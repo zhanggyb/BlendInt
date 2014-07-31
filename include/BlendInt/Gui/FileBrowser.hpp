@@ -42,9 +42,10 @@ namespace BlendInt {
 
 	public:
 
-		enum FileBrowserMode {
-			FileList,
-			FileIcon
+		enum DisplayMode {
+			ListMode,
+			IconMode,
+			TreeMode
 		};
 
 		FileBrowser ();

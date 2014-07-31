@@ -86,19 +86,19 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		/**
 		 * space between tool buttons
 		 */
-		int m_space;
+		int space_;
 
 		/** Used for middle mouse move */
-		bool m_move_status;
-		int m_last_x;
-		int m_start_x;
+		bool move_status_;
+		int last_x_;
+		int start_x_;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

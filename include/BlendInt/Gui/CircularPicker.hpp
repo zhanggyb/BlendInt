@@ -59,10 +59,10 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 	};
 
 }

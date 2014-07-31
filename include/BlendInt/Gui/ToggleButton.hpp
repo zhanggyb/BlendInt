@@ -66,10 +66,10 @@ namespace BlendInt {
 
 		void InitializeToggleButton (const String& text);
 
-		GLuint m_vao[2];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
 	};
 

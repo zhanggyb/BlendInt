@@ -47,6 +47,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ExpandButton::ExpandButton()
 	: AbstractButton()
 	{
@@ -121,8 +123,6 @@ namespace BlendInt {
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
 		}
@@ -148,9 +148,7 @@ namespace BlendInt {
 	void ExpandButton::InitializeExpandButton ()
 	{
 		set_checkable(true);
-
 		int h = font().GetHeight();
-
 		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
 						h + DefaultButtonPadding().vsum());
 	}
@@ -183,7 +181,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: AbstractContainer(2), m_vao(0), m_frame_height(0)
+	: AbstractContainer(2), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Frame* frame = Manage(new Frame);
@@ -209,7 +207,7 @@ namespace BlendInt {
 		set_size(width, height);
 
 		FillInExpander(position(), size(), margin());
-		m_frame_height = frame->size().height();
+		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
 
@@ -217,7 +215,7 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: AbstractContainer(2), m_vao(0), m_frame_height(0)
+	: AbstractContainer(2), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Frame* frame = Manage(new Frame);
@@ -243,7 +241,7 @@ namespace BlendInt {
 		set_margin(2, 2, 2, 2);
 
 		FillInExpander(position(), size(), margin());
-		m_frame_height = frame->size().height();
+		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
 
@@ -252,7 +250,7 @@ namespace BlendInt {
 
 	Expander::~Expander ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Expander::Setup (AbstractWidget* widget)
@@ -325,8 +323,8 @@ namespace BlendInt {
 
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
 
 			set_size(*request.size());
 			Refresh();
@@ -351,19 +349,20 @@ namespace BlendInt {
 
 	ResponseType Expander::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		program->SetUniform3f(Shaders::instance->triangle_uniform_position(),
+				(float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		program->SetUniform1i(Shaders::instance->triangle_uniform_antialias(),
+				0);
 
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		program->SetVertexAttrib4f(Shaders::instance->triangle_attrib_color(),
+				0.447f, 0.447f, 0.447f, 1.0f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
@@ -473,19 +472,20 @@ namespace BlendInt {
 	
 	void Expander::InitializeExpander ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		glBindVertexArray(m_vao);
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		glBindVertexArray(vao_);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
@@ -500,7 +500,7 @@ namespace BlendInt {
 			int x = position().x();
 			int y = position().y() + size().height();
 			frame->SetVisible(false);
-			m_frame_height = frame->size().height();
+			frame_height_ = frame->size().height();
 			Resize(size().width(), button->size().height() + margin().vsum());
 			y = y - size().height();
 			SetPosition(x, y);
@@ -511,7 +511,7 @@ namespace BlendInt {
 			frame->SetVisible(true);
 
 			Resize(size().width(),
-							button->size().height() + m_frame_height + margin().vsum());
+							button->size().height() + frame_height_ + margin().vsum());
 			y = y - size().height();
 			SetPosition(x, y);
 		}

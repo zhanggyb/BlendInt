@@ -78,12 +78,12 @@ namespace BlendInt {
 
 		void InitializeColorWheel ();
 
-		GLuint m_vao[2];
+		GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> m_outline;
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> outer_;
+		RefPtr<GLArrayBuffer> inner_;
 
-		CircularPicker m_picker;
+		CircularPicker picker_;
 
 	};
 

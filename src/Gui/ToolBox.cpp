@@ -45,22 +45,22 @@ namespace BlendInt {
 
 	ToolBox::ToolBox()
 	: AbstractContainer(),
-	  m_vao(0),
-	  m_space(1)
+	  vao_(0),
+	  space_(1)
 	{
 		set_size(200, 400);
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
 
-		tool.SetInnerBufferData(m_inner.get());
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	ToolBox::~ToolBox()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 	
 	void ToolBox::PushBack (AbstractWidget* widget)
@@ -124,7 +124,7 @@ namespace BlendInt {
 			AbstractWidget* widget = 0;
 			Size tmp_size;
 
-			preferred_size.set_height(-m_space);
+			preferred_size.set_height(-space_);
 			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				widget = *it;
@@ -132,7 +132,7 @@ namespace BlendInt {
 				if(widget->visiable()) {
 					tmp_size = widget->GetPreferredSize();
 
-					preferred_size.add_height(tmp_size.height() + m_space);
+					preferred_size.add_height(tmp_size.height() + space_);
 					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
 				}
 			}
@@ -151,7 +151,7 @@ namespace BlendInt {
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
 
-		FillSubWidgets(x, y, w, h, m_space);
+		FillSubWidgets(x, y, w, h, space_);
 	}
 	
 	void ToolBox::PerformPositionUpdate (const PositionUpdateRequest& request)
@@ -172,19 +172,19 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.UpdateInnerBuffer(m_inner.get());
+			tool.UpdateInnerBuffer(inner_.get());
 
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
-			FillSubWidgets(x, y, w, h, m_space);
+			FillSubWidgets(x, y, w, h, space_);
 
 			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
-			FillSubWidgets(position(), size(), margin(), m_space);
+			FillSubWidgets(position(), size(), margin(), space_);
 		}
 
 		ReportSizeUpdate(request);
@@ -200,7 +200,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
@@ -250,7 +250,7 @@ namespace BlendInt {
 
 		if(sub_widget_size()) {
 			y = deque().back()->position().y();
-			y -= m_space;
+			y -= space_;
 		}
 
 		return y;

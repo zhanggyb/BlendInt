@@ -68,14 +68,14 @@ namespace BlendInt {
 
 		Stack* CreateBlockStack ();
 
-		ButtonGroup m_radio_group;
+		ButtonGroup radio_group_;
 
-		GLuint m_vao[2];
+		GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		Stack* m_stack;
+		Stack* stack_;
 
 	};
 }

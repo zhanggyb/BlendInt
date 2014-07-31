@@ -44,19 +44,19 @@
 namespace BlendInt {
 
 	CircularPicker::CircularPicker ()
-	: AbstractRoundForm(), m_vao(0)
+	: AbstractRoundForm(), vao_(0)
 	{
 		set_round_type(RoundAll);
 
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		inner_.reset(new GLArrayBuffer);
+		outer_.reset(new GLArrayBuffer);
 	}
 
 	CircularPicker::~CircularPicker ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void CircularPicker::Resize(unsigned int radius)
@@ -68,8 +68,8 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(dot_size, DefaultBorderWidth(), RoundAll, radius);
-		tool.UpdateInnerBuffer(m_inner_buffer.get());
-		tool.UpdateOuterBuffer(m_outer_buffer.get());
+		tool.UpdateInnerBuffer(inner_.get());
+		tool.UpdateOuterBuffer(outer_.get());
 	}
 
 	void CircularPicker::UpdateGeometry (const UpdateRequest& request)
@@ -80,8 +80,8 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateInnerBuffer(inner_.get());
+				tool.UpdateOuterBuffer(outer_.get());
 				break;
 			}
 
@@ -90,8 +90,8 @@ namespace BlendInt {
 								static_cast<const int*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateInnerBuffer(inner_.get());
+				tool.UpdateOuterBuffer(outer_.get());
 				glBindVertexArray(0);
 				break;
 			}
@@ -101,8 +101,8 @@ namespace BlendInt {
 								static_cast<const float*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateInnerBuffer(inner_.get());
+				tool.UpdateOuterBuffer(outer_.get());
 				break;
 			}
 
@@ -116,7 +116,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->triangle_program();
@@ -130,21 +130,21 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);
 
-		m_inner_buffer->Bind();
+		inner_->Bind();
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						m_inner_buffer->GetBufferSize()
+						inner_->GetBufferSize()
 										/ (2 * sizeof(GLfloat)));
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
-		m_outer_buffer->Bind();
+		outer_->Bind();
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-						m_outer_buffer->GetBufferSize()
+						outer_->GetBufferSize()
 						/ (2 * sizeof(GLfloat)));
-		m_outer_buffer->Reset();
+		outer_->Reset();
 
 		glDisableVertexAttribArray(0);
 		program->Reset();

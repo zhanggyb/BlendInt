@@ -63,7 +63,7 @@ namespace BlendInt {
 
 	Button::~Button ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void Button::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -74,10 +74,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_size(*request.size());
 			Refresh();
@@ -94,10 +94,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -114,10 +114,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -150,14 +150,14 @@ namespace BlendInt {
 			}
 		}
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 		        Theme::instance->regular().outline.data());
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
@@ -186,23 +186,25 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		tool.SetInnerBufferData(m_inner_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		tool.SetOuterBufferData(m_outer_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
@@ -242,23 +244,25 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		tool.SetInnerBufferData(m_inner_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		tool.SetOuterBufferData(m_outer_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
