@@ -304,6 +304,11 @@ namespace BlendInt {
 		return true;
 	}
 
+	void GLSLProgram::SetUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
+	{
+		glUniformMatrix3fv (location, count, transpose, value);
+	}
+
 	void GLSLProgram::SetUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
 	{
 		glUniformMatrix4fv (location, count, transpose, value);
@@ -395,6 +400,16 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool GLSLProgram::SetUniformMatrix3fv(const char* name, GLsizei count, GLboolean transpose, const GLfloat* value)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniformMatrix3fv (uniform_location, count, transpose, value);
+
+		return true;
+	}
 
 	bool GLSLProgram::SetUniformMatrix4fv(const char* name, GLsizei count, GLboolean transpose, const GLfloat* value)
 	{

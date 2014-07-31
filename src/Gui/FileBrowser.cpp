@@ -297,11 +297,11 @@ namespace BlendInt {
 			}
 		}
 
-		DBG_PRINT_MSG("highlight index: %d", highlight_index_);
+		//DBG_PRINT_MSG("highlight index: %d", highlight_index_);
 
 		if(index.IsValid()) {
 			file_selected_ = *index.GetData();
-			DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
+			//DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
 		} else {
 			file_selected_.clear();
 		}

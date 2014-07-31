@@ -53,14 +53,16 @@ namespace BlendInt {
 
 		void InitializeMesh ();
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> m_vertex_buffer;
-		RefPtr<GLArrayBuffer> m_normal_buffer;
+		RefPtr<GLArrayBuffer> vertex_buffer_;
+		RefPtr<GLArrayBuffer> normal_buffer_;
 
-		RefPtr<GLElementArrayBuffer> m_index_buffer;
+		RefPtr<GLElementArrayBuffer> index_buffer_;
 
-		RefPtr<GLSLProgram> m_program;
+		RefPtr<GLSLProgram> program_;
+
+		glm::mat4 model_matrix_;
 
 		static const char* vertex_shader;
 		static const char* fragment_shader;
