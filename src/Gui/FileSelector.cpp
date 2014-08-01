@@ -48,7 +48,7 @@
 namespace BlendInt {
 
 	FileSelector::FileSelector ()
-	: m_layout(0), m_path_entry(0)
+	: layout_(0), path_entry_(0)
 	{
 		set_size(500, 400);
 		set_margin(2, 2, 2, 2);
@@ -59,7 +59,7 @@ namespace BlendInt {
 
 	FileSelector::~FileSelector ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 	
 	void FileSelector::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -67,9 +67,9 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_inner->Reset();
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			inner_->Reset();
 		}
 
 		ReportSizeUpdate(request);
@@ -88,7 +88,7 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		program->Reset();
@@ -98,57 +98,67 @@ namespace BlendInt {
 
 	void FileSelector::InitializeFileSelector ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		m_inner->Reset();
+		inner_->Reset();
 
 		// create sub widgets
 
-		m_layout = Manage(new VBox);
-		m_layout->SetMargin(2, 2, 2, 2);
-		m_layout->SetSpace(4);
+		layout_ = Manage(new VBox);
+		layout_->SetMargin(2, 2, 2, 2);
+		layout_->SetSpace(4);
 
-		m_path_entry = Manage(new TextEntry);
-		m_path_entry->SetRoundCornerType(RoundAll);
+		path_entry_ = Manage(new TextEntry);
+		path_entry_->SetRoundCornerType(RoundAll);
 
-		m_open = Manage(new Button(String("Open")));
+		open_ = Manage(new Button(String("Open")));
 
 		HBox* dir_layout = Manage(new HBox);
 		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->PushBack(m_path_entry);
-		dir_layout->PushBack(m_open);
+		dir_layout->PushBack(path_entry_);
+		dir_layout->PushBack(open_);
 
-		m_file_entry = Manage(new TextEntry);
-		m_file_entry->SetRoundCornerType(RoundAll);
-		m_cancel = Manage(new Button(String("Cancel")));
+		file_entry_ = Manage(new TextEntry);
+		file_entry_->SetRoundCornerType(RoundAll);
+		cancel_ = Manage(new Button(String("Cancel")));
 
 		HBox* file_layout = Manage(new HBox);
 		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->PushBack(m_file_entry);
-		file_layout->PushBack(m_cancel);
+		file_layout->PushBack(file_entry_);
+		file_layout->PushBack(cancel_);
 
-		m_list = Manage(new FileBrowser);
+		browser_ = Manage(new FileBrowser);
 
-		m_layout->PushBack(dir_layout);
-		m_layout->PushBack(file_layout);
-		m_layout->PushBack(m_list);
+		layout_->PushBack(dir_layout);
+		layout_->PushBack(file_layout);
+		layout_->PushBack(browser_);
 
-		Setup(m_layout);
+		Setup(layout_);
 
-		m_list->Load(getenv("PWD"));
+		std::string pwd =getenv("PWD");
+		pwd.append("/");
+		path_entry_->SetText(pwd);
+		browser_->Load(getenv("PWD"));
+
+		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+	}
+
+	void FileSelector::OnFileSelect ()
+	{
+		file_entry_->SetText(browser_->file_selected());
 	}
 
 }

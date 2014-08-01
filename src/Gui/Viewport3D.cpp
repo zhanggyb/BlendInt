@@ -60,7 +60,7 @@ namespace BlendInt {
 
 	Viewport3D::~Viewport3D ()
 	{
-		m_cameras.clear();
+		cameras_.clear();
 	}
 
 	ResponseType Viewport3D::CursorEnterEvent (bool entered)
@@ -84,11 +84,11 @@ namespace BlendInt {
 			switch (event.key()) {
 				case Key_KP_Decimal: {
 					// setup camera
-					glm::vec3 pos = glm::vec3(5.f);
+					glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
 					glm::vec3 center = glm::vec3(0);
 					glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
-					m_default_camera->LookAt(pos, center, up);
-					m_default_camera->SetPerspective(m_default_camera->fovy(),
+					default_camera_->LookAt(pos, center, up);
+					default_camera_->SetPerspective(default_camera_->fovy(),
 					        1.0f * size().width() / size().height());
 					Refresh();
 					break;
@@ -130,17 +130,17 @@ namespace BlendInt {
 
 			if (event.modifiers() == ModifierNone) {
 
-				m_default_camera->SaveCurrentPosition();
-				m_default_camera->SaveCurrentCenter();
+				default_camera_->SaveCurrentPosition();
+				default_camera_->SaveCurrentCenter();
 
 			} else if (event.modifiers() == ModifierShift) {
 
-				m_default_camera->SaveCurrentPosition();
-				m_default_camera->SaveCurrentCenter();
+				default_camera_->SaveCurrentPosition();
+				default_camera_->SaveCurrentCenter();
 
 			} else if (event.modifiers() == ModifierControl) {
 
-				m_default_camera->SaveCurrentPosition();
+				default_camera_->SaveCurrentPosition();
 
 			}
 
@@ -148,17 +148,17 @@ namespace BlendInt {
 
 			std::cout << "scroll up" << std::endl;
 
-			m_default_camera->SaveCurrentPosition();
+			default_camera_->SaveCurrentPosition();
 
-			m_default_camera->Zoom(5.f);
+			default_camera_->Zoom(5.f);
 
 		} else if (m_button_down == MouseButtonScrollDown) {
 
 			std::cout << "scroll down" << std::endl;
 
-			m_default_camera->SaveCurrentPosition();
+			default_camera_->SaveCurrentPosition();
 
-			m_default_camera->Zoom(-5.f);
+			default_camera_->Zoom(-5.f);
 
 		}
 
@@ -187,18 +187,18 @@ namespace BlendInt {
 					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
 					        - event.position().y());
-					m_default_camera->Pan(dx, dy);
+					default_camera_->Pan(dx, dy);
 
 				} else if (event.modifiers() == ModifierControl) {
 
-					m_default_camera->Zoom(m_last_y - event.position().y());
+					default_camera_->Zoom(m_last_y - event.position().y());
 
 				} else if (event.modifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
 					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
 					        - event.position().y());
-					m_default_camera->Orbit(dx, dy);
+					default_camera_->Orbit(dx, dy);
 				}
 
 				Refresh();
@@ -220,7 +220,7 @@ namespace BlendInt {
 	void Viewport3D::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			m_default_camera->SetPerspective(m_default_camera->fovy(),
+			default_camera_->SetPerspective(default_camera_->fovy(),
 			        1.f * request.size()->width() / request.size()->height());
 
 			set_size(*request.size());
@@ -235,11 +235,11 @@ namespace BlendInt {
 		glClearColor(0.25, 0.25, 0.25, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_grid->Render(m_default_camera->projection(), m_default_camera->view());
+		gridfloor_->Render(default_camera_->projection(), default_camera_->view());
 
 		for(std::deque<RefPtr<AbstractPrimitive> >::iterator it = m_primitives.begin(); it != m_primitives.end(); it++)
 		{
-			(*it)->Render(m_default_camera->projection(), m_default_camera->view());
+			(*it)->Render(default_camera_->projection(), default_camera_->view());
 		}
 	}
 
@@ -305,19 +305,19 @@ namespace BlendInt {
 
 	void Viewport3D::InitOnce ()
 	{
-		m_default_camera.reset(new NavigationCamera);
+		default_camera_.reset(new NavigationCamera);
 
 		// setup camera
-		glm::vec3 pos = glm::vec3(5.f);
+		glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
 		glm::vec3 center = glm::vec3(0);
 		glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
-		m_default_camera->LookAt(pos, center, up);
+		default_camera_->LookAt(pos, center, up);
 
-		m_default_camera->SetPerspective(m_default_camera->fovy(),
+		default_camera_->SetPerspective(default_camera_->fovy(),
 		        1.f * size().width() / size().height());
-		m_default_camera->Update();
+		default_camera_->Update();
 
-		m_grid.reset(new GridFloor);
+		gridfloor_.reset(new GridFloor);
 	}
 
 }

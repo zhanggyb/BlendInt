@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		void SetScale (float scale);
 
+		void SetAxis (const char* str);
+
 		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
 
 	private:
@@ -52,14 +54,26 @@ namespace BlendInt {
 
 		void GenerateGripFloorVertices (std::vector<GLfloat>& vertices);
 
-		GLuint vao_;
+		/**
+		 * @brief Vertex array objects
+		 *
+		 * - 0: grid
+		 * - 1: x axis
+		 * - 2: y axis
+		 * - 3: z axis
+		 */
+		GLuint vaos_[4];
 
 		int lines_;
 		float scale_;
 
 		int subdivisions_;	// default is 10
 
-		RefPtr<GLArrayBuffer> buffer_;	// X axis
+		RefPtr<GLArrayBuffer> buffer_;
+
+		RefPtr<GLArrayBuffer> axis_x_;
+		RefPtr<GLArrayBuffer> axis_y_;
+		RefPtr<GLArrayBuffer> axis_z_;
 	};
 
 }

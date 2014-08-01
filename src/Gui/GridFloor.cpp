@@ -54,7 +54,6 @@ namespace BlendInt {
 
 	GridFloor::GridFloor ()
 	: AbstractPrimitive(),
-	  vao_(0),
 	  lines_(16),
 	  scale_(1.f),
 	  subdivisions_(10)
@@ -70,7 +69,38 @@ namespace BlendInt {
 		GenerateGripFloorVertices(vertices);
 		buffer_->Bind();
 		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		buffer_->Reset();
+
+		GLfloat verts [] = {
+				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
+				(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f
+		};
+
+		if(axis_x_) {
+			axis_x_->Bind();
+			axis_x_->SetData(sizeof(verts), verts);
+		}
+
+		if(axis_y_) {
+			verts [0] = 0.f;
+			verts[3] = 0.f;
+			verts[1] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[4] = (GLfloat)(lines_ / 2) * scale_;
+
+			axis_y_->Bind();
+			axis_y_->SetData(sizeof(verts), verts);
+		}
+
+		if(axis_z_) {
+			verts [1] = 0.f;
+			verts[4] = 0.f;
+			verts[2] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[5] = (GLfloat)(lines_ / 2) * scale_;
+
+			axis_y_->Bind();
+			axis_y_->SetData(sizeof(verts), verts);
+		}
+
+		GLArrayBuffer::Reset();
 	}
 
 	void GridFloor::SetScale (float scale)
@@ -81,13 +111,44 @@ namespace BlendInt {
 		GenerateGripFloorVertices(vertices);
 		buffer_->Bind();
 		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		buffer_->Reset();
+
+		GLfloat verts [] = {
+				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
+				(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f
+		};
+
+		if(axis_x_) {
+			axis_x_->Bind();
+			axis_x_->SetData(sizeof(verts), verts);
+		}
+
+		if(axis_y_) {
+			verts [0] = 0.f;
+			verts[3] = 0.f;
+			verts[1] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[4] = (GLfloat)(lines_ / 2) * scale_;
+
+			axis_y_->Bind();
+			axis_y_->SetData(sizeof(verts), verts);
+		}
+
+		if(axis_z_) {
+			verts [1] = 0.f;
+			verts[4] = 0.f;
+			verts[2] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[5] = (GLfloat)(lines_ / 2) * scale_;
+
+			axis_y_->Bind();
+			axis_y_->SetData(sizeof(verts), verts);
+		}
+
+		GLArrayBuffer::Reset();
 	}
 
 	void GridFloor::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
 		int max = lines_ / 2;
-		int total_count = max * 2 * 2 * 2 + 2 * 2;
+		int total_count = max * 2 * 2 * 2;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->primitive_program();
 		program->Use();
@@ -96,11 +157,30 @@ namespace BlendInt {
 		glUniformMatrix4fv(Shaders::instance->primitive_uniform_view(), 1, GL_FALSE, glm::value_ptr(view_matrix));
 		glUniformMatrix4fv(Shaders::instance->primitive_uniform_model(), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
-		glVertexAttrib3f(Shaders::instance->primitive_attrib_color_v3(), 0.35f, 0.35f, 0.35f);
+		if(vaos_[0] != 0) {
+			glVertexAttrib4f(Shaders::instance->primitive_attrib_color_v4(), 0.35f, 0.35f, 0.35f, 1.f);
+			glBindVertexArray(vaos_[0]);
+			glDrawArrays(GL_LINES, 0, total_count);
+		}
 
-		/* Draw the grid using the indices to our vertices using our vertex buffer objects */
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_LINES, 0, total_count);
+		if(vaos_[1] != 0) {	// show x axis
+			glVertexAttrib4f(Shaders::instance->primitive_attrib_color_v4(), 1.f, 0.f, 0.f, 0.5f);
+			glBindVertexArray(vaos_[1]);
+			glDrawArrays(GL_LINES, 0, 2);
+		}
+
+		if(vaos_[2] != 0) {	// show y axis
+			glVertexAttrib4f(Shaders::instance->primitive_attrib_color_v4(), 0.f, 1.f, 0.f, 0.5f);
+			glBindVertexArray(vaos_[2]);
+			glDrawArrays(GL_LINES, 0, 2);
+		}
+
+		if(vaos_[3] != 0) {	// show z axis
+			glVertexAttrib4f(Shaders::instance->primitive_attrib_color_v4(), 0.f, 0.f, 1.f, 0.5f);
+			glBindVertexArray(vaos_[3]);
+			glDrawArrays(GL_LINES, 0, 2);
+		}
+
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -108,7 +188,7 @@ namespace BlendInt {
 
 	GridFloor::~GridFloor ()
 	{
-		glDeleteVertexArrays(1, &vao_);
+		glDeleteVertexArrays(4, vaos_);
 	}
 
 	void GridFloor::InitializeGrid()
@@ -117,8 +197,9 @@ namespace BlendInt {
 
 		GenerateGripFloorVertices(vertices);
 
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
+		memset(vaos_, 0, 4);
+		glGenVertexArrays(3, vaos_);
+		glBindVertexArray(vaos_[0]);
 
 		buffer_.reset(new GLArrayBuffer);
 		buffer_->Generate();
@@ -126,9 +207,55 @@ namespace BlendInt {
 
 		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		/* Draw the grid using the indices to our vertices using our vertex buffer objects */
 		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vaos_[1]);
+
+		GLfloat verts [] = {
+				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
+				(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f
+		};
+
+		axis_x_.reset(new GLArrayBuffer);
+		axis_x_->Generate();
+		axis_x_->Bind();
+		axis_x_->SetData(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vaos_[2]);
+
+		verts [0] = 0.f;
+		verts[3] = 0.f;
+		verts[1] = - (GLfloat)(lines_ / 2) * scale_;
+		verts[4] = (GLfloat)(lines_ / 2) * scale_;
+
+		axis_y_.reset(new GLArrayBuffer);
+		axis_y_->Generate();
+		axis_y_->Bind();
+		axis_y_->SetData(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		/*
+		glBindVertexArray(vaos_[3]);
+
+		verts [1] = 0.f;
+		verts[4] = 0.f;
+		verts[2] = - (GLfloat)(lines_ / 2) * scale_;
+		verts[5] = (GLfloat)(lines_ / 2) * scale_;
+
+		axis_y_.reset(new GLArrayBuffer);
+		axis_y_->Generate();
+		axis_y_->Bind();
+		axis_y_->SetData(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		*/
 
 		glBindVertexArray(0);
 
@@ -136,11 +263,130 @@ namespace BlendInt {
 		GLElementArrayBuffer::Reset();
 	}
 
+	void GridFloor::SetAxis (const char* str)
+	{
+		if(str == 0) return;
+
+		int flag = 0;
+		const char *p = str;
+		while (*p != '\0') {
+			switch(*p) {
+				case 'x':
+				case 'X': {
+					flag |= (0x1 << 0);
+					break;
+				}
+
+				case 'y':
+				case 'Y': {
+					flag |= (0x1 << 1);
+					break;
+				}
+
+				case 'z':
+				case 'Z': {
+					flag |= (0x1 << 2);
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			p++;
+		}
+
+		GLfloat verts [] = {
+				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
+				(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f
+		};
+
+		if(flag & 0x1) {
+
+			if(vaos_[1] == 0) {
+				glGenVertexArrays(1, &vaos_[1]);
+			}
+			glBindVertexArray(vaos_[1]);
+
+			if(!axis_x_) {
+				axis_x_.reset(new GLArrayBuffer);
+				axis_x_->Generate();
+			}
+			axis_x_->Bind();
+			axis_x_->SetData(sizeof(verts), verts);
+			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		} else {
+			glDeleteVertexArrays(1, &vaos_[1]);
+			vaos_[1] = 0;
+			axis_x_.destroy();
+		}
+
+		if(flag & (0x1 << 1)) {
+			verts [0] = 0.f;
+			verts[3] = 0.f;
+			verts[1] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[4] = (GLfloat)(lines_ / 2) * scale_;
+
+			if(vaos_[2] == 0) {
+				glGenVertexArrays(1, &vaos_[2]);
+			}
+			glBindVertexArray(vaos_[2]);
+
+			if(!axis_y_) {
+				axis_y_.reset(new GLArrayBuffer);
+				axis_y_->Generate();
+			}
+			axis_y_->Bind();
+			axis_y_->SetData(sizeof(verts), verts);
+			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		} else {
+			glDeleteVertexArrays(1, &vaos_[2]);
+			vaos_[2] = 0;
+			axis_y_.destroy();
+		}
+
+		if(flag & (0x1 << 2)) {
+
+			verts [1] = 0.f;
+			verts[4] = 0.f;
+			verts[2] = - (GLfloat)(lines_ / 2) * scale_;
+			verts[5] = (GLfloat)(lines_ / 2) * scale_;
+
+			if(vaos_[3] == 0) {
+				glGenVertexArrays(1, &vaos_[3]);
+			}
+
+			glBindVertexArray(vaos_[3]);
+
+			if(!axis_z_) {
+				axis_z_.reset(new GLArrayBuffer);
+				axis_z_->Generate();
+			}
+
+			axis_z_->Bind();
+			axis_z_->SetData(sizeof(verts), verts);
+			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
+			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		} else {
+			glDeleteVertexArrays(1, &vaos_[3]);
+			vaos_[3] = 0;
+			axis_z_.destroy();
+		}
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+	}
+
 	void GridFloor::GenerateGripFloorVertices (std::vector<GLfloat>& vertices)
 	{
 		int max = lines_ / 2;
 
-		unsigned int total_count = 3 * max * 2 * 2 * 2 + 3 * 2 * 2;
+		unsigned int total_count = 3 * max * 2 * 2 * 2;
 				//		  ~ 3  (x,y,z) coord of 1 point
 				//			max * 2, horizontal lines
 				//			max * 2 * 2, horizontal + vertical lines
@@ -163,15 +409,15 @@ namespace BlendInt {
 			count += 6;
 		}
 
-		vertices[count + 0] = (GLfloat)(-max) * scale_;
-		vertices[count + 1] = 0.f;
-		vertices[count + 2] = 0.f;
-
-		vertices[count + 3] = (GLfloat)(max) * scale_;
-		vertices[count + 4] = 0.f;
-		vertices[count + 5] = 0.f;
-
-		count += 6;
+//		vertices[count + 0] = (GLfloat)(-max) * scale_;
+//		vertices[count + 1] = 0.f;
+//		vertices[count + 2] = 0.f;
+//
+//		vertices[count + 3] = (GLfloat)(max) * scale_;
+//		vertices[count + 4] = 0.f;
+//		vertices[count + 5] = 0.f;
+//
+//		count += 6;
 
 		for(int i = 0; i < max; i++)
 		{
@@ -199,15 +445,15 @@ namespace BlendInt {
 			count += 6;
 		}
 
-		vertices[count + 0] = 0.f;
-		vertices[count + 1] = (GLfloat)(-max) * scale_;
-		vertices[count + 2] = 0.f;
-
-		vertices[count + 3] = 0.f;
-		vertices[count + 4] = (GLfloat)(max) * scale_;
-		vertices[count + 5] = 0.f;
-
-		count += 6;
+//		vertices[count + 0] = 0.f;
+//		vertices[count + 1] = (GLfloat)(-max) * scale_;
+//		vertices[count + 2] = 0.f;
+//
+//		vertices[count + 3] = 0.f;
+//		vertices[count + 4] = (GLfloat)(max) * scale_;
+//		vertices[count + 5] = 0.f;
+//
+//		count += 6;
 
 		for(int i = 0; i < max; i++)
 		{

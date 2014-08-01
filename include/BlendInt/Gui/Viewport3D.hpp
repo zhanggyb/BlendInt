@@ -92,11 +92,11 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		vector<RefPtr<AbstractCamera> > m_cameras;
+		vector<RefPtr<AbstractCamera> > cameras_;
 
-		RefPtr<NavigationCamera> m_default_camera;
+		RefPtr<NavigationCamera> default_camera_;
 
-		RefPtr<GridFloor> m_grid;
+		RefPtr<GridFloor> gridfloor_;
 
 		// temporary member, use model-view to display a hierarchy
 		std::deque<RefPtr<AbstractPrimitive> > m_primitives;

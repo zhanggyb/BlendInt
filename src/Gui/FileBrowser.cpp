@@ -306,6 +306,7 @@ namespace BlendInt {
 			file_selected_.clear();
 		}
 
+		clicked_.fire();
 		return Accept;
 	}
 

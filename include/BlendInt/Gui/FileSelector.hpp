@@ -58,19 +58,20 @@ namespace BlendInt {
 
 		void InitializeFileSelector ();
 
-		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
+		void OnFileSelect ();
 
-		VBox* m_layout;
+		GLuint vao_;
+		RefPtr<GLArrayBuffer> inner_;
 
-		TextEntry* m_path_entry;
-		TextEntry* m_file_entry;
+		VBox* layout_;
 
-		Button* m_open;
-		Button* m_cancel;
+		TextEntry* path_entry_;
+		TextEntry* file_entry_;
 
-		FileBrowser* m_list;
+		Button* open_;
+		Button* cancel_;
 
+		FileBrowser* browser_;
 	};
 
 }

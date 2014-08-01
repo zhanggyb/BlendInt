@@ -37,6 +37,9 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A one-line text editor
+	 */
 	class TextEntry: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TextEntry);
@@ -56,7 +59,7 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		const String& text () const {return m_text;}
+		const String& text () const {return text_;}
 
 		virtual Size GetPreferredSize () const;
 
@@ -111,22 +114,32 @@ namespace BlendInt {
 		 */
 		void GetVisibleTextPlace (size_t* start, size_t* length);
 
-		GLuint m_vao[3];
+		/**
+		 * @brief Vertex array objects
+		 *
+		 * 	- 0: for inner buffer
+		 * 	- 1: for outline buffer
+		 * 	- 2: for cursor buffer
+		 */
+		GLuint vaos_[3];
 
-		Font m_font;
+		Font font_;
 
-		String m_text;
+		String text_;
 
-		size_t m_start;	// where start print the text
+		size_t start_;	// where start print the text
 
-		size_t m_length;	// the text length inside this widget
+		size_t length_;	// the text length inside this widget
 
-		size_t m_cursor_position;
+		/**
+		 * @brief Where display the cursor and insert new text
+		 */
+		size_t index_;
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		RefPtr<GLArrayBuffer> m_cursor_buffer;
+		RefPtr<GLArrayBuffer> cursor_buffer_;
 
 		static Margin default_textentry_padding;
 	};

@@ -105,12 +105,12 @@ namespace BlendInt {
 		const char* Shaders::primitive_vertex_shader = "#version 330\n"
 				""
 				"layout(location = 0) in vec3 coord;"
-				"layout(location = 1) in vec3 color;"
+				"layout(location = 1) in vec4 color;"
 				"uniform mat4 P;"
 				"uniform mat4 V;"
 				"uniform mat4 M;"
 				""
-				"out vec3 vColor;"
+				"out vec4 vColor;"
 				""
 				"void main(void) {"
 				"	gl_Position = P * V * M * vec4(coord, 1.0);"
@@ -120,11 +120,11 @@ namespace BlendInt {
 		const char* Shaders::primitive_fragment_shader =
 				"#version 330\n"
 				""
-				"in vec3 vColor;"
+				"in vec4 vColor;"
 				"out vec4 vFragColor;"
 				""
 				"void main(void) {"
-				"	vFragColor = vec4(vColor, 1.0);"
+				"	vFragColor = vColor;"
 				"}";
 
 		const char* Shaders::widget_vertex_shader =
@@ -601,7 +601,7 @@ namespace BlendInt {
 		  m_text_uniform_texture(-1),
 		  m_text_uniform_color(-1),
 		  m_primitive_attrib_coord_v3(-1),
-		  m_primitive_attrib_color_v3(-1),
+		  m_primitive_attrib_color_v4(-1),
 		  m_primitive_uniform_projection(-1),
 		  m_primitive_uniform_view(-1),
 		  m_primitive_uniform_model(-1),
@@ -747,7 +747,7 @@ namespace BlendInt {
 			m_text_uniform_color = m_text_program->GetUniformLocation("u_color");
 
 			m_primitive_attrib_coord_v3 = m_primitive_program->GetAttributeLocation("coord");
-			m_primitive_attrib_color_v3 = m_primitive_program->GetAttributeLocation("color");
+			m_primitive_attrib_color_v4 = m_primitive_program->GetAttributeLocation("color");
 			m_primitive_uniform_projection = m_primitive_program->GetUniformLocation("P");
 			m_primitive_uniform_view = m_primitive_program->GetUniformLocation("V");
 			m_primitive_uniform_model = m_primitive_program->GetUniformLocation("M");

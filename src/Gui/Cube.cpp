@@ -94,15 +94,15 @@ namespace BlendInt {
 
 		GLfloat cube_vertices[] = {
 				// front
-				-1.0, -1.0,  1.0,
-				1.0, -1.0,  1.0,
-				1.0,  1.0,  1.0,
-				-1.0,  1.0,  1.0,
+				-1.0, -1.0,  1.0, 1.0,
+				1.0, -1.0,  1.0, 1.0,
+				1.0,  1.0,  1.0, 1.0,
+				-1.0,  1.0,  1.0, 1.0,
 				// back
-				-1.0, -1.0, -1.0,
-				1.0, -1.0, -1.0,
-				1.0,  1.0, -1.0,
-				-1.0,  1.0, -1.0,
+				-1.0, -1.0, -1.0, 1.0,
+				1.0, -1.0, -1.0, 1.0,
+				1.0,  1.0, -1.0, 1.0,
+				-1.0,  1.0, -1.0, 1.0
 		};
 
 		glGenBuffers(1, &m_vbo_cube_vertices);
@@ -110,7 +110,7 @@ namespace BlendInt {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLfloat cube_colors[] = {
 				// front colors

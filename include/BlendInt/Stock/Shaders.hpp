@@ -77,9 +77,9 @@ namespace BlendInt {
 				return m_image_program;
 			}
 
-			GLint primitive_attrib_color_v3 () const
+			GLint primitive_attrib_color_v4 () const
 			{
-				return m_primitive_attrib_color_v3;
+				return m_primitive_attrib_color_v4;
 			}
 
 			GLint primitive_attrib_coord_v3 () const
@@ -322,7 +322,7 @@ namespace BlendInt {
 
 			GLint m_primitive_attrib_coord_v3;
 
-			GLint m_primitive_attrib_color_v3;
+			GLint m_primitive_attrib_color_v4;
 
 			GLint m_primitive_uniform_projection;
 
