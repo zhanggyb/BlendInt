@@ -1,15 +1,15 @@
-#include "ColorSelectorTest1.hpp"
-#include <BlendInt/Gui/ColorSelector.hpp>
+#include "CVImageViewTest1.hpp"
+#include <BlendInt/Gui/CVImageView.hpp>
 
 using namespace BlendInt;
 
-ColorSelectorTest1::ColorSelectorTest1()
+CVImageViewTest1::CVImageViewTest1()
 : testing::Test()
 {
 	// TODO: add constructor code
 }
 
-ColorSelectorTest1::~ColorSelectorTest1()
+CVImageViewTest1::~CVImageViewTest1()
 {
 	// TODO: add destructor code
 }
@@ -19,20 +19,20 @@ ColorSelectorTest1::~ColorSelectorTest1()
  *
  * Expected result: 
  */
-TEST_F(ColorSelectorTest1, Foo1)
+TEST_F(CVImageViewTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("ColorSelector - Foo1", 640, 480);
+    GLFWwindow* win = CreateWindow("CVImageView - Foo1", 1280, 800);
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
+    context->Resize(1280, 800);
 
-    ColorSelector* cs = Manage(new ColorSelector);
-    cs->SetPosition(200, 50);
-
-    context->PushBack(cs);
+    CVImageView* img = Manage(new CVImageView);
+    img->SetPosition(100, 100);
+    context->PushBack(img);
 
     RunLoop(win);
 

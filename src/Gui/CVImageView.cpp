@@ -45,46 +45,49 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
+	Color CVImageView::background_color = Color(Color::SlateGray);
+
 	CVImageView::CVImageView ()
-	: AbstractWidget()
+	: AbstractScrollable()
 	{
-		m_background_color = Color(Color::SlateGray);
 		InitializeCVImageView();
 	}
 
 	CVImageView::~CVImageView ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	void CVImageView::Open (const char* filename)
 	{
-		m_image = cv::imread(filename);
+		image_ = cv::imread(filename);
 
-		if(m_image.data) {
+		if(image_.data) {
 
-			m_texture->Bind();
-			switch (m_image.channels()) {
+			texture_->Bind();
+			switch (image_.channels()) {
 
 				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					m_texture->SetImage(0, GL_RGB, m_image.cols, m_image.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, m_image.data);
+					texture_->SetImage(0, GL_RGB, image_.cols, image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
 					break;
 				}
 
 				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
 				{
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					m_texture->SetImage(0, GL_RGBA, m_image.cols, m_image.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, m_image.data);
+					texture_->SetImage(0, GL_RGBA, image_.cols, image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
 					break;
 				}
 
 				default:
 					break;
 			}
-			m_texture->Reset();
+			texture_->Reset();
 
 			AdjustImageArea(size());
 		}
@@ -95,17 +98,28 @@ namespace BlendInt {
 
 	}
 
+	void CVImageView::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
 	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_background_buffer->Bind();
-			tool.SetInnerBufferData(m_background_buffer.get());
-			m_background_buffer->Reset();
+			background_->Bind();
+			tool.SetInnerBufferData(background_.get());
+			background_->Reset();
 
 			set_size(*request.size());
 			AdjustImageArea(*request.size());
+
+			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
 		}
 
 		ReportSizeUpdate(request);
@@ -122,16 +136,16 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		program->SetVertexAttrib4fv("a_color", m_background_color.data());
+		program->SetVertexAttrib4fv("a_color", background_color.data());
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		glActiveTexture(GL_TEXTURE0);
-		m_texture->Bind();
+		texture_->Bind();
 
-		if (m_texture->GetWidth() > 0) {
+		if (texture_->GetWidth() > 0) {
 
 			program = Shaders::instance->image_program();
 			program->Use();
@@ -139,13 +153,16 @@ namespace BlendInt {
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 			program->SetUniform1i("u_gamma", 0);
 
-			glBindVertexArray(m_vao[1]);
+			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 		glBindVertexArray(0);
-		m_texture->Reset();
+		texture_->Reset();
 		program->Reset();
+
+		DispatchDrawEvent(hbar(), event);
+		DispatchDrawEvent(vbar(), event);
 
 		return Accept;
 	}
@@ -164,46 +181,41 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		if(m_texture && glIsTexture(m_texture->texture())) {
-			prefer.reset(m_image.cols, m_image.rows);
+		if(image_.data) {
+			prefer.reset(image_.cols, image_.rows);
 		}
 
 		return prefer;
-	}
-
-	void CVImageView::SetBackgroundColor(const Color& color)
-	{
-		m_background_color = color;
-		Refresh();
 	}
 
 	void CVImageView::InitializeCVImageView ()
 	{
 		set_size(400, 300);
 
-		m_texture.reset(new GLTexture2D);
-		m_texture->Generate();
-		m_texture->Bind();
-		m_texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		m_texture->SetMinFilter(GL_LINEAR);
-		m_texture->SetMagFilter(GL_LINEAR);
-		m_texture->Reset();
+		texture_.reset(new GLTexture2D);
+		texture_->Generate();
+		texture_->Bind();
+		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		texture_->SetMinFilter(GL_LINEAR);
+		texture_->SetMagFilter(GL_LINEAR);
+		texture_->Reset();
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vaos_);
+		glBindVertexArray(vaos_[0]);
 
-		m_background_buffer.reset(new GLArrayBuffer);
-		m_background_buffer->Generate();
-		m_background_buffer->Bind();
+		background_.reset(new GLArrayBuffer);
+		background_->Generate();
+		background_->Bind();
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		tool.SetInnerBufferData(m_background_buffer.get());
+		tool.SetInnerBufferData(background_.get());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vaos_[1]);
 
 		GLfloat vertices[] = {
 			0.f, 0.f, 		0.f, 1.f,
@@ -212,18 +224,23 @@ namespace BlendInt {
 			400.f, 300.f,	1.f, 0.f
 		};
 
-		m_image_buffer.reset(new GLArrayBuffer);
-		m_image_buffer->Generate();
-		m_image_buffer->Bind();
-		m_image_buffer->SetData(sizeof(vertices), vertices);
+		plane_.reset(new GLArrayBuffer);
+		plane_->Generate();
+		plane_->Bind();
+		plane_->SetData(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
+		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2, GL_FLOAT,
+				GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
 
 	ResponseType CVImageView::FocusEvent (bool focus)
@@ -255,29 +272,47 @@ namespace BlendInt {
 
 	ResponseType CVImageView::MousePressEvent (const MouseEvent& event)
 	{
+		if(hbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(hbar(), event);
+		} else if (vbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 
 	ResponseType CVImageView::MouseReleaseEvent (const MouseEvent& event)
 	{
+		if(hbar()->pressed()) {
+			return DispatchMouseReleaseEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseReleaseEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 
 	ResponseType CVImageView::MouseMoveEvent (const MouseEvent& event)
 	{
+		if(hbar()->pressed()) {
+			return DispatchMouseMoveEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseMoveEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 
 	void CVImageView::AdjustImageArea (const Size& size)
 	{
-		int w = std::min(size.width(), m_image.cols);
-		int h = std::min(size.height(), m_image.rows);
+		int w = std::min(size.width(), image_.cols);
+		int h = std::min(size.height(), image_.rows);
 
 		if(h == 0) {
 			w = 0;
 		} else {
 			float ratio = (float)w / h;
-			float ref_ratio = (float)m_image.cols / m_image.rows;
+			float ref_ratio = (float)image_.cols / image_.rows;
 			if(ratio > ref_ratio) {
 				w = h * ref_ratio;
 			} else if (ratio < ref_ratio) {
@@ -294,9 +329,9 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		m_image_buffer->Bind();
-		m_image_buffer->SetData(sizeof(vertices), vertices);
-		m_image_buffer->Reset();
+		plane_->Bind();
+		plane_->SetData(sizeof(vertices), vertices);
+		plane_->Reset();
 	}
 
 }

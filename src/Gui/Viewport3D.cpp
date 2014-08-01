@@ -317,7 +317,7 @@ namespace BlendInt {
 		        1.f * size().width() / size().height());
 		m_default_camera->Update();
 
-		m_grid.reset(new Grid);
+		m_grid.reset(new GridFloor);
 	}
 
 }

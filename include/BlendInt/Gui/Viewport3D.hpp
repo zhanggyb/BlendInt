@@ -28,7 +28,7 @@
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
-#include <BlendInt/Gui/Grid.hpp>
+#include <BlendInt/Gui/GridFloor.hpp>
 #include <BlendInt/Gui/Cube.hpp>
 #include <BlendInt/Gui/Mesh.hpp>
 
@@ -96,7 +96,7 @@ namespace BlendInt {
 
 		RefPtr<NavigationCamera> m_default_camera;
 
-		RefPtr<Grid> m_grid;
+		RefPtr<GridFloor> m_grid;
 
 		// temporary member, use model-view to display a hierarchy
 		std::deque<RefPtr<AbstractPrimitive> > m_primitives;

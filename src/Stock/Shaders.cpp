@@ -104,27 +104,27 @@ namespace BlendInt {
 
 		const char* Shaders::primitive_vertex_shader = "#version 330\n"
 				""
-				"layout(location = 0) in vec3 coord3d;"
-				"layout(location = 1) in vec3 v_color;"
-				"uniform mat4 m_P;"
-				"uniform mat4 m_V;"
-				"uniform mat4 m_M;"
+				"layout(location = 0) in vec3 coord;"
+				"layout(location = 1) in vec3 color;"
+				"uniform mat4 P;"
+				"uniform mat4 V;"
+				"uniform mat4 M;"
 				""
-				"out vec3 f_color;"
+				"out vec3 vColor;"
 				""
 				"void main(void) {"
-				"	gl_Position = m_P * m_V * m_M * vec4(coord3d, 1.0);"
-				"	f_color = v_color;"
+				"	gl_Position = P * V * M * vec4(coord, 1.0);"
+				"	vColor = color;"
 				"}";
 
 		const char* Shaders::primitive_fragment_shader =
 				"#version 330\n"
 				""
-				"in vec3 f_color;"
-				"out vec4 FragmentColor;"
+				"in vec3 vColor;"
+				"out vec4 vFragColor;"
 				""
 				"void main(void) {"
-				"	FragmentColor = vec4(f_color, 1.0);"
+				"	vFragColor = vec4(vColor, 1.0);"
 				"}";
 
 		const char* Shaders::widget_vertex_shader =
@@ -600,8 +600,8 @@ namespace BlendInt {
 		  m_text_uniform_rotation(-1),
 		  m_text_uniform_texture(-1),
 		  m_text_uniform_color(-1),
-		  m_primitive_attrib_coord(-1),
-		  m_primitive_attrib_color(-1),
+		  m_primitive_attrib_coord_v3(-1),
+		  m_primitive_attrib_color_v3(-1),
 		  m_primitive_uniform_projection(-1),
 		  m_primitive_uniform_view(-1),
 		  m_primitive_uniform_model(-1),
@@ -746,11 +746,11 @@ namespace BlendInt {
 			m_text_uniform_texture = m_text_program->GetUniformLocation("u_tex");
 			m_text_uniform_color = m_text_program->GetUniformLocation("u_color");
 
-			m_primitive_attrib_coord = m_primitive_program->GetAttributeLocation("coord3d");
-			m_primitive_attrib_color = m_primitive_program->GetAttributeLocation("v_color");
-			m_primitive_uniform_projection = m_primitive_program->GetUniformLocation("m_P");
-			m_primitive_uniform_view = m_primitive_program->GetUniformLocation("m_V");
-			m_primitive_uniform_model = m_primitive_program->GetUniformLocation("m_M");
+			m_primitive_attrib_coord_v3 = m_primitive_program->GetAttributeLocation("coord");
+			m_primitive_attrib_color_v3 = m_primitive_program->GetAttributeLocation("color");
+			m_primitive_uniform_projection = m_primitive_program->GetUniformLocation("P");
+			m_primitive_uniform_view = m_primitive_program->GetUniformLocation("V");
+			m_primitive_uniform_model = m_primitive_program->GetUniformLocation("M");
 
 			m_triangle_attrib_coord = m_triangle_program->GetAttributeLocation("a_coord");
 			m_triangle_attrib_color = m_triangle_program->GetAttributeLocation("a_color");
