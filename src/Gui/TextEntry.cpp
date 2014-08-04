@@ -31,8 +31,6 @@
 #endif
 #endif  // __UNIX__
 
-#include <iostream>
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -46,14 +44,19 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Margin TextEntry::default_textentry_padding = Margin(2, 2, 2, 2);
-
 	TextEntry::TextEntry ()
 	: AbstractWidget(),
 	  start_(0),
 	  length_(0),
 	  index_(0)
 	{
+		int h = font_.GetHeight();
+		int initial_width = h + round_radius() * 2 * Theme::instance->pixel()
+				+ 120;
+		int initial_height = h + vertical_space * 2 * Theme::instance->pixel();
+
+		set_size(initial_width, initial_height);
+
 		InitializeTextEntry();
 	}
 
@@ -83,7 +86,7 @@ namespace BlendInt {
 			}
 		}
 
-		font_.set_pen(2,
+		font_.set_pen(round_radius(),
 				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
 
 		index_ = text_.length();
@@ -97,7 +100,7 @@ namespace BlendInt {
 
 		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
-		font_.set_pen(default_textentry_padding.left(),
+		font_.set_pen(round_radius(),
 				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
 	}
 
@@ -115,27 +118,26 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
 			radius_plus += round_radius();
 		}
 
-		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+		if ((round_type() & RoundTopRight)
+				|| (round_type() & RoundBottomRight)) {
 			radius_plus += round_radius();
 		}
 
 		int max_font_height = font_.GetHeight();
 
-		preferred_size.set_height(max_font_height + default_textentry_padding.vsum());	// top padding: 2, bottom padding: 2
+		preferred_size.set_height(
+				max_font_height
+						+ vertical_space * 2 * Theme::instance->pixel());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
-			preferred_size.set_width(
-							max_font_height + default_textentry_padding.hsum()
-											+ radius_plus + 120);
+			preferred_size.set_width(max_font_height + radius_plus + 120);
 		} else {
 			int width = font_.GetTextWidth(text());
-			preferred_size.set_width(width
-									 + default_textentry_padding.hsum()
-									 + radius_plus);	// left padding: 2, right padding: 2
+			preferred_size.set_width(width + radius_plus);
 		}
 
 		return preferred_size;
@@ -150,7 +152,7 @@ namespace BlendInt {
 	{
 		if(!event.text().empty()) {
 
-			DBG_PRINT_MSG("index: %ld", index_);
+			DBG_PRINT_MSG("index: %d", index_);
 			DBG_PRINT_MSG("text length: %ld", text_.length());
 
 			text_.insert(index_, event.text());
@@ -159,8 +161,7 @@ namespace BlendInt {
 
 			int text_width = font_.GetTextWidth(text_, length_,
 							start_);
-			int valid_width = size().width()
-							- default_textentry_padding.hsum();
+			int valid_width = size().width() - round_radius() * 2;
 
 			if(text_width > valid_width) {
 				start_++;
@@ -222,7 +223,7 @@ namespace BlendInt {
 		if(text_.size()) {
 			index_ = GetCursorPosition(event);
 
-			DBG_PRINT_MSG("index: %ld", index_);
+			DBG_PRINT_MSG("index: %d", index_);
 
 			Refresh();
 		}
@@ -250,9 +251,9 @@ namespace BlendInt {
 			GLfloat* buf_p = (GLfloat*) cursor_buffer_->Map(
 			GL_READ_WRITE);
 			*(buf_p + 5) = (GLfloat) (request.size()->height()
-					- default_textentry_padding.vsum());
+					- vertical_space * 2 * Theme::instance->pixel());
 			*(buf_p + 7) = (GLfloat) (request.size()->height()
-					- default_textentry_padding.vsum());
+					- vertical_space * 2 * Theme::instance->pixel());
 			cursor_buffer_->Unmap();
 			cursor_buffer_->Reset();
 
@@ -306,7 +307,7 @@ namespace BlendInt {
 			tool.SetOuterBufferData(outer_.get());
 
 			font_.set_pen(
-			        *request.round_radius() + default_textentry_padding.left(),
+			        *request.round_radius(),
 			        font_.pen().y());
 
 			set_round_radius(*request.round_radius());
@@ -341,8 +342,9 @@ namespace BlendInt {
 		if(focused()) {			// draw a cursor
 			unsigned int cursor_pos = font_.GetTextWidth(text_,
 						        index_ - start_, start_);
+			cursor_pos += round_radius();
 
-			glm::vec3 pos(position().x() + cursor_pos + 1, position().y() + 1, 0.f);
+			glm::vec3 pos(position().x() + cursor_pos, position().y() + 1, 0.f);
 
 			glUniform3fv(Shaders::instance->triangle_uniform_position(), 1,
 					glm::value_ptr(pos));
@@ -356,10 +358,10 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
-		font_.Print(position(), text_, length_, start_);
-
 		glBindVertexArray(0);
 		program->Reset();
+
+		font_.Print(position(), text_, length_, start_);
 
 		return Accept;
 	}
@@ -372,19 +374,15 @@ namespace BlendInt {
 
 	void TextEntry::InitializeTextEntry ()
 	{
-		int h = font_.GetHeight();
-
-		set_size(
-				h + round_radius() * 2 + default_textentry_padding.hsum() + 120,
-				h + default_textentry_padding.vsum());
-
-		const Color& color = Theme::instance->text().inner;
-		short shadetop = Theme::instance->text().shadetop;
-		short shadedown = Theme::instance->text().shadedown;
-
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius(),
-				color, Vertical, shadetop, shadedown);
+		tool.Setup(size(),
+				DefaultBorderWidth(),
+				round_type(),
+				round_radius(),
+				Theme::instance->text().inner,
+				Vertical,
+				Theme::instance->text().shadetop,
+				Theme::instance->text().shadedown);
 
 		glGenVertexArrays(3, vaos_);
 
@@ -396,10 +394,10 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_color());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_color(), 4,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_color(),
+				4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(vaos_[1]);
@@ -409,23 +407,24 @@ namespace BlendInt {
 		tool.SetOuterBufferData(outer_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		std::vector<GLfloat> cursor_vertices(8);
 
 		cursor_vertices[0] = 1.f;
-		cursor_vertices[1] = (GLfloat) default_textentry_padding.bottom();
+		cursor_vertices[1] = (GLfloat) vertical_space;
 
 		cursor_vertices[2] = 3.f;
-		cursor_vertices[3] = (GLfloat) default_textentry_padding.bottom();
+		cursor_vertices[3] = (GLfloat) vertical_space;
 
 		cursor_vertices[4] = 1.f;
 		cursor_vertices[5] = (GLfloat) (size().height()
-				- default_textentry_padding.vsum());
+				- vertical_space * 2 * Theme::instance->pixel());
 
 		cursor_vertices[6] = 3.f;
 		cursor_vertices[7] = (GLfloat) (size().height()
-				- default_textentry_padding.vsum());
+				- vertical_space * 2 * Theme::instance->pixel());
 
 		glBindVertexArray(vaos_[2]);
 		cursor_buffer_.reset(new GLArrayBuffer);
@@ -441,12 +440,13 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 		glBindVertexArray(0);
 
-		font_.set_pen(default_textentry_padding.left(),
+		// TODO: count Theme::pixel for retina
+		font_.set_pen(round_radius(),
 				(size().height() - font_.GetHeight()) / 2
 		                + std::abs(font_.GetDescender()));
 	}
 
-	size_t TextEntry::GetValidTextSize ()
+	int TextEntry::GetValidTextSize ()
 	{
 		int width = 0;
 		int str_len = text_.length();
@@ -468,8 +468,7 @@ namespace BlendInt {
 	{
 		if (text_.size() && index_ > 0) {
 
-			size_t valid_width = size().width()
-							- default_textentry_padding.hsum();
+			size_t valid_width = size().width() - round_radius() * 2;
 
 			text_.erase(index_ - 1, 1);
 			index_--;
@@ -494,10 +493,9 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeDeletePress ()
 	{
-		if (text_.size() && (index_ < text_.length())) {
+		if (text_.size() && (index_ < static_cast<int>(text_.length()))) {
 
-			size_t valid_width = size().width()
-							- default_textentry_padding.hsum();
+			size_t valid_width = size().width() - round_radius() * 2;
 
 			text_.erase(index_, 1);
 
@@ -524,22 +522,20 @@ namespace BlendInt {
 	{
 		if (text_.size() && index_ > 0) {
 
-			size_t valid_width = size().width()
-								- default_textentry_padding.left()
-								- default_textentry_padding.right();
+			int valid_width = size().width() - round_radius() * 2;
 
 			index_--;
 
 			if (index_ < start_) {
 				start_ = index_;
 
-				size_t text_width = font_.GetTextWidth(text_, length_,
+				int text_width = font_.GetTextWidth(text_, length_,
 								start_);
 
-				if(text_width < valid_width && length_ < (text_.length() - start_)) {
+				if((text_width < valid_width) && (length_ < (static_cast<int>(text_.length()) - start_))) {
 					length_++;
 					text_width = font_.GetTextWidth(text_, length_, start_);
-					while(text_width < valid_width && length_ < (text_.length() - start_)) {
+					while(text_width < valid_width && length_ < (static_cast<int>(text_.length()) - start_)) {
 						length_++;
 						text_width = font_.GetTextWidth(text_, length_, start_);
 					}
@@ -563,7 +559,7 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeRightPress ()
 	{
-		if (text_.size() && index_ < text_.length()) {
+		if ((text_.size() > 0) && (index_ < static_cast<int>(text_.length()))) {
 			index_++;
 
 			if (index_ > (start_ + length_))
@@ -605,7 +601,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
+	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)
 	{
 		int str_len = text_.length();
 		int width = font_.GetTextWidth(text_, str_len, 0);
@@ -627,31 +623,27 @@ namespace BlendInt {
 	
 	int TextEntry::GetCursorPosition (const MouseEvent& event)
 	{
-		int text_width = font_.GetTextWidth(text_, length_, start_);
-		int click_width = event.position().x() - position().x()
-						- default_textentry_padding.left();
+		int click_position = event.position().x() - position().x()
+						- round_radius();
 
-		if(click_width < 0 ||
-		   click_width > (size().width() - default_textentry_padding.right())) {
+		if((click_position < 0) ||
+				(click_position > (size().width() - round_radius()))) {
 			return index_;
 		}
 
-		int cursor_offset = 1;
-
-		text_width = font_.GetTextWidth(text_, cursor_offset, start_);
-		if(text_width > click_width) {
-			cursor_offset--;
-		} else {
-			cursor_offset++;
-			text_width = font_.GetTextWidth(text_, cursor_offset, start_);
-			while((text_width < click_width) &&
-				  (cursor_offset <= static_cast<int>(length_))) {
-				cursor_offset++;
-				text_width = font_.GetTextWidth(text_, cursor_offset, start_);
+		int text_width = 0;
+		int offset = 1;
+		while (offset < length_) {
+			text_width = font_.GetTextWidth(text_, offset, start_);
+			if(text_width > click_position) {
+				// FIXME: some character: e.g. 'f' always return small text width
+				offset--;
+				break;
 			}
+			offset++;
 		}
 
-		return start_ + cursor_offset;
+		return start_ + offset;
 	}
 
 }

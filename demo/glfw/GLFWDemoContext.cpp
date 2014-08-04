@@ -43,7 +43,9 @@ void GLFWDemoContext::Initialize ()
 	TextEntry* text = Manage(new TextEntry);
 	PushBack(text);
 	text->SetPosition(200, 100);
-	text->SetText("Hello World!");
+	text->SetRoundCornerType(RoundAll);
+	String str;
+	text->SetText(str);
 }
 
 void GLFWDemoContext::OnOpenObjFile()

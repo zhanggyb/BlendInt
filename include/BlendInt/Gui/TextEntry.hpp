@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TEXTENTRY_HPP_
-#define _BLENDINT_TEXTENTRY_HPP_
+#ifndef _BLENDINT_GUI_TEXTENTRY_HPP_
+#define _BLENDINT_GUI_TEXTENTRY_HPP_
 
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/Timer.hpp>
@@ -103,7 +103,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		size_t GetValidTextSize ();
+		int GetValidTextSize ();
 
 		int GetCursorPosition (const MouseEvent& event);
 
@@ -112,7 +112,7 @@ namespace BlendInt {
 		 * @param[out] start The index in the text to print
 		 * @param[out] length The length of the text to print
 		 */
-		void GetVisibleTextPlace (size_t* start, size_t* length);
+		void GetVisibleTextRange (size_t* start, size_t* length);
 
 		/**
 		 * @brief Vertex array objects
@@ -127,23 +127,25 @@ namespace BlendInt {
 
 		String text_;
 
-		size_t start_;	// where start print the text
+		int start_;	// where start print the text
 
-		size_t length_;	// the text length inside this widget
+		int length_;	// the text length inside this widget
 
 		/**
 		 * @brief Where display the cursor and insert new text
 		 */
-		size_t index_;
+		int index_;
 
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
 		RefPtr<GLArrayBuffer> cursor_buffer_;
 
-		static Margin default_textentry_padding;
+		// the space between the text and the top
+		// o the text and the bottom
+		static const int vertical_space = 2;
 	};
 
 }
 
-#endif /* _BLENDINT_TEXTENTRY_HPP_ */
+#endif /* _BLENDINT_GUI_TEXTENTRY_HPP_ */
