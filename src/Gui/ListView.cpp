@@ -48,14 +48,16 @@ namespace BlendInt {
 
 	ListView::ListView ()
 	: AbstractItemView(),
-	  vao_(0)
+	  vao_(0),
+	  highlight_index_(-1)
 	{
 		set_size(400, 300);
 		set_drop_shadow(true);
 
 		InitializeListView();
 
-		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
+		AdjustScrollBarGeometries(position().x(), position().y(),
+		        size().width(), size().height());
 	}
 
 	ListView::~ListView ()
@@ -81,6 +83,24 @@ namespace BlendInt {
 	void ListView::SetModel (const RefPtr<AbstractItemModel>& model)
 	{
 		model_ = model;
+
+		if(model_) {
+			int h = font_.GetHeight();
+			h = model_->GetRows() * h;	// total height
+
+			if(h > size().height()) {
+				vbar()->SetVisible(true);
+				vbar()->SetMaximum(h);
+				vbar()->SetMinimum(size().height());
+				vbar()->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar()->SetVisible(false);
+			}
+			hbar()->SetVisible(false);
+
+			AdjustScrollBarGeometries(position().x(), position().y(),
+					size().width(), size().height());
+		}
 	}
 
 	Size ListView::GetPreferredSize () const
@@ -93,6 +113,11 @@ namespace BlendInt {
 	ResponseType ListView::Draw (const RedrawEvent& event)
 	{
 		int y = position().y() + size().height();
+
+		if(model_ && vbar()->visiable()) {
+			y = position().y() + vbar()->value();
+		}
+
 		int h = font_.GetHeight();
 
 		glEnable(GL_SCISSOR_TEST);
@@ -117,10 +142,14 @@ namespace BlendInt {
 			glUniform3f(Shaders::instance->triangle_uniform_position(),
 					(float) position().x(), (float) y, 0.f);
 
-			if(i % 2 == 0) {
-				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			if(i == highlight_index_) {	// TODO: use different functions for performance
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), -35);
 			} else {
-				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+				if(i % 2 == 0) {
+					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+				} else {
+					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+				}
 			}
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -128,15 +157,18 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-
 		program->Reset();
 
-		if(GetModel()) {
+		RefPtr<AbstractItemModel> model = GetModel();
+		if(model) {
 
-			ModelIndex index = GetModel()->GetRootIndex();
+			ModelIndex index = model->GetRootIndex();
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
+			if(vbar()->visiable()) {
+				y = position().y() + vbar()->value();
+			}
 
 			while(index.IsValid()) {
 
@@ -186,9 +218,44 @@ namespace BlendInt {
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
 	{
 		if (hbar()->visiable() && hbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(hbar(), event);
+			DispatchMousePressEvent(hbar(), event);
 		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(vbar(), event);
+			DispatchMousePressEvent(vbar(), event);
+		}
+
+		if(model_) {
+
+			ModelIndex index;
+
+			int rows = model_->GetRows();
+
+			if(rows > 0) {
+				int h = font_.GetHeight();	// the row height
+				int total = rows * h;
+
+				int i = 0;
+				if(total > size().height()) {
+					i = position().y() + vbar()->value() - event.position().y();
+				} else {	// no vbar
+					i = position().y() + size().height() - event.position().y();
+				}
+
+				i = i / h;
+				highlight_index_ = i;
+
+				index = model_->GetRootIndex().GetChildIndex();
+				while((i > 0) && index.IsValid()) {
+					index = index.GetDownIndex();
+					i--;
+				}
+
+				if(!index.IsValid()) {
+					highlight_index_ = -1;
+				}
+			}
+
+		} else {
+			highlight_index_ = -1;
 		}
 
 		return Accept;
@@ -197,9 +264,9 @@ namespace BlendInt {
 	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
 	{
 		if(hbar()->pressed()) {
-			return DispatchMouseReleaseEvent(hbar(), event);
+			DispatchMouseReleaseEvent(hbar(), event);
 		} else if (vbar()->pressed()) {
-			return DispatchMouseReleaseEvent(vbar(), event);
+			DispatchMouseReleaseEvent(vbar(), event);
 		}
 
 		return Accept;
@@ -213,9 +280,9 @@ namespace BlendInt {
 	ResponseType ListView::MouseMoveEvent (const MouseEvent& event)
 	{
 		if(hbar()->pressed()) {
-			return DispatchMouseMoveEvent(hbar(), event);
+			DispatchMouseMoveEvent(hbar(), event);
 		} else if (vbar()->pressed()) {
-			return DispatchMouseMoveEvent(vbar(), event);
+			DispatchMouseMoveEvent(vbar(), event);
 		}
 
 		return Accept;

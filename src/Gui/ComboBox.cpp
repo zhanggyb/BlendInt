@@ -44,6 +44,8 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
+#include <BlendInt/Gui/FileSystemModel.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -52,7 +54,8 @@ namespace BlendInt {
 
 	ComboBox::ComboBox ()
 	: AbstractWidget(),
-	  status_down_(false)
+	  status_down_(false),
+	  list_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -105,6 +108,14 @@ namespace BlendInt {
 	bool ComboBox::IsExpandX() const
 	{
 		return true;
+	}
+
+	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
+	{
+		model_ = model;
+		if(list_) {
+			list_->SetModel(model_);
+		}
 	}
 
 	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -182,10 +193,12 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
 	{
+		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
 		if(status_down_) {
@@ -212,13 +225,18 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
-		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
+		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_menu();
 
 		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
 		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
 		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
 
 		//icon->Draw(mvp * translate * rotate * scale);
+
+		pos.x += size().width() - icon->size().width()/2.f;
+		pos.y += size().height()/2.f;
+
+		icon->Draw(pos, 0, 1.f, Color(0xEFEFEFFF));
 
 		return Accept;
 	}
@@ -228,14 +246,24 @@ namespace BlendInt {
 		status_down_ = true;
 
 		Context* context = event.context();
-		if(menu_->container()) {
-			context->Remove(menu_.get());
+
+		if(list_) {
+			context->Remove(list_);
+			delete list_;
+			list_ = 0;
 			SetRoundCornerType(RoundAll);
 		} else {
-			menu_->SetPosition(position().x(), position().y() + size().height());
-			context->PushBack(menu_.get());
+			list_ = Manage(new ListView);
+
+			if(model_) {
+				list_->SetModel(model_);
+			}
+
+			list_->Resize(200, list_->size().height());
+			list_->SetPosition(position().x(), position().y() + size().height());
+			context->PushBack(list_);
 			SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-			context->SetFocusedWidget(menu_.get());	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
+			context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}
 
 		Refresh();
@@ -319,32 +347,10 @@ namespace BlendInt {
 
 		GLArrayBuffer::Reset();
 		glBindVertexArray(0);
-
-		// Now create menu
-
-		menu_.reset(new Menu);
-
-		menu_->SetRoundCornerType(RoundTopLeft | RoundTopRight);
-		//m_menu->SetPosition(200, 200);
-		//menu->Resize (200, 200);
-
-		menu_->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-		menu_->AddAction("MenuItem2", "Ctrl + 1");
-		menu_->AddAction("MenuItem3", "Ctrl + 1");
-		menu_->AddAction("MenuItem4", "Ctrl + 1");
-		menu_->AddAction("MenuItem5");
-
-		events()->connect(menu_->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}
 
 	void ComboBox::OnMenuActionTriggered (Action* item)
 	{
-		Context* context = Context::GetContext(this);
-
-		context->Remove(menu_.get());
-		SetRoundCornerType(RoundAll);
-
-		Refresh();
 	}
 
 }

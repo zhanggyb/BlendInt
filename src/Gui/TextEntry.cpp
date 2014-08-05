@@ -152,9 +152,6 @@ namespace BlendInt {
 	{
 		if(!event.text().empty()) {
 
-			DBG_PRINT_MSG("index: %d", index_);
-			DBG_PRINT_MSG("text length: %ld", text_.length());
-
 			text_.insert(index_, event.text());
 			index_ += event.text().length();
 			length_ += event.text().length();
