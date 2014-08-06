@@ -52,6 +52,22 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
+	bool IsContained (AbstractContainer* container, AbstractWidget* widget)
+	{
+		bool retval = false;
+
+		AbstractContainer* p = widget->container();
+		while(p) {
+			if(p == container) {
+				retval = true;
+				break;
+			}
+			p = p->container();
+		}
+
+		return retval;
+	}
+
 	float AbstractWidget::default_border_width = 1.f;
 
 	AbstractWidget::AbstractWidget ()
@@ -418,4 +434,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-

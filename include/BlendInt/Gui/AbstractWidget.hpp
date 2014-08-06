@@ -62,6 +62,11 @@ namespace BlendInt {
 		return obj;
 	}
 
+	/**
+	 * @brief Check if a widget is contained in a container
+	 */
+	extern bool IsContained (AbstractContainer* container, AbstractWidget* widget);
+
 	class WidgetUpdateRequest
 	{
 	public:
@@ -440,9 +445,15 @@ namespace BlendInt {
 			SetPosition(position().x() + offset_x, position().y() + offset_y);
 		}
 
-		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
+		Cpp::EventRef<AbstractWidget*> destroyed ()
+		{
+			return m_destroyed;
+		}
 
-		AbstractContainer* container() const {return m_container;}
+		inline AbstractContainer* container() const
+		{
+			return m_container;
+		}
 
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
