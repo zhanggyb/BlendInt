@@ -10,6 +10,8 @@
 
 #include <BlendInt/Gui/VBlock.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/HBox.hpp>
 
 #include "MainLayout.hpp"
 
@@ -41,12 +43,15 @@ void MainLayout::InitOnce ()
 
     Tab* tab = CreateTab();
 
+    ToolBar* bottom = CreateBottomBar();
+
     splitter->PushBack(tab);
     splitter->PushBack(tbox);
 
 	PushBack(m_menubar);
 	PushBack(m_toolbar);
     PushBack(splitter);
+    PushBack(bottom);
 
 	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
 }
@@ -141,4 +146,29 @@ BI::Tab* MainLayout::CreateTab ()
     tab->Add("Image View", iv);
 
 	return tab;
+}
+
+BI::ToolBar* MainLayout::CreateBottomBar ()
+{
+	using namespace BI;
+
+	ToolBar* toolbar = Manage(new ToolBar);
+
+	ComboBox* combo = Manage(new ComboBox);
+
+	HBox* box = Manage(new HBox);
+	box->SetMargin(0, 0, 0, 0);
+	box->SetSpace(-1);
+	TextEntry* input = Manage(new TextEntry);
+	Button* btn = Manage(new Button("Open"));
+	input->SetRoundCornerType(RoundTopLeft | RoundBottomLeft);
+	btn->SetRoundCornerType(RoundTopRight | RoundBottomRight);
+	box->PushBack(input);
+	box->PushBack(btn);
+
+	toolbar->SetMargin(2, 2, 2, 2);
+	toolbar->PushBack(combo);
+	toolbar->PushBack(box);
+
+	return toolbar;
 }

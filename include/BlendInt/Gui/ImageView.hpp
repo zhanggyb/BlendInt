@@ -81,20 +81,20 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeImageView ();
 
 		void AdjustImageArea (const Size& size);
 
-		Size m_image_size;
+		Size image_size_;
 
-		GLuint m_vao[2];
+		GLuint vaos_[2];
 
-		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLTexture2D> texture_;
 
-		RefPtr<GLArrayBuffer> m_background_buffer;
-		RefPtr<GLArrayBuffer> m_image_buffer;
+		RefPtr<GLArrayBuffer> background_;
+		RefPtr<GLArrayBuffer> plane_;
 
-		RefPtr<CheckerBoard> m_checkerboard;
+		RefPtr<CheckerBoard> checkerboard_;
 	};
 
 }

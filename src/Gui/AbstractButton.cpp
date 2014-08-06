@@ -35,8 +35,6 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Section.hpp>
 
-#include <iostream>
-
 namespace BlendInt {
 
 	Margin AbstractButton::default_button_padding = Margin(2, 2, 2, 2);

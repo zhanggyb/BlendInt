@@ -224,6 +224,10 @@ namespace BlendInt {
 
 		bool SetUniform4fv (const char* name, GLsizei count, const GLfloat* value);
 
+		void SetUniformMatrix3fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+
+		bool SetUniformMatrix3fv (const char* name, GLsizei count, GLboolean transpose, const GLfloat *value);
+
 		void SetUniformMatrix4fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 		bool SetUniformMatrix4fv (const char* name, GLsizei count, GLboolean transpose, const GLfloat *value);

@@ -36,6 +36,7 @@
 #include <sstream>
 
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Mesh.hpp>
 
@@ -43,34 +44,44 @@ namespace BlendInt {
 
 	const char* Mesh::vertex_shader =
 			"#version 330\n"
+			"layout (location = 0) in vec4 VertexPosition;"
+			"layout (location = 1) in vec3 VertexNormal;"
+			"out vec3 LightIntensity;"
+			"uniform vec4 LightPosition;"	// Light position in eye coords.
+			"uniform vec3 Kd;"	// Diffuse reflectivity
+			"uniform vec3 Ld;"	// Light source intensity
+			"uniform mat4 ModelViewMatrix;"
+			"uniform mat3 NormalMatrix;"
+			"uniform mat4 ProjectionMatrix;"
+			"uniform mat4 MVP;"	// Projection * ModelView
 			""
-			"layout(location = 0) in vec4 v_coord;"
-			"layout(location = 1) in vec3 v_normal;"
-			"uniform mat4 MVP;"
-			""
-			"void main(void) {"
-			"	gl_Position = MVP * v_coord;"
+			"void main() {"
+			"	vec3 tnorm = normalize( NormalMatrix * VertexNormal);"			// Convert normal and position to eye coords
+			"	vec4 eyeCoords = ModelViewMatrix * VertexPosition;"
+			"	vec3 s = normalize(vec3(LightPosition - eyeCoords));"
+			"	LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );"			// The diffuse shading equation
+			"	gl_Position = MVP * VertexPosition;"			// Convert position to clip coordinates and pass along
 			"}";
 
 	const char* Mesh::fragment_shader =
 			"#version 330\n"
+			"in vec3 LightIntensity;"
+			"layout( location = 0 ) out vec4 FragColor;"
 			""
-			"out vec4 FragmentColor;"
-			""
-			"void main(void) {"
-			"	FragmentColor = vec4(0.67, 0.58, 0.635, 1.0);"
+			"void main() {"
+			"	FragColor = vec4(LightIntensity, 1.0);"
 			"}";
 
 	Mesh::Mesh ()
 	: AbstractPrimitive(),
-	  m_vao(0)
+	  vao_(0)
 	{
 		InitializeMesh();
 	}
 
 	Mesh::~Mesh ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Mesh::Load(const char* filename)
@@ -83,22 +94,22 @@ namespace BlendInt {
 			return false;
 		}
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
-		m_vertex_buffer->Bind();
-		m_vertex_buffer->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
+		vertex_buffer_->Bind();
+		vertex_buffer_->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		m_normal_buffer->Bind();
-		m_normal_buffer->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
+		normal_buffer_->Bind();
+		normal_buffer_->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		m_index_buffer->Bind();
-		m_index_buffer->SetData(elements.size() * sizeof(GLushort), &elements[0]);
+		index_buffer_->Bind();
+		index_buffer_->SetData(elements.size() * sizeof(GLushort), &elements[0]);
 
 		glBindVertexArray(0);
 
@@ -110,23 +121,36 @@ namespace BlendInt {
 
 	void Mesh::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
-		m_program->Use();
-		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(projection_matrix * view_matrix));
+		glm::mat4 mv = view_matrix * model_matrix_;
 
-		m_index_buffer->Bind();
+		program_->Use();
+		program_->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+				glm::value_ptr(projection_matrix * view_matrix));
+		program_->SetUniform3f("Kd", 0.9f, 0.5f, 0.3f);
+		program_->SetUniform3f("Ld", 1.0f, 1.0f, 1.0f);
+		program_->SetUniformMatrix4fv("LightPosition", 1, GL_FALSE,
+				glm::value_ptr(
+						view_matrix * glm::vec4(8.0f, 10.0f, 6.0f, 1.0f)));
+		program_->SetUniformMatrix4fv("ModelViewMatrix", 1, GL_FALSE,
+				glm::value_ptr(mv));
+		program_->SetUniformMatrix3fv("NormalMatrix", 1, GL_FALSE,
+				glm::value_ptr(
+						glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]),
+								glm::vec3(mv[2]))));
+		index_buffer_->Bind();
 
 		int size;
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 		glBindVertexArray(0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		m_program->Reset();
+		program_->Reset();
 	}
 
 	bool Mesh::LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
@@ -184,32 +208,35 @@ namespace BlendInt {
 
 	void Mesh::InitializeMesh ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
-		m_vertex_buffer.reset(new GLArrayBuffer);
-		m_vertex_buffer->Generate();
+		vertex_buffer_.reset(new GLArrayBuffer);
+		vertex_buffer_->Generate();
 
-		m_normal_buffer.reset(new GLArrayBuffer);
-		m_normal_buffer->Generate();
+		normal_buffer_.reset(new GLArrayBuffer);
+		normal_buffer_->Generate();
 
-		m_index_buffer.reset(new GLElementArrayBuffer);
-		m_index_buffer->Generate();
+		index_buffer_.reset(new GLElementArrayBuffer);
+		index_buffer_->Generate();
 
 		glBindVertexArray(0);
 
-		m_program.reset(new GLSLProgram);
-		m_program->Create();
+		program_.reset(new GLSLProgram);
+		program_->Create();
 
-		m_program->AttachShader(vertex_shader, GL_VERTEX_SHADER);
-		m_program->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
-		if (!m_program->Link()) {
+		program_->AttachShader(vertex_shader, GL_VERTEX_SHADER);
+		program_->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
+		if (!program_->Link()) {
 			DBG_PRINT_MSG("Fail to link the text program: %d",
-					m_program->id());
+					program_->id());
 			exit(1);
 		}
 
+		model_matrix_ = glm::mat4(1.0f);
+		model_matrix_ *= glm::rotate(model_matrix_, (glm::mediump_float)(M_PI * -35.0f), glm::vec3(1.0f,0.0f,0.0f));
+		model_matrix_ *= glm::rotate(model_matrix_, (glm::mediump_float)(M_PI * 35.0f), glm::vec3(0.0f,1.0f,0.0f));
 	}
 
 }

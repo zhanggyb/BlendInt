@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TEXTENTRY_HPP_
-#define _BLENDINT_TEXTENTRY_HPP_
+#ifndef _BLENDINT_GUI_TEXTENTRY_HPP_
+#define _BLENDINT_GUI_TEXTENTRY_HPP_
 
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/Timer.hpp>
@@ -37,6 +37,9 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A one-line text editor
+	 */
 	class TextEntry: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TextEntry);
@@ -56,7 +59,7 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		const String& text () const {return m_text;}
+		const String& text () const {return text_;}
 
 		virtual Size GetPreferredSize () const;
 
@@ -100,7 +103,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		size_t GetValidTextSize ();
+		int GetValidTextSize ();
 
 		int GetCursorPosition (const MouseEvent& event);
 
@@ -109,28 +112,40 @@ namespace BlendInt {
 		 * @param[out] start The index in the text to print
 		 * @param[out] length The length of the text to print
 		 */
-		void GetVisibleTextPlace (size_t* start, size_t* length);
+		void GetVisibleTextRange (size_t* start, size_t* length);
 
-		GLuint m_vao[3];
+		/**
+		 * @brief Vertex array objects
+		 *
+		 * 	- 0: for inner buffer
+		 * 	- 1: for outline buffer
+		 * 	- 2: for cursor buffer
+		 */
+		GLuint vaos_[3];
 
-		Font m_font;
+		Font font_;
 
-		String m_text;
+		String text_;
 
-		size_t m_start;	// where start print the text
+		int start_;	// where start print the text
 
-		size_t m_length;	// the text length inside this widget
+		int length_;	// the text length inside this widget
 
-		size_t m_cursor_position;
+		/**
+		 * @brief Where display the cursor and insert new text
+		 */
+		int index_;
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		RefPtr<GLArrayBuffer> m_cursor_buffer;
+		RefPtr<GLArrayBuffer> cursor_buffer_;
 
-		static Margin default_textentry_padding;
+		// the space between the text and the top
+		// o the text and the bottom
+		static const int vertical_space = 2;
 	};
 
 }
 
-#endif /* _BLENDINT_TEXTENTRY_HPP_ */
+#endif /* _BLENDINT_GUI_TEXTENTRY_HPP_ */

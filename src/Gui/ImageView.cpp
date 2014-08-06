@@ -47,12 +47,12 @@ namespace BlendInt {
 	ImageView::ImageView ()
 	: AbstractScrollable()
 	{
-		InitOnce();
+		InitializeImageView();
 	}
 
 	ImageView::~ImageView ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	void ImageView::Open (const char* filename)
@@ -60,19 +60,19 @@ namespace BlendInt {
 		Image image;
 
 		if(image.Read(filename)) {
-			m_texture->Bind();
+			texture_->Bind();
 
 			switch(image.channels()) {
 				case 3:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					m_texture->SetImage(0, GL_RGB, image.width(),
+					texture_->SetImage(0, GL_RGB, image.width(),
 					        image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
 					        image.pixels());
 					break;
 
 				case 4:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					m_texture->SetImage(0, GL_RGBA, image.width(),
+					texture_->SetImage(0, GL_RGBA, image.width(),
 					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					        image.pixels());
 					break;
@@ -81,10 +81,10 @@ namespace BlendInt {
 					break;
 			}
 
-			m_texture->Reset();
+			texture_->Reset();
 
-			m_image_size.set_width(image.width());
-			m_image_size.set_height(image.height());
+			image_size_.set_width(image.width());
+			image_size_.set_height(image.height());
 
 			AdjustImageArea(size());
 		}
@@ -111,8 +111,8 @@ namespace BlendInt {
 
 	Size ImageView::GetPreferredSize () const
 	{
-		if(m_texture && glIsTexture(m_texture->texture())) {
-			return m_image_size;
+		if(texture_ && glIsTexture(texture_->texture())) {
+			return image_size_;
 		}
 
 		return Size(400, 300);
@@ -131,11 +131,11 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			m_background_buffer->Bind();
+			background_->Bind();
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.SetInnerBufferData(m_background_buffer.get());
-			m_background_buffer->Reset();
+			tool.SetInnerBufferData(background_.get());
+			background_->Reset();
 
 			AdjustImageArea (*request.size());
 
@@ -159,33 +159,33 @@ namespace BlendInt {
 
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		glm::vec3 pos(0.f);
-		pos.x = position().x() + (size().width() - m_checkerboard->size().width()) / 2.f;
-		pos.y = position().y() + (size().height() - m_checkerboard->size().height()) / 2.f;
+		pos.x = position().x() + (size().width() - checkerboard_->size().width()) / 2.f;
+		pos.y = position().y() + (size().height() - checkerboard_->size().height()) / 2.f;
 
 		// draw checkerboard
-		m_checkerboard->Draw(pos);
+		checkerboard_->Draw(pos);
 
 		glActiveTexture(GL_TEXTURE0);
-		m_texture->Bind();
+		texture_->Bind();
 
-		if (m_texture->GetWidth() > 0) {
+		if (texture_->GetWidth() > 0) {
 			program = Shaders::instance->image_program();
 			program->Use();
 			glUniform3f(Shaders::instance->image_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
 			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
 
-			glBindVertexArray(m_vao[1]);
+			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 		glBindVertexArray(0);
-		m_texture->Reset();
+		texture_->Reset();
 		program->Reset();
 
 		DispatchDrawEvent(hbar(), event);
@@ -194,36 +194,36 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void ImageView::InitOnce ()
+	void ImageView::InitializeImageView ()
 	{
 		set_size(400, 300);
 
-		m_checkerboard.reset(new CheckerBoard(20));
-		m_checkerboard->Resize(size());
+		checkerboard_.reset(new CheckerBoard(20));
+		checkerboard_->Resize(size());
 
-		m_texture.reset(new GLTexture2D);
-		m_texture->Generate();
-		m_texture->Bind();
-		m_texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		m_texture->SetMinFilter(GL_LINEAR);
-		m_texture->SetMagFilter(GL_LINEAR);
-		m_texture->Reset();
+		texture_.reset(new GLTexture2D);
+		texture_->Generate();
+		texture_->Bind();
+		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		texture_->SetMinFilter(GL_LINEAR);
+		texture_->SetMagFilter(GL_LINEAR);
+		texture_->Reset();
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vaos_);
+		glBindVertexArray(vaos_[0]);
 
-		m_background_buffer.reset(new GLArrayBuffer);
-		m_background_buffer->Generate();
-		m_background_buffer->Bind();
+		background_.reset(new GLArrayBuffer);
+		background_->Generate();
+		background_->Bind();
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		tool.SetInnerBufferData(m_background_buffer.get());
+		tool.SetInnerBufferData(background_.get());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vaos_[1]);
 
 		GLfloat vertices[] = {
 			0.f, 0.f, 		0.f, 1.f,
@@ -232,15 +232,15 @@ namespace BlendInt {
 			400.f, 300.f,	1.f, 0.f
 		};
 
-		m_image_buffer.reset(new GLArrayBuffer);
-		m_image_buffer->Generate();
-		m_image_buffer->Bind();
-		m_image_buffer->SetData(sizeof(vertices), vertices);
+		plane_.reset(new GLArrayBuffer);
+		plane_->Generate();
+		plane_->Bind();
+		plane_->SetData(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
+		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
@@ -310,19 +310,19 @@ namespace BlendInt {
 
 	void ImageView::AdjustImageArea(const Size& size)
 	{
-		if(m_image_size.width() == 0 || m_image_size.height() == 0) {
-			m_checkerboard->Resize(size);
+		if(image_size_.width() == 0 || image_size_.height() == 0) {
+			checkerboard_->Resize(size);
 			return;
 		}
 
-		int w = std::min(size.width(), m_image_size.width());
-		int h = std::min(size.height(), m_image_size.height());
+		int w = std::min(size.width(), image_size_.width());
+		int h = std::min(size.height(), image_size_.height());
 
 		if(h == 0) {
 			w = 0;
 		} else {
 			float ratio = (float)w / h;
-			float ref_ratio = (float)m_image_size.width() / m_image_size.height();
+			float ref_ratio = (float)image_size_.width() / image_size_.height();
 			if(ratio > ref_ratio) {
 				w = h * ref_ratio;
 			} else if (ratio < ref_ratio) {
@@ -330,7 +330,7 @@ namespace BlendInt {
 			}
 		}
 
-		m_checkerboard->Resize(w, h);
+		checkerboard_->Resize(w, h);
 
 		GLfloat x = (size.width() - w) / 2.f;
 		GLfloat y = (size.height() - h) / 2.f;
@@ -342,9 +342,9 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		m_image_buffer->Bind();
-		m_image_buffer->SetData(sizeof(vertices), vertices);
-		m_image_buffer->Reset();
+		plane_->Bind();
+		plane_->SetData(sizeof(vertices), vertices);
+		plane_->Reset();
 	}
 
 }

@@ -28,6 +28,8 @@
 
 #include <BlendInt/Gui/Menu.hpp>
 
+#include <BlendInt/Gui/ListView.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -46,6 +48,8 @@ namespace BlendInt {
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
+
+		void SetModel (const RefPtr<AbstractItemModel>& model);
 
 	protected:
 
@@ -90,7 +94,9 @@ namespace BlendInt {
 
 		String text_;
 
-		RefPtr<Menu> menu_;
+		ListView* list_;
+
+		RefPtr<AbstractItemModel> model_;
 
 		static Margin default_combobox_padding;
 

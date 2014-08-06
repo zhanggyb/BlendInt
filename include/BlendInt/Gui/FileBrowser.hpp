@@ -73,6 +73,11 @@ namespace BlendInt {
 
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
+		Cpp::EventRef<> clicked ()
+		{
+			return clicked_;
+		}
+
 	protected:
 
 		virtual ResponseType Draw (const RedrawEvent& event);
@@ -106,6 +111,8 @@ namespace BlendInt {
 		RefPtr<FileSystemModel> model_;
 
 		int highlight_index_;
+
+		Cpp::Event<> clicked_;
 	};
 
 }

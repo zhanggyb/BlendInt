@@ -31,15 +31,10 @@ TEST_F(TextEntryTest1, Foo1)
     TextEntry* lineedit = Manage(new TextEntry);
  	lineedit->SetPosition(200, 200);
     
-    Label* label = Manage(new Label("Label"));
-    label->SetPosition(420, 200);
-
     context->PushBack(lineedit);
-    context->PushBack(label);
+    lineedit->SetText("Hello World!");
 
 	RunLoop(window);
-
 	Terminate();
-
 	ASSERT_TRUE(true);
 }

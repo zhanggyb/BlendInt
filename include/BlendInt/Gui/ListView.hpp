@@ -100,6 +100,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 
 		RefPtr<AbstractItemModel> model_;
+
+		int highlight_index_;
 	};
 
 }

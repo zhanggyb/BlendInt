@@ -43,6 +43,8 @@ private:
 
 	BI::Expander* CreateExpander ();
 
+	BI::ToolBar* CreateBottomBar ();
+
 	BI::Tab* CreateTab ();
 
 	BI::MenuBar* m_menubar;

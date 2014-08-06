@@ -1,5 +1,6 @@
 #include "ComboBoxTest1.hpp"
 #include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/FileSystemModel.hpp>
 
 using namespace BlendInt;
 
@@ -30,7 +31,14 @@ TEST_F(ComboBoxTest1, Foo1)
 
     ComboBox* combo = Manage(new ComboBox);
 
-    combo->SetPosition(200, 200);
+    combo->SetPosition(200, 20);
+
+    FileSystemModel* fs = new FileSystemModel;
+    fs->Load(getenv("PWD"));
+
+    RefPtr<AbstractItemModel> model(fs);
+
+    combo->SetModel(model);
 
     context->PushBack(combo);
 

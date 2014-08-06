@@ -77,14 +77,14 @@ namespace BlendInt {
 				return m_image_program;
 			}
 
-			GLint primitive_attrib_color () const
+			GLint primitive_attrib_color_v4 () const
 			{
-				return m_primitive_attrib_color;
+				return m_primitive_attrib_color_v4;
 			}
 
-			GLint primitive_attrib_coord () const
+			GLint primitive_attrib_coord_v3 () const
 			{
-				return m_primitive_attrib_coord;
+				return m_primitive_attrib_coord_v3;
 			}
 
 			GLint primitive_uniform_model () const
@@ -320,9 +320,9 @@ namespace BlendInt {
 
 			GLint m_text_uniform_color;
 
-			GLint m_primitive_attrib_coord;
+			GLint m_primitive_attrib_coord_v3;
 
-			GLint m_primitive_attrib_color;
+			GLint m_primitive_attrib_color_v4;
 
 			GLint m_primitive_uniform_projection;
 

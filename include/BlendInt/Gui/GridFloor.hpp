@@ -21,8 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GRID_HPP_
-#define _BLENDINT_GRID_HPP_
+#ifndef _BLENDINT_GUI_GRID_HPP_
+#define _BLENDINT_GUI_GRID_HPP_
+
+#include <vector>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
@@ -30,15 +32,19 @@
 
 namespace BlendInt {
 
-	class Grid: public AbstractPrimitive
+	class GridFloor: public AbstractPrimitive
 	{
 	public:
 
-		Grid ();
+		GridFloor ();
 
-		virtual ~Grid ();
+		virtual ~GridFloor ();
 
-		void SetSize (int size);
+		void SetLines (int lines);
+
+		void SetScale (float scale);
+
+		void SetAxis (const char* str);
 
 		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
 
@@ -46,22 +52,32 @@ namespace BlendInt {
 
 		void InitializeGrid ();
 
-		GLuint m_vao;
+		void GenerateGripFloorVertices (std::vector<GLfloat>& vertices);
 
-		int m_size;
-		int m_step;
+		/**
+		 * @brief Vertex array objects
+		 *
+		 * - 0: grid
+		 * - 1: x axis
+		 * - 2: y axis
+		 * - 3: z axis
+		 */
+		GLuint vaos_[4];
 
-		RefPtr<GLArrayBuffer> m_vb;	// vertex buffer
-		RefPtr<GLElementArrayBuffer> m_ib;	// index buffer
+		int lines_;
+		float scale_;
 
-		RefPtr<GLSLProgram> m_program;
+		int subdivisions_;	// default is 10
 
-		static const char* vertex_shader;
-		static const char* fragment_shader;
+		RefPtr<GLArrayBuffer> buffer_;
+
+		RefPtr<GLArrayBuffer> axis_x_;
+		RefPtr<GLArrayBuffer> axis_y_;
+		RefPtr<GLArrayBuffer> axis_z_;
 	};
 
 }
 
 
 
-#endif /* _BLENDINT_GRID_HPP_ */
+#endif /* _BLENDINT_GUI_GRID_HPP_ */

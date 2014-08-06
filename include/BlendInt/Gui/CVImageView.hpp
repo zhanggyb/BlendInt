@@ -35,11 +35,19 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/CheckerBoard.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
 
-	class CVImageView: public AbstractWidget
+	/**
+	 * @brief A widget to display opencv image
+	 *
+	 * This class provides similar functions as ImageView except that it
+	 * get image data from an opencv matrix.
+	 *
+	 * Due to opencv design, this widget cannot display images with alpha channel.
+	 */
+	class CVImageView: public AbstractScrollable
 	{
 	public:
 
@@ -57,9 +65,9 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		void SetBackgroundColor (const Color& color);
-
 	protected:
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -87,16 +95,22 @@ namespace BlendInt {
 
 		void AdjustImageArea (const Size& size);
 
-		GLuint m_vao[2];
+		/**
+		 * @brief Vertex Array Objects
+		 *
+		 * 0 - for background
+		 * 1 - for plane to display image texture
+		 */
+		GLuint vaos_[2];
 
-		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLTexture2D> texture_;
 
-		RefPtr<GLArrayBuffer> m_background_buffer;
-		RefPtr<GLArrayBuffer> m_image_buffer;
+		RefPtr<GLArrayBuffer> background_;
+		RefPtr<GLArrayBuffer> plane_;
 
-		cv::Mat m_image;
+		cv::Mat image_;
 
-		Color m_background_color;
+		static Color background_color;
 	};
 
 }
