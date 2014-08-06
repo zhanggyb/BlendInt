@@ -223,8 +223,8 @@ namespace BlendInt {
 	{
 	public:
 
-		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target) :
-				WidgetUpdateRequest(source, target), m_visibility(0)
+		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_visibility(0)
 		{
 
 		}
@@ -266,41 +266,6 @@ namespace BlendInt {
 		}
 	};
 
-	/**
-	 * @brief Proxy class to be used in sub widget to communicate with its container
-	 */
-	class ContainerProxy
-	{
-	private:
-		friend class AbstractWidget;
-
-		ContainerProxy ();
-
-		~ContainerProxy ();
-
-		static inline bool RequestSizeUpdateTest (AbstractContainer* container, const SizeUpdateRequest& request);
-
-		static inline bool RequestPositionUpdateTest (AbstractContainer* container, const PositionUpdateRequest& request);
-
-		static inline bool RequestRoundTypeUpdateTest (AbstractContainer* container, const RoundTypeUpdateRequest& request);
-
-		static inline bool RequestRoundRadiusUpdateTest (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
-
-		static inline bool RequestVisibilityUpdateTest (AbstractContainer* container, const VisibilityUpdateRequest& request);
-
-		static inline void RequestSizeUpdate (AbstractContainer* container, const SizeUpdateRequest& request);
-
-		static inline void RequestPositionUpdate (AbstractContainer* container, const PositionUpdateRequest& request);
-
-		static inline void RequestRoundTypeUpdate (AbstractContainer* container, const RoundTypeUpdateRequest& request);
-
-		static inline void RequestRoundRadiusUpdate (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
-
-		static inline void RequestVisibilityUpdate (AbstractContainer* container, const VisibilityUpdateRequest& request);
-
-		static inline void RequestRefresh (AbstractContainer* container, const RefreshRequest& request);
-	};
-
 	// ----------------------------------------------------
 
 	/**
@@ -317,7 +282,6 @@ namespace BlendInt {
 		friend class Context;
 		friend class Section;
 		friend class AbstractContainer;
-		friend class SubWidgetProxy;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
 

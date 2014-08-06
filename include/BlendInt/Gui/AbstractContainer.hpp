@@ -39,47 +39,13 @@ namespace BlendInt {
 	class Context;
 	class AbstractContainer;
 
-	/**
-	 * @brief Proxy class to be used in container to set its sub widget property
-	 */
-	class SubWidgetProxy
-	{
-	private:
-		friend class AbstractContainer;
-
-		SubWidgetProxy ();
-
-		~SubWidgetProxy ();
-
-		static inline bool RequestSizeUpdateTest (AbstractWidget* sub_widget, const SizeUpdateRequest& request);
-
-		static inline bool RequestPositionUpdateTest (AbstractWidget* sub_widget, const PositionUpdateRequest& request);
-
-		static inline bool RequestRoundTypeUpdateTest (AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request);
-
-		static inline bool RequestRoundRadiusUpdateTest (AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request);
-
-		static inline bool RequestVisibilityUpdateTest (AbstractWidget* sub_widget, const VisibilityUpdateRequest& request);
-
-		static inline void RequestSizeUpdate (AbstractWidget* sub_widget, const SizeUpdateRequest& request);
-
-		static inline void RequestPositionUpdate (AbstractWidget* sub_widget, const PositionUpdateRequest& request);
-
-		static inline void RequestRoundTypeUpdate (AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request);
-
-		static inline void RequestRoundRadiusUpdate (AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request);
-
-		static inline void RequestVisibilityUpdate (AbstractWidget* sub_widget, const VisibilityUpdateRequest& request);
-
-	};
-
 	class AbstractContainer: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 		friend class Context;
 		friend class Section;
-		friend class ContainerProxy;
+		friend class AbstractWidget;
 
 	public:
 

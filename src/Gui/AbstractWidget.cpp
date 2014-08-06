@@ -52,103 +52,6 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
-	ContainerProxy::ContainerProxy ()
-	{
-	}
-
-	ContainerProxy::~ContainerProxy ()
-	{
-	}
-
-	inline bool ContainerProxy::RequestSizeUpdateTest(AbstractContainer* container, const SizeUpdateRequest& request)
-	{
-		if(container) {
-			return container->SizeUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool ContainerProxy::RequestPositionUpdateTest(AbstractContainer* container, const PositionUpdateRequest& request)
-	{
-		if(container) {
-			return container->PositionUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool ContainerProxy::RequestRoundTypeUpdateTest(AbstractContainer* container, const RoundTypeUpdateRequest& request)
-	{
-		if(container) {
-			return container->RoundTypeUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool ContainerProxy::RequestRoundRadiusUpdateTest(AbstractContainer* container, const RoundRadiusUpdateRequest& request)
-	{
-		if(container) {
-			return container->RoundRadiusUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool ContainerProxy::RequestVisibilityUpdateTest(AbstractContainer* container, const VisibilityUpdateRequest& request)
-	{
-		if(container) {
-			return container->VisibilityUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline void ContainerProxy::RequestSizeUpdate(AbstractContainer* container, const SizeUpdateRequest& request)
-	{
-		if(container) {
-			container->PerformSizeUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestPositionUpdate(AbstractContainer* container, const PositionUpdateRequest& request)
-	{
-		if(container) {
-			container->PerformPositionUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestRoundTypeUpdate(AbstractContainer* container, const RoundTypeUpdateRequest& request)
-	{
-		if(container) {
-			container->PerformRoundTypeUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestRoundRadiusUpdate(AbstractContainer* container, const RoundRadiusUpdateRequest& request)
-	{
-		if(container) {
-			container->PerformRoundRadiusUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestVisibilityUpdate(AbstractContainer* container, const VisibilityUpdateRequest& request)
-	{
-		if(container) {
-			container->PerformVisibilityUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestRefresh(AbstractContainer* container, const RefreshRequest& request)
-	{
-		if(container) {
-			container->PerformRefresh(request);
-		}
-	}
-
-	// --------------------------------------------------------------------
-
 	float AbstractWidget::default_border_width = 1.f;
 
 	AbstractWidget::AbstractWidget ()
@@ -179,9 +82,16 @@ namespace BlendInt {
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, this, &new_size);
 
-		if(ContainerProxy::RequestSizeUpdateTest(m_container, request) && SizeUpdateTest(request)) {
-			PerformSizeUpdate(request);
-			set_size(width, height);
+		if(m_container) {
+			if(m_container->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+				PerformSizeUpdate(request);
+				set_size(width, height);
+			}
+		} else {
+			if(SizeUpdateTest(request)) {
+				PerformSizeUpdate(request);
+				set_size(width, height);
+			}
 		}
 	}
 
@@ -191,9 +101,16 @@ namespace BlendInt {
 
 		SizeUpdateRequest request(this, this, &size);
 
-		if(ContainerProxy::RequestSizeUpdateTest(m_container, request) && SizeUpdateTest(request)) {
-			PerformSizeUpdate(request);
-			set_size(size);
+		if(m_container) {
+			if(m_container->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+				PerformSizeUpdate(request);
+				set_size(size);
+			}
+		} else {
+			if(SizeUpdateTest(request)) {
+				PerformSizeUpdate(request);
+				set_size(size);
+			}
 		}
 	}
 
@@ -204,9 +121,16 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		PositionUpdateRequest request(this, this, &new_pos);
 
-		if(ContainerProxy::RequestPositionUpdateTest(m_container, request) && PositionUpdateTest(request)) {
-			PerformPositionUpdate(request);
-			set_position(x, y);
+		if(m_container) {
+			if(m_container->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+				PerformPositionUpdate(request);
+				set_position(x, y);
+			}
+		} else {
+			if(PositionUpdateTest(request)) {
+				PerformPositionUpdate(request);
+				set_position(x, y);
+			}
 		}
 	}
 
@@ -216,9 +140,16 @@ namespace BlendInt {
 
 		PositionUpdateRequest request(this, this, &pos);
 
-		if(ContainerProxy::RequestPositionUpdateTest(m_container, request) && PositionUpdateTest(request)) {
-			PerformPositionUpdate(request);
-			set_position(pos);
+		if(m_container) {
+			if(m_container->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+				PerformPositionUpdate(request);
+				set_position(pos);
+			}
+		} else {
+			if(PositionUpdateTest(request)) {
+				PerformPositionUpdate(request);
+				set_position(pos);
+			}
 		}
 	}
 
@@ -228,9 +159,16 @@ namespace BlendInt {
 
 		RoundTypeUpdateRequest request(this, this, &type);
 
-		if(ContainerProxy::RequestRoundTypeUpdateTest(m_container, request) && RoundTypeUpdateTest(request)) {
-			PerformRoundTypeUpdate(request);
-			set_round_type(type);
+		if(m_container) {
+			if(m_container->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
+				PerformRoundTypeUpdate(request);
+				set_round_type(type);
+			}
+		} else {
+			if(RoundTypeUpdateTest(request)) {
+				PerformRoundTypeUpdate(request);
+				set_round_type(type);
+			}
 		}
 	}
 
@@ -240,9 +178,16 @@ namespace BlendInt {
 
 		RoundRadiusUpdateRequest request(this, this, &radius);
 
-		if(ContainerProxy::RequestRoundRadiusUpdateTest(m_container, request) && RoundRadiusUpdateTest(request)) {
-			PerformRoundRadiusUpdate(request);
-			m_round_radius = radius;
+		if(m_container) {
+			if(m_container->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
+				PerformRoundRadiusUpdate(request);
+				m_round_radius = radius;
+			}
+		} else {
+			if(RoundRadiusUpdateTest(request)) {
+				PerformRoundRadiusUpdate(request);
+				m_round_radius = radius;
+			}
 		}
 	}
 
@@ -253,9 +198,16 @@ namespace BlendInt {
 
 		VisibilityUpdateRequest request(this, this, &visible);
 
-		if(ContainerProxy::RequestVisibilityUpdateTest(m_container, request) && VisibilityUpdateTest(request)) {
-			PerformVisibilityUpdate(request);
-			set_visible(visible);
+		if(m_container) {
+			if(m_container->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
+				PerformVisibilityUpdate(request);
+				set_visible(visible);
+			}
+		} else {
+			if(VisibilityUpdateTest(request)) {
+				PerformVisibilityUpdate(request);
+				set_visible(visible);
+			}
 		}
 	}
 
@@ -276,7 +228,9 @@ namespace BlendInt {
 	{
 		RefreshRequest request (this, m_container);
 
-		ContainerProxy::RequestRefresh(m_container, request);
+		if(m_container) {
+			m_container->PerformRefresh(request);
+		}
 	}
 
 	void AbstractWidget::SetDefaultBorderWidth(float border)
@@ -322,7 +276,9 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
 	{
-		ContainerProxy::RequestRefresh(m_container, request);
+		if(m_container) {
+			m_container->PerformRefresh(request);
+		}
 	}
 
 	int AbstractWidget::GetOutlineVertices (int round_type)
@@ -415,27 +371,38 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)
 	{
-		ContainerProxy::RequestSizeUpdate(m_container, request);
+		if(m_container) {
+			m_container->PerformSizeUpdate(request);
+		}
 	}
 
 	void AbstractWidget::ReportPositionUpdate(const PositionUpdateRequest& request)
 	{
-		ContainerProxy::RequestPositionUpdate(m_container, request);
+		if(m_container) {
+			m_container->PerformPositionUpdate(request);
+		}
 	}
 
 	void AbstractWidget::ReportRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
-		ContainerProxy::RequestRoundTypeUpdate(m_container, request);
+		if(m_container) {
+			m_container->PerformRoundTypeUpdate(request);
+		}
 	}
 
 	void AbstractWidget::ReportRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
-		ContainerProxy::RequestRoundRadiusUpdate(m_container, request);
+		if(m_container) {
+			m_container->PerformRoundRadiusUpdate(request);
+		}
 	}
 
 	void AbstractWidget::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
 	{
-		ContainerProxy::RequestVisibilityUpdate(m_container, request);
+
+		if(m_container) {
+			m_container->PerformVisibilityUpdate(request);
+		}
 	}
 
 	int AbstractWidget::GetHalfOutlineVertices(int round_type) const

@@ -27,104 +27,6 @@
 
 namespace BlendInt {
 
-	SubWidgetProxy::SubWidgetProxy ()
-	{
-	}
-
-	SubWidgetProxy::~SubWidgetProxy ()
-	{
-	}
-
-	inline bool SubWidgetProxy::RequestSizeUpdateTest (
-	        AbstractWidget* sub_widget, const SizeUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->SizeUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool SubWidgetProxy::RequestPositionUpdateTest (
-	        AbstractWidget* sub_widget, const PositionUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->PositionUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool SubWidgetProxy::RequestRoundTypeUpdateTest (
-	        AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->RoundTypeUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool SubWidgetProxy::RequestRoundRadiusUpdateTest (
-	        AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->RoundRadiusUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline bool SubWidgetProxy::RequestVisibilityUpdateTest (
-	        AbstractWidget* sub_widget, const VisibilityUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->VisibilityUpdateTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline void SubWidgetProxy::RequestSizeUpdate (AbstractWidget* sub_widget,
-	        const SizeUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->PerformSizeUpdate(request);
-		}
-	}
-
-	inline void SubWidgetProxy::RequestPositionUpdate (
-	        AbstractWidget* sub_widget, const PositionUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->PerformPositionUpdate(request);
-		}
-	}
-
-	inline void SubWidgetProxy::RequestRoundTypeUpdate (
-	        AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->PerformRoundTypeUpdate(request);
-		}
-	}
-
-	inline void SubWidgetProxy::RequestRoundRadiusUpdate (
-	        AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->PerformRoundRadiusUpdate(request);
-		}
-	}
-
-	inline void SubWidgetProxy::RequestVisibilityUpdate (
-	        AbstractWidget* sub_widget, const VisibilityUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->PerformVisibilityUpdate(request);
-		}
-	}
-
 	AbstractContainer::AbstractContainer()
 	: AbstractWidget()
 	{
@@ -567,8 +469,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, sub, &new_size);
 
-		if(SubWidgetProxy::RequestSizeUpdateTest(sub, request)) {
-			SubWidgetProxy::RequestSizeUpdate(sub, request);
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
 			sub->set_size(width, height);
 		}
 	}
@@ -584,8 +486,8 @@ namespace BlendInt {
 
 		SizeUpdateRequest request(this, sub, &size);
 
-		if (SubWidgetProxy::RequestSizeUpdateTest(sub, request)) {
-			SubWidgetProxy::RequestSizeUpdate(sub, request);
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
 			sub->set_size(size);
 		}
 	}
@@ -603,8 +505,8 @@ namespace BlendInt {
 
 		PositionUpdateRequest request(this, sub, &new_pos);
 
-		if (SubWidgetProxy::RequestPositionUpdateTest(sub, request)) {
-			SubWidgetProxy::RequestPositionUpdate(sub, request);
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
 			sub->set_position(x, y);
 		}
 	}
@@ -618,8 +520,8 @@ namespace BlendInt {
 
 		PositionUpdateRequest request (this, sub, &pos);
 
-		if(SubWidgetProxy::RequestPositionUpdateTest(sub, request)) {
-			SubWidgetProxy::RequestPositionUpdate(sub, request);
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
 			sub->set_position(pos);
 		}
 	}
@@ -633,8 +535,8 @@ namespace BlendInt {
 
 		VisibilityUpdateRequest request (this, sub, &visible);
 
-		if(SubWidgetProxy::RequestVisibilityUpdateTest(sub, request)) {
-			SubWidgetProxy::RequestVisibilityUpdate(sub, request);
+		if(sub->VisibilityUpdateTest(request)) {
+			sub->PerformVisibilityUpdate(request);
 			sub->set_visible(visible);
 		}
 	}
