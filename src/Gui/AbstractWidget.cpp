@@ -72,18 +72,44 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget ()
 	: Object(),
-	  m_flags(0),
-	  m_round_radius(5),
-	  m_container(0)
+	  flags_(0),
+	  round_radius_(5),
+	  container_(0),
+	  previous_(0),
+	  next_(0)
 	{
-		m_events.reset(new Cpp::ConnectionScope);
+		events_.reset(new Cpp::ConnectionScope);
 
-		SETBIT(m_flags, WidgetFlagVisibility);
+		SETBIT(flags_, WidgetFlagVisibility);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		m_destroyed.fire(this);
+		if(previous_) {
+			previous_->next_ = next_;
+		} else {
+			if(container_) {
+				assert(container_->first_ == this);
+				container_->first_ = next_;
+			}
+		}
+
+		if(next_) {
+			next_->previous_ = previous_;
+		} else {
+			if(container_) {
+				assert(container_->last_ == this);
+				container_->last_ = previous_;
+			}
+		}
+
+		previous_ = 0;
+		next_ = 0;
+		container_ = 0;
+
+		destroyed_.fire(this);
+
+		DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
 	Size AbstractWidget::GetPreferredSize() const
@@ -98,8 +124,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, this, &new_size);
 
-		if(m_container) {
-			if(m_container->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(container_) {
+			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(width, height);
 			}
@@ -117,8 +143,8 @@ namespace BlendInt {
 
 		SizeUpdateRequest request(this, this, &size);
 
-		if(m_container) {
-			if(m_container->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(container_) {
+			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(size);
 			}
@@ -137,8 +163,8 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		PositionUpdateRequest request(this, this, &new_pos);
 
-		if(m_container) {
-			if(m_container->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(container_) {
+			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(x, y);
 			}
@@ -156,8 +182,8 @@ namespace BlendInt {
 
 		PositionUpdateRequest request(this, this, &pos);
 
-		if(m_container) {
-			if(m_container->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(container_) {
+			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(pos);
 			}
@@ -175,8 +201,8 @@ namespace BlendInt {
 
 		RoundTypeUpdateRequest request(this, this, &type);
 
-		if(m_container) {
-			if(m_container->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
+		if(container_) {
+			if(container_->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
 				PerformRoundTypeUpdate(request);
 				set_round_type(type);
 			}
@@ -190,19 +216,19 @@ namespace BlendInt {
 
 	void AbstractWidget::SetRoundCornerRadius(float radius)
 	{
-		if(m_round_radius == radius) return;
+		if(round_radius_ == radius) return;
 
 		RoundRadiusUpdateRequest request(this, this, &radius);
 
-		if(m_container) {
-			if(m_container->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
+		if(container_) {
+			if(container_->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
 				PerformRoundRadiusUpdate(request);
-				m_round_radius = radius;
+				round_radius_ = radius;
 			}
 		} else {
 			if(RoundRadiusUpdateTest(request)) {
 				PerformRoundRadiusUpdate(request);
-				m_round_radius = radius;
+				round_radius_ = radius;
 			}
 		}
 	}
@@ -214,8 +240,8 @@ namespace BlendInt {
 
 		VisibilityUpdateRequest request(this, this, &visible);
 
-		if(m_container) {
-			if(m_container->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
+		if(container_) {
+			if(container_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
 				PerformVisibilityUpdate(request);
 				set_visible(visible);
 			}
@@ -229,10 +255,10 @@ namespace BlendInt {
 
 	bool AbstractWidget::Contain(const Point& point) const
 	{
-		if(point.x() < m_position.x() ||
-				point.y() < m_position.y() ||
-				point.x() > static_cast<int>(m_position.x() + size().width()) ||
-				point.y() > static_cast<int>(m_position.y() + size().height()))
+		if(point.x() < position_.x() ||
+				point.y() < position_.y() ||
+				point.x() > static_cast<int>(position_.x() + size().width()) ||
+				point.y() > static_cast<int>(position_.y() + size().height()))
 		{
 			return false;
 		}
@@ -242,10 +268,10 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		RefreshRequest request (this, m_container);
+		RefreshRequest request (this, container_);
 
-		if(m_container) {
-			m_container->PerformRefresh(request);
+		if(container_) {
+			container_->PerformRefresh(request);
 		}
 	}
 
@@ -272,7 +298,7 @@ namespace BlendInt {
 	{
 		if(widget->Contain(cursor)) {
 
-			AbstractContainer* container = widget->m_container;
+			AbstractContainer* container = widget->container_;
 
 			if(container == 0) return false;	// if a widget hovered was removed from any container.
 
@@ -292,8 +318,8 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
 	{
-		if(m_container) {
-			m_container->PerformRefresh(request);
+		if(container_) {
+			container_->PerformRefresh(request);
 		}
 	}
 
@@ -387,37 +413,37 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)
 	{
-		if(m_container) {
-			m_container->PerformSizeUpdate(request);
+		if(container_) {
+			container_->PerformSizeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportPositionUpdate(const PositionUpdateRequest& request)
 	{
-		if(m_container) {
-			m_container->PerformPositionUpdate(request);
+		if(container_) {
+			container_->PerformPositionUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
-		if(m_container) {
-			m_container->PerformRoundTypeUpdate(request);
+		if(container_) {
+			container_->PerformRoundTypeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
-		if(m_container) {
-			m_container->PerformRoundRadiusUpdate(request);
+		if(container_) {
+			container_->PerformRoundRadiusUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
 	{
 
-		if(m_container) {
-			m_container->PerformVisibilityUpdate(request);
+		if(container_) {
+			container_->PerformVisibilityUpdate(request);
 		}
 	}
 

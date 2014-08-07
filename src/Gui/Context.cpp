@@ -388,8 +388,8 @@ namespace BlendInt
 
 		} else if (request.source()->container() == this) {
 
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->Resize(request.size()->width(),
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->Resize(request.size()->width(),
 				        request.size()->height());
 			}
 

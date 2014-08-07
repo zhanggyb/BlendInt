@@ -73,6 +73,34 @@ namespace BlendInt {
 			return m_deque;
 		}
 
+		const AbstractWidget* first () const
+		{
+			return first_;
+		}
+
+		const AbstractWidget* last() const
+		{
+			return last_;
+		}
+
+		// temporary public:
+
+		bool PushFrontSubWidgetExt (AbstractWidget* widget);
+
+		bool InsertSubWidgetExt (int index, AbstractWidget* widget);
+
+		bool PushBackSubWidgetExt (AbstractWidget* widget);
+
+		bool RemoveSubWidgetExt (AbstractWidget* widget);
+
+		int GetSubWidgetSize ();
+
+#ifdef DEBUG
+
+		void ListSubWidgets ();
+
+#endif
+
 	protected:
 
 		bool PushFrontSubWidget (AbstractWidget* widget);
@@ -86,6 +114,8 @@ namespace BlendInt {
 		bool RemoveSubWidget (AbstractWidget* widget);
 
 		void Clear ();
+
+		void ClearExt ();
 
 		void ResizeSubWidget (AbstractWidget* sub, int width, int height);
 
@@ -139,7 +169,7 @@ namespace BlendInt {
 
 		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
 		{
-			widget->m_container = container;
+			widget->container_ = container;
 		}
 
 		bool EnableShadow (AbstractWidget* widget);
@@ -177,6 +207,9 @@ namespace BlendInt {
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
 		AbstractWidgetDeque m_deque;
+
+		AbstractWidget* first_;
+		AbstractWidget* last_;
 
 	};
 

@@ -156,7 +156,7 @@ namespace BlendInt {
 		GLsizei height = widget->size().height();
 		GLfloat left = widget->position().x();
 		GLfloat bottom = widget->position().y();
-		if(widget->m_shadow) {
+		if(widget->shadow_) {
 			width += Theme::instance->shadow_width() * 2;
 			height += Theme::instance->shadow_width() * 2;
 			left -= Theme::instance->shadow_width();
@@ -289,7 +289,7 @@ namespace BlendInt {
 		GLsizei height = widget->size().height();
 		GLfloat left = widget->position().x();
 		GLfloat bottom = widget->position().y();
-		if(widget->m_shadow) {
+		if(widget->shadow_) {
 			width += Theme::instance->shadow_width() * 2;
 			height += Theme::instance->shadow_width() * 2;
 			left -= Theme::instance->shadow_width();
@@ -430,8 +430,8 @@ namespace BlendInt {
 		}
 
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->Resize(*request.size());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->Resize(*request.size());
 			}
 		}
 
@@ -441,8 +441,8 @@ namespace BlendInt {
 	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->SetRoundType(*request.round_type());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->SetRoundType(*request.round_type());
 			}
 		}
 
@@ -453,8 +453,8 @@ namespace BlendInt {
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->SetRadius(*request.round_radius());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->SetRadius(*request.round_radius());
 			}
 		}
 
@@ -576,8 +576,8 @@ namespace BlendInt {
 	{
 		if (widget->visiable()) {
 
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			if(widget->drop_shadow() && widget->shadow_) {
+				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
 			ResponseType response = widget->Draw(event);
@@ -622,8 +622,8 @@ namespace BlendInt {
 	{
 		if (widget && widget->visiable()) {
 
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			if(widget->drop_shadow() && widget->shadow_) {
+				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
 			ResponseType response = widget->Draw(event);

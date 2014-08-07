@@ -107,5 +107,59 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	Container::Container ()
+	{
+	}
+
+	Container::~Container ()
+	{
+	}
+
+	ResponseType Container::Draw (const RedrawEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::KeyPressEvent (
+	        const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::MousePressEvent (
+	        const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::MouseReleaseEvent (
+	        const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Container::MouseMoveEvent (
+	        const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
 }
 

@@ -28,13 +28,17 @@
 namespace BlendInt {
 
 	AbstractContainer::AbstractContainer()
-	: AbstractWidget()
+	: AbstractWidget(),
+	  first_(0),
+	  last_(0)
 	{
 
 	}
 
 	AbstractContainer::AbstractContainer(size_t size)
-	: AbstractWidget()
+	: AbstractWidget(),
+	  first_(0),
+	  last_(0)
 	{
 		m_deque.resize(size, 0);
 	}
@@ -42,6 +46,8 @@ namespace BlendInt {
 	AbstractContainer::~AbstractContainer()
 	{
 		Clear();
+
+		ClearExt();
 	}
 
 	bool AbstractContainer::PushFrontSubWidget (AbstractWidget* widget)
@@ -267,6 +273,33 @@ namespace BlendInt {
 		m_deque.clear();
 	}
 
+	void AbstractContainer::ClearExt()
+	{
+		AbstractWidget* widget = first_;
+		AbstractWidget* next = 0;
+
+		while(widget) {
+
+			next = widget->next_;
+
+			//(*it)->destroyed().disconnectOne(this,
+			//				&AbstractContainer::OnSubWidgetDestroyed);
+
+			widget->previous_ = 0;
+			widget->next_ = 0;
+			widget->container_ = 0;
+
+			if(widget->managed() && widget->count() == 0) {
+				delete widget;
+			}
+
+			widget = next;
+		}
+
+		first_ = 0;
+		last_ = 0;
+	}
+
 	ResponseType AbstractContainer::FocusEvent (bool focus)
 	{
 		return Ignore;
@@ -410,6 +443,229 @@ namespace BlendInt {
 		}
 	}
 
+	bool AbstractContainer::PushFrontSubWidgetExt (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidgetExt(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(first_) {
+			first_->previous_ = widget;
+			widget->next_ = first_;
+		} else {
+			assert(last_ == 0);
+			widget->next_ = 0;
+			last_ = widget;
+		}
+		first_ = widget;
+
+		widget->previous_ = 0;
+		widget->container_ = this;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::InsertSubWidgetExt (int index,
+	        AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidgetExt(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(first_ == 0) {
+			assert(last_ == 0);
+
+			widget->next_ = 0;
+			last_ = widget;
+			first_ = widget;
+			widget->previous_ = 0;
+
+		} else {
+
+			AbstractWidget* p = first_;
+
+			if(index > 0) {
+
+				while(p && (index > 0)) {
+					if(p->next_ == 0)
+						break;
+
+					p = p->next_;
+					index--;
+				}
+
+				if(index == 0) {	// insert
+
+					widget->previous_ = p->previous_;
+					widget->next_ = p;
+					p->previous_->next_ = widget;
+					p->previous_ = widget;
+
+				} else {	// same as push back
+
+					assert(p == last_);
+					last_->next_ = widget;
+					widget->previous_ = last_;
+					last_ = widget;
+					widget->next_ = 0;
+
+				}
+
+			} else {	// same as push front
+
+				first_->previous_ = widget;
+				widget->next_ = first_;
+				first_ = widget;
+				widget->previous_ = 0;
+
+			}
+
+		}
+
+		widget->container_ = this;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::PushBackSubWidgetExt (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidgetExt(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(last_) {
+			last_->next_ = widget;
+			widget->previous_ = last_;
+		} else {
+			assert(first_ == 0);
+			widget->previous_ = 0;
+			first_ = widget;
+		}
+		last_ = widget;
+
+		widget->next_ = 0;
+		widget->container_ = this;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::RemoveSubWidgetExt (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		assert(widget->container_ == this);
+
+		//widget->destroyed().disconnectOne(this,
+		//        &AbstractContainer::OnSubWidgetDestroyed);
+
+		if (widget->previous_) {
+			widget->previous_->next_ = widget->next_;
+		} else {
+			assert(first_ == widget);
+			first_ = widget->next_;
+		}
+
+		if (widget->next_) {
+			widget->next_->previous_ = widget->previous_;
+		} else {
+			assert(last_ == widget);
+			last_ = widget->previous_;
+		}
+
+		widget->previous_ = 0;
+		widget->next_ = 0;
+		widget->container_ = 0;
+
+		return true;
+	}
+
+	int AbstractContainer::GetSubWidgetSize()
+	{
+		int sum = 0;
+
+		AbstractWidget* p = first_;
+		while(p) {
+			sum++;
+			p = p->next_;
+		}
+
+		return sum;
+	}
+
+#ifdef DEBUG
+
+	void AbstractContainer::ListSubWidgets()
+	{
+		AbstractWidget* widget = first_;
+		while(widget) {
+			DBG_PRINT_MSG("sub widget: %s", widget->name_.c_str());
+			widget = widget->next_;
+		}
+	}
+
+#endif
+
 	void AbstractContainer::AlignVertically (int x, int width, int alignment)
 	{
 		AbstractWidget* widget = 0;
@@ -548,11 +804,11 @@ namespace BlendInt {
 
 		if(widget->drop_shadow()) {
 
-			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_type(), widget->round_radius()));
+			if(!widget->shadow_) {
+				widget->shadow_.reset(new Shadow(widget->size(), widget->round_type(), widget->round_radius()));
 			}
 
-			widget->m_shadow->Update(widget->size(), widget->round_type(), widget->round_radius());
+			widget->shadow_->Update(widget->size(), widget->round_type(), widget->round_radius());
 
 		} else {
 			DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
@@ -567,7 +823,7 @@ namespace BlendInt {
 		if(!widget) return false;
 		if(widget->container() != this) return false;
 
-		widget->m_shadow.destroy();
+		widget->shadow_.destroy();
 
 		return true;
 	}
