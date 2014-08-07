@@ -592,3 +592,145 @@ TEST_F(WidgetTest1, MoveToLast1)
 
 	ASSERT_TRUE(true);
 }
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+TEST_F(WidgetTest1, MoveForward1)
+{
+    Init();
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1", 640, 480);
+
+	// TODO: add test code here
+    Context* context = Manage (new Context);
+    Interface::instance->SetCurrentContext(context);
+
+    Container* container = Manage(new Container);
+    DBG_SET_NAME(container, "Container");
+    Widget* widget1 = Manage(new Widget);
+    DBG_SET_NAME(widget1, "Widget1");
+    Widget* widget2 = Manage(new Widget);
+    DBG_SET_NAME(widget2, "Widget2");
+    Widget* widget3 = Manage(new Widget);
+    DBG_SET_NAME(widget3, "Widget3");
+
+    container->PushBackSubWidgetExt(widget1);
+    container->PushBackSubWidgetExt(widget2);
+    container->PushBackSubWidgetExt(widget3);
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    DBG_PRINT_MSG("%s", "Move forward");
+
+    widget1->MoveForward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget1->MoveForward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget1->MoveForward();
+
+    widget1->MoveForward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    //delete widget2;
+    //delete widget1;
+    //delete widget3;
+
+    delete container;
+
+    RunLoop(win);
+
+    Interface::Release();
+
+    Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+TEST_F(WidgetTest1, MoveBackward1)
+{
+    Init();
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1", 640, 480);
+
+	// TODO: add test code here
+    Context* context = Manage (new Context);
+    Interface::instance->SetCurrentContext(context);
+
+    Container* container = Manage(new Container);
+    DBG_SET_NAME(container, "Container");
+    Widget* widget1 = Manage(new Widget);
+    DBG_SET_NAME(widget1, "Widget1");
+    Widget* widget2 = Manage(new Widget);
+    DBG_SET_NAME(widget2, "Widget2");
+    Widget* widget3 = Manage(new Widget);
+    DBG_SET_NAME(widget3, "Widget3");
+
+    container->PushBackSubWidgetExt(widget1);
+    container->PushBackSubWidgetExt(widget2);
+    container->PushBackSubWidgetExt(widget3);
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    DBG_PRINT_MSG("%s", "Move backward");
+
+    widget3->MoveBackward();
+	
+	int sum = container->GetSubWidgetSize();
+	
+	DBG_PRINT_MSG("sum: %d", sum);
+	
+	ASSERT_TRUE(sum == 3);
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget3->MoveBackward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget3->MoveBackward();
+
+    widget3->MoveBackward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    //delete widget2;
+    //delete widget1;
+    //delete widget3;
+
+    delete container;
+
+    RunLoop(win);
+
+    Interface::Release();
+
+    Terminate();
+
+	ASSERT_TRUE(true);
+}

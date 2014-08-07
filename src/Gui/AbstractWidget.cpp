@@ -279,12 +279,64 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveBackward()
 	{
-		// TODO:
+		if(container_) {
+
+			if(previous_) {
+
+				AbstractWidget* tmp = previous_;
+
+				tmp->next_ = next_;
+				if(next_) {
+					next_->previous_ = tmp;
+				} else {
+					container_->last_ = tmp;
+				}
+
+				next_ = tmp;
+				previous_ = tmp->previous_;
+				tmp->previous_ = this;
+
+				if(previous_ == 0) {
+					assert(container_->first_ == tmp);
+					container_->first_ = this;
+				}
+
+			} else {
+				assert(container_->first_ == this);
+			}
+
+		}
 	}
 
 	void AbstractWidget::MoveForward()
 	{
-		// TODO:
+		if(container_) {
+
+			if(next_) {
+
+				AbstractWidget* tmp = next_;
+
+				tmp->previous_ = previous_;
+				if(previous_) {
+					previous_->next_ = tmp;
+				} else {
+					container_->first_ = tmp;
+				}
+
+				previous_ = tmp;
+				next_ = tmp->next_;
+				tmp->next_ = this;
+
+				if(next_ == 0) {
+					assert(container_->last_ == tmp);
+					container_->last_ = this;
+				}
+
+			} else {
+				assert(container_->last_ == this);
+			}
+
+		}
 	}
 
 	void AbstractWidget::MoveToFirst()

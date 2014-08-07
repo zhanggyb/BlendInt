@@ -49,7 +49,6 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
-	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
 

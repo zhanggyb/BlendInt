@@ -30,13 +30,42 @@ int main(int argc, char* argv[])
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
+    Widget* widget3 = Manage(new Widget);
+    DBG_SET_NAME(widget3, "Widget3");
 
-    container->InsertSubWidgetExt(0, widget1);
-    container->InsertSubWidgetExt(1, widget2);
+    container->PushBackSubWidgetExt(widget1);
+    container->PushBackSubWidgetExt(widget2);
+    container->PushBackSubWidgetExt(widget3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
+
+    DBG_PRINT_MSG("%s", "Move backward");
+
+    widget3->MoveBackward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget3->MoveBackward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget3->MoveBackward();
+
+    widget3->MoveBackward();
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    //delete widget2;
+    //delete widget1;
+    //delete widget3;
 
     delete container;
 
