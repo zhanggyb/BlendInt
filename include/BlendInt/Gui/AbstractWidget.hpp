@@ -462,6 +462,16 @@ namespace BlendInt {
 			return container_;
 		}
 
+		inline const AbstractWidget* previous () const
+		{
+			return previous_;
+		}
+
+		inline const AbstractWidget* next () const
+		{
+			return next_;
+		}
+
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
 		 *

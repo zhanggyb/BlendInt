@@ -157,6 +157,8 @@ TEST_F(WidgetTest1, Insert1)
     container->InsertSubWidgetExt(0, widget1);
     container->InsertSubWidgetExt(0, widget2);
 
+    int sum = container->GetSubWidgetSize();
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -169,7 +171,7 @@ TEST_F(WidgetTest1, Insert1)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum == 2);
 }
 
 /**
@@ -196,6 +198,8 @@ TEST_F(WidgetTest1, Insert2)
     container->InsertSubWidgetExt(0, widget1);
     container->InsertSubWidgetExt(1, widget2);
 
+    int sum = container->GetSubWidgetSize();
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -208,7 +212,7 @@ TEST_F(WidgetTest1, Insert2)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum == 2);
 }
 
 /**
@@ -235,6 +239,8 @@ TEST_F(WidgetTest1, Insert3)
     container->InsertSubWidgetExt(5, widget1);
     container->InsertSubWidgetExt(5, widget2);
 
+    int sum = container->GetSubWidgetSize();
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -247,7 +253,7 @@ TEST_F(WidgetTest1, Insert3)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum == 2);
 }
 
 /**
@@ -274,6 +280,8 @@ TEST_F(WidgetTest1, PushFront1)
     container->PushFrontSubWidgetExt(widget1);
     container->PushFrontSubWidgetExt(widget2);
 
+    int sum = container->GetSubWidgetSize();
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -286,7 +294,7 @@ TEST_F(WidgetTest1, PushFront1)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum == 2);
 }
 
 /**
@@ -318,6 +326,9 @@ TEST_F(WidgetTest1, PushFront2)
     container2->PushFrontSubWidgetExt(widget2);
     container2->PushFrontSubWidgetExt(widget1);
 
+    int sum1 = container1->GetSubWidgetSize();
+    int sum2 = container2->GetSubWidgetSize();
+
 #ifdef DEBUG
     container1->ListSubWidgets();
     container2->ListSubWidgets();
@@ -332,7 +343,7 @@ TEST_F(WidgetTest1, PushFront2)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum1 == 0 && sum2 == 2);
 }
 
 /**
@@ -362,6 +373,8 @@ TEST_F(WidgetTest1, Remove1)
     container->PushBackSubWidgetExt(widget2);
     container->PushBackSubWidgetExt(widget3);
 
+    int sum = container->GetSubWidgetSize();
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -378,7 +391,7 @@ TEST_F(WidgetTest1, Remove1)
 
     Terminate();
 
-	ASSERT_TRUE(true);
+	ASSERT_TRUE(sum == 3);
 }
 
 /**
@@ -484,6 +497,10 @@ TEST_F(WidgetTest1, MoveToFirst1)
     container->PushBackSubWidgetExt(widget2);
     container->PushBackSubWidgetExt(widget3);
 
+    int sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -491,12 +508,18 @@ TEST_F(WidgetTest1, MoveToFirst1)
     DBG_PRINT_MSG("%s", "Move to first");
 
     widget1->MoveToFirst();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
 
     widget2->MoveToFirst();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -505,6 +528,9 @@ TEST_F(WidgetTest1, MoveToFirst1)
     widget3->MoveToFirst();
 
     widget3->MoveToFirst();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -552,6 +578,10 @@ TEST_F(WidgetTest1, MoveToLast1)
     container->PushBackSubWidgetExt(widget2);
     container->PushBackSubWidgetExt(widget3);
 
+    int sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -559,12 +589,18 @@ TEST_F(WidgetTest1, MoveToLast1)
     DBG_PRINT_MSG("%s", "Move to last");
 
     widget1->MoveToLast();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
 
     widget2->MoveToLast();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -573,6 +609,9 @@ TEST_F(WidgetTest1, MoveToLast1)
     widget3->MoveToLast();
 
     widget3->MoveToLast();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -620,6 +659,10 @@ TEST_F(WidgetTest1, MoveForward1)
     container->PushBackSubWidgetExt(widget2);
     container->PushBackSubWidgetExt(widget3);
 
+    int sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
+
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
@@ -627,6 +670,18 @@ TEST_F(WidgetTest1, MoveForward1)
     DBG_PRINT_MSG("%s", "Move forward");
 
     widget1->MoveForward();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
+
+#ifdef DEBUG
+    container->ListSubWidgets();
+#endif
+
+    widget1->MoveForward();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -634,13 +689,10 @@ TEST_F(WidgetTest1, MoveForward1)
 
     widget1->MoveForward();
 
-#ifdef DEBUG
-    container->ListSubWidgets();
-#endif
-
     widget1->MoveForward();
+    sum = container->GetSubWidgetSize();
 
-    widget1->MoveForward();
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -707,6 +759,9 @@ TEST_F(WidgetTest1, MoveBackward1)
 #endif
 
     widget3->MoveBackward();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -715,10 +770,19 @@ TEST_F(WidgetTest1, MoveBackward1)
     widget3->MoveBackward();
 
     widget3->MoveBackward();
+    sum = container->GetSubWidgetSize();
+
+    ASSERT_TRUE(sum == 3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
 #endif
+
+    const AbstractWidget* widget = container->last();
+	while(widget) {
+		DBG_PRINT_MSG("sub widget: %s", widget->name().c_str());
+		widget = widget->previous();
+	}
 
     //delete widget2;
     //delete widget1;

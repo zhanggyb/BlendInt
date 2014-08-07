@@ -289,16 +289,30 @@ namespace BlendInt {
 				if(next_) {
 					next_->previous_ = tmp;
 				} else {
+					assert(container_->last_ == this);
 					container_->last_ = tmp;
 				}
 
 				next_ = tmp;
 				previous_ = tmp->previous_;
+				if(tmp->previous_) {
+					tmp->previous_->next_ = this;
+				}
 				tmp->previous_ = this;
 
 				if(previous_ == 0) {
 					assert(container_->first_ == tmp);
 					container_->first_ = this;
+				}
+
+				DBG_PRINT_MSG("this: %s", name_.c_str());
+				if(previous_) {
+					DBG_PRINT_MSG("previous: %s", previous_->name_.c_str());
+					assert(previous_->next_ == this);
+				}
+				if(next_) {
+					DBG_PRINT_MSG("next: %s", next_->name_.c_str());
+					assert(next_->previous_ == this);
 				}
 
 			} else {
@@ -320,16 +334,27 @@ namespace BlendInt {
 				if(previous_) {
 					previous_->next_ = tmp;
 				} else {
+					assert(container_->first_ == this);
 					container_->first_ = tmp;
 				}
 
 				previous_ = tmp;
 				next_ = tmp->next_;
+				if(tmp->next_) {
+					tmp->next_->previous_ = this;
+				}
 				tmp->next_ = this;
 
 				if(next_ == 0) {
 					assert(container_->last_ == tmp);
 					container_->last_ = this;
+				}
+
+				if(previous_) {
+					assert(previous_->next_ == this);
+				}
+				if(next_) {
+					assert(next_->previous_ == this);
 				}
 
 			} else {
