@@ -86,6 +86,7 @@ namespace BlendInt {
 	AbstractWidget::~AbstractWidget ()
 	{
 		if(previous_) {
+			assert(container_);
 			previous_->next_ = next_;
 		} else {
 			if(container_) {
@@ -95,6 +96,7 @@ namespace BlendInt {
 		}
 
 		if(next_) {
+			assert(container_);
 			next_->previous_ = previous_;
 		} else {
 			if(container_) {
@@ -272,6 +274,67 @@ namespace BlendInt {
 
 		if(container_) {
 			container_->PerformRefresh(request);
+		}
+	}
+
+	void AbstractWidget::MoveBackward()
+	{
+		// TODO:
+	}
+
+	void AbstractWidget::MoveForward()
+	{
+		// TODO:
+	}
+
+	void AbstractWidget::MoveToFirst()
+	{
+		if(container_) {
+
+			if(container_->first_ == this) {
+				assert(previous_ == 0);
+				return;	// already at first
+			}
+
+			previous_->next_ = next_;
+			if(next_) {
+				next_->previous_ = previous_;
+			} else {
+				assert(container_->last_ == this);
+				container_->last_ = previous_;
+			}
+
+			previous_ = 0;
+			next_ = container_->first_;
+			container_->first_->previous_ = this;
+			container_->first_ = this;
+
+		}
+	}
+
+	void AbstractWidget::MoveToLast()
+	{
+		if(container_) {
+
+			if(container_->last_ == this) {
+				assert(next_ == 0);
+				return;	// already at last
+			}
+
+			next_->previous_ = previous_;
+
+			if(previous_) {
+				previous_->next_ = next_;
+			} else {
+				assert(container_->first_ == this);
+				container_->first_ = next_;
+			}
+
+			next_ = 0;
+			previous_ = container_->last_;
+			container_->last_->next_ = this;
+			container_->last_ = this;
+
 		}
 	}
 

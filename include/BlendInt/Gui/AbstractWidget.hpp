@@ -352,6 +352,14 @@ namespace BlendInt {
 
 		void Refresh ();
 
+		void MoveBackward ();
+
+		void MoveForward ();
+
+		void MoveToFirst ();
+
+		void MoveToLast ();
+
 		const Size& size () const
 		{
 			return size_;

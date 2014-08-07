@@ -653,6 +653,42 @@ namespace BlendInt {
 		return sum;
 	}
 
+	const AbstractWidget* AbstractContainer::operator [](int i) const
+	{
+		if(i < 0) return 0;
+
+		AbstractWidget* widget = first_;
+
+		while(widget && (i > 0)) {
+			i--;
+			widget = widget->next_;
+		}
+
+		if(i != 0) {	// out of range
+			widget = 0;
+		}
+
+		return widget;
+	}
+
+	const AbstractWidget* AbstractContainer::GetWidgetAt(int i) const
+	{
+		if(i < 0) return 0;
+
+		AbstractWidget* widget = first_;
+
+		while(widget && (i > 0)) {
+			i--;
+			widget = widget->next_;
+		}
+
+		if(i != 0) {	// out of range
+			widget = 0;
+		}
+
+		return widget;
+	}
+
 #ifdef DEBUG
 
 	void AbstractContainer::ListSubWidgets()

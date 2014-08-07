@@ -95,6 +95,10 @@ namespace BlendInt {
 
 		int GetSubWidgetSize ();
 
+		const AbstractWidget* operator [] (int i) const;
+
+		const AbstractWidget* GetWidgetAt (int i) const;
+
 #ifdef DEBUG
 
 		void ListSubWidgets ();
