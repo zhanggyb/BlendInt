@@ -223,9 +223,9 @@ namespace BlendInt {
 
 	void HBlock::FillInHBlock (int x, int y, int w, int h)
 	{
-		int sum = GetSubWidgetSize();
-		if(sum == 0) return;
-		int average_width = w / sum + 1;
+		int count = CountSubWidgets();
+		if(count == 0) return;
+		int average_width = w / count + 1;
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{

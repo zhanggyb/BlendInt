@@ -62,7 +62,7 @@ namespace BlendInt {
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
-			if(GetSubWidgetSize() == 1) {
+			if(CountSubWidgets() == 1) {
 				m_active_widget = widget;
 				m_active_widget->SetVisible(true);
 			} else {
@@ -71,7 +71,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Insert (size_t index, AbstractWidget* widget)
+	void Stack::Insert (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().left() - margin().right();
@@ -90,7 +90,7 @@ namespace BlendInt {
 
 			if(m_active_widget == widget) {
 
-				if(GetSubWidgetSize() == 0) {
+				if(CountSubWidgets() == 0) {
 					m_active_widget = 0;
 				} else {
 					m_active_widget = first();
@@ -101,9 +101,9 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::SetIndex (size_t index)
+	void Stack::SetIndex (int index)
 	{
-		int count = GetSubWidgetSize();
+		int count = CountSubWidgets();
 
 		if(index > (count - 1)) return;
 
@@ -182,7 +182,7 @@ namespace BlendInt {
 
 	AbstractWidget* Stack::GetWidget (int index)
 	{
-		int count = GetSubWidgetSize();
+		int count = CountSubWidgets();
 
 		if(index > (count - 1)) return 0;
 
@@ -191,7 +191,7 @@ namespace BlendInt {
 
 	void Stack::HideSubWidget(int index)
 	{
-		int count = GetSubWidgetSize();
+		int count = CountSubWidgets();
 
 		if(count && index < (count - 1)) {
 			AbstractWidget* p = GetWidgetAt(index);

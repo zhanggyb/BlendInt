@@ -47,7 +47,7 @@
 namespace BlendInt {
 
 	VirtualWindow::VirtualWindow ()
-	: AbstractContainer(2)
+	: AbstractContainer()
 	{
 		set_round_type(RoundTopLeft | RoundTopRight);
 		set_round_radius(10.f);
@@ -70,10 +70,22 @@ namespace BlendInt {
 
 		if(widget->container() == this) return;
 
-		int sum = GetSubWidgetSize();
+		int sum = CountSubWidgets();
 
 		if (sum > 1) {
 			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");
+
+			AbstractWidget* tmp = 0;
+			for(AbstractWidget* p = first()->next(); p; p = tmp)
+			{
+				tmp = p->next();
+				if(p->managed() && (p->count() == 0))
+				{
+					delete p;
+				} else {
+					DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", p->name().c_str());
+				}
+			}
 		}
 
 		if(InsertSubWidget(ContentIndex, widget)) {

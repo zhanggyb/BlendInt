@@ -43,11 +43,11 @@ namespace BlendInt {
 
 		void PushBack (AbstractWidget* widget);
 
-		void Insert (size_t index, AbstractWidget* widget);
+		void Insert (int index, AbstractWidget* widget);
 
 		void Remove (AbstractWidget* widget);
 
-		void SetIndex (size_t index);
+		void SetIndex (int index);
 
 		virtual bool IsExpandX () const;
 

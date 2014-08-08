@@ -48,7 +48,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: AbstractContainer(1)
+	: AbstractContainer()
 	{
 		set_size(400, 300);
 	}
@@ -65,8 +65,8 @@ namespace BlendInt {
 
 		if(widget->container() == this) return true;
 
-		int sum = GetSubWidgetSize();
-		if(sum > 0) {
+		int count = CountSubWidgets();
+		if(count > 0) {
 			Clear();
 		}
 

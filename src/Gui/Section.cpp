@@ -45,6 +45,8 @@
 
 namespace BlendInt {
 
+	AbstractWidget* Section::iterator_ptr = 0;
+
 	Section::Section ()
 	: AbstractContainer(),
 	  m_focused_widget(0),
@@ -62,6 +64,11 @@ namespace BlendInt {
 
 		// unset hover status
 		ClearHoverWidgets();
+
+		// avoid calling deleted Section pointer in Context::MousePressEvent
+		if(iterator_ptr == this) {
+			iterator_ptr = 0;
+		}
 	}
 
 	void Section::PushFront(AbstractWidget* widget)

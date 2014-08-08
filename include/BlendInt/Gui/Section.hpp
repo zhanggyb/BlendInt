@@ -125,6 +125,7 @@ namespace BlendInt {
 
 		ScissorStatus m_scissor_status;
 
+		static AbstractWidget* iterator_ptr;
 	};
 }
 

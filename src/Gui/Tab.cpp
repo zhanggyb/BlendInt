@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: AbstractContainer(2)
+	: AbstractContainer()
 	{
 		set_size(400, 300);
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 		header->PushBack(btn);
 		stack->PushBack(widget);
 
-		if(header->GetSubWidgetSize() == 1) {
+		if(header->CountSubWidgets() == 1) {
 			btn->SetChecked(true);
 		}
 	}

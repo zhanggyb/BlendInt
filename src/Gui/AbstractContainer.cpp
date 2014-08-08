@@ -35,14 +35,6 @@ namespace BlendInt {
 
 	}
 
-	AbstractContainer::AbstractContainer(size_t size)
-	: AbstractWidget(),
-	  first_(0),
-	  last_(0)
-	{
-		//m_deque.resize(size, 0);
-	}
-
 	AbstractContainer::~AbstractContainer()
 	{
 		Clear();
@@ -156,7 +148,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeHorizontally (int x, int width, int space)
 	{
-		int sum = GetSubWidgetSize();
+		int sum = CountSubWidgets();
 
 		if (sum) {
 			int average_width = (width - (sum - 1)* space) / sum;
@@ -179,7 +171,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeVertically (int y, int height, int space)
 	{
-		int sum = GetSubWidgetSize();
+		int sum = CountSubWidgets();
 
 		y = y + height;
 		if (sum) {
@@ -421,7 +413,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	int AbstractContainer::GetSubWidgetSize() const
+	int AbstractContainer::CountSubWidgets() const
 	{
 		int sum = 0;
 

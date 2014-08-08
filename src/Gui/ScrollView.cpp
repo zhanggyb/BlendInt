@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: AbstractContainer(1),
+	: AbstractContainer(),
 	  m_vao(0),
 	  m_orientation(Horizontal | Vertical),
 	  m_move_status(false)

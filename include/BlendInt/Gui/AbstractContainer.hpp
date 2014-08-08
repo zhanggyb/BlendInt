@@ -51,8 +51,6 @@ namespace BlendInt {
 
 		AbstractContainer ();
 
-		AbstractContainer (size_t size);
-
 		virtual ~AbstractContainer ();
 
 		const Margin& margin () const {return m_margin;}
@@ -84,7 +82,7 @@ namespace BlendInt {
 		void ListSubWidgets ();
 #endif
 
-		int GetSubWidgetSize () const;
+		int CountSubWidgets () const;
 
 		AbstractWidget* operator [] (int i) const;
 

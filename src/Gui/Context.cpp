@@ -112,7 +112,7 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
-		int count = GetSubWidgetSize();
+		int count = CountSubWidgets();
 		char buf[32];
 		sprintf(buf, "Section %d", count);
 		DBG_SET_NAME(section, buf);
@@ -424,37 +424,20 @@ namespace BlendInt
 
 		const_cast<MouseEvent&>(event).m_context = this;
 
-		AbstractWidget* section = 0;
-
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			response = p->MousePressEvent(event);
+		for (Section::iterator_ptr = last(); Section::iterator_ptr;
+		        Section::iterator_ptr = Section::iterator_ptr->previous()) {
+			response = Section::iterator_ptr->MousePressEvent(event);
 
 			if (response == Accept) {
-				section = p;
 				break;
 			}
 		}
 
-		// The Section may be deleted in this event, e.g, a popup menu may delete itself when click a menuitem
-		// Have to check if the section is still exist in deque
-		//AbstractWidgetDeque::iterator it = std::find (m_deque.begin(), m_deque.end(), section);
-		//if(it != m_deque.end()) {
-		//	widget = dynamic_cast<Section*>(*it)->m_last_hover_widget;
-		//}
-
-		bool found = false;
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			if (p == section) {
-				found = true;
-				break;
-			}
+		if(response == Accept && Section::iterator_ptr) {
+			widget = dynamic_cast<Section*>(Section::iterator_ptr)->m_last_hover_widget;
 		}
 
-		if(found) {
-			widget = dynamic_cast<Section*>(section)->m_last_hover_widget;
-		}
+		Section::iterator_ptr = 0;
 
 		if(original_focused_widget != m_focused_widget) {
 
@@ -471,13 +454,11 @@ namespace BlendInt
 
 		}
 
-		/*
 		if(m_focused_widget) {
 			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
 		} else {
 			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
-		*/
 
 		return response;
 	}

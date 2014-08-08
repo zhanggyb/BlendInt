@@ -224,9 +224,9 @@ namespace BlendInt {
 
 	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
-		int sum = GetSubWidgetSize();
-		if(sum == 0) return;
-		int average_height = h / sum + 1;
+		int count = CountSubWidgets();
+		if(count == 0) return;
+		int average_height = h / count + 1;
 
 		y = y + h;
 		for(AbstractWidget* p = first(); p; p = p->next())
