@@ -81,7 +81,7 @@ namespace BlendInt {
 		Frame::PerformSizeUpdate(request);
 	}
 
-	ResponseType FramePanel::Draw (const RedrawEvent& event)
+	ResponseType FramePanel::Draw (const Profile& profile)
 	{
 		if(m_refresh) {
 
@@ -199,7 +199,7 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			RedrawEvent event;
+			Profile event;
 			ScissorStatus scissor;
 
             GLint vp[4];

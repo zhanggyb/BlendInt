@@ -21,46 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_WINDOW_REDRAWEVENT_HPP_
-#define _BLENDINT_WINDOW_REDRAWEVENT_HPP_
-
-#include <glm/glm.hpp>
-
-#include <BlendInt/Window/DeviceEvent.hpp>
+#ifndef _BLENDINT_GUI_PROFILE_HPP_
+#define _BLENDINT_GUI_PROFILE_HPP_
 
 namespace BlendInt {
 
-	class RedrawEvent: public DeviceEvent
+	class Context;
+	class Section;
+
+	/**
+	 * @brief Global setting for widget drawing
+	 */
+	class Profile
 	{
 	public:
 
-		RedrawEvent ()
-		: DeviceEvent(), m_onscreen(true)
+		Profile ()
+		: context_(0),
+		  section_(0)
 		{
 		}
 
-		RedrawEvent (const RedrawEvent& orig)
-		: DeviceEvent(orig)
+		~Profile ()
 		{
-			m_onscreen = orig.m_onscreen;
 		}
 
-		~RedrawEvent ()
-		{}
-
-		RedrawEvent& operator = (const RedrawEvent& orig)
+		Context* context () const
 		{
-			m_onscreen = orig.m_onscreen;
+			return context_;
+		}
 
-			return *this;
+		Section* section () const
+		{
+			return section_;
 		}
 
 	private:
 
-		bool m_onscreen;
+		friend class Context;
+		friend class Section;
 
+		Context* context_;
+		Section* section_;
 	};
 
 }
 
-#endif // _BLENDINT_WINDOW_REDRAWEVENT_HPP_
+#endif /* _BLENDINT_GUI_PROFILE_HPP_ */

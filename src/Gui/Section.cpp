@@ -241,7 +241,7 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			RedrawEvent event;
+			Profile event;
 			ScissorStatus scissor;
 
             GLint vp[4];
@@ -372,7 +372,7 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			RedrawEvent event;
+			Profile event;
 			ScissorStatus scissor;
 
             GLint vp[4];
@@ -468,13 +468,13 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Section::Draw (const RedrawEvent& event)
+	ResponseType Section::Draw (const Profile& profile)
 	{
-		const_cast<RedrawEvent&>(event).m_section = this;
+		const_cast<Profile&>(profile).section_ = this;
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			DispatchDrawEvent(p, event);
+			DispatchDrawEvent(p, profile);
 		}
 
 		return Accept;
@@ -579,7 +579,7 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
-	        const RedrawEvent& event, ScissorStatus& scissor)
+	        const Profile& profile, ScissorStatus& scissor)
 	{
 		if (widget->visiable()) {
 
@@ -587,7 +587,7 @@ namespace BlendInt {
 				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
-			ResponseType response = widget->Draw(event);
+			ResponseType response = widget->Draw(profile);
 			if(response == Accept) return;
 
 			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
@@ -605,14 +605,14 @@ namespace BlendInt {
 
 					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
 					{
-						DispatchDrawEvent(sub, event, scissor);
+						DispatchDrawEvent(sub, profile, scissor);
 					}
 
 				} else {
 
 					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
 					{
-						DispatchDrawEvent(sub, event, scissor);
+						DispatchDrawEvent(sub, profile, scissor);
 					}
 				}
 
@@ -627,7 +627,7 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
-	        const RedrawEvent& event)
+	        const Profile& profile)
 	{
 		if (widget && widget->visiable()) {
 
@@ -635,7 +635,7 @@ namespace BlendInt {
 				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
-			ResponseType response = widget->Draw(event);
+			ResponseType response = widget->Draw(profile);
 			if(response == Accept) return;
 
 			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
@@ -653,14 +653,14 @@ namespace BlendInt {
 
 					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
 					{
-						DispatchDrawEvent(sub, event);
+						DispatchDrawEvent(sub, profile);
 					}
 
 				} else {
 
 					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
 					{
-						DispatchDrawEvent(sub, event);
+						DispatchDrawEvent(sub, profile);
 					}
 				}
 

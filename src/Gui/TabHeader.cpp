@@ -168,7 +168,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType TabHeader::Draw (const RedrawEvent& event)
+	ResponseType TabHeader::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

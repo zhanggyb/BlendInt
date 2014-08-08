@@ -190,7 +190,7 @@ void FontView::LoadCharacter ()
 	// glBindVertexArray(0);
 }
 
-BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
+BI::ResponseType FontView::Draw (const BI::Profile& event)
 {
 	//int advance = m_font.Print(position(), L"A仁B义C礼D智E信F");
 	//int advance = m_font.Print(mvp, L"ABC");

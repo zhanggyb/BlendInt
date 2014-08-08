@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 

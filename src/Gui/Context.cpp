@@ -353,11 +353,11 @@ namespace BlendInt
 	{
 	}
 
-	ResponseType Context::Draw (const RedrawEvent& event)
+	ResponseType Context::Draw (const Profile& profile)
 	{
 		//glm::vec3 pos(position().x(), position().y(), z());
 		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-		const_cast<RedrawEvent&>(event).m_context = this;
+		const_cast<Profile&>(profile).context_ = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
@@ -374,7 +374,7 @@ namespace BlendInt
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			p->Draw(event);
+			p->Draw(profile);
 		}
 
 		return Accept;

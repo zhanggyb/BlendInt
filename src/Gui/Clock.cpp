@@ -55,7 +55,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	ResponseType Clock::Draw(const RedrawEvent& event)
+	ResponseType Clock::Draw(const Profile& profile)
 	{
 		using Stock::Shaders;
 

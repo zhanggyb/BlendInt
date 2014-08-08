@@ -243,16 +243,16 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::Draw (const RedrawEvent& event)
+	void Interface::Draw (const Profile& profile)
 	{
 		if(m_current_context) {
-			m_current_context->Draw(event);
+			m_current_context->Draw(profile);
 		}
 	}
 
-	void Interface::DrawContext (Context* context, const RedrawEvent& event)
+	void Interface::DrawContext (Context* context, const Profile& profile)
 	{
-		ResponseType response = context->Draw(event);
+		ResponseType response = context->Draw(profile);
 
 		if(response == Accept) {
 			// DO nothing;

@@ -145,7 +145,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType SplitterHandle::Draw (const RedrawEvent& event)
+	ResponseType SplitterHandle::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 
@@ -572,7 +572,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Splitter::Draw (const RedrawEvent& event)
+	ResponseType Splitter::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

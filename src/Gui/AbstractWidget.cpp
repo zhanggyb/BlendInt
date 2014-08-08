@@ -21,34 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <algorithm>
-#include <iostream>
-#include <set>
-#include <stdexcept>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <OpenImageIO/imageio.h>
-OIIO_NAMESPACE_USING
-
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/OpenGL/GLFramebuffer.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
-
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 

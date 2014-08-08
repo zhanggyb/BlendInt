@@ -83,9 +83,9 @@ namespace BlendInt {
 
 		void Draw ();
 
-		void Draw (const RedrawEvent& event);
+		void Draw (const Profile& profile);
 
-		void DrawContext (Context* context, const RedrawEvent& event);
+		void DrawContext (Context* context, const Profile& profile);
 
 		void DispatchKeyEvent (Context* context, const KeyEvent& event);
 

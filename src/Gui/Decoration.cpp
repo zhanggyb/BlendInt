@@ -129,7 +129,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Decoration::Draw (const RedrawEvent& event)
+	ResponseType Decoration::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

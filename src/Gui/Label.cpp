@@ -85,7 +85,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Label::Draw (const RedrawEvent& event)
+	ResponseType Label::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

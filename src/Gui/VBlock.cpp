@@ -171,7 +171,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType VBlock::Draw (const RedrawEvent& event)
+	ResponseType VBlock::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

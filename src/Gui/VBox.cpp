@@ -192,7 +192,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType VBox::Draw (const RedrawEvent& event)
+	ResponseType VBox::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

@@ -121,7 +121,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ExpandButton::Draw (const RedrawEvent& event)
+	ResponseType ExpandButton::Draw (const Profile& profile)
 	{
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -347,7 +347,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType Expander::Draw (const RedrawEvent& event)
+	ResponseType Expander::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->triangle_program();

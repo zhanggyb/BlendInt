@@ -150,7 +150,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolButton::Draw (const RedrawEvent& event)
+	ResponseType ToolButton::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

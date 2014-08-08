@@ -40,9 +40,8 @@
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
-#include <BlendInt/Window/RedrawEvent.hpp>
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/Gui/Profile.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
@@ -553,6 +552,8 @@ namespace BlendInt {
 			size_ = size;
 		}
 
+		virtual ResponseType Draw (const Profile& profile) = 0;
+
 		virtual ResponseType FocusEvent (bool focus) = 0;
 
 		virtual ResponseType CursorEnterEvent (bool entered) = 0;
@@ -590,8 +591,6 @@ namespace BlendInt {
 		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
 		virtual void PerformRefresh (const RefreshRequest& request);
-
-		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
 		void ReportSizeUpdate (const SizeUpdateRequest& request);
 

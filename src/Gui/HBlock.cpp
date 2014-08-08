@@ -170,7 +170,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType HBlock::Draw (const RedrawEvent& event)
+	ResponseType HBlock::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

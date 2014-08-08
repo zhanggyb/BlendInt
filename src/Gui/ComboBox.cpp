@@ -191,7 +191,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ComboBox::Draw(const RedrawEvent& event)
+	ResponseType ComboBox::Draw(const Profile& profile)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 

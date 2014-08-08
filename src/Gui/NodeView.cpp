@@ -134,7 +134,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType NodeView::Draw(const RedrawEvent& event)
+	ResponseType NodeView::Draw(const Profile& profile)
 	{
 		using Stock::Shaders;
 

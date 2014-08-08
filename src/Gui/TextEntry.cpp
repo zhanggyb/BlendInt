@@ -314,7 +314,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType TextEntry::Draw (const RedrawEvent& event)
+	ResponseType TextEntry::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

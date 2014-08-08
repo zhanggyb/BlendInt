@@ -149,7 +149,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Tab::Draw (const RedrawEvent& event)
+	ResponseType Tab::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

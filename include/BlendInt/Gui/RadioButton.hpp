@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 

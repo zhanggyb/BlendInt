@@ -125,7 +125,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType CVImageView::Draw (const RedrawEvent& event)
+	ResponseType CVImageView::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 
@@ -161,8 +161,8 @@ namespace BlendInt {
 		texture_->Reset();
 		program->Reset();
 
-		DispatchDrawEvent(hbar(), event);
-		DispatchDrawEvent(vbar(), event);
+		DispatchDrawEvent(hbar(), profile);
+		DispatchDrawEvent(vbar(), profile);
 
 		return Accept;
 	}

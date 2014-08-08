@@ -192,7 +192,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType HBox::Draw (const RedrawEvent& event)
+	ResponseType HBox::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

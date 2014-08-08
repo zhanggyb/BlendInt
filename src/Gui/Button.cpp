@@ -126,7 +126,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Button::Draw (const RedrawEvent& event)
+	ResponseType Button::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

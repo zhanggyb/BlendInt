@@ -148,7 +148,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ImageView::Draw (const RedrawEvent& event)
+	ResponseType ImageView::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -188,8 +188,8 @@ namespace BlendInt {
 		texture_->Reset();
 		program->Reset();
 
-		DispatchDrawEvent(hbar(), event);
-		DispatchDrawEvent(vbar(), event);
+		DispatchDrawEvent(hbar(), profile);
+		DispatchDrawEvent(vbar(), profile);
 
 		return Accept;
 	}

@@ -187,7 +187,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolBox::Draw (const RedrawEvent& event)
+	ResponseType ToolBox::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

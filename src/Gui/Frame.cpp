@@ -214,7 +214,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Frame::Draw (const RedrawEvent& event)
+	ResponseType Frame::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

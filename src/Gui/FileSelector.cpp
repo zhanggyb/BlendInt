@@ -75,7 +75,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType FileSelector::Draw (const RedrawEvent& event)
+	ResponseType FileSelector::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

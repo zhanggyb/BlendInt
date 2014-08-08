@@ -71,7 +71,7 @@ namespace BlendInt {
 		return Size(160, 160);
 	}
 
-	ResponseType ColorWheel::Draw (const RedrawEvent& event)
+	ResponseType ColorWheel::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

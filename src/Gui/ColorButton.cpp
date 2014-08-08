@@ -120,7 +120,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ColorButton::Draw (const RedrawEvent& event)
+	ResponseType ColorButton::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 		int outline_vertices = GetOutlineVertices(round_type());
