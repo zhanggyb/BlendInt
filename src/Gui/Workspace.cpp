@@ -101,13 +101,13 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				tmp = (*it)->GetPreferredSize();
+				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
 				prefer.set_height(std::max(prefer.height(), tmp.height()));
 			}

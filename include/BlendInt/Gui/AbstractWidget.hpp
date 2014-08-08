@@ -49,7 +49,6 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
-	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
 
@@ -302,7 +301,7 @@ namespace BlendInt {
 
 		const Point& position () const
 		{
-			return m_position;
+			return position_;
 		}
 
 		virtual Size GetPreferredSize () const;
@@ -352,69 +351,77 @@ namespace BlendInt {
 
 		void Refresh ();
 
+		void MoveBackward ();
+
+		void MoveForward ();
+
+		void MoveToFirst ();
+
+		void MoveToLast ();
+
 		const Size& size () const
 		{
-			return m_size;
+			return size_;
 		}
 
 		void activate_events ()
 		{
-			SETBIT(m_flags, WidgetFlagFireEvents);
+			SETBIT(flags_, WidgetFlagFireEvents);
 		}
 
 		void deactivate_events ()
 		{
-			CLRBIT(m_flags, WidgetFlagFireEvents);
+			CLRBIT(flags_, WidgetFlagFireEvents);
 		}
 
 		bool fire_events () const
 		{
-			return m_flags & WidgetFlagFireEvents;
+			return flags_ & WidgetFlagFireEvents;
 		}
 
 		inline bool focused () const
 		{
-			return m_flags & WidgetFlagFocus;
+			return flags_ & WidgetFlagFocus;
 		}
 
 		inline bool hover () const
 		{
-			return m_flags & WidgetFlagHover;
+			return flags_ & WidgetFlagHover;
 		}
 
 		inline bool visiable () const
 		{
-			return m_flags & WidgetFlagVisibility;
+			return flags_ & WidgetFlagVisibility;
 		}
 
 		inline bool scissor_test () const
 		{
-			return m_flags & WidgetFlagScissorTest;
+			return flags_ & WidgetFlagScissorTest;
 		}
 
 		inline bool managed () const
 		{
-			return m_flags & WidgetFlagManaged;
+			return flags_ & WidgetFlagManaged;
 		}
 
 		inline bool emboss () const
 		{
-			return m_flags & WidgetFlagEmboss;
+			return flags_ & WidgetFlagEmboss;
 		}
 
 		int round_type () const
 		{
-			return m_flags & 0x0F;
+			return flags_ & 0x0F;
 		}
 
 		float round_radius () const
 		{
-			return m_round_radius;
+			return round_radius_;
 		}
 
 		bool drop_shadow () const
 		{
-			return m_flags & WidgetFlagDropShadow;
+			return flags_ & WidgetFlagDropShadow;
 		}
 
 		/**
@@ -447,12 +454,22 @@ namespace BlendInt {
 
 		Cpp::EventRef<AbstractWidget*> destroyed ()
 		{
-			return m_destroyed;
+			return destroyed_;
 		}
 
 		inline AbstractContainer* container() const
 		{
-			return m_container;
+			return container_;
+		}
+
+		inline AbstractWidget* previous () const
+		{
+			return previous_;
+		}
+
+		inline AbstractWidget* next () const
+		{
+			return next_;
 		}
 
 		/**
@@ -470,15 +487,15 @@ namespace BlendInt {
 
 		inline void set_name (const char* name)
 		{
-			m_name = name;
+			name_ = name;
 		}
 
 		inline void set_name (const std::string& name)
 		{
-			m_name = name;
+			name_ = name;
 		}
 
-		const std::string& name () const {return m_name;}
+		const std::string& name () const {return name_;}
 
 #endif
 
@@ -494,8 +511,8 @@ namespace BlendInt {
 		 */
 		void set_position (int x, int y)
 		{
-			m_position.set_x(x);
-			m_position.set_y(y);
+			position_.set_x(x);
+			position_.set_y(y);
 		}
 
 		/**
@@ -507,7 +524,7 @@ namespace BlendInt {
 		 */
 		void set_position (const Point& pos)
 		{
-			m_position = pos;
+			position_ = pos;
 		}
 
 		/**
@@ -520,8 +537,8 @@ namespace BlendInt {
 		 */
 		inline void set_size (int width, int height)
 		{
-			m_size.set_width(width);
-			m_size.set_height(height);
+			size_.set_width(width);
+			size_.set_height(height);
 		}
 
 		/**
@@ -533,7 +550,7 @@ namespace BlendInt {
 		 */
 		inline void set_size (const Size& size)
 		{
-			m_size = size;
+			size_ = size;
 		}
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
@@ -599,68 +616,68 @@ namespace BlendInt {
 		void set_focus (bool focus)
 		{
 			if(focus) {
-				SETBIT(m_flags, WidgetFlagFocus);
+				SETBIT(flags_, WidgetFlagFocus);
 			} else {
-				CLRBIT(m_flags, WidgetFlagFocus);
+				CLRBIT(flags_, WidgetFlagFocus);
 			}
 		}
 
 		void set_hover (bool hover)
 		{
 			if(hover) {
-				SETBIT(m_flags, WidgetFlagHover);
+				SETBIT(flags_, WidgetFlagHover);
 			} else {
-				CLRBIT(m_flags, WidgetFlagHover);
+				CLRBIT(flags_, WidgetFlagHover);
 			}
 		}
 
 		void set_visible (bool visiable)
 		{
 			if(visiable) {
-				SETBIT(m_flags, WidgetFlagVisibility);
+				SETBIT(flags_, WidgetFlagVisibility);
 			} else {
-				CLRBIT(m_flags, WidgetFlagVisibility);
+				CLRBIT(flags_, WidgetFlagVisibility);
 			}
 		}
 
 		void set_emboss (bool emboss)
 		{
 			if (emboss) {
-				SETBIT(m_flags, WidgetFlagEmboss);
+				SETBIT(flags_, WidgetFlagEmboss);
 			} else {
-				CLRBIT(m_flags, WidgetFlagEmboss);
+				CLRBIT(flags_, WidgetFlagEmboss);
 			}
 		}
 
 		void set_scissor_test (bool status)
 		{
 			if(status) {
-				SETBIT(m_flags, WidgetFlagScissorTest);
+				SETBIT(flags_, WidgetFlagScissorTest);
 			} else {
-				CLRBIT(m_flags, WidgetFlagScissorTest);
+				CLRBIT(flags_, WidgetFlagScissorTest);
 			}
 		}
 
 		void set_round_type (int type)
 		{
-			m_flags = (m_flags & 0xFFF0) + (type & 0x0F);
+			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
 		}
 
 		void set_round_radius (float radius)
 		{
-			m_round_radius = radius;
+			round_radius_ = radius;
 		}
 
 		void set_drop_shadow (bool shadow)
 		{
 			if(shadow) {
-				SETBIT(m_flags, WidgetFlagDropShadow);
+				SETBIT(flags_, WidgetFlagDropShadow);
 			} else {
-				CLRBIT(m_flags, WidgetFlagDropShadow);
+				CLRBIT(flags_, WidgetFlagDropShadow);
 			}
 		}
 
-		Cpp::ConnectionScope* events() const {return m_events.get();}
+		Cpp::ConnectionScope* events() const {return events_.get();}
 
 	private:
 
@@ -696,30 +713,34 @@ namespace BlendInt {
 		void set_manage (bool val)
 		{
 			if(val) {
-				SETBIT(m_flags, WidgetFlagManaged);
+				SETBIT(flags_, WidgetFlagManaged);
 			} else {
-				CLRBIT(m_flags, WidgetFlagManaged);
+				CLRBIT(flags_, WidgetFlagManaged);
 			}
 		}
 
-		Point m_position;
+		Point position_;
 
-		Size m_size;
+		Size size_;
 
-		unsigned int m_flags;
+		unsigned int flags_;
 
-		float m_round_radius;
+		float round_radius_;
 
-		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
-		Cpp::Event<AbstractWidget*> m_destroyed;
+		Cpp::Event<AbstractWidget*> destroyed_;
 
-		AbstractContainer* m_container;
+		AbstractContainer* container_;
 
-		RefPtr<Shadow> m_shadow;
+		AbstractWidget* previous_;
+
+		AbstractWidget* next_;
+
+		RefPtr<Shadow> shadow_;
 
 #ifdef DEBUG
-		std::string m_name;
+		std::string name_;
 #endif
 
 		static float default_border_width;

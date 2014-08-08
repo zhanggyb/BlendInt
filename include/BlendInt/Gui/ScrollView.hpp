@@ -68,7 +68,7 @@ namespace BlendInt {
 
 		AbstractWidget* viewport () const
 		{
-			return deque()[0];
+			return first();
 		}
 
 		virtual bool IsExpandX () const;

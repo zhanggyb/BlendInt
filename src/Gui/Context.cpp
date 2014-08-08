@@ -96,7 +96,7 @@ namespace BlendInt
 									name().c_str());
 				return section;
 			} else {
-				AbstractContainer::RemoveSubWidget(section->container(), section);
+				section->container_->RemoveSubWidget(section);
 			}
 		} else {
 			section = Manage(new Section);
@@ -108,12 +108,13 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
 		}
 
-		if(section->m_deque.size() == 0) {
+		if(section->first_ == 0) {
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
+		int count = CountSubWidgets();
 		char buf[32];
-		sprintf(buf, "Section %ld", deque().size());
+		sprintf(buf, "Section %d", count);
 		DBG_SET_NAME(section, buf);
 #endif
 
@@ -135,7 +136,7 @@ namespace BlendInt
 		Section* section = Section::GetSection(widget);
 		assert(section->container() == this);
 
-		AbstractContainer::RemoveSubWidget(widget->container(), widget);
+		widget->container_->RemoveSubWidget(widget);
 
 		if(widget->focused()) {
 
@@ -147,7 +148,7 @@ namespace BlendInt
 
 		}
 
-		if(section->m_deque.size() == 0) {
+		if(section->first_ == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {
 				delete section;
@@ -159,70 +160,6 @@ namespace BlendInt
 		}
 
 		return section;
-	}
-
-	void Context::MoveToTop(const Section* section)
-	{
-		if((section == 0) || (section->container() != this)) return;
-
-		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
-
-		if(it == m_deque.end()) return;
-
-		AbstractWidget* sect = *it;
-
-		m_deque.erase(it);
-		m_deque.push_back(sect);
-	}
-
-	void Context::MoveToBottom(const Section* section)
-	{
-		if((section == 0) || (section->container() != this)) return;
-
-		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
-
-		if(it == m_deque.end()) return;
-
-		AbstractWidget* sect = *it;
-
-		m_deque.erase(it);
-		m_deque.push_front(sect);
-	}
-
-	void Context::MoveUp (const Section* section)
-	{
-		if((section == 0) || (section->container() != this)) return;
-
-		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
-
-		if(it == m_deque.end()) return;
-
-		AbstractWidgetDeque::iterator next = it;
-		std::advance(next, 1);
-
-		if(next == m_deque.end()) return;
-
-		AbstractWidget* tmp = *it;
-		*it = *next;
-		*next = tmp;
-	}
-
-	void Context::MoveDown(const Section* section)
-	{
-		if((section == 0) || (section->container() != this)) return;
-
-		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
-
-		if(it == m_deque.end()) return;
-
-		AbstractWidgetDeque::iterator prev = it;
-		std::advance(prev, -1);
-
-		if(it == m_deque.begin()) return;
-
-		AbstractWidget* tmp = *it;
-		*it = *prev;
-		*prev = tmp;
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -377,9 +314,9 @@ namespace BlendInt
 
 			program->Reset();
 
-			for (AbstractWidgetDeque::iterator it = m_deque.begin();
-			        it != m_deque.end(); it++) {
-				ResizeSubWidget(*it, *request.size());
+			for(AbstractWidget* p = first(); p; p = p->next())
+			{
+				ResizeSubWidget(p, *request.size());
 			}
 
 			set_size(*request.size());
@@ -388,8 +325,8 @@ namespace BlendInt
 
 		} else if (request.source()->container() == this) {
 
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->Resize(request.size()->width(),
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->Resize(request.size()->width(),
 				        request.size()->height());
 			}
 
@@ -435,9 +372,9 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for (AbstractWidgetDeque::iterator it = m_deque.begin();
-		        it != m_deque.end(); it++) {
-			(*it)->Draw(event);
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			p->Draw(event);
 		}
 
 		return Accept;
@@ -487,26 +424,20 @@ namespace BlendInt
 
 		const_cast<MouseEvent&>(event).m_context = this;
 
-		AbstractWidget* section = 0;
-
-		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
-				it != m_deque.rend();
-				it++)
-		{
-			response = (*it)->MousePressEvent(event);
+		for (Section::iterator_ptr = last(); Section::iterator_ptr;
+		        Section::iterator_ptr = Section::iterator_ptr->previous()) {
+			response = Section::iterator_ptr->MousePressEvent(event);
 
 			if (response == Accept) {
-				section = *it;
 				break;
 			}
 		}
 
-		// The Section may be deleted in this event, e.g, a popup menu may delete itself when click a menuitem
-		// Have to check if the section is still exist in deque
-		AbstractWidgetDeque::iterator it = std::find (m_deque.begin(), m_deque.end(), section);
-		if(it != m_deque.end()) {
-			widget = dynamic_cast<Section*>(*it)->m_last_hover_widget;
+		if(response == Accept && Section::iterator_ptr) {
+			widget = dynamic_cast<Section*>(Section::iterator_ptr)->m_last_hover_widget;
 		}
+
+		Section::iterator_ptr = 0;
 
 		if(original_focused_widget != m_focused_widget) {
 
@@ -523,13 +454,11 @@ namespace BlendInt
 
 		}
 
-		/*
 		if(m_focused_widget) {
 			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
 		} else {
 			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
-		*/
 
 		return response;
 	}
@@ -549,11 +478,9 @@ namespace BlendInt
 			return response;
 		}
 
-		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
-				it != m_deque.rend();
-				it++)
+		for(AbstractWidget* p = last(); p; p = p->previous())
 		{
-			response = (*it)->MouseReleaseEvent(event);
+			response = p->MouseReleaseEvent(event);
 			if (response == Accept) {
 				break;
 			}
@@ -576,21 +503,17 @@ namespace BlendInt
 		if(response == Accept) {
 
 			// still set cursor hover
-			for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
-					it != m_deque.rend();
-					it++)
+			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
-				if(dynamic_cast<Section*>(*it)->CheckAndUpdateHoverWidget(event)) break;
+				if(dynamic_cast<Section*>(p)->CheckAndUpdateHoverWidget(event)) break;
 			}
 
 			return response;	// return Accept
 		}
 
-		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
-				it != m_deque.rend();
-				it++)
+		for(AbstractWidget* p = last(); p; p = p->previous())
 		{
-			response = (*it)->MouseMoveEvent(event);
+			response = p->MouseMoveEvent(event);
 
 			if (response == Accept) {
 				break;

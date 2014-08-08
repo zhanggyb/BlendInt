@@ -225,7 +225,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -241,16 +241,13 @@ namespace BlendInt {
 
 		} else {
 
-			AbstractWidget* widget = 0;
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				widget = *it;
-
-				if(widget->visiable()) {
-					tmp_size = widget->GetPreferredSize();
+				if(p->visiable()) {
+					tmp_size = p->GetPreferredSize();
 
 					preferred_size.add_width(tmp_size.width() + m_space);
 					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
@@ -269,13 +266,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	MenuButton* MenuBar::GetMenuButton (size_t index)
+	MenuButton* MenuBar::GetMenuButton (int index)
 	{
 		MenuButton* button = 0;
 
-		if(index < sub_widget_size()) {
-			button = dynamic_cast<MenuButton*>(deque().at(index));
-		}
+		button = dynamic_cast<MenuButton*>(GetWidgetAt(index));
 
 		return button;
 	}
@@ -306,9 +301,9 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			MenuButton* menubutton = dynamic_cast<MenuButton*>(*it);
+			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
 				if(menubutton->focused()) {
 					m_active_button = menubutton;
@@ -389,14 +384,8 @@ namespace BlendInt {
 	{
 		int pos = position().x() + margin().left();
 
-		if(deque().size()) {
-			pos -= m_space;
-
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
-			{
-				pos += m_space;
-				pos = pos + (*it)->size().width();
-			}
+		if(last()) {
+			pos = last()->position().x() + last()->size().width() + m_space;
 		}
 		return pos;
 	}

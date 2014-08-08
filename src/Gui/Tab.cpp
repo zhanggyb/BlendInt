@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: AbstractContainer(2)
+	: AbstractContainer()
 	{
 		set_size(400, 300);
 
@@ -54,8 +54,8 @@ namespace BlendInt {
 		StackPanel* stack = Manage(new StackPanel);
 		stack->SetMargin(4, 4, 4, 4);
 
-		AssignSubWidget(0, header);
-		AssignSubWidget(1, stack);
+		PushBackSubWidget(header);	// 0
+		PushBackSubWidget(stack);	// 1
 
 		FillSubWidgetsInTab(size(), margin());
 
@@ -71,23 +71,23 @@ namespace BlendInt {
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
 
-		TabHeader* header = dynamic_cast<TabHeader*>(deque()[0]);
-		StackPanel* stack = dynamic_cast<StackPanel*>(deque()[1]);
+		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
+		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
 
 		header->PushBack(btn);
 		stack->PushBack(widget);
 
-		if(header->deque().size() == 1) {
+		if(header->CountSubWidgets() == 1) {
 			btn->SetChecked(true);
 		}
 	}
 
 	bool Tab::IsExpandX () const
 	{
-		if(deque()[0]->IsExpandX())
+		if(GetWidgetAt(0)->IsExpandX())
 			return true;
 
-		if(deque()[1]->IsExpandX())
+		if(GetWidgetAt(1)->IsExpandX())
 			return true;
 
 		return false;
@@ -95,10 +95,10 @@ namespace BlendInt {
 
 	bool Tab::IsEXpandY () const
 	{
-		if(deque()[0]->IsExpandY())
+		if(GetWidgetAt(0)->IsExpandY())
 			return true;
 
-		if(deque()[1]->IsExpandY())
+		if(GetWidgetAt(1)->IsExpandY())
 			return true;
 
 		return false;
@@ -109,8 +109,8 @@ namespace BlendInt {
 		int w = 0;
 		int h = 0;
 
-		Size tmp1 = deque()[0]->GetPreferredSize();
-		Size tmp2 = deque()[1]->GetPreferredSize();
+		Size tmp1 = GetWidgetAt(0)->GetPreferredSize();
+		Size tmp2 = GetWidgetAt(1)->GetPreferredSize();
 
 		w = std::max(tmp1.width(), tmp2.width());
 		h = tmp1.height() + tmp2.height();
@@ -191,7 +191,7 @@ namespace BlendInt {
 	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
-		Stack* stack = dynamic_cast<Stack*>(deque()[1]);
+		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		stack->SetIndex(index);
 		Refresh();
@@ -211,8 +211,8 @@ namespace BlendInt {
 	{
 		int header_y = position().y() + size().height() - margin().top();
 
-		TabHeader* header = dynamic_cast<TabHeader*>(deque()[0]);
-		StackPanel* stack = dynamic_cast<StackPanel*>(deque()[1]);
+		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
+		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
 
 		Size header_size = header->GetPreferredSize();
 

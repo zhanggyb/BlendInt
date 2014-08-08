@@ -51,8 +51,6 @@ namespace BlendInt {
 
 		AbstractContainer ();
 
-		AbstractContainer (size_t size);
-
 		virtual ~AbstractContainer ();
 
 		const Margin& margin () const {return m_margin;}
@@ -61,29 +59,46 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
-		bool FindSubWidget (AbstractWidget* widget);
-
-		size_t sub_widget_size () const
+		AbstractWidget* first () const
 		{
-			return m_deque.size();
+			return first_;
 		}
 
-		const AbstractWidgetDeque& deque () const
+		AbstractWidget* last() const
 		{
-			return m_deque;
+			return last_;
 		}
 
-	protected:
-
+		// temporary public:
+#ifdef DEBUG
 		bool PushFrontSubWidget (AbstractWidget* widget);
+
+		bool InsertSubWidget (int index, AbstractWidget* widget);
 
 		bool PushBackSubWidget (AbstractWidget* widget);
 
-		bool AssignSubWidget (size_t index, AbstractWidget* widget);
+		bool RemoveSubWidget (AbstractWidget* widget);
 
-		bool InsertSubWidget (size_t index, AbstractWidget* widget);
+		void ListSubWidgets ();
+#endif
+
+		int CountSubWidgets () const;
+
+		AbstractWidget* operator [] (int i) const;
+
+		AbstractWidget* GetWidgetAt (int i) const;
+
+	protected:
+
+#ifndef DEBUG
+		bool PushFrontSubWidget (AbstractWidget* widget);
+
+		bool InsertSubWidget (int index, AbstractWidget* widget);
+
+		bool PushBackSubWidget (AbstractWidget* widget);
 
 		bool RemoveSubWidget (AbstractWidget* widget);
+#endif
 
 		void Clear ();
 
@@ -107,11 +122,11 @@ namespace BlendInt {
 
 		void ResizeSubWidgets (int w, int h);
 
-		void FillSingleWidget (size_t index, const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillSingleWidget (int index, const Point& out_pos, const Size& out_size, const Margin& margin);
 
-		void FillSingleWidget (size_t index, const Point& pos, const Size& size);
+		void FillSingleWidget (int index, const Point& pos, const Size& size);
 
-		void FillSingleWidget (size_t index, int left, int bottom, int width, int height);
+		void FillSingleWidget (int index, int left, int bottom, int width, int height);
 
 		void FillSubWidgetsAveragely (const Point& out_pos, const Size& out_size,
 						const Margin& margin, Orientation orientation,
@@ -128,19 +143,6 @@ namespace BlendInt {
 		void FillSubWidgetsAveragely (int x, int y, int width,
 						int height, Orientation orientation,
 						int alignment, int space);
-
-		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
-		{
-			if(container)
-				return container->RemoveSubWidget(sub);
-			else
-				return true;
-		}
-
-		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
-		{
-			widget->m_container = container;
-		}
 
 		bool EnableShadow (AbstractWidget* widget);
 
@@ -161,8 +163,6 @@ namespace BlendInt {
 
 	private:
 
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
-
 		void DistributeHorizontally (int x, int width, int space);
 
 		void DistributeVertically (int y, int height, int space);
@@ -173,10 +173,8 @@ namespace BlendInt {
 
 		Margin m_margin;
 
-		/**
-		 * @brief Sub widgets which build a tree to accept render and device events
-		 */
-		AbstractWidgetDeque m_deque;
+		AbstractWidget* first_;
+		AbstractWidget* last_;
 
 	};
 

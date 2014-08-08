@@ -86,23 +86,20 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 
 			preferred_size.set_width(200);
 			preferred_size.set_height(200);
 
 		} else {
 
-			AbstractWidget* widget = 0;
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				widget = *it;
-
-				if(widget->visiable()) {
-					tmp_size = widget->GetPreferredSize();
+				if(p->visiable()) {
+					tmp_size = p->GetPreferredSize();
 
 					preferred_size.add_width(tmp_size.width() + m_space);
 					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
@@ -120,9 +117,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandX()) {
+			if(p->IsExpandX()) {
 				expand = true;
 				break;
 			}
@@ -135,9 +132,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandY()) {
+			if(p->IsExpandY()) {
 				expand = true;
 				break;
 			}
@@ -263,15 +260,13 @@ namespace BlendInt {
 		int expandable_preferred_width_sum = 0;	// the width sum of the expandable widgets' size
 		int unexpandable_preferred_width_sum = 0;	// the width sum of the unexpandable widgets' size
 
-		AbstractWidget* widget = 0;
 		Size tmp_size;
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			widget = *it;
-			if (widget->visiable()) {
-				tmp_size = widget->GetPreferredSize();
+			if (p->visiable()) {
+				tmp_size = p->GetPreferredSize();
 
-				if(widget->IsExpandX()) {
+				if(p->IsExpandX()) {
 					expandable_preferred_width_sum += tmp_size.width();
 					expandable_preferred_widths->push_back(tmp_size.width());
 				} else {
@@ -279,7 +274,7 @@ namespace BlendInt {
 					unexpandable_preferred_widths->push_back(tmp_size.width());
 				}
 
-				if(!widget->IsExpandY()) {
+				if(!p->IsExpandY()) {
 					unexpandable_preferred_heights->push_back(tmp_size.height());
 				}
 
@@ -318,29 +313,26 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		AbstractWidgetDeque::const_iterator widget_it = deque().begin();
-		AbstractWidget* widget = 0;
+		AbstractWidget* p = first();
 
-		while (widget_it != deque().end()) {
+		while (p) {
 
-			widget = *widget_it;
+			if(p->visiable()) {
 
-			if(widget->visiable()) {
-
-				if(widget->IsExpandX()) {
-					ResizeSubWidget(widget, *exp_it, widget->size().height());
-					SetSubWidgetPosition(widget, x, widget->position().y());
+				if(p->IsExpandX()) {
+					ResizeSubWidget(p, *exp_it, p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, *unexp_it, widget->size().height());
-					SetSubWidgetPosition(widget, x, widget->position().y());
+					ResizeSubWidget(p, *unexp_it, p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
 					unexp_it++;
 				}
 
-				x = x + widget->size().width() + space;
+				x = x + p->size().width() + space;
 			}
 
-			widget_it++;
+			p = p->next();
 		}
 	}
 
@@ -355,9 +347,9 @@ namespace BlendInt {
 		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
 
 		if(widgets_width <= 0) {
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				(*it)->Resize(0, (*it)->size().height());
+				p->Resize(0, p->size().height());
 			}
 			return;
 		}
@@ -365,63 +357,59 @@ namespace BlendInt {
 		int reference_width;
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
-		AbstractWidgetDeque::const_iterator it = deque().begin();
-		AbstractWidget* widget = 0;
+
+		AbstractWidget* p = first();
 
 		if(widgets_width <= unexpandable_prefer_sum) {
 			reference_width = widgets_width;
 
-			while (it != deque().end()) {
+			while (p) {
 
-				widget = (*it);
+				if(p->visiable()) {
 
-				if(widget->visiable()) {
-
-					if (widget->IsExpandX()) {
-						ResizeSubWidget(widget, 0, widget->size().height());
-						SetSubWidgetPosition(widget, x, widget->position().y());
+					if (p->IsExpandX()) {
+						ResizeSubWidget(p, 0, p->size().height());
+						SetSubWidgetPosition(p, x, p->position().y());
 						exp_it++;
 					} else {
-						ResizeSubWidget(widget,
+						ResizeSubWidget(p,
 										reference_width * (*unexp_it)
 														/ unexpandable_prefer_sum,
-										widget->size().height());
-						SetSubWidgetPosition(widget, x, widget->position().y());
+										p->size().height());
+						SetSubWidgetPosition(p, x, p->position().y());
 						unexp_it++;
 					}
 
-					x = x + widget->size().width() + space;
+					x = x + p->size().width() + space;
 				}
 
-				it++;
+				p = p->next();
 			}
 
 		} else {
 			reference_width = widgets_width - unexpandable_prefer_sum;
 
-			while (it != deque().end()) {
+			while (p) {
 
-				widget = (*it);
+				if(p->visiable()) {
 
-				if(widget->visiable()) {
-
-					if (widget->IsExpandX()) {
-						ResizeSubWidget(widget,
+					if (p->IsExpandX()) {
+						ResizeSubWidget(p,
 										reference_width * (*exp_it)
 														/ expandable_prefer_sum,
-										widget->size().height());
-						SetSubWidgetPosition(widget, x, widget->position().y());
+										p->size().height());
+						SetSubWidgetPosition(p, x, p->position().y());
 						exp_it++;
 					} else {
-						ResizeSubWidget(widget, (*unexp_it), widget->size().height());
-						SetSubWidgetPosition(widget, x, widget->position().y());
+						ResizeSubWidget(p, (*unexp_it), p->size().height());
+						SetSubWidgetPosition(p, x, p->position().y());
 						unexp_it++;
 					}
 
-					x = x + widget->size().width() + space;
+					x = x + p->size().width() + space;
 				}
 
-				it++;
+				p = p->next();
 			}
 
 		}
@@ -442,32 +430,28 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		AbstractWidgetDeque::const_iterator it = deque().begin();
+		AbstractWidget* p = first();
+		while (p) {
 
-		AbstractWidget* widget = 0;
-		while (it != deque().end()) {
+			if(p->visiable()) {
 
-			widget = (*it);
-
-			if(widget->visiable()) {
-
-				if (widget->IsExpandX()) {
-					ResizeSubWidget(widget,
+				if (p->IsExpandX()) {
+					ResizeSubWidget(p,
 									expandable_width * (*exp_it)
 													/ expandable_prefer_sum,
-									widget->size().height());
-					SetSubWidgetPosition(widget, x, widget->position().y());
+									p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, (*unexp_it), widget->size().height());
-					SetSubWidgetPosition(widget, x, widget->position().y());
+					ResizeSubWidget(p, (*unexp_it), p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
 					unexp_it++;
 				}
 
-				x = x + widget->size().width() + space;
+				x = x + p->size().width() + space;
 			}
 
-			it++;
+			p = p->next();
 		}
 	}
 
@@ -475,34 +459,32 @@ namespace BlendInt {
 	{
 		std::deque<int>::const_iterator unexp_it =
 		        unexpandable_preferred_heights->begin();
-		AbstractWidgetDeque::const_iterator it;
-		AbstractWidget* widget = 0;
-		for (it = deque().begin(); it != deque().end(); it++) {
-			widget = *it;
 
-			if (widget->IsExpandY()) {
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if (p->IsExpandY()) {
 
-				ResizeSubWidget(widget, widget->size().width(), height);
-				SetSubWidgetPosition(widget, widget->position().x(), y);
+				ResizeSubWidget(p, p->size().width(), height);
+				SetSubWidgetPosition(p, p->position().x(), y);
 
 			} else {
 
 				if ((*unexp_it) >= height) {
-					ResizeSubWidget(widget, widget->size().width(), height);
-					SetSubWidgetPosition(widget, widget->position().x(), y);
+					ResizeSubWidget(p, p->size().width(), height);
+					SetSubWidgetPosition(p, p->position().x(), y);
 				} else {
 
-					ResizeSubWidget(widget, widget->size().width(),
+					ResizeSubWidget(p, p->size().width(),
 					        (*unexp_it));
 
 					if (alignment & AlignTop) {
-						SetSubWidgetPosition(widget, widget->position().x(),
-						        y + (height - widget->size().height()));
+						SetSubWidgetPosition(p, p->position().x(),
+						        y + (height - p->size().height()));
 					} else if (alignment & AlignBottom) {
-						SetSubWidgetPosition(widget, widget->position().x(), y);
+						SetSubWidgetPosition(p, p->position().x(), y);
 					} else if (alignment & AlignHorizontalCenter) {
-						SetSubWidgetPosition(widget, widget->position().x(),
-						        y + (height - widget->size().height()) / 2);
+						SetSubWidgetPosition(p, p->position().x(),
+						        y + (height - p->size().height()) / 2);
 					}
 				}
 

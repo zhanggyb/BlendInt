@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractContainer(3)
+	: AbstractContainer()
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
@@ -60,22 +60,22 @@ namespace BlendInt {
 		if (!widget)
 			return;
 
-		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 		view->Setup(widget);
 
 		int width = size().width() - margin().hsum();
 		int height = size().height() - margin().vsum();
 
 		if (widget->size().width() <= width) {
-			deque()[HScrollBarIndex]->SetVisible(false);
+			GetWidgetAt(HScrollBarIndex)->SetVisible(false);
 		} else {
-			deque()[HScrollBarIndex]->SetVisible(true);
+			GetWidgetAt(HScrollBarIndex)->SetVisible(true);
 		}
 
 		if (widget->size().height() <= height) {
-			deque()[VScrollBarIndex]->SetVisible(false);
+			GetWidgetAt(VScrollBarIndex)->SetVisible(false);
 		} else {
-			deque()[VScrollBarIndex]->SetVisible(true);
+			GetWidgetAt(VScrollBarIndex)->SetVisible(true);
 		}
 
 		AdjustGeometries(position().x() + margin().left(),
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 	void ScrollArea::CentralizeViewport () const
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 		view->CentralizeViewport();
 	}
 
@@ -180,13 +180,13 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 
-		ScrollView* view = Manage(new ScrollView);
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		ScrollView* view = Manage(new ScrollView);
 
-		AssignSubWidget(ScrollViewIndex, view);
-		AssignSubWidget(HScrollBarIndex, hbar);
-		AssignSubWidget(VScrollBarIndex, vbar);
+		PushBackSubWidget(hbar);	// HScrollBarIndex
+		PushBackSubWidget(vbar);	// VScrollBarIndex
+		PushBackSubWidget(view);	// ScrollViewIndex
 
 		hbar->SetSliderPercentage(100);
 		vbar->SetSliderPercentage(100);
@@ -243,7 +243,7 @@ namespace BlendInt {
 			m_inner->Bind();
 			tool.SetInnerBufferData(m_inner.get());
 
-			ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+			ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 			AbstractWidget* widget = view->viewport();
 
 			int width = request.size()->width() - margin().hsum();
@@ -251,15 +251,15 @@ namespace BlendInt {
 
 			if(widget) {
 				if (widget->size().width() <= width) {
-					deque()[HScrollBarIndex]->SetVisible(false);
+					GetWidgetAt(HScrollBarIndex)->SetVisible(false);
 				} else {
-					deque()[HScrollBarIndex]->SetVisible(true);
+					GetWidgetAt(HScrollBarIndex)->SetVisible(true);
 				}
 
 				if (widget->size().height() <= height) {
-					deque()[VScrollBarIndex]->SetVisible(false);
+					GetWidgetAt(VScrollBarIndex)->SetVisible(false);
 				} else {
-					deque()[VScrollBarIndex]->SetVisible(true);
+					GetWidgetAt(VScrollBarIndex)->SetVisible(true);
 				}
 			}
 
@@ -276,9 +276,9 @@ namespace BlendInt {
 		int bh = 0;	// bottom height of the hbar
 		int rw = 0;	// right width of the vbar
 
-		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
-		ScrollBar* hbar = dynamic_cast<ScrollBar*>(deque()[HScrollBarIndex]);
-		ScrollBar* vbar = dynamic_cast<ScrollBar*>(deque()[VScrollBarIndex]);
+		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
+		ScrollBar* hbar = dynamic_cast<ScrollBar*>(GetWidgetAt(HScrollBarIndex));
+		ScrollBar* vbar = dynamic_cast<ScrollBar*>(GetWidgetAt(VScrollBarIndex));
 
 		if(hbar->visiable()) {
 			bh = hbar->size().height();
@@ -320,7 +320,7 @@ namespace BlendInt {
 
 	void ScrollArea::OnHorizontalScroll (int value)
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
 		AbstractWidget* p = view->viewport();
 
@@ -332,7 +332,7 @@ namespace BlendInt {
 
 	void ScrollArea::OnVerticalScroll (int value)
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
 		AbstractWidget* p = view->viewport();
 		if (p) {

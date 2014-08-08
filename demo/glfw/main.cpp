@@ -7,6 +7,8 @@
 #include "GLFWDemoContext.hpp"
 #include "Window.hpp"
 
+#include <BlendInt/Gui/Splitter.hpp>
+
 int main(int argc, char* argv[])
 {
 	using namespace BlendInt;

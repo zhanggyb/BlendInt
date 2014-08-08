@@ -48,7 +48,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: AbstractContainer(1)
+	: AbstractContainer()
 	{
 		set_size(400, 300);
 	}
@@ -61,7 +61,16 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		if (AssignSubWidget(0, widget)) {
+		if(!widget) return false;
+
+		if(widget->container() == this) return true;
+
+		int count = CountSubWidgets();
+		if(count > 0) {
+			Clear();
+		}
+
+		if (PushBackSubWidget(widget)) {
 
 			FillSingleWidget(0, position(), size(), margin());
 
@@ -85,25 +94,27 @@ namespace BlendInt {
 
 	bool Frame::IsExpandX() const
 	{
-		if(deque().size())
-			return deque()[0]->IsExpandX();
-		else
+		if(first()) {
+			return first()->IsExpandX();
+		} else {
 			return false;
+		}
 	}
 
 	bool Frame::IsExpandY() const
 	{
-		if(deque().size())
-			return deque()[0]->IsExpandY();
-		else
+		if(first()) {
+			return first()->IsExpandY();
+		} else {
 			return false;
+		}
 	}
 
 	Size Frame::GetPreferredSize() const
 	{
 		Size prefer(400, 300);
 
-		AbstractWidget* widget = deque()[0];
+		const AbstractWidget* widget = first();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -119,7 +130,7 @@ namespace BlendInt {
 	{
 		set_margin(request);
 
-		if(deque().size()) {
+		if(first()) {
 			FillSingleWidget(0, position(), size(), request);
 		}
 	}
@@ -147,7 +158,7 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (deque().size() && deque()[0]) {
+			if (first()) {
 				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
@@ -160,7 +171,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_position(*request.position());
-			SetSubWidgetPosition(deque()[0],
+			SetSubWidgetPosition(first(),
 					request.position()->x() + margin().left(),
 					request.position()->y() + margin().bottom());
 		}

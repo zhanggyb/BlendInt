@@ -115,20 +115,17 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
 			prefer.set_height(max_font_height + margin().vsum());
 		} else {
-			AbstractWidget* widget = 0;
 			Size tmp_size;
 
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				widget = *it;
-
-				if(widget->visiable()) {
-					tmp_size = widget->GetPreferredSize();
+				if(p->visiable()) {
+					tmp_size = p->GetPreferredSize();
 
 					prefer.add_width(tmp_size.width());
 					prefer.set_height(std::max(prefer.height(), tmp_size.height()));
@@ -240,9 +237,9 @@ namespace BlendInt {
 	{
 		int x = position().x() + margin().left();
 
-		if(sub_widget_size()) {
-			x = deque().back()->position().x();
-			x += deque().back()->size().width();
+		if(first()) {
+			x = last()->position().x();
+			x += last()->size().width();
 		}
 
 		return x;

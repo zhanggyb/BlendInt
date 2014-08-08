@@ -4,6 +4,8 @@
 #include <gtest/gtest.h>
 #include <BlendInt/Core/Object.hpp>
 
+#include <BlendInt/Gui/AbstractContainer.hpp>
+
 class WidgetTest1: public testing::Test
 {
 public:

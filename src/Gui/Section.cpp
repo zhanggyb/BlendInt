@@ -45,6 +45,8 @@
 
 namespace BlendInt {
 
+	AbstractWidget* Section::iterator_ptr = 0;
+
 	Section::Section ()
 	: AbstractContainer(),
 	  m_focused_widget(0),
@@ -55,13 +57,18 @@ namespace BlendInt {
 
 	Section::~Section ()
 	{
-		for(AbstractWidgetDeque::iterator it = m_deque.begin(); it != m_deque.end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			(*it)->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
+			p->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 		}
 
 		// unset hover status
 		ClearHoverWidgets();
+
+		// avoid calling deleted Section pointer in Context::MousePressEvent
+		if(iterator_ptr == this) {
+			iterator_ptr = 0;
+		}
 	}
 
 	void Section::PushFront(AbstractWidget* widget)
@@ -105,7 +112,7 @@ namespace BlendInt {
 
 			}
 
-			if(m_deque.size() == 0) {
+			if(first() == 0) {
 
 				if(managed() && (count() == 0)) {
 					DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
@@ -156,7 +163,7 @@ namespace BlendInt {
 		GLsizei height = widget->size().height();
 		GLfloat left = widget->position().x();
 		GLfloat bottom = widget->position().y();
-		if(widget->m_shadow) {
+		if(widget->shadow_) {
 			width += Theme::instance->shadow_width() * 2;
 			height += Theme::instance->shadow_width() * 2;
 			left -= Theme::instance->shadow_width();
@@ -289,7 +296,7 @@ namespace BlendInt {
 		GLsizei height = widget->size().height();
 		GLfloat left = widget->position().x();
 		GLfloat bottom = widget->position().y();
-		if(widget->m_shadow) {
+		if(widget->shadow_) {
 			width += Theme::instance->shadow_width() * 2;
 			height += Theme::instance->shadow_width() * 2;
 			left -= Theme::instance->shadow_width();
@@ -430,8 +437,8 @@ namespace BlendInt {
 		}
 
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->Resize(*request.size());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->Resize(*request.size());
 			}
 		}
 
@@ -441,8 +448,8 @@ namespace BlendInt {
 	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->SetRoundType(*request.round_type());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->SetRoundType(*request.round_type());
 			}
 		}
 
@@ -453,8 +460,8 @@ namespace BlendInt {
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->m_shadow) {
-				request.source()->m_shadow->SetRadius(*request.round_radius());
+			if (request.source()->drop_shadow() && request.source()->shadow_) {
+				request.source()->shadow_->SetRadius(*request.round_radius());
 			}
 		}
 
@@ -465,9 +472,9 @@ namespace BlendInt {
 	{
 		const_cast<RedrawEvent&>(event).m_section = this;
 
-		for(AbstractWidgetDeque::iterator it = m_deque.begin(); it != m_deque.end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			DispatchDrawEvent(*it, event);
+			DispatchDrawEvent(p, event);
 		}
 
 		return Accept;
@@ -576,38 +583,40 @@ namespace BlendInt {
 	{
 		if (widget->visiable()) {
 
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			if(widget->drop_shadow() && widget->shadow_) {
+				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
 			ResponseType response = widget->Draw(event);
 			if(response == Accept) return;
 
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
-			if (p) {
+			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
+			if (parent) {
 
-				if(p->scissor_test()) {
-					scissor.Push(p->position().x() + p->margin().left(),
-							p->position().y() + p->margin().right(),
-							p->size().width() - p->margin().left() - p->margin().right(),
-							p->size().height() - p->margin().top() - p->margin().bottom());
+				if(parent->scissor_test()) {
+					scissor.Push(parent->position().x() + parent->margin().left(),
+							parent->position().y() + parent->margin().right(),
+							parent->size().width() - parent->margin().left() - parent->margin().right(),
+							parent->size().height() - parent->margin().top() - parent->margin().bottom());
 				}
 
 				if(scissor.valid()) {
 					scissor.Enable();
 
-					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
-						DispatchDrawEvent(*it, event, scissor);
+					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+					{
+						DispatchDrawEvent(sub, event, scissor);
 					}
 
 				} else {
 
-					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
-						DispatchDrawEvent(*it, event, scissor);
+					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+					{
+						DispatchDrawEvent(sub, event, scissor);
 					}
 				}
 
-				if(p->scissor_test()) {
+				if(parent->scissor_test()) {
 					scissor.Pop();
 					scissor.Disable();
 				}
@@ -622,38 +631,40 @@ namespace BlendInt {
 	{
 		if (widget && widget->visiable()) {
 
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			if(widget->drop_shadow() && widget->shadow_) {
+				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
 			ResponseType response = widget->Draw(event);
 			if(response == Accept) return;
 
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
-			if (p) {
+			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
+			if (parent) {
 
-				if(p->scissor_test()) {
-					m_scissor_status.Push(p->position().x() + p->margin().left(),
-							p->position().y() + p->margin().right(),
-							p->size().width() - p->margin().left() - p->margin().right(),
-							p->size().height() - p->margin().top() - p->margin().bottom());
+				if(parent->scissor_test()) {
+					m_scissor_status.Push(parent->position().x() + parent->margin().left(),
+							parent->position().y() + parent->margin().right(),
+							parent->size().width() - parent->margin().left() - parent->margin().right(),
+							parent->size().height() - parent->margin().top() - parent->margin().bottom());
 				}
 
 				if(m_scissor_status.valid()) {
 					m_scissor_status.Enable();
 
-					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
-						DispatchDrawEvent(*it, event);
+					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+					{
+						DispatchDrawEvent(sub, event);
 					}
 
 				} else {
 
-					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
-						DispatchDrawEvent(*it, event);
+					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+					{
+						DispatchDrawEvent(sub, event);
 					}
 				}
 
-				if(p->scissor_test()) {
+				if(parent->scissor_test()) {
 					m_scissor_status.Pop();
 					m_scissor_status.Disable();
 				}
@@ -704,12 +715,12 @@ namespace BlendInt {
 			}
 
 		} else {
-			for (AbstractWidgetDeque::iterator it = m_deque.begin();
-			        it != m_deque.end(); it++) {
-				if ((*it) && (*it)->Contain(event.position())) {
+			for(AbstractWidget* p = first(); p; p = p->next())
+			{
+				if (p->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
-					m_last_hover_widget = *it;
+					m_last_hover_widget = p;
 					events()->connect(m_last_hover_widget->destroyed(), this,
 					        &Section::OnHoverWidgetDestroyed);
 					m_last_hover_widget->set_hover(true);
@@ -726,16 +737,14 @@ namespace BlendInt {
 
 	void Section::UpdateHoverWidgetSubs (const MouseEvent& event)
 	{
-		AbstractContainer* p = dynamic_cast<AbstractContainer*>(m_last_hover_widget);
+		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(m_last_hover_widget);
 
-		if (p) {
+		if (parent) {
 
-			AbstractWidget* widget = 0;
-			for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
-
-				widget = *it;
-				if(widget && widget->Contain(event.position())) {
-					m_last_hover_widget = widget;
+			for(AbstractWidget* p = parent->first(); p; p = p->next())
+			{
+				if(p->Contain(event.position())) {
+					m_last_hover_widget = p;
 					events()->connect(m_last_hover_widget->destroyed(), this, &Section::OnHoverWidgetDestroyed);
 					m_last_hover_widget->set_hover(true);
 					m_last_hover_widget->CursorEnterEvent(true);
@@ -750,9 +759,9 @@ namespace BlendInt {
 
 	void Section::OnSubWidgetDestroyedInSection(AbstractWidget* widget)
 	{
-		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 
-		if(m_deque.size() == 0) {
+		if(first() == 0) {
 
 			if(managed() && (count() == 0)) {
 				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
@@ -765,7 +774,7 @@ namespace BlendInt {
 			return;
 		}
 
-		if(m_deque.size() == 1 && m_deque[0] == widget) {
+		if((first() == widget) && (last() == widget)) {
 
 			if(managed() && (count() == 0)) {
 				DBG_PRINT_MSG("the last widget is removed, delete this section: %s", name().c_str());

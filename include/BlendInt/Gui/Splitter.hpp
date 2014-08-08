@@ -122,7 +122,7 @@ namespace BlendInt
 
 		SplitterHandle* GetHandle (int index) const;
 
-		int GetWidgetCount () const;
+		int GetWidgetsHold () const;
 
 		void MoveHandle (int index, int x, int y);
 
