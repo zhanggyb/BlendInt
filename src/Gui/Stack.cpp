@@ -62,7 +62,7 @@ namespace BlendInt {
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
-			if(deque().size() == 1) {
+			if(GetSubWidgetSize() == 1) {
 				m_active_widget = widget;
 				m_active_widget->SetVisible(true);
 			} else {
@@ -90,10 +90,10 @@ namespace BlendInt {
 
 			if(m_active_widget == widget) {
 
-				if(deque().size() == 0) {
+				if(GetSubWidgetSize() == 0) {
 					m_active_widget = 0;
 				} else {
-					m_active_widget = deque().front();
+					m_active_widget = first();
 					m_active_widget->SetVisible(true);
 				}
 
@@ -103,13 +103,13 @@ namespace BlendInt {
 
 	void Stack::SetIndex (size_t index)
 	{
-		size_t size = sub_widget_size();
+		int count = GetSubWidgetSize();
 
-		if(index > (size - 1)) return;
+		if(index > (count - 1)) return;
 
-		if(size) {
+		if(count) {
 
-			AbstractWidget* widget = deque()[index];
+			AbstractWidget* widget = GetWidgetAt(index);
 			if(m_active_widget == widget) {
 				return;
 			}
@@ -124,9 +124,9 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandX()) {
+			if(p->IsExpandX()) {
 				ret = true;
 				break;
 			}
@@ -139,9 +139,9 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandY()) {
+			if(p->IsExpandY()) {
 				ret = true;
 				break;
 			}
@@ -154,15 +154,15 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		if(sub_widget_size()) {
+		if(first()) {
 
 			prefer.set_width(0);
 			prefer.set_height(0);
 
 			Size tmp;
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				tmp = (*it)->GetPreferredSize();
+				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
 				prefer.set_height(std::max(prefer.height(), tmp.height()));
 			}
@@ -180,21 +180,21 @@ namespace BlendInt {
 		return m_active_widget;
 	}
 
-	AbstractWidget* Stack::GetWidget (size_t index)
+	AbstractWidget* Stack::GetWidget (int index)
 	{
-		size_t size = sub_widget_size();
+		int count = GetSubWidgetSize();
 
-		if(index > (size - 1)) return 0;
+		if(index > (count - 1)) return 0;
 
-		return deque().at(index);
+		return GetWidgetAt(index);
 	}
 
-	void Stack::HideSubWidget(size_t index)
+	void Stack::HideSubWidget(int index)
 	{
-		size_t size = sub_widget_size();
+		int count = GetSubWidgetSize();
 
-		if(size && index < (size - 1)) {
-			AbstractWidget* p = deque().at(index);
+		if(count && index < (count - 1)) {
+			AbstractWidget* p = GetWidgetAt(index);
 			p->SetVisible(false);
 		}
 	}

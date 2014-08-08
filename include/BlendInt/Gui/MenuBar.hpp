@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual bool IsExpandX () const;
 
-		MenuButton* GetMenuButton (size_t index);
+		MenuButton* GetMenuButton (int index);
 
 		int space () const
 		{

@@ -76,7 +76,16 @@ namespace BlendInt {
 
 	void ScrollView::Setup (AbstractWidget* widget)
 	{
-		if (AssignSubWidget(0, widget)) {
+		if(widget == 0) return;
+
+		if(widget->container() == this)
+			return;
+
+		if(first()) {
+			Clear();
+		}
+
+		if (PushBackSubWidget(widget)) {
 			int x = position().x() + margin().left();
 			int y = position().y() + size().height() - margin().top();
 
@@ -96,9 +105,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(!deque()[0]) return;
+		if(first() == 0) return;
 
-		AbstractWidget* p = deque()[0];
+		AbstractWidget* p = first();
 
 		int w = size().width() - margin().hsum();
 		int h = size().height() - margin().vsum();
@@ -115,8 +124,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(deque()[0]) {
-			AbstractWidget* p = deque()[0];
+		if(first()) {
+			AbstractWidget* p = first();
 
 			int w = size().width() - margin().hsum();
 
@@ -135,8 +144,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(deque()[0]) {
-			AbstractWidget* p = deque()[0];
+		if(first()) {
+			AbstractWidget* p = first();
 
 			int h = size().height() - margin().vsum();
 
@@ -153,10 +162,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(deque()[0]) {
+		if(first()) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = deque()[0];
+				AbstractWidget* p = first();
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -166,8 +175,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(deque()[0]) {
-			AbstractWidget* p = deque()[0];
+		if(first()) {
+			AbstractWidget* p = first();
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -177,8 +186,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(deque()[0]) {
-			return deque()[0]->IsExpandX();
+		if(first()) {
+			return first()->IsExpandX();
 		} else {
 			return false;
 		}
@@ -186,8 +195,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(deque()[0]) {
-			return deque()[0]->IsExpandY();
+		if(first()) {
+			return first()->IsExpandY();
 		} else {
 			return false;
 		}
@@ -197,7 +206,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractWidget* widget = deque()[0];
+		AbstractWidget* widget = first();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -222,7 +231,7 @@ namespace BlendInt {
 
 			set_position(*request.position());
 
-			if(deque()[0]) {
+			if(first()) {
 				MoveSubWidgets(x, y);
 			}
 		}
@@ -239,12 +248,12 @@ namespace BlendInt {
 			tool.SetInnerBufferData(m_inner.get());
 
 			// align the subwidget
-			if (deque()[0]) {
+			if (first()) {
 
 				int dy = request.size()->height() - size().height();
 
-				deque()[0]->SetPosition(deque()[0]->position().x(),
-				        deque()[0]->position().y() + dy);
+				first()->SetPosition(first()->position().x(),
+				        first()->position().y() + dy);
 			}
 
 			set_size(*request.size());
@@ -264,7 +273,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		if(deque()[0]) {
+		if(first()) {
 			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 		} else {
 			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
@@ -281,11 +290,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!deque()[0]) {
+		if (!first()) {
 			return Ignore;
 		}
 
-		AbstractWidget* p = deque()[0];
+		AbstractWidget* p = first();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -306,7 +315,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(!deque()[0]) {
+		if(!first()) {
 			return Ignore;
 		}
 
@@ -342,11 +351,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(deque()[0]) {
+		if(first()) {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = deque()[0];
+				AbstractWidget* p = first();
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

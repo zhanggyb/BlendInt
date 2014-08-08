@@ -219,8 +219,8 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
 
-			if(deque().size()) {
-				Section::DispatchDrawEvent(deque()[0], event, scissor);
+			if(first()) {
+				Section::DispatchDrawEvent(first(), event, scissor);
 			}
 
 			// Restore the viewport setting and projection matrix

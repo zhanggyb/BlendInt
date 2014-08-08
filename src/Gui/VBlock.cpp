@@ -38,19 +38,16 @@ namespace BlendInt {
 
 	void VBlock::PushBack (AbstractWidget* widget)
 	{
-		AbstractWidget* last = 0;
-		if(sub_widget_size()) {
-			last = deque().back();
-		}
+		AbstractWidget* orig_last = last();
 
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
 			FillInVBlock(position(), size(), margin());
 
-			if(last) {
-				last->SetEmboss(false);
-				last->SetRoundCornerType(last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+			if(orig_last) {
+				orig_last->SetEmboss(false);
+				orig_last->SetRoundCornerType(orig_last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
 				widget->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
 			} else {
 				widget->SetRoundCornerType(RoundAll);
@@ -63,9 +60,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandX()) {
+			if(p->IsExpandX()) {
 				expand = true;
 				break;
 			}
@@ -78,9 +75,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandY()) {
+			if(p->IsExpandY()) {
 				expand = true;
 				break;
 			}
@@ -93,31 +90,30 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 
 			preferred_size.set_width(80);
 			preferred_size.set_height(60);
 
 		} else {
 
-			AbstractWidget* widget = 0;
 			Size tmp;
 			int max_width = 0;
 			int max_height = 0;
+			int sum = 0;
 
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				widget = *it;
-
-				if(widget->visiable()) {
-					tmp = widget->GetPreferredSize();
+				if(p->visiable()) {
+					sum++;
+					tmp = p->GetPreferredSize();
 
 					max_width = std::max(max_width, tmp.width());
 					max_height = std::max(max_height, tmp.height());
 				}
 			}
 			preferred_size.set_width(max_width);
-			preferred_size.set_height(sub_widget_size() * (max_height - 1));
+			preferred_size.set_height(sum * (max_height - 1));
 
 			preferred_size.add_width(margin().hsum());
 			preferred_size.add_height(margin().vsum());
@@ -228,19 +224,16 @@ namespace BlendInt {
 
 	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
-		if(sub_widget_size() == 0) return;
-		int average_height = h / sub_widget_size() + 1;
-
-		AbstractWidget* widget = 0;
+		int sum = GetSubWidgetSize();
+		if(sum == 0) return;
+		int average_height = h / sum + 1;
 
 		y = y + h;
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			widget = *it;
-
-			ResizeSubWidget(widget, w, average_height);
+			ResizeSubWidget(p, w, average_height);
 			y = y - average_height + 1;
-			SetSubWidgetPosition(widget, x, y);
+			SetSubWidgetPosition(p, x, y);
 		}
 	}
 

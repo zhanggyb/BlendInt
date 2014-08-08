@@ -128,7 +128,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -139,16 +139,13 @@ namespace BlendInt {
 
 		} else {
 
-			AbstractWidget* widget = 0;
 			Size tmp_size;
-
 			preferred_size.set_width(-space_);
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
-			{
-				widget = *it;
 
-				if(widget->visiable()) {
-					tmp_size = widget->GetPreferredSize();
+			for(AbstractWidget* p = first(); p; p = p->next())
+			{
+				if(p->visiable()) {
+					tmp_size = p->GetPreferredSize();
 
 					preferred_size.add_width(tmp_size.width() + space_);
 					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
@@ -170,8 +167,8 @@ namespace BlendInt {
 	void ToolBar::PerformMarginUpdate (const Margin& request)
 	{
 		int x = position().x() + request.left();
-		if (sub_widget_size()) {
-			x = deque().front()->position().x();
+		if (first()) {
+			x = first()->position().x();
 		}
 
 		int y = position().y() + request.bottom();
@@ -205,8 +202,8 @@ namespace BlendInt {
 			inner_->Reset();
 
 			int x = position().x() + margin().left();
-			if (sub_widget_size()) {
-				x = deque().front()->position().x();
+			if (first()) {
+				x = first()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();
@@ -274,10 +271,10 @@ namespace BlendInt {
 	ResponseType ToolBar::MousePressEvent (const MouseEvent& event)
 	{
 		if(event.button() == MouseButtonMiddle) {
-			if(sub_widget_size()) {
+			if(first()) {
 				move_status_ = true;
 				start_x_ = event.position().x();
-				last_x_ = deque().front()->position().x();
+				last_x_ = first()->position().x();
 			}
 		}
 
@@ -295,8 +292,8 @@ namespace BlendInt {
 
 	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
 	{
-		if(move_status_ && sub_widget_size()) {
-			int xmin = deque().front()->position().x();
+		if(move_status_ && first()) {
+			int xmin = first()->position().x();
 			int direction = event.position().x() - start_x_;
 			int offset = last_x_ + event.position().x() - start_x_;
 			int width = size().width() - margin().left() - margin().right();
@@ -304,9 +301,9 @@ namespace BlendInt {
 			int right = position().x() + size().width() - margin().right();
 
 			int xmax = xmin - space_;
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				xmax += (*it)->size().width() + space_;
+				xmax += p->size().width() + space_;
 			}
 
 			DBG_PRINT_MSG("direction: %d, xmin: %d, xmax: %d, offset: %d, left: %d, right: %d", direction, xmin, xmax, offset, left, right);
@@ -317,10 +314,10 @@ namespace BlendInt {
 
 					if(xmax > right) {
 						int x = last_x_;
-						for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(*it, x + event.position().x() - start_x_, (*it)->position().y());
-							x += (*it)->size().width() + space_;
+							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							x += p->size().width() + space_;
 						}
 					}
 
@@ -328,10 +325,10 @@ namespace BlendInt {
 
 					if(xmin < left) {
 						int x = last_x_;
-						for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(*it, x + event.position().x() - start_x_, (*it)->position().y());
-							x += (*it)->size().width() + space_;
+							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							x += p->size().width() + space_;
 						}
 					}
 
@@ -342,19 +339,19 @@ namespace BlendInt {
 				if(direction < 0) { // left
 					if(xmin > left) {
 						int x = last_x_;
-						for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(*it, x + event.position().x() - start_x_, (*it)->position().y());
-							x += (*it)->size().width() + space_;
+							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							x += p->size().width() + space_;
 						}
 					}
 				} else if (direction > 0) {	// right
 					if(xmax < right) {
 						int x = last_x_;
-						for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(*it, x + event.position().x() - start_x_, (*it)->position().y());
-							x += (*it)->size().width() + space_;
+							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							x += p->size().width() + space_;
 						}
 					}
 				}
@@ -404,11 +401,11 @@ namespace BlendInt {
 
 		x += margin.left();
 		y += margin.bottom();
-		for (AbstractWidgetDeque::const_iterator it = deque().begin();
-				it != deque().end(); it++) {
-			SetSubWidgetPosition(*it, x, y);
-			ResizeSubWidget(*it, (*it)->size().width(), h);
-			x += (*it)->size().width() + space;
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			SetSubWidgetPosition(p, x, y);
+			ResizeSubWidget(p, p->size().width(), h);
+			x += p->size().width() + space;
 		}
 	}
 	
@@ -426,26 +423,24 @@ namespace BlendInt {
 	void ToolBar::FillSubWidgets (int x, int y, int width, int height,
 			int space)
 	{
-		AbstractWidget* widget = 0;
-		for (AbstractWidgetDeque::const_iterator it = deque().begin();
-				it != deque().end(); it++) {
-			widget = *it;
-			SetSubWidgetPosition(widget, x, y);
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			SetSubWidgetPosition(p, x, y);
 
-			if (widget->IsExpandY()) {
-				ResizeSubWidget(widget, widget->size().width(), height);
+			if (p->IsExpandY()) {
+				ResizeSubWidget(p, p->size().width(), height);
 			} else {
 
-				if (widget->size().height() > height) {
-					ResizeSubWidget(widget, widget->size().width(), height);
+				if (p->size().height() > height) {
+					ResizeSubWidget(p, p->size().width(), height);
 				} else {
-					SetSubWidgetPosition(widget, x,
-							y + (height - widget->size().height()) / 2);
+					SetSubWidgetPosition(p, x,
+							y + (height - p->size().height()) / 2);
 				}
 
 			}
 
-			x += widget->size().width() + space;
+			x += p->size().width() + space;
 		}
 	}
 
@@ -453,9 +448,9 @@ namespace BlendInt {
 	{
 		int x = position().x() + margin().left();
 
-		if (sub_widget_size()) {
-			x = deque().back()->position().x();
-			x += deque().back()->size().width() + space_;
+		if (last()) {
+			x = last()->position().x();
+			x += last()->size().width() + space_;
 		}
 
 		return x;

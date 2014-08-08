@@ -7,7 +7,7 @@
 #include "GLFWDemoContext.hpp"
 #include "Window.hpp"
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/Splitter.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -24,50 +24,25 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
-    Widget* widget1 = Manage(new Widget);
-    DBG_SET_NAME(widget1, "Widget1");
-    Widget* widget2 = Manage(new Widget);
-    DBG_SET_NAME(widget2, "Widget2");
-    Widget* widget3 = Manage(new Widget);
-    DBG_SET_NAME(widget3, "Widget3");
-
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
-
+	Splitter* splitter = Manage(new Splitter);
 #ifdef DEBUG
-    container->ListSubWidgets();
+	splitter->set_name("Splitter");
 #endif
+	splitter->SetPosition(50, 50);
+	splitter->Resize(450, 200);
 
-    DBG_PRINT_MSG("%s", "Move backward");
+	Button* btn1 = Manage(new Button("Button1"));
+	//Button* btn2 = Manage(new Button("Button2"));
+	//Button* btn3 = Manage(new Button("Button3"));
 
-    widget3->MoveBackward();
+	splitter->PushBack(btn1);
+	//splitter->PushBack(btn2);
+	//splitter->PushBack(btn3);
 
-#ifdef DEBUG
-    container->ListSubWidgets();
-#endif
+	context->PushBack(splitter);
 
-    widget3->MoveBackward();
-
-#ifdef DEBUG
-    container->ListSubWidgets();
-#endif
-
-    widget3->MoveBackward();
-
-    widget3->MoveBackward();
-
-#ifdef DEBUG
-    container->ListSubWidgets();
-#endif
-
-    //delete widget2;
-    //delete widget1;
-    //delete widget3;
-
-    delete container;
+	splitter->Resize(400, 200);
+	splitter->SetPosition(100, 100);
 
 	RunLoop(win);
 	Interface::Release();

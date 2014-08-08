@@ -15,6 +15,8 @@ WidgetTest1::~WidgetTest1()
 	// TODO: add destructor code
 }
 
+#ifdef DEBUG
+
 /**
  * test Foo() method
  *
@@ -48,6 +50,45 @@ TEST_F(WidgetTest1, Pointer1)
  *
  * Expected result:
  */
+TEST_F(WidgetTest1, Pointer2)
+{
+    Init();
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1", 640, 480);
+
+	// TODO: add test code here
+    Context* context = Manage (new Context);
+    Interface::instance->SetCurrentContext(context);
+
+    Container* container = Manage(new Container);
+    DBG_SET_NAME(container, "Container");
+
+    Widget* widget1 = Manage(new Widget);
+    DBG_SET_NAME(widget1, "Widget1");
+
+    container->PushBackSubWidget(widget1);
+
+    bool result1 = (container->first() == widget1) && (container->last() == widget1);
+
+    delete widget1;
+
+    bool result2 = (container->first() == 0) && (container->last() == 0);
+
+    delete container;
+
+    RunLoop(win);
+
+    Interface::Release();
+
+    Terminate();
+
+	ASSERT_TRUE(result1 && result2);
+}
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
 TEST_F(WidgetTest1, PushBack1)
 {
     Init();
@@ -64,8 +105,10 @@ TEST_F(WidgetTest1, PushBack1)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+
+    bool result = (container->first() == widget1) && (container->last() == widget2);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -81,7 +124,7 @@ TEST_F(WidgetTest1, PushBack1)
 
     Terminate();
 
-	ASSERT_TRUE(size == 2);
+	ASSERT_TRUE(result && (size == 2));
 }
 
 /**
@@ -105,13 +148,13 @@ TEST_F(WidgetTest1, PushBack2)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container1->PushBackSubWidgetExt(widget1);
-    container1->PushBackSubWidgetExt(widget2);
+    container1->PushBackSubWidget(widget1);
+    container1->PushBackSubWidget(widget2);
 
     Container* container2 = Manage(new Container);
     DBG_SET_NAME(container2, "Container2");
-    container2->PushBackSubWidgetExt(widget2);
-    container2->PushBackSubWidgetExt(widget1);
+    container2->PushBackSubWidget(widget2);
+    container2->PushBackSubWidget(widget1);
 
     int sum1 = container1->GetSubWidgetSize();
     int sum2 = container2->GetSubWidgetSize();
@@ -154,8 +197,8 @@ TEST_F(WidgetTest1, Insert1)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container->InsertSubWidgetExt(0, widget1);
-    container->InsertSubWidgetExt(0, widget2);
+    container->InsertSubWidget(0, widget1);
+    container->InsertSubWidget(0, widget2);
 
     int sum = container->GetSubWidgetSize();
 
@@ -195,8 +238,8 @@ TEST_F(WidgetTest1, Insert2)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container->InsertSubWidgetExt(0, widget1);
-    container->InsertSubWidgetExt(1, widget2);
+    container->InsertSubWidget(0, widget1);
+    container->InsertSubWidget(1, widget2);
 
     int sum = container->GetSubWidgetSize();
 
@@ -236,8 +279,8 @@ TEST_F(WidgetTest1, Insert3)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container->InsertSubWidgetExt(5, widget1);
-    container->InsertSubWidgetExt(5, widget2);
+    container->InsertSubWidget(5, widget1);
+    container->InsertSubWidget(5, widget2);
 
     int sum = container->GetSubWidgetSize();
 
@@ -277,8 +320,8 @@ TEST_F(WidgetTest1, PushFront1)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container->PushFrontSubWidgetExt(widget1);
-    container->PushFrontSubWidgetExt(widget2);
+    container->PushFrontSubWidget(widget1);
+    container->PushFrontSubWidget(widget2);
 
     int sum = container->GetSubWidgetSize();
 
@@ -318,13 +361,13 @@ TEST_F(WidgetTest1, PushFront2)
     Widget* widget2 = Manage(new Widget);
     DBG_SET_NAME(widget2, "Widget2");
 
-    container1->PushFrontSubWidgetExt(widget1);
-    container1->PushFrontSubWidgetExt(widget2);
+    container1->PushFrontSubWidget(widget1);
+    container1->PushFrontSubWidget(widget2);
 
     Container* container2 = Manage(new Container);
     DBG_SET_NAME(container2, "Container2");
-    container2->PushFrontSubWidgetExt(widget2);
-    container2->PushFrontSubWidgetExt(widget1);
+    container2->PushFrontSubWidget(widget2);
+    container2->PushFrontSubWidget(widget1);
 
     int sum1 = container1->GetSubWidgetSize();
     int sum2 = container2->GetSubWidgetSize();
@@ -369,9 +412,9 @@ TEST_F(WidgetTest1, Remove1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
     int sum = container->GetSubWidgetSize();
 
@@ -417,9 +460,9 @@ TEST_F(WidgetTest1, GetWidgetAt1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -493,9 +536,9 @@ TEST_F(WidgetTest1, MoveToFirst1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
     int sum = container->GetSubWidgetSize();
 
@@ -574,9 +617,9 @@ TEST_F(WidgetTest1, MoveToLast1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
     int sum = container->GetSubWidgetSize();
 
@@ -655,9 +698,9 @@ TEST_F(WidgetTest1, MoveForward1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
     int sum = container->GetSubWidgetSize();
 
@@ -736,9 +779,9 @@ TEST_F(WidgetTest1, MoveBackward1)
     Widget* widget3 = Manage(new Widget);
     DBG_SET_NAME(widget3, "Widget3");
 
-    container->PushBackSubWidgetExt(widget1);
-    container->PushBackSubWidgetExt(widget2);
-    container->PushBackSubWidgetExt(widget3);
+    container->PushBackSubWidget(widget1);
+    container->PushBackSubWidget(widget2);
+    container->PushBackSubWidget(widget3);
 
 #ifdef DEBUG
     container->ListSubWidgets();
@@ -798,3 +841,5 @@ TEST_F(WidgetTest1, MoveBackward1)
 
 	ASSERT_TRUE(true);
 }
+
+#endif

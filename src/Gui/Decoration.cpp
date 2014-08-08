@@ -108,8 +108,8 @@ namespace BlendInt {
 			m_inner->Reset();
 
 			int x = position().x() + margin().left();
-			if (sub_widget_size()) {
-				x = deque().front()->position().x();
+			if (first()) {
+				x = first()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();
@@ -182,7 +182,7 @@ namespace BlendInt {
 
 			if(event.section() == container()->container()) {
 				if(event.section()->last_hover_widget() == this) {
-					event.context()->MoveToTop(event.section());
+					event.section()->MoveToLast();
 					return Accept;
 				}
 			}

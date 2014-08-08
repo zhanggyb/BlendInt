@@ -38,18 +38,15 @@ namespace BlendInt {
 	
 	void HBlock::PushBack (AbstractWidget* widget)
 	{
-		AbstractWidget* last = 0;
-		if(sub_widget_size()) {
-			last = deque().back();
-		}
+		AbstractWidget* orig_last = last();
 
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
 			FillInHBlock(position(), size(), margin());
 
-			if(last) {
-				last->SetRoundCornerType(last->round_type() & ~(RoundTopRight | RoundBottomRight));
+			if(orig_last) {
+				orig_last->SetRoundCornerType(orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
 				widget->SetRoundCornerType(RoundTopRight | RoundBottomRight);
 			} else {
 				widget->SetRoundCornerType(RoundAll);
@@ -62,9 +59,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandX()) {
+			if(p->IsExpandX()) {
 				expand = true;
 				break;
 			}
@@ -77,9 +74,9 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if((*it)->IsExpandY()) {
+			if(p->IsExpandY()) {
 				expand = true;
 				break;
 			}
@@ -92,30 +89,29 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(sub_widget_size() == 0) {
+		if(first() == 0) {
 
 			preferred_size.set_width(100);
 			preferred_size.set_height(20);
 
 		} else {
 
-			AbstractWidget* widget = 0;
 			Size tmp;
 			int max_width = 0;
 			int max_height = 0;
+			int sum = 0;
 
-			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+			for(AbstractWidget* p = first(); p; p = p->next())
 			{
-				widget = *it;
+				if(p->visiable()) {
+					tmp = p->GetPreferredSize();
 
-				if(widget->visiable()) {
-					tmp = widget->GetPreferredSize();
-
+					sum++;
 					max_width = std::max(max_width, tmp.width());
 					max_height = std::max(max_height, tmp.height());
 				}
 			}
-			preferred_size.set_width(sub_widget_size() * (max_width - 1));
+			preferred_size.set_width(sum * (max_width - 1));
 			preferred_size.set_height(max_height);
 
 			preferred_size.add_width(margin().hsum());
@@ -227,17 +223,14 @@ namespace BlendInt {
 
 	void HBlock::FillInHBlock (int x, int y, int w, int h)
 	{
-		if(sub_widget_size() == 0) return;
-		int average_width = w / sub_widget_size() + 1;
+		int sum = GetSubWidgetSize();
+		if(sum == 0) return;
+		int average_width = w / sum + 1;
 
-		AbstractWidget* widget = 0;
-
-		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
+		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			widget = *it;
-
-			ResizeSubWidget(widget, average_width, h);
-			SetSubWidgetPosition(widget, x, y);
+			ResizeSubWidget(p, average_width, h);
+			SetSubWidgetPosition(p, x, y);
 			x = x + average_width - 1;
 		}
 	}

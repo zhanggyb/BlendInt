@@ -66,7 +66,17 @@ namespace BlendInt {
 
 	void VirtualWindow::Setup (AbstractWidget* widget)
 	{
-		if(AssignSubWidget(ContentIndex, widget)) {
+		if(widget == 0) return;
+
+		if(widget->container() == this) return;
+
+		int sum = GetSubWidgetSize();
+
+		if (sum > 1) {
+			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");
+		}
+
+		if(InsertSubWidget(ContentIndex, widget)) {
 			FillSubWidgets(position(), size());
 		}
 	}
@@ -125,7 +135,7 @@ namespace BlendInt {
 	{
 		if(container() == event.section()) {
 			if(event.section()->last_hover_widget() == this) {
-				event.context()->MoveToTop(event.section());
+				event.section()->MoveToLast();
 				return Accept;
 			}
 		}
@@ -163,7 +173,7 @@ namespace BlendInt {
 	void VirtualWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int h = request.size()->height() - deque()[0]->size().height();
+			int h = request.size()->height() - GetWidgetAt(0)->size().height();
 			if (h < 0) h = 0;
 
 			Size vw_size (request.size()->width(), h);
@@ -209,8 +219,8 @@ namespace BlendInt {
 
 	void VirtualWindow::FillSubWidgets(int x, int y, int w, int h)
 	{
-		AbstractWidget* dec = deque()[DecorationIndex];
-		AbstractWidget* content = deque()[ContentIndex];
+		AbstractWidget* dec = GetWidgetAt(DecorationIndex);
+		AbstractWidget* content = GetWidgetAt(ContentIndex);
 
 		Size dec_prefer = dec->GetPreferredSize();
 
@@ -250,7 +260,7 @@ namespace BlendInt {
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
 		DBG_SET_NAME(dec, "Decoration");
-		AssignSubWidget(DecorationIndex, dec);
+		PushBackSubWidget(dec);
 
 		FillSubWidgets (position(), size());
 

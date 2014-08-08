@@ -462,12 +462,12 @@ namespace BlendInt {
 			return container_;
 		}
 
-		inline const AbstractWidget* previous () const
+		inline AbstractWidget* previous () const
 		{
 			return previous_;
 		}
 
-		inline const AbstractWidget* next () const
+		inline AbstractWidget* next () const
 		{
 			return next_;
 		}

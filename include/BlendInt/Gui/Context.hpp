@@ -76,14 +76,6 @@ namespace BlendInt {
 		 */
 		Section* Remove (AbstractWidget* widget);
 
-		void MoveToTop (const Section* section);
-
-		void MoveToBottom (const Section* section);
-
-		void MoveUp (const Section* seciton);
-
-		void MoveDown (const Section* section);
-
 		void SetFocusedWidget (AbstractWidget* widget);
 
 		/**

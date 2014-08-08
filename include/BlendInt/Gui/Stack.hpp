@@ -57,11 +57,11 @@ namespace BlendInt {
 
 		AbstractWidget* GetActiveWidget () const;
 
-		AbstractWidget* GetWidget (size_t index);
+		AbstractWidget* GetWidget (int index);
 
 	protected:
 
-		void HideSubWidget (size_t index);
+		void HideSubWidget (int index);
 
 		virtual void PerformMarginUpdate (const Margin& request);
 
