@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		if(widget->container() == this) return;
 
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if (sum > 1) {
 			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");

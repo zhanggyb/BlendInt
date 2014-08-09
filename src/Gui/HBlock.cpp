@@ -223,7 +223,7 @@ namespace BlendInt {
 
 	void HBlock::FillInHBlock (int x, int y, int w, int h)
 	{
-		int count = CountSubWidgets();
+		int count = widget_count();
 		if(count == 0) return;
 		int average_width = w / count + 1;
 

@@ -224,7 +224,7 @@ namespace BlendInt {
 
 	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
-		int count = CountSubWidgets();
+		int count = widget_count();
 		if(count == 0) return;
 		int average_height = h / count + 1;
 

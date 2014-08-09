@@ -508,7 +508,7 @@ namespace BlendInt {
 	{
 		if(first() == 0) return 0;
 
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		int max = (sum + 1) / 2;
 		if(index > max) return 0;
@@ -520,7 +520,7 @@ namespace BlendInt {
 
 	SplitterHandle* Splitter::GetHandle (int index) const
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if(sum <= 1) return 0;
 
@@ -534,7 +534,7 @@ namespace BlendInt {
 
 	int Splitter::GetWidgetsHold () const
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 		return (sum / 2 + 1);
 	}
 

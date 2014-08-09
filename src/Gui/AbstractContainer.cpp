@@ -89,6 +89,7 @@ namespace BlendInt {
 			widget = next;
 		}
 
+		widget_count_ = 0;
 		first_ = 0;
 		last_ = 0;
 	}
@@ -149,7 +150,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeHorizontally (int x, int width, int space)
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if (sum) {
 			int average_width = (width - (sum - 1)* space) / sum;
@@ -172,7 +173,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeVertically (int y, int height, int space)
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		y = y + height;
 		if (sum) {
@@ -252,6 +253,7 @@ namespace BlendInt {
 
 		widget->previous_ = 0;
 		widget->container_ = this;
+		widget_count_++;
 
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -334,7 +336,7 @@ namespace BlendInt {
 		}
 
 		widget->container_ = this;
-
+		widget_count_++;
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
 
@@ -376,6 +378,7 @@ namespace BlendInt {
 
 		widget->next_ = 0;
 		widget->container_ = this;
+		widget_count_++;
 
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -410,55 +413,67 @@ namespace BlendInt {
 		widget->previous_ = 0;
 		widget->next_ = 0;
 		widget->container_ = 0;
+		widget_count_--;
 
 		return true;
 	}
 
-	int AbstractContainer::CountSubWidgets() const
-	{
-		int sum = 0;
-
-		AbstractWidget* p = first_;
-		while(p) {
-			sum++;
-			p = p->next_;
-		}
-
-		return sum;
-	}
-
 	AbstractWidget* AbstractContainer::operator [](int i) const
 	{
-		if(i < 0) return 0;
+		if((i < 0) || (i >= widget_count_)) return 0;
 
-		AbstractWidget* widget = first_;
+		AbstractWidget* widget = 0;
 
-		while(widget && (i > 0)) {
-			i--;
-			widget = widget->next_;
+		if(i < ((widget_count_ + 1)/ 2)) {
+
+			widget = first_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_;
+			int max = widget_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
 		}
 
-		if(i != 0) {	// out of range
-			widget = 0;
-		}
+		//assert(widget != 0);
 
 		return widget;
 	}
 
 	AbstractWidget* AbstractContainer::GetWidgetAt(int i) const
 	{
-		if(i < 0) return 0;
+		if((i < 0) || (i >= widget_count_)) return 0;
 
-		AbstractWidget* widget = first_;
+		AbstractWidget* widget = 0;
 
-		while(widget && (i > 0)) {
-			i--;
-			widget = widget->next_;
+		if(i < ((widget_count_ + 1)/ 2)) {
+
+			widget = first_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_;
+			int max = widget_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
 		}
 
-		if(i != 0) {	// out of range
-			widget = 0;
-		}
+		//assert(widget != 0);
 
 		return widget;
 	}

@@ -59,29 +59,33 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(previous_) {
-			assert(container_);
-			previous_->next_ = next_;
-		} else {
-			if(container_) {
+		if(container_) {
+
+			if(previous_) {
+				previous_->next_ = next_;
+			} else {
 				assert(container_->first_ == this);
 				container_->first_ = next_;
 			}
-		}
 
-		if(next_) {
-			assert(container_);
-			next_->previous_ = previous_;
-		} else {
-			if(container_) {
+			if(next_) {
+				next_->previous_ = previous_;
+			} else {
 				assert(container_->last_ == this);
 				container_->last_ = previous_;
 			}
-		}
 
-		previous_ = 0;
-		next_ = 0;
-		container_ = 0;
+			container_->widget_count_--;
+			assert(container_->widget_count_ >= 0);
+
+			previous_ = 0;
+			next_ = 0;
+			container_ = 0;
+
+		} else {
+			assert(previous_ == 0);
+			assert(next_ == 0);
+		}
 
 		destroyed_.fire(this);
 

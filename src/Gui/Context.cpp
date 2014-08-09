@@ -112,7 +112,7 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
-		int count = CountSubWidgets();
+		int count = widget_count();
 		char buf[32];
 		sprintf(buf, "Section %d", count);
 		DBG_SET_NAME(section, buf);

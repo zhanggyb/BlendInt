@@ -82,7 +82,10 @@ namespace BlendInt {
 		void ListSubWidgets ();
 #endif
 
-		int CountSubWidgets () const;
+		int widget_count () const
+		{
+			return widget_count_;
+		}
 
 		AbstractWidget* operator [] (int i) const;
 

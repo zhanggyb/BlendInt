@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		if(widget->container() == this) return true;
 
-		int count = CountSubWidgets();
+		int count = widget_count();
 		if(count > 0) {
 			Clear();
 		}
