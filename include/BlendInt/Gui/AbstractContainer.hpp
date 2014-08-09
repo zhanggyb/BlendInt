@@ -53,7 +53,7 @@ namespace BlendInt {
 
 		virtual ~AbstractContainer ();
 
-		const Margin& margin () const {return m_margin;}
+		const Margin& margin () const {return margin_;}
 
 		void SetMargin (const Margin& margin);
 
@@ -150,15 +150,15 @@ namespace BlendInt {
 
 		void set_margin (const Margin& margin)
 		{
-			m_margin = margin;
+			margin_ = margin;
 		}
 
 		void set_margin (int left, int right, int top, int bottom)
 		{
-			m_margin.set_left(left);
-			m_margin.set_right(right);
-			m_margin.set_top(top);
-			m_margin.set_bottom(bottom);
+			margin_.set_left(left);
+			margin_.set_right(right);
+			margin_.set_top(top);
+			margin_.set_bottom(bottom);
 		}
 
 	private:
@@ -171,10 +171,12 @@ namespace BlendInt {
 
 		void AlignVertically (int x, int width, int alignment);
 
-		Margin m_margin;
+		Margin margin_;
 
 		AbstractWidget* first_;
 		AbstractWidget* last_;
+
+		int widget_count_;
 
 	};
 

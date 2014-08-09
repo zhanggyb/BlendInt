@@ -98,54 +98,56 @@ namespace BlendInt {
 		text_length_ = UpdateTextPosition(size, round_type, radius, text, font_);
 	}
 
-	size_t AbstractButton::UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font)
+	int AbstractButton::UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font)
 	{
-		size_t str_len = 0;
+		if(text.length() == 0) {
+			return 0;
+		}
+
+		int text_length = 0;
 
 		// If size changed, we need to update the text length for printing too.
 		bool cal_width = true;
 
-		int radius_plus = 0;
+		float radius_plus = 0.f;
+		int x = DefaultButtonPadding().left(); int y = DefaultButtonPadding().bottom();
 
 		if((round_type & RoundTopLeft) || (round_type & RoundBottomLeft)) {
 			radius_plus += radius;
+			x += (int)radius;
 		}
 
 		if((round_type & RoundTopRight) || (round_type & RoundBottomRight)) {
 			radius_plus += radius;
 		}
 
-		int width = size.width() - DefaultButtonPadding().hsum() - radius_plus;
-		int height = size.height() - DefaultButtonPadding().vsum();
+		int valid_width = size.width() - DefaultButtonPadding().hsum() - (int)radius_plus;
+		int valid_height = size.height() - DefaultButtonPadding().vsum();
 
-		if(width <= 0 || height <= 0) {
-			return 0;
-		}
-
-		if(text.length() == 0) {
+		if(valid_width <= 0 || valid_height <= 0) {
 			return 0;
 		}
 
 		Rect text_outline = font.GetTextOutline(text);
 
-		if(height < text_outline.height()) {
-			str_len = 0;
+		if(valid_height < text_outline.height()) {
+			text_length = 0;
 			cal_width = false;
 		}
 
 		if(cal_width) {
-			if(width < text_outline.width()) {
-				str_len = GetValidTextSize(size, text, font);
+			if(valid_width < text_outline.width()) {
+				text_length = GetValidTextLength(text, font, valid_width);
 			} else {
-				str_len = text.length();
+				text_length = text.length();
+				x = (size.width() - text_outline.width()) / 2;
 			}
+			y = (size.height() - font.GetHeight()) / 2 + std::abs(font.GetDescender());
 		}
 
-		font.set_pen((size.width() - text_outline.width()) / 2,
-						(size.height() - font.GetHeight()) / 2
-										+ std::abs(font.GetDescender()));
+		font.set_pen(x, y);
 
-		return str_len;
+		return text_length;
 	}
 
 	ResponseType AbstractButton::CursorEnterEvent(bool entered)
@@ -319,19 +321,17 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	size_t AbstractButton::GetValidTextSize(const Size& size, const String& text, const Font& font)
+	int AbstractButton::GetValidTextLength(const String& text, const Font& font, int max_width)
 	{
 		int width = 0;
 		int str_len = text.length();
 
 		width = font.GetTextWidth(text, str_len, 0);
 
-		int text_width_space = size.width() - DefaultButtonPadding().left() - DefaultButtonPadding().right();
-
-		if(width > text_width_space) {
+		if(width > max_width) {
 			while(str_len > 0) {
 				width = font.GetTextWidth(text, str_len, 0);
-				if(width < text_width_space) break;
+				if(width < max_width) break;
 				str_len--;
 			}
 		}

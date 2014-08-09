@@ -48,8 +48,8 @@ namespace BlendInt {
 	{
 	public:
 
-		Object () :
-				m_count(0)
+		Object ()
+		: reference_count_(0)
 		{
 		}
 
@@ -57,20 +57,23 @@ namespace BlendInt {
 		{
 		}
 
-		Object (const Object& orig);
+		Object (const Object& orig)
+		: reference_count_(0)
+		{
+		}
 
 		Object& operator = (const Object& orig);
 
-		inline size_t count ()
+		inline size_t reference_count ()
 		{
-			return m_count;
+			return reference_count_;
 		}
 
 	private:
 
 		template <typename T> friend class RefPtr;
 
-		size_t m_count;
+		size_t reference_count_;
 
 	};
 

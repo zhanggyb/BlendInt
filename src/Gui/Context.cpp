@@ -150,7 +150,7 @@ namespace BlendInt
 
 		if(section->first_ == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
-			if(section->managed() && (section->count() == 0)) {
+			if(section->managed() && (section->reference_count() == 0)) {
 				delete section;
 				section = 0;
 			} else {

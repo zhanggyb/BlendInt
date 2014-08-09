@@ -31,7 +31,7 @@ namespace BlendInt {
 	{
 		for(std::set<WidgetSimPtr>::iterator it = m_children.begin(); it != m_children.end(); it++)
 		{
-			std::cout << "count: " << (*it)->count() << std::endl;
+			std::cout << "count: " << (*it)->reference_count() << std::endl;
 		}
 	}
 

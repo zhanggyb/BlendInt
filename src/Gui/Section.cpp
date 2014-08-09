@@ -114,7 +114,7 @@ namespace BlendInt {
 
 			if(first() == 0) {
 
-				if(managed() && (count() == 0)) {
+				if(managed() && (reference_count() == 0)) {
 					DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
 					delete this;
 				} else {
@@ -763,7 +763,7 @@ namespace BlendInt {
 
 		if(first() == 0) {
 
-			if(managed() && (count() == 0)) {
+			if(managed() && (reference_count() == 0)) {
 				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
 				delete this;
 			} else {
@@ -776,7 +776,7 @@ namespace BlendInt {
 
 		if((first() == widget) && (last() == widget)) {
 
-			if(managed() && (count() == 0)) {
+			if(managed() && (reference_count() == 0)) {
 				DBG_PRINT_MSG("the last widget is removed, delete this section: %s", name().c_str());
 				delete this;
 			} else {

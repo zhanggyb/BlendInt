@@ -81,26 +81,18 @@ namespace BlendInt {
 		int w = size().width() - margin().hsum();
 
 		if(PushBackSubWidget(widget)) {
-
 			Size prefer = widget->GetPreferredSize();
-
 			y = y - prefer.height();
-
 			SetSubWidgetPosition(widget, x, y);
-
 			if(widget->IsExpandX()) {
-
 				ResizeSubWidget(widget, w, prefer.height());
-
 			} else {
-
 				if(widget->size().width() > w) {
 					ResizeSubWidget(widget, w, prefer.height());
 				} else {
 					ResizeSubWidget(widget, widget->size().width(), prefer.height());
 				}
 			}
-
 			DisableShadow(widget);
 		}
 	}

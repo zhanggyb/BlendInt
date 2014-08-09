@@ -38,7 +38,7 @@ TEST_F(ObjectTest1, RefPtr1)
 
     RefPtr<Object> obj3(obj2);
 
-	ASSERT_TRUE(obj3->count() == 3);
+	ASSERT_TRUE(obj3->reference_count() == 3);
 }
 
 /**
@@ -55,7 +55,7 @@ TEST_F(ObjectTest1, RefPtr2)
 
     RefPtr<Object> obj3(obj2);
 
-	ASSERT_TRUE(obj3->count() == 3);
+	ASSERT_TRUE(obj3->reference_count() == 3);
 }
 
 /**
@@ -119,11 +119,11 @@ TEST_F(ObjectTest1, RefPtr6)
     test_set.insert(obj1);
     test_set.insert(obj2);
 
-    std::cout << "obj1 count: " << obj1->count() << std::endl;
+    std::cout << "obj1 count: " << obj1->reference_count() << std::endl;
 
     test_set.erase(obj2);
 
-    std::cout << "obj2 count: " << obj2->count() << std::endl;
+    std::cout << "obj2 count: " << obj2->reference_count() << std::endl;
 
     ASSERT_TRUE(true);
 }
@@ -148,7 +148,7 @@ TEST_F(ObjectTest1, RefPtr7)
 
     RefPtr<Object> obj4(widget);
 
-    ASSERT_TRUE(obj4->count() == 5);
+    ASSERT_TRUE(obj4->reference_count() == 5);
 }
 
 /**

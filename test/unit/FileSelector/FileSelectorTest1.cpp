@@ -32,6 +32,7 @@ TEST_F(FileSelectorTest1, Foo1)
 
     FileSelector* fb = Manage(new FileSelector);
     fb->SetPosition(100, 100);
+	fb->Resize(600, 400);
 
     context->PushBack(fb);
 

@@ -32,6 +32,9 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/FileBrowser.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Expander.hpp>
 
 namespace BlendInt {
 
@@ -58,12 +61,20 @@ namespace BlendInt {
 
 		void InitializeFileSelector ();
 
+		VBox* CreateBrowserAreaOnce ();
+
+		ToolBar* CreateToolBarOnce ();
+
+		ToolBox* CreateSideBarOnce ();
+
+		Expander* CreateSystemPartOnce ();
+
+		Expander* CreateSystemBookmarksOnce ();
+
 		void OnFileSelect ();
 
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;
-
-		VBox* layout_;
 
 		TextEntry* path_entry_;
 		TextEntry* file_entry_;

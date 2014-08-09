@@ -45,10 +45,13 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Splitter.hpp>
+
 namespace BlendInt {
 
 	FileSelector::FileSelector ()
-	: layout_(0), path_entry_(0)
+	: path_entry_(0),
+	  file_entry_(0)
 	{
 		set_size(500, 400);
 		set_margin(2, 2, 2, 2);
@@ -116,10 +119,44 @@ namespace BlendInt {
 		inner_->Reset();
 
 		// create sub widgets
+		VBox* layout = Manage(new VBox);
+		DBG_SET_NAME(layout, "Main Layout");
+		layout->SetMargin(2, 2, 2, 2);
+		layout->SetSpace(0);
 
-		layout_ = Manage(new VBox);
-		layout_->SetMargin(2, 2, 2, 2);
-		layout_->SetSpace(4);
+		ToolBar* toolbar = CreateToolBarOnce();
+		ToolBox* sidebar = CreateSideBarOnce();
+		VBox* area = CreateBrowserAreaOnce();
+
+		Splitter* splitter = Manage(new Splitter);
+		DBG_SET_NAME(splitter, "Splitter");
+		splitter->SetMargin(0, 0, 0, 0);
+		splitter->PushBack(sidebar);
+		splitter->PushBack(area);
+
+		layout->PushBack(toolbar);
+		layout->PushBack(splitter);
+
+		Setup(layout);
+
+		std::string pwd =getenv("PWD");
+		pwd.append("/");
+		path_entry_->SetText(pwd);
+		browser_->Load(getenv("PWD"));
+
+		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+	}
+
+	void FileSelector::OnFileSelect ()
+	{
+		file_entry_->SetText(browser_->file_selected());
+	}
+
+	VBox* FileSelector::CreateBrowserAreaOnce()
+	{
+		VBox* vbox = Manage(new VBox);
+		vbox->SetMargin(2, 2, 2, 2);
+		vbox->SetSpace(4);
 
 		path_entry_ = Manage(new TextEntry);
 		path_entry_->SetRoundCornerType(RoundAll);
@@ -142,23 +179,58 @@ namespace BlendInt {
 
 		browser_ = Manage(new FileBrowser);
 
-		layout_->PushBack(dir_layout);
-		layout_->PushBack(file_layout);
-		layout_->PushBack(browser_);
+		vbox->PushBack(dir_layout);
+		vbox->PushBack(file_layout);
+		vbox->PushBack(browser_);
 
-		Setup(layout_);
-
-		std::string pwd =getenv("PWD");
-		pwd.append("/");
-		path_entry_->SetText(pwd);
-		browser_->Load(getenv("PWD"));
-
-		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+		return vbox;
 	}
 
-	void FileSelector::OnFileSelect ()
+	ToolBar* FileSelector::CreateToolBarOnce()
 	{
-		file_entry_->SetText(browser_->file_selected());
+		ToolBar* toolbar = Manage(new ToolBar);
+		DBG_SET_NAME(toolbar, "ToolBar");
+		toolbar->SetMargin(2, 2, 2, 2);
+
+		return toolbar;
+	}
+
+	ToolBox* FileSelector::CreateSideBarOnce ()
+	{
+		ToolBox* toolbox = Manage(new ToolBox);
+		DBG_SET_NAME(toolbox, "SideBar");
+		toolbox->SetMargin(2, 2, 2, 2);
+
+		Expander* exp1 = CreateSystemPartOnce();
+		Expander* exp2 = CreateSystemBookmarksOnce();
+
+		toolbox->PushBack(exp1);
+		toolbox->PushBack(exp2);
+
+		return toolbox;
+	}
+
+	Expander* FileSelector::CreateSystemPartOnce ()
+	{
+		Expander* expander = Manage(new Expander("System"));
+		DBG_SET_NAME(expander, "System Expander");
+		Button* btn = Manage(new Button);
+
+		expander->Setup(btn);
+
+		return expander;
+	}
+
+	Expander* FileSelector::CreateSystemBookmarksOnce ()
+	{
+		Expander* expander = Manage(new Expander("System Bookmarks"));
+		DBG_SET_NAME(expander, "System Bookmarks Expander");
+		Button* btn = Manage(new Button);
+
+		expander->Setup(btn);
+
+		return expander;
 	}
 
 }
+

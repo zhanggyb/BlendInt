@@ -30,7 +30,8 @@ namespace BlendInt {
 	AbstractContainer::AbstractContainer()
 	: AbstractWidget(),
 	  first_(0),
-	  last_(0)
+	  last_(0),
+	  widget_count_(0)
 	{
 
 	}
@@ -79,7 +80,7 @@ namespace BlendInt {
 			widget->next_ = 0;
 			widget->container_ = 0;
 
-			if(widget->managed() && widget->count() == 0) {
+			if(widget->managed() && widget->reference_count() == 0) {
 				delete widget;
 			} else {
 				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
@@ -501,21 +502,21 @@ namespace BlendInt {
 
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
-		if (m_margin.equal(margin))
+		if (margin_.equal(margin))
 			return;
 
 		PerformMarginUpdate(margin);
-		m_margin = margin;
+		margin_ = margin;
 	}
 
 	void AbstractContainer::SetMargin (int left, int right, int top, int bottom)
 	{
-		if (m_margin.equal(left, right, top, bottom))
+		if (margin_.equal(left, right, top, bottom))
 			return;
 
 		Margin new_margin(left, right, top, bottom);
 		PerformMarginUpdate(new_margin);
-		m_margin = new_margin;
+		margin_ = new_margin;
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,

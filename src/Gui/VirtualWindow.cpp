@@ -79,7 +79,7 @@ namespace BlendInt {
 			for(AbstractWidget* p = first()->next(); p; p = tmp)
 			{
 				tmp = p->next();
-				if(p->managed() && (p->count() == 0))
+				if(p->managed() && (p->reference_count() == 0))
 				{
 					delete p;
 				} else {

@@ -21,10 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_BUTTON_HPP_
-#define _BLENDINT_BUTTON_HPP_
+#ifndef _BLENDINT_GUI_BUTTON_HPP_
+#define _BLENDINT_GUI_BUTTON_HPP_
 
-#include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
