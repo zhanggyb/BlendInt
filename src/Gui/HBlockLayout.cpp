@@ -36,6 +36,26 @@ namespace BlendInt {
 	{
 	}
 	
+	void HBlock::PushFront (AbstractWidget* widget)
+	{
+		AbstractWidget* orig_first = first();
+
+		if(PushFrontSubWidget(widget)) {
+
+			widget->SetEmboss(true);
+
+			if(orig_first) {
+				SetSubWidgetRoundType(orig_first, orig_first->round_type() & ~(RoundTopLeft | RoundBottomLeft));
+				SetSubWidgetRoundType(widget, RoundTopLeft | RoundBottomLeft);
+			} else {
+				SetSubWidgetRoundType(widget, RoundAll);
+			}
+
+			FillInHBlock(position(), size(), margin());
+
+		}
+	}
+
 	void HBlock::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_last = last();
@@ -43,7 +63,6 @@ namespace BlendInt {
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
-			FillInHBlock(position(), size(), margin());
 
 			if(orig_last) {
 				SetSubWidgetRoundType(orig_last, orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
@@ -51,6 +70,8 @@ namespace BlendInt {
 			} else {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
+
+			FillInHBlock(position(), size(), margin());
 
 		}
 	}

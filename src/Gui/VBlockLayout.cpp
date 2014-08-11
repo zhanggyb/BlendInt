@@ -36,6 +36,26 @@ namespace BlendInt {
 	{
 	}
 
+	void VBlock::PushFront (AbstractWidget* widget)
+	{
+		AbstractWidget* orig_first = first();
+
+		if(PushBackSubWidget(widget)) {
+
+			if(orig_first) {
+				widget->SetEmboss(false);
+				SetSubWidgetRoundType(orig_first, orig_first->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+				SetSubWidgetRoundType(widget, RoundBottomLeft | RoundBottomRight);
+			} else {
+				widget->SetEmboss(true);
+				SetSubWidgetRoundType(widget, RoundAll);
+			}
+
+			FillInVBlock(position(), size(), margin());
+
+		}
+	}
+
 	void VBlock::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_last = last();
@@ -43,7 +63,6 @@ namespace BlendInt {
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
-			FillInVBlock(position(), size(), margin());
 
 			if(orig_last) {
 				orig_last->SetEmboss(false);
@@ -52,6 +71,8 @@ namespace BlendInt {
 			} else {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
+
+			FillInVBlock(position(), size(), margin());
 
 		}
 	}

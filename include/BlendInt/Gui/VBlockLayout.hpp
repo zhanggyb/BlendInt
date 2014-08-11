@@ -41,6 +41,8 @@ namespace BlendInt {
 
 		virtual ~VBlock ();
 
+		void PushFront (AbstractWidget* widget);
+
 		void PushBack (AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
