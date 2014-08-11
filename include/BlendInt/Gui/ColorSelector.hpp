@@ -30,7 +30,7 @@
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 namespace BlendInt {
 

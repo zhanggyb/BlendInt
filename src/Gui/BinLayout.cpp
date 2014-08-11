@@ -21,43 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <assert.h>
-#include <algorithm>
-
-#include <iostream>
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Gui/Frame.hpp>
-
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 namespace BlendInt {
 
-	Frame::Frame ()
+	BinLayout::BinLayout()
 	: AbstractContainer()
 	{
-		set_size(400, 300);
 	}
 
-	Frame::~Frame ()
+	BinLayout::~BinLayout()
 	{
 	}
 
-	bool Frame::Setup (AbstractWidget* widget)
+	bool BinLayout::Setup (AbstractWidget* widget)
 	{
 		bool ret = false;
 
@@ -77,30 +54,32 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool Frame::Remove (AbstractWidget* widget)
+	bool BinLayout::Remove (AbstractWidget* widget)
 	{
 		return RemoveSubWidget(widget);
 	}
 
-	bool Frame::IsExpandX() const
+	bool BinLayout::IsExpandX () const
 	{
-		if(first()) {
+		if(widget_count() == 0) {
+			return false;
+		} else {
+			assert(widget_count() == 1);	// DEBUG
 			return first()->IsExpandX();
-		} else {
-			return false;
 		}
 	}
 
-	bool Frame::IsExpandY() const
+	bool BinLayout::IsExpandY () const
 	{
-		if(first()) {
-			return first()->IsExpandY();
-		} else {
+		if(widget_count() == 0) {
 			return false;
+		} else {
+			assert(widget_count() == 1);	// DEBUG
+			return first()->IsExpandY();
 		}
 	}
 
-	Size Frame::GetPreferredSize() const
+	Size BinLayout::GetPreferredSize () const
 	{
 		Size prefer(400, 300);
 
@@ -116,39 +95,23 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Frame::PerformMarginUpdate(const Margin& request)
+	void BinLayout::PerformMarginUpdate (const Margin& request)
 	{
 		set_margin(request);
 
-		if(first()) {
+		if(widget_count()) {
+			assert(widget_count() == 1);
 			FillSingleWidget(0, position(), size(), request);
 		}
 	}
 
-	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Frame::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void BinLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (first()) {
+			if (widget_count()) {
+				assert(widget_count() == 1);
 				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
@@ -156,57 +119,62 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Frame::PerformPositionUpdate (
-			const PositionUpdateRequest& request)
+	void BinLayout::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_position(*request.position());
-			SetSubWidgetPosition(first(),
-					request.position()->x() + margin().left(),
-					request.position()->y() + margin().bottom());
+
+			if(widget_count()) {
+				assert(widget_count() == 1);
+				SetSubWidgetPosition(first(),
+						request.position()->x() + margin().left(),
+						request.position()->y() + margin().bottom());
+			}
 		}
 
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType Frame::CursorEnterEvent (bool entered)
+	ResponseType BinLayout::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
+	ResponseType BinLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType BinLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType BinLayout::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::MousePressEvent (const MouseEvent& event)
+	ResponseType BinLayout::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType BinLayout::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
+	ResponseType BinLayout::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::Draw (const Profile& profile)
+	ResponseType BinLayout::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-} /* namespace BlendInt */
+}

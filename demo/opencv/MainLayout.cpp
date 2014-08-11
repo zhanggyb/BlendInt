@@ -6,8 +6,8 @@
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Stock/Icons.hpp>
-#include <BlendInt/Gui/HBox.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/VBlock.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>

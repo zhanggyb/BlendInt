@@ -26,7 +26,7 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/Button.hpp>

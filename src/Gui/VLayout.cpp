@@ -32,7 +32,7 @@
 #endif  // __UNIX__
 
 #include <boost/smart_ptr.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 namespace BlendInt {
 

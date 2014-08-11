@@ -1,7 +1,7 @@
 #include "PerformanceTest1.hpp"
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <Common/Window.hpp>
 
 using namespace BlendInt;

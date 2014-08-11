@@ -9,7 +9,7 @@
 #include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Gui/CVImageView.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
 

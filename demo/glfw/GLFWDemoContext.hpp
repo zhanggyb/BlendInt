@@ -9,7 +9,7 @@
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
-#include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/Slider.hpp>
 #include <BlendInt/Gui/Frame.hpp>
@@ -21,7 +21,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>

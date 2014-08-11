@@ -36,8 +36,8 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
-#include <BlendInt/Gui/HBox.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>

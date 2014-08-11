@@ -5,7 +5,7 @@
 #ifndef _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 #define _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/Button.hpp>

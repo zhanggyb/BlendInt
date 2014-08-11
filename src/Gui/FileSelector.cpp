@@ -40,7 +40,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Gui/FileSelector.hpp>
-#include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>

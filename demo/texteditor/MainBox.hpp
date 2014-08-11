@@ -8,7 +8,7 @@
 #ifndef MAINBOX_HPP_
 #define MAINBOX_HPP_
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>

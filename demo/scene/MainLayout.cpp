@@ -11,7 +11,7 @@
 #include <BlendInt/Gui/VBlock.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
-#include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 #include "MainLayout.hpp"
 
