@@ -8,7 +8,7 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 
-#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
@@ -88,7 +88,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 	RefPtr<Menu> file_menu(new Menu);
 
-    file_menu->SetRoundCornerType(RoundAll);
+    file_menu->SetRoundType(RoundAll);
     file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");
@@ -161,8 +161,8 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	box->SetSpace(-1);
 	TextEntry* input = Manage(new TextEntry);
 	Button* btn = Manage(new Button("Open"));
-	input->SetRoundCornerType(RoundTopLeft | RoundBottomLeft);
-	btn->SetRoundCornerType(RoundTopRight | RoundBottomRight);
+	input->SetRoundType(RoundTopLeft | RoundBottomLeft);
+	btn->SetRoundType(RoundTopRight | RoundBottomRight);
 	box->PushBack(input);
 	box->PushBack(btn);
 

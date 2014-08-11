@@ -175,7 +175,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundCornerType(int type)
+	void AbstractWidget::SetRoundType(int type)
 	{
 		if(round_type() == type) return;
 
@@ -194,7 +194,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundCornerRadius(float radius)
+	void AbstractWidget::SetRoundRadius(float radius)
 	{
 		if(round_radius_ == radius) return;
 

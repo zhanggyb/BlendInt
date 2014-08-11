@@ -24,8 +24,8 @@
 #ifndef _BLENDINT_GUI_COLORSELECTOR_HPP_
 #define _BLENDINT_GUI_COLORSELECTOR_HPP_
 
-#include <BlendInt/Gui/HBlock.hpp>
-#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
+#include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>

@@ -121,6 +121,10 @@ namespace BlendInt {
 
 		void SetSubWidgetPosition (AbstractWidget* sub, const Point& pos);
 
+		void SetSubWidgetRoundType (AbstractWidget* sub, int type);
+
+		void SetSubWidgetRoundRadius (AbstractWidget* sub, float radius);
+
 		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
 
 		virtual void PerformMarginUpdate (const Margin& margin);

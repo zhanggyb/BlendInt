@@ -40,8 +40,8 @@ void MainLayout::InitOnce ()
 	box->SetSpace(-1);
 	m_input = Manage(new TextEntry);
 	m_open = Manage(new Button("Open"));
-	m_input->SetRoundCornerType(RoundTopLeft | RoundBottomLeft);
-	m_open->SetRoundCornerType(RoundTopRight | RoundBottomRight);
+	m_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
+	m_open->SetRoundType(RoundTopRight | RoundBottomRight);
 	box->PushBack(m_input);
 	box->PushBack(m_open);
 
@@ -84,7 +84,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 	RefPtr<Menu> file_menu(new Menu);
 
-    file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
+    file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
     file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");

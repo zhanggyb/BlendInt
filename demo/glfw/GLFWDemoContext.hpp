@@ -39,8 +39,8 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
-#include <BlendInt/Gui/HBlock.hpp>
-#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
+#include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/FramePanel.hpp>
 
 #include <BlendInt/Gui/VirtualWindow.hpp>

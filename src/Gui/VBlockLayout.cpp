@@ -21,41 +21,42 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/HBlock.hpp>
+#include <BlendInt/Gui/VBlockLayout.hpp>
 
 namespace BlendInt {
 
-	HBlock::HBlock ()
+	VBlock::VBlock ()
 	: AbstractContainer()
 	{
-		set_size(100, 20);
+		set_size(80, 60);
 		set_margin(0, 0, 0, 0);
 	}
-	
-	HBlock::~HBlock ()
+
+	VBlock::~VBlock ()
 	{
 	}
-	
-	void HBlock::PushBack (AbstractWidget* widget)
+
+	void VBlock::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_last = last();
 
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
-			FillInHBlock(position(), size(), margin());
+			FillInVBlock(position(), size(), margin());
 
 			if(orig_last) {
-				orig_last->SetRoundCornerType(orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
-				widget->SetRoundCornerType(RoundTopRight | RoundBottomRight);
+				orig_last->SetEmboss(false);
+				SetSubWidgetRoundType(orig_last, orig_last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+				SetSubWidgetRoundType(widget, RoundBottomLeft | RoundBottomRight);
 			} else {
-				widget->SetRoundCornerType(RoundAll);
+				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
 		}
 	}
-	
-	bool HBlock::IsExpandX () const
+
+	bool VBlock::IsExpandX() const
 	{
 		bool expand = false;
 
@@ -70,7 +71,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool HBlock::IsExpandY () const
+	bool VBlock::IsExpandY () const
 	{
 		bool expand = false;
 
@@ -84,15 +85,15 @@ namespace BlendInt {
 
 		return expand;
 	}
-	
-	Size HBlock::GetPreferredSize () const
+
+	Size VBlock::GetPreferredSize () const
 	{
 		Size preferred_size;
 
 		if(first() == 0) {
 
-			preferred_size.set_width(100);
-			preferred_size.set_height(20);
+			preferred_size.set_width(80);
+			preferred_size.set_height(60);
 
 		} else {
 
@@ -104,15 +105,15 @@ namespace BlendInt {
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
 				if(p->visiable()) {
+					sum++;
 					tmp = p->GetPreferredSize();
 
-					sum++;
 					max_width = std::max(max_width, tmp.width());
 					max_height = std::max(max_height, tmp.height());
 				}
 			}
-			preferred_size.set_width(sum * (max_width - 1));
-			preferred_size.set_height(max_height);
+			preferred_size.set_width(max_width);
+			preferred_size.set_height(sum * (max_height - 1));
 
 			preferred_size.add_width(margin().hsum());
 			preferred_size.add_height(margin().vsum());
@@ -120,13 +121,13 @@ namespace BlendInt {
 
 		return preferred_size;
 	}
-	
-	void HBlock::PerformMarginUpdate(const Margin& request)
+
+	void VBlock::PerformMarginUpdate(const Margin& request)
 	{
-		FillInHBlock(position(), size(), request);
+		FillInVBlock(position(), size(), request);
 	}
 
-	bool HBlock::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool VBlock::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
 		if(request.source()->container() == this) {
@@ -136,7 +137,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool HBlock::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool VBlock::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
 		if(request.source()->container() == this) {
@@ -146,71 +147,71 @@ namespace BlendInt {
 		return true;
 	}
 
-	void HBlock::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void VBlock::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInHBlock(position(), *request.size(), margin());
+			FillInVBlock(position(), *request.size(), margin());
 		}
 
 		ReportSizeUpdate(request);
 	}
-	
-	void HBlock::PerformPositionUpdate(const PositionUpdateRequest& request)
+
+	void VBlock::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
 			int y = request.position()->y() - position().y();
 
 			set_position(*request.position());
-
 			MoveSubWidgets(x, y);
 		}
 
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType HBlock::Draw (const Profile& profile)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlock::MouseMoveEvent (const MouseEvent& event)
+	ResponseType VBlock::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}
 
-	void HBlock::FillInHBlock (const Point& out_pos, const Size& out_size,
+	ResponseType VBlock::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType VBlock::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+	
+	void VBlock::FillInVBlock (const Point& out_pos, const Size& out_size,
 					const Margin& margin)
 	{
 		int x = out_pos.x() + margin.left();
@@ -218,20 +219,21 @@ namespace BlendInt {
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 
-		FillInHBlock(x, y, w, h);
+		FillInVBlock(x, y, w, h);
 	}
 
-	void HBlock::FillInHBlock (int x, int y, int w, int h)
+	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
 		int count = widget_count();
 		if(count == 0) return;
-		int average_width = w / count + 1;
+		int average_height = h / count + 1;
 
+		y = y + h;
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			ResizeSubWidget(p, average_width, h);
+			ResizeSubWidget(p, w, average_height);
+			y = y - average_height + 1;
 			SetSubWidgetPosition(p, x, y);
-			x = x + average_width - 1;
 		}
 	}
 

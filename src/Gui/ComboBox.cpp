@@ -251,7 +251,7 @@ namespace BlendInt {
 			context->Remove(list_);
 			delete list_;
 			list_ = 0;
-			SetRoundCornerType(RoundAll);
+			SetRoundType(RoundAll);
 		} else {
 			list_ = Manage(new ListView);
 
@@ -262,7 +262,7 @@ namespace BlendInt {
 			list_->Resize(200, list_->size().height());
 			list_->SetPosition(position().x(), position().y() + size().height());
 			context->PushBack(list_);
-			SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
+			SetRoundType(RoundBottomLeft | RoundBottomRight);
 			context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}
 

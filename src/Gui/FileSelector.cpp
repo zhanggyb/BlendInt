@@ -162,7 +162,7 @@ namespace BlendInt {
 		vbox->SetSpace(4);
 
 		path_entry_ = Manage(new TextEntry);
-		path_entry_->SetRoundCornerType(RoundAll);
+		path_entry_->SetRoundType(RoundAll);
 
 		open_ = Manage(new Button(String("Open")));
 
@@ -172,7 +172,7 @@ namespace BlendInt {
 		dir_layout->PushBack(open_);
 
 		file_entry_ = Manage(new TextEntry);
-		file_entry_->SetRoundCornerType(RoundAll);
+		file_entry_->SetRoundType(RoundAll);
 		cancel_ = Manage(new Button(String("Cancel")));
 
 		HBox* file_layout = Manage(new HBox);

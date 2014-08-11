@@ -315,7 +315,7 @@ namespace BlendInt {
 			RefPtr<Menu> menu = original_active->menu();
 			Context* context = Context::GetContext(this);
 			context->Remove(menu.get());
-			original_active->SetRoundCornerType(RoundAll);
+			original_active->SetRoundType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 		}
@@ -334,7 +334,7 @@ namespace BlendInt {
 
 			menu->SetPosition(m_active_button->position().x(), y);
 			context->PushBack(menu.get());
-			m_active_button->SetRoundCornerType(RoundTopLeft | RoundTopRight);
+			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
 			context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
@@ -351,7 +351,7 @@ namespace BlendInt {
 
 				Context* context = Context::GetContext(this);
 				context->Remove(menu.get());
-				m_active_button->SetRoundCornerType(RoundAll);
+				m_active_button->SetRoundType(RoundAll);
 			}
 
 			m_active_button = 0;
@@ -374,7 +374,7 @@ namespace BlendInt {
 		}
 
 		if(m_active_button) {
-			m_active_button->SetRoundCornerType(RoundAll);
+			m_active_button->SetRoundType(RoundAll);
 			m_active_button = 0;
 		}
 

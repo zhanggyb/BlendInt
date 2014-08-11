@@ -642,6 +642,34 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractContainer::SetSubWidgetRoundType(AbstractWidget* sub, int type)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_type() == (type & 0x0F)) return;
+
+		RoundTypeUpdateRequest request (this, sub, &type);
+
+		if(sub->RoundTypeUpdateTest(request)) {
+			sub->PerformRoundTypeUpdate(request);
+			sub->set_round_type(type);
+		}
+	}
+
+	void AbstractContainer::SetSubWidgetRoundRadius(AbstractWidget* sub, float radius)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_radius() == radius) return;
+
+		RoundRadiusUpdateRequest request(this, sub, &radius);
+
+		if(sub->RoundRadiusUpdateTest(request)) {
+			sub->PerformRoundRadiusUpdate(request);
+			sub->set_round_radius(radius);
+		}
+	}
+
 	void AbstractContainer::SetSubWidgetVisibility (AbstractWidget* sub,
 	        bool visible)
 	{

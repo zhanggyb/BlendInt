@@ -328,9 +328,9 @@ namespace BlendInt {
 
 		void SetPosition (const Point& pos);
 
-		void SetRoundCornerType (int type);
+		void SetRoundType (int type);
 
-		void SetRoundCornerRadius (float radius);
+		void SetRoundRadius (float radius);
 
 		void SetVisible (bool visible);
 
