@@ -75,27 +75,33 @@ namespace BlendInt
 
 	private:
 
-		Orientation m_orientation;
+		Orientation orientation_;
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		bool m_highlight;
-		bool m_pressed;
+		bool highlight_;
+		bool pressed_;
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> buffer_;
 
-		Point m_last;
-		Point m_cursor;
+		Point last_;
+		Point cursor_;
 
-		unsigned int m_prev_size;	// width or height of the previous widget
-		unsigned int m_next_size;	// width or height of the next widget
-		int m_nearby_pos;	// nearby widget position
+		int prev_size_;	// width or height of the previous widget
+		int next_size_;	// width or height of the next widget
+		int nearby_pos_;	// nearby widget position
 
-		AbstractWidget* m_prev_widget;
-		AbstractWidget* m_next_widget;
+		AbstractWidget* prev_widget_;
+		AbstractWidget* next_widget_;
 
 	};
 
+	/**
+	 * @brief Splitter container
+	 *
+	 * A Splitter lets the user control the size of the sub widgets by dragging
+	 * the splitter handler between them.
+	 */
 	class Splitter: public AbstractContainer
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
@@ -221,7 +227,7 @@ namespace BlendInt
 		int GetWidgetsRoom (Orientation orientation, const Size& out_size,
 		        const Margin& margin);
 
-		Orientation m_orientation;
+		Orientation orientation_;
 	};
 }
 
