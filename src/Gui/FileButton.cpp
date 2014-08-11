@@ -40,6 +40,9 @@
 
 #include <BlendInt/Gui/FileButton.hpp>
 
+#include <BlendInt/Gui/FileSelector.hpp>
+#include <BlendInt/Gui/Context.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -51,6 +54,8 @@ namespace BlendInt {
 		set_drop_shadow(true);
 
 		InitializeFileButtonOnce();
+
+		events()->connect(clicked(), this, &FileButton::OnOpenFileSelector);
 	}
 
 	FileButton::~FileButton ()
@@ -227,5 +232,34 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-}
+	void FileButton::OnOpenFileSelector ()
+	{
+		Context* context = Context::GetContext(this);
 
+		if(context) {
+			FileSelector* fs = Manage(new FileSelector);
+			DBG_SET_NAME(fs, "File Selector on File Button");
+			context->PushBack(fs);
+			context->SetFocusedWidget(fs);
+
+			int w = 800;
+			int h = 600;
+
+			if(w > context->size().width()) {
+				w = context->size().width();
+			}
+
+			if(h > context->size().height()) {
+				h = context->size().height();
+			}
+
+			int x = (context->size().width() - w) / 2;
+			int y = (context->size().height() - h) / 2;
+
+			fs->Resize(w, h);
+			fs->SetPosition(x, y);
+
+		}
+	}
+
+}

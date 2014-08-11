@@ -23,11 +23,12 @@ TEST_F(FileButtonTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("FileButton - Foo1", 640, 480);
+    GLFWwindow* win = CreateWindow("FileButton - Foo1", 1280, 800);
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
+    context->Resize(1280, 800);
 
     FileButton* fb = Manage(new FileButton);
 	fb->SetPosition(100, 100);

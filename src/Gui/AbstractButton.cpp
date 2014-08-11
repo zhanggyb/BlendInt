@@ -194,10 +194,9 @@ namespace BlendInt {
 			Refresh();
 
 			pressed_.fire();
-			return Accept;
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)

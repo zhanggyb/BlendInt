@@ -62,7 +62,7 @@ namespace BlendInt {
 
 		AbstractWidget* last_hover_widget () const
 		{
-			return m_last_hover_widget;
+			return last_hover_widget_;
 		}
 
 		static Section* GetSection (AbstractWidget* widget);
@@ -129,7 +129,7 @@ namespace BlendInt {
 
 		AbstractWidget* m_focused_widget;
 
-		AbstractWidget* m_last_hover_widget;
+		AbstractWidget* last_hover_widget_;
 
 		ScissorStatus m_scissor_status;
 

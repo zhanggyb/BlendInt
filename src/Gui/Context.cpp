@@ -434,7 +434,7 @@ namespace BlendInt
 		}
 
 		if(response == Accept && Section::iterator_ptr) {
-			widget = dynamic_cast<Section*>(Section::iterator_ptr)->m_last_hover_widget;
+			widget = dynamic_cast<Section*>(Section::iterator_ptr)->last_hover_widget_;
 		}
 
 		Section::iterator_ptr = 0;

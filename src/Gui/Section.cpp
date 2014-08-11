@@ -50,7 +50,7 @@ namespace BlendInt {
 	Section::Section ()
 	: AbstractContainer(),
 	  m_focused_widget(0),
-	  m_last_hover_widget(0)
+	  last_hover_widget_(0)
 	{
 		set_size(800, 600);
 	}
@@ -99,16 +99,16 @@ namespace BlendInt {
 
 			if(widget->hover()) {
 
-				while (m_last_hover_widget && m_last_hover_widget != widget) {
-					m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(false);
-					m_last_hover_widget = m_last_hover_widget->container();
+				while (last_hover_widget_ && last_hover_widget_ != widget) {
+					last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+					last_hover_widget_->set_hover(false);
+					last_hover_widget_ = last_hover_widget_->container();
 				}
 
-				assert(m_last_hover_widget == widget);
-				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget = 0;
+				assert(last_hover_widget_ == widget);
+				last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				last_hover_widget_->set_hover(false);
+				last_hover_widget_ = 0;
 
 			}
 
@@ -517,7 +517,7 @@ namespace BlendInt {
 
 		CheckAndUpdateHoverWidget(event);
 
-		if(m_last_hover_widget) {
+		if(last_hover_widget_) {
 
 			/*
 			{
@@ -531,7 +531,7 @@ namespace BlendInt {
 			}
 			*/
 
-			return DispatchMousePressEvent(m_last_hover_widget, event);
+			return DispatchMousePressEvent(last_hover_widget_, event);
 
 		} else {
 			return Ignore;
@@ -544,7 +544,7 @@ namespace BlendInt {
 
 		CheckAndUpdateHoverWidget(event);
 
-		if(m_last_hover_widget) {
+		if(last_hover_widget_) {
 
 			/*
 			{
@@ -558,7 +558,7 @@ namespace BlendInt {
 			}
 			*/
 
-			return DispatchMouseReleaseEvent(m_last_hover_widget, event);
+			return DispatchMouseReleaseEvent(last_hover_widget_, event);
 
 		} else {
 			return Ignore;
@@ -571,8 +571,8 @@ namespace BlendInt {
 
 		CheckAndUpdateHoverWidget(event);
 
-		if(m_last_hover_widget) {
-			return m_last_hover_widget->MouseMoveEvent(event);
+		if(last_hover_widget_) {
+			return last_hover_widget_->MouseMoveEvent(event);
 		}
 
 		return Ignore;
@@ -676,40 +676,40 @@ namespace BlendInt {
 
 	bool Section::CheckAndUpdateHoverWidget (const MouseEvent& event)
 	{
-		if (m_last_hover_widget) {
+		if (last_hover_widget_) {
 
-			if (IsHoverThrough(m_last_hover_widget, event.position())) {
+			if (IsHoverThrough(last_hover_widget_, event.position())) {
 				//DBG_PRINT_MSG("last widget %s is under cursor", m_last_hover_widget->name().c_str());
 				UpdateHoverWidgetSubs(event);
 			} else {
-				m_last_hover_widget->destroyed().disconnectOne(this,
+				last_hover_widget_->destroyed().disconnectOne(this,
 				        &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget->CursorEnterEvent(false);
+				last_hover_widget_->set_hover(false);
+				last_hover_widget_->CursorEnterEvent(false);
 
 				// find which contianer contains cursor position
-				while (m_last_hover_widget->container()) {
+				while (last_hover_widget_->container()) {
 
-					if (m_last_hover_widget->container() == this) {	// FIXME: the widget may be mvoed to another context
+					if (last_hover_widget_->container() == this) {	// FIXME: the widget may be mvoed to another context
 						//DBG_PRINT_MSG("last widget %s is not under cursor and container is context", m_last_hover_widget->name().c_str());
-						m_last_hover_widget = 0;
+						last_hover_widget_ = 0;
 						break;
 					} else {
 						//DBG_PRINT_MSG("last widget %s is not under cursor but container is", m_last_hover_widget->name().c_str());
-						m_last_hover_widget = m_last_hover_widget->container();
+						last_hover_widget_ = last_hover_widget_->container();
 
-						if (IsHoverThrough(m_last_hover_widget, event.position())) {
+						if (IsHoverThrough(last_hover_widget_, event.position())) {
 							break;
 						} else {
-							m_last_hover_widget->destroyed().disconnectOne(this,
+							last_hover_widget_->destroyed().disconnectOne(this,
 							        &Section::OnHoverWidgetDestroyed);
-							m_last_hover_widget->set_hover(false);
-							m_last_hover_widget->CursorEnterEvent(false);
+							last_hover_widget_->set_hover(false);
+							last_hover_widget_->CursorEnterEvent(false);
 						}
 					}
 				}
 
-				if (m_last_hover_widget) {
+				if (last_hover_widget_) {
 					UpdateHoverWidgetSubs(event);
 				}
 			}
@@ -720,11 +720,14 @@ namespace BlendInt {
 				if (p->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
-					m_last_hover_widget = p;
-					events()->connect(m_last_hover_widget->destroyed(), this,
+					last_hover_widget_ = p;
+					events()->connect(last_hover_widget_->destroyed(), this,
 					        &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(true);
-					m_last_hover_widget->CursorEnterEvent(true);
+
+					if(!last_hover_widget_->hover()) {
+						last_hover_widget_->set_hover(true);
+						last_hover_widget_->CursorEnterEvent(true);
+					}
 
 					UpdateHoverWidgetSubs(event);
 					break;
@@ -732,22 +735,25 @@ namespace BlendInt {
 			}
 		}
 
-		return m_last_hover_widget != 0;
+		return last_hover_widget_ != 0;
 	}
 
 	void Section::UpdateHoverWidgetSubs (const MouseEvent& event)
 	{
-		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(m_last_hover_widget);
+		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(last_hover_widget_);
 
 		if (parent) {
 
 			for(AbstractWidget* p = parent->first(); p; p = p->next())
 			{
 				if(p->Contain(event.position())) {
-					m_last_hover_widget = p;
-					events()->connect(m_last_hover_widget->destroyed(), this, &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(true);
-					m_last_hover_widget->CursorEnterEvent(true);
+					last_hover_widget_ = p;
+					events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+
+					if(!last_hover_widget_->hover()) {
+						last_hover_widget_->set_hover(true);
+						last_hover_widget_->CursorEnterEvent(true);
+					}
 
 					UpdateHoverWidgetSubs(event);
 					break;
@@ -833,7 +839,33 @@ namespace BlendInt {
 
 	void Section::OnHoverWidgetDestroyed (AbstractWidget* widget)
 	{
+		assert(widget->hover());
+
+		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+
+		if(last_hover_widget_ == widget) {
+
+			last_hover_widget_ = widget->container();
+			if(last_hover_widget_) {
+
+				// the widget going to be deleted has no container, this line will never be reached
+
+				if(last_hover_widget_ == this) {
+					last_hover_widget_ = 0;
+				}
+
+			}
+
+		}
+
+		/*
 		if(widget->hover()) {	// check the hover status if the widget is the last one and hover status is reset in the destructor.
+
+			DBG_PRINT_MSG("Widget under cursor: %s was destroyed", widget->name().c_str());
+
+			if(m_last_hover_widget)
+				DBG_PRINT_MSG("last hover widget: %s", m_last_hover_widget->name().c_str());
 
 			assert(m_last_hover_widget);
 
@@ -845,10 +877,16 @@ namespace BlendInt {
 			m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
 
 			m_last_hover_widget = m_last_hover_widget->container();
+
+			if(m_last_hover_widget == 0) {
+				DBG_PRINT_MSG("%s", "now last hover widget is: 0");
+			}
+
 			if(m_last_hover_widget == this)
 				m_last_hover_widget = 0;
 
 		}
+		*/
 	}
 
 	bool Section::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -874,16 +912,16 @@ namespace BlendInt {
 
 	void Section::ClearHoverWidgets()
 	{
-		if(m_last_hover_widget) {
+		if(last_hover_widget_) {
 
-			while (m_last_hover_widget && m_last_hover_widget != this) {
-				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget = m_last_hover_widget->container();
+			while (last_hover_widget_ && last_hover_widget_ != this) {
+				last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				last_hover_widget_->set_hover(false);
+				last_hover_widget_ = last_hover_widget_->container();
 			}
 
-			if(m_last_hover_widget == this)
-				m_last_hover_widget = 0;
+			if(last_hover_widget_ == this)
+				last_hover_widget_ = 0;
 
 		}
 	}

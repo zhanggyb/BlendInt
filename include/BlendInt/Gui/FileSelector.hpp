@@ -73,6 +73,8 @@ namespace BlendInt {
 
 		void OnFileSelect ();
 
+		void OnCancel ();
+
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;
 

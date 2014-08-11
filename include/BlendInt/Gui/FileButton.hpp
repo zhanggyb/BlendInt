@@ -56,6 +56,8 @@ namespace BlendInt {
 
 		void InitializeFileButtonOnce ();
 
+		void OnOpenFileSelector();
+
 		GLuint vao_[2];
 
 		RefPtr<GLArrayBuffer> inner_;

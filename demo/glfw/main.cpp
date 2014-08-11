@@ -8,6 +8,7 @@
 #include "Window.hpp"
 
 #include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -23,27 +24,6 @@ int main(int argc, char* argv[])
 	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
-
-    ToolBox* tb = Manage(new ToolBox);
-    tb->SetPosition(100, 100);
-
-	Expander* expander1 = Manage(new Expander("System"));
-	DBG_SET_NAME(expander1, "System Expander");
-	Button* btn1 = Manage(new Button);
-	expander1->Setup(btn1);
-
-	Expander* expander2 = Manage(new Expander("System Bookmarks"));
-	DBG_SET_NAME(expander2, "System Bookmarks Expander");
-	Button* btn2 = Manage(new Button);
-
-	expander2->Setup(btn2);
-
-    tb->PushBack(expander1);
-    tb->PushBack(expander2);
-
-    //tb->Resize(200, 400);
-
-    context->PushBack(tb);
 
 	RunLoop(win);
 	Interface::Release();

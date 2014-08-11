@@ -58,6 +58,8 @@ namespace BlendInt {
 		set_drop_shadow(true);
 
 		InitializeFileSelector();
+
+		events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
 	}
 
 	FileSelector::~FileSelector ()
@@ -158,29 +160,40 @@ namespace BlendInt {
 	VBox* FileSelector::CreateBrowserAreaOnce()
 	{
 		VBox* vbox = Manage(new VBox);
+		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetMargin(2, 2, 2, 2);
 		vbox->SetSpace(4);
 
 		path_entry_ = Manage(new TextEntry);
+		DBG_SET_NAME(path_entry_, "Path Entry");
 		path_entry_->SetRoundType(RoundAll);
 
 		open_ = Manage(new Button(String("Open")));
+		DBG_SET_NAME(open_, "Open Button");
 
 		HBox* dir_layout = Manage(new HBox);
+		DBG_SET_NAME(dir_layout, "DIR Layout");
+
 		dir_layout->SetMargin(0, 0, 0, 0);
 		dir_layout->PushBack(path_entry_);
 		dir_layout->PushBack(open_);
 
 		file_entry_ = Manage(new TextEntry);
+		DBG_SET_NAME(file_entry_, "File Entry");
+
 		file_entry_->SetRoundType(RoundAll);
 		cancel_ = Manage(new Button(String("Cancel")));
+		DBG_SET_NAME(cancel_, "Cancel Button");
 
 		HBox* file_layout = Manage(new HBox);
+		DBG_SET_NAME(file_layout, "File Layout");
+
 		file_layout->SetMargin(0, 0, 0, 0);
 		file_layout->PushBack(file_entry_);
 		file_layout->PushBack(cancel_);
 
 		browser_ = Manage(new FileBrowser);
+		DBG_SET_NAME(browser_, "FileBrowser");
 
 		vbox->PushBack(dir_layout);
 		vbox->PushBack(file_layout);
@@ -221,6 +234,7 @@ namespace BlendInt {
 		Expander* expander = Manage(new Expander("System"));
 		DBG_SET_NAME(expander, "System Expander");
 		Button* btn = Manage(new Button);
+		DBG_SET_NAME(btn, "Temp button in System");
 
 		expander->Setup(btn);
 
@@ -232,11 +246,17 @@ namespace BlendInt {
 		Expander* expander = Manage(new Expander("System Bookmarks"));
 		DBG_SET_NAME(expander, "System Bookmarks Expander");
 		Button* btn = Manage(new Button);
+		DBG_SET_NAME(btn, "Temp button in SystemBookmarks");
 
 		expander->Setup(btn);
 
 		return expander;
 	}
 
-}
+	void FileSelector::OnCancel ()
+	{
+		cancel_->clicked().disconnectOne(this, &FileSelector::OnCancel);
+		delete this;
+	}
 
+}
