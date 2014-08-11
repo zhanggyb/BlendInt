@@ -10,7 +10,7 @@ GLFWDemoContext::GLFWDemoContext()
   m_browser(0),
   m_open_button(0)
 {
-	Initialize ();
+	//Initialize ();
 }
 
 GLFWDemoContext::~GLFWDemoContext ()

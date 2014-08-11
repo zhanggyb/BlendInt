@@ -73,6 +73,9 @@ namespace BlendInt {
 			inner_->Bind();
 			tool.SetInnerBufferData(inner_.get());
 			inner_->Reset();
+
+			Frame::PerformSizeUpdate(request);
+			return;
 		}
 
 		ReportSizeUpdate(request);
@@ -191,6 +194,9 @@ namespace BlendInt {
 		ToolBar* toolbar = Manage(new ToolBar);
 		DBG_SET_NAME(toolbar, "ToolBar");
 		toolbar->SetMargin(2, 2, 2, 2);
+
+		ToolButton* tool_btn1 = Manage(new ToolButton);
+		toolbar->PushBack(tool_btn1);
 
 		return toolbar;
 	}

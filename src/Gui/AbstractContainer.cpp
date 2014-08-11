@@ -491,6 +491,45 @@ namespace BlendInt {
 
 #endif
 
+	bool AbstractContainer::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::PositionUpdateTest (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::RoundTypeUpdateTest (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	void AbstractContainer::AlignVertically (int x, int width, int alignment)
 	{
 		for (AbstractWidget* p = first_; p; p = p->next_) {
@@ -632,7 +671,7 @@ namespace BlendInt {
 			widget->shadow_->Update(widget->size(), widget->round_type(), widget->round_radius());
 
 		} else {
-			DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
+			//DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
 			return false;
 		}
 

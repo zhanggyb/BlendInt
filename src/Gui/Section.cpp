@@ -851,6 +851,27 @@ namespace BlendInt {
 		}
 	}
 
+	bool Section::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void Section::ClearHoverWidgets()
 	{
 		if(m_last_hover_widget) {

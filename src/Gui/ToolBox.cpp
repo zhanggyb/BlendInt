@@ -133,6 +133,11 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	bool ToolBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void ToolBox::PerformMarginUpdate (const Margin& request)
 	{
 		int x = position().x() + request.left();
