@@ -38,6 +38,7 @@ option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
 option(WITH_GLUT_DEMO "Build GLUT demo program" OFF)
 option(WITH_QT5_DEMO "Build Qt5 demo program" OFF)
 option(WITH_UNIT_TEST "Build unit test code" OFF)
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 # end of options
 
 configure_file(
@@ -186,6 +187,10 @@ add_subdirectory(src)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
+endif()
+
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
 endif()
 
 if(WITH_UNIT_TEST)
