@@ -38,6 +38,11 @@ namespace BlendInt {
 	{
 	public:
 
+		enum Mode {
+			Normal,
+			Modal
+		};
+
 		friend class Context;
 
 		Section ();
@@ -63,6 +68,11 @@ namespace BlendInt {
 		AbstractWidget* last_hover_widget () const
 		{
 			return last_hover_widget_;
+		}
+
+		void set_mode (Mode mode)
+		{
+			mode_ = mode;
 		}
 
 		static Section* GetSection (AbstractWidget* widget);
@@ -132,6 +142,8 @@ namespace BlendInt {
 		AbstractWidget* last_hover_widget_;
 
 		ScissorStatus m_scissor_status;
+
+		Mode mode_;
 
 		static AbstractWidget* iterator_ptr;
 	};

@@ -90,14 +90,17 @@ namespace BlendInt
 
 		if(section) {
 
-			if(section->container() == this) {
+			if(section->container_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in context %s",
 									widget->name().c_str(),
 									name().c_str());
 				return section;
 			} else {
-				section->container_->RemoveSubWidget(section);
+				if(section->container_) {
+					section->container_->RemoveSubWidget(section);
+				}
 			}
+
 		} else {
 			section = Manage(new Section);
 			section->PushBack(widget);

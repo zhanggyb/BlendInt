@@ -50,7 +50,8 @@ namespace BlendInt {
 	Section::Section ()
 	: AbstractContainer(),
 	  m_focused_widget(0),
-	  last_hover_widget_(0)
+	  last_hover_widget_(0),
+	  mode_(Normal)
 	{
 		set_size(800, 600);
 	}
@@ -508,69 +509,63 @@ namespace BlendInt {
 
 	ResponseType Section::MousePressEvent (const MouseEvent& event)
 	{
+		ResponseType retval = Ignore;
+
 		const_cast<MouseEvent&>(event).m_section = this;
 
 		CheckAndUpdateHoverWidget(event);
 
 		if(last_hover_widget_) {
 
-			/*
-			{
-				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
-				AbstractWidget* hover_widget = m_last_hover_widget;
+			retval = DispatchMousePressEvent(last_hover_widget_, event);
 
-				while(hover_widget != this) {
-					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
-					hover_widget = hover_widget->container();
-				}
-			}
-			*/
-
-			return DispatchMousePressEvent(last_hover_widget_, event);
-
-		} else {
-			return Ignore;
 		}
+
+		if(mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	ResponseType Section::MouseReleaseEvent (const MouseEvent& event)
 	{
+		ResponseType retval = Ignore;
+
 		const_cast<MouseEvent&>(event).m_section = this;
 
 		CheckAndUpdateHoverWidget(event);
 
 		if(last_hover_widget_) {
 
-			/*
-			{
-				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
-				AbstractWidget* hover_widget = m_last_hover_widget;
+			retval = DispatchMouseReleaseEvent(last_hover_widget_, event);
 
-				while(hover_widget != this) {
-					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
-					hover_widget = hover_widget->container();
-				}
-			}
-			*/
-
-			return DispatchMouseReleaseEvent(last_hover_widget_, event);
-
-		} else {
-			return Ignore;
 		}
+
+		if(mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	ResponseType Section::MouseMoveEvent (const MouseEvent& event)
 	{
+		ResponseType retval = Ignore;
+
 		const_cast<MouseEvent&>(event).m_section = this;
 
 		CheckAndUpdateHoverWidget(event);
 
 		if(last_hover_widget_) {
-			return last_hover_widget_->MouseMoveEvent(event);
+			retval = last_hover_widget_->MouseMoveEvent(event);
 		}
 
-		return Ignore;
+		if(mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
@@ -806,14 +801,12 @@ namespace BlendInt {
 
 			if(widget->container()) {
 				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
-					//DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
 					return widget->MousePressEvent(event);
 				} else {
 					return Accept;
 				}
 
 			} else {
-				//DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
 				return widget->MousePressEvent(event);
 			}
 
@@ -828,7 +821,6 @@ namespace BlendInt {
 
 			if(widget->container()) {
 				if(DispatchMouseReleaseEvent(widget->container(), event) == Ignore) {
-					//DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
 					return widget->MouseReleaseEvent(event);
 				} else {
 					return Accept;

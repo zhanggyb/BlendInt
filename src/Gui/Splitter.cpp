@@ -73,19 +73,32 @@ namespace BlendInt {
 		buffer_->Generate();
 		buffer_->Bind();
 
-		std::vector<GLfloat> vertices(4, 0);
+		std::vector<GLfloat> vertices(8, 0.f);
 
 		if(orientation == Horizontal) {
 			vertices[2] = 200.f;
+			//vertices[3] = 0.f;
 
+			//vertices[4] = 0.f;
+			vertices[5] = 1.f;
+
+			vertices[6] = 200.f;
+			vertices[7] = 1.f;
 		} else {
-			vertices[3] = 200.f;
+			vertices[2] = 1.f;
+			//vertices[3] = 0.f;
+
+			//vertices[4] = 0.f;
+			vertices[5] = 200.f;
+
+			vertices[6] = 1.f;
+			vertices[7] = 200.f;
 		}
 
-		buffer_->SetData(sizeof(GLfloat) * 4, &vertices[0], GL_STATIC_DRAW);
+		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->line_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->line_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -131,17 +144,19 @@ namespace BlendInt {
 	void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			std::vector<GLfloat> vertices(4, 0);
+			std::vector<GLfloat> vertices(8, 0.f);
 
-			if (orientation_ == Horizontal) {
-				vertices[2] = request.size()->width();
-			} else {
-				vertices[3] = request.size()->height();
-			}
+			vertices[2] = (GLfloat)request.size()->width();
+			//vertices[3] = 0.f;
+
+			//vertices[4] = 0.f;
+			vertices[5] = (GLfloat)request.size()->height();
+
+			vertices[6] = (GLfloat)request.size()->width();
+			vertices[7] = (GLfloat)request.size()->height();
 
 			buffer_->Bind();
-			buffer_->SetData(sizeof(GLfloat) * 4, &vertices[0],
-							GL_STATIC_DRAW);
+			buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 			buffer_->Reset();
 
 			set_size(*request.size());
@@ -153,20 +168,20 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::Draw (const Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		glUniform3f(Shaders::instance->line_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->line_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 		if(highlight_) {
-			glUniform1i(Shaders::instance->line_uniform_gamma(), 50);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 50);
 		} else {
-			glUniform1i(Shaders::instance->line_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		}
-		glVertexAttrib4f(Shaders::instance->line_attrib_color(), 0.05f, 0.05f, 0.05f, 0.6f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.05f, 0.05f, 0.05f, 0.6f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_LINES, 0, 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
 
 		program->Reset();

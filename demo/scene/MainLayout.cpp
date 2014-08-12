@@ -12,6 +12,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 #include "MainLayout.hpp"
 
@@ -160,7 +161,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	TextEntry* input = Manage(new TextEntry);
-	Button* btn = Manage(new Button("Open"));
+	FileButton* btn = Manage(new FileButton);
 	input->SetRoundType(RoundTopLeft | RoundBottomLeft);
 	btn->SetRoundType(RoundTopRight | RoundBottomRight);
 	box->PushBack(input);
