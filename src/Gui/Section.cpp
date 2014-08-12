@@ -97,18 +97,13 @@ namespace BlendInt {
 
 			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 
-			if(widget->hover()) {
+			if(widget == last_hover_widget_) {
 
-				while (last_hover_widget_ && last_hover_widget_ != widget) {
-					last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-					last_hover_widget_->set_hover(false);
-					last_hover_widget_ = last_hover_widget_->container();
-				}
+				assert(widget->hover());
 
-				assert(last_hover_widget_ == widget);
-				last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				last_hover_widget_->set_hover(false);
-				last_hover_widget_ = 0;
+				widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				widget->set_hover(false);
+				widget = 0;
 
 			}
 
@@ -679,9 +674,17 @@ namespace BlendInt {
 		if (last_hover_widget_) {
 
 			if (IsHoverThrough(last_hover_widget_, event.position())) {
-				//DBG_PRINT_MSG("last widget %s is under cursor", m_last_hover_widget->name().c_str());
+
+				AbstractWidget* orig = last_hover_widget_;
 				UpdateHoverWidgetSubs(event);
+
+				if(orig != last_hover_widget_) {
+					orig->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+					events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+				}
+
 			} else {
+
 				last_hover_widget_->destroyed().disconnectOne(this,
 				        &Section::OnHoverWidgetDestroyed);
 				last_hover_widget_->set_hover(false);
@@ -691,48 +694,53 @@ namespace BlendInt {
 				while (last_hover_widget_->container()) {
 
 					if (last_hover_widget_->container() == this) {	// FIXME: the widget may be mvoed to another context
-						//DBG_PRINT_MSG("last widget %s is not under cursor and container is context", m_last_hover_widget->name().c_str());
 						last_hover_widget_ = 0;
 						break;
 					} else {
-						//DBG_PRINT_MSG("last widget %s is not under cursor but container is", m_last_hover_widget->name().c_str());
 						last_hover_widget_ = last_hover_widget_->container();
 
 						if (IsHoverThrough(last_hover_widget_, event.position())) {
 							break;
-						} else {
+						}
+						/*
+						else {
 							last_hover_widget_->destroyed().disconnectOne(this,
 							        &Section::OnHoverWidgetDestroyed);
 							last_hover_widget_->set_hover(false);
 							last_hover_widget_->CursorEnterEvent(false);
 						}
+						*/
 					}
 				}
 
 				if (last_hover_widget_) {
 					UpdateHoverWidgetSubs(event);
+					events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
 				}
 			}
 
 		} else {
+
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
 				if (p->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					last_hover_widget_ = p;
-					events()->connect(last_hover_widget_->destroyed(), this,
-					        &Section::OnHoverWidgetDestroyed);
-
-					if(!last_hover_widget_->hover()) {
-						last_hover_widget_->set_hover(true);
-						last_hover_widget_->CursorEnterEvent(true);
-					}
+					last_hover_widget_->set_hover(true);
+					last_hover_widget_->CursorEnterEvent(true);
 
 					UpdateHoverWidgetSubs(event);
+
 					break;
 				}
 			}
+
+			if(last_hover_widget_) {
+				events()->connect(last_hover_widget_->destroyed(), this,
+				        &Section::OnHoverWidgetDestroyed);
+			}
+
 		}
 
 		return last_hover_widget_ != 0;
@@ -747,13 +755,10 @@ namespace BlendInt {
 			for(AbstractWidget* p = parent->first(); p; p = p->next())
 			{
 				if(p->Contain(event.position())) {
-					last_hover_widget_ = p;
-					events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
 
-					if(!last_hover_widget_->hover()) {
-						last_hover_widget_->set_hover(true);
-						last_hover_widget_->CursorEnterEvent(true);
-					}
+					last_hover_widget_ = p;
+					last_hover_widget_->set_hover(true);
+					last_hover_widget_->CursorEnterEvent(true);
 
 					UpdateHoverWidgetSubs(event);
 					break;
@@ -840,53 +845,12 @@ namespace BlendInt {
 	void Section::OnHoverWidgetDestroyed (AbstractWidget* widget)
 	{
 		assert(widget->hover());
+		assert(last_hover_widget_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
 		widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
 
-		if(last_hover_widget_ == widget) {
-
-			last_hover_widget_ = widget->container();
-			if(last_hover_widget_) {
-
-				// the widget going to be deleted has no container, this line will never be reached
-
-				if(last_hover_widget_ == this) {
-					last_hover_widget_ = 0;
-				}
-
-			}
-
-		}
-
-		/*
-		if(widget->hover()) {	// check the hover status if the widget is the last one and hover status is reset in the destructor.
-
-			DBG_PRINT_MSG("Widget under cursor: %s was destroyed", widget->name().c_str());
-
-			if(m_last_hover_widget)
-				DBG_PRINT_MSG("last hover widget: %s", m_last_hover_widget->name().c_str());
-
-			assert(m_last_hover_widget);
-
-			while (m_last_hover_widget != widget) {
-				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget = m_last_hover_widget->container();
-			}
-
-			m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-
-			m_last_hover_widget = m_last_hover_widget->container();
-
-			if(m_last_hover_widget == 0) {
-				DBG_PRINT_MSG("%s", "now last hover widget is: 0");
-			}
-
-			if(m_last_hover_widget == this)
-				m_last_hover_widget = 0;
-
-		}
-		*/
+		last_hover_widget_ = 0;
 	}
 
 	bool Section::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -914,8 +878,9 @@ namespace BlendInt {
 	{
 		if(last_hover_widget_) {
 
+			last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+
 			while (last_hover_widget_ && last_hover_widget_ != this) {
-				last_hover_widget_->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
 				last_hover_widget_->set_hover(false);
 				last_hover_widget_ = last_hover_widget_->container();
 			}

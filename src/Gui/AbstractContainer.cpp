@@ -415,6 +415,10 @@ namespace BlendInt {
 		widget->container_ = 0;
 		widget_count_--;
 
+		if(widget->hover()) {
+			widget->set_hover(false);
+		}
+
 		return true;
 	}
 
