@@ -5,6 +5,7 @@ add_subdirectory(Core)
 add_subdirectory(OpenGL)
 add_subdirectory(Gui)
 add_subdirectory(Stock)
+add_subdirectory(CppEvents)
 
 file(GLOB libBlendInt_SRC "*.cpp")
 
@@ -28,3 +29,4 @@ set(MODULES BlendIntCore BlendIntOpenGL BlendIntGui BlendIntStock CppEvents)
 
 target_link_libraries(BlendInt ${MODULES} ${LIBS})
 
+install(TARGETS BlendInt DESTINATION lib)

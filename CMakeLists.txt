@@ -40,6 +40,13 @@ option(WITH_QT5_DEMO "Build Qt5 demo program" OFF)
 option(WITH_UNIT_TEST "Build unit test code" OFF)
 # end of options
 
+configure_file(
+	"${PROJECT_SOURCE_DIR}/BlendIntConfig.hpp.in"
+	"${PROJECT_BINARY_DIR}/BlendIntConfig.hpp"
+)
+
+include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
+
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -100,7 +107,7 @@ endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
-include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)
+include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt/CppEvents)
 include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 include(CheckCXXCompilerFlag)
@@ -175,7 +182,6 @@ if(ENABLE_OPENCV)
     set(LIBS ${LIBS} ${OpenCV_LIBS})
 endif()
 
-add_subdirectory(extern/CppEvents/src)
 add_subdirectory(src)
 
 if(BUILD_STATIC_LIBRARY)
@@ -195,3 +201,4 @@ endif()
 
 add_subdirectory(demo)
 
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)

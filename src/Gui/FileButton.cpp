@@ -239,7 +239,8 @@ namespace BlendInt {
 		if(context) {
 			FileSelector* fs = Manage(new FileSelector);
 			DBG_SET_NAME(fs, "File Selector on File Button");
-			context->PushBack(fs);
+			Section* section = context->PushBack(fs);
+			section->set_mode(Section::Modal);
 			context->SetFocusedWidget(fs);
 
 			int w = 800;
