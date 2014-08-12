@@ -43,23 +43,23 @@ namespace BlendInt {
 
 	TabHeader::TabHeader()
 	: AbstractContainer(),
-	  m_vao(0)
+	  vao_(0)
 	{
 		set_size(400, 24);
 		set_margin(2, 2, 0, 0);
 
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
 
-		tool.SetInnerBufferData(m_buffer.get());
+		tool.SetInnerBufferData(inner_.get());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 
 	TabHeader::~TabHeader()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void TabHeader::PushBack (TabButton* button)
@@ -161,7 +161,7 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.UpdateInnerBuffer(m_buffer.get());
+			tool.UpdateInnerBuffer(inner_.get());
 			set_size(*request.size());
 		}
 
@@ -181,7 +181,7 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);

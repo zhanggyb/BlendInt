@@ -86,9 +86,9 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> inner_;
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		ButtonGroup m_group;
 

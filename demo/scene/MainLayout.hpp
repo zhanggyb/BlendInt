@@ -16,6 +16,7 @@
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 namespace BI = BlendInt;
 
@@ -47,6 +48,8 @@ private:
 
 	BI::Tab* CreateTab ();
 
+	void OnFileChanged ();
+
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 
@@ -54,6 +57,9 @@ private:
 	BI::ToolButton* m_open;
 
 	BI::Viewport3D* m_scene;
+
+	BI::TextEntry* m_file_input;
+	BI::FileButton* m_file_button;
 };
 
 #endif

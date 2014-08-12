@@ -91,7 +91,7 @@ namespace Cpp {
 
 			ConnectionList::~ConnectionList ()
 			{
-				assert(!data_.isBorrowed());
+				// assert(!data_.isBorrowed());
 				disconnectAll();
 			}
 			//------------------------------------------------------------------------------

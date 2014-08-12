@@ -12,12 +12,11 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
-#include <BlendInt/Gui/FileButton.hpp>
 
 #include "MainLayout.hpp"
 
 MainLayout::MainLayout ()
-	: m_menubar(0), m_toolbar(0), m_scene(0)
+	: m_menubar(0), m_toolbar(0), m_scene(0), m_file_input(0), m_file_button(0)
 {
 	InitOnce();
 }
@@ -160,16 +159,23 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	HBox* box = Manage(new HBox);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
-	TextEntry* input = Manage(new TextEntry);
-	FileButton* btn = Manage(new FileButton);
-	input->SetRoundType(RoundTopLeft | RoundBottomLeft);
-	btn->SetRoundType(RoundTopRight | RoundBottomRight);
-	box->PushBack(input);
-	box->PushBack(btn);
+	m_file_input = Manage(new TextEntry);
+	m_file_button = Manage(new FileButton);
+	m_file_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
+	m_file_button->SetRoundType(RoundTopRight | RoundBottomRight);
+	box->PushBack(m_file_input);
+	box->PushBack(m_file_button);
 
 	toolbar->SetMargin(2, 2, 2, 2);
 	toolbar->PushBack(combo);
 	toolbar->PushBack(box);
 
+	events()->connect(m_file_button->file_opened(), this, &MainLayout::OnFileChanged);
+
 	return toolbar;
+}
+
+void MainLayout::OnFileChanged ()
+{
+	m_file_input->SetText(m_file_button->file());
 }

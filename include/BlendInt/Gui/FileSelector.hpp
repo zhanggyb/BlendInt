@@ -36,6 +36,8 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -50,6 +52,15 @@ namespace BlendInt {
 		FileSelector ();
 
 		virtual ~FileSelector ();
+
+		const String& file_selected () const
+		{
+			return browser_->file_selected();
+		}
+
+		Cpp::EventRef<> opened () {return opened_;}
+
+		Cpp::EventRef<> canceled () {return canceled_;}
 
 	protected:
 
@@ -73,8 +84,6 @@ namespace BlendInt {
 
 		void OnFileSelect ();
 
-		void OnCancel ();
-
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;
 
@@ -85,6 +94,10 @@ namespace BlendInt {
 		Button* cancel_;
 
 		FileBrowser* browser_;
+
+		Cpp::Event<> opened_;
+
+		Cpp::Event<> canceled_;
 	};
 
 }

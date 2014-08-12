@@ -40,7 +40,6 @@
 
 #include <BlendInt/Gui/FileButton.hpp>
 
-#include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -48,14 +47,15 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FileButton::FileButton ()
-	: AbstractButton()
+	: AbstractButton(),
+	  file_selector_(0)
 	{
 		set_round_type(RoundAll);
 		set_drop_shadow(true);
 
 		InitializeFileButtonOnce();
 
-		events()->connect(clicked(), this, &FileButton::OnOpenFileSelector);
+		events()->connect(clicked(), this, &FileButton::OnClicked);
 	}
 
 	FileButton::~FileButton ()
@@ -232,16 +232,19 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-	void FileButton::OnOpenFileSelector ()
+	void FileButton::OnClicked ()
 	{
 		Context* context = Context::GetContext(this);
 
 		if(context) {
-			FileSelector* fs = Manage(new FileSelector);
-			DBG_SET_NAME(fs, "File Selector on File Button");
-			Section* section = context->PushBack(fs);
+
+			assert(file_selector_ == 0);
+
+			file_selector_ = Manage(new FileSelector);
+			DBG_SET_NAME(file_selector_, "File Selector on File Button");
+			Section* section = context->PushBack(file_selector_);
 			section->set_mode(Section::Modal);
-			context->SetFocusedWidget(fs);
+			context->SetFocusedWidget(file_selector_);
 
 			int w = 800;
 			int h = 600;
@@ -257,10 +260,30 @@ namespace BlendInt {
 			int x = (context->size().width() - w) / 2;
 			int y = (context->size().height() - h) / 2;
 
-			fs->Resize(w, h);
-			fs->SetPosition(x, y);
+			file_selector_->Resize(w, h);
+			file_selector_->SetPosition(x, y);
+
+			events()->connect(file_selector_->opened(), this, &FileButton::OnOpened);
+			events()->connect(file_selector_->canceled(), this, &FileButton::OnCanceled);
 
 		}
+	}
+
+	void FileButton::OnOpened ()
+	{
+		file_selector_->opened().disconnectOne(this, &FileButton::OnOpened);
+		file_ = file_selector_->file_selected();
+		delete file_selector_;
+		file_selector_ = 0;
+
+		file_opened_.fire();
+	}
+
+	void FileButton::OnCanceled ()
+	{
+		file_selector_->canceled().disconnectOne(this, &FileButton::OnCanceled);
+		delete file_selector_;
+		file_selector_ = 0;
 	}
 
 }

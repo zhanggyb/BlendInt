@@ -25,6 +25,9 @@
 #define _BLENDINT_GUI_FILEBUTTON_HPP_
 
 #include <BlendInt/Gui/AbstractButton.hpp>
+#include <BlendInt/Gui/FileSelector.hpp>
+
+#include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
@@ -42,6 +45,13 @@ namespace BlendInt {
 
 		virtual ~FileButton ();
 
+		const String& file () const
+		{
+			return file_;
+		}
+
+		Cpp::EventRef<> file_opened() {return file_opened_;}
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -56,13 +66,22 @@ namespace BlendInt {
 
 		void InitializeFileButtonOnce ();
 
-		void OnOpenFileSelector();
+		void OnClicked();
+
+		void OnOpened ();
+
+		void OnCanceled ();
 
 		GLuint vao_[2];
 
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
+		FileSelector* file_selector_;
+
+		String file_;
+
+		Cpp::Event<> file_opened_;
 	};
 
 }
