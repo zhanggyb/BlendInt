@@ -42,7 +42,11 @@ private:
 
 	BI::ToolBox* CreateToolBox ();
 
-	BI::Expander* CreateExpander ();
+	BI::Expander* CreateTransformExpander ();
+
+	BI::Expander* CreateLightExpander ();
+
+	BI::Expander* CreateColorExpander ();
 
 	BI::ToolBar* CreateBottomBar ();
 

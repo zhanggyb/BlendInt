@@ -56,26 +56,28 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
 			radius_plus += round_radius();
 		}
 
-		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+		if ((round_type() & RoundTopRight)
+				|| (round_type() & RoundBottomRight)) {
 			radius_plus += round_radius();
 		}
 
 		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(
-		        max_font_height + DefaultButtonPadding().vsum());// top padding: 2, bottom padding: 2
+				max_font_height + default_button_padding.vsum()); // top padding: 2, bottom padding: 2
 
 		if (text_.empty()) {
 			preferred_size.set_width(
-			        max_font_height + DefaultButtonPadding().hsum()
-			                + radius_plus);
+					max_font_height + default_button_padding.hsum()
+							+ radius_plus);
 		} else {
 			int width = font().GetTextWidth(text());
-			preferred_size.set_width(width + DefaultButtonPadding().hsum() + radius_plus);	// left padding: 2, right padding: 2
+			preferred_size.set_width(
+					width + default_button_padding.hsum() + radius_plus); // left padding: 2, right padding: 2
 		}
 
 		return preferred_size;

@@ -13,11 +13,18 @@
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
+#include <BlendInt/Gui/NumericalSlider.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
 
 #include "MainLayout.hpp"
 
 MainLayout::MainLayout ()
-	: m_menubar(0), m_toolbar(0), m_scene(0), m_file_input(0), m_file_button(0), m_btn_open(0)
+: m_menubar(0),
+  m_toolbar(0),
+  m_scene(0),
+  m_file_input(0),
+  m_file_button(0),
+  m_btn_open(0)
 {
 	InitOnce();
 }
@@ -120,13 +127,19 @@ BI::ToolBox* MainLayout::CreateToolBox()
 
 	ToolBox* toolbox = Manage(new ToolBox);
 
-	Expander* expander = CreateExpander();
-	toolbox->PushBack(expander);
+	Expander* expander1 = CreateTransformExpander();
+	toolbox->PushBack(expander1);
+
+	Expander* expander2 = CreateLightExpander();
+	toolbox->PushBack(expander2);
+
+	Expander* expander3 = CreateColorExpander();
+	toolbox->PushBack(expander3);
 
 	return toolbox;
 }
 
-BI::Expander* MainLayout::CreateExpander()
+BI::Expander* MainLayout::CreateTransformExpander()
 {
 	using namespace BI;
 
@@ -142,6 +155,39 @@ BI::Expander* MainLayout::CreateExpander()
 	vblock->PushBack(btn3);
 
 	expander->Setup(vblock);
+
+	return expander;
+}
+
+BI::Expander* MainLayout::CreateLightExpander()
+{
+	using namespace BI;
+
+	Expander* expander = Manage(new Expander("Light"));
+
+	NumericalSlider* ns1 = Manage(new NumericalSlider);
+	NumericalSlider* ns2 = Manage(new NumericalSlider);
+	NumericalSlider* ns3 = Manage(new NumericalSlider);
+
+	VBlock* vblock = Manage(new VBlock);
+	vblock->PushBack(ns1);
+	vblock->PushBack(ns2);
+	vblock->PushBack(ns3);
+
+	expander->Setup(vblock);
+
+	return expander;
+}
+
+BI::Expander* MainLayout::CreateColorExpander()
+{
+	using namespace BI;
+
+	Expander* expander = Manage(new Expander("Color"));
+
+	ColorSelector* cs = Manage(new ColorSelector);
+
+	expander->Setup(cs);
 
 	return expander;
 }

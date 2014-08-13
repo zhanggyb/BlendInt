@@ -88,8 +88,7 @@ namespace BlendInt {
 		}
 
 		destroyed_.fire(this);
-
-		DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
+		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
 	Size AbstractWidget::GetPreferredSize() const

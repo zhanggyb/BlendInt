@@ -109,12 +109,48 @@ The source code is verified to be built and workable on:
 * Ubuntu 13.10, 14.04(LTS)
 * Fedora 20
 
+### Install Prerequsites in Mac OS X
+
+The packages required above can be install through
+[Homebrew](http://brew.sh):
+
+```shell
+$ brew install cmake openimageio boost freetype fontconfig
+```
+
+### Install Prerequsites in ArchLinux
+
+Use Pacman in ArchLinux:
+
+```shell
+$ sudo pacman -S cmake openimageio boost freetype fontconfig
+```
+
+### Install Prerequsites in Ubuntu
+
+Use apt-get in Ubuntu:
+
+### Install Prerequsites in Fedora
+
 ## Build the Source Code
 
-### Build source code in Mac OS X
+### Get the Source Code
 
-### Build source code in Linux
+Use git to checkout the source code from the repository on Bitbucket:
 
+```shell
+$ git clone https://zhanggyb@bitbucket.org/zhanggyb/blendint.git
+```
+
+### Build the Library
+
+```shell
+$ cd <blendint dir>
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+```
 ### Build and Try the Demos
 
 To build and run the demos, use additional cmake options:
@@ -137,15 +173,27 @@ To build the unit test, add `-DWITH_UNIT_TEST=TRUE`:
 $ cmake <source dir> -DWITH_UNIT_TEST=TRUE
 ```
 
-
 To run the unit tests:
 
 ```shell
 $ ./bin/test<class name>
 ```
 
-
 ## Installation
+
+Install header files, binaries, html documentations with:
+
+```shell
+$ sudo make install
+```
+
+after build the source code.
+
+By default it will install header files to /usr/include/BlendInt, and
+install binary files to /usr/lib/libBlendInt.so.
+
+To build static library, add cmake option:
+`-DBUILD_STATIC_LIBRARY=TRUE` instead.
 
 ## Contributing
 
