@@ -40,12 +40,12 @@ namespace BlendInt {
 
 	TextureAtlas2D::TextureAtlas2D ()
 	: GLTexture2D(),
-	  m_cell_width(0),
-	  m_cell_height(0),
-	  m_xoffset(0),
-	  m_yoffset(0),
-	  m_xspace(0),
-	  m_yspace(0)
+	  cell_width_(0),
+	  cell_height_(0),
+	  offset_x_(0),
+	  offset_y_(0),
+	  space_x_(0),
+	  space_y_(0)
 	{
 	}
 
@@ -84,17 +84,17 @@ namespace BlendInt {
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		m_cell_width = cell_x;
-		m_cell_height = cell_y;
-		m_xspace = xspace;
-		m_yspace = yspace;
-		m_xoffset = xoffset;
-		m_yoffset = yoffset;
+		cell_width_ = cell_x;
+		cell_height_ = cell_y;
+		space_x_ = xspace;
+		space_y_ = yspace;
+		offset_x_ = xoffset;
+		offset_y_ = yoffset;
 	}
 
 	bool TextureAtlas2D::SetSubImage (int index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
 	{
-		if(bitmap_width > m_cell_width || bitmap_rows > m_cell_height) {
+		if(bitmap_width > cell_width_ || bitmap_rows > cell_height_) {
 			return false;
 		}
 
@@ -112,22 +112,22 @@ namespace BlendInt {
 
 		int x = 0, y = 0;
 
-		int columns = (tex_width - m_xoffset) / (m_cell_width + m_xspace);
-		int rows = (tex_height - m_yoffset) / (m_cell_height + m_yspace);
+		int columns = (tex_width - offset_x_) / (cell_width_ + space_x_);
+		int rows = (tex_height - offset_y_) / (cell_height_ + space_y_);
 
 		if(index > (rows * columns - 1)) return false;
 
 		x = index % columns;
 		y = index / columns;
 
-		x = m_xoffset + (x * (m_cell_width + m_xspace));
-		y = m_yoffset + (y * (m_cell_height + m_yspace));
+		x = offset_x_ + (x * (cell_width_ + space_x_));
+		y = offset_y_ + (y * (cell_height_ + space_y_));
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		if(clear) {
-			std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+			std::vector<unsigned char> blank(cell_width_ * cell_height_, 0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, cell_width_, cell_height_, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
 		}
 
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
@@ -140,7 +140,7 @@ namespace BlendInt {
 
 	bool TextureAtlas2D::SetSubImage (int column_index, int row_index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
 	{
-		if(bitmap_width > m_cell_width || bitmap_rows > m_cell_height) {
+		if(bitmap_width > cell_width_ || bitmap_rows > cell_height_) {
 			return false;
 		}
 
@@ -156,21 +156,21 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int columns = (tex_width - m_xoffset) / (m_cell_width + m_xspace);
-		int rows = (tex_height - m_yoffset) / (m_cell_height + m_yspace);
+		int columns = (tex_width - offset_x_) / (cell_width_ + space_x_);
+		int rows = (tex_height - offset_y_) / (cell_height_ + space_y_);
 
 		if(column_index > (columns - 1)) return false;
 		if(row_index > (rows - 1)) return false;
 
 		int x = 0, y = 0;
-		x = m_xoffset + (column_index * (m_cell_width + m_xspace));
-		y = m_yoffset + (row_index * (m_cell_height + m_yspace));
+		x = offset_x_ + (column_index * (cell_width_ + space_x_));
+		y = offset_y_ + (row_index * (cell_height_ + space_y_));
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		if(clear) {
-			std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+			std::vector<unsigned char> blank(cell_width_ * cell_height_, 0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, cell_width_, cell_height_, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
 		}
 
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
@@ -190,7 +190,7 @@ namespace BlendInt {
 						GL_TEXTURE_WIDTH,
 						&tex_width);
 
-		int columns = (tex_width - m_xoffset) / (m_cell_width + m_xspace);
+		int columns = (tex_width - offset_x_) / (cell_width_ + space_x_);
 
 		return columns;
 	}
@@ -204,7 +204,7 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int rows = (tex_height - m_yoffset) / (m_cell_height + m_yspace);
+		int rows = (tex_height - offset_y_) / (cell_height_ + space_y_);
 
 		return rows;
 	}
@@ -225,8 +225,8 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int h = (tex_width - m_xoffset) / (m_cell_width + m_xspace);
-		int v = (tex_height - m_yoffset) / (m_cell_height + m_yspace);
+		int h = (tex_width - offset_x_) / (cell_width_ + space_x_);
+		int v = (tex_height - offset_y_) / (cell_height_ + space_y_);
 
 		num = h * v;
 

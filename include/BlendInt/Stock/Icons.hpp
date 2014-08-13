@@ -26,6 +26,7 @@
 
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
+#include <BlendInt/Gui/PixelIcon.hpp>
 
 namespace BlendInt {
 
@@ -98,6 +99,8 @@ namespace BlendInt {
 			RefPtr<VertexIcon> m_icon_check;
 
 			RefPtr<VertexIcon> m_icon_num;
+
+			RefPtr<PixelIcon> m_icon_file_16x16;
 		};
 
 	}
