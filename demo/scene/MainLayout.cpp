@@ -12,11 +12,12 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 #include "MainLayout.hpp"
 
 MainLayout::MainLayout ()
-	: m_menubar(0), m_toolbar(0), m_scene(0), m_file_input(0), m_file_button(0)
+	: m_menubar(0), m_toolbar(0), m_scene(0), m_file_input(0), m_file_button(0), m_btn_open(0)
 {
 	InitOnce();
 }
@@ -53,11 +54,24 @@ void MainLayout::InitOnce ()
     PushBack(splitter);
     PushBack(bottom);
 
-	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
+	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
 
 void MainLayout::OnOpenClick()
 {
+	using namespace BI;
+
+	if(m_file_input->text().empty()) return;
+
+	std::string filename = ConvertFromString(m_file_input->text());
+
+	DBG_PRINT_MSG("Load file: %s", filename.c_str());
+
+	RefPtr<Mesh> monkey(new Mesh);
+
+	if(monkey->Load(filename.c_str())) {
+		m_scene->PushBack(monkey);
+	}
 }
 
 void MainLayout::OnResize (AbstractWidget* context, int type)
@@ -71,11 +85,11 @@ BI::ToolBar* MainLayout::CreateToolBar()
 
 	ToolBar* toolbar = Manage(new ToolBar);
 
-	m_input = Manage(new TextEntry);
-	m_open = Manage(new ToolButton);
+	m_tool_open = Manage(new ToolButton);
 
-	toolbar->PushBack(m_input);
-	toolbar->PushBack(m_open);
+	toolbar->PushBack(m_tool_open);
+
+	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
 	return toolbar;
 }
@@ -153,29 +167,35 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	using namespace BI;
 
 	ToolBar* toolbar = Manage(new ToolBar);
-
-	ComboBox* combo = Manage(new ComboBox);
+	toolbar->SetMargin(2, 2, 2, 2);
 
 	HBox* box = Manage(new HBox);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
+	Label* label = Manage(new Label("Select OBJ model: "));
 	m_file_input = Manage(new TextEntry);
 	m_file_button = Manage(new FileButton);
 	m_file_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
 	m_file_button->SetRoundType(RoundTopRight | RoundBottomRight);
+	box->PushBack(label);
 	box->PushBack(m_file_input);
 	box->PushBack(m_file_button);
 
-	toolbar->SetMargin(2, 2, 2, 2);
-	toolbar->PushBack(combo);
-	toolbar->PushBack(box);
+	m_btn_open = Manage(new Button("Open"));
 
-	events()->connect(m_file_button->file_opened(), this, &MainLayout::OnFileChanged);
+	ComboBox* combo = Manage(new ComboBox);
+
+	toolbar->PushBack(box);
+	toolbar->PushBack(m_btn_open);
+	toolbar->PushBack(combo);
+
+	events()->connect(m_file_button->file_selected(), this, &MainLayout::OnFileSelected);
+	events()->connect(m_btn_open->clicked(), this, &MainLayout::OnOpenClick);
 
 	return toolbar;
 }
 
-void MainLayout::OnFileChanged ()
+void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 }

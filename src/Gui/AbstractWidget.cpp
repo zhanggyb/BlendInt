@@ -237,8 +237,8 @@ namespace BlendInt {
 	{
 		if(point.x() < position_.x() ||
 				point.y() < position_.y() ||
-				point.x() > static_cast<int>(position_.x() + size().width()) ||
-				point.y() > static_cast<int>(position_.y() + size().height()))
+				point.x() > static_cast<int>(position_.x() + size_.width()) ||
+				point.y() > static_cast<int>(position_.y() + size_.height()))
 		{
 			return false;
 		}

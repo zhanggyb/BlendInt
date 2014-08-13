@@ -40,7 +40,8 @@ namespace BlendInt {
 
 		enum Mode {
 			Normal,
-			Modal
+			Modal,
+			Popup
 		};
 
 		friend class Context;

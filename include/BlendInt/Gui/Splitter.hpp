@@ -49,6 +49,8 @@ namespace BlendInt
 
 		virtual bool IsExpandY () const;
 
+		virtual bool Contain (const Point& point) const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

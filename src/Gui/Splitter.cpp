@@ -141,6 +141,33 @@ namespace BlendInt {
 		}
 	}
 
+	bool SplitterHandle::Contain (const Point& point) const
+	{
+		if(orientation_ == Horizontal) {
+
+			if(point.x() < position().x() ||
+					point.y() < (position().y() - 2) ||
+					point.x() > static_cast<int>(position().x() + size().width()) ||
+					point.y() > static_cast<int>(position().y() + size().height() + 2))
+			{
+				return false;
+			}
+
+		} else {
+
+			if(point.x() < (position().x() - 2) ||
+					point.y() < position().y() ||
+					point.x() > static_cast<int>(position().x() + size().width() + 2) ||
+					point.y() > static_cast<int>(position().y() + size().height()))
+			{
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+
 	void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

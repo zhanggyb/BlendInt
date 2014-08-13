@@ -43,11 +43,11 @@ void MainLayout::InitOnce ()
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	m_input = Manage(new TextEntry);
-	m_open = Manage(new Button("Open"));
+	m_tool_open = Manage(new Button("Open"));
 	m_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
-	m_open->SetRoundType(RoundTopRight | RoundBottomRight);
+	m_tool_open->SetRoundType(RoundTopRight | RoundBottomRight);
 	box->PushBack(m_input);
-	box->PushBack(m_open);
+	box->PushBack(m_tool_open);
 
 	m_toolbar->SetMargin(2, 2, 2, 2);
 	m_toolbar->PushBack(m_menubar);
@@ -71,7 +71,7 @@ void MainLayout::InitOnce ()
 	PushBack(splitter);
 	PushBack(m_toolbar);
 
-	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
+	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
 
 void MainLayout::OnOpenClick()

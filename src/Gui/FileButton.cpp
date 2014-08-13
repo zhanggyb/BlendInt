@@ -276,7 +276,7 @@ namespace BlendInt {
 		delete file_selector_;
 		file_selector_ = 0;
 
-		file_opened_.fire();
+		file_selected_.fire();
 	}
 
 	void FileButton::OnCanceled ()

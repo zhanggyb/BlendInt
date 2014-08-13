@@ -50,7 +50,7 @@ namespace BlendInt {
 			return file_;
 		}
 
-		Cpp::EventRef<> file_opened() {return file_opened_;}
+		Cpp::EventRef<> file_selected() {return file_selected_;}
 
 	protected:
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 
 		String file_;
 
-		Cpp::Event<> file_opened_;
+		Cpp::Event<> file_selected_;
 	};
 
 }

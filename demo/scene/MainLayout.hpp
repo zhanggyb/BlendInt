@@ -48,18 +48,19 @@ private:
 
 	BI::Tab* CreateTab ();
 
-	void OnFileChanged ();
+	void OnFileSelected ();
 
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 
-	BI::TextEntry* m_input;
-	BI::ToolButton* m_open;
+	BI::ToolButton* m_tool_open;
 
 	BI::Viewport3D* m_scene;
 
 	BI::TextEntry* m_file_input;
 	BI::FileButton* m_file_button;
+
+	BI::Button* m_btn_open;
 };
 
 #endif

@@ -46,7 +46,7 @@ private:
 
 	BI::TextEntry* m_input;
 	BI::ComboBox* m_combo;
-	BI::Button* m_open;
+	BI::Button* m_tool_open;
 };
 
 #endif
