@@ -73,7 +73,7 @@ namespace BlendInt {
 
 		RefPtr<Action> action_;
 
-		RefPtr<PixelIcon> icon_;
+		RefPtr<Icon> icon_;
 	};
 }
 

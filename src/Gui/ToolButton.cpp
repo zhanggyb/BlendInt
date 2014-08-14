@@ -127,15 +127,16 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
-		pos.x += (size().width() - icon_->size().width()) / 2;
-		pos.y += (size().height() - icon_->size().height()) / 2;
+		if(icon_) {
+			pos.x += (size().width() - icon_->size().width()) / 2;
+			pos.y += (size().height() - icon_->size().height()) / 2;
 
-		if(hover()) {
-			icon_->Draw(pos, 15);
-		} else {
-			icon_->Draw(pos, 0);
+			if(hover()) {
+				icon_->Draw(pos, 15);
+			} else {
+				icon_->Draw(pos, 0);
+			}
 		}
-
 		return Accept;
 	}
 
@@ -158,6 +159,8 @@ namespace BlendInt {
 		RefPtr<Action> action(new Action(icon, text));
 
 		action_ = action;
+
+		icon_ = icon;	// for temporary use
 	}
 
 	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text,
@@ -206,7 +209,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		// demo
-		icon_ = Icons::instance->outline_16x16();
+		icon_ = Icons::instance->seq_sequencer_16x16();
 	}
 
 }

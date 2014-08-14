@@ -98,6 +98,26 @@ BI::ToolBar* MainLayout::CreateToolBar()
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
+	ToolButton* btn1 = Manage(new ToolButton);
+	btn1->SetAction(BI::Stock::Icons::instance->seq_preview_16x16(), String("SEQ PREVIEW"));
+	toolbar->PushBack(btn1);
+
+	ToolButton* btn2 = Manage(new ToolButton);
+	btn2->SetAction(BI::Stock::Icons::instance->seq_luma_waveform_16x16(), String("SEQ LUMA WAVEFORM"));
+	toolbar->PushBack(btn2);
+
+	ToolButton* btn3 = Manage(new ToolButton);
+	btn3->SetAction(BI::Stock::Icons::instance->seq_chroma_scope_16x16(), String("SEQ CHROMA SCOPE"));
+	toolbar->PushBack(btn3);
+
+	ToolButton* btn4 = Manage(new ToolButton);
+	btn4->SetAction(BI::Stock::Icons::instance->seq_histogram_16x16(), String("SEQ HISTOGRAM"));
+	toolbar->PushBack(btn4);
+
+	ToolButton* btn5 = Manage(new ToolButton);
+	btn5->SetAction(BI::Stock::Icons::instance->seq_splitview_16x16(), String("SEQ SPLITVIEW"));
+	toolbar->PushBack(btn5);
+
 	return toolbar;
 }
 

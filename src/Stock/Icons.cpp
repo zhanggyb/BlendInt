@@ -36,6 +36,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <vector>
 #include <boost/filesystem.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
@@ -80,9 +81,13 @@ namespace BlendInt {
 
 		void Icons::CreateIcons ()
 		{
-			namespace fs = boost::filesystem;
+			CreateVertexIcons();
+			CreatePixelIcons16x16();
+			CreatePixelIcons32x32();
+		}
 
-			// Create VertexIcons
+		void Icons::CreateVertexIcons()
+		{
 			float vec[16][2];
 
 			menu_.reset(new VertexIcon(16, 16));
@@ -120,41 +125,19 @@ namespace BlendInt {
 			}
 
 			num_->Load(vec, 3, VertexIcon::num_tria_face, 1);
+		}
 
-			// Create Pixel Icons
+		void Icons::CreatePixelIcons16x16 ()
+		{
+			namespace fs = boost::filesystem;
 
 			fs::path icon16_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/blender_icons16.png");
-			fs::path icon32_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/blender_icons32.png");
 
 			if(!fs::exists(icon16_path)) {
 				icon16_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/blender_icons16.png");
 			}
 
-			if(!fs::exists(icon32_path)) {
-				icon32_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/blender_icons32.png");
-			}
-
-//			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
-//
-//			texture->Generate(datatoc_blender_icons16_png_width, datatoc_blender_icons16_png_height, 5, 10, 16, 16, 5, 5);
-//			texture->Bind();
-//			texture->SetImage(0,
-//					GL_RGBA,
-//					datatoc_blender_icons16_png_width,
-//					datatoc_blender_icons16_png_height,
-//					0,
-//					GL_RGBA,
-//					GL_UNSIGNED_BYTE,
-//					datatoc_blender_icons16_png);
-//			texture->Reset();
-//
-//			m_icon_file_16x16.reset(new PixelIcon(16, 16));
-//			m_icon_file_16x16->SetTexture(texture, 0);
-
-			// TODO: set texture in PixelIcon and add more stock icons.
-
 			Image image;
-
 			image.Read(icon16_path.native());
 
 			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
@@ -183,20 +166,135 @@ namespace BlendInt {
 
 			texture->Reset();
 
-			GLfloat x1 = (GLfloat)5 / image.width();
-			GLfloat y1 = (GLfloat)10 / image.height();
-			GLfloat x2 = (GLfloat)(5 + 16) / image.width();
-			GLfloat y2 = (GLfloat)(10 + 16) / image.height();
+			GLfloat x = (GLfloat)5 / image.width();
+			GLfloat y = (GLfloat)10 / image.height();
+			GLfloat w = (GLfloat)(16) / image.width();
+			GLfloat h = (GLfloat)(16) / image.height();
+			GLfloat dx = (GLfloat)(5) / image.width();
+			//GLfloat dy = (GLfloat)(5) / image.height();
 
-			GLfloat uv[] = {
-					x1, y2,
-					x2, y2,
-					x1, y1,
-					x2, y1
-			};
+			std::vector<GLfloat> uv(8, 0.f);
+			uv[0] = x; uv[1] = y + h;
+			uv[2] = x + w; uv[3] = y + h;
+			uv[4] = x; uv[5] = y;
+			uv[6] = x + w; uv[7] = y;
 
-			outline_16x16_.reset(new PixelIcon(16, 16, texture, uv));
+			seq_sequencer_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
 
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_preview_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_luma_waveform_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_chroma_scope_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_histogram_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_splitview_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+		}
+
+		void Icons::CreatePixelIcons32x32 ()
+		{
+			namespace fs = boost::filesystem;
+
+			fs::path icon32_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/blender_icons32.png");
+
+			if(!fs::exists(icon32_path)) {
+				icon32_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/blender_icons32.png");
+			}
+
+			Image image;
+			image.Read(icon32_path.native());
+
+			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
+			texture->Generate(image.width(),
+					image.height(),
+					32,
+					32,
+					10,
+					20,
+					10,
+					10);
+			texture->Bind();
+			texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+			texture->SetMinFilter(GL_LINEAR);
+			texture->SetMagFilter(GL_LINEAR);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+			texture->SetImage(0,
+					GL_RGBA,
+					image.width(),
+					image.height(),
+					0,
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					image.pixels());
+
+			texture->Reset();
+
+			GLfloat x = (GLfloat)10 / image.width();
+			GLfloat y = (GLfloat)20 / image.height();
+			GLfloat w = (GLfloat)(32) / image.width();
+			GLfloat h = (GLfloat)(32) / image.height();
+			GLfloat dx = (GLfloat)(10) / image.width();
+			//GLfloat dy = (GLfloat)(10) / image.height();
+
+			std::vector<GLfloat> uv(8, 0.f);
+			uv[0] = x; uv[1] = y + h;
+			uv[2] = x + w; uv[3] = y + h;
+			uv[4] = x; uv[5] = y;
+			uv[6] = x + w; uv[7] = y;
+
+			seq_sequencer_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_preview_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_luma_waveform_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_chroma_scope_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_histogram_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			seq_splitview_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
 		}
 
 	}
