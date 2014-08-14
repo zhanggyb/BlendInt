@@ -9,10 +9,8 @@
 #include <BlendInt/Gui/Splitter.hpp>
 
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
-#include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 
@@ -21,10 +19,14 @@
 MainLayout::MainLayout ()
 : m_menubar(0),
   m_toolbar(0),
+  m_tool_open(0),
+  m_tab(0),
   m_scene(0),
+  m_image_view(0),
   m_file_input(0),
   m_file_button(0),
-  m_btn_open(0)
+  m_btn_open(0),
+  m_msg_label(0)
 {
 	InitOnce();
 }
@@ -49,11 +51,11 @@ void MainLayout::InitOnce ()
 
     ToolBox* tbox = CreateToolBox();
 
-    Tab* tab = CreateTab();
+    m_tab = CreateTab();
 
     ToolBar* bottom = CreateBottomBar();
 
-    splitter->PushBack(tab);
+    splitter->PushBack(m_tab);
     splitter->PushBack(tbox);
 
 	PushBack(m_menubar);
@@ -72,12 +74,37 @@ void MainLayout::OnOpenClick()
 
 	std::string filename = ConvertFromString(m_file_input->text());
 
-	DBG_PRINT_MSG("Load file: %s", filename.c_str());
+	int index = m_tab->GetIndex();
 
-	RefPtr<Mesh> monkey(new Mesh);
+	switch(index) {
+		case 0: {
+			RefPtr<Mesh> monkey(new Mesh);
 
-	if(monkey->Load(filename.c_str())) {
-		m_scene->PushBack(monkey);
+			if(monkey->Load(filename.c_str())) {
+				m_scene->PushBack(monkey);
+
+				m_msg_label->SetText("3D Mesh is loaded");
+			} else {
+				m_msg_label->SetText("");
+			}
+			break;
+		}
+
+		case 1: {
+
+			if(m_image_view->Open(filename.c_str())) {
+				m_msg_label->SetText("Image is loaded");
+			} else {
+				m_msg_label->SetText("");
+			}
+
+			break;
+		}
+
+		default: {
+			m_msg_label->SetText("");
+			break;
+		}
 	}
 }
 
@@ -93,7 +120,6 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	ToolBar* toolbar = Manage(new ToolBar);
 
 	m_tool_open = Manage(new ToolButton);
-
 	toolbar->PushBack(m_tool_open);
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
@@ -220,10 +246,10 @@ BI::Tab* MainLayout::CreateTab ()
 	tab->SetMargin(0, 0, 0, 0);
 
     m_scene = Manage(new Viewport3D);
-    ImageView* iv = Manage(new ImageView);
+    m_image_view = Manage(new ImageView);
 
     tab->Add("3D View", m_scene);
-    tab->Add("Image View", iv);
+    tab->Add("Image", m_image_view);
 
 	return tab;
 }
@@ -251,9 +277,14 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 
 	ComboBox* combo = Manage(new ComboBox);
 
+	Label* info_label = Manage(new Label("Info: "));
+	m_msg_label = Manage(new Label(""));
+
 	toolbar->PushBack(box);
 	toolbar->PushBack(m_btn_open);
 	toolbar->PushBack(combo);
+	toolbar->PushBack(info_label);
+	toolbar->PushBack(m_msg_label);
 
 	events()->connect(m_file_button->file_selected(), this, &MainLayout::OnFileSelected);
 	events()->connect(m_btn_open->clicked(), this, &MainLayout::OnOpenClick);

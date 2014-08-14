@@ -17,6 +17,8 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 namespace BI = BlendInt;
 
@@ -59,12 +61,17 @@ private:
 
 	BI::ToolButton* m_tool_open;
 
+	BI::Tab* m_tab;
+
 	BI::Viewport3D* m_scene;
+	BI::ImageView* m_image_view;
 
 	BI::TextEntry* m_file_input;
 	BI::FileButton* m_file_button;
 
 	BI::Button* m_btn_open;
+
+	BI::Label* m_msg_label;
 };
 
 #endif

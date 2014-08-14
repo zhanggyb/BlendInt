@@ -121,6 +121,13 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
+	int Tab::GetIndex() const
+	{
+		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
+
+		return stack->GetIndex();
+	}
+
 	void Tab::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInTab(size(), request);

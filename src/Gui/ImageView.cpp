@@ -55,8 +55,10 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vaos_);
 	}
 
-	void ImageView::Open (const char* filename)
+	bool ImageView::Open (const char* filename)
 	{
+		bool retval = false;
+
 		Image image;
 
 		if(image.Read(filename)) {
@@ -87,7 +89,11 @@ namespace BlendInt {
 			image_size_.set_height(image.height());
 
 			AdjustImageArea(size());
+
+			retval = true;
 		}
+
+		return retval;
 	}
 
 	void ImageView::Load (const RefPtr<Image>& image)

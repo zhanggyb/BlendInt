@@ -43,7 +43,7 @@ namespace BlendInt {
 
 		virtual ~ImageView ();
 
-		void Open (const char* filename);
+		bool Open (const char* filename);
 
 		void Load (const RefPtr<Image>& image);
 

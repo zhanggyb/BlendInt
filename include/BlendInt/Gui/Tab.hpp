@@ -46,6 +46,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		int GetIndex () const;
+
 	protected:
 
 		virtual void PerformMarginUpdate (const Margin& request);

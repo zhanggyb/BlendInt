@@ -35,6 +35,7 @@ TEST_F(ToolButtonTest1, Foo1)
     DBG_SET_NAME(tb, "ToolButton");
 
     tb->SetPosition(200, 200);
+    tb->SetRoundType(RoundTopLeft | RoundBottomLeft);
 
     context->PushBack(tb);
 

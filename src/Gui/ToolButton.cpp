@@ -65,18 +65,65 @@ namespace BlendInt {
 	void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(),
+				        round_radius(), text());
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(), RoundAll, 5);
 			inner_->Bind();
 			tool.SetInnerBufferData(inner_.get());
 			outer_->Bind();
 			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
 		ReportSizeUpdate(request);
+	}
+
+	void ToolButton::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+
+	}
+
+	void ToolButton::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(),
+			        round_type(), *request.round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
+
+			set_round_radius(*request.round_radius());
+
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType ToolButton::Draw (const Profile& profile)
@@ -194,8 +241,8 @@ namespace BlendInt {
 		inner_->Generate();
 		inner_->Bind();
 		tool.SetInnerBufferData(inner_.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
@@ -207,6 +254,7 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 
 		// demo
 		icon_ = Icons::instance->seq_sequencer_16x16();

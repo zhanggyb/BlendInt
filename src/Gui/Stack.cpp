@@ -101,6 +101,24 @@ namespace BlendInt {
 		}
 	}
 
+	int Stack::GetIndex() const
+	{
+		int index = 0;
+
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if(p == m_active_widget) {
+				break;
+			}
+
+			index++;
+		}
+
+		if(index >= widget_count()) index = -1;
+
+		return index;
+	}
+
 	void Stack::SetIndex (int index)
 	{
 		int count = widget_count();

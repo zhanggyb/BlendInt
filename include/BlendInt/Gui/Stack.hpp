@@ -47,6 +47,8 @@ namespace BlendInt {
 
 		void Remove (AbstractWidget* widget);
 
+		int GetIndex () const;
+
 		void SetIndex (int index);
 
 		virtual bool IsExpandX () const;
