@@ -36,11 +36,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <boost/filesystem.hpp>
+
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+#include <BlendInt/Core/Image.hpp>
+
+#include "BlendIntConfig.hpp"
 
 namespace BlendInt {
 
@@ -75,46 +80,59 @@ namespace BlendInt {
 
 		void Icons::CreateIcons ()
 		{
+			namespace fs = boost::filesystem;
+
 			// Create VertexIcons
 			float vec[16][2];
 
-			m_icon_menu.reset(new VertexIcon(16, 16));
+			menu_.reset(new VertexIcon(16, 16));
 
 			for (size_t i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
 				vec[i][1] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][1];
 			}
 
-			m_icon_menu->Load(vec, 6, VertexIcon::menu_tria_face, 2);
+			menu_->Load(vec, 6, VertexIcon::menu_tria_face, 2);
 
-			m_icon_circle.reset(new VertexIcon(10, 10));
+			circle_.reset(new VertexIcon(10, 10));
 
 			for (size_t i = 0; i < 16; i++) {
 				vec[i][0] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][0];
 				vec[i][1] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][1];
 			}
 
-			m_icon_circle->Load(vec, 16, VertexIcon::scroll_circle_face, 14);
+			circle_->Load(vec, 16, VertexIcon::scroll_circle_face, 14);
 
-			m_icon_check.reset(new VertexIcon(14, 14));
+			check_.reset(new VertexIcon(14, 14));
 
 			for (size_t i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 14 * VertexIcon::check_tria_vert[i][0];
 				vec[i][1] = 0.5 * 14 * VertexIcon::check_tria_vert[i][1];
 			}
 
-			m_icon_check->Load(vec, 6, VertexIcon::check_tria_face, 4);
+			check_->Load(vec, 6, VertexIcon::check_tria_face, 4);
 
-			m_icon_num.reset(new VertexIcon(10, 10));
+			num_.reset(new VertexIcon(10, 10));
 
 			for (size_t i = 0; i < 3; i++) {
 				vec[i][0] = 0.5 * 10 * VertexIcon::num_tria_vert[i][0];
 				vec[i][1] = 0.5 * 10 * VertexIcon::num_tria_vert[i][1];
 			}
 
-			m_icon_num->Load(vec, 3, VertexIcon::num_tria_face, 1);
+			num_->Load(vec, 3, VertexIcon::num_tria_face, 1);
 
 			// Create Pixel Icons
+
+			fs::path icon16_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/blender_icons16.png");
+			fs::path icon32_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/blender_icons32.png");
+
+			if(!fs::exists(icon16_path)) {
+				icon16_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/blender_icons16.png");
+			}
+
+			if(!fs::exists(icon32_path)) {
+				icon32_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/blender_icons32.png");
+			}
 
 //			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
 //
@@ -134,6 +152,51 @@ namespace BlendInt {
 //			m_icon_file_16x16->SetTexture(texture, 0);
 
 			// TODO: set texture in PixelIcon and add more stock icons.
+
+			Image image;
+
+			image.Read(icon16_path.native());
+
+			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
+			texture->Generate(image.width(),
+					image.height(),
+					16,
+					16,
+					5,
+					10,
+					5,
+					5);
+			texture->Bind();
+			texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+			texture->SetMinFilter(GL_LINEAR);
+			texture->SetMagFilter(GL_LINEAR);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+			texture->SetImage(0,
+					GL_RGBA,
+					image.width(),
+					image.height(),
+					0,
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					image.pixels());
+
+			texture->Reset();
+
+			GLfloat x1 = (GLfloat)5 / image.width();
+			GLfloat y1 = (GLfloat)10 / image.height();
+			GLfloat x2 = (GLfloat)(5 + 16) / image.width();
+			GLfloat y2 = (GLfloat)(10 + 16) / image.height();
+
+			GLfloat uv[] = {
+					x1, y2,
+					x2, y2,
+					x1, y1,
+					x2, y1
+			};
+
+			outline_16x16_.reset(new PixelIcon(16, 16, texture, uv));
+
 		}
 
 	}

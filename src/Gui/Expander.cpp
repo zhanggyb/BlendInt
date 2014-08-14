@@ -48,6 +48,7 @@
 namespace BlendInt {
 
 	using Stock::Shaders;
+	using Stock::Icons;
 
 	ExpandButton::ExpandButton()
 	: AbstractButton()
@@ -127,8 +128,6 @@ namespace BlendInt {
 			font().Print(position(), text(), text_length(), 0);
 		}
 
-		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
-
 		float rotate = 0.f;
 		if(checked()) {
 			rotate = 0.f;
@@ -137,10 +136,10 @@ namespace BlendInt {
 		}
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		pos.x += icon->size().width()/2.f;
+		pos.x += Icons::instance->num()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 
-		icon->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
+		Icons::instance->num()->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
 
 		return Accept;
 	}

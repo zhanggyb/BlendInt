@@ -62,11 +62,11 @@ namespace BlendInt {
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
-		void Draw (const glm::vec3& pos, const Color& color, short gamma = 0);
+		void Draw (const glm::vec3& pos, const Color& color, short gamma = 0) const;
 
-		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0);
+		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0) const;
 
 	private:
 

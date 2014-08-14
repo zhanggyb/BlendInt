@@ -36,7 +36,7 @@ TEST_F(MenuTest1, Foo1)
 	menu->SetPosition(200, 200);
 	//menu->Resize (200, 200);
 
-	menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+	menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
 	menu->AddAction("MenuItem2", "Ctrl + 1");
 	menu->AddAction("MenuItem3", "Ctrl + 1");
 	menu->AddAction("MenuItem4", "Ctrl + 1");

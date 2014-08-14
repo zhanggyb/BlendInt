@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~Icon ();
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) = 0;
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const = 0;
 
 		const Size& size() const
 		{

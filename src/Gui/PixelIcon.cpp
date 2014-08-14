@@ -321,7 +321,7 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (const glm::vec3& pos, short gamma)
+	void PixelIcon::Draw (const glm::vec3& pos, short gamma) const
 	{
 		if(texture_) {
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();

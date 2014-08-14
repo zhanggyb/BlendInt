@@ -207,3 +207,4 @@ endif()
 add_subdirectory(demo)
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)

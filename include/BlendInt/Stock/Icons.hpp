@@ -47,24 +47,29 @@ namespace BlendInt {
 
 			static Icons* instance;
 
-			RefPtr<VertexIcon> icon_menu () const
+			const RefPtr<VertexIcon>& menu () const
 			{
-				return m_icon_menu;
+				return menu_;
 			}
 
-			RefPtr<VertexIcon> icon_circle () const
+			const RefPtr<VertexIcon>& circle () const
 			{
-				return m_icon_circle;
+				return circle_;
 			}
 
-			RefPtr<VertexIcon> icon_check () const
+			const RefPtr<VertexIcon>& check () const
 			{
-				return m_icon_check;
+				return check_;
 			}
 
-			RefPtr<VertexIcon> icon_num () const
+			const RefPtr<VertexIcon>& num () const
 			{
-				return m_icon_num;
+				return num_;
+			}
+
+			const RefPtr<PixelIcon>& outline_16x16 () const
+			{
+				return outline_16x16_;
 			}
 
 		private:
@@ -92,13 +97,15 @@ namespace BlendInt {
 			 */
 			void CreateIcons ();
 
-			RefPtr<VertexIcon> m_icon_menu;
+			RefPtr<VertexIcon> menu_;
 
-			RefPtr<VertexIcon> m_icon_circle;
+			RefPtr<VertexIcon> circle_;
 
-			RefPtr<VertexIcon> m_icon_check;
+			RefPtr<VertexIcon> check_;
 
-			RefPtr<VertexIcon> m_icon_num;
+			RefPtr<VertexIcon> num_;
+
+			RefPtr<PixelIcon> outline_16x16_;
 		};
 
 	}

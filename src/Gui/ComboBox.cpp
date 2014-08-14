@@ -49,6 +49,7 @@
 namespace BlendInt {
 
 	using Stock::Shaders;
+	using Stock::Icons;
 
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
@@ -225,7 +226,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
-		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_menu();
+		//RefPtr<VertexIcon> icon = Icons::instance->icon_menu();
 
 		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
 		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
@@ -233,10 +234,10 @@ namespace BlendInt {
 
 		//icon->Draw(mvp * translate * rotate * scale);
 
-		pos.x += size().width() - icon->size().width()/2.f;
+		pos.x += size().width() - Icons::instance->menu()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 
-		icon->Draw(pos, 0, 1.f, Color(0xEFEFEFFF));
+		Icons::instance->menu()->Draw(pos, 0, 1.f, Color(0xEFEFEFFF));
 
 		return Accept;
 	}

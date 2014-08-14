@@ -85,7 +85,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	RefPtr<Menu> file_menu(new Menu);
 
     file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");
     file_menu->AddAction("MenuItem4", "Ctrl + 1");

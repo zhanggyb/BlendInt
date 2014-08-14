@@ -141,14 +141,14 @@ namespace BlendInt {
 		element_buffer_->Reset();
 	}
 
-	void VertexIcon::Draw(const glm::vec3& pos, short gamma)
+	void VertexIcon::Draw(const glm::vec3& pos, short gamma) const
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
 		Draw(pos, color, gamma);
 	}
 
-	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma)
+	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -174,7 +174,7 @@ namespace BlendInt {
 		program->Reset();
 	}
 
-	void VertexIcon::Draw(const glm::vec3& pos, float angle, float scale, const Color& color, short gamma)
+	void VertexIcon::Draw(const glm::vec3& pos, float angle, float scale, const Color& color, short gamma) const
 	{
 		using Stock::Shaders;
 
