@@ -595,18 +595,6 @@ namespace BlendInt {
 		strip[count * 2 + 2] = outer[0];
 		strip[count * 2 + 3] = outer[1];
 	}
-	
-	RefPtr<GLArrayBuffer> VertexTool::GenerateInnerBuffer (GLenum usage)
-	{
-		RefPtr<GLArrayBuffer> buf(new GLArrayBuffer);
-
-		buf->Generate();
-		buf->Bind();
-		buf->SetData(sizeof(GLfloat) * m_inner.size(), &m_inner[0], usage);
-		buf->Reset();
-
-		return buf;
-	}
 
 	void VertexTool::SetInnerBufferData(GLArrayBuffer* buffer, GLenum usage)
 	{
@@ -615,33 +603,6 @@ namespace BlendInt {
 		}
 	}
 
-	void VertexTool::UpdateInnerBuffer (GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			if(!buffer->IsBuffer()) {
-				buffer->Generate();
-			}
-			buffer->Bind();
-			buffer->SetData(sizeof(GLfloat) * m_inner.size(), &m_inner[0], usage);
-			buffer->Reset();
-		}
-	}
-	
-	RefPtr<GLArrayBuffer> VertexTool::GenerateOuterBuffer (GLenum usage)
-	{
-		RefPtr<GLArrayBuffer> buf(new GLArrayBuffer);
-
-		std::vector<GLfloat> strip;
-		GenerateTriangleStripVertices(m_inner, m_outer, m_total, strip);
-
-		buf->Generate();
-		buf->Bind();
-		buf->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-		buf->Reset();
-
-		return buf;
-	}
-	
 	void VertexTool::SetOuterBufferData (GLArrayBuffer* buffer, GLenum usage)
 	{
 		if(buffer) {
@@ -649,61 +610,6 @@ namespace BlendInt {
 			GenerateTriangleStripVertices(m_inner, m_outer, m_total, strip);
 
 			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-		}
-	}
-
-	void VertexTool::UpdateOuterBuffer (GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			std::vector<GLfloat> strip;
-			GenerateTriangleStripVertices(m_inner, m_outer, m_total, strip);
-
-			if(!buffer->IsBuffer()) {
-				buffer->Generate();
-			}
-			buffer->Bind();
-			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-			buffer->Reset();
-		}
-	}
-	
-	RefPtr<GLArrayBuffer> VertexTool::GenerateEmbossBuffer (GLenum usage)
-	{
-		RefPtr<GLArrayBuffer> buf(new GLArrayBuffer);
-
-		std::vector<GLfloat> strip;
-		GenerateTriangleStripVertices(m_inner, m_outer, m_half, strip);
-
-		buf->Generate();
-		buf->Bind();
-		buf->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-		buf->Reset();
-
-		return buf;
-	}
-	
-	void VertexTool::SetEmbossBufferData (GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			std::vector<GLfloat> strip;
-			GenerateOpenTriangleStripVertices(m_outer, m_half, strip);
-
-			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-		}
-	}
-
-	void VertexTool::UpdateEmbossBuffer (GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			std::vector<GLfloat> strip;
-			GenerateOpenTriangleStripVertices(m_outer, m_half, strip);
-
-			if(!buffer->IsBuffer()) {
-				buffer->Generate();
-			}
-			buffer->Bind();
-			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-			buffer->Reset();
 		}
 	}
 

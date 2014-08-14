@@ -210,6 +210,41 @@ namespace BlendInt {
 				uv[i] += (w + dx);
 			}
 			seq_splitview_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx) * 3;	// skip 3 blank icons
+			}
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			image_rgb_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			image_rgb_alpha_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			image_alpha_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			image_zdepth_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			for(int i = 0; i < 8; i = i + 2)
+			{
+				uv[i] += (w + dx);
+			}
+			imagefile_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
 		}
 
 		void Icons::CreatePixelIcons32x32 ()

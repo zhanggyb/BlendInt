@@ -78,6 +78,7 @@ namespace BlendInt {
 			tool.SetInnerBufferData(inner_.get());
 			outer_->Bind();
 			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -98,6 +99,7 @@ namespace BlendInt {
 			tool.SetInnerBufferData(inner_.get());
 			outer_->Bind();
 			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -118,6 +120,7 @@ namespace BlendInt {
 			tool.SetInnerBufferData(inner_.get());
 			outer_->Bind();
 			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
 			set_round_radius(*request.round_radius());
 			Refresh();

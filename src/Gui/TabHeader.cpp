@@ -161,7 +161,9 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.UpdateInnerBuffer(inner_.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			GLArrayBuffer::Reset();
 			set_size(*request.size());
 		}
 

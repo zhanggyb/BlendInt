@@ -66,9 +66,9 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(),
-				        round_radius(), text());
+					round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), RoundAll, 5);
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
 			inner_->Bind();
 			tool.SetInnerBufferData(inner_.get());
 			outer_->Bind();
@@ -86,7 +86,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
-			        text());
+					text());
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
@@ -101,14 +101,13 @@ namespace BlendInt {
 		}
 
 		ReportRoundTypeUpdate(request);
-
 	}
 
 	void ToolButton::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
-			        text());
+					text());
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());

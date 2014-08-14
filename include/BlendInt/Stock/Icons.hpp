@@ -97,6 +97,31 @@ namespace BlendInt {
 				return seq_splitview_16x16_;
 			}
 
+			const RefPtr<PixelIcon>& image_rgb_16x16 () const
+			{
+				return image_rgb_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& image_rgb_alpha_16x16 () const
+			{
+				return image_rgb_alpha_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& image_alpha_16x16 () const
+			{
+				return image_alpha_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& image_zdepth_16x16 () const
+			{
+				return image_zdepth_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& imagefile_16x16 () const
+			{
+				return imagefile_16x16_;
+			}
+
 			const RefPtr<PixelIcon>& seq_sequencer_32x32 () const
 			{
 				return seq_sequencer_16x16_;
@@ -173,8 +198,8 @@ namespace BlendInt {
 			RefPtr<PixelIcon> seq_histogram_16x16_;
 			RefPtr<PixelIcon> seq_splitview_16x16_;
 			// SKIP 3 blank
-			RefPtr<PixelIcon> image_rbg_16x16_;
-			RefPtr<PixelIcon> image_rbg_alpha_16x16_;
+			RefPtr<PixelIcon> image_rgb_16x16_;
+			RefPtr<PixelIcon> image_rgb_alpha_16x16_;
 			RefPtr<PixelIcon> image_alpha_16x16_;
 			RefPtr<PixelIcon> image_zdepth_16x16_;
 			RefPtr<PixelIcon> imagefile_16x16_;
@@ -188,8 +213,8 @@ namespace BlendInt {
 			RefPtr<PixelIcon> seq_histogram_32x32_;
 			RefPtr<PixelIcon> seq_splitview_32x32_;
 			// SKIP 3 blank
-			RefPtr<PixelIcon> image_rbg_32x32_;
-			RefPtr<PixelIcon> image_rbg_alpha_32x32_;
+			RefPtr<PixelIcon> image_rgb_32x32_;
+			RefPtr<PixelIcon> image_rgb_alpha_32x32_;
 			RefPtr<PixelIcon> image_alpha_32x32_;
 			RefPtr<PixelIcon> image_zdepth_32x32_;
 			RefPtr<PixelIcon> imagefile_32x32_;

@@ -51,7 +51,9 @@ namespace BlendInt {
 		glGenVertexArrays(1, &vao_);
 
 		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
 		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
 	}
 
 	CircularPicker::~CircularPicker ()
@@ -68,8 +70,12 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(dot_size, DefaultBorderWidth(), RoundAll, radius);
-		tool.UpdateInnerBuffer(inner_.get());
-		tool.UpdateOuterBuffer(outer_.get());
+
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+		GLArrayBuffer::Reset();
 	}
 
 	void CircularPicker::UpdateGeometry (const UpdateRequest& request)
@@ -80,8 +86,11 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius());
-				tool.UpdateInnerBuffer(inner_.get());
-				tool.UpdateOuterBuffer(outer_.get());
+				inner_->Bind();
+				tool.SetInnerBufferData(inner_.get());
+				outer_->Bind();
+				tool.SetOuterBufferData(outer_.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 
@@ -90,9 +99,11 @@ namespace BlendInt {
 								static_cast<const int*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius());
-				tool.UpdateInnerBuffer(inner_.get());
-				tool.UpdateOuterBuffer(outer_.get());
-				glBindVertexArray(0);
+				inner_->Bind();
+				tool.SetInnerBufferData(inner_.get());
+				outer_->Bind();
+				tool.SetOuterBufferData(outer_.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 
@@ -101,8 +112,11 @@ namespace BlendInt {
 								static_cast<const float*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p);
-				tool.UpdateInnerBuffer(inner_.get());
-				tool.UpdateOuterBuffer(outer_.get());
+				inner_->Bind();
+				tool.SetInnerBufferData(inner_.get());
+				outer_->Bind();
+				tool.SetOuterBufferData(outer_.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 

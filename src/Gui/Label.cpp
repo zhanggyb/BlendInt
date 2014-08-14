@@ -76,7 +76,10 @@ namespace BlendInt {
 
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(), RoundNone, 0);
-			tool.UpdateInnerBuffer(rect_.get());
+
+			rect_->Bind();
+			tool.SetInnerBufferData(rect_.get());
+			GLArrayBuffer::Reset();
 
 			set_size (*request.size());
 			Refresh();

@@ -119,30 +119,59 @@ BI::ToolBar* MainLayout::CreateToolBar()
 
 	ToolBar* toolbar = Manage(new ToolBar);
 
+	HBlock* hblock = Manage (new HBlock);
+	
 	m_tool_open = Manage(new ToolButton);
-	toolbar->PushBack(m_tool_open);
-
-	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
 	ToolButton* btn1 = Manage(new ToolButton);
 	btn1->SetAction(BI::Stock::Icons::instance->seq_preview_16x16(), String("SEQ PREVIEW"));
-	toolbar->PushBack(btn1);
 
 	ToolButton* btn2 = Manage(new ToolButton);
 	btn2->SetAction(BI::Stock::Icons::instance->seq_luma_waveform_16x16(), String("SEQ LUMA WAVEFORM"));
-	toolbar->PushBack(btn2);
 
 	ToolButton* btn3 = Manage(new ToolButton);
 	btn3->SetAction(BI::Stock::Icons::instance->seq_chroma_scope_16x16(), String("SEQ CHROMA SCOPE"));
-	toolbar->PushBack(btn3);
 
 	ToolButton* btn4 = Manage(new ToolButton);
 	btn4->SetAction(BI::Stock::Icons::instance->seq_histogram_16x16(), String("SEQ HISTOGRAM"));
-	toolbar->PushBack(btn4);
 
 	ToolButton* btn5 = Manage(new ToolButton);
 	btn5->SetAction(BI::Stock::Icons::instance->seq_splitview_16x16(), String("SEQ SPLITVIEW"));
-	toolbar->PushBack(btn5);
+
+	hblock->PushBack(m_tool_open);
+	hblock->PushBack(btn1);
+	hblock->PushBack(btn2);
+	hblock->PushBack(btn3);
+	hblock->PushBack(btn4);
+	hblock->PushBack(btn5);
+
+	HBlock* hblock2 = Manage (new HBlock);
+
+	ToolButton* btn6 = Manage(new ToolButton);
+	btn6->SetAction(BI::Stock::Icons::instance->image_rgb_16x16(), String("IMAGE RGB"));
+
+	ToolButton* btn7 = Manage(new ToolButton);
+	btn7->SetAction(BI::Stock::Icons::instance->image_rgb_alpha_16x16(), String("IMAGE RGB ALPHA"));
+
+	ToolButton* btn8 = Manage(new ToolButton);
+	btn8->SetAction(BI::Stock::Icons::instance->image_alpha_16x16(), String("IMAGE ALPHA"));
+
+	ToolButton* btn9 = Manage(new ToolButton);
+	btn9->SetAction(BI::Stock::Icons::instance->image_zdepth_16x16(), String("IMAGE ZDEPTH"));
+
+	ToolButton* btn10 = Manage(new ToolButton);
+	btn10->SetAction(BI::Stock::Icons::instance->imagefile_16x16(), String("IMAGEFILE"));
+
+	hblock2->PushBack(btn6);
+	hblock2->PushBack(btn7);
+	hblock2->PushBack(btn8);
+	hblock2->PushBack(btn9);
+	hblock2->PushBack(btn10);
+
+	toolbar->PushBack(hblock);
+	toolbar->PushBack(hblock2);
+
+	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
 	return toolbar;
 }
