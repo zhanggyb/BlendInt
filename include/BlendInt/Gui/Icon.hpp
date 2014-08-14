@@ -21,38 +21,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ICON_HPP_
-#define _BLENDINT_ICON_HPP_
+#ifndef _BLENDINT_GUI_ICON_HPP_
+#define _BLENDINT_GUI_ICON_HPP_
 
-#include <glm/mat4x4.hpp>
-#include <BlendInt/Gui/AbstractForm.hpp>
+#include <glm/vec3.hpp>
+#include <BlendInt/Core/Object.hpp>
+#include <BlendInt/Core/Size.hpp>
 
 namespace BlendInt {
 
-	class Icons;
-
-	class Icon: public AbstractForm
+	class Icon: public Object
 	{
 	public:
 
-		Icon ();
-
-		Icon (const Icon& orig);
+		Icon (int width, int height);
 
 		virtual ~Icon ();
 
-		Icon& operator = (const Icon& orig);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) = 0;
 
-		void Scale (float ratio);
-
-		virtual void Draw (const glm::vec3& pos, int x, int y, int restrict_width, int restrict_height) = 0;
+		const Size& size() const
+		{
+			return size_;
+		}
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		void set_size (int w, int h)
+		{
+			size_.reset(w, h);
+		}
+
+		void set_size (const Size& size)
+		{
+			size_ = size;
+		}
+
+	private:
+
+		Size size_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_ICON_HPP_ */
+#endif /* _BLENDINT_GUI_ICON_HPP_ */

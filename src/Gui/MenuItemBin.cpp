@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <iterator>
 
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 
 namespace BlendInt {

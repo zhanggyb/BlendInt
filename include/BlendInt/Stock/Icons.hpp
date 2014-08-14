@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCKICONS_HPP_
-#define _BLENDINT_STOCKICONS_HPP_
+#ifndef _BLENDINT_STOCK_ICONS_HPP_
+#define _BLENDINT_STOCK_ICONS_HPP_
 
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
@@ -99,12 +99,10 @@ namespace BlendInt {
 			RefPtr<VertexIcon> m_icon_check;
 
 			RefPtr<VertexIcon> m_icon_num;
-
-			RefPtr<PixelIcon> m_icon_file_16x16;
 		};
 
 	}
 
 }
 
-#endif /* _BLENDINT_STOCKICONS_HPP_ */
+#endif /* _BLENDINT_STOCK_ICONS_HPP_ */

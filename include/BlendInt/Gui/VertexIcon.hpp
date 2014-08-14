@@ -55,31 +55,25 @@ namespace BlendInt {
 
 		static const unsigned int check_tria_face[4][3];
 
-		VertexIcon ();
+		VertexIcon (int width, int height);
 
-		~VertexIcon ();
+		virtual ~VertexIcon ();
 
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
 		virtual void Draw (const glm::vec3& pos, short gamma = 0);
 
-		virtual void Draw (const glm::vec3& pos, int x, int y, int restrict_width, int restrict_height);
-
 		void Draw (const glm::vec3& pos, const Color& color, short gamma = 0);
 
 		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0);
 
-	protected:
-
-		virtual void UpdateGeometry (const UpdateRequest& request);
-
 	private:
 
-		RefPtr<GLArrayBuffer> m_array_buffer;
-		RefPtr<GLElementArrayBuffer> m_index_buffer;
+		RefPtr<GLArrayBuffer> vertex_buffer_;
+		RefPtr<GLElementArrayBuffer> element_buffer_;
 
-		GLuint m_vao;
+		GLuint vao_;
 	};
 }
 

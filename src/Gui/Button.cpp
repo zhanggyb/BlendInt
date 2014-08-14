@@ -141,13 +141,11 @@ namespace BlendInt {
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
-				Color color = Theme::instance->regular().inner + 15;
-				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        color.data());
-			} else {
-				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        Theme::instance->regular().inner.data());
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 			}
+
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+					Theme::instance->regular().inner.data());
 		}
 
 		glBindVertexArray(vao_[0]);

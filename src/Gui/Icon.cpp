@@ -36,42 +36,14 @@
 
 namespace BlendInt {
 
-	Icon::Icon ()
-	: AbstractForm()
+	Icon::Icon (int width, int height)
+	: Object(),
+	  size_(width, height)
 	{
-	}
-
-	Icon::Icon (const Icon& orig)
-	{
-		set_size(orig.size());
 	}
 
 	Icon::~Icon ()
 	{
-	}
-
-	Icon& Icon::operator = (const Icon& orig)
-	{
-		set_size(orig.size());
-		return *this;
-	}
-
-	void Icon::UpdateGeometry (const UpdateRequest& request)
-	{
-		// Do nothing
-		return;
-	}
-
-	void Icon::Scale (float ratio)
-	{
-		if(ratio < 0.0) return;
-
-		Size new_size;
-		new_size.set_width(size().width() * ratio);
-		new_size.set_height(size().height() * ratio);
-
-		UpdateGeometry(UpdateRequest(FormSize, &new_size));
-		set_size(new_size);
 	}
 
 }

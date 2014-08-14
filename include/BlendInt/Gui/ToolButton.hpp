@@ -66,14 +66,14 @@ namespace BlendInt {
 
 		void InitializeToolButton ();
 
-		GLuint m_vao[2];
+		GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		RefPtr<Action> m_action;
+		RefPtr<Action> action_;
 
-		RefPtr<PixelIcon> m_icon;
+		RefPtr<PixelIcon> icon_;
 	};
 }
 

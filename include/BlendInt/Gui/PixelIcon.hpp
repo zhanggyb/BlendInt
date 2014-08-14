@@ -22,11 +22,10 @@
  */
 
 
-#ifndef _BLENDINT_PIXELICON_HPP_
-#define _BLENDINT_PIXELICON_HPP_
+#ifndef _BLENDINT_GUI_PIXELICON_HPP_
+#define _BLENDINT_GUI_PIXELICON_HPP_
 
-#include <vector>
-
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/Icon.hpp>
 
@@ -41,36 +40,28 @@ namespace BlendInt {
 
 		PixelIcon (int width, int height);
 
-		PixelIcon (int width, int height, const unsigned char* pixels);
+		PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
 
-		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv);
+		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
-		PixelIcon (const PixelIcon& orig);
+		virtual ~PixelIcon ();
 
-		~PixelIcon ();
+		void SetPixels (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
 
-		void SetPixels (const unsigned char* pixels);
-
-		void SetTexture (const RefPtr<GLTexture2D>& texture, const GLfloat* uv);
+		void SetTexture (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
 		virtual void Draw (const glm::vec3& pos, short gamma = 0);
 
-		virtual void Draw (const glm::vec3& pos, int x, int y, int restrict_width, int restrict_height);
-
-	protected:
-
-		virtual void UpdateGeometry (const UpdateRequest& request);
-
 	private:
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		/**
 		 * @brief Coord and UV vertex buffer
 		 */
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> buffer_;
 
-		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLTexture2D> texture_;
 
 		// disabled
 		PixelIcon& operator = (const PixelIcon& orig);
