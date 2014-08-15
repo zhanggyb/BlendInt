@@ -47,6 +47,8 @@
 
 #include <BlendInt/Gui/Splitter.hpp>
 
+#include <BlendInt/Gui/HBlockLayout.hpp>
+
 namespace BlendInt {
 
 	FileSelector::FileSelector ()
@@ -210,8 +212,38 @@ namespace BlendInt {
 		DBG_SET_NAME(toolbar, "ToolBar");
 		toolbar->SetMargin(2, 2, 2, 2);
 
-		ToolButton* tool_btn1 = Manage(new ToolButton);
-		toolbar->PushBack(tool_btn1);
+		// directory control group
+		HBlock* block1 = Manage(new HBlock);
+
+		Button* btn_back = Manage(new Button);
+		Button* btn_forward = Manage(new Button);
+		Button* btn_up = Manage(new Button);
+		Button* btn_reload = Manage(new Button);
+
+		block1->PushBack(btn_back);
+		block1->PushBack(btn_forward);
+		block1->PushBack(btn_up);
+		block1->PushBack(btn_reload);
+
+		block1->Resize(block1->GetPreferredSize());
+
+		// create new
+		Button* btn_new = Manage(new Button("Create New Directory"));
+
+		// display mode
+		HBlock* block2 = Manage(new HBlock);
+
+		Button* btn_short_list = Manage(new Button);
+		Button* btn_detail_list = Manage(new Button);
+		Button* btn_thumbnail = Manage(new Button);
+
+		block2->PushBack(btn_short_list);
+		block2->PushBack(btn_detail_list);
+		block2->PushBack(btn_thumbnail);
+
+		toolbar->PushBack(block1);
+		toolbar->PushBack(btn_new);
+		toolbar->PushBack(block2);
 
 		return toolbar;
 	}

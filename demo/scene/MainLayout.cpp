@@ -144,6 +144,7 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	hblock->PushBack(btn3);
 	hblock->PushBack(btn4);
 	hblock->PushBack(btn5);
+	hblock->Resize(hblock->GetPreferredSize());
 
 	HBlock* hblock2 = Manage (new HBlock);
 
@@ -167,6 +168,7 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	hblock2->PushBack(btn8);
 	hblock2->PushBack(btn9);
 	hblock2->PushBack(btn10);
+	hblock2->Resize(hblock2->GetPreferredSize());
 
 	toolbar->PushBack(hblock);
 	toolbar->PushBack(hblock2);
@@ -307,7 +309,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	ComboBox* combo = Manage(new ComboBox);
 
 	Label* info_label = Manage(new Label("Info: "));
-	m_msg_label = Manage(new Label(""));
+	m_msg_label = Manage(new Label("Ready..."));
 
 	toolbar->PushBack(box);
 	toolbar->PushBack(m_btn_open);

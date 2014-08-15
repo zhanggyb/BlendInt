@@ -152,8 +152,8 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().left() + margin().right());
-			preferred_size.add_height(margin().top() + margin().bottom());
+			preferred_size.add_width(margin().hsum());
+			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
