@@ -245,6 +245,18 @@ namespace BlendInt {
 				uv[i] += (w + dx);
 			}
 			imagefile_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+
+			file_parent_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_refresh_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_folder_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_blank_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_blend_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_image_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_movie_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_script_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_sound_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_font_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			file_text_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
 		}
 
 		void Icons::CreatePixelIcons32x32 ()

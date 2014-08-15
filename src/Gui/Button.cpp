@@ -44,21 +44,58 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Button::Button ()
-		: AbstractButton()
+	: AbstractButton(),
+	  icon_offset_x_(0.f),
+	  icon_offset_y_(0.f),
+	  show_icon_(true)
 	{
 		set_round_type(RoundAll);
 		set_drop_shadow(true);
 		int h = font().GetHeight();
 		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		        h + DefaultButtonPadding().vsum());
 
-		InitializeButton();
+		InitializeButtonOnce();
 	}
 
 	Button::Button (const String& text)
-		: AbstractButton()
+	: AbstractButton(),
+	  icon_offset_x_(0.f),
+	  icon_offset_y_(0.f),
+	  show_icon_(true)
 	{
-		InitializeButton(text);
+		set_round_type(RoundAll);
+		set_drop_shadow(true);
+		set_text(text);
+
+		InitializeButtonOnce(text);
+	}
+
+	Button::Button (const RefPtr<AbstractIcon>& icon)
+	: AbstractButton(),
+	  icon_offset_x_(0.f),
+	  icon_offset_y_(0.f),
+	  show_icon_(true)
+	{
+		set_round_type(RoundAll);
+		set_drop_shadow(true);
+		icon_ = icon;
+
+		InitializeButtonOnce(icon, String());
+	}
+
+	Button::Button (const RefPtr<AbstractIcon>& icon, const String& text)
+	: AbstractButton(),
+	  icon_offset_x_(0.f),
+	  icon_offset_y_(0.f),
+	  show_icon_(true)
+	{
+		set_round_type(RoundAll);
+		set_drop_shadow(true);
+		set_text(text);
+		icon_ = icon;
+
+		InitializeButtonOnce(icon, text);
 	}
 
 	Button::~Button ()
@@ -66,11 +103,77 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
+	void Button::SetIcon (const RefPtr<AbstractIcon>& icon)
+	{
+		icon_ = icon;
+
+		float radius_plus = 0.f;
+
+		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
+		}
+
+		icon_offset_x_ = radius_plus + DefaultButtonPadding().left();
+		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
+
+		Refresh();
+	}
+
+	Size Button::GetPreferredSize() const
+	{
+		Size prefer;
+
+		int radius_plus = 0;
+
+		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
+		}
+
+		if ((round_type() & RoundTopRight)
+		        || (round_type() & RoundBottomRight)) {
+			radius_plus += round_radius();
+		}
+
+		int font_height = font().GetHeight();
+		int h = font_height;
+
+		if(icon_) {
+			h = std::max(icon_->size().height(), font_height);
+		}
+
+		prefer.set_height(h + DefaultButtonPadding().vsum());
+		// top padding: 2, bottom padding: 2
+
+		int w = 0;
+		if (text().empty()) {
+
+			if(icon_) {
+				w = icon_->size().width();
+			} else {
+				w = font_height;
+			}
+
+			w = w + DefaultButtonPadding().hsum() + radius_plus;
+
+		} else {
+
+			if(icon_) {
+				w += icon_->size().width();
+			}
+
+			int text_width = font().GetTextWidth(text());
+			w = w + text_width + DefaultButtonPadding().hsum() + radius_plus; // left padding: 2, right padding: 2
+
+		}
+
+		prefer.set_width(w);
+
+		return prefer;
+	}
+
 	void Button::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			UpdateTextPosition(*request.size(), round_type(),
-			        round_radius(), text());
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
@@ -81,6 +184,9 @@ namespace BlendInt {
 			GLArrayBuffer::Reset();
 
 			set_size(*request.size());
+
+			CalculateIconTextPosition(size(), round_type(), round_radius());
+
 			Refresh();
 		}
 
@@ -90,8 +196,6 @@ namespace BlendInt {
 	void Button::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			UpdateTextPosition(size(), *request.round_type(), round_radius(),
-			        text());
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
@@ -102,6 +206,9 @@ namespace BlendInt {
 			GLArrayBuffer::Reset();
 
 			set_round_type(*request.round_type());
+
+			CalculateIconTextPosition(size(), round_type(), round_radius());
+
 			Refresh();
 		}
 
@@ -111,8 +218,6 @@ namespace BlendInt {
 	void Button::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			UpdateTextPosition(size(), round_type(), *request.round_radius(),
-			        text());
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
@@ -123,6 +228,9 @@ namespace BlendInt {
 			GLArrayBuffer::Reset();
 
 			set_round_radius(*request.round_radius());
+
+			CalculateIconTextPosition(size(), round_type(), round_radius());
+
 			Refresh();
 		}
 
@@ -134,8 +242,9 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
-		        (float) position().x(), (float) position().y(), 0.f);
+		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+
+		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
@@ -175,6 +284,14 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
+		if(show_icon_ && icon_) {
+			if(hover()) {
+				icon_->Draw(pos.x + icon_offset_x_, pos.y + icon_offset_y_, 15);
+			} else {
+				icon_->Draw(pos.x + icon_offset_x_, pos.y + icon_offset_y_, 0);
+			}
+		}
+
 		if (text().size()) {
 			font().Print(position(), text(), text_length(), 0);
 		}
@@ -182,7 +299,143 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Button::InitializeButton ()
+	void Button::CalculateIconTextPosition(const Size& size, int round_type, float radius)
+	{
+		int x = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int y = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		float radius_plus = 0.f;
+
+		icon_offset_x_ = 0.f;
+		icon_offset_y_ = 0.f;
+
+		if((round_type & RoundTopLeft) || (round_type & RoundBottomLeft)) {
+			radius_plus += radius;
+			x += (int)radius;
+			icon_offset_x_ += radius;
+		}
+
+		if((round_type & RoundTopRight) || (round_type & RoundBottomRight)) {
+			radius_plus += radius;
+		}
+
+		int valid_width = size.width() - DefaultButtonPadding().hsum() * Theme::instance->pixel() - (int)radius_plus;
+		int valid_height = size.height() - DefaultButtonPadding().vsum() * Theme::instance->pixel();
+
+		if(valid_width <= 0 || valid_height <= 0) {
+			show_icon_ = false;
+			set_text_length(0);
+			return;
+		}
+
+		icon_offset_x_ += DefaultButtonPadding().left() * Theme::instance->pixel();
+
+		if(text().empty()) {
+
+			set_text_length(0);
+
+			if(icon_) {
+
+				if((icon_->size().width() < valid_width) ||
+						(icon_->size().height() < valid_height)) {
+					show_icon_ = false;
+				} else {
+					show_icon_ = true;
+					icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
+				}
+
+			} else {
+
+				// Nothing to configure
+
+			}
+
+		} else {
+
+			int text_length = 0;
+
+			if(icon_) {
+
+				icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
+
+				int text_width = valid_width - icon_->size().width();
+
+				if(text_width < 0) {
+
+					show_icon_ = false;
+
+				} else if (text_width == 0) {
+
+					if(icon_->size().height() > valid_height) {
+						show_icon_ = false;
+					} else {
+						show_icon_ = true;
+					}
+
+				} else {
+
+					if(icon_->size().height() > valid_height) {
+						show_icon_ = false;
+					} else {
+						show_icon_ = true;
+					}
+
+					x += icon_->size().width();
+
+					bool cal_width = true;
+
+					Rect text_outline = font().GetTextOutline(text());
+
+					if(valid_height < text_outline.height()) {
+						text_length = 0;
+						cal_width = false;
+					}
+
+					if(cal_width) {
+						if(text_width < text_outline.width()) {
+							text_length = GetValidTextLength(text(), font(), text_width);
+						} else {
+							text_length = text().length();
+							x = x + (valid_width - icon_->size().width() - text_outline.width()) / 2;
+						}
+						y = (size.height() - font().GetHeight()) / 2 + std::abs(font().GetDescender());
+					}
+
+					set_pen(x, y);
+
+				}
+
+			} else {
+
+				// If size changed, we need to update the text length for printing too.
+				bool cal_width = true;
+
+				Rect text_outline = font().GetTextOutline(text());
+
+				if(valid_height < text_outline.height()) {
+					text_length = 0;
+					cal_width = false;
+				}
+
+				if(cal_width) {
+					if(valid_width < text_outline.width()) {
+						text_length = GetValidTextLength(text(), font(), valid_width);
+					} else {
+						text_length = text().length();
+						x = (size.width() - text_outline.width()) / 2;
+					}
+					y = (size.height() - font().GetHeight()) / 2 + std::abs(font().GetDescender());
+				}
+
+				set_pen(x, y);
+
+			}
+
+			set_text_length(text_length);
+		}
+
+	}
+
+	void Button::InitializeButtonOnce ()
 	{
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
@@ -211,12 +464,8 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-	void Button::InitializeButton (const String& text)
+	void Button::InitializeButtonOnce (const String& text)
 	{
-		set_round_type(RoundAll);
-		set_drop_shadow(true);
-		set_text(text);
-
 		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
 		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
 		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
@@ -240,6 +489,93 @@ namespace BlendInt {
 			set_pen((width - text_outline.width()) / 2,
 							(height - font().GetHeight()) / 2
 											+ std::abs(font().GetDescender()));
+		}
+
+		VertexTool tool;
+		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+	}
+
+	void Button::InitializeButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text)
+	{
+		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
+		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
+		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int font_height = font().GetHeight();
+		int h = 0;
+
+		if(text.empty()) {
+
+			if(icon) {
+				h = std::max(icon->size().height(), font_height);
+				set_size(icon->size().width() + round_radius() * 2 * Theme::instance->pixel() + left + right,
+						h + top + bottom);
+			} else {
+				set_size(font_height + round_radius() * 2 * Theme::instance->pixel() + left + right,
+						font_height + top + bottom);
+			}
+
+		} else {
+
+			set_text_length(text.length());
+			Rect text_outline = font().GetTextOutline(text);
+
+			if(icon) {
+				h = std::max(icon->size().height(), font_height);
+
+				int width = icon->size().width() + text_outline.width()
+								+ round_radius() * 2 * Theme::instance->pixel()
+								+ left + right;
+				int height = h + top + bottom;
+
+				set_size(width, height);
+
+				set_pen(((width - icon_->size().width()) - text_outline.width()) / 2 + icon_->size().width(),
+								(height - font().GetHeight()) / 2
+												+ std::abs(font().GetDescender()));
+
+			} else {
+
+				int width = text_outline.width()
+								+ round_radius() * 2 * Theme::instance->pixel()
+								+ left + right;
+				int height = font_height + top + bottom;
+
+				set_size(width, height);
+
+				set_pen((width - text_outline.width()) / 2,
+								(height - font().GetHeight()) / 2
+												+ std::abs(font().GetDescender()));
+			}
+
+		}
+
+		if(icon) {
+			icon_offset_x_ = round_radius() + left;
+			icon_offset_y_ = (size().height() - icon->size().height()) / 2.f;
 		}
 
 		VertexTool tool;

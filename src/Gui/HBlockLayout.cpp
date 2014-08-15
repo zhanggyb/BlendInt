@@ -25,18 +25,18 @@
 
 namespace BlendInt {
 
-	HBlock::HBlock ()
+	HBlockLayout::HBlockLayout ()
 	: AbstractContainer()
 	{
 		set_size(100, 20);
 		set_margin(0, 0, 0, 0);
 	}
 	
-	HBlock::~HBlock ()
+	HBlockLayout::~HBlockLayout ()
 	{
 	}
 	
-	void HBlock::PushFront (AbstractWidget* widget)
+	void HBlockLayout::PushFront (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_first = first();
 
@@ -56,7 +56,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBlock::PushBack (AbstractWidget* widget)
+	void HBlockLayout::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_last = last();
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 		}
 	}
 	
-	bool HBlock::IsExpandX () const
+	bool HBlockLayout::IsExpandX () const
 	{
 		bool expand = false;
 
@@ -91,7 +91,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool HBlock::IsExpandY () const
+	bool HBlockLayout::IsExpandY () const
 	{
 		bool expand = false;
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 		return expand;
 	}
 	
-	Size HBlock::GetPreferredSize () const
+	Size HBlockLayout::GetPreferredSize () const
 	{
 		Size preferred_size;
 
@@ -142,12 +142,12 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void HBlock::PerformMarginUpdate(const Margin& request)
+	void HBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillInHBlock(position(), size(), request);
 	}
 
-	bool HBlock::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool HBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
 		if(request.source()->container() == this) {
@@ -157,7 +157,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool HBlock::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool HBlockLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
 		if(request.source()->container() == this) {
@@ -167,7 +167,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void HBlock::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void HBlockLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -177,7 +177,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 	
-	void HBlock::PerformPositionUpdate(const PositionUpdateRequest& request)
+	void HBlockLayout::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -191,47 +191,47 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType HBlock::Draw (const Profile& profile)
+	ResponseType HBlockLayout::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::CursorEnterEvent (bool entered)
+	ResponseType HBlockLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::KeyPressEvent (const KeyEvent& event)
+	ResponseType HBlockLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType HBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType HBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::MousePressEvent (const MouseEvent& event)
+	ResponseType HBlockLayout::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType HBlockLayout::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 	
-	ResponseType HBlock::MouseMoveEvent (const MouseEvent& event)
+	ResponseType HBlockLayout::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void HBlock::FillInHBlock (const Point& out_pos, const Size& out_size,
+	void HBlockLayout::FillInHBlock (const Point& out_pos, const Size& out_size,
 					const Margin& margin)
 	{
 		int x = out_pos.x() + margin.left();
@@ -242,7 +242,7 @@ namespace BlendInt {
 		FillInHBlock(x, y, w, h);
 	}
 
-	void HBlock::FillInHBlock (int x, int y, int w, int h)
+	void HBlockLayout::FillInHBlock (int x, int y, int w, int h)
 	{
 		int count = widget_count();
 		if(count == 0) return;

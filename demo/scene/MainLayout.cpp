@@ -119,7 +119,7 @@ BI::ToolBar* MainLayout::CreateToolBar()
 
 	ToolBar* toolbar = Manage(new ToolBar);
 
-	HBlock* hblock = Manage (new HBlock);
+	HBlockLayout* hblock = Manage (new HBlockLayout);
 	
 	m_tool_open = Manage(new ToolButton);
 
@@ -146,7 +146,7 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	hblock->PushBack(btn5);
 	hblock->Resize(hblock->GetPreferredSize());
 
-	HBlock* hblock2 = Manage (new HBlock);
+	HBlockLayout* hblock2 = Manage (new HBlockLayout);
 
 	ToolButton* btn6 = Manage(new ToolButton);
 	btn6->SetAction(BI::Stock::Icons::instance->image_rgb_16x16(), String("IMAGE RGB"));
@@ -195,6 +195,29 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 	menubar->PushBack(String("File"), file_menu);
 
+	RefPtr<Menu> edit_menu(new Menu);
+
+	edit_menu->SetRoundType(RoundAll);
+	edit_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
+	edit_menu->AddAction("MenuItem2", "Ctrl + 1");
+	edit_menu->AddAction("MenuItem3", "Ctrl + 1");
+	edit_menu->AddAction("MenuItem4", "Ctrl + 1");
+	edit_menu->AddAction("MenuItem5");
+
+	menubar->PushBack(String("Edit"), edit_menu);
+
+	RefPtr<Menu> help_menu(new Menu);
+
+	help_menu->SetRoundType(RoundAll);
+	help_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
+	help_menu->AddAction("MenuItem2", "Ctrl + 1");
+	help_menu->AddAction("MenuItem3", "Ctrl + 1");
+	help_menu->AddAction("MenuItem4", "Ctrl + 1");
+	help_menu->AddAction("MenuItem5");
+
+	menubar->PushBack(String("Help"), help_menu);
+
+
 	return menubar;
 }
 
@@ -226,7 +249,7 @@ BI::Expander* MainLayout::CreateTransformExpander()
 	Button* btn2 = Manage(new Button("Rotate"));
 	Button* btn3 = Manage(new Button("Scale"));
 
-	VBlock* vblock = Manage(new VBlock);
+	VBlockLayout* vblock = Manage(new VBlockLayout);
 	vblock->PushBack(btn1);
 	vblock->PushBack(btn2);
 	vblock->PushBack(btn3);
@@ -246,7 +269,7 @@ BI::Expander* MainLayout::CreateLightExpander()
 	NumericalSlider* ns2 = Manage(new NumericalSlider);
 	NumericalSlider* ns3 = Manage(new NumericalSlider);
 
-	VBlock* vblock = Manage(new VBlock);
+	VBlockLayout* vblock = Manage(new VBlockLayout);
 	vblock->PushBack(ns1);
 	vblock->PushBack(ns2);
 	vblock->PushBack(ns3);

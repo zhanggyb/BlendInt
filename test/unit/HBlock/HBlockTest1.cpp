@@ -36,7 +36,7 @@ TEST_F(HBlockTest1, Foo1)
 	Button* btn1 = Manage(new Button);
 	Button* btn2 = Manage(new Button);
 	
-	HBlock* hblock = Manage(new HBlock);
+	HBlockLayout* hblock = Manage(new HBlockLayout);
 	
 	hblock->SetPosition(200, 200);
 	hblock->PushBack(btn1);
@@ -49,7 +49,7 @@ TEST_F(HBlockTest1, Foo1)
 	ToolButton* tbtn1 = Manage(new ToolButton);
 	ToolButton* tbtn2 = Manage(new ToolButton);
 	
-	HBlock* hblock2 = Manage(new HBlock);
+	HBlockLayout* hblock2 = Manage(new HBlockLayout);
 	
 	hblock2->SetPosition(400, 200);
 	hblock2->PushBack(tbtn1);

@@ -60,9 +60,9 @@ namespace BlendInt {
 
 		void OnButtonToggled (int index, bool toggled);
 
-		VBlock* CreateRGBBlock ();
+		VBlockLayout* CreateRGBBlock ();
 
-		VBlock* CreateHSVBlock ();
+		VBlockLayout* CreateHSVBlock ();
 
 		VBox* CreateHexBlock ();
 

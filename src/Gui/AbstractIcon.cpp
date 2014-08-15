@@ -32,18 +32,24 @@
 #endif  // __UNIX__
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Icon.hpp>
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
-	Icon::Icon (int width, int height)
+	AbstractIcon::AbstractIcon (int width, int height)
 	: Object(),
 	  size_(width, height)
 	{
 	}
 
-	Icon::~Icon ()
+	AbstractIcon::~AbstractIcon ()
 	{
+	}
+
+	void AbstractIcon::Draw(float x, float y, short gamma)
+	{
+		glm::vec3 pos(x, y, 0.f);
+		Draw(pos, gamma);
 	}
 
 }

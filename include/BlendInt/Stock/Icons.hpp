@@ -122,6 +122,62 @@ namespace BlendInt {
 				return imagefile_16x16_;
 			}
 
+			// FILE SELECT
+			const RefPtr<PixelIcon>& file_parent_16x16 () const
+			{
+				return file_parent_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_refresh_16x16 () const
+			{
+				return file_refresh_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_folder_16x16 () const
+			{
+				return file_folder_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_blank_16x16 () const
+			{
+				return file_blank_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_blend_16x16 () const
+			{
+				return file_blend_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_image_16x16 () const
+			{
+				return file_image_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_movie_16x16 () const
+			{
+				return file_movie_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_scipt_16x16 () const
+			{
+				return file_script_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_sound_16x16 () const
+			{
+				return file_sound_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_font_16x16 () const
+			{
+				return file_font_16x16_;
+			}
+
+			const RefPtr<PixelIcon>& file_text_16x16 () const
+			{
+				return file_text_16x16_;
+			}
+
 			const RefPtr<PixelIcon>& seq_sequencer_32x32 () const
 			{
 				return seq_sequencer_16x16_;
@@ -203,6 +259,19 @@ namespace BlendInt {
 			RefPtr<PixelIcon> image_alpha_16x16_;
 			RefPtr<PixelIcon> image_zdepth_16x16_;
 			RefPtr<PixelIcon> imagefile_16x16_;
+
+			// FILE SELECT
+			RefPtr<PixelIcon> file_parent_16x16_;
+			RefPtr<PixelIcon> file_refresh_16x16_;
+			RefPtr<PixelIcon> file_folder_16x16_;
+			RefPtr<PixelIcon> file_blank_16x16_;
+			RefPtr<PixelIcon> file_blend_16x16_;
+			RefPtr<PixelIcon> file_image_16x16_;
+			RefPtr<PixelIcon> file_movie_16x16_;
+			RefPtr<PixelIcon> file_script_16x16_;
+			RefPtr<PixelIcon> file_sound_16x16_;
+			RefPtr<PixelIcon> file_font_16x16_;
+			RefPtr<PixelIcon> file_text_16x16_;
 
 			// 32 x 32 icons
 

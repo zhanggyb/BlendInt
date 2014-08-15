@@ -38,18 +38,19 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-
-#include <BlendInt/Gui/Splitter.hpp>
-
-#include <BlendInt/Gui/HBlockLayout.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
+
+	using Stock::Shaders;
+	using Stock::Icons;
 
 	FileSelector::FileSelector ()
 	: path_entry_(0),
@@ -73,7 +74,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
+			tool.Setup(*request.size(), 0, round_type(), round_radius());
 			inner_->Bind();
 			tool.SetInnerBufferData(inner_.get());
 			inner_->Reset();
@@ -83,6 +84,39 @@ namespace BlendInt {
 		}
 
 		ReportSizeUpdate(request);
+	}
+
+	void FileSelector::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), 0, *request.round_type(),
+			        round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			GLArrayBuffer::Reset();
+
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void FileSelector::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), 0, round_type(),
+			        *request.round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			GLArrayBuffer::Reset();
+
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType FileSelector::Draw (const Profile& profile)
@@ -99,7 +133,7 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 		program->Reset();
 
@@ -112,7 +146,7 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.Setup(size(), 0, RoundNone, 0.f);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->Generate();
@@ -213,12 +247,12 @@ namespace BlendInt {
 		toolbar->SetMargin(2, 2, 2, 2);
 
 		// directory control group
-		HBlock* block1 = Manage(new HBlock);
+		HBlockLayout* block1 = Manage(new HBlockLayout);
 
-		Button* btn_back = Manage(new Button);
-		Button* btn_forward = Manage(new Button);
-		Button* btn_up = Manage(new Button);
-		Button* btn_reload = Manage(new Button);
+		Button* btn_back = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_forward = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_up = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_reload = Manage(new Button(Icons::instance->file_parent_16x16()));
 
 		block1->PushBack(btn_back);
 		block1->PushBack(btn_forward);
@@ -228,14 +262,14 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		Button* btn_new = Manage(new Button("Create New Directory"));
+		Button* btn_new = Manage(new Button(Icons::instance->file_parent_16x16(), "Create New Directory"));
 
 		// display mode
-		HBlock* block2 = Manage(new HBlock);
+		HBlockLayout* block2 = Manage(new HBlockLayout);
 
-		Button* btn_short_list = Manage(new Button);
-		Button* btn_detail_list = Manage(new Button);
-		Button* btn_thumbnail = Manage(new Button);
+		Button* btn_short_list = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_detail_list = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_thumbnail = Manage(new Button(Icons::instance->file_parent_16x16()));
 
 		block2->PushBack(btn_short_list);
 		block2->PushBack(btn_detail_list);

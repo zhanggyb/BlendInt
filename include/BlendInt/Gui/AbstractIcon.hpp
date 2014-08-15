@@ -30,13 +30,15 @@
 
 namespace BlendInt {
 
-	class Icon: public Object
+	class AbstractIcon: public Object
 	{
 	public:
 
-		Icon (int width, int height);
+		AbstractIcon (int width, int height);
 
-		virtual ~Icon ();
+		virtual ~AbstractIcon ();
+
+		void Draw (float x, float y, short gamma = 0);
 
 		virtual void Draw (const glm::vec3& pos, short gamma = 0) const = 0;
 

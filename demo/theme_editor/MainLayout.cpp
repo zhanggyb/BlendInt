@@ -109,7 +109,7 @@ BI::Expander* MainLayout::CreateExpander1()
 
 	Expander* expander = Manage(new Expander("Widgets"));
 
-	VBlock* vblock = Manage(new VBlock);
+	VBlockLayout* vblock = Manage(new VBlockLayout);
 
 	Button* create_btn1 = Manage(new Button("Button"));
 	Button* create_btn2 = Manage(new Button("ToggleButton"));
@@ -143,7 +143,7 @@ BI::Expander* MainLayout::CreateExpander()
 
 	ColorSelector* cs = Manage(new ColorSelector);
 
-	HBlock* hblock = Manage(new HBlock);
+	HBlockLayout* hblock = Manage(new HBlockLayout);
 	hblock->SetMargin(0, 0, 2, 2);
 
 	Button* btn1 = Manage(new Button("Blur"));

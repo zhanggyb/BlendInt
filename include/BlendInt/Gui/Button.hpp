@@ -27,6 +27,8 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
+#include <BlendInt/Gui/AbstractIcon.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -44,7 +46,15 @@ namespace BlendInt {
 
 		Button (const String& text);
 
+		Button (const RefPtr<AbstractIcon>& icon);
+
+		Button (const RefPtr<AbstractIcon>& icon, const String& text);
+
 		virtual ~Button ();
+
+		void SetIcon (const RefPtr<AbstractIcon>& icon);
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -56,15 +66,28 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Profile& profile);
 
+		void CalculateIconTextPosition (const Size& size, int round_type, float radius);
+
 	private:
 
-		void InitializeButton ();
+		void InitializeButtonOnce ();
 
-		void InitializeButton (const String& text);
+		void InitializeButtonOnce (const String& text);
+
+		void InitializeButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text);
 
 		GLuint vao_[2];
+
 		RefPtr<GLArrayBuffer> inner_;
+
 		RefPtr<GLArrayBuffer> outer_;
+
+		RefPtr<AbstractIcon> icon_;
+
+		float icon_offset_x_;	// the offset along x to draw the icon
+		float icon_offset_y_;
+
+		bool show_icon_;
 	};
 
 }

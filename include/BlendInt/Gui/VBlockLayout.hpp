@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VBLOCK_HPP_
-#define _BLENDINT_GUI_VBLOCK_HPP_
+#ifndef _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
+#define _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
@@ -31,15 +31,15 @@ namespace BlendInt {
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class VBlock: public AbstractContainer
+	class VBlockLayout: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(VBlock);
+		DISALLOW_COPY_AND_ASSIGN(VBlockLayout);
 
 	public:
 
-		VBlock ();
+		VBlockLayout ();
 
-		virtual ~VBlock ();
+		virtual ~VBlockLayout ();
 
 		void PushFront (AbstractWidget* widget);
 
@@ -86,7 +86,7 @@ namespace BlendInt {
 	private:
 
 	};
+
 }
 
-
-#endif /* _BLENDINT_GUI_VBLOCK_HPP_ */
+#endif /* _BLENDINT_GUI_VBLOCKLAYOUT_HPP_ */

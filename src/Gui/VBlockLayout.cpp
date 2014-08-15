@@ -25,18 +25,18 @@
 
 namespace BlendInt {
 
-	VBlock::VBlock ()
+	VBlockLayout::VBlockLayout ()
 	: AbstractContainer()
 	{
 		set_size(80, 60);
 		set_margin(0, 0, 0, 0);
 	}
 
-	VBlock::~VBlock ()
+	VBlockLayout::~VBlockLayout ()
 	{
 	}
 
-	void VBlock::PushFront (AbstractWidget* widget)
+	void VBlockLayout::PushFront (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_first = first();
 
@@ -56,7 +56,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBlock::PushBack (AbstractWidget* widget)
+	void VBlockLayout::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* orig_last = last();
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool VBlock::IsExpandX() const
+	bool VBlockLayout::IsExpandX() const
 	{
 		bool expand = false;
 
@@ -92,7 +92,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool VBlock::IsExpandY () const
+	bool VBlockLayout::IsExpandY () const
 	{
 		bool expand = false;
 
@@ -107,7 +107,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	Size VBlock::GetPreferredSize () const
+	Size VBlockLayout::GetPreferredSize () const
 	{
 		Size preferred_size;
 
@@ -143,12 +143,12 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void VBlock::PerformMarginUpdate(const Margin& request)
+	void VBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillInVBlock(position(), size(), request);
 	}
 
-	bool VBlock::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool VBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
 		if(request.source()->container() == this) {
@@ -158,7 +158,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool VBlock::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool VBlockLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
 		if(request.source()->container() == this) {
@@ -168,7 +168,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void VBlock::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void VBlockLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -178,7 +178,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void VBlock::PerformPositionUpdate (
+	void VBlockLayout::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -192,47 +192,47 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType VBlock::Draw (const Profile& profile)
+	ResponseType VBlockLayout::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::CursorEnterEvent (bool entered)
+	ResponseType VBlockLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::KeyPressEvent (const KeyEvent& event)
+	ResponseType VBlockLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType VBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType VBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::MousePressEvent (const MouseEvent& event)
+	ResponseType VBlockLayout::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType VBlockLayout::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBlock::MouseMoveEvent (const MouseEvent& event)
+	ResponseType VBlockLayout::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 	
-	void VBlock::FillInVBlock (const Point& out_pos, const Size& out_size,
+	void VBlockLayout::FillInVBlock (const Point& out_pos, const Size& out_size,
 					const Margin& margin)
 	{
 		int x = out_pos.x() + margin.left();
@@ -243,7 +243,7 @@ namespace BlendInt {
 		FillInVBlock(x, y, w, h);
 	}
 
-	void VBlock::FillInVBlock (int x, int y, int w, int h)
+	void VBlockLayout::FillInVBlock (int x, int y, int w, int h)
 	{
 		int count = widget_count();
 		if(count == 0) return;

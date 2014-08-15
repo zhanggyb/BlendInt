@@ -109,7 +109,7 @@ BI::Expander* MainLayout::CreateExpander()
 	Button* btn2 = Manage(new Button("Sharpen"));
 	Button* btn3 = Manage(new Button("Help"));
 
-	VBlock* vblock = Manage(new VBlock);
+	VBlockLayout* vblock = Manage(new VBlockLayout);
 	vblock->PushBack(btn1);
 	vblock->PushBack(btn2);
 	vblock->PushBack(btn3);

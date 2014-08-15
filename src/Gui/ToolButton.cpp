@@ -200,7 +200,7 @@ namespace BlendInt {
 		action_ = action;
 	}
 
-	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text)
+	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text)
 	{
 		RefPtr<Action> action(new Action(icon, text));
 
@@ -209,7 +209,7 @@ namespace BlendInt {
 		icon_ = icon;	// for temporary use
 	}
 
-	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text,
+	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text,
 	        const String& shortcut)
 	{
 		RefPtr<Action> action(new Action(icon, text, shortcut));

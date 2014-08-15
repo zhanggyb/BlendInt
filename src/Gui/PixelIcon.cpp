@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	PixelIcon::PixelIcon (int width, int height)
-	: Icon(width, height),
+	: AbstractIcon(width, height),
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
@@ -91,7 +91,7 @@ namespace BlendInt {
 	}
 
 	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
-	: Icon(width, height),
+	: AbstractIcon(width, height),
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
@@ -162,7 +162,7 @@ namespace BlendInt {
 
 	PixelIcon::PixelIcon (int width, int height,
 					const RefPtr<GLTexture2D>& texture, const GLfloat* uv)
-	: Icon(width, height),
+	: AbstractIcon(width, height),
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);

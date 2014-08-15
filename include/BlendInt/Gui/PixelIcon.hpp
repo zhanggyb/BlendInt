@@ -27,14 +27,14 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/Gui/Icon.hpp>
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * Icon displayed with pixels
 	 */
-	class PixelIcon: public Icon
+	class PixelIcon: public AbstractIcon
 	{
 	public:
 

@@ -103,7 +103,7 @@ namespace BlendInt {
 	};
 
 	VertexIcon::VertexIcon (int width, int height)
-	: Icon(width, height),
+	: AbstractIcon(width, height),
 	  vertex_buffer_(0),
 	  element_buffer_(0),
 	  vao_(0)

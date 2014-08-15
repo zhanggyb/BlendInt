@@ -28,14 +28,14 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
 
-#include <BlendInt/Gui/Icon.hpp>
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * Icon displayed with vertexes
 	 */
-	class VertexIcon: public Icon
+	class VertexIcon: public AbstractIcon
 	{
 	public:
 

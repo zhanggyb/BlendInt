@@ -27,7 +27,7 @@
 #include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
-#include <BlendInt/Gui/PixelIcon.hpp>
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
@@ -48,9 +48,9 @@ namespace BlendInt {
 
 		void SetAction (const String& text, const String& shortcut);
 
-		void SetAction (const RefPtr<Icon>& icon, const String& text);
+		void SetAction (const RefPtr<AbstractIcon>& AbstractIcon, const String& text);
 
-		void SetAction (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		void SetAction (const RefPtr<AbstractIcon>& AbstractIcon, const String& text, const String& shortcut);
 
 		void SetAction (const RefPtr<Action>& item);
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		RefPtr<Action> action_;
 
-		RefPtr<Icon> icon_;
+		RefPtr<AbstractIcon> icon_;
 	};
 }
 
