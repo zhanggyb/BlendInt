@@ -16,6 +16,8 @@
 
 #include "MainLayout.hpp"
 
+using namespace BI;
+
 MainLayout::MainLayout ()
 : m_menubar(0),
   m_toolbar(0),
@@ -38,8 +40,6 @@ MainLayout::~MainLayout ()
 
 void MainLayout::InitOnce ()
 {
-	using namespace BI;
-
 	set_margin(0, 0, 0, 0);
 	set_space(1);
 
@@ -68,8 +68,6 @@ void MainLayout::InitOnce ()
 
 void MainLayout::OnOpenClick()
 {
-	using namespace BI;
-
 	if(m_file_input->text().empty()) return;
 
 	std::string filename = ConvertFromString(m_file_input->text());
@@ -84,8 +82,10 @@ void MainLayout::OnOpenClick()
 				m_scene->PushBack(monkey);
 
 				m_msg_label->SetText("3D Mesh is loaded");
+				m_msg_label->Resize(m_msg_label->GetPreferredSize());
 			} else {
 				m_msg_label->SetText("");
+				m_msg_label->Resize(m_msg_label->GetPreferredSize());
 			}
 			break;
 		}
@@ -94,8 +94,17 @@ void MainLayout::OnOpenClick()
 
 			if(m_image_view->Open(filename.c_str())) {
 				m_msg_label->SetText("Image is loaded");
+				
+				Size prefer = m_msg_label->GetPreferredSize();
+				DBG_PRINT_MSG("prefer size: %d, %d", prefer.width(), prefer.height());
+				
+				m_msg_label->Resize(m_msg_label->GetPreferredSize());
+
+				DBG_PRINT_MSG("size: %d, %d", m_msg_label->size().width(), m_msg_label->size().height());
+
 			} else {
 				m_msg_label->SetText("");
+				m_msg_label->Resize(m_msg_label->GetPreferredSize());
 			}
 
 			break;
@@ -103,6 +112,7 @@ void MainLayout::OnOpenClick()
 
 		default: {
 			m_msg_label->SetText("");
+			m_msg_label->Resize(m_msg_label->GetPreferredSize());
 			break;
 		}
 	}
@@ -115,8 +125,6 @@ void MainLayout::OnResize (AbstractWidget* context, int type)
 
 BI::ToolBar* MainLayout::CreateToolBar()
 {
-	using namespace BI;
-
 	ToolBar* toolbar = Manage(new ToolBar);
 
 	HBlockLayout* hblock = Manage (new HBlockLayout);
@@ -180,8 +188,6 @@ BI::ToolBar* MainLayout::CreateToolBar()
 
 BI::MenuBar* MainLayout::CreateMenuBar()
 {
-	using namespace BI;
-
 	MenuBar* menubar = Manage(new MenuBar);
 
 	RefPtr<Menu> file_menu(new Menu);
@@ -223,8 +229,6 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 BI::ToolBox* MainLayout::CreateToolBox()
 {
-	using namespace BI;
-
 	ToolBox* toolbox = Manage(new ToolBox);
 
 	Expander* expander1 = CreateTransformExpander();
@@ -241,8 +245,6 @@ BI::ToolBox* MainLayout::CreateToolBox()
 
 BI::Expander* MainLayout::CreateTransformExpander()
 {
-	using namespace BI;
-
 	Expander* expander = Manage(new Expander("Transform"));
 
 	Button* btn1 = Manage(new Button("Translate"));
@@ -261,8 +263,6 @@ BI::Expander* MainLayout::CreateTransformExpander()
 
 BI::Expander* MainLayout::CreateLightExpander()
 {
-	using namespace BI;
-
 	Expander* expander = Manage(new Expander("Light"));
 
 	NumericalSlider* ns1 = Manage(new NumericalSlider);
@@ -281,8 +281,6 @@ BI::Expander* MainLayout::CreateLightExpander()
 
 BI::Expander* MainLayout::CreateColorExpander()
 {
-	using namespace BI;
-
 	Expander* expander = Manage(new Expander("Color"));
 
 	ColorSelector* cs = Manage(new ColorSelector);
@@ -294,8 +292,6 @@ BI::Expander* MainLayout::CreateColorExpander()
 
 BI::Tab* MainLayout::CreateTab ()
 {
-	using namespace BI;
-
 	Tab* tab = Manage(new Tab);
 	tab->SetMargin(0, 0, 0, 0);
 
@@ -310,15 +306,13 @@ BI::Tab* MainLayout::CreateTab ()
 
 BI::ToolBar* MainLayout::CreateBottomBar ()
 {
-	using namespace BI;
-
 	ToolBar* toolbar = Manage(new ToolBar);
 	toolbar->SetMargin(2, 2, 2, 2);
 
 	HBox* box = Manage(new HBox);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
-	Label* label = Manage(new Label("Select OBJ model: "));
+	Label* label = Manage(new Label("Select 3D model or image file: "));
 	m_file_input = Manage(new TextEntry);
 	m_file_button = Manage(new FileButton);
 	m_file_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
@@ -333,6 +327,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 
 	Label* info_label = Manage(new Label("Info: "));
 	m_msg_label = Manage(new Label("Ready..."));
+	m_msg_label->SetBackgroundColor(Color(0x8888EFFF));
 
 	toolbar->PushBack(box);
 	toolbar->PushBack(m_btn_open);
@@ -349,4 +344,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
+
+	HBox* box = dynamic_cast<HBox*>(m_file_input->container());
+	box->Resize(box->GetPreferredSize());
 }

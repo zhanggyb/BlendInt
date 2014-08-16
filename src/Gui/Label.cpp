@@ -61,12 +61,16 @@ namespace BlendInt {
 	{
 		text_ = text;
 		text_length_ = UpdateTextPosition(size(), text, font_);
+
+		Refresh();
 	}
 
 	void Label::SetFont (const Font& font)
 	{
 		font_ = font;
 		text_length_ = UpdateTextPosition(size(), text_, font_);
+
+		Refresh();
 	}
 
 	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -75,10 +79,10 @@ namespace BlendInt {
 			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
 
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), RoundNone, 0);
+			tool.Setup(*request.size(), 0, RoundNone, 0.f);
 
-			rect_->Bind();
-			tool.SetInnerBufferData(rect_.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
 			GLArrayBuffer::Reset();
 
 			set_size (*request.size());
@@ -190,6 +194,18 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	void Label::SetForegroundColor (const Color& fg)
+	{
+		font_.set_color(fg);
+		Refresh();
+	}
+
+	void Label::SetBackgroundColor (const Color& color)
+	{
+		background_color_ = color;
+		Refresh();
+	}
+
 	bool Label::IsExpandX() const
 	{
 		return true;
@@ -260,13 +276,13 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
+		tool.Setup(size(), 0, RoundNone, 0.f);
 
-		rect_.reset(new GLArrayBuffer);
-		rect_->Generate();
-		rect_->Bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
 
-		tool.SetInnerBufferData(rect_.get());
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());	// 0 is the locaiton in shader
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));

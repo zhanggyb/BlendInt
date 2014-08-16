@@ -164,6 +164,11 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool ToolBar::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void ToolBar::PerformMarginUpdate (const Margin& request)
 	{
 		int x = position().x() + request.left();

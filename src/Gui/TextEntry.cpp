@@ -90,6 +90,8 @@ namespace BlendInt {
 				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
 
 		index_ = text_.length();
+
+		Refresh();
 	}
 
 	void TextEntry::SetFont (const Font& font)
@@ -116,7 +118,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		int radius_plus = 0;
+		float radius_plus = 0.f;
 
 		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
 			radius_plus += round_radius();
@@ -137,7 +139,7 @@ namespace BlendInt {
 			preferred_size.set_width(max_font_height + radius_plus + 120);
 		} else {
 			int width = font_.GetTextWidth(text());
-			preferred_size.set_width(width + radius_plus);
+			preferred_size.set_width(width + (int)radius_plus);
 		}
 
 		return preferred_size;
