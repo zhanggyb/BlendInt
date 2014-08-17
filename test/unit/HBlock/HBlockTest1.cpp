@@ -4,7 +4,10 @@
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
+#include <BlendInt/Stock/Icons.hpp>
+
 using namespace BlendInt;
+using Stock::Icons;
 
 HBlockTest1::HBlockTest1()
 : testing::Test()
@@ -33,17 +36,22 @@ TEST_F(HBlockTest1, Foo1)
 	DBG_SET_NAME(context, "Context");
     Interface::instance->SetCurrentContext(context);
 
-	Button* btn1 = Manage(new Button);
-	Button* btn2 = Manage(new Button);
-	
+	Button* btn1 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	DBG_SET_NAME(btn1, "button 1");
+	Button* btn2 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	DBG_SET_NAME(btn2, "button 2");
+	Button* btn3 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	DBG_SET_NAME(btn3, "button 3");
+
 	HBlockLayout* hblock = Manage(new HBlockLayout);
 	
 	hblock->SetPosition(200, 200);
 	hblock->PushBack(btn1);
 	hblock->PushBack(btn2);
-
-	hblock->Resize(hblock->GetPreferredSize());
+	hblock->PushBack(btn3);
 	
+	hblock->Resize(hblock->GetPreferredSize());
+
 	context->PushBack(hblock);
 	
 	ToolButton* tbtn1 = Manage(new ToolButton);
@@ -57,8 +65,6 @@ TEST_F(HBlockTest1, Foo1)
 
 	hblock2->Resize(hblock2->GetPreferredSize());
 
-	DBG_PRINT_MSG("preferred size: %d, %d", hblock2->size().width(), hblock2->size().height());
-	
 	context->PushBack (hblock2);
 	
     RunLoop(win);

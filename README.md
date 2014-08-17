@@ -37,10 +37,9 @@ improved with some new technologies:
 
 Here're some example widgets:
 
-* Widget
-* Button
-* ToggleButton
-* Label
+| ------------ | ------------- | ------------ |
+| Button       | ToggleButton  | Label        |
+| Viewport3D   | NumericalSlider | FileSelector |
 
 ## Usage
 

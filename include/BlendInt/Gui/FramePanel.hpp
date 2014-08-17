@@ -30,6 +30,9 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A Frame container for demo only
+	 */
 	class FramePanel: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(FramePanel);
@@ -54,12 +57,12 @@ namespace BlendInt {
 
 		void RenderToBuffer ();
 
-		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
+		GLuint vao_;
+		RefPtr<GLArrayBuffer> inner_;
 
-		TextureBuffer m_buffer;
+		TextureBuffer tex_buffer_;
 
-		bool m_refresh;
+		bool refresh_;
 	};
 
 }

@@ -139,19 +139,19 @@ namespace BlendInt {
 		if (hover()) {
 			Color color;
 			if (checked()) {
-				color = Theme::instance->regular().inner_sel + 15;
+				color = Theme::instance->toggle().inner_sel + 15;
 			} else {
-				color = Theme::instance->regular().inner + 15;
+				color = Theme::instance->toggle().inner + 15;
 			}
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        color.data());
 		} else {
 			if (checked()) {
 				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        Theme::instance->regular().inner_sel.data());
+				        Theme::instance->toggle().inner_sel.data());
 			} else {
 				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        Theme::instance->regular().inner.data());
+				        Theme::instance->toggle().inner.data());
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace BlendInt {
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-		        Theme::instance->regular().outline.data());
+		        Theme::instance->toggle().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,

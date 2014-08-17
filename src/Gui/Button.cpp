@@ -335,11 +335,12 @@ namespace BlendInt {
 
 			if(icon_) {
 
-				if((icon_->size().width() < valid_width) ||
-						(icon_->size().height() < valid_height)) {
+				if((icon_->size().width() > valid_width) ||
+						(icon_->size().height() > valid_height)) {
 					show_icon_ = false;
 				} else {
 					show_icon_ = true;
+					icon_offset_x_ = (size.width() - icon_->size().width()) / 2.f;
 					icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
 				}
 
