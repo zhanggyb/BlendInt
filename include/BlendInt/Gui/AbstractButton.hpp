@@ -80,10 +80,9 @@ namespace BlendInt {
 
 		const Font& font () const {return font_;}
 
-		static const Margin& DefaultButtonPadding ()
-		{
-			return default_button_padding;
-		}
+		static Margin default_padding;
+
+		static int icon_text_space;	// the space between icon and text
 
 	protected:
 
@@ -181,9 +180,6 @@ namespace BlendInt {
 		Cpp::Event<> clicked_;
 
 		Cpp::Event<bool> toggled_;
-
-		static Margin default_button_padding;
-
 	};
 
 } /* namespace BIL */

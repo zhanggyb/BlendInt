@@ -193,8 +193,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 + default_padding.hsum(),
+						h + default_padding.vsum());
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
@@ -232,14 +232,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-							h + DefaultButtonPadding().vsum());
+			set_size(h + round_radius() * 2 + default_padding.hsum(),
+							h + default_padding.vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().hsum();
-			int height = h + DefaultButtonPadding().vsum();
+			int width = text_outline.width() + round_radius() * 2 + default_padding.hsum();
+			int height = h + default_padding.vsum();
 
 			set_size(width, height);
 

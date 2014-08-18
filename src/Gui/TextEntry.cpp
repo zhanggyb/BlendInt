@@ -44,6 +44,8 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
+	Margin TextEntry::default_padding = Margin(2, 2, 2, 2);
+
 	TextEntry::TextEntry ()
 	: AbstractWidget(),
 	  start_(0),
@@ -124,8 +126,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		if ((round_type() & RoundTopRight)
-				|| (round_type() & RoundBottomRight)) {
+		if ((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
 			radius_plus += round_radius();
 		}
 
@@ -133,10 +134,10 @@ namespace BlendInt {
 
 		preferred_size.set_height(
 				max_font_height
-						+ vertical_space * 2 * Theme::instance->pixel());// top padding: 2, bottom padding: 2
+						+ default_padding.vsum() * Theme::instance->pixel());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
-			preferred_size.set_width(max_font_height + radius_plus + 120);
+			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
 		} else {
 			int width = font_.GetTextWidth(text());
 			preferred_size.set_width(width + (int)radius_plus);

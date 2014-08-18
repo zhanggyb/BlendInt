@@ -75,8 +75,8 @@ namespace BlendInt {
 	{
 		int h = font().GetHeight();
 
-		Size prefer(h + round_radius() * 2 + DefaultButtonPadding().hsum() + 100,
-						h + DefaultButtonPadding().vsum());
+		Size prefer(h + round_radius() * 2 + default_padding.hsum() + 100,
+						h + default_padding.vsum());
 
 		return prefer;
 	}
@@ -148,8 +148,8 @@ namespace BlendInt {
 	{
 		set_checkable(true);
 		int h = font().GetHeight();
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 + default_padding.hsum(),
+						h + default_padding.vsum());
 	}
 
 	void ExpandButton::InitializeExpandButton (const String& text)
@@ -160,14 +160,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+			set_size(h + round_radius() * 2 + default_padding.hsum(),
+							h + default_padding.vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_radius() * 2 + default_padding.hsum();
+			int height = h + default_padding.vsum();
 
 			set_size(width, height);
 

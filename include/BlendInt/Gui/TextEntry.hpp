@@ -65,6 +65,11 @@ namespace BlendInt {
 
 		virtual bool IsExpandX () const;
 
+		static const Margin& DefaultPadding ()
+		{
+			return default_padding;
+		}
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -144,6 +149,8 @@ namespace BlendInt {
 		// the space between the text and the top
 		// o the text and the bottom
 		static const int vertical_space = 2;
+
+		static Margin default_padding;
 	};
 
 }

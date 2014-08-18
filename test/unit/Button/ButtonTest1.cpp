@@ -22,7 +22,6 @@ ButtonTest1::~ButtonTest1()
  *
  * Expected result: 
  */
-/*
 TEST_F(ButtonTest1, Foo1)
 {
     Init();
@@ -31,22 +30,15 @@ TEST_F(ButtonTest1, Foo1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = new Button;
+    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
     DBG_SET_NAME(bt1, "Button1");
-    bt1->SetPosition(100, 200);
+    bt1->SetPosition(200, 200);
     bt1->SetText(String("Button1"));
-
-    Button* bt2 = new Button("Button2");
-    DBG_SET_NAME(bt2, "Button2");
-    bt2->SetPosition(240, 200);
+    bt1->Resize(bt1->GetPreferredSize());
 
     context->PushBack(bt1);
-    context->PushBack(bt2);
 
     RunLoop(win);
-
-	delete bt1;
-	delete bt2;
 
     Interface::Release();
 
@@ -54,7 +46,6 @@ TEST_F(ButtonTest1, Foo1)
 
 	ASSERT_TRUE(true);
 }
-*/
 
 /**
  * test Foo() method

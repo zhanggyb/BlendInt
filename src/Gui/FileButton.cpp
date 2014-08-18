@@ -186,10 +186,10 @@ namespace BlendInt {
 		String text("...");
 		set_text(text);
 
-		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int left = default_padding.left() * Theme::instance->pixel();
+		int right = default_padding.right() * Theme::instance->pixel();
+		int top = default_padding.top() * Theme::instance->pixel();
+		int bottom = default_padding.bottom() * Theme::instance->pixel();
 		int h = font().GetHeight();
 
 		set_text_length(text.length());

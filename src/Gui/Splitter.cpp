@@ -199,13 +199,13 @@ namespace BlendInt {
 		program->Use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 		if(highlight_) {
 			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 50);
 		} else {
 			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		}
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.05f, 0.05f, 0.05f, 0.6f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

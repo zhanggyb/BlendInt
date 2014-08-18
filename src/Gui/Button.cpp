@@ -52,8 +52,8 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_drop_shadow(true);
 		int h = font().GetHeight();
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-		        h + DefaultButtonPadding().vsum());
+		set_size(h + default_padding.hsum(),
+		        h + default_padding.vsum());
 
 		InitializeButtonOnce();
 	}
@@ -107,13 +107,7 @@ namespace BlendInt {
 	{
 		icon_ = icon;
 
-		float radius_plus = 0.f;
-
-		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += round_radius();
-		}
-
-		icon_offset_x_ = radius_plus + DefaultButtonPadding().left();
+		icon_offset_x_ = default_padding.left();
 		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
 
 		Refresh();
@@ -123,17 +117,6 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		int radius_plus = 0;
-
-		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += round_radius();
-		}
-
-		if ((round_type() & RoundTopRight)
-		        || (round_type() & RoundBottomRight)) {
-			radius_plus += round_radius();
-		}
-
 		int font_height = font().GetHeight();
 		int h = font_height;
 
@@ -141,7 +124,7 @@ namespace BlendInt {
 			h = std::max(icon_->size().height(), font_height);
 		}
 
-		prefer.set_height(h + DefaultButtonPadding().vsum());
+		prefer.set_height(h + default_padding.vsum());
 		// top padding: 2, bottom padding: 2
 
 		int w = 0;
@@ -153,16 +136,16 @@ namespace BlendInt {
 				w = font_height;
 			}
 
-			w = w + DefaultButtonPadding().hsum() + radius_plus;
+			w = w + default_padding.hsum();
 
 		} else {
 
 			if(icon_) {
-				w += icon_->size().width();
+				w = w + icon_->size().width() + icon_text_space;
 			}
 
 			int text_width = font().GetTextWidth(text());
-			w = w + text_width + DefaultButtonPadding().hsum() + radius_plus; // left padding: 2, right padding: 2
+			w = w + text_width + default_padding.hsum(); // left padding: 2, right padding: 2
 
 		}
 
@@ -301,25 +284,14 @@ namespace BlendInt {
 
 	void Button::CalculateIconTextPosition(const Size& size, int round_type, float radius)
 	{
-		int x = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int y = DefaultButtonPadding().bottom() * Theme::instance->pixel();
-		float radius_plus = 0.f;
+		int x = default_padding.left() * Theme::instance->pixel();
+		int y = default_padding.bottom() * Theme::instance->pixel();
 
 		icon_offset_x_ = 0.f;
 		icon_offset_y_ = 0.f;
 
-		if((round_type & RoundTopLeft) || (round_type & RoundBottomLeft)) {
-			radius_plus += radius;
-			x += (int)radius;
-			icon_offset_x_ += radius;
-		}
-
-		if((round_type & RoundTopRight) || (round_type & RoundBottomRight)) {
-			radius_plus += radius;
-		}
-
-		int valid_width = size.width() - DefaultButtonPadding().hsum() * Theme::instance->pixel() - (int)radius_plus;
-		int valid_height = size.height() - DefaultButtonPadding().vsum() * Theme::instance->pixel();
+		int valid_width = size.width() - default_padding.hsum() * Theme::instance->pixel();
+		int valid_height = size.height() - default_padding.vsum() * Theme::instance->pixel();
 
 		if(valid_width <= 0 || valid_height <= 0) {
 			show_icon_ = false;
@@ -327,7 +299,7 @@ namespace BlendInt {
 			return;
 		}
 
-		icon_offset_x_ += DefaultButtonPadding().left() * Theme::instance->pixel();
+		icon_offset_x_ += default_padding.left() * Theme::instance->pixel();
 
 		if(text().empty()) {
 
@@ -358,7 +330,7 @@ namespace BlendInt {
 
 				icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
 
-				int text_width = valid_width - icon_->size().width();
+				int text_width = valid_width - icon_->size().width() - icon_text_space;
 
 				if(text_width < 0) {
 
@@ -380,7 +352,7 @@ namespace BlendInt {
 						show_icon_ = true;
 					}
 
-					x += icon_->size().width();
+					x = x + icon_->size().width() + icon_text_space;
 
 					bool cal_width = true;
 
@@ -394,6 +366,8 @@ namespace BlendInt {
 					if(cal_width) {
 						if(text_width < text_outline.width()) {
 							text_length = GetValidTextLength(text(), font(), text_width);
+						} else if (text_width == text_outline.width()) {
+							text_length = text().length();
 						} else {
 							text_length = text().length();
 							x = x + (valid_width - icon_->size().width() - text_outline.width()) / 2;
@@ -467,10 +441,10 @@ namespace BlendInt {
 
 	void Button::InitializeButtonOnce (const String& text)
 	{
-		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int left = default_padding.left() * Theme::instance->pixel();
+		int right = default_padding.right() * Theme::instance->pixel();
+		int top = default_padding.top() * Theme::instance->pixel();
+		int bottom = default_padding.bottom() * Theme::instance->pixel();
 		int h = font().GetHeight();
 
 		if(text.empty()) {
@@ -521,10 +495,10 @@ namespace BlendInt {
 
 	void Button::InitializeButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text)
 	{
-		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int left = default_padding.left() * Theme::instance->pixel();
+		int right = default_padding.right() * Theme::instance->pixel();
+		int top = default_padding.top() * Theme::instance->pixel();
+		int bottom = default_padding.bottom() * Theme::instance->pixel();
 		int font_height = font().GetHeight();
 		int h = 0;
 

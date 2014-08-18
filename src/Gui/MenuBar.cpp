@@ -233,9 +233,7 @@ namespace BlendInt {
 			int max_font_height = font.GetHeight();
 
 			preferred_size.set_height(
-			        max_font_height
-			                + AbstractButton::DefaultButtonPadding().top()
-			                + AbstractButton::DefaultButtonPadding().bottom());	// top padding: 2, bottom padding: 2
+			        max_font_height + AbstractButton::default_padding.vsum());// top padding: 2, bottom padding: 2
 
 			preferred_size.add_height(margin().vsum());
 

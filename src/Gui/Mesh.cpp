@@ -128,11 +128,11 @@ namespace BlendInt {
 		program_->Use();
 		program_->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 				glm::value_ptr(projection_matrix * view_matrix));
-		program_->SetUniform3f("Kd", 0.9f, 0.5f, 0.3f);
+		program_->SetUniform3f("Kd", 0.9f, 0.9f, 0.9f);
 		program_->SetUniform3f("Ld", 1.0f, 1.0f, 1.0f);
 		program_->SetUniformMatrix4fv("LightPosition", 1, GL_FALSE,
 				glm::value_ptr(
-						view_matrix * glm::vec4(8.0f, 10.0f, 6.0f, 1.0f)));
+						view_matrix * glm::vec4(8.0f, 10.0f, 16.0f, 1.0f)));
 		program_->SetUniformMatrix4fv("ModelViewMatrix", 1, GL_FALSE,
 				glm::value_ptr(mv));
 		program_->SetUniformMatrix3fv("NormalMatrix", 1, GL_FALSE,

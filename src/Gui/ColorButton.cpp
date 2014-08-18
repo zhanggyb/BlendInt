@@ -169,8 +169,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 +default_padding.hsum(),
+						h + default_padding.vsum());
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
