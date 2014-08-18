@@ -39,7 +39,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType CheckButton::Draw (const RedrawEvent& event)
+	ResponseType CheckButton::Draw (const Profile& profile)
 	{
 		return Accept;
 	}

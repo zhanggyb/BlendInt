@@ -63,8 +63,8 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int columns = (tex_width - xoffset()) / (cell_width() + xspace());
-		int rows = (tex_height - yoffset()) / (cell_height() + yspace());
+		int columns = (tex_width - offset_x()) / (cell_width() + space_x());
+		int rows = (tex_height - offset_y()) / (cell_height() + space_y());
 
 		if(m_index > (rows * columns - 1)) {
 			DBG_PRINT_MSG("%s", "Not enough space to push a new sub texture");
@@ -74,8 +74,8 @@ namespace BlendInt {
 		int x = m_index % columns;
 		int y = m_index / columns;
 
-		x = xoffset() + (x * (cell_width() + xspace()));
-		y = yoffset() + (y * (cell_height() + yspace()));
+		x = offset_x() + (x * (cell_width() + space_x()));
+		y = offset_y() + (y * (cell_height() + space_y()));
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -107,8 +107,8 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int columns = (tex_width - xoffset()) / (cell_width() + xspace());
-		int rows = (tex_height - yoffset()) / (cell_height() + yspace());
+		int columns = (tex_width - offset_x()) / (cell_width() + space_x());
+		int rows = (tex_height - offset_y()) / (cell_height() + space_y());
 
 		if(m_index > (rows * columns - 1)) {
 			return false;
@@ -136,8 +136,8 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-		int columns = (tex_width - xoffset()) / (cell_width() + xspace());
-		int rows = (tex_height - yoffset()) / (cell_height() + yspace());
+		int columns = (tex_width - offset_x()) / (cell_width() + space_x());
+		int rows = (tex_height - offset_y()) / (cell_height() + space_y());
 
 		if(m_index > (rows * columns - 1)) {
 			DBG_PRINT_MSG("%s", "Cannot go to next index, texture is full.");

@@ -189,7 +189,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType ScrollBar::Draw (const RedrawEvent& event)
+	ResponseType ScrollBar::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

@@ -48,7 +48,7 @@ namespace BlendInt {
 		return item;
 	}
 
-	RefPtr<Action> Action::Create (const RefPtr<Icon>& icon,
+	RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
 					const String& text)
 	{
 		RefPtr<Action> item(new Action(icon, text));
@@ -56,7 +56,7 @@ namespace BlendInt {
 		return item;
 	}
 
-	RefPtr<Action> Action::Create (const RefPtr<Icon>& icon,
+	RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
 					const String& text, const String& shortcut)
 	{
 		RefPtr<Action> item(new Action(icon, text, shortcut));
@@ -78,12 +78,12 @@ namespace BlendInt {
 	{
 	}
 
-	Action::Action (const RefPtr<Icon>& icon, const String& text)
+	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text)
 	: m_icon(icon), m_text(text)
 	{
 	}
 
-	Action::Action (const RefPtr<Icon>& icon, const String& text, const String& shortcut)
+	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
 	: m_icon(icon), m_text(text), m_shortcut(shortcut)
 	{
 	}

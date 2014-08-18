@@ -57,9 +57,9 @@ namespace BlendInt {
 
 		void AddAction (const String& text, const String& shortcut);
 
-		void AddAction (const RefPtr<Icon>& icon, const String& text);
+		void AddAction (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		void AddAction (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		void AddAction (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
 
 		void AddAction (const RefPtr<Action>& item);
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 

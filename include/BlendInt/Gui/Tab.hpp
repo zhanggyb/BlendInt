@@ -46,6 +46,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		int GetIndex () const;
+
 	protected:
 
 		virtual void PerformMarginUpdate (const Margin& request);
@@ -54,7 +56,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

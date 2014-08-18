@@ -34,90 +34,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
-
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
 
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Icons.hpp>
+
+#include <BlendInt/Core/Image.hpp>
+
 namespace BlendInt {
 
-	static const unsigned char pixel_data[24 * 24 * 4 + 1] = {
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0g\313\25Cg\313\25Cg\313\25Cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25Cg\313\25cg"
-	  "\313\25cg\313\25cg\313\25cg\313\25Cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0g\313\25Cg\313\25Cg\313\25cg\313\25\213g\313\25\246g\313\25\246"
-	  "g\313\25\246g\313\25\246g\313\25\213g\313\25cg\313\25Cg\313\25C\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0g\313\25Cg\313\25cg\313\25\213g\313\25\246g\313\25\272g\313\25\311"
-	  "g\313\25\325g\313\25\325g\313\25\311g\313\25\272g\313\25\246g\313\25\213"
-	  "g\313\25cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25\213g\313\25\246g\313\25\311g"
-	  "\313\25\337g\313\25\355g\313\25\363g\313\25\363g\313\25\355g\313\25\337g"
-	  "\313\25\311g\313\25\246g\313\25\213g\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25\246"
-	  "g\313\25\311g\313\25\347g\313\25\365g\313\25\366g\313\25\367g\313\25\367"
-	  "g\313\25\366g\313\25\365g\313\25\347g\313\25\311g\313\25\246g\313\25cg\313"
-	  "\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313"
-	  "\25Cg\313\25\213g\313\25\272g\313\25\337g\313\25\365g\313\25\367g\313\25"
-	  "\370g\313\25\371g\313\25\371g\313\25\370g\313\25\367g\313\25\365g\313\25"
-	  "\337g\313\25\272g\313\25\213g\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25\246g\313\25\311g\313\25\355"
-	  "g\313\25\366g\313\25\370g\313\25\371g\313\25\372g\313\25\372g\313\25\371"
-	  "g\313\25\370g\313\25\366g\313\25\355g\313\25\311g\313\25\246g\313\25cg\313"
-	  "\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313"
-	  "\25\246g\313\25\325g\313\25\363g\313\25\367g\313\25\371g\313\25\372g\313"
-	  "\25\372g\313\25\372g\313\25\372g\313\25\371g\313\25\367g\313\25\363g\313"
-	  "\25\325g\313\25\246g\313\25cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25\246g\313\25\325g\313\25\363g\313\25"
-	  "\367g\313\25\371g\313\25\372g\313\25\372g\313\25\372g\313\25\372g\313\25"
-	  "\371g\313\25\367g\313\25\363g\313\25\325g\313\25\246g\313\25cg\313\25C\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25"
-	  "\246g\313\25\311g\313\25\355g\313\25\366g\313\25\370g\313\25\371g\313\25"
-	  "\372g\313\25\372g\313\25\371g\313\25\370g\313\25\366g\313\25\355g\313\25"
-	  "\311g\313\25\246g\313\25cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25\213g\313\25\272g\313\25\337g\313\25\365"
-	  "g\313\25\367g\313\25\370g\313\25\371g\313\25\371g\313\25\370g\313\25\367"
-	  "g\313\25\365g\313\25\337g\313\25\272g\313\25\213g\313\25C\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25"
-	  "\246g\313\25\311g\313\25\347g\313\25\365g\313\25\366g\313\25\367g\313\25"
-	  "\367g\313\25\366g\313\25\365g\313\25\347g\313\25\311g\313\25\246g\313\25"
-	  "cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0g\313\25Cg\313\25\213g\313\25\246g\313\25\311g\313\25\337g\313"
-	  "\25\355g\313\25\363g\313\25\363g\313\25\355g\313\25\337g\313\25\311g\313"
-	  "\25\246g\313\25\213g\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg\313\25cg\313\25\213g\313\25"
-	  "\246g\313\25\272g\313\25\311g\313\25\325g\313\25\325g\313\25\311g\313\25"
-	  "\272g\313\25\246g\313\25\213g\313\25cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0g\313\25Cg"
-	  "\313\25Cg\313\25cg\313\25\213g\313\25\246g\313\25\246g\313\25\246g\313\25"
-	  "\246g\313\25\213g\313\25cg\313\25Cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0g\313\25Cg\313\25Cg\313\25cg\313\25cg\313\25cg\313\25cg\313\25"
-	  "Cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0g\313\25Cg\313\25Cg\313\25Cg\313\25C\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-	  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-	};
-
+	using Stock::Shaders;
+	using Stock::Icons;
 
 	ToolButton::ToolButton ()
 	: AbstractButton()
@@ -130,18 +59,21 @@ namespace BlendInt {
 
 	ToolButton::~ToolButton ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(),
+					round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), RoundAll, 5);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -150,57 +82,107 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolButton::Draw (const RedrawEvent& event)
+	void ToolButton::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
-		using Stock::Shaders;
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+					text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
 
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ToolButton::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+					text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(),
+			        round_type(), *request.round_radius());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
+			GLArrayBuffer::Reset();
+
+			set_round_radius(*request.round_radius());
+
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
+	ResponseType ToolButton::Draw (const Profile& profile)
+	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_AA", 0);
+		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
 
-		if(down()) {
-			program->SetUniform1i("u_gamma", 0);
-			program->SetVertexAttrib4f("a_color", 0.2f, 0.2f, 0.2f, 1.f);
+		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+		if (down()) {
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+			        Theme::instance->regular().inner_sel.data());
 		} else {
-			if(hover()) {
-				program->SetUniform1i("u_gamma", 20);
-			} else {
-				program->SetUniform1i("u_gamma", 0);
+			if (hover()) {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 			}
-			program->SetVertexAttrib4f("a_color", 0.4f, 0.4f, 0.3f, 1.f);
+
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+					Theme::instance->regular().inner.data());
 		}
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		program->SetUniform1i("u_AA", 1);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetVertexAttrib4f("a_color", 0.f, 0.f, 0.f, 1.f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.f, 0.f,
+		        0.f, 1.f);
 
-		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+		glBindVertexArray(vaos_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.0f,
+			        1.0f, 1.0f, 0.16f);
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_type()) * 2);
+			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
 		program->Reset();
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+		if(icon_) {
+			pos.x += (size().width() - icon_->size().width()) / 2;
+			pos.y += (size().height() - icon_->size().height()) / 2;
 
-		if(hover()) {
-			m_icon->Draw(pos, 20);
-		} else {
-			m_icon->Draw(pos, 0);
+			if(hover()) {
+				icon_->Draw(pos, 15);
+			} else {
+				icon_->Draw(pos, 0);
+			}
 		}
-
 		return Accept;
 	}
 
@@ -208,34 +190,36 @@ namespace BlendInt {
 	{
 		RefPtr<Action> action(new Action(text));
 
-		m_action = action;
+		action_ = action;
 	}
 
 	void ToolButton::SetAction (const String& text, const String& shortcut)
 	{
 		RefPtr<Action> action(new Action(text, shortcut));
 
-		m_action = action;
+		action_ = action;
 	}
 
-	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text)
+	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text)
 	{
 		RefPtr<Action> action(new Action(icon, text));
 
-		m_action = action;
+		action_ = action;
+
+		icon_ = icon;	// for temporary use
 	}
 
-	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text,
+	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text,
 	        const String& shortcut)
 	{
 		RefPtr<Action> action(new Action(icon, text, shortcut));
 
-		m_action = action;
+		action_ = action;
 	}
 
 	void ToolButton::SetAction (const RefPtr<Action>& item)
 	{
-		m_action = item;
+		action_ = item;
 	}
 
 	Size ToolButton::GetPreferredSize() const
@@ -248,28 +232,31 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), RoundAll, 5.f);
 
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vaos_);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		tool.SetOuterBufferData(m_outer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray(vaos_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+
 		// demo
-		m_icon.reset(new PixelIcon(24, 24, pixel_data));
+		icon_ = Icons::instance->icon_16x16(0);
 	}
 
 }

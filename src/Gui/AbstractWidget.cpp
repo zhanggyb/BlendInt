@@ -21,34 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <algorithm>
-#include <iostream>
-#include <set>
-#include <stdexcept>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <OpenImageIO/imageio.h>
-OIIO_NAMESPACE_USING
-
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/OpenGL/GLFramebuffer.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
-
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
@@ -85,33 +59,36 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(previous_) {
-			assert(container_);
-			previous_->next_ = next_;
-		} else {
-			if(container_) {
+		if(container_) {
+
+			if(previous_) {
+				previous_->next_ = next_;
+			} else {
 				assert(container_->first_ == this);
 				container_->first_ = next_;
 			}
-		}
 
-		if(next_) {
-			assert(container_);
-			next_->previous_ = previous_;
-		} else {
-			if(container_) {
+			if(next_) {
+				next_->previous_ = previous_;
+			} else {
 				assert(container_->last_ == this);
 				container_->last_ = previous_;
 			}
+
+			container_->widget_count_--;
+			assert(container_->widget_count_ >= 0);
+
+			previous_ = 0;
+			next_ = 0;
+			container_ = 0;
+
+		} else {
+			assert(previous_ == 0);
+			assert(next_ == 0);
 		}
 
-		previous_ = 0;
-		next_ = 0;
-		container_ = 0;
-
 		destroyed_.fire(this);
-
-		DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
+		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
 	Size AbstractWidget::GetPreferredSize() const
@@ -197,7 +174,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundCornerType(int type)
+	void AbstractWidget::SetRoundType(int type)
 	{
 		if(round_type() == type) return;
 
@@ -216,7 +193,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundCornerRadius(float radius)
+	void AbstractWidget::SetRoundRadius(float radius)
 	{
 		if(round_radius_ == radius) return;
 
@@ -259,8 +236,8 @@ namespace BlendInt {
 	{
 		if(point.x() < position_.x() ||
 				point.y() < position_.y() ||
-				point.x() > static_cast<int>(position_.x() + size().width()) ||
-				point.y() > static_cast<int>(position_.y() + size().height()))
+				point.x() > static_cast<int>(position_.x() + size_.width()) ||
+				point.y() > static_cast<int>(position_.y() + size_.height()))
 		{
 			return false;
 		}

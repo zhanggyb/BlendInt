@@ -74,7 +74,8 @@ int main(int argc, char **argv)
     format.setMajorVersion(3);
     format.setMinorVersion(3);
     format.setProfile(QSurfaceFormat::CoreProfile);
-    format.setSamples(16);
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    //format.setSamples(16);
 
     DemoWindow window;
     window.setFormat(format);

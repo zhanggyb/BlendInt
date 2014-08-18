@@ -59,7 +59,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	ResponseType StackPanel::Draw (const RedrawEvent& event)
+	ResponseType StackPanel::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

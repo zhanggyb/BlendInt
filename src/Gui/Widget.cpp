@@ -62,7 +62,7 @@ namespace BlendInt {
 
 	}
 
-	ResponseType Widget::Draw(const RedrawEvent& event)
+	ResponseType Widget::Draw(const Profile& profile)
 	{
 		return Ignore;
 	}
@@ -115,7 +115,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Container::Draw (const RedrawEvent& event)
+	ResponseType Container::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

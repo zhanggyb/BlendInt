@@ -5,7 +5,7 @@
 #ifndef _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 #define _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
@@ -46,7 +46,7 @@ private:
 
 	BI::TextEntry* m_input;
 	BI::ComboBox* m_combo;
-	BI::Button* m_open;
+	BI::Button* m_tool_open;
 
 };
 

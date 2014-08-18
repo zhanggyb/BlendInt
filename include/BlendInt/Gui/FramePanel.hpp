@@ -24,13 +24,16 @@
 #ifndef _BLENDINT_GUI_FRAMEPANEL_HPP_
 #define _BLENDINT_GUI_FRAMEPANEL_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 #include <BlendInt/OpenGL/TextureBuffer.hpp>
 
 namespace BlendInt {
 
-	class FramePanel: public Frame
+	/**
+	 * @brief A Frame container for demo only
+	 */
+	class FramePanel: public BinLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(FramePanel);
 
@@ -46,7 +49,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 
@@ -54,12 +57,12 @@ namespace BlendInt {
 
 		void RenderToBuffer ();
 
-		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
+		GLuint vao_;
+		RefPtr<GLArrayBuffer> inner_;
 
-		TextureBuffer m_buffer;
+		TextureBuffer tex_buffer_;
 
-		bool m_refresh;
+		bool refresh_;
 	};
 
 }

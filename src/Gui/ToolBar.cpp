@@ -152,14 +152,19 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().left() + margin().right());
-			preferred_size.add_height(margin().top() + margin().bottom());
+			preferred_size.add_width(margin().hsum());
+			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
 	}
 
 	bool ToolBar::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool ToolBar::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		return true;
 	}
@@ -222,7 +227,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolBar::Draw (const RedrawEvent& event)
+	ResponseType ToolBar::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

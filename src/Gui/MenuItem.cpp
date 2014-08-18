@@ -47,12 +47,12 @@ namespace BlendInt {
 	}
 
 
-	MenuItem::MenuItem (Icon* icon, const String& text)
+	MenuItem::MenuItem (AbstractIcon* icon, const String& text)
 	: m_icon(icon), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
 	{
 	}
 
-	MenuItem::MenuItem (Icon* icon, const String& text, const String& shortcut)
+	MenuItem::MenuItem (AbstractIcon* icon, const String& text, const String& shortcut)
 	: m_icon(icon), m_text(text), m_shortcut(shortcut), m_parent(0), m_sub(0), m_highlight(false)
 	{
 	}
@@ -72,7 +72,7 @@ namespace BlendInt {
 		RemoveIcon();
 	}
 
-	void MenuItem::SetIcon(Icon* icon)
+	void MenuItem::SetIcon(AbstractIcon* icon)
 	{
 		m_icon.reset(icon);
 	}

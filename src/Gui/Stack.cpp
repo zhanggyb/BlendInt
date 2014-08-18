@@ -62,7 +62,7 @@ namespace BlendInt {
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
-			if(CountSubWidgets() == 1) {
+			if(widget_count() == 1) {
 				m_active_widget = widget;
 				m_active_widget->SetVisible(true);
 			} else {
@@ -90,7 +90,7 @@ namespace BlendInt {
 
 			if(m_active_widget == widget) {
 
-				if(CountSubWidgets() == 0) {
+				if(widget_count() == 0) {
 					m_active_widget = 0;
 				} else {
 					m_active_widget = first();
@@ -101,9 +101,27 @@ namespace BlendInt {
 		}
 	}
 
+	int Stack::GetIndex() const
+	{
+		int index = 0;
+
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if(p == m_active_widget) {
+				break;
+			}
+
+			index++;
+		}
+
+		if(index >= widget_count()) index = -1;
+
+		return index;
+	}
+
 	void Stack::SetIndex (int index)
 	{
-		int count = CountSubWidgets();
+		int count = widget_count();
 
 		if(index > (count - 1)) return;
 
@@ -182,7 +200,7 @@ namespace BlendInt {
 
 	AbstractWidget* Stack::GetWidget (int index)
 	{
-		int count = CountSubWidgets();
+		int count = widget_count();
 
 		if(index > (count - 1)) return 0;
 
@@ -191,7 +209,7 @@ namespace BlendInt {
 
 	void Stack::HideSubWidget(int index)
 	{
-		int count = CountSubWidgets();
+		int count = widget_count();
 
 		if(count && index < (count - 1)) {
 			AbstractWidget* p = GetWidgetAt(index);
@@ -252,7 +270,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Stack::Draw (const RedrawEvent& event)
+	ResponseType Stack::Draw (const Profile& event)
 	{
 		return Ignore;
 	}

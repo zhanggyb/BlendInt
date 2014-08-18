@@ -238,7 +238,7 @@ TexAtlasViewer::~TexAtlasViewer()
 	glDeleteVertexArrays(1, &m_vao);
 }
 
-BI::ResponseType TexAtlasViewer::Draw (const BI::RedrawEvent& event)
+BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 {
 	//glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 	//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);

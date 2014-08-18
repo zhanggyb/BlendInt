@@ -243,7 +243,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport3D::Draw (const RedrawEvent& event)
+	ResponseType Viewport3D::Draw (const Profile& profile)
 	{
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);

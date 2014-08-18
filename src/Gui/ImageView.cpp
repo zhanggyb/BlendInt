@@ -55,8 +55,10 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vaos_);
 	}
 
-	void ImageView::Open (const char* filename)
+	bool ImageView::Open (const char* filename)
 	{
+		bool retval = false;
+
 		Image image;
 
 		if(image.Read(filename)) {
@@ -87,7 +89,11 @@ namespace BlendInt {
 			image_size_.set_height(image.height());
 
 			AdjustImageArea(size());
+
+			retval = true;
 		}
+
+		return retval;
 	}
 
 	void ImageView::Load (const RefPtr<Image>& image)
@@ -148,7 +154,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ImageView::Draw (const RedrawEvent& event)
+	ResponseType ImageView::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -188,8 +194,8 @@ namespace BlendInt {
 		texture_->Reset();
 		program->Reset();
 
-		DispatchDrawEvent(hbar(), event);
-		DispatchDrawEvent(vbar(), event);
+		DispatchDrawEvent(hbar(), profile);
+		DispatchDrawEvent(vbar(), profile);
 
 		return Accept;
 	}

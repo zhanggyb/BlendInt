@@ -38,7 +38,15 @@ option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
 option(WITH_GLUT_DEMO "Build GLUT demo program" OFF)
 option(WITH_QT5_DEMO "Build Qt5 demo program" OFF)
 option(WITH_UNIT_TEST "Build unit test code" OFF)
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 # end of options
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/BlendIntConfig.hpp.in"
+	"${PROJECT_BINARY_DIR}/BlendIntConfig.hpp"
+)
+
+include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
 
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
@@ -100,7 +108,7 @@ endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
-include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)
+include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt/CppEvents)
 include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 include(CheckCXXCompilerFlag)
@@ -175,11 +183,14 @@ if(ENABLE_OPENCV)
     set(LIBS ${LIBS} ${OpenCV_LIBS})
 endif()
 
-add_subdirectory(extern/CppEvents/src)
 add_subdirectory(src)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
+endif()
+
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
 endif()
 
 if(WITH_UNIT_TEST)
@@ -195,3 +206,5 @@ endif()
 
 add_subdirectory(demo)
 
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)

@@ -32,7 +32,7 @@
 #include <BlendInt/Core/String.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/Icon.hpp>
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
@@ -49,9 +49,9 @@ namespace BlendInt {
 
 		static RefPtr<Action> Create (const String& text, const String& shortcut);
 
-		static RefPtr<Action> Create (const RefPtr<Icon>& icon, const String& text);
+		static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		static RefPtr<Action> Create (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
 
 		Action ();
 
@@ -59,13 +59,13 @@ namespace BlendInt {
 
 		Action (const String& text, const String& shortcut);
 
-		Action (const RefPtr<Icon>& icon, const String& text);
+		Action (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		Action (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		Action (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
 
 		virtual ~Action ();
 
-		const RefPtr<Icon>& icon () const
+		const RefPtr<AbstractIcon>& icon () const
 		{
 			return m_icon;
 		}
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		unsigned int GetTextLength (const Font& font);
 
-		void set_icon (const RefPtr<Icon>& icon)
+		void set_icon (const RefPtr<AbstractIcon>& icon)
 		{
 			m_icon = icon;
 		}
@@ -116,7 +116,7 @@ namespace BlendInt {
 
 	private:
 
-		RefPtr<Icon> m_icon;
+		RefPtr<AbstractIcon> m_icon;
 
 		String m_text;
 

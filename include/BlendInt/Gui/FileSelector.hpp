@@ -26,12 +26,17 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/FileBrowser.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Expander.hpp>
+
+#include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
@@ -48,22 +53,43 @@ namespace BlendInt {
 
 		virtual ~FileSelector ();
 
+		const String& file_selected () const
+		{
+			return browser_->file_selected();
+		}
+
+		Cpp::EventRef<> opened () {return opened_;}
+
+		Cpp::EventRef<> canceled () {return canceled_;}
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 
 		void InitializeFileSelector ();
 
+		VBox* CreateBrowserAreaOnce ();
+
+		ToolBar* CreateToolBarOnce ();
+
+		ToolBox* CreateSideBarOnce ();
+
+		Expander* CreateSystemPartOnce ();
+
+		Expander* CreateSystemBookmarksOnce ();
+
 		void OnFileSelect ();
 
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;
-
-		VBox* layout_;
 
 		TextEntry* path_entry_;
 		TextEntry* file_entry_;
@@ -72,6 +98,10 @@ namespace BlendInt {
 		Button* cancel_;
 
 		FileBrowser* browser_;
+
+		Cpp::Event<> opened_;
+
+		Cpp::Event<> canceled_;
 	};
 
 }

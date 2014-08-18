@@ -81,26 +81,18 @@ namespace BlendInt {
 		int w = size().width() - margin().hsum();
 
 		if(PushBackSubWidget(widget)) {
-
 			Size prefer = widget->GetPreferredSize();
-
 			y = y - prefer.height();
-
 			SetSubWidgetPosition(widget, x, y);
-
 			if(widget->IsExpandX()) {
-
 				ResizeSubWidget(widget, w, prefer.height());
-
 			} else {
-
 				if(widget->size().width() > w) {
 					ResizeSubWidget(widget, w, prefer.height());
 				} else {
 					ResizeSubWidget(widget, widget->size().width(), prefer.height());
 				}
 			}
-
 			DisableShadow(widget);
 		}
 	}
@@ -141,6 +133,11 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	bool ToolBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void ToolBox::PerformMarginUpdate (const Margin& request)
 	{
 		int x = position().x() + request.left();
@@ -169,7 +166,9 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.UpdateInnerBuffer(inner_.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			GLArrayBuffer::Reset();
 
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
@@ -187,7 +186,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolBox::Draw (const RedrawEvent& event)
+	ResponseType ToolBox::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

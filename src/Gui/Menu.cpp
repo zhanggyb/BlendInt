@@ -77,14 +77,14 @@ namespace BlendInt {
 		AddAction(item);
 	}
 
-	void Menu::AddAction(const RefPtr<Icon>& icon, const String& text)
+	void Menu::AddAction(const RefPtr<AbstractIcon>& icon, const String& text)
 	{
 		RefPtr<Action> item = Action::Create(icon, text);
 
 		AddAction(item);
 	}
 
-	void Menu::AddAction(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
+	void Menu::AddAction(const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
 	{
 		RefPtr<Action> item = Action::Create(icon, text, shortcut);
 
@@ -215,7 +215,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Menu::Draw (const RedrawEvent& event)
+	ResponseType Menu::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 		using std::deque;

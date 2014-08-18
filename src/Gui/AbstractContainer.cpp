@@ -30,7 +30,8 @@ namespace BlendInt {
 	AbstractContainer::AbstractContainer()
 	: AbstractWidget(),
 	  first_(0),
-	  last_(0)
+	  last_(0),
+	  widget_count_(0)
 	{
 
 	}
@@ -79,7 +80,7 @@ namespace BlendInt {
 			widget->next_ = 0;
 			widget->container_ = 0;
 
-			if(widget->managed() && widget->count() == 0) {
+			if(widget->managed() && widget->reference_count() == 0) {
 				delete widget;
 			} else {
 				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
@@ -88,6 +89,7 @@ namespace BlendInt {
 			widget = next;
 		}
 
+		widget_count_ = 0;
 		first_ = 0;
 		last_ = 0;
 	}
@@ -148,7 +150,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeHorizontally (int x, int width, int space)
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if (sum) {
 			int average_width = (width - (sum - 1)* space) / sum;
@@ -171,7 +173,7 @@ namespace BlendInt {
 
 	void AbstractContainer::DistributeVertically (int y, int height, int space)
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		y = y + height;
 		if (sum) {
@@ -251,6 +253,7 @@ namespace BlendInt {
 
 		widget->previous_ = 0;
 		widget->container_ = this;
+		widget_count_++;
 
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -333,7 +336,7 @@ namespace BlendInt {
 		}
 
 		widget->container_ = this;
-
+		widget_count_++;
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
 
@@ -375,6 +378,7 @@ namespace BlendInt {
 
 		widget->next_ = 0;
 		widget->container_ = this;
+		widget_count_++;
 
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -409,55 +413,71 @@ namespace BlendInt {
 		widget->previous_ = 0;
 		widget->next_ = 0;
 		widget->container_ = 0;
+		widget_count_--;
+
+		if(widget->hover()) {
+			widget->set_hover(false);
+		}
 
 		return true;
 	}
 
-	int AbstractContainer::CountSubWidgets() const
-	{
-		int sum = 0;
-
-		AbstractWidget* p = first_;
-		while(p) {
-			sum++;
-			p = p->next_;
-		}
-
-		return sum;
-	}
-
 	AbstractWidget* AbstractContainer::operator [](int i) const
 	{
-		if(i < 0) return 0;
+		if((i < 0) || (i >= widget_count_)) return 0;
 
-		AbstractWidget* widget = first_;
+		AbstractWidget* widget = 0;
 
-		while(widget && (i > 0)) {
-			i--;
-			widget = widget->next_;
+		if(i < ((widget_count_ + 1)/ 2)) {
+
+			widget = first_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_;
+			int max = widget_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
 		}
 
-		if(i != 0) {	// out of range
-			widget = 0;
-		}
+		//assert(widget != 0);
 
 		return widget;
 	}
 
 	AbstractWidget* AbstractContainer::GetWidgetAt(int i) const
 	{
-		if(i < 0) return 0;
+		if((i < 0) || (i >= widget_count_)) return 0;
 
-		AbstractWidget* widget = first_;
+		AbstractWidget* widget = 0;
 
-		while(widget && (i > 0)) {
-			i--;
-			widget = widget->next_;
+		if(i < ((widget_count_ + 1)/ 2)) {
+
+			widget = first_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_;
+			int max = widget_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
 		}
 
-		if(i != 0) {	// out of range
-			widget = 0;
-		}
+		//assert(widget != 0);
 
 		return widget;
 	}
@@ -474,6 +494,45 @@ namespace BlendInt {
 	}
 
 #endif
+
+	bool AbstractContainer::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::PositionUpdateTest (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::RoundTypeUpdateTest (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractContainer::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 	void AbstractContainer::AlignVertically (int x, int width, int alignment)
 	{
@@ -501,21 +560,21 @@ namespace BlendInt {
 
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
-		if (m_margin.equal(margin))
+		if (margin_.equal(margin))
 			return;
 
 		PerformMarginUpdate(margin);
-		m_margin = margin;
+		margin_ = margin;
 	}
 
 	void AbstractContainer::SetMargin (int left, int right, int top, int bottom)
 	{
-		if (m_margin.equal(left, right, top, bottom))
+		if (margin_.equal(left, right, top, bottom))
 			return;
 
 		Margin new_margin(left, right, top, bottom);
 		PerformMarginUpdate(new_margin);
-		m_margin = new_margin;
+		margin_ = new_margin;
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -587,6 +646,34 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractContainer::SetSubWidgetRoundType(AbstractWidget* sub, int type)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_type() == (type & 0x0F)) return;
+
+		RoundTypeUpdateRequest request (this, sub, &type);
+
+		if(sub->RoundTypeUpdateTest(request)) {
+			sub->PerformRoundTypeUpdate(request);
+			sub->set_round_type(type);
+		}
+	}
+
+	void AbstractContainer::SetSubWidgetRoundRadius(AbstractWidget* sub, float radius)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_radius() == radius) return;
+
+		RoundRadiusUpdateRequest request(this, sub, &radius);
+
+		if(sub->RoundRadiusUpdateTest(request)) {
+			sub->PerformRoundRadiusUpdate(request);
+			sub->set_round_radius(radius);
+		}
+	}
+
 	void AbstractContainer::SetSubWidgetVisibility (AbstractWidget* sub,
 	        bool visible)
 	{
@@ -616,7 +703,7 @@ namespace BlendInt {
 			widget->shadow_->Update(widget->size(), widget->round_type(), widget->round_radius());
 
 		} else {
-			DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
+			//DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
 			return false;
 		}
 

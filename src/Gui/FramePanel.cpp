@@ -50,21 +50,23 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	FramePanel::FramePanel()
-	: Frame(), m_refresh(true)
+	: BinLayout(), refresh_(true)
 	{
-		set_drop_shadow(true);
+		//set_drop_shadow(true);
 		InitializeFramePanel();
 	}
 	
 	FramePanel::~FramePanel ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void FramePanel::PerformRefresh(const RefreshRequest& request)
 	{
-		m_refresh = true;
+		refresh_ = true;
 		ReportRefresh(request);
 	}
 
@@ -73,55 +75,53 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_inner->Reset();
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			inner_->Reset();
 		}
 
-		Frame::PerformSizeUpdate(request);
+		BinLayout::PerformSizeUpdate(request);
 	}
 
-	ResponseType FramePanel::Draw (const RedrawEvent& event)
+	ResponseType FramePanel::Draw (const Profile& profile)
 	{
-		if(m_refresh) {
+		if(refresh_) {
 
 			RenderToBuffer();
 
-			m_refresh = false;
+			refresh_ = false;
 		}
 
-		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		m_buffer.Draw(position().x(), position().y());
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		tex_buffer_.Draw(position().x(), position().y());
 
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Accept;
 	}
 
 	void FramePanel::InitializeFramePanel()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		m_inner->Reset();
+		inner_->Reset();
 	}
 
 	void FramePanel::RenderToBuffer ()
 	{
-		using Stock::Shaders;
-
 		GLsizei width = size().width();
 		GLsizei height = size().height();
 		GLfloat left = position().x();
@@ -130,9 +130,9 @@ namespace BlendInt {
 		GLfloat right = left + width;
 		GLfloat top = bottom + height;
 
-		m_buffer.SetCoord(0.f, 0.f, width, height);
+		tex_buffer_.SetCoord(0.f, 0.f, width, height);
 		// Create and set texture to render to.
-		GLTexture2D* tex = m_buffer.texture();
+		GLTexture2D* tex = tex_buffer_.texture();
 		if(!tex->texture())
 			tex->Generate();
 
@@ -173,7 +173,7 @@ namespace BlendInt {
 			glClearDepth(1.0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glEnable(GL_BLEND);
 
 			glm::mat4 origin;
@@ -199,7 +199,7 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			RedrawEvent event;
+			Profile event;
 			ScissorStatus scissor;
 
             GLint vp[4];
@@ -207,17 +207,17 @@ namespace BlendInt {
 			glViewport(0, 0, width, height);
 
 			// Draw frame panel
-			program = Shaders::instance->triangle_program();
-			program->Use();
-
-			program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
-			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
-			program->SetUniform1i("u_gamma", 0);
-			program->SetUniform1i("u_AA", 0);
-
-			glBindVertexArray(m_vao);
-			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-			glBindVertexArray(0);
+//			program = Shaders::instance->triangle_program();
+//			program->Use();
+//
+//			program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
+//			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+//			program->SetUniform1i("u_gamma", 0);
+//			program->SetUniform1i("u_AA", 0);
+//
+//			glBindVertexArray(m_vao);
+//			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+//			glBindVertexArray(0);
 
 			if(first()) {
 				Section::DispatchDrawEvent(first(), event, scissor);
@@ -243,6 +243,9 @@ namespace BlendInt {
 					glm::value_ptr(origin));
 
 			program->Reset();
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		}
 
 		fb->Reset();

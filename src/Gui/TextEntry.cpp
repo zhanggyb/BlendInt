@@ -44,6 +44,8 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
+	Margin TextEntry::default_padding = Margin(2, 2, 2, 2);
+
 	TextEntry::TextEntry ()
 	: AbstractWidget(),
 	  start_(0),
@@ -90,6 +92,8 @@ namespace BlendInt {
 				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
 
 		index_ = text_.length();
+
+		Refresh();
 	}
 
 	void TextEntry::SetFont (const Font& font)
@@ -116,14 +120,13 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		int radius_plus = 0;
+		float radius_plus = 0.f;
 
 		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
 			radius_plus += round_radius();
 		}
 
-		if ((round_type() & RoundTopRight)
-				|| (round_type() & RoundBottomRight)) {
+		if ((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
 			radius_plus += round_radius();
 		}
 
@@ -131,13 +134,13 @@ namespace BlendInt {
 
 		preferred_size.set_height(
 				max_font_height
-						+ vertical_space * 2 * Theme::instance->pixel());// top padding: 2, bottom padding: 2
+						+ default_padding.vsum() * Theme::instance->pixel());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
-			preferred_size.set_width(max_font_height + radius_plus + 120);
+			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
 		} else {
 			int width = font_.GetTextWidth(text());
-			preferred_size.set_width(width + radius_plus);
+			preferred_size.set_width(width + (int)radius_plus);
 		}
 
 		return preferred_size;
@@ -314,7 +317,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType TextEntry::Draw (const RedrawEvent& event)
+	ResponseType TextEntry::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

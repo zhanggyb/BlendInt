@@ -80,7 +80,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 

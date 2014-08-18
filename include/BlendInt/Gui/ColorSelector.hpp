@@ -24,13 +24,13 @@
 #ifndef _BLENDINT_GUI_COLORSELECTOR_HPP_
 #define _BLENDINT_GUI_COLORSELECTOR_HPP_
 
-#include <BlendInt/Gui/HBlock.hpp>
-#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
+#include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 namespace BlendInt {
 
@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 
@@ -60,9 +60,9 @@ namespace BlendInt {
 
 		void OnButtonToggled (int index, bool toggled);
 
-		VBlock* CreateRGBBlock ();
+		VBlockLayout* CreateRGBBlock ();
 
-		VBlock* CreateHSVBlock ();
+		VBlockLayout* CreateHSVBlock ();
 
 		VBox* CreateHexBlock ();
 

@@ -109,7 +109,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType MenuButton::Draw (const RedrawEvent& event)
+	ResponseType MenuButton::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 
@@ -154,14 +154,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+			set_size(h + round_radius() * 2 + default_padding.hsum(),
+							h + default_padding.vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_radius() * 2 + default_padding.hsum();
+			int height = h + default_padding.vsum();
 
 			set_size(width, height);
 

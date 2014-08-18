@@ -23,15 +23,17 @@ TEST_F(FileSelectorTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("FileSelector - Foo1", 800, 600);
+    GLFWwindow* win = CreateWindow("FileSelector - Foo1", 1280, 800);
 
     // TODO: add test code here
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
-	context->Resize(800, 600);
+	context->Resize(1200, 800);
 
     FileSelector* fb = Manage(new FileSelector);
     fb->SetPosition(100, 100);
+	fb->Resize(800, 600);
+	fb->SetRoundType(RoundAll);
 
     context->PushBack(fb);
 

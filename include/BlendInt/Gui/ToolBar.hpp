@@ -52,13 +52,15 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
 		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

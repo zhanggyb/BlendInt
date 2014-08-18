@@ -36,8 +36,8 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
-#include <BlendInt/Gui/HBox.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
@@ -114,7 +114,7 @@ namespace BlendInt {
 		radio_group_.Add(btn2);
 		radio_group_.Add(btn3);
 
-		HBlock* btn_block = Manage(new HBlock);
+		HBlockLayout* btn_block = Manage(new HBlockLayout);
 		btn_block->SetMargin(4, 4, 4, 4);
 		btn_block->PushBack(btn1);
 		btn_block->PushBack(btn2);
@@ -195,7 +195,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ColorSelector::Draw (const RedrawEvent& event)
+	ResponseType ColorSelector::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 
@@ -225,9 +225,9 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	VBlock* ColorSelector::CreateRGBBlock ()
+	VBlockLayout* ColorSelector::CreateRGBBlock ()
 	{
-		VBlock* block = Manage(new VBlock);
+		VBlockLayout* block = Manage(new VBlockLayout);
 
 		NumericalSlider* red_slider = Manage(new NumericalSlider);
 		NumericalSlider* green_slider = Manage(new NumericalSlider);
@@ -240,9 +240,9 @@ namespace BlendInt {
 		return block;
 	}
 	
-	VBlock* ColorSelector::CreateHSVBlock ()
+	VBlockLayout* ColorSelector::CreateHSVBlock ()
 	{
-		VBlock* block = Manage(new VBlock);
+		VBlockLayout* block = Manage(new VBlockLayout);
 
 		NumericalSlider* h_slider = Manage(new NumericalSlider);
 		NumericalSlider* s_slider = Manage(new NumericalSlider);
@@ -280,8 +280,8 @@ namespace BlendInt {
 		Stack* stack = Manage(new Stack);
 		stack->SetMargin(0, 0, 0, 0);
 
-		VBlock* rgb_block = CreateRGBBlock();
-		VBlock* hsv_block = CreateHSVBlock();
+		VBlockLayout* rgb_block = CreateRGBBlock();
+		VBlockLayout* hsv_block = CreateHSVBlock();
 		VBox* hex_box = CreateHexBlock();
 
 		stack->PushBack(rgb_block);

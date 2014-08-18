@@ -126,7 +126,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ToggleButton::Draw (const RedrawEvent& event)
+	ResponseType ToggleButton::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -139,19 +139,19 @@ namespace BlendInt {
 		if (hover()) {
 			Color color;
 			if (checked()) {
-				color = Theme::instance->regular().inner_sel + 15;
+				color = Theme::instance->toggle().inner_sel + 15;
 			} else {
-				color = Theme::instance->regular().inner + 15;
+				color = Theme::instance->toggle().inner + 15;
 			}
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        color.data());
 		} else {
 			if (checked()) {
 				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        Theme::instance->regular().inner_sel.data());
+				        Theme::instance->toggle().inner_sel.data());
 			} else {
 				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-				        Theme::instance->regular().inner.data());
+				        Theme::instance->toggle().inner.data());
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace BlendInt {
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
-		        Theme::instance->regular().outline.data());
+		        Theme::instance->toggle().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -193,8 +193,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 + default_padding.hsum(),
+						h + default_padding.vsum());
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
@@ -232,14 +232,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-							h + DefaultButtonPadding().vsum());
+			set_size(h + round_radius() * 2 + default_padding.hsum(),
+							h + default_padding.vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().hsum();
-			int height = h + DefaultButtonPadding().vsum();
+			int width = text_outline.width() + round_radius() * 2 + default_padding.hsum();
+			int height = h + default_padding.vsum();
 
 			set_size(width, height);
 

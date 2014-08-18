@@ -65,15 +65,12 @@ namespace BlendInt {
 
 		if(widget->container() == this) return true;
 
-		int count = CountSubWidgets();
-		if(count > 0) {
+		if(widget_count() > 0) {
 			Clear();
 		}
 
 		if (PushBackSubWidget(widget)) {
-
 			FillSingleWidget(0, position(), size(), margin());
-
 			ret = true;
 		}
 
@@ -82,14 +79,7 @@ namespace BlendInt {
 
 	bool Frame::Remove (AbstractWidget* widget)
 	{
-		bool ret = false;
-
-		if(RemoveSubWidget(widget)) {
-
-			ret = true;
-		}
-
-		return ret;
+		return RemoveSubWidget(widget);
 	}
 
 	bool Frame::IsExpandX() const
@@ -181,7 +171,7 @@ namespace BlendInt {
 
 	ResponseType Frame::CursorEnterEvent (bool entered)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
@@ -214,7 +204,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Frame::Draw (const RedrawEvent& event)
+	ResponseType Frame::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

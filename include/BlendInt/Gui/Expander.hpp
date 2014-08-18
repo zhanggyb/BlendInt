@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

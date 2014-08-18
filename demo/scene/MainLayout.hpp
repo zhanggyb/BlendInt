@@ -5,7 +5,7 @@
 #ifndef _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 #define _BLENDINT_DEMO_IMGPROC_MAIN_LAYOUT_HPP_
 
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
@@ -16,6 +16,9 @@
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 namespace BI = BlendInt;
 
@@ -41,19 +44,34 @@ private:
 
 	BI::ToolBox* CreateToolBox ();
 
-	BI::Expander* CreateExpander ();
+	BI::Expander* CreateTransformExpander ();
+
+	BI::Expander* CreateLightExpander ();
+
+	BI::Expander* CreateColorExpander ();
 
 	BI::ToolBar* CreateBottomBar ();
 
 	BI::Tab* CreateTab ();
 
+	void OnFileSelected ();
+
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 
-	BI::TextEntry* m_input;
-	BI::ToolButton* m_open;
+	BI::ToolButton* m_tool_open;
+
+	BI::Tab* m_tab;
 
 	BI::Viewport3D* m_scene;
+	BI::ImageView* m_image_view;
+
+	BI::TextEntry* m_file_input;
+	BI::FileButton* m_file_button;
+
+	BI::Button* m_btn_open;
+
+	BI::Label* m_msg_label;
 };
 
 #endif

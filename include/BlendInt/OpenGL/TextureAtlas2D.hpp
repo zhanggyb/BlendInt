@@ -28,6 +28,9 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A special GLTexture2D class to store M x N sub images
+	 */
 	class TextureAtlas2D: public GLTexture2D
 	{
 	public:
@@ -68,46 +71,46 @@ namespace BlendInt {
 
 		int GetRows () const;
 
-		short xoffset () const
+		short offset_x () const
 		{
-			return m_xoffset;
+			return offset_x_;
 		}
 
-		short yoffset () const
+		short offset_y () const
 		{
-			return m_yoffset;
+			return offset_y_;
 		}
 
-		short xspace () const
+		short space_x () const
 		{
-			return m_xspace;
+			return space_x_;
 		}
 
-		short yspace () const
+		short space_y () const
 		{
-			return m_yspace;
+			return space_y_;
 		}
 
 		short cell_width () const
 		{
-			return m_cell_width;
+			return cell_width_;
 		}
 
 		short cell_height () const
 		{
-			return m_cell_height;
+			return cell_height_;
 		}
 
 	private:
 
-		short m_cell_width;
-		short m_cell_height;
+		short cell_width_;
+		short cell_height_;
 
-		short m_xoffset;
-		short m_yoffset;
+		short offset_x_;
+		short offset_y_;
 
-		short m_xspace;
-		short m_yspace;
+		short space_x_;
+		short space_y_;
 	};
 
 }

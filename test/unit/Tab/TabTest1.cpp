@@ -36,10 +36,10 @@ TEST_F(TabTest1, Foo1)
 
     Label* label = Manage(new Label("Test in Stack"));
     label->SetFont(Font("Doird Sans Mono", 24));
-    label->set_background_color(Color(0x4F0F7F8F));
+    label->SetBackgroundColor(Color(0x4F0F7F8F));
 
     Button* btn = Manage (new Button);
-    btn->SetRoundCornerType(RoundNone);
+    btn->SetRoundType(RoundNone);
 
     tab->Add(String("Title1"), btn);
     tab->Resize(400, 300);

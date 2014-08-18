@@ -120,7 +120,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ColorButton::Draw (const RedrawEvent& event)
+	ResponseType ColorButton::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 		int outline_vertices = GetOutlineVertices(round_type());
@@ -169,8 +169,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 +default_padding.hsum(),
+						h + default_padding.vsum());
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());

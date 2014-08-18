@@ -82,10 +82,10 @@ namespace BlendInt {
 	}
 
 	ResponseType AbstractScrollable::DispatchDrawEvent (
-	        const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event)
+	        const RefPtr<NativeScrollBar>& scrollbar, const Profile& profile)
 	{
 		if(scrollbar->visiable()) {
-			return scrollbar->Draw(event);
+			return scrollbar->Draw(profile);
 		} else {
 			return Ignore;
 		}

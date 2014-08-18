@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CHECKBUTTON_HPP_
-#define _BLENDINT_CHECKBUTTON_HPP_
+#ifndef _BLENDINT_GUI_TOGGLEBUTTON_HPP_
+#define _BLENDINT_GUI_TOGGLEBUTTON_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 	private:
 

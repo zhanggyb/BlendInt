@@ -5,8 +5,8 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Stock/Icons.hpp>
-#include <BlendInt/Gui/HBox.hpp>
-#include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
@@ -39,11 +39,11 @@ void MainLayout::InitOnce ()
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	m_input = Manage(new TextEntry);
-	m_open = Manage(new Button("Open"));
-	m_input->SetRoundCornerType(RoundTopLeft | RoundBottomLeft);
-	m_open->SetRoundCornerType(RoundTopRight | RoundBottomRight);
+	m_tool_open = Manage(new Button("Open"));
+	m_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
+	m_tool_open->SetRoundType(RoundTopRight | RoundBottomRight);
 	box->PushBack(m_input);
-	box->PushBack(m_open);
+	box->PushBack(m_tool_open);
 
 	m_toolbar->SetMargin(2, 2, 2, 2);
 	m_toolbar->PushBack(m_menubar);
@@ -63,7 +63,7 @@ void MainLayout::InitOnce ()
 	PushBack(splitter);
 	PushBack(m_toolbar);
 
-	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
+	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
 
 void MainLayout::OnOpenClick()
@@ -84,8 +84,8 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 	RefPtr<Menu> file_menu(new Menu);
 
-    file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    file_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");
     file_menu->AddAction("MenuItem4", "Ctrl + 1");

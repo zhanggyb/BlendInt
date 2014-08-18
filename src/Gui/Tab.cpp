@@ -77,7 +77,7 @@ namespace BlendInt {
 		header->PushBack(btn);
 		stack->PushBack(widget);
 
-		if(header->CountSubWidgets() == 1) {
+		if(header->widget_count() == 1) {
 			btn->SetChecked(true);
 		}
 	}
@@ -121,6 +121,13 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
+	int Tab::GetIndex() const
+	{
+		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
+
+		return stack->GetIndex();
+	}
+
 	void Tab::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInTab(size(), request);
@@ -149,7 +156,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Tab::Draw (const RedrawEvent& event)
+	ResponseType Tab::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

@@ -34,185 +34,314 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <vector>
+
 #include <BlendInt/Gui/PixelIcon.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	PixelIcon::PixelIcon (int width, int height)
-	: Icon(),
-	  m_vao(0)
+	: AbstractIcon(width, height),
+	  vao_(0)
 	{
-		set_size(width, height);
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
 
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
+		/*
+			// x, 			y, 					u, 				v
+			0.f, 			0.f, 				0.0, 			0.0,
+			(GLfloat)width, 0.f,				1.0,			0.0,
+			0.f, 			(GLfloat)height, 	0.0,			1.0,
+			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
+		*/
+		std::vector<GLfloat> vertices(16, 0.f);
 
-		GLfloat vertices[] = {
-						// x, 	y, 	u, 	v
-						0.f, 0.f, 0.f, 0.f,
-						(GLfloat)width, 0.f, 1.f, 0.f,
-						0.f, (GLfloat)height, 0.f, 1.f,
-						(GLfloat)width, (GLfloat)height, 1.f, 1.f
-		};
+		vertices[4] = (GLfloat)width;
+		vertices[9] = (GLfloat)height;
+		vertices[12] = (GLfloat)width;
+		vertices[13] = (GLfloat)height;
 
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(vertices), vertices);
+		//vertices[2] = 0.f;
+		//vertices[3] = 0.f;
+		vertices[6] = 1.f;
+		//vertices[7] = 0.f;
+		//vertices[10] = 0.f;
+		vertices[11] = 1.f;
+		vertices[14] = 1.f;
+		vertices[15] = 1.f;
 
-		glEnableVertexAttribArray(0);	// 0: Coord
-		glEnableVertexAttribArray(1);	// 1: Texture UV
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		buffer_.reset(new GLArrayBuffer);
+		buffer_->Generate();
+		buffer_->Bind();
+		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2, GL_FLOAT,
+				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 
-		m_buffer->Reset();
+		buffer_->Reset();
 	}
 
-	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels)
-	: Icon(),
-	  m_vao(0)
+	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
+	: AbstractIcon(width, height),
+	  vao_(0)
 	{
-		set_size(width, height);
+		glGenVertexArrays(1, &vao_);
 
-		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(vao_);
 
-		glBindVertexArray(m_vao);
+		/*
+			// x, 			y, 					u, 				v
+			0.f, 			0.f, 				0.0, 			0.0,
+			(GLfloat)width, 0.f,				1.0,			0.0,
+			0.f, 			(GLfloat)height, 	0.0,			1.0,
+			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
+		*/
+		std::vector<GLfloat> vertices(16, 0.f);
 
-		GLfloat vertices[] = {
-						// x, 	y, 	u, 	v
-						0.f, 0.f, 0.f, 0.f,
-						(GLfloat)width, 0.f, 1.f, 0.f,
-						0.f, (GLfloat)height, 0.f, 1.f,
-						(GLfloat)width, (GLfloat)height, 1.f, 1.f
-		};
+		vertices[4] = (GLfloat)width;
+		vertices[9] = (GLfloat)height;
+		vertices[12] = (GLfloat)width;
+		vertices[13] = (GLfloat)height;
 
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(vertices), vertices);
+		if(uv) {
+			vertices[2] = *(uv + 0);
+			vertices[3] = *(uv + 1);
+			vertices[6] = *(uv + 2);
+			vertices[7] = *(uv + 3);
+			vertices[10] = *(uv + 4);
+			vertices[11] = *(uv + 5);
+			vertices[14] = *(uv + 6);
+			vertices[15] = *(uv + 7);
+		} else {
+			//vertices[2] = 0.f;
+			//vertices[3] = 0.f;
+			vertices[6] = 1.f;
+			//vertices[7] = 0.f;
+			//vertices[10] = 0.f;
+			vertices[11] = 1.f;
+			vertices[14] = 1.f;
+			vertices[15] = 1.f;
+		}
 
-		glEnableVertexAttribArray(0);	// 0: Coord
-		glEnableVertexAttribArray(1);	// 1: Texture UV
+		buffer_.reset(new GLArrayBuffer);
+		buffer_->Generate();
+		buffer_->Bind();
+		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,
+		        GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2, GL_FLOAT,
+		        GL_FALSE, 4 * sizeof(GLfloat),
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 
-		m_buffer->Reset();
+		buffer_->Reset();
 
-		m_texture.reset(new GLTexture2D);
-		m_texture->Generate();
-		m_texture->Bind();
-		m_texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		m_texture->SetMinFilter(GL_LINEAR);
-		m_texture->SetMagFilter(GL_LINEAR);
+		texture_.reset(new GLTexture2D);
+		texture_->Generate();
+		texture_->Bind();
+		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		texture_->SetMinFilter(GL_LINEAR);
+		texture_->SetMagFilter(GL_LINEAR);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-		m_texture->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		m_texture->Reset();
+		texture_->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		texture_->Reset();
 	}
 
 	PixelIcon::PixelIcon (int width, int height,
 					const RefPtr<GLTexture2D>& texture, const GLfloat* uv)
-	: Icon(),
-	  m_vao(0)
+	: AbstractIcon(width, height),
+	  vao_(0)
 	{
-		set_size(width, height);
+		glGenVertexArrays(1, &vao_);
 
-		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(vao_);
 
-		glBindVertexArray(m_vao);
-		GLfloat vertices[] = {
-						// x, 	y, 	u, 	v
-						0.f, 0.f, *(uv + 0), *(uv + 1),
-						(GLfloat)width, 0.f, *(uv + 2), *(uv + 3),
-						0.f, (GLfloat)height, *(uv + 4), *(uv + 5),
-						(GLfloat)width, (GLfloat)height, *(uv + 6), *(uv + 7)
-		};
+		/*
+			// x, 			y, 					u, 				v
+			0.f, 			0.f, 				0.0, 			0.0,
+			(GLfloat)width, 0.f,				1.0,			0.0,
+			0.f, 			(GLfloat)height, 	0.0,			1.0,
+			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
+		*/
+		std::vector<GLfloat> vertices(16, 0.f);
 
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(vertices), vertices);
+		vertices[4] = (GLfloat)width;
+		vertices[9] = (GLfloat)height;
+		vertices[12] = (GLfloat)width;
+		vertices[13] = (GLfloat)height;
 
-		glEnableVertexAttribArray(0);	// 0: Coord
-		glEnableVertexAttribArray(1);	// 1: Texture UV
+		if(uv) {
+			vertices[2] = *(uv + 0);
+			vertices[3] = *(uv + 1);
+			vertices[6] = *(uv + 2);
+			vertices[7] = *(uv + 3);
+			vertices[10] = *(uv + 4);
+			vertices[11] = *(uv + 5);
+			vertices[14] = *(uv + 6);
+			vertices[15] = *(uv + 7);
+		} else {
+			//vertices[2] = 0.f;
+			//vertices[3] = 0.f;
+			vertices[6] = 1.f;
+			//vertices[7] = 0.f;
+			//vertices[10] = 0.f;
+			vertices[11] = 1.f;
+			vertices[14] = 1.f;
+			vertices[15] = 1.f;
+		}
 
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		buffer_.reset(new GLArrayBuffer);
+		buffer_->Generate();
+		buffer_->Bind();
+		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		m_buffer->Reset();
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,
+		        GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2, GL_FLOAT,
+		        GL_FALSE, 4 * sizeof(GLfloat),
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		buffer_->Reset();
 		glBindVertexArray(0);
 
-		m_texture = texture;
-	}
-
-	PixelIcon::PixelIcon (const PixelIcon& orig)
-	: Icon(),
-	  m_vao(orig.m_vao)
-	{
-		m_buffer = orig.m_buffer;
-		m_texture = orig.m_texture;
-		set_size(orig.size());
+		texture_ = texture;
 	}
 
 	PixelIcon::~PixelIcon ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void PixelIcon::SetPixels (const unsigned char* pixels)
+	void PixelIcon::SetPixels (int width, int height, const unsigned char* pixels, const GLfloat* uv)
 	{
+		assert(pixels);
 
+		RefPtr<GLTexture2D> texture(new GLTexture2D);
+		texture->Generate();
+		texture->Bind();
+		texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		texture->SetMinFilter(GL_LINEAR);
+		texture->SetMagFilter(GL_LINEAR);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		texture->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		texture->Reset();
+
+		texture_ = texture;
+
+		buffer_->Bind();
+
+		GLfloat* ptr = (GLfloat*)buffer_->Map(GL_READ_WRITE);
+
+		*(ptr + 4) = (GLfloat)width;
+		*(ptr + 9) = (GLfloat)height;
+		*(ptr + 12) = (GLfloat)width;
+		*(ptr + 13) = (GLfloat)height;
+
+		if(uv) {
+			*(ptr + 2) = *(uv + 0);
+			*(ptr + 3) = *(uv + 1);
+			*(ptr + 6) = *(uv + 2);
+			*(ptr + 7) = *(uv + 3);
+			*(ptr + 10) = *(uv + 4);
+			*(ptr + 11) = *(uv + 5);
+			*(ptr + 14) = *(uv + 6);
+			*(ptr + 15) = *(uv + 7);
+		} else {
+			*(ptr + 2) = 0.f;
+			*(ptr + 3) = 0.f;
+			*(ptr + 6) = 1.f;
+			*(ptr + 7) = 0.f;
+			*(ptr + 10) = 0.f;
+			*(ptr + 11) = 1.f;
+			*(ptr + 14) = 1.f;
+			*(ptr + 15) = 1.f;
+		}
+
+		buffer_->Unmap();
+		buffer_->Reset();
+
+		set_size(width, height);
 	}
 
-	void PixelIcon::SetTexture (const RefPtr<GLTexture2D>& texture,
+	void PixelIcon::SetTexture (int width, int height, const RefPtr<GLTexture2D>& texture,
 					const GLfloat* uv)
 	{
+		if(!texture) return;
+		if(texture->texture() == 0) return;
+
+		texture_ = texture;
+
+		buffer_->Bind();
+
+		GLfloat* ptr = (GLfloat*)buffer_->Map(GL_READ_WRITE);
+
+		*(ptr + 4) = (GLfloat)width;
+		*(ptr + 9) = (GLfloat)height;
+		*(ptr + 12) = (GLfloat)width;
+		*(ptr + 13) = (GLfloat)height;
+
+		if(uv) {
+			*(ptr + 2) = *(uv + 0);
+			*(ptr + 3) = *(uv + 1);
+			*(ptr + 6) = *(uv + 2);
+			*(ptr + 7) = *(uv + 3);
+			*(ptr + 10) = *(uv + 4);
+			*(ptr + 11) = *(uv + 5);
+			*(ptr + 14) = *(uv + 6);
+			*(ptr + 15) = *(uv + 7);
+		} else {
+			*(ptr + 2) = 0.f;
+			*(ptr + 3) = 0.f;
+			*(ptr + 6) = 1.f;
+			*(ptr + 7) = 0.f;
+			*(ptr + 10) = 0.f;
+			*(ptr + 11) = 1.f;
+			*(ptr + 14) = 1.f;
+			*(ptr + 15) = 1.f;
+		}
+
+		buffer_->Unmap();
+		buffer_->Reset();
+
+		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (const glm::vec3& pos, short gamma)
+	void PixelIcon::Draw (const glm::vec3& pos, short gamma) const
 	{
-		using Stock::Shaders;
-
-		if(m_texture) {
+		if(texture_) {
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
 			program->Use();
 
-			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-			program->SetUniform1i("u_gamma", gamma);
+			glUniform3fv(Shaders::instance->image_uniform_position(), 1, glm::value_ptr(pos));
+			glUniform1i(Shaders::instance->image_uniform_gamma(), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
-			program->SetUniform1i("TexID", 0);
+			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
 
-			m_texture->Bind();
-
-			glBindVertexArray(m_vao);
+			texture_->Bind();
+			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 			glBindVertexArray(0);
-			m_texture->Reset();
+			texture_->Reset();
+
 			program->Reset();
 
 		}
 	}
 	
-	void PixelIcon::Draw (const glm::vec3& pos, int x, int y,
-			int restrict_width, int restrict_height)
-	{
-	}
-
-	void PixelIcon::UpdateGeometry(const UpdateRequest& request)
-	{
-
-	}
-	
-	PixelIcon& PixelIcon::operator = (const PixelIcon& orig)
-	{
-		return *this;
-	}
-
 }

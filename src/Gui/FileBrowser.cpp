@@ -136,7 +136,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (const RedrawEvent& event)
+	ResponseType FileBrowser::Draw (const Profile& profile)
 	{
 		int y = position().y() + size().height();
 
@@ -205,8 +205,8 @@ namespace BlendInt {
 
 		}
 
-        DispatchDrawEvent(hbar(), event);
-		DispatchDrawEvent(vbar(), event);
+        DispatchDrawEvent(hbar(), profile);
+		DispatchDrawEvent(vbar(), profile);
 
 		glDisable(GL_SCISSOR_TEST);
 

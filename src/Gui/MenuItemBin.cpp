@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <iterator>
 
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 
 namespace BlendInt {
@@ -81,7 +82,7 @@ namespace BlendInt {
 		m_list.push_back(new_item);
 	}
 
-	void MenuItemBin::Add (Icon* icon, const String& text)
+	void MenuItemBin::Add (AbstractIcon* icon, const String& text)
 	{
 		MenuItem* new_item = new MenuItem (icon, text);
 
@@ -89,7 +90,7 @@ namespace BlendInt {
 		m_list.push_back(new_item);
 	}
 
-	void MenuItemBin::Add (Icon* icon, const String& text, const String& shortcut)
+	void MenuItemBin::Add (AbstractIcon* icon, const String& text, const String& shortcut)
 	{
 		MenuItem* new_item = new MenuItem (icon, text, shortcut);
 

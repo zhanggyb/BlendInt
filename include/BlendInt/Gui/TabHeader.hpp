@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 
@@ -86,9 +86,9 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> inner_;
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		ButtonGroup m_group;
 

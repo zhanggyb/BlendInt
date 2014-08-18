@@ -48,6 +48,7 @@
 namespace BlendInt {
 
 	using Stock::Shaders;
+	using Stock::Icons;
 
 	ExpandButton::ExpandButton()
 	: AbstractButton()
@@ -74,8 +75,8 @@ namespace BlendInt {
 	{
 		int h = font().GetHeight();
 
-		Size prefer(h + round_radius() * 2 + DefaultButtonPadding().hsum() + 100,
-						h + DefaultButtonPadding().vsum());
+		Size prefer(h + round_radius() * 2 + default_padding.hsum() + 100,
+						h + default_padding.vsum());
 
 		return prefer;
 	}
@@ -121,13 +122,11 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ExpandButton::Draw (const RedrawEvent& event)
+	ResponseType ExpandButton::Draw (const Profile& profile)
 	{
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
 		}
-
-		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
 
 		float rotate = 0.f;
 		if(checked()) {
@@ -137,10 +136,10 @@ namespace BlendInt {
 		}
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		pos.x += icon->size().width()/2.f;
+		pos.x += Icons::instance->num()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 
-		icon->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
+		Icons::instance->num()->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
 
 		return Accept;
 	}
@@ -149,8 +148,8 @@ namespace BlendInt {
 	{
 		set_checkable(true);
 		int h = font().GetHeight();
-		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
+		set_size(h + round_radius() * 2 + default_padding.hsum(),
+						h + default_padding.vsum());
 	}
 
 	void ExpandButton::InitializeExpandButton (const String& text)
@@ -161,14 +160,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+			set_size(h + round_radius() * 2 + default_padding.hsum(),
+							h + default_padding.vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_radius() * 2 + default_padding.hsum();
+			int height = h + default_padding.vsum();
 
 			set_size(width, height);
 
@@ -347,7 +346,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType Expander::Draw (const RedrawEvent& event)
+	ResponseType Expander::Draw (const Profile& profile)
 	{
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->triangle_program();

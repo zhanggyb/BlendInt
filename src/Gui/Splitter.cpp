@@ -45,57 +45,76 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	SplitterHandle::SplitterHandle (Orientation orientation)
 	: AbstractWidget(),
-	  m_orientation(orientation),
-	  m_vao(0),
-	  m_highlight(false),
-	  m_pressed(false),
-	  m_prev_size(0),
-	  m_next_size(0),
-	  m_nearby_pos(0),
-	  m_prev_widget(0),
-	  m_next_widget(0)
+	  orientation_(orientation),
+	  vao_(0),
+	  highlight_(false),
+	  pressed_(false),
+	  prev_size_(0),
+	  next_size_(0),
+	  nearby_pos_(0),
+	  prev_widget_(0),
+	  next_widget_(0)
 	{
 		if(orientation == Horizontal) {
-			set_size(200, 3);
+			set_size(200, 1);
 		} else {
-			set_size(3, 200);
+			set_size(1, 200);
 		}
 
-		glGenVertexArrays(1, &m_vao);
-		m_buffer.reset(new GLArrayBuffer);
+		glGenVertexArrays(1, &vao_);
+		buffer_.reset(new GLArrayBuffer);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
-		m_buffer->Generate();
-		m_buffer->Bind();
+		buffer_->Generate();
+		buffer_->Bind();
 
-		std::vector<GLfloat> vertices(4, 0);
+		std::vector<GLfloat> vertices(8, 0.f);
 
 		if(orientation == Horizontal) {
 			vertices[2] = 200.f;
+			//vertices[3] = 0.f;
 
+			//vertices[4] = 0.f;
+			vertices[5] = 1.f;
+
+			vertices[6] = 200.f;
+			vertices[7] = 1.f;
 		} else {
-			vertices[3] = 200.f;
+			vertices[2] = 1.f;
+			//vertices[3] = 0.f;
+
+			//vertices[4] = 0.f;
+			vertices[5] = 200.f;
+
+			vertices[6] = 1.f;
+			vertices[7] = 200.f;
 		}
 
-		m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0], GL_STATIC_DRAW);
-		m_buffer->Reset();
+		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
+		buffer_->Reset();
 	}
 
 	SplitterHandle::~SplitterHandle ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	Size SplitterHandle::GetPreferredSize () const
 	{
-		Size preferred_size(3, 3);
+		Size preferred_size(1, 1);
 
-		if(m_orientation == Horizontal) {
+		if(orientation_ == Horizontal) {
 			preferred_size.set_width(200);
 		} else {
 			preferred_size.set_height(200);
@@ -106,7 +125,7 @@ namespace BlendInt {
 
 	bool SplitterHandle::IsExpandX () const
 	{
-		if(m_orientation == Horizontal) {
+		if(orientation_ == Horizontal) {
 			return true;
 		} else {
 			return false;
@@ -115,28 +134,57 @@ namespace BlendInt {
 
 	bool SplitterHandle::IsExpandY () const
 	{
-		if(m_orientation == Vertical) {
+		if(orientation_ == Vertical) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
+	bool SplitterHandle::Contain (const Point& point) const
+	{
+		if(orientation_ == Horizontal) {
+
+			if(point.x() < position().x() ||
+					point.y() < (position().y() - 2) ||
+					point.x() > static_cast<int>(position().x() + size().width()) ||
+					point.y() > static_cast<int>(position().y() + size().height() + 2))
+			{
+				return false;
+			}
+
+		} else {
+
+			if(point.x() < (position().x() - 2) ||
+					point.y() < position().y() ||
+					point.x() > static_cast<int>(position().x() + size().width() + 2) ||
+					point.y() > static_cast<int>(position().y() + size().height()))
+			{
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+
 	void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			std::vector<GLfloat> vertices(4, 0);
+			std::vector<GLfloat> vertices(8, 0.f);
 
-			if (m_orientation == Horizontal) {
-				vertices[2] = request.size()->width();
-			} else {
-				vertices[3] = request.size()->height();
-			}
+			vertices[2] = (GLfloat)request.size()->width();
+			//vertices[3] = 0.f;
 
-			m_buffer->Bind();
-			m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0],
-							GL_STATIC_DRAW);
-			m_buffer->Reset();
+			//vertices[4] = 0.f;
+			vertices[5] = (GLfloat)request.size()->height();
+
+			vertices[6] = (GLfloat)request.size()->width();
+			vertices[7] = (GLfloat)request.size()->height();
+
+			buffer_->Bind();
+			buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+			buffer_->Reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -145,70 +193,25 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType SplitterHandle::Draw (const RedrawEvent& event)
+	ResponseType SplitterHandle::Draw (const Profile& profile)
 	{
-		using Stock::Shaders;
-
-		glBindVertexArray(m_vao);
-
-		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform1i("u_AA", 0);
-		if(m_highlight) {
-			program->SetUniform1i("u_gamma", 50);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		if(highlight_) {
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 50);
 		} else {
-			program->SetUniform1i("u_gamma", 0);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		}
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.15f, 0.15f, 0.15f, 0.6f);
 
-		glm::vec4 color;
-		glm::vec3 pos(position().x(), position().y(), 0.f);
-
-		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
-		m_buffer->Bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		if(m_orientation == Horizontal) {
-
-			for(int i = 0; i < 3; i++) {
-				pos.y += (i + 1);
-
-				if((i % 2) == 0) {
-					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
-				} else {
-					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
-				}
-
-				program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-				program->SetVertexAttrib4fv("a_color", glm::value_ptr(color));
-				glDrawArrays(GL_LINES, 0, 2);
-
-			}
-
-		} else {
-
-			for(int i = 0; i < 3; i++) {
-				pos.x += (i + 1);
-
-				if((i % 2) == 0) {
-					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
-				} else {
-					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
-				}
-
-				program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-				program->SetVertexAttrib4fv("a_color", glm::value_ptr(color));
-				glDrawArrays(GL_LINES, 0, 2);
-			}
-
-		}
-
-		m_buffer->Reset();
-
-		glDisableVertexAttribArray(0);
-		program->Reset();
-
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
+
+		program->Reset();
 
 		return Accept;
 	}
@@ -219,11 +222,11 @@ namespace BlendInt {
 		if(!context) return Ignore;
 
 		if(entered) {
-			m_highlight = true;
+			highlight_ = true;
 			context->PushCursor(context->GetCursor());
-			context->SetCursor(m_orientation == Horizontal ? SplitHCursor : SplitVCursor);
+			context->SetCursor(orientation_ == Horizontal ? SplitHCursor : SplitVCursor);
 		} else {
-			m_highlight = false;
+			highlight_ = false;
 			context->SetCursor(context->PopCursor());
 		}
 
@@ -233,18 +236,18 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
 	{
-		m_last = position();
-		m_cursor = event.position();
-		m_pressed = true;
+		last_ = position();
+		cursor_ = event.position();
+		pressed_ = true;
 
-		if(m_orientation == Horizontal) {
-			m_prev_size = m_prev_widget->size().height();
-			m_next_size = m_next_widget->size().height();
-			m_nearby_pos = m_prev_widget->position().y();
+		if(orientation_ == Horizontal) {
+			prev_size_ = prev_widget_->size().height();
+			next_size_ = next_widget_->size().height();
+			nearby_pos_ = prev_widget_->position().y();
 		} else {
-			m_prev_size = m_prev_widget->size().width();
-			m_next_size = m_next_widget->size().width();
-			m_nearby_pos = m_next_widget->position().x();
+			prev_size_ = prev_widget_->size().width();
+			next_size_ = next_widget_->size().width();
+			nearby_pos_ = next_widget_->position().x();
 		}
 
 		return Accept;
@@ -252,7 +255,7 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
 	{
-		m_pressed = false;
+		pressed_ = false;
 
 		return Accept;
 	}
@@ -281,41 +284,41 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)
 	{
-		if(m_pressed) {
+		if(pressed_) {
 
 			Splitter* splitter = dynamic_cast<Splitter*>(container());
 
-			if(m_orientation == Horizontal) {
+			if(orientation_ == Horizontal) {
 
-				int offset = event.position().y() - m_cursor.y();
-				int oy1 = m_prev_size - offset;
-				int oy2 = m_next_size + offset;
+				int offset = event.position().y() - cursor_.y();
+				int oy1 = prev_size_ - offset;
+				int oy2 = next_size_ + offset;
 
 				if((oy1 < 0) || (oy2 < 0)) {
 					return Accept;
 				}
 
-				splitter->SetSubWidgetPosition(this, m_last.x(), m_last.y() + offset);
+				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubWidget(m_prev_widget, m_prev_widget->size().width(), oy1);
-				splitter->SetSubWidgetPosition(m_prev_widget, m_prev_widget->position().x(), m_nearby_pos + offset);
-				splitter->ResizeSubWidget(m_next_widget, m_next_widget->size().width(), oy2);
+				splitter->ResizeSubWidget(prev_widget_, prev_widget_->size().width(), oy1);
+				splitter->SetSubWidgetPosition(prev_widget_, prev_widget_->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubWidget(next_widget_, next_widget_->size().width(), oy2);
 
 			} else {
 
-				int offset = event.position().x() - m_cursor.x();
-				int oy1 = m_prev_size + offset;
-				int oy2 = m_next_size - offset;
+				int offset = event.position().x() - cursor_.x();
+				int oy1 = prev_size_ + offset;
+				int oy2 = next_size_ - offset;
 
 				if((oy1 < 0) || (oy2 < 0)) {
 					return Accept;
 				}
 
-				splitter->SetSubWidgetPosition(this, m_last.x() + offset, m_last.y());
+				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubWidget(m_prev_widget, oy1, m_prev_widget->size().height());
-				splitter->ResizeSubWidget(m_next_widget, oy2, m_next_widget->size().height());
-				splitter->SetSubWidgetPosition(m_next_widget, m_nearby_pos + offset, m_next_widget->position().y());
+				splitter->ResizeSubWidget(prev_widget_, oy1, prev_widget_->size().height());
+				splitter->ResizeSubWidget(next_widget_, oy2, next_widget_->size().height());
+				splitter->SetSubWidgetPosition(next_widget_, nearby_pos_ + offset, next_widget_->position().y());
 
 			}
 
@@ -327,7 +330,7 @@ namespace BlendInt {
 
 	Splitter::Splitter(Orientation orientation)
 	: AbstractContainer(),
-	  m_orientation(orientation)
+	  orientation_(orientation)
 	{
 		set_size(400, 400);
 	}
@@ -345,7 +348,7 @@ namespace BlendInt {
 				PushFrontSubWidget(widget);
 			} else {
 				SplitterHandle* handle = 0;
-				if(m_orientation == Horizontal) {
+				if(orientation_ == Horizontal) {
 					handle = Manage(new SplitterHandle(Vertical));
 				} else {
 					handle = Manage(new SplitterHandle(Horizontal));
@@ -353,13 +356,13 @@ namespace BlendInt {
 
 				AbstractWidget* p = first();
 				PushFrontSubWidget(handle);
-				handle->m_prev_widget = widget;
-				handle->m_next_widget = p;
+				handle->prev_widget_ = widget;
+				handle->next_widget_ = p;
 
 				PushFrontSubWidget(widget);
 			}
 
-			AlignSubWidgets(m_orientation, size(), margin());
+			AlignSubWidgets(orientation_, size(), margin());
 		}
 	}
 
@@ -371,7 +374,7 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			} else {
 				SplitterHandle* handle = 0;
-				if(m_orientation == Horizontal) {
+				if(orientation_ == Horizontal) {
 					handle = Manage(new SplitterHandle(Vertical));
 				} else {
 					handle = Manage(new SplitterHandle(Horizontal));
@@ -379,23 +382,23 @@ namespace BlendInt {
 
 				AbstractWidget* p = last();
 				PushBackSubWidget(handle);
-				handle->m_prev_widget = p;
-				handle->m_next_widget = widget;
+				handle->prev_widget_ = p;
+				handle->next_widget_ = widget;
 
 				PushBackSubWidget(widget);
 			}
 
-			AlignSubWidgets(m_orientation, size(), margin());
+			AlignSubWidgets(orientation_, size(), margin());
 		}
 	}
 
 	void Splitter::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			if(m_orientation == Horizontal) {
-				FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
+			if(orientation_ == Horizontal) {
+				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
 			} else {
-				FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
+				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
 			}
 		}
 	}
@@ -410,7 +413,7 @@ namespace BlendInt {
 		} else {
 			Size tmp;
 
-			if (m_orientation == Horizontal) {
+			if (orientation_ == Horizontal) {
 				for(AbstractWidget* p = first(); p; p = p->next())
 				{
 					if (p->visiable()) {
@@ -508,7 +511,7 @@ namespace BlendInt {
 	{
 		if(first() == 0) return 0;
 
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		int max = (sum + 1) / 2;
 		if(index > max) return 0;
@@ -520,7 +523,7 @@ namespace BlendInt {
 
 	SplitterHandle* Splitter::GetHandle (int index) const
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if(sum <= 1) return 0;
 
@@ -534,7 +537,7 @@ namespace BlendInt {
 
 	int Splitter::GetWidgetsHold () const
 	{
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 		return (sum / 2 + 1);
 	}
 
@@ -544,7 +547,7 @@ namespace BlendInt {
 
 	void Splitter::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInSplitter(position(), size(), request, m_orientation);
+		FillSubWidgetsInSplitter(position(), size(), request, orientation_);
 	}
 
 	void Splitter::PerformPositionUpdate (const PositionUpdateRequest& request)
@@ -564,7 +567,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			FillSubWidgetsInSplitter(position(), *request.size(), margin(), m_orientation);
+			FillSubWidgetsInSplitter(position(), *request.size(), margin(), orientation_);
 
 			set_size(*request.size());
 		}
@@ -572,7 +575,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Splitter::Draw (const RedrawEvent& event)
+	ResponseType Splitter::Draw (const Profile& profile)
 	{
 		return Ignore;
 	}

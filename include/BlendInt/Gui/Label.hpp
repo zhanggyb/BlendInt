@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_LABEL_HPP_
-#define _BLENDINT_LABEL_HPP_
+#ifndef _BLENDINT_GUI_LABEL_HPP_
+#define _BLENDINT_GUI_LABEL_HPP_
 
 #include <string>
 
@@ -39,8 +39,6 @@
 using namespace std;
 
 namespace BlendInt {
-
-	class Rect;
 
 	class Label: public AbstractWidget
 	{
@@ -73,15 +71,9 @@ namespace BlendInt {
 			return font_;
 		}
 
-		void set_foreground_color (const Color& fg)
-		{
-			font_.set_color(fg);
-		}
+		void SetForegroundColor (const Color& fg);
 
-		void set_background_color (const Color& color)
-		{
-			background_color_ = color;
-		}
+		void SetBackgroundColor (const Color& color);
 
 		virtual Size GetPreferredSize () const;
 
@@ -91,7 +83,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -136,7 +128,7 @@ namespace BlendInt {
 
 		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> rect_;
+		RefPtr<GLArrayBuffer> inner_;
 	};
 
 } /* namespace BlendInt */

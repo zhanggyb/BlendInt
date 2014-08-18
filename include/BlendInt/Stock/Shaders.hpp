@@ -47,32 +47,32 @@ namespace BlendInt {
 
 			static Shaders* instance;
 
-			RefPtr<GLSLProgram> text_program () const
+			const RefPtr<GLSLProgram>& text_program () const
 			{
 				return m_text_program;
 			}
 
-			RefPtr<GLSLProgram> primitive_program () const
+			const RefPtr<GLSLProgram>& primitive_program () const
 			{
 				return m_primitive_program;
 			}
 
-			RefPtr<GLSLProgram> triangle_program () const
+			const RefPtr<GLSLProgram>& triangle_program () const
 			{
 				return m_triangle_program;
 			}
 
-			RefPtr<GLSLProgram> line_program () const
+			const RefPtr<GLSLProgram>& line_program () const
 			{
 				return m_line_program;
 			}
 
-			RefPtr<GLSLProgram> context_program () const
+			const RefPtr<GLSLProgram>& context_program () const
 			{
 				return m_context_program;
 			}
 
-			RefPtr<GLSLProgram> image_program () const
+			const RefPtr<GLSLProgram>& image_program () const
 			{
 				return m_image_program;
 			}

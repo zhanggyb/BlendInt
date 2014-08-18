@@ -8,6 +8,7 @@
 #include "Window.hpp"
 
 #include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 int main(int argc, char* argv[])
 {

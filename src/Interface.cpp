@@ -169,7 +169,7 @@ namespace BlendInt {
 		while(Context::context_set.size()) {
 			std::set<Context*>::iterator it = Context::context_set.begin();
 
-			if((*it)->managed() && ((*it)->count() == 0)) {
+			if((*it)->managed() && ((*it)->reference_count() == 0)) {
 				DBG_PRINT_MSG("%s", "Delete context");
 				delete (*it);	// this will erase the context from the set
 			} else {
@@ -203,7 +203,7 @@ namespace BlendInt {
 		/*
 		if(m_current_context) {
 			if(m_current_context->managed() &&
-							(m_current_context->count() == 0)) {
+							(m_current_context->reference_count() == 0)) {
 				m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
 				delete m_current_context;
 			}
@@ -243,16 +243,16 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::Draw (const RedrawEvent& event)
+	void Interface::Draw (const Profile& profile)
 	{
 		if(m_current_context) {
-			m_current_context->Draw(event);
+			m_current_context->Draw(profile);
 		}
 	}
 
-	void Interface::DrawContext (Context* context, const RedrawEvent& event)
+	void Interface::DrawContext (Context* context, const Profile& profile)
 	{
-		ResponseType response = context->Draw(event);
+		ResponseType response = context->Draw(profile);
 
 		if(response == Accept) {
 			// DO nothing;

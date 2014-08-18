@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		if(widget->container() == this) return;
 
-		int sum = CountSubWidgets();
+		int sum = widget_count();
 
 		if (sum > 1) {
 			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");
@@ -79,7 +79,7 @@ namespace BlendInt {
 			for(AbstractWidget* p = first()->next(); p; p = tmp)
 			{
 				tmp = p->next();
-				if(p->managed() && (p->count() == 0))
+				if(p->managed() && (p->reference_count() == 0))
 				{
 					delete p;
 				} else {
@@ -93,7 +93,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType VirtualWindow::Draw (const RedrawEvent& event)
+	ResponseType VirtualWindow::Draw (const Profile& profile)
 	{
 		using Stock::Shaders;
 

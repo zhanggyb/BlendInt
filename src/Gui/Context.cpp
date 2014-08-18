@@ -90,14 +90,17 @@ namespace BlendInt
 
 		if(section) {
 
-			if(section->container() == this) {
+			if(section->container_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in context %s",
 									widget->name().c_str(),
 									name().c_str());
 				return section;
 			} else {
-				section->container_->RemoveSubWidget(section);
+				if(section->container_) {
+					section->container_->RemoveSubWidget(section);
+				}
 			}
+
 		} else {
 			section = Manage(new Section);
 			section->PushBack(widget);
@@ -112,7 +115,7 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
-		int count = CountSubWidgets();
+		int count = widget_count();
 		char buf[32];
 		sprintf(buf, "Section %d", count);
 		DBG_SET_NAME(section, buf);
@@ -150,7 +153,7 @@ namespace BlendInt
 
 		if(section->first_ == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
-			if(section->managed() && (section->count() == 0)) {
+			if(section->managed() && (section->reference_count() == 0)) {
 				delete section;
 				section = 0;
 			} else {
@@ -353,11 +356,11 @@ namespace BlendInt
 	{
 	}
 
-	ResponseType Context::Draw (const RedrawEvent& event)
+	ResponseType Context::Draw (const Profile& profile)
 	{
 		//glm::vec3 pos(position().x(), position().y(), z());
 		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-		const_cast<RedrawEvent&>(event).m_context = this;
+		const_cast<Profile&>(profile).context_ = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
@@ -374,7 +377,7 @@ namespace BlendInt
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			p->Draw(event);
+			p->Draw(profile);
 		}
 
 		return Accept;
@@ -434,7 +437,7 @@ namespace BlendInt
 		}
 
 		if(response == Accept && Section::iterator_ptr) {
-			widget = dynamic_cast<Section*>(Section::iterator_ptr)->m_last_hover_widget;
+			widget = dynamic_cast<Section*>(Section::iterator_ptr)->last_hover_widget_;
 		}
 
 		Section::iterator_ptr = 0;

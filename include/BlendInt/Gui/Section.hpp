@@ -38,6 +38,12 @@ namespace BlendInt {
 	{
 	public:
 
+		enum Mode {
+			Normal,
+			Modal,
+			Popup
+		};
+
 		friend class Context;
 
 		Section ();
@@ -62,7 +68,12 @@ namespace BlendInt {
 
 		AbstractWidget* last_hover_widget () const
 		{
-			return m_last_hover_widget;
+			return last_hover_widget_;
+		}
+
+		void set_mode (Mode mode)
+		{
+			mode_ = mode;
 		}
 
 		static Section* GetSection (AbstractWidget* widget);
@@ -71,9 +82,17 @@ namespace BlendInt {
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
-		static void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event, ScissorStatus& scissor);
+		static void DispatchDrawEvent (AbstractWidget* widget, const Profile& profile, ScissorStatus& scissor);
 
 	protected:
+
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+
+		virtual bool RoundTypeUpdateTest (const RoundTypeUpdateRequest& request);
+
+		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -83,7 +102,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		virtual ResponseType Draw (const Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -103,7 +122,7 @@ namespace BlendInt {
 
 	private:
 
-		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
+		void DispatchDrawEvent (AbstractWidget* widget, const Profile& profile);
 
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
@@ -121,9 +140,11 @@ namespace BlendInt {
 
 		AbstractWidget* m_focused_widget;
 
-		AbstractWidget* m_last_hover_widget;
+		AbstractWidget* last_hover_widget_;
 
 		ScissorStatus m_scissor_status;
+
+		Mode mode_;
 
 		static AbstractWidget* iterator_ptr;
 	};
