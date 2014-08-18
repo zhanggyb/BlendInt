@@ -162,7 +162,139 @@ namespace BlendInt {
 			FILE_FONT,
 			FILE_TEXT,
 
-			// -------------------------------
+			#ifndef DEF_ICON_BLANK_SKIP
+				/* available */
+				BLANK_E_1,
+				BLANK_E_2,
+				BLANK_E_3,
+				BLANK_E_4,
+				BLANK_E_5,
+				BLANK_E_6,
+				BLANK_E_7,
+				BLANK_E_8,
+				BLANK_E_9,
+				BLANK_E_10,
+				BLANK_E_11,
+				BLANK_E_12,
+				BLANK_E_13,
+				BLANK_E_14,
+				BLANK_E_15,
+				BLANK_E_16,
+				BLANK_E_17,
+				BLANK_E_18,
+				BLANK_E_19,
+				BLANK_E_20,
+				BLANK_E_21,
+				BLANK_E_22,
+				BLANK_E_23,
+				BLANK_E_24,
+				BLANK_E_25,
+				BLANK_E_26,
+			#endif
+
+			/* 3D VIEW */
+			BBOX,
+			WIRE,
+			SOLID,
+			SMOOTH,
+			POTATO,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_F_6,
+			#endif
+			ORTHO,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_F_8,
+				BLANK_F_9,
+			#endif
+			LOCKVIEW_OFF,
+			LOCKVIEW_ON,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_F_12,
+			#endif
+			AXIS_SIDE,
+			AXIS_FRONT,
+			AXIS_TOP,
+			NDOF_DOM,
+			NDOF_TURN,
+			NDOF_FLY,
+			NDOF_TRANS,
+			LAYER_USED,
+			LAYER_ACTIVE,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_F_22,
+				BLANK_F_23,
+				BLANK_F_24,
+				BLANK_F_25,
+				BLANK_F_26,
+			#endif
+
+
+			/* EDITING */
+			PASTEDOWN,
+			COPYDOWN,
+			PASTEFLIPUP,
+			PASTEFLIPDOWN,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_G_5,
+				BLANK_G_6,
+				BLANK_G_7,
+				BLANK_G_8,
+			#endif
+			SNAP_SURFACE,
+			AUTOMERGE_ON,
+			AUTOMERGE_OFF,
+			RETOPO,
+			UV_VERTEXSEL,
+			UV_EDGESEL,
+			UV_FACESEL,
+			UV_ISLANDSEL,
+			UV_SYNC_SELECT,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_G_18,
+				BLANK_G_19,
+				BLANK_G_20,
+				BLANK_G_21,
+				BLANK_G_22,
+				BLANK_G_23,
+				BLANK_G_24,
+				BLANK_G_25,
+				BLANK_G_26,
+			#endif
+
+			/* EDITING */
+			MAN_TRANS,
+			MAN_ROT,
+			MAN_SCALE,
+			MANIPUL,
+			SNAP_OFF,
+			SNAP_ON,
+			SNAP_NORMAL,
+			SNAP_INCREMENT,
+			SNAP_VERTEX,
+			SNAP_EDGE,
+			SNAP_FACE,
+			SNAP_VOLUME,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_H_13,
+			#endif
+			STICKY_UVS_LOC,
+			STICKY_UVS_DISABLE,
+			STICKY_UVS_VERT,
+			CLIPUV_DEHLT,
+			CLIPUV_HLT,
+			SNAP_PEEL_OBJECT,
+			GRID,
+			#ifndef DEF_ICON_BLANK_SKIP
+				BLANK_H_21,
+				BLANK_H_22,
+				BLANK_H_23,
+				BLANK_H_24,
+				BLANK_H_25,
+				BLANK_H_26,
+			#endif
+
+
+			// -----------------------------------------------------------
 
 			NONE,
 			QUESTION,
@@ -826,133 +958,6 @@ namespace BlendInt {
 			PARTICLE_POINT,
 			PARTICLE_TIP,
 			PARTICLE_PATH,
-
-				/* EDITING */
-			MAN_TRANS,
-			MAN_ROT,
-			MAN_SCALE,
-			MANIPUL,
-			SNAP_OFF,
-			SNAP_ON,
-			SNAP_NORMAL,
-			SNAP_INCREMENT,
-			SNAP_VERTEX,
-			SNAP_EDGE,
-			SNAP_FACE,
-			SNAP_VOLUME,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK220,
-			#endif
-			STICKY_UVS_LOC,
-			STICKY_UVS_DISABLE,
-			STICKY_UVS_VERT,
-			CLIPUV_DEHLT,
-			CLIPUV_HLT,
-			SNAP_PEEL_OBJECT,
-			GRID,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK221,
-				BLANK222,
-				BLANK224,
-				BLANK225,
-				BLANK226,
-				BLANK226b,
-			#endif
-
-				/* EDITING */
-			PASTEDOWN,
-			COPYDOWN,
-			PASTEFLIPUP,
-			PASTEFLIPDOWN,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK227,
-				BLANK228,
-				BLANK229,
-				BLANK230,
-			#endif
-			SNAP_SURFACE,
-			AUTOMERGE_ON,
-			AUTOMERGE_OFF,
-			RETOPO,
-			UV_VERTEXSEL,
-			UV_EDGESEL,
-			UV_FACESEL,
-			UV_ISLANDSEL,
-			UV_SYNC_SELECT,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK240,
-				BLANK241,
-				BLANK242,
-				BLANK243,
-				BLANK244,
-				BLANK245,
-				BLANK246,
-				BLANK247,
-				BLANK247b,
-			#endif
-
-				/* 3D VIEW */
-			BBOX,
-			WIRE,
-			SOLID,
-			SMOOTH,
-			POTATO,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK248,
-			#endif
-			ORTHO,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK249,
-				BLANK250,
-			#endif
-			LOCKVIEW_OFF,
-			LOCKVIEW_ON,
-			#ifndef DEF_ICON_BLANK_SKIP
-				BLANK251,
-			#endif
-			AXIS_SIDE,
-			AXIS_FRONT,
-			AXIS_TOP,
-			NDOF_DOM,
-			NDOF_TURN,
-			NDOF_FLY,
-			NDOF_TRANS,
-			LAYER_USED,
-			LAYER_ACTIVE,
-			#ifndef DEF_ICON_BLANK_SKIP
-				/* available */
-				BLANK254,
-				BLANK255,
-				BLANK256,
-				BLANK257,
-				BLANK257b,
-				BLANK258,
-				BLANK259,
-				BLANK260,
-				BLANK261,
-				BLANK262,
-				BLANK263,
-				BLANK264,
-				BLANK265,
-				BLANK266,
-				BLANK267,
-				BLANK268,
-				BLANK269,
-				BLANK270,
-				BLANK271,
-				BLANK272,
-				BLANK273,
-				BLANK274,
-				BLANK275,
-				BLANK276,
-				BLANK277,
-				BLANK278,
-				BLANK279,
-				BLANK280,
-				BLANK281,
-				BLANK282,
-				BLANK282b,
-			#endif
 
 
 				/* brush icons */
