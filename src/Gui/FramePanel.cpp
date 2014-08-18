@@ -53,7 +53,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FramePanel::FramePanel()
-	: Frame(), refresh_(true)
+	: BinLayout(), refresh_(true)
 	{
 		//set_drop_shadow(true);
 		InitializeFramePanel();
@@ -80,7 +80,7 @@ namespace BlendInt {
 			inner_->Reset();
 		}
 
-		Frame::PerformSizeUpdate(request);
+		BinLayout::PerformSizeUpdate(request);
 	}
 
 	ResponseType FramePanel::Draw (const Profile& profile)

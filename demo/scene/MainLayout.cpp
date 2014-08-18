@@ -132,19 +132,19 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	m_tool_open = Manage(new ToolButton);
 
 	ToolButton* btn1 = Manage(new ToolButton);
-	btn1->SetAction(BI::Stock::Icons::instance->seq_preview_16x16(), String("SEQ PREVIEW"));
+	btn1->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_PREVIEW), String("SEQ PREVIEW"));
 
 	ToolButton* btn2 = Manage(new ToolButton);
-	btn2->SetAction(BI::Stock::Icons::instance->seq_luma_waveform_16x16(), String("SEQ LUMA WAVEFORM"));
+	btn2->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_LUMA_WAVEFORM), String("SEQ LUMA WAVEFORM"));
 
 	ToolButton* btn3 = Manage(new ToolButton);
-	btn3->SetAction(BI::Stock::Icons::instance->seq_chroma_scope_16x16(), String("SEQ CHROMA SCOPE"));
+	btn3->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_CHROMA_SCOPE), String("SEQ CHROMA SCOPE"));
 
 	ToolButton* btn4 = Manage(new ToolButton);
-	btn4->SetAction(BI::Stock::Icons::instance->seq_histogram_16x16(), String("SEQ HISTOGRAM"));
+	btn4->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_HISTOGRAM), String("SEQ HISTOGRAM"));
 
 	ToolButton* btn5 = Manage(new ToolButton);
-	btn5->SetAction(BI::Stock::Icons::instance->seq_splitview_16x16(), String("SEQ SPLITVIEW"));
+	btn5->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_SPLITVIEW), String("SEQ SPLITVIEW"));
 
 	hblock->PushBack(m_tool_open);
 	hblock->PushBack(btn1);
@@ -157,19 +157,19 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	HBlockLayout* hblock2 = Manage (new HBlockLayout);
 
 	ToolButton* btn6 = Manage(new ToolButton);
-	btn6->SetAction(BI::Stock::Icons::instance->image_rgb_16x16(), String("IMAGE RGB"));
+	btn6->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB), String("IMAGE RGB"));
 
 	ToolButton* btn7 = Manage(new ToolButton);
-	btn7->SetAction(BI::Stock::Icons::instance->image_rgb_alpha_16x16(), String("IMAGE RGB ALPHA"));
+	btn7->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB_ALPHA), String("IMAGE RGB ALPHA"));
 
 	ToolButton* btn8 = Manage(new ToolButton);
-	btn8->SetAction(BI::Stock::Icons::instance->image_alpha_16x16(), String("IMAGE ALPHA"));
+	btn8->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ALPHA), String("IMAGE ALPHA"));
 
 	ToolButton* btn9 = Manage(new ToolButton);
-	btn9->SetAction(BI::Stock::Icons::instance->image_zdepth_16x16(), String("IMAGE ZDEPTH"));
+	btn9->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ZDEPTH), String("IMAGE ZDEPTH"));
 
 	ToolButton* btn10 = Manage(new ToolButton);
-	btn10->SetAction(BI::Stock::Icons::instance->imagefile_16x16(), String("IMAGEFILE"));
+	btn10->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGEFILE), String("IMAGEFILE"));
 
 	hblock2->PushBack(btn6);
 	hblock2->PushBack(btn7);
@@ -327,7 +327,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 
 	Label* info_label = Manage(new Label("Info: "));
 	m_msg_label = Manage(new Label("Ready..."));
-	m_msg_label->SetBackgroundColor(Color(0x8888EFFF));
+	//m_msg_label->SetBackgroundColor(Color(0x8888EFFF));
 
 	toolbar->PushBack(box);
 	toolbar->PushBack(m_btn_open);

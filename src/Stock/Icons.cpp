@@ -171,7 +171,7 @@ namespace BlendInt {
 			GLfloat w = (GLfloat)(16) / image.width();
 			GLfloat h = (GLfloat)(16) / image.height();
 			GLfloat dx = (GLfloat)(5) / image.width();
-			//GLfloat dy = (GLfloat)(5) / image.height();
+			GLfloat dy = (GLfloat)(5) / image.height();
 
 			std::vector<GLfloat> uv(8, 0.f);
 			uv[0] = x; uv[1] = y + h;
@@ -179,84 +179,32 @@ namespace BlendInt {
 			uv[4] = x; uv[5] = y;
 			uv[6] = x + w; uv[7] = y;
 
-			seq_sequencer_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			icons_16x16_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_preview_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+			for(int i = 0; i < 30; i++) {
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_luma_waveform_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+				for(int j = 0; j < 26; j++) {
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_chroma_scope_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+					icons_16x16_[i * 26 + j] = RefPtr<PixelIcon>(new PixelIcon(16, 16, texture, &uv[0]));
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_histogram_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+					for(int k = 0; k < 8; k += 2) {
+						uv[k] += (w + dx);
+					}
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_splitview_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
+				}
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx) * 3;	// skip 3 blank icons
+				uv[0] = x;
+				uv[2] = x + w;
+				uv[4] = x;
+				uv[6] = x + w;
+
+				for(int k = 1; k < 8; k += 2)
+				{
+					uv[k] += (h + dy);
+				}
+
 			}
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			image_rgb_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			image_rgb_alpha_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			image_alpha_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			image_zdepth_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			imagefile_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-
-			file_parent_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_refresh_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_folder_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_blank_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_blend_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_image_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_movie_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_script_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_sound_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_font_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
-			file_text_16x16_.reset(new PixelIcon(16, 16, texture, &uv[0]));
 		}
 
 		void Icons::CreatePixelIcons32x32 ()
@@ -303,7 +251,7 @@ namespace BlendInt {
 			GLfloat w = (GLfloat)(32) / image.width();
 			GLfloat h = (GLfloat)(32) / image.height();
 			GLfloat dx = (GLfloat)(10) / image.width();
-			//GLfloat dy = (GLfloat)(10) / image.height();
+			GLfloat dy = (GLfloat)(10) / image.height();
 
 			std::vector<GLfloat> uv(8, 0.f);
 			uv[0] = x; uv[1] = y + h;
@@ -311,37 +259,32 @@ namespace BlendInt {
 			uv[4] = x; uv[5] = y;
 			uv[6] = x + w; uv[7] = y;
 
-			seq_sequencer_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+			icons_32x32_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_preview_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+			for(int i = 0; i < 30; i++) {
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_luma_waveform_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+				for(int j = 0; j < 26; j++) {
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_chroma_scope_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+					icons_32x32_[i * 26 + j] = RefPtr<PixelIcon>(new PixelIcon(32, 32, texture, &uv[0]));
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
-			}
-			seq_histogram_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+					for(int k = 0; k < 8; k += 2) {
+						uv[k] += (w + dx);
+					}
 
-			for(int i = 0; i < 8; i = i + 2)
-			{
-				uv[i] += (w + dx);
+				}
+
+				uv[0] = x;
+				uv[2] = x + w;
+				uv[4] = x;
+				uv[6] = x + w;
+
+				for(int k = 1; k < 8; k += 2)
+				{
+					uv[k] += (h + dy);
+				}
+
 			}
-			seq_splitview_32x32_.reset(new PixelIcon(32, 32, texture, &uv[0]));
+
 		}
 
 	}

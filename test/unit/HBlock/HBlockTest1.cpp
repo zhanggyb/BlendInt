@@ -36,11 +36,11 @@ TEST_F(HBlockTest1, Foo1)
 	DBG_SET_NAME(context, "Context");
     Interface::instance->SetCurrentContext(context);
 
-	Button* btn1 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	Button* btn1 = Manage(new Button(Icons::instance->icon_16x16(0)));
 	DBG_SET_NAME(btn1, "button 1");
-	Button* btn2 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	Button* btn2 = Manage(new Button(Icons::instance->icon_16x16(0)));
 	DBG_SET_NAME(btn2, "button 2");
-	Button* btn3 = Manage(new Button(Icons::instance->image_rgb_16x16()));
+	Button* btn3 = Manage(new Button(Icons::instance->icon_16x16(0)));
 	DBG_SET_NAME(btn3, "button 3");
 
 	HBlockLayout* hblock = Manage(new HBlockLayout);

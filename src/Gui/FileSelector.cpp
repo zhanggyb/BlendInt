@@ -249,10 +249,10 @@ namespace BlendInt {
 		// directory control group
 		HBlockLayout* block1 = Manage(new HBlockLayout);
 
-		Button* btn_back = Manage(new Button(Icons::instance->file_parent_16x16()));
-		Button* btn_forward = Manage(new Button(Icons::instance->file_parent_16x16()));
-		Button* btn_up = Manage(new Button(Icons::instance->file_parent_16x16()));
-		Button* btn_reload = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_back = Manage(new Button(Icons::instance->icon_16x16(Stock::BACK)));
+		Button* btn_forward = Manage(new Button(Icons::instance->icon_16x16(Stock::FORWARD)));
+		Button* btn_up = Manage(new Button(Icons::instance->icon_16x16(Stock::FILE_PARENT)));
+		Button* btn_reload = Manage(new Button(Icons::instance->icon_16x16(Stock::FILE_REFRESH)));
 
 		block1->PushBack(btn_back);
 		block1->PushBack(btn_forward);
@@ -262,22 +262,35 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		Button* btn_new = Manage(new Button(Icons::instance->file_parent_16x16(), "Create New Directory"));
+		Button* btn_new = Manage(new Button(Icons::instance->icon_16x16(Stock::NEWFOLDER), "Create New Directory"));
 
 		// display mode
 		HBlockLayout* block2 = Manage(new HBlockLayout);
 
-		Button* btn_short_list = Manage(new Button(Icons::instance->file_parent_16x16()));
-		Button* btn_detail_list = Manage(new Button(Icons::instance->file_parent_16x16()));
-		Button* btn_thumbnail = Manage(new Button(Icons::instance->file_parent_16x16()));
+		Button* btn_short_list = Manage(new Button(Icons::instance->icon_16x16(Stock::SHORTDISPLAY)));
+		Button* btn_detail_list = Manage(new Button(Icons::instance->icon_16x16(Stock::LONGDISPLAY)));
+		Button* btn_thumbnail = Manage(new Button(Icons::instance->icon_16x16(Stock::IMGDISPLAY)));
 
 		block2->PushBack(btn_short_list);
 		block2->PushBack(btn_detail_list);
 		block2->PushBack(btn_thumbnail);
 
+		HBlockLayout* block3 = Manage(new HBlockLayout);
+
+		Button* btn_sort_alpha = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTALPHA)));
+		Button* btn_sort_ext = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTBYEXT)));
+		Button* btn_sort_time = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTTIME)));
+		Button* btn_sort_size = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTSIZE)));
+
+		block3->PushBack(btn_sort_alpha);
+		block3->PushBack(btn_sort_ext);
+		block3->PushBack(btn_sort_time);
+		block3->PushBack(btn_sort_size);
+
 		toolbar->PushBack(block1);
 		toolbar->PushBack(btn_new);
 		toolbar->PushBack(block2);
+		toolbar->PushBack(block3);
 
 		return toolbar;
 	}

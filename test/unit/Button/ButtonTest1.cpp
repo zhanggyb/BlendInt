@@ -30,7 +30,7 @@ TEST_F(ButtonTest1, Foo1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt1, "Button1");
     bt1->SetPosition(200, 200);
     bt1->SetText(String("Button1"));
@@ -60,9 +60,9 @@ TEST_F(ButtonTest1, SetIcon1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt1, "Button1");
-    //bt1->SetIcon(BlendInt::Stock::Icons::instance->image_rgb_16x16());
+    //bt1->SetIcon(BlendInt::Stock::Icons::instance->icon_16x16(0));
     bt1->SetPosition(200, 200);
 
     Size prefer = bt1->GetPreferredSize();
@@ -75,14 +75,14 @@ TEST_F(ButtonTest1, SetIcon1)
 
     Button* bt2 = Manage(new Button("Hello World!"));
     DBG_SET_NAME(bt2, "Button2");
-    //bt1->SetIcon(BlendInt::Stock::Icons::instance->image_rgb_16x16());
+    //bt1->SetIcon(BlendInt::Stock::Icons::instance->icon_16x16(0));
     bt2->SetPosition(400, 200);
 
     bt2->Resize(120, 40);
 
     context->PushBack(bt2);
 
-    Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt3, "Button3");
     bt3->SetPosition(200, 100);
     bt3->Resize(120, 40);
@@ -90,7 +90,7 @@ TEST_F(ButtonTest1, SetIcon1)
 
     context->PushBack(bt3);
 
-    Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt4, "Button4");
     bt4->SetPosition(400, 100);
     bt4->Resize(120, 40);
@@ -120,9 +120,9 @@ TEST_F(ButtonTest1, PreferSizing1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt1, "Button1");
-    //bt1->SetIcon(BlendInt::Stock::Icons::instance->image_rgb_16x16());
+    //bt1->SetIcon(BlendInt::Stock::Icons::instance->icon_16x16(0));
     bt1->SetPosition(200, 200);
 
     Size prefer = bt1->GetPreferredSize();
@@ -135,14 +135,14 @@ TEST_F(ButtonTest1, PreferSizing1)
 
     Button* bt2 = Manage(new Button("Hello World!"));
     DBG_SET_NAME(bt2, "Button2");
-    //bt1->SetIcon(BlendInt::Stock::Icons::instance->image_rgb_16x16());
+    //bt1->SetIcon(BlendInt::Stock::Icons::instance->icon_16x16(0));
     bt2->SetPosition(400, 200);
 
     bt2->Resize(bt2->GetPreferredSize());
 
     context->PushBack(bt2);
 
-    Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt3, "Button3");
     bt3->SetPosition(200, 100);
     bt3->Resize(bt3->GetPreferredSize());
@@ -150,7 +150,7 @@ TEST_F(ButtonTest1, PreferSizing1)
 
     context->PushBack(bt3);
 
-    Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), "Hello World!"));
+    Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt4, "Button4");
     bt4->SetPosition(400, 100);
     bt4->Resize(bt4->GetPreferredSize());
@@ -180,9 +180,9 @@ TEST_F(ButtonTest1, PreferSizing2)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), String()));
+    Button* bt1 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), String()));
     DBG_SET_NAME(bt1, "Button1");
-    //bt1->SetIcon(BlendInt::Stock::Icons::instance->image_rgb_16x16());
+    //bt1->SetIcon(BlendInt::Stock::Icons::instance->icon_16x16(0));
     bt1->SetPosition(200, 200);
 
     Size prefer = bt1->GetPreferredSize();
@@ -193,7 +193,7 @@ TEST_F(ButtonTest1, PreferSizing2)
 
     context->PushBack(bt1);
 
-    Button* bt2 = Manage(new Button(BlendInt::Stock::Icons::instance->image_rgb_16x16(), String()));
+    Button* bt2 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), String()));
     DBG_SET_NAME(bt2, "Button2");
     bt2->SetPosition(300, 200);
     bt2->SetRoundType(RoundNone);

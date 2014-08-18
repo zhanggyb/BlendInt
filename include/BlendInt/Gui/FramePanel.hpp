@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_FRAMEPANEL_HPP_
 #define _BLENDINT_GUI_FRAMEPANEL_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 #include <BlendInt/OpenGL/TextureBuffer.hpp>
 
@@ -33,7 +33,7 @@ namespace BlendInt {
 	/**
 	 * @brief A Frame container for demo only
 	 */
-	class FramePanel: public Frame
+	class FramePanel: public BinLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(FramePanel);
 
