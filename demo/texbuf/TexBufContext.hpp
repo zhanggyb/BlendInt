@@ -8,6 +8,7 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/FramePanel.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BI=BlendInt;
 
@@ -27,7 +28,9 @@ private:
 	void OnTakeScreenShot ();
 
 	BI::Button* m_button;
-	BI::FramePanel* m_panel;
+
+	BI::Frame* m_panel;
+	//BI::FramePanel* m_panel;
 	
 	BI::FramePanel* view3d_frame_;
 	

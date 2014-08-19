@@ -53,7 +53,8 @@ namespace BlendInt {
 	using Stock::Icons;
 
 	FileSelector::FileSelector ()
-	: path_entry_(0),
+	: BinLayout(),
+	  path_entry_(0),
 	  file_entry_(0)
 	{
 		set_size(500, 400);
@@ -79,7 +80,7 @@ namespace BlendInt {
 			tool.SetInnerBufferData(inner_.get());
 			inner_->Reset();
 
-			Frame::PerformSizeUpdate(request);
+			BinLayout::PerformSizeUpdate(request);
 			return;
 		}
 

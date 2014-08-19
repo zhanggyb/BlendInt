@@ -256,7 +256,7 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 
 		// demo
-		icon_ = Icons::instance->icon_16x16(0);
+		icon_ = Icons::instance->icon_16x16(Stock::IMAGE_ALPHA);
 	}
 
 }

@@ -37,12 +37,16 @@ void TexBufContext::CreateWidgets ()
 
 	m_button = Manage(new Button("Take Screenshot"));
 
-	Button* btn = Manage(new Button(Icons::instance->icon_16x16(0), "Button"));
+	FileSelector* fs = Manage(new FileSelector);
 
-	m_panel = Manage(new FramePanel);
-	m_panel->Setup(btn);
+	m_panel = Manage(new Frame);
+	//m_panel->SetMargin(10, 10, 10, 10);
+	m_panel->Setup(fs);
 	m_panel->SetPosition(100, 100);
-	m_panel->Resize(m_panel->GetPreferredSize());
+	m_panel->Resize(800, 600);
+
+	DBG_PRINT_MSG("pos: %d, %d", fs->position().x(), fs->position().y());
+	DBG_PRINT_MSG("size: %d, %d", fs->size().width(), fs->size().height());
 
 	FramePanel* btn_panel = Manage(new FramePanel);
 	btn_panel->Setup(m_button);
@@ -58,7 +62,7 @@ void TexBufContext::CreateWidgets ()
 	label_frame_ = Manage(new FramePanel);
 	label_frame_->Setup (Manage(new Label("Label")));
 	label_frame_->Resize(label_frame_->GetPreferredSize());
-	label_frame_->SetPosition(100, 600);
+	label_frame_->SetPosition(100, 700);
 
 	PushBack(m_panel);
 

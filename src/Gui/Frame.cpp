@@ -47,14 +47,20 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Frame::Frame ()
-	: AbstractContainer()
+	: AbstractContainer(),
+	  vao_(0)
 	{
 		set_size(400, 300);
+
+		InitializeFrame();
 	}
 
 	Frame::~Frame ()
 	{
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Frame::Setup (AbstractWidget* widget)
@@ -146,6 +152,13 @@ namespace BlendInt {
 	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			inner_->Reset();
+
 			set_size(*request.size());
 
 			if (first()) {
@@ -206,7 +219,41 @@ namespace BlendInt {
 
 	ResponseType Frame::Draw (const Profile& profile)
 	{
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		program->Use();
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float)position().x(), (float)position().y(), 0.f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.0f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+
+		program->Reset();
+
 		return Ignore;
+	}
+
+	void Frame::InitializeFrame ()
+	{
+		glGenVertexArrays(1, &vao_);
+
+		glBindVertexArray(vao_);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		inner_->Reset();
 	}
 
 } /* namespace BlendInt */

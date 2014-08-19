@@ -726,10 +726,8 @@ namespace BlendInt {
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
 
-		int w = out_size.width() - margin.left()
-							- margin.right();
-		int h = out_size.height() - margin.top()
-							- margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
 
 		FillSingleWidget(index, x, y, w, h);
 	}

@@ -87,6 +87,14 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+	private:
+
+		void InitializeFrame ();
+
+		GLuint vao_;
+
+		RefPtr<GLArrayBuffer> inner_;
+
 	};
 
 } /* namespace BlendInt */
