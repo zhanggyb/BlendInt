@@ -28,9 +28,10 @@
 namespace BlendInt {
 
 	ButtonGroup::ButtonGroup ()
-	: m_last_active(0), m_mode (SingleSelection)
+	: last_active_(0),
+	  mode_(SingleSelection)
 	{
-		m_events.reset(new Cpp::ConnectionScope);
+		events_.reset(new Cpp::ConnectionScope);
 	}
 
 	ButtonGroup::~ButtonGroup ()
@@ -41,25 +42,25 @@ namespace BlendInt {
 	{
 		if(!button) return;
 
-		std::vector<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
-		if(it != m_group.end()) {
+		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
+		if(it != buttons_.end()) {
 			DBG_PRINT_MSG("Button %s already in button group.", button->name().c_str());
 			return;
 		}
 
-		m_group.push_back(button);
+		buttons_.push_back(button);
 
-		m_events->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
-		m_events->connect(button->clicked(), this, &ButtonGroup::OnButtonClicked);
-		m_events->connect(button->toggled(), this, &ButtonGroup::OnButtonToggled);
+		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
+		events_->connect(button->clicked(), this, &ButtonGroup::OnButtonClicked);
+		events_->connect(button->toggled(), this, &ButtonGroup::OnButtonToggled);
 	}
 	
 	void ButtonGroup::Remove (AbstractButton* button)
 	{
 		if(!button) return;
 
-		std::vector<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
-		if(it == m_group.end()) {
+		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
+		if(it == buttons_.end()) {
 			DBG_PRINT_MSG("Button %s is not in button group.", button->name().c_str());
 			return;
 		}
@@ -67,60 +68,60 @@ namespace BlendInt {
 		button->toggled().disconnectOne(this, &ButtonGroup::OnButtonToggled);
 		button->clicked().disconnectOne(this, &ButtonGroup::OnButtonClicked);
 		button->destroyed().disconnectOne(this, &ButtonGroup::OnButtonDestroyed);
-		m_group.erase(it);
+		buttons_.erase(it);
 	}
 	
 	void ButtonGroup::OnButtonClicked ()
 	{
 		DBG_PRINT_MSG("%s", "get button clicked event");
 
-		if(m_last_active) {
-			m_last_active->SetDown(false);
+		if(last_active_) {
+			last_active_->SetDown(false);
 		}
 
 		int i = 0;
-		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
+		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end(); it++)
 		{
-			m_last_active = *it;
-			if(m_last_active->focused()) {
+			last_active_ = *it;
+			if(last_active_->focused()) {
 				break;
 			}
 			i++;
 		}
 
-		m_button_clicked.fire(m_last_active);
-		m_button_index_clicked.fire(i);
+		button_clicked_.fire(last_active_);
+		button_index_clicked_.fire(i);
 	}
 	
 	void ButtonGroup::OnButtonToggled (bool toggled)
 	{
-		AbstractButton* original_active_button = m_last_active;
+		AbstractButton* original_active_button = last_active_;
 
-		if(m_mode == SingleSelection && m_last_active) {
-			m_last_active->set_checked(false);
+		if(mode_ == SingleSelection && last_active_) {
+			last_active_->set_checked(false);
 		}
 
 		int i = 0;
-		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
+		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end(); it++)
 		{
-			m_last_active = *it;
-			if(m_last_active->focused()) {
+			last_active_ = *it;
+			if(last_active_->focused()) {
 				break;
 			}
 			i++;
 		}
 
-		if(m_mode == SingleSelection) {
-			m_last_active->set_checked(true);
+		if(mode_ == SingleSelection) {
+			last_active_->set_checked(true);
 			toggled = true;
 		} else {
-			m_last_active->set_checked(toggled);
+			last_active_->set_checked(toggled);
 		}
 
-		if(original_active_button == m_last_active) return;	// Do not fire events repeatedly
+		if(original_active_button == last_active_) return;	// Do not fire events repeatedly
 
-		m_button_toggled.fire(m_last_active, toggled);
-		m_button_index_toggled.fire(i, toggled);
+		button_toggled_.fire(last_active_, toggled);
+		button_index_toggled_.fire(i, toggled);
 	}
 
 	void ButtonGroup::OnButtonDestroyed (AbstractWidget* button)
