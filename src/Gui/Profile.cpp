@@ -21,56 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_PROFILE_HPP_
-#define _BLENDINT_GUI_PROFILE_HPP_
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/Profile.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	class Context;
-	class Section;
+	using Stock::Shaders;
 
-	/**
-	 * @brief Global setting for widget drawing
-	 */
-	class Profile
+	void Profile::PushStencil(const RefPtr<GLArrayBuffer>& vertex_buffer, int count) const
 	{
-	public:
+	}
 
-		Profile ()
-		: context_(0),
-		  section_(0)
-		{
-		}
-
-		~Profile ()
-		{
-		}
-
-		Context* context () const
-		{
-			return context_;
-		}
-
-		Section* section () const
-		{
-			return section_;
-		}
-
-		void PushStencil (const RefPtr<GLArrayBuffer>& vertex_buffer, int count) const;
-
-		void PopStencil () const;
-
-	private:
-
-		friend class Context;
-		friend class Section;
-
-		Context* context_;
-		Section* section_;
-	};
+	void Profile::PopStencil() const
+	{
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_PROFILE_HPP_ */

@@ -239,7 +239,7 @@ namespace BlendInt {
 	{
 
 		if(m_current_context) {
-			m_current_context->Draw(m_current_context->m_redraw_event);
+			m_current_context->Draw(m_current_context->profile_);
 		}
 	}
 

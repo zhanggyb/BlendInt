@@ -66,9 +66,13 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		GLuint vaos_[4];
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
+
+		RefPtr<GLArrayBuffer> area_;
+
+		RefPtr<GLArrayBuffer> rect_;	// used for test stencil stack only, temporarily
 
 	};
 

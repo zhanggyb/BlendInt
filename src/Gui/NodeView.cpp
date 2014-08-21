@@ -41,34 +41,68 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	NodeView::NodeView()
 	: AbstractWidget()
 	{
 		set_size (400, 300);
 		set_round_type(RoundAll);
 		set_round_radius(10.f);
-		set_drop_shadow(true);
+		//set_drop_shadow(true);
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(4, vaos_);
+		glBindVertexArray(vaos_[0]);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		tool.SetInnerBufferData(m_inner_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		tool.SetOuterBufferData(m_outer_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray(vaos_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vaos_[2]);
+		area_.reset(new GLArrayBuffer);
+		area_->Generate();
+		area_->Bind();
+
+		GLfloat verts1[] = {
+				0.f, 0.f,
+				350.f, 0.f,
+				0.f, 250.f,
+				350.f, 250.f
+		};
+
+		area_->SetData(sizeof(verts1), verts1);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vaos_[3]);
+		rect_.reset(new GLArrayBuffer);
+		rect_->Generate();
+		rect_->Bind();
+
+		GLfloat verts2[] = {
+				0.f, 0.f,
+				200.f, 0.f,
+				0.f, 200.f,
+				200.f, 200.f
+		};
+
+		rect_->SetData(sizeof(verts2), verts2);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
@@ -76,7 +110,7 @@ namespace BlendInt {
 
 	NodeView::~NodeView ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(4, vaos_);
 	}
 
 	void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -85,10 +119,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_size(*request.size());
 			Refresh();
@@ -103,10 +137,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -122,10 +156,10 @@ namespace BlendInt {
 			VertexTool tool;
 			tool.Setup(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			m_inner_buffer->Bind();
-			tool.SetInnerBufferData(m_inner_buffer.get());
-			m_outer_buffer->Bind();
-			tool.SetOuterBufferData(m_outer_buffer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -136,30 +170,77 @@ namespace BlendInt {
 
 	ResponseType NodeView::Draw(const Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4fv("a_color",
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 				Theme::instance->regular().inner.data());
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		program->SetUniform1i("u_AA", 1);
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
+		// Stencil test
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glEnable(GL_STENCIL_TEST);
+		glClearStencil(0);	// default is 0
+		glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
+		//glDepthMask(GL_FALSE);
+		glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
+		glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
 
-		glBindVertexArray(m_vao[1]);
+		// draw stencil pattern
+		//glStencilMask(0xFF);
+
+		//glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f, 1.f,
+		//		1.f, 1.f);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);	// GL_NEVER: always fails
+		glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 25, 0.f);
+		glBindVertexArray(vaos_[2]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		//glDepthMask(GL_TRUE);
+
+		//glStencilMask(0x00);
+
+		// draw where stencil's value is 0
+		//glStencilFunc(GL_EQUAL, 0, 0xFF);
+		/* (nothing to draw) */
+
+		// draw only where stencil's value is 1
+		glStencilFunc(GL_EQUAL, 2, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 300, (float) position().y() + 150, 0.f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f, 0.2f, 0.2f, 0.9f);
+		glBindVertexArray(vaos_[3]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glDisable(GL_STENCIL_TEST);
+
+		// Stencil test end
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.f, 0.f, 1.f, 1.f);
+
+		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
+
 		program->Reset();
 
 		return Accept;
