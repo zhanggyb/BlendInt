@@ -39,7 +39,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType RadioButton::Draw (const Profile& profile)
+	ResponseType RadioButton::Draw (Profile& profile)
 	{
 		return Accept;
 	}

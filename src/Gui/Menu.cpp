@@ -215,7 +215,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Menu::Draw (const Profile& profile)
+	ResponseType Menu::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 		using std::deque;

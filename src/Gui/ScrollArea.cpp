@@ -140,7 +140,7 @@ namespace BlendInt {
 
 	}
 
-	ResponseType ScrollArea::Draw (const Profile& profile)
+	ResponseType ScrollArea::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

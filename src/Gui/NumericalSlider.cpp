@@ -246,7 +246,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 	
-	ResponseType NumericalSlider::Draw (const Profile& profile)
+	ResponseType NumericalSlider::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

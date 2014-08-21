@@ -191,7 +191,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType HBlockLayout::Draw (const Profile& profile)
+	ResponseType HBlockLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

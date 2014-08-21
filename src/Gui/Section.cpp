@@ -464,9 +464,9 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Section::Draw (const Profile& profile)
+	ResponseType Section::Draw (Profile& profile)
 	{
-		const_cast<Profile&>(profile).section_ = this;
+		profile.section_ = this;
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
@@ -569,7 +569,7 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
-	        const Profile& profile, ScissorStatus& scissor)
+	        Profile& profile, ScissorStatus& scissor)
 	{
 		if (widget->visiable()) {
 
@@ -617,7 +617,7 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
-	        const Profile& profile)
+	        Profile& profile)
 	{
 		if (widget && widget->visiable()) {
 

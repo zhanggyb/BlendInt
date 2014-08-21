@@ -136,7 +136,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (const Profile& profile)
+	ResponseType FileBrowser::Draw (Profile& profile)
 	{
 		int y = position().y() + size().height();
 

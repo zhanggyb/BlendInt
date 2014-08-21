@@ -110,7 +110,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	ResponseType ListView::Draw (const Profile& profile)
+	ResponseType ListView::Draw (Profile& profile)
 	{
 		int y = position().y() + size().height();
 

@@ -19,7 +19,7 @@ public:
 	
 protected:
 	
-	virtual BI::ResponseType Draw (const BI::Profile& profile);
+	virtual BI::ResponseType Draw (BI::Profile& profile);
 	
 private:
 	

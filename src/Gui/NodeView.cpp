@@ -168,7 +168,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType NodeView::Draw(const Profile& profile)
+	ResponseType NodeView::Draw(Profile& profile)
 	{
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
@@ -186,10 +186,11 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 
 		// Stencil test
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glEnable(GL_STENCIL_TEST);
 		glClearStencil(0);	// default is 0
 		glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
+
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		//glDepthMask(GL_FALSE);
 		glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
 		glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
@@ -202,7 +203,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);	// GL_NEVER: always fails
+		glStencilFunc(GL_LESS, 1, 0xFF);
 		glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 25, 0.f);

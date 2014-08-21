@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 

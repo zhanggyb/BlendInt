@@ -120,7 +120,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType FileSelector::Draw (const Profile& profile)
+	ResponseType FileSelector::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

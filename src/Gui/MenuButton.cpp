@@ -109,7 +109,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType MenuButton::Draw (const Profile& profile)
+	ResponseType MenuButton::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

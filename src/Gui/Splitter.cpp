@@ -193,7 +193,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType SplitterHandle::Draw (const Profile& profile)
+	ResponseType SplitterHandle::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -575,7 +575,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Splitter::Draw (const Profile& profile)
+	ResponseType Splitter::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

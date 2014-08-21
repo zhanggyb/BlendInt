@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
-		static void DispatchDrawEvent (AbstractWidget* widget, const Profile& profile, ScissorStatus& scissor);
+		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile, ScissorStatus& scissor);
 
 	protected:
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -122,7 +122,7 @@ namespace BlendInt {
 
 	private:
 
-		void DispatchDrawEvent (AbstractWidget* widget, const Profile& profile);
+		void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
 
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 

@@ -270,7 +270,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Stack::Draw (const Profile& event)
+	ResponseType Stack::Draw (Profile& event)
 	{
 		return Ignore;
 	}

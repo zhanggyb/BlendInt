@@ -133,7 +133,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Separator::Draw (const Profile& profile)
+	ResponseType Separator::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

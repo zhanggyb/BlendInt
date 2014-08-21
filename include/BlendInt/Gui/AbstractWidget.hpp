@@ -552,7 +552,7 @@ namespace BlendInt {
 			size_ = size;
 		}
 
-		virtual ResponseType Draw (const Profile& profile) = 0;
+		virtual ResponseType Draw (Profile& profile) = 0;
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
 

@@ -75,7 +75,7 @@ namespace BlendInt {
 
 		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, const Profile& profile);
+		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, Profile& profile);
 
 		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
 

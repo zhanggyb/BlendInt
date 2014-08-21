@@ -174,7 +174,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Workspace::Draw (const Profile& profile)
+	ResponseType Workspace::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

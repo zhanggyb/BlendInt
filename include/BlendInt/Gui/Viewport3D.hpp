@@ -88,7 +88,7 @@ namespace BlendInt {
 
 	private:
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		void InitOnce ();
 

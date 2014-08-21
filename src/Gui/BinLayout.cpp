@@ -135,7 +135,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType BinLayout::Draw (const Profile& profile)
+	ResponseType BinLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

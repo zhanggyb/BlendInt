@@ -227,7 +227,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ToolBar::Draw (const Profile& profile)
+	ResponseType ToolBar::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

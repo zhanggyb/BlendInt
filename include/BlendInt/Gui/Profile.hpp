@@ -40,7 +40,8 @@ namespace BlendInt {
 
 		Profile ()
 		: context_(0),
-		  section_(0)
+		  section_(0),
+		  stencil_count_(0)
 		{
 		}
 
@@ -58,9 +59,13 @@ namespace BlendInt {
 			return section_;
 		}
 
-		void PushStencil (const RefPtr<GLArrayBuffer>& vertex_buffer, int count) const;
+		void BeginPushStencil ();
 
-		void PopStencil () const;
+		void StopPushStencil ();
+
+		void BeginPopStencil ();
+
+		void StopPopStencil ();
 
 	private:
 
@@ -69,6 +74,8 @@ namespace BlendInt {
 
 		Context* context_;
 		Section* section_;
+
+		GLuint stencil_count_;
 	};
 
 }

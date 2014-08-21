@@ -83,7 +83,7 @@ namespace BlendInt {
 		BinLayout::PerformSizeUpdate(request);
 	}
 
-	ResponseType FramePanel::Draw (const Profile& profile)
+	ResponseType FramePanel::Draw (Profile& profile)
 	{
 		if(refresh_) {
 

@@ -195,7 +195,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ColorSelector::Draw (const Profile& profile)
+	ResponseType ColorSelector::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

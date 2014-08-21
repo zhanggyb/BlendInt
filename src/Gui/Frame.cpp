@@ -217,7 +217,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Frame::Draw (const Profile& profile)
+	ResponseType Frame::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

@@ -262,7 +262,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ScrollView::Draw (const Profile& profile)
+	ResponseType ScrollView::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 
