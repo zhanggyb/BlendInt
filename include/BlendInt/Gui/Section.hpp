@@ -78,11 +78,11 @@ namespace BlendInt {
 
 		static Section* GetSection (AbstractWidget* widget);
 
-		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
+		static void RenderToTexture (AbstractWidget* widget, Profile& profile, GLTexture2D* texture);
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
-		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile, ScissorStatus& scissor);
+		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
 
 	protected:
 
@@ -122,8 +122,6 @@ namespace BlendInt {
 
 	private:
 
-		void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
-
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
 		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
@@ -141,8 +139,6 @@ namespace BlendInt {
 		AbstractWidget* m_focused_widget;
 
 		AbstractWidget* last_hover_widget_;
-
-		ScissorStatus m_scissor_status;
 
 		Mode mode_;
 

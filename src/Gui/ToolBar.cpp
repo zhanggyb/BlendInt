@@ -53,7 +53,6 @@ namespace BlendInt {
 	{
 		set_size(200, 32);
 		set_margin(4, 4, 4, 4);	// the same as MenuBar
-		set_scissor_test(true);
 
 		InitializeToolBar();
 	}

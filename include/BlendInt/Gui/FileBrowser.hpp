@@ -100,11 +100,13 @@ namespace BlendInt {
 
 		void OnVBarSlide (int val);
 
-		GLuint vao_;
+		GLuint vaos_[2];
 
 		Font font_;
 
 		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> row_;
 
 		String file_selected_;
 

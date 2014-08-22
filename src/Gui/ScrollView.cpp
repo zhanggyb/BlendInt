@@ -49,7 +49,6 @@ namespace BlendInt {
 	{
 		set_margin(0, 0, 0, 0);
 		set_size(400, 300);
-		set_scissor_test(true);
 
 		glGenVertexArrays(1, &m_vao);
 

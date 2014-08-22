@@ -60,13 +60,6 @@ namespace BlendInt {
 	{
 	public:
 
-		Profile ()
-		: context_(0),
-		  section_(0),
-		  stencil_count_(0)
-		{
-		}
-
 		~Profile ()
 		{
 		}
@@ -93,6 +86,13 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
+
+		Profile ()
+		: context_(0),
+		  section_(0),
+		  stencil_count_(0)
+		{
+		}
 
 		Context* context_;
 		Section* section_;

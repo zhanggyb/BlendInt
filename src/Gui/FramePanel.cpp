@@ -87,7 +87,7 @@ namespace BlendInt {
 	{
 		if(refresh_) {
 
-			RenderToBuffer();
+			RenderToBuffer(profile);
 
 			refresh_ = false;
 		}
@@ -120,7 +120,14 @@ namespace BlendInt {
 		inner_->Reset();
 	}
 
-	void FramePanel::RenderToBuffer ()
+	void FramePanel::ExportTextureToFile (const std::string& filename)
+	{
+		tex_buffer_.texture()->Bind();
+		tex_buffer_.texture()->WriteToFile(filename);
+		tex_buffer_.texture()->Reset();
+	}
+
+	void FramePanel::RenderToBuffer (Profile& profile)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -168,78 +175,81 @@ namespace BlendInt {
 
 			fb->Bind();
 
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+//			glClearColor(0.0, 0.0, 0.0, 0.0);
+//			glClearDepth(1.0);
+//			glClearStencil(0);
+//
+//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glEnable(GL_BLEND);
 
 			glm::mat4 origin;
+			glGetUniformfv(Shaders::instance->triangle_program()->id(),
+					Shaders::instance->triangle_uniform_projection(),
+					glm::value_ptr(origin));
+
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 			        -100.f);
 
 			RefPtr<GLSLProgram> program =
 			        Shaders::instance->triangle_program();
-			program->GetUniformfv("u_projection", glm::value_ptr(origin));
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->line_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->image_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
-
-			Profile event;
-			ScissorStatus scissor;
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, width, height);
 
 			// Draw frame panel
-//			program = Shaders::instance->triangle_program();
-//			program->Use();
-//
-//			program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
-//			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
-//			program->SetUniform1i("u_gamma", 0);
-//			program->SetUniform1i("u_AA", 0);
-//
-//			glBindVertexArray(m_vao);
-//			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-//			glBindVertexArray(0);
+			program = Shaders::instance->triangle_program();
+			program->Use();
+
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+					(float) position().x(), (float) position().y(), 0.f);
+			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
+					0.447f, 0.447f, 1.0f);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+			glBindVertexArray(vao_);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+			glBindVertexArray(0);
 
 			if(first()) {
-				Section::DispatchDrawEvent(first(), event, scissor);
+				Section::DispatchDrawEvent(first(), profile);
 			}
 
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 			program = Shaders::instance->triangle_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->line_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->text_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->image_program();
 			program->Use();
-			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 
 			program->Reset();

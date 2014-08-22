@@ -40,12 +40,16 @@
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Interface.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Viewport3D::Viewport3D ()
 	: AbstractWidget(),
+	  vao_(0),
 	  m_last_x(0),
 	  m_last_y(0),
 	  m_rX(0.0),
@@ -55,11 +59,12 @@ namespace BlendInt {
 		set_size(600, 500);
 		set_drop_shadow(true);
 
-		InitOnce();
+		InitializeViewport3DOnce();
 	}
 
 	Viewport3D::~Viewport3D ()
 	{
+		glDeleteVertexArrays(1, &vao_);
 		cameras_.clear();
 	}
 
@@ -223,6 +228,12 @@ namespace BlendInt {
 			default_camera_->SetPerspective(default_camera_->fovy(),
 			        1.f * request.size()->width() / request.size()->height());
 
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0.f);
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			inner_->Reset();
+
 			set_size(*request.size());
 		}
 
@@ -232,8 +243,9 @@ namespace BlendInt {
 	void Viewport3D::Render ()
 	{
 		/* Clear the buffer, clear the matrix */
-		glClearColor(0.25, 0.25, 0.25, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClearColor(0.25, 0.25, 0.25, 1.0);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 		gridfloor_->Render(default_camera_->projection(), default_camera_->view());
 
@@ -245,23 +257,75 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::Draw (Profile& profile)
 	{
-        GLint vp[4];
+		// TODO: check the performance difference between scissor and stencil.
+
+        GLint vp[4];	// Original viewport
+        //GLint sci[4];
+        //GLboolean scissor_status;
+
         glGetIntegerv(GL_VIEWPORT, vp);
+        //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);
+
+        //if(scissor_status == GL_TRUE) {
+        //	glGetIntegerv(GL_SCISSOR_BOX, sci);
+        //}
+
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		program->Use();
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(),
+				0.25f, 0.25f, 0.25f, 1.f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+
+		profile.BeginPushStencil();	// inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		profile.EndPushStencil();
+
+		glBindVertexArray(0);
+		program->Reset();
 
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(position().x(), position().y(), size().width(),
-                size().height());
+//        glEnable(GL_SCISSOR_TEST);
+//        glScissor(position().x(), position().y(), size().width(),
+//                size().height());
 
         glViewport(position().x(), position().y(), size().width(),
                 size().height());
+
         // --------------------------------------------------------------------------------
         Render();
         // --------------------------------------------------------------------------------
-        glDisable(GL_SCISSOR_TEST);
+
+//        if(scissor_status == GL_TRUE) {
+//        	glScissor(sci[0], sci[1], sci[2], sci[3]);
+//        } else {
+//        	glDisable(GL_SCISSOR_TEST);
+//        }
+
         glDisable(GL_DEPTH_TEST);
 
         glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+        program->Use();
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+		profile.BeginPopStencil();	// pop inner stencil
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		glBindVertexArray(0);
+		profile.EndPopStencil();
+		program->Reset();
 
 		return Accept;
 	}
@@ -303,8 +367,27 @@ namespace BlendInt {
 		m_primitives.push_back(primitive);
 	}
 
-	void Viewport3D::InitOnce ()
+	void Viewport3D::InitializeViewport3DOnce ()
 	{
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0.f);
+
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+
+		tool.SetInnerBufferData(inner_.get());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+
 		default_camera_.reset(new NavigationCamera);
 
 		// setup camera

@@ -29,8 +29,8 @@ private:
 
 	BI::Button* m_button;
 
-	BI::Frame* m_panel;
-	//BI::FramePanel* m_panel;
+//	BI::Frame* m_panel;
+	BI::FramePanel* m_panel;
 	
 	BI::FramePanel* view3d_frame_;
 	

@@ -231,7 +231,7 @@ namespace BlendInt
 	void Context::RenderToTexture (AbstractWidget* widget,
 	        GLTexture2D* texture)
 	{
-		Section::RenderToTexture(widget, texture);
+		//Section::RenderToTexture(widget, profile_, texture);
 	}
 
 	void Context::RenderToFile (AbstractWidget* widget,

@@ -393,11 +393,6 @@ namespace BlendInt {
 			return flags_ & WidgetFlagVisibility;
 		}
 
-		inline bool scissor_test () const
-		{
-			return flags_ & WidgetFlagScissorTest;
-		}
-
 		inline bool managed () const
 		{
 			return flags_ & WidgetFlagManaged;
@@ -648,15 +643,6 @@ namespace BlendInt {
 			}
 		}
 
-		void set_scissor_test (bool status)
-		{
-			if(status) {
-				SETBIT(flags_, WidgetFlagScissorTest);
-			} else {
-				CLRBIT(flags_, WidgetFlagScissorTest);
-			}
-		}
-
 		void set_round_type (int type)
 		{
 			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
@@ -700,12 +686,9 @@ namespace BlendInt {
 
 			WidgetFlagVisibility = (1 << 8),
 
-			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
-			WidgetFlagScissorTest = (1 << 9),
+			WidgetFlagDropShadow = (1 << 9),
 
-			WidgetFlagDropShadow = (1 << 10),
-
-			WidgetFlagEmboss = (1 << 11)
+			WidgetFlagEmboss = (1 << 10)
 
 		};
 

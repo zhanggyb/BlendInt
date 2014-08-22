@@ -45,7 +45,6 @@ namespace BlendInt {
 	: AbstractContainer()
 	{
 		set_size(500, 400);
-		set_scissor_test(true);
 		set_drop_shadow(true);
 
 		InitializeWorkspace();

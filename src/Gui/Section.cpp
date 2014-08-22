@@ -45,6 +45,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	AbstractWidget* Section::iterator_ptr = 0;
 
 	Section::Section ()
@@ -147,10 +149,8 @@ namespace BlendInt {
 		return dynamic_cast<Section*>(section);
 	}
 
-	void Section::RenderToTexture (AbstractWidget* widget, GLTexture2D* texture)
+	void Section::RenderToTexture (AbstractWidget* widget, Profile& profile, GLTexture2D* texture)
 	{
-		using Stock::Shaders;
-
 #ifdef DEBUG
 		assert(widget && texture);
 #endif
@@ -205,14 +205,15 @@ namespace BlendInt {
 
 			fb->Bind();
 
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+//			glClearColor(0.0, 0.0, 0.0, 0.0);
+//			glClearDepth(1.0);
+//			glClearStencil(0);
+//
+//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-			glEnable(GL_BLEND);
+			//glEnable(GL_BLEND);
 
 			glm::mat4 origin;
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
@@ -237,14 +238,11 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			Profile event;
-			ScissorStatus scissor;
-
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, width, height);
 
-			DispatchDrawEvent(widget, event, scissor);
+			DispatchDrawEvent(widget, profile);
 
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -266,6 +264,8 @@ namespace BlendInt {
 					glm::value_ptr(origin));
 
 			program->Reset();
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		fb->Reset();
@@ -369,13 +369,12 @@ namespace BlendInt {
 			        glm::value_ptr(projection));
 
 			Profile event;
-			ScissorStatus scissor;
 
-            GLint vp[4];
+			GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, width, height);
 
-			DispatchDrawEvent(widget, event, scissor);
+			DispatchDrawEvent(widget, event);
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -569,54 +568,6 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
-	        Profile& profile, ScissorStatus& scissor)
-	{
-		if (widget->visiable()) {
-
-			if(widget->drop_shadow() && widget->shadow_) {
-				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
-			}
-
-			ResponseType response = widget->Draw(profile);
-			if(response == Accept) return;
-
-			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
-			if (parent) {
-
-				if(parent->scissor_test()) {
-					scissor.Push(parent->position().x() + parent->margin().left(),
-							parent->position().y() + parent->margin().right(),
-							parent->size().width() - parent->margin().left() - parent->margin().right(),
-							parent->size().height() - parent->margin().top() - parent->margin().bottom());
-				}
-
-				if(scissor.valid()) {
-					scissor.Enable();
-
-					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
-					{
-						DispatchDrawEvent(sub, profile, scissor);
-					}
-
-				} else {
-
-					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
-					{
-						DispatchDrawEvent(sub, profile, scissor);
-					}
-				}
-
-				if(parent->scissor_test()) {
-					scissor.Pop();
-					scissor.Disable();
-				}
-
-			}
-
-		}
-	}
-
-	void Section::DispatchDrawEvent (AbstractWidget* widget,
 	        Profile& profile)
 	{
 		if (widget && widget->visiable()) {
@@ -631,32 +582,9 @@ namespace BlendInt {
 			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
 			if (parent) {
 
-				if(parent->scissor_test()) {
-					m_scissor_status.Push(parent->position().x() + parent->margin().left(),
-							parent->position().y() + parent->margin().right(),
-							parent->size().width() - parent->margin().left() - parent->margin().right(),
-							parent->size().height() - parent->margin().top() - parent->margin().bottom());
-				}
-
-				if(m_scissor_status.valid()) {
-					m_scissor_status.Enable();
-
-					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
-					{
-						DispatchDrawEvent(sub, profile);
-					}
-
-				} else {
-
-					for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
-					{
-						DispatchDrawEvent(sub, profile);
-					}
-				}
-
-				if(parent->scissor_test()) {
-					m_scissor_status.Pop();
-					m_scissor_status.Disable();
+				for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+				{
+					DispatchDrawEvent(sub, profile);
 				}
 
 			}

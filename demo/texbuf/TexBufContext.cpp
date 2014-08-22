@@ -11,6 +11,7 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
+#include <BlendInt/Gui/NodeView.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
@@ -37,16 +38,16 @@ void TexBufContext::CreateWidgets ()
 
 	m_button = Manage(new Button("Take Screenshot"));
 
-	FileSelector* fs = Manage(new FileSelector);
+	FileBrowser* view = Manage(new FileBrowser);
 
-	m_panel = Manage(new Frame);
+	m_panel = Manage(new FramePanel);
 	//m_panel->SetMargin(10, 10, 10, 10);
-	m_panel->Setup(fs);
+	m_panel->Setup(view);
 	m_panel->SetPosition(100, 100);
 	m_panel->Resize(800, 600);
 
-	DBG_PRINT_MSG("pos: %d, %d", fs->position().x(), fs->position().y());
-	DBG_PRINT_MSG("size: %d, %d", fs->size().width(), fs->size().height());
+	//DBG_PRINT_MSG("pos: %d, %d", fs->position().x(), fs->position().y());
+	//DBG_PRINT_MSG("size: %d, %d", fs->size().width(), fs->size().height());
 
 	FramePanel* btn_panel = Manage(new FramePanel);
 	btn_panel->Setup(m_button);
@@ -62,7 +63,7 @@ void TexBufContext::CreateWidgets ()
 	label_frame_ = Manage(new FramePanel);
 	label_frame_->Setup (Manage(new Label("Label")));
 	label_frame_->Resize(label_frame_->GetPreferredSize());
-	label_frame_->SetPosition(100, 700);
+	label_frame_->SetPosition(100, 750);
 
 	PushBack(m_panel);
 
@@ -77,5 +78,5 @@ void TexBufContext::OnTakeScreenShot ()
 {
 	DBG_PRINT_MSG("%s", "Take a screen shot of panel");
 
-	BI::Section::RenderToFile(m_panel, "Panel.png");
+	m_panel->ExportTextureToFile("Panel.png");
 }
