@@ -362,11 +362,13 @@ namespace BlendInt
 		profile.context_ = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-
+		glClearStencil(0);
 		glClearDepth(1.0);
+
 		glClear(GL_COLOR_BUFFER_BIT |
-		GL_DEPTH_BUFFER_BIT |
-		GL_STENCIL_BUFFER_BIT);
+				GL_DEPTH_BUFFER_BIT |
+				GL_STENCIL_BUFFER_BIT);
+
 		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

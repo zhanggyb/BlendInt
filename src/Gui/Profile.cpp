@@ -48,14 +48,14 @@ namespace BlendInt {
 			glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
 		} else {
 			glStencilFunc(GL_LESS, stencil_count_, 0xFF);
-			glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+			glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // increase 1s on test fail (always)
 		}
+
+		stencil_count_++;
 	}
 
-	void Profile::StopPushStencil()
+	void Profile::EndPushStencil()
 	{
-		stencil_count_++;
-
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -64,21 +64,23 @@ namespace BlendInt {
 	void Profile::BeginPopStencil()
 	{
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glStencilFunc(GL_NOTEQUAL, stencil_count_, 0xFF);
+		glStencilFunc(GL_LESS, stencil_count_, 0xFF);
 		glStencilOp(GL_DECR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
 	}
 
-	void Profile::StopPopStencil()
+	void Profile::EndPopStencil()
 	{
 		if(stencil_count_ > 0) {
 			stencil_count_--;
+
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
 			if(stencil_count_ == 0) {
 				glDisable(GL_STENCIL_TEST);
-			} else {
-				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-				glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
-				glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 			}
+
 		}
 	}
 

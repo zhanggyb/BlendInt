@@ -185,43 +185,19 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		// Stencil test
-		glEnable(GL_STENCIL_TEST);
-		glClearStencil(0);	// default is 0
-		glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
-
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		//glDepthMask(GL_FALSE);
-		glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
-		glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
-
-		// draw stencil pattern
-		//glStencilMask(0xFF);
-
-		//glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f, 1.f,
-		//		1.f, 1.f);
+		profile.BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
+		profile.EndPushStencil();
 
-		glStencilFunc(GL_LESS, 1, 0xFF);
-		glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+		// Stack 2
+		profile.BeginPushStencil();	// area stencil
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 25, 0.f);
 		glBindVertexArray(vaos_[2]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		//glDepthMask(GL_TRUE);
-
-		//glStencilMask(0x00);
-
-		// draw where stencil's value is 0
-		//glStencilFunc(GL_EQUAL, 0, 0xFF);
-		/* (nothing to draw) */
-
-		// draw only where stencil's value is 1
-		glStencilFunc(GL_EQUAL, 2, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+		profile.EndPushStencil();
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 300, (float) position().y() + 150, 0.f);
@@ -229,7 +205,17 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[3]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		glDisable(GL_STENCIL_TEST);
+		profile.BeginPopStencil();	// pop area stencil
+		glBindVertexArray(vaos_[2]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		profile.EndPopStencil();
+
+		profile.BeginPopStencil();	// pop inner stencil
+		glBindVertexArray(vaos_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		profile.EndPopStencil();
+
 
 		// Stencil test end
 
