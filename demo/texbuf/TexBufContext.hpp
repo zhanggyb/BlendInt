@@ -29,15 +29,9 @@ private:
 
 	BI::Button* m_button;
 
-//	BI::Frame* m_panel;
-	BI::FramePanel* m_panel;
+	BI::Frame* m_panel1;
 	
-	BI::FramePanel* view3d_frame_;
-	
-	BI::FramePanel* label_frame_;
-	
-	BI::FramePanel* toggle_frame_;
-	
+	BI::FramePanel* m_panel2;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

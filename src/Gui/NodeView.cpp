@@ -193,14 +193,14 @@ namespace BlendInt {
 		// Stack 2
 		profile.BeginPushStencil();	// area stencil
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 25, 0.f);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 425, 0.f);
 		glBindVertexArray(vaos_[2]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		profile.EndPushStencil();
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 300, (float) position().y() + 150, 0.f);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 300, (float) position().y() + 450, 0.f);
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f, 0.2f, 0.2f, 0.9f);
 		glBindVertexArray(vaos_[3]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

@@ -50,7 +50,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Frame::Frame ()
-	: AbstractContainer(),
+	: BinLayout(),
 	  vao_(0)
 	{
 		set_size(400, 300);
@@ -61,92 +61,6 @@ namespace BlendInt {
 	Frame::~Frame ()
 	{
 		glDeleteVertexArrays(1, &vao_);
-	}
-
-	bool Frame::Setup (AbstractWidget* widget)
-	{
-		bool ret = false;
-
-		if(!widget) return false;
-
-		if(widget->container() == this) return true;
-
-		if(widget_count() > 0) {
-			Clear();
-		}
-
-		if (PushBackSubWidget(widget)) {
-			FillSingleWidget(0, position(), size(), margin());
-			ret = true;
-		}
-
-		return ret;
-	}
-
-	bool Frame::Remove (AbstractWidget* widget)
-	{
-		return RemoveSubWidget(widget);
-	}
-
-	bool Frame::IsExpandX() const
-	{
-		if(first()) {
-			return first()->IsExpandX();
-		} else {
-			return false;
-		}
-	}
-
-	bool Frame::IsExpandY() const
-	{
-		if(first()) {
-			return first()->IsExpandY();
-		} else {
-			return false;
-		}
-	}
-
-	Size Frame::GetPreferredSize() const
-	{
-		Size prefer(400, 300);
-
-		const AbstractWidget* widget = first();
-
-		if(widget) {
-			prefer = widget->GetPreferredSize();
-
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
-		}
-
-		return prefer;
-	}
-
-	void Frame::PerformMarginUpdate(const Margin& request)
-	{
-		set_margin(request);
-
-		if(first()) {
-			FillSingleWidget(0, position(), size(), request);
-		}
-	}
-
-	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Frame::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
 	}
 
 	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -161,7 +75,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			if (first()) {
+			if (widget_count()) {
+				assert(widget_count() == 1);
 				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
@@ -174,47 +89,15 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_position(*request.position());
-			SetSubWidgetPosition(first(),
-					request.position()->x() + margin().left(),
-					request.position()->y() + margin().bottom());
+			if(widget_count()) {
+				assert(widget_count() == 1);
+				SetSubWidgetPosition(first(),
+						request.position()->x() + margin().left(),
+						request.position()->y() + margin().bottom());
+			}
 		}
 
 		ReportPositionUpdate(request);
-	}
-
-	ResponseType Frame::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	ResponseType Frame::Draw (Profile& profile)

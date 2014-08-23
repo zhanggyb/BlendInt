@@ -78,6 +78,8 @@ namespace BlendInt {
 			inner_->Bind();
 			tool.SetInnerBufferData(inner_.get());
 			inner_->Reset();
+
+			refresh_ = true;
 		}
 
 		BinLayout::PerformSizeUpdate(request);
@@ -131,13 +133,14 @@ namespace BlendInt {
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
+
 		GLfloat left = position().x();
 		GLfloat bottom = position().y();
 
 		GLfloat right = left + width;
 		GLfloat top = bottom + height;
 
-		tex_buffer_.SetCoord(0.f, 0.f, width, height);
+		tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 		// Create and set texture to render to.
 		GLTexture2D* tex = tex_buffer_.texture();
 		if(!tex->texture())
@@ -147,7 +150,7 @@ namespace BlendInt {
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;
@@ -159,16 +162,17 @@ namespace BlendInt {
 				GL_TEXTURE_2D, tex->texture(), 0);
 		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
-		GLuint rb = 0;
+		// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+		GLuint rb;
 		glGenRenderbuffers(1, &rb);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-				width, height);
-
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+				size().width(), size().height());
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
 				GL_RENDERBUFFER, rb);
 
 		if(GLFramebuffer::CheckStatus()) {
@@ -212,7 +216,7 @@ namespace BlendInt {
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
-			glViewport(0, 0, width, height);
+			glViewport(0, 0, size().width(), size().height());
 
 			// Draw frame panel
 			program = Shaders::instance->triangle_program();
@@ -229,12 +233,15 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
 
+			Profile off_screen_profile(profile);
+
 			if(first()) {
-				Section::DispatchDrawEvent(first(), profile);
+				Section::DispatchDrawEvent(first(), off_screen_profile);
 			}
 
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
+
 			program = Shaders::instance->triangle_program();
 			program->Use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
