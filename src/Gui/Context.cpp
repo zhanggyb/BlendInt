@@ -359,7 +359,6 @@ namespace BlendInt
 	{
 		//glm::vec3 pos(position().x(), position().y(), z());
 		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-		profile.context_ = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearStencil(0);

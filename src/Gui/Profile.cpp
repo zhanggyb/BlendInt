@@ -36,8 +36,6 @@
 
 namespace BlendInt {
 
-	using Stock::Shaders;
-
 	void Profile::BeginPushStencil()
 	{
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

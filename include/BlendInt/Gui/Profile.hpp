@@ -24,12 +24,10 @@
 #ifndef _BLENDINT_GUI_PROFILE_HPP_
 #define _BLENDINT_GUI_PROFILE_HPP_
 
+#include <BlendInt/Core/Point.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
-
-	class Context;
-	class Section;
 
 	/**
 	 * @brief Global setting for widget drawing
@@ -61,31 +59,24 @@ namespace BlendInt {
 	public:
 
 		Profile ()
-		: context_(0),
-		  section_(0),
+		: stencil_count_(0)
+		{
+		}
+
+		Profile (const Point& point)
+		: origin_(point),
 		  stencil_count_(0)
 		{
 		}
 
-		Profile (const Profile& orig)
-		: context_(orig.context_),
-		  section_(orig.section_),
+		Profile (int x, int y)
+		: origin_(x, y),
 		  stencil_count_(0)
 		{
 		}
 
 		~Profile ()
 		{
-		}
-
-		Context* context () const
-		{
-			return context_;
-		}
-
-		Section* section () const
-		{
-			return section_;
 		}
 
 		void BeginPushStencil ();
@@ -96,13 +87,18 @@ namespace BlendInt {
 
 		void EndPopStencil ();
 
+		const Point& origin () const
+		{
+			return origin_;
+		}
+
 	private:
 
-		friend class Context;
-		friend class Section;
+		// disable
+		Profile (const Profile& orig);
+		Profile& operator = (const Profile& orig);
 
-		Context* context_;
-		Section* section_;
+		Point origin_;
 
 		GLuint stencil_count_;
 	};

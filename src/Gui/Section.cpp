@@ -465,8 +465,6 @@ namespace BlendInt {
 
 	ResponseType Section::Draw (Profile& profile)
 	{
-		profile.section_ = this;
-
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, profile);

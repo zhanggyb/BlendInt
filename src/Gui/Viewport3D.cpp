@@ -297,8 +297,10 @@ namespace BlendInt {
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-        glViewport(position().x(), position().y(), size().width(),
-                size().height());
+		glViewport(position().x() - profile.origin().x(),
+		        position().y() - profile.origin().y(),
+		        size().width(),
+		        size().height());
 
         // --------------------------------------------------------------------------------
         Render();

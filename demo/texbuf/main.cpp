@@ -22,14 +22,14 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("Texture Buffer Demo", 1280, 800);
+	GLFWwindow* win = CreateWindow("Texture Buffer Demo", 1600, 800);
 
 	TexBufContext* context = Manage(new TexBufContext);
 #ifdef DEBUG
 	context->set_name("TexBufContext");
 #endif
 	Interface::instance->SetCurrentContext(context);
-	context->Resize(1280, 800);
+	context->Resize(1600, 800);
 
 	RunLoop (win);
 

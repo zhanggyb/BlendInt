@@ -233,7 +233,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
 
-			Profile off_screen_profile(profile);
+			Profile off_screen_profile(position());
 
 			if(first()) {
 				Section::DispatchDrawEvent(first(), off_screen_profile);

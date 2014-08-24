@@ -14,6 +14,7 @@
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/ListView.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
@@ -39,9 +40,23 @@ void TexBufContext::CreateWidgets ()
 	m_button = Manage(new Button("Take Screenshot"));
 
 	//FileSelector* view = Manage(new FileSelector);
+	
+	Font my_font ("Droid Sans", 24);
+	
+	Label* label1 = Manage(new Label("Realtime Render"));
+	label1->SetFont(my_font);
+	label1->SetForegroundColor(Color(0xF0B0E0EF));
+	label1->SetBackgroundColor(Color(0x101010A0));
+	label1->Resize(label1->GetPreferredSize());
+	
+	Label* label2 = Manage(new Label("Off-screen Render Once"));
+	label2->SetFont(my_font);
+	label2->SetForegroundColor(Color(0xF0B0E0EF));
+	label2->SetBackgroundColor(Color(0x101010A0));
+	label2->Resize(label2->GetPreferredSize());
 
-	NodeView* view1 = Manage(new NodeView);
-	NodeView* view2 = Manage(new NodeView);
+	Viewport3D* view1 = Manage(new Viewport3D);
+	Viewport3D* view2 = Manage(new Viewport3D);
 
 	m_panel1 = Manage(new Frame);
 	m_panel2 = Manage(new FramePanel);
@@ -49,17 +64,21 @@ void TexBufContext::CreateWidgets ()
 	m_panel1->Setup(view1);
 	m_panel2->Setup(view2);
 
+	label1->SetPosition(50, 700);
 	m_panel1->SetPosition(50, 100);
-	m_panel1->Resize(580, 600);
+	m_panel1->Resize(720, 600);
 
-	m_panel2->SetPosition(650, 100);
-	m_panel2->Resize(580, 600);
+	label2->SetPosition(830, 700);
+	m_panel2->SetPosition(830, 100);
+	m_panel2->Resize(720, 600);
 
 	//DBG_PRINT_MSG("pos: %d, %d", fs->position().x(), fs->position().y());
 	//DBG_PRINT_MSG("size: %d, %d", fs->size().width(), fs->size().height());
 
-	m_button->SetPosition(550, 20);
+	m_button->SetPosition(750, 20);
 
+	Section* section = PushBack(label1);
+	section->PushBack(label2);
 	PushBack(m_panel1);
 	PushBack(m_panel2);
 	PushBack(m_button);
