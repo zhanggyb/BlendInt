@@ -87,5 +87,5 @@ void TexBufContext::OnTakeScreenShot ()
 {
 	DBG_PRINT_MSG("%s", "Take a screen shot of panel");
 
-	//m_panel->ExportTextureToFile("Panel.png");
+	m_panel2->RenderToFile("Panel2.png");
 }

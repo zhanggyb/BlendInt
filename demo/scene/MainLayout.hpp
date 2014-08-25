@@ -20,6 +20,8 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
+#include <BlendInt/OpenGL/TextureBuffer.hpp>
+
 namespace BI = BlendInt;
 
 class MainLayout: public BI::VLayout
@@ -30,7 +32,17 @@ public:
 
 	virtual ~MainLayout ();
 
+protected:
+
+	virtual void PerformRefresh (const BI::RefreshRequest& request);
+
+	virtual void PerformSizeUpdate (const BI::SizeUpdateRequest& request);
+
+	virtual BI::ResponseType Draw (BI::Profile& profile);
+
 private:
+
+	void RenderToBuffer ();
 
 	void InitOnce ();
 
@@ -72,6 +84,10 @@ private:
 	BI::Button* m_btn_open;
 
 	BI::Label* m_msg_label;
+
+	bool refresh_;
+
+	BI::TextureBuffer buffer_;
 };
 
 #endif

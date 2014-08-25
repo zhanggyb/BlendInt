@@ -108,11 +108,12 @@ namespace BlendInt {
 		ToggleButton* btn1 = Manage(new ToggleButton("RGB"));
 		ToggleButton* btn2 = Manage(new ToggleButton("HSV"));
 		ToggleButton* btn3 = Manage(new ToggleButton("Hex"));
-		btn1->SetChecked(true);
 
-		radio_group_.Add(btn1);
-		radio_group_.Add(btn2);
-		radio_group_.Add(btn3);
+		radio_group_.PushBack(btn1);
+		radio_group_.PushBack(btn2);
+		radio_group_.PushBack(btn3);
+
+		btn1->SetChecked(true);
 
 		HBlockLayout* btn_block = Manage(new HBlockLayout);
 		btn_block->SetMargin(4, 4, 4, 4);
@@ -137,7 +138,6 @@ namespace BlendInt {
 		hbox2->PushBack(pick_btn);
 
 		PushBack(hbox1);
-		//vbox->PushBack(colorwheel);
 		PushBack(btn_block);
 		PushBack(hbox2);
 

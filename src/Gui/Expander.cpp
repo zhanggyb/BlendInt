@@ -129,7 +129,7 @@ namespace BlendInt {
 		}
 
 		float rotate = 0.f;
-		if(checked()) {
+		if(is_checked()) {
 			rotate = 0.f;
 		} else {
 			rotate = -90.f;

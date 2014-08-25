@@ -98,9 +98,9 @@ namespace BlendInt {
 
 			}
 
-			m_group.Add(button);
+			m_group.PushBack(button);
 
-			if(m_group.size() == 1) {
+			if(m_group.button_count() == 1) {
 				button->SetChecked(true);
 			}
 		}

@@ -102,7 +102,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 
 		// draw inner, simple fill
-		if (checked()) {
+		if (is_checked()) {
 			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 			program->SetUniform1i("u_AA", 0);
 
@@ -116,7 +116,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
-		if (checked()) {
+		if (is_checked()) {
 			program->SetUniform1i("u_AA", 1);
 			program->SetVertexAttrib4fv("a_color", Theme::instance->tab().outline.data());
 

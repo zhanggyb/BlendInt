@@ -134,7 +134,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		if (down()) {
+		if (is_down()) {
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        Theme::instance->regular().inner_sel.data());
 		} else {

@@ -24,14 +24,13 @@
 #ifndef _BLENDINT_GUI_BUTTONGROUP_HPP_
 #define _BLENDINT_GUI_BUTTONGROUP_HPP_
 
-#include <vector>
+#include <deque>
 #include <boost/smart_ptr.hpp>
 
-#include <Cpp/Events.hpp>
-
 #include <BlendInt/Core/Object.hpp>
-
 #include <BlendInt/Gui/AbstractButton.hpp>
+
+#include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
@@ -48,9 +47,15 @@ namespace BlendInt {
 
 		~ButtonGroup ();
 
-		void Add (AbstractButton* button);
+		void PushFront (AbstractButton* button);
+
+		void PushBack (AbstractButton* button);
+
+		void Insert (int index, AbstractButton* button);
 
 		void Remove (AbstractButton* button);
+
+		void Clear ();
 
 		Cpp::EventRef<AbstractButton*> button_clicked() {return button_clicked_;}
 
@@ -68,7 +73,7 @@ namespace BlendInt {
 
 		Cpp::EventRef<int, bool> button_index_toggled() {return button_index_toggled_;}
 
-		size_t size () const {return buttons_.size();}
+		size_t button_count () const {return buttons_.size();}
 
 		const std::deque<AbstractButton*>& buttons () const
 		{
@@ -77,9 +82,11 @@ namespace BlendInt {
 
 	private:
 
-		void OnButtonClicked ();
+		friend class AbstractButton;
 
-		void OnButtonToggled (bool toggled);
+		void Click (AbstractButton* button);
+
+		void Toggle (AbstractButton* button, bool toggled);
 
 		void OnButtonDestroyed (AbstractWidget* button);
 

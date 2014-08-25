@@ -138,7 +138,7 @@ namespace BlendInt {
 
 		if (hover()) {
 			Color color;
-			if (checked()) {
+			if (is_checked()) {
 				color = Theme::instance->toggle().inner_sel + 15;
 			} else {
 				color = Theme::instance->toggle().inner + 15;
@@ -146,7 +146,7 @@ namespace BlendInt {
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        color.data());
 		} else {
-			if (checked()) {
+			if (is_checked()) {
 				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 				        Theme::instance->toggle().inner_sel.data());
 			} else {

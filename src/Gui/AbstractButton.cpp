@@ -37,6 +37,8 @@
 
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/ButtonGroup.hpp>
+
 namespace BlendInt {
 
 	Margin AbstractButton::default_padding = Margin(2, 2, 2, 2);
@@ -45,7 +47,8 @@ namespace BlendInt {
 
 	AbstractButton::AbstractButton ()
 	: AbstractWidget(),
-	  text_length_(0)
+	  text_length_(0),
+	  group_(0)
 	{
 	}
 
@@ -227,14 +230,24 @@ namespace BlendInt {
 				case 0:
 					break;
 
-				case 1:
-					clicked_.fire();
+				case 1: {
+					if(group_) {
+						group_->Click(this);
+					} else {
+						clicked_.fire();
+					}
 					break;
+				}
 
 				case 2: {
 					if (m_status[ButtonChecked]
 									!= m_status[ButtonLastChecked]) {
-						toggled_.fire(m_status[ButtonChecked]);
+
+						if(group_) {
+							group_->Toggle(this, m_status[ButtonChecked]);
+						} else {
+							toggled_.fire(m_status[ButtonChecked]);
+						}
 					}
 					break;
 				}
@@ -272,12 +285,24 @@ namespace BlendInt {
 				Refresh();
 
 			m_status[ButtonChecked] = down ? 1 : 0;
+
+			if(group_) {
+				group_->Toggle(this, m_status[ButtonChecked]);
+			} else {
+				toggled_.fire(m_status[ButtonChecked]);
+			}
+
 		} else {
 
 			if(m_status[ButtonDown] != down)
 				Refresh();
 
 			m_status[ButtonDown] = down ? 1 : 0;
+			if(group_) {
+				group_->Click(this);
+			} else {
+				clicked_.fire();
+			}
 		}
 	}
 
@@ -300,7 +325,11 @@ namespace BlendInt {
 			m_status[ButtonChecked] = checked ? 1 : 0;
 			Refresh();
 
-			toggled_.fire(m_status[ButtonChecked]);
+			if(group_) {
+				group_->Toggle(this, m_status[ButtonChecked]);
+			} else {
+				toggled_.fire(m_status[ButtonChecked]);
+			}
 		}
 	}
 
