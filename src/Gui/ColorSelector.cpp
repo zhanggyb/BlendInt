@@ -49,8 +49,11 @@
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
+
+	using Stock::Icons;
 
 	ColorSelector::ColorSelector()
 	: VLayout (), stack_(0)
@@ -131,6 +134,7 @@ namespace BlendInt {
 		color_box->PushBack(alpha_slider);
 
 		ToolButton* pick_btn = Manage(new ToolButton);
+		pick_btn->SetAction(Icons::instance->icon_16x16(Stock::EYEDROPPER), String("EYEDROPPER"));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));
