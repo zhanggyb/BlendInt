@@ -228,18 +228,6 @@ namespace BlendInt
 		return dynamic_cast<Context*>(container);
 	}
 
-	void Context::RenderToTexture (AbstractWidget* widget,
-	        GLTexture2D* texture)
-	{
-		//Section::RenderToTexture(widget, profile_, texture);
-	}
-
-	void Context::RenderToFile (AbstractWidget* widget,
-	        const char* filename)
-	{
-		Section::RenderToFile(widget, filename);
-	}
-
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		if(request.source()->container() == this) {

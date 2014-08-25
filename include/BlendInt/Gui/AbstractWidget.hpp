@@ -601,6 +601,8 @@ namespace BlendInt {
 
 		static int GetOutlineVertices (int round_type);
 
+		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
+
 		/**
 		 * @brief Used to get emboss vertices
 		 * @return

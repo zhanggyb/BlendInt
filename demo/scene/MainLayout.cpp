@@ -326,7 +326,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	ToolBar* toolbar = Manage(new ToolBar);
 	toolbar->SetMargin(2, 2, 2, 2);
 
-	HBox* box = Manage(new HBox);
+	HLayout* box = Manage(new HLayout);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	Label* label = Manage(new Label("Select 3D model or image file: "));
@@ -362,6 +362,6 @@ void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 
-	HBox* box = dynamic_cast<HBox*>(m_file_input->container());
+	HLayout* box = dynamic_cast<HLayout*>(m_file_input->container());
 	box->Resize(box->GetPreferredSize());
 }

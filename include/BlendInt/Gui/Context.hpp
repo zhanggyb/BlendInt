@@ -99,10 +99,6 @@ namespace BlendInt {
 
 		static Context* GetContext (AbstractWidget* widget);
 
-		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
-
-		static void RenderToFile (AbstractWidget* widget, const char* filename);
-
 		static glm::mat4 default_view_matrix;
 
 	protected:

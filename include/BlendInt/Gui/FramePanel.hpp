@@ -43,7 +43,7 @@ namespace BlendInt {
 
 		virtual ~FramePanel ();
 
-		void ExportTextureToFile (const std::string& filename);
+		void RenderToFile (const std::string& filename);
 
 	protected:
 

@@ -21,11 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <glext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <assert.h>
+
 #include <algorithm>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	AbstractContainer::AbstractContainer()
 	: AbstractWidget(),
@@ -93,6 +113,7 @@ namespace BlendInt {
 		first_ = 0;
 		last_ = 0;
 	}
+
 
 	ResponseType AbstractContainer::FocusEvent (bool focus)
 	{
@@ -480,6 +501,147 @@ namespace BlendInt {
 		//assert(widget != 0);
 
 		return widget;
+	}
+
+	void AbstractContainer::RenderSubWidgetsToTexture (Profile& profile,
+	        GLTexture2D* texture)
+	{
+#ifdef DEBUG
+		assert(texture);
+#endif
+
+		GLsizei width = size().width();
+		GLsizei height = size().height();
+
+		GLfloat left = position().x();
+		GLfloat bottom = position().y();
+
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		if(!tex->texture())
+			tex->Generate();
+
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+		GLuint rb;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+				size().width(), size().height());
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+//			glClearColor(0.0, 0.0, 0.0, 0.0);
+//			glClearDepth(1.0);
+//			glClearStencil(0);
+//
+//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glEnable(GL_BLEND);
+
+			glm::mat4 origin;
+			glGetUniformfv(Shaders::instance->triangle_program()->id(),
+					Shaders::instance->triangle_uniform_projection(),
+					glm::value_ptr(origin));
+
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->triangle_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->line_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->text_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->image_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
+			        glm::value_ptr(projection));
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+			glViewport(0, 0, size().width(), size().height());
+
+			// Draw frame panel
+
+			// Draw container
+
+			Profile off_screen_profile(position());
+
+			if(first()) {
+				//Section::DispatchDrawEvent(first(), off_screen_profile);
+			}
+
+			// Restore the viewport setting and projection matrix
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+			program = Shaders::instance->triangle_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->line_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->text_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->image_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
+					glm::value_ptr(origin));
+
+			program->Reset();
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		//delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
 	}
 
 #ifdef DEBUG

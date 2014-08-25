@@ -55,8 +55,8 @@ void TexBufContext::CreateWidgets ()
 	label2->SetBackgroundColor(Color(0x101010A0));
 	label2->Resize(label2->GetPreferredSize());
 
-	FileSelector* view1 = Manage(new FileSelector);
-	FileSelector* view2 = Manage(new FileSelector);
+	Viewport3D* view1 = Manage(new Viewport3D);
+	Viewport3D* view2 = Manage(new Viewport3D);
 
 	m_panel1 = Manage(new Frame);
 	m_panel2 = Manage(new FramePanel);

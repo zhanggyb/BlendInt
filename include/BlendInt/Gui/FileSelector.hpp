@@ -76,7 +76,7 @@ namespace BlendInt {
 
 		void InitializeFileSelector ();
 
-		VBox* CreateBrowserAreaOnce ();
+		VLayout* CreateBrowserAreaOnce ();
 
 		ToolBar* CreateToolBarOnce ();
 

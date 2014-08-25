@@ -53,7 +53,7 @@
 namespace BlendInt {
 
 	ColorSelector::ColorSelector()
-	: VBox (), stack_(0)
+	: VLayout (), stack_(0)
 	{
 		set_size(200, 320);
 		set_round_type(RoundAll);
@@ -98,7 +98,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 
-		HBox* hbox1 = Manage(new HBox);
+		HLayout* hbox1 = Manage(new HLayout);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
 		BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
 
@@ -124,7 +124,7 @@ namespace BlendInt {
 		NumericalSlider* alpha_slider = Manage(new NumericalSlider);
 		alpha_slider->SetEmboss(true);
 
-		VBox* color_box = Manage(new VBox);
+		VLayout* color_box = Manage(new VLayout);
 		color_box->SetMargin(0, 0, 0, 0);
 		color_box->PushBack(stack_);
 		color_box->PushBack(alpha_slider);
@@ -132,7 +132,7 @@ namespace BlendInt {
 		ToolButton* pick_btn = Manage(new ToolButton);
 		pick_btn->SetEmboss(true);
 
-		HBox* hbox2 = Manage(new HBox(AlignTop));
+		HLayout* hbox2 = Manage(new HLayout(AlignTop));
 		hbox2->PushBack(color_box);
 		hbox2->PushBack(pick_btn);
 
@@ -156,7 +156,7 @@ namespace BlendInt {
 			tool.SetOuterBufferData(outer_.get());
 			set_size(*request.size());
 
-			VBox::PerformSizeUpdate(request);
+			VLayout::PerformSizeUpdate(request);
 			return;	// return to avoid double report of size update
 		}
 
@@ -255,9 +255,9 @@ namespace BlendInt {
 		return block;
 	}
 	
-	VBox* ColorSelector::CreateHexBlock ()
+	VLayout* ColorSelector::CreateHexBlock ()
 	{
-		VBox* box = Manage(new VBox(AlignLeft, 0));
+		VLayout* box = Manage(new VLayout(AlignLeft, 0));
 		box->SetMargin(2, 2, 2, 2);
 
 		TextEntry* hex_edit = Manage(new TextEntry);
@@ -282,7 +282,7 @@ namespace BlendInt {
 
 		VBlockLayout* rgb_block = CreateRGBBlock();
 		VBlockLayout* hsv_block = CreateHSVBlock();
-		VBox* hex_box = CreateHexBlock();
+		VLayout* hex_box = CreateHexBlock();
 
 		stack->PushBack(rgb_block);
 		stack->PushBack(hsv_block);

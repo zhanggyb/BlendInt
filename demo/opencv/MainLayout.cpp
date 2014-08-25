@@ -38,7 +38,7 @@ void MainLayout::InitOnce ()
 
 	m_combo = Manage(new ComboBox);
 
-	HBox* box = Manage(new HBox);
+	HLayout* box = Manage(new HLayout);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	m_input = Manage(new TextEntry);

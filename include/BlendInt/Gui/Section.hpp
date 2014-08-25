@@ -78,12 +78,6 @@ namespace BlendInt {
 
 		static Section* GetSection (AbstractWidget* widget);
 
-		static void RenderToTexture (AbstractWidget* widget, Profile& profile, GLTexture2D* texture);
-
-		static void RenderToFile (AbstractWidget* widget, const char* filename);
-
-		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
-
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

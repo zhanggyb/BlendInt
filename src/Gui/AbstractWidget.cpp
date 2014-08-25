@@ -21,6 +21,21 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
@@ -451,6 +466,31 @@ namespace BlendInt {
 		}
 
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
+	}
+
+	void AbstractWidget::DispatchDrawEvent (AbstractWidget* widget,
+	        Profile& profile)
+	{
+		if (widget && widget->visiable()) {
+
+			if(widget->drop_shadow() && widget->shadow_) {
+				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			}
+
+			ResponseType response = widget->Draw(profile);
+			if(response == Accept) return;
+
+			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
+			if (parent) {
+
+				for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+				{
+					DispatchDrawEvent(sub, profile);
+				}
+
+			}
+
+		}
 	}
 
 	bool AbstractWidget::SizeUpdateTest(const SizeUpdateRequest& request)

@@ -55,8 +55,8 @@ namespace BlendInt {
 	FramePanel::FramePanel()
 	: BinLayout(), refresh_(true)
 	{
-		//set_drop_shadow(true);
 		set_size(400, 300);
+		set_drop_shadow(true);
 
 		InitializeFramePanel();
 	}
@@ -132,7 +132,7 @@ namespace BlendInt {
 		inner_->Reset();
 	}
 
-	void FramePanel::ExportTextureToFile (const std::string& filename)
+	void FramePanel::RenderToFile (const std::string& filename)
 	{
 		tex_buffer_.texture()->Bind();
 		tex_buffer_.texture()->WriteToFile(filename);
@@ -246,7 +246,7 @@ namespace BlendInt {
 			Profile off_screen_profile(position());
 
 			if(first()) {
-				Section::DispatchDrawEvent(first(), off_screen_profile);
+				DispatchDrawEvent(first(), off_screen_profile);
 			}
 
 			// Restore the viewport setting and projection matrix

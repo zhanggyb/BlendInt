@@ -34,7 +34,7 @@
 
 namespace BlendInt {
 
-	class ColorSelector: public VBox
+	class ColorSelector: public VLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		VBlockLayout* CreateHSVBlock ();
 
-		VBox* CreateHexBlock ();
+		VLayout* CreateHexBlock ();
 
 		Stack* CreateBlockStack ();
 
