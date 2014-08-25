@@ -34,7 +34,7 @@
 
 namespace BlendInt {
 
-	class ColorSelector: public VBox
+	class ColorSelector: public VLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		VBlockLayout* CreateHSVBlock ();
 
-		VBox* CreateHexBlock ();
+		VLayout* CreateHexBlock ();
 
 		Stack* CreateBlockStack ();
 

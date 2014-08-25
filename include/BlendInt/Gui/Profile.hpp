@@ -24,21 +24,54 @@
 #ifndef _BLENDINT_GUI_PROFILE_HPP_
 #define _BLENDINT_GUI_PROFILE_HPP_
 
-namespace BlendInt {
+#include <BlendInt/Core/Point.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-	class Context;
-	class Section;
+namespace BlendInt {
 
 	/**
 	 * @brief Global setting for widget drawing
+	 *
+	 * Profile is created in Context -- the root container in a OpenGL window,
+	 * and was passed to each widget when drawing.
+	 *
+	 * It stores the global setting of the opengl context, as well as provide
+	 * the methods to manipulate the Stencil Buffer.
+	 *
+	 * Usage of stencil buffer methods:
+	 *
+	 * @code
+	 * BeginPushStencil();
+	 * draw a shape (usually draw the inner buffer)
+	 * EndPushStencil();
+	 *
+	 * and draw something you'd like
+	 *
+	 * BeginPopStencil();
+	 * draw the same shape again
+	 * EndPopStencil();
+	 * @endcode
+	 *
+	 * @note Push and pop to stencil buffer must be called in pairs
 	 */
 	class Profile
 	{
 	public:
 
 		Profile ()
-		: context_(0),
-		  section_(0)
+		: stencil_count_(0)
+		{
+		}
+
+		Profile (const Point& point)
+		: origin_(point),
+		  stencil_count_(0)
+		{
+		}
+
+		Profile (int x, int y)
+		: origin_(x, y),
+		  stencil_count_(0)
 		{
 		}
 
@@ -46,23 +79,28 @@ namespace BlendInt {
 		{
 		}
 
-		Context* context () const
-		{
-			return context_;
-		}
+		void BeginPushStencil ();
 
-		Section* section () const
+		void EndPushStencil ();
+
+		void BeginPopStencil ();
+
+		void EndPopStencil ();
+
+		const Point& origin () const
 		{
-			return section_;
+			return origin_;
 		}
 
 	private:
 
-		friend class Context;
-		friend class Section;
+		// disable
+		Profile (const Profile& orig);
+		Profile& operator = (const Profile& orig);
 
-		Context* context_;
-		Section* section_;
+		Point origin_;
+
+		GLuint stencil_count_;
 	};
 
 }

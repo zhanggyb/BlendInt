@@ -88,11 +88,15 @@ namespace BlendInt {
 
 	private:
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
-		void InitOnce ();
+		void InitializeViewport3DOnce ();
+
+		GLuint vao_;
 
 		vector<RefPtr<AbstractCamera> > cameras_;
+
+		RefPtr<GLArrayBuffer> inner_;
 
 		RefPtr<NavigationCamera> default_camera_;
 

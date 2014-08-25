@@ -52,27 +52,27 @@ namespace BlendInt {
 
 		void Remove (AbstractButton* button);
 
-		Cpp::EventRef<AbstractButton*> button_clicked() {return m_button_clicked;}
+		Cpp::EventRef<AbstractButton*> button_clicked() {return button_clicked_;}
 
-		Cpp::EventRef<int> button_index_clicked() {return m_button_index_clicked;}
+		Cpp::EventRef<int> button_index_clicked() {return button_index_clicked_;}
 
-		Cpp::EventRef<AbstractButton*> button_pressed() {return m_button_pressed;}
+		Cpp::EventRef<AbstractButton*> button_pressed() {return button_pressed_;}
 
-		Cpp::EventRef<int> button_index_pressed() {return m_button_index_pressed;}
+		Cpp::EventRef<int> button_index_pressed() {return button_index_pressed_;}
 
-		Cpp::EventRef<AbstractButton*> button_released() {return m_button_released;}
+		Cpp::EventRef<AbstractButton*> button_released() {return button_released_;}
 
-		Cpp::EventRef<int> button_index_released() {return m_button_index_released;}
+		Cpp::EventRef<int> button_index_released() {return button_index_released_;}
 
-		Cpp::EventRef<AbstractButton*, bool> button_toggled() {return m_button_toggled;}
+		Cpp::EventRef<AbstractButton*, bool> button_toggled() {return button_toggled_;}
 
-		Cpp::EventRef<int, bool> button_index_toggled() {return m_button_index_toggled;}
+		Cpp::EventRef<int, bool> button_index_toggled() {return button_index_toggled_;}
 
-		size_t size () const {return m_group.size();}
+		size_t size () const {return buttons_.size();}
 
-		std::vector<AbstractButton*>* buttons ()
+		const std::deque<AbstractButton*>& buttons () const
 		{
-			return &m_group;
+			return buttons_;
 		}
 
 	private:
@@ -83,29 +83,29 @@ namespace BlendInt {
 
 		void OnButtonDestroyed (AbstractWidget* button);
 
-		std::vector<AbstractButton*> m_group;
+		std::deque<AbstractButton*> buttons_;
 
-		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
-		AbstractButton* m_last_active;
+		AbstractButton* last_active_;
 
-		ButtonGroupMode m_mode;
+		ButtonGroupMode mode_;
 
-		Cpp::Event<AbstractButton*> m_button_clicked;
+		Cpp::Event<AbstractButton*> button_clicked_;
 
-		Cpp::Event<int> m_button_index_clicked;
+		Cpp::Event<int> button_index_clicked_;
 
-		Cpp::Event<AbstractButton*> m_button_pressed;
+		Cpp::Event<AbstractButton*> button_pressed_;
 
-		Cpp::Event<int> m_button_index_pressed;
+		Cpp::Event<int> button_index_pressed_;
 
-		Cpp::Event<AbstractButton*> m_button_released;
+		Cpp::Event<AbstractButton*> button_released_;
 
-		Cpp::Event<int> m_button_index_released;
+		Cpp::Event<int> button_index_released_;
 
-		Cpp::Event<AbstractButton*, bool> m_button_toggled;
+		Cpp::Event<AbstractButton*, bool> button_toggled_;
 
-		Cpp::Event<int, bool> m_button_index_toggled;
+		Cpp::Event<int, bool> button_index_toggled_;
 
 	};
 

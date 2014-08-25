@@ -43,19 +43,21 @@ namespace BlendInt {
 
 		virtual ~FramePanel ();
 
+		void RenderToFile (const std::string& filename);
+
 	protected:
 
 		virtual void PerformRefresh (const RefreshRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
 		void InitializeFramePanel ();
 
-		void RenderToBuffer ();
+		void RenderToBuffer (Profile& profile);
 
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;

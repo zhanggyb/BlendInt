@@ -37,7 +37,7 @@ TEST_F(VLayoutTest1, Add1)
 #endif
 	Interface::instance->SetCurrentContext(context);
 
-	VBox* vlayout = Manage(new VBox);
+	VLayout* vlayout = Manage(new VLayout);
 
 	vlayout->SetPosition(100, 100);
 
@@ -45,7 +45,7 @@ TEST_F(VLayoutTest1, Add1)
 	Widget* widget2 = Manage(new Widget);
 	Widget* widget3 = Manage(new Widget);
 
-	HBox* hlayout = Manage(new HBox);
+	HLayout* hlayout = Manage(new HLayout);
 	hlayout->PushBack(widget2);
 	hlayout->PushBack(widget3);
 

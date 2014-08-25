@@ -93,7 +93,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType VirtualWindow::Draw (const Profile& profile)
+	ResponseType VirtualWindow::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

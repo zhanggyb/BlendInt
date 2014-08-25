@@ -154,7 +154,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ImageView::Draw (const Profile& profile)
+	ResponseType ImageView::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();

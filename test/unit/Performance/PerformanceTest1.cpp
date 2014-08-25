@@ -35,13 +35,13 @@ TEST_F(PerformanceTest1, Layout1)
 
     int max_x = 50;
     int max_y = 20;
-    HBox* layout[max_y];
+    HLayout* layout[max_y];
     Button* btn[max_x];
     int x_pos = 50;
     int y_pos = 5;
     for(int i = 0; i < max_y; i++)
     {
-        layout[i] = Manage(new HBox);
+        layout[i] = Manage(new HLayout);
 
         for(int j = 0; j < max_x; j++)
         {

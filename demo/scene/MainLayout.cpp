@@ -157,29 +157,46 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	HBlockLayout* hblock2 = Manage (new HBlockLayout);
 
 	ToolButton* btn6 = Manage(new ToolButton);
-	btn6->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB), String("IMAGE RGB"));
+	btn6->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_TRANS), String("MAN TRANS"));
 
 	ToolButton* btn7 = Manage(new ToolButton);
-	btn7->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB_ALPHA), String("IMAGE RGB ALPHA"));
+	btn7->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_ROT), String("MAN ROT"));
 
 	ToolButton* btn8 = Manage(new ToolButton);
-	btn8->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ALPHA), String("IMAGE ALPHA"));
-
-	ToolButton* btn9 = Manage(new ToolButton);
-	btn9->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ZDEPTH), String("IMAGE ZDEPTH"));
-
-	ToolButton* btn10 = Manage(new ToolButton);
-	btn10->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGEFILE), String("IMAGEFILE"));
+	btn8->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_SCALE), String("MAN SCALE"));
 
 	hblock2->PushBack(btn6);
 	hblock2->PushBack(btn7);
 	hblock2->PushBack(btn8);
-	hblock2->PushBack(btn9);
-	hblock2->PushBack(btn10);
 	hblock2->Resize(hblock2->GetPreferredSize());
+
+	HBlockLayout* hblock3 = Manage (new HBlockLayout);
+
+	ToolButton* btn9 = Manage(new ToolButton);
+	btn9->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB), String("IMAGE RGB"));
+
+	ToolButton* btn10 = Manage(new ToolButton);
+	btn10->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB_ALPHA), String("IMAGE RGB ALPHA"));
+
+	ToolButton* btn11 = Manage(new ToolButton);
+	btn11->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ALPHA), String("IMAGE ALPHA"));
+
+	ToolButton* btn12 = Manage(new ToolButton);
+	btn12->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ZDEPTH), String("IMAGE ZDEPTH"));
+
+	ToolButton* btn13 = Manage(new ToolButton);
+	btn13->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGEFILE), String("IMAGEFILE"));
+
+	hblock3->PushBack(btn9);
+	hblock3->PushBack(btn10);
+	hblock3->PushBack(btn11);
+	hblock3->PushBack(btn12);
+	hblock3->PushBack(btn13);
+	hblock3->Resize(hblock3->GetPreferredSize());
 
 	toolbar->PushBack(hblock);
 	toolbar->PushBack(hblock2);
+	toolbar->PushBack(hblock3);
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
@@ -309,7 +326,7 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	ToolBar* toolbar = Manage(new ToolBar);
 	toolbar->SetMargin(2, 2, 2, 2);
 
-	HBox* box = Manage(new HBox);
+	HLayout* box = Manage(new HLayout);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	Label* label = Manage(new Label("Select 3D model or image file: "));
@@ -345,6 +362,6 @@ void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 
-	HBox* box = dynamic_cast<HBox*>(m_file_input->container());
+	HLayout* box = dynamic_cast<HLayout*>(m_file_input->container());
 	box->Resize(box->GetPreferredSize());
 }

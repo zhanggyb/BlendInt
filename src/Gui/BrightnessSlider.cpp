@@ -80,7 +80,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType BrightnessSlider::Draw (const Profile& profile)
+	ResponseType BrightnessSlider::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

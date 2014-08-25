@@ -45,7 +45,6 @@ namespace BlendInt {
 	: AbstractContainer()
 	{
 		set_size(500, 400);
-		set_scissor_test(true);
 		set_drop_shadow(true);
 
 		InitializeWorkspace();
@@ -174,7 +173,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType Workspace::Draw (const Profile& profile)
+	ResponseType Workspace::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

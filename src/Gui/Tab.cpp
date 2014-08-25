@@ -156,7 +156,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Tab::Draw (const Profile& profile)
+	ResponseType Tab::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

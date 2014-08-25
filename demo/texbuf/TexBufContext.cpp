@@ -11,14 +11,16 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
+#include <BlendInt/Gui/NodeView.hpp>
+#include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/ListView.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
 	m_button(0),
-	m_panel(0),
-	view3d_frame_(0),
-	label_frame_(0),
-	toggle_frame_(0)
+	m_panel1(0),
+	m_panel2(0)
 {
 	activate_events();
 
@@ -37,41 +39,53 @@ void TexBufContext::CreateWidgets ()
 
 	m_button = Manage(new Button("Take Screenshot"));
 
-	Button* btn = Manage(new Button(Icons::instance->icon_16x16(0), "Button"));
-
-	m_panel = Manage(new FramePanel);
-	m_panel->Setup(btn);
-	m_panel->SetPosition(100, 100);
-	m_panel->Resize(m_panel->GetPreferredSize());
-
-	FramePanel* btn_panel = Manage(new FramePanel);
-	btn_panel->Setup(m_button);
-	btn_panel->Resize(btn_panel->GetPreferredSize());
-
-	btn_panel->SetPosition(1120, 400);
-
-	// view3d_frame_ = Manage(new FramePanel);
-	// view3d_frame_->Setup(Manage(new Viewport3D));
-	// view3d_frame_->Resize(500, 400);
-	// view3d_frame_->SetPosition(100, 400);
-
-	label_frame_ = Manage(new FramePanel);
-	label_frame_->Setup (Manage(new Label("Label")));
-	label_frame_->Resize(label_frame_->GetPreferredSize());
-	label_frame_->SetPosition(100, 600);
-
-	PushBack(m_panel);
-
-	PushBack(label_frame_);
+	//FileSelector* view = Manage(new FileSelector);
 	
-	PushBack(btn_panel);
+	Font my_font ("Droid Sans", 24);
+	
+	Label* label1 = Manage(new Label("Realtime Render"));
+	label1->SetFont(my_font);
+	label1->SetForegroundColor(Color(0xF0B0E0EF));
+	label1->SetBackgroundColor(Color(0x101010A0));
+	label1->Resize(label1->GetPreferredSize());
+	
+	Label* label2 = Manage(new Label("Off-screen Render Once"));
+	label2->SetFont(my_font);
+	label2->SetForegroundColor(Color(0xF0B0E0EF));
+	label2->SetBackgroundColor(Color(0x101010A0));
+	label2->Resize(label2->GetPreferredSize());
 
+	Viewport3D* view1 = Manage(new Viewport3D);
+	Viewport3D* view2 = Manage(new Viewport3D);
+
+	m_panel1 = Manage(new Frame);
+	m_panel2 = Manage(new FramePanel);
+	//m_panel->SetMargin(10, 10, 10, 10);
+	m_panel1->Setup(view1);
+	m_panel2->Setup(view2);
+
+	label1->SetPosition(50, 700);
+	m_panel1->SetPosition(50, 100);
+	m_panel1->Resize(720, 600);
+
+	label2->SetPosition(830, 700);
+	m_panel2->SetPosition(830, 100);
+	m_panel2->Resize(720, 600);
+
+	m_button->SetPosition(750, 20);
+
+	Section* section = PushBack(label1);
+	section->PushBack(label2);
+	PushBack(m_panel1);
+	PushBack(m_panel2);
+	PushBack(m_button);
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
+
 }
 
 void TexBufContext::OnTakeScreenShot ()
 {
 	DBG_PRINT_MSG("%s", "Take a screen shot of panel");
 
-	BI::Section::RenderToFile(m_panel, "Panel.png");
+	//m_panel->ExportTextureToFile("Panel.png");
 }

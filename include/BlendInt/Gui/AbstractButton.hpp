@@ -66,7 +66,9 @@ namespace BlendInt {
 
 		Cpp::EventRef<bool> toggled() {return toggled_;}
 
-		bool pressed () const {return m_status[ButtonPressed];}
+		Cpp::EventRef<> pressed () {return pressed_;}
+
+		bool is_pressed () const {return m_status[ButtonPressed];}
 
 		virtual Size GetPreferredSize () const;
 

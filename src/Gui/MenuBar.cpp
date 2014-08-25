@@ -163,7 +163,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType MenuBar::Draw (const Profile& profile)
+	ResponseType MenuBar::Draw (Profile& profile)
 	{
 		using namespace BlendInt::Stock;
 

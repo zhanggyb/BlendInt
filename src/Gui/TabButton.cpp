@@ -90,7 +90,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType TabButton::Draw (const Profile& profile)
+	ResponseType TabButton::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

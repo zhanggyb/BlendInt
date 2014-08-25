@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -95,9 +95,11 @@ namespace BlendInt {
 
 		// 0 for inner buffer
 		// 1 for row_ background
-		GLuint vao_;
+		GLuint vaos_[2];
 
 		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> row_;
 
 		RefPtr<AbstractItemModel> model_;
 

@@ -19,7 +19,7 @@
 
 namespace BI = BlendInt;
 
-class MainBox: public BI::VBox
+class MainBox: public BI::VLayout
 {
 public:
 

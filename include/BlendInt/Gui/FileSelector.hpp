@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_FILESELECTOR_HPP_
 #define _BLENDINT_GUI_FILESELECTOR_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
@@ -43,7 +43,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget to browse and select local directories/files.
 	 */
-	class FileSelector: public Frame
+	class FileSelector: public BinLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileSelector);
 
@@ -70,13 +70,13 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
 		void InitializeFileSelector ();
 
-		VBox* CreateBrowserAreaOnce ();
+		VLayout* CreateBrowserAreaOnce ();
 
 		ToolBar* CreateToolBarOnce ();
 

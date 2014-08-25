@@ -80,7 +80,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -100,11 +100,13 @@ namespace BlendInt {
 
 		void OnVBarSlide (int val);
 
-		GLuint vao_;
+		GLuint vaos_[2];
 
 		Font font_;
 
 		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> row_;
 
 		String file_selected_;
 

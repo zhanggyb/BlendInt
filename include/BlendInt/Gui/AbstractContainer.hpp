@@ -24,12 +24,8 @@
 #ifndef _BLENDINT_CONTAINER_HPP_
 #define _BLENDINT_CONTAINER_HPP_
 
-#include <assert.h>
-
-#include <deque>
-#include <boost/smart_ptr.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
@@ -90,6 +86,8 @@ namespace BlendInt {
 		AbstractWidget* operator [] (int i) const;
 
 		AbstractWidget* GetWidgetAt (int i) const;
+
+		void RenderSubWidgetsToTexture (Profile& profile, GLTexture2D* texture);
 
 	protected:
 

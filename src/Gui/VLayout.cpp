@@ -36,17 +36,17 @@
 
 namespace BlendInt {
 
-	VBox::VBox (int align, int space)
+	VLayout::VLayout (int align, int space)
 	: AbstractContainer(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
 
-	VBox::~VBox ()
+	VLayout::~VLayout ()
 	{
 	}
 
-	bool VBox::PushBack (AbstractWidget* widget)
+	bool VLayout::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
@@ -56,7 +56,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool VBox::Remove (AbstractWidget* widget)
+	bool VLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
@@ -66,7 +66,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	void VBox::SetAlignment (int align)
+	void VLayout::SetAlignment (int align)
 	{
 		if(m_alignment == align) return;
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 		FillSubWidgetsInVBox(position(), size(), margin(), align, m_space);
 	}
 
-	void VBox::SetSpace (int space)
+	void VLayout::SetSpace (int space)
 	{
 		if(m_space == space) return;
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 		FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
 	}
 
-	Size BlendInt::VBox::GetPreferredSize () const
+	Size BlendInt::VLayout::GetPreferredSize () const
 	{
 		Size preferred_size;
 
@@ -113,7 +113,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	bool VBox::IsExpandX () const
+	bool VLayout::IsExpandX () const
 	{
 		bool expand = false;
 
@@ -128,7 +128,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool VBox::IsExpandY () const
+	bool VLayout::IsExpandY () const
 	{
 		bool expand = false;
 
@@ -143,12 +143,12 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void VBox::PerformMarginUpdate(const Margin& request)
+	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInVBox(position(), size(), request, m_alignment, m_space);
 	}
 
-	bool VBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool VLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
 		if(request.source()->container() == this) {
@@ -158,7 +158,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool VBox::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool VLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
 		if(request.source()->container() == this) {
@@ -168,7 +168,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void VBox::PerformPositionUpdate (
+	void VLayout::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -182,7 +182,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void VBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void VLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -192,48 +192,48 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType VBox::Draw (const Profile& profile)
+	ResponseType VLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::CursorEnterEvent (bool entered)
+	ResponseType VLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::KeyPressEvent (const KeyEvent& event)
+	ResponseType VLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType VLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType VLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::MousePressEvent (const MouseEvent& event)
+	ResponseType VLayout::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType VLayout::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VBox::MouseMoveEvent (const MouseEvent& event)
+	ResponseType VLayout::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
 
-	void VBox::FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	void VLayout::FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin,
 			int alignment, int space)
 	{
 		int x = out_pos.x() + margin.left();
@@ -244,12 +244,12 @@ namespace BlendInt {
 		FillSubWidgetsProportionallyInVBox(x, y, width, height, alignment, space);
 	}
 
-	void VBox::FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space)
+	void VLayout::FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space)
 	{
 		FillSubWidgetsProportionallyInVBox(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
-	void VBox::FillSubWidgetsProportionallyInVBox (int x, int y, int width,
+	void VLayout::FillSubWidgetsProportionallyInVBox (int x, int y, int width,
 					int height, int alignment, int space)
 	{
 		boost::scoped_ptr<std::deque<int> > expandable_preferred_heights(new std::deque<int>);
@@ -305,7 +305,7 @@ namespace BlendInt {
 		AlignInVBox(x, width, alignment, unexpandable_preferred_widths.get());
 	}
 
-	void VBox::DistributeWithPreferredHeight (int y,
+	void VLayout::DistributeWithPreferredHeight (int y,
 					int height,
 					int space,
 					const std::deque<int>* expandable_preferred_heights,
@@ -340,7 +340,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::DistributeWithSmallHeight (int y,
+	void VLayout::DistributeWithSmallHeight (int y,
 					int height,
 					int space,
 					const std::deque<int>* expandable_preferred_heights,
@@ -425,7 +425,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::DistributeWithLargeHeight (int y,
+	void VLayout::DistributeWithLargeHeight (int y,
 					int height,
 					int space,
 					const std::deque<int>* expandable_preferred_heights,
@@ -469,7 +469,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::AlignInVBox (int x, int width, int alignment,
+	void VLayout::AlignInVBox (int x, int width, int alignment,
 	        const std::deque<int>* unexpandable_preferred_widths)
 	{
 		std::deque<int>::const_iterator unexp_it =

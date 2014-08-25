@@ -393,11 +393,6 @@ namespace BlendInt {
 			return flags_ & WidgetFlagVisibility;
 		}
 
-		inline bool scissor_test () const
-		{
-			return flags_ & WidgetFlagScissorTest;
-		}
-
 		inline bool managed () const
 		{
 			return flags_ & WidgetFlagManaged;
@@ -552,7 +547,7 @@ namespace BlendInt {
 			size_ = size;
 		}
 
-		virtual ResponseType Draw (const Profile& profile) = 0;
+		virtual ResponseType Draw (Profile& profile) = 0;
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
 
@@ -606,6 +601,8 @@ namespace BlendInt {
 
 		static int GetOutlineVertices (int round_type);
 
+		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
+
 		/**
 		 * @brief Used to get emboss vertices
 		 * @return
@@ -645,15 +642,6 @@ namespace BlendInt {
 				SETBIT(flags_, WidgetFlagEmboss);
 			} else {
 				CLRBIT(flags_, WidgetFlagEmboss);
-			}
-		}
-
-		void set_scissor_test (bool status)
-		{
-			if(status) {
-				SETBIT(flags_, WidgetFlagScissorTest);
-			} else {
-				CLRBIT(flags_, WidgetFlagScissorTest);
 			}
 		}
 
@@ -700,12 +688,9 @@ namespace BlendInt {
 
 			WidgetFlagVisibility = (1 << 8),
 
-			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
-			WidgetFlagScissorTest = (1 << 9),
+			WidgetFlagDropShadow = (1 << 9),
 
-			WidgetFlagDropShadow = (1 << 10),
-
-			WidgetFlagEmboss = (1 << 11)
+			WidgetFlagEmboss = (1 << 10)
 
 		};
 

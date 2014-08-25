@@ -28,15 +28,15 @@
 
 namespace BlendInt {
 
-	class VBox: public AbstractContainer
+	class VLayout: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(VBox);
+		DISALLOW_COPY_AND_ASSIGN(VLayout);
 
 	public:
 
-		VBox(int align = AlignVerticalCenter, int space = 4);
+		VLayout(int align = AlignVerticalCenter, int space = 4);
 
-		virtual ~VBox ();
+		virtual ~VLayout ();
 
 		bool PushBack (AbstractWidget* widget);
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

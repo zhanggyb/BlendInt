@@ -22,14 +22,14 @@ TEST_F(HLayoutTest1, Mix1)
 #endif
 	Interface::instance->SetCurrentContext(context);
 
-	HBox* hlayout = Manage(new HBox);
+	HLayout* hlayout = Manage(new HLayout);
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = Manage(new Widget);
 	Widget* widget2 = Manage(new Widget);
 	Widget* widget3 = Manage(new Widget);
 
-	VBox* vlayout = Manage(new VBox);
+	VLayout* vlayout = Manage(new VLayout);
 	vlayout->PushBack(widget2);
 	vlayout->PushBack(widget3);
 

@@ -53,7 +53,8 @@ namespace BlendInt {
 	using Stock::Icons;
 
 	FileSelector::FileSelector ()
-	: path_entry_(0),
+	: BinLayout(),
+	  path_entry_(0),
 	  file_entry_(0)
 	{
 		set_size(500, 400);
@@ -79,7 +80,7 @@ namespace BlendInt {
 			tool.SetInnerBufferData(inner_.get());
 			inner_->Reset();
 
-			Frame::PerformSizeUpdate(request);
+			BinLayout::PerformSizeUpdate(request);
 			return;
 		}
 
@@ -119,7 +120,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType FileSelector::Draw (const Profile& profile)
+	ResponseType FileSelector::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 
@@ -160,14 +161,14 @@ namespace BlendInt {
 		inner_->Reset();
 
 		// create sub widgets
-		VBox* layout = Manage(new VBox);
+		VLayout* layout = Manage(new VLayout);
 		DBG_SET_NAME(layout, "Main Layout");
 		layout->SetMargin(2, 2, 2, 2);
 		layout->SetSpace(0);
 
 		ToolBar* toolbar = CreateToolBarOnce();
 		ToolBox* sidebar = CreateSideBarOnce();
-		VBox* area = CreateBrowserAreaOnce();
+		VLayout* area = CreateBrowserAreaOnce();
 
 		Splitter* splitter = Manage(new Splitter);
 		DBG_SET_NAME(splitter, "Splitter");
@@ -195,9 +196,9 @@ namespace BlendInt {
 		file_entry_->SetText(browser_->file_selected());
 	}
 
-	VBox* FileSelector::CreateBrowserAreaOnce()
+	VLayout* FileSelector::CreateBrowserAreaOnce()
 	{
-		VBox* vbox = Manage(new VBox);
+		VLayout* vbox = Manage(new VLayout);
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetMargin(2, 2, 2, 2);
 		vbox->SetSpace(4);
@@ -209,7 +210,7 @@ namespace BlendInt {
 		open_ = Manage(new Button(String("Open")));
 		DBG_SET_NAME(open_, "Open Button");
 
-		HBox* dir_layout = Manage(new HBox);
+		HLayout* dir_layout = Manage(new HLayout);
 		DBG_SET_NAME(dir_layout, "DIR Layout");
 
 		dir_layout->SetMargin(0, 0, 0, 0);
@@ -223,7 +224,7 @@ namespace BlendInt {
 		cancel_ = Manage(new Button(String("Cancel")));
 		DBG_SET_NAME(cancel_, "Cancel Button");
 
-		HBox* file_layout = Manage(new HBox);
+		HLayout* file_layout = Manage(new HLayout);
 		DBG_SET_NAME(file_layout, "File Layout");
 
 		file_layout->SetMargin(0, 0, 0, 0);

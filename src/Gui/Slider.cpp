@@ -138,7 +138,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Slider::Draw (const Profile& profile)
+	ResponseType Slider::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

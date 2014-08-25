@@ -30,7 +30,7 @@
  * @ingroup gui
  */
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 namespace BlendInt {
 
@@ -39,7 +39,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Frame: public AbstractContainer
+	class Frame: public BinLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Frame);
 
@@ -49,43 +49,19 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		bool Setup (AbstractWidget* widget);
-
-		bool Remove (AbstractWidget* widget);
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType Draw (const Profile& profile);
+	private:
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		void InitializeFrame ();
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		GLuint vao_;
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 

@@ -192,7 +192,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	ResponseType VBlockLayout::Draw (const Profile& profile)
+	ResponseType VBlockLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}

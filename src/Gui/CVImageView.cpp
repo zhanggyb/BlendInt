@@ -125,7 +125,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType CVImageView::Draw (const Profile& profile)
+	ResponseType CVImageView::Draw (Profile& profile)
 	{
 		using Stock::Shaders;
 

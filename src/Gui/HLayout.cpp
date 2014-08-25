@@ -36,17 +36,17 @@
 
 namespace BlendInt {
 
-	HBox::HBox (int align, int space)
+	HLayout::HLayout (int align, int space)
 	: AbstractContainer(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
 
-	HBox::~HBox ()
+	HLayout::~HLayout ()
 	{
 	}
 
-	bool HBox::PushBack (AbstractWidget* widget)
+	bool HLayout::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
@@ -56,7 +56,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool HBox::Remove (AbstractWidget* widget)
+	bool HLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
@@ -66,7 +66,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	void HBox::SetAlignment (int align)
+	void HLayout::SetAlignment (int align)
 	{
 		if(m_alignment == align) return;
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 		FillSubWidgetsInHBox(position(), size(), margin(), align, m_space);
 	}
 
-	void HBox::SetSpace (int space)
+	void HLayout::SetSpace (int space)
 	{
 		if(m_space == space) return;
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 		FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
 	}
 
-	Size BlendInt::HBox::GetPreferredSize () const
+	Size BlendInt::HLayout::GetPreferredSize () const
 	{
 		Size preferred_size;
 
@@ -113,7 +113,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	bool HBox::IsExpandX () const
+	bool HLayout::IsExpandX () const
 	{
 		bool expand = false;
 
@@ -128,7 +128,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool HBox::IsExpandY () const
+	bool HLayout::IsExpandY () const
 	{
 		bool expand = false;
 
@@ -143,12 +143,12 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void HBox::PerformMarginUpdate(const Margin& request)
+	void HLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInHBox(position(), size(), request, m_alignment, m_space);
 	}
 
-	bool HBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
 		if(request.source()->container() == this) {
@@ -158,7 +158,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool HBox::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool HLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
 		if(request.source()->container() == this) {
@@ -168,7 +168,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void HBox::PerformPositionUpdate (
+	void HLayout::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -182,7 +182,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void HBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void HLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -192,49 +192,49 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType HBox::Draw (const Profile& profile)
+	ResponseType HLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::CursorEnterEvent (bool entered)
+	ResponseType HLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::KeyPressEvent (const KeyEvent& event)
+	ResponseType HLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::ContextMenuPressEvent (
+	ResponseType HLayout::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::ContextMenuReleaseEvent (
+	ResponseType HLayout::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::MousePressEvent (const MouseEvent& event)
+	ResponseType HLayout::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType HLayout::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType HBox::MouseMoveEvent (const MouseEvent& event)
+	ResponseType HLayout::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void HBox::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	void HLayout::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,
 	        int alignment, int space)
 	{
 		int x = out_pos.x() + margin.left();
@@ -245,12 +245,12 @@ namespace BlendInt {
 		FillSubWidgetsProportionallyInHBox(x, y, width, height, alignment, space);
 	}
 
-	void HBox::FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space)
+	void HLayout::FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space)
 	{
 		FillSubWidgetsProportionallyInHBox(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
-	void HBox::FillSubWidgetsProportionallyInHBox (int x, int y, int width,
+	void HLayout::FillSubWidgetsProportionallyInHBox (int x, int y, int width,
 					int height, int alignment, int space)
 	{
 		boost::scoped_ptr<std::deque<int> > expandable_preferred_widths(new std::deque<int>);
@@ -306,7 +306,7 @@ namespace BlendInt {
 		AlignInHBox(y, height, alignment, unexpandable_preferred_heights.get());
 	}
 
-	void HBox::DistributeWithPreferredWidth (int x, int space,
+	void HLayout::DistributeWithPreferredWidth (int x, int space,
 					const std::deque<int>* expandable_preferred_widths,
 					const std::deque<int>* unexpandable_preferred_widths)
 	{
@@ -336,7 +336,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::DistributeWithSmallWidth (int x,
+	void HLayout::DistributeWithSmallWidth (int x,
 					int width,
 					int space,
 					const std::deque<int>* expandable_preferred_widths,
@@ -415,7 +415,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::DistributeWithLargeWidth (int x,
+	void HLayout::DistributeWithLargeWidth (int x,
 					int width,
 					int space,
 					const std::deque<int>* expandable_preferred_widths,
@@ -455,7 +455,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::AlignInHBox (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights)
+	void HLayout::AlignInHBox (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights)
 	{
 		std::deque<int>::const_iterator unexp_it =
 		        unexpandable_preferred_heights->begin();

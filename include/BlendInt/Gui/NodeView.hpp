@@ -46,7 +46,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -66,9 +66,13 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		GLuint vaos_[4];
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
+
+		RefPtr<GLArrayBuffer> area_;
+
+		RefPtr<GLArrayBuffer> rect_;	// used for test stencil stack only, temporarily
 
 	};
 

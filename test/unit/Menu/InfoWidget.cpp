@@ -27,7 +27,7 @@ void InfoWidget::onShowText (BlendInt::MenuItem* item)
 	m_text = item->text();
 }
 
-BI::ResponseType InfoWidget::Draw (const BI::Profile& event)
+BI::ResponseType InfoWidget::Draw (BI::Profile& event)
 {
 	return BlendInt::Widget::Draw(event);
 }

@@ -141,7 +141,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ProgressBar::Draw(const Profile& profile)
+	ResponseType ProgressBar::Draw(Profile& profile)
 	{
 		using Stock::Shaders;
 

@@ -26,6 +26,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FileBrowser.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -36,7 +37,6 @@ namespace BlendInt {
 
 	FileBrowser::FileBrowser ()
 	: AbstractItemView(),
-	  vao_(0),
 	  highlight_index_(-1)
 	{
 		set_drop_shadow(true);
@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	FileBrowser::~FileBrowser ()
 	{
-		glDeleteVertexArrays(1, &vao_);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	bool FileBrowser::Load (const std::string& pathname)
@@ -136,7 +136,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (const Profile& profile)
+	ResponseType FileBrowser::Draw (Profile& profile)
 	{
 		int y = position().y() + size().height();
 
@@ -146,20 +146,31 @@ namespace BlendInt {
 
 		int h = font_.GetHeight();
 
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(),
-				position().y(),
-				size().width(),
-				size().height());
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+				Theme::instance->regular().inner.data());
+
+		glBindVertexArray(vaos_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+
+		profile.BeginPushStencil();	// inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		profile.EndPushStencil();
+
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
-		glBindVertexArray(vao_);
+		glBindVertexArray(vaos_[1]);
 
 		int i = 0;
 		while(y > position().y()) {
@@ -208,7 +219,17 @@ namespace BlendInt {
         DispatchDrawEvent(hbar(), profile);
 		DispatchDrawEvent(vbar(), profile);
 
-		glDisable(GL_SCISSOR_TEST);
+		program->Use();
+
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		profile.BeginPopStencil();	// pop inner stencil
+		glBindVertexArray(vaos_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		glBindVertexArray(0);
+		profile.EndPopStencil();
+
+		program->Reset();
 
 		return Accept;
 	}
@@ -237,9 +258,15 @@ namespace BlendInt {
 					(GLfloat)request.size()->width(), (GLfloat)h
 			};
 
+			row_->Bind();
+			row_->SetData(sizeof(verts), verts);
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0.f);
 			inner_->Bind();
-			inner_->SetData(sizeof(verts), verts);
-			inner_->Reset();
+			tool.SetInnerBufferData(inner_.get());
+
+			GLArrayBuffer::Reset();
 
 			h = model_->GetRows() * h;	// total height
 
@@ -302,8 +329,13 @@ namespace BlendInt {
 		if(index.IsValid()) {
 			file_selected_ = *index.GetData();
 			//DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
+			Refresh();
 		} else {
-			file_selected_.clear();
+
+			if(!file_selected_.empty()) {
+				file_selected_.clear();
+				Refresh();
+			}
 		}
 
 		clicked_.fire();
@@ -346,18 +378,32 @@ namespace BlendInt {
 						(GLfloat)size().width(), row_height
 		};
 
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0);
+
+		glGenVertexArrays(2, vaos_);
+
+		glBindVertexArray(vaos_[0]);
+
 		inner_.reset(new GLArrayBuffer);
 		inner_->Generate();
 		inner_->Bind();
-		inner_->SetData(sizeof(verts), verts);
+		tool.SetInnerBufferData(inner_.get());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vaos_[1]);
+		row_.reset(new GLArrayBuffer);
+		row_->Generate();
+		row_->Bind();
+		row_->SetData(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		inner_->Reset();
+		row_->Reset();
 
 		font_.set_color(Color(0xF0F0F0FF));
 		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));

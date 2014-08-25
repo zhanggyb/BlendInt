@@ -125,7 +125,7 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType ToolButton::Draw (const Profile& profile)
+	ResponseType ToolButton::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -256,7 +256,7 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 
 		// demo
-		icon_ = Icons::instance->icon_16x16(0);
+		icon_ = Icons::instance->icon_16x16(Stock::IMAGE_ALPHA);
 	}
 
 }

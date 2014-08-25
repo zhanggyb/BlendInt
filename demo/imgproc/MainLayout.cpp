@@ -35,7 +35,7 @@ void MainLayout::InitOnce ()
 
 	m_combo = Manage(new ComboBox);
 
-	HBox* box = Manage(new HBox);
+	HLayout* box = Manage(new HLayout);
 	box->SetMargin(0, 0, 0, 0);
 	box->SetSpace(-1);
 	m_input = Manage(new TextEntry);
@@ -103,7 +103,7 @@ BI::Expander* MainLayout::CreateExpander()
 	BI::Button* btn1 = Manage(new BI::Button("Blur"));
 	BI::Button* btn2 = Manage(new BI::Button("Help"));
 
-	BI::VBox* vbox = Manage(new BI::VBox);
+	BI::VLayout* vbox = Manage(new BI::VLayout);
 	vbox->PushBack(btn1);
 	vbox->PushBack(btn2);
 

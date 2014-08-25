@@ -24,15 +24,7 @@
 #ifndef _BLENDINT_GUI_CONTEXT_HPP_
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
-#include <map>
-
-#include <BlendInt/Core/Point.hpp>
-#include <BlendInt/Core/Size.hpp>
-
-#include <BlendInt/OpenGL/ScissorStatus.hpp>
-
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/Section.hpp>
@@ -102,14 +94,10 @@ namespace BlendInt {
 
 		Cpp::EventRef<const Size&> resized ()
 		{
-			return m_resized;
+			return resized_;
 		}
 
 		static Context* GetContext (AbstractWidget* widget);
-
-		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
-
-		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
 		static glm::mat4 default_view_matrix;
 
@@ -131,7 +119,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (const Profile& profile);
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -157,13 +145,11 @@ namespace BlendInt {
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		Profile m_redraw_event;
+		Profile profile_;
 
-		bool m_refresh;
+		AbstractWidget* focused_widget_;
 
-		AbstractWidget* m_focused_widget;
-
-		Cpp::Event<const Size&> m_resized;
+		Cpp::Event<const Size&> resized_;
 
 		static std::set<Context*> context_set;
 	};

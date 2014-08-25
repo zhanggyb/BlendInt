@@ -47,108 +47,37 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Frame::Frame ()
-	: AbstractContainer()
+	: BinLayout(),
+	  vao_(0)
 	{
 		set_size(400, 300);
+		set_drop_shadow(true);
+
+		InitializeFrame();
 	}
 
 	Frame::~Frame ()
 	{
-	}
-
-	bool Frame::Setup (AbstractWidget* widget)
-	{
-		bool ret = false;
-
-		if(!widget) return false;
-
-		if(widget->container() == this) return true;
-
-		if(widget_count() > 0) {
-			Clear();
-		}
-
-		if (PushBackSubWidget(widget)) {
-			FillSingleWidget(0, position(), size(), margin());
-			ret = true;
-		}
-
-		return ret;
-	}
-
-	bool Frame::Remove (AbstractWidget* widget)
-	{
-		return RemoveSubWidget(widget);
-	}
-
-	bool Frame::IsExpandX() const
-	{
-		if(first()) {
-			return first()->IsExpandX();
-		} else {
-			return false;
-		}
-	}
-
-	bool Frame::IsExpandY() const
-	{
-		if(first()) {
-			return first()->IsExpandY();
-		} else {
-			return false;
-		}
-	}
-
-	Size Frame::GetPreferredSize() const
-	{
-		Size prefer(400, 300);
-
-		const AbstractWidget* widget = first();
-
-		if(widget) {
-			prefer = widget->GetPreferredSize();
-
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
-		}
-
-		return prefer;
-	}
-
-	void Frame::PerformMarginUpdate(const Margin& request)
-	{
-		set_margin(request);
-
-		if(first()) {
-			FillSingleWidget(0, position(), size(), request);
-		}
-	}
-
-	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Frame::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			inner_->Reset();
+
 			set_size(*request.size());
 
-			if (first()) {
+			if (widget_count()) {
+				assert(widget_count() == 1);
 				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
@@ -156,57 +85,43 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Frame::PerformPositionUpdate (
-			const PositionUpdateRequest& request)
+	ResponseType Frame::Draw (Profile& profile)
 	{
-		if(request.target() == this) {
-			set_position(*request.position());
-			SetSubWidgetPosition(first(),
-					request.position()->x() + margin().left(),
-					request.position()->y() + margin().bottom());
-		}
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		program->Use();
 
-		ReportPositionUpdate(request);
-	}
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float)position().x(), (float)position().y(), 0.f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.0f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-	ResponseType Frame::CursorEnterEvent (bool entered)
-	{
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+
+		program->Reset();
+
 		return Ignore;
 	}
 
-	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
+	void Frame::InitializeFrame ()
 	{
-		return Ignore;
-	}
+		glGenVertexArrays(1, &vao_);
 
-	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
+		glBindVertexArray(vao_);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0);
 
-	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
-	ResponseType Frame::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::Draw (const Profile& profile)
-	{
-		return Ignore;
+		glBindVertexArray(0);
+		inner_->Reset();
 	}
 
 } /* namespace BlendInt */
