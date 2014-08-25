@@ -248,8 +248,7 @@ namespace BlendInt {
 			tool.SetOuterBufferData(outer_.get());
 
 			cursor_buffer_->Bind();
-			GLfloat* buf_p = (GLfloat*) cursor_buffer_->Map(
-			GL_READ_WRITE);
+			GLfloat* buf_p = (GLfloat*) cursor_buffer_->Map(GL_READ_WRITE);
 			*(buf_p + 5) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * Theme::instance->pixel());
 			*(buf_p + 7) = (GLfloat) (request.size()->height()

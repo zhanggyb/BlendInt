@@ -84,22 +84,6 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Frame::PerformPositionUpdate (
-			const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			set_position(*request.position());
-			if(widget_count()) {
-				assert(widget_count() == 1);
-				SetSubWidgetPosition(first(),
-						request.position()->x() + margin().left(),
-						request.position()->y() + margin().bottom());
-			}
-		}
-
-		ReportPositionUpdate(request);
-	}
-
 	ResponseType Frame::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();

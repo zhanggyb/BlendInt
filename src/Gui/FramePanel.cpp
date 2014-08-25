@@ -56,6 +56,8 @@ namespace BlendInt {
 	: BinLayout(), refresh_(true)
 	{
 		//set_drop_shadow(true);
+		set_size(400, 300);
+
 		InitializeFramePanel();
 	}
 	
@@ -73,6 +75,7 @@ namespace BlendInt {
 	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);
 			inner_->Bind();
@@ -80,9 +83,16 @@ namespace BlendInt {
 			inner_->Reset();
 
 			refresh_ = true;
+
+			set_size(*request.size());
+
+			if (widget_count()) {
+				assert(widget_count() == 1);
+				FillSingleWidget(0, position(), *request.size(), margin());
+			}
 		}
 
-		BinLayout::PerformSizeUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType FramePanel::Draw (Profile& profile)

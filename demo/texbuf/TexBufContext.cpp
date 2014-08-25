@@ -55,8 +55,8 @@ void TexBufContext::CreateWidgets ()
 	label2->SetBackgroundColor(Color(0x101010A0));
 	label2->Resize(label2->GetPreferredSize());
 
-	Viewport3D* view1 = Manage(new Viewport3D);
-	Viewport3D* view2 = Manage(new Viewport3D);
+	FileSelector* view1 = Manage(new FileSelector);
+	FileSelector* view2 = Manage(new FileSelector);
 
 	m_panel1 = Manage(new Frame);
 	m_panel2 = Manage(new FramePanel);
@@ -72,9 +72,6 @@ void TexBufContext::CreateWidgets ()
 	m_panel2->SetPosition(830, 100);
 	m_panel2->Resize(720, 600);
 
-	//DBG_PRINT_MSG("pos: %d, %d", fs->position().x(), fs->position().y());
-	//DBG_PRINT_MSG("size: %d, %d", fs->size().width(), fs->size().height());
-
 	m_button->SetPosition(750, 20);
 
 	Section* section = PushBack(label1);
@@ -83,6 +80,7 @@ void TexBufContext::CreateWidgets ()
 	PushBack(m_panel2);
 	PushBack(m_button);
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
+
 }
 
 void TexBufContext::OnTakeScreenShot ()
