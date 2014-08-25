@@ -2,8 +2,8 @@
  * A context works in GLFW
  */
 
-#ifndef GLFWCONTEXT_HPP_
-#define GLFWCONTEXT_HPP_
+#ifndef STUDIOCONTEXT_HPP_
+#define STUDIOCONTEXT_HPP_
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Clock.hpp>
@@ -52,28 +52,28 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
+#include "StudioFrame.hpp"
+
 namespace BI=BlendInt;
 
-class GLFWDemoContext: public BI::Context
+class StudioContext: public BI::Context
 {
 public:
 
-	GLFWDemoContext ();
+	StudioContext ();
 
-	virtual ~GLFWDemoContext ();
+	virtual ~StudioContext ();
 
 private:
 
 	void Initialize ();
 
-	void OnOpenObjFile ();
+	void OnSaveTextureToFile ();
 
-	BI::Viewport3D* m_view3d;
+	StudioFrame* frame_;
 
-	BI::FileBrowser* m_browser;;
-
-	BI::Button* m_open_button;
+	BI::Button* button_;
 
 };
 
-#endif /* GLFWCONTEXT_HPP_ */
+#endif /* STUDIOCONTEXT_HPP_ */

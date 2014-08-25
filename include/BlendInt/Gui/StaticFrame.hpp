@@ -33,15 +33,15 @@ namespace BlendInt {
 	/**
 	 * @brief A Frame container for demo only
 	 */
-	class FramePanel: public BinLayout
+	class StaticFrame: public BinLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(FramePanel);
+		DISALLOW_COPY_AND_ASSIGN(StaticFrame);
 
 	public:
 
-		FramePanel ();
+		StaticFrame ();
 
-		virtual ~FramePanel ();
+		virtual ~StaticFrame ();
 
 		void RenderToFile (const std::string& filename);
 

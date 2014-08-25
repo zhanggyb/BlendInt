@@ -172,14 +172,14 @@ void MainLayout::RenderToBuffer()
 
 		fb->Bind();
 
-//			glClearColor(0.0, 0.0, 0.0, 0.0);
-//			glClearDepth(1.0);
-//			glClearStencil(0);
-//
-//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+		glClearDepth(1.0);
+		glClearStencil(0);
+		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		//glEnable(GL_BLEND);
+		glEnable(GL_BLEND);
 
 		glm::mat4 origin;
 		glGetUniformfv(Shaders::instance->triangle_program()->id(),

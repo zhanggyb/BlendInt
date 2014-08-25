@@ -45,13 +45,13 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/FramePanel.hpp>
+#include <BlendInt/Gui/StaticFrame.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	FramePanel::FramePanel()
+	StaticFrame::StaticFrame()
 	: BinLayout(), refresh_(true)
 	{
 		set_size(400, 300);
@@ -60,18 +60,18 @@ namespace BlendInt {
 		InitializeFramePanel();
 	}
 	
-	FramePanel::~FramePanel ()
+	StaticFrame::~StaticFrame ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void FramePanel::PerformRefresh(const RefreshRequest& request)
+	void StaticFrame::PerformRefresh(const RefreshRequest& request)
 	{
 		refresh_ = true;
 		ReportRefresh(request);
 	}
 
-	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -94,7 +94,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType FramePanel::Draw (Profile& profile)
+	ResponseType StaticFrame::Draw (Profile& profile)
 	{
 		if(refresh_) {
 
@@ -111,7 +111,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void FramePanel::InitializeFramePanel()
+	void StaticFrame::InitializeFramePanel()
 	{
 		glGenVertexArrays(1, &vao_);
 
@@ -131,14 +131,14 @@ namespace BlendInt {
 		inner_->Reset();
 	}
 
-	void FramePanel::RenderToFile (const std::string& filename)
+	void StaticFrame::RenderToFile (const std::string& filename)
 	{
 		tex_buffer_.texture()->Bind();
 		tex_buffer_.texture()->WriteToFile(filename);
 		tex_buffer_.texture()->Reset();
 	}
 
-	void FramePanel::RenderToBuffer (Profile& profile)
+	void StaticFrame::RenderToBuffer (Profile& profile)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -188,14 +188,14 @@ namespace BlendInt {
 
 			fb->Bind();
 
-//			glClearColor(0.0, 0.0, 0.0, 0.0);
-//			glClearDepth(1.0);
-//			glClearStencil(0);
-//
-//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+			glClearDepth(1.0);
+			glClearStencil(0);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			//glEnable(GL_BLEND);
+			glEnable(GL_BLEND);
 
 			glm::mat4 origin;
 			glGetUniformfv(Shaders::instance->triangle_program()->id(),
