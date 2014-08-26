@@ -26,6 +26,9 @@
 
 #include <string>	// typedef String
 
+#define GUI_FRONT_END_GLFW3 0
+#define GUI_FRONT_END_QT5 1
+
 /**
  * A macro to disallow the copy constructor and operator= functions
  * This should be used in the private: declarations for a class

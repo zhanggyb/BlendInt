@@ -194,21 +194,21 @@ namespace BlendInt
 		// TODO: overwrite this
 	}
 
-	int Context::GetCursor () const
-	{
-		// TODO: overwrite this
-		return ArrowCursor;
-	}
-
 	void Context::PushCursor (int cursor_type)
 	{
-		// TODO: overwrite this
+		cursor_stack_.push(cursor_type);
 	}
 
 	int Context::PopCursor ()
 	{
-		// TODO:: overwrite this
-		return ArrowCursor;
+		int cursor = ArrowCursor;
+
+		if(!cursor_stack_.empty()) {
+			cursor = cursor_stack_.top();
+			cursor_stack_.pop();
+		}
+
+		return cursor;
 	}
 
 	Context* Context::GetContext (AbstractWidget* widget)

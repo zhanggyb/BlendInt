@@ -219,12 +219,11 @@ namespace BlendInt {
 	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
 	{
 		Context* context = Context::GetContext(this);
-		if(!context) return Ignore;
 
 		if(entered) {
 			highlight_ = true;
-			context->PushCursor(context->GetCursor());
-			context->SetCursor(orientation_ == Horizontal ? SplitHCursor : SplitVCursor);
+			context->PushCursor(context->current_cursor());
+			context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		} else {
 			highlight_ = false;
 			context->SetCursor(context->PopCursor());

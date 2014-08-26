@@ -5,6 +5,10 @@
 #ifndef GLFWCONTEXT_HPP_
 #define GLFWCONTEXT_HPP_
 
+#include <GLFW/glfw3.h>
+
+#include <vector>
+
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
@@ -58,13 +62,19 @@ class GLFWDemoContext: public BI::Context
 {
 public:
 
-	GLFWDemoContext ();
+	explicit GLFWDemoContext (GLFWwindow* window);
 
 	virtual ~GLFWDemoContext ();
 
+	virtual void SetCursor (int cursor_type);
+
 private:
 
+	void InitializeGLFWCursors ();
+
 	void Initialize ();
+
+	void ReleaseGLFWCursors ();
 
 	void OnOpenObjFile ();
 
@@ -74,6 +84,11 @@ private:
 
 	BI::Button* m_open_button;
 
+	GLFWcursor* arrow_;
+
+	GLFWcursor* cross_;
+
+	GLFWwindow* window_;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

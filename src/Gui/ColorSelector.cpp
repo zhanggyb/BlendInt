@@ -42,6 +42,7 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
+#include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
@@ -133,8 +134,7 @@ namespace BlendInt {
 		color_box->PushBack(stack_);
 		color_box->PushBack(alpha_slider);
 
-		ToolButton* pick_btn = Manage(new ToolButton);
-		pick_btn->SetAction(Icons::instance->icon_16x16(Stock::EYEDROPPER), String("EYEDROPPER"));
+		Button* pick_btn = Manage(new Button(Icons::instance->icon_16x16(Stock::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));

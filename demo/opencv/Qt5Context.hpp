@@ -26,21 +26,11 @@ public:
 	// overload cursor functions
 	virtual void SetCursor (int cursor_type);
 
-	virtual int GetCursor () const;
-
-	virtual void PushCursor (int cursor_type);
-
-	virtual int PopCursor ();
-
 private:
 
 	void OnResizeLayout (const BI::Size& size);
 
 	QWindow* m_qt_window;
-
-	BI::CursorShape m_current_cursor;
-
-	std::stack<int> m_cursor_stack;
 
 	MainLayout* m_layout;
 };

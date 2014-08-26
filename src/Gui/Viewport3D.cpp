@@ -74,7 +74,7 @@ namespace BlendInt {
 		if(!context) return Ignore;
 
 		if(entered) {
-			context->PushCursor(context->GetCursor());
+			context->PushCursor(context->current_cursor());
 			context->SetCursor(CrossCursor);
 		} else {
 			context->SetCursor(context->PopCursor());

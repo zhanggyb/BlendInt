@@ -42,6 +42,7 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/HBlockLayout.hpp>
+#include <BlendInt/Gui/FolderList.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -302,7 +303,7 @@ namespace BlendInt {
 		DBG_SET_NAME(toolbox, "SideBar");
 		toolbox->SetMargin(2, 2, 2, 2);
 
-		Expander* exp1 = CreateSystemPartOnce();
+		Expander* exp1 = CreateSystemDevicesOnce();
 		Expander* exp2 = CreateSystemBookmarksOnce();
 
 		toolbox->PushBack(exp1);
@@ -311,14 +312,15 @@ namespace BlendInt {
 		return toolbox;
 	}
 
-	Expander* FileSelector::CreateSystemPartOnce ()
+	Expander* FileSelector::CreateSystemDevicesOnce ()
 	{
 		Expander* expander = Manage(new Expander("System"));
 		DBG_SET_NAME(expander, "System Expander");
-		Button* btn = Manage(new Button);
-		DBG_SET_NAME(btn, "Temp button in System");
 
-		expander->Setup(btn);
+		FolderList* system_folders = Manage(new FolderList);
+		DBG_SET_NAME(system_folders, "System Folders");
+
+		expander->Setup(system_folders);
 
 		return expander;
 	}
@@ -327,10 +329,11 @@ namespace BlendInt {
 	{
 		Expander* expander = Manage(new Expander("System Bookmarks"));
 		DBG_SET_NAME(expander, "System Bookmarks Expander");
-		Button* btn = Manage(new Button);
-		DBG_SET_NAME(btn, "Temp button in SystemBookmarks");
 
-		expander->Setup(btn);
+		FolderList* system_bookmark = Manage(new FolderList);
+		DBG_SET_NAME(system_bookmark, "System Bookmarks");
+
+		expander->Setup(system_bookmark);
 
 		return expander;
 	}
