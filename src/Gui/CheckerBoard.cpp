@@ -46,6 +46,8 @@ namespace BlendInt {
 	CheckerBoard::CheckerBoard(size_t cell_size)
 	: AbstractForm(),
 	  m_vao(0),
+	  light_elements_(0),
+	  dark_elements_(0),
 	  m_cell_size(cell_size)
 	{
 		set_size(0, 0);	// TODO: use the default size in Interface
@@ -72,17 +74,17 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		m_vbo->Bind();
-		m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_vbo->Reset();
+		m_vbo->bind();
+		m_vbo->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_vbo->reset();
 
-		m_light_ibo->Bind();
-		m_light_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &light_indices[0]);
-		m_light_ibo->Reset();
+		m_light_ibo->bind();
+		m_light_ibo->set_data(light_indices.size() * sizeof(GLuint), &light_indices[0]);
+		m_light_ibo->reset();
 
-		m_dark_ibo->Bind();
-		m_dark_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &dark_indices[0]);
-		m_dark_ibo->Reset();
+		m_dark_ibo->bind();
+		m_dark_ibo->set_data(light_indices.size() * sizeof(GLuint), &dark_indices[0]);
+		m_dark_ibo->reset();
 
 		glBindVertexArray(0);
 	}
@@ -105,21 +107,21 @@ namespace BlendInt {
 				glGenVertexArrays(1, &m_vao);
 				glBindVertexArray(m_vao);
 
-				m_vbo->Bind();
-				m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_vbo->Reset();
+				m_vbo->bind();
+				m_vbo->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-				m_light_ibo->Bind();
-				m_light_ibo->SetData(light_indices.size() / 3,
-								3 * sizeof(GLuint), &light_indices[0]);
-				m_light_ibo->Reset();
+				m_light_ibo->bind();
+				m_light_ibo->set_data(light_indices.size() * sizeof(GLuint), &light_indices[0]);
 
-				m_dark_ibo->Bind();
-				m_dark_ibo->SetData(light_indices.size() / 3,
-								3 * sizeof(GLuint), &dark_indices[0]);
-				m_dark_ibo->Reset();
+				m_dark_ibo->bind();
+				m_dark_ibo->set_data(dark_indices.size() * sizeof(GLuint), &dark_indices[0]);
 
 				glBindVertexArray(0);
+				GLArrayBuffer::reset();
+				GLElementArrayBuffer::reset();
+
+				light_elements_ = light_indices.size();
+				dark_elements_ = dark_indices.size();
 
 				break;
 			}
@@ -148,8 +150,8 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);
 
-		m_vbo->Bind();	// bind ARRAY BUFFER
-		m_light_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
+		m_vbo->bind();	// bind ARRAY BUFFER
+		m_light_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
 		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
@@ -159,14 +161,14 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glDrawElements(GL_TRIANGLES, m_light_ibo->vertices() * 3,
+		glDrawElements(GL_TRIANGLES, light_elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		color = 0x666666FF;
 
 		program->SetVertexAttrib4fv("a_color", color.data());
 
-		m_dark_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
+		m_dark_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
 		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
@@ -176,15 +178,15 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glDrawElements(GL_TRIANGLES, m_dark_ibo->vertices() * 3,
+		glDrawElements(GL_TRIANGLES, dark_elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-		m_dark_ibo->Reset();
-		m_vbo->Reset();
+		m_dark_ibo->reset();
+		m_vbo->reset();
 
 		glDisableVertexAttribArray(0);
 
-		program->Reset();
+		program->reset();
 
 		glBindVertexArray(0);
 	}
@@ -368,20 +370,20 @@ namespace BlendInt {
 		m_light_ibo.reset(new GLElementArrayBuffer);
 		m_dark_ibo.reset(new GLElementArrayBuffer);
 
-		m_vbo->Generate();
-		m_vbo->Bind();
-		m_vbo->SetData(0, 0);
-		m_vbo->Reset();
+		m_vbo->generate();
+		m_vbo->bind();
+		m_vbo->set_data(0, 0);
+		m_vbo->reset();
 
-		m_light_ibo->Generate();
-		m_light_ibo->Bind();
-		m_light_ibo->SetData(0, 0, 0);
-		m_light_ibo->Reset();
+		m_light_ibo->generate();
+		m_light_ibo->bind();
+		m_light_ibo->set_data(0, 0, 0);
+		m_light_ibo->reset();
 
-		m_dark_ibo->Generate();
-		m_dark_ibo->Bind();
-		m_dark_ibo->SetData(0, 0, 0);
-		m_dark_ibo->Reset();
+		m_dark_ibo->generate();
+		m_dark_ibo->bind();
+		m_dark_ibo->set_data(0, 0, 0);
+		m_dark_ibo->reset();
 
 
 		glBindVertexArray(0);

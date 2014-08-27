@@ -69,12 +69,12 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(),
 			        round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 			Refresh();
@@ -90,12 +90,12 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -111,12 +111,12 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -170,7 +170,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		if (text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -206,30 +206,30 @@ namespace BlendInt {
 		                + std::abs(font().GetDescender()));
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void FileButton::OnClicked ()

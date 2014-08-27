@@ -74,9 +74,9 @@ namespace BlendInt {
 		vertices[15] = 1.f;
 
 		buffer_.reset(new GLArrayBuffer);
-		buffer_->Generate();
-		buffer_->Bind();
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->generate();
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
@@ -87,7 +87,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		buffer_->Reset();
+		buffer_->reset();
 	}
 
 	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
@@ -133,9 +133,9 @@ namespace BlendInt {
 		}
 
 		buffer_.reset(new GLArrayBuffer);
-		buffer_->Generate();
-		buffer_->Bind();
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->generate();
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
@@ -147,17 +147,17 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		buffer_->Reset();
+		buffer_->reset();
 
 		texture_.reset(new GLTexture2D);
-		texture_->Generate();
-		texture_->Bind();
+		texture_->generate();
+		texture_->bind();
 		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture_->SetMinFilter(GL_LINEAR);
 		texture_->SetMagFilter(GL_LINEAR);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		texture_->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		texture_->Reset();
+		texture_->reset();
 	}
 
 	PixelIcon::PixelIcon (int width, int height,
@@ -204,9 +204,9 @@ namespace BlendInt {
 		}
 
 		buffer_.reset(new GLArrayBuffer);
-		buffer_->Generate();
-		buffer_->Bind();
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->generate();
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());	// 0: Coord
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());// 1: Texture UV
@@ -216,7 +216,7 @@ namespace BlendInt {
 		        GL_FALSE, 4 * sizeof(GLfloat),
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		buffer_->Reset();
+		buffer_->reset();
 		glBindVertexArray(0);
 
 		texture_ = texture;
@@ -232,20 +232,20 @@ namespace BlendInt {
 		assert(pixels);
 
 		RefPtr<GLTexture2D> texture(new GLTexture2D);
-		texture->Generate();
-		texture->Bind();
+		texture->generate();
+		texture->bind();
 		texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture->SetMinFilter(GL_LINEAR);
 		texture->SetMagFilter(GL_LINEAR);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		texture->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		texture->Reset();
+		texture->reset();
 
 		texture_ = texture;
 
-		buffer_->Bind();
+		buffer_->bind();
 
-		GLfloat* ptr = (GLfloat*)buffer_->Map(GL_READ_WRITE);
+		GLfloat* ptr = (GLfloat*)buffer_->map(GL_READ_WRITE);
 
 		*(ptr + 4) = (GLfloat)width;
 		*(ptr + 9) = (GLfloat)height;
@@ -272,8 +272,8 @@ namespace BlendInt {
 			*(ptr + 15) = 1.f;
 		}
 
-		buffer_->Unmap();
-		buffer_->Reset();
+		buffer_->unmap();
+		buffer_->reset();
 
 		set_size(width, height);
 	}
@@ -286,9 +286,9 @@ namespace BlendInt {
 
 		texture_ = texture;
 
-		buffer_->Bind();
+		buffer_->bind();
 
-		GLfloat* ptr = (GLfloat*)buffer_->Map(GL_READ_WRITE);
+		GLfloat* ptr = (GLfloat*)buffer_->map(GL_READ_WRITE);
 
 		*(ptr + 4) = (GLfloat)width;
 		*(ptr + 9) = (GLfloat)height;
@@ -315,8 +315,8 @@ namespace BlendInt {
 			*(ptr + 15) = 1.f;
 		}
 
-		buffer_->Unmap();
-		buffer_->Reset();
+		buffer_->unmap();
+		buffer_->reset();
 
 		set_size(width, height);
 	}
@@ -333,13 +333,13 @@ namespace BlendInt {
 			glActiveTexture(GL_TEXTURE0);
 			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
 
-			texture_->Bind();
+			texture_->bind();
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			glBindVertexArray(0);
-			texture_->Reset();
+			texture_->reset();
 
-			program->Reset();
+			program->reset();
 
 		}
 	}

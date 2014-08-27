@@ -74,8 +74,8 @@ namespace BlendInt {
 
 		GLuint m_vao[2];
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
 		bool m_highlight;
 	};

@@ -128,8 +128,8 @@ namespace BlendInt {
 		 */
 		GLuint m_vao[4];
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
 		RefPtr<GLArrayBuffer> m_slider1;
 		RefPtr<GLArrayBuffer> m_slider2;

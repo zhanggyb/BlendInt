@@ -72,9 +72,9 @@ namespace BlendInt {
 
 				std::vector<GLfloat> vertices;
 				GenerateShadowVerticesExt(*size_p, round_type(), radius(), vertices);
-				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->Reset();
+				m_buffer->bind();
+				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->reset();
 
 				break;
 			}
@@ -85,9 +85,9 @@ namespace BlendInt {
 
 				std::vector<GLfloat> vertices;
 				GenerateShadowVerticesExt(size(), *type_p, radius(), vertices);
-				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->Reset();
+				m_buffer->bind();
+				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->reset();
 
 				break;
 			}
@@ -98,9 +98,9 @@ namespace BlendInt {
 
 				std::vector<GLfloat> vertices;
 				GenerateShadowVerticesExt(size(), round_type(), *radius_p, vertices);
-				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->Reset();
+				m_buffer->bind();
+				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->reset();
 
 				break;
 			}
@@ -159,8 +159,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		GLArrayBuffer::Reset();
-		program->Reset();
+		GLArrayBuffer::reset();
+		program->reset();
 	}
 
 	void Shadow::InitializeShadow ()
@@ -172,16 +172,16 @@ namespace BlendInt {
 		GenerateShadowVerticesExt(size(), round_type(), radius(), vertices);
 
 		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->generate();
+		m_buffer->bind();
+		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void Shadow::Update (int width, int height, int type, float rad)
@@ -192,9 +192,9 @@ namespace BlendInt {
 
 		std::vector<GLfloat> vertices;
 		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_buffer->Reset();
+		m_buffer->bind();
+		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->reset();
 	}
 
 	void Shadow::Update (const Size& new_size, int type, float rad)
@@ -208,9 +208,9 @@ namespace BlendInt {
 
 		std::vector<GLfloat> vertices;
 		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_buffer->Reset();
+		m_buffer->bind();
+		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->reset();
 	}
 
 	void Shadow::GenerateShadowVerticesExt (const Size& size, int round_type,

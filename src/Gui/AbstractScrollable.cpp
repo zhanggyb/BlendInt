@@ -28,11 +28,11 @@ namespace BlendInt {
 	AbstractScrollable::AbstractScrollable()
 	: AbstractWidget()
 	{
-		m_hbar.reset(new NativeScrollBar(Horizontal));
-		m_vbar.reset(new NativeScrollBar(Vertical));
+		hbar_.reset(new NativeScrollBar(Horizontal));
+		vbar_.reset(new NativeScrollBar(Vertical));
 
-		events()->connect(m_hbar->slider_moved(), &m_hbar_moved, &Cpp::Event<int>::fire);
-		events()->connect(m_vbar->slider_moved(), &m_vbar_moved, &Cpp::Event<int>::fire);
+		events()->connect(hbar_->slider_moved(), &hbar_moved_, &Cpp::Event<int>::fire);
+		events()->connect(vbar_->slider_moved(), &vbar_moved_, &Cpp::Event<int>::fire);
 	}
 
 	AbstractScrollable::~AbstractScrollable ()
@@ -124,23 +124,23 @@ namespace BlendInt {
 	void AbstractScrollable::AdjustScrollBarGeometries (int left, int bottom,
 	        int width, int height)
 	{
-		int bh = m_hbar->visiable() ? m_hbar->size().height() : 0;	// height of the bottom hbar
-		int rw = m_vbar->visiable() ? m_vbar->size().width() : 0;	// width of the right vbar
+		int bh = hbar_->visiable() ? hbar_->size().height() : 0;	// height of the bottom hbar
+		int rw = vbar_->visiable() ? vbar_->size().width() : 0;	// width of the right vbar
 
-		if(m_hbar->visiable()) {
-			m_hbar->SetPosition(left, bottom);
-			m_hbar->Resize(width - rw, bh);
+		if(hbar_->visiable()) {
+			hbar_->SetPosition(left, bottom);
+			hbar_->Resize(width - rw, bh);
 		} else {
-			m_hbar->SetPosition(left, bottom);
-			m_hbar->Resize(width - m_vbar->size().width(), m_hbar->size().height());
+			hbar_->SetPosition(left, bottom);
+			hbar_->Resize(width - vbar_->size().width(), hbar_->size().height());
 		}
 
-		if(m_vbar->visiable()) {
-			m_vbar->SetPosition(left + width - rw, bottom + bh);
-			m_vbar->Resize (rw, height - bh);
+		if(vbar_->visiable()) {
+			vbar_->SetPosition(left + width - rw, bottom + bh);
+			vbar_->Resize (rw, height - bh);
 		} else {
-			m_vbar->SetPosition(left + width - m_vbar->size().width(), bottom + m_hbar->size().height());
-			m_vbar->Resize (m_vbar->size().width(), height - m_hbar->size().height());
+			vbar_->SetPosition(left + width - vbar_->size().width(), bottom + hbar_->size().height());
+			vbar_->Resize (vbar_->size().width(), height - hbar_->size().height());
 		}
 	}
 

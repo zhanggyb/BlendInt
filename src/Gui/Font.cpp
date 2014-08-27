@@ -252,7 +252,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
+		program->reset();
 
 		return advance;
 	}
@@ -373,7 +373,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
+		program->reset();
 
 		return advance;
 	}

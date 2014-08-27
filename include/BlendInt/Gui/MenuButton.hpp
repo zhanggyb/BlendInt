@@ -63,7 +63,7 @@ namespace BlendInt {
 
 		GLuint m_vao;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 
 		RefPtr<Menu> m_menu;
 	};

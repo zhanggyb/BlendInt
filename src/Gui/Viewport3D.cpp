@@ -229,10 +229,10 @@ namespace BlendInt {
 			        1.f * request.size()->width() / request.size()->height());
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0.f);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			inner_->Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			set_size(*request.size());
 		}
@@ -290,7 +290,7 @@ namespace BlendInt {
 		profile.EndPushStencil();
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
         glEnable(GL_DEPTH_TEST);
 //        glEnable(GL_SCISSOR_TEST);
@@ -327,7 +327,7 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 		profile.EndPopStencil();
-		program->Reset();
+		program->reset();
 
 		return Accept;
 	}
@@ -372,23 +372,23 @@ namespace BlendInt {
 	void Viewport3D::InitializeViewport3DOnce ()
 	{
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0.f);
+		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
 
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(inner_.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		default_camera_.reset(new NavigationCamera);
 

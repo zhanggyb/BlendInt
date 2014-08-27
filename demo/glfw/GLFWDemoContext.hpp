@@ -76,14 +76,6 @@ private:
 
 	void ReleaseGLFWCursors ();
 
-	void OnOpenObjFile ();
-
-	BI::Viewport3D* m_view3d;
-
-	BI::FileBrowser* m_browser;;
-
-	BI::Button* m_open_button;
-
 	GLFWcursor* arrow_;
 
 	GLFWcursor* cross_;

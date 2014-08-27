@@ -78,8 +78,8 @@ namespace BlendInt {
 
 		Orientation m_orientation;
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 	};
 
 }

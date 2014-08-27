@@ -57,7 +57,7 @@ namespace BlendInt {
 					short cell_y, short xoffset, short yoffset, short xspace,
 					short yspace)
 	{
-		GLTexture2D::Generate();
+		GLTexture2D::generate();
 
 		glBindTexture(GL_TEXTURE_2D, texture());
 

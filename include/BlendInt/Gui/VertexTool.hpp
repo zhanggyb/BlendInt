@@ -52,51 +52,45 @@ namespace BlendInt {
 
 		~VertexTool ();
 
-		void Initialize ();
+		void GenerateVertices (const Size& size, float border, int round_type, float radius);
 
-		/**
-		 * @brief Generate round vertices for inner and outline of a form
-		 * @param[in] size The size of the form
-		 * @param[in] border The width of the outline
-		 * @param[in] round_type Round type, MUST be one or bit operation of the values in RoundType
-		 * @param[in] radius The round radius
-		 * @param[out] inner The inner vertices in std::vector
-		 * @param[out] outer The outline vertices in std::vector
-		 */
-		void Setup (const Size& size, float border, int round_type, float radius);
+		void GenerateVertices (const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				const Color& color,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown);
 
-		void Setup (const Size& size,
-						float border,
-						int round_type,
-						float radius,
-						const Color& color,
-						Orientation shadedir,
-						short shadetop,
-						short shadedown
-						);
+		inline int inner_size () const
+		{
+			return sizeof(GLfloat) * inner_.size();
+		}
 
-		void SetInnerBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
-
-		void SetOuterBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
+		inline int outer_size () const
+		{
+			return sizeof(GLfloat) * outer_.size();
+		}
 
 		const GLfloat* inner_data () const
 		{
-			return m_inner.data();
+			return &inner_[0];
 		}
 
 		const GLfloat* outer_data () const
 		{
-			return m_outer.data();
+			return &outer_[0];
 		}
 
-		unsigned int total () const
+		const std::vector<GLfloat>& inner () const
 		{
-			return m_total;
+			return inner_;
 		}
 
-		unsigned int half () const
+		const std::vector<GLfloat>& outer () const
 		{
-			return m_half;
+			return outer_;
 		}
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
@@ -114,14 +108,9 @@ namespace BlendInt {
 						unsigned int num,
 						std::vector<GLfloat>& strip);
 
+		std::vector<GLfloat> inner_;
 
-		unsigned int m_total;	/**< total number of vertices for widget */
-
-		unsigned int m_half;	/**< halfway vertices number */
-
-		std::vector<GLfloat> m_inner;
-		std::vector<GLfloat> m_outer;
-
+		std::vector<GLfloat> outer_;
 	};
 
 }

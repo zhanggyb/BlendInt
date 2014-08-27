@@ -53,18 +53,18 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(inner_.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
@@ -160,10 +160,10 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			GLArrayBuffer::Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
 			set_size(*request.size());
 		}
 
@@ -188,7 +188,7 @@ namespace BlendInt {
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}

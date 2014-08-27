@@ -240,21 +240,21 @@ namespace BlendInt {
 			short shadedown = Theme::instance->text().shadedown;
 
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius(), color, Vertical, shadetop, shadedown);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
-			cursor_buffer_->Bind();
-			GLfloat* buf_p = (GLfloat*) cursor_buffer_->Map(GL_READ_WRITE);
+			cursor_buffer_->bind();
+			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
 			*(buf_p + 5) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * Theme::instance->pixel());
 			*(buf_p + 7) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * Theme::instance->pixel());
-			cursor_buffer_->Unmap();
-			cursor_buffer_->Reset();
+			cursor_buffer_->unmap();
+			cursor_buffer_->reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -274,12 +274,12 @@ namespace BlendInt {
 			short shadedown = Theme::instance->text().shadedown;
 
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius(), color, Vertical, shadetop, shadedown);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -297,13 +297,13 @@ namespace BlendInt {
 			short shadedown = Theme::instance->text().shadedown;
 
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius(), color, Vertical, shadetop,
 			        shadedown);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			font_.set_pen(
 			        *request.round_radius(),
@@ -358,7 +358,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		font_.Print(position(), text_, length_, start_);
 
@@ -374,7 +374,7 @@ namespace BlendInt {
 	void TextEntry::InitializeTextEntry ()
 	{
 		VertexTool tool;
-		tool.Setup(size(),
+		tool.GenerateVertices(size(),
 				DefaultBorderWidth(),
 				round_type(),
 				round_radius(),
@@ -387,9 +387,9 @@ namespace BlendInt {
 
 		glBindVertexArray(vaos_[0]);
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_color());
@@ -401,9 +401,9 @@ namespace BlendInt {
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(),
@@ -428,15 +428,15 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[2]);
 		cursor_buffer_.reset(new GLArrayBuffer);
 
-		cursor_buffer_->Generate();
-		cursor_buffer_->Bind();
-		cursor_buffer_->SetData(8 * sizeof(GLfloat), &cursor_vertices[0]);
+		cursor_buffer_->generate();
+		cursor_buffer_->bind();
+		cursor_buffer_->set_data(8 * sizeof(GLfloat), &cursor_vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 		glBindVertexArray(0);
 
 		// TODO: count Theme::pixel for retina

@@ -75,7 +75,7 @@ TexAtlasViewer::TexAtlasViewer()
 
 	m_atlas.Generate(384, 384, cell_x, cell_y, 1);
 	FT_GlyphSlot slot = ft_face.face()->glyph;
-	m_atlas.Bind();
+	m_atlas.bind();
 
 	FT_Int32 flags = 0;
 	flags |= FT_LOAD_NO_BITMAP;
@@ -199,7 +199,7 @@ TexAtlasViewer::TexAtlasViewer()
 	DBG_PRINT_MSG("columns: %d, rows: %d", m_atlas.GetColumns(), m_atlas.GetRows());
 	DBG_PRINT_MSG("max count: %d", m_atlas.GetMaxNumber());
 
-	m_atlas.Reset();
+	m_atlas.reset();
 	ft_face.Done();
 	ft_lib.Done();
 
@@ -211,10 +211,10 @@ TexAtlasViewer::TexAtlasViewer()
 	};
 
 	m_vbo.reset(new BI::GLArrayBuffer);
-	m_vbo->Generate();
-	m_vbo->Bind();
-	m_vbo->SetData(sizeof(vertices), vertices);
-	m_vbo->Reset();
+	m_vbo->generate();
+	m_vbo->bind();
+	m_vbo->set_data(sizeof(vertices), vertices);
+	m_vbo->reset();
 
 	GLfloat uv[] = {
 			0.0, 1.0,
@@ -225,10 +225,10 @@ TexAtlasViewer::TexAtlasViewer()
 
 	m_tbo.reset(new BI::GLArrayBuffer);
 
-	m_tbo->Generate();
-	m_tbo->Bind();
-	m_tbo->SetData(sizeof(uv), uv);
-	m_tbo->Reset();
+	m_tbo->generate();
+	m_tbo->bind();
+	m_tbo->set_data(sizeof(uv), uv);
+	m_tbo->reset();
 
 	glBindVertexArray(0);
 }
@@ -250,7 +250,7 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 	m_program->Use();
 
 	glActiveTexture(GL_TEXTURE0);
-	m_atlas.Bind();
+	m_atlas.bind();
 
 	if (m_atlas.GetWidth() > 0) {
 		m_program->SetUniform1i("TexID", 0);
@@ -258,7 +258,7 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 		        glm::value_ptr(mvp));
 
 		glEnableVertexAttribArray(0);
-		m_vbo->Bind();
+		m_vbo->bind();
 		glVertexAttribPointer(0,
 						2,
 						GL_FLOAT,
@@ -267,7 +267,7 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 						BUFFER_OFFSET(0));
 
 		glEnableVertexAttribArray(1);
-		m_tbo->Bind();
+		m_tbo->bind();
 		glVertexAttribPointer(1,
 						2,
 						GL_FLOAT,
@@ -275,17 +275,17 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 						0,
 						BUFFER_OFFSET(0));
 
-		m_vbo->Bind();
+		m_vbo->bind();
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 
-		m_vbo->Reset();
-		m_atlas.Reset();
+		m_vbo->reset();
+		m_atlas.reset();
 	}
-	m_program->Reset();
+	m_program->reset();
 
 	glBindVertexArray(0);
 	

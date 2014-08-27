@@ -321,9 +321,9 @@ namespace BlendInt {
 			FillInExpander(position(), *request.size(), margin());
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_size(*request.size());
 			Refresh();
@@ -366,7 +366,7 @@ namespace BlendInt {
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -474,20 +474,20 @@ namespace BlendInt {
 		glGenVertexArrays(1, &vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		glBindVertexArray(vao_);
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void Expander::OnToggled (bool toggle)

@@ -194,7 +194,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		if(GetModel()) {
 
@@ -229,7 +229,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		profile.EndPopStencil();
 
-		program->Reset();
+		program->reset();
 
 		return Accept;
 	}
@@ -258,15 +258,15 @@ namespace BlendInt {
 					(GLfloat)request.size()->width(), (GLfloat)h
 			};
 
-			row_->Bind();
-			row_->SetData(sizeof(verts), verts);
+			row_->bind();
+			row_->set_data(sizeof(verts), verts);
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0.f);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
-			GLArrayBuffer::Reset();
+			GLArrayBuffer::reset();
 
 			h = model_->GetRows() * h;	// total height
 
@@ -379,31 +379,31 @@ namespace BlendInt {
 		};
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		glGenVertexArrays(2, vaos_);
 
 		glBindVertexArray(vaos_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		row_.reset(new GLArrayBuffer);
-		row_->Generate();
-		row_->Bind();
-		row_->SetData(sizeof(verts), verts);
+		row_->generate();
+		row_->bind();
+		row_->set_data(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		row_->Reset();
+		row_->reset();
 
 		font_.set_color(Color(0xF0F0F0FF));
 		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));

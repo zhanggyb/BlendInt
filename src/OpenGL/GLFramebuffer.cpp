@@ -48,24 +48,6 @@ namespace BlendInt {
 		glDeleteFramebuffers(1, &m_id);
 	}
 
-	void GLFramebuffer::Generate ()
-	{
-		if(m_id) {
-			Clear();
-		}
-
-		glGenFramebuffers (1, &m_id);
-	}
-
-	void GLFramebuffer::Bind()
-	{
-		if(m_id) {
-			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
-		} else {
-			std::cerr << "The frame buffer is not generated! call Generate() first." << std::endl;
-		}
-	}
-
 	void GLFramebuffer::Attach (const GLTexture2D& tex, GLenum attachment)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.texture(), 0);
@@ -74,20 +56,6 @@ namespace BlendInt {
 	void GLFramebuffer::Attach (const GLRenderbuffer& renderbuffer, GLenum attachment)
 	{
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.id());
-	}
-
-	void GLFramebuffer::Clear ()
-	{
-		//if(glIsFramebuffer(m_id)) {
-		glDeleteFramebuffers(1, &m_id);
-		//}
-
-		m_id = 0;
-	}
-
-	void GLFramebuffer::Reset ()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	bool GLFramebuffer::CheckStatus()

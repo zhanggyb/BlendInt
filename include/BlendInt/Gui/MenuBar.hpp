@@ -104,7 +104,7 @@ namespace BlendInt {
 
 		MenuButton* m_active_button;
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 

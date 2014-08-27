@@ -134,15 +134,15 @@ namespace BlendInt {
 			        request.size()->height() - margin().vsum());
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0.f);
-			m_background->Bind();
-			tool.SetInnerBufferData(m_background.get());
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
+			m_background->bind();
+			m_background->set_data(tool.inner_size(), tool.inner_data());
 
-			tool.Setup(inner_size, 0, RoundNone, 0.f);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			tool.GenerateVertices(inner_size, 0, RoundNone, 0.f);
+			m_inner->bind();
+			m_inner->set_data(tool.inner_size(), tool.inner_data());
 
-			m_inner->Reset();
+			m_inner->reset();
 
 			set_size(*request.size());
 		} else if (request.source()->container() == this) {
@@ -200,7 +200,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -257,31 +257,31 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[0]);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0.f);
+		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
 
 		m_background.reset(new GLArrayBuffer);
-		m_background->Generate();
-		m_background->Bind();
+		m_background->generate();
+		m_background->bind();
 
-		tool.SetInnerBufferData(m_background.get());
+		m_background->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(m_vao[1]);
-		tool.Setup(inner_size, 0, RoundNone, 0.f);
+		tool.GenerateVertices(inner_size, 0, RoundNone, 0.f);
 
 		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
+		m_inner->generate();
+		m_inner->bind();
 
-		tool.SetInnerBufferData(m_inner.get());
+		m_inner->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 }

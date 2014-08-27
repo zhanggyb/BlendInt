@@ -101,11 +101,11 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, round_type(), round_radius());
+			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
 
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_inner->Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			int x = position().x() + margin().left();
 			if (first()) {
@@ -147,7 +147,7 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 		return Accept;
 	}
 
@@ -217,22 +217,22 @@ namespace BlendInt {
 		set_round_radius(10.f);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, round_type(), round_radius());
+		tool.GenerateVertices(size(), 0, round_type(), round_radius());
 
 		glGenVertexArrays(1, m_vao);
 
 		glBindVertexArray(m_vao[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size,

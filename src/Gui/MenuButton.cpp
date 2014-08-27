@@ -60,10 +60,10 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(),
 			        round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_size(*request.size());
 			Refresh();
@@ -78,10 +78,10 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -97,10 +97,10 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -130,7 +130,7 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 			glBindVertexArray(0);
 
-			program->Reset();
+			program->reset();
 
 		}
 
@@ -173,19 +173,19 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glBindVertexArray(m_vao);
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 } /* namespace BlendInt */

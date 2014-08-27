@@ -137,9 +137,9 @@ void MainLayout::RenderToBuffer()
 	// Create and set texture to render to.
 	GLTexture2D* tex = buffer_.texture();
 	if(!tex->texture())
-		tex->Generate();
+		tex->generate();
 
-	tex->Bind();
+	tex->bind();
 	tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 	tex->SetMinFilter(GL_NEAREST);
 	tex->SetMagFilter(GL_NEAREST);
@@ -147,8 +147,8 @@ void MainLayout::RenderToBuffer()
 
 	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 	GLFramebuffer* fb = new GLFramebuffer;
-	fb->Generate();
-	fb->Bind();
+	fb->generate();
+	fb->bind();
 
 	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -170,7 +170,7 @@ void MainLayout::RenderToBuffer()
 
 	if(GLFramebuffer::CheckStatus()) {
 
-		fb->Bind();
+		fb->bind();
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearDepth(1.0);
@@ -240,21 +240,21 @@ void MainLayout::RenderToBuffer()
 		glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
 				glm::value_ptr(origin));
 
-		program->Reset();
+		program->reset();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	}
 
-	fb->Reset();
-	tex->Reset();
+	fb->reset();
+	tex->reset();
 
 	//delete tex; tex = 0;
 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glDeleteRenderbuffers(1, &rb);
 
-	fb->Reset();
+	fb->reset();
 	delete fb; fb = 0;
 }
 

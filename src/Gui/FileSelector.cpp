@@ -76,10 +76,10 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			inner_->Reset();
+			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			BinLayout::PerformSizeUpdate(request);
 			return;
@@ -92,11 +92,11 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), 0, *request.round_type(),
+			tool.GenerateVertices(size(), 0, *request.round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
 
 			Refresh();
 		}
@@ -109,11 +109,11 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), 0, round_type(),
+			tool.GenerateVertices(size(), 0, round_type(),
 			        *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
 
 			Refresh();
 		}
@@ -137,7 +137,7 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -148,18 +148,18 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0.f);
+		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		inner_->Reset();
+		inner_->reset();
 
 		// create sub widgets
 		VLayout* layout = Manage(new VLayout);

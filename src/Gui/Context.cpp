@@ -302,7 +302,7 @@ namespace BlendInt
 			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
-			program->Reset();
+			program->reset();
 
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
@@ -543,7 +543,7 @@ namespace BlendInt
 		glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(Shaders::instance->image_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program->Reset();
+		program->reset();
 	}
 
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)

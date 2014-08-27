@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Color CVImageView::background_color = Color(Color::SlateGray);
+	Color CVImageView::background_color = Color(Color::Gray);
 
 	CVImageView::CVImageView ()
 	: AbstractScrollable()
@@ -60,34 +60,55 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vaos_);
 	}
 
+	bool CVImageView::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool CVImageView::IsExpandY () const
+	{
+		return true;
+	}
+
+	Size CVImageView::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(cv_image_.data) {
+			prefer.reset(cv_image_.cols, cv_image_.rows);
+		}
+
+		return prefer;
+	}
+
 	void CVImageView::Open (const char* filename)
 	{
-		image_ = cv::imread(filename);
+		cv_image_ = cv::imread(filename);
 
-		if(image_.data) {
+		if(cv_image_.data) {
 
-			texture_->Bind();
-			switch (image_.channels()) {
+			texture_->bind();
+			switch (cv_image_.channels()) {
 
 				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_->SetImage(0, GL_RGB, image_.cols, image_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
+					texture_->SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
 					break;
 				}
 
 				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
 				{
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_->SetImage(0, GL_RGBA, image_.cols, image_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
+					texture_->SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
 					break;
 				}
 
 				default:
 					break;
 			}
-			texture_->Reset();
+			texture_->reset();
 
 			AdjustImageArea(size());
 		}
@@ -95,7 +116,34 @@ namespace BlendInt {
 
 	void CVImageView::Load (const cv::Mat& image)
 	{
+		cv_image_ = image;
+		if(cv_image_.data) {
 
+			texture_->bind();
+			switch (cv_image_.channels()) {
+
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_->SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
+					break;
+				}
+
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_->SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
+					break;
+				}
+
+				default:
+					break;
+			}
+			texture_->reset();
+
+			AdjustImageArea(size());
+		}
 	}
 
 	void CVImageView::PerformPositionUpdate(const PositionUpdateRequest& request)
@@ -111,10 +159,10 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			background_->Bind();
-			tool.SetInnerBufferData(background_.get());
-			background_->Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			background_->bind();
+			background_->set_data(tool.inner_size(), tool.inner_data());
+			background_->reset();
 
 			set_size(*request.size());
 			AdjustImageArea(*request.size());
@@ -127,39 +175,37 @@ namespace BlendInt {
 
 	ResponseType CVImageView::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4fv("a_color", background_color.data());
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), background_color.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		glActiveTexture(GL_TEXTURE0);
-		texture_->Bind();
+		texture_->bind();
 
 		if (texture_->GetWidth() > 0) {
 
 			program = Shaders::instance->image_program();
 			program->Use();
-			program->SetUniform1i("TexID", 0);
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-			program->SetUniform1i("u_gamma", 0);
+			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
+			glUniform3f(Shaders::instance->image_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
 
 			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 		glBindVertexArray(0);
-		texture_->Reset();
-		program->Reset();
+		texture_->reset();
+		program->reset();
 
 		DispatchDrawEvent(hbar(), profile);
 		DispatchDrawEvent(vbar(), profile);
@@ -167,49 +213,28 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	bool CVImageView::IsExpandX () const
-	{
-		return true;
-	}
-
-	bool CVImageView::IsExpandY () const
-	{
-		return true;
-	}
-
-	Size CVImageView::GetPreferredSize () const
-	{
-		Size prefer(400, 300);
-
-		if(image_.data) {
-			prefer.reset(image_.cols, image_.rows);
-		}
-
-		return prefer;
-	}
-
 	void CVImageView::InitializeCVImageView ()
 	{
 		set_size(400, 300);
 
 		texture_.reset(new GLTexture2D);
-		texture_->Generate();
-		texture_->Bind();
+		texture_->generate();
+		texture_->bind();
 		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture_->SetMinFilter(GL_LINEAR);
 		texture_->SetMagFilter(GL_LINEAR);
-		texture_->Reset();
+		texture_->reset();
 
 		glGenVertexArrays(2, vaos_);
 		glBindVertexArray(vaos_[0]);
 
 		background_.reset(new GLArrayBuffer);
-		background_->Generate();
-		background_->Bind();
+		background_->generate();
+		background_->bind();
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		tool.SetInnerBufferData(background_.get());
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		background_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
@@ -224,10 +249,10 @@ namespace BlendInt {
 			400.f, 300.f,	1.f, 0.f
 		};
 
-		plane_.reset(new GLArrayBuffer);
-		plane_->Generate();
-		plane_->Bind();
-		plane_->SetData(sizeof(vertices), vertices);
+		image_plane_.reset(new GLArrayBuffer);
+		image_plane_->generate();
+		image_plane_->bind();
+		image_plane_->set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
@@ -238,7 +263,7 @@ namespace BlendInt {
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
@@ -305,14 +330,14 @@ namespace BlendInt {
 
 	void CVImageView::AdjustImageArea (const Size& size)
 	{
-		int w = std::min(size.width(), image_.cols);
-		int h = std::min(size.height(), image_.rows);
+		int w = std::min(size.width(), cv_image_.cols);
+		int h = std::min(size.height(), cv_image_.rows);
 
 		if(h == 0) {
 			w = 0;
 		} else {
 			float ratio = (float)w / h;
-			float ref_ratio = (float)image_.cols / image_.rows;
+			float ref_ratio = (float)cv_image_.cols / cv_image_.rows;
 			if(ratio > ref_ratio) {
 				w = h * ref_ratio;
 			} else if (ratio < ref_ratio) {
@@ -329,9 +354,14 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		plane_->Bind();
-		plane_->SetData(sizeof(vertices), vertices);
-		plane_->Reset();
+		image_plane_->bind();
+		image_plane_->set_data(sizeof(vertices), vertices);
+		image_plane_->reset();
+	}
+
+	void CVImageView::AdjustScrollArea(const Size& size)
+	{
+		//cv_image_.cols;
 	}
 
 }

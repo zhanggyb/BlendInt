@@ -111,7 +111,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -190,10 +190,10 @@ namespace BlendInt {
 
 			Size vw_size (request.size()->width(), h);
 			VertexTool tool;
-			tool.Setup(vw_size, 0, RoundNone, 0.f);
+			tool.GenerateVertices(vw_size, 0, RoundNone, 0.f);
 
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_size(*request.size());
 
@@ -279,21 +279,21 @@ namespace BlendInt {
 		Size area_size(size().width(), size().height() - dec->size().height());
 
 		VertexTool tool;
-		tool.Setup (area_size, 0, RoundNone, 0.f);
+		tool.GenerateVertices (area_size, 0, RoundNone, 0.f);
 
 		glGenVertexArrays(1, m_vao);
 		glBindVertexArray(m_vao[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 }

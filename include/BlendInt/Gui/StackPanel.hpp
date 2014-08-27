@@ -49,7 +49,7 @@ namespace BlendInt {
 		void InitializeStackPanel ();
 
 		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 

@@ -74,6 +74,8 @@ namespace BlendInt {
 		RefPtr<GLElementArrayBuffer> element_buffer_;
 
 		GLuint vao_;
+
+		int elements_;
 	};
 }
 

@@ -73,15 +73,15 @@ namespace BlendInt {
 			GenerateTabButtonVertices(*request.size(), DefaultBorderWidth(),
 			        inner, outer);
 
-			m_inner_buffer->Bind();
-			m_inner_buffer->SetData(sizeof(GLfloat) * inner.size(),
+			m_inner_buffer->bind();
+			m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(),
 			        &inner[0]);
 
-			m_outer_buffer->Bind();
-			m_outer_buffer->SetData(sizeof(GLfloat) * outer.size(),
+			m_outer_buffer->bind();
+			m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(),
 			        &outer[0]);
 
-			GLArrayBuffer::Reset();
+			GLArrayBuffer::reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -125,7 +125,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -153,24 +153,24 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		m_inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
+		m_inner_buffer->generate();
+		m_inner_buffer->bind();
+		m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(m_vao[1]);
 
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		m_outer_buffer->SetData(sizeof(GLfloat) * outer.size(), &outer[0]);
+		m_outer_buffer->generate();
+		m_outer_buffer->bind();
+		m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void TabButton::InitializeTabButton(const String& text)

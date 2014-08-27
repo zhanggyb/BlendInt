@@ -99,7 +99,7 @@ namespace BlendInt {
 		Point m_last;
 		Point m_cursor;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

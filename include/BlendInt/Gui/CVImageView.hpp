@@ -55,15 +55,15 @@ namespace BlendInt {
 
 		virtual ~CVImageView ();
 
-		void Open (const char* filename);
-
-		void Load (const cv::Mat& image);
-
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
+
+		void Open (const char* filename);
+
+		void Load (const cv::Mat& image);
 
 	protected:
 
@@ -95,6 +95,8 @@ namespace BlendInt {
 
 		void AdjustImageArea (const Size& size);
 
+		void AdjustScrollArea (const Size& size);
+
 		/**
 		 * @brief Vertex Array Objects
 		 *
@@ -106,9 +108,9 @@ namespace BlendInt {
 		RefPtr<GLTexture2D> texture_;
 
 		RefPtr<GLArrayBuffer> background_;
-		RefPtr<GLArrayBuffer> plane_;
+		RefPtr<GLArrayBuffer> image_plane_;
 
-		cv::Mat image_;
+		cv::Mat cv_image_;
 
 		static Color background_color;
 	};

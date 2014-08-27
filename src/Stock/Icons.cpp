@@ -149,7 +149,7 @@ namespace BlendInt {
 					10,
 					5,
 					5);
-			texture->Bind();
+			texture->bind();
 			texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 			texture->SetMinFilter(GL_LINEAR);
 			texture->SetMagFilter(GL_LINEAR);
@@ -164,7 +164,7 @@ namespace BlendInt {
 					GL_UNSIGNED_BYTE,
 					image.pixels());
 
-			texture->Reset();
+			texture->reset();
 
 			GLfloat x = (GLfloat)5 / image.width();
 			GLfloat y = (GLfloat)10 / image.height();
@@ -229,7 +229,7 @@ namespace BlendInt {
 					20,
 					10,
 					10);
-			texture->Bind();
+			texture->bind();
 			texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 			texture->SetMinFilter(GL_LINEAR);
 			texture->SetMagFilter(GL_LINEAR);
@@ -244,7 +244,7 @@ namespace BlendInt {
 					GL_UNSIGNED_BYTE,
 					image.pixels());
 
-			texture->Reset();
+			texture->reset();
 
 			GLfloat x = (GLfloat)10 / image.width();
 			GLfloat y = (GLfloat)20 / image.height();

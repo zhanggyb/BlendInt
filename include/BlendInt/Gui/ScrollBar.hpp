@@ -123,8 +123,8 @@ namespace BlendInt {
 		int GetSlidePosition ();
 
 		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
 		Point m_cursor_origin;
 		SlideIcon m_slide;

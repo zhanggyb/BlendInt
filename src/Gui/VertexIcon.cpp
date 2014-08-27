@@ -106,7 +106,8 @@ namespace BlendInt {
 	: AbstractIcon(width, height),
 	  vertex_buffer_(0),
 	  element_buffer_(0),
-	  vao_(0)
+	  vao_(0),
+	  elements_(0)
 	{
 		vertex_buffer_.reset(new GLArrayBuffer);
 		element_buffer_.reset(new GLElementArrayBuffer);
@@ -124,21 +125,23 @@ namespace BlendInt {
 	{
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->Generate();
-		vertex_buffer_->Bind();
-		vertex_buffer_->SetData(array_size * sizeof(vertex_array[0]), vertex_array[0]);
+		vertex_buffer_->generate();
+		vertex_buffer_->bind();
+		vertex_buffer_->set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 
-		element_buffer_->Generate();
-		element_buffer_->Bind();
-		element_buffer_->SetData(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
+		element_buffer_->generate();
+		element_buffer_->bind();
+		element_buffer_->set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 
-		vertex_buffer_->Reset();
-		element_buffer_->Reset();
+		vertex_buffer_->reset();
+		element_buffer_->reset();
+
+		elements_ = indeces_size * 3;
 	}
 
 	void VertexIcon::Draw(const glm::vec3& pos, short gamma) const
@@ -161,17 +164,17 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->Bind();	// bind ARRAY BUFFER
-		element_buffer_->Bind();	// bind ELEMENT ARRAY BUFFER
+		vertex_buffer_->bind();	// bind ARRAY BUFFER
+		element_buffer_->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glDrawElements(GL_TRIANGLES, element_buffer_->vertices() * 3,
+		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		element_buffer_->Reset();
-		vertex_buffer_->Reset();
+		element_buffer_->reset();
+		vertex_buffer_->reset();
 
-		program->Reset();
+		program->reset();
 	}
 
 	void VertexIcon::Draw(const glm::vec3& pos, float angle, float scale, const Color& color, short gamma) const
@@ -191,21 +194,21 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->Bind();	// bind ARRAY BUFFER
-		element_buffer_->Bind();	// bind ELEMENT ARRAY BUFFER
+		vertex_buffer_->bind();	// bind ARRAY BUFFER
+		element_buffer_->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glDrawElements(GL_TRIANGLES, element_buffer_->vertices() * 3,
+		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 
-		element_buffer_->Reset();
-		vertex_buffer_->Reset();
+		element_buffer_->reset();
+		vertex_buffer_->reset();
 
 		glUniform1f(Shaders::instance->triangle_uniform_rotation(), 0.f);
 		glUniform2f(Shaders::instance->triangle_uniform_scale(), 1.f, 1.f);
 
-		program->Reset();
+		program->reset();
 	}
 
 }

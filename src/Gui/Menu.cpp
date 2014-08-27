@@ -46,7 +46,7 @@ namespace BlendInt {
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: AbstractWidget(), m_highlight(0), m_inner(0), m_outer(0), m_highlight_buffer(0)
+	: AbstractWidget(), m_highlight(0), inner_(0), outer_(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
 		set_drop_shadow(true);
@@ -170,12 +170,12 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			ResetHighlightBuffer(request.size()->width());
 			set_size(*request.size());
 		}
@@ -187,12 +187,12 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_type(*request.round_type());
 		}
 
@@ -203,12 +203,12 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_radius(*request.round_radius());
 		}
 
@@ -253,7 +253,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		float h = size().height() - round_radius();
 
@@ -282,7 +282,7 @@ namespace BlendInt {
 		Size size(width, DefaultMenuItemHeight);
 
 		VertexTool tool;
-		tool.Setup(size,
+		tool.GenerateVertices(size,
 				DefaultBorderWidth(),
 				RoundNone,
 				0,
@@ -292,8 +292,9 @@ namespace BlendInt {
 				Theme::instance->menu_item().shadedown
 				);
 
-		m_highlight_buffer->Bind();
-		tool.SetInnerBufferData(m_highlight_buffer.get());
+		m_highlight_buffer->bind();
+		m_highlight_buffer->set_data(tool.inner_size(), tool.inner_data());
+		m_highlight_buffer->reset();
 	}
 	
 	void Menu::RemoveAction (size_t index)
@@ -355,28 +356,28 @@ namespace BlendInt {
 		glGenVertexArrays(3, m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glBindVertexArray(m_vao[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(m_vao[1]);
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		tool.SetOuterBufferData(m_outer.get());
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		// Now set buffer for hightlight bar
 		Size highlight_size(size().width(), DefaultMenuItemHeight);
-		tool.Setup(highlight_size,
+		tool.GenerateVertices(highlight_size,
 				DefaultBorderWidth(),
 				RoundNone,
 				0,
@@ -388,10 +389,10 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[2]);
 		m_highlight_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer->Generate();
-		m_highlight_buffer->Bind();
+		m_highlight_buffer->generate();
+		m_highlight_buffer->bind();
 
-		tool.SetInnerBufferData(m_highlight_buffer.get());
+		m_highlight_buffer->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -399,7 +400,7 @@ namespace BlendInt {
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 }
