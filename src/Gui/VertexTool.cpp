@@ -228,6 +228,10 @@ namespace BlendInt {
 
 			GenerateTriangleStripVertices(inner_, edge_vertices, count, outer_);
 
+		} else {
+
+			outer_.clear();
+
 		}
 	}
 
@@ -525,6 +529,10 @@ namespace BlendInt {
 			}
 
 			GenerateTriangleStripVertices(inner_, edge_vertices, count, outer_);
+
+		} else {
+
+			outer_.clear();
 
 		}
 

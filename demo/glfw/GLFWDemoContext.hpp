@@ -47,7 +47,7 @@
 #include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/StaticFrame.hpp>
 
-#include <BlendInt/Gui/VirtualWindow.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>

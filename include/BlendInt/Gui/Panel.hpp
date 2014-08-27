@@ -27,8 +27,6 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
-#include <BlendInt/OpenGL/ScissorStatus.hpp>
-
 namespace BlendInt {
 
 	/**
@@ -36,15 +34,17 @@ namespace BlendInt {
 	 *
 	 * The margin of a VirtualWindow is always zero.
 	 */
-	class VirtualWindow: public AbstractContainer
+	class Panel: public AbstractContainer
 	{
 	public:
 
-		VirtualWindow ();
+		Panel ();
 
-		virtual ~VirtualWindow ();
+		virtual ~Panel ();
 
 		void Setup (AbstractWidget* widget);
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgets (const Point& out_pos, const Size& size);
+		void FillSubWidgets (const Point& out_pos, const Size& size, const Margin& margin);
 
 		void FillSubWidgets (int x, int y, int w, int h);
 
@@ -87,10 +87,13 @@ namespace BlendInt {
 
 		void InitializeVirtualWindow ();
 
-		GLuint m_vao[1];
+		int space_;
+
+		GLuint vao_[2];
 
 		RefPtr<GLArrayBuffer> inner_;
 
+		RefPtr<GLArrayBuffer> outer_;
 	};
 
 }

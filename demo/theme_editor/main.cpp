@@ -1,5 +1,5 @@
 #include "QtGLWindow.hpp"
-#include "Qt5Context.hpp"
+#include "Qt5ThemeEditorContext.hpp"
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QMatrix4x4>
@@ -51,7 +51,7 @@ private:
 
     GLuint loadShader(GLenum type, const char *source);
 
-    Qt5Context* m_context;
+    Qt5ThemeEditorContext* m_context;
 };
 
 DemoWindow::DemoWindow()
@@ -104,7 +104,7 @@ void DemoWindow::initialize()
 
 	BI::Interface::instance->Resize(1280, 800);
 
-	m_context = Manage (new Qt5Context(this));
+	m_context = Manage (new Qt5ThemeEditorContext(this));
 	BI::Interface::instance->SetCurrentContext(m_context);
 	m_context->Resize(1280, 800);
 }

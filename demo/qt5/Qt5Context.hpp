@@ -30,7 +30,7 @@ private:
 
 	void OnResizeLayout (const BI::Size& size);
 
-	QWindow* m_qt_window;
+	QWindow* window_;
 
 	MainLayout* m_layout;
 };

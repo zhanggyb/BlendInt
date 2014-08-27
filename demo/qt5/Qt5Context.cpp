@@ -6,7 +6,7 @@
 #include <QtGui/QCursor>
 
 Qt5Context::Qt5Context (QWindow* window)
-: BI::Context (), m_qt_window(window), m_layout(0)
+: BI::Context (), window_(window), m_layout(0)
 {
 	m_layout = Manage(new MainLayout);
 	m_layout->Resize(size());
@@ -22,8 +22,8 @@ Qt5Context::~Qt5Context ()
 
 void Qt5Context::SetCursor(int cursor_type)
 {
-	if(m_qt_window) {
-		m_qt_window->setCursor(QCursor(static_cast<Qt::CursorShape>(cursor_type)));
+	if(window_) {
+		window_->setCursor(QCursor(static_cast<Qt::CursorShape>(cursor_type)));
 	}
 }
 

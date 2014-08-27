@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/VirtualWindow.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 namespace BlendInt {
 
@@ -42,11 +42,11 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void PushBack (VirtualWindow* window);
+		void PushBack (Panel* window);
 
-		void PushFront (VirtualWindow* window);
+		void PushFront (Panel* window);
 
-		void Remove (VirtualWindow* window);
+		void Remove (Panel* window);
 
 		virtual bool IsExpandX () const;
 

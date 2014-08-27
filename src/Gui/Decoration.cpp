@@ -45,12 +45,17 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Decoration::Decoration()
 	: AbstractContainer(),
 	  m_space(4),
 	  m_pressed(false)
 	{
 		set_size(200, 20);
+		//set_round_type(RoundNone);
+		//set_round_radius(5.f);
+
 		InitializeDecoration();
 	}
 
@@ -104,7 +109,7 @@ namespace BlendInt {
 			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
 
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			inner_->reset();
 
 			int x = position().x() + margin().left();
@@ -131,16 +136,14 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.667f, 0.825f, 0.575f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.667f, 0.825f, 0.575f, 1.0f);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -182,7 +185,7 @@ namespace BlendInt {
 
 			if(event.section() == container()->container()) {
 				if(event.section()->last_hover_widget() == this) {
-					event.section()->MoveToLast();
+					container()->MoveToLast();
 					return Accept;
 				}
 			}
@@ -213,9 +216,6 @@ namespace BlendInt {
 
 	void Decoration::InitializeDecoration()
 	{
-		set_round_type(RoundTopLeft | RoundTopRight);
-		set_round_radius(10.f);
-
 		VertexTool tool;
 		tool.GenerateVertices(size(), 0, round_type(), round_radius());
 
@@ -228,8 +228,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

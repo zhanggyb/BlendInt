@@ -55,7 +55,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void Workspace::PushBack (VirtualWindow* window)
+	void Workspace::PushBack (Panel* window)
 	{
 		if(PushBackSubWidget(window)) {
 
@@ -68,7 +68,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Workspace::PushFront (VirtualWindow* window)
+	void Workspace::PushFront (Panel* window)
 	{
 		if (PushFrontSubWidget(window)) {
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Workspace::Remove (VirtualWindow* window)
+	void Workspace::Remove (Panel* window)
 	{
 		RemoveSubWidget(window);
 	}

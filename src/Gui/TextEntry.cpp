@@ -243,9 +243,9 @@ namespace BlendInt {
 			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius(), color, Vertical, shadetop, shadedown);
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			cursor_buffer_->bind();
 			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
@@ -301,9 +301,9 @@ namespace BlendInt {
 			        *request.round_radius(), color, Vertical, shadetop,
 			        shadedown);
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			font_.set_pen(
 			        *request.round_radius(),

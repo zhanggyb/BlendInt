@@ -79,15 +79,21 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	Frame* frame = Manage(new Frame);
+	Panel* vw1 = Manage(new Panel);
+	Section* section = PushBack(vw1);
 
-	TextEntry* text = Manage(new TextEntry);
-	text->SetRoundType(RoundAll);
-	frame->Setup(text);
+	vw1->SetPosition(400, 400);
 
-	PushBack(frame);
-	frame->SetPosition(200, 200);
-	frame->Resize(200, 100);
+	Panel* vw2 = Manage(new Panel);
+	section->PushBack(vw2);
+
+	vw2->SetPosition(200, 200);
+
+	Panel* vw3 = Manage(new Panel);
+	section->PushBack(vw3);
+
+	vw3->SetPosition(600, 300);
+
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

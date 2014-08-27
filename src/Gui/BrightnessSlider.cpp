@@ -126,9 +126,9 @@ namespace BlendInt {
 			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 			Refresh();
@@ -165,9 +165,9 @@ namespace BlendInt {
 			        *request.round_radius(), Color(0x000000FF), orientation(),
 			        255, 0);
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_round_radius(*request.round_radius());
 			Refresh();

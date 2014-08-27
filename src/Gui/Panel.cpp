@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Gui/VirtualWindow.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
@@ -46,25 +46,26 @@
 
 namespace BlendInt {
 
-	VirtualWindow::VirtualWindow ()
-	: AbstractContainer()
+	using Stock::Shaders;
+
+	Panel::Panel ()
+	: AbstractContainer(),
+	  space_(2)
 	{
-		set_round_type(RoundTopLeft | RoundTopRight);
-		set_round_radius(10.f);
-		set_size(400, 300);
-		set_margin(0, 0, 0, 0);
+		set_size(360, 360);
+		set_margin(2, 2, 2, 2);
 
 		set_drop_shadow(true);
 
 		InitializeVirtualWindow();
 	}
 
-	VirtualWindow::~VirtualWindow ()
+	Panel::~Panel ()
 	{
-		glDeleteVertexArrays(1, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
-	void VirtualWindow::Setup (AbstractWidget* widget)
+	void Panel::Setup (AbstractWidget* widget)
 	{
 		if(widget == 0) return;
 
@@ -89,65 +90,91 @@ namespace BlendInt {
 		}
 
 		if(InsertSubWidget(ContentIndex, widget)) {
-			FillSubWidgets(position(), size());
+			FillSubWidgets(position(), size(), margin());
 		}
 	}
 
-	ResponseType VirtualWindow::Draw (Profile& profile)
+	Size Panel::GetPreferredSize () const
 	{
-		using Stock::Shaders;
+		Size prefer;
 
+		Size tmp;
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			tmp = p->GetPreferredSize();
+
+			prefer.set_width(std::max(prefer.width(), tmp.width()));
+			prefer.add_height(tmp.height());
+		}
+
+		prefer.add_height((widget_count() - 1) * space_);
+
+		prefer.add_width(margin().hsum());
+		prefer.add_height(margin().vsum());
+
+		return prefer;
+	}
+
+	ResponseType Panel::Draw (Profile& profile)
+	{
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.f);
 
-		glBindVertexArray(m_vao[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.8f, 0.8f, 0.8f, 0.8f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
+
 		glBindVertexArray(0);
-
 		program->reset();
 
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::FocusEvent (bool focus)
+	ResponseType Panel::FocusEvent (bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::CursorEnterEvent (bool entered)
+	ResponseType Panel::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::KeyPressEvent (const KeyEvent& event)
+	ResponseType Panel::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::ContextMenuPressEvent (
+	ResponseType Panel::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::ContextMenuReleaseEvent (
+	ResponseType Panel::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::MousePressEvent (const MouseEvent& event)
+	ResponseType Panel::MousePressEvent (const MouseEvent& event)
 	{
 		if(container() == event.section()) {
 			if(event.section()->last_hover_widget() == this) {
-				event.section()->MoveToLast();
+				MoveToLast();
 				return Accept;
 			}
 		}
@@ -155,18 +182,18 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::MouseReleaseEvent (
+	ResponseType Panel::MouseReleaseEvent (
 	        const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType VirtualWindow::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Panel::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void VirtualWindow::PerformPositionUpdate (const PositionUpdateRequest& request)
+	void Panel::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -182,29 +209,27 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void VirtualWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Panel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int h = request.size()->height() - GetWidgetAt(0)->size().height();
-			if (h < 0) h = 0;
-
-			Size vw_size (request.size()->width(), h);
 			VertexTool tool;
-			tool.GenerateVertices(vw_size, 0, RoundNone, 0.f);
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), RoundNone, 0.f);
 
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 
-			FillSubWidgets(position(), *request.size());
+			FillSubWidgets(position(), *request.size(), margin());
 			Refresh();
 		}
 
 		ReportSizeUpdate(request);
 	}
 
-	void VirtualWindow::PerformRoundTypeUpdate (
+	void Panel::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -214,7 +239,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void VirtualWindow::PerformRoundRadiusUpdate (
+	void Panel::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -224,12 +249,17 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	void VirtualWindow::FillSubWidgets(const Point& out_pos, const Size& size)
+	void Panel::FillSubWidgets(const Point& out_pos, const Size& size, const Margin& margin)
 	{
-		FillSubWidgets(out_pos.x(), out_pos.y(), size.width(), size.height());
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = size.width() - margin.hsum();
+		int h = size.height() - margin.vsum();
+
+		FillSubWidgets(x, y, w, h);
 	}
 
-	void VirtualWindow::FillSubWidgets(int x, int y, int w, int h)
+	void Panel::FillSubWidgets(int x, int y, int w, int h)
 	{
 		AbstractWidget* dec = GetWidgetAt(DecorationIndex);
 		AbstractWidget* content = GetWidgetAt(ContentIndex);
@@ -242,7 +272,7 @@ namespace BlendInt {
 
 			if(h > dec_prefer.height()) {
 				ResizeSubWidget(dec, w, dec_prefer.height());
-				ResizeSubWidget(content, w, h - dec_prefer.height());
+				ResizeSubWidget(content, w, h - dec_prefer.height() - space_);
 			} else {
 				ResizeSubWidget(dec, w, h);
 				ResizeSubWidget(content, w, 0);
@@ -250,6 +280,7 @@ namespace BlendInt {
 
 			y = y - dec->size().height();
 			SetSubWidgetPosition(dec, x, y);
+			y -= space_;
 			y = y - content->size().height();
 			SetSubWidgetPosition(content, x, y);
 
@@ -263,34 +294,41 @@ namespace BlendInt {
 
 			y = y - dec->size().height();
 			SetSubWidgetPosition(dec, x, y);
-
 		}
 	}
 
-	void VirtualWindow::InitializeVirtualWindow ()
+	void Panel::InitializeVirtualWindow ()
 	{
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
 		DBG_SET_NAME(dec, "Decoration");
 		PushBackSubWidget(dec);
 
-		FillSubWidgets (position(), size());
-
-		Size area_size(size().width(), size().height() - dec->size().height());
+		FillSubWidgets (position(), size(), margin());
 
 		VertexTool tool;
-		tool.GenerateVertices (area_size, 0, RoundNone, 0.f);
+		tool.GenerateVertices (size(), DefaultBorderWidth(), RoundNone, 0.f);
 
-		glGenVertexArrays(1, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
