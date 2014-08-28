@@ -509,7 +509,9 @@ namespace BlendInt {
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void AbstractWidget::PerformPositionUpdate(const PositionUpdateRequest& request)
@@ -518,7 +520,9 @@ namespace BlendInt {
 			set_position(*request.position());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	bool AbstractWidget::RoundTypeUpdateTest(const RoundTypeUpdateRequest& request)
@@ -551,7 +555,9 @@ namespace BlendInt {
 			set_round_radius(*request.round_radius());
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	void AbstractWidget::PerformVisibilityUpdate(const VisibilityUpdateRequest& request)
@@ -560,7 +566,9 @@ namespace BlendInt {
 			set_visible(*request.visibility());
 		}
 
-		ReportVisibilityRequest(request);
+		if(request.source() != container()) {
+			ReportVisibilityRequest(request);
+		}
 	}
 
 	void AbstractWidget::PerformRefresh(const RefreshRequest& request)

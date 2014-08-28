@@ -99,7 +99,9 @@ namespace BlendInt {
 
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -131,7 +133,9 @@ namespace BlendInt {
 
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType Decoration::Draw (Profile& profile)

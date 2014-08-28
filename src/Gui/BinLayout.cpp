@@ -116,7 +116,9 @@ namespace BlendInt {
 			}
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void BinLayout::PerformPositionUpdate (const PositionUpdateRequest& request)
@@ -132,7 +134,9 @@ namespace BlendInt {
 			}
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	ResponseType BinLayout::Draw (Profile& profile)

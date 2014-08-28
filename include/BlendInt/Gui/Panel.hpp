@@ -26,6 +26,7 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/OpenGL/TextureBuffer.hpp>
 
 namespace BlendInt {
 
@@ -94,6 +95,32 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 
 		RefPtr<GLArrayBuffer> outer_;
+	};
+
+	class StaticPanel: public Panel
+	{
+	public:
+
+		StaticPanel ();
+
+		virtual ~StaticPanel ();
+
+	protected:
+
+		virtual void PerformRefresh (const RefreshRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+	private:
+
+		void RenderToBuffer (Profile& profile);
+
+		TextureBuffer tex_buffer_;
+
+		bool refresh_;
+
 	};
 
 }

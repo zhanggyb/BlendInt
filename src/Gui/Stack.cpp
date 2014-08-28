@@ -254,7 +254,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -267,7 +269,9 @@ namespace BlendInt {
 			ResizeSubWidgets(w, h);
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType Stack::Draw (Profile& event)

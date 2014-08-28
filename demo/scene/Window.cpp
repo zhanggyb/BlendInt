@@ -170,7 +170,7 @@ namespace BlendInt {
 #ifdef __APPLE__
             glfwPollEvents();
 #else
-            glfwWaitEvents();
+            glfwPollEvents();
 #endif  // __APPLE__
 		}
 	

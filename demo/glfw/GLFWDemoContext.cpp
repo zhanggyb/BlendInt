@@ -79,21 +79,32 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	Panel* vw1 = Manage(new Panel);
-	Section* section = PushBack(vw1);
+	StaticPanel* panel1 = Manage(new StaticPanel);
 
-	vw1->SetPosition(400, 400);
+	VBlockLayout* block = Manage(new VBlockLayout);
 
-	Panel* vw2 = Manage(new Panel);
-	section->PushBack(vw2);
+	Button* btn1 = Manage(new Button("Button"));
+	Button* btn2 = Manage(new Button("Button"));
+	Button* btn3 = Manage(new Button("Button"));
+	Button* btn4 = Manage(new Button("Button"));
 
-	vw2->SetPosition(200, 200);
+	block->PushBack(btn1);
+	block->PushBack(btn2);
+	block->PushBack(btn3);
+	block->PushBack(btn4);
 
-	Panel* vw3 = Manage(new Panel);
-	section->PushBack(vw3);
+	panel1->Setup(block);
+	panel1->Resize(panel1->GetPreferredSize());
 
-	vw3->SetPosition(600, 300);
+	StaticPanel* panel2 = Manage(new StaticPanel);
 
+	ColorSelector* cs = Manage(new ColorSelector);
+
+	panel2->Setup(cs);
+	panel2->Resize(panel2->GetPreferredSize());
+
+	Section* section = PushBack(panel1);
+	section->PushBack(panel2);
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

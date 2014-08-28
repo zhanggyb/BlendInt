@@ -85,7 +85,9 @@ namespace BlendInt {
 			return;
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void FileSelector::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
@@ -101,7 +103,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void FileSelector::PerformRoundRadiusUpdate (
@@ -118,7 +122,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType FileSelector::Draw (Profile& profile)

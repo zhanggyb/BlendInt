@@ -37,9 +37,9 @@ private:
 
 	void Initialize ();
 
-	BI::Panel* CreateButtonPanel ();
+	BI::StaticPanel* CreateButtonPanel ();
 
-	BI::Panel* CreateColorPanel ();
+	BI::StaticPanel* CreateColorPanel ();
 
 	QWindow* window_;
 };

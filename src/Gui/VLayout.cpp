@@ -179,7 +179,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void VLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -189,7 +191,9 @@ namespace BlendInt {
 			FillSubWidgetsInVBox(position(), *request.size(), margin(), m_alignment,
 											m_space);		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType VLayout::Draw (Profile& profile)

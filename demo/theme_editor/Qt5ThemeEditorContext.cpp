@@ -30,11 +30,11 @@ void Qt5ThemeEditorContext::Initialize()
 {
 	using namespace BI;
 
-	Panel* panel1 = CreateButtonPanel();
+	StaticPanel* panel1 = CreateButtonPanel();
 	panel1->SetPosition(900, 580);
 	panel1->Resize(panel1->GetPreferredSize());
 
-	Panel* panel2 = CreateColorPanel();
+	StaticPanel* panel2 = CreateColorPanel();
 	panel2->SetPosition(900, 100);
 	panel2->Resize(panel2->GetPreferredSize());
 
@@ -42,11 +42,11 @@ void Qt5ThemeEditorContext::Initialize()
 	section->PushBack(panel2);
 }
 
-BI::Panel* Qt5ThemeEditorContext::CreateButtonPanel ()
+BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
 {
 	using namespace BI;
 
-	Panel* panel = Manage(new Panel);
+	StaticPanel* panel = Manage(new StaticPanel);
 
 	VBlockLayout* block = Manage(new VBlockLayout);
 
@@ -65,11 +65,11 @@ BI::Panel* Qt5ThemeEditorContext::CreateButtonPanel ()
 	return panel;
 }
 
-BI::Panel* Qt5ThemeEditorContext::CreateColorPanel ()
+BI::StaticPanel* Qt5ThemeEditorContext::CreateColorPanel ()
 {
 	using namespace BI;
 
-	Panel* panel = Manage(new Panel);
+	StaticPanel* panel = Manage(new StaticPanel);
 
 	ColorSelector* cs = Manage(new ColorSelector);
 

@@ -188,7 +188,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	ResponseType HBlockLayout::Draw (Profile& profile)
