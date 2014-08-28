@@ -51,70 +51,20 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Panel::Panel ()
-	: AbstractContainer(),
-	  space_(2)
+	: AbstractPanel(),
+	  pressed_(false)
 	{
-		set_size(360, 360);
-		set_margin(2, 2, 2, 2);
+		set_margin(10, 10, 10, 10);
+		set_round_type(RoundAll);
 
 		set_drop_shadow(true);
 
-		InitializeVirtualWindow();
+		InitializePanelOnce();
 	}
 
 	Panel::~Panel ()
 	{
 		glDeleteVertexArrays(2, vao_);
-	}
-
-	void Panel::Setup (AbstractWidget* widget)
-	{
-		if(widget == 0) return;
-
-		if(widget->container() == this) return;
-
-		int sum = widget_count();
-
-		if (sum > 1) {
-			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");
-
-			AbstractWidget* tmp = 0;
-			for(AbstractWidget* p = first()->next(); p; p = tmp)
-			{
-				tmp = p->next();
-				if(p->managed() && (p->reference_count() == 0))
-				{
-					delete p;
-				} else {
-					DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", p->name().c_str());
-				}
-			}
-		}
-
-		if(InsertSubWidget(ContentIndex, widget)) {
-			FillSubWidgets(position(), size(), margin());
-		}
-	}
-
-	Size Panel::GetPreferredSize () const
-	{
-		Size prefer;
-
-		Size tmp;
-		for(AbstractWidget* p = first(); p; p = p->next())
-		{
-			tmp = p->GetPreferredSize();
-
-			prefer.set_width(std::max(prefer.width(), tmp.width()));
-			prefer.add_height(tmp.height());
-		}
-
-		prefer.add_height((widget_count() - 1) * space_);
-
-		prefer.add_width(margin().hsum());
-		prefer.add_height(margin().vsum());
-
-		return prefer;
 	}
 
 	ResponseType Panel::Draw (Profile& profile)
@@ -145,38 +95,16 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Panel::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Panel::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Panel::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Panel::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Panel::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType Panel::MousePressEvent (const MouseEvent& event)
 	{
 		if(container() == event.section()) {
 			if(event.section()->last_hover_widget() == this) {
 				MoveToLast();
+
+				last_position_ = position();
+				cursor_position_ = event.position();
+				pressed_ = true;
+
 				return Accept;
 			}
 		}
@@ -187,11 +115,21 @@ namespace BlendInt {
 	ResponseType Panel::MouseReleaseEvent (
 	        const MouseEvent& event)
 	{
+		pressed_ = false;
 		return Ignore;
 	}
 
 	ResponseType Panel::MouseMoveEvent (const MouseEvent& event)
 	{
+		if(pressed_) {
+
+			int offset_x = event.position().x() - cursor_position_.x();
+			int offset_y = event.position().y() - cursor_position_.y();
+
+			SetPosition(last_position_.x() + offset_x,
+					last_position_.y() + offset_y);
+		}
+
 		return Ignore;
 	}
 
@@ -217,7 +155,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), RoundNone, 0.f);
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
 
 			inner_->bind();
 			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
@@ -230,88 +168,56 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Panel::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void Panel::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
-	}
-
-	void Panel::FillSubWidgets(const Point& out_pos, const Size& size, const Margin& margin)
-	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int w = size.width() - margin.hsum();
-		int h = size.height() - margin.vsum();
-
-		FillSubWidgets(x, y, w, h);
-	}
-
-	void Panel::FillSubWidgets(int x, int y, int w, int h)
-	{
-		AbstractWidget* dec = GetWidgetAt(DecorationIndex);
-		AbstractWidget* content = GetWidgetAt(ContentIndex);
-
-		Size dec_prefer = dec->GetPreferredSize();
-
-		y = y + h;
-
-		if(content) {
-
-			if(h > dec_prefer.height()) {
-				ResizeSubWidget(dec, w, dec_prefer.height());
-				ResizeSubWidget(content, w, h - dec_prefer.height() - space_);
-			} else {
-				ResizeSubWidget(dec, w, h);
-				ResizeSubWidget(content, w, 0);
-			}
-
-			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, x, y);
-			y -= space_;
-			y = y - content->size().height();
-			SetSubWidgetPosition(content, x, y);
-
-		} else {
-
-			if(h > dec_prefer.height()) {
-				ResizeSubWidget(dec, w, dec_prefer.height());
-			} else {
-				ResizeSubWidget(dec, w, h);
-			}
-
-			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, x, y);
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
 		}
 	}
 
-	void Panel::InitializeVirtualWindow ()
+	void Panel::InitializePanelOnce ()
 	{
-		// set decoration
-		Decoration* dec = Manage(new Decoration);
-		DBG_SET_NAME(dec, "Decoration");
-		PushBackSubWidget(dec);
-
-		FillSubWidgets (position(), size(), margin());
-
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), RoundNone, 0.f);
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -339,28 +245,63 @@ namespace BlendInt {
 	}
 
 	StaticPanel::StaticPanel ()
-	: Panel(),
-	  refresh_(true)
+	: AbstractPanel(),
+	  refresh_(true),
+	  pressed_(false),
+	  realign_(false)
 	{
+		set_margin(10, 10, 10, 10);
+		set_round_type(RoundAll);
+
+		set_drop_shadow(true);
+
+		InitializeStaticPanelOnce();
 	}
 
 	StaticPanel::~StaticPanel ()
 	{
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
 	{
-		refresh_ = true;
-		ReportRefresh(request);
+		if(!pressed_) {
+			refresh_ = true;
+			ReportRefresh(request);
+		}
+	}
+
+	void StaticPanel::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void StaticPanel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			set_size(*request.size());
+
+			FillSubWidgets(position(), *request.size(), margin());
+
 			refresh_ = true;
+			Refresh();
 		}
 
-		Panel::PerformSizeUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType StaticPanel::Draw (Profile& profile)
@@ -376,6 +317,128 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Accept;
+	}
+
+	ResponseType StaticPanel::MousePressEvent (const MouseEvent& event)
+	{
+		if(container() == event.section()) {
+			if(event.section()->last_hover_widget() == this) {
+				MoveToLast();
+
+				last_position_ = position();
+				cursor_position_ = event.position();
+				pressed_ = true;
+
+				return Accept;
+			}
+		}
+
+		return Ignore;
+	}
+
+	ResponseType StaticPanel::MouseReleaseEvent (const MouseEvent& event)
+	{
+		if(pressed_) {
+
+			if(realign_) {
+				DBG_PRINT_MSG("%s", "now fill subwidgets");
+				FillSubWidgets(position(), size(), margin());
+			}
+
+			realign_ = false;
+		}
+
+		pressed_ = false;
+		return Accept;
+	}
+
+	ResponseType StaticPanel::MouseMoveEvent (const MouseEvent& event)
+	{
+		if(pressed_) {
+
+			int offset_x = event.position().x() - cursor_position_.x();
+			int offset_y = event.position().y() - cursor_position_.y();
+
+			SetPosition(last_position_.x() + offset_x,
+					last_position_.y() + offset_y);
+
+			realign_ = true;
+
+			return Accept;
+		}
+
+		return Ignore;
+	}
+
+	void StaticPanel::InitializeStaticPanelOnce ()
+	{
+		VertexTool tool;
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
+	}
+
+	void StaticPanel::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
+
+	void StaticPanel::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	void StaticPanel::RenderToBuffer (Profile& profile)
@@ -468,7 +531,28 @@ namespace BlendInt {
 			glViewport(0, 0, size().width(), size().height());
 
 			// Draw frame panel
-			Panel::Draw(profile);
+			program =
+							Shaders::instance->triangle_program();
+			program->Use();
+
+			glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+
+			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.f);
+
+			glBindVertexArray(vao_[0]);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.8f, 0.8f, 0.8f, 0.8f);
+			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+
+			glBindVertexArray(vao_[1]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+			        GetOutlineVertices(round_type()) * 2 + 2);
+
+			glBindVertexArray(0);
+			program->reset();
 
 			Profile off_screen_profile(position());
 

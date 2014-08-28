@@ -49,8 +49,7 @@ namespace BlendInt {
 
 	Decoration::Decoration()
 	: AbstractContainer(),
-	  m_space(4),
-	  m_pressed(false)
+	  m_space(4)
 	{
 		set_size(200, 20);
 		//set_round_type(RoundNone);
@@ -180,44 +179,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
-	{
-		if(container()) {
-			m_last = container()->position();
-			m_cursor = event.position();
-			m_pressed = true;
-
-			if(event.section() == container()->container()) {
-				if(event.section()->last_hover_widget() == this) {
-					container()->MoveToLast();
-					return Accept;
-				}
-			}
-
-		}
-
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
-	{
-		m_pressed = false;
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
-	{
-		if (container() && m_pressed) {
-
-			int offset_x = event.position().x() - m_cursor.x();
-			int offset_y = event.position().y() - m_cursor.y();
-
-			container()->SetPosition(m_last.x() + offset_x,
-			        m_last.y() + offset_y);
-		}
-		return Ignore;
-	}
-
 	void Decoration::InitializeDecoration()
 	{
 		VertexTool tool;
@@ -252,6 +213,21 @@ namespace BlendInt {
 	void Decoration::RealignSubWidgets (const Size& size, const Margin& margin,
 	        int space)
 	{
+	}
+
+	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	int Decoration::GetLastPosition () const

@@ -60,7 +60,7 @@ BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
 	block->PushBack(btn3);
 	block->PushBack(btn4);
 
-	panel->Setup(block);
+	panel->SetContent(block);
 
 	return panel;
 }
@@ -73,7 +73,7 @@ BI::StaticPanel* Qt5ThemeEditorContext::CreateColorPanel ()
 
 	ColorSelector* cs = Manage(new ColorSelector);
 
-	panel->Setup(cs);
+	panel->SetContent(cs);
 
 	return panel;
 }

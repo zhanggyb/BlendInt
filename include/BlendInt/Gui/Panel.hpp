@@ -25,8 +25,9 @@
 #define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/OpenGL/TextureBuffer.hpp>
+
+#include <BlendInt/Gui/AbstractPanel.hpp>
 
 namespace BlendInt {
 
@@ -35,17 +36,13 @@ namespace BlendInt {
 	 *
 	 * The margin of a VirtualWindow is always zero.
 	 */
-	class Panel: public AbstractContainer
+	class Panel: public AbstractPanel
 	{
 	public:
 
 		Panel ();
 
 		virtual ~Panel ();
-
-		void Setup (AbstractWidget* widget);
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -59,36 +56,21 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgets (const Point& out_pos, const Size& size, const Margin& margin);
-
-		void FillSubWidgets (int x, int y, int w, int h);
-
 	private:
 
-		enum SubWidgetIndex {
-			DecorationIndex,
-			ContentIndex
-		};
+		void InitializePanelOnce ();
 
-		void InitializeVirtualWindow ();
+		bool pressed_;
 
-		int space_;
+		Point last_position_;
+
+		Point cursor_position_;
 
 		GLuint vao_[2];
 
@@ -97,7 +79,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> outer_;
 	};
 
-	class StaticPanel: public Panel
+	class StaticPanel: public AbstractPanel
 	{
 	public:
 
@@ -109,17 +91,45 @@ namespace BlendInt {
 
 		virtual void PerformRefresh (const RefreshRequest& request);
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
+
+		void InitializeStaticPanelOnce ();
 
 		void RenderToBuffer (Profile& profile);
 
 		TextureBuffer tex_buffer_;
 
 		bool refresh_;
+
+		bool pressed_;
+
+		bool realign_;
+
+		Point last_position_;
+
+		Point cursor_position_;
+
+		GLuint vao_[2];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
 
 	};
 

@@ -93,14 +93,17 @@ void GLFWDemoContext::Initialize ()
 	block->PushBack(btn3);
 	block->PushBack(btn4);
 
-	panel1->Setup(block);
+	panel1->SetContent(block);
 	panel1->Resize(panel1->GetPreferredSize());
 
 	StaticPanel* panel2 = Manage(new StaticPanel);
 
+	Decoration* dec = Manage(new Decoration);
+
 	ColorSelector* cs = Manage(new ColorSelector);
 
-	panel2->Setup(cs);
+	panel2->SetDecoration(dec);
+	panel2->SetContent(cs);
 	panel2->Resize(panel2->GetPreferredSize());
 
 	Section* section = PushBack(panel1);
