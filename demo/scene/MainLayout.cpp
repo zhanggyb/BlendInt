@@ -43,7 +43,8 @@ using namespace BI;
 using Stock::Shaders;
 
 MainLayout::MainLayout ()
-: m_menubar(0),
+: VLayout(),
+  m_menubar(0),
   m_toolbar(0),
   m_tool_open(0),
   m_tab(0),

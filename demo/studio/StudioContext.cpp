@@ -4,6 +4,8 @@
 
 #include "StudioContext.hpp"
 
+#include <BlendInt/Gui/StaticPanel.hpp>
+
 using namespace BI;
 
 StudioContext::StudioContext()
@@ -34,10 +36,13 @@ void StudioContext::Initialize ()
 
 	PushBack(frame_);
 
+	StaticPanel* panel = Manage(new StaticPanel);
 	button_ = Manage(new Button("Save Texture"));
-	PushBack(button_);
-	button_->SetPosition(1100, 200);
+	panel->SetContent(button_);
+	panel->SetPosition(1100, 600);
+	panel->Resize(panel->GetPreferredSize());
 
+	PushBack(panel);
 	events()->connect(button_->clicked(), this, &StudioContext::OnSaveTextureToFile);
 }
 

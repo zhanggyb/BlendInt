@@ -42,6 +42,18 @@ namespace BlendInt {
 		if(widget == 0) return;
 		if(widget == decoration_) return;	// already in this panel
 
+		if(decoration_) {
+			DBG_PRINT_MSG("TODO: %s", "delete original decoration");
+
+			if(decoration_->managed() && (decoration_->reference_count() == 0))
+			{
+				delete decoration_;
+			} else {
+				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", decoration_->name().c_str());
+			}
+			decoration_ = 0;
+		}
+
 		if(InsertSubWidget(DecorationIndex, widget)) {
 			decoration_ = widget;
 			FillSubWidgets(position(), size(), margin());
@@ -54,22 +66,17 @@ namespace BlendInt {
 
 		if(widget == content_) return;	// already in this panel
 
-		int sum = widget_count();
-
-		if (sum > 1) {
+		if (content_) {
 			DBG_PRINT_MSG("TODO: %s", "delete tail widgets");
 
-			AbstractWidget* tmp = 0;
-			for(AbstractWidget* p = first()->next(); p; p = tmp)
+			if(content_->managed() && (content_->reference_count() == 0))
 			{
-				tmp = p->next();
-				if(p->managed() && (p->reference_count() == 0))
-				{
-					delete p;
-				} else {
-					DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", p->name().c_str());
-				}
+				delete content_;
+			} else {
+				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", content_->name().c_str());
 			}
+
+			content_ = 0;
 		}
 
 		if(InsertSubWidget(ContentIndex, widget)) {
@@ -138,45 +145,52 @@ namespace BlendInt {
 
 	void AbstractPanel::FillSubWidgets (int x, int y, int w, int h)
 	{
-		AbstractWidget* dec = GetWidgetAt(DecorationIndex);
-		AbstractWidget* content = GetWidgetAt(ContentIndex);
+		if (decoration_) {
 
-		Size dec_prefer(0, 0);
+			Size dec_prefer = decoration_->GetPreferredSize();
 
-		if (dec) {
-			dec_prefer = dec->GetPreferredSize();
-		}
+			y = y + h;
 
-		y = y + h;
-		int space = dec ? space_ : 0;
+			if (content_) {
 
-		if (content) {
+				if (h > dec_prefer.height()) {
+					ResizeSubWidget(decoration_, w, dec_prefer.height());
+					ResizeSubWidget(content_, w, h - dec_prefer.height() - space_);
+				} else {
+					ResizeSubWidget(decoration_, w, h);
+					ResizeSubWidget(content_, w, 0);
+				}
 
-			if (h > dec_prefer.height()) {
-				ResizeSubWidget(dec, w, dec_prefer.height());
-				ResizeSubWidget(content, w, h - dec_prefer.height() - space);
+				y = y - decoration_->size().height();
+				SetSubWidgetPosition(decoration_, x, y);
+				y -= space_;
+				y = y - content_->size().height();
+				SetSubWidgetPosition(content_, x, y);
+
 			} else {
-				ResizeSubWidget(dec, w, h);
-				ResizeSubWidget(content, w, 0);
-			}
 
-			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, x, y);
-			y -= space;
-			y = y - content->size().height();
-			SetSubWidgetPosition(content, x, y);
+				if (h > dec_prefer.height()) {
+					ResizeSubWidget(decoration_, w, dec_prefer.height());
+				} else {
+					ResizeSubWidget(decoration_, w, h);
+				}
+
+				y = y - decoration_->size().height();
+				SetSubWidgetPosition(decoration_, x, y);
+			}
 
 		} else {
 
-			if (h > dec_prefer.height()) {
-				ResizeSubWidget(dec, w, dec_prefer.height());
-			} else {
-				ResizeSubWidget(dec, w, h);
+			if (content_) {
+
+				ResizeSubWidget(content_, w, h);
+				SetSubWidgetPosition(content_, x, y);
+				DBG_PRINT_MSG("content size: %d %d", content_->size().width(), content_->size().height());
+
 			}
 
-			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, x, y);
 		}
+
 	}
 
 }

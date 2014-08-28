@@ -13,7 +13,10 @@
 #include "MainLayout.hpp"
 
 MainLayout::MainLayout ()
-	: m_menubar(0), m_toolbar(0), m_imgview(0)
+: VLayout(),
+  m_menubar(0),
+  m_toolbar(0),
+  m_imgview(0)
 {
 	set_margin(0, 0, 0, 0);
 	set_space(1);

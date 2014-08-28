@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	FileButton::FileButton ()
 	: AbstractButton(),
-	  file_selector_(0)
+	  panel_(0)
 	{
 		set_round_type(RoundAll);
 		set_drop_shadow(true);
@@ -238,13 +238,12 @@ namespace BlendInt {
 
 		if(context) {
 
-			assert(file_selector_ == 0);
+			assert(panel_ == 0);
 
-			file_selector_ = Manage(new FileSelector);
-			DBG_SET_NAME(file_selector_, "File Selector on File Button");
-			Section* section = context->PushBack(file_selector_);
-			section->set_mode(Section::Modal);
-			context->SetFocusedWidget(file_selector_);
+			panel_ = Manage(new StaticPanel);
+
+			FileSelector* file_selector = Manage(new FileSelector);
+			DBG_SET_NAME(file_selector, "File Selector on File Button");
 
 			int w = 800;
 			int h = 600;
@@ -260,30 +259,36 @@ namespace BlendInt {
 			int x = (context->size().width() - w) / 2;
 			int y = (context->size().height() - h) / 2;
 
-			file_selector_->Resize(w, h);
-			file_selector_->SetPosition(x, y);
+			panel_->Resize(w, h);
+			panel_->SetPosition(x, y);
+			panel_->SetContent(file_selector);
+			Section* section = context->PushBack(panel_);
+			section->set_mode(Section::Modal);
+			context->SetFocusedWidget(file_selector);
 
-			events()->connect(file_selector_->opened(), this, &FileButton::OnOpened);
-			events()->connect(file_selector_->canceled(), this, &FileButton::OnCanceled);
+			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
+			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
 
 		}
 	}
 
 	void FileButton::OnOpened ()
 	{
-		file_selector_->opened().disconnectOne(this, &FileButton::OnOpened);
-		file_ = file_selector_->file_selected();
-		delete file_selector_;
-		file_selector_ = 0;
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		fs->opened().disconnectOne(this, &FileButton::OnOpened);
+		file_ = fs->file_selected();
+		delete panel_;
+		panel_ = 0;
 
 		file_selected_.fire();
 	}
 
 	void FileButton::OnCanceled ()
 	{
-		file_selector_->canceled().disconnectOne(this, &FileButton::OnCanceled);
-		delete file_selector_;
-		file_selector_ = 0;
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
+		delete panel_;
+		panel_ = 0;
 	}
 
 }

@@ -81,6 +81,14 @@ namespace BlendInt {
 	void StaticPanel::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			if(!pressed_) {
+				int x = request.position()->x() - position().x();
+				int y = request.position()->y() - position().y();
+
+				MoveSubWidgets(x, y);
+			}
+
 			Refresh();
 		}
 

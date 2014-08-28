@@ -135,7 +135,7 @@ void StudioFrame::RenderToBuffer ()
 
 		fb->bind();
 
-		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+		glClearColor(0.f, 0.f, 0.f, 0.f);
 		glClearDepth(1.0);
 		glClearStencil(0);
 
