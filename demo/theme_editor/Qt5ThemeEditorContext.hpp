@@ -20,6 +20,7 @@
 #include <BlendInt/Gui/Workspace.hpp>
 
 #include <BlendInt/Gui/Panel.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 namespace BI=BlendInt;
 

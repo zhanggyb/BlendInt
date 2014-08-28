@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -24,17 +24,12 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
-#include <glext.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
-#endif  // __UNIX__
-
-#include <assert.h>
-#include <algorithm>
-
-#include <iostream>
+#endif	// __UNIX__
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
@@ -42,64 +37,84 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
-#include <BlendInt/Gui/StaticFrame.hpp>
+#include <BlendInt/Gui/Decoration.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Section.hpp>
+
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	StaticFrame::StaticFrame()
-	: BinLayout(), refresh_(true)
+	StaticPanel::StaticPanel ()
+	: AbstractPanel(),
+	  refresh_(true),
+	  pressed_(false),
+	  realign_(false)
 	{
-		set_size(400, 300);
+		set_margin(10, 10, 10, 10);
+		set_round_type(RoundAll);
+
 		set_drop_shadow(true);
 
-		InitializeFramePanel();
-	}
-	
-	StaticFrame::~StaticFrame ()
-	{
-		glDeleteVertexArrays(1, &vao_);
+		InitializeStaticPanelOnce();
 	}
 
-	void StaticFrame::PerformRefresh(const RefreshRequest& request)
+	StaticPanel::~StaticPanel ()
 	{
-		refresh_ = true;
-		ReportRefresh(request);
+		glDeleteVertexArrays(2, vao_);
 	}
 
-	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void StaticPanel::PerformRefresh (const RefreshRequest& request)
+	{
+		if(!pressed_) {
+			refresh_ = true;
+			ReportRefresh(request);
+		}
+	}
+
+	void StaticPanel::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			Refresh();
+		}
 
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
+	}
+
+	void StaticPanel::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
 
-			refresh_ = true;
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 
-			if (widget_count()) {
-				assert(widget_count() == 1);
-				FillSingleWidget(0, position(), *request.size(), margin());
-			}
+			FillSubWidgets(position(), *request.size(), margin());
+
+			refresh_ = true;
+			Refresh();
 		}
 
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType StaticFrame::Draw (Profile& profile)
+	ResponseType StaticPanel::Draw (Profile& profile)
 	{
 		if(refresh_) {
-
 			RenderToBuffer(profile);
-
 			refresh_ = false;
 		}
 
@@ -111,13 +126,64 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void StaticFrame::InitializeFramePanel()
+	ResponseType StaticPanel::MousePressEvent (const MouseEvent& event)
 	{
-		glGenVertexArrays(1, &vao_);
+		if(container() == event.section()) {
+			if(event.section()->last_hover_widget() == this) {
+				MoveToLast();
 
-		glBindVertexArray(vao_);
+				last_position_ = position();
+				cursor_position_ = event.position();
+				pressed_ = true;
+
+				return Accept;
+			}
+		}
+
+		return Ignore;
+	}
+
+	ResponseType StaticPanel::MouseReleaseEvent (const MouseEvent& event)
+	{
+		if(pressed_) {
+
+			if(realign_) {
+				DBG_PRINT_MSG("%s", "now fill subwidgets");
+				FillSubWidgets(position(), size(), margin());
+			}
+
+			realign_ = false;
+		}
+
+		pressed_ = false;
+		return Accept;
+	}
+
+	ResponseType StaticPanel::MouseMoveEvent (const MouseEvent& event)
+	{
+		if(pressed_) {
+
+			int offset_x = event.position().x() - cursor_position_.x();
+			int offset_y = event.position().y() - cursor_position_.y();
+
+			SetPosition(last_position_.x() + offset_x,
+					last_position_.y() + offset_y);
+
+			realign_ = true;
+
+			return Accept;
+		}
+
+		return Ignore;
+	}
+
+	void StaticPanel::InitializeStaticPanelOnce ()
+	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
@@ -127,18 +193,62 @@ namespace BlendInt {
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+		glBindVertexArray(vao_[1]);
+
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
 		glBindVertexArray(0);
-		inner_->reset();
+		GLArrayBuffer::reset();
 	}
 
-	void StaticFrame::RenderToFile (const std::string& filename)
+	void StaticPanel::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
 	{
-		tex_buffer_.texture()->bind();
-		tex_buffer_.texture()->WriteToFile(filename);
-		tex_buffer_.texture()->reset();
+		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
-	void StaticFrame::RenderToBuffer (Profile& profile)
+	void StaticPanel::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
+	}
+
+	void StaticPanel::RenderToBuffer (Profile& profile)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -231,21 +341,29 @@ namespace BlendInt {
 			program = Shaders::instance->triangle_program();
 			program->Use();
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
-					(float) position().x(), (float) position().y(), 0.f);
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
-					0.447f, 0.447f, 1.0f);
+			glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-			glBindVertexArray(vao_);
-			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->tooltip().inner.data());
+
+			glBindVertexArray(vao_[0]);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->tooltip().outline.data());
+			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+
+			glBindVertexArray(vao_[1]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+			        GetOutlineVertices(round_type()) * 2 + 2);
+
 			glBindVertexArray(0);
+			program->reset();
 
 			Profile off_screen_profile(position());
 
-			if(first()) {
-				DispatchDrawEvent(first(), off_screen_profile);
+			for(AbstractWidget* p = first(); p; p = p->next()) {
+				DispatchDrawEvent(p, off_screen_profile);
 			}
 
 			// Restore the viewport setting and projection matrix
@@ -284,7 +402,6 @@ namespace BlendInt {
 
 		fb->reset();
 		delete fb; fb = 0;
-
 	}
 
 }

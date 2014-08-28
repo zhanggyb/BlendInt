@@ -55,6 +55,7 @@
 #include <BlendInt/Gui/ListView.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 namespace BI=BlendInt;
 

@@ -21,29 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VIRTUALWINDOW_HPP_
-#define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
+#ifndef _BLENDINT_GUI_STATICPANEL_HPP_
+#define _BLENDINT_GUI_STATICPANEL_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/TextureBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractPanel.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special container works as a window in desktop
-	 *
-	 * The margin of a VirtualWindow is always zero.
-	 */
-	class Panel: public AbstractPanel
+	class StaticPanel: public AbstractPanel
 	{
 	public:
 
-		Panel ();
+		StaticPanel ();
 
-		virtual ~Panel ();
+		virtual ~StaticPanel ();
 
 	protected:
+
+		virtual void PerformRefresh (const RefreshRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -63,9 +61,17 @@ namespace BlendInt {
 
 	private:
 
-		void InitializePanelOnce ();
+		void InitializeStaticPanelOnce ();
+
+		void RenderToBuffer (Profile& profile);
+
+		TextureBuffer tex_buffer_;
+
+		bool refresh_;
 
 		bool pressed_;
+
+		bool realign_;
 
 		Point last_position_;
 
@@ -76,8 +82,9 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 
 		RefPtr<GLArrayBuffer> outer_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_VIRTUALWINDOW_HPP_ */
+#endif /* _BLENDINT_GUI_STATICPANEL_HPP_ */
