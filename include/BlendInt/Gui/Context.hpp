@@ -154,6 +154,8 @@ namespace BlendInt {
 
 		AbstractWidget* focused_widget_;
 
+		bool custom_focus_widget_;
+
 		int current_cursor_;
 
 		std::stack<int> cursor_stack_;

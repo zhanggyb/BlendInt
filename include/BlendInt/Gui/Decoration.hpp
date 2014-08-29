@@ -59,6 +59,10 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
 		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
@@ -87,12 +91,12 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		GLuint m_vao[1];
+		GLuint vao_[1];
 
 		/**
 		 * space between tool buttons
 		 */
-		int m_space;
+		int space_;
 
 		RefPtr<GLArrayBuffer> inner_;
 	};

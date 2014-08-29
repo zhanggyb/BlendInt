@@ -98,12 +98,15 @@ namespace BlendInt {
 	ResponseType Panel::MousePressEvent (const MouseEvent& event)
 	{
 		if(container() == event.section()) {
-			if(event.section()->last_hover_widget() == this) {
+			if(event.section()->last_hover_widget() == this ||
+					event.section()->last_hover_widget() == decoration()) {
 				MoveToLast();
 
 				last_position_ = position();
 				cursor_position_ = event.position();
 				pressed_ = true;
+
+				event.context()->SetFocusedWidget(this);
 
 				return Accept;
 			}

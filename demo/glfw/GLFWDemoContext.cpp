@@ -79,35 +79,25 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	StaticPanel* panel1 = Manage(new StaticPanel);
-
-	VBlockLayout* block = Manage(new VBlockLayout);
-
-	Button* btn1 = Manage(new Button("Button"));
-	Button* btn2 = Manage(new Button("Button"));
-	Button* btn3 = Manage(new Button("Button"));
-	Button* btn4 = Manage(new Button("Button"));
-
-	block->PushBack(btn1);
-	block->PushBack(btn2);
-	block->PushBack(btn3);
-	block->PushBack(btn4);
-
-	panel1->SetContent(block);
-	panel1->Resize(panel1->GetPreferredSize());
-
-	StaticPanel* panel2 = Manage(new StaticPanel);
+	StaticPanel* panel = Manage(new StaticPanel);
+	DBG_SET_NAME(panel, "Static Panel");
+	panel->SetPosition(400, 200);
+	panel->SetSpace(0);
 
 	Decoration* dec = Manage(new Decoration);
+	DBG_SET_NAME(dec, "Decoration");
+	dec->SetRoundType(RoundTopLeft | RoundTopRight);
 
 	ColorSelector* cs = Manage(new ColorSelector);
+	DBG_SET_NAME(cs, "ColorSelector");
+	cs->SetRoundType(RoundBottomLeft | RoundBottomRight);
 
-	panel2->SetDecoration(dec);
-	panel2->SetContent(cs);
-	panel2->Resize(panel2->GetPreferredSize());
+	panel->SetDecoration(dec);
+	panel->SetContent(cs);
 
-	Section* section = PushBack(panel1);
-	section->PushBack(panel2);
+	panel->Resize(panel->GetPreferredSize());
+
+	PushBack(panel);
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

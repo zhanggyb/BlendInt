@@ -85,6 +85,13 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractPanel::SetSpace (int space)
+	{
+		space_ = space;
+
+		FillSubWidgets(position(), size(), margin());
+	}
+
 	Size AbstractPanel::GetPreferredSize () const
 	{
 		if(widget_count() == 0) {
@@ -108,6 +115,11 @@ namespace BlendInt {
 		prefer.add_height(margin().vsum());
 
 		return prefer;
+	}
+
+	void AbstractPanel::PerformMarginUpdate (const Margin& margin)
+	{
+		FillSubWidgets(position(), size(), margin);
 	}
 
 	ResponseType AbstractPanel::CursorEnterEvent (bool entered)
@@ -194,3 +206,4 @@ namespace BlendInt {
 	}
 
 }
+

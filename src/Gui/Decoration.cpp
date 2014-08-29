@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	Decoration::Decoration()
 	: AbstractContainer(),
-	  m_space(4)
+	  space_(4)
 	{
 		set_size(200, 20);
 		//set_round_type(RoundNone);
@@ -60,7 +60,7 @@ namespace BlendInt {
 
 	Decoration::~Decoration ()
 	{
-		glDeleteVertexArrays(1, m_vao);
+		glDeleteVertexArrays(1, vao_);
 	}
 
 	void Decoration::PushFront (AbstractWidget* widget)
@@ -122,13 +122,13 @@ namespace BlendInt {
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
-			FillSubWidgets(x, y, w, h, m_space);
+			FillSubWidgets(x, y, w, h, space_);
 
 			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
 
-			FillSubWidgets(position(), size(), margin(), m_space);
+			FillSubWidgets(position(), size(), margin(), space_);
 
 		}
 
@@ -144,11 +144,11 @@ namespace BlendInt {
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.667f, 0.825f, 0.575f, 1.0f);
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Color(Color::Aqua).data());
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
@@ -184,9 +184,9 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.GenerateVertices(size(), 0, round_type(), round_radius());
 
-		glGenVertexArrays(1, m_vao);
+		glGenVertexArrays(1, vao_);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
@@ -228,6 +228,44 @@ namespace BlendInt {
 	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
+	}
+
+	void Decoration::PerformRoundTypeUpdate (
+			const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, *request.round_type(),
+					round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
+
+	void Decoration::PerformRoundRadiusUpdate (
+			const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, round_type(),
+					*request.round_radius());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	int Decoration::GetLastPosition () const

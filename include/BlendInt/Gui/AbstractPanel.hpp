@@ -45,6 +45,8 @@ namespace BlendInt {
 
 		void SetContent (AbstractWidget* widget);
 
+		void SetSpace (int space);
+
 		virtual Size GetPreferredSize () const;
 
 		AbstractWidget* decoration () const
@@ -68,6 +70,8 @@ namespace BlendInt {
 			DecorationIndex = 0,
 			ContentIndex
 		};
+
+		virtual void PerformMarginUpdate (const Margin& margin);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

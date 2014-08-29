@@ -54,7 +54,8 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractContainer(),
-	  focused_widget_(0)
+	  focused_widget_(0),
+	  custom_focus_widget_(false)
 	{
 		set_size(640, 480);
 
@@ -171,6 +172,8 @@ namespace BlendInt
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
+		custom_focus_widget_ = true;
+
 		if(focused_widget_ == widget) {
 			return;
 		}
@@ -410,18 +413,16 @@ namespace BlendInt
 
 		ResponseType response;
 
-		AbstractWidget* widget = 0;
-		AbstractWidget* original_focused_widget = focused_widget_;	// mouse press event may change the focused widget
+		AbstractWidget* widget = 0;	// widget may be focused
 
 		const_cast<MouseEvent&>(event).m_context = this;
 
+		custom_focus_widget_ = false;
 		for (Section::iterator_ptr = last(); Section::iterator_ptr;
 		        Section::iterator_ptr = Section::iterator_ptr->previous()) {
 			response = Section::iterator_ptr->MousePressEvent(event);
 
-			if (response == Accept) {
-				break;
-			}
+			if (response == Accept)	break;
 		}
 
 		if(response == Accept && Section::iterator_ptr) {
@@ -430,20 +431,10 @@ namespace BlendInt
 
 		Section::iterator_ptr = 0;
 
-		if(original_focused_widget != focused_widget_) {
-
-			if(original_focused_widget && original_focused_widget->focused()) {
-				original_focused_widget->set_focus(false);
-				original_focused_widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-				original_focused_widget->FocusEvent(false);
-			}
-
-		} else {
-
-			focused_widget_ = original_focused_widget;
+		if(!custom_focus_widget_) {
 			SetFocusedWidget(widget);
-
 		}
+		custom_focus_widget_ = false;
 
 		if(focused_widget_) {
 			DBG_PRINT_MSG("focus widget: %s", focused_widget_->name().c_str());
