@@ -155,7 +155,11 @@ namespace BlendInt {
 			set_position (*request.position());
 		}
 
-		ReportPositionUpdate(request);
+		/*
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
+		*/
 	}
 
 	void Section::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -170,7 +174,11 @@ namespace BlendInt {
 			}
 		}
 
-		ReportSizeUpdate(request);
+		/*
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
+		*/
 	}
 
 	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
@@ -181,7 +189,7 @@ namespace BlendInt {
 			}
 		}
 
-		ReportRoundTypeUpdate(request);
+		//ReportRoundTypeUpdate(request);
 	}
 
 	void Section::PerformRoundRadiusUpdate (
@@ -193,7 +201,7 @@ namespace BlendInt {
 			}
 		}
 
-		ReportRoundRadiusUpdate(request);
+		//ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType Section::Draw (Profile& profile)

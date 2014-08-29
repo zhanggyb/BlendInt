@@ -41,6 +41,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	TabHeader::TabHeader()
 	: AbstractContainer(),
 	  vao_(0)
@@ -153,7 +155,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -167,28 +171,27 @@ namespace BlendInt {
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType TabHeader::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->triangle_program()->Use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		Shaders::instance->triangle_program()->reset();
 
 		return Ignore;
 	}

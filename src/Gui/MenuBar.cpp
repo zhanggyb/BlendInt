@@ -146,7 +146,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -160,7 +162,9 @@ namespace BlendInt {
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType MenuBar::Draw (Profile& profile)

@@ -91,7 +91,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ExpandButton::PerformRoundTypeUpdate (
@@ -102,10 +104,10 @@ namespace BlendInt {
 			        text());
 
 			set_round_type(*request.round_type());
+
+			ReportRoundTypeUpdate(request);
 			Refresh();
 		}
-
-		ReportRoundTypeUpdate(request);
 	}
 
 	void ExpandButton::PerformRoundRadiusUpdate (
@@ -116,10 +118,9 @@ namespace BlendInt {
 			        text());
 
 			set_round_radius(*request.round_radius());
+			ReportRoundRadiusUpdate(request);
 			Refresh();
 		}
-
-		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType ExpandButton::Draw (Profile& profile)

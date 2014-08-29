@@ -91,7 +91,9 @@ namespace BlendInt {
 			}
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType StaticFrame::Draw (Profile& profile)

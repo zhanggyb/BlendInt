@@ -192,7 +192,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -223,7 +225,9 @@ namespace BlendInt {
 			FillSubWidgets(position(), size(), margin(), space_);
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType ToolBar::Draw (Profile& profile)
