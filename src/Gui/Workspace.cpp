@@ -39,51 +39,50 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+
+#include <BlendInt/Gui/Viewport3D.hpp>
+
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Workspace::Workspace()
-	: AbstractContainer()
+	: AbstractContainer(),
+	  left_sidebar_(0),
+	  right_sidebar_(0),
+	  header_(0),
+	  viewport_(0),
+	  splitter_(0),
+	  vao_(0)
 	{
-		set_size(500, 400);
+		set_size(800, 600);
 		set_drop_shadow(true);
+		set_margin(0, 0, 0, 0);
 
 		InitializeWorkspace();
 	}
 
 	Workspace::~Workspace()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Workspace::PushBack (Panel* window)
+	void Workspace::SetViewport (AbstractWidget* viewport)
 	{
-		if(PushBackSubWidget(window)) {
-
-			EnableShadow(window);
-
-			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
-
-			window->SetPosition(x, y);
-		}
 	}
 
-	void Workspace::PushFront (Panel* window)
+	void Workspace::SetLeftSideBar (AbstractWidget* widget)
 	{
-		if (PushFrontSubWidget(window)) {
-
-			EnableShadow(window);
-
-			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
-
-			window->SetPosition(x, y);
-		}
 	}
 
-	void Workspace::Remove (Panel* window)
+	void Workspace::SetRightSideBar (AbstractWidget* widget)
 	{
-		RemoveSubWidget(window);
+	}
+
+	void Workspace::SetHeader (AbstractWidget* widget)
+	{
 	}
 
 	bool Workspace::IsExpandX () const
@@ -100,7 +99,7 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		if(first() == 0) {
+		if(widget_count() == 0) {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
@@ -120,11 +119,17 @@ namespace BlendInt {
 
 	void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		if (request.source()->container() == this) {
-			EnableShadow(request.source());
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() != container()) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -135,69 +140,64 @@ namespace BlendInt {
 
 			VertexTool tool;
 			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
-			m_background->bind();
-			m_background->set_data(tool.inner_size(), tool.inner_data());
-
-			tool.GenerateVertices(inner_size, 0, RoundNone, 0.f);
-			m_inner->bind();
-			m_inner->set_data(tool.inner_size(), tool.inner_data());
-
-			m_inner->reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			set_size(*request.size());
+
+			AdjustGeometries(position(), size(), margin());
 		} else if (request.source()->container() == this) {
 
 			EnableShadow(request.source());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() != container()) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Workspace::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
+		/*
 		if (request.source()->container() == this) {
 			EnableShadow(request.source());
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundTypeUpdate(request);
+		}
+		*/
 	}
 
 	void Workspace::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
+		/*
 		if (request.source()->container() == this) {
 			EnableShadow(request.source());
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() != container()) {
+			ReportRoundRadiusUpdate(request);
+		}
+		*/
 	}
 
 	ResponseType Workspace::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.407f, 0.407f, 0.407f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-		program->SetUniform3f("u_position",
-		        (float) position().x() + margin().left(),
-		        (float) position().y() + margin().bottom(), 0.f);
-
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
-
-		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
 		glBindVertexArray(0);
 
 		program->reset();
@@ -249,39 +249,82 @@ namespace BlendInt {
 
 	void Workspace::InitializeWorkspace ()
 	{
-		Size inner_size(size().width() - margin().hsum(), size().height() - margin().vsum());
+		glGenVertexArrays(1, &vao_);
 
-		glGenVertexArrays(2, m_vao);
-
-		// index 0 for background
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_);
 
 		VertexTool tool;
 		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
 
-		m_background.reset(new GLArrayBuffer);
-		m_background->generate();
-		m_background->bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		m_background->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		glBindVertexArray(m_vao[1]);
-		tool.GenerateVertices(inner_size, 0, RoundNone, 0.f);
-
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->generate();
-		m_inner->bind();
-
-		m_inner->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
+
+		splitter_ = Manage(new Splitter);
+		splitter_->SetMargin(0, 0, 0, 0);
+		viewport_ = Manage(new Viewport3D);
+//		left_sidebar_ = Manage(new ToolBox);
+//		right_sidebar_ = Manage(new ToolBox);
+		header_ = Manage(new ToolBar);
+
+//		splitter_->PushBack(left_sidebar_);
+		splitter_->PushBack(viewport_);
+//		splitter_->PushBack(right_sidebar_);
+
+		PushBackSubWidget(splitter_);
+		PushBackSubWidget(header_);
+
+		AdjustGeometries(position(), size(), margin());
+	}
+
+	void Workspace::AdjustGeometries(const Point& out_pos, const Size& out_size, const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		AdjustGeometries(x, y, w, h);
+	}
+
+	void Workspace::AdjustGeometries (int x, int y, int w, int h)
+	{
+
+		if(header_) {
+
+			Size pref = header_->GetPreferredSize();
+
+			if(first() == header_) {
+
+				ResizeSubWidget(header_, w, pref.height());
+				SetSubWidgetPosition(header_, x, y + h - pref.height());
+
+				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
+				SetSubWidgetPosition(splitter_, x, y);
+
+			} else {
+
+				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
+				SetSubWidgetPosition(splitter_, x, y + h - splitter_->size().height());
+
+				ResizeSubWidget(header_, w, pref.height());
+				SetSubWidgetPosition(header_, x, y);
+
+			}
+
+		} else {
+
+			ResizeSubWidget(splitter_, w, h);
+			SetSubWidgetPosition(splitter_, x, y);
+		}
+
 	}
 
 }

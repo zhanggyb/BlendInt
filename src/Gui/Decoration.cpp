@@ -146,7 +146,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Color(Color::Aqua).data());
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Color(Color::DarkGray).data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,

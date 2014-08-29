@@ -25,12 +25,19 @@
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/Panel.hpp>
+
+#include <BlendInt/Gui/Splitter.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A container works for MDI application
+	 * @brief A special container which works as a space in Blender
+	 *
+	 * A workspace may contain:
+	 * 	- A left side bar, e.g, for toolbox
+	 * 	- A right side bar, e.g, a property box
+	 * 	- A header which on top or bottom
+	 * 	- A viewport
 	 */
 	class Workspace: public AbstractContainer
 	{
@@ -42,11 +49,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void PushBack (Panel* window);
+		void SetViewport (AbstractWidget* viewport);
 
-		void PushFront (Panel* window);
+		void SetLeftSideBar (AbstractWidget* widget);
 
-		void Remove (Panel* window);
+		void SetRightSideBar (AbstractWidget* widget);
+
+		void SetHeader (AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -86,10 +95,23 @@ namespace BlendInt {
 
 		void InitializeWorkspace ();
 
-		GLuint m_vao[2];
+		void AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin);
 
-		RefPtr<GLArrayBuffer> m_background;
-		RefPtr<GLArrayBuffer> m_inner;
+		void AdjustGeometries (int x, int y, int w, int h);
+
+		AbstractWidget* left_sidebar_;
+
+		AbstractWidget* right_sidebar_;
+
+		AbstractWidget* header_;
+
+		AbstractWidget* viewport_;
+
+		Splitter* splitter_;
+
+		GLuint vao_;
+
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 
