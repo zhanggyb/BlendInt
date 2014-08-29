@@ -38,6 +38,7 @@
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
@@ -47,6 +48,7 @@
 namespace BlendInt {
 
 	using Stock::Shaders;
+	using Stock::Icons;
 
 	Workspace::Workspace()
 	: AbstractContainer(),
@@ -55,6 +57,8 @@ namespace BlendInt {
 	  header_(0),
 	  viewport_(0),
 	  splitter_(0),
+	  left_button_(0),
+	  right_button_(0),
 	  vao_(0)
 	{
 		set_size(800, 600);
@@ -66,6 +70,9 @@ namespace BlendInt {
 
 	Workspace::~Workspace()
 	{
+		if(left_button_) delete left_button_;
+		if(right_button_) delete right_button_;
+
 		glDeleteVertexArrays(1, &vao_);
 	}
 
@@ -281,6 +288,12 @@ namespace BlendInt {
 		PushBackSubWidget(splitter_);
 		PushBackSubWidget(header_);
 
+		left_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
+		right_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
+
+		PushBackSubWidget(left_button_);
+		PushBackSubWidget(right_button_);
+
 		AdjustGeometries(position(), size(), margin());
 	}
 
@@ -325,6 +338,8 @@ namespace BlendInt {
 			SetSubWidgetPosition(splitter_, x, y);
 		}
 
+		SetSubWidgetPosition(left_button_, x, y + h * 0.9);
+		SetSubWidgetPosition(right_button_, x + w - right_button_->size().width(), y + h * 0.9);
 	}
 
 }

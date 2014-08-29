@@ -24,7 +24,7 @@ StackTest1::~StackTest1()
 TEST_F(StackTest1, Foo1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Stack - Foo1", 640, 480);
+	GLFWwindow* window = CreateWindow("StackLayout - Foo1", 640, 480);
 
 	// TODO: add test code here
 	Context* context = Manage (new Context);
@@ -54,8 +54,8 @@ TEST_F(StackTest1, Foo1)
 	DBG_SET_NAME(label3, "Button3");
 	label3->SetFont(Font("Droid Sans Mono", 24));
 
-	Stack* stack = Manage (new Stack);
-	DBG_SET_NAME(stack, "Stack");
+	StackLayout* stack = Manage (new StackLayout);
+	DBG_SET_NAME(stack, "StackLayout");
 	stack->PushBack(label1);
 	stack->PushBack(label2);
 	stack->PushBack(label3);

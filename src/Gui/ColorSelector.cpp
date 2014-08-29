@@ -279,9 +279,9 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	Stack* ColorSelector::CreateBlockStack()
+	StackLayout* ColorSelector::CreateBlockStack()
 	{
-		Stack* stack = Manage(new Stack);
+		StackLayout* stack = Manage(new StackLayout);
 		stack->SetMargin(0, 0, 0, 0);
 
 		VBlockLayout* rgb_block = CreateRGBBlock();

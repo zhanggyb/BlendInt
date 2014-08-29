@@ -27,6 +27,7 @@
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 namespace BlendInt {
 
@@ -108,6 +109,10 @@ namespace BlendInt {
 		AbstractWidget* viewport_;
 
 		Splitter* splitter_;
+
+		Button* left_button_;
+
+		Button* right_button_;
 
 		GLuint vao_;
 

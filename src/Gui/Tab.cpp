@@ -41,7 +41,7 @@
 #include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Gui/StackPanel.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {
 
@@ -51,7 +51,7 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		TabHeader* header = Manage(new TabHeader);
-		StackPanel* stack = Manage(new StackPanel);
+		Stack* stack = Manage(new Stack);
 		stack->SetMargin(4, 4, 4, 4);
 
 		PushBackSubWidget(header);	// 0
@@ -72,7 +72,7 @@ namespace BlendInt {
 		btn->SetText(title);
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
-		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		header->PushBack(btn);
 		stack->PushBack(widget);
@@ -123,7 +123,7 @@ namespace BlendInt {
 
 	int Tab::GetIndex() const
 	{
-		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		return stack->GetIndex();
 	}
@@ -202,7 +202,7 @@ namespace BlendInt {
 	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
-		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
+		StackLayout* stack = dynamic_cast<StackLayout*>(GetWidgetAt(1));
 
 		stack->SetIndex(index);
 		Refresh();
@@ -223,7 +223,7 @@ namespace BlendInt {
 		int header_y = position().y() + size().height() - margin().top();
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
-		StackPanel* stack = dynamic_cast<StackPanel*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		Size header_size = header->GetPreferredSize();
 

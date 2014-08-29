@@ -1,3 +1,5 @@
+
+
 /*
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
@@ -21,17 +23,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STACKEDWIDGET_HPP_
-#define _BLENDINT_GUI_STACKEDWIDGET_HPP_
+#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
+#define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/StackLayout.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief class for stacked widgets
-	 */
-	class Stack: public AbstractContainer
+	class Stack: public StackLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 
@@ -41,61 +40,21 @@ namespace BlendInt {
 
 		virtual ~Stack ();
 
-		void PushBack (AbstractWidget* widget);
-
-		void Insert (int index, AbstractWidget* widget);
-
-		void Remove (AbstractWidget* widget);
-
-		int GetIndex () const;
-
-		void SetIndex (int index);
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-		AbstractWidget* GetActiveWidget () const;
-
-		AbstractWidget* GetWidget (int index);
-
 	protected:
-
-		void HideSubWidget (int index);
-
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
-		AbstractWidget* m_active_widget;
+		void InitializeStackPanel ();
+
+		GLuint m_vao;
+		RefPtr<GLArrayBuffer> inner_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_STACKEDWIDGET_HPP_ */
+#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */
