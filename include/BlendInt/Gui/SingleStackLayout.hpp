@@ -1,5 +1,3 @@
-
-
 /*
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
@@ -23,22 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
-#define _BLENDINT_GUI_STACKPANEL_HPP_
+#ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
+#define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 
 #include <BlendInt/Gui/AbstractStackLayout.hpp>
 
 namespace BlendInt {
 
-	class Stack: public AbstractStackLayout
+	class SingleStackLayout: public AbstractStackLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(Stack);
+		DISALLOW_COPY_AND_ASSIGN(SingleStackLayout);
 
 	public:
 
-		Stack ();
+		SingleStackLayout ();
 
-		virtual ~Stack ();
+		virtual ~SingleStackLayout ();
 
 		void PushFront (AbstractWidget* widget);
 
@@ -93,16 +91,10 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeStack ();
-
 		AbstractWidget* active_widget_;
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */
+#endif /* _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_ */

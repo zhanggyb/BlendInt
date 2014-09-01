@@ -1,4 +1,3 @@
-
 /*
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
@@ -22,46 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <algorithm>
-
-#include <BlendInt/Gui/VertexTool.hpp>
-
-#include <BlendInt/Gui/Stack.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/SingleStackLayout.hpp>
 
 namespace BlendInt {
 
-	using Stock::Shaders;
 
-	Stack::Stack()
+	SingleStackLayout::SingleStackLayout ()
 	: AbstractStackLayout(),
-	  active_widget_(0),
-	  vao_(0)
+	  active_widget_(0)
 	{
-		set_drop_shadow(true);
-		InitializeStack();
 	}
 
-	Stack::~Stack ()
+	SingleStackLayout::~SingleStackLayout ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Stack::PushFront (AbstractWidget* widget)
+	void SingleStackLayout::PushFront (AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -79,7 +54,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::PushBack (AbstractWidget* widget)
+	void SingleStackLayout::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -97,7 +72,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Insert (int index, AbstractWidget* widget)
+	void SingleStackLayout::Insert (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().left() - margin().right();
@@ -110,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Remove (AbstractWidget* widget)
+	void SingleStackLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
@@ -127,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	int Stack::GetIndex() const
+	int SingleStackLayout::GetIndex () const
 	{
 		int index = 0;
 
@@ -145,7 +120,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	void Stack::SetIndex (int index)
+	void SingleStackLayout::SetIndex (int index)
 	{
 		int count = widget_count();
 
@@ -164,7 +139,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Stack::IsExpandX () const
+	bool SingleStackLayout::IsExpandX () const
 	{
 		bool ret = false;
 
@@ -179,7 +154,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool Stack::IsExpandY () const
+	bool SingleStackLayout::IsExpandY () const
 	{
 		bool ret = false;
 
@@ -194,7 +169,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	Size Stack::GetPreferredSize () const
+	Size SingleStackLayout::GetPreferredSize () const
 	{
 		Size prefer(400, 300);
 
@@ -219,7 +194,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Stack::PerformMarginUpdate(const Margin& request)
+	void SingleStackLayout::PerformMarginUpdate (const Margin& request)
 	{
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
@@ -227,30 +202,8 @@ namespace BlendInt {
 		ResizeSubWidgets(w, h);
 	}
 
-	ResponseType Stack::Draw (Profile& profile)
-	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
-
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
-		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
-		        0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        GetOutlineVertices(round_type()) * 2 + 2);
-		glBindVertexArray(0);
-
-		program->reset();
-		return Ignore;
-	}
-
-	void Stack::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
+	void SingleStackLayout::PerformPositionUpdate (
+			const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -265,14 +218,10 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void SingleStackLayout::PerformSizeUpdate (
+			const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
 
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
@@ -286,69 +235,57 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::HideSubWidget(int index)
+	ResponseType SingleStackLayout::Draw (Profile& profile)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::ContextMenuPressEvent (
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::ContextMenuReleaseEvent (
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::MousePressEvent (
+			const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::MouseReleaseEvent (
+			const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::MouseMoveEvent (
+			const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	void BlendInt::SingleStackLayout::HideSubWidget (int index)
 	{
 		if(widget_count() && index < (widget_count() - 1)) {
 			AbstractWidget* p = GetWidgetAt(index);
 			p->SetVisible(false);
 		}
-	}
-
-	ResponseType Stack::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	void Stack::InitializeStack()
-	{
-		glGenVertexArrays(1, &vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
-
-		glBindVertexArray(vao_);
-
-		inner_.reset(new GLArrayBuffer);
-
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
 	}
 
 }
