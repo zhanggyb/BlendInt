@@ -52,6 +52,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
+#include <BlendInt/Gui/Stack.hpp>
+
 namespace BlendInt {
 
 	using Stock::Icons;
@@ -285,9 +287,9 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	StackLayout* ColorSelector::CreateBlockStack()
+	Stack* ColorSelector::CreateBlockStack()
 	{
-		StackLayout* stack = Manage(new StackLayout);
+		Stack* stack = Manage(new Stack);
 		stack->SetMargin(0, 0, 0, 0);
 
 		VBlockLayout* rgb_block = CreateRGBBlock();

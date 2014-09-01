@@ -87,6 +87,7 @@ void GLFWDemoContext::Initialize ()
 	PushBack(ws);
 	*/
 
+	/*
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
 	panel->SetPosition(1020, 200);
@@ -106,7 +107,23 @@ void GLFWDemoContext::Initialize ()
 	panel->Resize(panel->GetPreferredSize());
 
 	PushBack(panel);
+	*/
 
+    Tab* tab = Manage (new Tab);
+    tab->SetPosition(100, 100);
+
+    Button* btn1 = Manage (new Button("Button1"));
+    btn1->SetRoundType(RoundNone);
+
+    Button* btn2 = Manage (new Button("Button2"));
+    btn2->SetRoundType(RoundNone);
+
+    tab->Add(String("Title1"), btn1);
+    tab->Resize(400, 300);
+
+    tab->Add(String("Title2"), btn2);
+
+    PushBack(tab);
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

@@ -26,11 +26,11 @@
 #ifndef _BLENDINT_GUI_STACKPANEL_HPP_
 #define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <BlendInt/Gui/StackLayout.hpp>
+#include <BlendInt/Gui/AbstractStackLayout.hpp>
 
 namespace BlendInt {
 
-	class Stack: public StackLayout
+	class Stack: public AbstractStackLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 
@@ -40,17 +40,65 @@ namespace BlendInt {
 
 		virtual ~Stack ();
 
+		void PushFront (AbstractWidget* widget);
+
+		void PushBack (AbstractWidget* widget);
+
+		void Insert (int index, AbstractWidget* widget);
+
+		void Remove (AbstractWidget* widget);
+
+		int GetIndex () const;
+
+		void SetIndex (int index);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+		inline AbstractWidget* active_widget () const
+		{
+			return active_widget_;
+		}
+
 	protected:
+
+		virtual void PerformMarginUpdate (const Margin& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (
+		        const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (
+		        const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		void HideSubWidget (int index);
+
 	private:
 
-		void InitializeStackPanel ();
+		void InitializeStack ();
 
-		GLuint m_vao;
+		AbstractWidget* active_widget_;
+
+		GLuint vao_;
+
 		RefPtr<GLArrayBuffer> inner_;
 
 	};

@@ -48,16 +48,183 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Stack::Stack()
-	: StackLayout(),
-	  m_vao(0)
+	: AbstractStackLayout(),
+	  active_widget_(0),
+	  vao_(0)
 	{
 		set_drop_shadow(true);
-		InitializeStackPanel();
+		InitializeStack();
 	}
 
 	Stack::~Stack ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
+	}
+
+	void Stack::PushFront (AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			if(widget_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void Stack::PushBack (AbstractWidget* widget)
+	{
+		if(PushBackSubWidget(widget)) {
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			if(widget_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void Stack::Insert (int index, AbstractWidget* widget)
+	{
+		if(InsertSubWidget(index, widget)) {
+			int w = size().width() - margin().left() - margin().right();
+			int h = size().height() - margin().top() - margin().bottom();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			widget->SetVisible(false);
+		}
+	}
+
+	void Stack::Remove (AbstractWidget* widget)
+	{
+		if(RemoveSubWidget(widget)) {
+
+			if(active_widget_ == widget) {
+
+				if(widget_count() == 0) {
+					active_widget_ = 0;
+				} else {
+					active_widget_ = first();
+					active_widget_->SetVisible(true);
+				}
+
+			}
+		}
+	}
+
+	int Stack::GetIndex() const
+	{
+		int index = 0;
+
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if(p == active_widget_) {
+				break;
+			}
+
+			index++;
+		}
+
+		if(index >= widget_count()) index = -1;
+
+		return index;
+	}
+
+	void Stack::SetIndex (int index)
+	{
+		int count = widget_count();
+
+		if(index > (count - 1)) return;
+
+		if(count) {
+
+			AbstractWidget* widget = GetWidgetAt(index);
+			if(active_widget_ == widget) {
+				return;
+			}
+
+			active_widget_->SetVisible(false);
+			active_widget_ = widget;
+			active_widget_->SetVisible(true);
+		}
+	}
+
+	bool Stack::IsExpandX () const
+	{
+		bool ret = false;
+
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if(p->IsExpandX()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	bool Stack::IsExpandY () const
+	{
+		bool ret = false;
+
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			if(p->IsExpandY()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	Size Stack::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(first()) {
+
+			prefer.set_width(0);
+			prefer.set_height(0);
+
+			Size tmp;
+			for(AbstractWidget* p = first(); p; p = p->next())
+			{
+				tmp = p->GetPreferredSize();
+				prefer.set_width(std::max(prefer.width(), tmp.width()));
+				prefer.set_height(std::max(prefer.height(), tmp.height()));
+			}
+
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+
+		}
+
+		return prefer;
+	}
+
+	void Stack::PerformMarginUpdate(const Margin& request)
+	{
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
+
+		ResizeSubWidgets(w, h);
 	}
 
 	ResponseType Stack::Draw (Profile& profile)
@@ -73,13 +240,29 @@ namespace BlendInt {
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
 		        0.447f, 0.447f, 1.0f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 		glBindVertexArray(0);
 
 		program->reset();
 		return Ignore;
+	}
+
+	void Stack::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -90,19 +273,70 @@ namespace BlendInt {
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 			inner_->reset();
+
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			set_size(*request.size());
+			ResizeSubWidgets(w, h);
 		}
 
-		StackLayout::PerformSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
-	void Stack::InitializeStackPanel()
+	void Stack::HideSubWidget(int index)
 	{
-		glGenVertexArrays(1, &m_vao);
+		if(widget_count() && index < (widget_count() - 1)) {
+			AbstractWidget* p = GetWidgetAt(index);
+			p->SetVisible(false);
+		}
+	}
+
+	ResponseType Stack::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	void Stack::InitializeStack()
+	{
+		glGenVertexArrays(1, &vao_);
 
 		VertexTool tool;
 		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
 		inner_.reset(new GLArrayBuffer);
 

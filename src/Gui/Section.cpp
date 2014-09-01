@@ -348,7 +348,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
-				if (p->Contain(event.position())) {
+				if (p->visiable() && p->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					last_hover_widget_ = p;
@@ -379,7 +379,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = parent->last(); p; p = p->previous())
 			{
-				if(p->Contain(event.position())) {
+				if(p->visiable() && p->Contain(event.position())) {
 
 					last_hover_widget_ = p;
 					last_hover_widget_->set_hover(true);

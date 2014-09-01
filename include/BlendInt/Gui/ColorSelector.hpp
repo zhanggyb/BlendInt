@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		VLayout* CreateHexBlock ();
 
-		StackLayout* CreateBlockStack ();
+		Stack* CreateBlockStack ();
 
 		ButtonGroup radio_group_;
 
@@ -75,7 +75,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		StackLayout* stack_;
+		Stack* stack_;
 
 	};
 }

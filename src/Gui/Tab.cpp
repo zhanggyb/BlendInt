@@ -202,7 +202,7 @@ namespace BlendInt {
 	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
-		StackLayout* stack = dynamic_cast<StackLayout*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		stack->SetIndex(index);
 		Refresh();

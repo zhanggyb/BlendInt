@@ -428,21 +428,20 @@ namespace BlendInt {
 
 	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		if(widget->Contain(cursor)) {
+		AbstractContainer* container = widget->container_;
+		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
-			AbstractContainer* container = widget->container_;
-
-			if(container == 0) return false;	// if a widget hovered was removed from any container.
+		if(widget->visiable() && widget->Contain(cursor)) {
 
 			while(container) {
-
-				if(!container->Contain(cursor))
+				if((!container->visiable()) || (!container->Contain(cursor)))
 					return false;
 
 				container = container->container();
 			}
 
 			return true;
+
 		}
 
 		return false;
