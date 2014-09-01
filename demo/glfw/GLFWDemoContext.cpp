@@ -79,11 +79,13 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	/*
 	Workspace* ws = Manage(new Workspace);
 	ws->SetPosition(20, 20);
 	ws->Resize(960, 720);
 
 	PushBack(ws);
+	*/
 
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");

@@ -98,7 +98,7 @@ namespace BlendInt {
 
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}
@@ -132,8 +132,46 @@ namespace BlendInt {
 
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
+		}
+	}
+
+	void Decoration::PerformRoundTypeUpdate (
+			const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, *request.round_type(),
+					round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
+
+	void Decoration::PerformRoundRadiusUpdate (
+			const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, round_type(),
+					*request.round_radius());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
 		}
 	}
 
@@ -228,44 +266,6 @@ namespace BlendInt {
 	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
-	}
-
-	void Decoration::PerformRoundTypeUpdate (
-			const RoundTypeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, *request.round_type(),
-					round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
-
-			Refresh();
-		}
-
-		if(request.source() != container()) {
-			ReportRoundTypeUpdate(request);
-		}
-	}
-
-	void Decoration::PerformRoundRadiusUpdate (
-			const RoundRadiusUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, round_type(),
-					*request.round_radius());
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
-
-			Refresh();
-		}
-
-		if(request.source() != container()) {
-			ReportRoundRadiusUpdate(request);
-		}
 	}
 
 	int Decoration::GetLastPosition () const

@@ -134,7 +134,7 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}
@@ -159,7 +159,7 @@ namespace BlendInt {
 			EnableShadow(request.source());
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}
@@ -291,8 +291,8 @@ namespace BlendInt {
 		left_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
 		right_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
 
-		PushBackSubWidget(left_button_);
 		PushBackSubWidget(right_button_);
+		PushBackSubWidget(left_button_);
 
 		AdjustGeometries(position(), size(), margin());
 	}
@@ -314,7 +314,7 @@ namespace BlendInt {
 
 			Size pref = header_->GetPreferredSize();
 
-			if(first() == header_) {
+			if(splitter_->previous() == header_) {
 
 				ResizeSubWidget(header_, w, pref.height());
 				SetSubWidgetPosition(header_, x, y + h - pref.height());

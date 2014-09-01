@@ -173,7 +173,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Button::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
@@ -195,7 +197,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void Button::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
@@ -217,7 +221,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType Button::Draw (Profile& profile)

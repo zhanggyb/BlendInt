@@ -261,7 +261,9 @@ namespace BlendInt {
 
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void TextEntry::PerformRoundTypeUpdate (
@@ -285,7 +287,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void TextEntry::PerformRoundRadiusUpdate (
@@ -313,7 +317,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType TextEntry::Draw (Profile& profile)

@@ -92,7 +92,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}
@@ -116,7 +116,50 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void StaticPanel::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
+
+	void StaticPanel::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType StaticPanel::Draw (Profile& profile)
@@ -217,47 +260,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
-	}
-
-	void StaticPanel::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
-
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
-
-			Refresh();
-		}
-
-		if(request.source() != container()) {
-			ReportRoundTypeUpdate(request);
-		}
-	}
-
-	void StaticPanel::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
-
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
-
-			Refresh();
-		}
-
-		if(request.source() != container()) {
-			ReportRoundRadiusUpdate(request);
-		}
 	}
 
 	void StaticPanel::RenderToBuffer (Profile& profile)

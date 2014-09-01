@@ -241,7 +241,9 @@ namespace BlendInt {
 			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -284,7 +286,9 @@ namespace BlendInt {
 					request.size()->width(), request.size()->height());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)

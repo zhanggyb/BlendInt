@@ -80,7 +80,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void FileButton::PerformRoundTypeUpdate (
@@ -101,8 +103,10 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
-}
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
 
 	void FileButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
@@ -122,7 +126,10 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);}
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
+	}
 
 	ResponseType FileButton::Draw (Profile& profile)
 	{

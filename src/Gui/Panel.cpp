@@ -149,7 +149,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}
@@ -171,7 +171,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}
@@ -192,7 +192,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportRoundTypeUpdate(request);
 		}
 	}
@@ -212,7 +212,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportRoundRadiusUpdate(request);
 		}
 	}

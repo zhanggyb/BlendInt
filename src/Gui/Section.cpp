@@ -154,12 +154,6 @@ namespace BlendInt {
 		if (request.target() == this) {
 			set_position (*request.position());
 		}
-
-		/*
-		if(request.source() != container()) {
-			ReportPositionUpdate(request);
-		}
-		*/
 	}
 
 	void Section::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -173,12 +167,6 @@ namespace BlendInt {
 				request.source()->shadow_->Resize(*request.size());
 			}
 		}
-
-		/*
-		if(request.source() != container()) {
-			ReportSizeUpdate(request);
-		}
-		*/
 	}
 
 	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
@@ -358,7 +346,7 @@ namespace BlendInt {
 
 		} else {
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
 				if (p->Contain(event.position())) {
 
@@ -389,7 +377,7 @@ namespace BlendInt {
 
 		if (parent) {
 
-			for(AbstractWidget* p = parent->first(); p; p = p->next())
+			for(AbstractWidget* p = parent->last(); p; p = p->previous())
 			{
 				if(p->Contain(event.position())) {
 

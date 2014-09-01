@@ -83,7 +83,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ToggleButton::PerformRoundTypeUpdate (
@@ -104,7 +106,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void ToggleButton::PerformRoundRadiusUpdate (
@@ -123,7 +127,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType ToggleButton::Draw (Profile& profile)

@@ -118,7 +118,9 @@ namespace BlendInt {
 
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Separator::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -130,7 +132,9 @@ namespace BlendInt {
 
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType Separator::Draw (Profile& profile)

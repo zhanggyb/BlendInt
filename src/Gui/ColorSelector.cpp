@@ -164,7 +164,9 @@ namespace BlendInt {
 			return;	// return to avoid double report of size update
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ColorSelector::PerformRoundTypeUpdate (
@@ -180,7 +182,9 @@ namespace BlendInt {
 			set_round_type(*request.round_type());
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void ColorSelector::PerformRoundRadiusUpdate (
@@ -196,7 +200,9 @@ namespace BlendInt {
 			set_round_radius(*request.round_radius());
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType ColorSelector::Draw (Profile& profile)

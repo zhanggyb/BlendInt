@@ -158,7 +158,7 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}
@@ -185,7 +185,7 @@ namespace BlendInt {
 			FillSubWidgets(position(), size(), margin(), space_);
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}

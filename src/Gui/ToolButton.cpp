@@ -79,7 +79,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ToolButton::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
@@ -100,7 +102,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void ToolButton::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
@@ -122,7 +126,9 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType ToolButton::Draw (Profile& profile)

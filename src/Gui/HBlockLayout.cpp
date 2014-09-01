@@ -174,7 +174,9 @@ namespace BlendInt {
 			FillInHBlock(position(), *request.size(), margin());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 	
 	void HBlockLayout::PerformPositionUpdate(const PositionUpdateRequest& request)
@@ -188,7 +190,7 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportPositionUpdate(request);
 		}
 	}

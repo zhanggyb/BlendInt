@@ -82,7 +82,7 @@ namespace BlendInt {
 			}
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}

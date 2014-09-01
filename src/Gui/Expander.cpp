@@ -91,7 +91,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(request.source() != container()) {
+		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}
@@ -105,8 +105,11 @@ namespace BlendInt {
 
 			set_round_type(*request.round_type());
 
-			ReportRoundTypeUpdate(request);
 			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
 		}
 	}
 
@@ -118,8 +121,11 @@ namespace BlendInt {
 			        text());
 
 			set_round_radius(*request.round_radius());
-			ReportRoundRadiusUpdate(request);
 			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
 		}
 	}
 
