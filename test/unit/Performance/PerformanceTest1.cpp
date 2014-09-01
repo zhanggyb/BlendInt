@@ -2,6 +2,9 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/StaticFrame.hpp>
 #include <Common/Window.hpp>
 
 using namespace BlendInt;
@@ -27,36 +30,44 @@ TEST_F(PerformanceTest1, Layout1)
 
 	// TODO: add test code here
 	Context* context = Manage(new Context);
-#ifdef DEBUG
-	context->set_name("Context");
-#endif
+	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	Interface::instance->Resize(1280, 800);
 
-    int max_x = 50;
+    VLayout* layout1 = Manage(new VLayout);
+
+    Frame* frame1 = Manage(new Frame);
+
+    frame1->SetPosition(20, 20);
+
+    int max_x = 20;
     int max_y = 20;
-    HLayout* layout[max_y];
-    Button* btn[max_x];
-    int x_pos = 50;
-    int y_pos = 5;
+
+    //int x_pos = 50;
+    //int y_pos = 5;
     for(int i = 0; i < max_y; i++)
     {
-        layout[i] = Manage(new HLayout);
+    	HLayout* layout = Manage(new HLayout);
 
         for(int j = 0; j < max_x; j++)
         {
-            btn[j] = Manage(new Button);
+        	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-            layout[i]->PushBack(btn[j]);
+        	layout->PushBack(btn);
         }
-    
-        layout[i]->SetPosition(x_pos, y_pos);
-		layout[i]->Resize(layout[i]->GetPreferredSize());
 
-        y_pos += 40;
+        //layout[i]->SetPosition(x_pos, y_pos);
+        //layout[i]->Resize(layout[i]->GetPreferredSize());
 
-        context->PushBack(layout[i]);
+        //y_pos += 40;
+
+        layout1->PushBack(layout);
     }
+
+    frame1->Setup(layout1);
+    frame1->Resize(frame1->GetPreferredSize());
+
+    context->PushBack(frame1);
 
     RunLoop(win);
     Interface::Release();
@@ -65,6 +76,156 @@ TEST_F(PerformanceTest1, Layout1)
 
     ASSERT_TRUE(true);
 }
+
+
+/**
+ * Test layout performance
+ */
+TEST_F(PerformanceTest1, Layout2)
+{
+    Init();
+    GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
+
+	// TODO: add test code here
+	Context* context = Manage(new Context);
+	DBG_SET_NAME(context, "Context");
+	Interface::instance->SetCurrentContext(context);
+	Interface::instance->Resize(1280, 800);
+
+    VLayout* layout2 = Manage(new VLayout);
+
+    StaticFrame* frame2 = Manage(new StaticFrame);
+
+    frame2->SetPosition(620, 20);
+
+    int max_x = 20;
+    int max_y = 20;
+
+    for(int i = 0; i < max_y; i++)
+    {
+    	HLayout* layout = Manage(new HLayout);
+
+        for(int j = 0; j < max_x; j++)
+        {
+        	Button* btn = Manage(new Button);
+            //btn[j]->SetPreferredSize(25, btn[j]->size().height());
+        	layout->PushBack(btn);
+        }
+
+        layout2->PushBack(layout);
+    }
+
+    frame2->Setup(layout2);
+    frame2->Resize(frame2->GetPreferredSize());
+
+    context->PushBack(frame2);
+
+    RunLoop(win);
+    Interface::Release();
+
+    Terminate();
+
+    ASSERT_TRUE(true);
+}
+
+/**
+ * Test layout performance
+ */
+TEST_F(PerformanceTest1, Layout3)
+{
+    Init();
+    GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
+
+	// TODO: add test code here
+	Context* context = Manage(new Context);
+	DBG_SET_NAME(context, "Context");
+	Interface::instance->SetCurrentContext(context);
+	Interface::instance->Resize(1280, 800);
+
+    StaticFrame* mainframe = Manage(new StaticFrame);
+
+    StaticFrame* frame1 = Manage(new StaticFrame);
+    StaticFrame* frame2 = Manage(new StaticFrame);
+    StaticFrame* frame3 = Manage(new StaticFrame);
+
+    mainframe->SetPosition(100, 100);
+
+    int max_x = 10;
+    int max_y = 10;
+
+    VLayout* layout1 = Manage(new VLayout);
+    for(int i = 0; i < max_y; i++)
+    {
+    	HLayout* layout = Manage(new HLayout);
+
+        for(int j = 0; j < max_x; j++)
+        {
+        	Button* btn = Manage(new Button);
+            //btn[j]->SetPreferredSize(25, btn[j]->size().height());
+        	layout->PushBack(btn);
+        }
+
+        layout1->PushBack(layout);
+    }
+
+    frame1->Setup(layout1);
+    frame1->Resize(frame1->GetPreferredSize());
+
+    VLayout* layout2 = Manage(new VLayout);
+    for(int i = 0; i < max_y; i++)
+    {
+    	HLayout* layout = Manage(new HLayout);
+
+        for(int j = 0; j < max_x; j++)
+        {
+        	Button* btn = Manage(new Button);
+            //btn[j]->SetPreferredSize(25, btn[j]->size().height());
+        	layout->PushBack(btn);
+        }
+
+        layout2->PushBack(layout);
+    }
+
+    frame2->Setup(layout2);
+    frame2->Resize(frame2->GetPreferredSize());
+
+    VLayout* layout3 = Manage(new VLayout);
+    for(int i = 0; i < max_y; i++)
+    {
+    	HLayout* layout = Manage(new HLayout);
+
+        for(int j = 0; j < max_x; j++)
+        {
+        	Button* btn = Manage(new Button);
+            //btn[j]->SetPreferredSize(25, btn[j]->size().height());
+        	layout->PushBack(btn);
+        }
+
+        layout3->PushBack(layout);
+    }
+
+    frame3->Setup(layout3);
+    frame3->Resize(frame3->GetPreferredSize());
+
+    HLayout* mainlayout = Manage(new HLayout);
+
+    mainlayout->PushBack(layout1);
+    mainlayout->PushBack(layout2);
+    mainlayout->PushBack(layout3);
+
+    mainframe->Setup(mainlayout);
+    mainframe->Resize(mainframe->GetPreferredSize());
+
+    context->PushBack(mainframe);
+
+    RunLoop(win);
+    Interface::Release();
+
+    Terminate();
+
+    ASSERT_TRUE(true);
+}
+
 
 /**
  * test Foo() method

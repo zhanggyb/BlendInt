@@ -300,56 +300,100 @@ namespace BlendInt {
 	{
 		if (last_hover_widget_) {
 
-			if (AbstractStackLayout* parent =
-					dynamic_cast<AbstractStackLayout*>(last_hover_widget_->container_)) {
-				// StackLayout is a special container which arranges sub widgets vertically (back on top)
+			if(IsHoverThrough(last_hover_widget_->container_, event.position())) {
 
-				AbstractWidget* orig = last_hover_widget_;
+				if (AbstractStackLayout* parent =
+						dynamic_cast<AbstractStackLayout*>(last_hover_widget_->container_)) {
+					// StackLayout is a special container which arranges sub widgets vertically (back on top)
 
-				last_hover_widget_ = 0;
-				for(AbstractWidget* p = parent->last_; p; p = p->previous_)
-				{
-					if(p->visiable() && IsHoverThrough(p, event.position())) {
-						last_hover_widget_ = p;
-						break;
+					AbstractWidget* orig = last_hover_widget_;
+
+					last_hover_widget_ = 0;
+					for(AbstractWidget* p = parent->last_; p; p = p->previous_)
+					{
+						if(p->visiable() && p->Contain(event.position())) {
+							last_hover_widget_ = p;
+							break;
+						}
 					}
-				}
 
-				if(last_hover_widget_) {
+					if(last_hover_widget_) {
 
-					if(orig != last_hover_widget_) {
+						if(orig != last_hover_widget_) {
+							orig->set_hover(false);
+							orig->CursorEnterEvent(false);
+
+							last_hover_widget_->set_hover(true);
+							last_hover_widget_->CursorEnterEvent(true);
+						}
+
+						UpdateHoverWidgetSubs(event);
+
+						if(orig != last_hover_widget_) {
+							orig->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+							events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+						}
+
+					} else {
+
+						orig->destroyed().disconnectOne(this,
+						        &Section::OnHoverWidgetDestroyed);
 						orig->set_hover(false);
 						orig->CursorEnterEvent(false);
 
-						last_hover_widget_->set_hover(true);
-						last_hover_widget_->CursorEnterEvent(true);
-					}
+						last_hover_widget_ = parent;
 
-					UpdateHoverWidgetSubs(event);
+						if (last_hover_widget_->Contain(event.position())) {
 
-					if(orig != last_hover_widget_) {
-						orig->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-						events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+							//last_hover_widget_->set_hover(true);
+							//last_hover_widget_->CursorEnterEvent(true);
+
+							events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+
+						} else {
+
+							last_hover_widget_->set_hover(false);
+							last_hover_widget_->CursorEnterEvent(false);
+
+							// find which contianer contains cursor position
+							while (last_hover_widget_->container()) {
+
+								if (last_hover_widget_->container() == this) {	// FIXME: the widget may be mvoed to another context
+									last_hover_widget_ = 0;
+									break;
+								} else {
+									last_hover_widget_ = last_hover_widget_->container();
+
+									if (last_hover_widget_->Contain(event.position())) {
+										break;
+									}
+								}
+							}
+
+							if (last_hover_widget_) {
+								UpdateHoverWidgetSubs(event);
+								events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+							}
+						}
+
 					}
 
 				} else {
 
-					orig->destroyed().disconnectOne(this,
-					        &Section::OnHoverWidgetDestroyed);
-					orig->set_hover(false);
-					orig->CursorEnterEvent(false);
+					if (last_hover_widget_->Contain(event.position())) {
 
-					last_hover_widget_ = parent;
+						AbstractWidget* orig = last_hover_widget_;
+						UpdateHoverWidgetSubs(event);
 
-					if (IsHoverThrough(last_hover_widget_, event.position())) {
-
-						//last_hover_widget_->set_hover(true);
-						//last_hover_widget_->CursorEnterEvent(true);
-
-						events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+						if(orig != last_hover_widget_) {
+							orig->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+							events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
+						}
 
 					} else {
 
+						last_hover_widget_->destroyed().disconnectOne(this,
+						        &Section::OnHoverWidgetDestroyed);
 						last_hover_widget_->set_hover(false);
 						last_hover_widget_->CursorEnterEvent(false);
 
@@ -362,7 +406,7 @@ namespace BlendInt {
 							} else {
 								last_hover_widget_ = last_hover_widget_->container();
 
-								if (IsHoverThrough(last_hover_widget_, event.position())) {
+								if (last_hover_widget_->Contain(event.position())) {
 									break;
 								}
 							}
@@ -378,42 +422,29 @@ namespace BlendInt {
 
 			} else {
 
-				if (IsHoverThrough(last_hover_widget_, event.position())) {
+				last_hover_widget_->destroyed().disconnectOne(this,
+				        &Section::OnHoverWidgetDestroyed);
+				last_hover_widget_->set_hover(false);
+				last_hover_widget_->CursorEnterEvent(false);
 
-					AbstractWidget* orig = last_hover_widget_;
-					UpdateHoverWidgetSubs(event);
+				// find which contianer contains cursor position
+				while (last_hover_widget_->container()) {
 
-					if(orig != last_hover_widget_) {
-						orig->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-						events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
-					}
+					if (last_hover_widget_->container() == this) {	// FIXME: the widget may be mvoed to another context
+						last_hover_widget_ = 0;
+						break;
+					} else {
+						last_hover_widget_ = last_hover_widget_->container();
 
-				} else {
-
-					last_hover_widget_->destroyed().disconnectOne(this,
-					        &Section::OnHoverWidgetDestroyed);
-					last_hover_widget_->set_hover(false);
-					last_hover_widget_->CursorEnterEvent(false);
-
-					// find which contianer contains cursor position
-					while (last_hover_widget_->container()) {
-
-						if (last_hover_widget_->container() == this) {	// FIXME: the widget may be mvoed to another context
-							last_hover_widget_ = 0;
+						if (IsHoverThrough(last_hover_widget_, event.position())) {
 							break;
-						} else {
-							last_hover_widget_ = last_hover_widget_->container();
-
-							if (IsHoverThrough(last_hover_widget_, event.position())) {
-								break;
-							}
 						}
 					}
+				}
 
-					if (last_hover_widget_) {
-						UpdateHoverWidgetSubs(event);
-						events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
-					}
+				if (last_hover_widget_) {
+					UpdateHoverWidgetSubs(event);
+					events()->connect(last_hover_widget_->destroyed(), this, &Section::OnHoverWidgetDestroyed);
 				}
 
 			}
