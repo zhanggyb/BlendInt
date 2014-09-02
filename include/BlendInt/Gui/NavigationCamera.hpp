@@ -37,9 +37,9 @@ namespace BlendInt {
 
 		virtual ~NavigationCamera ();
 
-		void Orbit (float x, float y);
+		void Orbit (float dx, float dy);
 
-		void Pan (float x, float y);
+		void Pan (float dx, float dy);
 
 		void Zoom (float fac);
 
@@ -49,22 +49,17 @@ namespace BlendInt {
 
 		virtual void Update ();
 
-		float speed () {return m_speed;}
-
-		void set_speed (float speed)
-		{
-			m_speed = speed;
-		}
-
 	private:
 
-		glm::vec3 m_last_position;
-		glm::vec3 m_last_center;
+		glm::vec3 last_position_;
 
-		/**
-		 * Speed used in Orbit, Pan, Zoom, more large, more slower
-		 */
-		float m_speed;
+		glm::vec3 last_center_;
+
+		static float orbit_speed;
+
+		static float pan_speed;
+
+		static float zoom_speed;
 
 	};
 

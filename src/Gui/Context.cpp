@@ -436,11 +436,13 @@ namespace BlendInt
 		}
 		custom_focus_widget_ = false;
 
+		/*
 		if(focused_widget_) {
 			DBG_PRINT_MSG("focus widget: %s", focused_widget_->name().c_str());
 		} else {
 			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
+		*/
 
 		return response;
 	}

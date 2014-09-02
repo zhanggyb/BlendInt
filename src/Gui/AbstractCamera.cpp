@@ -24,30 +24,32 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <BlendInt/Gui/AbstractCamera.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+
 namespace BlendInt {
 
 	AbstractCamera::AbstractCamera ()
 	: Object(),
-	  m_fovy(45.0f),
-	  m_aspect(1.0),
-	  m_near(0.1f),
-	  m_far(100.f)
+	  fovy_(45.0f),
+	  aspect_(1.0),
+	  near_(0.1f),
+	  far_(100.f)
 	{
 		LookAt (glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f));
 
-		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
+		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
 	}
 
 	AbstractCamera::AbstractCamera (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up)
 	: Object(),
-	  m_fovy(45.0f),
-	  m_aspect(1.0),
-	  m_near(0.1f),
-	  m_far(100.f)
+	  fovy_(45.0f),
+	  aspect_(1.0),
+	  near_(0.1f),
+	  far_(100.f)
 	{
 		LookAt (pos, center, up);
 
-		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
+		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
 	}
 
 	AbstractCamera::~AbstractCamera ()
@@ -56,30 +58,35 @@ namespace BlendInt {
 
 	void AbstractCamera::LookAt(const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up)
 	{
-		m_position = pos;
-		m_center = center;
-		m_up = up;
+		if(pos == center) {
+			DBG_PRINT_MSG("ERROR: %s", "position and center are the same");
+			return;
+		}
 
-		m_local_z = m_position - m_center;
-		m_local_x = glm::cross(m_up, m_local_z);
-		m_local_y = glm::cross(m_local_z, m_local_x);
+		position_ = pos;
+		center_ = center;
+		up_ = up;
 
-		m_local_x = glm::normalize(m_local_x);
-		m_local_y = glm::normalize(m_local_y);
-		m_local_z = glm::normalize(m_local_z);
+		local_z_ = position_ - center_;
+		local_x_ = glm::cross(up_, local_z_);
+		local_y_ = glm::cross(local_z_, local_x_);
 
-		m_view = glm::lookAt(m_position, m_center, m_up);
+		local_x_ = glm::normalize(local_x_);
+		local_y_ = glm::normalize(local_y_);
+		local_z_ = glm::normalize(local_z_);
+
+		view_ = glm::lookAt(position_, center_, up_);
 	}
 
 	void AbstractCamera::SetPerspective (const float fovy, const float aspect,
 	        const float near, const float far)
 	{
-		m_near = near;
-		m_far = far;
-		m_fovy = fovy;
-		m_aspect = aspect;
+		near_ = near;
+		far_ = far;
+		fovy_ = fovy;
+		aspect_ = aspect;
 
-		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
+		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
 	}
 
 }

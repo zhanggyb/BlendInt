@@ -31,17 +31,21 @@
 
 #include <BlendInt/Gui/NavigationCamera.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+
 namespace BlendInt {
 
+	float NavigationCamera::orbit_speed = 25.f;
+
+	float NavigationCamera::pan_speed = 50.f;
+
+	float NavigationCamera::zoom_speed = 100.f;
+
 	NavigationCamera::NavigationCamera ()
-	: m_speed(200.f)
 	{
 		set_position(5.0, 5.0, 5.0);
 		set_center(0.0, 0.0, 0.0);
 		set_up(0.0, 0.0, 1.0);
-
-		m_last_position = glm::vec3(0);
-		m_last_center = glm::vec3(0);
 	}
 
 	NavigationCamera::~NavigationCamera ()
@@ -50,34 +54,33 @@ namespace BlendInt {
 
 	void NavigationCamera::Orbit (float dx, float dy)
 	{
-		float radius = glm::distance(m_last_position, m_last_center);
+		float radius = glm::distance(last_position_, last_center_);
 
 		glm::mat4 I = glm::mat4(1);
-		glm::mat4 T1 = glm::translate(I, m_last_center * (-1.f));
-		glm::mat4 T2 = glm::translate(I, m_last_center);
-		glm::mat4 Rh = glm::rotate(I, dx / radius / (m_speed / 2), up());
-		glm::mat4 Rv = glm::rotate(I, -dy / radius / (m_speed / 2), local_x());
+		glm::mat4 Rh = glm::rotate(I, dx / radius / orbit_speed, up());
+		glm::mat4 Rv = glm::rotate(I, -dy / radius / orbit_speed, local_x());
 
-		glm::vec4 pos = glm::vec4(m_last_position, 1.0);
-		pos = T2 * Rv * Rh * T1 * pos;
+		glm::vec4 pos = glm::vec4(last_position_, 1.f);
 
-		LookAt(glm::vec3(pos), m_last_center, up());
+		pos = Rv * Rh * pos;
+
+		LookAt(glm::vec3(pos), last_center_, up());
 	}
 
 	void NavigationCamera::Pan (float dx, float dy)
 	{
-		glm::vec3 translate = local_x() * (dx / m_speed) + local_y() * (dy / m_speed);
+		glm::vec3 translate = local_x() * (dx / pan_speed) + local_y() * (dy / pan_speed);
 
-		set_position(m_last_position + translate);
-		set_center(m_last_center + translate);
+		set_position(last_position_ + translate);
+		set_center(last_center_ + translate);
 
 		set_view(glm::lookAt(position(), center(), up()));
 	}
 
 	void NavigationCamera::Zoom (float dy)
 	{
-		glm::vec3 direct_orig = glm::normalize(m_last_position - center());
-		glm::vec3 pos = m_last_position + local_z() * (dy / m_speed / 2);
+		glm::vec3 direct_orig = glm::normalize(last_position_ - center());
+		glm::vec3 pos = last_position_ + local_z() * (dy / zoom_speed);
 		glm::vec3 direct_new = glm::normalize(pos - center());
 
 		if(direct_new != direct_orig)
@@ -89,12 +92,12 @@ namespace BlendInt {
 
     void NavigationCamera::SaveCurrentPosition()
     {
-        m_last_position = position();
+        last_position_ = position();
     }
 
     void NavigationCamera::SaveCurrentCenter()
     {
-        m_last_center = center();
+        last_center_ = center();
     }
 
 	void NavigationCamera::Update ()
