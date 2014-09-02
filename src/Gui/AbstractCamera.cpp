@@ -29,27 +29,8 @@
 namespace BlendInt {
 
 	AbstractCamera::AbstractCamera ()
-	: Object(),
-	  fovy_(45.0f),
-	  aspect_(1.0),
-	  near_(0.1f),
-	  far_(100.f)
+	: Object()
 	{
-		LookAt (glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f));
-
-		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
-	}
-
-	AbstractCamera::AbstractCamera (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up)
-	: Object(),
-	  fovy_(45.0f),
-	  aspect_(1.0),
-	  near_(0.1f),
-	  far_(100.f)
-	{
-		LookAt (pos, center, up);
-
-		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
 	}
 
 	AbstractCamera::~AbstractCamera ()
@@ -78,15 +59,19 @@ namespace BlendInt {
 		view_ = glm::lookAt(position_, center_, up_);
 	}
 
-	void AbstractCamera::SetPerspective (const float fovy, const float aspect,
-	        const float near, const float far)
+	void AbstractCamera::Orbit (float dx, float dy)
 	{
-		near_ = near;
-		far_ = far;
-		fovy_ = fovy;
-		aspect_ = aspect;
+		// Nothing in base class
+	}
 
-		projection_ = glm::perspective(fovy_, aspect_, near_, far_);
+	void AbstractCamera::Pan (float dx, float dy)
+	{
+		// Nothing in base class
+	}
+
+	void AbstractCamera::Zoom (float fac)
+	{
+		// Nothing in base class
 	}
 
 }

@@ -29,55 +29,95 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/NavigationCamera.hpp>
+#include <BlendInt/Gui/PerspectiveCamera.hpp>
 
 #include <BlendInt/Core/Types.hpp>
 
 namespace BlendInt {
 
-	float NavigationCamera::orbit_speed = 25.f;
+	float PerspectiveCamera::orbit_speed = 25.f;
 
-	float NavigationCamera::pan_speed = 50.f;
+	float PerspectiveCamera::pan_speed = 50.f;
 
-	float NavigationCamera::zoom_speed = 100.f;
+	float PerspectiveCamera::zoom_speed = 100.f;
 
-	NavigationCamera::NavigationCamera ()
+	PerspectiveCamera::PerspectiveCamera ()
+	: AbstractCamera(),
+	  fovy_(45.0f),
+	  aspect_(1.0),
+	  near_(0.1f),
+	  far_(100.f)
 	{
-		set_position(5.0, 5.0, 5.0);
-		set_center(0.0, 0.0, 0.0);
-		set_up(0.0, 0.0, 1.0);
+		set_position(5.f, 5.f, 5.f);
+		set_center(0.f, 0.f, 0.f);
+		set_up(0.f, 0.f, 1.f);
+
+		glm::vec3 z = position() - center();
+		glm::vec3 x = glm::cross(up(), z);
+		glm::vec3 y = glm::cross(z, x);
+
+		set_local_x(glm::normalize(x));
+		set_local_y(glm::normalize(y));
+		set_local_z(glm::normalize(z));
+
+		set_view(glm::lookAt(position(), center(), local_y()));
+		set_projection(glm::perspective(fovy_, aspect_, near_, far_));
 	}
 
-	NavigationCamera::~NavigationCamera ()
+	PerspectiveCamera::~PerspectiveCamera ()
 	{
 	}
 
-	void NavigationCamera::Orbit (float dx, float dy)
+	void PerspectiveCamera::SetPerspective (const float fovy, const float aspect,
+	        const float near, const float far)
+	{
+		near_ = near;
+		far_ = far;
+		fovy_ = fovy;
+		aspect_ = aspect;
+
+		set_projection(glm::perspective(fovy_, aspect_, near_, far_));
+	}
+
+	void PerspectiveCamera::Orbit (float dx, float dy)
 	{
 		float radius = glm::distance(last_position_, last_center_);
 
 		glm::mat4 I = glm::mat4(1);
+		glm::mat4 T1 = glm::translate(I, last_center_ * (-1.f));
+		glm::mat4 T2 = glm::translate(I, last_center_);
 		glm::mat4 Rh = glm::rotate(I, dx / radius / orbit_speed, up());
 		glm::mat4 Rv = glm::rotate(I, -dy / radius / orbit_speed, local_x());
 
 		glm::vec4 pos = glm::vec4(last_position_, 1.f);
 
-		pos = Rv * Rh * pos;
+		pos = T2 * Rv * Rh * T1 * pos;
 
-		LookAt(glm::vec3(pos), last_center_, up());
+		set_position(glm::vec3(pos));
+		set_center(last_center_);
+
+		glm::vec3 z = position() - center();
+		glm::vec3 x = glm::cross(up(), z);
+		glm::vec3 y = glm::cross(z, x);
+
+		set_local_z(z);
+		set_local_x(glm::normalize(x));
+		set_local_y(glm::normalize(y));
+
+		set_view(glm::lookAt(position(), center(), local_y()));
 	}
 
-	void NavigationCamera::Pan (float dx, float dy)
+	void PerspectiveCamera::Pan (float dx, float dy)
 	{
 		glm::vec3 translate = local_x() * (dx / pan_speed) + local_y() * (dy / pan_speed);
 
 		set_position(last_position_ + translate);
 		set_center(last_center_ + translate);
 
-		set_view(glm::lookAt(position(), center(), up()));
+		set_view(glm::lookAt(position(), center(), local_y()));
 	}
 
-	void NavigationCamera::Zoom (float dy)
+	void PerspectiveCamera::Zoom (float dy)
 	{
 		glm::vec3 direct_orig = glm::normalize(last_position_ - center());
 		glm::vec3 pos = last_position_ + local_z() * (dy / zoom_speed);
@@ -90,20 +130,15 @@ namespace BlendInt {
 		set_view(glm::lookAt(position(), center(), up()));
 	}
 
-    void NavigationCamera::SaveCurrentPosition()
+    void PerspectiveCamera::SaveCurrentPosition()
     {
         last_position_ = position();
     }
 
-    void NavigationCamera::SaveCurrentCenter()
+    void PerspectiveCamera::SaveCurrentCenter()
     {
         last_center_ = center();
     }
-
-	void NavigationCamera::Update ()
-	{
-		set_view(glm::lookAt(position(), center(), up()));
-	}
 
 }
 

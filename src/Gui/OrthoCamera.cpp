@@ -21,48 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CAMERA_HPP_
-#define _BLENDINT_CAMERA_HPP_
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
-#include <glm/vec3.hpp>
-#include <BlendInt/Gui/AbstractCamera.hpp>
+#include <BlendInt/Gui/OrthoCamera.hpp>
 
 namespace BlendInt {
 
-	class NavigationCamera: public AbstractCamera
+	OrthoCamera::OrthoCamera()
+	: AbstractCamera(),
+	  left_(0.f),
+	  right_(100.f),
+	  bottom_(0.f),
+	  top_(100.f),
+	  near_(100.f),
+	  far_(-100.f)
 	{
-	public:
+	}
 
-		NavigationCamera ();
+	OrthoCamera::~OrthoCamera()
+	{
+	}
 
-		virtual ~NavigationCamera ();
+	void OrthoCamera::SetOrtho (float left, float right, float bottom,
+			float top, float near, float far)
+	{
+		left_ = left;
+		right_ = right;
+		bottom_ = bottom;
+		top_ = top;
+		near_ = near;
+		far_ = far;
 
-		void Orbit (float dx, float dy);
-
-		void Pan (float dx, float dy);
-
-		void Zoom (float fac);
-
-		void SaveCurrentPosition ();
-
-		void SaveCurrentCenter ();
-
-		virtual void Update ();
-
-	private:
-
-		glm::vec3 last_position_;
-
-		glm::vec3 last_center_;
-
-		static float orbit_speed;
-
-		static float pan_speed;
-
-		static float zoom_speed;
-
-	};
+		set_projection(glm::ortho(left_, right_, bottom_, top_, near_, far_));
+	}
 
 }
-
-#endif /* _BLENDINT_CAMERA_HPP_ */

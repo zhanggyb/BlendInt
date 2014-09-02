@@ -392,7 +392,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		default_camera_.reset(new NavigationCamera);
+		default_camera_.reset(new PerspectiveCamera);
 
 		// setup camera
 		glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
@@ -402,7 +402,6 @@ namespace BlendInt {
 
 		default_camera_->SetPerspective(default_camera_->fovy(),
 		        1.f * size().width() / size().height());
-		default_camera_->Update();
 
 		gridfloor_.reset(new GridFloor);
 	}

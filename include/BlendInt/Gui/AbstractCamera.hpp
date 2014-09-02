@@ -36,21 +36,15 @@ namespace BlendInt {
 
 		AbstractCamera ();
 
-		AbstractCamera (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up);
-
 		virtual ~AbstractCamera ();
 
 		void LookAt (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up);
 
-		/**
-		 * @brief Set the projection data of this camera
-		 * @param fovy
-		 * @param aspect
-		 * @param near
-		 * @param far
-		 */
-		void SetPerspective (const float fovy, const float aspect,
-		        const float near = 0.1f, const float far = 100.f);
+		virtual void Orbit (float dx, float dy);
+
+		virtual void Pan (float dx, float dy);
+
+		virtual void Zoom (float fac);
 
 		const glm::vec3& position () const {return position_;}
 
@@ -67,19 +61,6 @@ namespace BlendInt {
 		const glm::mat4& projection () const	{return projection_;}
 
 		const glm::mat4& view () const {return view_;}
-
-		float fovy () const {return fovy_;}
-
-		float aspect () const	{return aspect_;}
-
-		float near () const	{return near_;}
-
-		float far () const {return far_;}
-
-		/**
-		 * @brief Update the model view projection matrix
-		 */
-		virtual void Update () = 0;
 
 	protected:
 
@@ -161,26 +142,6 @@ namespace BlendInt {
 			view_ = view;
 		}
 
-		void set_fovy (float fovy)
-		{
-			fovy_ = fovy;
-		}
-
-		void set_aspect (float aspect)
-		{
-			aspect_ = aspect;
-		}
-
-		void set_near (float near)
-		{
-			near_ = near;
-		}
-
-		void set_far (float far)
-		{
-			far_ = far;
-		}
-
 	private:
 
 		/** The eye position */
@@ -206,18 +167,6 @@ namespace BlendInt {
 
 		/** The projection matrix */
 		glm::mat4 projection_;
-
-		/** The field of view angle, in degrees, in the y direction */
-		float fovy_;
-
-		/** Aspect ratio that determines the field of view in the x direction, the aspect ratio is the ratio of x (width) to y (height) */
-		float aspect_;
-
-		/**	The distance from the viewer to the near clipping plane (always positive) */
-		float near_;
-
-		/** The distance from the viewer to the far clipping plane (always positive) */
-		float far_;
 
 	};
 

@@ -32,7 +32,7 @@
 #include <BlendInt/Gui/Cube.hpp>
 #include <BlendInt/Gui/Mesh.hpp>
 
-#include <BlendInt/Gui/NavigationCamera.hpp>
+#include <BlendInt/Gui/PerspectiveCamera.hpp>
 
 using std::vector;
 
@@ -98,7 +98,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> inner_;
 
-		RefPtr<NavigationCamera> default_camera_;
+		RefPtr<PerspectiveCamera> default_camera_;
 
 		RefPtr<GridFloor> gridfloor_;
 
