@@ -41,25 +41,14 @@ namespace BlendInt {
     };
 
 	VertexTool::VertexTool()
-	: m_total(0), m_half(0)
 	{
-
 	}
 	
 	VertexTool::~VertexTool ()
 	{
 	}
 	
-	void VertexTool::Initialize()
-	{
-		m_total = 0;
-		m_half = 0;
-
-		m_inner.clear();
-		m_outer.clear();
-	}
-
-	void VertexTool::Setup (
+	void VertexTool::GenerateVertices(
 					const Size& size,
 					float border,
 					int round_type,
@@ -118,142 +107,137 @@ namespace BlendInt {
 		}
 
 		{	// generate inner vertices
-
-			if(m_inner.size() != ((outline_vertex_number + 2) * 2)) {
-				m_inner.resize((outline_vertex_number + 2) * 2);
+			if(inner_.size() != ((outline_vertex_number + 2) * 2)) {
+				inner_.resize((outline_vertex_number + 2) * 2);
 			}
 
 			// inner[0, 0] is the center of a triangle fan
-			m_inner[0] = minxi + (maxxi - minxi) / 2.f;
-			m_inner[1] = minyi + (maxyi - minyi) / 2.f;
+			inner_[0] = minxi + (maxxi - minxi) / 2.f;
+			inner_[1] = minyi + (maxyi - minyi) / 2.f;
 
 			count = 1;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 2] = minxi + veci[i][1];
-					m_inner[count * 2 + 1] = minyi + radi - veci[i][0];
+					inner_[count * 2] = minxi + veci[i][1];
+					inner_[count * 2 + 1] = minyi + radi - veci[i][0];
 				}
 			} else {
-				m_inner[count * 2] = minxi;
-				m_inner[count * 2 + 1] = minyi;
+				inner_[count * 2] = minxi;
+				inner_[count * 2 + 1] = minyi;
 				count++;
 			}
 
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 2] = maxxi - radi + veci[i][0];
-					m_inner[count * 2 + 1] = minyi + veci[i][1];
+					inner_[count * 2] = maxxi - radi + veci[i][0];
+					inner_[count * 2 + 1] = minyi + veci[i][1];
 				}
 			} else {
-				m_inner[count * 2] = maxxi;
-				m_inner[count * 2 + 1] = minyi;
+				inner_[count * 2] = maxxi;
+				inner_[count * 2 + 1] = minyi;
 				count++;
 			}
 
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 2] = maxxi - veci[i][1];
-					m_inner[count * 2 + 1] = maxyi - radi + veci[i][0];
+					inner_[count * 2] = maxxi - veci[i][1];
+					inner_[count * 2 + 1] = maxyi - radi + veci[i][0];
 				}
 			} else {
-				m_inner[count * 2] = maxxi;
-				m_inner[count * 2 + 1] = maxyi;
+				inner_[count * 2] = maxxi;
+				inner_[count * 2 + 1] = maxyi;
 				count++;
 			}
 
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 2] = minxi + radi - veci[i][0];
-					m_inner[count * 2 + 1] = maxyi - veci[i][1];
+					inner_[count * 2] = minxi + radi - veci[i][0];
+					inner_[count * 2 + 1] = maxyi - veci[i][1];
 				}
 
 			} else {
-				m_inner[count * 2] = minxi;
-				m_inner[count * 2 + 1] = maxyi;
+				inner_[count * 2] = minxi;
+				inner_[count * 2 + 1] = maxyi;
 				count++;
 			}
 
-			m_inner[count * 2] = m_inner[2];
-			m_inner[count * 2 + 1] = m_inner[3];
+			inner_[count * 2] = inner_[2];
+			inner_[count * 2 + 1] = inner_[3];
 		}
 
-		if(border > 0) {
+		if(border > 0.f) {
 
-			if(m_outer.size() != (outline_vertex_number * 2)) {
-				m_outer.resize(outline_vertex_number * 2);
-			}
+			std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
 
 			count = 0;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2] = minx + vec[i][1];
-					m_outer[count * 2 + 1] = miny + rad - vec[i][0];
+					edge_vertices[count * 2] = minx + vec[i][1];
+					edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
 				}
 			} else {
-				m_outer[count * 2] = minx;
-				m_outer[count * 2 + 1] = miny;
+				edge_vertices[count * 2] = minx;
+				edge_vertices[count * 2 + 1] = miny;
 				count++;
 			}
 
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2] = maxx - rad + vec[i][0];
-					m_outer[count * 2 + 1] = miny + vec[i][1];
+					edge_vertices[count * 2] = maxx - rad + vec[i][0];
+					edge_vertices[count * 2 + 1] = miny + vec[i][1];
 				}
 			} else {
-				m_outer[count * 2] = maxx;
-				m_outer[count * 2 + 1] = miny;
+				edge_vertices[count * 2] = maxx;
+				edge_vertices[count * 2 + 1] = miny;
 				count++;
 			}
 
-			m_half = count;
+			// m_half = count;
 
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2] = maxx - vec[i][1];
-					m_outer[count * 2 + 1] = maxy - rad + vec[i][0];
+					edge_vertices[count * 2] = maxx - vec[i][1];
+					edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
 				}
 			} else {
-				m_outer[count * 2] = maxx;
-				m_outer[count * 2 + 1] = maxy;
+				edge_vertices[count * 2] = maxx;
+				edge_vertices[count * 2 + 1] = maxy;
 				count++;
 			}
 
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2] = minx + rad - vec[i][0];
-					m_outer[count * 2 + 1] = maxy - vec[i][1];
+					edge_vertices[count * 2] = minx + rad - vec[i][0];
+					edge_vertices[count * 2 + 1] = maxy - vec[i][1];
 				}
 			} else {
-				m_outer[count * 2] = minx;
-				m_outer[count * 2 + 1] = maxy;
+				edge_vertices[count * 2] = minx;
+				edge_vertices[count * 2 + 1] = maxy;
 				count++;
 			}
 
-		}
+			GenerateTriangleStripVertices(inner_, edge_vertices, count, outer_);
 
-		m_total = count;
+		} else {
+
+			outer_.clear();
+
+		}
 	}
-	
-	void VertexTool::Setup (
-					const Size& size,
-					float border,
-					int round_type,
-					float radius,
-					const Color& color,
-					Orientation shadedir,
-					short shadetop,
-					short shadedown)
+
+	void VertexTool::GenerateVertices (const Size& size, float border,
+			int round_type, float radius, const Color& color, Orientation shadedir,
+			short shadetop, short shadedown)
 	{
 		float rad = radius;
 		float radi = rad - border * Theme::instance->pixel();
@@ -315,60 +299,60 @@ namespace BlendInt {
 
 		{	// generate inner vertices
 
-			if(m_inner.size() != ((outline_vertex_number + 2) * 6)) {
-				m_inner.resize((outline_vertex_number + 2) * 6);
+			if(inner_.size() != ((outline_vertex_number + 2) * 6)) {
+				inner_.resize((outline_vertex_number + 2) * 6);
 			}
 
 			// inner[0, 0] is the center of a triangle fan
-			m_inner[0] = minxi + (maxxi - minxi) / 2.f;
-			m_inner[1] = minyi + (maxyi - minyi) / 2.f;
+			inner_[0] = minxi + (maxxi - minxi) / 2.f;
+			inner_[1] = minyi + (maxyi - minyi) / 2.f;
 
 			if (shadedir == Vertical) {
 				shaded_color = MakeShadedColor(color_top, color_down,
-								facyi * (m_inner[1] - minyi));
+								facyi * (inner_[1] - minyi));
 			} else {
 				shaded_color = MakeShadedColor(color_top, color_down,
-								facxi * (m_inner[0] - minxi));
+								facxi * (inner_[0] - minxi));
 			}
-			m_inner[2] = shaded_color.r();
-			m_inner[3] = shaded_color.g();
-			m_inner[4] = shaded_color.b();
-			m_inner[5] = shaded_color.a();
+			inner_[2] = shaded_color.r();
+			inner_[3] = shaded_color.g();
+			inner_[4] = shaded_color.b();
+			inner_[5] = shaded_color.a();
 
 			count = 1;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 6 + 0] = minxi + veci[i][1];
-					m_inner[count * 6 + 1] = minyi + radi - veci[i][0];
+					inner_[count * 6 + 0] = minxi + veci[i][1];
+					inner_[count * 6 + 1] = minyi + radi - veci[i][0];
 
 					if (shadedir == Vertical) {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facyi * (m_inner[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facxi * (m_inner[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 6 + 0] - minxi));
 					}
 
-					m_inner[count * 6 + 2] = shaded_color.r();
-					m_inner[count * 6 + 3] = shaded_color.g();
-					m_inner[count * 6 + 4] = shaded_color.b();
-					m_inner[count * 6 + 5] = shaded_color.a();
+					inner_[count * 6 + 2] = shaded_color.r();
+					inner_[count * 6 + 3] = shaded_color.g();
+					inner_[count * 6 + 4] = shaded_color.b();
+					inner_[count * 6 + 5] = shaded_color.a();
 				}
 			} else {
-				m_inner[count * 6 + 0] = minxi;
-				m_inner[count * 6 + 1] = minyi;
+				inner_[count * 6 + 0] = minxi;
+				inner_[count * 6 + 1] = minyi;
 
 				if (shadedir == Vertical) {
 					shaded_color = MakeShadedColor(color_top, color_down, 0.0f);
 				} else {
 					shaded_color = MakeShadedColor(color_top, color_down, 0.0f);
 				}
-				m_inner[count * 6 + 2] = shaded_color.r();
-				m_inner[count * 6 + 3] = shaded_color.g();
-				m_inner[count * 6 + 4] = shaded_color.b();
-				m_inner[count * 6 + 5] = shaded_color.a();
+				inner_[count * 6 + 2] = shaded_color.r();
+				inner_[count * 6 + 3] = shaded_color.g();
+				inner_[count * 6 + 4] = shaded_color.b();
+				inner_[count * 6 + 5] = shaded_color.a();
 
 				count++;
 			}
@@ -376,34 +360,34 @@ namespace BlendInt {
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 6 + 0] = maxxi - radi + veci[i][0];
-					m_inner[count * 6 + 1] = minyi + veci[i][1];
+					inner_[count * 6 + 0] = maxxi - radi + veci[i][0];
+					inner_[count * 6 + 1] = minyi + veci[i][1];
 
 					if (shadedir == Vertical) {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facyi * (m_inner[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facxi * (m_inner[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 6 + 0] - minxi));
 					}
-					m_inner[count * 6 + 2] = shaded_color.r();
-					m_inner[count * 6 + 3] = shaded_color.g();
-					m_inner[count * 6 + 4] = shaded_color.b();
-					m_inner[count * 6 + 5] = shaded_color.a();
+					inner_[count * 6 + 2] = shaded_color.r();
+					inner_[count * 6 + 3] = shaded_color.g();
+					inner_[count * 6 + 4] = shaded_color.b();
+					inner_[count * 6 + 5] = shaded_color.a();
 				}
 			} else {
-				m_inner[count * 6 + 0] = maxxi;
-				m_inner[count * 6 + 1] = minyi;
+				inner_[count * 6 + 0] = maxxi;
+				inner_[count * 6 + 1] = minyi;
 
 				if (shadedir == Vertical) {
 					shaded_color = MakeShadedColor(color_top, color_down, 0.0f);
 				} else {
 					shaded_color = MakeShadedColor(color_top, color_down, 1.0f);
 				}
-				m_inner[count * 6 + 2] = shaded_color.r();
-				m_inner[count * 6 + 3] = shaded_color.g();
-				m_inner[count * 6 + 4] = shaded_color.b();
-				m_inner[count * 6 + 5] = shaded_color.a();
+				inner_[count * 6 + 2] = shaded_color.r();
+				inner_[count * 6 + 3] = shaded_color.g();
+				inner_[count * 6 + 4] = shaded_color.b();
+				inner_[count * 6 + 5] = shaded_color.a();
 
 				count++;
 			}
@@ -411,34 +395,34 @@ namespace BlendInt {
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 6 + 0] = maxxi - veci[i][1];
-					m_inner[count * 6 + 1] = maxyi - radi + veci[i][0];
+					inner_[count * 6 + 0] = maxxi - veci[i][1];
+					inner_[count * 6 + 1] = maxyi - radi + veci[i][0];
 
 					if (shadedir == Vertical) {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facyi * (m_inner[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facxi * (m_inner[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 6 + 0] - minxi));
 					}
-					m_inner[count * 6 + 2] = shaded_color.r();
-					m_inner[count * 6 + 3] = shaded_color.g();
-					m_inner[count * 6 + 4] = shaded_color.b();
-					m_inner[count * 6 + 5] = shaded_color.a();
+					inner_[count * 6 + 2] = shaded_color.r();
+					inner_[count * 6 + 3] = shaded_color.g();
+					inner_[count * 6 + 4] = shaded_color.b();
+					inner_[count * 6 + 5] = shaded_color.a();
 				}
 			} else {
-				m_inner[count * 6 + 0] = maxxi;
-				m_inner[count * 6 + 1] = maxyi;
+				inner_[count * 6 + 0] = maxxi;
+				inner_[count * 6 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
 					shaded_color = MakeShadedColor(color_top, color_down, 1.0f);
 				} else {
 					shaded_color = MakeShadedColor(color_top, color_down, 1.0f);
 				}
-				m_inner[count * 6 + 2] = shaded_color.r();
-				m_inner[count * 6 + 3] = shaded_color.g();
-				m_inner[count * 6 + 4] = shaded_color.b();
-				m_inner[count * 6 + 5] = shaded_color.a();
+				inner_[count * 6 + 2] = shaded_color.r();
+				inner_[count * 6 + 3] = shaded_color.g();
+				inner_[count * 6 + 4] = shaded_color.b();
+				inner_[count * 6 + 5] = shaded_color.a();
 
 				count++;
 			}
@@ -446,110 +430,114 @@ namespace BlendInt {
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_inner[count * 6 + 0] = minxi + radi - veci[i][0];
-					m_inner[count * 6 + 1] = maxyi - veci[i][1];
+					inner_[count * 6 + 0] = minxi + radi - veci[i][0];
+					inner_[count * 6 + 1] = maxyi - veci[i][1];
 
 					if (shadedir == Vertical) {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facyi * (m_inner[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = MakeShadedColor(color_top, color_down,
-										facxi * (m_inner[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 6 + 0] - minxi));
 					}
-					m_inner[count * 6 + 2] = shaded_color.r();
-					m_inner[count * 6 + 3] = shaded_color.g();
-					m_inner[count * 6 + 4] = shaded_color.b();
-					m_inner[count * 6 + 5] = shaded_color.a();
+					inner_[count * 6 + 2] = shaded_color.r();
+					inner_[count * 6 + 3] = shaded_color.g();
+					inner_[count * 6 + 4] = shaded_color.b();
+					inner_[count * 6 + 5] = shaded_color.a();
 				}
 			} else {
 
-				m_inner[count * 6 + 0] = minxi;
-				m_inner[count * 6 + 1] = maxyi;
+				inner_[count * 6 + 0] = minxi;
+				inner_[count * 6 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
 					shaded_color = MakeShadedColor(color_top, color_down, 1.0f);
 				} else {
 					shaded_color = MakeShadedColor(color_top, color_down, 0.0f);
 				}
-				m_inner[count * 6 + 2] = shaded_color.r();
-				m_inner[count * 6 + 3] = shaded_color.g();
-				m_inner[count * 6 + 4] = shaded_color.b();
-				m_inner[count * 6 + 5] = shaded_color.a();
+				inner_[count * 6 + 2] = shaded_color.r();
+				inner_[count * 6 + 3] = shaded_color.g();
+				inner_[count * 6 + 4] = shaded_color.b();
+				inner_[count * 6 + 5] = shaded_color.a();
 
 				count++;
 			}
 
-			m_inner[count * 6 + 0] = m_inner[6 + 0];
-			m_inner[count * 6 + 1] = m_inner[6 + 1];
-			m_inner[count * 6 + 2] = m_inner[6 + 2];
-			m_inner[count * 6 + 3] = m_inner[6 + 3];
-			m_inner[count * 6 + 4] = m_inner[6 + 4];
-			m_inner[count * 6 + 5] = m_inner[6 + 5];
+			inner_[count * 6 + 0] = inner_[6 + 0];
+			inner_[count * 6 + 1] = inner_[6 + 1];
+			inner_[count * 6 + 2] = inner_[6 + 2];
+			inner_[count * 6 + 3] = inner_[6 + 3];
+			inner_[count * 6 + 4] = inner_[6 + 4];
+			inner_[count * 6 + 5] = inner_[6 + 5];
 
 		}
 
-		if (border > 0) {
+		if (border > 0.f) {
 
-			if(m_outer.size() != (outline_vertex_number * 2)) {
-				m_outer.resize(outline_vertex_number * 2);
-			}
+			std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
 
 			count = 0;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2 + 0] = minx + vec[i][1];
-					m_outer[count * 2 + 1] = miny + rad - vec[i][0];
+					edge_vertices[count * 2 + 0] = minx + vec[i][1];
+					edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
 				}
 			} else {
-				m_outer[count * 2 + 0] = minx;
-				m_outer[count * 2 + 1] = miny;
+				edge_vertices[count * 2 + 0] = minx;
+				edge_vertices[count * 2 + 1] = miny;
 				count++;
 			}
 
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2 + 0] = maxx - rad + vec[i][0];
-					m_outer[count * 2 + 1] = miny + vec[i][1];
+					edge_vertices[count * 2 + 0] = maxx - rad + vec[i][0];
+					edge_vertices[count * 2 + 1] = miny + vec[i][1];
 				}
 			} else {
-				m_outer[count * 2 + 0] = maxx;
-				m_outer[count * 2 + 1] = miny;
+				edge_vertices[count * 2 + 0] = maxx;
+				edge_vertices[count * 2 + 1] = miny;
 				count++;
 			}
 
-			m_half = count;
+			// m_half = count;
 
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2 + 0] = maxx - vec[i][1];
-					m_outer[count * 2 + 1] = maxy - rad + vec[i][0];
+					edge_vertices[count * 2 + 0] = maxx - vec[i][1];
+					edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
 				}
 			} else {
-				m_outer[count * 2 + 0] = maxx;
-				m_outer[count * 2 + 1] = maxy;
+				edge_vertices[count * 2 + 0] = maxx;
+				edge_vertices[count * 2 + 1] = maxy;
 				count++;
 			}
 
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					m_outer[count * 2 + 0] = minx + rad - vec[i][0];
-					m_outer[count * 2 + 1] = maxy - vec[i][1];
+					edge_vertices[count * 2 + 0] = minx + rad - vec[i][0];
+					edge_vertices[count * 2 + 1] = maxy - vec[i][1];
 				}
 			} else {
-				m_outer[count * 2 + 0] = minx;
-				m_outer[count * 2 + 1] = maxy;
+				edge_vertices[count * 2 + 0] = minx;
+				edge_vertices[count * 2 + 1] = maxy;
 				count++;
 			}
+
+			GenerateTriangleStripVertices(inner_, edge_vertices, count, outer_);
+
+		} else {
+
+			outer_.clear();
+
 		}
 
-		m_total = count;
 	}
-	
+
 	void VertexTool::GenerateTriangleStripVertices (
 					const std::vector<GLfloat>& inner,
 					const std::vector<GLfloat>& outer,
@@ -558,7 +546,7 @@ namespace BlendInt {
 	{
 		if (num > outer.size() / 2) {
 			DBG_PRINT_MSG("Attempt to process %u vertices, but maximum is %ld",
-							m_total, outer.size() / 2);
+					num, outer.size() / 2);
 			return;
 		}
 
@@ -596,23 +584,6 @@ namespace BlendInt {
 		strip[count * 2 + 3] = outer[1];
 	}
 
-	void VertexTool::SetInnerBufferData(GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			buffer->set_data(sizeof(GLfloat) * m_inner.size(), &m_inner[0], usage);
-		}
-	}
-
-	void VertexTool::SetOuterBufferData (GLArrayBuffer* buffer, GLenum usage)
-	{
-		if(buffer) {
-			std::vector<GLfloat> strip;
-			GenerateTriangleStripVertices(m_inner, m_outer, m_total, strip);
-
-			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
-		}
-	}
-
 	void VertexTool::GenerateOpenTriangleStripVertices (
 					const std::vector<GLfloat>& outer,
 					unsigned int num,
@@ -620,7 +591,7 @@ namespace BlendInt {
 	{
 		if (num > outer.size() / 2) {
 			DBG_PRINT_MSG("Attempt to process %u vertices, but maximum is %ld",
-							m_total, outer.size() / 2);
+					num, outer.size() / 2);
 			return;
 		}
 

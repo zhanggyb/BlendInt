@@ -26,7 +26,7 @@
 
 #include <BlendInt/Gui/HBlockLayout.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/Stack.hpp>
+#include <BlendInt/Gui/SingleStackLayout.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		VLayout* CreateHexBlock ();
 
-		Stack* CreateBlockStack ();
+		SingleStackLayout* CreateBlockStack ();
 
 		ButtonGroup radio_group_;
 
@@ -75,7 +75,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		Stack* stack_;
+		SingleStackLayout* stack_;
 
 	};
 }

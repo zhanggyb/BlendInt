@@ -26,7 +26,6 @@
 
 #include <set>
 
-#include <BlendInt/OpenGL/ScissorStatus.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {

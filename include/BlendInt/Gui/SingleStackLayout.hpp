@@ -21,25 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STACKEDWIDGET_HPP_
-#define _BLENDINT_GUI_STACKEDWIDGET_HPP_
+#ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
+#define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractStackLayout.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief class for stacked widgets
-	 */
-	class Stack: public AbstractContainer
+	class SingleStackLayout: public AbstractStackLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(Stack);
+		DISALLOW_COPY_AND_ASSIGN(SingleStackLayout);
 
 	public:
 
-		Stack ();
+		SingleStackLayout ();
 
-		virtual ~Stack ();
+		virtual ~SingleStackLayout ();
+
+		void PushFront (AbstractWidget* widget);
 
 		void PushBack (AbstractWidget* widget);
 
@@ -57,19 +56,14 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		AbstractWidget* GetActiveWidget () const;
-
-		AbstractWidget* GetWidget (int index);
+		inline AbstractWidget* active_widget () const
+		{
+			return active_widget_;
+		}
 
 	protected:
 
-		void HideSubWidget (int index);
-
 		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -81,9 +75,11 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (
+		        const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (
+		        const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -91,11 +87,14 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void HideSubWidget (int index);
+
 	private:
 
-		AbstractWidget* m_active_widget;
+		AbstractWidget* active_widget_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_STACKEDWIDGET_HPP_ */
+#endif /* _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_ */

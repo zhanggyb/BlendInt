@@ -42,6 +42,7 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
+#include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
@@ -49,8 +50,13 @@
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
+
+#include <BlendInt/Gui/SingleStack.hpp>
 
 namespace BlendInt {
+
+	using Stock::Icons;
 
 	ColorSelector::ColorSelector()
 	: VLayout (), stack_(0)
@@ -71,16 +77,16 @@ namespace BlendInt {
 	void ColorSelector::InitializeColorSelector()
 	{
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vaos_);
 
 		glBindVertexArray(vaos_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -88,15 +94,15 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		HLayout* hbox1 = Manage(new HLayout);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
@@ -108,11 +114,12 @@ namespace BlendInt {
 		ToggleButton* btn1 = Manage(new ToggleButton("RGB"));
 		ToggleButton* btn2 = Manage(new ToggleButton("HSV"));
 		ToggleButton* btn3 = Manage(new ToggleButton("Hex"));
-		btn1->SetChecked(true);
 
-		radio_group_.Add(btn1);
-		radio_group_.Add(btn2);
-		radio_group_.Add(btn3);
+		radio_group_.PushBack(btn1);
+		radio_group_.PushBack(btn2);
+		radio_group_.PushBack(btn3);
+
+		btn1->SetChecked(true);
 
 		HBlockLayout* btn_block = Manage(new HBlockLayout);
 		btn_block->SetMargin(4, 4, 4, 4);
@@ -129,7 +136,7 @@ namespace BlendInt {
 		color_box->PushBack(stack_);
 		color_box->PushBack(alpha_slider);
 
-		ToolButton* pick_btn = Manage(new ToolButton);
+		Button* pick_btn = Manage(new Button(Icons::instance->icon_16x16(Stock::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));
@@ -137,7 +144,6 @@ namespace BlendInt {
 		hbox2->PushBack(pick_btn);
 
 		PushBack(hbox1);
-		//vbox->PushBack(colorwheel);
 		PushBack(btn_block);
 		PushBack(hbox2);
 
@@ -148,19 +154,21 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_size(*request.size());
 
 			VLayout::PerformSizeUpdate(request);
 			return;	// return to avoid double report of size update
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ColorSelector::PerformRoundTypeUpdate (
@@ -168,15 +176,17 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_type(*request.round_type());
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void ColorSelector::PerformRoundRadiusUpdate (
@@ -184,15 +194,17 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_radius(*request.round_radius());
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType ColorSelector::Draw (Profile& profile)
@@ -220,7 +232,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -275,9 +287,9 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	Stack* ColorSelector::CreateBlockStack()
+	SingleStackLayout* ColorSelector::CreateBlockStack()
 	{
-		Stack* stack = Manage(new Stack);
+		SingleStackLayout* stack = Manage(new SingleStackLayout);
 		stack->SetMargin(0, 0, 0, 0);
 
 		VBlockLayout* rgb_block = CreateRGBBlock();

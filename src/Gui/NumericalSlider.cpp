@@ -117,12 +117,12 @@ namespace BlendInt {
 		GenerateSliderVertices(size(), DefaultBorderWidth(),
 		        round_type(), round_radius(), value,
 		        minimum(), maximum(), l_verts, r_verts);
-		m_slider1->Bind();
-		m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+		m_slider1->bind();
+		m_slider1->set_data(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 		if(r_verts.size()) {
 			m_right = true;
-			m_slider2->Bind();
-			m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
+			m_slider2->bind();
+			m_slider2->set_data(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
 			DBG_PRINT_MSG("%s", "have right part of slider");
 		} else {
 			m_right = false;
@@ -138,37 +138,39 @@ namespace BlendInt {
 		if (request.target() == this) {
 
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			std::vector<GLfloat> l_verts;
 			std::vector<GLfloat> r_verts;
 			GenerateSliderVertices(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius(), value(), minimum(), maximum(),
 			        l_verts, r_verts);
-			m_slider1->Bind();
-			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			m_slider1->bind();
+			m_slider1->set_data(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 			if (r_verts.size()) {
 				m_right = true;
-				m_slider2->Bind();
-				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				m_slider2->bind();
+				m_slider2->set_data(sizeof(GLfloat) * r_verts.size(),
 				        &r_verts[0]);
 				DBG_PRINT_MSG("%s", "have right part of slider");
 			} else {
 				m_right = false;
 			}
 
-			GLArrayBuffer::Reset();
+			GLArrayBuffer::reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void NumericalSlider::PerformRoundTypeUpdate (
@@ -176,37 +178,39 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			std::vector<GLfloat> l_verts;
 			std::vector<GLfloat> r_verts;
 			GenerateSliderVertices(size(), DefaultBorderWidth(),
 			        *request.round_type(), round_radius(), value(), minimum(),
 			        maximum(), l_verts, r_verts);
-			m_slider1->Bind();
-			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			m_slider1->bind();
+			m_slider1->set_data(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 			if (r_verts.size()) {
 				m_right = true;
-				m_slider2->Bind();
-				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				m_slider2->bind();
+				m_slider2->set_data(sizeof(GLfloat) * r_verts.size(),
 				        &r_verts[0]);
 				DBG_PRINT_MSG("%s", "have right part of slider");
 			} else {
 				m_right = false;
 			}
 
-			GLArrayBuffer::Reset();
+			GLArrayBuffer::reset();
 
 			set_round_type(*request.round_type());
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void NumericalSlider::PerformRoundRadiusUpdate (
@@ -214,36 +218,38 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius());
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			std::vector<GLfloat> l_verts;
 			std::vector<GLfloat> r_verts;
 			GenerateSliderVertices(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius(), value(), minimum(), maximum(),
 			        l_verts, r_verts);
-			m_slider1->Bind();
-			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			m_slider1->bind();
+			m_slider1->set_data(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 			if (r_verts.size()) {
 				m_right = true;
-				m_slider2->Bind();
-				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				m_slider2->bind();
+				m_slider2->set_data(sizeof(GLfloat) * r_verts.size(),
 				        &r_verts[0]);
 				DBG_PRINT_MSG("%s", "have right part of slider");
 			} else {
 				m_right = false;
 			}
 
-			GLArrayBuffer::Reset();
+			GLArrayBuffer::reset();
 			set_round_radius(*request.round_radius());
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
@@ -296,7 +302,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		if(m_title.size()) {
 			m_font.Print(position(), m_title);
@@ -357,7 +363,7 @@ namespace BlendInt {
 		set_round_radius(size().height() / 2);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(),
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
 						round_radius());
 
 		glGenVertexArrays(4, m_vao);
@@ -365,21 +371,21 @@ namespace BlendInt {
 		// generate buffer for inner
 		glBindVertexArray(m_vao[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(m_inner.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
 		glBindVertexArray(m_vao[1]);
 
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		tool.SetOuterBufferData(m_outer.get());
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -402,26 +408,26 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[2]);
 
 		m_slider1.reset(new GLArrayBuffer);
-		m_slider1->Generate();
-		m_slider1->Bind();
+		m_slider1->generate();
+		m_slider1->bind();
 
-		m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+		m_slider1->set_data(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(m_vao[3]);
 		m_slider2.reset(new GLArrayBuffer);
-		m_slider2->Generate();
-		m_slider2->Bind();
+		m_slider2->generate();
+		m_slider2->bind();
 
-		m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
+		m_slider2->set_data(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 	
 	float NumericalSlider::GetSlidePosition (float border, double v)

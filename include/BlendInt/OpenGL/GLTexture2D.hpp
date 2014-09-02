@@ -53,9 +53,16 @@ namespace BlendInt {
 
 		inline GLuint texture() const {return m_texture;}
 
-		void Generate ();
+		inline void generate ()
+		{
+			if(m_texture != 0) clear();
+			glGenTextures(1, &m_texture);
+		}
 
-		void Bind ();
+		inline void bind () const
+		{
+			glBindTexture(GL_TEXTURE_2D, m_texture);
+		}
 
 		/**
 		 * @brief Get the index of the lowest defined mipmap level
@@ -164,7 +171,10 @@ namespace BlendInt {
 
 		void CopySubimage (GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
-		static void Reset ();
+		static inline void reset ()
+		{
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 
 		/**
 		 * @brief Write the texture to file
@@ -173,7 +183,11 @@ namespace BlendInt {
 		 */
 		bool WriteToFile (const std::string& path, GLint level = 0, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
 
-		void Clear();
+		inline void clear()
+		{
+			glDeleteTextures(1, &m_texture);
+			m_texture = 0;
+		}
 
 		static GLuint GetTextureBinding ();
 

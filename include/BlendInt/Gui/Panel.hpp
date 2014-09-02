@@ -25,9 +25,8 @@
 #define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
 
-#include <BlendInt/OpenGL/ScissorStatus.hpp>
+#include <BlendInt/Gui/AbstractPanel.hpp>
 
 namespace BlendInt {
 
@@ -36,15 +35,13 @@ namespace BlendInt {
 	 *
 	 * The margin of a VirtualWindow is always zero.
 	 */
-	class VirtualWindow: public AbstractContainer
+	class Panel: public AbstractPanel
 	{
 	public:
 
-		VirtualWindow ();
+		Panel ();
 
-		virtual ~VirtualWindow ();
-
-		void Setup (AbstractWidget* widget);
+		virtual ~Panel ();
 
 	protected:
 
@@ -58,39 +55,27 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgets (const Point& out_pos, const Size& size);
-
-		void FillSubWidgets (int x, int y, int w, int h);
-
 	private:
 
-		enum SubWidgetIndex {
-			DecorationIndex,
-			ContentIndex
-		};
+		void InitializePanelOnce ();
 
-		void InitializeVirtualWindow ();
+		bool pressed_;
 
-		GLuint m_vao[1];
+		Point last_position_;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		Point cursor_position_;
 
+		GLuint vao_[2];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
 	};
 
 }

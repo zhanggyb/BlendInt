@@ -96,25 +96,25 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->Bind();
-		vertex_buffer_->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
+		vertex_buffer_->bind();
+		vertex_buffer_->set_data(vertices.size() * sizeof(vertices[0]), &vertices[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		normal_buffer_->Bind();
-		normal_buffer_->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
+		normal_buffer_->bind();
+		normal_buffer_->set_data(normals.size() * sizeof(normals[0]), &normals[0]);
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		index_buffer_->Bind();
-		index_buffer_->SetData(elements.size() * sizeof(GLushort), &elements[0]);
+		index_buffer_->bind();
+		index_buffer_->set_data(elements.size() * sizeof(GLushort), &elements[0]);
 
 		glBindVertexArray(0);
 
-		GLArrayBuffer::Reset();
-		GLElementArrayBuffer::Reset();
+		GLArrayBuffer::reset();
+		GLElementArrayBuffer::reset();
 
 		return true;
 	}
@@ -139,7 +139,7 @@ namespace BlendInt {
 				glm::value_ptr(
 						glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]),
 								glm::vec3(mv[2]))));
-		index_buffer_->Bind();
+		index_buffer_->bind();
 
 		int size;
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
@@ -150,7 +150,7 @@ namespace BlendInt {
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		program_->Reset();
+		program_->reset();
 	}
 
 	bool Mesh::LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
@@ -213,13 +213,13 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		vertex_buffer_.reset(new GLArrayBuffer);
-		vertex_buffer_->Generate();
+		vertex_buffer_->generate();
 
 		normal_buffer_.reset(new GLArrayBuffer);
-		normal_buffer_->Generate();
+		normal_buffer_->generate();
 
 		index_buffer_.reset(new GLElementArrayBuffer);
-		index_buffer_->Generate();
+		index_buffer_->generate();
 
 		glBindVertexArray(0);
 

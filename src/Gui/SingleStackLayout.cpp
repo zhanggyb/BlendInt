@@ -21,39 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <algorithm>
-
-#include <BlendInt/Gui/Stack.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/SingleStackLayout.hpp>
 
 namespace BlendInt {
 
-	Stack::Stack()
-	: AbstractContainer(),
-	  m_active_widget(0)
-	{
-		set_size(400, 300);
-	}
 
-	Stack::~Stack()
+	SingleStackLayout::SingleStackLayout ()
+	: AbstractStackLayout(),
+	  active_widget_(0)
 	{
 	}
 
-	void Stack::PushBack (AbstractWidget* widget)
+	SingleStackLayout::~SingleStackLayout ()
+	{
+	}
+
+	void SingleStackLayout::PushFront (AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			if(widget_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void SingleStackLayout::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -63,15 +64,15 @@ namespace BlendInt {
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
 			if(widget_count() == 1) {
-				m_active_widget = widget;
-				m_active_widget->SetVisible(true);
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
 			} else {
 				widget->SetVisible(false);
 			}
 		}
 	}
 
-	void Stack::Insert (int index, AbstractWidget* widget)
+	void SingleStackLayout::Insert (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().left() - margin().right();
@@ -84,30 +85,30 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Remove (AbstractWidget* widget)
+	void SingleStackLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
-			if(m_active_widget == widget) {
+			if(active_widget_ == widget) {
 
 				if(widget_count() == 0) {
-					m_active_widget = 0;
+					active_widget_ = 0;
 				} else {
-					m_active_widget = first();
-					m_active_widget->SetVisible(true);
+					active_widget_ = first();
+					active_widget_->SetVisible(true);
 				}
 
 			}
 		}
 	}
 
-	int Stack::GetIndex() const
+	int SingleStackLayout::GetIndex () const
 	{
 		int index = 0;
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
-			if(p == m_active_widget) {
+			if(p == active_widget_) {
 				break;
 			}
 
@@ -119,7 +120,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	void Stack::SetIndex (int index)
+	void SingleStackLayout::SetIndex (int index)
 	{
 		int count = widget_count();
 
@@ -128,17 +129,17 @@ namespace BlendInt {
 		if(count) {
 
 			AbstractWidget* widget = GetWidgetAt(index);
-			if(m_active_widget == widget) {
+			if(active_widget_ == widget) {
 				return;
 			}
 
-			m_active_widget->SetVisible(false);
-			m_active_widget = widget;
-			m_active_widget->SetVisible(true);
+			active_widget_->SetVisible(false);
+			active_widget_ = widget;
+			active_widget_->SetVisible(true);
 		}
 	}
 
-	bool Stack::IsExpandX () const
+	bool SingleStackLayout::IsExpandX () const
 	{
 		bool ret = false;
 
@@ -153,7 +154,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool Stack::IsExpandY () const
+	bool SingleStackLayout::IsExpandY () const
 	{
 		bool ret = false;
 
@@ -168,7 +169,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	Size Stack::GetPreferredSize () const
+	Size SingleStackLayout::GetPreferredSize () const
 	{
 		Size prefer(400, 300);
 
@@ -193,31 +194,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	AbstractWidget* Stack::GetActiveWidget () const
-	{
-		return m_active_widget;
-	}
-
-	AbstractWidget* Stack::GetWidget (int index)
-	{
-		int count = widget_count();
-
-		if(index > (count - 1)) return 0;
-
-		return GetWidgetAt(index);
-	}
-
-	void Stack::HideSubWidget(int index)
-	{
-		int count = widget_count();
-
-		if(count && index < (count - 1)) {
-			AbstractWidget* p = GetWidgetAt(index);
-			p->SetVisible(false);
-		}
-	}
-
-	void Stack::PerformMarginUpdate(const Margin& request)
+	void SingleStackLayout::PerformMarginUpdate (const Margin& request)
 	{
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
@@ -225,26 +202,8 @@ namespace BlendInt {
 		ResizeSubWidgets(w, h);
 	}
 
-	bool Stack::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Stack::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			return false;
-		}
-
-		return true;
-	}
-
-	void Stack::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
+	void SingleStackLayout::PerformPositionUpdate (
+			const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -254,12 +213,16 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
-	void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void SingleStackLayout::PerformSizeUpdate (
+			const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
+		if(request.target() == this) {
+
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
@@ -267,47 +230,62 @@ namespace BlendInt {
 			ResizeSubWidgets(w, h);
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
-	ResponseType Stack::Draw (Profile& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Stack::CursorEnterEvent(bool entered)
+	ResponseType SingleStackLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType Stack::KeyPressEvent(const KeyEvent& event)
+	ResponseType SingleStackLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType Stack::ContextMenuPressEvent(const ContextMenuEvent& event)
+	ResponseType SingleStackLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Stack::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+	ResponseType SingleStackLayout::ContextMenuPressEvent (
+			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Stack::MousePressEvent(const MouseEvent& event)
+	ResponseType SingleStackLayout::ContextMenuReleaseEvent (
+			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Stack::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType SingleStackLayout::MousePressEvent (
+			const MouseEvent& event)
 	{
 		return Ignore;
 	}
-	
-	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
+
+	ResponseType SingleStackLayout::MouseReleaseEvent (
+			const MouseEvent& event)
 	{
 		return Ignore;
+	}
+
+	ResponseType SingleStackLayout::MouseMoveEvent (
+			const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	void BlendInt::SingleStackLayout::HideSubWidget (int index)
+	{
+		if(widget_count() && index < (widget_count() - 1)) {
+			AbstractWidget* p = GetWidgetAt(index);
+			p->SetVisible(false);
+		}
 	}
 
 }

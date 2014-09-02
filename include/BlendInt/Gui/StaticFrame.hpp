@@ -21,24 +21,33 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
-#define _BLENDINT_GUI_STACKPANEL_HPP_
+#ifndef _BLENDINT_GUI_FRAMEPANEL_HPP_
+#define _BLENDINT_GUI_FRAMEPANEL_HPP_
 
-#include <BlendInt/Gui/Stack.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
+
+#include <BlendInt/OpenGL/TextureBuffer.hpp>
 
 namespace BlendInt {
 
-	class StackPanel: public Stack
+	/**
+	 * @brief A Frame container for demo only
+	 */
+	class StaticFrame: public BinLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(StackPanel);
+		DISALLOW_COPY_AND_ASSIGN(StaticFrame);
 
 	public:
 
-		StackPanel ();
+		StaticFrame ();
 
-		virtual ~StackPanel ();
+		virtual ~StaticFrame ();
+
+		void RenderToFile (const std::string& filename);
 
 	protected:
+
+		virtual void PerformRefresh (const RefreshRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -46,13 +55,20 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeStackPanel ();
+		void InitializeFramePanel ();
 
-		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
+		void RenderToBuffer (Profile& profile);
 
+		GLuint vao_;
+		RefPtr<GLArrayBuffer> inner_;
+
+		TextureBuffer tex_buffer_;
+
+		bool refresh_;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */
+
+
+#endif /* _BLENDINT_GUI_FRAMEPANEL_HPP_ */

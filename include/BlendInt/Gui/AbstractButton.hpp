@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTBUTTON_HPP_
-#define _BLENDINT_ABSTRACTBUTTON_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTBUTTON_HPP_
+#define _BLENDINT_GUI_ABSTRACTBUTTON_HPP_
 
 #include <string>
 #include <bitset>
@@ -44,8 +44,6 @@ namespace BlendInt {
 
 	public:
 
-		friend class ButtonGroup;
-
 		AbstractButton ();
 
 		virtual ~AbstractButton ();
@@ -56,20 +54,6 @@ namespace BlendInt {
 
 		void SetChecked (bool checked);
 
-		bool down () const {return m_status[ButtonDown];}
-
-		bool checked () const {return m_status[ButtonChecked];}
-
-		bool checkable () const {return m_status[ButtonCheckable];}
-
-		Cpp::EventRef<> clicked() {return clicked_;}
-
-		Cpp::EventRef<bool> toggled() {return toggled_;}
-
-		Cpp::EventRef<> pressed () {return pressed_;}
-
-		bool is_pressed () const {return m_status[ButtonPressed];}
-
 		virtual Size GetPreferredSize () const;
 
 		void SetText (const String& text);
@@ -78,7 +62,19 @@ namespace BlendInt {
 
 		const String& text () const {return text_;}
 
-		int text_length () const {return text_length_;}
+		bool is_down () const {return m_status[ButtonDown];}
+
+		bool is_checked () const {return m_status[ButtonChecked];}
+
+		bool is_checkable () const {return m_status[ButtonCheckable];}
+
+		bool is_pressed () const {return m_status[ButtonPressed];}
+
+		Cpp::EventRef<> clicked() {return clicked_;}
+
+		Cpp::EventRef<bool> toggled() {return toggled_;}
+
+		Cpp::EventRef<> pressed () {return pressed_;}
 
 		const Font& font () const {return font_;}
 
@@ -103,6 +99,8 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		int text_length () const {return text_length_;}
 
 		void set_down (bool down)
 		{
@@ -147,6 +145,8 @@ namespace BlendInt {
 
 	private:
 
+		friend class ButtonGroup;
+
 		enum ButtonStatusIndex {
 			ButtonPressed = 0,
 			ButtonDown,
@@ -182,7 +182,10 @@ namespace BlendInt {
 		Cpp::Event<> clicked_;
 
 		Cpp::Event<bool> toggled_;
+
+		ButtonGroup* group_;
 	};
 
 } /* namespace BIL */
-#endif // _BLENDINT_ABSTRACTBUTTON_HPP_
+
+#endif // _BLENDINT_GUI_ABSTRACTBUTTON_HPP_

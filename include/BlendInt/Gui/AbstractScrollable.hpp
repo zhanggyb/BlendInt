@@ -43,12 +43,12 @@ namespace BlendInt {
 
 		Cpp::EventRef<int> hbar_moved ()
 		{
-			return m_hbar_moved;
+			return hbar_moved_;
 		}
 
 		Cpp::EventRef<int> vbar_moved ()
 		{
-			return m_vbar_moved;
+			return vbar_moved_;
 		}
 
 	protected:
@@ -84,7 +84,7 @@ namespace BlendInt {
 		 */
 		const RefPtr<NativeScrollBar>& hbar () const
 		{
-			return m_hbar;
+			return hbar_;
 		}
 
 		/**
@@ -92,18 +92,18 @@ namespace BlendInt {
 		 */
 		const RefPtr<NativeScrollBar>& vbar () const
 		{
-			return m_vbar;
+			return vbar_;
 		}
 
 	private:
 
-		RefPtr<NativeScrollBar> m_hbar;
+		RefPtr<NativeScrollBar> hbar_;
 
-		RefPtr<NativeScrollBar> m_vbar;
+		RefPtr<NativeScrollBar> vbar_;
 
-		Cpp::Event<int> m_hbar_moved;
+		Cpp::Event<int> hbar_moved_;
 
-		Cpp::Event<int> m_vbar_moved;
+		Cpp::Event<int> vbar_moved_;
 
 	};
 

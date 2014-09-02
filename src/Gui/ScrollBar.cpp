@@ -150,17 +150,19 @@ namespace BlendInt {
 			}
 
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(), radius, color, slot_orient,
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), radius, color, slot_orient,
 							shadetop, shadedown);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ScrollBar::PerformOrientationUpdate (Orientation orientation)
@@ -220,7 +222,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		glm::vec3 pos(position().x(), position().y(), 0.f);
 
@@ -323,7 +325,7 @@ namespace BlendInt {
 		}
 
 		VertexTool tool;
-		tool.Setup(slot_size,
+		tool.GenerateVertices(slot_size,
 						DefaultBorderWidth(),
 						round_type(),
 						slot_radius,
@@ -334,10 +336,10 @@ namespace BlendInt {
 						);
 
 		glBindVertexArray(m_vao[0]);
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -347,15 +349,15 @@ namespace BlendInt {
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(m_vao[1]);
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		tool.SetOuterBufferData(m_outer.get());
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 		glBindVertexArray(0);
 	}
 

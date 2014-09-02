@@ -175,7 +175,9 @@ namespace BlendInt {
 			FillInVBlock(position(), *request.size(), margin());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void VBlockLayout::PerformPositionUpdate (
@@ -189,7 +191,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	ResponseType VBlockLayout::Draw (Profile& profile)

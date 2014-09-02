@@ -70,8 +70,8 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		buffer_->Generate();
-		buffer_->Bind();
+		buffer_->generate();
+		buffer_->bind();
 
 		std::vector<GLfloat> vertices(8, 0.f);
 
@@ -95,14 +95,14 @@ namespace BlendInt {
 			vertices[7] = 200.f;
 		}
 
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		buffer_->Reset();
+		buffer_->reset();
 	}
 
 	SplitterHandle::~SplitterHandle ()
@@ -182,15 +182,17 @@ namespace BlendInt {
 			vertices[6] = (GLfloat)request.size()->width();
 			vertices[7] = (GLfloat)request.size()->height();
 
-			buffer_->Bind();
-			buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-			buffer_->Reset();
+			buffer_->bind();
+			buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+			buffer_->reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType SplitterHandle::Draw (Profile& profile)
@@ -211,7 +213,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Accept;
 	}
@@ -219,12 +221,11 @@ namespace BlendInt {
 	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
 	{
 		Context* context = Context::GetContext(this);
-		if(!context) return Ignore;
 
 		if(entered) {
 			highlight_ = true;
-			context->PushCursor(context->GetCursor());
-			context->SetCursor(orientation_ == Horizontal ? SplitHCursor : SplitVCursor);
+			context->PushCursor(context->current_cursor());
+			context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		} else {
 			highlight_ = false;
 			context->SetCursor(context->PopCursor());
@@ -560,7 +561,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -572,7 +575,9 @@ namespace BlendInt {
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType Splitter::Draw (Profile& profile)

@@ -43,8 +43,6 @@ namespace BlendInt {
 		{
 		public:
 
-			friend class BlendInt::Interface;
-
 			static Shaders* instance;
 
 			const RefPtr<GLSLProgram>& text_program () const
@@ -283,6 +281,8 @@ namespace BlendInt {
 			}
 
 		private:
+
+			friend class BlendInt::Interface;
 
 			static bool Initialize ();
 

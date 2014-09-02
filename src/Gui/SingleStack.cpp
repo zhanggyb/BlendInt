@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 
-#include <BlendInt/Gui/StackPanel.hpp>
+#include <BlendInt/Gui/SingleStack.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -46,20 +46,41 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	StackPanel::StackPanel()
-	: Stack(),
-	  m_vao(0)
+	SingleStack::SingleStack()
+	: SingleStackLayout(),
+	  vao_(0)
 	{
 		set_drop_shadow(true);
-		InitializeStackPanel();
+		InitializeStack();
 	}
-	
-	StackPanel::~StackPanel ()
+
+	SingleStack::~SingleStack ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
-	
-	ResponseType StackPanel::Draw (Profile& profile)
+
+	void SingleStack::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
+
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			set_size(*request.size());
+			ResizeSubWidgets(w, h);
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	ResponseType SingleStack::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
@@ -72,49 +93,36 @@ namespace BlendInt {
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
 		        0.447f, 0.447f, 1.0f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
+
 		return Ignore;
 	}
-	
-	void StackPanel::PerformSizeUpdate(const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_inner->Reset();
-		}
 
-		Stack::PerformSizeUpdate(request);
-	}
-
-	void StackPanel::InitializeStackPanel()
+	void SingleStack::InitializeStack()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
-		m_inner.reset(new GLArrayBuffer);
+		inner_.reset(new GLArrayBuffer);
 
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
-
+		GLArrayBuffer::reset();
 	}
 
 }

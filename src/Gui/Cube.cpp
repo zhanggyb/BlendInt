@@ -83,7 +83,7 @@ namespace BlendInt {
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		program->Reset();
+		program->reset();
 	}
 
 	void Cube::InitializeCube()

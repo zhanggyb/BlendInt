@@ -467,8 +467,8 @@ namespace BlendInt {
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color_calib = vec4(0.0);"
-				"	color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
+				"	vec4 color_calib = vec4(0.f);"
+				"	color_calib = vec4(vec3(clamp(u_gamma/255.f, -1.f, 1.f)), 0.f);"
 				"	vec4 color = texture(TexID, f_texcoord);"
 				"	FragmentColor = color + color_calib;"
 				"}";

@@ -59,7 +59,7 @@ void TexBufContext::CreateWidgets ()
 	Viewport3D* view2 = Manage(new Viewport3D);
 
 	m_panel1 = Manage(new Frame);
-	m_panel2 = Manage(new FramePanel);
+	m_panel2 = Manage(new StaticFrame);
 	//m_panel->SetMargin(10, 10, 10, 10);
 	m_panel1->Setup(view1);
 	m_panel2->Setup(view2);
@@ -87,5 +87,5 @@ void TexBufContext::OnTakeScreenShot ()
 {
 	DBG_PRINT_MSG("%s", "Take a screen shot of panel");
 
-	//m_panel->ExportTextureToFile("Panel.png");
+	m_panel2->RenderToFile("Panel2.png");
 }

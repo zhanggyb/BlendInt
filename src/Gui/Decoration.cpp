@@ -45,18 +45,22 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Decoration::Decoration()
 	: AbstractContainer(),
-	  m_space(4),
-	  m_pressed(false)
+	  space_(4)
 	{
 		set_size(200, 20);
+		//set_round_type(RoundNone);
+		//set_round_radius(5.f);
+
 		InitializeDecoration();
 	}
 
 	Decoration::~Decoration ()
 	{
-		glDeleteVertexArrays(1, m_vao);
+		glDeleteVertexArrays(1, vao_);
 	}
 
 	void Decoration::PushFront (AbstractWidget* widget)
@@ -94,18 +98,20 @@ namespace BlendInt {
 
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, round_type(), round_radius());
+			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
 
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_inner->Reset();
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			int x = position().x() + margin().left();
 			if (first()) {
@@ -116,38 +122,76 @@ namespace BlendInt {
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
-			FillSubWidgets(x, y, w, h, m_space);
+			FillSubWidgets(x, y, w, h, space_);
 
 			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
 
-			FillSubWidgets(position(), size(), margin(), m_space);
+			FillSubWidgets(position(), size(), margin(), space_);
 
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void Decoration::PerformRoundTypeUpdate (
+			const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, *request.round_type(),
+					round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
+
+	void Decoration::PerformRoundRadiusUpdate (
+			const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.GenerateVertices(size(), 0, round_type(),
+					*request.round_radius());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType Decoration::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 
-		program->SetVertexAttrib4f("a_color", 0.667f, 0.825f, 0.575f, 1.0f);
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Color(Color::DarkGray).data());
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 		return Accept;
 	}
 
@@ -173,66 +217,25 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
-	{
-		if(container()) {
-			m_last = container()->position();
-			m_cursor = event.position();
-			m_pressed = true;
-
-			if(event.section() == container()->container()) {
-				if(event.section()->last_hover_widget() == this) {
-					event.section()->MoveToLast();
-					return Accept;
-				}
-			}
-
-		}
-
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
-	{
-		m_pressed = false;
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
-	{
-		if (container() && m_pressed) {
-
-			int offset_x = event.position().x() - m_cursor.x();
-			int offset_y = event.position().y() - m_cursor.y();
-
-			container()->SetPosition(m_last.x() + offset_x,
-			        m_last.y() + offset_y);
-		}
-		return Ignore;
-	}
-
 	void Decoration::InitializeDecoration()
 	{
-		set_round_type(RoundTopLeft | RoundTopRight);
-		set_round_radius(10.f);
-
 		VertexTool tool;
-		tool.Setup(size(), 0, round_type(), round_radius());
+		tool.GenerateVertices(size(), 0, round_type(), round_radius());
 
-		glGenVertexArrays(1, m_vao);
+		glGenVertexArrays(1, vao_);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size,
@@ -248,6 +251,21 @@ namespace BlendInt {
 	void Decoration::RealignSubWidgets (const Size& size, const Margin& margin,
 	        int space)
 	{
+	}
+
+	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	int Decoration::GetLastPosition () const

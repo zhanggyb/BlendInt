@@ -21,54 +21,36 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAMEPANEL_HPP_
-#define _BLENDINT_GUI_FRAMEPANEL_HPP_
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
 
-#include <BlendInt/Gui/BinLayout.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <algorithm>
+
+#include <BlendInt/Gui/AbstractStackLayout.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A Frame container for demo only
-	 */
-	class FramePanel: public BinLayout
+	AbstractStackLayout::AbstractStackLayout()
+	: AbstractContainer()
 	{
-		DISALLOW_COPY_AND_ASSIGN(FramePanel);
+		set_size(400, 300);
+	}
 
-	public:
-
-		FramePanel ();
-
-		virtual ~FramePanel ();
-
-		void RenderToFile (const std::string& filename);
-
-	protected:
-
-		virtual void PerformRefresh (const RefreshRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
-	private:
-
-		void InitializeFramePanel ();
-
-		void RenderToBuffer (Profile& profile);
-
-		GLuint vao_;
-		RefPtr<GLArrayBuffer> inner_;
-
-		TextureBuffer tex_buffer_;
-
-		bool refresh_;
-	};
+	AbstractStackLayout::~AbstractStackLayout()
+	{
+	}
 
 }
 
-
-
-#endif /* _BLENDINT_GUI_FRAMEPANEL_HPP_ */

@@ -428,21 +428,20 @@ namespace BlendInt {
 
 	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		if(widget->Contain(cursor)) {
+		AbstractContainer* container = widget->container_;
+		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
-			AbstractContainer* container = widget->container_;
-
-			if(container == 0) return false;	// if a widget hovered was removed from any container.
+		if(widget->visiable() && widget->Contain(cursor)) {
 
 			while(container) {
-
-				if(!container->Contain(cursor))
+				if((!container->visiable()) || (!container->Contain(cursor)))
 					return false;
 
 				container = container->container();
 			}
 
 			return true;
+
 		}
 
 		return false;
@@ -509,7 +508,9 @@ namespace BlendInt {
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void AbstractWidget::PerformPositionUpdate(const PositionUpdateRequest& request)
@@ -518,7 +519,9 @@ namespace BlendInt {
 			set_position(*request.position());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	bool AbstractWidget::RoundTypeUpdateTest(const RoundTypeUpdateRequest& request)
@@ -542,7 +545,9 @@ namespace BlendInt {
 			set_round_type(*request.round_type());
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void AbstractWidget::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
@@ -551,7 +556,9 @@ namespace BlendInt {
 			set_round_radius(*request.round_radius());
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	void AbstractWidget::PerformVisibilityUpdate(const VisibilityUpdateRequest& request)
@@ -560,7 +567,9 @@ namespace BlendInt {
 			set_visible(*request.visibility());
 		}
 
-		ReportVisibilityRequest(request);
+		if(request.source() == this) {
+			ReportVisibilityRequest(request);
+		}
 	}
 
 	void AbstractWidget::PerformRefresh(const RefreshRequest& request)

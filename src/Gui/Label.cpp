@@ -79,17 +79,19 @@ namespace BlendInt {
 			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0.f);
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
 
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
 
 			set_size (*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType Label::Draw (Profile& profile)
@@ -107,7 +109,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		if(text_.length()) {
 			font_.Print(position(), text_, text_length_, 0);
@@ -276,18 +278,18 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0.f);
+		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(inner_.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());	// 0 is the locaiton in shader
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 		glBindVertexArray(0);
 	}
 

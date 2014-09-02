@@ -67,55 +67,87 @@ namespace BlendInt {
 		 *
 		 * Generate new GL buffers, if there's buffer generated before, this will delete these.
 		 */
-		void Generate ();
+		inline void generate ()
+		{
+			if(id_ != 0) clear();
+			glGenBuffers(1, &id_);
+		}
+
 
 		/**
 		 * @brief Delete buffer created
 		 */
-		void Clear ();
+		inline void clear ()
+		{
+			glDeleteBuffers(1, &id_);
+			id_ = 0;
+		}
 
 		/**
 		 * @brief The buffer id
 		 * @return
 		 */
-		inline GLuint id () const {return m_id;}
+		inline GLuint id () const {return id_;}
 
-		bool IsBuffer ();
+		inline bool is_buffer () const
+		{
+			return glIsBuffer(id_);
+		}
 
-		void Bind () const;
+		inline void bind () const
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, id_);
+		}
 
-		static inline void Reset ()
+		static inline void reset ()
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
-		void set_data (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
+		inline void set_data (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
 		{
 			glBufferData (GL_ARRAY_BUFFER, size, data, usage);
 		}
 
-		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+		inline void set_sub_data (GLintptr offset, GLsizeiptr size, const GLvoid* data)
+		{
+			glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+		}
 
-		//void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+		inline GLvoid* map (GLenum access = GL_READ_ONLY) const
+		{
+			GLvoid* ptr = 0;
+			ptr = glMapBuffer(GL_ARRAY_BUFFER, access);
+			return ptr;
+		}
 
-		void UpdateData (const GLvoid* data, GLsizeiptr size, GLintptr offset = 0);
-
-		GLvoid* Map (GLenum access = GL_READ_ONLY);
-
-		bool Unmap ();
+		inline bool unmap () const
+		{
+			return glUnmapBuffer(GL_ARRAY_BUFFER);
+		}
 
 		inline GLenum target ()
 		{
 			return GL_ARRAY_BUFFER;
 		}
 
-		GLenum GetUsage ();
+		inline GLenum get_usage () const
+		{
+			GLint usage = 0;
+			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			return usage;
+		}
 
-		GLint GetBufferSize () const;
+		inline GLint get_buffer_size () const
+		{
+			GLint buffer_size = 0;
+			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+			return buffer_size;
+		}
 
 	private:
 
-		GLuint m_id;
+		GLuint id_;
 	};
 
 }

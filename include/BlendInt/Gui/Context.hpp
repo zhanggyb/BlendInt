@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_GUI_CONTEXT_HPP_
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
+#include <stack>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
@@ -86,11 +88,14 @@ namespace BlendInt {
 		 */
 		virtual void SetCursor (int cursor_type);
 
-		virtual int GetCursor () const;
+		int current_cursor () const
+		{
+			return current_cursor_;
+		}
 
-		virtual void PushCursor (int cursor_type);
+		void PushCursor (int cursor_type);
 
-		virtual int PopCursor ();
+		int PopCursor ();
 
 		Cpp::EventRef<const Size&> resized ()
 		{
@@ -149,9 +154,16 @@ namespace BlendInt {
 
 		AbstractWidget* focused_widget_;
 
+		bool custom_focus_widget_;
+
+		int current_cursor_;
+
+		std::stack<int> cursor_stack_;
+
 		Cpp::Event<const Size&> resized_;
 
 		static std::set<Context*> context_set;
+
 	};
 
 }

@@ -422,17 +422,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	void GLSLProgram::Use()
-	{
-		if (glIsProgram(m_id))
-			glUseProgram (m_id);
-	}
-
-	void GLSLProgram::Reset()
-	{
-		glUseProgram(0);
-	}
-
 	void GLSLProgram::PrintLog ()
 	{
 		GLint log_length = 0;

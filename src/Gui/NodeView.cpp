@@ -52,30 +52,30 @@ namespace BlendInt {
 		//set_drop_shadow(true);
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(4, vaos_);
 		glBindVertexArray(vaos_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[2]);
 		area_.reset(new GLArrayBuffer);
-		area_->Generate();
-		area_->Bind();
+		area_->generate();
+		area_->bind();
 
 		GLfloat verts1[] = {
 				0.f, 0.f,
@@ -84,14 +84,14 @@ namespace BlendInt {
 				350.f, 250.f
 		};
 
-		area_->SetData(sizeof(verts1), verts1);
+		area_->set_data(sizeof(verts1), verts1);
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[3]);
 		rect_.reset(new GLArrayBuffer);
-		rect_->Generate();
-		rect_->Bind();
+		rect_->generate();
+		rect_->bind();
 
 		GLfloat verts2[] = {
 				0.f, 0.f,
@@ -100,12 +100,12 @@ namespace BlendInt {
 				200.f, 200.f
 		};
 
-		rect_->SetData(sizeof(verts2), verts2);
+		rect_->set_data(sizeof(verts2), verts2);
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	NodeView::~NodeView ()
@@ -117,12 +117,12 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 			Refresh();
@@ -135,12 +135,12 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -154,12 +154,12 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -228,7 +228,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Accept;
 	}

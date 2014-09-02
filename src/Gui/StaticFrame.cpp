@@ -45,14 +45,13 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/FramePanel.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/StaticFrame.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	FramePanel::FramePanel()
+	StaticFrame::StaticFrame()
 	: BinLayout(), refresh_(true)
 	{
 		set_size(400, 300);
@@ -61,26 +60,26 @@ namespace BlendInt {
 		InitializeFramePanel();
 	}
 	
-	FramePanel::~FramePanel ()
+	StaticFrame::~StaticFrame ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void FramePanel::PerformRefresh(const RefreshRequest& request)
+	void StaticFrame::PerformRefresh(const RefreshRequest& request)
 	{
 		refresh_ = true;
 		ReportRefresh(request);
 	}
 
-	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			inner_->Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			refresh_ = true;
 
@@ -92,10 +91,12 @@ namespace BlendInt {
 			}
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
-	ResponseType FramePanel::Draw (Profile& profile)
+	ResponseType StaticFrame::Draw (Profile& profile)
 	{
 		if(refresh_) {
 
@@ -112,34 +113,34 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void FramePanel::InitializeFramePanel()
+	void StaticFrame::InitializeFramePanel()
 	{
 		glGenVertexArrays(1, &vao_);
 
 		glBindVertexArray(vao_);
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		inner_->Reset();
+		inner_->reset();
 	}
 
-	void FramePanel::RenderToFile (const std::string& filename)
+	void StaticFrame::RenderToFile (const std::string& filename)
 	{
-		tex_buffer_.texture()->Bind();
+		tex_buffer_.texture()->bind();
 		tex_buffer_.texture()->WriteToFile(filename);
-		tex_buffer_.texture()->Reset();
+		tex_buffer_.texture()->reset();
 	}
 
-	void FramePanel::RenderToBuffer (Profile& profile)
+	void StaticFrame::RenderToBuffer (Profile& profile)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -154,9 +155,9 @@ namespace BlendInt {
 		// Create and set texture to render to.
 		GLTexture2D* tex = tex_buffer_.texture();
 		if(!tex->texture())
-			tex->Generate();
+			tex->generate();
 
-		tex->Bind();
+		tex->bind();
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
@@ -164,8 +165,8 @@ namespace BlendInt {
 
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
+		fb->generate();
+		fb->bind();
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -187,16 +188,16 @@ namespace BlendInt {
 
 		if(GLFramebuffer::CheckStatus()) {
 
-			fb->Bind();
+			fb->bind();
 
-//			glClearColor(0.0, 0.0, 0.0, 0.0);
-//			glClearDepth(1.0);
-//			glClearStencil(0);
-//
-//			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			glClearColor(0.f, 0.f, 0.f, 0.f);
+			glClearDepth(1.0);
+			glClearStencil(0);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			//glEnable(GL_BLEND);
+			glEnable(GL_BLEND);
 
 			glm::mat4 origin;
 			glGetUniformfv(Shaders::instance->triangle_program()->id(),
@@ -269,21 +270,21 @@ namespace BlendInt {
 			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 
-			program->Reset();
+			program->reset();
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		}
 
-		fb->Reset();
-		tex->Reset();
+		fb->reset();
+		tex->reset();
 
 		//delete tex; tex = 0;
 
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glDeleteRenderbuffers(1, &rb);
 
-		fb->Reset();
+		fb->reset();
 		delete fb; fb = 0;
 
 	}

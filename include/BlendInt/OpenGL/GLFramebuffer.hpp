@@ -57,19 +57,33 @@ namespace BlendInt {
 
 		~GLFramebuffer ();
 
-		void Generate ();
+		inline void generate ()
+		{
+			if(m_id != 0) clear();
+			glGenFramebuffers (1, &m_id);
+		}
 
-		void Bind ();
+		inline void bind () const
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		}
 
 		void Attach (const GLTexture2D& tex, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
 		void Attach (const GLRenderbuffer& renderbuffer, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
-		void Clear ();
+		inline void clear ()
+		{
+			glDeleteFramebuffers(1, &m_id);
+			m_id = 0;
+		}
 
 		GLuint id () const {return m_id;}
 
-		static void Reset ();
+		static inline void reset ()
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 
 		static bool CheckStatus ();
 

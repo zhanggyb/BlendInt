@@ -68,18 +68,20 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(),
 					round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
-			GLArrayBuffer::Reset();
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
+			GLArrayBuffer::reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ToolButton::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
@@ -88,19 +90,21 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 					text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
+			GLArrayBuffer::reset();
 
 			set_round_type(*request.round_type());
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void ToolButton::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
@@ -109,20 +113,22 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 					text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
+			GLArrayBuffer::reset();
 
 			set_round_radius(*request.round_radius());
 
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	ResponseType ToolButton::Draw (Profile& profile)
@@ -136,7 +142,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		if (down()) {
+		if (is_down()) {
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        Theme::instance->regular().inner_sel.data());
 		} else {
@@ -171,7 +177,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		if(icon_) {
 			pos.x += (size().width() - icon_->size().width()) / 2;
@@ -230,30 +236,30 @@ namespace BlendInt {
 	void ToolButton::InitializeToolButton ()
 	{
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundAll, 5.f);
+		tool.GenerateVertices(size(), DefaultBorderWidth(), RoundAll, 5.f);
 
 		glGenVertexArrays(2, vaos_);
 
 		glBindVertexArray(vaos_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		// demo
 		icon_ = Icons::instance->icon_16x16(Stock::IMAGE_ALPHA);

@@ -122,7 +122,7 @@ namespace BlendInt {
 		 */
 		Point m_move_start_pos;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

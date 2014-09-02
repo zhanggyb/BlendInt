@@ -146,21 +146,25 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			m_buffer->Bind();
-			tool.SetInnerBufferData(m_buffer.get());
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType MenuBar::Draw (Profile& profile)
@@ -181,7 +185,7 @@ namespace BlendInt {
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -278,21 +282,21 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		glBindVertexArray(m_vao);
 
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-		m_buffer->Bind();
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(m_buffer.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 	
 	void MenuBar::OnMenuButtonClicked ()

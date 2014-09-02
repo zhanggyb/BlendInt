@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
 
+#include <BlendInt/Gui/StaticPanel.hpp>
+
 #include <Cpp/Events.hpp>
 
 namespace BlendInt {
@@ -77,7 +79,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		FileSelector* file_selector_;
+		StaticPanel* panel_;
 
 		String file_;
 

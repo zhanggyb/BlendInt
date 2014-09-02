@@ -95,7 +95,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
@@ -110,9 +110,9 @@ namespace BlendInt {
 
 			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
 
-			inner_->Bind();
+			inner_->bind();
 
-			GLfloat* ptr = (GLfloat*) inner_->Map(GL_READ_WRITE);
+			GLfloat* ptr = (GLfloat*) inner_->map(GL_READ_WRITE);
 
 			double rad = 0.0;
 			float x1 = 0.f;
@@ -139,12 +139,12 @@ namespace BlendInt {
 			*(ptr) = x1;
 			*(ptr + 1) = y1;
 
-			inner_->Unmap();
-			inner_->Reset();
+			inner_->unmap();
+			inner_->reset();
 
-			outer_->Bind();
+			outer_->bind();
 
-			ptr = (GLfloat*) outer_->Map(GL_READ_WRITE);
+			ptr = (GLfloat*) outer_->map(GL_READ_WRITE);
 			float x2 = 0.f;
 			float y2 = 0.f;
 
@@ -176,13 +176,15 @@ namespace BlendInt {
 			*(ptr + 2) = x2;
 			*(ptr + 3) = y2;
 
-			outer_->Unmap();
-			outer_->Reset();
+			outer_->unmap();
+			outer_->reset();
 
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType ColorWheel::FocusEvent (bool focus)
@@ -370,10 +372,10 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
+		inner_->generate();
 
-		inner_->Bind();
-		inner_->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -384,15 +386,15 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		outer_->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 }

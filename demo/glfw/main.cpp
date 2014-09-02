@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
-	GLFWDemoContext* context = Manage (new GLFWDemoContext);
+	GLFWDemoContext* context = Manage (new GLFWDemoContext(win));
 	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);

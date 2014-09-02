@@ -67,8 +67,8 @@ namespace BlendInt {
 
 		std::vector<GLfloat> vertices;
 		GenerateGripFloorVertices(vertices);
-		buffer_->Bind();
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		GLfloat verts [] = {
 				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
@@ -76,8 +76,8 @@ namespace BlendInt {
 		};
 
 		if(axis_x_) {
-			axis_x_->Bind();
-			axis_x_->SetData(sizeof(verts), verts);
+			axis_x_->bind();
+			axis_x_->set_data(sizeof(verts), verts);
 		}
 
 		if(axis_y_) {
@@ -86,8 +86,8 @@ namespace BlendInt {
 			verts[1] = - (GLfloat)(lines_ / 2) * scale_;
 			verts[4] = (GLfloat)(lines_ / 2) * scale_;
 
-			axis_y_->Bind();
-			axis_y_->SetData(sizeof(verts), verts);
+			axis_y_->bind();
+			axis_y_->set_data(sizeof(verts), verts);
 		}
 
 		if(axis_z_) {
@@ -96,11 +96,11 @@ namespace BlendInt {
 			verts[2] = - (GLfloat)(lines_ / 2) * scale_;
 			verts[5] = (GLfloat)(lines_ / 2) * scale_;
 
-			axis_y_->Bind();
-			axis_y_->SetData(sizeof(verts), verts);
+			axis_y_->bind();
+			axis_y_->set_data(sizeof(verts), verts);
 		}
 
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void GridFloor::SetScale (float scale)
@@ -109,8 +109,8 @@ namespace BlendInt {
 
 		std::vector<GLfloat> vertices;
 		GenerateGripFloorVertices(vertices);
-		buffer_->Bind();
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		GLfloat verts [] = {
 				-(GLfloat)(lines_ / 2) * scale_, 0.f, 0.f,
@@ -118,8 +118,8 @@ namespace BlendInt {
 		};
 
 		if(axis_x_) {
-			axis_x_->Bind();
-			axis_x_->SetData(sizeof(verts), verts);
+			axis_x_->bind();
+			axis_x_->set_data(sizeof(verts), verts);
 		}
 
 		if(axis_y_) {
@@ -128,8 +128,8 @@ namespace BlendInt {
 			verts[1] = - (GLfloat)(lines_ / 2) * scale_;
 			verts[4] = (GLfloat)(lines_ / 2) * scale_;
 
-			axis_y_->Bind();
-			axis_y_->SetData(sizeof(verts), verts);
+			axis_y_->bind();
+			axis_y_->set_data(sizeof(verts), verts);
 		}
 
 		if(axis_z_) {
@@ -138,11 +138,11 @@ namespace BlendInt {
 			verts[2] = - (GLfloat)(lines_ / 2) * scale_;
 			verts[5] = (GLfloat)(lines_ / 2) * scale_;
 
-			axis_y_->Bind();
-			axis_y_->SetData(sizeof(verts), verts);
+			axis_y_->bind();
+			axis_y_->set_data(sizeof(verts), verts);
 		}
 
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void GridFloor::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
@@ -183,7 +183,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 	}
 
 	GridFloor::~GridFloor ()
@@ -202,10 +202,10 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 
 		buffer_.reset(new GLArrayBuffer);
-		buffer_->Generate();
-		buffer_->Bind();
+		buffer_->generate();
+		buffer_->bind();
 
-		buffer_->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -218,9 +218,9 @@ namespace BlendInt {
 		};
 
 		axis_x_.reset(new GLArrayBuffer);
-		axis_x_->Generate();
-		axis_x_->Bind();
-		axis_x_->SetData(sizeof(verts), verts);
+		axis_x_->generate();
+		axis_x_->bind();
+		axis_x_->set_data(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -233,9 +233,9 @@ namespace BlendInt {
 		verts[4] = (GLfloat)(lines_ / 2) * scale_;
 
 		axis_y_.reset(new GLArrayBuffer);
-		axis_y_->Generate();
-		axis_y_->Bind();
-		axis_y_->SetData(sizeof(verts), verts);
+		axis_y_->generate();
+		axis_y_->bind();
+		axis_y_->set_data(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -249,9 +249,9 @@ namespace BlendInt {
 		verts[5] = (GLfloat)(lines_ / 2) * scale_;
 
 		axis_y_.reset(new GLArrayBuffer);
-		axis_y_->Generate();
-		axis_y_->Bind();
-		axis_y_->SetData(sizeof(verts), verts);
+		axis_y_->generate();
+		axis_y_->bind();
+		axis_y_->set_data(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 		glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -259,8 +259,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		GLArrayBuffer::Reset();
-		GLElementArrayBuffer::Reset();
+		GLArrayBuffer::reset();
+		GLElementArrayBuffer::reset();
 	}
 
 	void GridFloor::SetAxis (const char* str)
@@ -310,10 +310,10 @@ namespace BlendInt {
 
 			if(!axis_x_) {
 				axis_x_.reset(new GLArrayBuffer);
-				axis_x_->Generate();
+				axis_x_->generate();
 			}
-			axis_x_->Bind();
-			axis_x_->SetData(sizeof(verts), verts);
+			axis_x_->bind();
+			axis_x_->set_data(sizeof(verts), verts);
 			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -336,10 +336,10 @@ namespace BlendInt {
 
 			if(!axis_y_) {
 				axis_y_.reset(new GLArrayBuffer);
-				axis_y_->Generate();
+				axis_y_->generate();
 			}
-			axis_y_->Bind();
-			axis_y_->SetData(sizeof(verts), verts);
+			axis_y_->bind();
+			axis_y_->set_data(sizeof(verts), verts);
 			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -364,11 +364,11 @@ namespace BlendInt {
 
 			if(!axis_z_) {
 				axis_z_.reset(new GLArrayBuffer);
-				axis_z_->Generate();
+				axis_z_->generate();
 			}
 
-			axis_z_->Bind();
-			axis_z_->SetData(sizeof(verts), verts);
+			axis_z_->bind();
+			axis_z_->set_data(sizeof(verts), verts);
 			glEnableVertexAttribArray(Shaders::instance->primitive_attrib_coord_v3());
 			glVertexAttribPointer(Shaders::instance->primitive_attrib_coord_v3(), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -379,7 +379,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void GridFloor::GenerateGripFloorVertices (std::vector<GLfloat>& vertices)

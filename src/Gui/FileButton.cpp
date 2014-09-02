@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	FileButton::FileButton ()
 	: AbstractButton(),
-	  file_selector_(0)
+	  panel_(0)
 	{
 		set_round_type(RoundAll);
 		set_drop_shadow(true);
@@ -69,18 +69,20 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(),
 			        round_radius(), text());
 			VertexTool tool;
-			tool.Setup(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
 			        round_type(), round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void FileButton::PerformRoundTypeUpdate (
@@ -90,19 +92,21 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_type(*request.round_type());
 			Refresh();
 		}
 
-		ReportRoundTypeUpdate(request);
-}
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
+	}
 
 	void FileButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
@@ -111,18 +115,21 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.Setup(size(), DefaultBorderWidth(),
+			tool.GenerateVertices(size(), DefaultBorderWidth(),
 			        round_type(), *request.round_radius());
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			outer_->Bind();
-			tool.SetOuterBufferData(outer_.get());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
 		}
 
-		ReportRoundRadiusUpdate(request);}
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
+	}
 
 	ResponseType FileButton::Draw (Profile& profile)
 	{
@@ -134,7 +141,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		if (down()) {
+		if (is_down()) {
 			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
 			        Theme::instance->regular().inner_sel.data());
 		} else {
@@ -170,7 +177,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 
 		if (text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -206,30 +213,30 @@ namespace BlendInt {
 		                + std::abs(font().GetDescender()));
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		tool.SetOuterBufferData(outer_.get());
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 	void FileButton::OnClicked ()
@@ -238,13 +245,12 @@ namespace BlendInt {
 
 		if(context) {
 
-			assert(file_selector_ == 0);
+			assert(panel_ == 0);
 
-			file_selector_ = Manage(new FileSelector);
-			DBG_SET_NAME(file_selector_, "File Selector on File Button");
-			Section* section = context->PushBack(file_selector_);
-			section->set_mode(Section::Modal);
-			context->SetFocusedWidget(file_selector_);
+			panel_ = Manage(new StaticPanel);
+
+			FileSelector* file_selector = Manage(new FileSelector);
+			DBG_SET_NAME(file_selector, "File Selector on File Button");
 
 			int w = 800;
 			int h = 600;
@@ -260,30 +266,36 @@ namespace BlendInt {
 			int x = (context->size().width() - w) / 2;
 			int y = (context->size().height() - h) / 2;
 
-			file_selector_->Resize(w, h);
-			file_selector_->SetPosition(x, y);
+			panel_->Resize(w, h);
+			panel_->SetPosition(x, y);
+			panel_->SetContent(file_selector);
+			Section* section = context->PushBack(panel_);
+			section->set_mode(Section::Modal);
+			context->SetFocusedWidget(file_selector);
 
-			events()->connect(file_selector_->opened(), this, &FileButton::OnOpened);
-			events()->connect(file_selector_->canceled(), this, &FileButton::OnCanceled);
+			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
+			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
 
 		}
 	}
 
 	void FileButton::OnOpened ()
 	{
-		file_selector_->opened().disconnectOne(this, &FileButton::OnOpened);
-		file_ = file_selector_->file_selected();
-		delete file_selector_;
-		file_selector_ = 0;
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		fs->opened().disconnectOne(this, &FileButton::OnOpened);
+		file_ = fs->file_selected();
+		delete panel_;
+		panel_ = 0;
 
 		file_selected_.fire();
 	}
 
 	void FileButton::OnCanceled ()
 	{
-		file_selector_->canceled().disconnectOne(this, &FileButton::OnCanceled);
-		delete file_selector_;
-		file_selector_ = 0;
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
+		delete panel_;
+		panel_ = 0;
 	}
 
 }

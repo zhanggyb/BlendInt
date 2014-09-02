@@ -149,12 +149,18 @@ namespace BlendInt {
 		/**
 		 * @brief Use this program for render
 		 */
-		void Use ();
+		inline void Use () const
+		{
+			glUseProgram (m_id);
+		}
 
 		/**
 		 * @brief Unuse this program for render
 		 */
-		static void Reset ();
+		static inline void reset ()
+		{
+			glUseProgram(0);
+		}
 
 		/**
 		 * @brief Print log

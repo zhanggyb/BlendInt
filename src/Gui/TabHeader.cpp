@@ -41,6 +41,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	TabHeader::TabHeader()
 	: AbstractContainer(),
 	  vao_(0)
@@ -53,18 +55,18 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(inner_.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
@@ -98,9 +100,9 @@ namespace BlendInt {
 
 			}
 
-			m_group.Add(button);
+			m_group.PushBack(button);
 
-			if(m_group.size() == 1) {
+			if(m_group.button_count() == 1) {
 				button->SetChecked(true);
 			}
 		}
@@ -153,42 +155,43 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			GLArrayBuffer::Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			GLArrayBuffer::reset();
 			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType TabHeader::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->triangle_program()->Use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->Reset();
+		Shaders::instance->triangle_program()->reset();
 
 		return Ignore;
 	}

@@ -56,53 +56,69 @@ namespace BlendInt {
 		 *
 		 * Generate new GL buffers, if there's buffer generated before, this will delete these.
 		 */
-		void Generate ();
+		inline void generate ()
+		{
+			if(id_ != 0) clear();
+			glGenBuffers(1, &id_);
+		}
 
 		/**
 		 * @brief Delete buffer created
 		 */
-		void Clear ();
+		inline void clear ()
+		{
+			glDeleteBuffers(1, &id_);
+			id_ = 0;
+		}
 
 		/**
 		 * @brief The buffer id
 		 * @return
 		 */
-		inline GLuint id () const {return m_id;}
+		inline GLuint id () const {return id_;}
 
-		bool IsBbuffer ();
+		inline bool is_buffer () const
+		{
+			return glIsBuffer(id_);
+		}
 
-		void Bind ();
+		inline void bind () const
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
+		}
 
-		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+		inline void set_data (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
+		{
+			glBufferData (GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
+		}
 
-		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
-
-		static void Reset ();
+		static inline void reset ()
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
 
 		inline GLenum target ()
 		{
 			return GL_ELEMENT_ARRAY_BUFFER;
 		}
 
-		GLenum GetUsage ();
-
-		GLint GetBufferSize ();
-
-		/**
-		 * @brief Get vertex number used in this buffer
-		 * @param size Must be 2, 3, how many float variables for one vertex
-		 * @return
-		 */
-		inline GLint vertices ()
+		inline GLenum get_usage () const
 		{
-			return m_vertices;
+			GLint usage = 0;
+			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			return usage;
+		}
+
+		inline GLint get_buffer_size () const
+		{
+			GLint buffer_size = 0;
+			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+			return buffer_size;
 		}
 
 	private:
 
-		GLuint m_id;
-
-		GLint m_vertices;
+		GLuint id_;
 
 	};
 

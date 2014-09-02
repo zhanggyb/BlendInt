@@ -137,7 +137,7 @@ TEST_F(TextureFontTest1, Foo1)
 		glDisableVertexAttribArray(0);
 
     	glBindTexture(GL_TEXTURE_2D, 0);
-    	program.Reset();
+    	program.reset();
 
     	glBindVertexArray(0);
 

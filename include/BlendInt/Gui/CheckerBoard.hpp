@@ -76,6 +76,9 @@ namespace BlendInt {
 		RefPtr<GLElementArrayBuffer> m_light_ibo;
 		RefPtr<GLElementArrayBuffer> m_dark_ibo;
 
+		int light_elements_;
+
+		int dark_elements_;
 
 		size_t m_cell_size;
 	};

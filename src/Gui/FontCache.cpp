@@ -232,13 +232,13 @@ namespace BlendInt {
                                 m_ft_face.face()->size->metrics.descender) >> 6,
                                m_ft_face.face()->size->metrics.height >> 6);
 
-        m_last->Bind();
+        m_last->bind();
         if(m_last->IsFull()) {
             DBG_PRINT_MSG("%s", "Atlas is full, create a new one");
-            m_last->Reset();
+            m_last->reset();
             m_last.reset(new GlyphAtlas);
             m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
-            m_last->Bind();
+            m_last->bind();
         }
 
         FT_GlyphSlot slot = m_ft_face.face()->glyph;
@@ -299,11 +299,11 @@ namespace BlendInt {
 
             if(!m_last->MoveNext()) {
                 DBG_PRINT_MSG("%s", "one texture is full, create a new one");
-                m_last->Reset();
+                m_last->reset();
 
                 m_last.reset(new GlyphAtlas);
                 m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
-                m_last->Bind();
+                m_last->bind();
             }
 
         } else {
@@ -351,7 +351,7 @@ namespace BlendInt {
 
         m_last.reset(new GlyphAtlas);
         m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
-        m_last->Bind();
+        m_last->bind();
 
         while (i < size) {
 
@@ -407,11 +407,11 @@ namespace BlendInt {
 
                 if(!m_last->MoveNext()) {
                     DBG_PRINT_MSG("%s", "one texture is full, create a new one");
-                    m_last->Reset();
+                    m_last->reset();
 
                     m_last.reset(new GlyphAtlas);
                     m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
-                    m_last->Bind();
+                    m_last->bind();
                 }
 
             } else {
@@ -422,7 +422,7 @@ namespace BlendInt {
             i++;
         }
 
-        m_last->Reset();
+        m_last->reset();
 
     }
 

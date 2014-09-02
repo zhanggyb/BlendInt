@@ -5,6 +5,10 @@
 #ifndef GLFWCONTEXT_HPP_
 #define GLFWCONTEXT_HPP_
 
+#include <GLFW/glfw3.h>
+
+#include <vector>
+
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
@@ -41,9 +45,9 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlockLayout.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/FramePanel.hpp>
+#include <BlendInt/Gui/StaticFrame.hpp>
 
-#include <BlendInt/Gui/VirtualWindow.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
@@ -51,6 +55,7 @@
 #include <BlendInt/Gui/ListView.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 namespace BI=BlendInt;
 
@@ -58,22 +63,25 @@ class GLFWDemoContext: public BI::Context
 {
 public:
 
-	GLFWDemoContext ();
+	explicit GLFWDemoContext (GLFWwindow* window);
 
 	virtual ~GLFWDemoContext ();
 
+	virtual void SetCursor (int cursor_type);
+
 private:
+
+	void InitializeGLFWCursors ();
 
 	void Initialize ();
 
-	void OnOpenObjFile ();
+	void ReleaseGLFWCursors ();
 
-	BI::Viewport3D* m_view3d;
+	GLFWcursor* arrow_;
 
-	BI::FileBrowser* m_browser;;
+	GLFWcursor* cross_;
 
-	BI::Button* m_open_button;
-
+	GLFWwindow* window_;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

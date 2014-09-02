@@ -192,7 +192,9 @@ namespace BlendInt {
 			MoveSubWidgets(x, y);
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -200,10 +202,10 @@ namespace BlendInt {
 		if (request.target() == this) {
 
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			inner_->Bind();
-			tool.SetInnerBufferData(inner_.get());
-			inner_->Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			inner_->bind();
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			int x = position().x() + margin().left();
 			if (first()) {
@@ -223,7 +225,9 @@ namespace BlendInt {
 			FillSubWidgets(position(), size(), margin(), space_);
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType ToolBar::Draw (Profile& profile)
@@ -245,7 +249,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Ignore;
 	}
@@ -372,22 +376,22 @@ namespace BlendInt {
 		glGenVertexArrays(1, &vao_);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		glBindVertexArray(vao_);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
+		inner_->generate();
+		inner_->bind();
 
-		tool.SetInnerBufferData(inner_.get());
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
 				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 	
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,

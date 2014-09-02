@@ -36,28 +36,69 @@ namespace BlendInt {
 
 	ButtonGroup::~ButtonGroup ()
 	{
+		Clear();
 	}
 	
-	void ButtonGroup::Add (AbstractButton* button)
+	void ButtonGroup::PushFront (AbstractButton* button)
 	{
 		if(!button) return;
 
-		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
-		if(it != buttons_.end()) {
-			DBG_PRINT_MSG("Button %s already in button group.", button->name().c_str());
-			return;
+		if(button->group_) {
+			if(button->group_ == this) {
+				DBG_PRINT_MSG("Button %s is already in this button group", button->name().c_str());
+				return;
+			} else {
+				button->group_->Remove(button);
+			}
 		}
 
-		buttons_.push_back(button);
+		assert(button->group_ == 0);
+
+		buttons_.push_front(button);
+		button->group_ = this;
 
 		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
-		events_->connect(button->clicked(), this, &ButtonGroup::OnButtonClicked);
-		events_->connect(button->toggled(), this, &ButtonGroup::OnButtonToggled);
+	}
+
+	void ButtonGroup::PushBack (AbstractButton* button)
+	{
+		if(!button) return;
+
+		if(button->group_) {
+			if(button->group_ == this) {
+				DBG_PRINT_MSG("Button %s is already in this button group", button->name().c_str());
+				return;
+			} else {
+				button->group_->Remove(button);
+			}
+		}
+
+		assert(button->group_ == 0);
+
+		buttons_.push_back(button);
+		button->group_ = this;
+
+		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
 	}
 	
+	void ButtonGroup::Insert (int index, AbstractButton* button)
+	{
+	}
+
 	void ButtonGroup::Remove (AbstractButton* button)
 	{
 		if(!button) return;
+
+		if(button->group_) {
+			if(button->group_ != this) {
+				DBG_PRINT_MSG("Button %s is NOT in this button group", button->name().c_str());
+				return;
+			}
+		} else {
+			return;
+		}
+
+		assert(button->group_ == this);
 
 		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
 		if(it == buttons_.end()) {
@@ -65,35 +106,45 @@ namespace BlendInt {
 			return;
 		}
 
-		button->toggled().disconnectOne(this, &ButtonGroup::OnButtonToggled);
-		button->clicked().disconnectOne(this, &ButtonGroup::OnButtonClicked);
 		button->destroyed().disconnectOne(this, &ButtonGroup::OnButtonDestroyed);
+
 		buttons_.erase(it);
+		button->group_ = 0;
 	}
 	
-	void ButtonGroup::OnButtonClicked ()
+	void ButtonGroup::Clear ()
 	{
-		DBG_PRINT_MSG("%s", "get button clicked event");
+		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end();)
+		{
+			(*it)->destroyed().disconnectOne(this, &ButtonGroup::OnButtonDestroyed);
+			(*it)->group_ = 0;
 
+			it = buttons_.erase(it);
+		}
+	}
+
+	void ButtonGroup::Click (AbstractButton* button)
+	{
 		if(last_active_) {
-			last_active_->SetDown(false);
+			last_active_->set_down(false);
 		}
 
 		int i = 0;
 		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end(); it++)
 		{
-			last_active_ = *it;
-			if(last_active_->focused()) {
+			if((*it) == button) {
+				last_active_ = *it;
 				break;
 			}
+
 			i++;
 		}
 
 		button_clicked_.fire(last_active_);
 		button_index_clicked_.fire(i);
 	}
-	
-	void ButtonGroup::OnButtonToggled (bool toggled)
+
+	void ButtonGroup::Toggle (AbstractButton* button, bool toggled)
 	{
 		AbstractButton* original_active_button = last_active_;
 
@@ -104,8 +155,8 @@ namespace BlendInt {
 		int i = 0;
 		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end(); it++)
 		{
-			last_active_ = *it;
-			if(last_active_->focused()) {
+			if((*it) == button) {
+				last_active_ = *it;
 				break;
 			}
 			i++;

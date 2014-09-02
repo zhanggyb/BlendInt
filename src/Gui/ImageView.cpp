@@ -62,7 +62,7 @@ namespace BlendInt {
 		Image image;
 
 		if(image.Read(filename)) {
-			texture_->Bind();
+			texture_->bind();
 
 			switch(image.channels()) {
 				case 3:
@@ -83,7 +83,7 @@ namespace BlendInt {
 					break;
 			}
 
-			texture_->Reset();
+			texture_->reset();
 
 			image_size_.set_width(image.width());
 			image_size_.set_height(image.height());
@@ -137,11 +137,11 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			background_->Bind();
+			background_->bind();
 			VertexTool tool;
-			tool.Setup(*request.size(), 0, RoundNone, 0);
-			tool.SetInnerBufferData(background_.get());
-			background_->Reset();
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			background_->set_data(tool.inner_size(), tool.inner_data());
+			background_->reset();
 
 			AdjustImageArea (*request.size());
 
@@ -177,7 +177,7 @@ namespace BlendInt {
 		checkerboard_->Draw(pos);
 
 		glActiveTexture(GL_TEXTURE0);
-		texture_->Bind();
+		texture_->bind();
 
 		if (texture_->GetWidth() > 0) {
 			program = Shaders::instance->image_program();
@@ -191,8 +191,8 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		texture_->Reset();
-		program->Reset();
+		texture_->reset();
+		program->reset();
 
 		DispatchDrawEvent(hbar(), profile);
 		DispatchDrawEvent(vbar(), profile);
@@ -208,23 +208,23 @@ namespace BlendInt {
 		checkerboard_->Resize(size());
 
 		texture_.reset(new GLTexture2D);
-		texture_->Generate();
-		texture_->Bind();
+		texture_->generate();
+		texture_->bind();
 		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture_->SetMinFilter(GL_LINEAR);
 		texture_->SetMagFilter(GL_LINEAR);
-		texture_->Reset();
+		texture_->reset();
 
 		glGenVertexArrays(2, vaos_);
 		glBindVertexArray(vaos_[0]);
 
 		background_.reset(new GLArrayBuffer);
-		background_->Generate();
-		background_->Bind();
+		background_->generate();
+		background_->bind();
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		tool.SetInnerBufferData(background_.get());
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		background_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -239,9 +239,9 @@ namespace BlendInt {
 		};
 
 		plane_.reset(new GLArrayBuffer);
-		plane_->Generate();
-		plane_->Bind();
-		plane_->SetData(sizeof(vertices), vertices);
+		plane_->generate();
+		plane_->bind();
+		plane_->set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
 		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
@@ -249,7 +249,7 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
@@ -348,9 +348,9 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		plane_->Bind();
-		plane_->SetData(sizeof(vertices), vertices);
-		plane_->Reset();
+		plane_->bind();
+		plane_->set_data(sizeof(vertices), vertices);
+		plane_->reset();
 	}
 
 }

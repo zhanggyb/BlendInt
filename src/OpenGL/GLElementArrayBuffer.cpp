@@ -38,106 +38,14 @@
 namespace BlendInt {
 
 	GLElementArrayBuffer::GLElementArrayBuffer()
-	: Object(), m_id(0), m_vertices(0)
+	: Object(), id_(0)
 	{
 
 	}
 
 	GLElementArrayBuffer::~GLElementArrayBuffer ()
 	{
-		glDeleteBuffers(1, &m_id);
-	}
-
-	void GLElementArrayBuffer::Generate()
-	{
-		if(!m_id)
-			Clear();
-
-		glGenBuffers(1, &m_id);
-	}
-
-	void GLElementArrayBuffer::Clear()
-	{
-		//if(glIsBuffer(m_id)) {
-			glDeleteBuffers(1, &m_id);
-		//}
-
-		m_id = 0;
-	}
-
-	bool GLElementArrayBuffer::IsBbuffer ()
-	{
-		return glIsBuffer(m_id);
-	}
-
-	void GLElementArrayBuffer::Bind()
-	{
-		if(m_id) {
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
-		} else {
-			std::cerr << "The element array buffer is not generated! call Generate() first." << std::endl;
-		}
-	}
-
-	void GLElementArrayBuffer::SetData (GLsizeiptr size, const GLvoid* data,
-	        GLenum usage)
-	{
-		if(glIsBuffer(m_id) == GL_FALSE) {
-			std::cerr << "The array buffer is not generated!" << std::endl;
-			return;
-		}
-
-		GLint buffer = 0;
-		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buffer);
-
-		if(m_id != static_cast<GLuint>(buffer)) {
-			std::cerr << "The current element array buffer binding is not the one to be set data, call Bind() first!" << std::endl;
-			return;
-		}
-
-		glBufferData (GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
-	}
-
-	void GLElementArrayBuffer::SetData (int vertices, size_t size, const GLvoid* data, GLenum usage)
-	{
-		if(glIsBuffer(m_id) == GL_FALSE) {
-			std::cerr << "The element array buffer is not generated!" << std::endl;
-			return;
-		}
-
-		GLint buffer = 0;
-		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buffer);
-
-		if(m_id != static_cast<GLuint>(buffer)) {
-			std::cerr << "The current element array buffer binding is not the one to be set data, call Bind() first!" << std::endl;
-			return;
-		}
-
-		m_vertices = vertices;
-		glBufferData (GL_ELEMENT_ARRAY_BUFFER, size * m_vertices, data, usage);
-	}
-
-
-	void GLElementArrayBuffer::Reset()
-	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-
-	GLenum GLElementArrayBuffer::GetUsage ()
-	{
-		GLint usage = 0;
-
-		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
-
-		return usage;
-	}
-
-	GLint GLElementArrayBuffer::GetBufferSize ()
-	{
-		GLint buffer_size = 0;
-		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
-
-		return buffer_size;
+		glDeleteBuffers(1, &id_);
 	}
 
 }

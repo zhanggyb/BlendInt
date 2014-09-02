@@ -56,24 +56,6 @@ namespace BlendInt {
 		}
 	}
 
-	void GLTexture2D::Generate ()
-	{
-		if(m_texture) {
-			Clear();
-		}
-
-		glGenTextures(1, &m_texture);
-	}
-
-	void GLTexture2D::Bind()
-	{
-		if(m_texture) {
-			glBindTexture(GL_TEXTURE_2D, m_texture);
-		} else {
-			std::cerr << "The texture is not generated! call Generate() first." << std::endl;
-		}
-	}
-
 	GLint GLTexture2D::GetBaseLevel()
 	{
 		return 0;
@@ -102,11 +84,6 @@ namespace BlendInt {
 	void GLTexture2D::CopySubimage(GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 	{
 		glCopyTexSubImage2D(GL_TEXTURE_2D, level, xoffset, yoffset, x, y, width, height);
-	}
-
-	void GLTexture2D::Reset ()
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void GLTexture2D::SetMinFilter (GLint filter)
@@ -199,12 +176,6 @@ namespace BlendInt {
 		delete out;
 
 		return true;
-	}
-
-	void GLTexture2D::Clear ()
-	{
-		glDeleteTextures(1, &m_texture);
-		m_texture = 0;
 	}
 
 	GLuint GLTexture2D::GetTextureBinding()

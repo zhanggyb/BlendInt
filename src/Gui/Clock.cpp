@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		program->Reset();
+		program->reset();
 
 		return Accept;
 	}
@@ -107,11 +107,11 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
 
-			inner_->Bind();
-			inner_->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->Bind();
-			outer_->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::Reset();
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
 
 			set_size(*request.size());
 			Refresh();
@@ -235,9 +235,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
-		inner_->Generate();
-		inner_->Bind();
-		inner_->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -245,15 +245,15 @@ namespace BlendInt {
 		glBindVertexArray(vao_[1]);
 
 		outer_.reset(new GLArrayBuffer);
-		outer_->Generate();
-		outer_->Bind();
-		outer_->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 
 		timer_.reset(new Timer);
 		timer_->SetInterval(1000);

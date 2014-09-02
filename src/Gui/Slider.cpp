@@ -96,8 +96,8 @@ namespace BlendInt {
 
 	void Slider::PerformOrientationUpdate (Orientation orientation)
 	{
-		m_line->Bind();
-		GLfloat* buf_p = (GLfloat*) m_line->Map(GL_READ_WRITE);
+		m_line->bind();
+		GLfloat* buf_p = (GLfloat*) m_line->map(GL_READ_WRITE);
 		if (orientation == Horizontal) {
 			*(buf_p + 0) = m_slide_icon.size().width() / 2;
 			*(buf_p + 1) = size().height() / 2;
@@ -110,8 +110,8 @@ namespace BlendInt {
 			*(buf_p + 3) = size().height()
 							- m_slide_icon.size().height() / 2;
 		}
-		m_line->Unmap();
-		m_line->Reset();
+		m_line->unmap();
+		m_line->reset();
 
 		Refresh();
 	}
@@ -156,14 +156,14 @@ namespace BlendInt {
 		        Theme::instance->scroll().outline.data());
 
 		glEnableVertexAttribArray(0);
-		m_line->Bind();
+		m_line->bind();
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,	0,	BUFFER_OFFSET(0));
 		glLineWidth(1.0);
 		glDrawArrays(GL_LINES, 0, 2);
-		m_line->Reset();
+		m_line->reset();
 
 		glDisableVertexAttribArray(0);
-		program->Reset();
+		program->reset();
 		glBindVertexArray(0);
 
 		// ----- end of draw line
@@ -274,8 +274,8 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		m_line.reset(new GLArrayBuffer);
-		m_line->Generate();
-		m_line->Bind();
+		m_line->generate();
+		m_line->bind();
 
 		GLfloat vertices[4];
 
@@ -291,9 +291,9 @@ namespace BlendInt {
 			vertices[3] = size().height() - m_slide_icon.size().height() / 2;
 		}
 
-		m_line->SetData (sizeof(vertices), vertices);
+		m_line->set_data (sizeof(vertices), vertices);
 
-		m_line->Reset();
+		m_line->reset();
 
 		glBindVertexArray(0);
 

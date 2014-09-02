@@ -46,7 +46,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 		if(m_vbo->id() == 0) {
-			m_vbo->Generate();
+			m_vbo->generate();
 		}
 
 		GLfloat vertices[] = {
@@ -57,8 +57,8 @@ namespace BlendInt {
 				x1, y1,		1.f, 1.f
 		};
 
-		m_vbo->Bind();
-		m_vbo->SetData(sizeof(vertices), vertices);
+		m_vbo->bind();
+		m_vbo->set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -66,7 +66,7 @@ namespace BlendInt {
 		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		m_vbo->Reset();
+		m_vbo->reset();
 	}
 
 	void TextureBuffer::Draw (GLfloat x, GLfloat y)
@@ -75,19 +75,19 @@ namespace BlendInt {
 
 		if(m_texture->texture()) {
 
-			m_texture->Bind();
+			m_texture->bind();
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
 			program->Use();
-			program->SetUniform3f("u_position", x, y, 0.f);
-			program->SetUniform1i("TexID", 0);
-			program->SetUniform1i("u_gamma", 0);
+			glUniform3f(Shaders::instance->image_uniform_position(), x, y, 0.f);
+			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
+			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
 
 			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			glBindVertexArray(0);
 
-			m_texture->Reset();
-			program->Reset();
+			m_texture->reset();
+			program->reset();
 
 		}
 	}

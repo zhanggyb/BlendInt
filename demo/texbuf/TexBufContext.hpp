@@ -7,7 +7,7 @@
 
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/FramePanel.hpp>
+#include <BlendInt/Gui/StaticFrame.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
 namespace BI=BlendInt;
@@ -31,7 +31,7 @@ private:
 
 	BI::Frame* m_panel1;
 	
-	BI::FramePanel* m_panel2;
+	BI::StaticFrame* m_panel2;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

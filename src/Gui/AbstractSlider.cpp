@@ -74,12 +74,12 @@ namespace BlendInt {
 				short shadedown = Theme::instance->scroll().shadedown;
 
 				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				GLArrayBuffer::Reset();
+				tool.GenerateVertices(*size_p, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
+				inner_->bind();
+				inner_->set_data(tool.inner_size(), tool.inner_data());
+				outer_->bind();
+				outer_->set_data(tool.outer_size(), tool.outer_data());
+				GLArrayBuffer::reset();
 				break;
 			}
 
@@ -94,12 +94,12 @@ namespace BlendInt {
 				short shadedown = Theme::instance->scroll().shadedown;
 
 				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius(), color, shadedir, shadetop, shadedown);
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				GLArrayBuffer::Reset();
+				tool.GenerateVertices(size(), DefaultBorderWidth(), *round_p, radius(), color, shadedir, shadetop, shadedown);
+				inner_->bind();
+				inner_->set_data(tool.inner_size(), tool.inner_data());
+				outer_->bind();
+				outer_->set_data(tool.outer_size(), tool.outer_data());
+				GLArrayBuffer::reset();
 				break;
 			}
 
@@ -114,12 +114,12 @@ namespace BlendInt {
 				short shadedown = Theme::instance->scroll().shadedown;
 
 				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p, color, shadedir, shadetop, shadedown);
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				GLArrayBuffer::Reset();
+				tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *radius_p, color, shadedir, shadetop, shadedown);
+				inner_->bind();
+				inner_->set_data(tool.inner_size(), tool.inner_data());
+				outer_->bind();
+				outer_->set_data(tool.outer_size(), tool.outer_data());
+				GLArrayBuffer::reset();
 				break;
 			}
 
@@ -156,7 +156,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->Reset();
+		program->reset();
 	}
 
 	void SlideIcon::InitializeSliderIcon ()
@@ -171,13 +171,13 @@ namespace BlendInt {
 		short shadedown = Theme::instance->scroll().shadedown;
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
 
 		glBindVertexArray(m_vao[0]);
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		tool.SetInnerBufferData(m_inner_buffer.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -187,16 +187,16 @@ namespace BlendInt {
 		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(m_vao[1]);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		tool.SetOuterBufferData(m_outer_buffer.get());
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
+		GLArrayBuffer::reset();
 	}
 
 }

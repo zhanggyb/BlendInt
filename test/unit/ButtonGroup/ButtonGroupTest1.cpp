@@ -3,6 +3,7 @@
 #include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
 
 using namespace BlendInt;
 
@@ -32,34 +33,33 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
-	/*
-    TabButton* btn1 = Manage(new TabButton);
-    btn1->set_name("TabButton1");
-    btn1->SetPosition(100, 100);
-    TabButton* btn2 = Manage(new TabButton);
-    btn2->set_name("TabButton2");
-    btn2->SetPosition(100 + btn1->size().width() + 2, 100);
-    TabButton* btn3 = Manage(new TabButton);
-    btn3->set_name("TabButton3");
-    btn3->SetPosition(100 + btn1->size().width() + btn2->size().width() + 4, 100);
-    */
+	HBlockLayout* hblock = Manage(new HBlockLayout);
 
-	ToggleButton* btn1 = Manage(new ToggleButton);
-	btn1->SetPosition(100, 100);
+	ToggleButton* btn1 = Manage(new ToggleButton("Toggle1"));
+	DBG_SET_NAME(btn1, "Toggle Button1");
 	//btn1->SetDown(true);
-	ToggleButton* btn2 = Manage(new ToggleButton);
-	btn2->SetPosition(190, 100);
-	ToggleButton* btn3 = Manage(new ToggleButton);
-	btn3->SetPosition(280, 100);
+	ToggleButton* btn2 = Manage(new ToggleButton("Toggle2"));
+	DBG_SET_NAME(btn2, "Toggle Button2");
+	ToggleButton* btn3 = Manage(new ToggleButton("Toggle3"));
+	DBG_SET_NAME(btn3, "Toggle Button3");
+
+	hblock->PushBack(btn1);
+	hblock->PushBack(btn2);
+	hblock->PushBack(btn3);
 
     ButtonGroup btngroup;
-    btngroup.Add(btn1);
-    btngroup.Add(btn2);
-    btngroup.Add(btn3);
+    btngroup.PushBack(btn1);
+    btngroup.PushBack(btn2);
+    btngroup.PushBack(btn3);
 
-    context->PushBack(btn1);
-    context->PushBack(btn2);
-    context->PushBack(btn3);
+    hblock->SetPosition(200, 200);
+    hblock->Resize(hblock->GetPreferredSize());
+
+    btn1->SetChecked(true);
+
+    btngroup.Clear();
+
+    context->PushBack(hblock);
 
     RunLoop(win);
 
@@ -70,6 +70,7 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
 	ASSERT_TRUE(true);
 }
 
+/*
 TEST_F(ButtonGroupTest1, MenuGroup1)
 {
 	Init ();
@@ -80,18 +81,6 @@ TEST_F(ButtonGroupTest1, MenuGroup1)
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
-	/*
-    TabButton* btn1 = Manage(new TabButton);
-    btn1->set_name("TabButton1");
-    btn1->SetPosition(100, 100);
-    TabButton* btn2 = Manage(new TabButton);
-    btn2->set_name("TabButton2");
-    btn2->SetPosition(100 + btn1->size().width() + 2, 100);
-    TabButton* btn3 = Manage(new TabButton);
-    btn3->set_name("TabButton3");
-    btn3->SetPosition(100 + btn1->size().width() + btn2->size().width() + 4, 100);
-    */
-
 	MenuButton* btn1 = Manage(new MenuButton("Menu1"));
 	btn1->SetPosition(100, 100);
 	//btn1->SetDown(true);
@@ -117,4 +106,4 @@ TEST_F(ButtonGroupTest1, MenuGroup1)
 
 	ASSERT_TRUE(true);
 }
-
+*/
