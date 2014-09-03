@@ -236,103 +236,6 @@ namespace BlendInt {
 				        ""
 				        "}";
 
-		const char* Shaders::widget_line_geometry_shader =
-		        "#version 330\n"
-				        ""
-				        "layout (lines) in;"
-				        "layout (line_strip, max_vertices = 16) out;"
-				        "in vec4 VertexColor[];"
-				        "out vec4 PreFragColor;"
-						"uniform mat4 u_projection;"	// projection matrix
-						"uniform mat4 u_view;"			// view matrix
-						"uniform vec3 u_position;"		// position
-						"uniform float u_rotation = 0.f;"		// the rotation in degree, only support rotation along Z axis
-						"uniform vec2 u_scale = vec2(1.f, 1.f);"			// the scale factor, only support xy plane
-		        		"uniform bool u_AA = false;"
-				        ""
-				        "const vec2 AA_JITTER[8] = vec2[8]("
-				        "	vec2(0.468813, -0.481430),"
-				        "	vec2(-0.155755, -0.352820),"
-				        "	vec2(0.219306, -0.238501),"
-				        "	vec2(-0.393286,-0.110949),"
-				        "	vec2(-0.024699, 0.013908),"
-				        "	vec2(0.343805, 0.147431),"
-				        "	vec2(-0.272855, 0.269918),"
-				        "	vec2(0.095909, 0.388710));"
-				        ""
-						"mat4 ScaleMatrix (const in vec3 s)"
-		        		"{"
-		        		"	return mat4(s.x, 0.0, 0.0, 0.0,"
-		        		"				0.0, s.y, 0.0, 0.0,"
-		        		"				0.0, 0.0, s.z, 0.0,"
-		        		"				0.0, 0.0, 0.0, 1.0);"
-		        		"}"
-		        		""
-		        		"mat4 TranslateMatrix (const in vec3 t)"
-		        		"{"
-		        		"	return mat4(1.0, 0.0, 0.0, 0.0,"
-						"				0.0, 1.0, 0.0, 0.0,"
-		        		"				0.0, 0.0, 1.0, 0.0,"
-		        		"				t.x, t.y, t.z, 1.0);"
-		        		"}"
-		        		""
-						"mat4 RotateMatrix( const in float angle,"
-						"					const in vec3 axis )"
-						"{"
-						"	vec3 n = normalize( axis );"
-						"	float theta = radians( angle );"
-						"	float c = cos( theta );"
-						"	float s = sin( theta );"
-						"	mat3 R;"
-						"	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-						"	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-						"	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-						"	return mat4( R[0],	0.0,"
-						"				 R[1],	0.0,"
-						"				 R[2],	0.0,"
-						"				 0.0, 0.0, 0.0, 1.0 );"
-						"}"
-						""
-		        		"mat4 RotateMatrixAlongZ (const in float angle)"
-		        		"{"
-						"	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-		        		"}"
-						""
-				        "void main()"
-				        "{"
-		        		"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-						"	vec4 vertex;"
-				        ""
-				        "	if(u_AA) {"
-				        "		mat4 aa_matrix = mat4(1.0);"
-				        "		vec4 col_calib;"
-				        "		for(int jit = 0; jit < 8; jit++) {"
-				        "			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-				        "			for(int n = 0; n < gl_in.length(); n++)"
-				        "			{"
-				        "				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				        "				col_calib = VertexColor[n];"
-				        "				col_calib.a = col_calib.a/8;"
-				        "				PreFragColor = col_calib;"
-				        "				gl_Position = vertex;"
-				        "				EmitVertex();"
-				        "			}"
-				        "			EndPrimitive();"
-				        "		}"
-				        "		return;"
-				        "	} else {"
-				        "		for(int n = 0; n < gl_in.length(); n++) {"
-				        "			vertex = mvp * gl_in[n].gl_Position;"
-				        "			PreFragColor = VertexColor[n];"
-				        "			gl_Position = vertex;"
-				        "			EmitVertex();"
-				        "		}"
-				        "		EndPrimitive();"
-				        "		return;"
-				        "	}"
-				        ""
-				        "}";
-
 		const char* Shaders::widget_fragment_shader =
 		        "#version 330\n"
 				        ""
@@ -356,13 +259,12 @@ namespace BlendInt {
 		const char* Shaders::widget_vertex_shader_ext =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec2 a_coord;"
-				"layout(location=1) in float a_shade;"
+				"layout(location=0) in vec3 a_coord;"
 				"out float VertexShade;"
 				""
 				"void main(void) {"
-				"	gl_Position = vec4(a_coord, 0.0, 1.0);"
-				"	VertexShade = a_shade;"
+				"	gl_Position = vec4(a_coord.xy, 0.0, 1.0);"
+				"	VertexShade = a_coord.z;"
 				"}";
 
 		const char* Shaders::widget_triangle_geometry_shader_ext =
@@ -745,27 +647,6 @@ namespace BlendInt {
 		  m_triangle_uniform_scale(-1),
 		  m_triangle_uniform_antialias(-1),
 		  m_triangle_uniform_gamma(-1),
-
-		  m_triangle_attrib_coord_ext(-1),
-		  m_triangle_attrib_shade_ext(-1),
-		  m_triangle_uniform_color_ext(-1),
-		  m_triangle_uniform_projection_ext(-1),
-		  m_triangle_uniform_view_ext(-1),
-		  m_triangle_uniform_position_ext(-1),
-		  m_triangle_uniform_rotation_ext(-1),
-		  m_triangle_uniform_scale_ext(-1),
-		  m_triangle_uniform_antialias_ext(-1),
-		  m_triangle_uniform_gamma_ext(-1),
-
-		  m_line_attrib_coord(-1),
-		  m_line_attrib_color(-1),
-		  m_line_uniform_projection(-1),
-		  m_line_uniform_view(-1),
-		  m_line_uniform_position(-1),
-		  m_line_uniform_rotation(-1),
-		  m_line_uniform_scale(-1),
-		  m_line_uniform_antialias(-1),
-		  m_line_uniform_gamma(-1),
 		  m_image_attrib_coord(-1),
 		  m_image_attrib_uv(-1),
 		  m_image_uniform_projection(-1),
@@ -781,9 +662,7 @@ namespace BlendInt {
 
 			m_triangle_program.reset(new GLSLProgram);
 
-			m_triangle_program_ext.reset(new GLSLProgram);
-
-			m_line_program.reset(new GLSLProgram);
+			widget_program_.reset(new GLSLProgram);
 
 			m_context_program.reset(new GLSLProgram);
 
@@ -807,11 +686,7 @@ namespace BlendInt {
 				return false;
 			}
 
-			if (!m_triangle_program_ext->Create()) {
-				return false;
-			}
-
-			if (!m_line_program->Create()) {
+			if (!widget_program_->Create()) {
 				return false;
 			}
 
@@ -855,38 +730,16 @@ namespace BlendInt {
 				return false;
 			}
 
-			m_triangle_program_ext->AttachShader(
+			widget_program_->AttachShader(
 			        widget_vertex_shader_ext, GL_VERTEX_SHADER);
-			m_triangle_program_ext->AttachShader(
+			widget_program_->AttachShader(
 			        widget_triangle_geometry_shader_ext,
 			        GL_GEOMETRY_SHADER);
-			m_triangle_program_ext->AttachShader(
+			widget_program_->AttachShader(
 			        widget_fragment_shader_ext, GL_FRAGMENT_SHADER);
-			if (!m_triangle_program_ext->Link()) {
+			if (!widget_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        m_triangle_program_ext->id());
-				return false;
-			}
-
-			m_line_program->AttachShader(widget_vertex_shader,
-			        GL_VERTEX_SHADER);
-			m_line_program->AttachShader(
-			        widget_line_geometry_shader, GL_GEOMETRY_SHADER);
-			m_line_program->AttachShader(widget_fragment_shader,
-			        GL_FRAGMENT_SHADER);
-			if (!m_line_program->Link()) {
-				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        m_line_program->id());
-				return false;
-			}
-
-			m_context_program->AttachShader(
-			        context_vertex_shader, GL_VERTEX_SHADER);
-			m_context_program->AttachShader(
-			        context_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!m_context_program->Link()) {
-				DBG_PRINT_MSG("Fail to link the context program: %d",
-				        m_context_program->id());
+				        widget_program_->id());
 				return false;
 			}
 
@@ -932,37 +785,15 @@ namespace BlendInt {
 			m_triangle_uniform_antialias = m_triangle_program->GetUniformLocation("u_AA");
 			m_triangle_uniform_gamma = m_triangle_program->GetUniformLocation("u_gamma");
 
-			locations_[TRIANGLE_COORD] = m_triangle_program_ext->GetAttributeLocation("a_coord");
-			locations_[TRIANGLE_SHADE] = m_triangle_program_ext->GetAttributeLocation("a_shade");
-			locations_[TRIANGLE_COLOR] = m_triangle_program_ext->GetUniformLocation("u_color");
-			locations_[TRIANGLE_PROJECTION] = m_triangle_program_ext->GetUniformLocation("u_projection");
-			locations_[TRIANGLE_VIEW] = m_triangle_program_ext->GetUniformLocation("u_view");
-			locations_[TRIANGLE_POSITION] = m_triangle_program_ext->GetUniformLocation("u_position");
-			locations_[TRIANGLE_ROTATION] = m_triangle_program_ext->GetUniformLocation("u_rotation");
-			locations_[TRIANGLE_SCALE] = m_triangle_program_ext->GetUniformLocation("u_scale");
-			locations_[TRIANGLE_ANTI_ALIAS] = m_triangle_program_ext->GetUniformLocation("u_AA");
-			locations_[TRIANGLE_GAMMA] = m_triangle_program_ext->GetUniformLocation("u_gamma");
-
-			m_triangle_attrib_coord_ext = m_triangle_program_ext->GetAttributeLocation("a_coord");
-			m_triangle_attrib_shade_ext = m_triangle_program_ext->GetAttributeLocation("a_shade");
-			m_triangle_uniform_color_ext = m_triangle_program_ext->GetUniformLocation("u_color");
-			m_triangle_uniform_projection_ext = m_triangle_program_ext->GetUniformLocation("u_projection");
-			m_triangle_uniform_view_ext = m_triangle_program_ext->GetUniformLocation("u_view");
-			m_triangle_uniform_position_ext = m_triangle_program_ext->GetUniformLocation("u_position");
-			m_triangle_uniform_rotation_ext = m_triangle_program_ext->GetUniformLocation("u_rotation");
-			m_triangle_uniform_scale_ext = m_triangle_program_ext->GetUniformLocation("u_scale");
-			m_triangle_uniform_antialias_ext = m_triangle_program_ext->GetUniformLocation("u_AA");
-			m_triangle_uniform_gamma_ext = m_triangle_program_ext->GetUniformLocation("u_gamma");
-
-			m_line_attrib_coord = m_line_program->GetAttributeLocation("a_coord");
-			m_line_attrib_color = m_line_program->GetAttributeLocation("a_color");
-			m_line_uniform_projection = m_line_program->GetUniformLocation("u_projection");
-			m_line_uniform_view = m_line_program->GetUniformLocation("u_view");
-			m_line_uniform_position = m_line_program->GetUniformLocation("u_position");
-			m_line_uniform_rotation = m_line_program->GetUniformLocation("u_rotation");
-			m_line_uniform_scale = m_line_program->GetUniformLocation("u_scale");
-			m_line_uniform_antialias = m_line_program->GetUniformLocation("u_AA");
-			m_line_uniform_gamma = m_line_program->GetUniformLocation("u_gamma");
+			locations_[WIDGET_COORD] = widget_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_COLOR] = widget_program_->GetUniformLocation("u_color");
+			locations_[WIDGET_PROJECTION] = widget_program_->GetUniformLocation("u_projection");
+			locations_[WIDGET_VIEW] = widget_program_->GetUniformLocation("u_view");
+			locations_[WIDGET_POSITION] = widget_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_ROTATION] = widget_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_SCALE] = widget_program_->GetUniformLocation("u_scale");
+			locations_[WIDGET_ANTI_ALIAS] = widget_program_->GetUniformLocation("u_AA");
+			locations_[WIDGET_GAMMA] = widget_program_->GetUniformLocation("u_gamma");
 
 			m_image_attrib_coord = m_image_program->GetAttributeLocation("a_coord");
 			m_image_attrib_uv = m_image_program->GetAttributeLocation("a_uv");

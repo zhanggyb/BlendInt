@@ -42,8 +42,11 @@
 
 namespace BlendInt {
 
-	Slider::Slider (Orientation orientation) :
-			AbstractSlider<int>(orientation), m_vao(0), m_last_value(0), m_pressed(false)
+	Slider::Slider (Orientation orientation)
+	: AbstractSlider<int>(orientation),
+	  //m_vao(0),
+	  m_last_value(0),
+	  m_pressed(false)
 	{
 		m_slide_icon.Resize(14, 14);
 
@@ -58,7 +61,7 @@ namespace BlendInt {
 
 	Slider::~Slider()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		//glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Slider::IsExpandX() const
@@ -96,6 +99,7 @@ namespace BlendInt {
 
 	void Slider::PerformOrientationUpdate (Orientation orientation)
 	{
+		/*
 		m_line->bind();
 		GLfloat* buf_p = (GLfloat*) m_line->map(GL_READ_WRITE);
 		if (orientation == Horizontal) {
@@ -114,6 +118,7 @@ namespace BlendInt {
 		m_line->reset();
 
 		Refresh();
+		*/
 	}
 
 	void Slider::PerformMinimumUpdate (int minimum)
@@ -144,6 +149,7 @@ namespace BlendInt {
 
 		// ----- draw line
 
+		/*
 		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
 		program->Use();
@@ -165,6 +171,7 @@ namespace BlendInt {
 		glDisableVertexAttribArray(0);
 		program->reset();
 		glBindVertexArray(0);
+		*/
 
 		// ----- end of draw line
 
@@ -269,6 +276,7 @@ namespace BlendInt {
 
 	void Slider::InitOnce ()
 	{
+		/*
 		glGenVertexArrays(1, &m_vao);
 
 		glBindVertexArray(m_vao);
@@ -296,7 +304,7 @@ namespace BlendInt {
 		m_line->reset();
 
 		glBindVertexArray(0);
-
+		*/
 	}
 
 	int Slider::GetSpace ()

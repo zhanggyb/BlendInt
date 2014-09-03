@@ -200,22 +200,22 @@ namespace BlendInt {
 			glEnable(GL_BLEND);
 
 			glm::mat4 origin;
-			glGetUniformfv(Shaders::instance->triangle_program()->id(),
-					Shaders::instance->triangle_uniform_projection(),
+			glGetUniformfv(Shaders::instance->widget_program()->id(),
+					Shaders::instance->location(Stock::WIDGET_PROJECTION),
 					glm::value_ptr(origin));
 
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 			        -100.f);
 
 			RefPtr<GLSLProgram> program =
-			        Shaders::instance->triangle_program();
+			        Shaders::instance->widget_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->triangle_program();
 			program->Use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
+					glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->Use();
 			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
@@ -253,13 +253,13 @@ namespace BlendInt {
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
+			program = Shaders::instance->widget_program();
+			program->Use();
+			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
+					glm::value_ptr(origin));
 			program = Shaders::instance->triangle_program();
 			program->Use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->text_program();
 			program->Use();

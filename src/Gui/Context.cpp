@@ -292,13 +292,9 @@ namespace BlendInt
 			program->Use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->triangle_program_ext();
+			program = Shaders::instance->widget_program();
 			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection_ext(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->Use();
@@ -525,15 +521,10 @@ namespace BlendInt
 		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(Shaders::instance->triangle_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->triangle_program_ext();
+		program = Shaders::instance->widget_program();
 		program->Use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection_ext(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_view_ext(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->instance->line_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
+		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->text_program();
 		program->Use();

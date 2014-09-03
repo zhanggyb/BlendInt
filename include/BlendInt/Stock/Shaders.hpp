@@ -36,16 +36,15 @@ namespace BlendInt {
 		enum LocationType {
 
 			// Triangles
-			TRIANGLE_COORD,
-			TRIANGLE_SHADE,
-			TRIANGLE_COLOR,
-			TRIANGLE_PROJECTION,
-			TRIANGLE_VIEW,
-			TRIANGLE_POSITION,
-			TRIANGLE_ROTATION,
-			TRIANGLE_SCALE,
-			TRIANGLE_ANTI_ALIAS,
-			TRIANGLE_GAMMA,
+			WIDGET_COORD,
+			WIDGET_COLOR,
+			WIDGET_PROJECTION,
+			WIDGET_VIEW,
+			WIDGET_POSITION,
+			WIDGET_ROTATION,
+			WIDGET_SCALE,
+			WIDGET_ANTI_ALIAS,
+			WIDGET_GAMMA,
 
 			// Text
 			TEXT_COORD,
@@ -86,19 +85,9 @@ namespace BlendInt {
 				return m_triangle_program;
 			}
 
-			const RefPtr<GLSLProgram>& triangle_program_ext () const
+			const RefPtr<GLSLProgram>& widget_program () const
 			{
-				return m_triangle_program_ext;
-			}
-
-			const RefPtr<GLSLProgram>& line_program () const
-			{
-				return m_line_program;
-			}
-
-			const RefPtr<GLSLProgram>& context_program () const
-			{
-				return m_context_program;
+				return widget_program_;
 			}
 
 			const RefPtr<GLSLProgram>& image_program () const
@@ -226,120 +215,6 @@ namespace BlendInt {
 				return m_triangle_uniform_view;
 			}
 
-			// ----------------------------------------------------
-
-			GLint triangle_uniform_scale_ext () const
-			{
-				return m_triangle_uniform_scale_ext;
-			}
-
-			/**
-			 * @brief The vertex attribute location of coord
-			 *
-			 * Always return 0
-			 */
-			GLint triangle_attrib_coord_ext () const
-			{
-				return m_triangle_attrib_coord_ext;
-			}
-
-			/**
-			 * @brief The vertex attribute location of color
-			 *
-			 * Always return 1
-			 */
-			GLint triangle_attrib_shade_ext () const
-			{
-				return m_triangle_attrib_shade_ext;
-			}
-
-			GLint triangle_uniform_color_ext () const
-			{
-				return m_triangle_uniform_color_ext;
-			}
-
-			GLint triangle_uniform_antialias_ext () const
-			{
-				return m_triangle_uniform_antialias_ext;
-			}
-
-			GLint triangle_uniform_gamma_ext () const
-			{
-				return m_triangle_uniform_gamma_ext;
-			}
-
-			GLint triangle_uniform_position_ext () const
-			{
-				return m_triangle_uniform_position_ext;
-			}
-
-			GLint triangle_uniform_projection_ext () const
-			{
-				return m_triangle_uniform_projection_ext;
-			}
-
-			GLint triangle_uniform_rotation_ext () const
-			{
-				return m_triangle_uniform_rotation_ext;
-			}
-
-			GLint triangle_uniform_view_ext () const
-			{
-				return m_triangle_uniform_view_ext;
-			}
-
-			// ----------------------------------------------------
-
-			/**
-			 * @brief The vertex attribute location of coord
-			 *
-			 * Always return 0
-			 */
-			GLint line_attrib_coord () const
-			{
-				return m_line_attrib_coord;
-			}
-
-			/**
-			 * @brief The vertex attribute location of color
-			 *
-			 * Always return 1
-			 */
-			GLint line_attrib_color () const
-			{
-				return m_line_attrib_color;
-			}
-
-			GLint line_uniform_antialias () const
-			{
-				return m_line_uniform_antialias;
-			}
-
-			GLint line_uniform_gamma () const
-			{
-				return m_line_uniform_gamma;
-			}
-
-			GLint line_uniform_position () const
-			{
-				return m_line_uniform_position;
-			}
-
-			GLint line_uniform_projection () const
-			{
-				return m_line_uniform_projection;
-			}
-
-			GLint line_uniform_rotation () const
-			{
-				return m_line_uniform_rotation;
-			}
-
-			GLint line_uniform_view () const
-			{
-				return m_line_uniform_view;
-			}
-
 			GLint image_attrib_coord () const
 			{
 				return m_image_attrib_coord;
@@ -402,11 +277,9 @@ namespace BlendInt {
 
 			// ---------------------------------------------
 
-			RefPtr<GLSLProgram> m_triangle_program_ext;
+			RefPtr<GLSLProgram> widget_program_;
 
 			// ---------------------------------------------
-
-			RefPtr<GLSLProgram> m_line_program;
 
 			RefPtr<GLSLProgram> m_context_program;
 
@@ -456,48 +329,6 @@ namespace BlendInt {
 
 			GLint m_triangle_uniform_gamma;
 
-			// ---------------------------------------------------
-
-			GLint m_triangle_attrib_coord_ext;
-
-			GLint m_triangle_attrib_shade_ext;
-
-			GLint m_triangle_uniform_color_ext;
-
-			GLint m_triangle_uniform_projection_ext;
-
-			GLint m_triangle_uniform_view_ext;
-
-			GLint m_triangle_uniform_position_ext;
-
-			GLint m_triangle_uniform_rotation_ext;
-
-			GLint m_triangle_uniform_scale_ext;
-
-			GLint m_triangle_uniform_antialias_ext;
-
-			GLint m_triangle_uniform_gamma_ext;
-
-			// ---------------------------------------------------
-
-			GLint m_line_attrib_coord;
-
-			GLint m_line_attrib_color;
-
-			GLint m_line_uniform_projection;
-
-			GLint m_line_uniform_view;
-
-			GLint m_line_uniform_position;
-
-			GLint m_line_uniform_rotation;
-
-			GLint m_line_uniform_scale;
-
-			GLint m_line_uniform_antialias;
-
-			GLint m_line_uniform_gamma;
-
 			GLint m_image_attrib_coord;
 
 			GLint m_image_attrib_uv;
@@ -525,8 +356,6 @@ namespace BlendInt {
 			static const char* widget_vertex_shader;
 
 			static const char* widget_triangle_geometry_shader;
-
-			static const char* widget_line_geometry_shader;
 
 			static const char* widget_fragment_shader;
 

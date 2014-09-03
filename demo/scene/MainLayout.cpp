@@ -195,10 +195,6 @@ void MainLayout::RenderToBuffer()
 		program->Use();
 		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 		        glm::value_ptr(projection));
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-		        glm::value_ptr(projection));
 		program = Shaders::instance->text_program();
 		program->Use();
 		glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
@@ -227,10 +223,6 @@ void MainLayout::RenderToBuffer()
 		program = Shaders::instance->triangle_program();
 		program->Use();
 		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
 				glm::value_ptr(origin));
 		program = Shaders::instance->text_program();
 		program->Use();

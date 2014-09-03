@@ -54,6 +54,8 @@ namespace BlendInt {
 
 		void GenerateVertices (const Size& size, float border, int round_type, float radius);
 
+		void GenerateVerticesExt (const Size& size, float border, int round_type, float radius);
+
 		void GenerateVertices (const Size& size,
 				float border,
 				int round_type,
