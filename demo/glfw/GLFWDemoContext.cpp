@@ -5,6 +5,7 @@
 #include "GLFWDemoContext.hpp"
 
 #include <BlendInt/Core/Image.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 GLFWDemoContext::GLFWDemoContext(GLFWwindow* window)
 : BI::Context(),
@@ -79,6 +80,11 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	Widget* widget = Manage(new Widget);
+	widget->SetPosition(200, 200);
+
+	PushBack(widget);
+
 	/*
 	Workspace* ws = Manage(new Workspace);
 	ws->SetPosition(20, 20);
@@ -87,6 +93,7 @@ void GLFWDemoContext::Initialize ()
 	PushBack(ws);
 	*/
 
+	/*
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
 	panel->SetPosition(1020, 200);
@@ -106,6 +113,7 @@ void GLFWDemoContext::Initialize ()
 	panel->Resize(panel->GetPreferredSize());
 
 	PushBack(panel);
+	*/
 
 	/*
     Tab* tab = Manage (new Tab);

@@ -58,6 +58,14 @@ namespace BlendInt {
 				float border,
 				int round_type,
 				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown);
+
+		void GenerateVertices (const Size& size,
+				float border,
+				int round_type,
+				float radius,
 				const Color& color,
 				Orientation shadedir,
 				short shadetop,
@@ -107,6 +115,8 @@ namespace BlendInt {
 						const std::vector<GLfloat>& outer,
 						unsigned int num,
 						std::vector<GLfloat>& strip);
+
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
 		std::vector<GLfloat> inner_;
 
