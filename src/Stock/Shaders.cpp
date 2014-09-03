@@ -626,19 +626,7 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: m_text_attrib_coord(-1),
-		  m_text_uniform_projection(-1),
-		  m_text_uniform_view(-1),
-		  m_text_uniform_position(-1),
-		  m_text_uniform_rotation(-1),
-		  m_text_uniform_texture(-1),
-		  m_text_uniform_color(-1),
-		  m_primitive_attrib_coord_v3(-1),
-		  m_primitive_attrib_color_v4(-1),
-		  m_primitive_uniform_projection(-1),
-		  m_primitive_uniform_view(-1),
-		  m_primitive_uniform_model(-1),
-		  m_triangle_attrib_coord(-1),
+		: m_triangle_attrib_coord(-1),
 		  m_triangle_attrib_color(-1),
 		  m_triangle_uniform_projection(-1),
 		  m_triangle_uniform_view(-1),
@@ -646,15 +634,7 @@ namespace BlendInt {
 		  m_triangle_uniform_rotation(-1),
 		  m_triangle_uniform_scale(-1),
 		  m_triangle_uniform_antialias(-1),
-		  m_triangle_uniform_gamma(-1),
-		  m_image_attrib_coord(-1),
-		  m_image_attrib_uv(-1),
-		  m_image_uniform_projection(-1),
-		  m_image_uniform_view(-1),
-		  m_image_uniform_position(-1),
-		  m_image_uniform_rotation(-1),
-		  m_image_uniform_texture(-1),
-		  m_image_uniform_gamma(-1)
+		  m_triangle_uniform_gamma(-1)
 		{
 			m_text_program.reset(new GLSLProgram);
 
@@ -761,19 +741,11 @@ namespace BlendInt {
 			locations_[TEXT_TEXTURE] = m_text_program->GetUniformLocation("u_tex");
 			locations_[TEXT_COLOR] = m_text_program->GetUniformLocation("u_color");
 
-			m_text_attrib_coord = m_text_program->GetAttributeLocation("a_coord");
-			m_text_uniform_projection = m_text_program->GetUniformLocation("u_projection");
-			m_text_uniform_view = m_text_program->GetUniformLocation("u_view");
-			m_text_uniform_position = m_text_program->GetUniformLocation("u_position");
-			m_text_uniform_rotation = m_text_program->GetUniformLocation("u_rotation");
-			m_text_uniform_texture = m_text_program->GetUniformLocation("u_tex");
-			m_text_uniform_color = m_text_program->GetUniformLocation("u_color");
-
-			m_primitive_attrib_coord_v3 = m_primitive_program->GetAttributeLocation("coord");
-			m_primitive_attrib_color_v4 = m_primitive_program->GetAttributeLocation("color");
-			m_primitive_uniform_projection = m_primitive_program->GetUniformLocation("P");
-			m_primitive_uniform_view = m_primitive_program->GetUniformLocation("V");
-			m_primitive_uniform_model = m_primitive_program->GetUniformLocation("M");
+			locations_[PRIMITIVE_COORD] = m_primitive_program->GetAttributeLocation("coord");
+			locations_[PRIMITIVE_COLOR] = m_primitive_program->GetAttributeLocation("color");
+			locations_[PRIMITIVE_PROJECTION] = m_primitive_program->GetUniformLocation("P");
+			locations_[PRIMITIVE_VIEW] = m_primitive_program->GetUniformLocation("V");
+			locations_[PRIMITIVE_MODEL] = m_primitive_program->GetUniformLocation("M");
 
 			m_triangle_attrib_coord = m_triangle_program->GetAttributeLocation("a_coord");
 			m_triangle_attrib_color = m_triangle_program->GetAttributeLocation("a_color");
@@ -795,14 +767,14 @@ namespace BlendInt {
 			locations_[WIDGET_ANTI_ALIAS] = widget_program_->GetUniformLocation("u_AA");
 			locations_[WIDGET_GAMMA] = widget_program_->GetUniformLocation("u_gamma");
 
-			m_image_attrib_coord = m_image_program->GetAttributeLocation("a_coord");
-			m_image_attrib_uv = m_image_program->GetAttributeLocation("a_uv");
-			m_image_uniform_projection = m_image_program->GetUniformLocation("u_projection");
-			m_image_uniform_view = m_image_program->GetUniformLocation("u_view");
-			m_image_uniform_position = m_image_program->GetUniformLocation("u_position");
-			m_image_uniform_rotation = m_image_program->GetUniformLocation("u_rotation");
-			m_image_uniform_texture = m_image_program->GetUniformLocation("TexID");
-			m_image_uniform_gamma = m_image_program->GetUniformLocation("u_gamma");
+			locations_[IMAGE_COORD] = m_image_program->GetAttributeLocation("a_coord");
+			locations_[IMAGE_UV] = m_image_program->GetAttributeLocation("a_uv");
+			locations_[IMAGE_PROJECTION] = m_image_program->GetUniformLocation("u_projection");
+			locations_[IMAGE_VIEW] = m_image_program->GetUniformLocation("u_view");
+			locations_[IMAGE_POSITION] = m_image_program->GetUniformLocation("u_position");
+			locations_[IMAGE_ROTATION] = m_image_program->GetUniformLocation("u_rotation");
+			locations_[IMAGE_TEXTURE] = m_image_program->GetUniformLocation("TexID");
+			locations_[IMAGE_GAMMA] = m_image_program->GetUniformLocation("u_gamma");
 
 			return true;
 		}

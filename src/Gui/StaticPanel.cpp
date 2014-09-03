@@ -340,11 +340,11 @@ namespace BlendInt {
 					glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->image_program();
 			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
             GLint vp[4];
@@ -393,11 +393,11 @@ namespace BlendInt {
 					glm::value_ptr(origin));
 			program = Shaders::instance->text_program();
 			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->image_program();
 			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 
 			program->reset();

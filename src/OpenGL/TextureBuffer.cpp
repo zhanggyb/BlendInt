@@ -78,9 +78,9 @@ namespace BlendInt {
 			m_texture->bind();
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
 			program->Use();
-			glUniform3f(Shaders::instance->image_uniform_position(), x, y, 0.f);
-			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
-			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
+			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), x, y, 0.f);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
 
 			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

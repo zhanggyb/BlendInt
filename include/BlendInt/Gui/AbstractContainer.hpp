@@ -87,8 +87,6 @@ namespace BlendInt {
 
 		AbstractWidget* GetWidgetAt (int i) const;
 
-		void RenderSubWidgetsToTexture (Profile& profile, GLTexture2D* texture);
-
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

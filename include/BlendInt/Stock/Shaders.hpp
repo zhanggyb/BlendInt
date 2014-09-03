@@ -55,6 +55,22 @@ namespace BlendInt {
 			TEXT_TEXTURE,
 			TEXT_COLOR,
 
+			// Image
+			IMAGE_COORD,
+			IMAGE_UV,
+			IMAGE_PROJECTION,
+			IMAGE_VIEW,
+			IMAGE_POSITION,
+			IMAGE_ROTATION,
+			IMAGE_TEXTURE,
+			IMAGE_GAMMA,
+
+			PRIMITIVE_COORD,
+			PRIMITIVE_COLOR,
+			PRIMITIVE_PROJECTION,
+			PRIMITIVE_VIEW,
+			PRIMITIVE_MODEL,
+
 			LocationLast
 		};
 
@@ -98,66 +114,6 @@ namespace BlendInt {
 			inline GLint location (LocationType index) const
 			{
 				return locations_[index];
-			}
-
-			GLint primitive_attrib_color_v4 () const
-			{
-				return m_primitive_attrib_color_v4;
-			}
-
-			GLint primitive_attrib_coord_v3 () const
-			{
-				return m_primitive_attrib_coord_v3;
-			}
-
-			GLint primitive_uniform_model () const
-			{
-				return m_primitive_uniform_model;
-			}
-
-			GLint primitive_uniform_projection () const
-			{
-				return m_primitive_uniform_projection;
-			}
-
-			GLint primitive_uniform_view () const
-			{
-				return m_primitive_uniform_view;
-			}
-
-			GLint text_attrib_coord () const
-			{
-				return m_text_attrib_coord;
-			}
-
-			GLint text_uniform_color () const
-			{
-				return m_text_uniform_color;
-			}
-
-			GLint text_uniform_position () const
-			{
-				return m_text_uniform_position;
-			}
-
-			GLint text_uniform_projection () const
-			{
-				return m_text_uniform_projection;
-			}
-
-			GLint text_uniform_rotation () const
-			{
-				return m_text_uniform_rotation;
-			}
-
-			GLint text_uniform_texture () const
-			{
-				return m_text_uniform_texture;
-			}
-
-			GLint text_uniform_view () const
-			{
-				return m_text_uniform_view;
 			}
 
 			GLint triangle_uniform_scale () const
@@ -215,46 +171,6 @@ namespace BlendInt {
 				return m_triangle_uniform_view;
 			}
 
-			GLint image_attrib_coord () const
-			{
-				return m_image_attrib_coord;
-			}
-
-			GLint image_attrib_uv () const
-			{
-				return m_image_attrib_uv;
-			}
-
-			GLint image_uniform_gamma () const
-			{
-				return m_image_uniform_gamma;
-			}
-
-			GLint image_uniform_position () const
-			{
-				return m_image_uniform_position;
-			}
-
-			GLint image_uniform_projection () const
-			{
-				return m_image_uniform_projection;
-			}
-
-			GLint image_uniform_rotation () const
-			{
-				return m_image_uniform_rotation;
-			}
-
-			GLint image_uniform_texture () const
-			{
-				return m_image_uniform_texture;
-			}
-
-			GLint image_uniform_view () const
-			{
-				return m_image_uniform_view;
-			}
-
 		private:
 
 			friend class BlendInt::Interface;
@@ -287,30 +203,6 @@ namespace BlendInt {
 
 			GLint locations_[LocationLast];
 
-			GLint m_text_attrib_coord;
-
-			GLint m_text_uniform_projection;
-
-			GLint m_text_uniform_view;
-
-			GLint m_text_uniform_position;
-
-			GLint m_text_uniform_rotation;
-
-			GLint m_text_uniform_texture;
-
-			GLint m_text_uniform_color;
-
-			GLint m_primitive_attrib_coord_v3;
-
-			GLint m_primitive_attrib_color_v4;
-
-			GLint m_primitive_uniform_projection;
-
-			GLint m_primitive_uniform_view;
-
-			GLint m_primitive_uniform_model;
-
 			GLint m_triangle_attrib_coord;
 
 			GLint m_triangle_attrib_color;
@@ -328,22 +220,6 @@ namespace BlendInt {
 			GLint m_triangle_uniform_antialias;
 
 			GLint m_triangle_uniform_gamma;
-
-			GLint m_image_attrib_coord;
-
-			GLint m_image_attrib_uv;
-
-			GLint m_image_uniform_projection;
-
-			GLint m_image_uniform_view;
-
-			GLint m_image_uniform_position;
-
-			GLint m_image_uniform_rotation;
-
-			GLint m_image_uniform_texture;
-
-			GLint m_image_uniform_gamma;
 
 			static const char* text_vertex_shader;
 

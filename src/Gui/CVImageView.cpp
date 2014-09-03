@@ -195,9 +195,9 @@ namespace BlendInt {
 
 			program = Shaders::instance->image_program();
 			program->Use();
-			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
-			glUniform3f(Shaders::instance->image_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
+			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -254,11 +254,11 @@ namespace BlendInt {
 		image_plane_->bind();
 		image_plane_->set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
-		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
-		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));
+		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2, GL_FLOAT,
+		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
