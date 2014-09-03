@@ -127,7 +127,7 @@ namespace BlendInt {
 				"	vFragColor = vColor;"
 				"}";
 
-		const char* Shaders::widget_vertex_shader =
+		const char* Shaders::triangle_vertex_shader =
 				"#version 330\n"
 				""
 				"layout(location=0) in vec2 a_coord;"
@@ -139,7 +139,7 @@ namespace BlendInt {
 				"	VertexColor = a_color;"
 				"}";
 
-		const char* Shaders::widget_triangle_geometry_shader =
+		const char* Shaders::triangle_geometry_shader =
 		        "#version 330\n"
 				        ""
 				        "layout (triangles) in;"
@@ -236,7 +236,7 @@ namespace BlendInt {
 				        ""
 				        "}";
 
-		const char* Shaders::widget_fragment_shader =
+		const char* Shaders::triangle_fragment_shader =
 		        "#version 330\n"
 				        ""
 				        "in vec4 PreFragColor;"
@@ -267,7 +267,7 @@ namespace BlendInt {
 				"	VertexShade = a_coord.z;"
 				"}";
 
-		const char* Shaders::widget_triangle_geometry_shader_ext =
+		const char* Shaders::widget_geometry_shader_ext =
 		        "#version 330\n"
 				""
 				"layout (triangles) in;"
@@ -551,7 +551,7 @@ namespace BlendInt {
 		"	gl_FragColor = vec4(f_color, 1.0);"
 		"}";
 
-		const char* Shaders::widget_vertex_shader =
+		const char* Shaders::triangle_vertex_shader =
 		"#version 120\n"
 		""
 		"attribute vec2 xy;"
@@ -565,7 +565,7 @@ namespace BlendInt {
 		"	f_color = color;"
 		"}";
 
-		const char* Shaders::widget_fragment_shader =
+		const char* Shaders::triangle_fragment_shader =
 		"#version 120\n"
 		""
 		"varying vec4 f_color;"
@@ -637,15 +637,9 @@ namespace BlendInt {
 		  m_triangle_uniform_gamma(-1)
 		{
 			m_text_program.reset(new GLSLProgram);
-
 			m_primitive_program.reset(new GLSLProgram);
-
 			m_triangle_program.reset(new GLSLProgram);
-
 			widget_program_.reset(new GLSLProgram);
-
-			m_context_program.reset(new GLSLProgram);
-
 			m_image_program.reset(new GLSLProgram);
 		}
 
@@ -667,10 +661,6 @@ namespace BlendInt {
 			}
 
 			if (!widget_program_->Create()) {
-				return false;
-			}
-
-			if (!m_context_program->Create()) {
 				return false;
 			}
 
@@ -698,12 +688,12 @@ namespace BlendInt {
 			}
 
 			m_triangle_program->AttachShader(
-			        widget_vertex_shader, GL_VERTEX_SHADER);
+			        triangle_vertex_shader, GL_VERTEX_SHADER);
 			m_triangle_program->AttachShader(
-			        widget_triangle_geometry_shader,
+			        triangle_geometry_shader,
 			        GL_GEOMETRY_SHADER);
 			m_triangle_program->AttachShader(
-			        widget_fragment_shader, GL_FRAGMENT_SHADER);
+			        triangle_fragment_shader, GL_FRAGMENT_SHADER);
 			if (!m_triangle_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
 				        m_triangle_program->id());
@@ -713,7 +703,7 @@ namespace BlendInt {
 			widget_program_->AttachShader(
 			        widget_vertex_shader_ext, GL_VERTEX_SHADER);
 			widget_program_->AttachShader(
-			        widget_triangle_geometry_shader_ext,
+			        widget_geometry_shader_ext,
 			        GL_GEOMETRY_SHADER);
 			widget_program_->AttachShader(
 			        widget_fragment_shader_ext, GL_FRAGMENT_SHADER);

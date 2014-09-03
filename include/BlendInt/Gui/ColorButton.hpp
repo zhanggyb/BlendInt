@@ -47,6 +47,8 @@ namespace BlendInt {
 
 		void SetColor (const Color& color);
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -61,11 +63,11 @@ namespace BlendInt {
 
 		void InitializeColorButton ();
 
-		GLuint m_vao[2];
+		GLuint vao_[2];
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		Color m_color;
+		Color color_;
 	};
 
 }

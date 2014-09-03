@@ -197,8 +197,6 @@ namespace BlendInt {
 
 			// ---------------------------------------------
 
-			RefPtr<GLSLProgram> m_context_program;
-
 			RefPtr<GLSLProgram> m_image_program;
 
 			GLint locations_[LocationLast];
@@ -229,17 +227,17 @@ namespace BlendInt {
 
 			static const char* primitive_fragment_shader;
 
-			static const char* widget_vertex_shader;
+			static const char* triangle_vertex_shader;
 
-			static const char* widget_triangle_geometry_shader;
+			static const char* triangle_geometry_shader;
 
-			static const char* widget_fragment_shader;
+			static const char* triangle_fragment_shader;
 
 			// ----------------------------------------------
 
 			static const char* widget_vertex_shader_ext;
 
-			static const char* widget_triangle_geometry_shader_ext;
+			static const char* widget_geometry_shader_ext;
 
 			static const char* widget_fragment_shader_ext;
 

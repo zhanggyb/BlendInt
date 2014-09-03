@@ -115,6 +115,11 @@ void GLFWDemoContext::Initialize ()
 
 	PushBack(panel);
 
+	ColorButton* cb = Manage(new ColorButton);
+	cb->SetPosition(200, 200);
+
+	PushBack(cb);
+
 	/*
     Tab* tab = Manage (new Tab);
     tab->SetPosition(100, 100);
