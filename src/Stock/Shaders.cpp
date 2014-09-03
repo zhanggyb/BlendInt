@@ -357,8 +357,8 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec2 a_coord;"
-				"layout(location=1) in vec4 a_shade;"
-				"out vec4 VertexShade;"
+				"layout(location=1) in float a_shade;"
+				"out float VertexShade;"
 				""
 				"void main(void) {"
 				"	gl_Position = vec4(a_coord, 0.0, 1.0);"
@@ -370,14 +370,14 @@ namespace BlendInt {
 				""
 				"layout (triangles) in;"
 				"layout (triangle_strip, max_vertices = 24) out;"
-				"in vec4 VertexShade[];"
+				"in float VertexShade[];"
 				"uniform mat4 u_projection;"	// projection matrix
 				"uniform mat4 u_view;"// view matrix
 				"uniform vec3 u_position;"// position
 				"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				"uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
 				"uniform bool u_AA = false;"
-				"out vec4 PreFragShade;"
+				"out float PreFragShade;"
 				""
 				"const vec2 AA_JITTER[8] = vec2[8]("
 				"	vec2(0.468813, -0.481430),"
@@ -462,7 +462,7 @@ namespace BlendInt {
 		const char* Shaders::widget_fragment_shader_ext =
 		        "#version 330\n"
 				""
-				"in vec4 PreFragShade;"
+				"in float PreFragShade;"
 				"uniform vec4 u_color;"
 				"uniform bool u_AA = false;"
 				"uniform int u_gamma = 0;"
@@ -477,7 +477,7 @@ namespace BlendInt {
 				"	} else {"
 				"		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
 				"	}"
-				"	FragmentColor = PreFragShade + color_calib + color;"
+				"	FragmentColor = vec4(PreFragShade) + color_calib + color;"
 				"}";
 
 		// ---------------------------------------------------------------
@@ -900,6 +900,14 @@ namespace BlendInt {
 				return false;
 			}
 
+			locations_[TEXT_COORD] = m_text_program->GetAttributeLocation("a_coord");
+			locations_[TEXT_PROJECTION] = m_text_program->GetUniformLocation("u_projection");
+			locations_[TEXT_VIEW] = m_text_program->GetUniformLocation("u_view");
+			locations_[TEXT_POSITION] = m_text_program->GetUniformLocation("u_position");
+			locations_[TEXT_ROTATION] = m_text_program->GetUniformLocation("u_rotation");
+			locations_[TEXT_TEXTURE] = m_text_program->GetUniformLocation("u_tex");
+			locations_[TEXT_COLOR] = m_text_program->GetUniformLocation("u_color");
+
 			m_text_attrib_coord = m_text_program->GetAttributeLocation("a_coord");
 			m_text_uniform_projection = m_text_program->GetUniformLocation("u_projection");
 			m_text_uniform_view = m_text_program->GetUniformLocation("u_view");
@@ -923,6 +931,17 @@ namespace BlendInt {
 			m_triangle_uniform_scale = m_triangle_program->GetUniformLocation("u_scale");
 			m_triangle_uniform_antialias = m_triangle_program->GetUniformLocation("u_AA");
 			m_triangle_uniform_gamma = m_triangle_program->GetUniformLocation("u_gamma");
+
+			locations_[TRIANGLE_COORD] = m_triangle_program_ext->GetAttributeLocation("a_coord");
+			locations_[TRIANGLE_SHADE] = m_triangle_program_ext->GetAttributeLocation("a_shade");
+			locations_[TRIANGLE_COLOR] = m_triangle_program_ext->GetUniformLocation("u_color");
+			locations_[TRIANGLE_PROJECTION] = m_triangle_program_ext->GetUniformLocation("u_projection");
+			locations_[TRIANGLE_VIEW] = m_triangle_program_ext->GetUniformLocation("u_view");
+			locations_[TRIANGLE_POSITION] = m_triangle_program_ext->GetUniformLocation("u_position");
+			locations_[TRIANGLE_ROTATION] = m_triangle_program_ext->GetUniformLocation("u_rotation");
+			locations_[TRIANGLE_SCALE] = m_triangle_program_ext->GetUniformLocation("u_scale");
+			locations_[TRIANGLE_ANTI_ALIAS] = m_triangle_program_ext->GetUniformLocation("u_AA");
+			locations_[TRIANGLE_GAMMA] = m_triangle_program_ext->GetUniformLocation("u_gamma");
 
 			m_triangle_attrib_coord_ext = m_triangle_program_ext->GetAttributeLocation("a_coord");
 			m_triangle_attrib_shade_ext = m_triangle_program_ext->GetAttributeLocation("a_shade");

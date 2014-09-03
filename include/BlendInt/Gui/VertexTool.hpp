@@ -111,6 +111,12 @@ namespace BlendInt {
 						unsigned int num,
 						std::vector<GLfloat>& strip);
 
+		void GenerateTriangleStripVerticesExt (
+						const std::vector<GLfloat>& inner,
+						const std::vector<GLfloat>& outer,
+						unsigned int num,
+						std::vector<GLfloat>& strip);
+
 		void GenerateOpenTriangleStripVertices (
 						const std::vector<GLfloat>& outer,
 						unsigned int num,

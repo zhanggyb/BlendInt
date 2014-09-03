@@ -297,8 +297,8 @@ namespace BlendInt {
 
 		{	// generate inner vertices
 
-			if(inner_.size() != ((outline_vertex_number + 2) * 6)) {
-				inner_.resize((outline_vertex_number + 2) * 6);
+			if(inner_.size() != ((outline_vertex_number + 2) * 3)) {
+				inner_.resize((outline_vertex_number + 2) * 3);
 			}
 
 			// inner[0, 0] is the center of a triangle fan
@@ -313,44 +313,35 @@ namespace BlendInt {
 								facxi * (inner_[0] - minxi));
 			}
 			inner_[2] = offset;
-			inner_[3] = offset;
-			inner_[4] = offset;
-			inner_[5] = offset;
 
 			count = 1;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					inner_[count * 6 + 0] = minxi + veci[i][1];
-					inner_[count * 6 + 1] = minyi + radi - veci[i][0];
+					inner_[count * 3 + 0] = minxi + veci[i][1];
+					inner_[count * 3 + 1] = minyi + radi - veci[i][0];
 
 					if (shadedir == Vertical) {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facyi * (inner_[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 3 + 1] - minyi));
 					} else {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facxi * (inner_[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 3 + 0] - minxi));
 					}
 
-					inner_[count * 6 + 2] = offset;
-					inner_[count * 6 + 3] = offset;
-					inner_[count * 6 + 4] = offset;
-					inner_[count * 6 + 5] = offset;
+					inner_[count * 3 + 2] = offset;
 				}
 			} else {
-				inner_[count * 6 + 0] = minxi;
-				inner_[count * 6 + 1] = minyi;
+				inner_[count * 3 + 0] = minxi;
+				inner_[count * 3 + 1] = minyi;
 
 				if (shadedir == Vertical) {
 					offset = make_shaded_offset(shadetop, shadedown, 0.f);
 				} else {
 					offset = make_shaded_offset(shadetop, shadedown, 0.f);
 				}
-				inner_[count * 6 + 2] = offset;
-				inner_[count * 6 + 3] = offset;
-				inner_[count * 6 + 4] = offset;
-				inner_[count * 6 + 5] = offset;
+				inner_[count * 3 + 2] = offset;
 
 				count++;
 			}
@@ -358,34 +349,28 @@ namespace BlendInt {
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					inner_[count * 6 + 0] = maxxi - radi + veci[i][0];
-					inner_[count * 6 + 1] = minyi + veci[i][1];
+					inner_[count * 3 + 0] = maxxi - radi + veci[i][0];
+					inner_[count * 3 + 1] = minyi + veci[i][1];
 
 					if (shadedir == Vertical) {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facyi * (inner_[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 3 + 1] - minyi));
 					} else {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facxi * (inner_[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 3 + 0] - minxi));
 					}
-					inner_[count * 6 + 2] = offset;
-					inner_[count * 6 + 3] = offset;
-					inner_[count * 6 + 4] = offset;
-					inner_[count * 6 + 5] = offset;
+					inner_[count * 3 + 2] = offset;
 				}
 			} else {
-				inner_[count * 6 + 0] = maxxi;
-				inner_[count * 6 + 1] = minyi;
+				inner_[count * 3 + 0] = maxxi;
+				inner_[count * 3 + 1] = minyi;
 
 				if (shadedir == Vertical) {
 					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
 				} else {
 					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
 				}
-				inner_[count * 6 + 2] = offset;
-				inner_[count * 6 + 3] = offset;
-				inner_[count * 6 + 4] = offset;
-				inner_[count * 6 + 5] = offset;
+				inner_[count * 3 + 2] = offset;
 
 				count++;
 			}
@@ -393,34 +378,28 @@ namespace BlendInt {
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					inner_[count * 6 + 0] = maxxi - veci[i][1];
-					inner_[count * 6 + 1] = maxyi - radi + veci[i][0];
+					inner_[count * 3 + 0] = maxxi - veci[i][1];
+					inner_[count * 3 + 1] = maxyi - radi + veci[i][0];
 
 					if (shadedir == Vertical) {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facyi * (inner_[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 3 + 1] - minyi));
 					} else {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facxi * (inner_[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 3 + 0] - minxi));
 					}
-					inner_[count * 6 + 2] = offset;
-					inner_[count * 6 + 3] = offset;
-					inner_[count * 6 + 4] = offset;
-					inner_[count * 6 + 5] = offset;
+					inner_[count * 3 + 2] = offset;
 				}
 			} else {
-				inner_[count * 6 + 0] = maxxi;
-				inner_[count * 6 + 1] = maxyi;
+				inner_[count * 3 + 0] = maxxi;
+				inner_[count * 3 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
 					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
 				} else {
 					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
 				}
-				inner_[count * 6 + 2] = offset;
-				inner_[count * 6 + 3] = offset;
-				inner_[count * 6 + 4] = offset;
-				inner_[count * 6 + 5] = offset;
+				inner_[count * 3 + 2] = offset;
 
 				count++;
 			}
@@ -428,45 +407,36 @@ namespace BlendInt {
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					inner_[count * 6 + 0] = minxi + radi - veci[i][0];
-					inner_[count * 6 + 1] = maxyi - veci[i][1];
+					inner_[count * 3 + 0] = minxi + radi - veci[i][0];
+					inner_[count * 3 + 1] = maxyi - veci[i][1];
 
 					if (shadedir == Vertical) {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facyi * (inner_[count * 6 + 1] - minyi));
+										facyi * (inner_[count * 3 + 1] - minyi));
 					} else {
 						offset = make_shaded_offset(shadetop, shadedown,
-										facxi * (inner_[count * 6 + 0] - minxi));
+										facxi * (inner_[count * 3 + 0] - minxi));
 					}
-					inner_[count * 6 + 2] = offset;
-					inner_[count * 6 + 3] = offset;
-					inner_[count * 6 + 4] = offset;
-					inner_[count * 6 + 5] = offset;
+					inner_[count * 3 + 2] = offset;
 				}
 			} else {
 
-				inner_[count * 6 + 0] = minxi;
-				inner_[count * 6 + 1] = maxyi;
+				inner_[count * 3 + 0] = minxi;
+				inner_[count * 3 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
 					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
 				} else {
 					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
 				}
-				inner_[count * 6 + 2] = offset;
-				inner_[count * 6 + 3] = offset;
-				inner_[count * 6 + 4] = offset;
-				inner_[count * 6 + 5] = offset;
+				inner_[count * 3 + 2] = offset;
 
 				count++;
 			}
 
-			inner_[count * 6 + 0] = inner_[6 + 0];
-			inner_[count * 6 + 1] = inner_[6 + 1];
-			inner_[count * 6 + 2] = inner_[6 + 2];
-			inner_[count * 6 + 3] = inner_[6 + 3];
-			inner_[count * 6 + 4] = inner_[6 + 4];
-			inner_[count * 6 + 5] = inner_[6 + 5];
+			inner_[count * 3 + 0] = inner_[3 + 0];
+			inner_[count * 3 + 1] = inner_[3 + 1];
+			inner_[count * 3 + 2] = inner_[3 + 2];
 
 		}
 
@@ -526,7 +496,7 @@ namespace BlendInt {
 				count++;
 			}
 
-			GenerateTriangleStripVertices(inner_, edge_vertices, count, outer_);
+			GenerateTriangleStripVerticesExt(inner_, edge_vertices, count, outer_);
 
 		} else {
 
@@ -837,6 +807,52 @@ namespace BlendInt {
 
 		}
 
+	}
+
+	void VertexTool::GenerateTriangleStripVerticesExt (
+					const std::vector<GLfloat>& inner,
+					const std::vector<GLfloat>& outer,
+					unsigned int num,
+					std::vector<GLfloat>& strip)
+	{
+		if (num > outer.size() / 2) {
+			DBG_PRINT_MSG("Attempt to process %u vertices, but maximum is %ld",
+					num, outer.size() / 2);
+			return;
+		}
+
+		int step = 0;	// stride in inner
+
+		if (inner.size() >= (outer.size() * 3 / 2 + 3 * 2)) {
+			step = 3;
+		} else if (inner.size() >= (outer.size() + 2 * 2)) {
+			step = 2;
+		} else {
+			DBG_PRINT_MSG("Not enough inner vertices: %ld", inner.size());
+			return;
+		}
+
+		if (strip.size() != (num * 2 + 2) * 2) {
+			strip.resize((num * 2 + 2) * 2);
+		}
+
+		size_t count = 0;
+		for (int i = 0, j = 0; count < num * 2; count++) {
+			if (count % 2 == 0) {
+				strip[count * 2] = inner[step + i];
+				strip[count * 2 + 1] = inner[step + i + 1];
+				i += step;
+			} else {
+				strip[count * 2] = outer[j];
+				strip[count * 2 + 1] = outer[j + 1];
+				j += 2;
+			}
+		}
+
+		strip[count * 2] = inner[step + 0];
+		strip[count * 2 + 1] = inner[step + 1];
+		strip[count * 2 + 2] = outer[0];
+		strip[count * 2 + 3] = outer[1];
 	}
 
 	void VertexTool::GenerateTriangleStripVertices (

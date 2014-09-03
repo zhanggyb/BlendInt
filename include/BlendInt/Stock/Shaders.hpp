@@ -33,6 +33,32 @@ namespace BlendInt {
 
 	namespace Stock {
 
+		enum LocationType {
+
+			// Triangles
+			TRIANGLE_COORD,
+			TRIANGLE_SHADE,
+			TRIANGLE_COLOR,
+			TRIANGLE_PROJECTION,
+			TRIANGLE_VIEW,
+			TRIANGLE_POSITION,
+			TRIANGLE_ROTATION,
+			TRIANGLE_SCALE,
+			TRIANGLE_ANTI_ALIAS,
+			TRIANGLE_GAMMA,
+
+			// Text
+			TEXT_COORD,
+			TEXT_PROJECTION,
+			TEXT_VIEW,
+			TEXT_POSITION,
+			TEXT_ROTATION,
+			TEXT_TEXTURE,
+			TEXT_COLOR,
+
+			LocationLast
+		};
+
 		/**
 		 * @brief A class which provide pre-defined shaders
 		 *
@@ -78,6 +104,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& image_program () const
 			{
 				return m_image_program;
+			}
+
+			inline GLint location (LocationType index) const
+			{
+				return locations_[index];
 			}
 
 			GLint primitive_attrib_color_v4 () const
@@ -380,6 +411,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> m_context_program;
 
 			RefPtr<GLSLProgram> m_image_program;
+
+			GLint locations_[LocationLast];
 
 			GLint m_text_attrib_coord;
 
