@@ -154,7 +154,7 @@ namespace BlendInt {
 	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), gamma);
@@ -182,7 +182,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), gamma);

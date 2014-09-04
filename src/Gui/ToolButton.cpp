@@ -134,7 +134,7 @@ namespace BlendInt {
 	ResponseType ToolButton::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
 

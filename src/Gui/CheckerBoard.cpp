@@ -139,7 +139,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 		program->SetUniform1i("u_gamma", gamma);

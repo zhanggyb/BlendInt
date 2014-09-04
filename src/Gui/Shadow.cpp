@@ -128,7 +128,7 @@ namespace BlendInt {
 	{
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1,
 		        glm::value_ptr(pos));

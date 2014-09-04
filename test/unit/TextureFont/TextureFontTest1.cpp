@@ -109,7 +109,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     	glBindVertexArray(vao);
 
-    	program.Use();
+    	program.use();
 
     	glActiveTexture(GL_TEXTURE0);
     	glBindTexture(GL_TEXTURE_2D, font.texture());

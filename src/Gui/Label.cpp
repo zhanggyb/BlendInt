@@ -97,7 +97,7 @@ namespace BlendInt {
 	ResponseType Label::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);

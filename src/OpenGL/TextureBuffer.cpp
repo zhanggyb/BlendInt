@@ -77,7 +77,7 @@ namespace BlendInt {
 
 			m_texture->bind();
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
-			program->Use();
+			program->use();
 			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), x, y, 0.f);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);

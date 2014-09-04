@@ -331,19 +331,19 @@ namespace BlendInt {
 
 			RefPtr<GLSLProgram> program =
 			        Shaders::instance->triangle_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->widget_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->image_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
@@ -353,7 +353,7 @@ namespace BlendInt {
 
 			// Draw frame panel
 			program = Shaders::instance->triangle_program();
-			program->Use();
+			program->use();
 
 			glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
@@ -384,19 +384,19 @@ namespace BlendInt {
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
 			program = Shaders::instance->triangle_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->widget_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->text_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->image_program();
-			program->Use();
+			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 

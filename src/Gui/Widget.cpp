@@ -69,7 +69,7 @@ namespace BlendInt {
 	ResponseType Widget::Draw(Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
 				(float) position().x(), (float) position().y(), 0.f);

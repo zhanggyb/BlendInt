@@ -125,7 +125,7 @@ namespace BlendInt {
 
 		glm::mat4 mv = view_matrix * model_matrix_;
 
-		program_->Use();
+		program_->use();
 		program_->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 				glm::value_ptr(projection_matrix * view_matrix));
 		program_->SetUniform3f("Kd", 0.9f, 0.9f, 0.9f);

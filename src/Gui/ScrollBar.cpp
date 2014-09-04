@@ -194,7 +194,7 @@ namespace BlendInt {
 	ResponseType ScrollBar::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(),
 		        (float) position().x(), (float) position().y(), 0.f);

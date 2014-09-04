@@ -273,7 +273,7 @@ namespace BlendInt {
         //}
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
@@ -318,7 +318,7 @@ namespace BlendInt {
 
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-        program->Use();
+        program->use();
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);

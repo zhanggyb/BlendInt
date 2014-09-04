@@ -323,7 +323,7 @@ namespace BlendInt {
 	{
 		if(texture_) {
 			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
-			program->Use();
+			program->use();
 
 			glUniform3fv(Shaders::instance->location(Stock::IMAGE_POSITION), 1, glm::value_ptr(pos));
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), gamma);

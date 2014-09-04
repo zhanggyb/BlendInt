@@ -64,7 +64,7 @@ namespace BlendInt {
 
 	ResponseType FolderList::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->Use();
+		Shaders::instance->triangle_program()->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (GLfloat)position().x(), (GLfloat)position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);

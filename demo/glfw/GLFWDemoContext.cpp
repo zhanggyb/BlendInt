@@ -6,6 +6,7 @@
 
 #include <BlendInt/Core/Image.hpp>
 #include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
 
 GLFWDemoContext::GLFWDemoContext(GLFWwindow* window)
 : BI::Context(),
@@ -119,6 +120,11 @@ void GLFWDemoContext::Initialize ()
 	cb->SetPosition(200, 200);
 
 	PushBack(cb);
+
+	RadioButton* rb = Manage(new RadioButton("Radio Button"));
+	rb->SetPosition(200, 400);
+
+	PushBack(rb);
 
 	/*
     Tab* tab = Manage (new Tab);

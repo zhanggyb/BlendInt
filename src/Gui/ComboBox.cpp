@@ -221,7 +221,7 @@ namespace BlendInt {
 		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->Use();
+		program->use();
 
 		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
 				glm::value_ptr(pos));

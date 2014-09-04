@@ -263,7 +263,7 @@ namespace BlendInt {
 	ResponseType ToggleButton::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->Use();
+		program->use();
 
 		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
 

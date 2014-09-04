@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position",
 		        (float) (position().x() + size().width() / 2.f),

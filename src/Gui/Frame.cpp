@@ -90,7 +90,7 @@ namespace BlendInt {
 	ResponseType Frame::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float)position().x(), (float)position().y(), 0.f);
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.0f);

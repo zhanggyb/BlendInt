@@ -157,7 +157,7 @@ namespace BlendInt {
 	ResponseType ImageView::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
@@ -181,7 +181,7 @@ namespace BlendInt {
 
 		if (texture_->GetWidth() > 0) {
 			program = Shaders::instance->image_program();
-			program->Use();
+			program->use();
 			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);

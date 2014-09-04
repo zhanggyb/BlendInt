@@ -151,7 +151,7 @@ namespace BlendInt {
 		int total_count = max * 2 * 2 * 2;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->primitive_program();
-		program->Use();
+		program->use();
 
 		glUniformMatrix4fv(Shaders::instance->location(Stock::PRIMITIVE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection_matrix));
 		glUniformMatrix4fv(Shaders::instance->location(Stock::PRIMITIVE_VIEW), 1, GL_FALSE, glm::value_ptr(view_matrix));

@@ -43,7 +43,7 @@
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Label.hpp>
@@ -111,9 +111,9 @@ namespace BlendInt {
 		hbox1->PushBack(colorwheel);
 		hbox1->PushBack(br_slider);
 
-		ToggleButton* btn1 = Manage(new ToggleButton("RGB"));
-		ToggleButton* btn2 = Manage(new ToggleButton("HSV"));
-		ToggleButton* btn3 = Manage(new ToggleButton("Hex"));
+		RadioButton* btn1 = Manage(new RadioButton("RGB"));
+		RadioButton* btn2 = Manage(new RadioButton("HSV"));
+		RadioButton* btn3 = Manage(new RadioButton("Hex"));
 
 		radio_group_.PushBack(btn1);
 		radio_group_.PushBack(btn2);
@@ -213,7 +213,7 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);
