@@ -237,7 +237,7 @@ namespace BlendInt {
 
 			VertexTool tool;
 			if(Theme::instance->text().shaded) {
-				tool.GenerateVertices(*request.size(),
+				tool.GenerateShadedVertices(*request.size(),
 						DefaultBorderWidth(),
 						round_type(),
 				        round_radius(),
@@ -245,7 +245,7 @@ namespace BlendInt {
 				        Theme::instance->instance->text().shadetop,
 				        Theme::instance->instance->text().shadedown);
 			} else {
-				tool.GenerateVerticesExt(*request.size(),
+				tool.GenerateShadedVertices(*request.size(),
 						DefaultBorderWidth(),
 						round_type(),
 				        round_radius());
@@ -280,7 +280,7 @@ namespace BlendInt {
 
 			VertexTool tool;
 			if(Theme::instance->text().shaded) {
-				tool.GenerateVertices(size(),
+				tool.GenerateShadedVertices(size(),
 						DefaultBorderWidth(),
 						*request.round_type(),
 				        round_radius(),
@@ -288,7 +288,7 @@ namespace BlendInt {
 				        Theme::instance->instance->text().shadetop,
 				        Theme::instance->instance->text().shadedown);
 			} else {
-				tool.GenerateVerticesExt(size(),
+				tool.GenerateShadedVertices(size(),
 						DefaultBorderWidth(),
 						*request.round_type(),
 				        round_radius());
@@ -313,7 +313,7 @@ namespace BlendInt {
 		if (request.target() == this) {
 			VertexTool tool;
 			if(Theme::instance->text().shaded) {
-				tool.GenerateVertices(size(),
+				tool.GenerateShadedVertices(size(),
 						DefaultBorderWidth(),
 						round_type(),
 						*request.round_radius(),
@@ -321,7 +321,7 @@ namespace BlendInt {
 				        Theme::instance->instance->text().shadetop,
 				        Theme::instance->instance->text().shadedown);
 			} else {
-				tool.GenerateVerticesExt(size(),
+				tool.GenerateShadedVertices(size(),
 						DefaultBorderWidth(),
 						round_type(),
 						*request.round_radius());
@@ -404,7 +404,7 @@ namespace BlendInt {
 	{
 		VertexTool tool;
 		if(Theme::instance->text().shaded) {
-			tool.GenerateVertices(size(),
+			tool.GenerateShadedVertices(size(),
 					DefaultBorderWidth(),
 					round_type(),
 					round_radius(),
@@ -412,7 +412,7 @@ namespace BlendInt {
 					Theme::instance->text().shadetop,
 					Theme::instance->text().shadedown);
 		} else {
-			tool.GenerateVerticesExt(size(),
+			tool.GenerateShadedVertices(size(),
 					DefaultBorderWidth(),
 					round_type(),
 					round_radius());

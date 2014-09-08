@@ -170,12 +170,12 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->radio_button().shaded) {
-				tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
 						round_type(), round_radius(), Vertical,
 						Theme::instance->radio_button().shadetop,
 						Theme::instance->radio_button().shadedown);
 			} else {
-				tool.GenerateVerticesExt(*request.size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
 						round_type(), round_radius());
 			}
 			inner_->bind();
@@ -202,12 +202,12 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->radio_button().shaded) {
-				tool.GenerateVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						*request.round_type(), round_radius(), Vertical,
 						Theme::instance->radio_button().shadetop,
 						Theme::instance->radio_button().shadedown);
 			} else {
-				tool.GenerateVerticesExt(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						*request.round_type(), round_radius());
 			}
 			inner_->bind();
@@ -234,12 +234,12 @@ namespace BlendInt {
 		if (request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->radio_button().shaded) {
-				tool.GenerateVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						round_type(), *request.round_radius(), Vertical,
 						Theme::instance->radio_button().shadetop,
 						Theme::instance->radio_button().shadedown);
 			} else {
-				tool.GenerateVerticesExt(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						round_type(), *request.round_radius());
 			}
 			inner_->bind();
@@ -463,7 +463,7 @@ namespace BlendInt {
 	{
 		VertexTool tool;
 		if(Theme::instance->radio_button().shaded) {
-			tool.GenerateVertices(size(),
+			tool.GenerateShadedVertices(size(),
 					DefaultBorderWidth(),
 					round_type(),
 					round_radius(),
@@ -471,7 +471,7 @@ namespace BlendInt {
 					Theme::instance->radio_button().shadetop,
 					Theme::instance->radio_button().shadedown);
 		} else {
-			tool.GenerateVerticesExt(size(), DefaultBorderWidth(), round_type(), round_radius());
+			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
 		}
 
 		glGenVertexArrays(2, vao_);

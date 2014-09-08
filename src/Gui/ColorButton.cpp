@@ -85,7 +85,7 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVerticesExt(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -106,7 +106,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVerticesExt(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -127,7 +127,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVerticesExt(size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -193,7 +193,7 @@ namespace BlendInt {
 	void ColorButton::InitializeColorButton ()
 	{
 		VertexTool tool;
-		tool.GenerateVerticesExt (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateShadedVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);

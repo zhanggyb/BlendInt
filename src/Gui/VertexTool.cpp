@@ -235,7 +235,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VertexTool::GenerateVerticesExt(
+	void VertexTool::GenerateShadedVertices(
 					const Size& size,
 					float border,
 					int round_type,
@@ -432,7 +432,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VertexTool::GenerateVertices (const Size& size, float border,
+	void VertexTool::GenerateShadedVertices (const Size& size, float border,
 			int round_type, float radius, Orientation shadedir, short shadetop,
 			short shadedown)
 	{

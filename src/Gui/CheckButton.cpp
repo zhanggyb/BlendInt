@@ -21,14 +21,37 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/Gui/VertexTool.hpp>
+#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+
 #include <BlendInt/Gui/CheckButton.hpp>
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	CheckButton::CheckButton()
 	: AbstractButton()
 	{
+		set_size(200, 100);
+		//set_round_type(RoundAll);
 
+		InitializeCheckButton();
 	}
 
 	CheckButton::CheckButton (const String& text)
@@ -37,11 +60,116 @@ namespace BlendInt {
 
 	CheckButton::~CheckButton ()
 	{
+		glDeleteVertexArrays(3, vao_);
 	}
 
 	ResponseType CheckButton::Draw (Profile& profile)
 	{
+		glActiveTexture(GL_TEXTURE0);
+
+		RefPtr<GLTexture2D> texture = Theme::instance->shadow_texture();
+		RefPtr<GLSLProgram> program = Shaders::instance->image_program();
+
+		program->use();
+		texture->bind();
+
+		glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
+		glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
+
+		glBindVertexArray(vao_[2]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		texture->reset();
+
+		program->reset();
+
+		program = Shaders::instance->widget_program();
+		program->use();
+
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+				(float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
+				0);
+
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.f, 219 / 255.f, 97 / 255.f, 1.f);
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_type()) + 2);
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f, 0.f, 0.f, 1.f);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+
+		glBindVertexArray(0);
+		program->reset();
+
 		return Accept;
+	}
+
+	void CheckButton::InitializeCheckButton ()
+	{
+		VertexTool tool;
+
+		tool.GenerateShadedVertices(size(),
+				DefaultBorderWidth(),
+				round_type(),
+				round_radius(),
+				Vertical,
+				25,
+				-25);
+
+		glGenVertexArrays(3, vao_);
+
+		glBindVertexArray(vao_[0]);
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLfloat verts [] = {
+
+				-10.f, -10.f, 		0.f, 1.f,
+
+				-10.f, 110.f, 		0.f, 0.f,
+
+				210.f, -10.f, 		1.f, 1.f,
+
+				210.f, 110.f, 		1.f, 0.f,
+
+		};
+
+		glBindVertexArray(vao_[2]);
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));
+		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
 	}
 
 }

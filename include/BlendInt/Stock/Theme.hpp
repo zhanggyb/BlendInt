@@ -27,9 +27,12 @@
 #include <rapidxml.hpp>
 #include <rapidxml_utils.hpp>
 
-#include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/Color.hpp>
+
+#include <BlendInt/Gui/Font.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
@@ -78,102 +81,102 @@ namespace BlendInt {
 
 		const WidgetTheme& box () const
 		{
-			return m_box;
+			return box_;
 		}
 		
 		unsigned int dpi () const
 		{
-			return m_dpi;
+			return dpi_;
 		}
 		
 		short pixel () const
 		{
-			return m_pixel;
+			return pixel_;
 		}
 
 		const WidgetTheme& list_item () const
 		{
-			return m_list_item;
+			return list_item_;
 		}
 		
 		const WidgetTheme& menu () const
 		{
-			return m_menu;
+			return menu_;
 		}
 		
 		const WidgetTheme& menu_back () const
 		{
-			return m_menu_back;
+			return menu_back_;
 		}
 		
 		const WidgetTheme& menu_item () const
 		{
-			return m_menu_item;
+			return menu_item_;
 		}
 		
 		const WidgetTheme& number_field () const
 		{
-			return m_number_field;
+			return number_field_;
 		}
 		
 		const WidgetTheme& number_slider () const
 		{
-			return m_number_slider;
+			return number_slider_;
 		}
 		
 		const WidgetTheme& option () const
 		{
-			return m_option;
+			return option_;
 		}
 
 		const WidgetTheme& progress () const
 		{
-			return m_progress;
+			return progress_;
 		}
 		
 		const WidgetTheme& pulldown () const
 		{
-			return m_pulldown;
+			return pulldown_;
 		}
 		
 		const WidgetTheme& radio_button () const
 		{
-			return m_radio_button;
+			return radio_button_;
 		}
 		
 		const WidgetTheme& regular () const
 		{
-			return m_regular;
+			return regular_;
 		}
 		
 		const WidgetTheme& scroll () const
 		{
-			return m_scroll;
+			return scroll_;
 		}
 		
 		const WidgetTheme& tab () const
 		{
-			return m_tab;
+			return tab_;
 		}
 		
 		const WidgetTheme& text () const
 		{
-			return m_text;
+			return text_;
 		}
 		
 		const WidgetTheme& toggle () const
 		{
-			return m_toggle;
+			return toggle_;
 		}
 		
 		const WidgetTheme& tool () const
 		{
-			return m_tool;
+			return tool_;
 		}
 		
 		const WidgetTheme& tooltip () const
 		{
-			return m_tooltip;
+			return tooltip_;
 		}
 		
 		float menu_shadow_fac1 () const
@@ -194,6 +197,11 @@ namespace BlendInt {
 		short shadow_width () const
 		{
 			return m_shadow_width;
+		}
+
+		const RefPtr<GLTexture2D>& shadow_texture () const
+		{
+			return shadow_texture_;
 		}
 
 	private:
@@ -223,31 +231,33 @@ namespace BlendInt {
 
 		rapidxml::xml_node<>* AllocateWidgetThemeNode (rapidxml::xml_document<>& doc, const char* name, const WidgetTheme& wtheme);
 
+		void GenerateShadowTexture ();
+
 		/* Interface Elements (buttons, menus, icons) */
-		WidgetTheme m_regular;
-		WidgetTheme m_tool;
-		WidgetTheme m_text;
-		WidgetTheme m_radio_button;
-		WidgetTheme m_option;
-		WidgetTheme m_toggle;
-		WidgetTheme m_number_field;
-		WidgetTheme m_number_slider;
-		WidgetTheme m_menu;
-		WidgetTheme m_pulldown;
-		WidgetTheme m_menu_back;
-		WidgetTheme m_menu_item;
-		WidgetTheme m_tab;
-		WidgetTheme m_tooltip;
-		WidgetTheme m_box;
-		WidgetTheme m_scroll;
-		WidgetTheme m_progress;
-		WidgetTheme m_list_item;
+		WidgetTheme regular_;
+		WidgetTheme tool_;
+		WidgetTheme text_;
+		WidgetTheme radio_button_;
+		WidgetTheme option_;
+		WidgetTheme toggle_;
+		WidgetTheme number_field_;
+		WidgetTheme number_slider_;
+		WidgetTheme menu_;
+		WidgetTheme pulldown_;
+		WidgetTheme menu_back_;
+		WidgetTheme menu_item_;
+		WidgetTheme tab_;
+		WidgetTheme tooltip_;
+		WidgetTheme box_;
+		WidgetTheme scroll_;
+		WidgetTheme progress_;
+		WidgetTheme list_item_;
 
 		/** Font DPI */
-		unsigned int m_dpi;
+		unsigned int dpi_;
 
 		/** How many pixels for 1 border */
-		short m_pixel;
+		short pixel_;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		float m_shadow_fac;
@@ -259,7 +269,9 @@ namespace BlendInt {
 		//float icon_alpha;
 
 		/* Axis Colors */
-		Color m_xaxis, m_yaxis, m_zaxis;
+		Color xaxis_, yaxis_, zaxis_;
+
+		RefPtr<GLTexture2D> shadow_texture_;
 	};
 
 } /* namespace BlendInt */

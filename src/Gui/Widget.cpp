@@ -139,7 +139,7 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 
 		VertexTool tool;
-		tool.GenerateVerticesExt(size(),
+		tool.GenerateShadedVertices(size(),
 				DefaultBorderWidth(),
 				round_type(),
 				round_radius());

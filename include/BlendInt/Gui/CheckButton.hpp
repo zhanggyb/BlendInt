@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_GUI_CHECKBUTTON_HPP_
 #define _BLENDINT_GUI_CHECKBUTTON_HPP_
 
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
@@ -46,6 +48,15 @@ namespace BlendInt {
 
 	private:
 
+		void InitializeCheckButton ();
+
+		GLuint vao_[3];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
+
+		RefPtr<GLArrayBuffer> shadow_;
 	};
 }
 
