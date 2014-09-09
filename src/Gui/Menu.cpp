@@ -49,7 +49,6 @@ namespace BlendInt {
 	: AbstractWidget(), m_highlight(0), inner_(0), outer_(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
-		set_drop_shadow(true);
 		InitializeMenu();
 	}
 

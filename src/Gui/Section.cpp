@@ -80,7 +80,6 @@ namespace BlendInt {
 	{
 		if(PushFrontSubWidget(widget)) {
 
-			EnableShadow(widget);
 			events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
 
 		}
@@ -90,7 +89,6 @@ namespace BlendInt {
 	{
 		if(PushBackSubWidget(widget)) {
 
-			EnableShadow(widget);
 			events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
 
 		}
@@ -163,35 +161,17 @@ namespace BlendInt {
 		if (request.target() == this) {
 			set_size (*request.size());
 		}
-
-		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->shadow_) {
-				request.source()->shadow_->Resize(*request.size());
-			}
-		}
 	}
 
 	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
-		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->shadow_) {
-				request.source()->shadow_->SetRoundType(*request.round_type());
-			}
-		}
-
-		//ReportRoundTypeUpdate(request);
+		// Do nothing
 	}
 
 	void Section::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
-		if (request.source()->container() == this) {
-			if (request.source()->drop_shadow() && request.source()->shadow_) {
-				request.source()->shadow_->SetRadius(*request.round_radius());
-			}
-		}
-
-		//ReportRoundRadiusUpdate(request);
+		// Do nothing
 	}
 
 	ResponseType Section::Draw (Profile& profile)

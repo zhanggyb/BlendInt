@@ -51,7 +51,6 @@ namespace BlendInt {
 	  panel_(0)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 
 		InitializeFileButtonOnce();
 
@@ -189,7 +188,6 @@ namespace BlendInt {
 	void FileButton::InitializeFileButtonOnce ()
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		String text("...");
 		set_text(text);
 

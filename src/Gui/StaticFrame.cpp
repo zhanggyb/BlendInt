@@ -55,8 +55,6 @@ namespace BlendInt {
 	: BinLayout(), refresh_(true)
 	{
 		set_size(400, 300);
-		set_drop_shadow(true);
-
 		InitializeFramePanel();
 	}
 	

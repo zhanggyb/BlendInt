@@ -129,6 +129,8 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_;
 
 		std::vector<GLfloat> outer_;
+
+		std::vector<GLfloat> shadow_;
 	};
 
 }

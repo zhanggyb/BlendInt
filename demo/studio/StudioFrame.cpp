@@ -31,7 +31,6 @@ StudioFrame::StudioFrame()
 : BinLayout(), refresh_(true)
 {
 	set_size(400, 300);
-	set_drop_shadow(true);
 }
 
 StudioFrame::~StudioFrame ()

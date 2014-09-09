@@ -155,10 +155,6 @@ namespace BlendInt {
 						int height, Orientation orientation,
 						int alignment, int space);
 
-		bool EnableShadow (AbstractWidget* widget);
-
-		bool DisableShadow (AbstractWidget* widget);
-
 		void set_margin (const Margin& margin)
 		{
 			margin_ = margin;

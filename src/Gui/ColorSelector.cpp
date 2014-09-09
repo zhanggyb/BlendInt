@@ -63,7 +63,6 @@ namespace BlendInt {
 	{
 		set_size(200, 320);
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_margin(4, 4, 4, 4);
 
 		InitializeColorSelector();

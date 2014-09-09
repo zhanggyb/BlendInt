@@ -57,7 +57,6 @@ namespace BlendInt {
 	  m_button_down(MouseButtonNone)
 	{
 		set_size(600, 500);
-		set_drop_shadow(true);
 
 		InitializeViewport3DOnce();
 	}

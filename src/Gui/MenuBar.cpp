@@ -48,8 +48,6 @@ namespace BlendInt {
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
-		set_drop_shadow(true);
-
 		InitializeMenuBar();
 	}
 

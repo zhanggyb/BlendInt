@@ -472,10 +472,6 @@ namespace BlendInt {
 	{
 		if (widget && widget->visiable()) {
 
-			if(widget->drop_shadow() && widget->shadow_) {
-				widget->shadow_->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
-			}
-
 			ResponseType response = widget->Draw(profile);
 			if(response == Accept) return;
 

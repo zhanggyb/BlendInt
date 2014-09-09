@@ -51,7 +51,6 @@ namespace BlendInt {
 	  show_icon_(true)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_checkable(true);
 		int h = font().GetHeight();
 		set_size(h + default_padding.hsum(),
@@ -67,7 +66,6 @@ namespace BlendInt {
 	  show_icon_(true)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_checkable(true);
 		set_text(text);
 
@@ -81,7 +79,6 @@ namespace BlendInt {
 	  show_icon_(true)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_checkable(true);
 		icon_ = icon;
 
@@ -96,7 +93,6 @@ namespace BlendInt {
 	  show_icon_(true)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_checkable(true);
 		set_text(text);
 		icon_ = icon;

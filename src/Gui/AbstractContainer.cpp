@@ -710,37 +710,6 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractContainer::EnableShadow(AbstractWidget* widget)
-	{
-		if(!widget) return false;
-		if(widget->container() != this) return false;
-
-		if(widget->drop_shadow()) {
-
-			if(!widget->shadow_) {
-				widget->shadow_.reset(new Shadow(widget->size(), widget->round_type(), widget->round_radius()));
-			}
-
-			widget->shadow_->Update(widget->size(), widget->round_type(), widget->round_radius());
-
-		} else {
-			//DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
-			return false;
-		}
-
-		return true;
-	}
-
-	bool AbstractContainer::DisableShadow (AbstractWidget* widget)
-	{
-		if(!widget) return false;
-		if(widget->container() != this) return false;
-
-		widget->shadow_.destroy();
-
-		return true;
-	}
-
 	void AbstractContainer::FillSingleWidget (int index, const Point& out_pos,
 	        const Size& out_size, const Margin& margin)
 	{

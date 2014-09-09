@@ -39,7 +39,6 @@ namespace BlendInt {
 	: AbstractItemView(),
 	  highlight_index_(-1)
 	{
-		set_drop_shadow(true);
 		set_size(400, 300);
 
 		InitializeFileBrowserOnce();

@@ -45,7 +45,6 @@ namespace BlendInt {
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
-		set_drop_shadow(true);
 
 		InitializeScrollArea();
 	}

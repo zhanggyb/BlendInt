@@ -62,7 +62,6 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		set_size(800, 600);
-		set_drop_shadow(true);
 		set_margin(0, 0, 0, 0);
 
 		InitializeWorkspace();
@@ -156,7 +155,6 @@ namespace BlendInt {
 			AdjustGeometries(position(), size(), margin());
 		} else if (request.source()->container() == this) {
 
-			EnableShadow(request.source());
 		}
 
 		if(request.source() == this) {

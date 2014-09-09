@@ -93,7 +93,6 @@ namespace BlendInt {
 					ResizeSubWidget(widget, widget->size().width(), prefer.height());
 				}
 			}
-			DisableShadow(widget);
 		}
 	}
 	

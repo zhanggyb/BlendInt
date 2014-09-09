@@ -50,7 +50,6 @@ namespace BlendInt {
 	: SingleStackLayout(),
 	  vao_(0)
 	{
-		set_drop_shadow(true);
 		InitializeStack();
 	}
 

@@ -57,8 +57,6 @@ namespace BlendInt {
 		set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
 
-		set_drop_shadow(true);
-
 		InitializePanelOnce();
 	}
 

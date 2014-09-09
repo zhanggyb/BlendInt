@@ -98,7 +98,6 @@ namespace BlendInt {
 			*/
 
 
-			DisableShadow(widget);
 		}
 	}
 

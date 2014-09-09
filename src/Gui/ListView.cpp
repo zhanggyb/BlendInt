@@ -51,7 +51,6 @@ namespace BlendInt {
 	  highlight_index_(-1)
 	{
 		set_size(400, 300);
-		set_drop_shadow(true);
 
 		InitializeListView();
 

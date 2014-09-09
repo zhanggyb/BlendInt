@@ -60,8 +60,6 @@ namespace BlendInt {
 		set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
 
-		set_drop_shadow(true);
-
 		InitializeStaticPanelOnce();
 	}
 
@@ -73,8 +71,12 @@ namespace BlendInt {
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
 	{
 		if(!pressed_) {
-			refresh_ = true;
-			ReportRefresh(request);
+
+			if(!refresh_) {
+				refresh_ = true;
+				ReportRefresh(request);
+			}
+
 		}
 	}
 
