@@ -55,7 +55,8 @@ namespace BlendInt {
 	: AbstractPanel(),
 	  refresh_(true),
 	  pressed_(false),
-	  realign_(false)
+	  realign_(false),
+	  shadow_(0)
 	{
 		set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
@@ -66,6 +67,8 @@ namespace BlendInt {
 	StaticPanel::~StaticPanel ()
 	{
 		glDeleteVertexArrays(2, vao_);
+
+		if(shadow_) delete shadow_;
 	}
 
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
@@ -112,6 +115,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
+			shadow_->Resize(size());
+
 			FillSubWidgets(position(), *request.size(), margin());
 
 			refresh_ = true;
@@ -136,6 +141,8 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
+			shadow_->SetRoundType(*request.round_type());
+
 			Refresh();
 		}
 
@@ -156,6 +163,7 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
+			shadow_->SetRadius(*request.round_radius());
 			Refresh();
 		}
 
@@ -166,6 +174,8 @@ namespace BlendInt {
 
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
+		shadow_->Draw(glm::vec3(position().x(), position().y(), 0.f));
+
 		if(refresh_) {
 			RenderToBuffer(profile);
 			refresh_ = false;
@@ -262,6 +272,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
+
+		shadow_ = new ShadowExt(size(), round_type(), round_radius());
 	}
 
 	void StaticPanel::RenderToBuffer (Profile& profile)

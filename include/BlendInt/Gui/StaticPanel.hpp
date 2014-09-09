@@ -28,6 +28,7 @@
 #include <BlendInt/OpenGL/TextureBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractPanel.hpp>
+#include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
@@ -83,6 +84,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 
+		ShadowExt* shadow_;
 	};
 
 }

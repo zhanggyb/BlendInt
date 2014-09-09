@@ -50,7 +50,7 @@ namespace BlendInt {
 	  shadow_(0)
 	{
 		set_size(200, 100);
-		set_round_type(RoundNone);
+		set_round_type(RoundAll);
 
 		InitializeCheckButton();
 	}
@@ -139,7 +139,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		shadow_ = new ShadowExt(size(), RoundNone, round_radius());
+		shadow_ = new ShadowExt(size(), RoundAll, round_radius());
 	}
 
 }

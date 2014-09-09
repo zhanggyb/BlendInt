@@ -27,20 +27,13 @@
 #include <deque>
 
 #include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/Color.hpp>
+
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
-
-	enum ShadowDirection {
-		ShadowNone = 0x0,
-		ShadowLeft = (0x1 << 0),
-		ShadowRight = (0x1 << 1),
-		ShadowTop = (0x1 << 2),
-		ShadowBottom = (0x1 << 3),
-		ShadowAll = (ShadowLeft | ShadowRight | ShadowTop | ShadowBottom)
-	};
 
 	/**
 	 * @brief Shadow form
@@ -112,6 +105,8 @@ namespace BlendInt {
 		GLuint vao_;
 
 		RefPtr<GLArrayBuffer> buffer_;
+
+		Color color_;
 	};
 
 }

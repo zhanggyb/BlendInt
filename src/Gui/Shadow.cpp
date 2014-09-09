@@ -361,6 +361,7 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		set_size(100, 100);
+		color_.set_value(0.f, 0.f, 0.f, 0.75f);
 
 		InitializeShadow();
 	}
@@ -372,6 +373,7 @@ namespace BlendInt {
 		set_size(size);
 		set_round_type(round_type);
 		set_radius(radius);
+		color_.set_value(0.f, 0.f, 0.f, 0.75f);
 
 		InitializeShadow();
 	}
@@ -383,31 +385,21 @@ namespace BlendInt {
 
 	void ShadowExt::Draw (const glm::vec3& pos, short gamma)
 	{
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->widget_program();
-		program->use();
+		Shaders::instance->widget_program()->use();
 
 		int count = GetOutlineVertices(round_type());
-		//count = count * 2 + 2;
 
 		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
 		        glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), gamma);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f,
-		        0.f, 1.f, 0.75f);
-
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, color_.data());
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vao_);
-
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, (count + 1) * 2 * 2);
-
-		//glDrawArrays(GL_TRIANGLE_STRIP, (count + 1) * 3 * 2, (count + 1) * 2);
-
 		glBindVertexArray(0);
 
-		GLArrayBuffer::reset();
-		program->reset();
+		GLSLProgram::reset();
 	}
 
 	void ShadowExt::UpdateGeometry(const UpdateRequest& request)
@@ -502,27 +494,47 @@ namespace BlendInt {
 		if (2.0f * radius > size.height())
 			radius = 0.5f * size.height();
 
-		int count = 0;
 		int edge_vertex_count = GetOutlineVertices(round_type);
-
 		unsigned int max_count = (edge_vertex_count + 1) * 3 * 2 * 2;
-
-		//DBG_PRINT_MSG("max verts: %u", max_verts);
 
 		if(vertices.size() != max_count) {
 			vertices.resize(max_count);
 		}
 
-		count = 0;
+		int count = 0;
 
-		float w = Theme::instance->shadow_width() / 3.f;
+		float offset = Theme::instance->shadow_width() / 4.f;
 		float radi = radius;
-		float rado = radi + Theme::instance->shadow_width() / 3.f;
+		float rado = radi + Theme::instance->shadow_width() / 4.f;
 
-		// TODO: find tune shade 1 ~ 3
-		float shade1 = -7 / 255.f;
-		float shade2 = -19 / 255.f;
-		float shade3 = -25.5 / 255.f;
+		// TODO: fine tune shade 1 ~ 3 for better look
+		float shade1 = -4 / 255.f;
+		float shade2 = -17.5 / 255.f;
+		float shade3 = -30.5 / 255.f;
+
+		// fine-tuning for shade
+		float fx = 0.f;
+		float fy = 0.f;
+
+		if(x_offset != 0 || y_offset != 0) {
+
+			fx = (x_offset / 4.f) / sqrt(pow(x_offset / 4.f, 2) + pow(y_offset / 4.f, 2));
+			fy = (y_offset / 4.f) / sqrt(pow(y_offset / 4.f, 2) + pow(y_offset / 4.f, 2));
+
+			fx = fx / 100.f;
+			fy = fy / 100.f;
+
+			if (x_offset < 0) {
+				fx = -fx;
+			}
+
+			if(y_offset < 0) {
+				fy = -fy;
+			}
+
+		}
+
+		DBG_PRINT_MSG("fx: %f, fy: %f", fx, fy);
 
 		/* start with left-top, anti clockwise */
 		if (round_type & RoundTopLeft) {
@@ -530,11 +542,11 @@ namespace BlendInt {
 
 				vertices[count + 0] = minx + radi - radi * cornervec[j][0];
 				vertices[count + 1] = maxy - radi * cornervec[j][1];
-				vertices[count + 2] = shade1;
+				vertices[count + 2] = shade1 - fx - fy;
 
-				vertices[count + 3] = minx - w + rado - rado * cornervec[j][0] + x_offset / 3.f;
-				vertices[count + 4] = maxy + w - rado * cornervec[j][1] + y_offset / 3.f;
-				vertices[count + 5] = shade2;
+				vertices[count + 3] = minx - offset + rado - rado * cornervec[j][0] + x_offset / 4.f;
+				vertices[count + 4] = maxy + offset - rado * cornervec[j][1] + y_offset / 4.f;
+				vertices[count + 5] = shade2 - fx - fy;
 
 				count += 6;
 			}
@@ -542,11 +554,11 @@ namespace BlendInt {
 
 			vertices[count + 0] = minx;
 			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade1;
+			vertices[count + 2] = shade1 - fx - fy;
 
-			vertices[count + 3] = minx - w + x_offset / 3.f;
-			vertices[count + 4] = maxy + w + y_offset / 3.f;
-			vertices[count + 5] = shade2;
+			vertices[count + 3] = minx - offset + x_offset / 4.f;
+			vertices[count + 4] = maxy + offset + y_offset / 4.f;
+			vertices[count + 5] = shade2 - fx - fy;
 
 			count += 6;
 		}
@@ -556,11 +568,11 @@ namespace BlendInt {
 
 				vertices[count + 0] = minx + radi * cornervec[j][1];
 				vertices[count + 1] = miny + radi - radi * cornervec[j][0];
-				vertices[count + 2] = shade1;
+				vertices[count + 2] = shade1 - fx + fy;
 
-				vertices[count + 3] = minx - w + rado * cornervec[j][1] + x_offset / 3.f;
-				vertices[count + 4] = miny - w + rado - rado * cornervec[j][0] + y_offset / 3.f;
-				vertices[count + 5] = shade2;
+				vertices[count + 3] = minx - offset + rado * cornervec[j][1] + x_offset / 4.f;
+				vertices[count + 4] = miny - offset + rado - rado * cornervec[j][0] + y_offset / 4.f;
+				vertices[count + 5] = shade2 - fx + fy;
 
 				count += 6;
 			}
@@ -568,11 +580,11 @@ namespace BlendInt {
 
 			vertices[count + 0] = minx;
 			vertices[count + 1] = miny;
-			vertices[count + 2] = shade1;
+			vertices[count + 2] = shade1 - fx + fy;
 
-			vertices[count + 3] = minx - w + x_offset / 3.f;
-			vertices[count + 4] = miny - w + y_offset / 3.f;
-			vertices[count + 5] = shade2;
+			vertices[count + 3] = minx - offset + x_offset / 4.f;
+			vertices[count + 4] = miny - offset + y_offset / 4.f;
+			vertices[count + 5] = shade2 - fx + fy;
 
 			count += 6;
 		}
@@ -582,11 +594,11 @@ namespace BlendInt {
 
 				vertices[count + 0] = maxx - radi + radi * cornervec[j][0];
 				vertices[count + 1] = miny + radi * cornervec[j][1];
-				vertices[count + 2] = shade1;
+				vertices[count + 2] = shade1 + fx + fy;
 
-				vertices[count + 3] = maxx + w - rado + rado * cornervec[j][0] + x_offset / 3.f;
-				vertices[count + 4] = miny - w + rado * cornervec[j][1] + y_offset / 3.f;
-				vertices[count + 5] = shade2;
+				vertices[count + 3] = maxx + offset - rado + rado * cornervec[j][0] + x_offset / 4.f;
+				vertices[count + 4] = miny - offset + rado * cornervec[j][1] + y_offset / 4.f;
+				vertices[count + 5] = shade2 + fx + fy;
 
 				count += 6;
 			}
@@ -594,11 +606,11 @@ namespace BlendInt {
 
 			vertices[count + 0] = maxx;
 			vertices[count + 1] = miny;
-			vertices[count + 2] = shade1;
+			vertices[count + 2] = shade1 + fx + fy;
 
-			vertices[count + 3] = maxx + w + x_offset / 3.f;
-			vertices[count + 4] = miny - w + y_offset / 3.f;
-			vertices[count + 5] = shade2;
+			vertices[count + 3] = maxx + offset + x_offset / 4.f;
+			vertices[count + 4] = miny - offset + y_offset / 4.f;
+			vertices[count + 5] = shade2 + fx + fy;
 
 			count += 6;
 		}
@@ -608,11 +620,11 @@ namespace BlendInt {
 
 				vertices[count + 0] = maxx - radi * cornervec[j][1];
 				vertices[count + 1] = maxy - radi + radi * cornervec[j][0];
-				vertices[count + 2] = shade1;
+				vertices[count + 2] = shade1 + fx - fy;
 
-				vertices[count + 3] = maxx + w - rado * cornervec[j][1] + x_offset / 3.f;
-				vertices[count + 4] = maxy + w - rado + rado * cornervec[j][0] + y_offset / 3.f;
-				vertices[count + 5] = shade2;
+				vertices[count + 3] = maxx + offset - rado * cornervec[j][1] + x_offset / 4.f;
+				vertices[count + 4] = maxy + offset - rado + rado * cornervec[j][0] + y_offset / 4.f;
+				vertices[count + 5] = shade2 + fx - fy;
 
 				count += 6;
 			}
@@ -620,11 +632,11 @@ namespace BlendInt {
 
 			vertices[count + 0] = maxx;
 			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade1;
+			vertices[count + 2] = shade1 + fx - fy;
 
-			vertices[count + 3] = maxx + w + x_offset / 3.f;
-			vertices[count + 4] = maxy + w + y_offset / 3.f;
-			vertices[count + 5] = shade2;
+			vertices[count + 3] = maxx + offset + x_offset / 4.f;
+			vertices[count + 4] = maxy + offset + y_offset / 4.f;
+			vertices[count + 5] = shade2 + fx - fy;
 
 			count += 6;
 		}
@@ -639,12 +651,12 @@ namespace BlendInt {
 
 		count += 6;
 
-		minx = minx - w + x_offset / 3.f;
-		miny = miny - w + y_offset / 3.f;
-		maxx = maxx + w + x_offset / 3.f;
-		maxy = maxy + w + y_offset / 3.f;
+		minx = minx - offset + x_offset / 4.f;
+		miny = miny - offset + y_offset / 4.f;
+		maxx = maxx + offset + x_offset / 4.f;
+		maxy = maxy + offset + y_offset / 4.f;
 
-		w = Theme::instance->shadow_width() / 3.f * 2.f;
+		offset = Theme::instance->shadow_width() / 4.f * 3.f;
 
 		radi = rado;
 		rado = radi + Theme::instance->shadow_width();
@@ -657,8 +669,8 @@ namespace BlendInt {
 				vertices[count + 1] = maxy - radi * cornervec[j][1];
 				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = minx - w + rado - rado * cornervec[j][0] + x_offset / 1.f;
-				vertices[count + 4] = maxy + w - rado * cornervec[j][1] + y_offset / 1.f + y_offset / 1.f;
+				vertices[count + 3] = minx - offset + rado - rado * cornervec[j][0] + x_offset / 1.f;
+				vertices[count + 4] = maxy + offset - rado * cornervec[j][1] + y_offset / 1.f + y_offset / 1.f;
 				vertices[count + 5] = shade3;
 
 				count += 6;
@@ -669,8 +681,8 @@ namespace BlendInt {
 			vertices[count + 1] = maxy;
 			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = minx - w + x_offset / 1.f;
-			vertices[count + 4] = maxy + w + y_offset / 1.f;
+			vertices[count + 3] = minx - offset + x_offset / 1.f;
+			vertices[count + 4] = maxy + offset + y_offset / 1.f;
 			vertices[count + 5] = shade3;
 
 			count += 6;
@@ -683,8 +695,8 @@ namespace BlendInt {
 				vertices[count + 1] = miny + radi - radi * cornervec[j][0];
 				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = minx - w + rado * cornervec[j][1] + x_offset / 1.f;
-				vertices[count + 4] = miny - w + rado - rado * cornervec[j][0] + y_offset / 1.f;
+				vertices[count + 3] = minx - offset + rado * cornervec[j][1] + x_offset / 1.f;
+				vertices[count + 4] = miny - offset + rado - rado * cornervec[j][0] + y_offset / 1.f;
 				vertices[count + 5] = shade3;
 
 				count += 6;
@@ -695,8 +707,8 @@ namespace BlendInt {
 			vertices[count + 1] = miny;
 			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = minx - w + x_offset / 1.f;
-			vertices[count + 4] = miny - w + y_offset / 1.f;
+			vertices[count + 3] = minx - offset + x_offset / 1.f;
+			vertices[count + 4] = miny - offset + y_offset / 1.f;
 			vertices[count + 5] = shade3;
 
 			count += 6;
@@ -709,8 +721,8 @@ namespace BlendInt {
 				vertices[count + 1] = miny + radi * cornervec[j][1];
 				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = maxx + w - rado + rado * cornervec[j][0] + x_offset / 1.f;
-				vertices[count + 4] = miny - w + rado * cornervec[j][1] + y_offset / 1.f;
+				vertices[count + 3] = maxx + offset - rado + rado * cornervec[j][0] + x_offset / 1.f;
+				vertices[count + 4] = miny - offset + rado * cornervec[j][1] + y_offset / 1.f;
 				vertices[count + 5] = shade3;
 
 				count += 6;
@@ -721,8 +733,8 @@ namespace BlendInt {
 			vertices[count + 1] = miny;
 			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = maxx + w + x_offset / 1.f;
-			vertices[count + 4] = miny - w + y_offset / 1.f;
+			vertices[count + 3] = maxx + offset + x_offset / 1.f;
+			vertices[count + 4] = miny - offset + y_offset / 1.f;
 			vertices[count + 5] = shade3;
 
 			count += 6;
@@ -735,8 +747,8 @@ namespace BlendInt {
 				vertices[count + 1] = maxy - radi + radi * cornervec[j][0];
 				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = maxx + w - rado * cornervec[j][1] + x_offset / 1.f;
-				vertices[count + 4] = maxy + w - rado + rado * cornervec[j][0] + y_offset / 1.f;
+				vertices[count + 3] = maxx + offset - rado * cornervec[j][1] + x_offset / 1.f;
+				vertices[count + 4] = maxy + offset - rado + rado * cornervec[j][0] + y_offset / 1.f;
 				vertices[count + 5] = shade3;
 
 				count += 6;
@@ -747,8 +759,8 @@ namespace BlendInt {
 			vertices[count + 1] = maxy;
 			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = maxx + w + x_offset / 1.f;
-			vertices[count + 4] = maxy + w + y_offset / 1.f;
+			vertices[count + 3] = maxx + offset + x_offset / 1.f;
+			vertices[count + 4] = maxy + offset + y_offset / 1.f;
 			vertices[count + 5] = shade3;
 
 			count += 6;

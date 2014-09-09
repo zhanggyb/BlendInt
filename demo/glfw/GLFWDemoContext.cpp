@@ -89,22 +89,6 @@ void GLFWDemoContext::Initialize ()
 	PushBack(widget);
 	*/
 
-	/*
-	Workspace* ws = Manage(new Workspace);
-	ws->SetPosition(20, 20);
-	ws->Resize(960, 720);
-
-	PushBack(ws);
-	*/
-
-    StaticPanel* panel = Manage(new StaticPanel);
-    DBG_SET_NAME(panel, "Static Panel");
-    panel->SetPosition(1020, 200);
-    panel->SetRoundRadius (20.f);
-
-    PushBack(panel);
-
-    /*
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
 	panel->SetPosition(1020, 200);
@@ -124,7 +108,6 @@ void GLFWDemoContext::Initialize ()
 	panel->Resize(panel->GetPreferredSize());
 
 	PushBack(panel);
-    */
 
 	/*
     Tab* tab = Manage (new Tab);
