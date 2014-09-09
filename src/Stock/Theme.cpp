@@ -70,7 +70,9 @@ namespace BlendInt {
 	: dpi_(72),
 	  pixel_(1),
 	  m_shadow_fac(0.5),
-	  m_shadow_width(12)
+	  shadow_offset_x_(0),
+	  shadow_offset_y_(-4),
+	  shadow_width_(12)
 	{
 		shadow_texture_.reset(new GLTexture2D);
 	}
@@ -175,7 +177,17 @@ namespace BlendInt {
 		attr = doc.allocate_attribute("menu_shadow_fac", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%hd", m_shadow_width);
+		snprintf(buf, 16, "%hd", shadow_offset_x_);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("shadow_offset_x", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%hd", shadow_offset_y_);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("shadow_offset_y", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%hd", shadow_width_);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_width", value);
 		ui_node->append_attribute(attr);
@@ -438,7 +450,9 @@ namespace BlendInt {
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 		m_shadow_fac = 0.5f;
-		m_shadow_width = 12;
+		shadow_offset_x_ = 0;
+		shadow_offset_y_ = -4;
+		shadow_width_ = 12;
 
 		dpi_ = 72;
 
@@ -480,12 +494,28 @@ namespace BlendInt {
 					m_shadow_fac = v;
 				}
 
+			} else if(strcmp("shadow_offset_x", attrib->name()) == 0) {
+
+				short w = 0;
+
+				if(sscanf(attrib->value(), "%hd", &w) == 1) {
+					shadow_offset_x_ = w;
+				}
+
+			} else if(strcmp("shadow_offset_y", attrib->name()) == 0) {
+
+				short w = 0;
+
+				if(sscanf(attrib->value(), "%hd", &w) == 1) {
+					shadow_offset_y_ = w;
+				}
+
 			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
 
 				short w = 0;
 
 				if(sscanf(attrib->value(), "%hd", &w) == 1) {
-					m_shadow_width = w;
+					shadow_width_ = w;
 				}
 
 			} else if(strcmp("axis_x", attrib->name()) == 0) {

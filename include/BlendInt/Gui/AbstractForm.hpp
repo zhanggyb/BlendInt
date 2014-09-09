@@ -140,19 +140,21 @@ namespace BlendInt {
 	{
 	public:
 
-#ifdef DEBUG
-		friend class Interface;
-#endif
+		AbstractForm ()
+		: Object()
+		{}
 
-		AbstractForm();
+		virtual ~AbstractForm ()
+		{}
 
-		virtual ~AbstractForm();
-
-		AbstractForm(const AbstractForm& orig);
+		AbstractForm (const AbstractForm& orig)
+		{
+			size_ = orig.size_;
+		}
 
 		AbstractForm& operator = (const AbstractForm& orig)
 		{
-			m_size = orig.size();
+			size_ = orig.size();
 			return *this;
 		}
 
@@ -162,7 +164,7 @@ namespace BlendInt {
 
 		const Size& size () const
 		{
-			return m_size;
+			return size_;
 		}
 
 		virtual void Draw (const glm::vec3& pos, int short gamma = 0) = 0;
@@ -187,8 +189,8 @@ namespace BlendInt {
 		 */
 		inline void set_size (int width, int height)
 		{
-			m_size.set_width(width);
-			m_size.set_height(height);
+			size_.set_width(width);
+			size_.set_height(height);
 		}
 
 		/**
@@ -200,7 +202,7 @@ namespace BlendInt {
 		 */
 		inline void set_size (const Size& size)
 		{
-			m_size = size;
+			size_ = size;
 		}
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
@@ -209,7 +211,7 @@ namespace BlendInt {
 
 		static int default_border_width;
 
-		Size m_size;
+		Size size_;
 
 	};
 

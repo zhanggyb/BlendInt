@@ -67,9 +67,6 @@ namespace BlendInt {
 
 	private:
 
-		// Disable default constructor
-		Shadow();
-
 		void InitializeShadow ();
 
 		/**
@@ -86,6 +83,35 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_buffer;
 
+	};
+
+	class ShadowExt: public AbstractRoundForm
+	{
+		DISALLOW_COPY_AND_ASSIGN(ShadowExt);
+
+	public:
+
+		ShadowExt();
+
+		ShadowExt(const Size& size, int round_type, float radius);
+
+		virtual ~ShadowExt ();
+
+		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+
+	protected:
+
+		virtual void UpdateGeometry (const UpdateRequest& request);
+
+	private:
+
+		void InitializeShadow ();
+
+		void GenerateShadowVertices (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
+
+		GLuint vao_;
+
+		RefPtr<GLArrayBuffer> buffer_;
 	};
 
 }

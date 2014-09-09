@@ -186,7 +186,7 @@ namespace BlendInt {
 		
 		short menu_shadow_width1 () const
 		{
-			return m_shadow_width;
+			return shadow_width_;
 		}
 		
 		float shadow_fac () const
@@ -194,9 +194,19 @@ namespace BlendInt {
 			return m_shadow_fac;
 		}
 		
+		short shadow_offset_x () const
+		{
+			return shadow_offset_x_;
+		}
+
+		short shadow_offset_y () const
+		{
+			return shadow_offset_y_;
+		}
+
 		short shadow_width () const
 		{
-			return m_shadow_width;
+			return shadow_width_;
 		}
 
 		const RefPtr<GLTexture2D>& shadow_texture () const
@@ -261,7 +271,12 @@ namespace BlendInt {
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		float m_shadow_fac;
-		short m_shadow_width;
+
+		short shadow_offset_x_;
+
+		short shadow_offset_y_;
+
+		short shadow_width_;
 
 		//short pad;
 

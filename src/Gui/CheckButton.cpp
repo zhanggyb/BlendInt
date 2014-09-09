@@ -46,45 +46,36 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	CheckButton::CheckButton()
-	: AbstractButton()
+	: AbstractButton(),
+	  shadow_(0)
 	{
 		set_size(200, 100);
-		//set_round_type(RoundAll);
+		set_round_type(RoundNone);
 
 		InitializeCheckButton();
 	}
 
 	CheckButton::CheckButton (const String& text)
+	: AbstractButton(),
+	  shadow_(0)
 	{
 	}
 
 	CheckButton::~CheckButton ()
 	{
 		glDeleteVertexArrays(3, vao_);
+
+		if(shadow_)
+			delete shadow_;
 	}
 
 	ResponseType CheckButton::Draw (Profile& profile)
 	{
-		glActiveTexture(GL_TEXTURE0);
+		glm::vec3 pos(position().x(), position().y(), 0.f);
 
-		RefPtr<GLTexture2D> texture = Theme::instance->shadow_texture();
-		RefPtr<GLSLProgram> program = Shaders::instance->image_program();
+		shadow_->Draw(pos);
 
-		program->use();
-		texture->bind();
-
-		glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
-		glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
-
-		glBindVertexArray(vao_[2]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-		texture->reset();
-
-		program->reset();
-
-		program = Shaders::instance->widget_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
 		program->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
@@ -145,31 +136,10 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLfloat verts [] = {
-
-				-10.f, -10.f, 		0.f, 1.f,
-
-				-10.f, 110.f, 		0.f, 0.f,
-
-				210.f, -10.f, 		1.f, 1.f,
-
-				210.f, 110.f, 		1.f, 0.f,
-
-		};
-
-		glBindVertexArray(vao_[2]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(verts), verts);
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
+
+		shadow_ = new ShadowExt(size(), RoundNone, round_radius());
 	}
 
 }

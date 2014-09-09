@@ -28,6 +28,8 @@
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 
+#include <BlendInt/Gui/Shadow.hpp>
+
 namespace BlendInt {
 
 	class CheckButton: public AbstractButton
@@ -56,7 +58,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 
-		RefPtr<GLArrayBuffer> shadow_;
+		ShadowExt* shadow_;
 	};
 }
 

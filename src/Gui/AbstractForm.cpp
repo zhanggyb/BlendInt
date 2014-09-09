@@ -67,24 +67,9 @@ namespace BlendInt {
 		return default_border_width;
 	}
 
-	AbstractForm::AbstractForm () :
-					Object()
-	{
-	}
-
-	AbstractForm::AbstractForm (const AbstractForm& orig)
-	{
-		m_size = orig.size();
-	}
-
-	AbstractForm::~AbstractForm ()
-	{
-
-	}
-	
 	void AbstractForm::Resize (int width, int height)
 	{
-		if(m_size.width() == width && m_size.height() == height) return;
+		if(size_.width() == width && size_.height() == height) return;
 
 		Size new_size (width, height);
 
@@ -94,7 +79,7 @@ namespace BlendInt {
 	
 	void AbstractForm::Resize (const Size& size)
 	{
-		if(m_size == size) return;
+		if(size_ == size) return;
 
 		UpdateGeometry(UpdateRequest(FormSize, &size));
 		set_size(size);

@@ -21,10 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VIEWPORT3D_HPP_
-#define _BLENDINT_VIEWPORT3D_HPP_
-
-#include <vector>
+#ifndef _BLENDINT_GUI_VIEWPORT3D_HPP_
+#define _BLENDINT_GUI_VIEWPORT3D_HPP_
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
@@ -33,8 +31,6 @@
 #include <BlendInt/Gui/Mesh.hpp>
 
 #include <BlendInt/Gui/PerspectiveCamera.hpp>
-
-using std::vector;
 
 namespace BlendInt {
 
@@ -94,9 +90,9 @@ namespace BlendInt {
 
 		GLuint vao_;
 
-		vector<RefPtr<AbstractCamera> > cameras_;
-
 		RefPtr<GLArrayBuffer> inner_;
+
+		std::vector<RefPtr<AbstractCamera> > cameras_;
 
 		RefPtr<PerspectiveCamera> default_camera_;
 
@@ -117,4 +113,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_VIEWPORT3D_HPP_ */
+#endif /* _BLENDINT_GUI_VIEWPORT3D_HPP_ */

@@ -28,7 +28,7 @@ namespace BlendInt {
 	AbstractRoundForm::AbstractRoundForm()
 	: AbstractForm(),
 	  m_round_type(RoundNone),
-	  m_radius(5)
+	  m_radius(5.f)
 	{
 
 	}
@@ -40,7 +40,7 @@ namespace BlendInt {
 
 	void AbstractRoundForm::SetRoundType(int type)
 	{
-		if(m_round_type == type) return;
+		if(m_round_type == (type & RoundAll)) return;
 
 		UpdateGeometry (UpdateRequest(FormRoundType, &type));
 		set_round_type(type);
