@@ -73,7 +73,7 @@ namespace BlendInt {
 
 		Size new_size (width, height);
 
-		UpdateGeometry(UpdateRequest(FormSize, &new_size));
+		PerformSizeUpdate(new_size);
 		set_size(width, height);
 	}
 	
@@ -81,7 +81,7 @@ namespace BlendInt {
 	{
 		if(size_ == size) return;
 
-		UpdateGeometry(UpdateRequest(FormSize, &size));
+		PerformSizeUpdate(size);
 		set_size(size);
 	}
 

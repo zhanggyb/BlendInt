@@ -40,29 +40,33 @@ namespace BlendInt {
 
 		void SetRadius (float radius);
 
-		int round_type () const {return m_round_type;}
+		int round_type () const {return round_type_;}
 
-		float radius () const {return m_radius;}
+		float radius () const {return radius_;}
 
 		static int GetOutlineVertices (int round_type);
 
 	protected:
 
+		virtual void PerformRoundTypeUpdate (int round_type) = 0;
+
+		virtual void PerformRoundRadiusUpdate (float radius) = 0;
+
 		void set_round_type (int type)
 		{
-			m_round_type = type;
+			round_type_ = type;
 		}
 
 		void set_radius (float radius)
 		{
-			m_radius = radius;
+			radius_ = radius;
 		}
 
 	private:
 
-		int m_round_type;
+		int round_type_;
 
-		float m_radius;
+		float radius_;
 	};
 
 }

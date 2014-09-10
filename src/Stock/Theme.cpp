@@ -72,7 +72,7 @@ namespace BlendInt {
 	  m_shadow_fac(0.5),
 	  shadow_offset_x_(0),
 	  shadow_offset_y_(-4),
-	  shadow_width_(16)
+	  shadow_width_(12)
 	{
 		shadow_texture_.reset(new GLTexture2D);
 	}
@@ -452,7 +452,7 @@ namespace BlendInt {
 		m_shadow_fac = 0.5f;
 		shadow_offset_x_ = 0;
 		shadow_offset_y_ = -4;
-		shadow_width_ = 16;
+		shadow_width_ = 12;
 
 		dpi_ = 72;
 

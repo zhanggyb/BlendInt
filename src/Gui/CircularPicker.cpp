@@ -78,52 +78,37 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 	}
 
-	void CircularPicker::UpdateGeometry (const UpdateRequest& request)
+	void CircularPicker::PerformSizeUpdate(const Size& size)
 	{
-		switch (request.type()) {
+		VertexTool tool;
+		tool.GenerateVertices(size, DefaultBorderWidth(), round_type(), radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
+	}
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.GenerateVertices(*size_p, DefaultBorderWidth(), round_type(), radius());
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
+	void CircularPicker::PerformRoundTypeUpdate(int type)
+	{
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), type, radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
+	}
 
-			case FormRoundType: {
-				const int* round_p =
-								static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.GenerateVertices(size(), DefaultBorderWidth(), *round_p, radius());
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
-
-			case FormRoundRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				VertexTool tool;
-				tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *radius_p);
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
-
-			default:
-				break;
-		}
-
+	void CircularPicker::PerformRoundRadiusUpdate(float radius)
+	{
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
 	}
 
 	void CircularPicker::Draw (const glm::vec3& pos, short gamma)

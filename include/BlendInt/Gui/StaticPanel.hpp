@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 
-		ShadowExt* shadow_;
+		Shadow* shadow_;
 	};
 
 }

@@ -379,7 +379,7 @@ namespace BlendInt {
 				"	} else {"
 				"		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
 				"	}"
-				"	FragmentColor = vec4(PreFragShade) + color_calib + color;"
+				"	FragmentColor = vec4(PreFragShade, PreFragShade, PreFragShade, 0.f) + color_calib + color;"
 				"}";
 
 		// ---------------------------------------------------------------
@@ -722,6 +722,16 @@ namespace BlendInt {
 				        m_image_program->id());
 				return false;
 			}
+
+			locations_[TRIANGLE_COORD] = m_triangle_program->GetAttributeLocation("a_coord");
+			locations_[TRIANGLE_COLOR] = m_triangle_program->GetAttributeLocation("a_color");
+			locations_[TRIANGLE_PROJECTION] = m_triangle_program->GetUniformLocation("u_projection");
+			locations_[TRIANGLE_VIEW] = m_triangle_program->GetUniformLocation("u_view");
+			locations_[TRIANGLE_POSITION] = m_triangle_program->GetUniformLocation("u_position");
+			locations_[TRIANGLE_ROTATION] = m_triangle_program->GetUniformLocation("u_rotation");
+			locations_[TRIANGLE_SCALE] = m_triangle_program->GetUniformLocation("u_scale");
+			locations_[TRIANGLE_ANTI_ALIAS] = m_triangle_program->GetUniformLocation("u_AA");
+			locations_[TRIANGLE_GAMMA] = m_triangle_program->GetUniformLocation("u_gamma");
 
 			locations_[TEXT_COORD] = m_text_program->GetAttributeLocation("a_coord");
 			locations_[TEXT_PROJECTION] = m_text_program->GetUniformLocation("u_projection");

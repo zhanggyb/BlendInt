@@ -35,66 +35,29 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Shadow form
-	 */
 	class Shadow: public AbstractRoundForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(Shadow);
 
 	public:
 
-		Shadow (const Size& size, int round_type, float radius);
+		Shadow();
+
+		Shadow(const Size& size, int round_type, float radius);
 
 		virtual ~Shadow ();
 
-		void Update (int width, int height, int round_type, float radius);
-
-		void Update (const Size& size, int round_type, float radius);
+		void SetColor (const Color& color);
 
 		virtual void Draw (const glm::vec3& pos, short gamma = 0);
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
 
-	private:
+		virtual void PerformRoundTypeUpdate (int type);
 
-		void InitializeShadow ();
-
-		/**
-		 * @brief Create shadow vertices
-		 * @param[in] size The shadow inner size
-		 * @param[in] round_type Round type, same as widget
-		 * @param[in] radius Round radius
-		 * @param[in] depth The shadow size
-		 * @param[out] vertices The vertices created
-		 */
-		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
-
-		GLuint m_vao;
-
-		RefPtr<GLArrayBuffer> m_buffer;
-
-	};
-
-	class ShadowExt: public AbstractRoundForm
-	{
-		DISALLOW_COPY_AND_ASSIGN(ShadowExt);
-
-	public:
-
-		ShadowExt();
-
-		ShadowExt(const Size& size, int round_type, float radius);
-
-		virtual ~ShadowExt ();
-
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
-
-	protected:
-
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 	private:
 
@@ -102,13 +65,7 @@ namespace BlendInt {
 
 		void GenerateShadowVertices (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
 
-		float make_shaded_offset (short shadetop, short shadedown, float fact)
-		{
-			float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
-			float facm = 1.f - fact;
-
-			return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
-		}
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
 		GLuint vao_;
 

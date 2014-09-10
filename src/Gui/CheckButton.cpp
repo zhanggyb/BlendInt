@@ -139,7 +139,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		shadow_ = new ShadowExt(size(), RoundAll, round_radius());
+		shadow_ = new Shadow(size(), RoundAll, round_radius());
 	}
 
 }

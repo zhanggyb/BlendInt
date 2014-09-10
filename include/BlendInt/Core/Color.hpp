@@ -37,6 +37,8 @@ namespace BlendInt {
 
 	extern Color MakeShadedColor (const Color& color1, const Color& color2, float fact);
 
+	extern bool operator == (const Color& src, const Color& dist);
+
 	class Color
 	{
 	public:

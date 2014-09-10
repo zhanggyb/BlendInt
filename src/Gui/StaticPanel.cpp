@@ -273,7 +273,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		shadow_ = new ShadowExt(size(), round_type(), round_radius());
+		shadow_ = new Shadow(size(), round_type(), round_radius());
 	}
 
 	void StaticPanel::RenderToBuffer (Profile& profile)

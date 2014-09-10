@@ -66,7 +66,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
+
+		virtual void PerformRoundTypeUpdate (int type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 	private:
 

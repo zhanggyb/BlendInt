@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
 
 		static void GenerateCheckerVertices (const Size& size,
 						size_t cell_size,

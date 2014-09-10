@@ -177,7 +177,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
+		virtual void PerformSizeUpdate (const Size& size) = 0;
 
 		/**
 		 * @brief preset the size of the form
