@@ -38,10 +38,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
-#include <BlendInt/Interface.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -258,8 +259,6 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::Draw (Profile& profile)
 	{
-		// TODO: check the performance difference between scissor and stencil.
-
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;

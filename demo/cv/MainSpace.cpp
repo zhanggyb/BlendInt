@@ -1,3 +1,7 @@
+/**
+ * Main Layout
+ */
+
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
@@ -18,49 +22,78 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include "StudioFrame.hpp"
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Gui/Menu.hpp>
+#include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Splitter.hpp>
 
-using namespace BlendInt;
+#include <BlendInt/Gui/VBlockLayout.hpp>
+#include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/NumericalSlider.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
+
+#include "MainSpace.hpp"
+
+using namespace BI;
 using Stock::Shaders;
 
-StudioFrame::StudioFrame()
-: BinLayout(), refresh_(true)
+MainSpace::MainSpace ()
+: VLayout(),
+  m_toolbar(0),
+  image_viewport_(0),
+  message_(0)
 {
-	set_size(400, 300);
+	InitOnce();
 }
 
-StudioFrame::~StudioFrame ()
+MainSpace::~MainSpace ()
 {
+
 }
 
-void StudioFrame::PerformRefresh(const RefreshRequest& request)
+void MainSpace::InitOnce ()
+{
+	set_margin(0, 0, 0, 0);
+	set_space(1);
+
+	m_toolbar = CreateToolBar();
+
+    Splitter* splitter = Manage(new Splitter);
+    splitter->SetMargin(0, 0, 0, 0);
+
+    ToolBox* tbox = CreateToolBox();
+    ToolBar* bottom = CreateBottomBar();
+
+    image_viewport_ = Manage(new Viewport2D);
+    splitter->PushBack(image_viewport_);
+    splitter->PushBack(tbox);
+
+	PushBack(m_toolbar);
+    PushBack(splitter);
+    PushBack(bottom);
+}
+
+void MainSpace::PerformRefresh(const RefreshRequest& request)
 {
 	refresh_ = true;
 	ReportRefresh(request);
 }
 
-void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
+void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-
 		refresh_ = true;
-
-		set_size(*request.size());
-
-		if (widget_count()) {
-			assert(widget_count() == 1);
-			FillSingleWidget(0, position(), *request.size(), margin());
-		}
 	}
 
-	ReportSizeUpdate(request);
+	VLayout::PerformSizeUpdate(request);
 }
 
-ResponseType StudioFrame::Draw (Profile& profile)
+ResponseType MainSpace::Draw(Profile& profile)
 {
 	if(refresh_) {
 
@@ -70,21 +103,14 @@ ResponseType StudioFrame::Draw (Profile& profile)
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	tex_buffer_.Draw(position().x(), position().y());
+	buffer_.Draw(position().x(), position().y());
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;
 }
 
-void StudioFrame::RenderToFile (const std::string& filename)
-{
-	tex_buffer_.texture()->bind();
-	tex_buffer_.texture()->WriteToFile(filename);
-	tex_buffer_.texture()->reset();
-}
-
-void StudioFrame::RenderToBuffer ()
+void MainSpace::RenderToBuffer()
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -95,9 +121,9 @@ void StudioFrame::RenderToBuffer ()
 	GLfloat right = left + width;
 	GLfloat top = bottom + height;
 
-	tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
+	buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 	// Create and set texture to render to.
-	GLTexture2D* tex = tex_buffer_.texture();
+	GLTexture2D* tex = buffer_.texture();
 	if(!tex->texture())
 		tex->generate();
 
@@ -134,10 +160,10 @@ void StudioFrame::RenderToBuffer ()
 
 		fb->bind();
 
-		glClearColor(0.f, 0.f, 0.f, 0.f);
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearDepth(1.0);
 		glClearStencil(0);
-
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -177,8 +203,9 @@ void StudioFrame::RenderToBuffer ()
 
 		Profile off_screen_profile(position());
 
-		if(first()) {
-			DispatchDrawEvent(first(), off_screen_profile);
+		for(AbstractWidget* p = first(); p; p = p->next())
+		{
+			DispatchDrawEvent(p, off_screen_profile);
 		}
 
 		// Restore the viewport setting and projection matrix
@@ -217,5 +244,104 @@ void StudioFrame::RenderToBuffer ()
 
 	fb->reset();
 	delete fb; fb = 0;
+}
 
+void MainSpace::OnResize (AbstractWidget* context, int type)
+{
+	Resize(context->size());
+}
+
+BI::ToolBar* MainSpace::CreateToolBar()
+{
+	ToolBar* toolbar = Manage(new ToolBar);
+
+	ComboBox* combo1 = Manage(new ComboBox);
+
+	MenuButton* menu1 = Manage(new MenuButton("File"));
+	MenuButton* menu2 = Manage(new MenuButton("Render"));
+	MenuButton* menu3 = Manage(new MenuButton("Help"));
+
+	TextEntry* input = Manage(new TextEntry);
+
+	toolbar->PushBack(combo1);
+	toolbar->PushBack(menu1);
+	toolbar->PushBack(menu2);
+	toolbar->PushBack(menu3);
+	toolbar->PushBack(input);
+
+	return toolbar;
+}
+
+BI::ToolBox* MainSpace::CreateToolBox()
+{
+	ToolBox* toolbox = Manage(new ToolBox);
+
+	Expander* expander1 = CreateTransformExpander();
+	toolbox->PushBack(expander1);
+
+	Expander* expander2 = CreateLightExpander();
+	toolbox->PushBack(expander2);
+
+	Expander* expander3 = CreateColorExpander();
+	toolbox->PushBack(expander3);
+
+	return toolbox;
+}
+
+BI::Expander* MainSpace::CreateTransformExpander()
+{
+	Expander* expander = Manage(new Expander("Transform"));
+
+	Button* btn1 = Manage(new Button("Translate"));
+	Button* btn2 = Manage(new Button("Rotate"));
+	Button* btn3 = Manage(new Button("Scale"));
+
+	VBlockLayout* vblock = Manage(new VBlockLayout);
+	vblock->PushBack(btn1);
+	vblock->PushBack(btn2);
+	vblock->PushBack(btn3);
+
+	expander->Setup(vblock);
+
+	return expander;
+}
+
+BI::Expander* MainSpace::CreateLightExpander()
+{
+	Expander* expander = Manage(new Expander("Light"));
+
+	NumericalSlider* ns1 = Manage(new NumericalSlider);
+	NumericalSlider* ns2 = Manage(new NumericalSlider);
+	NumericalSlider* ns3 = Manage(new NumericalSlider);
+
+	VBlockLayout* vblock = Manage(new VBlockLayout);
+	vblock->PushBack(ns1);
+	vblock->PushBack(ns2);
+	vblock->PushBack(ns3);
+
+	expander->Setup(vblock);
+
+	return expander;
+}
+
+BI::Expander* MainSpace::CreateColorExpander()
+{
+	Expander* expander = Manage(new Expander("Color"));
+
+	ColorSelector* cs = Manage(new ColorSelector);
+
+	expander->Setup(cs);
+
+	return expander;
+}
+
+BI::ToolBar* MainSpace::CreateBottomBar ()
+{
+	ToolBar* toolbar = Manage(new ToolBar);
+	toolbar->SetMargin(2, 2, 2, 2);
+
+	message_ = Manage(new Label("Ready..."));
+	toolbar->PushBack(message_);
+
+	return toolbar;
 }
