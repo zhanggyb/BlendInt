@@ -163,10 +163,10 @@ namespace BlendInt {
 				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
 						round_type(), round_radius());
 			}
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, tool.inner_size(), tool.inner_data());
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, tool.outer_size(), tool.outer_data());
 			GLArrayBuffer::reset();
 
 			set_size(*request.size());
@@ -194,10 +194,10 @@ namespace BlendInt {
 				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						*request.round_type(), round_radius());
 			}
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			buffer_.bind(0);
+			buffer_.set_data(tool.inner_size(), tool.inner_data());
+			buffer_.bind(1);
+			buffer_.set_data(tool.outer_size(), tool.outer_data());
 			GLArrayBuffer::reset();
 
 			set_round_type(*request.round_type());
@@ -225,10 +225,10 @@ namespace BlendInt {
 				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
 						round_type(), *request.round_radius());
 			}
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, tool.inner_size(), tool.inner_data());
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, tool.outer_size(), tool.outer_data());
 			GLArrayBuffer::reset();
 
 			set_round_radius(*request.round_radius());
@@ -450,21 +450,19 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(2, vao_);
+		buffer_.generate ();
+
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		buffer_.bind(0);
+		buffer_.set_data(tool.inner_size(), tool.inner_data());
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		buffer_.bind(1);
+		buffer_.set_data(tool.outer_size(), tool.outer_data());
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
@@ -567,4 +565,3 @@ namespace BlendInt {
 	}
 
 }
-
