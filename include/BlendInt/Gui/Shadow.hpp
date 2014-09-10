@@ -102,6 +102,14 @@ namespace BlendInt {
 
 		void GenerateShadowVertices (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
 
+		float make_shaded_offset (short shadetop, short shadedown, float fact)
+		{
+			float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
+			float facm = 1.f - fact;
+
+			return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
+		}
+
 		GLuint vao_;
 
 		RefPtr<GLArrayBuffer> buffer_;

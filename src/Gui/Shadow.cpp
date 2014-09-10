@@ -396,7 +396,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, (count + 1) * 2 * 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, (count + 1) * 2);
 		glBindVertexArray(0);
 
 		GLSLProgram::reset();
@@ -475,10 +475,10 @@ namespace BlendInt {
 	void ShadowExt::GenerateShadowVertices(const Size& size, int round_type,
 			float radius, std::vector<GLfloat>& vertices)
 	{
-		float minx = 0.0f;
-		float miny = 0.0f;
-		float maxx = size.width();
-		float maxy = size.height();
+		const float minx = 0.0f;
+		const float miny = 0.0f;
+		const float maxx = size.width();
+		const float maxy = size.height();
 
 		short x_offset = Theme::instance->shadow_offset_x();
 		short y_offset = Theme::instance->shadow_offset_y();
@@ -495,183 +495,47 @@ namespace BlendInt {
 			radius = 0.5f * size.height();
 
 		int edge_vertex_count = GetOutlineVertices(round_type);
-		unsigned int max_count = (edge_vertex_count + 1) * 3 * 2 * 2;
+		unsigned int max_count = (edge_vertex_count + 1) * 3 * 2;
 
-		if(vertices.size() != max_count) {
-			vertices.resize(max_count);
-		}
+		if(vertices.size() != max_count) vertices.resize(max_count);
 
 		int count = 0;
 
-		float offset = Theme::instance->shadow_width() / 4.f;
+		float offset = Theme::instance->shadow_width();
 		float radi = radius;
-		float rado = radi + Theme::instance->shadow_width() / 4.f;
+		float rado = radi + Theme::instance->shadow_width();
 
 		// TODO: fine tune shade 1 ~ 3 for better look
-		float shade1 = -4 / 255.f;
-		float shade2 = -17.5 / 255.f;
-		float shade3 = -30.5 / 255.f;
+		float shade1 = -12.5 / 255.f;
+		float shade2 = -28.5 / 255.f;
+		//float shade3 = -30.5 / 255.f;
 
-		// fine-tuning for shade
+		short shadetop_x = x_offset;
+		short shadedown_x = -x_offset;
+		short shadetop_y = y_offset;
+		short shadedown_y = -y_offset;
+
+		const float facx = (maxx != minx) ? 1.0f / (maxx - minx) : 0.0f;
+		const float facy = (maxy != miny) ? 1.0f / (maxy - miny) : 0.0f;
+
 		float fx = 0.f;
 		float fy = 0.f;
 
-		if(x_offset != 0 || y_offset != 0) {
-
-			fx = (x_offset / 4.f) / sqrt(pow(x_offset / 4.f, 2) + pow(y_offset / 4.f, 2));
-			fy = (y_offset / 4.f) / sqrt(pow(y_offset / 4.f, 2) + pow(y_offset / 4.f, 2));
-
-			fx = fx / 100.f;
-			fy = fy / 100.f;
-
-			if (x_offset < 0) {
-				fx = -fx;
-			}
-
-			if(y_offset < 0) {
-				fy = -fy;
-			}
-
-		}
-
-		DBG_PRINT_MSG("fx: %f, fy: %f", fx, fy);
-
 		/* start with left-top, anti clockwise */
 		if (round_type & RoundTopLeft) {
 			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 
 				vertices[count + 0] = minx + radi - radi * cornervec[j][0];
 				vertices[count + 1] = maxy - radi * cornervec[j][1];
-				vertices[count + 2] = shade1 - fx - fy;
 
-				vertices[count + 3] = minx - offset + rado - rado * cornervec[j][0] + x_offset / 4.f;
-				vertices[count + 4] = maxy + offset - rado * cornervec[j][1] + y_offset / 4.f;
-				vertices[count + 5] = shade2 - fx - fy;
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
 
-				count += 6;
-			}
-		} else {
-
-			vertices[count + 0] = minx;
-			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade1 - fx - fy;
-
-			vertices[count + 3] = minx - offset + x_offset / 4.f;
-			vertices[count + 4] = maxy + offset + y_offset / 4.f;
-			vertices[count + 5] = shade2 - fx - fy;
-
-			count += 6;
-		}
-
-		if (round_type & RoundBottomLeft) {
-			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-				vertices[count + 0] = minx + radi * cornervec[j][1];
-				vertices[count + 1] = miny + radi - radi * cornervec[j][0];
-				vertices[count + 2] = shade1 - fx + fy;
-
-				vertices[count + 3] = minx - offset + rado * cornervec[j][1] + x_offset / 4.f;
-				vertices[count + 4] = miny - offset + rado - rado * cornervec[j][0] + y_offset / 4.f;
-				vertices[count + 5] = shade2 - fx + fy;
-
-				count += 6;
-			}
-		} else {
-
-			vertices[count + 0] = minx;
-			vertices[count + 1] = miny;
-			vertices[count + 2] = shade1 - fx + fy;
-
-			vertices[count + 3] = minx - offset + x_offset / 4.f;
-			vertices[count + 4] = miny - offset + y_offset / 4.f;
-			vertices[count + 5] = shade2 - fx + fy;
-
-			count += 6;
-		}
-
-		if (round_type & RoundBottomRight) {
-			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-				vertices[count + 0] = maxx - radi + radi * cornervec[j][0];
-				vertices[count + 1] = miny + radi * cornervec[j][1];
-				vertices[count + 2] = shade1 + fx + fy;
-
-				vertices[count + 3] = maxx + offset - rado + rado * cornervec[j][0] + x_offset / 4.f;
-				vertices[count + 4] = miny - offset + rado * cornervec[j][1] + y_offset / 4.f;
-				vertices[count + 5] = shade2 + fx + fy;
-
-				count += 6;
-			}
-		} else {
-
-			vertices[count + 0] = maxx;
-			vertices[count + 1] = miny;
-			vertices[count + 2] = shade1 + fx + fy;
-
-			vertices[count + 3] = maxx + offset + x_offset / 4.f;
-			vertices[count + 4] = miny - offset + y_offset / 4.f;
-			vertices[count + 5] = shade2 + fx + fy;
-
-			count += 6;
-		}
-
-		if (round_type & RoundTopRight) {
-			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-				vertices[count + 0] = maxx - radi * cornervec[j][1];
-				vertices[count + 1] = maxy - radi + radi * cornervec[j][0];
 				vertices[count + 2] = shade1 + fx - fy;
 
-				vertices[count + 3] = maxx + offset - rado * cornervec[j][1] + x_offset / 4.f;
-				vertices[count + 4] = maxy + offset - rado + rado * cornervec[j][0] + y_offset / 4.f;
-				vertices[count + 5] = shade2 + fx - fy;
-
-				count += 6;
-			}
-		} else {
-
-			vertices[count + 0] = maxx;
-			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade1 + fx - fy;
-
-			vertices[count + 3] = maxx + offset + x_offset / 4.f;
-			vertices[count + 4] = maxy + offset + y_offset / 4.f;
-			vertices[count + 5] = shade2 + fx - fy;
-
-			count += 6;
-		}
-
-		vertices[count + 0] = vertices[count - edge_vertex_count * 6];
-		vertices[count + 1] = vertices[count - edge_vertex_count * 6 + 1];
-		vertices[count + 2] = vertices[count - edge_vertex_count * 6 + 2];
-
-		vertices[count + 3] = vertices[count - edge_vertex_count * 6 + 3];
-		vertices[count + 4] = vertices[count - edge_vertex_count * 6 + 4];
-		vertices[count + 5] = vertices[count - edge_vertex_count * 6 + 5];
-
-		count += 6;
-
-		minx = minx - offset + x_offset / 4.f;
-		miny = miny - offset + y_offset / 4.f;
-		maxx = maxx + offset + x_offset / 4.f;
-		maxy = maxy + offset + y_offset / 4.f;
-
-		offset = Theme::instance->shadow_width() / 4.f * 3.f;
-
-		radi = rado;
-		rado = radi + Theme::instance->shadow_width();
-
-		/* start with left-top, anti clockwise */
-		if (round_type & RoundTopLeft) {
-			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-				vertices[count + 0] = minx + radi - radi * cornervec[j][0];
-				vertices[count + 1] = maxy - radi * cornervec[j][1];
-				vertices[count + 2] = shade2;
-
-				vertices[count + 3] = minx - offset + rado - rado * cornervec[j][0] + x_offset / 1.f;
-				vertices[count + 4] = maxy + offset - rado * cornervec[j][1] + y_offset / 1.f + y_offset / 1.f;
-				vertices[count + 5] = shade3;
+				vertices[count + 3] = minx - offset + rado - rado * cornervec[j][0] + x_offset;
+				vertices[count + 4] = maxy + offset - rado * cornervec[j][1] + y_offset;
+				vertices[count + 5] = shade2;
 
 				count += 6;
 			}
@@ -679,11 +543,15 @@ namespace BlendInt {
 
 			vertices[count + 0] = minx;
 			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = minx - offset + x_offset / 1.f;
-			vertices[count + 4] = maxy + offset + y_offset / 1.f;
-			vertices[count + 5] = shade3;
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 0.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 1.f);
+
+			vertices[count + 2] = shade1 + fx - fy;
+
+			vertices[count + 3] = minx - offset + x_offset;
+			vertices[count + 4] = maxy + offset + y_offset;
+			vertices[count + 5] = shade2;
 
 			count += 6;
 		}
@@ -693,11 +561,15 @@ namespace BlendInt {
 
 				vertices[count + 0] = minx + radi * cornervec[j][1];
 				vertices[count + 1] = miny + radi - radi * cornervec[j][0];
-				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = minx - offset + rado * cornervec[j][1] + x_offset / 1.f;
-				vertices[count + 4] = miny - offset + rado - rado * cornervec[j][0] + y_offset / 1.f;
-				vertices[count + 5] = shade3;
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = shade1 + fx + fy;
+
+				vertices[count + 3] = minx - offset + rado * cornervec[j][1] + x_offset;
+				vertices[count + 4] = miny - offset + rado - rado * cornervec[j][0] + y_offset;
+				vertices[count + 5] = shade2;
 
 				count += 6;
 			}
@@ -705,11 +577,15 @@ namespace BlendInt {
 
 			vertices[count + 0] = minx;
 			vertices[count + 1] = miny;
-			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = minx - offset + x_offset / 1.f;
-			vertices[count + 4] = miny - offset + y_offset / 1.f;
-			vertices[count + 5] = shade3;
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 0.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 0.f);
+
+			vertices[count + 2] = shade1 + fx + fy;
+
+			vertices[count + 3] = minx - offset + x_offset;
+			vertices[count + 4] = miny - offset + y_offset;
+			vertices[count + 5] = shade2;
 
 			count += 6;
 		}
@@ -719,11 +595,15 @@ namespace BlendInt {
 
 				vertices[count + 0] = maxx - radi + radi * cornervec[j][0];
 				vertices[count + 1] = miny + radi * cornervec[j][1];
-				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = maxx + offset - rado + rado * cornervec[j][0] + x_offset / 1.f;
-				vertices[count + 4] = miny - offset + rado * cornervec[j][1] + y_offset / 1.f;
-				vertices[count + 5] = shade3;
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = shade1 - fx + fy;
+
+				vertices[count + 3] = maxx + offset - rado + rado * cornervec[j][0] + x_offset;
+				vertices[count + 4] = miny - offset + rado * cornervec[j][1] + y_offset;
+				vertices[count + 5] = shade2;
 
 				count += 6;
 			}
@@ -731,11 +611,15 @@ namespace BlendInt {
 
 			vertices[count + 0] = maxx;
 			vertices[count + 1] = miny;
-			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = maxx + offset + x_offset / 1.f;
-			vertices[count + 4] = miny - offset + y_offset / 1.f;
-			vertices[count + 5] = shade3;
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 1.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 0.f);
+
+			vertices[count + 2] = shade1 - fx + fy;
+
+			vertices[count + 3] = maxx + offset + x_offset;
+			vertices[count + 4] = miny - offset + y_offset;
+			vertices[count + 5] = shade2;
 
 			count += 6;
 		}
@@ -745,11 +629,15 @@ namespace BlendInt {
 
 				vertices[count + 0] = maxx - radi * cornervec[j][1];
 				vertices[count + 1] = maxy - radi + radi * cornervec[j][0];
-				vertices[count + 2] = shade2;
 
-				vertices[count + 3] = maxx + offset - rado * cornervec[j][1] + x_offset / 1.f;
-				vertices[count + 4] = maxy + offset - rado + rado * cornervec[j][0] + y_offset / 1.f;
-				vertices[count + 5] = shade3;
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = shade1 - fx - fy;
+
+				vertices[count + 3] = maxx + offset - rado * cornervec[j][1] + x_offset;
+				vertices[count + 4] = maxy + offset - rado + rado * cornervec[j][0] + y_offset;
+				vertices[count + 5] = shade2;
 
 				count += 6;
 			}
@@ -757,11 +645,15 @@ namespace BlendInt {
 
 			vertices[count + 0] = maxx;
 			vertices[count + 1] = maxy;
-			vertices[count + 2] = shade2;
 
-			vertices[count + 3] = maxx + offset + x_offset / 1.f;
-			vertices[count + 4] = maxy + offset + y_offset / 1.f;
-			vertices[count + 5] = shade3;
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 1.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 1.f);
+
+			vertices[count + 2] = shade1 - fx - fy;
+
+			vertices[count + 3] = maxx + offset + x_offset;
+			vertices[count + 4] = maxy + offset + y_offset;
+			vertices[count + 5] = shade2;
 
 			count += 6;
 		}
