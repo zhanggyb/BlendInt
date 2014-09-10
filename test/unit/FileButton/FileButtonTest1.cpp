@@ -33,7 +33,7 @@ TEST_F(FileButtonTest1, Foo1)
     FileButton* fb = Manage(new FileButton);
 	fb->SetPosition(100, 100);
 
-	context->PushBack(fb);
+	context->Append(fb);
 
     RunLoop(win);
 

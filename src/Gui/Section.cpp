@@ -76,7 +76,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Section::PushFront(AbstractWidget* widget)
+	void Section::Prepend(AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 
@@ -85,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Section::PushBack (AbstractWidget* widget)
+	void Section::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 

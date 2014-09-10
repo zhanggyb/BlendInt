@@ -41,7 +41,7 @@ TEST_F(LabelTest1, Resize1)
 	label1->Resize(300, 40);
 	label1->SetPosition(200, 200);
 
-	context->PushBack(label1);
+	context->Append(label1);
 
     RunLoop(win);
 
@@ -89,8 +89,8 @@ TEST_F(LabelTest1, Foo1)
 
 	label1->Resize(label1->GetPreferredSize());
 
-	context->PushBack(label1);
-	context->PushBack(label2);
+	context->Append(label1);
+	context->Append(label2);
 
     RunLoop(win);
 

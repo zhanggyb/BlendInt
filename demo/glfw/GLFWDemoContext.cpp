@@ -122,9 +122,15 @@ void GLFWDemoContext::Initialize ()
     PushBack(tab);
     */
 
-	Workspace* ws = Manage(new Workspace);
+//	Workspace* ws = Manage(new Workspace);
+//	ws->SetPosition(200, 100);
+//
+//	Append(ws);
 
-	PushBack(ws);
+	CheckButton* widget = Manage(new CheckButton);
+	widget->SetPosition(400, 200);
+
+	Append(widget);
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

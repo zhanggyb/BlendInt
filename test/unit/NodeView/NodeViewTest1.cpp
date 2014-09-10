@@ -33,7 +33,7 @@ TEST_F(NodeViewTest1, Foo1)
 
     nv->SetPosition(100, 100);
 
-    context->PushBack(nv);
+    context->Append(nv);
 
     RunLoop(win);
 

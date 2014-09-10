@@ -74,11 +74,11 @@ void TexBufContext::CreateWidgets ()
 
 	m_button->SetPosition(750, 20);
 
-	Section* section = PushBack(label1);
-	section->PushBack(label2);
-	PushBack(m_panel1);
-	PushBack(m_panel2);
-	PushBack(m_button);
+	Section* section = Append(label1);
+	section->Append(label2);
+	Append(m_panel1);
+	Append(m_panel2);
+	Append(m_button);
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
 
 }

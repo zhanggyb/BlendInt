@@ -70,12 +70,12 @@ TEST_F(MenuBarTest1, AddMenu1)
     menu3->AddActionItem("MenuItem4", "Ctrl + 1");
     */
 
-    menubar->PushBack(String("File"), menu1);
-    menubar->PushBack(String("Edit"), menu2);
-    menubar->PushBack(String("Help"), menu3);
+    menubar->Append(String("File"), menu1);
+    menubar->Append(String("Edit"), menu2);
+    menubar->Append(String("Help"), menu3);
 
     menubar->SetPosition(200, 400);
-	context->PushBack(menubar);
+	context->Append(menubar);
 
     RunLoop(win);
 
@@ -106,7 +106,7 @@ TEST_F(MenuBarTest1, AddMenu2)
 
 
     menubar->SetPosition(200, 400);
-	context->PushBack(menubar);
+	context->Append(menubar);
 
     RunLoop(win);
 

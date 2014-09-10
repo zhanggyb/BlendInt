@@ -48,7 +48,7 @@ TEST_F(FrameTest1, Foo1)
     frame->SetMargin(10, 10, 4, 4);
     frame->Resize(800, 600);
 
-    context->PushBack(frame);
+    context->Append(frame);
 
     RunLoop(win);
 

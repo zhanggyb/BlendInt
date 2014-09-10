@@ -74,8 +74,8 @@ namespace BlendInt {
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
 		SingleStack* stack = dynamic_cast<SingleStack*>(GetWidgetAt(1));
 
-		header->PushBack(btn);
-		stack->PushBack(widget);
+		header->Append(btn);
+		stack->Append(widget);
 
 		if(header->widget_count() == 1) {
 			btn->SetChecked(true);

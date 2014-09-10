@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~HLayout ();
 
-		bool PushBack (AbstractWidget* widget);
+		bool Append (AbstractWidget* widget);
 
 		bool Remove (AbstractWidget* widget);
 

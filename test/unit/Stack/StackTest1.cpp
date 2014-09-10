@@ -56,15 +56,15 @@ TEST_F(StackTest1, Foo1)
 
 	SingleStack* stack = Manage (new SingleStack);
 	DBG_SET_NAME(stack, "Stack");
-	stack->PushBack(label1);
-	stack->PushBack(label2);
-	stack->PushBack(label3);
+	stack->Append(label1);
+	stack->Append(label2);
+	stack->Append(label3);
 
 	stack->SetPosition(200, 200);
 	stack->Resize(200, 200);
 	stack->SetIndex(0);
 
-	context->PushBack(stack);
+	context->Append(stack);
 
 	RunLoop(window);
 

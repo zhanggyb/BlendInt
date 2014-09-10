@@ -39,8 +39,8 @@ void Qt5ThemeEditorContext::Initialize()
 	panel2->SetPosition(980, 200);
 	panel2->Resize(panel2->GetPreferredSize());
 
-	Section* section = PushBack(panel1);
-	section->PushBack(panel2);
+	Section* section = Append(panel1);
+	section->Append(panel2);
 }
 
 BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
@@ -56,10 +56,10 @@ BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
 	Button* btn3 = Manage(new Button("ToolButton"));
 	Button* btn4 = Manage(new Button("Button"));
 
-	block->PushBack(btn1);
-	block->PushBack(btn2);
-	block->PushBack(btn3);
-	block->PushBack(btn4);
+	block->Append(btn1);
+	block->Append(btn2);
+	block->Append(btn3);
+	block->Append(btn4);
 
 	panel->SetContent(block);
 

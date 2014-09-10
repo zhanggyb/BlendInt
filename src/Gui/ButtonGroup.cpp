@@ -39,7 +39,7 @@ namespace BlendInt {
 		Clear();
 	}
 	
-	void ButtonGroup::PushFront (AbstractButton* button)
+	void ButtonGroup::Prepend (AbstractButton* button)
 	{
 		if(!button) return;
 
@@ -60,7 +60,7 @@ namespace BlendInt {
 		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
 	}
 
-	void ButtonGroup::PushBack (AbstractButton* button)
+	void ButtonGroup::Append (AbstractButton* button)
 	{
 		if(!button) return;
 

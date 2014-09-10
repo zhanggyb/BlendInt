@@ -36,7 +36,7 @@ TEST_F(ButtonTest1, Foo1)
     bt1->SetText(String("Button1"));
     bt1->Resize(bt1->GetPreferredSize());
 
-    context->PushBack(bt1);
+    context->Append(bt1);
 
     RunLoop(win);
 
@@ -71,7 +71,7 @@ TEST_F(ButtonTest1, SetIcon1)
 
     bt1->Resize(120, 40);
 
-    context->PushBack(bt1);
+    context->Append(bt1);
 
     Button* bt2 = Manage(new Button("Hello World!"));
     DBG_SET_NAME(bt2, "Button2");
@@ -80,7 +80,7 @@ TEST_F(ButtonTest1, SetIcon1)
 
     bt2->Resize(120, 40);
 
-    context->PushBack(bt2);
+    context->Append(bt2);
 
     Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt3, "Button3");
@@ -88,7 +88,7 @@ TEST_F(ButtonTest1, SetIcon1)
     bt3->Resize(120, 40);
     bt3->SetRoundType(RoundNone);
 
-    context->PushBack(bt3);
+    context->Append(bt3);
 
     Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt4, "Button4");
@@ -96,7 +96,7 @@ TEST_F(ButtonTest1, SetIcon1)
     bt4->Resize(120, 40);
     bt4->SetRoundRadius(10.f);
 
-    context->PushBack(bt4);
+    context->Append(bt4);
 
     RunLoop(win);
 
@@ -131,7 +131,7 @@ TEST_F(ButtonTest1, PreferSizing1)
 
     bt1->Resize(bt1->GetPreferredSize());
 
-    context->PushBack(bt1);
+    context->Append(bt1);
 
     Button* bt2 = Manage(new Button("Hello World!"));
     DBG_SET_NAME(bt2, "Button2");
@@ -140,7 +140,7 @@ TEST_F(ButtonTest1, PreferSizing1)
 
     bt2->Resize(bt2->GetPreferredSize());
 
-    context->PushBack(bt2);
+    context->Append(bt2);
 
     Button* bt3 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt3, "Button3");
@@ -148,7 +148,7 @@ TEST_F(ButtonTest1, PreferSizing1)
     bt3->Resize(bt3->GetPreferredSize());
     bt3->SetRoundType(RoundNone);
 
-    context->PushBack(bt3);
+    context->Append(bt3);
 
     Button* bt4 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), "Hello World!"));
     DBG_SET_NAME(bt4, "Button4");
@@ -156,7 +156,7 @@ TEST_F(ButtonTest1, PreferSizing1)
     bt4->Resize(bt4->GetPreferredSize());
     bt4->SetRoundRadius(10.f);
 
-    context->PushBack(bt4);
+    context->Append(bt4);
 
     RunLoop(win);
 
@@ -191,7 +191,7 @@ TEST_F(ButtonTest1, PreferSizing2)
 
     bt1->Resize(bt1->GetPreferredSize());
 
-    context->PushBack(bt1);
+    context->Append(bt1);
 
     Button* bt2 = Manage(new Button(BlendInt::Stock::Icons::instance->icon_16x16(0), String()));
     DBG_SET_NAME(bt2, "Button2");
@@ -204,7 +204,7 @@ TEST_F(ButtonTest1, PreferSizing2)
 
     bt2->Resize(bt2->GetPreferredSize());
 
-    context->PushBack(bt2);
+    context->Append(bt2);
 
     RunLoop(win);
 

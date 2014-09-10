@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 namespace BlendInt {
 
 	struct WidgetTheme;
@@ -73,9 +75,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffers_;
 
 	};
 

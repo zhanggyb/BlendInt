@@ -46,7 +46,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool VLayout::PushBack (AbstractWidget* widget)
+	bool VLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);

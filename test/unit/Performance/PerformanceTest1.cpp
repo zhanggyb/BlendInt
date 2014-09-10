@@ -53,7 +53,7 @@ TEST_F(PerformanceTest1, Layout1)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->PushBack(btn);
+        	layout->Append(btn);
         }
 
         //layout[i]->SetPosition(x_pos, y_pos);
@@ -61,13 +61,13 @@ TEST_F(PerformanceTest1, Layout1)
 
         //y_pos += 40;
 
-        layout1->PushBack(layout);
+        layout1->Append(layout);
     }
 
     frame1->Setup(layout1);
     frame1->Resize(frame1->GetPreferredSize());
 
-    context->PushBack(frame1);
+    context->Append(frame1);
 
     RunLoop(win);
     Interface::Release();
@@ -109,16 +109,16 @@ TEST_F(PerformanceTest1, Layout2)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->PushBack(btn);
+        	layout->Append(btn);
         }
 
-        layout2->PushBack(layout);
+        layout2->Append(layout);
     }
 
     frame2->Setup(layout2);
     frame2->Resize(frame2->GetPreferredSize());
 
-    context->PushBack(frame2);
+    context->Append(frame2);
 
     RunLoop(win);
     Interface::Release();
@@ -162,10 +162,10 @@ TEST_F(PerformanceTest1, Layout3)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->PushBack(btn);
+        	layout->Append(btn);
         }
 
-        layout1->PushBack(layout);
+        layout1->Append(layout);
     }
 
     frame1->Setup(layout1);
@@ -180,10 +180,10 @@ TEST_F(PerformanceTest1, Layout3)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->PushBack(btn);
+        	layout->Append(btn);
         }
 
-        layout2->PushBack(layout);
+        layout2->Append(layout);
     }
 
     frame2->Setup(layout2);
@@ -198,10 +198,10 @@ TEST_F(PerformanceTest1, Layout3)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->PushBack(btn);
+        	layout->Append(btn);
         }
 
-        layout3->PushBack(layout);
+        layout3->Append(layout);
     }
 
     frame3->Setup(layout3);
@@ -209,14 +209,14 @@ TEST_F(PerformanceTest1, Layout3)
 
     HLayout* mainlayout = Manage(new HLayout);
 
-    mainlayout->PushBack(layout1);
-    mainlayout->PushBack(layout2);
-    mainlayout->PushBack(layout3);
+    mainlayout->Append(layout1);
+    mainlayout->Append(layout2);
+    mainlayout->Append(layout3);
 
     mainframe->Setup(mainlayout);
     mainframe->Resize(mainframe->GetPreferredSize());
 
-    context->PushBack(mainframe);
+    context->Append(mainframe);
 
     RunLoop(win);
     Interface::Release();

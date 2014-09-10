@@ -81,7 +81,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void TabHeader::PushBack (TabButton* button)
+	void TabHeader::Append (TabButton* button)
 	{
 		int x = GetLastPosition ();
 		int y = position().y() + margin().bottom();
@@ -100,7 +100,7 @@ namespace BlendInt {
 
 			}
 
-			m_group.PushBack(button);
+			m_group.Append(button);
 
 			if(m_group.button_count() == 1) {
 				button->SetChecked(true);

@@ -341,7 +341,7 @@ namespace BlendInt {
 
 	}
 	
-	void Splitter::PushFront (AbstractWidget* widget)
+	void Splitter::Prepend (AbstractWidget* widget)
 	{
 		if(widget && widget->container() != this) {
 
@@ -367,7 +367,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::PushBack (AbstractWidget* widget)
+	void Splitter::Append (AbstractWidget* widget)
 	{
 		if(widget && widget->container() != this) {
 

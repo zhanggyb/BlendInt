@@ -154,22 +154,19 @@ namespace BlendInt {
 		*/
 
 		glGenVertexArrays(2, vao_);
+		buffers_.generate();
 
 		glBindVertexArray(vao_[0]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		buffers_.bind(0);
+		buffers_.set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		buffers_.bind(1);
+		buffers_.set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),

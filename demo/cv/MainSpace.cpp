@@ -36,6 +36,7 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
 
 #include "MainSpace.hpp"
 
@@ -66,16 +67,16 @@ void MainSpace::InitOnce ()
     Splitter* splitter = Manage(new Splitter);
     splitter->SetMargin(0, 0, 0, 0);
 
-    ToolBox* tbox = CreateToolBox();
+    ToolBox* tbox = CreateSideBox();
     ToolBar* bottom = CreateBottomBar();
 
     image_viewport_ = Manage(new Viewport2D);
-    splitter->PushBack(image_viewport_);
-    splitter->PushBack(tbox);
+    splitter->Append(image_viewport_);
+    splitter->Append(tbox);
 
-	PushBack(m_toolbar);
-    PushBack(splitter);
-    PushBack(bottom);
+	Append(m_toolbar);
+    Append(splitter);
+    Append(bottom);
 }
 
 void MainSpace::PerformRefresh(const RefreshRequest& request)
@@ -263,27 +264,40 @@ BI::ToolBar* MainSpace::CreateToolBar()
 
 	TextEntry* input = Manage(new TextEntry);
 
-	toolbar->PushBack(combo1);
-	toolbar->PushBack(menu1);
-	toolbar->PushBack(menu2);
-	toolbar->PushBack(menu3);
-	toolbar->PushBack(input);
+	toolbar->Append(combo1);
+	toolbar->Append(menu1);
+	toolbar->Append(menu2);
+	toolbar->Append(menu3);
+	toolbar->Append(input);
 
 	return toolbar;
 }
 
-BI::ToolBox* MainSpace::CreateToolBox()
+BI::ToolBox* MainSpace::CreateSideBox()
 {
 	ToolBox* toolbox = Manage(new ToolBox);
 
+	HBlockLayout* hblock = Manage(new HBlockLayout);
+	RadioButton* btn1 = Manage(new RadioButton);
+	RadioButton* btn2 = Manage(new RadioButton);
+	RadioButton* btn3 = Manage(new RadioButton);
+	RadioButton* btn4 = Manage(new RadioButton);
+
+	hblock->Append(btn1);
+	hblock->Append(btn2);
+	hblock->Append(btn3);
+	hblock->Append(btn4);
+
+	toolbox->Append(hblock);
+
 	Expander* expander1 = CreateTransformExpander();
-	toolbox->PushBack(expander1);
+	toolbox->Append(expander1);
 
 	Expander* expander2 = CreateLightExpander();
-	toolbox->PushBack(expander2);
+	toolbox->Append(expander2);
 
 	Expander* expander3 = CreateColorExpander();
-	toolbox->PushBack(expander3);
+	toolbox->Append(expander3);
 
 	return toolbox;
 }
@@ -297,9 +311,9 @@ BI::Expander* MainSpace::CreateTransformExpander()
 	Button* btn3 = Manage(new Button("Scale"));
 
 	VBlockLayout* vblock = Manage(new VBlockLayout);
-	vblock->PushBack(btn1);
-	vblock->PushBack(btn2);
-	vblock->PushBack(btn3);
+	vblock->Append(btn1);
+	vblock->Append(btn2);
+	vblock->Append(btn3);
 
 	expander->Setup(vblock);
 
@@ -315,9 +329,9 @@ BI::Expander* MainSpace::CreateLightExpander()
 	NumericalSlider* ns3 = Manage(new NumericalSlider);
 
 	VBlockLayout* vblock = Manage(new VBlockLayout);
-	vblock->PushBack(ns1);
-	vblock->PushBack(ns2);
-	vblock->PushBack(ns3);
+	vblock->Append(ns1);
+	vblock->Append(ns2);
+	vblock->Append(ns3);
 
 	expander->Setup(vblock);
 
@@ -341,7 +355,7 @@ BI::ToolBar* MainSpace::CreateBottomBar ()
 	toolbar->SetMargin(2, 2, 2, 2);
 
 	message_ = Manage(new Label("Ready..."));
-	toolbar->PushBack(message_);
+	toolbar->Append(message_);
 
 	return toolbar;
 }

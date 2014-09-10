@@ -40,15 +40,15 @@ TEST_F(SectionTest1, Foo1)
 
     Section* section = Manage(new Section);
     DBG_SET_NAME(section, "Section");
-    section->PushBack(fs);
+    section->Append(fs);
     section->set_mode(Section::Modal);
 
     fs->SetPosition(200, 100);
     fs->Resize(800, 600);
 
-    context->PushBack(btn);
+    context->Append(btn);
 
-	context->PushBack(section);
+	context->Append(section);
 
     RunLoop(win);
 

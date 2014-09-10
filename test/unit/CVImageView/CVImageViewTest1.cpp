@@ -32,7 +32,7 @@ TEST_F(CVImageViewTest1, Foo1)
 
     CVImageView* img = Manage(new CVImageView);
     img->SetPosition(100, 100);
-    context->PushBack(img);
+    context->Append(img);
 
     RunLoop(win);
 

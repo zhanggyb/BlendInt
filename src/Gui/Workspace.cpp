@@ -50,6 +50,126 @@ namespace BlendInt {
 	using Stock::Shaders;
 	using Stock::Icons;
 
+	SideButton::SideButton(int round_type)
+	: AbstractButton()
+	{
+		set_size(18, 18);
+		set_round_type(round_type);
+
+		VertexTool tool;
+		tool.GenerateShadedVertices(size(), 1.f, this->round_type(), round_radius());
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
+	}
+
+	SideButton::~SideButton()
+	{
+		glDeleteVertexArrays(2, vao_);
+	}
+
+	void SideButton::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
+						round_type(), round_radius());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			GLArrayBuffer::reset();
+
+			set_size(*request.size());
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	ResponseType SideButton::Draw(Profile& profile)
+	{
+		Shaders::instance->widget_program()->use();
+
+		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+
+		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
+
+		if (hover()) {
+
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+			if (is_checked()) {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner_sel.data());
+			} else {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner.data());
+			}
+
+		} else {
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+			if (is_checked()) {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner_sel.data());
+			} else {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner.data());
+			}
+		}
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		        Theme::instance->radio_button().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
+
+		if (emboss()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f,
+			        1.0f, 1.0f, 0.16f);
+
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+			        GetHalfOutlineVertices(round_type()) * 2);
+		}
+
+		glBindVertexArray(0);
+		GLSLProgram::reset();
+
+		return Accept;
+	}
+
+	// -------------------------------
+
 	Workspace::Workspace()
 	: AbstractContainer(),
 	  left_sidebar_(0),
@@ -280,14 +400,14 @@ namespace BlendInt {
 		header_ = Manage(new ToolBar);
 
 //		splitter_->PushBack(left_sidebar_);
-		splitter_->PushBack(viewport_);
+		splitter_->Append(viewport_);
 //		splitter_->PushBack(right_sidebar_);
 
 		PushBackSubWidget(splitter_);
 		PushBackSubWidget(header_);
 
-		left_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
-		right_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
+		left_button_ = Manage(new SideButton(RoundTopRight | RoundBottomRight));
+		right_button_ = Manage(new SideButton(RoundTopLeft | RoundBottomLeft));
 
 		PushBackSubWidget(right_button_);
 		PushBackSubWidget(left_button_);
@@ -341,4 +461,3 @@ namespace BlendInt {
 	}
 
 }
-

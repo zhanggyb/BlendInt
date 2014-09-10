@@ -292,7 +292,7 @@ namespace BlendInt {
 
 			list_->Resize(200, list_->size().height());
 			list_->SetPosition(position().x(), position().y() + size().height());
-			context->PushBack(list_);
+			context->Append(list_);
 			SetRoundType(RoundBottomLeft | RoundBottomRight);
 			context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}

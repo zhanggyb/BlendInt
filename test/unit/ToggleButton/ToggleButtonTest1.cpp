@@ -35,8 +35,8 @@ TEST_F(ToggleButtonTest1, Foo1)
     ToggleButton* btn2 = Manage(new ToggleButton("Check2 alsdkjflasjdf"));
     btn2->SetPosition(300, 200);
 
-	context->PushBack(btn1);
-	context->PushBack(btn2);
+	context->Append(btn1);
+	context->Append(btn2);
 
     RunLoop(win);
 

@@ -43,14 +43,14 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
 	ToggleButton* btn3 = Manage(new ToggleButton("Toggle3"));
 	DBG_SET_NAME(btn3, "Toggle Button3");
 
-	hblock->PushBack(btn1);
-	hblock->PushBack(btn2);
-	hblock->PushBack(btn3);
+	hblock->Append(btn1);
+	hblock->Append(btn2);
+	hblock->Append(btn3);
 
     ButtonGroup btngroup;
-    btngroup.PushBack(btn1);
-    btngroup.PushBack(btn2);
-    btngroup.PushBack(btn3);
+    btngroup.Append(btn1);
+    btngroup.Append(btn2);
+    btngroup.Append(btn3);
 
     hblock->SetPosition(200, 200);
     hblock->Resize(hblock->GetPreferredSize());
@@ -59,7 +59,7 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
 
     btngroup.Clear();
 
-    context->PushBack(hblock);
+    context->Append(hblock);
 
     RunLoop(win);
 

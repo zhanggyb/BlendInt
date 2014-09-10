@@ -62,7 +62,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ToolBar::PushBack (AbstractWidget* widget)
+	void ToolBar::Append (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
@@ -92,7 +92,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBar::PushBack (const RefPtr<Action>& action)
+	void ToolBar::Append (const RefPtr<Action>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();

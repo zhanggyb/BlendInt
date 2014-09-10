@@ -63,7 +63,7 @@ namespace BlendInt {
 
 	CheckButton::~CheckButton ()
 	{
-		glDeleteVertexArrays(3, vao_);
+		glDeleteVertexArrays(2, vao_);
 
 		if(shadow_)
 			delete shadow_;
@@ -114,23 +114,20 @@ namespace BlendInt {
 				25,
 				-25);
 
-		glGenVertexArrays(3, vao_);
+		glGenVertexArrays(2, vao_);
+		buffer_.generate();
 
 		glBindVertexArray(vao_[0]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		buffer_.bind(0);
+		buffer_.set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		buffer_.bind(1);
+		buffer_.set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),

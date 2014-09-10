@@ -30,13 +30,13 @@ TEST_F(HLayoutTest1, Mix1)
 	Widget* widget3 = Manage(new Widget);
 
 	VLayout* vlayout = Manage(new VLayout);
-	vlayout->PushBack(widget2);
-	vlayout->PushBack(widget3);
+	vlayout->Append(widget2);
+	vlayout->Append(widget3);
 
-	hlayout->PushBack(widget1);
-	hlayout->PushBack(vlayout);
+	hlayout->Append(widget1);
+	hlayout->Append(vlayout);
 
-	context->PushBack(hlayout);
+	context->Append(hlayout);
 
 	RunLoop(window);
 

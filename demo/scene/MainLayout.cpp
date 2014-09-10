@@ -80,13 +80,13 @@ void MainLayout::InitOnce ()
 
     ToolBar* bottom = CreateBottomBar();
 
-    splitter->PushBack(m_tab);
-    splitter->PushBack(tbox);
+    splitter->Append(m_tab);
+    splitter->Append(tbox);
 
-	PushBack(m_menubar);
-	PushBack(m_toolbar);
-    PushBack(splitter);
-    PushBack(bottom);
+	Append(m_menubar);
+	Append(m_toolbar);
+    Append(splitter);
+    Append(bottom);
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
@@ -331,12 +331,12 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	ToolButton* btn5 = Manage(new ToolButton);
 	btn5->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_SPLITVIEW), String("SEQ SPLITVIEW"));
 
-	hblock->PushBack(m_tool_open);
-	hblock->PushBack(btn1);
-	hblock->PushBack(btn2);
-	hblock->PushBack(btn3);
-	hblock->PushBack(btn4);
-	hblock->PushBack(btn5);
+	hblock->Append(m_tool_open);
+	hblock->Append(btn1);
+	hblock->Append(btn2);
+	hblock->Append(btn3);
+	hblock->Append(btn4);
+	hblock->Append(btn5);
 	hblock->Resize(hblock->GetPreferredSize());
 
 	HBlockLayout* hblock2 = Manage (new HBlockLayout);
@@ -350,9 +350,9 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	ToolButton* btn8 = Manage(new ToolButton);
 	btn8->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_SCALE), String("MAN SCALE"));
 
-	hblock2->PushBack(btn6);
-	hblock2->PushBack(btn7);
-	hblock2->PushBack(btn8);
+	hblock2->Append(btn6);
+	hblock2->Append(btn7);
+	hblock2->Append(btn8);
 	hblock2->Resize(hblock2->GetPreferredSize());
 
 	HBlockLayout* hblock3 = Manage (new HBlockLayout);
@@ -372,16 +372,16 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	ToolButton* btn13 = Manage(new ToolButton);
 	btn13->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGEFILE), String("IMAGEFILE"));
 
-	hblock3->PushBack(btn9);
-	hblock3->PushBack(btn10);
-	hblock3->PushBack(btn11);
-	hblock3->PushBack(btn12);
-	hblock3->PushBack(btn13);
+	hblock3->Append(btn9);
+	hblock3->Append(btn10);
+	hblock3->Append(btn11);
+	hblock3->Append(btn12);
+	hblock3->Append(btn13);
 	hblock3->Resize(hblock3->GetPreferredSize());
 
-	toolbar->PushBack(hblock);
-	toolbar->PushBack(hblock2);
-	toolbar->PushBack(hblock3);
+	toolbar->Append(hblock);
+	toolbar->Append(hblock2);
+	toolbar->Append(hblock3);
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 
@@ -401,7 +401,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
     file_menu->AddAction("MenuItem4", "Ctrl + 1");
     file_menu->AddAction("MenuItem5");
 
-	menubar->PushBack(String("File"), file_menu);
+	menubar->Append(String("File"), file_menu);
 
 	RefPtr<Menu> edit_menu(new Menu);
 
@@ -412,7 +412,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	edit_menu->AddAction("MenuItem4", "Ctrl + 1");
 	edit_menu->AddAction("MenuItem5");
 
-	menubar->PushBack(String("Edit"), edit_menu);
+	menubar->Append(String("Edit"), edit_menu);
 
 	RefPtr<Menu> help_menu(new Menu);
 
@@ -423,7 +423,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	help_menu->AddAction("MenuItem4", "Ctrl + 1");
 	help_menu->AddAction("MenuItem5");
 
-	menubar->PushBack(String("Help"), help_menu);
+	menubar->Append(String("Help"), help_menu);
 
 
 	return menubar;
@@ -434,13 +434,13 @@ BI::ToolBox* MainLayout::CreateToolBox()
 	ToolBox* toolbox = Manage(new ToolBox);
 
 	Expander* expander1 = CreateTransformExpander();
-	toolbox->PushBack(expander1);
+	toolbox->Append(expander1);
 
 	Expander* expander2 = CreateLightExpander();
-	toolbox->PushBack(expander2);
+	toolbox->Append(expander2);
 
 	Expander* expander3 = CreateColorExpander();
-	toolbox->PushBack(expander3);
+	toolbox->Append(expander3);
 
 	return toolbox;
 }
@@ -454,9 +454,9 @@ BI::Expander* MainLayout::CreateTransformExpander()
 	Button* btn3 = Manage(new Button("Scale"));
 
 	VBlockLayout* vblock = Manage(new VBlockLayout);
-	vblock->PushBack(btn1);
-	vblock->PushBack(btn2);
-	vblock->PushBack(btn3);
+	vblock->Append(btn1);
+	vblock->Append(btn2);
+	vblock->Append(btn3);
 
 	expander->Setup(vblock);
 
@@ -472,9 +472,9 @@ BI::Expander* MainLayout::CreateLightExpander()
 	NumericalSlider* ns3 = Manage(new NumericalSlider);
 
 	VBlockLayout* vblock = Manage(new VBlockLayout);
-	vblock->PushBack(ns1);
-	vblock->PushBack(ns2);
-	vblock->PushBack(ns3);
+	vblock->Append(ns1);
+	vblock->Append(ns2);
+	vblock->Append(ns3);
 
 	expander->Setup(vblock);
 
@@ -519,9 +519,9 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	m_file_button = Manage(new FileButton);
 	m_file_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
 	m_file_button->SetRoundType(RoundTopRight | RoundBottomRight);
-	box->PushBack(label);
-	box->PushBack(m_file_input);
-	box->PushBack(m_file_button);
+	box->Append(label);
+	box->Append(m_file_input);
+	box->Append(m_file_button);
 
 	m_btn_open = Manage(new Button("Open"));
 
@@ -531,11 +531,11 @@ BI::ToolBar* MainLayout::CreateBottomBar ()
 	m_msg_label = Manage(new Label("Ready..."));
 	//m_msg_label->SetBackgroundColor(Color(0x8888EFFF));
 
-	toolbar->PushBack(box);
-	toolbar->PushBack(m_btn_open);
-	toolbar->PushBack(combo);
-	toolbar->PushBack(info_label);
-	toolbar->PushBack(m_msg_label);
+	toolbar->Append(box);
+	toolbar->Append(m_btn_open);
+	toolbar->Append(combo);
+	toolbar->Append(info_label);
+	toolbar->Append(m_msg_label);
 
 	events()->connect(m_file_button->file_selected(), this, &MainLayout::OnFileSelected);
 	events()->connect(m_btn_open->clicked(), this, &MainLayout::OnOpenClick);

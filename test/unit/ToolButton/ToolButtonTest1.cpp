@@ -37,7 +37,7 @@ TEST_F(ToolButtonTest1, Foo1)
     tb->SetPosition(200, 200);
     tb->SetRoundType(RoundTopLeft | RoundBottomLeft);
 
-    context->PushBack(tb);
+    context->Append(tb);
 
     RunLoop(win);
 

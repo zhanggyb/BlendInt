@@ -38,7 +38,7 @@ TEST_F(ListViewTest1, Foo1)
 	model->Load(".");
 	list->SetModel(model);
 
-	context->PushBack(list);
+	context->Append(list);
 
     RunLoop(win);
 

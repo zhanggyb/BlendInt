@@ -267,7 +267,7 @@ namespace BlendInt {
 			panel_->Resize(w, h);
 			panel_->SetPosition(x, y);
 			panel_->SetContent(file_selector);
-			Section* section = context->PushBack(panel_);
+			Section* section = context->Append(panel_);
 			section->set_mode(Section::Modal);
 			context->SetFocusedWidget(file_selector);
 

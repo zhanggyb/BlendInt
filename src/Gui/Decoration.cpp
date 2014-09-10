@@ -63,11 +63,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, vao_);
 	}
 
-	void Decoration::PushFront (AbstractWidget* widget)
+	void Decoration::Prepend (AbstractWidget* widget)
 	{
 	}
 
-	void Decoration::PushBack (AbstractWidget* widget)
+	void Decoration::Append (AbstractWidget* widget)
 	{
 	}
 

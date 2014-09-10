@@ -31,7 +31,7 @@ TEST_F(TextEntryTest1, Foo1)
     TextEntry* lineedit = Manage(new TextEntry);
  	lineedit->SetPosition(200, 200);
     
-    context->PushBack(lineedit);
+    context->Append(lineedit);
     lineedit->SetText("Hello World!");
 
 	RunLoop(window);

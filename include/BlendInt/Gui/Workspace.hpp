@@ -32,6 +32,35 @@
 namespace BlendInt {
 
 	/**
+	 * @brief A special button used in Workspace to switch on/off side bars
+	 */
+	class SideButton: public AbstractButton
+	{
+		DISALLOW_COPY_AND_ASSIGN(SideButton);
+
+	public:
+
+		SideButton (int round_type);
+
+		virtual ~SideButton ();
+
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+	private:
+
+		GLuint vao_[2];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
+
+	};
+
+	/**
 	 * @brief A special container which works as a space in Blender
 	 *
 	 * A workspace may contain:
@@ -110,9 +139,9 @@ namespace BlendInt {
 
 		Splitter* splitter_;
 
-		Button* left_button_;
+		SideButton* left_button_;
 
-		Button* right_button_;
+		SideButton* right_button_;
 
 		GLuint vao_;
 

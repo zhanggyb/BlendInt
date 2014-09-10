@@ -12,7 +12,7 @@ CVContext::CVContext()
 	m_layout = Manage (new MainSpace);
 	m_layout->Resize(size());
 
-	PushBack(m_layout);
+	Append(m_layout);
 
 	events()->connect(resized(), this , &CVContext::OnResizeLayout);
 }

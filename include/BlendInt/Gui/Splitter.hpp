@@ -116,9 +116,9 @@ namespace BlendInt
 
 		virtual ~Splitter ();
 
-		void PushFront (AbstractWidget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
 		void Remove (AbstractWidget* widget);
 

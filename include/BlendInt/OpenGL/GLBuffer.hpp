@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
-#define _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
+#ifndef _BLENDINT_OPENGL_GLBUFFER_HPP_
+#define _BLENDINT_OPENGL_GLBUFFER_HPP_
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -34,122 +34,119 @@
 #endif
 #endif  // __UNIX__
 
-#include <stddef.h>
-
-#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Object.hpp>
-
-#define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
 namespace BlendInt {
 
-	/**
-	 * @brief Array buffer
-	 *
-	 * @ingroup opengl
-	 */
-	class GLArrayBuffer: public Object
+	enum BufferType {
+
+		ARRAY_BUFFER = GL_ARRAY_BUFFER,
+		ATOMIC_COUNTER_BUFFER = GL_ATOMIC_COUNTER_BUFFER,
+		COPY_READ_BUFFER = GL_COPY_READ_BUFFER,
+		COPY_WRITE_BUFFER = GL_COPY_WRITE_BUFFER,
+		DRAW_INDIRECT_BUFFER = GL_DRAW_INDIRECT_BUFFER,
+		DISPATCH_INDIRECT_BUFFER = GL_DISPATCH_INDIRECT_BUFFER,
+		ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER,
+		PIXEL_PACK_BUFFER = GL_PIXEL_PACK_BUFFER,
+		PIXEL_UNPACK_BUFFER = GL_PIXEL_UNPACK_BUFFER,
+		SHADER_STORAGE_BUFFER = GL_SHADER_STORAGE_BUFFER,
+		TEXTURE_BUFFER = GL_TEXTURE_BUFFER,
+		TRANSFORM_FEEDBACK_BUFFER = GL_TRANSFORM_FEEDBACK_BUFFER,
+		UNIFORM_BUFFER =  GL_UNIFORM_BUFFER
+
+	};
+
+	template<int TARGET = GL_ARRAY_BUFFER, int SIZE = 1>
+	class GLBuffer: public Object
 	{
 	public:
 
-		/**
-		 * @brief Default constructor
-		 */
-		GLArrayBuffer ();
+		GLBuffer ()
+		: Object()
+		{
+			memset(ids_, 0, SIZE);
+		}
 
-		/**
-		 * @brief Destructor
-		 */
-		virtual ~GLArrayBuffer ();
+		virtual ~GLBuffer ()
+		{
+			glDeleteBuffers(SIZE, ids_);
+		}
 
-		/**
-		 * @brief Generate buffer
-		 *
-		 * Generate new GL buffers, if there's buffer generated before, this will delete these.
-		 */
 		inline void generate ()
 		{
-			if(id_ != 0) clear();
-			glGenBuffers(1, &id_);
+			if(ids_[0] != 0) clear();
+			glGenBuffers(SIZE, ids_);
 		}
 
-
-		/**
-		 * @brief Delete buffer created
-		 */
 		inline void clear ()
 		{
-			glDeleteBuffers(1, &id_);
-			id_ = 0;
+			glDeleteBuffers(SIZE, ids_);
+			memset(ids_, 0, SIZE);
 		}
 
-		/**
-		 * @brief The buffer id
-		 * @return
-		 */
-		inline GLuint id () const {return id_;}
+		inline GLuint id (int index = 0) const {return ids_[index];}
 
-		inline bool is_buffer () const
+		inline bool is_buffer (int index = 0) const
 		{
-			return glIsBuffer(id_);
+			return glIsBuffer(ids_[index]);
 		}
 
-		inline void bind () const
+		inline void bind (int index = 0) const
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, id_);
+			glBindBuffer (TARGET, ids_[index]);
 		}
 
 		static inline void reset ()
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(TARGET, 0);
 		}
 
 		inline void set_data (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
 		{
-			glBufferData (GL_ARRAY_BUFFER, size, data, usage);
+			glBufferData (TARGET, size, data, usage);
 		}
 
 		inline void set_sub_data (GLintptr offset, GLsizeiptr size, const GLvoid* data)
 		{
-			glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+			glBufferSubData(TARGET, offset, size, data);
 		}
 
 		inline GLvoid* map (GLenum access = GL_READ_ONLY) const
 		{
 			GLvoid* ptr = 0;
-			ptr = glMapBuffer(GL_ARRAY_BUFFER, access);
+			ptr = glMapBuffer(TARGET, access);
 			return ptr;
 		}
 
 		inline bool unmap () const
 		{
-			return glUnmapBuffer(GL_ARRAY_BUFFER);
+			return glUnmapBuffer(TARGET);
 		}
 
-		inline GLenum target ()
+		inline GLenum target () const
 		{
-			return GL_ARRAY_BUFFER;
+			return TARGET;
 		}
 
 		inline GLenum get_usage () const
 		{
 			GLint usage = 0;
-			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+			glGetBufferParameteriv(TARGET, GL_BUFFER_USAGE, &usage);
 			return usage;
 		}
 
 		inline GLint get_buffer_size () const
 		{
 			GLint buffer_size = 0;
-			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+			glGetBufferParameteriv(TARGET, GL_BUFFER_SIZE, &buffer_size);
 			return buffer_size;
 		}
 
 	private:
 
-		GLuint id_;
+		GLuint ids_[SIZE];
 	};
 
 }
 
-#endif /* _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_ */
+#endif /* _BLENDINT_OPENGL_GLBUFFER_HPP_ */

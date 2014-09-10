@@ -74,7 +74,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 	
-	void ToolBox::PushBack (AbstractWidget* widget)
+	void ToolBox::Append (AbstractWidget* widget)
 	{
 		int x = position().x() + margin().left();
 		int y = GetLastPosition();

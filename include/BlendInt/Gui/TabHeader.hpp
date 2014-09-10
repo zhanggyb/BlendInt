@@ -40,7 +40,7 @@ namespace BlendInt {
 
 		virtual ~TabHeader ();
 
-		void PushBack (TabButton* button);
+		void Append (TabButton* button);
 
 		virtual bool IsExpandX () const;
 

@@ -52,7 +52,7 @@ private:
 
 	BI::ToolBar* CreateToolBar ();
 
-	BI::ToolBox* CreateToolBox ();
+	BI::ToolBox* CreateSideBox ();
 
 	BI::Expander* CreateTransformExpander ();
 

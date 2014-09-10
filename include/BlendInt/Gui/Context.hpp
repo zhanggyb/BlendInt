@@ -61,7 +61,7 @@ namespace BlendInt {
 		 * The widget could also be a Section object
 		 *
 		 */
-		Section* PushBack (AbstractWidget* widget);
+		Section* Append (AbstractWidget* widget);
 
 		/**
 		 * @brief Remove widget from this context

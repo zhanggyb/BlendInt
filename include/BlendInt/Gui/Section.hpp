@@ -49,9 +49,9 @@ namespace BlendInt {
 
 		virtual ~Section ();
 
-		void PushFront (AbstractWidget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
 		/**
 		 * @brief Remove sub widget

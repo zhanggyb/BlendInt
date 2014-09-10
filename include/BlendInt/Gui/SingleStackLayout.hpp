@@ -38,9 +38,9 @@ namespace BlendInt {
 
 		virtual ~SingleStackLayout ();
 
-		void PushFront (AbstractWidget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
 		void Insert (int index, AbstractWidget* widget);
 

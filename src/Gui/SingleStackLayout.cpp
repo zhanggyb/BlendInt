@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	}
 
-	void SingleStackLayout::PushFront (AbstractWidget* widget)
+	void SingleStackLayout::Prepend (AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -54,7 +54,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SingleStackLayout::PushBack (AbstractWidget* widget)
+	void SingleStackLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();

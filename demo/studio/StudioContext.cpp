@@ -34,7 +34,7 @@ void StudioContext::Initialize ()
 	
 	frame_->Setup(fs);
 
-	PushBack(frame_);
+	Append(frame_);
 
 	StaticPanel* panel = Manage(new StaticPanel);
 	button_ = Manage(new Button("Save Texture"));
@@ -42,7 +42,7 @@ void StudioContext::Initialize ()
 	panel->SetPosition(1100, 600);
 	panel->Resize(panel->GetPreferredSize());
 
-	PushBack(panel);
+	Append(panel);
 	events()->connect(button_->clicked(), this, &StudioContext::OnSaveTextureToFile);
 }
 

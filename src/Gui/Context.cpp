@@ -79,7 +79,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	Section* Context::PushBack (AbstractWidget* widget)
+	Section* Context::Append (AbstractWidget* widget)
 	{
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
@@ -103,7 +103,7 @@ namespace BlendInt
 
 		} else {
 			section = Manage(new Section);
-			section->PushBack(widget);
+			section->Append(widget);
 		}
 
 #ifdef DEBUG
