@@ -52,8 +52,13 @@ namespace BlendInt {
 				"layout(location = 0) in vec4 a_coord;"
 				"out vec2 uv;"
 				""
-				"uniform mat4 u_projection;"	// projection matrix
-        		"uniform mat4 u_view;"// view matrix
+				//"uniform mat4 u_projection;"	// projection matrix
+        		//"uniform mat4 u_view;"// view matrix
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"};"
+				""
 				"uniform vec3 u_position;"// position
         		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				""
@@ -88,7 +93,8 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
+				"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
 				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
 				"	uv = a_coord.zw;"
 				"}";
@@ -144,21 +150,27 @@ namespace BlendInt {
 
 		const char* Shaders::triangle_geometry_shader =
 		        "#version 330\n"
-				        ""
-				        "layout (triangles) in;"
-				        "layout (triangle_strip, max_vertices = 24) out;"
-				        "in vec4 VertexColor[];"
-				        "out vec4 PreFragColor;"
-						"uniform mat4 u_projection;"	// projection matrix
-		        		"uniform mat4 u_view;"// view matrix
-						"uniform vec3 u_position;"// position
-		        		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-		        		"uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
-		        		"uniform bool u_AA = false;"
-				        ""
-				        "const vec2 AA_JITTER[8] = vec2[8]("
-				        "	vec2(0.468813, -0.481430),"
-				        "	vec2(-0.155755, -0.352820),"
+				""
+				"layout (triangles) in;"
+				"layout (triangle_strip, max_vertices = 24) out;"
+				"in vec4 VertexColor[];"
+				"out vec4 PreFragColor;"
+				//"uniform mat4 u_projection;"	// projection matrix
+		       	//"uniform mat4 u_view;"// view matrix
+				""
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"};"
+				""
+				"uniform vec3 u_position;"// position
+		        "uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+		        "uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
+		        "uniform bool u_AA = false;"
+				""
+				"const vec2 AA_JITTER[8] = vec2[8]("
+				"	vec2(0.468813, -0.481430),"
+				"	vec2(-0.155755, -0.352820),"
 				        "	vec2(0.219306, -0.238501),"
 				        "	vec2(-0.393286,-0.110949),"
 				        "	vec2(-0.024699, 0.013908),"
@@ -206,7 +218,8 @@ namespace BlendInt {
 				        ""
 				        "void main()"
 				        "{"
-						"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
+						//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
+					"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
 				        "	vec4 vertex;"
 				        ""
 				        "	if(u_AA) {"
@@ -462,8 +475,14 @@ namespace BlendInt {
 				"layout(location = 1) in vec2 a_uv;"
 				"out vec2 f_texcoord;"
 				""
-				"uniform mat4 u_projection;"	// projection matrix
-        		"uniform mat4 u_view;"// view matrix
+				//"uniform mat4 u_projection;"	// projection matrix
+        		//"uniform mat4 u_view;"// view matrix
+				""
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"};"
+				""
 				"uniform vec3 u_position;"// position
         		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				""
@@ -498,7 +517,8 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
+				"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
 				"	gl_Position = mvp * vec4(a_coord, 0.0, 1.0);"
 				"	f_texcoord = a_uv;"
 				"}";
@@ -637,12 +657,13 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
+		: ui_matrix_block_size_(0)
 		{
 			text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
 			triangle_program_.reset(new GLSLProgram);
 			widget_program_.reset(new GLSLProgram);
-			m_image_program.reset(new GLSLProgram);
+			image_program_.reset(new GLSLProgram);
 		}
 
 		Shaders::~Shaders ()
@@ -654,7 +675,7 @@ namespace BlendInt {
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
-			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[0], sizeof(glm::mat4));
+			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0]);
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
@@ -665,7 +686,7 @@ namespace BlendInt {
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
-			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[1], sizeof(glm::mat4));
+			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[1], ui_matrix_block_size_ - ui_matrix_offset_[1]);
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
@@ -674,26 +695,26 @@ namespace BlendInt {
 		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
 		{
 			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[0], sizeof(glm::mat4), glm::value_ptr(matrix));
+			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
 			ui_matrix_->reset();
 		}
 
 		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
 		{
 			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[1], sizeof(glm::mat4), glm::value_ptr(matrix));
+			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_block_size_ - ui_matrix_offset_[1], glm::value_ptr(matrix));
 			ui_matrix_->reset();
 		}
 
 		bool Shaders::Setup ()
 		{
+			if(!SetupWidgetProgram())
+				return false;
+
 			if(!SetupTextProgram())
 				return false;
 
 			if(!SetupTriangleProgram())
-				return false;
-
-			if(!SetupWidgetProgram())
 				return false;
 
 			if(!SetupImageProgram())
@@ -701,6 +722,96 @@ namespace BlendInt {
 
 			if(!SetupPrimitiveProgram())
 				return false;
+
+			// setup uniform block
+
+			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
+			DBG_PRINT_MSG("block_index in widget program: %ud", block_index);
+
+			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &ui_matrix_block_size_);
+			DBG_PRINT_MSG("block size in widget program: %d", ui_matrix_block_size_);
+
+			const GLchar* names[] = {
+				"projection",
+				"view"
+			};
+
+			GLubyte* buf_p = (GLubyte*)malloc(ui_matrix_block_size_);
+
+			GLuint indices[2];
+			glGetUniformIndices(widget_program_->id(), 2, names, indices);
+			glGetActiveUniformsiv(widget_program_->id(), 2, indices, GL_UNIFORM_OFFSET, ui_matrix_offset_);
+
+			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", ui_matrix_offset_[0], ui_matrix_offset_[1]);
+
+			// set default matrix
+			glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
+			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+					glm::vec3(0.f, 0.f, 0.f),
+					glm::vec3(0.f, 1.f, 0.f));
+
+			if(ui_matrix_block_size_ > 0) {
+				memcpy(buf_p + ui_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
+				memcpy(buf_p + ui_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+			}
+
+			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			ui_matrix_->generate();
+			ui_matrix_->bind();
+			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+
+			free(buf_p);
+			buf_p = 0;
+			ui_matrix_->reset();
+
+			// set uniform block in text program
+
+			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
+			DBG_PRINT_MSG("block_index in text program: %ud", block_index);
+
+			GLint block_size = 0;
+			glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			DBG_PRINT_MSG("block size in text program: %d", block_size);
+
+			GLint offset[2];
+			glGetUniformIndices(text_program_->id(), 2, names, indices);
+			glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+
+			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+
+			// set uniform block in text program
+
+			block_index = glGetUniformBlockIndex(triangle_program_->id(), "UIMatrix");
+			DBG_PRINT_MSG("block_index in triangle program: %ud", block_index);
+
+			glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			DBG_PRINT_MSG("block size in triangle program: %d", block_size);
+
+			glGetUniformIndices(triangle_program_->id(), 2, names, indices);
+			glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+
+			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+
+			// set uniform block in image program
+
+			block_index = glGetUniformBlockIndex(image_program_->id(), "UIMatrix");
+			DBG_PRINT_MSG("block_index in image program: %ud", block_index);
+
+			glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			DBG_PRINT_MSG("block size in image program: %d", block_size);
+
+			glGetUniformIndices(image_program_->id(), 2, names, indices);
+			glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+
+			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
 			return true;
 		}
@@ -720,8 +831,8 @@ namespace BlendInt {
 			}
 
 			locations_[TEXT_COORD] = text_program_->GetAttributeLocation("a_coord");
-			locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
-			locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
+			//locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
+			//locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
 			locations_[TEXT_POSITION] = text_program_->GetUniformLocation("u_position");
 			locations_[TEXT_ROTATION] = text_program_->GetUniformLocation("u_rotation");
 			locations_[TEXT_TEXTURE] = text_program_->GetUniformLocation("u_tex");
@@ -751,8 +862,8 @@ namespace BlendInt {
 
 			locations_[TRIANGLE_COORD] = triangle_program_->GetAttributeLocation("a_coord");
 			locations_[TRIANGLE_COLOR] = triangle_program_->GetAttributeLocation("a_color");
-			locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
-			locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
+			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
+			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
 			locations_[TRIANGLE_POSITION] = triangle_program_->GetUniformLocation("u_position");
 			locations_[TRIANGLE_ROTATION] = triangle_program_->GetUniformLocation("u_rotation");
 			locations_[TRIANGLE_SCALE] = triangle_program_->GetUniformLocation("u_scale");
@@ -781,48 +892,6 @@ namespace BlendInt {
 				return false;
 			}
 
-			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
-			DBG_PRINT_MSG("block_index: %ud", block_index);
-
-			GLint block_size = 0;
-			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			DBG_PRINT_MSG("block size: %d", block_size);
-
-			const GLchar* names[] = {
-					"projection",
-					"view"
-			};
-
-			GLubyte* buf_p = (GLubyte*)malloc(block_size);
-
-			GLuint indices[2];
-			glGetUniformIndices(widget_program_->id(), 2, names, indices);
-			glGetActiveUniformsiv(widget_program_->id(), 2, indices, GL_UNIFORM_OFFSET, ui_matrix_offset_);
-
-			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", ui_matrix_offset_[0], ui_matrix_offset_[1]);
-
-			glm::mat4 projection = glm::ortho(0.f, 800.f,
-			        0.f, 600.f, 100.f, -100.f);
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-					glm::vec3(0.f, 0.f, 0.f),
-		            glm::vec3(0.f, 1.f, 0.f));
-
-			if(block_size > 0) {
-				memcpy(buf_p + ui_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
-				memcpy(buf_p + ui_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
-			}
-
-			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
-			ui_matrix_->generate();
-			ui_matrix_->bind();
-			ui_matrix_->set_data(block_size, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
-
-			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
-
-			free(buf_p);
-			buf_p = 0;
-			ui_matrix_->reset();
-
 			locations_[WIDGET_COORD] = widget_program_->GetAttributeLocation("a_coord");
 			locations_[WIDGET_COLOR] = widget_program_->GetUniformLocation("u_color");
 			//locations_[WIDGET_PROJECTION] = widget_program_->GetUniformLocation("u_projection");
@@ -838,28 +907,28 @@ namespace BlendInt {
 
 		bool Shaders::SetupImageProgram()
 		{
-			if (!m_image_program->Create()) {
+			if (!image_program_->Create()) {
 				return false;
 			}
 
-			m_image_program->AttachShader(image_vertex_shader,
+			image_program_->AttachShader(image_vertex_shader,
 			        GL_VERTEX_SHADER);
-			m_image_program->AttachShader(image_fragment_shader,
+			image_program_->AttachShader(image_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!m_image_program->Link()) {
+			if (!image_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
-				        m_image_program->id());
+				        image_program_->id());
 				return false;
 			}
 
-			locations_[IMAGE_COORD] = m_image_program->GetAttributeLocation("a_coord");
-			locations_[IMAGE_UV] = m_image_program->GetAttributeLocation("a_uv");
-			locations_[IMAGE_PROJECTION] = m_image_program->GetUniformLocation("u_projection");
-			locations_[IMAGE_VIEW] = m_image_program->GetUniformLocation("u_view");
-			locations_[IMAGE_POSITION] = m_image_program->GetUniformLocation("u_position");
-			locations_[IMAGE_ROTATION] = m_image_program->GetUniformLocation("u_rotation");
-			locations_[IMAGE_TEXTURE] = m_image_program->GetUniformLocation("TexID");
-			locations_[IMAGE_GAMMA] = m_image_program->GetUniformLocation("u_gamma");
+			locations_[IMAGE_COORD] = image_program_->GetAttributeLocation("a_coord");
+			locations_[IMAGE_UV] = image_program_->GetAttributeLocation("a_uv");
+			//locations_[IMAGE_PROJECTION] = image_program_->GetUniformLocation("u_projection");
+			//locations_[IMAGE_VIEW] = image_program_->GetUniformLocation("u_view");
+			locations_[IMAGE_POSITION] = image_program_->GetUniformLocation("u_position");
+			locations_[IMAGE_ROTATION] = image_program_->GetUniformLocation("u_rotation");
+			locations_[IMAGE_TEXTURE] = image_program_->GetUniformLocation("TexID");
+			locations_[IMAGE_GAMMA] = image_program_->GetUniformLocation("u_gamma");
 
 			return true;
 		}
@@ -892,4 +961,3 @@ namespace BlendInt {
 	}
 
 }
-

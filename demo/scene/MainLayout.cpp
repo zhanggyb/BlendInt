@@ -183,26 +183,12 @@ void MainLayout::RenderToBuffer()
 		glEnable(GL_BLEND);
 
 		glm::mat4 origin;
-		glGetUniformfv(Shaders::instance->triangle_program()->id(),
-				Shaders::instance->location(Stock::TRIANGLE_PROJECTION),
-				glm::value_ptr(origin));
+		Shaders::instance->GetUIProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		RefPtr<GLSLProgram> program =
-		        Shaders::instance->triangle_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
-		        glm::value_ptr(projection));
-		program = Shaders::instance->text_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
-		        glm::value_ptr(projection));
-		program = Shaders::instance->image_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
-		        glm::value_ptr(projection));
+		Shaders::instance->SetUIProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -220,20 +206,7 @@ void MainLayout::RenderToBuffer()
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		program = Shaders::instance->triangle_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->text_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->image_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
-				glm::value_ptr(origin));
-
-		program->reset();
+		Shaders::instance->SetUIProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

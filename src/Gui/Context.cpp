@@ -289,26 +289,6 @@ namespace BlendInt
 
 			Shaders::instance->SetUIProjectionMatrix(projection);
 
-			RefPtr<GLSLProgram> program =
-			        Shaders::instance->triangle_program();
-			program->use();
-			glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-//			program = Shaders::instance->widget_program();
-//			program->use();
-//			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
-//			        glm::value_ptr(projection));
-			program = Shaders::instance->text_program();
-			program->use();
-			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->image_program();
-			program->use();
-			glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-
-			program->reset();
-
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
 				ResizeSubWidget(p, *request.size());
@@ -515,28 +495,6 @@ namespace BlendInt
 
 		Shaders::instance->SetUIProjectionMatrix(projection);
 		Shaders::instance->SetUIViewMatrix(default_view_matrix);
-
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-//		program = Shaders::instance->widget_program();
-//		program->use();
-//		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
-//		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->text_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->image_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->location(Stock::IMAGE_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program->reset();
 	}
 
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)

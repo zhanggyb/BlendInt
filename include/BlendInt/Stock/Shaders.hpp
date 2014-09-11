@@ -42,8 +42,8 @@ namespace BlendInt {
 			// Triangles
 			TRIANGLE_COORD,
 			TRIANGLE_COLOR,
-			TRIANGLE_PROJECTION,
-			TRIANGLE_VIEW,
+			//TRIANGLE_PROJECTION,
+			//TRIANGLE_VIEW,
 			TRIANGLE_POSITION,
 			TRIANGLE_ROTATION,
 			TRIANGLE_SCALE,
@@ -62,8 +62,8 @@ namespace BlendInt {
 
 			// Text
 			TEXT_COORD,
-			TEXT_PROJECTION,
-			TEXT_VIEW,
+			//TEXT_PROJECTION,
+			//TEXT_VIEW,
 			TEXT_POSITION,
 			TEXT_ROTATION,
 			TEXT_TEXTURE,
@@ -72,8 +72,8 @@ namespace BlendInt {
 			// Image
 			IMAGE_COORD,
 			IMAGE_UV,
-			IMAGE_PROJECTION,
-			IMAGE_VIEW,
+			//IMAGE_PROJECTION,
+			//IMAGE_VIEW,
 			IMAGE_POSITION,
 			IMAGE_ROTATION,
 			IMAGE_TEXTURE,
@@ -122,7 +122,7 @@ namespace BlendInt {
 
 			const RefPtr<GLSLProgram>& image_program () const
 			{
-				return m_image_program;
+				return image_program_;
 			}
 
 			void GetUIProjectionMatrix (glm::mat4& matrix);
@@ -152,11 +152,11 @@ namespace BlendInt {
 
 			bool Setup ();
 
+			bool SetupWidgetProgram ();
+
 			bool SetupTextProgram ();
 
 			bool SetupTriangleProgram ();
-
-			bool SetupWidgetProgram ();
 
 			bool SetupImageProgram ();
 
@@ -170,7 +170,7 @@ namespace BlendInt {
 
 			RefPtr<GLSLProgram> widget_program_;
 
-			RefPtr<GLSLProgram> m_image_program;
+			RefPtr<GLSLProgram> image_program_;
 
 			GLint locations_[LocationLast];
 
@@ -178,6 +178,8 @@ namespace BlendInt {
 
 			// the offset of uniform block in shaders
 			GLint ui_matrix_offset_[2];
+
+			GLint ui_matrix_block_size_;
 
 			static const char* text_vertex_shader;
 
