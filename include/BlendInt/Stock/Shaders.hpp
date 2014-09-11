@@ -24,7 +24,11 @@
 #ifndef _BLENDINT_STOCK_SHADERS_HPP_
 #define _BLENDINT_STOCK_SHADERS_HPP_
 
+#include <glm/glm.hpp>
+
 #include <BlendInt/Core/RefPtr.hpp>
+
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
@@ -48,8 +52,8 @@ namespace BlendInt {
 
 			WIDGET_COORD,
 			WIDGET_COLOR,
-			WIDGET_PROJECTION,
-			WIDGET_VIEW,
+			//WIDGET_PROJECTION,
+			//WIDGET_VIEW,
 			WIDGET_POSITION,
 			WIDGET_ROTATION,
 			WIDGET_SCALE,
@@ -121,6 +125,14 @@ namespace BlendInt {
 				return m_image_program;
 			}
 
+			void GetUIProjectionMatrix (glm::mat4& matrix);
+
+			void GetUIViewMatrix (glm::mat4& matrix);
+
+			void SetUIProjectionMatrix (const glm::mat4& matrix);
+
+			void SetUIViewMatrix (const glm::mat4& matrix);
+
 			inline GLint location (LocationType index) const
 			{
 				return locations_[index];
@@ -161,6 +173,11 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> m_image_program;
 
 			GLint locations_[LocationLast];
+
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > ui_matrix_;
+
+			// the offset of uniform block in shaders
+			GLint ui_matrix_offset_[2];
 
 			static const char* text_vertex_shader;
 

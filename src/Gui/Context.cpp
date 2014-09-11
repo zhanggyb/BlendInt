@@ -287,15 +287,17 @@ namespace BlendInt
 			glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
 			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
+			Shaders::instance->SetUIProjectionMatrix(projection);
+
 			RefPtr<GLSLProgram> program =
 			        Shaders::instance->triangle_program();
 			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->widget_program();
-			program->use();
-			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
-			        glm::value_ptr(projection));
+//			program = Shaders::instance->widget_program();
+//			program->use();
+//			glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE,
+//			        glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->use();
 			glUniformMatrix4fv(Shaders::instance->location(Stock::TEXT_PROJECTION), 1, GL_FALSE,
@@ -511,15 +513,18 @@ namespace BlendInt
 	{
 		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
 
+		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
 		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->widget_program();
-		program->use();
-		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
+//		program = Shaders::instance->widget_program();
+//		program->use();
+//		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
+//		glUniformMatrix4fv(Shaders::instance->location(Stock::WIDGET_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->text_program();
 		program->use();

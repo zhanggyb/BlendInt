@@ -128,6 +128,11 @@ namespace BlendInt {
 			return TARGET;
 		}
 
+		inline int size () const
+		{
+			return SIZE;
+		}
+
 		inline GLenum get_usage () const
 		{
 			GLint usage = 0;
