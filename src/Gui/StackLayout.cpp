@@ -21,22 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/SingleStackLayout.hpp>
+#include <BlendInt/Gui/StackLayout.hpp>
 
 namespace BlendInt {
 
 
-	SingleStackLayout::SingleStackLayout ()
-	: AbstractStackLayout(),
+	StackLayout::StackLayout ()
+	: AbstractContainer(),
 	  active_widget_(0)
 	{
 	}
 
-	SingleStackLayout::~SingleStackLayout ()
+	StackLayout::~StackLayout ()
 	{
 	}
 
-	void SingleStackLayout::Prepend (AbstractWidget* widget)
+	void StackLayout::Prepend (AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -54,7 +54,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SingleStackLayout::Append (AbstractWidget* widget)
+	void StackLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -72,7 +72,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SingleStackLayout::Insert (int index, AbstractWidget* widget)
+	void StackLayout::Insert (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().left() - margin().right();
@@ -85,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SingleStackLayout::Remove (AbstractWidget* widget)
+	void StackLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	int SingleStackLayout::GetIndex () const
+	int StackLayout::GetIndex () const
 	{
 		int index = 0;
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	void SingleStackLayout::SetIndex (int index)
+	void StackLayout::SetIndex (int index)
 	{
 		int count = widget_count();
 
@@ -139,7 +139,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool SingleStackLayout::IsExpandX () const
+	bool StackLayout::IsExpandX () const
 	{
 		bool ret = false;
 
@@ -154,7 +154,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool SingleStackLayout::IsExpandY () const
+	bool StackLayout::IsExpandY () const
 	{
 		bool ret = false;
 
@@ -169,7 +169,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	Size SingleStackLayout::GetPreferredSize () const
+	Size StackLayout::GetPreferredSize () const
 	{
 		Size prefer(400, 300);
 
@@ -194,7 +194,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void SingleStackLayout::PerformMarginUpdate (const Margin& request)
+	void StackLayout::PerformMarginUpdate (const Margin& request)
 	{
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
@@ -202,7 +202,7 @@ namespace BlendInt {
 		ResizeSubWidgets(w, h);
 	}
 
-	void SingleStackLayout::PerformPositionUpdate (
+	void StackLayout::PerformPositionUpdate (
 			const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -218,7 +218,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SingleStackLayout::PerformSizeUpdate (
+	void StackLayout::PerformSizeUpdate (
 			const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -235,52 +235,52 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SingleStackLayout::Draw (Profile& profile)
+	ResponseType StackLayout::Draw (Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::CursorEnterEvent (bool entered)
+	ResponseType StackLayout::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::KeyPressEvent (const KeyEvent& event)
+	ResponseType StackLayout::KeyPressEvent (const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::ContextMenuPressEvent (
+	ResponseType StackLayout::ContextMenuPressEvent (
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::ContextMenuReleaseEvent (
+	ResponseType StackLayout::ContextMenuReleaseEvent (
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::MousePressEvent (
+	ResponseType StackLayout::MousePressEvent (
 			const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::MouseReleaseEvent (
+	ResponseType StackLayout::MouseReleaseEvent (
 			const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SingleStackLayout::MouseMoveEvent (
+	ResponseType StackLayout::MouseMoveEvent (
 			const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void BlendInt::SingleStackLayout::HideSubWidget (int index)
+	void BlendInt::StackLayout::HideSubWidget (int index)
 	{
 		if(widget_count() && index < (widget_count() - 1)) {
 			AbstractWidget* p = GetWidgetAt(index);

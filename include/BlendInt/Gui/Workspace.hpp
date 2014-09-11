@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_WORKSPACE_HPP_
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/Button.hpp>
@@ -58,6 +58,73 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 
+	};
+
+	/**
+	 * @brief A special container used in Workspace
+	 */
+	class SideButtonLayer: public AbstractContainer
+	{
+		DISALLOW_COPY_AND_ASSIGN(SideButtonLayer);
+
+	public:
+
+		SideButtonLayer();
+
+		virtual ~SideButtonLayer ();
+
+		virtual bool Contain (const Point& point) const;
+
+	protected:
+
+		virtual void PerformMarginUpdate (const Margin& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		void InitializeSideButtonLayer ();
+
+		void AlighButtons (const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void AlignButtons (int x, int y, int w, int h);
+
+	};
+
+	// ------------------------
+
+	/**
+	 * @brief A VLayout overrides Contain()
+	 */
+	class ViewportLayer: public VLayout
+	{
+		DISALLOW_COPY_AND_ASSIGN(ViewportLayer);
+
+	public:
+
+		ViewportLayer ();
+
+		virtual ~ViewportLayer ();
+
+		virtual bool Contain (const Point& point) const;
 	};
 
 	/**
@@ -125,10 +192,6 @@ namespace BlendInt {
 
 		void InitializeWorkspace ();
 
-		void AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin);
-
-		void AdjustGeometries (int x, int y, int w, int h);
-
 		AbstractWidget* left_sidebar_;
 
 		AbstractWidget* right_sidebar_;
@@ -138,10 +201,6 @@ namespace BlendInt {
 		AbstractWidget* viewport_;
 
 		Splitter* splitter_;
-
-		SideButton* left_button_;
-
-		SideButton* right_button_;
 
 		GLuint vao_;
 

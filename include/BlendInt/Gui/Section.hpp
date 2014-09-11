@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_GUI_SECTION_HPP_
 #define _BLENDINT_GUI_SECTION_HPP_
 
-#include <set>
-
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {

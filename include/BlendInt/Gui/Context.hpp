@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
 #include <stack>
+#include <set>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 

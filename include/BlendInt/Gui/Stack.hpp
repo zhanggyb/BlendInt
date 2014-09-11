@@ -21,36 +21,39 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
+#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
+#define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <algorithm>
-
-#include <BlendInt/Gui/AbstractStackLayout.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/StackLayout.hpp>
 
 namespace BlendInt {
 
-	AbstractStackLayout::AbstractStackLayout()
-	: AbstractContainer()
+	class Stack: public StackLayout
 	{
-		set_size(400, 300);
-	}
+		DISALLOW_COPY_AND_ASSIGN(Stack);
 
-	AbstractStackLayout::~AbstractStackLayout()
-	{
-	}
+	public:
+
+		Stack ();
+
+		virtual ~Stack ();
+
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+	private:
+
+		void InitializeStack ();
+
+		GLuint vao_;
+
+		RefPtr<GLArrayBuffer> inner_;
+
+	};
 
 }
 
+#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */

@@ -170,6 +170,149 @@ namespace BlendInt {
 
 	// -------------------------------
 
+	SideButtonLayer::SideButtonLayer()
+	: AbstractContainer()
+	{
+		set_margin(0, 0, 0, 0);
+		InitializeSideButtonLayer();
+	}
+
+	SideButtonLayer::~SideButtonLayer()
+	{
+
+	}
+
+	bool SideButtonLayer::Contain(const Point& point) const
+	{
+		return first()->Contain(point) || last()->Contain(point);
+	}
+
+	void SideButtonLayer::PerformMarginUpdate(const Margin& request)
+	{
+		AlighButtons(position(), size(), request);
+	}
+
+	void SideButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AlighButtons(position(), *request.size(), margin());
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void SideButtonLayer::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AlighButtons(*request.position(), size(), margin());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
+	}
+
+	ResponseType SideButtonLayer::Draw(Profile& profile)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::CursorEnterEvent(bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::KeyPressEvent(const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::ContextMenuPressEvent(
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::ContextMenuReleaseEvent(
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::MousePressEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::MouseReleaseEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SideButtonLayer::MouseMoveEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	void SideButtonLayer::InitializeSideButtonLayer()
+	{
+		SideButton* left = Manage(new SideButton(RoundTopRight | RoundBottomRight));
+		DBG_SET_NAME(left, "LeftButton");
+		SideButton* right = Manage(new SideButton(RoundTopLeft | RoundBottomLeft));
+		DBG_SET_NAME(right, "RightButton");
+
+		PushBackSubWidget(left);
+		PushBackSubWidget(right);
+
+		AlighButtons(position(), size(), margin());
+	}
+
+	void SideButtonLayer::AlighButtons(const Point& out_pos,
+			const Size& out_size, const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		AlignButtons(x, y, w, h);
+	}
+
+	void SideButtonLayer::AlignButtons(int x, int y, int w, int h)
+	{
+		SetSubWidgetPosition(first(), x, y + h * 9 / 10);
+		SetSubWidgetPosition(last(), x + w - last()->size().width(), y + h * 9 / 10);
+	}
+
+	// -------------------------------
+
+	ViewportLayer::ViewportLayer()
+	{
+		set_margin(0, 0, 0, 0);
+	}
+
+	ViewportLayer::~ViewportLayer()
+	{
+	}
+
+	bool ViewportLayer::Contain(const Point& point) const
+	{
+		if(next()) {
+			if(next()->Contain(point)) {
+				return false;
+			} else {
+				return VLayout::Contain(point);
+			}
+		}
+
+		return VLayout::Contain(point);
+	}
+
+	// -------------------------------
+
 	Workspace::Workspace()
 	: AbstractContainer(),
 	  left_sidebar_(0),
@@ -177,8 +320,6 @@ namespace BlendInt {
 	  header_(0),
 	  viewport_(0),
 	  splitter_(0),
-	  left_button_(0),
-	  right_button_(0),
 	  vao_(0)
 	{
 		set_size(800, 600);
@@ -189,9 +330,6 @@ namespace BlendInt {
 
 	Workspace::~Workspace()
 	{
-		if(left_button_) delete left_button_;
-		if(right_button_) delete right_button_;
-
 		glDeleteVertexArrays(1, &vao_);
 	}
 
@@ -272,7 +410,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			AdjustGeometries(position(), size(), margin());
+			ResizeSubWidgets(size());
+
 		} else if (request.source()->container() == this) {
 
 		}
@@ -393,71 +532,29 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 
 		splitter_ = Manage(new Splitter);
+		DBG_SET_NAME(splitter_, "Splitter");
 		splitter_->SetMargin(0, 0, 0, 0);
 		viewport_ = Manage(new Viewport3D);
-//		left_sidebar_ = Manage(new ToolBox);
-//		right_sidebar_ = Manage(new ToolBox);
+		DBG_SET_NAME(viewport_, "Viewport3D");
 		header_ = Manage(new ToolBar);
+		DBG_SET_NAME(header_, "Header ToolBar");
 
-//		splitter_->PushBack(left_sidebar_);
 		splitter_->Append(viewport_);
-//		splitter_->PushBack(right_sidebar_);
 
-		PushBackSubWidget(splitter_);
-		PushBackSubWidget(header_);
+		ViewportLayer* vlayout = Manage(new ViewportLayer);
+		DBG_SET_NAME(vlayout, "VLayout");
+		vlayout->SetSpace(0);
+		vlayout->Append(splitter_);
+		vlayout->Append(header_);
 
-		left_button_ = Manage(new SideButton(RoundTopRight | RoundBottomRight));
-		right_button_ = Manage(new SideButton(RoundTopLeft | RoundBottomLeft));
+		SideButtonLayer* btnlayout = Manage(new SideButtonLayer);
+		DBG_SET_NAME(btnlayout, "SideButton Layer");
 
-		PushBackSubWidget(right_button_);
-		PushBackSubWidget(left_button_);
+		PushBackSubWidget(vlayout);
+		PushBackSubWidget(btnlayout);
 
-		AdjustGeometries(position(), size(), margin());
-	}
-
-	void Workspace::AdjustGeometries(const Point& out_pos, const Size& out_size, const Margin& margin)
-	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
-
-		AdjustGeometries(x, y, w, h);
-	}
-
-	void Workspace::AdjustGeometries (int x, int y, int w, int h)
-	{
-
-		if(header_) {
-
-			Size pref = header_->GetPreferredSize();
-
-			if(splitter_->previous() == header_) {
-
-				ResizeSubWidget(header_, w, pref.height());
-				SetSubWidgetPosition(header_, x, y + h - pref.height());
-
-				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
-				SetSubWidgetPosition(splitter_, x, y);
-
-			} else {
-
-				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
-				SetSubWidgetPosition(splitter_, x, y + h - splitter_->size().height());
-
-				ResizeSubWidget(header_, w, pref.height());
-				SetSubWidgetPosition(header_, x, y);
-
-			}
-
-		} else {
-
-			ResizeSubWidget(splitter_, w, h);
-			SetSubWidgetPosition(splitter_, x, y);
-		}
-
-		SetSubWidgetPosition(left_button_, x, y + h * 0.9);
-		SetSubWidgetPosition(right_button_, x + w - right_button_->size().width(), y + h * 0.9);
+		ResizeSubWidget(vlayout, size());
+		ResizeSubWidget(btnlayout, size());
 	}
 
 }

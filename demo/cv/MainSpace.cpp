@@ -46,7 +46,7 @@ using Stock::Shaders;
 MainSpace::MainSpace ()
 : VLayout(),
   m_toolbar(0),
-  image_viewport_(0),
+  workspace_(0),
   message_(0)
 {
 	InitOnce();
@@ -70,8 +70,8 @@ void MainSpace::InitOnce ()
     ToolBox* tbox = CreateSideBox();
     ToolBar* bottom = CreateBottomBar();
 
-    image_viewport_ = Manage(new Viewport2D);
-    splitter->Append(image_viewport_);
+    workspace_ = Manage(new Workspace);
+    splitter->Append(workspace_);
     splitter->Append(tbox);
 
 	Append(m_toolbar);

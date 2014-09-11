@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 
-#include <BlendInt/Gui/SingleStack.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -46,19 +46,19 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	SingleStack::SingleStack()
-	: SingleStackLayout(),
+	Stack::Stack()
+	: StackLayout(),
 	  vao_(0)
 	{
 		InitializeStack();
 	}
 
-	SingleStack::~SingleStack ()
+	Stack::~Stack ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void SingleStack::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -79,7 +79,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SingleStack::Draw (Profile& profile)
+	ResponseType Stack::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
@@ -102,7 +102,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void SingleStack::InitializeStack()
+	void Stack::InitializeStack()
 	{
 		glGenVertexArrays(1, &vao_);
 

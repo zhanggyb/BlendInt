@@ -22,7 +22,7 @@
 
 #include <BlendInt/OpenGL/TextureBuffer.hpp>
 
-#include <BlendInt/Gui/Viewport2D.hpp>
+#include <BlendInt/Gui/Workspace.hpp>
 
 namespace BI = BlendInt;
 
@@ -64,7 +64,7 @@ private:
 
 	BI::ToolBar* m_toolbar;
 
-	BI::Viewport2D* image_viewport_;
+	BI::Workspace* workspace_;
 
 	BI::Label* message_;
 

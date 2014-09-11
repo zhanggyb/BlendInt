@@ -24,19 +24,19 @@
 #ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 #define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractStackLayout.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class SingleStackLayout: public AbstractStackLayout
+	class StackLayout: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(SingleStackLayout);
+		DISALLOW_COPY_AND_ASSIGN(StackLayout);
 
 	public:
 
-		SingleStackLayout ();
+		StackLayout ();
 
-		virtual ~SingleStackLayout ();
+		virtual ~StackLayout ();
 
 		void Prepend (AbstractWidget* widget);
 
