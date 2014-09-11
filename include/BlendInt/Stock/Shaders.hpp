@@ -98,17 +98,17 @@ namespace BlendInt {
 
 			const RefPtr<GLSLProgram>& text_program () const
 			{
-				return m_text_program;
+				return text_program_;
 			}
 
 			const RefPtr<GLSLProgram>& primitive_program () const
 			{
-				return m_primitive_program;
+				return primitive_program_;
 			}
 
 			const RefPtr<GLSLProgram>& triangle_program () const
 			{
-				return m_triangle_program;
+				return triangle_program_;
 			}
 
 			const RefPtr<GLSLProgram>& widget_program () const
@@ -126,61 +126,6 @@ namespace BlendInt {
 				return locations_[index];
 			}
 
-			GLint triangle_uniform_scale () const
-			{
-				return m_triangle_uniform_scale;
-			}
-
-			/**
-			 * @brief The vertex attribute location of coord
-			 *
-			 * Always return 0
-			 */
-			GLint triangle_attrib_coord () const
-			{
-				return m_triangle_attrib_coord;
-			}
-
-			/**
-			 * @brief The vertex attribute location of color
-			 *
-			 * Always return 1
-			 */
-			GLint triangle_attrib_color () const
-			{
-				return m_triangle_attrib_color;
-			}
-
-			GLint triangle_uniform_antialias () const
-			{
-				return m_triangle_uniform_antialias;
-			}
-
-			GLint triangle_uniform_gamma () const
-			{
-				return m_triangle_uniform_gamma;
-			}
-
-			GLint triangle_uniform_position () const
-			{
-				return m_triangle_uniform_position;
-			}
-
-			GLint triangle_uniform_projection () const
-			{
-				return m_triangle_uniform_projection;
-			}
-
-			GLint triangle_uniform_rotation () const
-			{
-				return m_triangle_uniform_rotation;
-			}
-
-			GLint triangle_uniform_view () const
-			{
-				return m_triangle_uniform_view;
-			}
-
 		private:
 
 			friend class BlendInt::Interface;
@@ -195,39 +140,27 @@ namespace BlendInt {
 
 			bool Setup ();
 
-			RefPtr<GLSLProgram> m_text_program;
+			bool SetupTextProgram ();
 
-			RefPtr<GLSLProgram> m_primitive_program;
+			bool SetupTriangleProgram ();
 
-			RefPtr<GLSLProgram> m_triangle_program;
+			bool SetupWidgetProgram ();
 
-			// ---------------------------------------------
+			bool SetupImageProgram ();
+
+			bool SetupPrimitiveProgram ();
+
+			RefPtr<GLSLProgram> text_program_;
+
+			RefPtr<GLSLProgram> primitive_program_;
+
+			RefPtr<GLSLProgram> triangle_program_;
 
 			RefPtr<GLSLProgram> widget_program_;
-
-			// ---------------------------------------------
 
 			RefPtr<GLSLProgram> m_image_program;
 
 			GLint locations_[LocationLast];
-
-			GLint m_triangle_attrib_coord;
-
-			GLint m_triangle_attrib_color;
-
-			GLint m_triangle_uniform_projection;
-
-			GLint m_triangle_uniform_view;
-
-			GLint m_triangle_uniform_position;
-
-			GLint m_triangle_uniform_rotation;
-
-			GLint m_triangle_uniform_scale;
-
-			GLint m_triangle_uniform_antialias;
-
-			GLint m_triangle_uniform_gamma;
 
 			static const char* text_vertex_shader;
 
@@ -243,15 +176,11 @@ namespace BlendInt {
 
 			static const char* triangle_fragment_shader;
 
-			// ----------------------------------------------
-
 			static const char* widget_vertex_shader_ext;
 
 			static const char* widget_geometry_shader_ext;
 
 			static const char* widget_fragment_shader_ext;
-
-			// ----------------------------------------------
 
 			static const char* context_vertex_shader;
 

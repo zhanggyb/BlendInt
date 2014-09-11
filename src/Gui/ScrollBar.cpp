@@ -196,26 +196,26 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 		        Theme::instance->scroll().outline.data());
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);

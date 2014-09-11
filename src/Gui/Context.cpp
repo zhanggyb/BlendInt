@@ -290,7 +290,7 @@ namespace BlendInt
 			RefPtr<GLSLProgram> program =
 			        Shaders::instance->triangle_program();
 			program->use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 			        glm::value_ptr(projection));
 			program = Shaders::instance->widget_program();
 			program->use();
@@ -513,8 +513,8 @@ namespace BlendInt
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
+		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_VIEW), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->widget_program();
 		program->use();

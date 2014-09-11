@@ -172,7 +172,7 @@ void MainSpace::RenderToBuffer()
 
 		glm::mat4 origin;
 		glGetUniformfv(Shaders::instance->triangle_program()->id(),
-				Shaders::instance->triangle_uniform_projection(),
+				Shaders::instance->location(Stock::TRIANGLE_PROJECTION),
 				glm::value_ptr(origin));
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
@@ -181,7 +181,7 @@ void MainSpace::RenderToBuffer()
 		RefPtr<GLSLProgram> program =
 		        Shaders::instance->triangle_program();
 		program->use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 		        glm::value_ptr(projection));
 		program = Shaders::instance->widget_program();
 		program->use();
@@ -214,7 +214,7 @@ void MainSpace::RenderToBuffer()
 
 		program = Shaders::instance->triangle_program();
 		program->use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+		glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 				glm::value_ptr(origin));
 		program = Shaders::instance->widget_program();
 		program->use();

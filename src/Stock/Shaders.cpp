@@ -273,8 +273,15 @@ namespace BlendInt {
 				"layout (triangles) in;"
 				"layout (triangle_strip, max_vertices = 24) out;"
 				"in float VertexShade[];"
+				""
 				"uniform mat4 u_projection;"	// projection matrix
-				"uniform mat4 u_view;"// view matrix
+				"uniform mat4 u_view;"			// view matrix
+				""
+				"uniform PVMatrix {"
+				"	mat4 mat_projection;"
+				"	mat4 mat_view;"
+				"};"
+				""
 				"uniform vec3 u_position;"// position
 				"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				"uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
@@ -626,19 +633,10 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: m_triangle_attrib_coord(-1),
-		  m_triangle_attrib_color(-1),
-		  m_triangle_uniform_projection(-1),
-		  m_triangle_uniform_view(-1),
-		  m_triangle_uniform_position(-1),
-		  m_triangle_uniform_rotation(-1),
-		  m_triangle_uniform_scale(-1),
-		  m_triangle_uniform_antialias(-1),
-		  m_triangle_uniform_gamma(-1)
 		{
-			m_text_program.reset(new GLSLProgram);
-			m_primitive_program.reset(new GLSLProgram);
-			m_triangle_program.reset(new GLSLProgram);
+			text_program_.reset(new GLSLProgram);
+			primitive_program_.reset(new GLSLProgram);
+			triangle_program_.reset(new GLSLProgram);
 			widget_program_.reset(new GLSLProgram);
 			m_image_program.reset(new GLSLProgram);
 		}
@@ -649,54 +647,84 @@ namespace BlendInt {
 
 		bool Shaders::Setup ()
 		{
-			if (!m_text_program->Create())
+			if(!SetupTextProgram())
 				return false;
 
-			if (!m_primitive_program->Create()) {
+			if(!SetupTriangleProgram())
 				return false;
-			}
 
-			if (!m_triangle_program->Create()) {
+			if(!SetupWidgetProgram())
 				return false;
-			}
 
-			if (!widget_program_->Create()) {
+			if(!SetupImageProgram())
 				return false;
-			}
 
-			if (!m_image_program->Create()) {
+			if(!SetupPrimitiveProgram())
 				return false;
-			}
 
-			m_text_program->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
-			m_text_program->AttachShader(text_fragment_shader,
+			return true;
+		}
+
+		bool Shaders::SetupTextProgram()
+		{
+			if (!text_program_->Create())
+				return false;
+
+			text_program_->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
+			text_program_->AttachShader(text_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!m_text_program->Link()) {
+			if (!text_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the text program: %d",
-				        m_text_program->id());
+				        text_program_->id());
 				return false;
 			}
 
-			m_primitive_program->AttachShader(primitive_vertex_shader,
-			        GL_VERTEX_SHADER);
-			m_primitive_program->AttachShader(primitive_fragment_shader,
-			        GL_FRAGMENT_SHADER);
-			if (!m_primitive_program->Link()) {
-				DBG_PRINT_MSG("Fail to link the primitive program: %d",
-				        m_primitive_program->id());
+			locations_[TEXT_COORD] = text_program_->GetAttributeLocation("a_coord");
+			locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
+			locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
+			locations_[TEXT_POSITION] = text_program_->GetUniformLocation("u_position");
+			locations_[TEXT_ROTATION] = text_program_->GetUniformLocation("u_rotation");
+			locations_[TEXT_TEXTURE] = text_program_->GetUniformLocation("u_tex");
+			locations_[TEXT_COLOR] = text_program_->GetUniformLocation("u_color");
+
+			return true;
+		}
+
+		bool Shaders::SetupTriangleProgram()
+		{
+			if (!triangle_program_->Create()) {
 				return false;
 			}
 
-			m_triangle_program->AttachShader(
+			triangle_program_->AttachShader(
 			        triangle_vertex_shader, GL_VERTEX_SHADER);
-			m_triangle_program->AttachShader(
+			triangle_program_->AttachShader(
 			        triangle_geometry_shader,
 			        GL_GEOMETRY_SHADER);
-			m_triangle_program->AttachShader(
+			triangle_program_->AttachShader(
 			        triangle_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!m_triangle_program->Link()) {
+			if (!triangle_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        m_triangle_program->id());
+				        triangle_program_->id());
+				return false;
+			}
+
+			locations_[TRIANGLE_COORD] = triangle_program_->GetAttributeLocation("a_coord");
+			locations_[TRIANGLE_COLOR] = triangle_program_->GetAttributeLocation("a_color");
+			locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
+			locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
+			locations_[TRIANGLE_POSITION] = triangle_program_->GetUniformLocation("u_position");
+			locations_[TRIANGLE_ROTATION] = triangle_program_->GetUniformLocation("u_rotation");
+			locations_[TRIANGLE_SCALE] = triangle_program_->GetUniformLocation("u_scale");
+			locations_[TRIANGLE_ANTI_ALIAS] = triangle_program_->GetUniformLocation("u_AA");
+			locations_[TRIANGLE_GAMMA] = triangle_program_->GetUniformLocation("u_gamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetProgram()
+		{
+			if (!widget_program_->Create()) {
 				return false;
 			}
 
@@ -713,49 +741,12 @@ namespace BlendInt {
 				return false;
 			}
 
-			m_image_program->AttachShader(image_vertex_shader,
-			        GL_VERTEX_SHADER);
-			m_image_program->AttachShader(image_fragment_shader,
-			        GL_FRAGMENT_SHADER);
-			if (!m_image_program->Link()) {
-				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
-				        m_image_program->id());
-				return false;
-			}
+			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "PVMatrix");
+			DBG_PRINT_MSG("block_index: %ud", block_index);
 
-			locations_[TRIANGLE_COORD] = m_triangle_program->GetAttributeLocation("a_coord");
-			locations_[TRIANGLE_COLOR] = m_triangle_program->GetAttributeLocation("a_color");
-			locations_[TRIANGLE_PROJECTION] = m_triangle_program->GetUniformLocation("u_projection");
-			locations_[TRIANGLE_VIEW] = m_triangle_program->GetUniformLocation("u_view");
-			locations_[TRIANGLE_POSITION] = m_triangle_program->GetUniformLocation("u_position");
-			locations_[TRIANGLE_ROTATION] = m_triangle_program->GetUniformLocation("u_rotation");
-			locations_[TRIANGLE_SCALE] = m_triangle_program->GetUniformLocation("u_scale");
-			locations_[TRIANGLE_ANTI_ALIAS] = m_triangle_program->GetUniformLocation("u_AA");
-			locations_[TRIANGLE_GAMMA] = m_triangle_program->GetUniformLocation("u_gamma");
-
-			locations_[TEXT_COORD] = m_text_program->GetAttributeLocation("a_coord");
-			locations_[TEXT_PROJECTION] = m_text_program->GetUniformLocation("u_projection");
-			locations_[TEXT_VIEW] = m_text_program->GetUniformLocation("u_view");
-			locations_[TEXT_POSITION] = m_text_program->GetUniformLocation("u_position");
-			locations_[TEXT_ROTATION] = m_text_program->GetUniformLocation("u_rotation");
-			locations_[TEXT_TEXTURE] = m_text_program->GetUniformLocation("u_tex");
-			locations_[TEXT_COLOR] = m_text_program->GetUniformLocation("u_color");
-
-			locations_[PRIMITIVE_COORD] = m_primitive_program->GetAttributeLocation("coord");
-			locations_[PRIMITIVE_COLOR] = m_primitive_program->GetAttributeLocation("color");
-			locations_[PRIMITIVE_PROJECTION] = m_primitive_program->GetUniformLocation("P");
-			locations_[PRIMITIVE_VIEW] = m_primitive_program->GetUniformLocation("V");
-			locations_[PRIMITIVE_MODEL] = m_primitive_program->GetUniformLocation("M");
-
-			m_triangle_attrib_coord = m_triangle_program->GetAttributeLocation("a_coord");
-			m_triangle_attrib_color = m_triangle_program->GetAttributeLocation("a_color");
-			m_triangle_uniform_projection = m_triangle_program->GetUniformLocation("u_projection");
-			m_triangle_uniform_view = m_triangle_program->GetUniformLocation("u_view");
-			m_triangle_uniform_position = m_triangle_program->GetUniformLocation("u_position");
-			m_triangle_uniform_rotation = m_triangle_program->GetUniformLocation("u_rotation");
-			m_triangle_uniform_scale = m_triangle_program->GetUniformLocation("u_scale");
-			m_triangle_uniform_antialias = m_triangle_program->GetUniformLocation("u_AA");
-			m_triangle_uniform_gamma = m_triangle_program->GetUniformLocation("u_gamma");
+			GLint block_size = 0;
+			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			DBG_PRINT_MSG("block size: %d", block_size);
 
 			locations_[WIDGET_COORD] = widget_program_->GetAttributeLocation("a_coord");
 			locations_[WIDGET_COLOR] = widget_program_->GetUniformLocation("u_color");
@@ -767,6 +758,25 @@ namespace BlendInt {
 			locations_[WIDGET_ANTI_ALIAS] = widget_program_->GetUniformLocation("u_AA");
 			locations_[WIDGET_GAMMA] = widget_program_->GetUniformLocation("u_gamma");
 
+			return true;
+		}
+
+		bool Shaders::SetupImageProgram()
+		{
+			if (!m_image_program->Create()) {
+				return false;
+			}
+
+			m_image_program->AttachShader(image_vertex_shader,
+			        GL_VERTEX_SHADER);
+			m_image_program->AttachShader(image_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!m_image_program->Link()) {
+				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
+				        m_image_program->id());
+				return false;
+			}
+
 			locations_[IMAGE_COORD] = m_image_program->GetAttributeLocation("a_coord");
 			locations_[IMAGE_UV] = m_image_program->GetAttributeLocation("a_uv");
 			locations_[IMAGE_PROJECTION] = m_image_program->GetUniformLocation("u_projection");
@@ -775,6 +785,31 @@ namespace BlendInt {
 			locations_[IMAGE_ROTATION] = m_image_program->GetUniformLocation("u_rotation");
 			locations_[IMAGE_TEXTURE] = m_image_program->GetUniformLocation("TexID");
 			locations_[IMAGE_GAMMA] = m_image_program->GetUniformLocation("u_gamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupPrimitiveProgram()
+		{
+			if (!primitive_program_->Create()) {
+				return false;
+			}
+
+			primitive_program_->AttachShader(primitive_vertex_shader,
+			        GL_VERTEX_SHADER);
+			primitive_program_->AttachShader(primitive_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!primitive_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the primitive program: %d",
+				        primitive_program_->id());
+				return false;
+			}
+
+			locations_[PRIMITIVE_COORD] = primitive_program_->GetAttributeLocation("coord");
+			locations_[PRIMITIVE_COLOR] = primitive_program_->GetAttributeLocation("color");
+			locations_[PRIMITIVE_PROJECTION] = primitive_program_->GetUniformLocation("P");
+			locations_[PRIMITIVE_VIEW] = primitive_program_->GetUniformLocation("V");
+			locations_[PRIMITIVE_MODEL] = primitive_program_->GetUniformLocation("M");
 
 			return true;
 		}

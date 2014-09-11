@@ -61,16 +61,16 @@ namespace BlendInt {
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[2]);
 		area_.reset(new GLArrayBuffer);
@@ -85,8 +85,8 @@ namespace BlendInt {
 		};
 
 		area_->set_data(sizeof(verts1), verts1);
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[3]);
 		rect_.reset(new GLArrayBuffer);
@@ -101,8 +101,8 @@ namespace BlendInt {
 		};
 
 		rect_->set_data(sizeof(verts2), verts2);
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -174,11 +174,11 @@ namespace BlendInt {
 						Shaders::instance->triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				Theme::instance->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
@@ -193,15 +193,15 @@ namespace BlendInt {
 		// Stack 2
 		profile.BeginPushStencil();	// area stencil
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 25, (float) position().y() + 425, 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x() + 25, (float) position().y() + 425, 0.f);
 		glBindVertexArray(vaos_[2]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		profile.EndPushStencil();
 
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x() + 300, (float) position().y() + 450, 0.f);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.f, 0.2f, 0.2f, 0.9f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x() + 300, (float) position().y() + 450, 0.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.f, 0.2f, 0.2f, 0.9f);
 		glBindVertexArray(vaos_[3]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -219,9 +219,9 @@ namespace BlendInt {
 
 		// Stencil test end
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.f, 0.f, 1.f, 1.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.f, 0.f, 1.f, 1.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

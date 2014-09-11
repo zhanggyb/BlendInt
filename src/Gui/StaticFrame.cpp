@@ -124,8 +124,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_->reset();
@@ -212,7 +212,7 @@ namespace BlendInt {
 			        glm::value_ptr(projection));
 			program = Shaders::instance->triangle_program();
 			program->use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(projection));
 			program = Shaders::instance->text_program();
 			program->use();
@@ -231,12 +231,12 @@ namespace BlendInt {
 			program = Shaders::instance->triangle_program();
 			program->use();
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 					(float) position().x(), (float) position().y(), 0.f);
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
 					0.447f, 0.447f, 1.0f);
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -257,7 +257,7 @@ namespace BlendInt {
 					glm::value_ptr(origin));
 			program = Shaders::instance->triangle_program();
 			program->use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
+			glUniformMatrix4fv(Shaders::instance->location(Stock::TRIANGLE_PROJECTION), 1, GL_FALSE,
 					glm::value_ptr(origin));
 			program = Shaders::instance->text_program();
 			program->use();

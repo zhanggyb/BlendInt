@@ -121,11 +121,11 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				Theme::instance->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
@@ -138,8 +138,8 @@ namespace BlendInt {
 		profile.EndPushStencil();
 
 
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f,
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 
@@ -149,16 +149,16 @@ namespace BlendInt {
 		while(y > position().y()) {
 			y -= h;
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 					(float) position().x(), (float) y, 0.f);
 
 			if(i == highlight_index_) {	// TODO: use different functions for performance
-				glUniform1i(Shaders::instance->triangle_uniform_gamma(), -35);
+				glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -195,7 +195,7 @@ namespace BlendInt {
 
 		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -369,8 +369,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -379,8 +379,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

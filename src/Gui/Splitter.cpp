@@ -97,8 +97,8 @@ namespace BlendInt {
 
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -200,14 +200,14 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 		if(highlight_) {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 50);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
 		} else {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		}
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.15f, 0.15f, 0.15f, 0.6f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

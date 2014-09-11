@@ -180,11 +180,11 @@ namespace BlendInt {
 	{
 		Shaders::instance->triangle_program()->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
