@@ -3,6 +3,7 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BI = BlendInt;
 

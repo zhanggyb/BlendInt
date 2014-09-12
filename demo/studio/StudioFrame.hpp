@@ -6,7 +6,7 @@
 #define _STUDIO_FRAME_HPP_
 
 #include <BlendInt/Gui/BinLayout.hpp>
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 namespace BI=BlendInt;
 
@@ -32,7 +32,7 @@ private:
 
 	void RenderToBuffer ();
 
-	BI::TextureBuffer tex_buffer_;
+	BI::ImagePlane2D tex_buffer_;
 
 	bool refresh_;
 

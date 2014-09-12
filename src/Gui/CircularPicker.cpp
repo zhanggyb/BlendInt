@@ -87,6 +87,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 		GLArrayBuffer::reset();
+
+		set_size(size);
 	}
 
 	void CircularPicker::PerformRoundTypeUpdate(int type)
@@ -98,6 +100,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 		GLArrayBuffer::reset();
+
+		set_round_type(type);
 	}
 
 	void CircularPicker::PerformRoundRadiusUpdate(float radius)
@@ -109,9 +113,11 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 		GLArrayBuffer::reset();
+
+		set_radius(radius);
 	}
 
-	void CircularPicker::Draw (const glm::vec3& pos, short gamma)
+	void CircularPicker::Draw (const glm::vec3& pos, short gamma) const
 	{
 		using Stock::Shaders;
 

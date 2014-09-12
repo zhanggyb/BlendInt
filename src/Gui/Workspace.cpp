@@ -50,10 +50,10 @@ namespace BlendInt {
 	using Stock::Shaders;
 	using Stock::Icons;
 
-	SideButton::SideButton(int round_type)
+	EdgeButton::EdgeButton(int round_type)
 	: AbstractButton()
 	{
-		set_size(18, 18);
+		set_size(14, 14);
 		set_round_type(round_type);
 
 		VertexTool tool;
@@ -83,12 +83,12 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 	}
 
-	SideButton::~SideButton()
+	EdgeButton::~EdgeButton()
 	{
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	void SideButton::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void EdgeButton::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -110,7 +110,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SideButton::Draw(Profile& profile)
+	ResponseType EdgeButton::Draw(Profile& profile)
 	{
 		Shaders::instance->widget_program()->use();
 
@@ -170,29 +170,40 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	SideButtonLayer::SideButtonLayer()
+	EdgeButtonLayer::EdgeButtonLayer()
 	: AbstractContainer()
 	{
 		set_margin(0, 0, 0, 0);
 		InitializeSideButtonLayer();
 	}
 
-	SideButtonLayer::~SideButtonLayer()
+	EdgeButtonLayer::~EdgeButtonLayer()
 	{
 
 	}
 
-	bool SideButtonLayer::Contain(const Point& point) const
+	bool EdgeButtonLayer::Contain(const Point& point) const
 	{
-		return first()->Contain(point) || last()->Contain(point);
+		bool retval = false;
+
+		for(AbstractWidget* p = first(); p; p = p->next()) {
+
+			if(p->visiable()) {
+				retval = p->Contain(point);
+			}
+
+			if(retval) break;
+		}
+
+		return retval;
 	}
 
-	void SideButtonLayer::PerformMarginUpdate(const Margin& request)
+	void EdgeButtonLayer::PerformMarginUpdate(const Margin& request)
 	{
 		AlighButtons(position(), size(), request);
 	}
 
-	void SideButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void EdgeButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			AlighButtons(position(), *request.size(), margin());
@@ -203,7 +214,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SideButtonLayer::PerformPositionUpdate(
+	void EdgeButtonLayer::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -215,62 +226,65 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SideButtonLayer::Draw(Profile& profile)
+	ResponseType EdgeButtonLayer::Draw(Profile& profile)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::CursorEnterEvent(bool entered)
+	ResponseType EdgeButtonLayer::CursorEnterEvent(bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::KeyPressEvent(const KeyEvent& event)
+	ResponseType EdgeButtonLayer::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::ContextMenuPressEvent(
+	ResponseType EdgeButtonLayer::ContextMenuPressEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::ContextMenuReleaseEvent(
+	ResponseType EdgeButtonLayer::ContextMenuReleaseEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::MousePressEvent(const MouseEvent& event)
+	ResponseType EdgeButtonLayer::MousePressEvent(const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType EdgeButtonLayer::MouseReleaseEvent(const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SideButtonLayer::MouseMoveEvent(const MouseEvent& event)
+	ResponseType EdgeButtonLayer::MouseMoveEvent(const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void SideButtonLayer::InitializeSideButtonLayer()
+	void EdgeButtonLayer::InitializeSideButtonLayer()
 	{
-		SideButton* left = Manage(new SideButton(RoundTopRight | RoundBottomRight));
+		EdgeButton* left = Manage(new EdgeButton(RoundTopRight | RoundBottomRight));
 		DBG_SET_NAME(left, "LeftButton");
-		SideButton* right = Manage(new SideButton(RoundTopLeft | RoundBottomLeft));
+		EdgeButton* right = Manage(new EdgeButton(RoundTopLeft | RoundBottomLeft));
 		DBG_SET_NAME(right, "RightButton");
+		EdgeButton* head = Manage(new EdgeButton(RoundTopLeft | RoundTopRight));
+		DBG_SET_NAME(head, "HeadButton");
 
 		PushBackSubWidget(left);
 		PushBackSubWidget(right);
+		PushBackSubWidget(head);
 
 		AlighButtons(position(), size(), margin());
 	}
 
-	void SideButtonLayer::AlighButtons(const Point& out_pos,
+	void EdgeButtonLayer::AlighButtons(const Point& out_pos,
 			const Size& out_size, const Margin& margin)
 	{
 		int x = out_pos.x() + margin.left();
@@ -281,10 +295,15 @@ namespace BlendInt {
 		AlignButtons(x, y, w, h);
 	}
 
-	void SideButtonLayer::AlignButtons(int x, int y, int w, int h)
+	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
 	{
-		SetSubWidgetPosition(first(), x, y + h * 9 / 10);
-		SetSubWidgetPosition(last(), x + w - last()->size().width(), y + h * 9 / 10);
+		AbstractWidget* p = first();
+
+		SetSubWidgetPosition(p, x, y + h * 9 / 10);
+		p = p->next();
+		SetSubWidgetPosition(p, x + w - last()->size().width(), y + h * 9 / 10);
+		p = p->next();
+		SetSubWidgetPosition(p, x + w * 9 / 10, y);
 	}
 
 	// -------------------------------
@@ -335,18 +354,50 @@ namespace BlendInt {
 
 	void Workspace::SetViewport (AbstractWidget* viewport)
 	{
+		if(viewport_ == viewport) return;
+
+		if(viewport_)
+			splitter_->Remove(viewport_);
+
+		splitter_->Append(viewport);
+		viewport_ = viewport;
+
+		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
 	}
 
 	void Workspace::SetLeftSideBar (AbstractWidget* widget)
 	{
+		if(left_sidebar_ == widget) return;
+
+		if(left_sidebar_)
+			splitter_->Remove(left_sidebar_);
+
+		splitter_->Prepend(widget);
+		left_sidebar_ = widget;
 	}
 
 	void Workspace::SetRightSideBar (AbstractWidget* widget)
 	{
+		if(right_sidebar_ == widget) return;
+
+		if(right_sidebar_)
+			splitter_->Remove(right_sidebar_);
+
+		splitter_->Append(widget);
+		right_sidebar_ = widget;
 	}
 
 	void Workspace::SetHeader (AbstractWidget* widget)
 	{
+		if(header_ == widget) return;
+
+		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first());
+
+		if(header_)
+			v->Remove(header_);
+
+		v->Append(widget);
+		header_ = widget;
 	}
 
 	bool Workspace::IsExpandX () const
@@ -525,8 +576,11 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::TRIANGLE_COORD));
+		glVertexAttribPointer (
+				Shaders::instance->location (Stock::TRIANGLE_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -534,20 +588,13 @@ namespace BlendInt {
 		splitter_ = Manage(new Splitter);
 		DBG_SET_NAME(splitter_, "Splitter");
 		splitter_->SetMargin(0, 0, 0, 0);
-		viewport_ = Manage(new Viewport3D);
-		DBG_SET_NAME(viewport_, "Viewport3D");
-		header_ = Manage(new ToolBar);
-		DBG_SET_NAME(header_, "Header ToolBar");
-
-		splitter_->Append(viewport_);
 
 		ViewportLayer* vlayout = Manage(new ViewportLayer);
 		DBG_SET_NAME(vlayout, "VLayout");
 		vlayout->SetSpace(0);
 		vlayout->Append(splitter_);
-		vlayout->Append(header_);
 
-		SideButtonLayer* btnlayout = Manage(new SideButtonLayer);
+		EdgeButtonLayer* btnlayout = Manage(new EdgeButtonLayer);
 		DBG_SET_NAME(btnlayout, "SideButton Layer");
 
 		PushBackSubWidget(vlayout);

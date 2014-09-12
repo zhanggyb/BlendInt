@@ -20,7 +20,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 #include <BlendInt/Gui/Workspace.hpp>
 
@@ -70,7 +70,7 @@ private:
 
 	bool refresh_;
 
-	BI::TextureBuffer buffer_;
+	BI::ImagePlane2D buffer_;
 };
 
 #endif

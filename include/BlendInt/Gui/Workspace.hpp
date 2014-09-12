@@ -34,15 +34,15 @@ namespace BlendInt {
 	/**
 	 * @brief A special button used in Workspace to switch on/off side bars
 	 */
-	class SideButton: public AbstractButton
+	class EdgeButton: public AbstractButton
 	{
-		DISALLOW_COPY_AND_ASSIGN(SideButton);
+		DISALLOW_COPY_AND_ASSIGN(EdgeButton);
 
 	public:
 
-		SideButton (int round_type);
+		EdgeButton (int round_type);
 
-		virtual ~SideButton ();
+		virtual ~EdgeButton ();
 
 	protected:
 
@@ -63,15 +63,15 @@ namespace BlendInt {
 	/**
 	 * @brief A special container used in Workspace
 	 */
-	class SideButtonLayer: public AbstractContainer
+	class EdgeButtonLayer: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(SideButtonLayer);
+		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
 
 	public:
 
-		SideButtonLayer();
+		EdgeButtonLayer();
 
-		virtual ~SideButtonLayer ();
+		virtual ~EdgeButtonLayer ();
 
 		virtual bool Contain (const Point& point) const;
 
@@ -154,11 +154,33 @@ namespace BlendInt {
 
 		void SetHeader (AbstractWidget* widget);
 
+		void SwitchHeaderPosition ();
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
+
+		AbstractWidget* viewport () const
+		{
+			return viewport_;
+		}
+
+		AbstractWidget* header () const
+		{
+			return header_;
+		}
+
+		AbstractWidget* left_sidebar() const
+		{
+			return left_sidebar_;
+		}
+
+		AbstractWidget* right_sidebar() const
+		{
+			return right_sidebar_;
+		}
 
 	protected:
 

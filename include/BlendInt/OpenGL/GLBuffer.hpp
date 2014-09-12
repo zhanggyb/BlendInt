@@ -34,7 +34,10 @@
 #endif
 #endif  // __UNIX__
 
+#include <string.h>
 #include <BlendInt/Core/Object.hpp>
+
+#define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
 namespace BlendInt {
 

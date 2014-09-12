@@ -36,17 +36,12 @@
 
 #include <vector>
 
-#include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/glm.hpp>
 
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/Core/Types.hpp>
-
 #include <BlendInt/Core/Object.hpp>
-
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -74,55 +69,6 @@ namespace BlendInt {
 		{
 			clear();
 		}
-	};
-
-	class UpdateRequest
-	{
-	public:
-
-		UpdateRequest (int type, const void* data) :
-						m_type(type), m_data(data)
-		{
-
-		}
-
-		~UpdateRequest ()
-		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
-		}
-
-	private:
-
-		UpdateRequest();
-
-		int m_type;
-		const void* m_data;
-	};
-
-	enum FormRequestType {
-		FormSize,
-		FormRoundType,
-		FormRoundRadius
 	};
 
 	/**
@@ -167,7 +113,7 @@ namespace BlendInt {
 			return size_;
 		}
 
-		virtual void Draw (const glm::vec3& pos, int short gamma = 0) = 0;
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const = 0;
 
 		static void SetDefaultBorderWidth (int border);
 

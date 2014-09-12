@@ -86,7 +86,7 @@ namespace BlendInt {
 		buffer_->reset();
 	}
 
-	void Shadow::Draw (const glm::vec3& pos, short gamma)
+	void Shadow::Draw (const glm::vec3& pos, short gamma) const
 	{
 		Shaders::instance->triangle_program()->use();
 
@@ -111,6 +111,8 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 		buffer_->reset();
+
+		set_size(size);
 	}
 
 	void Shadow::PerformRoundTypeUpdate(int type)
@@ -120,6 +122,8 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 		buffer_->reset();
+
+		set_round_type(type);
 	}
 
 	void Shadow::PerformRoundRadiusUpdate(float radius)
@@ -129,6 +133,8 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 		buffer_->reset();
+
+		set_radius(radius);
 	}
 
 	void Shadow::InitializeShadow()

@@ -47,6 +47,8 @@ namespace BlendInt {
 	ImageView::ImageView ()
 	: AbstractScrollable()
 	{
+		set_size(400, 300);
+
 		InitializeImageView();
 	}
 
@@ -202,8 +204,6 @@ namespace BlendInt {
 	
 	void ImageView::InitializeImageView ()
 	{
-		set_size(400, 300);
-
 		checkerboard_.reset(new CheckerBoard(20));
 		checkerboard_->Resize(size());
 
@@ -243,10 +243,15 @@ namespace BlendInt {
 		plane_->bind();
 		plane_->set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -317,7 +322,7 @@ namespace BlendInt {
 	void ImageView::AdjustImageArea(const Size& size)
 	{
 		if(image_size_.width() == 0 || image_size_.height() == 0) {
-			checkerboard_->Resize(size);
+			//checkerboard_->Resize(size);
 			return;
 		}
 

@@ -46,6 +46,16 @@ namespace BlendInt {
 	{
 	}
 
+	bool HLayout::Prepend (AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
+			return true;
+		}
+
+		return false;
+	}
+
 	bool HLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {

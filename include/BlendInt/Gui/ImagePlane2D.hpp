@@ -21,40 +21,43 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
-#define _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
+#ifndef _BLENDINT_GUI_IMAGEPLANE2D_HPP_
+#define _BLENDINT_GUI_IMAGEPLANE2D_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Core/Object.hpp>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class TextureBuffer: public Object
+	class ImagePlane2D: public Object
 	{
 	public:
 
-		TextureBuffer ();
+		ImagePlane2D ();
 
-		virtual ~TextureBuffer ();
+		virtual ~ImagePlane2D ();
 
 		void SetCoord (GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1);
 
 		GLTexture2D* texture () const
 		{
-			return m_texture.get();
+			return texture_.get();
 		}
 
 		void Draw (GLfloat x, GLfloat y);
 
 	private:
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> m_vbo;
+		GLBuffer<> vertex_buffer_;
 
-		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLTexture2D> texture_;
 	};
+
 
 }
 
-#endif /* _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_ */
+#endif /* _BLENDINT_GUI_IMAGEPLANE2D_HPP_ */

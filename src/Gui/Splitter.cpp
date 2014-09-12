@@ -393,6 +393,11 @@ namespace BlendInt {
 		}
 	}
 
+	void Splitter::Insert(int index, AbstractWidget* widget)
+	{
+
+	}
+
 	void Splitter::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {

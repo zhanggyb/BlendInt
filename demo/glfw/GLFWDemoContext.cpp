@@ -88,6 +88,18 @@ void GLFWDemoContext::Initialize ()
 
 	Append(ws);
 
+	Viewport3D* view = Manage(new Viewport3D);
+	ws->SetViewport(view);
+
+	ToolBar* tb = Manage(new ToolBar);
+	ws->SetHeader(tb);
+
+	ToolBox* box1 = Manage(new ToolBox);
+	ws->SetLeftSideBar(box1);
+
+	ToolBox* box2 = Manage(new ToolBox);
+	ws->SetRightSideBar(box2);
+
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
 	panel->SetPosition(1020, 200);

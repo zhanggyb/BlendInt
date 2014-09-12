@@ -68,6 +68,10 @@ namespace BlendInt {
 
 		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0) const;
 
+	protected:
+
+		virtual void PerformSizeUpdate (const Size& size);
+
 	private:
 
 		RefPtr<GLArrayBuffer> vertex_buffer_;

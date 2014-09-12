@@ -120,6 +120,8 @@ namespace BlendInt
 
 		void Append (AbstractWidget* widget);
 
+		void Insert (int index, AbstractWidget* widget);
+
 		void Remove (AbstractWidget* widget);
 
 		int GetWidgetIndex (AbstractWidget* widget) const;

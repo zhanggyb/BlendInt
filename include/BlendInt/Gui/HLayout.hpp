@@ -38,6 +38,8 @@ namespace BlendInt {
 
 		virtual ~HLayout ();
 
+		bool Prepend (AbstractWidget* widget);
+
 		bool Append (AbstractWidget* widget);
 
 		bool Remove (AbstractWidget* widget);

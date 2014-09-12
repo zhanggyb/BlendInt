@@ -43,7 +43,6 @@ namespace BlendInt {
 		if(round_type_ == (type & RoundAll)) return;
 
 		PerformRoundTypeUpdate(type);
-		set_round_type(type);
 	}
 
 	void AbstractRoundForm::SetRadius(float rad)
@@ -51,7 +50,6 @@ namespace BlendInt {
 		if(radius_ == rad) return;
 
 		PerformRoundRadiusUpdate(rad);
-		set_radius(rad);
 	}
 
 	int AbstractRoundForm::GetOutlineVertices (int round_type)

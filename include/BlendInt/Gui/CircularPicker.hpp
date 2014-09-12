@@ -51,7 +51,7 @@ namespace BlendInt {
 		/**
 		 * @brief Draw the icon
 		 */
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
 	protected:
 

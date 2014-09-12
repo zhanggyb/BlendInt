@@ -116,9 +116,11 @@ namespace BlendInt {
 
 		light_elements_ = light_indices.size();
 		dark_elements_ = dark_indices.size();
+
+		set_size(size);
 	}
 
-	void CheckerBoard::Draw (const glm::vec3& pos, short gamma)
+	void CheckerBoard::Draw (const glm::vec3& pos, short gamma) const
 	{
 		using Stock::Shaders;
 

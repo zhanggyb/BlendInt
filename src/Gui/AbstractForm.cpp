@@ -74,7 +74,6 @@ namespace BlendInt {
 		Size new_size (width, height);
 
 		PerformSizeUpdate(new_size);
-		set_size(width, height);
 	}
 	
 	void AbstractForm::Resize (const Size& size)
@@ -82,7 +81,6 @@ namespace BlendInt {
 		if(size_ == size) return;
 
 		PerformSizeUpdate(size);
-		set_size(size);
 	}
 
 }

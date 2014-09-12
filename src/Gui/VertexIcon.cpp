@@ -211,5 +211,9 @@ namespace BlendInt {
 		program->reset();
 	}
 
-}
+	void VertexIcon::PerformSizeUpdate(const Size& size)
+	{
+		set_size(size);
+	}
 
+}

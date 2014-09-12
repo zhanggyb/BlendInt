@@ -341,5 +341,10 @@ namespace BlendInt {
 
 		}
 	}
-	
+
+	void PixelIcon::PerformSizeUpdate(const Size& size)
+	{
+		// Pixel Icon cannot resized
+	}
+
 }

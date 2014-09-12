@@ -46,6 +46,16 @@ namespace BlendInt {
 	{
 	}
 
+	bool VLayout::Prepend (AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			return true;
+		}
+
+		return false;
+	}
+
 	bool VLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
