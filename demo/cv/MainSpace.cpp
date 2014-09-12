@@ -37,6 +37,7 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/RadioButton.hpp>
+#include <BlendInt/Gui/Viewport2D.hpp>
 
 #include "MainSpace.hpp"
 
@@ -71,6 +72,19 @@ void MainSpace::InitOnce ()
     ToolBar* bottom = CreateBottomBar();
 
     workspace_ = Manage(new Workspace);
+
+	Viewport2D* view = Manage(new Viewport2D);
+	workspace_->SetViewport(view);
+
+	ToolBar* tb = Manage(new ToolBar);
+	workspace_->SetHeader(tb);
+
+	ToolBox* box1 = Manage(new ToolBox);
+	workspace_->SetLeftSideBar(box1);
+
+	ToolBox* box2 = Manage(new ToolBox);
+	workspace_->SetRightSideBar(box2);
+
     splitter->Append(workspace_);
     splitter->Append(tbox);
 
