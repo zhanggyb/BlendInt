@@ -725,24 +725,20 @@ namespace BlendInt {
 
 			// setup uniform block
 
-			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
-			DBG_PRINT_MSG("block_index in widget program: %ud", block_index);
-
-			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &ui_matrix_block_size_);
-			DBG_PRINT_MSG("block size in widget program: %d", ui_matrix_block_size_);
-
 			const GLchar* names[] = {
 				"projection",
 				"view"
 			};
+
+			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
+
+			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &ui_matrix_block_size_);
 
 			GLubyte* buf_p = (GLubyte*)malloc(ui_matrix_block_size_);
 
 			GLuint indices[2];
 			glGetUniformIndices(widget_program_->id(), 2, names, indices);
 			glGetActiveUniformsiv(widget_program_->id(), 2, indices, GL_UNIFORM_OFFSET, ui_matrix_offset_);
-
-			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", ui_matrix_offset_[0], ui_matrix_offset_[1]);
 
 			// set default matrix
 			glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
@@ -758,7 +754,7 @@ namespace BlendInt {
 			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
 			ui_matrix_->generate();
 			ui_matrix_->bind();
-			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_STATIC_DRAW);
 
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
@@ -768,49 +764,29 @@ namespace BlendInt {
 
 			// set uniform block in text program
 
-			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
-			DBG_PRINT_MSG("block_index in text program: %ud", block_index);
-
 			GLint block_size = 0;
+			//GLint offset[2];
+
+			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
 			glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			DBG_PRINT_MSG("block size in text program: %d", block_size);
-
-			GLint offset[2];
 			glGetUniformIndices(text_program_->id(), 2, names, indices);
-			glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-
-			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
-
+			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
-			// set uniform block in text program
+			// set uniform block in triangle program
 
 			block_index = glGetUniformBlockIndex(triangle_program_->id(), "UIMatrix");
-			DBG_PRINT_MSG("block_index in triangle program: %ud", block_index);
-
 			glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			DBG_PRINT_MSG("block size in triangle program: %d", block_size);
-
 			glGetUniformIndices(triangle_program_->id(), 2, names, indices);
-			glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-
-			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
-
+			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
 			// set uniform block in image program
 
 			block_index = glGetUniformBlockIndex(image_program_->id(), "UIMatrix");
-			DBG_PRINT_MSG("block_index in image program: %ud", block_index);
-
 			glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			DBG_PRINT_MSG("block size in image program: %d", block_size);
-
 			glGetUniformIndices(image_program_->id(), 2, names, indices);
-			glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-
-			DBG_PRINT_MSG("offset 0: %d, offset 1: %d", offset[0], offset[1]);
-
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
 			return true;
