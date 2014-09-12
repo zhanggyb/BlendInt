@@ -27,6 +27,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	TextureBuffer::TextureBuffer()
 	: Object()
 	{
@@ -60,24 +62,26 @@ namespace BlendInt {
 		m_vbo->bind();
 		m_vbo->set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(0);
 		m_vbo->reset();
+		glBindVertexArray(0);
 	}
 
 	void TextureBuffer::Draw (GLfloat x, GLfloat y)
 	{
-		using Stock::Shaders;
-
 		if(m_texture->texture()) {
 
 			m_texture->bind();
-			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
-			program->use();
+			Shaders::instance->image_program()->use();
 			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), x, y, 0.f);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
 			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
@@ -87,7 +91,7 @@ namespace BlendInt {
 			glBindVertexArray(0);
 
 			m_texture->reset();
-			program->reset();
+			GLSLProgram::reset();
 
 		}
 	}

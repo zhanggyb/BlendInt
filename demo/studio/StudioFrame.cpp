@@ -39,8 +39,10 @@ StudioFrame::~StudioFrame ()
 
 void StudioFrame::PerformRefresh(const RefreshRequest& request)
 {
-	refresh_ = true;
-	ReportRefresh(request);
+	if(!refresh_) {
+		refresh_ = true;
+		ReportRefresh(request);
+	}
 }
 
 void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -57,19 +59,20 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 		}
 	}
 
-	ReportSizeUpdate(request);
+	if(request.source() == this) {
+		ReportSizeUpdate(request);
+	}
 }
 
 ResponseType StudioFrame::Draw (Profile& profile)
 {
 	if(refresh_) {
-
 		RenderToBuffer();
-
 		refresh_ = false;
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
 	tex_buffer_.Draw(position().x(), position().y());
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

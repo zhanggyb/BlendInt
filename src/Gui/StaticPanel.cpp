@@ -58,7 +58,7 @@ namespace BlendInt {
 	  realign_(false),
 	  shadow_(0)
 	{
-		set_margin(10, 10, 10, 10);
+		//set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
 
 		InitializeStaticPanelOnce();
@@ -177,11 +177,12 @@ namespace BlendInt {
 		shadow_->Draw(glm::vec3(position().x(), position().y(), 0.f));
 
 		if(refresh_) {
-			RenderToBuffer(profile);
+			RenderToBuffer();
 			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
 		tex_buffer_.Draw(position().x(), position().y());
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -276,7 +277,7 @@ namespace BlendInt {
 		shadow_ = new Shadow(size(), round_type(), round_radius());
 	}
 
-	void StaticPanel::RenderToBuffer (Profile& profile)
+	void StaticPanel::RenderToBuffer ()
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -349,8 +350,7 @@ namespace BlendInt {
 			glViewport(0, 0, size().width(), size().height());
 
 			// Draw frame panel
-			RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-			program->use();
+			Shaders::instance->triangle_program()->use();
 
 			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
@@ -367,9 +367,8 @@ namespace BlendInt {
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetOutlineVertices(round_type()) * 2 + 2);
-
 			glBindVertexArray(0);
-			program->reset();
+			GLSLProgram::reset();
 
 			Profile off_screen_profile(position());
 

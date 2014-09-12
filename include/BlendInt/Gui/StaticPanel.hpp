@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		void InitializeStaticPanelOnce ();
 
-		void RenderToBuffer (Profile& profile);
+		void RenderToBuffer ();
 
 		TextureBuffer tex_buffer_;
 

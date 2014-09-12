@@ -760,34 +760,35 @@ namespace BlendInt {
 
 			free(buf_p);
 			buf_p = 0;
-			ui_matrix_->reset();
 
 			// set uniform block in text program
 
-			GLint block_size = 0;
+			//GLint block_size = 0;
 			//GLint offset[2];
 
 			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
-			glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			glGetUniformIndices(text_program_->id(), 2, names, indices);
+			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
 			// set uniform block in triangle program
 
 			block_index = glGetUniformBlockIndex(triangle_program_->id(), "UIMatrix");
-			glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			glGetUniformIndices(triangle_program_->id(), 2, names, indices);
+			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
 
 			// set uniform block in image program
 
 			block_index = glGetUniformBlockIndex(image_program_->id(), "UIMatrix");
-			glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+
+			ui_matrix_->reset();
 
 			return true;
 		}

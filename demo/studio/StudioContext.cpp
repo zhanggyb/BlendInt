@@ -24,7 +24,7 @@ StudioContext::~StudioContext ()
 void StudioContext::Initialize ()
 {
 	frame_ = Manage(new StudioFrame);
-	frame_->SetPosition(20, 100);
+	frame_->SetPosition(100, 100);
 	frame_->Resize(800, 600);
 
 	// Setup a widget
@@ -44,6 +44,12 @@ void StudioContext::Initialize ()
 
 	Append(panel);
 	events()->connect(button_->clicked(), this, &StudioContext::OnSaveTextureToFile);
+
+	Button* btn = Manage(new Button);
+	btn->SetPosition(20, 750);
+	btn->Resize(100, 40);
+
+	Append(btn);
 }
 
 void StudioContext::OnSaveTextureToFile()

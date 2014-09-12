@@ -82,7 +82,12 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	/*
+	Workspace* ws = Manage(new Workspace);
+	DBG_SET_NAME(ws, "Workspace");
+	ws->SetPosition(200, 100);
+
+	Append(ws);
+
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
 	panel->SetPosition(1020, 200);
@@ -101,8 +106,7 @@ void GLFWDemoContext::Initialize ()
 
 	panel->Resize(panel->GetPreferredSize());
 
-	PushBack(panel);
-	*/
+	Append(panel);
 
 	/*
     Tab* tab = Manage (new Tab);
@@ -122,11 +126,6 @@ void GLFWDemoContext::Initialize ()
     PushBack(tab);
     */
 
-	Workspace* ws = Manage(new Workspace);
-	DBG_SET_NAME(ws, "Workspace");
-	ws->SetPosition(200, 100);
-
-	Append(ws);
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()
