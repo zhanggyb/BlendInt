@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 
-#include <BlendInt/Gui/SingleStack.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -46,20 +46,19 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	SingleStack::SingleStack()
-	: SingleStackLayout(),
+	Stack::Stack()
+	: StackLayout(),
 	  vao_(0)
 	{
-		set_drop_shadow(true);
 		InitializeStack();
 	}
 
-	SingleStack::~SingleStack ()
+	Stack::~Stack ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void SingleStack::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -80,17 +79,17 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SingleStack::Draw (Profile& profile)
+	ResponseType Stack::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
 		        0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
@@ -103,7 +102,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void SingleStack::InitializeStack()
+	void Stack::InitializeStack()
 	{
 		glGenVertexArrays(1, &vao_);
 
@@ -118,8 +117,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

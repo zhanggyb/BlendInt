@@ -43,7 +43,7 @@
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Label.hpp>
@@ -52,7 +52,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
-#include <BlendInt/Gui/SingleStack.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {
 
@@ -63,7 +63,6 @@ namespace BlendInt {
 	{
 		set_size(200, 320);
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		set_margin(4, 4, 4, 4);
 
 		InitializeColorSelector();
@@ -108,24 +107,24 @@ namespace BlendInt {
 		ColorWheel* colorwheel = Manage(new ColorWheel);
 		BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
 
-		hbox1->PushBack(colorwheel);
-		hbox1->PushBack(br_slider);
+		hbox1->Append(colorwheel);
+		hbox1->Append(br_slider);
 
-		ToggleButton* btn1 = Manage(new ToggleButton("RGB"));
-		ToggleButton* btn2 = Manage(new ToggleButton("HSV"));
-		ToggleButton* btn3 = Manage(new ToggleButton("Hex"));
+		RadioButton* btn1 = Manage(new RadioButton("RGB"));
+		RadioButton* btn2 = Manage(new RadioButton("HSV"));
+		RadioButton* btn3 = Manage(new RadioButton("Hex"));
 
-		radio_group_.PushBack(btn1);
-		radio_group_.PushBack(btn2);
-		radio_group_.PushBack(btn3);
+		radio_group_.Append(btn1);
+		radio_group_.Append(btn2);
+		radio_group_.Append(btn3);
 
 		btn1->SetChecked(true);
 
 		HBlockLayout* btn_block = Manage(new HBlockLayout);
 		btn_block->SetMargin(4, 4, 4, 4);
-		btn_block->PushBack(btn1);
-		btn_block->PushBack(btn2);
-		btn_block->PushBack(btn3);
+		btn_block->Append(btn1);
+		btn_block->Append(btn2);
+		btn_block->Append(btn3);
 
 		stack_ = CreateBlockStack();
 		NumericalSlider* alpha_slider = Manage(new NumericalSlider);
@@ -133,19 +132,19 @@ namespace BlendInt {
 
 		VLayout* color_box = Manage(new VLayout);
 		color_box->SetMargin(0, 0, 0, 0);
-		color_box->PushBack(stack_);
-		color_box->PushBack(alpha_slider);
+		color_box->Append(stack_);
+		color_box->Append(alpha_slider);
 
 		Button* pick_btn = Manage(new Button(Icons::instance->icon_16x16(Stock::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));
-		hbox2->PushBack(color_box);
-		hbox2->PushBack(pick_btn);
+		hbox2->Append(color_box);
+		hbox2->Append(pick_btn);
 
-		PushBack(hbox1);
-		PushBack(btn_block);
-		PushBack(hbox2);
+		Append(hbox1);
+		Append(btn_block);
+		Append(hbox2);
 
 		events()->connect(radio_group_.button_index_toggled(), this, &ColorSelector::OnButtonToggled);
 	}
@@ -213,7 +212,7 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);
@@ -245,9 +244,9 @@ namespace BlendInt {
 		NumericalSlider* green_slider = Manage(new NumericalSlider);
 		NumericalSlider* blue_slider = Manage(new NumericalSlider);
 
-		block->PushBack(red_slider);
-		block->PushBack(green_slider);
-		block->PushBack(blue_slider);
+		block->Append(red_slider);
+		block->Append(green_slider);
+		block->Append(blue_slider);
 
 		return block;
 	}
@@ -260,9 +259,9 @@ namespace BlendInt {
 		NumericalSlider* s_slider = Manage(new NumericalSlider);
 		NumericalSlider* v_slider = Manage(new NumericalSlider);
 
-		block->PushBack(h_slider);
-		block->PushBack(s_slider);
-		block->PushBack(v_slider);
+		block->Append(h_slider);
+		block->Append(s_slider);
+		block->Append(v_slider);
 
 		return block;
 	}
@@ -275,8 +274,8 @@ namespace BlendInt {
 		TextEntry* hex_edit = Manage(new TextEntry);
 		Label* label = Manage(new Label("Gamma Corrected"));
 
-		box->PushBack(hex_edit);
-		box->PushBack(label);
+		box->Append(hex_edit);
+		box->Append(label);
 
 		return box;
 	}
@@ -287,18 +286,18 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	SingleStackLayout* ColorSelector::CreateBlockStack()
+	StackLayout* ColorSelector::CreateBlockStack()
 	{
-		SingleStackLayout* stack = Manage(new SingleStackLayout);
+		StackLayout* stack = Manage(new StackLayout);
 		stack->SetMargin(0, 0, 0, 0);
 
 		VBlockLayout* rgb_block = CreateRGBBlock();
 		VBlockLayout* hsv_block = CreateHSVBlock();
 		VLayout* hex_box = CreateHexBlock();
 
-		stack->PushBack(rgb_block);
-		stack->PushBack(hsv_block);
-		stack->PushBack(hex_box);
+		stack->Append(rgb_block);
+		stack->Append(hsv_block);
+		stack->Append(hex_box);
 
 		return stack;
 	}

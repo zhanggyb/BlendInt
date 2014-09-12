@@ -38,10 +38,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
-#include <BlendInt/Interface.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -57,7 +58,6 @@ namespace BlendInt {
 	  m_button_down(MouseButtonNone)
 	{
 		set_size(600, 500);
-		set_drop_shadow(true);
 
 		InitializeViewport3DOnce();
 	}
@@ -259,8 +259,6 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::Draw (Profile& profile)
 	{
-		// TODO: check the performance difference between scissor and stencil.
-
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;
@@ -273,13 +271,13 @@ namespace BlendInt {
         //}
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(),
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
@@ -318,10 +316,10 @@ namespace BlendInt {
 
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-        program->Use();
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+        program->use();
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
@@ -385,14 +383,14 @@ namespace BlendInt {
 
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		default_camera_.reset(new NavigationCamera);
+		default_camera_.reset(new PerspectiveCamera);
 
 		// setup camera
 		glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
@@ -402,7 +400,6 @@ namespace BlendInt {
 
 		default_camera_->SetPerspective(default_camera_->fovy(),
 		        1.f * size().width() / size().height());
-		default_camera_->Update();
 
 		gridfloor_.reset(new GridFloor);
 	}

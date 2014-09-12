@@ -49,7 +49,6 @@ namespace BlendInt {
 	: AbstractWidget(), m_highlight(0), inner_(0), outer_(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
-		set_drop_shadow(true);
 		InitializeMenu();
 	}
 
@@ -221,7 +220,7 @@ namespace BlendInt {
 		using std::deque;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);

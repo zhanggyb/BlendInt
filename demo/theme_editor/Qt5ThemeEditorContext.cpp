@@ -6,6 +6,7 @@
 #include <QtGui/QCursor>
 
 #include <BlendInt/Gui/ColorSelector.hpp>
+#include <BlendInt/Gui/HBlockLayout.hpp>
 
 Qt5ThemeEditorContext::Qt5ThemeEditorContext (QWindow* window)
 : BI::Context (), window_(window)
@@ -31,15 +32,15 @@ void Qt5ThemeEditorContext::Initialize()
 	using namespace BI;
 
 	StaticPanel* panel1 = CreateButtonPanel();
-	panel1->SetPosition(900, 580);
+	panel1->SetPosition(940, 720);
 	panel1->Resize(panel1->GetPreferredSize());
 
 	StaticPanel* panel2 = CreateColorPanel();
-	panel2->SetPosition(900, 100);
+	panel2->SetPosition(980, 200);
 	panel2->Resize(panel2->GetPreferredSize());
 
-	Section* section = PushBack(panel1);
-	section->PushBack(panel2);
+	Section* section = Append(panel1);
+	section->Append(panel2);
 }
 
 BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
@@ -48,17 +49,17 @@ BI::StaticPanel* Qt5ThemeEditorContext::CreateButtonPanel ()
 
 	StaticPanel* panel = Manage(new StaticPanel);
 
-	VBlockLayout* block = Manage(new VBlockLayout);
+	HBlockLayout* block = Manage(new HBlockLayout);
 
 	Button* btn1 = Manage(new Button("Button"));
-	Button* btn2 = Manage(new Button("Button"));
-	Button* btn3 = Manage(new Button("Button"));
+	Button* btn2 = Manage(new Button("ToggleButton"));
+	Button* btn3 = Manage(new Button("ToolButton"));
 	Button* btn4 = Manage(new Button("Button"));
 
-	block->PushBack(btn1);
-	block->PushBack(btn2);
-	block->PushBack(btn3);
-	block->PushBack(btn4);
+	block->Append(btn1);
+	block->Append(btn2);
+	block->Append(btn3);
+	block->Append(btn4);
 
 	panel->SetContent(block);
 

@@ -21,53 +21,43 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CAMERA_HPP_
-#define _BLENDINT_CAMERA_HPP_
+#ifndef _BLENDINT_GUI_IMAGEPLANE2D_HPP_
+#define _BLENDINT_GUI_IMAGEPLANE2D_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/Gui/AbstractCamera.hpp>
+#include <BlendInt/Core/Object.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class NavigationCamera: public AbstractCamera
+	class ImagePlane2D: public Object
 	{
 	public:
 
-		NavigationCamera ();
+		ImagePlane2D ();
 
-		virtual ~NavigationCamera ();
+		virtual ~ImagePlane2D ();
 
-		void Orbit (float x, float y);
+		void SetCoord (GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1);
 
-		void Pan (float x, float y);
-
-		void Zoom (float fac);
-
-		void SaveCurrentPosition ();
-
-		void SaveCurrentCenter ();
-
-		virtual void Update ();
-
-		float speed () {return m_speed;}
-
-		void set_speed (float speed)
+		GLTexture2D* texture () const
 		{
-			m_speed = speed;
+			return texture_.get();
 		}
+
+		void Draw (GLfloat x, GLfloat y);
 
 	private:
 
-		glm::vec3 m_last_position;
-		glm::vec3 m_last_center;
+		GLuint vao_;
 
-		/**
-		 * Speed used in Orbit, Pan, Zoom, more large, more slower
-		 */
-		float m_speed;
+		GLBuffer<> vertex_buffer_;
 
+		RefPtr<GLTexture2D> texture_;
 	};
+
 
 }
 
-#endif /* _BLENDINT_CAMERA_HPP_ */
+#endif /* _BLENDINT_GUI_IMAGEPLANE2D_HPP_ */

@@ -81,7 +81,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void TabHeader::PushBack (TabButton* button)
+	void TabHeader::Append (TabButton* button)
 	{
 		int x = GetLastPosition ();
 		int y = position().y() + margin().bottom();
@@ -100,7 +100,7 @@ namespace BlendInt {
 
 			}
 
-			m_group.PushBack(button);
+			m_group.Append(button);
 
 			if(m_group.button_count() == 1) {
 				button->SetChecked(true);
@@ -178,13 +178,13 @@ namespace BlendInt {
 
 	ResponseType TabHeader::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->Use();
+		Shaders::instance->triangle_program()->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,

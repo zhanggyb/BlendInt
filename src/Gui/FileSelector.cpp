@@ -60,7 +60,6 @@ namespace BlendInt {
 	{
 		set_size(500, 400);
 		set_margin(2, 2, 2, 2);
-		set_drop_shadow(true);
 
 		InitializeFileSelector();
 
@@ -132,7 +131,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);
@@ -180,11 +179,11 @@ namespace BlendInt {
 		Splitter* splitter = Manage(new Splitter);
 		DBG_SET_NAME(splitter, "Splitter");
 		splitter->SetMargin(0, 0, 0, 0);
-		splitter->PushBack(sidebar);
-		splitter->PushBack(area);
+		splitter->Append(sidebar);
+		splitter->Append(area);
 
-		layout->PushBack(toolbar);
-		layout->PushBack(splitter);
+		layout->Append(toolbar);
+		layout->Append(splitter);
 
 		Setup(layout);
 
@@ -221,8 +220,8 @@ namespace BlendInt {
 		DBG_SET_NAME(dir_layout, "DIR Layout");
 
 		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->PushBack(path_entry_);
-		dir_layout->PushBack(open_);
+		dir_layout->Append(path_entry_);
+		dir_layout->Append(open_);
 
 		file_entry_ = Manage(new TextEntry);
 		DBG_SET_NAME(file_entry_, "File Entry");
@@ -235,15 +234,15 @@ namespace BlendInt {
 		DBG_SET_NAME(file_layout, "File Layout");
 
 		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->PushBack(file_entry_);
-		file_layout->PushBack(cancel_);
+		file_layout->Append(file_entry_);
+		file_layout->Append(cancel_);
 
 		browser_ = Manage(new FileBrowser);
 		DBG_SET_NAME(browser_, "FileBrowser");
 
-		vbox->PushBack(dir_layout);
-		vbox->PushBack(file_layout);
-		vbox->PushBack(browser_);
+		vbox->Append(dir_layout);
+		vbox->Append(file_layout);
+		vbox->Append(browser_);
 
 		return vbox;
 	}
@@ -262,10 +261,10 @@ namespace BlendInt {
 		Button* btn_up = Manage(new Button(Icons::instance->icon_16x16(Stock::FILE_PARENT)));
 		Button* btn_reload = Manage(new Button(Icons::instance->icon_16x16(Stock::FILE_REFRESH)));
 
-		block1->PushBack(btn_back);
-		block1->PushBack(btn_forward);
-		block1->PushBack(btn_up);
-		block1->PushBack(btn_reload);
+		block1->Append(btn_back);
+		block1->Append(btn_forward);
+		block1->Append(btn_up);
+		block1->Append(btn_reload);
 
 		block1->Resize(block1->GetPreferredSize());
 
@@ -279,9 +278,9 @@ namespace BlendInt {
 		Button* btn_detail_list = Manage(new Button(Icons::instance->icon_16x16(Stock::LONGDISPLAY)));
 		Button* btn_thumbnail = Manage(new Button(Icons::instance->icon_16x16(Stock::IMGDISPLAY)));
 
-		block2->PushBack(btn_short_list);
-		block2->PushBack(btn_detail_list);
-		block2->PushBack(btn_thumbnail);
+		block2->Append(btn_short_list);
+		block2->Append(btn_detail_list);
+		block2->Append(btn_thumbnail);
 
 		HBlockLayout* block3 = Manage(new HBlockLayout);
 
@@ -290,15 +289,15 @@ namespace BlendInt {
 		Button* btn_sort_time = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTTIME)));
 		Button* btn_sort_size = Manage(new Button(Icons::instance->icon_16x16(Stock::SORTSIZE)));
 
-		block3->PushBack(btn_sort_alpha);
-		block3->PushBack(btn_sort_ext);
-		block3->PushBack(btn_sort_time);
-		block3->PushBack(btn_sort_size);
+		block3->Append(btn_sort_alpha);
+		block3->Append(btn_sort_ext);
+		block3->Append(btn_sort_time);
+		block3->Append(btn_sort_size);
 
-		toolbar->PushBack(block1);
-		toolbar->PushBack(btn_new);
-		toolbar->PushBack(block2);
-		toolbar->PushBack(block3);
+		toolbar->Append(block1);
+		toolbar->Append(btn_new);
+		toolbar->Append(block2);
+		toolbar->Append(block3);
 
 		return toolbar;
 	}
@@ -312,8 +311,8 @@ namespace BlendInt {
 		Expander* exp1 = CreateSystemDevicesOnce();
 		Expander* exp2 = CreateSystemBookmarksOnce();
 
-		toolbox->PushBack(exp1);
-		toolbox->PushBack(exp2);
+		toolbox->Append(exp1);
+		toolbox->Append(exp2);
 
 		return toolbox;
 	}

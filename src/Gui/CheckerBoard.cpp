@@ -89,57 +89,45 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void CheckerBoard::UpdateGeometry (const UpdateRequest& request)
+	void CheckerBoard::PerformSizeUpdate(const Size& size)
 	{
-		switch (request.type()) {
+		std::vector<GLfloat> vertices;
+		std::vector<unsigned int> light_indices;
+		std::vector<unsigned int> dark_indices;
 
-			case FormSize: {
+		GenerateCheckerVertices(size, m_cell_size, &vertices,
+						&light_indices, &dark_indices);
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
-				std::vector<GLfloat> vertices;
-				std::vector<unsigned int> light_indices;
-				std::vector<unsigned int> dark_indices;
+		m_vbo->bind();
+		m_vbo->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-				GenerateCheckerVertices(*size_p, m_cell_size, &vertices,
-								&light_indices, &dark_indices);
+		m_light_ibo->bind();
+		m_light_ibo->set_data(light_indices.size() * sizeof(GLuint), &light_indices[0]);
 
-				glGenVertexArrays(1, &m_vao);
-				glBindVertexArray(m_vao);
+		m_dark_ibo->bind();
+		m_dark_ibo->set_data(dark_indices.size() * sizeof(GLuint), &dark_indices[0]);
 
-				m_vbo->bind();
-				m_vbo->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
+		GLElementArrayBuffer::reset();
 
-				m_light_ibo->bind();
-				m_light_ibo->set_data(light_indices.size() * sizeof(GLuint), &light_indices[0]);
+		light_elements_ = light_indices.size();
+		dark_elements_ = dark_indices.size();
 
-				m_dark_ibo->bind();
-				m_dark_ibo->set_data(dark_indices.size() * sizeof(GLuint), &dark_indices[0]);
-
-				glBindVertexArray(0);
-				GLArrayBuffer::reset();
-				GLElementArrayBuffer::reset();
-
-				light_elements_ = light_indices.size();
-				dark_elements_ = dark_indices.size();
-
-				break;
-			}
-
-			default:
-				break;
-		}
-
+		set_size(size);
 	}
-	
-	void CheckerBoard::Draw (const glm::vec3& pos, short gamma)
+
+	void CheckerBoard::Draw (const glm::vec3& pos, short gamma) const
 	{
 		using Stock::Shaders;
 
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 		program->SetUniform1i("u_gamma", gamma);

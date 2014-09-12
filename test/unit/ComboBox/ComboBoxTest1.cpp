@@ -40,7 +40,7 @@ TEST_F(ComboBoxTest1, Foo1)
 
     combo->SetModel(model);
 
-    context->PushBack(combo);
+    context->Append(combo);
 
     RunLoop(win);
 

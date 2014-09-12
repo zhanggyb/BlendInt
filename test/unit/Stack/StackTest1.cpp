@@ -1,5 +1,5 @@
 #include "StackTest1.hpp"
-#include <BlendInt/Gui/SingleStack.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
@@ -54,17 +54,17 @@ TEST_F(StackTest1, Foo1)
 	DBG_SET_NAME(label3, "Button3");
 	label3->SetFont(Font("Droid Sans Mono", 24));
 
-	SingleStack* stack = Manage (new SingleStack);
+	Stack* stack = Manage (new Stack);
 	DBG_SET_NAME(stack, "Stack");
-	stack->PushBack(label1);
-	stack->PushBack(label2);
-	stack->PushBack(label3);
+	stack->Append(label1);
+	stack->Append(label2);
+	stack->Append(label3);
 
 	stack->SetPosition(200, 200);
 	stack->Resize(200, 200);
 	stack->SetIndex(0);
 
-	context->PushBack(stack);
+	context->Append(stack);
 
 	RunLoop(window);
 

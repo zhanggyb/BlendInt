@@ -54,6 +54,16 @@ namespace BlendInt {
 
 		void GenerateVertices (const Size& size, float border, int round_type, float radius);
 
+		void GenerateShadedVertices (const Size& size, float border, int round_type, float radius);
+
+		void GenerateShadedVertices (const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown);
+
 		void GenerateVertices (const Size& size,
 				float border,
 				int round_type,
@@ -103,14 +113,24 @@ namespace BlendInt {
 						unsigned int num,
 						std::vector<GLfloat>& strip);
 
+		void GenerateTriangleStripVerticesExt (
+						const std::vector<GLfloat>& inner,
+						const std::vector<GLfloat>& outer,
+						unsigned int num,
+						std::vector<GLfloat>& strip);
+
 		void GenerateOpenTriangleStripVertices (
 						const std::vector<GLfloat>& outer,
 						unsigned int num,
 						std::vector<GLfloat>& strip);
 
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+
 		std::vector<GLfloat> inner_;
 
 		std::vector<GLfloat> outer_;
+
+		std::vector<GLfloat> shadow_;
 	};
 
 }

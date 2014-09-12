@@ -27,65 +27,51 @@
 #include <deque>
 
 #include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/Color.hpp>
+
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
 
-	enum ShadowDirection {
-		ShadowNone = 0x0,
-		ShadowLeft = (0x1 << 0),
-		ShadowRight = (0x1 << 1),
-		ShadowTop = (0x1 << 2),
-		ShadowBottom = (0x1 << 3),
-		ShadowAll = (ShadowLeft | ShadowRight | ShadowTop | ShadowBottom)
-	};
-
-	/**
-	 * @brief Shadow form
-	 */
 	class Shadow: public AbstractRoundForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(Shadow);
 
 	public:
 
-		Shadow (const Size& size, int round_type, float radius);
+		Shadow();
+
+		Shadow(const Size& size, int round_type, float radius);
 
 		virtual ~Shadow ();
 
-		void Update (int width, int height, int round_type, float radius);
+		void SetColor (const Color& color);
 
-		void Update (const Size& size, int round_type, float radius);
-
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
+
+		virtual void PerformRoundTypeUpdate (int type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 	private:
 
-		// Disable default constructor
-		Shadow();
-
 		void InitializeShadow ();
 
-		/**
-		 * @brief Create shadow vertices
-		 * @param[in] size The shadow inner size
-		 * @param[in] round_type Round type, same as widget
-		 * @param[in] radius Round radius
-		 * @param[in] depth The shadow size
-		 * @param[out] vertices The vertices created
-		 */
-		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
+		void GenerateShadowVertices (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
 
-		GLuint m_vao;
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		GLuint vao_;
 
+		RefPtr<GLArrayBuffer> buffer_;
+
+		Color color_;
 	};
 
 }

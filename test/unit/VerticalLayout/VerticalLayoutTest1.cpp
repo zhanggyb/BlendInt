@@ -35,10 +35,10 @@ TEST_F(VLayoutTest1, Add1)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -70,10 +70,10 @@ TEST_F(VLayoutTest1, Add2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -106,10 +106,10 @@ TEST_F(VLayoutTest1, Add3)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -144,10 +144,10 @@ TEST_F(VLayoutTest1, Add4)
     //widget2->SetPreferredSize(widget2->preferred_size().width(), 40);
     //widget2->SetMaximalSize(widget2->maximal_size().width(), 80);
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -190,12 +190,12 @@ TEST_F(VLayoutTest1, Add5)
     //widget4->SetMaximalSize(widget1->preferred_size().width(), 70);
 	widget4->Resize(widget4->size().width(), 40);
 	
-    vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
-	vlayout->PushBack(Manage(widget3));
-	vlayout->PushBack(Manage(widget4));
+    vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
+	vlayout->Append(Manage(widget3));
+	vlayout->Append(Manage(widget4));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -232,12 +232,12 @@ TEST_F(VLayoutTest1, Add6)
     //widget3->SetMinimalSize(widget3->minimal_size().height(), 20);
 	Widget* widget4 = new Widget;
 	
-    vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
-	vlayout->PushBack(Manage(widget3));
-	vlayout->PushBack(Manage(widget4));
+    vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
+	vlayout->Append(Manage(widget3));
+	vlayout->Append(Manage(widget4));
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -273,14 +273,14 @@ TEST_F(VLayoutTest1, Add7)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
-	vlayout->PushBack(Manage(widget3));
-	vlayout->PushBack(Manage(widget4));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
+	vlayout->Append(Manage(widget3));
+	vlayout->Append(Manage(widget4));
 
 	vlayout->Resize(100, 80);
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -313,12 +313,12 @@ TEST_F(VLayoutTest1, Resize1)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
 	vlayout->Resize(200, 400);
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -350,12 +350,12 @@ TEST_F(VLayoutTest1, Resize2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
 	vlayout->Resize(200, 400);
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -391,14 +391,14 @@ TEST_F(VLayoutTest1, Resize3)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
-	vlayout->PushBack(Manage(widget3));
-	vlayout->PushBack(Manage(widget4));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
+	vlayout->Append(Manage(widget3));
+	vlayout->Append(Manage(widget4));
 
 	vlayout->Resize(100, 80);
 
-	context->PushBack(vlayout);
+	context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -432,14 +432,14 @@ TEST_F(VLayoutTest1, SetMargin1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
     vlayout->SetMargin(20, 20, 20, 20);
 
-    context->PushBack(vlayout);
+    context->Append(vlayout);
 
 	RunLoop(window);
 
@@ -473,14 +473,14 @@ TEST_F(VLayoutTest1, SetSpace1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	vlayout->PushBack(Manage(widget1));
-	vlayout->PushBack(Manage(widget2));
+	vlayout->Append(Manage(widget1));
+	vlayout->Append(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
     vlayout->SetSpace(10);
 
-    context->PushBack(vlayout);
+    context->Append(vlayout);
 
 	RunLoop(window);
 

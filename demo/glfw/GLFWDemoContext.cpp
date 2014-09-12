@@ -5,6 +5,9 @@
 #include "GLFWDemoContext.hpp"
 
 #include <BlendInt/Core/Image.hpp>
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
+#include <BlendInt/Gui/CheckButton.hpp>
 
 GLFWDemoContext::GLFWDemoContext(GLFWwindow* window)
 : BI::Context(),
@@ -79,13 +82,23 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	/*
 	Workspace* ws = Manage(new Workspace);
-	ws->SetPosition(20, 20);
-	ws->Resize(960, 720);
+	DBG_SET_NAME(ws, "Workspace");
+	ws->SetPosition(200, 100);
 
-	PushBack(ws);
-	*/
+	Append(ws);
+
+	Viewport3D* view = Manage(new Viewport3D);
+	ws->SetViewport(view);
+
+	ToolBar* tb = Manage(new ToolBar);
+	ws->SetHeader(tb);
+
+	ToolBox* box1 = Manage(new ToolBox);
+	ws->SetLeftSideBar(box1);
+
+	ToolBox* box2 = Manage(new ToolBox);
+	ws->SetRightSideBar(box2);
 
 	StaticPanel* panel = Manage(new StaticPanel);
 	DBG_SET_NAME(panel, "Static Panel");
@@ -105,7 +118,7 @@ void GLFWDemoContext::Initialize ()
 
 	panel->Resize(panel->GetPreferredSize());
 
-	PushBack(panel);
+	Append(panel);
 
 	/*
     Tab* tab = Manage (new Tab);
@@ -124,6 +137,7 @@ void GLFWDemoContext::Initialize ()
 
     PushBack(tab);
     */
+
 }
 
 void GLFWDemoContext::ReleaseGLFWCursors()

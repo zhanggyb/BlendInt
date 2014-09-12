@@ -24,12 +24,108 @@
 #ifndef _BLENDINT_GUI_WORKSPACE_HPP_
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
 namespace BlendInt {
+
+	/**
+	 * @brief A special button used in Workspace to switch on/off side bars
+	 */
+	class EdgeButton: public AbstractButton
+	{
+		DISALLOW_COPY_AND_ASSIGN(EdgeButton);
+
+	public:
+
+		EdgeButton (int round_type);
+
+		virtual ~EdgeButton ();
+
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+	private:
+
+		GLuint vao_[2];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
+
+	};
+
+	/**
+	 * @brief A special container used in Workspace
+	 */
+	class EdgeButtonLayer: public AbstractContainer
+	{
+		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
+
+	public:
+
+		EdgeButtonLayer();
+
+		virtual ~EdgeButtonLayer ();
+
+		virtual bool Contain (const Point& point) const;
+
+	protected:
+
+		virtual void PerformMarginUpdate (const Margin& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		void InitializeSideButtonLayer ();
+
+		void AlighButtons (const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void AlignButtons (int x, int y, int w, int h);
+
+	};
+
+	// ------------------------
+
+	/**
+	 * @brief A VLayout overrides Contain()
+	 */
+	class ViewportLayer: public VLayout
+	{
+		DISALLOW_COPY_AND_ASSIGN(ViewportLayer);
+
+	public:
+
+		ViewportLayer ();
+
+		virtual ~ViewportLayer ();
+
+		virtual bool Contain (const Point& point) const;
+	};
 
 	/**
 	 * @brief A special container which works as a space in Blender
@@ -58,11 +154,33 @@ namespace BlendInt {
 
 		void SetHeader (AbstractWidget* widget);
 
+		void SwitchHeaderPosition ();
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
+
+		AbstractWidget* viewport () const
+		{
+			return viewport_;
+		}
+
+		AbstractWidget* header () const
+		{
+			return header_;
+		}
+
+		AbstractWidget* left_sidebar() const
+		{
+			return left_sidebar_;
+		}
+
+		AbstractWidget* right_sidebar() const
+		{
+			return right_sidebar_;
+		}
 
 	protected:
 
@@ -96,10 +214,6 @@ namespace BlendInt {
 
 		void InitializeWorkspace ();
 
-		void AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin);
-
-		void AdjustGeometries (int x, int y, int w, int h);
-
 		AbstractWidget* left_sidebar_;
 
 		AbstractWidget* right_sidebar_;
@@ -109,10 +223,6 @@ namespace BlendInt {
 		AbstractWidget* viewport_;
 
 		Splitter* splitter_;
-
-		Button* left_button_;
-
-		Button* right_button_;
 
 		GLuint vao_;
 

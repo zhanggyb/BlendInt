@@ -25,9 +25,10 @@
 #define _BLENDINT_GUI_STATICPANEL_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 #include <BlendInt/Gui/AbstractPanel.hpp>
+#include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
@@ -63,9 +64,9 @@ namespace BlendInt {
 
 		void InitializeStaticPanelOnce ();
 
-		void RenderToBuffer (Profile& profile);
+		void RenderToBuffer ();
 
-		TextureBuffer tex_buffer_;
+		ImagePlane2D tex_buffer_;
 
 		bool refresh_;
 
@@ -83,6 +84,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 
+		Shadow* shadow_;
 	};
 
 }

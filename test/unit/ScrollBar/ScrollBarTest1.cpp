@@ -34,7 +34,7 @@ TEST_F(ScrollBarTest1, Foo1)
 
     bar->SetPosition(200, 200);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 
@@ -65,7 +65,7 @@ TEST_F(ScrollBarTest1, Show2)
 
     bar->SetPosition(200, 200);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 
@@ -98,7 +98,7 @@ TEST_F(ScrollBarTest1, Resize01)
 
     bar->Resize(400, 20);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 
@@ -130,7 +130,7 @@ TEST_F(ScrollBarTest1, SetValue01)
     bar->SetPosition(200, 200);
     bar->SetValue(50);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 
@@ -163,7 +163,7 @@ TEST_F(ScrollBarTest1, SetPercentage01)
 
     bar->SetSliderPercentage(50);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 
@@ -195,7 +195,7 @@ TEST_F(ScrollBarTest1, SetMinimum01)
     bar->SetPosition(200, 200);
     bar->SetMinimum(20);
 
-    context->PushBack(bar);
+    context->Append(bar);
 
     RunLoop(win);
 

@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->primitive_program();
 
-		program->Use();
+		program->use();
 		program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));
 		program->SetUniformMatrix4fv("m_V", 1, GL_FALSE, glm::value_ptr(view_matrix));
 		program->SetUniformMatrix4fv("m_M", 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));

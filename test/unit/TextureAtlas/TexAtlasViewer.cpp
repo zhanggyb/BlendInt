@@ -247,7 +247,7 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 
 	glBindVertexArray(m_vao);
 
-	m_program->Use();
+	m_program->use();
 
 	glActiveTexture(GL_TEXTURE0);
 	m_atlas.bind();

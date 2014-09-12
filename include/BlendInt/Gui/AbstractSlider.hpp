@@ -53,7 +53,7 @@ namespace BlendInt {
 		/**
 		 * @brief Draw the icon
 		 */
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
 		/**
 		 * @brief Set the highlight status of this icon
@@ -66,7 +66,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
+
+		virtual void PerformRoundTypeUpdate (int type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 	private:
 

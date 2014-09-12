@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <iostream>
 #include <fstream>
 #include <algorithm>
 

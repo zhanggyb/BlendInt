@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLARRAYBUFFERF_HPP_
-#define _BLENDINT_GLARRAYBUFFERF_HPP_
+#ifndef _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
+#define _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -152,4 +152,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GLARRAYBUFFERF_HPP_ */
+#endif /* _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_ */

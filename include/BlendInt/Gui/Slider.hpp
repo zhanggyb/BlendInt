@@ -110,9 +110,9 @@ namespace BlendInt {
 			                / ((float) maximum() - (float) minimum());
 		}
 
-		GLuint m_vao;
+		//GLuint m_vao;
 
-		RefPtr<GLArrayBuffer> m_line;
+		//RefPtr<GLArrayBuffer> m_line;
 
 		SlideIcon m_slide_icon;
 

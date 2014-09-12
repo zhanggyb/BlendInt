@@ -178,11 +178,11 @@ namespace BlendInt {
 		int advance = 0;	// the return value
 
 		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
-		program->Use();
+		program->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glUniform1i(Shaders::instance->text_uniform_texture(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TEXT_TEXTURE), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -198,8 +198,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
-			glUniform4f(Shaders::instance->text_uniform_color(),
+			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+			glUniform4f(Shaders::instance->location(Stock::TEXT_COLOR),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -219,7 +219,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+				glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
 			}
 
 		}
@@ -227,8 +227,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
-		glUniform4fv(Shaders::instance->text_uniform_color(), 1, m_color.data());
+		glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+		glUniform4fv(Shaders::instance->location(Stock::TEXT_COLOR), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -246,7 +246,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
 		}
 
 		glBindVertexArray(0);
@@ -299,11 +299,11 @@ namespace BlendInt {
 		int advance = 0;	// the return value
 
 		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
-		program->Use();
+		program->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glUniform1i(Shaders::instance->text_uniform_texture(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TEXT_TEXTURE), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -319,8 +319,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
-			glUniform4f(Shaders::instance->text_uniform_color(),
+			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+			glUniform4f(Shaders::instance->location(Stock::TEXT_COLOR),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -340,7 +340,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+				glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
 			}
 
 		}
@@ -348,8 +348,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
-		glUniform4fv(Shaders::instance->text_uniform_color(), 1, m_color.data());
+		glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+		glUniform4fv(Shaders::instance->location(Stock::TEXT_COLOR), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -367,7 +367,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
 		}
 
 		glBindVertexArray(0);

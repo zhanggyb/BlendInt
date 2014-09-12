@@ -38,9 +38,9 @@ TEST_F(ToolBoxTest1, Foo1)
     Button* btn2 = Manage(new Button("Hello World 2!"));
     Button* btn3 = Manage(new Button("Hello World 3!"));
 
-    tb->PushBack(btn1);
-    tb->PushBack(btn2);
-    tb->PushBack(btn3);
+    tb->Append(btn1);
+    tb->Append(btn2);
+    tb->Append(btn3);
 
     tb->SetPosition(100, 100);
     tb->Resize(160, 300);
@@ -52,7 +52,7 @@ TEST_F(ToolBoxTest1, Foo1)
     DBG_PRINT_MSG("Button 2 position: %d %d", btn1->position().x(), btn2->position().y());
     DBG_PRINT_MSG("Button 3 position: %d %d", btn1->position().x(), btn3->position().y());
 
-    context->PushBack(tb);
+    context->Append(tb);
 
     RunLoop(win);
 

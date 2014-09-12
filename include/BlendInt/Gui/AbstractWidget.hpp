@@ -413,11 +413,6 @@ namespace BlendInt {
 			return round_radius_;
 		}
 
-		bool drop_shadow () const
-		{
-			return flags_ & WidgetFlagDropShadow;
-		}
-
 		/**
 		 * @brief move this object along x axis
 		 * @param offset_x
@@ -655,15 +650,6 @@ namespace BlendInt {
 			round_radius_ = radius;
 		}
 
-		void set_drop_shadow (bool shadow)
-		{
-			if(shadow) {
-				SETBIT(flags_, WidgetFlagDropShadow);
-			} else {
-				CLRBIT(flags_, WidgetFlagDropShadow);
-			}
-		}
-
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
 	private:
@@ -687,8 +673,6 @@ namespace BlendInt {
 			WidgetFlagHover = (1 << 7),
 
 			WidgetFlagVisibility = (1 << 8),
-
-			WidgetFlagDropShadow = (1 << 9),
 
 			WidgetFlagEmboss = (1 << 10)
 
@@ -720,8 +704,6 @@ namespace BlendInt {
 		AbstractWidget* previous_;
 
 		AbstractWidget* next_;
-
-		RefPtr<Shadow> shadow_;
 
 #ifdef DEBUG
 		std::string name_;

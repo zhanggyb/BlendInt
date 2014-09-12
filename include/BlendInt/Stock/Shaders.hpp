@@ -24,7 +24,11 @@
 #ifndef _BLENDINT_STOCK_SHADERS_HPP_
 #define _BLENDINT_STOCK_SHADERS_HPP_
 
+#include <glm/glm.hpp>
+
 #include <BlendInt/Core/RefPtr.hpp>
+
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
@@ -32,6 +36,57 @@ namespace BlendInt {
 	class Interface;
 
 	namespace Stock {
+
+		enum LocationType {
+
+			// Triangles
+			TRIANGLE_COORD,
+			TRIANGLE_COLOR,
+			//TRIANGLE_PROJECTION,
+			//TRIANGLE_VIEW,
+			TRIANGLE_POSITION,
+			TRIANGLE_ROTATION,
+			TRIANGLE_SCALE,
+			TRIANGLE_ANTI_ALIAS,
+			TRIANGLE_GAMMA,
+
+			WIDGET_COORD,
+			WIDGET_COLOR,
+			//WIDGET_PROJECTION,
+			//WIDGET_VIEW,
+			WIDGET_POSITION,
+			WIDGET_ROTATION,
+			WIDGET_SCALE,
+			WIDGET_ANTI_ALIAS,
+			WIDGET_GAMMA,
+
+			// Text
+			TEXT_COORD,
+			//TEXT_PROJECTION,
+			//TEXT_VIEW,
+			TEXT_POSITION,
+			TEXT_ROTATION,
+			TEXT_TEXTURE,
+			TEXT_COLOR,
+
+			// Image
+			IMAGE_COORD,
+			IMAGE_UV,
+			//IMAGE_PROJECTION,
+			//IMAGE_VIEW,
+			IMAGE_POSITION,
+			IMAGE_ROTATION,
+			IMAGE_TEXTURE,
+			IMAGE_GAMMA,
+
+			PRIMITIVE_COORD,
+			PRIMITIVE_COLOR,
+			PRIMITIVE_PROJECTION,
+			PRIMITIVE_VIEW,
+			PRIMITIVE_MODEL,
+
+			LocationLast
+		};
 
 		/**
 		 * @brief A class which provide pre-defined shaders
@@ -47,237 +102,40 @@ namespace BlendInt {
 
 			const RefPtr<GLSLProgram>& text_program () const
 			{
-				return m_text_program;
+				return text_program_;
 			}
 
 			const RefPtr<GLSLProgram>& primitive_program () const
 			{
-				return m_primitive_program;
+				return primitive_program_;
 			}
 
 			const RefPtr<GLSLProgram>& triangle_program () const
 			{
-				return m_triangle_program;
+				return triangle_program_;
 			}
 
-			const RefPtr<GLSLProgram>& line_program () const
+			const RefPtr<GLSLProgram>& widget_program () const
 			{
-				return m_line_program;
-			}
-
-			const RefPtr<GLSLProgram>& context_program () const
-			{
-				return m_context_program;
+				return widget_program_;
 			}
 
 			const RefPtr<GLSLProgram>& image_program () const
 			{
-				return m_image_program;
+				return image_program_;
 			}
 
-			GLint primitive_attrib_color_v4 () const
-			{
-				return m_primitive_attrib_color_v4;
-			}
+			void GetUIProjectionMatrix (glm::mat4& matrix);
 
-			GLint primitive_attrib_coord_v3 () const
-			{
-				return m_primitive_attrib_coord_v3;
-			}
+			void GetUIViewMatrix (glm::mat4& matrix);
 
-			GLint primitive_uniform_model () const
-			{
-				return m_primitive_uniform_model;
-			}
+			void SetUIProjectionMatrix (const glm::mat4& matrix);
 
-			GLint primitive_uniform_projection () const
-			{
-				return m_primitive_uniform_projection;
-			}
+			void SetUIViewMatrix (const glm::mat4& matrix);
 
-			GLint primitive_uniform_view () const
+			inline GLint location (LocationType index) const
 			{
-				return m_primitive_uniform_view;
-			}
-
-			GLint text_attrib_coord () const
-			{
-				return m_text_attrib_coord;
-			}
-
-			GLint text_uniform_color () const
-			{
-				return m_text_uniform_color;
-			}
-
-			GLint text_uniform_position () const
-			{
-				return m_text_uniform_position;
-			}
-
-			GLint text_uniform_projection () const
-			{
-				return m_text_uniform_projection;
-			}
-
-			GLint text_uniform_rotation () const
-			{
-				return m_text_uniform_rotation;
-			}
-
-			GLint text_uniform_texture () const
-			{
-				return m_text_uniform_texture;
-			}
-
-			GLint text_uniform_view () const
-			{
-				return m_text_uniform_view;
-			}
-
-			GLint triangle_uniform_scale () const
-			{
-				return m_triangle_uniform_scale;
-			}
-
-			/**
-			 * @brief The vertex attribute location of coord
-			 *
-			 * Always return 0
-			 */
-			GLint triangle_attrib_coord () const
-			{
-				return m_triangle_attrib_coord;
-			}
-
-			/**
-			 * @brief The vertex attribute location of color
-			 *
-			 * Always return 1
-			 */
-			GLint triangle_attrib_color () const
-			{
-				return m_triangle_attrib_color;
-			}
-
-			GLint triangle_uniform_antialias () const
-			{
-				return m_triangle_uniform_antialias;
-			}
-
-			GLint triangle_uniform_gamma () const
-			{
-				return m_triangle_uniform_gamma;
-			}
-
-			GLint triangle_uniform_position () const
-			{
-				return m_triangle_uniform_position;
-			}
-
-			GLint triangle_uniform_projection () const
-			{
-				return m_triangle_uniform_projection;
-			}
-
-			GLint triangle_uniform_rotation () const
-			{
-				return m_triangle_uniform_rotation;
-			}
-
-			GLint triangle_uniform_view () const
-			{
-				return m_triangle_uniform_view;
-			}
-
-			/**
-			 * @brief The vertex attribute location of coord
-			 *
-			 * Always return 0
-			 */
-			GLint line_attrib_coord () const
-			{
-				return m_line_attrib_coord;
-			}
-
-			/**
-			 * @brief The vertex attribute location of color
-			 *
-			 * Always return 1
-			 */
-			GLint line_attrib_color () const
-			{
-				return m_line_attrib_color;
-			}
-
-			GLint line_uniform_antialias () const
-			{
-				return m_line_uniform_antialias;
-			}
-
-			GLint line_uniform_gamma () const
-			{
-				return m_line_uniform_gamma;
-			}
-
-			GLint line_uniform_position () const
-			{
-				return m_line_uniform_position;
-			}
-
-			GLint line_uniform_projection () const
-			{
-				return m_line_uniform_projection;
-			}
-
-			GLint line_uniform_rotation () const
-			{
-				return m_line_uniform_rotation;
-			}
-
-			GLint line_uniform_view () const
-			{
-				return m_line_uniform_view;
-			}
-
-			GLint image_attrib_coord () const
-			{
-				return m_image_attrib_coord;
-			}
-
-			GLint image_attrib_uv () const
-			{
-				return m_image_attrib_uv;
-			}
-
-			GLint image_uniform_gamma () const
-			{
-				return m_image_uniform_gamma;
-			}
-
-			GLint image_uniform_position () const
-			{
-				return m_image_uniform_position;
-			}
-
-			GLint image_uniform_projection () const
-			{
-				return m_image_uniform_projection;
-			}
-
-			GLint image_uniform_rotation () const
-			{
-				return m_image_uniform_rotation;
-			}
-
-			GLint image_uniform_texture () const
-			{
-				return m_image_uniform_texture;
-			}
-
-			GLint image_uniform_view () const
-			{
-				return m_image_uniform_view;
+				return locations_[index];
 			}
 
 		private:
@@ -294,93 +152,34 @@ namespace BlendInt {
 
 			bool Setup ();
 
-			RefPtr<GLSLProgram> m_text_program;
+			bool SetupWidgetProgram ();
 
-			RefPtr<GLSLProgram> m_primitive_program;
+			bool SetupTextProgram ();
 
-			RefPtr<GLSLProgram> m_triangle_program;
+			bool SetupTriangleProgram ();
 
-			RefPtr<GLSLProgram> m_line_program;
+			bool SetupImageProgram ();
 
-			RefPtr<GLSLProgram> m_context_program;
+			bool SetupPrimitiveProgram ();
 
-			RefPtr<GLSLProgram> m_image_program;
+			RefPtr<GLSLProgram> text_program_;
 
-			GLint m_text_attrib_coord;
+			RefPtr<GLSLProgram> primitive_program_;
 
-			GLint m_text_uniform_projection;
+			RefPtr<GLSLProgram> triangle_program_;
 
-			GLint m_text_uniform_view;
+			RefPtr<GLSLProgram> widget_program_;
 
-			GLint m_text_uniform_position;
+			RefPtr<GLSLProgram> image_program_;
 
-			GLint m_text_uniform_rotation;
+			GLint locations_[LocationLast];
 
-			GLint m_text_uniform_texture;
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > ui_matrix_;
 
-			GLint m_text_uniform_color;
+			// the offset of uniform block in shaders
+			GLint ui_matrix_offset_[2];
 
-			GLint m_primitive_attrib_coord_v3;
-
-			GLint m_primitive_attrib_color_v4;
-
-			GLint m_primitive_uniform_projection;
-
-			GLint m_primitive_uniform_view;
-
-			GLint m_primitive_uniform_model;
-
-			GLint m_triangle_attrib_coord;
-
-			GLint m_triangle_attrib_color;
-
-			GLint m_triangle_uniform_projection;
-
-			GLint m_triangle_uniform_view;
-
-			GLint m_triangle_uniform_position;
-
-			GLint m_triangle_uniform_rotation;
-
-			GLint m_triangle_uniform_scale;
-
-			GLint m_triangle_uniform_antialias;
-
-			GLint m_triangle_uniform_gamma;
-
-			GLint m_line_attrib_coord;
-
-			GLint m_line_attrib_color;
-
-			GLint m_line_uniform_projection;
-
-			GLint m_line_uniform_view;
-
-			GLint m_line_uniform_position;
-
-			GLint m_line_uniform_rotation;
-
-			GLint m_line_uniform_scale;
-
-			GLint m_line_uniform_antialias;
-
-			GLint m_line_uniform_gamma;
-
-			GLint m_image_attrib_coord;
-
-			GLint m_image_attrib_uv;
-
-			GLint m_image_uniform_projection;
-
-			GLint m_image_uniform_view;
-
-			GLint m_image_uniform_position;
-
-			GLint m_image_uniform_rotation;
-
-			GLint m_image_uniform_texture;
-
-			GLint m_image_uniform_gamma;
+			GLint ui_matrix_block_size_;
 
 			static const char* text_vertex_shader;
 
@@ -390,13 +189,17 @@ namespace BlendInt {
 
 			static const char* primitive_fragment_shader;
 
-			static const char* widget_vertex_shader;
+			static const char* triangle_vertex_shader;
 
-			static const char* widget_triangle_geometry_shader;
+			static const char* triangle_geometry_shader;
 
-			static const char* widget_line_geometry_shader;
+			static const char* triangle_fragment_shader;
 
-			static const char* widget_fragment_shader;
+			static const char* widget_vertex_shader_ext;
+
+			static const char* widget_geometry_shader_ext;
+
+			static const char* widget_fragment_shader_ext;
 
 			static const char* context_vertex_shader;
 

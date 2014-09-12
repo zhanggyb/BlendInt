@@ -21,36 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <algorithm>
-
-#include <BlendInt/Gui/AbstractStackLayout.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/OrthoCamera.hpp>
 
 namespace BlendInt {
 
-	AbstractStackLayout::AbstractStackLayout()
-	: AbstractContainer()
+	OrthoCamera::OrthoCamera()
+	: AbstractCamera(),
+	  left_(0.f),
+	  right_(100.f),
+	  bottom_(0.f),
+	  top_(100.f),
+	  near_(100.f),
+	  far_(-100.f)
 	{
-		set_size(400, 300);
 	}
 
-	AbstractStackLayout::~AbstractStackLayout()
+	OrthoCamera::~OrthoCamera()
 	{
+	}
+
+	void OrthoCamera::SetOrtho (float left, float right, float bottom,
+			float top, float near, float far)
+	{
+		left_ = left;
+		right_ = right;
+		bottom_ = bottom;
+		top_ = top;
+		near_ = near;
+		far_ = far;
+
+		set_projection(glm::ortho(left_, right_, bottom_, top_, near_, far_));
 	}
 
 }
-

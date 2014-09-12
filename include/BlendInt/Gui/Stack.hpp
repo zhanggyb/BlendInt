@@ -21,40 +21,39 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
-#define _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
+#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
+#define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/Gui/StackLayout.hpp>
 
 namespace BlendInt {
 
-	class TextureBuffer: public Object
+	class Stack: public StackLayout
 	{
+		DISALLOW_COPY_AND_ASSIGN(Stack);
+
 	public:
 
-		TextureBuffer ();
+		Stack ();
 
-		virtual ~TextureBuffer ();
+		virtual ~Stack ();
 
-		void SetCoord (GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1);
+	protected:
 
-		GLTexture2D* texture () const
-		{
-			return m_texture.get();
-		}
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void Draw (GLfloat x, GLfloat y);
+		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
-		GLuint m_vao;
+		void InitializeStack ();
 
-		RefPtr<GLArrayBuffer> m_vbo;
+		GLuint vao_;
 
-		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLArrayBuffer> inner_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_ */
+#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */

@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~ToolBox();
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
 		virtual bool IsExpandY () const;
 

@@ -36,17 +36,12 @@
 
 #include <vector>
 
-#include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/glm.hpp>
 
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/Core/Types.hpp>
-
 #include <BlendInt/Core/Object.hpp>
-
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -76,55 +71,6 @@ namespace BlendInt {
 		}
 	};
 
-	class UpdateRequest
-	{
-	public:
-
-		UpdateRequest (int type, const void* data) :
-						m_type(type), m_data(data)
-		{
-
-		}
-
-		~UpdateRequest ()
-		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
-		}
-
-	private:
-
-		UpdateRequest();
-
-		int m_type;
-		const void* m_data;
-	};
-
-	enum FormRequestType {
-		FormSize,
-		FormRoundType,
-		FormRoundRadius
-	};
-
 	/**
 	 * @brief Abstract form class
 	 *
@@ -140,19 +86,21 @@ namespace BlendInt {
 	{
 	public:
 
-#ifdef DEBUG
-		friend class Interface;
-#endif
+		AbstractForm ()
+		: Object()
+		{}
 
-		AbstractForm();
+		virtual ~AbstractForm ()
+		{}
 
-		virtual ~AbstractForm();
-
-		AbstractForm(const AbstractForm& orig);
+		AbstractForm (const AbstractForm& orig)
+		{
+			size_ = orig.size_;
+		}
 
 		AbstractForm& operator = (const AbstractForm& orig)
 		{
-			m_size = orig.size();
+			size_ = orig.size();
 			return *this;
 		}
 
@@ -162,10 +110,10 @@ namespace BlendInt {
 
 		const Size& size () const
 		{
-			return m_size;
+			return size_;
 		}
 
-		virtual void Draw (const glm::vec3& pos, int short gamma = 0) = 0;
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const = 0;
 
 		static void SetDefaultBorderWidth (int border);
 
@@ -175,7 +123,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
+		virtual void PerformSizeUpdate (const Size& size) = 0;
 
 		/**
 		 * @brief preset the size of the form
@@ -187,8 +135,8 @@ namespace BlendInt {
 		 */
 		inline void set_size (int width, int height)
 		{
-			m_size.set_width(width);
-			m_size.set_height(height);
+			size_.set_width(width);
+			size_.set_height(height);
 		}
 
 		/**
@@ -200,7 +148,7 @@ namespace BlendInt {
 		 */
 		inline void set_size (const Size& size)
 		{
-			m_size = size;
+			size_ = size;
 		}
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
@@ -209,7 +157,7 @@ namespace BlendInt {
 
 		static int default_border_width;
 
-		Size m_size;
+		Size size_;
 
 	};
 

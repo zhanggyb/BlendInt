@@ -41,20 +41,41 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ColorButton::ColorButton ()
 		: AbstractButton()
 	{
+		set_round_type(RoundAll);
+		int h = font().GetHeight();
+		set_size(4 * h + round_radius() * 2 +default_padding.hsum(),
+						h + default_padding.vsum());
+
+		color_.set_red(0.3f);
+		color_.set_blue(0.8f);
+		color_.set_green(0.2f);
+
 		InitializeColorButton();
 	}
 
 	ColorButton::~ColorButton ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
+	}
+
+	Size ColorButton::GetPreferredSize () const
+	{
+		int h = font().GetHeight();
+
+		Size prefer(4 * h + round_radius() * 2 +default_padding.hsum(),
+					h + default_padding.vsum());
+
+		return prefer;
 	}
 
 	void ColorButton::SetColor(const Color& color)
 	{
-		m_color = color;
+		color_ = color;
 		Refresh();
 	}
 
@@ -64,7 +85,7 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -85,7 +106,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -106,7 +127,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -122,32 +143,38 @@ namespace BlendInt {
 
 	ResponseType ColorButton::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
 		int outline_vertices = GetOutlineVertices(round_type());
 
 		RefPtr<GLSLProgram> program =
-				Shaders::instance->triangle_program();
-		program->Use();
+				Shaders::instance->widget_program();
+		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+				(float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, color_.data());
 
-		program->SetVertexAttrib4fv("a_color", m_color.data());
+		if(hover()) {
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+		} else {
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+		}
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		program->SetUniform1i("u_AA", 1);
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
+				1);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, Theme::instance->regular().outline.data());
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+					(float) position().x(), (float) position().y() - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_type()) * 2);
@@ -165,33 +192,32 @@ namespace BlendInt {
 
 	void ColorButton::InitializeColorButton ()
 	{
-		set_round_type(RoundAll);
-
-		int h = font().GetHeight();
-
-		set_size(h + round_radius() * 2 +default_padding.hsum(),
-						h + default_padding.vsum());
-
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateShadedVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
 
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
+		glEnableVertexAttribArray(
+				Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(
+				Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

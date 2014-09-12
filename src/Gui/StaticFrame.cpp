@@ -55,8 +55,6 @@ namespace BlendInt {
 	: BinLayout(), refresh_(true)
 	{
 		set_size(400, 300);
-		set_drop_shadow(true);
-
 		InitializeFramePanel();
 	}
 	
@@ -126,8 +124,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_->reset();
@@ -200,49 +198,33 @@ namespace BlendInt {
 			glEnable(GL_BLEND);
 
 			glm::mat4 origin;
-			glGetUniformfv(Shaders::instance->triangle_program()->id(),
-					Shaders::instance->triangle_uniform_projection(),
-					glm::value_ptr(origin));
+			Shaders::instance->GetUIProjectionMatrix(origin);
 
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 			        -100.f);
 
-			RefPtr<GLSLProgram> program =
-			        Shaders::instance->triangle_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->text_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->image_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
+			Shaders::instance->SetUIProjectionMatrix(projection);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, size().width(), size().height());
 
 			// Draw frame panel
-			program = Shaders::instance->triangle_program();
-			program->Use();
+			RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+			program->use();
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 					(float) position().x(), (float) position().y(), 0.f);
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
 					0.447f, 0.447f, 1.0f);
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
+
+			program->reset();
 
 			Profile off_screen_profile(position());
 
@@ -253,24 +235,7 @@ namespace BlendInt {
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-			program = Shaders::instance->triangle_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->text_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->image_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-
-			program->reset();
+			Shaders::instance->SetUIProjectionMatrix(origin);
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

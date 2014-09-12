@@ -67,7 +67,7 @@ int main (int argc, char* argv[])
     Button* button = new Button("OK");
     button->SetPosition(1000, 400);
 
-    context->PushBack(view);
+    context->Append(view);
 
     RunLoop(window);
 

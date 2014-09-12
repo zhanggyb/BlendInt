@@ -48,11 +48,11 @@ namespace BlendInt {
 
 		size_t cell_size () const {return m_cell_size;}
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
 	protected:
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
 
 		static void GenerateCheckerVertices (const Size& size,
 						size_t cell_size,

@@ -62,7 +62,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ToolBar::PushBack (AbstractWidget* widget)
+	void ToolBar::Append (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
@@ -92,7 +92,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBar::PushBack (const RefPtr<Action>& action)
+	void ToolBar::Append (const RefPtr<Action>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();
@@ -235,14 +235,14 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		program->SetUniform3f(Shaders::instance->triangle_uniform_position(),
+		program->SetUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 		        (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		program->SetUniform1i(Shaders::instance->triangle_uniform_antialias(),
+		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
 		        0);
-		program->SetVertexAttrib4f(Shaders::instance->triangle_attrib_color(),
+		program->SetVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 		        0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
@@ -386,8 +386,8 @@ namespace BlendInt {
 
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);

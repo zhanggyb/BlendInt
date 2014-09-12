@@ -24,13 +24,11 @@
 #ifndef _BLENDINT_GUI_ICON_HPP_
 #define _BLENDINT_GUI_ICON_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/Core/Object.hpp>
-#include <BlendInt/Core/Size.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 namespace BlendInt {
 
-	class AbstractIcon: public Object
+	class AbstractIcon: public AbstractForm
 	{
 	public:
 
@@ -38,30 +36,9 @@ namespace BlendInt {
 
 		virtual ~AbstractIcon ();
 
-		void Draw (float x, float y, short gamma = 0);
+		void Draw (float x, float y, short gamma = 0) const;
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) const = 0;
-
-		const Size& size() const
-		{
-			return size_;
-		}
-
-	protected:
-
-		void set_size (int w, int h)
-		{
-			size_.reset(w, h);
-		}
-
-		void set_size (const Size& size)
-		{
-			size_ = size;
-		}
-
-	private:
-
-		Size size_;
+		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
 
 	};
 

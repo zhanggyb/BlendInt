@@ -29,6 +29,8 @@
 #include <rapidxml_print.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Core/Image.hpp>
+
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -65,15 +67,16 @@ namespace BlendInt {
 	}
 
 	Theme::Theme ()
-	: m_dpi(72),
-	  m_pixel(1),
+	: dpi_(72),
+	  pixel_(1),
 	  m_shadow_fac(0.5),
-	  m_shadow_width(12)
+	  shadow_offset_x_(0),
+	  shadow_offset_y_(-4),
+	  shadow_width_(12)
 	{
-		// TODO Auto-generated constructor stub
-
+		shadow_texture_.reset(new GLTexture2D);
 	}
-	
+
 	bool Theme::Load (const std::string& filepath)
 	{
 		using namespace rapidxml;
@@ -159,12 +162,12 @@ namespace BlendInt {
 
 		char* value = 0;
 
-		snprintf(buf, 16, "%u", m_dpi);
+		snprintf(buf, 16, "%u", dpi_);
 		value = doc.allocate_string(buf);
 		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%hd", m_pixel);
+		snprintf(buf, 16, "%hd", pixel_);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
@@ -174,80 +177,90 @@ namespace BlendInt {
 		attr = doc.allocate_attribute("menu_shadow_fac", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%hd", m_shadow_width);
+		snprintf(buf, 16, "%hd", shadow_offset_x_);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("shadow_offset_x", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%hd", shadow_offset_y_);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("shadow_offset_y", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%hd", shadow_width_);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_width", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_xaxis.uchar_red(), m_xaxis.uchar_green(), m_xaxis.uchar_blue(), m_xaxis.uchar_alpha());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", xaxis_.uchar_red(), xaxis_.uchar_green(), xaxis_.uchar_blue(), xaxis_.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_x", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_yaxis.uchar_red(), m_yaxis.uchar_green(), m_yaxis.uchar_blue(), m_yaxis.uchar_alpha());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", yaxis_.uchar_red(), yaxis_.uchar_green(), yaxis_.uchar_blue(), yaxis_.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_y", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_zaxis.uchar_red(), m_zaxis.uchar_green(), m_zaxis.uchar_blue(), m_zaxis.uchar_alpha());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", zaxis_.uchar_red(), zaxis_.uchar_green(), zaxis_.uchar_blue(), zaxis_.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_z", value);
 		ui_node->append_attribute(attr);
 
 		node->append_node(ui_node);
 
-		xml_node<>* widget_color_node = AllocateWidgetThemeNode(doc, "wcol_regular", m_regular);
+		xml_node<>* widget_color_node = AllocateWidgetThemeNode(doc, "wcol_regular", regular_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tool", m_tool);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tool", tool_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_text", m_text);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_text", text_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_radio_button", m_radio_button);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_radio_button", radio_button_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_option", m_option);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_option", option_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_toggle", m_toggle);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_toggle", toggle_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_field", m_number_field);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_field", number_field_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_slider", m_number_slider);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_slider", number_slider_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu", m_menu);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu", menu_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_pulldown", m_pulldown);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_pulldown", pulldown_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_back", m_menu_back);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_back", menu_back_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_item", m_menu_item);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_item", menu_item_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tab", m_tab);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tab", tab_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tooltip", m_tooltip);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tooltip", tooltip_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_box", m_box);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_box", box_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_scroll", m_scroll);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_scroll", scroll_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_progress", m_progress);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_progress", progress_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_list_item", m_list_item);
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_list_item", list_item_);
 		ui_node->append_node(widget_color_node);
 
 		std::ofstream out(filepath.c_str());
@@ -272,181 +285,185 @@ namespace BlendInt {
 		// _theme.wcol_regular	// use the default setting in struct constructor
 
 		// Tool
-		m_tool.outline = 0x191919FF;
-		m_tool.item = 0x191919FF;
-		m_tool.inner = 0x999999FF;
-		m_tool.inner_sel = 0x646464FF;
-		m_tool.text = 0x000000FF;
-		m_tool.text_sel = 0xFFFFFFFF;
-		m_tool.shaded = true;
-		m_tool.shadetop = 15;
-		m_tool.shadedown = -15;
+		tool_.outline = 0x191919FF;
+		tool_.item = 0x191919FF;
+		tool_.inner = 0x999999FF;
+		tool_.inner_sel = 0x646464FF;
+		tool_.text = 0x000000FF;
+		tool_.text_sel = 0xFFFFFFFF;
+		tool_.shaded = true;
+		tool_.shadetop = 15;
+		tool_.shadedown = -15;
 
 		// Radio Buttons
-		m_radio_button.outline = 0x000000FF;
-		m_radio_button.item = 0xFFFFFFFF;
-		m_radio_button.inner = 0x464646FF;
-		m_radio_button.inner_sel = 0x5680C2FF;
-		m_radio_button.text = 0xFFFFFFFF;
-		m_radio_button.text_sel = 0x000000FF;
-		m_radio_button.shaded = true;
-		m_radio_button.shadetop = 15;
-		m_radio_button.shadedown = -15;
+		radio_button_.outline = 0x000000FF;
+		radio_button_.item = 0xFFFFFFFF;
+		radio_button_.inner = 0x464646FF;
+		radio_button_.inner_sel = 0x5680C2FF;
+		radio_button_.text = 0xFFFFFFFF;
+		radio_button_.text_sel = 0x000000FF;
+		radio_button_.shaded = true;
+		radio_button_.shadetop = 15;
+		radio_button_.shadedown = -15;
 
 		// Text
-		m_text.outline = 0x191919FF;
-		m_text.item = 0x5A5A5AFF;
-		m_text.inner = 0x999999FF;
-		m_text.inner_sel = 0x999999FF;
-		m_text.text = 0x000000FF;
-		m_text.text_sel = 0xFFFFFFFF;
-		m_text.shaded = true;
-		m_text.shadetop = 0;
-		m_text.shadedown = 25;
+		text_.outline = 0x191919FF;
+		text_.item = 0x5A5A5AFF;
+		text_.inner = 0x999999FF;
+		text_.inner_sel = 0x999999FF;
+		text_.text = 0x000000FF;
+		text_.text_sel = 0xFFFFFFFF;
+		text_.shaded = true;
+		text_.shadetop = 0;
+		text_.shadedown = 25;
 
 		// Option
-		m_option.outline = 0x000000FF;
-		m_option.item = 0xFFFFFFFF;
-		m_option.inner = 0x464646FF;
-		m_option.inner_sel = 0x464646FF;
-		m_option.text = 0x000000FF;
-		m_option.text_sel = 0xFFFFFFFF;
-		m_option.shaded = true;
-		m_option.shadetop = 15;
-		m_option.shadedown = -15;
+		option_.outline = 0x000000FF;
+		option_.item = 0xFFFFFFFF;
+		option_.inner = 0x464646FF;
+		option_.inner_sel = 0x464646FF;
+		option_.text = 0x000000FF;
+		option_.text_sel = 0xFFFFFFFF;
+		option_.shaded = true;
+		option_.shadetop = 15;
+		option_.shadedown = -15;
 
 		// Toggle
-		m_toggle.outline = 0x191919FF;
-		m_toggle.item = 0x191919FF;
-		m_toggle.inner = 0x999999FF;
-		m_toggle.inner_sel = 0x646464FF;
-		m_toggle.text = 0x000000FF;
-		m_toggle.text_sel = 0xFFFFFFFF;
+		toggle_.outline = 0x191919FF;
+		toggle_.item = 0x191919FF;
+		toggle_.inner = 0x999999FF;
+		toggle_.inner_sel = 0x646464FF;
+		toggle_.text = 0x000000FF;
+		toggle_.text_sel = 0xFFFFFFFF;
 
 		// Number Fields
-		m_number_field.outline = 0x191919FF;
-		m_number_field.item = 0xFAFAFAFF;
-		m_number_field.inner = 0xB4B4B4FF;
-		m_number_field.inner_sel = 0x999999FF;
-		m_number_field.text = 0x000000FF;
-		m_number_field.text_sel = 0xFFFFFFFF;
-		m_number_field.shaded = true;
-		m_number_field.shadetop = -20;
-		m_number_field.shadedown = 0;
+		number_field_.outline = 0x191919FF;
+		number_field_.item = 0xFAFAFAFF;
+		number_field_.inner = 0xB4B4B4FF;
+		number_field_.inner_sel = 0x999999FF;
+		number_field_.text = 0x000000FF;
+		number_field_.text_sel = 0xFFFFFFFF;
+		number_field_.shaded = true;
+		number_field_.shadetop = -20;
+		number_field_.shadedown = 0;
 
 		// Value Slider
-		m_number_slider.outline = 0x191919FF;
-		m_number_slider.item = 0x808080FF;
-		m_number_slider.inner = 0xB4B4B4FF;
-		m_number_slider.inner_sel = 0x999999FF;
-		m_number_slider.text = 0x000000FF;
-		m_number_slider.text_sel = 0xFFFFFFFF;
-		m_number_slider.shaded = true;
-		m_number_slider.shadetop = -20;
-		m_number_slider.shadedown = 0;
+		number_slider_.outline = 0x191919FF;
+		number_slider_.item = 0x808080FF;
+		number_slider_.inner = 0xB4B4B4FF;
+		number_slider_.inner_sel = 0x999999FF;
+		number_slider_.text = 0x000000FF;
+		number_slider_.text_sel = 0xFFFFFFFF;
+		number_slider_.shaded = true;
+		number_slider_.shadetop = -20;
+		number_slider_.shadedown = 0;
 
 		// Box
-		m_box.outline = 0x191919FF;
-		m_box.item = 0x191919FF;
-		m_box.inner = 0x808080FF;
-		m_box.inner_sel = 0x646464FF;
-		m_box.text = 0x000000FF;
-		m_box.text_sel = 0xFFFFFFFF;
+		box_.outline = 0x191919FF;
+		box_.item = 0x191919FF;
+		box_.inner = 0x808080FF;
+		box_.inner_sel = 0x646464FF;
+		box_.text = 0x000000FF;
+		box_.text_sel = 0xFFFFFFFF;
 
 		// Menu
-		m_menu.outline = 0x000000FF;
-		m_menu.item = 0xFFFFFFFF;
-		m_menu.inner = 0x464646FF;
-		m_menu.inner_sel = 0x464646FF;
-		m_menu.text = 0xFFFFFFFF;
-		m_menu.text_sel = 0xCCCCCCFF;
-		m_menu.shaded = true;
-		m_menu.shadetop = 15;
-		m_menu.shadedown = -15;
+		menu_.outline = 0x000000FF;
+		menu_.item = 0xFFFFFFFF;
+		menu_.inner = 0x464646FF;
+		menu_.inner_sel = 0x464646FF;
+		menu_.text = 0xFFFFFFFF;
+		menu_.text_sel = 0xCCCCCCFF;
+		menu_.shaded = true;
+		menu_.shadetop = 15;
+		menu_.shadedown = -15;
 
 		// Pulldown
-		m_pulldown.outline = 0x000000FF;
-		m_pulldown.item = 0xFFFFFFFF;
-		m_pulldown.inner = 0x3F3F3FFF;
-		m_pulldown.inner_sel = 0x5680C2FF;
-		m_pulldown.text = 0x000000FF;
-		m_pulldown.text_sel = 0x000000FF;
+		pulldown_.outline = 0x000000FF;
+		pulldown_.item = 0xFFFFFFFF;
+		pulldown_.inner = 0x3F3F3FFF;
+		pulldown_.inner_sel = 0x5680C2FF;
+		pulldown_.text = 0x000000FF;
+		pulldown_.text_sel = 0x000000FF;
 
 		// Menu Back
-		m_menu_back.outline = 0x000000FF;
-		m_menu_back.item = 0x646464FF;
-		m_menu_back.inner = 0x191919E6;
-		m_menu_back.inner_sel = 0x2D2D2DE6;
-		m_menu_back.text = 0xA0A0A0FF;
-		m_menu_back.text_sel = 0xFFFFFFFF;
+		menu_back_.outline = 0x000000FF;
+		menu_back_.item = 0x646464FF;
+		menu_back_.inner = 0x191919E6;
+		menu_back_.inner_sel = 0x2D2D2DE6;
+		menu_back_.text = 0xA0A0A0FF;
+		menu_back_.text_sel = 0xFFFFFFFF;
 
 		// Menu Item
-		m_menu_item.outline = 0x000000FF;
-		m_menu_item.item = 0xACACAC80;
-		m_menu_item.inner = 0x00000000;
-		m_menu_item.inner_sel = 0x5680C2FF;
-		m_menu_item.text = 0xFFFFFFFF;
-		m_menu_item.text_sel = 0x000000FF;
-		m_menu_item.shaded = true;
-		m_menu_item.shadetop = 38;
-		m_menu_item.shadedown = 0;
+		menu_item_.outline = 0x000000FF;
+		menu_item_.item = 0xACACAC80;
+		menu_item_.inner = 0x00000000;
+		menu_item_.inner_sel = 0x5680C2FF;
+		menu_item_.text = 0xFFFFFFFF;
+		menu_item_.text_sel = 0x000000FF;
+		menu_item_.shaded = true;
+		menu_item_.shadetop = 38;
+		menu_item_.shadedown = 0;
 
 		// Tab
-		m_tab.outline = 0xBFBFBFFF;
-		m_tab.item = 0x4F4F4FFF;
-		m_tab.inner = 0x999999FF;
-		m_tab.inner_sel = 0x999999FF;
-		m_tab.text = 0x000000FF;
-		m_tab.text_sel = 0xFFFFFFFF;
+		tab_.outline = 0xBFBFBFFF;
+		tab_.item = 0x4F4F4FFF;
+		tab_.inner = 0x999999FF;
+		tab_.inner_sel = 0x999999FF;
+		tab_.text = 0x000000FF;
+		tab_.text_sel = 0xFFFFFFFF;
 
 		// Tooltip
-		m_tooltip.outline = 0x000000FF;
-		m_tooltip.item = 0x646464FF;
-		m_tooltip.inner = 0x191919E6;
-		m_tooltip.inner_sel = 0x2D2D2DE6;
-		m_tooltip.text = 0xA0A0A0FF;
-		m_tooltip.text_sel = 0xFFFFFFFF;
+		tooltip_.outline = 0x000000FF;
+		tooltip_.item = 0x646464FF;
+		tooltip_.inner = 0x191919E6;
+		tooltip_.inner_sel = 0x2D2D2DE6;
+		tooltip_.text = 0xA0A0A0FF;
+		tooltip_.text_sel = 0xFFFFFFFF;
 
 		// Scroll Bar
-		m_scroll.outline = 0x323232FF;
-		m_scroll.item = 0x808080FF;
-		m_scroll.inner = 0x505050B4;
-		m_scroll.inner_sel = 0x646464B4;
-		m_scroll.text = 0x000000FF;
-		m_scroll.text_sel = 0xFFFFFFFF;
-		m_scroll.shaded = true;
-		m_scroll.shadetop = 5 + 20;
-		m_scroll.shadedown = -5;
+		scroll_.outline = 0x323232FF;
+		scroll_.item = 0x808080FF;
+		scroll_.inner = 0x505050B4;
+		scroll_.inner_sel = 0x646464B4;
+		scroll_.text = 0x000000FF;
+		scroll_.text_sel = 0xFFFFFFFF;
+		scroll_.shaded = true;
+		scroll_.shadetop = 5 + 20;
+		scroll_.shadedown = -5;
 
 		// Progress Bar
-		m_progress.outline = 0x000000FF;
-		m_progress.item = 0x444444FF;
-		m_progress.inner = 0xBEBEBEFF;
-		m_progress.inner_sel = 0x646464B4;
-		m_progress.text = 0x000000FF;
-		m_progress.text_sel = 0xFFFFFFFF;
+		progress_.outline = 0x000000FF;
+		progress_.item = 0x444444FF;
+		progress_.inner = 0xBEBEBEFF;
+		progress_.inner_sel = 0x646464B4;
+		progress_.text = 0x000000FF;
+		progress_.text_sel = 0xFFFFFFFF;
 
 		// List Item
-		m_list_item.outline = 0x000000FF;
-		m_list_item.item = 0x000000FF;
-		m_list_item.inner = 0x00000000;
-		m_list_item.inner_sel = 0x5680C2FF;
-		m_list_item.text = 0x000000FF;
-		m_list_item.text_sel = 0x000000FF;
+		list_item_.outline = 0x000000FF;
+		list_item_.item = 0x000000FF;
+		list_item_.inner = 0x00000000;
+		list_item_.inner_sel = 0x5680C2FF;
+		list_item_.text = 0x000000FF;
+		list_item_.text_sel = 0x000000FF;
 
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 		m_shadow_fac = 0.5f;
-		m_shadow_width = 12;
+		shadow_offset_x_ = 0;
+		shadow_offset_y_ = -4;
+		shadow_width_ = 12;
 
-		m_dpi = 72;
+		dpi_ = 72;
 
 		// TODO: check if retina in Mac OS
-		m_pixel = 1;
+		pixel_ = 1;
 
-		m_xaxis = 0xFF0000FF;
-		m_yaxis = 0x00FF00FF;
-		m_zaxis = 0x0000FFFF;
+		xaxis_ = 0xFF0000FF;
+		yaxis_ = 0x00FF00FF;
+		zaxis_ = 0x0000FFFF;
+
+		GenerateShadowTexture();
 	}
 
 	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
@@ -460,14 +477,14 @@ namespace BlendInt {
 			if(strcmp("dpi", attrib->name()) == 0) {
 
 				if(sscanf(attrib->value(), "%u", &tmp) == 1) {
-					m_dpi = tmp;
+					dpi_ = tmp;
 				}
 
 			} else if(strcmp("pixel", attrib->name()) == 0) {
 
 				short v = 0;
 				if(sscanf(attrib->value(), "%hd", &v) == 1) {
-					m_pixel = v;
+					pixel_ = v;
 				}
 
 			} else if(strcmp("menu_shadow_fac", attrib->name()) == 0) {
@@ -477,30 +494,46 @@ namespace BlendInt {
 					m_shadow_fac = v;
 				}
 
+			} else if(strcmp("shadow_offset_x", attrib->name()) == 0) {
+
+				short w = 0;
+
+				if(sscanf(attrib->value(), "%hd", &w) == 1) {
+					shadow_offset_x_ = w;
+				}
+
+			} else if(strcmp("shadow_offset_y", attrib->name()) == 0) {
+
+				short w = 0;
+
+				if(sscanf(attrib->value(), "%hd", &w) == 1) {
+					shadow_offset_y_ = w;
+				}
+
 			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
 
 				short w = 0;
 
 				if(sscanf(attrib->value(), "%hd", &w) == 1) {
-					m_shadow_width = w;
+					shadow_width_ = w;
 				}
 
 			} else if(strcmp("axis_x", attrib->name()) == 0) {
 
 				if(sscanf(attrib->value(), "#%x", &tmp) == 1) {
-					m_xaxis = tmp;
+					xaxis_ = tmp;
 				}
 
 			} else if(strcmp("axis_y", attrib->name()) == 0) {
 
 				if(sscanf(attrib->value(), "#%x", &tmp) == 1) {
-					m_yaxis = tmp;
+					yaxis_ = tmp;
 				}
 
 			} else if(strcmp("axis_z", attrib->name()) == 0) {
 
 				if(sscanf(attrib->value(), "#%x", &tmp) == 1) {
-					m_zaxis = tmp;
+					zaxis_ = tmp;
 				}
 
 			}
@@ -518,41 +551,41 @@ namespace BlendInt {
 		WidgetTheme* p = 0;
 
 		if (strcmp("wcol_regular", node->name()) == 0) {
-			p = &m_regular;
+			p = &regular_;
 		} else if (strcmp("wcol_tool", node->name()) == 0) {
-			p = &m_tool;
+			p = &tool_;
 		} else if (strcmp("wcol_text", node->name()) == 0) {
-			p = &m_text;
+			p = &text_;
 		} else if (strcmp("wcol_radio_button", node->name()) == 0) {
-			p = &m_radio_button;
+			p = &radio_button_;
 		} else if (strcmp("wcol_option", node->name()) == 0) {
-			p = &m_option;
+			p = &option_;
 		} else if (strcmp("wcol_toggle", node->name()) == 0) {
-			p = &m_toggle;
+			p = &toggle_;
 		} else if (strcmp("wcol_number_field", node->name()) == 0) {
-			p = &m_number_field;
+			p = &number_field_;
 		} else if (strcmp("wcol_number_slider", node->name()) == 0) {
-			p = &m_number_slider;
+			p = &number_slider_;
 		} else if (strcmp("wcol_menu", node->name()) == 0) {
-			p = &m_menu;
+			p = &menu_;
 		} else if (strcmp("wcol_pulldown", node->name()) == 0) {
-			p = &m_pulldown;
+			p = &pulldown_;
 		} else if (strcmp("wcol_menu_back", node->name()) == 0) {
-			p = &m_menu_back;
+			p = &menu_back_;
 		} else if (strcmp("wcol_menu_item", node->name()) == 0) {
-			p = &m_menu_item;
+			p = &menu_item_;
 		} else if (strcmp("wcol_tab", node->name()) == 0) {
-			p = &m_tab;
+			p = &tab_;
 		} else if (strcmp("wcol_tooltip", node->name()) == 0) {
-			p = &m_tooltip;
+			p = &tooltip_;
 		} else if (strcmp("wcol_box", node->name()) == 0) {
-			p = &m_box;
+			p = &box_;
 		} else if (strcmp("wcol_scroll", node->name()) == 0) {
-			p = &m_scroll;
+			p = &scroll_;
 		} else if (strcmp("wcol_progress", node->name()) == 0) {
-			p = &m_progress;
+			p = &progress_;
 		} else if (strcmp("wcol_list_item", node->name()) == 0) {
-			p = &m_list_item;
+			p = &list_item_;
 		}
 
 		if (p == 0)
@@ -636,7 +669,7 @@ namespace BlendInt {
 			}
 		}
 	}
-	
+
 	rapidxml::xml_node<>* Theme::AllocateWidgetThemeNode (rapidxml::xml_document<>& doc,
 					const char* name,
 					const WidgetTheme& wtheme)
@@ -711,6 +744,44 @@ namespace BlendInt {
 		widget_color_node->append_node(colors_node);
 
 		return widget_color_node;
+	}
+
+	void Theme::GenerateShadowTexture ()
+	{
+		if(shadow_texture_->texture() == 0) {
+			shadow_texture_->generate();
+		}
+
+		/*
+		std::vector<unsigned char> pixels(32 * 32 * 4, 0);
+
+		unsigned char alpha = 255;
+		for (int i = 0; i < 32; i++) {
+			alpha = 128;
+			for(int j = 0; j < 32; j++) {
+				pixels[i * 32 * 4 + j * 4 + 0] = 0;
+				pixels[i * 32 * 4 + j * 4 + 1] = 0;
+				pixels[i * 32 * 4 + j * 4 + 2] = 0;
+				pixels[i * 32 * 4 + j * 4 + 3] = alpha;
+
+				alpha -= 4;
+			}
+		}
+		*/
+
+		Image image;
+		image.Read("shadow.png");
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+		shadow_texture_->bind();
+		shadow_texture_->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		shadow_texture_->SetMinFilter(GL_NEAREST);
+		shadow_texture_->SetMagFilter(GL_NEAREST);
+		//shadow_texture_->SetImage(0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+		shadow_texture_->SetImage(0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
+		//shadow_texture_->WriteToFile("test.png");
+		shadow_texture_->reset();
 	}
 
 } /* namespace BlendInt */

@@ -49,6 +49,14 @@ namespace BlendInt {
 		return color;
 	}
 
+	extern bool operator ==(const Color& src, const Color& dist)
+	{
+		return (src.r() == dist.r()) &&
+				(src.g() == dist.g()) &&
+				(src.b() == dist.b()) &&
+				(src.a() == dist.a());
+	}
+
 	Color MakeShadedColor (const Color& color1, const Color& color2, float fact)
 	{
 		Color shaded_color;

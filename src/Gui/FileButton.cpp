@@ -51,7 +51,6 @@ namespace BlendInt {
 	  panel_(0)
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 
 		InitializeFileButtonOnce();
 
@@ -134,23 +133,23 @@ namespace BlendInt {
 	ResponseType FileButton::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 		if (is_down()) {
-			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+			glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
 				Color color = Theme::instance->regular().inner + 15;
-				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+				glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				        color.data());
 			} else {
-				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+				glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				        Theme::instance->regular().inner.data());
 			}
 		}
@@ -158,8 +157,8 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 		        Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -167,10 +166,10 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.0f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
 			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -189,7 +188,6 @@ namespace BlendInt {
 	void FileButton::InitializeFileButtonOnce ()
 	{
 		set_round_type(RoundAll);
-		set_drop_shadow(true);
 		String text("...");
 		set_text(text);
 
@@ -222,8 +220,8 @@ namespace BlendInt {
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
@@ -231,8 +229,8 @@ namespace BlendInt {
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -269,7 +267,7 @@ namespace BlendInt {
 			panel_->Resize(w, h);
 			panel_->SetPosition(x, y);
 			panel_->SetContent(file_selector);
-			Section* section = context->PushBack(panel_);
+			Section* section = context->Append(panel_);
 			section->set_mode(Section::Modal);
 			context->SetFocusedWidget(file_selector);
 

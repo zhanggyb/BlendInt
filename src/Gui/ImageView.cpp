@@ -47,6 +47,8 @@ namespace BlendInt {
 	ImageView::ImageView ()
 	: AbstractScrollable()
 	{
+		set_size(400, 300);
+
 		InitializeImageView();
 	}
 
@@ -157,13 +159,13 @@ namespace BlendInt {
 	ResponseType ImageView::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -181,10 +183,10 @@ namespace BlendInt {
 
 		if (texture_->GetWidth() > 0) {
 			program = Shaders::instance->image_program();
-			program->Use();
-			glUniform3f(Shaders::instance->image_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
-			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
+			program->use();
+			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
+			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -202,8 +204,6 @@ namespace BlendInt {
 	
 	void ImageView::InitializeImageView ()
 	{
-		set_size(400, 300);
-
 		checkerboard_.reset(new CheckerBoard(20));
 		checkerboard_->Resize(size());
 
@@ -226,8 +226,8 @@ namespace BlendInt {
 		tool.GenerateVertices(size(), 0, RoundNone, 0);
 		background_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vaos_[1]);
 
@@ -243,10 +243,15 @@ namespace BlendInt {
 		plane_->bind();
 		plane_->set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Shaders::instance->image_attrib_coord());
-		glEnableVertexAttribArray(Shaders::instance->image_attrib_uv());
-		glVertexAttribPointer(Shaders::instance->image_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->image_attrib_uv(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -317,7 +322,7 @@ namespace BlendInt {
 	void ImageView::AdjustImageArea(const Size& size)
 	{
 		if(image_size_.width() == 0 || image_size_.height() == 0) {
-			checkerboard_->Resize(size);
+			//checkerboard_->Resize(size);
 			return;
 		}
 

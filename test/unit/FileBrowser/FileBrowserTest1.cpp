@@ -33,7 +33,7 @@ TEST_F(FileBrowserTest1, Foo1)
 	fb->SetPosition(100, 100);
 	fb->Load(getenv("HOME"));
 	
-	context->PushBack(fb);
+	context->Append(fb);
 
     RunLoop(win);
 

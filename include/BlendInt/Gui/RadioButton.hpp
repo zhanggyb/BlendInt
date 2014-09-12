@@ -24,7 +24,10 @@
 #ifndef _BLENDINT_GUI_RADIOBUTTON_HPP_
 #define _BLENDINT_GUI_RADIOBUTTON_HPP_
 
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
+
+#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
@@ -38,13 +41,50 @@ namespace BlendInt {
 
 		RadioButton (const String& test);
 
+		RadioButton (const RefPtr<AbstractIcon>& icon);
+
+		RadioButton (const RefPtr<AbstractIcon>& icon, const String& text);
+
 		virtual ~RadioButton ();
+
+		void SetIcon (const RefPtr<AbstractIcon>& icon);
+
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
 		virtual ResponseType Draw (Profile& profile);
 
+		void CalculateIconTextPosition (const Size& size, int round_type, float radius);
+
 	private:
+
+		void InitializeRadioButtonOnce ();
+
+		void InitializeRadioButtonOnce (const String& text);
+
+		void InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text);
+
+		GLuint vao_[2];
+
+		RefPtr<GLArrayBuffer> inner_;
+
+		RefPtr<GLArrayBuffer> outer_;
+
+		RefPtr<AbstractIcon> icon_;
+
+		float icon_offset_x_;	// the offset along x to draw the icon
+		float icon_offset_y_;
+
+		bool show_icon_;
 
 	};
 }

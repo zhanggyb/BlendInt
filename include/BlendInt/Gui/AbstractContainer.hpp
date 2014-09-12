@@ -87,8 +87,6 @@ namespace BlendInt {
 
 		AbstractWidget* GetWidgetAt (int i) const;
 
-		void RenderSubWidgetsToTexture (Profile& profile, GLTexture2D* texture);
-
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
@@ -156,10 +154,6 @@ namespace BlendInt {
 		void FillSubWidgetsAveragely (int x, int y, int width,
 						int height, Orientation orientation,
 						int alignment, int space);
-
-		bool EnableShadow (AbstractWidget* widget);
-
-		bool DisableShadow (AbstractWidget* widget);
 
 		void set_margin (const Margin& margin)
 		{

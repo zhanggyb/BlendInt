@@ -45,26 +45,26 @@ void MainLayout::InitOnce ()
 	m_tool_open = Manage(new Button("Open"));
 	m_input->SetRoundType(RoundTopLeft | RoundBottomLeft);
 	m_tool_open->SetRoundType(RoundTopRight | RoundBottomRight);
-	box->PushBack(m_input);
-	box->PushBack(m_tool_open);
+	box->Append(m_input);
+	box->Append(m_tool_open);
 
 	m_toolbar->SetMargin(2, 2, 2, 2);
-	m_toolbar->PushBack(m_menubar);
-	m_toolbar->PushBack(m_combo);
-	m_toolbar->PushBack(box);
+	m_toolbar->Append(m_menubar);
+	m_toolbar->Append(m_combo);
+	m_toolbar->Append(box);
 
 	ToolBox* tbox = Manage(new ToolBox);
 	Expander* expander = CreateExpander();
-	tbox->PushBack(expander);
+	tbox->Append(expander);
 
 	Splitter* splitter = Manage(new Splitter);
 	splitter->SetMargin(0, 0, 0, 0);
 
-	splitter->PushBack(m_imgview);
-	splitter->PushBack(tbox);
+	splitter->Append(m_imgview);
+	splitter->Append(tbox);
 
-	PushBack(splitter);
-	PushBack(m_toolbar);
+	Append(splitter);
+	Append(m_toolbar);
 
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
@@ -94,7 +94,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
     file_menu->AddAction("MenuItem4", "Ctrl + 1");
     file_menu->AddAction("MenuItem5");
 
-	menubar->PushBack(String("File"), file_menu);
+	menubar->Append(String("File"), file_menu);
 
 	return menubar;
 }
@@ -107,8 +107,8 @@ BI::Expander* MainLayout::CreateExpander()
 	BI::Button* btn2 = Manage(new BI::Button("Help"));
 
 	BI::VLayout* vbox = Manage(new BI::VLayout);
-	vbox->PushBack(btn1);
-	vbox->PushBack(btn2);
+	vbox->Append(btn1);
+	vbox->Append(btn2);
 
 	expander->Setup(vbox);
 

@@ -45,7 +45,6 @@ namespace BlendInt {
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
-		set_drop_shadow(true);
 
 		InitializeScrollArea();
 	}
@@ -145,7 +144,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);

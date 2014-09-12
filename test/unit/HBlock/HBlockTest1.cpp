@@ -46,13 +46,13 @@ TEST_F(HBlockTest1, Foo1)
 	HBlockLayout* hblock = Manage(new HBlockLayout);
 	
 	hblock->SetPosition(200, 200);
-	hblock->PushBack(btn1);
-	hblock->PushBack(btn2);
-	hblock->PushBack(btn3);
+	hblock->Append(btn1);
+	hblock->Append(btn2);
+	hblock->Append(btn3);
 	
 	hblock->Resize(hblock->GetPreferredSize());
 
-	context->PushBack(hblock);
+	context->Append(hblock);
 	
 	ToolButton* tbtn1 = Manage(new ToolButton);
 	ToolButton* tbtn2 = Manage(new ToolButton);
@@ -60,12 +60,12 @@ TEST_F(HBlockTest1, Foo1)
 	HBlockLayout* hblock2 = Manage(new HBlockLayout);
 	
 	hblock2->SetPosition(400, 200);
-	hblock2->PushBack(tbtn1);
-	hblock2->PushBack(tbtn2);
+	hblock2->Append(tbtn1);
+	hblock2->Append(tbtn2);
 
 	hblock2->Resize(hblock2->GetPreferredSize());
 
-	context->PushBack (hblock2);
+	context->Append (hblock2);
 	
     RunLoop(win);
 

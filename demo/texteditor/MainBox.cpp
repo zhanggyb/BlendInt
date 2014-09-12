@@ -45,13 +45,13 @@ void MainBox::InitOnce ()
     file_menu->AddActionItem("MenuItem5");
     */
 
-	m_menubar->PushBack(String("File"), file_menu);
+	m_menubar->Append(String("File"), file_menu);
 	// m_menubar->AddMenuButton("Edit");
 
-	m_toolbar->PushBack(m_open);
+	m_toolbar->Append(m_open);
 
-	PushBack(m_menubar);
-	PushBack(m_toolbar);
+	Append(m_menubar);
+	Append(m_toolbar);
 
 	events()->connect(m_open->clicked(), this, &MainBox::OnOpenClick);
 }

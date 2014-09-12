@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_BUTTON_HPP_
 #define _BLENDINT_GUI_BUTTON_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 #include <BlendInt/Gui/AbstractIcon.hpp>
@@ -78,9 +78,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		RefPtr<AbstractIcon> icon_;
 

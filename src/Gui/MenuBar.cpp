@@ -48,8 +48,6 @@ namespace BlendInt {
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
-		set_drop_shadow(true);
-
 		InitializeMenuBar();
 	}
 
@@ -58,33 +56,33 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	MenuButton* MenuBar::PushBack (const RefPtr<Menu>& menu)
+	MenuButton* MenuBar::Append (const RefPtr<Menu>& menu)
 	{
 		MenuButton* button = Manage (new MenuButton(menu->title()));
 		DBG_SET_NAME(button, ConvertFromString(menu->title()));
 		button->SetMenu(menu);
 
-		return PushBack(button);
+		return Append(button);
 	}
 
-	MenuButton* MenuBar::PushBack (const String& text, const RefPtr<Menu>& menu)
+	MenuButton* MenuBar::Append (const String& text, const RefPtr<Menu>& menu)
 	{
 		MenuButton* button = Manage (new MenuButton(text));
 		DBG_SET_NAME(button, ConvertFromString(text));
 		button->SetMenu(menu);
 
-		return PushBack(button);
+		return Append(button);
 	}
 
-	MenuButton* MenuBar::PushBack (MenuButton* button, const RefPtr<Menu>& menu)
+	MenuButton* MenuBar::Append (MenuButton* button, const RefPtr<Menu>& menu)
 	{
 		if(!button) return 0;
 		button->SetMenu(menu);
 
-		return PushBack(button);
+		return Append(button);
 	}
 
-	MenuButton* MenuBar::PushBack (MenuButton* button)
+	MenuButton* MenuBar::Append (MenuButton* button)
 	{
 		if(0 == button) return 0;
 
@@ -172,7 +170,7 @@ namespace BlendInt {
 		using namespace BlendInt::Stock;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 		program->SetUniform1i("u_gamma", 0);
@@ -335,7 +333,7 @@ namespace BlendInt {
 			}
 
 			menu->SetPosition(m_active_button->position().x(), y);
-			context->PushBack(menu.get());
+			context->Append(menu.get());
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
 			context->SetFocusedWidget(menu.get());
 

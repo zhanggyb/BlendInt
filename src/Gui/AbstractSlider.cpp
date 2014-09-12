@@ -60,97 +60,88 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void SlideIcon::UpdateGeometry (const UpdateRequest& request)
+	void SlideIcon::PerformSizeUpdate(const Size& size)
 	{
-		switch (request.type()) {
+		Orientation shadedir =
+						size.width() < size.height() ?
+										Horizontal : Vertical;
+		const Color& color = Theme::instance->scroll().item;
+		short shadetop = Theme::instance->scroll().shadetop;
+		short shadedown = Theme::instance->scroll().shadedown;
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				Orientation shadedir =
-								size_p->width() < size_p->height() ?
-												Horizontal : Vertical;
-				const Color& color = Theme::instance->scroll().item;
-				short shadetop = Theme::instance->scroll().shadetop;
-				short shadedown = Theme::instance->scroll().shadedown;
+		VertexTool tool;
+		tool.GenerateVertices(size, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
 
-				VertexTool tool;
-				tool.GenerateVertices(*size_p, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
-
-			case FormRoundType: {
-				Orientation shadedir =
-								size().width() < size().height() ?
-												Horizontal : Vertical;
-				const int* round_p =
-								static_cast<const int*>(request.data());
-				const Color& color = Theme::instance->scroll().item;
-				short shadetop = Theme::instance->scroll().shadetop;
-				short shadedown = Theme::instance->scroll().shadedown;
-
-				VertexTool tool;
-				tool.GenerateVertices(size(), DefaultBorderWidth(), *round_p, radius(), color, shadedir, shadetop, shadedown);
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
-
-			case FormRoundRadius: {
-				Orientation shadedir =
-								size().width() < size().height() ?
-												Horizontal : Vertical;
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				const Color& color = Theme::instance->scroll().item;
-				short shadetop = Theme::instance->scroll().shadetop;
-				short shadedown = Theme::instance->scroll().shadedown;
-
-				VertexTool tool;
-				tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *radius_p, color, shadedir, shadetop, shadedown);
-				inner_->bind();
-				inner_->set_data(tool.inner_size(), tool.inner_data());
-				outer_->bind();
-				outer_->set_data(tool.outer_size(), tool.outer_data());
-				GLArrayBuffer::reset();
-				break;
-			}
-
-			default:
-				break;
-		}
-
+		set_size(size);
 	}
 
-	void SlideIcon::Draw (const glm::vec3& pos, short gamma)
+	void SlideIcon::PerformRoundTypeUpdate(int type)
+	{
+		Orientation shadedir =
+						size().width() < size().height() ?
+										Horizontal : Vertical;
+		const Color& color = Theme::instance->scroll().item;
+		short shadetop = Theme::instance->scroll().shadetop;
+		short shadedown = Theme::instance->scroll().shadedown;
+
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), type, radius(), color, shadedir, shadetop, shadedown);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
+
+		set_round_type(type);
+	}
+
+	void SlideIcon::PerformRoundRadiusUpdate(float radius)
+	{
+		Orientation shadedir =
+						size().width() < size().height() ?
+										Horizontal : Vertical;
+		const Color& color = Theme::instance->scroll().item;
+		short shadetop = Theme::instance->scroll().shadetop;
+		short shadedown = Theme::instance->scroll().shadedown;
+
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius, color, shadedir, shadetop, shadedown);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
+
+		set_radius(radius);
+	}
+
+	void SlideIcon::Draw (const glm::vec3& pos, short gamma) const
 	{
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), pos.x, pos.y, 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), pos.x, pos.y, 0.f);
 
 		if (m_highlight) {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		}
 
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->scroll().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->scroll().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

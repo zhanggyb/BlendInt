@@ -47,9 +47,9 @@ namespace BlendInt {
 
 		~ButtonGroup ();
 
-		void PushFront (AbstractButton* button);
+		void Prepend (AbstractButton* button);
 
-		void PushBack (AbstractButton* button);
+		void Append (AbstractButton* button);
 
 		void Insert (int index, AbstractButton* button);
 

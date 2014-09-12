@@ -55,12 +55,11 @@ namespace BlendInt {
 	: AbstractPanel(),
 	  refresh_(true),
 	  pressed_(false),
-	  realign_(false)
+	  realign_(false),
+	  shadow_(0)
 	{
-		set_margin(10, 10, 10, 10);
+		//set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
-
-		set_drop_shadow(true);
 
 		InitializeStaticPanelOnce();
 	}
@@ -68,13 +67,19 @@ namespace BlendInt {
 	StaticPanel::~StaticPanel ()
 	{
 		glDeleteVertexArrays(2, vao_);
+
+		if(shadow_) delete shadow_;
 	}
 
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
 	{
 		if(!pressed_) {
-			refresh_ = true;
-			ReportRefresh(request);
+
+			if(!refresh_) {
+				refresh_ = true;
+				ReportRefresh(request);
+			}
+
 		}
 	}
 
@@ -110,6 +115,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
+			shadow_->Resize(size());
+
 			FillSubWidgets(position(), *request.size(), margin());
 
 			refresh_ = true;
@@ -134,6 +141,8 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
+			shadow_->SetRoundType(*request.round_type());
+
 			Refresh();
 		}
 
@@ -154,6 +163,7 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
+			shadow_->SetRadius(*request.round_radius());
 			Refresh();
 		}
 
@@ -164,12 +174,15 @@ namespace BlendInt {
 
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
+		shadow_->Draw(glm::vec3(position().x(), position().y(), 0.f));
+
 		if(refresh_) {
-			RenderToBuffer(profile);
+			RenderToBuffer();
 			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
 		tex_buffer_.Draw(position().x(), position().y());
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -245,8 +258,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
@@ -255,14 +268,16 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
+
+		shadow_ = new Shadow(size(), round_type(), round_radius());
 	}
 
-	void StaticPanel::RenderToBuffer (Profile& profile)
+	void StaticPanel::RenderToBuffer ()
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -322,57 +337,38 @@ namespace BlendInt {
 			glEnable(GL_BLEND);
 
 			glm::mat4 origin;
-			glGetUniformfv(Shaders::instance->triangle_program()->id(),
-					Shaders::instance->triangle_uniform_projection(),
-					glm::value_ptr(origin));
+
+			Shaders::instance->GetUIProjectionMatrix(origin);
 
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 			        -100.f);
 
-			RefPtr<GLSLProgram> program =
-			        Shaders::instance->triangle_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->text_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->image_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
+			Shaders::instance->SetUIProjectionMatrix(projection);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, size().width(), size().height());
 
 			// Draw frame panel
-			program = Shaders::instance->triangle_program();
-			program->Use();
+			Shaders::instance->triangle_program()->use();
 
-			glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->tooltip().inner.data());
+			glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->tooltip().inner.data());
 
 			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->tooltip().outline.data());
-			glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+			glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->tooltip().outline.data());
+			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetOutlineVertices(round_type()) * 2 + 2);
-
 			glBindVertexArray(0);
-			program->reset();
+			GLSLProgram::reset();
 
 			Profile off_screen_profile(position());
 
@@ -383,24 +379,7 @@ namespace BlendInt {
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-			program = Shaders::instance->triangle_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->text_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-			program = Shaders::instance->image_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-					glm::value_ptr(origin));
-
-			program->reset();
+			Shaders::instance->SetUIProjectionMatrix(origin);
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

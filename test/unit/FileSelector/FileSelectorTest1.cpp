@@ -35,7 +35,7 @@ TEST_F(FileSelectorTest1, Foo1)
 	fb->Resize(800, 600);
 	fb->SetRoundType(RoundAll);
 
-    context->PushBack(fb);
+    context->Append(fb);
 
     RunLoop(win);
 

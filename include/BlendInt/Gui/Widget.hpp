@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 namespace BlendInt {
 
 	struct WidgetTheme;
@@ -66,6 +68,14 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		void InitializeWidgetOnce();
+
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> buffers_;
 
 	};
 

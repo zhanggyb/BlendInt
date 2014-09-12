@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_GUI_SECTION_HPP_
 #define _BLENDINT_GUI_SECTION_HPP_
 
-#include <set>
-
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
@@ -49,9 +47,9 @@ namespace BlendInt {
 
 		virtual ~Section ();
 
-		void PushFront (AbstractWidget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
 		/**
 		 * @brief Remove sub widget

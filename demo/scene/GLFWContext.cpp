@@ -12,7 +12,7 @@ GLFWContext::GLFWContext()
 	m_layout = Manage (new MainLayout);
 	m_layout->Resize(size());
 
-	PushBack(m_layout);
+	Append(m_layout);
 
 	events()->connect(resized(), this , &GLFWContext::OnResizeLayout);
 }

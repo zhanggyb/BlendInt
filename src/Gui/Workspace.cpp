@@ -50,6 +50,288 @@ namespace BlendInt {
 	using Stock::Shaders;
 	using Stock::Icons;
 
+	EdgeButton::EdgeButton(int round_type)
+	: AbstractButton()
+	{
+		set_size(14, 14);
+		set_round_type(round_type);
+
+		VertexTool tool;
+		tool.GenerateShadedVertices(size(), 1.f, this->round_type(), round_radius());
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->generate();
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->generate();
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
+	}
+
+	EdgeButton::~EdgeButton()
+	{
+		glDeleteVertexArrays(2, vao_);
+	}
+
+	void EdgeButton::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
+						round_type(), round_radius());
+			inner_->bind();
+			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			outer_->bind();
+			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			GLArrayBuffer::reset();
+
+			set_size(*request.size());
+
+			Refresh();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	ResponseType EdgeButton::Draw(Profile& profile)
+	{
+		Shaders::instance->widget_program()->use();
+
+		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+
+		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
+
+		if (hover()) {
+
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+			if (is_checked()) {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner_sel.data());
+			} else {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner.data());
+			}
+
+		} else {
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+			if (is_checked()) {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner_sel.data());
+			} else {
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				        Theme::instance->radio_button().inner.data());
+			}
+		}
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		        Theme::instance->radio_button().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
+
+		if (emboss()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f,
+			        1.0f, 1.0f, 0.16f);
+
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+			        GetHalfOutlineVertices(round_type()) * 2);
+		}
+
+		glBindVertexArray(0);
+		GLSLProgram::reset();
+
+		return Accept;
+	}
+
+	// -------------------------------
+
+	EdgeButtonLayer::EdgeButtonLayer()
+	: AbstractContainer()
+	{
+		set_margin(0, 0, 0, 0);
+		InitializeSideButtonLayer();
+	}
+
+	EdgeButtonLayer::~EdgeButtonLayer()
+	{
+
+	}
+
+	bool EdgeButtonLayer::Contain(const Point& point) const
+	{
+		bool retval = false;
+
+		for(AbstractWidget* p = first(); p; p = p->next()) {
+
+			if(p->visiable()) {
+				retval = p->Contain(point);
+			}
+
+			if(retval) break;
+		}
+
+		return retval;
+	}
+
+	void EdgeButtonLayer::PerformMarginUpdate(const Margin& request)
+	{
+		AlighButtons(position(), size(), request);
+	}
+
+	void EdgeButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AlighButtons(position(), *request.size(), margin());
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void EdgeButtonLayer::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AlighButtons(*request.position(), size(), margin());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
+	}
+
+	ResponseType EdgeButtonLayer::Draw(Profile& profile)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::CursorEnterEvent(bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::KeyPressEvent(const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::ContextMenuPressEvent(
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::ContextMenuReleaseEvent(
+			const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::MousePressEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::MouseReleaseEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType EdgeButtonLayer::MouseMoveEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	void EdgeButtonLayer::InitializeSideButtonLayer()
+	{
+		EdgeButton* left = Manage(new EdgeButton(RoundTopRight | RoundBottomRight));
+		DBG_SET_NAME(left, "LeftButton");
+		EdgeButton* right = Manage(new EdgeButton(RoundTopLeft | RoundBottomLeft));
+		DBG_SET_NAME(right, "RightButton");
+		EdgeButton* head = Manage(new EdgeButton(RoundTopLeft | RoundTopRight));
+		DBG_SET_NAME(head, "HeadButton");
+
+		PushBackSubWidget(left);
+		PushBackSubWidget(right);
+		PushBackSubWidget(head);
+
+		AlighButtons(position(), size(), margin());
+	}
+
+	void EdgeButtonLayer::AlighButtons(const Point& out_pos,
+			const Size& out_size, const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		AlignButtons(x, y, w, h);
+	}
+
+	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
+	{
+		AbstractWidget* p = first();
+
+		SetSubWidgetPosition(p, x, y + h * 9 / 10);
+		p = p->next();
+		SetSubWidgetPosition(p, x + w - last()->size().width(), y + h * 9 / 10);
+		p = p->next();
+		SetSubWidgetPosition(p, x + w * 9 / 10, y);
+	}
+
+	// -------------------------------
+
+	ViewportLayer::ViewportLayer()
+	{
+		set_margin(0, 0, 0, 0);
+	}
+
+	ViewportLayer::~ViewportLayer()
+	{
+	}
+
+	bool ViewportLayer::Contain(const Point& point) const
+	{
+		if(next()) {
+			if(next()->Contain(point)) {
+				return false;
+			} else {
+				return VLayout::Contain(point);
+			}
+		}
+
+		return VLayout::Contain(point);
+	}
+
+	// -------------------------------
+
 	Workspace::Workspace()
 	: AbstractContainer(),
 	  left_sidebar_(0),
@@ -57,12 +339,9 @@ namespace BlendInt {
 	  header_(0),
 	  viewport_(0),
 	  splitter_(0),
-	  left_button_(0),
-	  right_button_(0),
 	  vao_(0)
 	{
 		set_size(800, 600);
-		set_drop_shadow(true);
 		set_margin(0, 0, 0, 0);
 
 		InitializeWorkspace();
@@ -70,26 +349,55 @@ namespace BlendInt {
 
 	Workspace::~Workspace()
 	{
-		if(left_button_) delete left_button_;
-		if(right_button_) delete right_button_;
-
 		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Workspace::SetViewport (AbstractWidget* viewport)
 	{
+		if(viewport_ == viewport) return;
+
+		if(viewport_)
+			splitter_->Remove(viewport_);
+
+		splitter_->Append(viewport);
+		viewport_ = viewport;
+
+		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
 	}
 
 	void Workspace::SetLeftSideBar (AbstractWidget* widget)
 	{
+		if(left_sidebar_ == widget) return;
+
+		if(left_sidebar_)
+			splitter_->Remove(left_sidebar_);
+
+		splitter_->Prepend(widget);
+		left_sidebar_ = widget;
 	}
 
 	void Workspace::SetRightSideBar (AbstractWidget* widget)
 	{
+		if(right_sidebar_ == widget) return;
+
+		if(right_sidebar_)
+			splitter_->Remove(right_sidebar_);
+
+		splitter_->Append(widget);
+		right_sidebar_ = widget;
 	}
 
 	void Workspace::SetHeader (AbstractWidget* widget)
 	{
+		if(header_ == widget) return;
+
+		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first());
+
+		if(header_)
+			v->Remove(header_);
+
+		v->Append(widget);
+		header_ = widget;
 	}
 
 	bool Workspace::IsExpandX () const
@@ -153,10 +461,10 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			AdjustGeometries(position(), size(), margin());
+			ResizeSubWidgets(size());
+
 		} else if (request.source()->container() == this) {
 
-			EnableShadow(request.source());
 		}
 
 		if(request.source() == this) {
@@ -195,13 +503,13 @@ namespace BlendInt {
 	ResponseType Workspace::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -268,79 +576,32 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::TRIANGLE_COORD));
+		glVertexAttribPointer (
+				Shaders::instance->location (Stock::TRIANGLE_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
 		splitter_ = Manage(new Splitter);
+		DBG_SET_NAME(splitter_, "Splitter");
 		splitter_->SetMargin(0, 0, 0, 0);
-		viewport_ = Manage(new Viewport3D);
-//		left_sidebar_ = Manage(new ToolBox);
-//		right_sidebar_ = Manage(new ToolBox);
-		header_ = Manage(new ToolBar);
 
-//		splitter_->PushBack(left_sidebar_);
-		splitter_->PushBack(viewport_);
-//		splitter_->PushBack(right_sidebar_);
+		ViewportLayer* vlayout = Manage(new ViewportLayer);
+		DBG_SET_NAME(vlayout, "VLayout");
+		vlayout->SetSpace(0);
+		vlayout->Append(splitter_);
 
-		PushBackSubWidget(splitter_);
-		PushBackSubWidget(header_);
+		EdgeButtonLayer* btnlayout = Manage(new EdgeButtonLayer);
+		DBG_SET_NAME(btnlayout, "SideButton Layer");
 
-		left_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
-		right_button_ = Manage(new Button(Icons::instance->icon_16x16(Stock::ZOOMIN)));
+		PushBackSubWidget(vlayout);
+		PushBackSubWidget(btnlayout);
 
-		PushBackSubWidget(right_button_);
-		PushBackSubWidget(left_button_);
-
-		AdjustGeometries(position(), size(), margin());
-	}
-
-	void Workspace::AdjustGeometries(const Point& out_pos, const Size& out_size, const Margin& margin)
-	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
-
-		AdjustGeometries(x, y, w, h);
-	}
-
-	void Workspace::AdjustGeometries (int x, int y, int w, int h)
-	{
-
-		if(header_) {
-
-			Size pref = header_->GetPreferredSize();
-
-			if(splitter_->previous() == header_) {
-
-				ResizeSubWidget(header_, w, pref.height());
-				SetSubWidgetPosition(header_, x, y + h - pref.height());
-
-				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
-				SetSubWidgetPosition(splitter_, x, y);
-
-			} else {
-
-				ResizeSubWidget(splitter_, w, h - pref.height() - 1);
-				SetSubWidgetPosition(splitter_, x, y + h - splitter_->size().height());
-
-				ResizeSubWidget(header_, w, pref.height());
-				SetSubWidgetPosition(header_, x, y);
-
-			}
-
-		} else {
-
-			ResizeSubWidget(splitter_, w, h);
-			SetSubWidgetPosition(splitter_, x, y);
-		}
-
-		SetSubWidgetPosition(left_button_, x, y + h * 0.9);
-		SetSubWidgetPosition(right_button_, x + w - right_button_->size().width(), y + h * 0.9);
+		ResizeSubWidget(vlayout, size());
+		ResizeSubWidget(btnlayout, size());
 	}
 
 }
-

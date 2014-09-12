@@ -133,8 +133,8 @@ namespace BlendInt {
 		element_buffer_->bind();
 		element_buffer_->set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 
@@ -154,13 +154,13 @@ namespace BlendInt {
 	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), gamma);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), color.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -182,15 +182,15 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
+		program->use();
 
-		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), gamma);
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
-		glUniform1f(Shaders::instance->triangle_uniform_rotation(), angle);
-		glUniform2f(Shaders::instance->triangle_uniform_scale(), scale, scale);
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), color.data());
+		glUniform1f(Shaders::instance->location(Stock::TRIANGLE_ROTATION), angle);
+		glUniform2f(Shaders::instance->location(Stock::TRIANGLE_SCALE), scale, scale);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -205,11 +205,15 @@ namespace BlendInt {
 		element_buffer_->reset();
 		vertex_buffer_->reset();
 
-		glUniform1f(Shaders::instance->triangle_uniform_rotation(), 0.f);
-		glUniform2f(Shaders::instance->triangle_uniform_scale(), 1.f, 1.f);
+		glUniform1f(Shaders::instance->location(Stock::TRIANGLE_ROTATION), 0.f);
+		glUniform2f(Shaders::instance->location(Stock::TRIANGLE_SCALE), 1.f, 1.f);
 
 		program->reset();
 	}
 
-}
+	void VertexIcon::PerformSizeUpdate(const Size& size)
+	{
+		set_size(size);
+	}
 
+}

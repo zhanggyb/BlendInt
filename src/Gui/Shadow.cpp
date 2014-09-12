@@ -46,313 +46,380 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Shadow::Shadow(const Size& s, int t, float r)
+	Shadow::Shadow()
 	: AbstractRoundForm(),
-	  m_vao(0)
+	  vao_(0)
 	{
-		set_size(s);
-		set_round_type(t);
-		set_radius(r);
+		set_size(100, 100);
+		color_.set_value(0.f, 0.f, 0.f, 0.33f);
 
-		InitializeShadow ();
+		InitializeShadow();
+	}
+
+	Shadow::Shadow(const Size& size, int round_type, float radius)
+	: AbstractRoundForm(),
+	  vao_(0)
+	{
+		set_size(size);
+		set_round_type(round_type);
+		set_radius(radius);
+		color_.set_value(0.f, 0.f, 0.f, 0.33f);
+
+		InitializeShadow();
 	}
 
 	Shadow::~Shadow()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Shadow::UpdateGeometry (const UpdateRequest& request)
+	void Shadow::SetColor(const Color& color)
 	{
-		switch (request.type()) {
+		if(color == color_) return;
 
-			case FormSize: {
+		color_ = color;
 
-				const Size* size_p = static_cast<const Size*>(request.data());
-
-				std::vector<GLfloat> vertices;
-				GenerateShadowVerticesExt(*size_p, round_type(), radius(), vertices);
-				m_buffer->bind();
-				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->reset();
-
-				break;
-			}
-
-			case FormRoundType: {
-
-				const int* type_p = static_cast<const int*>(request.data());
-
-				std::vector<GLfloat> vertices;
-				GenerateShadowVerticesExt(size(), *type_p, radius(), vertices);
-				m_buffer->bind();
-				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->reset();
-
-				break;
-			}
-
-			case FormRoundRadius: {
-
-				const float* radius_p = static_cast<const float*>(request.data());
-
-				std::vector<GLfloat> vertices;
-				GenerateShadowVerticesExt(size(), round_type(), *radius_p, vertices);
-				m_buffer->bind();
-				m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-				m_buffer->reset();
-
-				break;
-			}
-
-			/*
-			case ShadowBlurRadius: {
-
-				const float* blur_rad =
-								static_cast<const float*>(request.data());
-
-				glBindVertexArray(m_vao);
-				GenerateShadowBuffers(size(), radius(), *blur_rad);
-				glBindVertexArray(0);
-				break;
-			}
-			*/
-
-			default:
-				break;
-		}
-
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(size(), round_type(), radius(), vertices);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->reset();
 	}
 
-	void Shadow::Draw (const glm::vec3& pos, short gamma)
+	void Shadow::Draw (const glm::vec3& pos, short gamma) const
 	{
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->triangle_program();
-		program->Use();
+		Shaders::instance->triangle_program()->use();
 
-		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1,
+		int count = GetOutlineVertices(round_type());
+
+		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1,
 		        glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), gamma);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
-		// fine tune the shadow alpha, default is 10.0 * 0.5 / 12.0
-		float alphastep = 10.0f * Theme::instance->shadow_fac()
-		        / Theme::instance->shadow_width();
-		float expfac = 0.f;
-		int verts = GetOutlineVertices(round_type());
-		verts = verts * 2 + 2;
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, (count + 1) * 2);
+		glBindVertexArray(0);
 
-		// the first circle use anti-alias
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.f, 0.f, 0.f, alphastep);
+		GLSLProgram::reset();
+	}
 
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, verts);
+	void Shadow::PerformSizeUpdate(const Size& size)
+	{
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(size, round_type(), radius(), vertices);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->reset();
 
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		for (int i = 1; i < Theme::instance->shadow_width(); i++) {
-			expfac = sqrt(i / (float) Theme::instance->shadow_width());
+		set_size(size);
+	}
 
-			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.f,
-			        0.f, 0.f, alphastep * (1.0f - expfac));
-			glDrawArrays(GL_TRIANGLE_STRIP, verts * i, verts);
+	void Shadow::PerformRoundTypeUpdate(int type)
+	{
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(size(), type, radius(), vertices);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->reset();
+
+		set_round_type(type);
+	}
+
+	void Shadow::PerformRoundRadiusUpdate(float radius)
+	{
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(size(), round_type(), radius, vertices);
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_->reset();
+
+		set_radius(radius);
+	}
+
+	void Shadow::InitializeShadow()
+	{
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(size(), round_type(), radius(), vertices);
+
+		buffer_.reset(new GLArrayBuffer);
+		buffer_->generate();
+		buffer_->bind();
+		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COLOR));
+
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		        BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::reset();
+	}
+
+	void Shadow::GenerateShadowVertices(const Size& size, int round_type,
+			float radius, std::vector<GLfloat>& vertices)
+	{
+		const float minx = 0.0f;
+		const float miny = 0.0f;
+		const float maxx = size.width();
+		const float maxy = size.height();
+
+		short x_offset = Theme::instance->shadow_offset_x();
+		short y_offset = Theme::instance->shadow_offset_y();
+
+		if (std::abs(x_offset) >= Theme::instance->shadow_width()) {
+			x_offset = x_offset > 0 ? (Theme::instance->shadow_width() - 1) : (Theme::instance->shadow_width() + 1);
 		}
 
-		glBindVertexArray(0);
-
-		GLArrayBuffer::reset();
-		program->reset();
-	}
-
-	void Shadow::InitializeShadow ()
-	{
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		std::vector<GLfloat> vertices;
-		GenerateShadowVerticesExt(size(), round_type(), radius(), vertices);
-
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->generate();
-		m_buffer->bind();
-		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-
-		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
-		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,
-		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
-
-	void Shadow::Update (int width, int height, int type, float rad)
-	{
-		set_size(width, height);
-		set_round_type(type);
-		set_radius(rad);
-
-		std::vector<GLfloat> vertices;
-		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
-		m_buffer->bind();
-		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_buffer->reset();
-	}
-
-	void Shadow::Update (const Size& new_size, int type, float rad)
-	{
-		if((new_size == size()) && (type == round_type()) && (rad == radius()))
-			return;
-
-		set_size(new_size);
-		set_round_type(type);
-		set_radius(rad);
-
-		std::vector<GLfloat> vertices;
-		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
-		m_buffer->bind();
-		m_buffer->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_buffer->reset();
-	}
-
-	void Shadow::GenerateShadowVerticesExt (const Size& size, int round_type,
-	        float radius, std::vector<GLfloat>& vertices)
-	{
-		float minx = 0.0f;
-		float miny = 0.0f;
-		float maxx = size.width();
-		float maxy = size.height();
+		if (std::abs(x_offset) >= Theme::instance->shadow_width()) {
+			y_offset = y_offset > 0 ? (Theme::instance->shadow_width() - 1) : (Theme::instance->shadow_width() + 1);
+		}
 
 		if (2.0f * radius > size.height())
 			radius = 0.5f * size.height();
 
+		int edge_vertex_count = GetOutlineVertices(round_type);
+		unsigned int max_count = (edge_vertex_count + 1) * 6 * 2;
+
+		if(vertices.size() != max_count) vertices.resize(max_count);
+
 		int count = 0;
 
-		unsigned int corner = round_type & RoundAll;
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
+		float offset = Theme::instance->shadow_width();
+		float radi = radius;
+		float rado = radi + Theme::instance->shadow_width();
+
+		// TODO: fine tune shade 1 ~ 2 for better look
+		const float shade1 = -5.f / 255.f;
+		const float shade2 = 27.5 / 255.f;
+
+		short shadetop_x = x_offset * 5;
+		short shadedown_x = -x_offset * 5;
+		short shadetop_y = y_offset * 5;
+		short shadedown_y = -y_offset * 5;
+
+		const float facx = (maxx != minx) ? 1.0f / (maxx - minx) : 0.0f;
+		const float facy = (maxy != miny) ? 1.0f / (maxy - miny) : 0.0f;
+
+		float fx = 0.f;
+		float fy = 0.f;
+
+		/* start with left-top, anti clockwise */
+		if (round_type & RoundTopLeft) {
+			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+
+				vertices[count + 0] = minx + radi - radi * cornervec[j][0];
+				vertices[count + 1] = maxy - radi * cornervec[j][1];
+
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = color_.red() + shade1 + fx - fy;
+				vertices[count + 3] = color_.green() + shade1 + fx - fy;
+				vertices[count + 4] = color_.blue() + shade1 + fx - fy;
+				vertices[count + 5] = color_.alpha();
+
+				vertices[count + 6] = minx - offset + rado - rado * cornervec[j][0] + x_offset;
+				vertices[count + 7] = maxy + offset - rado * cornervec[j][1] + y_offset;
+				vertices[count + 8] = color_.red() + shade2;
+				vertices[count + 9] = color_.green() + shade2;
+				vertices[count + 10] = color_.blue() + shade2;
+				vertices[count + 11] = 0.f;
+
+				count += 12;
+			}
+		} else {
+
+			vertices[count + 0] = minx;
+			vertices[count + 1] = maxy;
+
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 0.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 1.f);
+
+			vertices[count + 2] = color_.red() + shade1 + fx - fy;
+			vertices[count + 3] = color_.green() + shade1 + fx - fy;
+			vertices[count + 4] = color_.blue() + shade1 + fx - fy;
+			vertices[count + 5] = color_.alpha();
+
+			vertices[count + 6] = minx - offset + x_offset;
+			vertices[count + 7] = maxy + offset + y_offset;
+			vertices[count + 8] = color_.red() + shade2;
+			vertices[count + 9] = color_.green() + shade2;
+			vertices[count + 10] = color_.blue() + shade2;
+			vertices[count + 11] = 0.f;
+
+			count += 12;
 		}
-		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
-		unsigned int max_verts = (outline_vertex_number + 1) * 2 * 2 * Theme::instance->shadow_width();
+		if (round_type & RoundBottomLeft) {
+			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 
-		//DBG_PRINT_MSG("max verts: %u", max_verts);
+				vertices[count + 0] = minx + radi * cornervec[j][1];
+				vertices[count + 1] = miny + radi - radi * cornervec[j][0];
 
-		if(vertices.size() != max_verts) {
-			vertices.resize(max_verts);
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = color_.red() + shade1 + fx + fy;
+				vertices[count + 3] = color_.green() + shade1 + fx + fy;
+				vertices[count + 4] = color_.blue() + shade1 + fx + fy;
+				vertices[count + 5] = color_.alpha();
+
+				vertices[count + 6] = minx - offset + rado * cornervec[j][1] + x_offset;
+				vertices[count + 7] = miny - offset + rado - rado * cornervec[j][0] + y_offset;
+				vertices[count + 8] = color_.red() + shade2;
+				vertices[count + 9] = color_.green() + shade2;
+				vertices[count + 10] = color_.blue() + shade2;
+				vertices[count + 11] = 0.f;
+
+				count += 12;
+			}
+		} else {
+
+			vertices[count + 0] = minx;
+			vertices[count + 1] = miny;
+
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 0.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 0.f);
+
+			vertices[count + 2] = color_.red() + shade1 + fx + fy;
+			vertices[count + 3] = color_.green() + shade1 + fx + fy;
+			vertices[count + 4] = color_.blue() + shade1 + fx + fy;
+			vertices[count + 5] = color_.alpha();
+
+			vertices[count + 6] = minx - offset + x_offset;
+			vertices[count + 7] = miny - offset + y_offset;
+			vertices[count + 8] = color_.red() + shade2;
+			vertices[count + 9] = color_.green() + shade2;
+			vertices[count + 10] = color_.blue() + shade2;
+			vertices[count + 11] = 0.f;
+
+			count += 12;
 		}
 
-		float radi = 0.f;
-		float rado = 0.f;
-		count = 0;
+		if (round_type & RoundBottomRight) {
+			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 
-		for(int i = 0; i < Theme::instance->shadow_width(); i++) {
+				vertices[count + 0] = maxx - radi + radi * cornervec[j][0];
+				vertices[count + 1] = miny + radi * cornervec[j][1];
 
-			radi = radius + i;
-			rado = radi + 1.f;
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
 
-			/* start with left-top, anti clockwise */
-			if (round_type & RoundTopLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+				vertices[count + 2] = color_.red() + shade1 - fx + fy;
+				vertices[count + 3] = color_.green() + shade1 - fx + fy;
+				vertices[count + 4] = color_.blue() + shade1 - fx + fy;
+				vertices[count + 5] = color_.alpha();
 
-					vertices[count + 0] = minx - i + radi - radi * cornervec[j][0];
-					vertices[count + 1] = maxy + i - radi * cornervec[j][1];
+				vertices[count + 6] = maxx + offset - rado + rado * cornervec[j][0] + x_offset;
+				vertices[count + 7] = miny - offset + rado * cornervec[j][1] + y_offset;
+				vertices[count + 8] = color_.red() + shade2;
+				vertices[count + 9] = color_.green() + shade2;
+				vertices[count + 10] = color_.blue() + shade2;
+				vertices[count + 11] = 0.f;
 
-					vertices[count + 2] = minx - (i + 1) + rado - rado * cornervec[j][0];
-					vertices[count + 3] = maxy + (i + 1) - rado * cornervec[j][1];
-
-					count += 4;
-				}
-			} else {
-
-				vertices[count + 0] = minx - i;
-				vertices[count + 1] = maxy + i;
-
-				vertices[count + 2] = minx - (i + 1);
-				vertices[count + 3] = maxy + (i + 1);
-
-				count += 4;
+				count += 12;
 			}
+		} else {
 
-			if (round_type & RoundBottomLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = miny;
 
-					vertices[count + 0] = minx - i + radi * cornervec[j][1];
-					vertices[count + 1] = miny - i + radi - radi * cornervec[j][0];
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 1.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 0.f);
 
-					vertices[count + 2] = minx - (i + 1) + rado * cornervec[j][1];
-					vertices[count + 3] = miny - (i + 1)+ rado - rado * cornervec[j][0];
+			vertices[count + 2] = color_.red() + shade1 - fx + fy;
+			vertices[count + 3] = color_.green() + shade1 - fx + fy;
+			vertices[count + 4] = color_.blue() + shade1 - fx + fy;
+			vertices[count + 5] = color_.alpha();
 
-					count += 4;
-				}
-			} else {
+			vertices[count + 6] = maxx + offset + x_offset;
+			vertices[count + 7] = miny - offset + y_offset;
+			vertices[count + 8] = color_.red() + shade2;
+			vertices[count + 9] = color_.green() + shade2;
+			vertices[count + 10] = color_.blue() + shade2;
+			vertices[count + 11] = 0.f;
 
-				vertices[count + 0] = minx - i;
-				vertices[count + 1] = miny - i;
-
-				vertices[count + 2] = minx - (i + 1);
-				vertices[count + 3] = miny - (i + 1);
-
-				count += 4;
-			}
-
-			if (round_type & RoundBottomRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-					vertices[count + 0] = maxx + i - radi + radi * cornervec[j][0];
-					vertices[count + 1] = miny - i + radi * cornervec[j][1];
-
-					vertices[count + 2] = maxx + (i + 1) - rado + rado * cornervec[j][0];
-					vertices[count + 3] = miny - (i + 1) + rado * cornervec[j][1];
-
-					count += 4;
-				}
-			} else {
-
-				vertices[count + 0] = maxx + i;
-				vertices[count + 1] = miny - i;
-
-				vertices[count + 2] = maxx + (i + 1);
-				vertices[count + 3] = miny - (i + 1);
-
-				count += 4;
-			}
-
-			if (round_type & RoundTopRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-
-					vertices[count + 0] = maxx + i - radi * cornervec[j][1];
-					vertices[count + 1] = maxy + i - radi + radi * cornervec[j][0];
-
-					vertices[count + 2] = maxx + (i + 1) - rado * cornervec[j][1];
-					vertices[count + 3] = maxy + (i + 1) - rado + rado * cornervec[j][0];
-
-					count += 4;
-				}
-			} else {
-
-				vertices[count + 0] = maxx + i;
-				vertices[count + 1] = maxy + i;
-
-				vertices[count + 2] = maxx + (i + 1);
-				vertices[count + 3] = maxy + (i + 1);
-
-				count += 4;
-			}
-
-			vertices[count + 0] = vertices[count - outline_vertex_number * 4];
-			vertices[count + 1] = vertices[count - outline_vertex_number * 4 + 1];
-
-			vertices[count + 2] = vertices[count - outline_vertex_number * 4 + 2];
-			vertices[count + 3] = vertices[count - outline_vertex_number * 4 + 3];
-
-			//DBG_PRINT_MSG("count: %d", count);
-
-			count += 4;
-
-			//radi = radi + (float)i;
+			count += 12;
 		}
+
+		if (round_type & RoundTopRight) {
+			for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+
+				vertices[count + 0] = maxx - radi * cornervec[j][1];
+				vertices[count + 1] = maxy - radi + radi * cornervec[j][0];
+
+				fx = make_shaded_offset(shadetop_x, shadedown_x, facx * (vertices[count + 0] - minx));
+				fy = make_shaded_offset(shadetop_y, shadedown_y, facy * (vertices[count + 1] - miny));
+
+				vertices[count + 2] = color_.red() + shade1 - fx - fy;
+				vertices[count + 3] = color_.green() + shade1 - fx - fy;
+				vertices[count + 4] = color_.blue() + shade1 - fx - fy;
+				vertices[count + 5] = color_.alpha();
+
+				vertices[count + 6] = maxx + offset - rado * cornervec[j][1] + x_offset;
+				vertices[count + 7] = maxy + offset - rado + rado * cornervec[j][0] + y_offset;
+				vertices[count + 8] = color_.red() + shade2;
+				vertices[count + 9] = color_.green() + shade2;
+				vertices[count + 10] = color_.blue() + shade2;
+				vertices[count + 11] = 0.f;
+
+				count += 12;
+			}
+		} else {
+
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = maxy;
+
+			fx = make_shaded_offset(shadetop_x, shadedown_x, 1.f);
+			fy = make_shaded_offset(shadetop_y, shadedown_y, 1.f);
+
+			vertices[count + 2] = color_.red() + shade1 - fx - fy;
+			vertices[count + 3] = color_.green() + shade1 - fx - fy;
+			vertices[count + 4] = color_.blue() + shade1 - fx - fy;
+			vertices[count + 5] = color_.alpha();
+
+			vertices[count + 6] = maxx + offset + x_offset;
+			vertices[count + 7] = maxy + offset + y_offset;
+			vertices[count + 8] = color_.red() + shade2;
+			vertices[count + 9] = color_.green() + shade2;
+			vertices[count + 10] = color_.blue() + shade2;
+			vertices[count + 11] = 0.f;
+
+			count += 12;
+		}
+
+		vertices[count + 0] = vertices[count - edge_vertex_count * 12 + 0];
+		vertices[count + 1] = vertices[count - edge_vertex_count * 12 + 1];
+		vertices[count + 2] = vertices[count - edge_vertex_count * 12 + 2];
+		vertices[count + 3] = vertices[count - edge_vertex_count * 12 + 3];
+		vertices[count + 4] = vertices[count - edge_vertex_count * 12 + 4];
+		vertices[count + 5] = vertices[count - edge_vertex_count * 12 + 5];
+
+		vertices[count + 6] = vertices[count - edge_vertex_count * 12 + 6];
+		vertices[count + 7] = vertices[count - edge_vertex_count * 12 + 7];
+		vertices[count + 8] = vertices[count - edge_vertex_count * 12 + 8];
+		vertices[count + 9] = vertices[count - edge_vertex_count * 12 + 9];
+		vertices[count + 10] = vertices[count - edge_vertex_count * 12 + 10];
+		vertices[count + 11] = vertices[count - edge_vertex_count * 12 + 11];
+
+		count += 12;
 
 	}
 
-}
+	inline float Shadow::make_shaded_offset(short shadetop, short shadedown,
+			float fact)
+	{
+		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
+		float facm = 1.f - fact;
 
+		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
+	}
+
+}

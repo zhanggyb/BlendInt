@@ -10,6 +10,7 @@ if(WITH_GLFW3_DEMO)
     if(ENABLE_OPENCV)
     add_subdirectory(imgproc)
     add_subdirectory(texbuf)
+    add_subdirectory(cv)
     endif()
 endif()
 

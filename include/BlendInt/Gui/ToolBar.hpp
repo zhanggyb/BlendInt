@@ -42,9 +42,9 @@ namespace BlendInt {
 
 		virtual ~ToolBar ();
 
-		void PushBack (AbstractWidget* widget);
+		void Append (AbstractWidget* widget);
 
-		void PushBack (const RefPtr<Action>& action);
+		void Append (const RefPtr<Action>& action);
 
 		virtual bool IsExpandX () const;
 

@@ -79,7 +79,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	Section* Context::PushBack (AbstractWidget* widget)
+	Section* Context::Append (AbstractWidget* widget)
 	{
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
@@ -103,7 +103,7 @@ namespace BlendInt
 
 		} else {
 			section = Manage(new Section);
-			section->PushBack(widget);
+			section->Append(widget);
 		}
 
 #ifdef DEBUG
@@ -287,25 +287,7 @@ namespace BlendInt
 			glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
 			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
-			RefPtr<GLSLProgram> program =
-			        Shaders::instance->triangle_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->line_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->text_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-			program = Shaders::instance->image_program();
-			program->Use();
-			glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-			        glm::value_ptr(projection));
-
-			program->reset();
+			Shaders::instance->SetUIProjectionMatrix(projection);
 
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
@@ -317,11 +299,6 @@ namespace BlendInt
 			resized_.fire(size());
 
 		} else if (request.source()->container() == this) {
-
-			if (request.source()->drop_shadow() && request.source()->shadow_) {
-				request.source()->shadow_->Resize(request.size()->width(),
-				        request.size()->height());
-			}
 
 		} else {
 
@@ -436,11 +413,13 @@ namespace BlendInt
 		}
 		custom_focus_widget_ = false;
 
+		/*
 		if(focused_widget_) {
 			DBG_PRINT_MSG("focus widget: %s", focused_widget_->name().c_str());
 		} else {
 			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
+		*/
 
 		return response;
 	}
@@ -514,27 +493,8 @@ namespace BlendInt
 	{
 		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->instance->line_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->text_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->text_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program = Shaders::instance->image_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(Shaders::instance->image_uniform_view(), 1, GL_FALSE, glm::value_ptr(default_view_matrix));
-
-		program->reset();
+		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->SetUIViewMatrix(default_view_matrix);
 	}
 
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)

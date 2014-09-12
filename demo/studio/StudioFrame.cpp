@@ -31,7 +31,6 @@ StudioFrame::StudioFrame()
 : BinLayout(), refresh_(true)
 {
 	set_size(400, 300);
-	set_drop_shadow(true);
 }
 
 StudioFrame::~StudioFrame ()
@@ -40,8 +39,10 @@ StudioFrame::~StudioFrame ()
 
 void StudioFrame::PerformRefresh(const RefreshRequest& request)
 {
-	refresh_ = true;
-	ReportRefresh(request);
+	if(!refresh_) {
+		refresh_ = true;
+		ReportRefresh(request);
+	}
 }
 
 void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -58,19 +59,20 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 		}
 	}
 
-	ReportSizeUpdate(request);
+	if(request.source() == this) {
+		ReportSizeUpdate(request);
+	}
 }
 
 ResponseType StudioFrame::Draw (Profile& profile)
 {
 	if(refresh_) {
-
 		RenderToBuffer();
-
 		refresh_ = false;
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
 	tex_buffer_.Draw(position().x(), position().y());
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -145,30 +147,13 @@ void StudioFrame::RenderToBuffer ()
 		glEnable(GL_BLEND);
 
 		glm::mat4 origin;
-		glGetUniformfv(Shaders::instance->triangle_program()->id(),
-				Shaders::instance->triangle_uniform_projection(),
-				glm::value_ptr(origin));
+
+		Shaders::instance->GetUIProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		RefPtr<GLSLProgram> program =
-		        Shaders::instance->triangle_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-		        glm::value_ptr(projection));
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-		        glm::value_ptr(projection));
-		program = Shaders::instance->text_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-		        glm::value_ptr(projection));
-		program = Shaders::instance->image_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-		        glm::value_ptr(projection));
+		Shaders::instance->SetUIProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -185,24 +170,7 @@ void StudioFrame::RenderToBuffer ()
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		program = Shaders::instance->triangle_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->triangle_uniform_projection(), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->line_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->line_uniform_projection(), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->text_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->text_uniform_projection(), 1, GL_FALSE,
-				glm::value_ptr(origin));
-		program = Shaders::instance->image_program();
-		program->Use();
-		glUniformMatrix4fv(Shaders::instance->image_uniform_projection(), 1, GL_FALSE,
-				glm::value_ptr(origin));
-
-		program->reset();
+		Shaders::instance->SetUIProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

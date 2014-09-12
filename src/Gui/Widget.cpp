@@ -51,20 +51,47 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Widget::Widget()
 	: AbstractWidget()
 	{
 		set_size(120, 80);
+
+		InitializeWidgetOnce();
 	}
 
 	Widget::~Widget()
 	{
-
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	ResponseType Widget::Draw(Profile& profile)
 	{
-		return Ignore;
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
+		program->use();
+
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+				(float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
+				0);
+
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f, 0.2f, 0.5f, 1.f);
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_type()) + 2);
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f, 0.f, 0.f, 1.f);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+
+		glBindVertexArray(0);
+		program->reset();
+		return Accept;
 	}
 
 	ResponseType Widget::CursorEnterEvent(bool entered)
@@ -106,6 +133,50 @@ namespace BlendInt {
 	{
 		return Accept;
 	}
+
+	void Widget::InitializeWidgetOnce()
+	{
+		set_round_type(RoundAll);
+
+		VertexTool tool;
+		tool.GenerateShadedVertices(size(),
+				DefaultBorderWidth(),
+				round_type(),
+				round_radius());
+		/*
+		tool.GenerateVertices(size(),
+				DefaultBorderWidth(),
+				round_type(),
+				round_radius(),
+				Vertical,
+				25,
+				-25);
+		*/
+
+		glGenVertexArrays(2, vao_);
+		buffers_.generate();
+
+		glBindVertexArray(vao_[0]);
+		buffers_.bind(0);
+		buffers_.set_data(tool.inner_size(), tool.inner_data());
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		buffers_.bind(1);
+		buffers_.set_data(tool.outer_size(), tool.outer_data());
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::reset();
+		glBindVertexArray(0);
+	}
+
+	// ----------------------------------------------------------
 
 	Container::Container ()
 	{

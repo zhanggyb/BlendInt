@@ -149,7 +149,7 @@ namespace BlendInt {
 		/**
 		 * @brief Use this program for render
 		 */
-		inline void Use () const
+		inline void use () const
 		{
 			glUseProgram (m_id);
 		}

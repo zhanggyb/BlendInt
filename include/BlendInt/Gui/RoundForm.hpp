@@ -39,9 +39,6 @@ namespace BlendInt
 
 		virtual ~RoundForm ();
 
-	protected:
-
-		virtual void UpdateGeometry (const UpdateRequest& request);
 	};
 
 }

@@ -26,7 +26,7 @@
 
 #include <BlendInt/Gui/BinLayout.hpp>
 
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 namespace BlendInt {
 
@@ -62,7 +62,7 @@ namespace BlendInt {
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;
 
-		TextureBuffer tex_buffer_;
+		ImagePlane2D tex_buffer_;
 
 		bool refresh_;
 	};

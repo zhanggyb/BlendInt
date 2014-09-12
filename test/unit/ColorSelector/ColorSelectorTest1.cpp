@@ -32,7 +32,7 @@ TEST_F(ColorSelectorTest1, Foo1)
     ColorSelector* cs = Manage(new ColorSelector);
     cs->SetPosition(200, 50);
 
-    context->PushBack(cs);
+    context->Append(cs);
 
     RunLoop(win);
 
