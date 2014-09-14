@@ -591,7 +591,7 @@ namespace BlendInt {
 
 		ViewportLayer* vlayout = Manage(new ViewportLayer);
 		DBG_SET_NAME(vlayout, "VLayout");
-		vlayout->SetSpace(0);
+		vlayout->SetSpace(1);
 		vlayout->Append(splitter_);
 
 		EdgeButtonLayer* btnlayout = Manage(new EdgeButtonLayer);

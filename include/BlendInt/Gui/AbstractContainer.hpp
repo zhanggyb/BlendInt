@@ -29,9 +29,6 @@
 
 namespace BlendInt {
 
-	typedef std::deque<AbstractWidget*> AbstractWidgetDeque;
-
-	class Interface;
 	class Context;
 	class AbstractContainer;
 

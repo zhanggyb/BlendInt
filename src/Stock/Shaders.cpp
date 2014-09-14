@@ -657,7 +657,8 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: ui_matrix_block_size_(0)
+		: ui_matrix_block_size_(0),
+			ui_matrix_binding_point_(1)
 		{
 			text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
@@ -754,9 +755,11 @@ namespace BlendInt {
 			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
 			ui_matrix_->generate();
 			ui_matrix_->bind();
-			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_STATIC_DRAW);
+			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			ui_matrix_->reset();
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
+			glUniformBlockBinding(widget_program_->id(), block_index, ui_matrix_binding_point_);
 
 			free(buf_p);
 			buf_p = 0;
@@ -770,7 +773,8 @@ namespace BlendInt {
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
+			glUniformBlockBinding(text_program_->id(), block_index, ui_matrix_binding_point_);
 
 			// set uniform block in triangle program
 
@@ -778,7 +782,8 @@ namespace BlendInt {
 			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
+			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
+			glUniformBlockBinding(triangle_program_->id(), block_index, ui_matrix_binding_point_);
 
 			// set uniform block in image program
 
@@ -786,9 +791,8 @@ namespace BlendInt {
 			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(image_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, block_index, ui_matrix_->id());
-
-			ui_matrix_->reset();
+			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
+			glUniformBlockBinding(image_program_->id(), block_index, ui_matrix_binding_point_);
 
 			return true;
 		}

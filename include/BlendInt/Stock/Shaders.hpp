@@ -180,6 +180,8 @@ namespace BlendInt {
 			GLint ui_matrix_offset_[2];
 
 			GLint ui_matrix_block_size_;
+			
+			GLuint ui_matrix_binding_point_;
 
 			static const char* text_vertex_shader;
 
