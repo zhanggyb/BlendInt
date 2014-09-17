@@ -48,6 +48,7 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
+	class View;
 	class AbstractWidget;
 	class AbstractContainer;
 
@@ -284,6 +285,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
+		friend class View;
 		friend class AbstractContainer;
 
 		template <typename T> friend T* Manage (T* obj, bool val);

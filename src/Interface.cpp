@@ -59,6 +59,7 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
@@ -140,6 +141,13 @@ namespace BlendInt {
 			success = false;
 		}
 
+		if (success && Cursor::Initialize()) {
+			// do nothing;
+		} else {
+			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
+			success = false;
+		}
+
 #ifdef USE_FONTCONFIG
 
 #ifdef __APPLE__
@@ -181,6 +189,7 @@ namespace BlendInt {
 		Shaders::Release();
 		Theme::Release();
 		FontCache::ReleaseAll();
+		Cursor::Release();
 
 #ifdef USE_FONTCONFIG
 		FontConfig::release();

@@ -276,7 +276,6 @@ namespace BlendInt {
 
 	Theme::~Theme ()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	void Theme::Reset()

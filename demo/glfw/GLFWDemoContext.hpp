@@ -63,25 +63,13 @@ class GLFWDemoContext: public BI::Context
 {
 public:
 
-	explicit GLFWDemoContext (GLFWwindow* window);
+	GLFWDemoContext ();
 
 	virtual ~GLFWDemoContext ();
 
-	virtual void SetCursor (int cursor_type);
-
 private:
 
-	void InitializeGLFWCursors ();
-
 	void Initialize ();
-
-	void ReleaseGLFWCursors ();
-
-	GLFWcursor* arrow_;
-
-	GLFWcursor* cross_;
-
-	GLFWwindow* window_;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

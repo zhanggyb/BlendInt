@@ -38,10 +38,10 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
-#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
@@ -220,15 +220,13 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
 	{
-		Context* context = Context::GetContext(this);
-
 		if(entered) {
 			highlight_ = true;
-			context->PushCursor(context->current_cursor());
-			context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
+			Cursor::instance->PushCursor();
+			Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		} else {
 			highlight_ = false;
-			context->SetCursor(context->PopCursor());
+			Cursor::instance->PopCursor();
 		}
 
 		Refresh();

@@ -42,7 +42,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
@@ -70,14 +70,11 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::CursorEnterEvent (bool entered)
 	{
-		Context* context = Context::GetContext(this);
-		if(!context) return Ignore;
-
 		if(entered) {
-			context->PushCursor(context->current_cursor());
-			context->SetCursor(CrossCursor);
+			Cursor::instance->PushCursor();
+			Cursor::instance->SetCursor(CrossCursor);
 		} else {
-			context->SetCursor(context->PopCursor());
+			Cursor::instance->PopCursor();
 		}
 
 		return Accept;
