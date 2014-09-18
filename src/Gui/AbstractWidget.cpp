@@ -106,6 +106,21 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
+	Point AbstractWidget::GetGlobalPosition () const
+	{
+		Point retval = position_;;
+
+		AbstractContainer* container = container_;
+
+		while(container) {
+			retval.set_x(retval.x() + container->position().x() + container->offset_x());
+			retval.set_y(retval.y() + container->position().y() + container->offset_y());
+			container = container->container_;
+		}
+
+		return retval;
+	}
+
 	Size AbstractWidget::GetPreferredSize() const
 	{
 		return Size(200, 200);
@@ -251,8 +266,8 @@ namespace BlendInt {
 	{
 		if(point.x() < position_.x() ||
 				point.y() < position_.y() ||
-				point.x() > static_cast<int>(position_.x() + size_.width()) ||
-				point.y() > static_cast<int>(position_.y() + size_.height()))
+				point.x() > (position_.x() + size_.width()) ||
+				point.y() > (position_.y() + size_.height()))
 		{
 			return false;
 		}
@@ -445,6 +460,21 @@ namespace BlendInt {
 		}
 
 		return false;
+	}
+
+	bool AbstractWidget::IsHoverThroughExt (const AbstractWidget* widget, const Point& cursor)
+	{
+		Point global_position = widget->GetGlobalPosition();
+
+		if(cursor.x() < global_position.x() ||
+			cursor.y() < global_position.y() ||
+			cursor.x() > (global_position.x() + widget->size().width()) ||
+			cursor.y() > (global_position.y() + widget->size().height()))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	void AbstractWidget::ReportRefresh(const RefreshRequest& request)

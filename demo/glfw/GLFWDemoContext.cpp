@@ -8,6 +8,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
+#include <BlendInt/Gui/Viewport.hpp>
 
 GLFWDemoContext::GLFWDemoContext()
 : BI::Context()
@@ -23,6 +24,31 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	Viewport* vp = Manage(new Viewport);
+	vp->SetPosition(200, 100);
+	vp->SetPosition(200, 200);
+
+	AddViewport(vp);
+
+	Widget* widget = Manage(new Widget);
+
+	vp->AddWidget(widget);
+
+	Point pos = widget->GetGlobalPosition ();
+
+	DBG_PRINT_MSG("widget position: %d, %d", pos.x(), pos.y());
+
+	DBG_PRINT_MSG("viewport: %d, %d, %d, %d", vp->position().x(), vp->position().y(), vp->size().width(), vp->size().height());
+
+	vp->SetPosition(300, 200);
+
+	Viewport* vp2 = Manage(new Viewport);
+
+	AddViewport(vp2);
+
+	vp2->SetPosition(450, 300);
+
+	/*
 	Workspace* ws = Manage(new Workspace);
 	DBG_SET_NAME(ws, "Workspace");
 	ws->SetPosition(200, 100);
@@ -60,6 +86,7 @@ void GLFWDemoContext::Initialize ()
 	panel->Resize(panel->GetPreferredSize());
 
 	Append(panel);
+	*/
 
 	/*
     Tab* tab = Manage (new Tab);

@@ -46,9 +46,6 @@
 
 namespace BlendInt {
 
-	class Context;
-	class Section;
-	class View;
 	class AbstractWidget;
 	class AbstractContainer;
 
@@ -285,7 +282,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class View;
+		friend class Viewport;
 		friend class AbstractContainer;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
@@ -304,6 +301,8 @@ namespace BlendInt {
 		{
 			return position_;
 		}
+
+		Point GetGlobalPosition () const;
 
 		virtual Size GetPreferredSize () const;
 
@@ -469,6 +468,8 @@ namespace BlendInt {
 		 * @note There's no meaning to use this function to test Context or Section.
 		 */
 		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
+
+		static bool IsHoverThroughExt (const AbstractWidget* widget, const Point& cursor);
 
 		static void SetDefaultBorderWidth (float border);
 

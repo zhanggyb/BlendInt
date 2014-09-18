@@ -79,6 +79,13 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
+	void Context::AddViewport (Viewport* vp)
+	{
+		if(PushBackSubWidget(vp)) {
+			// TODO: 			
+		}
+	}
+
 	Section* Context::Append (AbstractWidget* widget)
 	{
 		if(!widget) {
@@ -233,22 +240,11 @@ namespace BlendInt
 
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
-			// don't allow section to change any geometry
-			return false;
-		}
-
 		return true;
 	}
 
 	bool Context::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
 		return true;
 	}
 
@@ -289,10 +285,12 @@ namespace BlendInt
 
 			Shaders::instance->SetUIProjectionMatrix(projection);
 
+			/*
 			for(AbstractWidget* p = first(); p; p = p->next())
 			{
 				ResizeSubWidget(p, *request.size());
 			}
+			*/
 
 			set_size(*request.size());
 
@@ -341,11 +339,21 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
+		glm::mat4 projection_matrix  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+
+		Shaders::instance->SetUIProjectionMatrix(projection_matrix);
+		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+		Shaders::instance->SetUIModelMatrix(glm::mat4(1.f));
 		glViewport(0, 0, size().width(), size().height());
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
 			p->Draw(profile);
+
+			Shaders::instance->SetUIProjectionMatrix(projection_matrix);
+			Shaders::instance->SetUIViewMatrix(default_view_matrix);
+			Shaders::instance->SetUIModelMatrix(glm::mat4(1.f));
+			glViewport(0, 0, size().width(), size().height());
 		}
 
 		return Accept;

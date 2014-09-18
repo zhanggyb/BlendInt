@@ -31,6 +31,7 @@
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/Section.hpp>
+#include <BlendInt/Gui/Viewport.hpp>
 
 namespace BlendInt {
 
@@ -53,6 +54,8 @@ namespace BlendInt {
 		Context ();
 
 		virtual ~Context ();
+
+		void AddViewport (Viewport* vp);
 
 		/**
 		 * @brief Add a widget in a new section

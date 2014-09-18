@@ -51,7 +51,9 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  first_(0),
 	  last_(0),
-	  widget_count_(0)
+	  widget_count_(0),
+	  offset_x_(0),
+	  offset_y_(0)
 	{
 
 	}

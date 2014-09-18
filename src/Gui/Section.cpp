@@ -147,6 +147,27 @@ namespace BlendInt {
 		return dynamic_cast<Section*>(section);
 	}
 
+	bool Section::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Section::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void Section::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -483,27 +504,6 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
 
 		last_hover_widget_ = 0;
-	}
-
-	bool Section::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool Section::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool Section::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool Section::RoundRadiusUpdateTest (
-	        const RoundRadiusUpdateRequest& request)
-	{
-		return true;
 	}
 
 	void Section::ClearHoverWidgets()

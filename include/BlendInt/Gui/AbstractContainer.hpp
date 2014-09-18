@@ -29,15 +29,13 @@
 
 namespace BlendInt {
 
-	class Context;
-	class AbstractContainer;
-
 	class AbstractContainer: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 		friend class Context;
 		friend class Section;
+		friend class Viewport;
 		friend class AbstractWidget;
 
 	public:
@@ -83,6 +81,16 @@ namespace BlendInt {
 		AbstractWidget* operator [] (int i) const;
 
 		AbstractWidget* GetWidgetAt (int i) const;
+
+		int offset_x () const
+		{
+			return offset_x_;
+		}
+
+		int offset_y () const
+		{
+			return offset_y_;
+		}
 
 	protected:
 
@@ -152,17 +160,33 @@ namespace BlendInt {
 						int height, Orientation orientation,
 						int alignment, int space);
 
-		void set_margin (const Margin& margin)
+		inline void set_margin (const Margin& margin)
 		{
 			margin_ = margin;
 		}
 
-		void set_margin (int left, int right, int top, int bottom)
+		inline void set_margin (int left, int right, int top, int bottom)
 		{
 			margin_.set_left(left);
 			margin_.set_right(right);
 			margin_.set_top(top);
 			margin_.set_bottom(bottom);
+		}
+
+		inline void set_offset_x (int x)
+		{
+			offset_x_ = x;
+		}
+
+		inline void set_offset_y (int y)
+		{
+			offset_y_ = y;
+		}
+
+		inline void set_offset (int x, int y)
+		{
+			offset_x_ = x;
+			offset_y_ = y;
 		}
 
 	private:
@@ -182,6 +206,9 @@ namespace BlendInt {
 
 		int widget_count_;
 
+		int offset_x_;
+
+		int offset_y_;
 	};
 
 }

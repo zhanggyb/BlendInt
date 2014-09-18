@@ -133,6 +133,10 @@ namespace BlendInt {
 
 			void SetUIViewMatrix (const glm::mat4& matrix);
 
+			void SetUIModelMatrix (const glm::mat4& matrix);
+
+			void GetUIModelMatrix (glm::mat4& matrix);
+
 			inline GLint location (LocationType index) const
 			{
 				return locations_[index];
@@ -177,7 +181,7 @@ namespace BlendInt {
 			RefPtr<GLBuffer<UNIFORM_BUFFER> > ui_matrix_;
 
 			// the offset of uniform block in shaders
-			GLint ui_matrix_offset_[2];
+			GLint ui_matrix_offset_[3];
 
 			GLint ui_matrix_block_size_;
 			
