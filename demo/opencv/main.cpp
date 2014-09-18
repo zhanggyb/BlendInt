@@ -172,7 +172,7 @@ void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 {
 	kMouseEvent.set_action(BI::MouseMove);
 	kMouseEvent.set_button(BI::MouseButtonNone);
-	kMouseEvent.set_position(ev->pos().x(), BI::Interface::instance->GetCurrentContextHeight() - ev->pos().y());
+	kMouseEvent.set_global_position(ev->pos().x(), BI::Interface::instance->GetCurrentContextHeight() - ev->pos().y());
 
 	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
 	ev->accept();

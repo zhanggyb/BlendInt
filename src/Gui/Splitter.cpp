@@ -236,7 +236,7 @@ namespace BlendInt {
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
 	{
 		last_ = position();
-		cursor_ = event.position();
+		cursor_ = event.global_position();
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
@@ -289,7 +289,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = event.position().y() - cursor_.y();
+				int offset = event.global_position().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -305,7 +305,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = event.position().x() - cursor_.x();
+				int offset = event.global_position().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 

@@ -32,13 +32,13 @@
 #include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	class ButtonGroup;
 
-	class AbstractButton: public AbstractWidget
+	class AbstractButton: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
@@ -83,6 +83,8 @@ namespace BlendInt {
 		static int icon_text_space;	// the space between icon and text
 
 	protected:
+
+		virtual ResponseType Draw (Profile& profile) = 0;
 
 		virtual ResponseType FocusEvent (bool focus);
 

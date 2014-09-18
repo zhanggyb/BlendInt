@@ -44,6 +44,7 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
+	class Viewport;
 
 	/**
 	 * @brief the basic event class
@@ -55,15 +56,17 @@ namespace BlendInt {
 	public:
 
 		DeviceEvent ()
-		: m_context(0),
-		  m_section(0)
+		: context_(0),
+		  section_(0),
+		  viewport_(0)
 		{
 		}
 
 		DeviceEvent (const DeviceEvent& orig)
 		{
-			m_context = orig.m_context;
-			m_section = orig.m_section;
+			context_ = orig.context_;
+			section_ = orig.section_;
+			viewport_ = orig.viewport_;
 		}
 
 		~DeviceEvent ()
@@ -71,22 +74,23 @@ namespace BlendInt {
 
 		Context* context () const
 		{
-			return m_context;
+			return context_;
 		}
 
 		Section* section () const
 		{
-			return m_section;
+			return section_;
 		}
 
 	private:
 
 		friend class Context;
 		friend class Section;
+		friend class Viewport;
 
-		Context* m_context;
-		Section* m_section;
-
+		Context* context_;
+		Section* section_;
+		Viewport* viewport_;
 	};
 
 } /* namespace BlendInt */

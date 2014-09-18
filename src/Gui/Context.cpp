@@ -39,8 +39,15 @@
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+
+#ifdef USE_FONTCONFIG
+#include <BlendInt/Core/FontConfig.hpp>
+#endif
+
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
 {
@@ -51,6 +58,116 @@ namespace BlendInt
             glm::vec3(0.f, 1.f, 0.f));
 
 	std::set<Context*> Context::context_set;
+
+	bool Context::Initialize()
+	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
+		bool success = true;
+
+#ifdef DEBUG
+		int major, minor;
+		GetGLVersion(&major, &minor);
+		DBG_PRINT_MSG("OpenGL version: %d.%d", major, minor);
+		GetGLSLVersion(&major, &minor);
+		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
+#endif
+
+#ifdef USE_FONTCONFIG
+		if (success && FontConfig::initialize()) {
+
+			/*
+			 FontConfig* ftconfig = FontConfig::instance();
+			 if (!ftconfig->loadDefaultFontToMem()) {
+			 cerr << "Cannot load default font into memory" << endl;
+			 success = false;
+			 }
+			 */
+
+		} else {
+
+			DBG_PRINT_MSG("%s", "Cannot initialize FontConfig");
+			success = false;
+
+		}
+#endif
+
+		if (success && Theme::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
+			success = false;
+		}
+
+		if (success && Shaders::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
+			success = false;
+		}
+
+		if (success && Icons::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
+			success = false;
+		}
+
+		if (success && Cursor::Initialize()) {
+			// do nothing;
+		} else {
+			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
+			success = false;
+		}
+
+#ifdef USE_FONTCONFIG
+
+#ifdef __APPLE__
+
+		// Create a default font
+		//FontCache::Create("Sans-Serif", 9, 96, false, false);
+
+#endif
+
+#ifdef __LINUX__
+
+		// Create a default font
+		//FontCache::Create("Sans", 9, 96, false, false);
+
+#endif
+
+#endif
+
+		return success;
+	}
+
+	void Context::Release()
+	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
+		while(context_set.size()) {
+			std::set<Context*>::iterator it = context_set.begin();
+
+			if((*it)->managed() && ((*it)->reference_count() == 0)) {
+				DBG_PRINT_MSG("%s", "Delete context");
+				delete (*it);	// this will erase the context from the set
+			} else {
+				context_set.erase(it);
+			}
+		}
+
+		Icons::Release();
+		Shaders::Release();
+		Theme::Release();
+		FontCache::ReleaseAll();
+		Cursor::Release();
+
+#ifdef USE_FONTCONFIG
+		FontConfig::release();
+#endif
+	}
 
 	Context::Context ()
 	: AbstractContainer(),
@@ -88,6 +205,7 @@ namespace BlendInt
 
 	Section* Context::Append (AbstractWidget* widget)
 	{
+		/*
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
 			return 0;
@@ -133,10 +251,14 @@ namespace BlendInt
 		ResizeSubWidget(section, size());
 
 		return section;
+		*/
+
+		return 0;
 	}
 
 	Section* Context::Remove (AbstractWidget* widget)
 	{
+		/*
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
 			return 0;
@@ -170,6 +292,8 @@ namespace BlendInt
 		}
 
 		return section;
+		*/
+		return 0;
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -339,21 +463,9 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-		glm::mat4 projection_matrix  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-
-		Shaders::instance->SetUIProjectionMatrix(projection_matrix);
-		Shaders::instance->SetUIViewMatrix(default_view_matrix);
-		Shaders::instance->SetUIModelMatrix(glm::mat4(1.f));
-		glViewport(0, 0, size().width(), size().height());
-
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
 			p->Draw(profile);
-
-			Shaders::instance->SetUIProjectionMatrix(projection_matrix);
-			Shaders::instance->SetUIViewMatrix(default_view_matrix);
-			Shaders::instance->SetUIModelMatrix(glm::mat4(1.f));
-			glViewport(0, 0, size().width(), size().height());
 		}
 
 		return Accept;
@@ -366,9 +478,15 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		const_cast<KeyEvent&>(event).m_context = this;
+		const_cast<KeyEvent&>(event).context_ = this;
 
 		ResponseType response;
+
+		if(last()) {
+			response = last()->KeyPressEvent(event);
+		}
+
+		return response;
 
 		if(focused_widget_) {
 			response = focused_widget_->KeyPressEvent(event);
@@ -379,7 +497,7 @@ namespace BlendInt
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_context = this;
+		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
@@ -387,20 +505,28 @@ namespace BlendInt
 	ResponseType Context::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_context = this;
+		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		const_cast<MouseEvent&>(event).context_ = this;
 
 		ResponseType response;
 
+		for(AbstractWidget* p = last(); p; p = p->previous()) {
+			response = p->MousePressEvent(event);
+
+			if(response == Accept) break;
+		}
+
+		return response;
+
 		AbstractWidget* widget = 0;	// widget may be focused
 
-		const_cast<MouseEvent&>(event).m_context = this;
+		const_cast<MouseEvent&>(event).context_ = this;
 
 		custom_focus_widget_ = false;
 		for (Section::iterator_ptr = last(); Section::iterator_ptr;
@@ -434,9 +560,17 @@ namespace BlendInt
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		const_cast<MouseEvent&>(event).context_ = this;
 
 		ResponseType response;
+
+		for(AbstractWidget* p = last(); p; p = p->previous()) {
+			response = p->MouseReleaseEvent(event);
+
+			if(response == Accept) break;
+		}
+
+		return response;
 
 		// tell the focused widget first
 		if(focused_widget_) {
@@ -460,9 +594,17 @@ namespace BlendInt
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		const_cast<MouseEvent&>(event).context_ = this;
 
 		ResponseType response;
+
+		for(AbstractWidget* p = last(); p; p = p->previous()) {
+			response = p->MouseMoveEvent(event);
+
+			if(response == Accept) break;
+		}
+
+		return response;
 
 		// tell the focused widget first
 		if (focused_widget_) {
@@ -495,6 +637,41 @@ namespace BlendInt
 	ResponseType Context::FocusEvent (bool focus)
 	{
 		return Ignore;
+	}
+
+	void Context::GetGLVersion (int *major, int *minor)
+	{
+		const char* verstr = (const char*) glGetString(GL_VERSION);
+		if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2)) {
+			*major = *minor = 0;
+			fprintf(stderr, "Invalid GL_VERSION format!!!\n");
+		}
+	}
+
+	void Context::GetGLSLVersion (int *major, int *minor)
+	{
+		int gl_major, gl_minor;
+		GetGLVersion(&gl_major, &gl_minor);
+
+		*major = *minor = 0;
+		if(gl_major == 1) {
+			/* GL v1.x can provide GLSL v1.00 only as an extension */
+			const char* extstr = (const char*)glGetString(GL_EXTENSIONS);
+			if((extstr != NULL) && (strstr(extstr, "GL_ARB_shading_language_100") != NULL))
+			{
+				*major = 1;
+				*minor = 0;
+			}
+		} else if (gl_major >= 2) {
+			/* GL v2.0 and greater must parse the version string */
+			const char* verstr = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+			if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2))
+			{
+				*major = *minor = 0;
+				fprintf(stderr, "Invalid GL_SHADING_LANGUAGE_VERSION format!!!\n");
+			}
+		}
 	}
 
 	void Context::InitializeContext ()

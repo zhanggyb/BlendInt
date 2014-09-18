@@ -37,7 +37,7 @@ namespace BlendInt {
 	{
 	public:
 
-		enum  DisplayType {
+		enum  DisplayMode {
 			Normal,
 			Modal,
 			Popup
@@ -50,6 +50,18 @@ namespace BlendInt {
 		virtual ~Viewport ();
 
 		void AddWidget (Widget* widget);
+
+		void SetFocused (AbstractWidget* widget);
+
+		AbstractWidget* focused() const
+		{
+			return focused_;
+		}
+
+		AbstractWidget* top_hovered () const
+		{
+			return top_hovered_;
+		}
 
 		static Viewport* GetViewport (AbstractWidget* widget);
 
@@ -99,6 +111,8 @@ namespace BlendInt {
 
 		void UpdateHoverWidgetSubs (const MouseEvent& event);
 
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
 		void ClearHoverWidgets ();
@@ -114,6 +128,10 @@ namespace BlendInt {
 		AbstractWidget* focused_;
 
 		AbstractWidget* top_hovered_;
+
+		DisplayMode display_mode_;
+
+		bool custom_focused_widget_;
 
 		Point cursor_;
 

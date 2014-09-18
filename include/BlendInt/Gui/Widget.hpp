@@ -68,15 +68,6 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-	private:
-
-		void InitializeWidgetOnce();
-
-		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> buffers_;
-
 	};
 
 	class Container: public AbstractContainer

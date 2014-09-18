@@ -469,7 +469,7 @@ namespace BlendInt {
 		 */
 		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
 
-		static bool IsHoverThroughExt (const AbstractWidget* widget, const Point& cursor);
+		static bool IsHoverThroughExt (const AbstractWidget* widget, const Point& global_cursor_position);
 
 		static void SetDefaultBorderWidth (float border);
 

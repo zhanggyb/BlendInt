@@ -51,6 +51,10 @@ namespace BlendInt {
 
 	public:
 
+		static bool Initialize ();
+
+		static void Release ();
+
 		Context ();
 
 		virtual ~Context ();
@@ -147,6 +151,10 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
+
+		static void GetGLVersion (int *major, int *minor);
+
+		static void GetGLSLVersion (int *major, int *minor);
 
 		void InitializeContext ();
 

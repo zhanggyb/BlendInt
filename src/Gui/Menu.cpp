@@ -117,7 +117,7 @@ namespace BlendInt {
 	{
 		unsigned int orig = m_highlight;
 
-		if(!Contain(event.position())) {
+		if(!Contain(event.global_position())) {
 			m_highlight = 0;
 
 			if(orig != m_highlight) {
@@ -134,7 +134,7 @@ namespace BlendInt {
 			return Accept;
 		}
 
-		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
+		m_highlight = GetHighlightNo(static_cast<int>(event.global_position().y()));
 
 		if(orig != m_highlight) {
 			Refresh();

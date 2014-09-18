@@ -46,7 +46,7 @@ namespace BlendInt {
 	int AbstractButton::icon_text_space = 2;
 
 	AbstractButton::AbstractButton ()
-	: AbstractWidget(),
+	: Widget(),
 	  text_length_(0),
 	  group_(0)
 	{

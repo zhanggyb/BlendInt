@@ -34,6 +34,7 @@
 namespace BlendInt {
 
 	class Interface;
+	class Context;
 
 	namespace Stock {
 
@@ -145,6 +146,7 @@ namespace BlendInt {
 		private:
 
 			friend class BlendInt::Interface;
+			friend class BlendInt::Context;
 
 			static bool Initialize ();
 

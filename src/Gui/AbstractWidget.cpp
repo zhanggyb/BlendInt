@@ -462,14 +462,14 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool AbstractWidget::IsHoverThroughExt (const AbstractWidget* widget, const Point& cursor)
+	bool AbstractWidget::IsHoverThroughExt (const AbstractWidget* widget, const Point& global_cursor_position)
 	{
 		Point global_position = widget->GetGlobalPosition();
 
-		if(cursor.x() < global_position.x() ||
-			cursor.y() < global_position.y() ||
-			cursor.x() > (global_position.x() + widget->size().width()) ||
-			cursor.y() > (global_position.y() + widget->size().height()))
+		if(global_cursor_position.x() < global_position.x() ||
+				global_cursor_position.y() < global_position.y() ||
+				global_cursor_position.x() > (global_position.x() + widget->size().width()) ||
+				global_cursor_position.y() > (global_position.y() + widget->size().height()))
 		{
 			return false;
 		}

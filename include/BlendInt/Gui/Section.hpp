@@ -61,7 +61,7 @@ namespace BlendInt {
 		/**
 		 * @brief Always return true
 		 */
-		bool Contain (const Point& point) const;
+		virtual bool Contain (const Point& point) const;
 
 		AbstractWidget* last_hover_widget () const
 		{

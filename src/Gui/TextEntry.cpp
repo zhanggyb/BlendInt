@@ -653,7 +653,7 @@ namespace BlendInt {
 	
 	int TextEntry::GetCursorPosition (const MouseEvent& event)
 	{
-		int click_position = event.position().x() - position().x()
+		int click_position = event.global_position().x() - position().x()
 						- round_radius();
 
 		if((click_position < 0) ||

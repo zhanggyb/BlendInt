@@ -34,6 +34,8 @@ namespace BlendInt {
 
 	class InputEvent;
 
+	class Viewport;
+
 	/**
 	 * @brief Mouse event class
 	 *
@@ -63,7 +65,7 @@ namespace BlendInt {
 		MouseEvent (MouseAction action, MouseButton button,
 					const Point& position)
 			: InputEvent(), m_action(action), m_button(button),
-			m_position(position)
+			global_position_(position)
 		{}
 
 		virtual ~MouseEvent ()
@@ -83,27 +85,46 @@ namespace BlendInt {
 
 		void set_button (MouseButton button) {m_button = button;}
 
-		const Point& position () const
+		const Point& global_position () const
 		{
-			return m_position;
+			return global_position_;
 		}
 
-		void set_position (const Point& pos)
+		const Point& local_position () const
 		{
-			m_position = pos;
+			return local_position_;
 		}
 
-		void set_position (int x, int y)
+		void set_global_position (const Point& pos)
 		{
-			m_position.set_x (x);
-			m_position.set_y (y);
+			global_position_ = pos;
+		}
+
+		void set_global_position (int x, int y)
+		{
+			global_position_.set_x (x);
+			global_position_.set_y (y);
+		}
+
+		void set_local_position (const Point& pos)
+		{
+			local_position_ = pos;
+		}
+
+		void set_local_position (int x, int y)
+		{
+			local_position_.set_x(x);
+			local_position_.set_y(y);
 		}
 
 	private:
 
+		friend class Viewport;
+
 		MouseAction m_action;
 		MouseButton m_button;
-		Point m_position;
+		Point global_position_;
+		Point local_position_;
 	};
 
 }

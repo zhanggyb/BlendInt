@@ -51,7 +51,9 @@ namespace BlendInt {
 	Viewport::Viewport ()
 	: AbstractContainer(),
 	focused_(0),
-	top_hovered_(0)
+	top_hovered_(0),
+	display_mode_(Normal),
+	custom_focused_widget_(false)
 	{
 		set_size(500, 400);
 
@@ -96,6 +98,27 @@ namespace BlendInt {
 	{
 		if(PushBackSubWidget(widget)) {
 			widget->SetPosition(margin().left(), margin().bottom());
+		}
+	}
+
+	void Viewport::SetFocused(AbstractWidget* widget)
+	{
+		custom_focused_widget_ = true;
+
+		if(focused_ == widget)
+			return;
+
+		if (focused_) {
+			focused_->set_focus(false);
+			focused_->destroyed().disconnectOne(this, &Viewport::OnFocusedWidgetDestroyed);
+			focused_->FocusEvent(false);
+		}
+
+		focused_ = widget;
+		if (focused_) {
+			focused_->set_focus(true);
+			events()->connect(focused_->destroyed(), this, &Viewport::OnFocusedWidgetDestroyed);
+			focused_->FocusEvent(true);
 		}
 	}
 
@@ -257,7 +280,15 @@ namespace BlendInt {
 
 	ResponseType Viewport::KeyPressEvent (const KeyEvent& event)
 	{
-		return Ignore;
+		const_cast<KeyEvent&>(event).viewport_ = this;
+
+		ResponseType response = Ignore;
+
+		if(focused_) {
+			response = focused_->KeyPressEvent(event);
+		}
+
+		return response;
 	}
 
 	ResponseType Viewport::ContextMenuPressEvent (const ContextMenuEvent& event)
@@ -272,17 +303,84 @@ namespace BlendInt {
 
 	ResponseType Viewport::MousePressEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		ResponseType retval = Ignore;
+
+		const_cast<MouseEvent&>(event).viewport_ = this;
+
+		CheckAndUpdateHoverWidget(event);
+
+		if(top_hovered_) {
+
+			AbstractWidget* widget = 0;	// widget may be focused
+
+			custom_focused_widget_ = false;
+
+			retval = DispatchMousePressEvent(top_hovered_, event);
+
+			if(retval == Accept) {
+				widget = top_hovered_;
+			}
+
+			if(!custom_focused_widget_) {
+				SetFocused(widget);
+			}
+			custom_focused_widget_ = false;
+
+		}
+
+		if(display_mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	ResponseType Viewport::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		ResponseType retval = Ignore;
+
+		const_cast<MouseEvent&>(event).viewport_ = this;
+
+		CheckAndUpdateHoverWidget(event);
+
+		if(focused_) {
+			retval = focused_->MouseReleaseEvent(event);
+		}
+
+		if(retval == Accept) return retval;
+
+		if(display_mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	ResponseType Viewport::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		ResponseType retval = Ignore;
+
+		const_cast<MouseEvent&>(event).viewport_ = this;
+
+		if(Contain(event.global_position())) {
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.global_position().x() - position().x(),
+					event.global_position().y() - position().y());
+		} else {
+			return Ignore;
+		}
+
+		CheckAndUpdateHoverWidget(event);
+
+		if(top_hovered_) {
+			retval = top_hovered_->MouseMoveEvent(event);
+		}
+
+		if(display_mode_ == Modal) {
+			retval = Accept;
+		}
+
+		return retval;
 	}
 
 	bool Viewport::CheckAndUpdateHoverWidget (const MouseEvent& event)
@@ -290,9 +388,9 @@ namespace BlendInt {
 		if (top_hovered_) {
 
 			if (IsHoverThroughExt (top_hovered_->container_,
-					event.position ())) {
+					event.global_position ())) {
 
-				if (top_hovered_->Contain (event.position ())) {
+				if (top_hovered_->Contain (event.local_position ())) {
 
 					AbstractWidget* orig = top_hovered_;
 					UpdateHoverWidgetSubs (event);
@@ -322,7 +420,7 @@ namespace BlendInt {
 									top_hovered_->container ();
 
 							if (top_hovered_->Contain (
-									event.position ())) {
+									event.local_position ())) {
 								break;
 							}
 						}
@@ -330,7 +428,7 @@ namespace BlendInt {
 
 					if (top_hovered_) {
 						UpdateHoverWidgetSubs (event);
-						events ()->connect (top_hovered_->destroyed (),
+						events()->connect(top_hovered_->destroyed (),
 								this, &Viewport::OnHoverWidgetDestroyed);
 					}
 				}
@@ -351,7 +449,7 @@ namespace BlendInt {
 					} else {
 						top_hovered_ = top_hovered_->container();
 
-						if (IsHoverThroughExt(top_hovered_, event.position())) {
+						if (IsHoverThroughExt(top_hovered_, event.local_position())) {
 							break;
 						}
 					}
@@ -368,7 +466,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
-				if (p->visiable() && p->Contain(event.position())) {
+				if (p->visiable() && p->Contain(event.local_position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					top_hovered_ = p;
@@ -400,7 +498,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = parent->last(); p; p = p->previous())
 			{
-				if(p->visiable() && p->Contain(event.position())) {
+				if(p->visiable() && p->Contain(event.local_position())) {
 
 					top_hovered_ = p;
 					top_hovered_->set_hover(true);
@@ -453,6 +551,20 @@ namespace BlendInt {
 			}
 
 		}
+	}
+
+	void Viewport::OnFocusedWidgetDestroyed (AbstractWidget* widget)
+	{
+		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+
+		assert(focused_ == widget);
+
+		if(widget->focused()) {
+			widget->set_focus(false);
+			widget->destroyed().disconnectOne(this, &Viewport::OnFocusedWidgetDestroyed);
+		}
+
+		focused_ = 0;
 	}
 
 	void Viewport::OnHoverWidgetDestroyed (AbstractWidget* widget)

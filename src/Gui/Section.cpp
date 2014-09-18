@@ -221,7 +221,7 @@ namespace BlendInt {
 	ResponseType Section::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_section = this;
+		const_cast<ContextMenuEvent&>(event).section_ = this;
 
 		return Ignore;
 	}
@@ -229,7 +229,7 @@ namespace BlendInt {
 	ResponseType Section::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_section = this;
+		const_cast<ContextMenuEvent&>(event).section_ = this;
 
 		return Ignore;
 	}
@@ -238,7 +238,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		const_cast<MouseEvent&>(event).m_section = this;
+		const_cast<MouseEvent&>(event).section_ = this;
 
 		CheckAndUpdateHoverWidget(event);
 
@@ -259,7 +259,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		const_cast<MouseEvent&>(event).m_section = this;
+		const_cast<MouseEvent&>(event).section_ = this;
 
 		CheckAndUpdateHoverWidget(event);
 
@@ -280,7 +280,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		const_cast<MouseEvent&>(event).m_section = this;
+		const_cast<MouseEvent&>(event).section_ = this;
 
 		CheckAndUpdateHoverWidget(event);
 
@@ -300,9 +300,9 @@ namespace BlendInt {
 		if (last_hover_widget_) {
 
 			if (IsHoverThrough (last_hover_widget_->container_,
-					event.position ())) {
+					event.global_position ())) {
 
-				if (last_hover_widget_->Contain (event.position ())) {
+				if (last_hover_widget_->Contain (event.global_position ())) {
 
 					AbstractWidget* orig = last_hover_widget_;
 					UpdateHoverWidgetSubs (event);
@@ -332,7 +332,7 @@ namespace BlendInt {
 									last_hover_widget_->container ();
 
 							if (last_hover_widget_->Contain (
-									event.position ())) {
+									event.global_position ())) {
 								break;
 							}
 						}
@@ -361,7 +361,7 @@ namespace BlendInt {
 					} else {
 						last_hover_widget_ = last_hover_widget_->container();
 
-						if (IsHoverThrough(last_hover_widget_, event.position())) {
+						if (IsHoverThrough(last_hover_widget_, event.global_position())) {
 							break;
 						}
 					}
@@ -378,7 +378,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
-				if (p->visiable() && p->Contain(event.position())) {
+				if (p->visiable() && p->Contain(event.global_position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					last_hover_widget_ = p;
@@ -410,7 +410,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = parent->last(); p; p = p->previous())
 			{
-				if(p->visiable() && p->Contain(event.position())) {
+				if(p->visiable() && p->Contain(event.global_position())) {
 
 					last_hover_widget_ = p;
 					last_hover_widget_->set_hover(true);

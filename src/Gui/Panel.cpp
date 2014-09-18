@@ -101,7 +101,7 @@ namespace BlendInt {
 				MoveToLast();
 
 				last_position_ = position();
-				cursor_position_ = event.position();
+				cursor_position_ = event.global_position();
 				pressed_ = true;
 
 				event.context()->SetFocusedWidget(this);
@@ -124,8 +124,8 @@ namespace BlendInt {
 	{
 		if(pressed_) {
 
-			int offset_x = event.position().x() - cursor_position_.x();
-			int offset_y = event.position().y() - cursor_position_.y();
+			int offset_x = event.global_position().x() - cursor_position_.x();
+			int offset_y = event.global_position().y() - cursor_position_.y();
 
 			SetPosition(last_position_.x() + offset_x,
 					last_position_.y() + offset_y);

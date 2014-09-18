@@ -281,7 +281,7 @@ namespace BlendInt {
 		if(event.button() == MouseButtonMiddle) {
 			if(first()) {
 				move_status_ = true;
-				start_x_ = event.position().x();
+				start_x_ = event.global_position().x();
 				last_x_ = first()->position().x();
 			}
 		}
@@ -302,8 +302,8 @@ namespace BlendInt {
 	{
 		if(move_status_ && first()) {
 			int xmin = first()->position().x();
-			int direction = event.position().x() - start_x_;
-			int offset = last_x_ + event.position().x() - start_x_;
+			int direction = event.global_position().x() - start_x_;
+			int offset = last_x_ + event.global_position().x() - start_x_;
 			int width = size().width() - margin().left() - margin().right();
 			int left = position().x() + margin().left();
 			int right = position().x() + size().width() - margin().right();
@@ -324,7 +324,7 @@ namespace BlendInt {
 						int x = last_x_;
 						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							SetSubWidgetPosition(p, x + event.global_position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
 						}
 					}
@@ -335,7 +335,7 @@ namespace BlendInt {
 						int x = last_x_;
 						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							SetSubWidgetPosition(p, x + event.global_position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
 						}
 					}
@@ -349,7 +349,7 @@ namespace BlendInt {
 						int x = last_x_;
 						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							SetSubWidgetPosition(p, x + event.global_position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
 						}
 					}
@@ -358,7 +358,7 @@ namespace BlendInt {
 						int x = last_x_;
 						for(AbstractWidget* p = first(); p; p = p->next())
 						{
-							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
+							SetSubWidgetPosition(p, x + event.global_position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
 						}
 					}

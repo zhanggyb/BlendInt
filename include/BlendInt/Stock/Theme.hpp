@@ -37,6 +37,7 @@
 namespace BlendInt {
 
 	class Interface;
+	class Context;
 
 	class Theme;
 
@@ -217,6 +218,7 @@ namespace BlendInt {
 	private:
 
 		friend class Interface;
+		friend class Context;
 
 		static bool Initialize ();
 

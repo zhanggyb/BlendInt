@@ -243,7 +243,7 @@ namespace BlendInt {
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if (GetNewValue(event.position(), &new_value)) {
+			if (GetNewValue(event.global_position(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				Refresh();
@@ -252,7 +252,7 @@ namespace BlendInt {
 			return Accept;
 
 		} else {
-			if (CursorOnSlideIcon(event.position())) {
+			if (CursorOnSlideIcon(event.global_position())) {
 				m_slide.set_highlight(true);
 
 				Refresh();
@@ -269,9 +269,9 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
 	{
-		if (CursorOnSlideIcon(event.position())) {
+		if (CursorOnSlideIcon(event.global_position())) {
 
-			m_cursor_origin = event.position();
+			m_cursor_origin = event.global_position();
 			m_last_value = value();
 			m_pressed = true;
 			fire_slider_pressed();
@@ -287,7 +287,7 @@ namespace BlendInt {
 		if (m_pressed) {
 			m_pressed = false;
 
-			if (CursorOnSlideIcon(event.position())) {
+			if (CursorOnSlideIcon(event.global_position())) {
 				fire_slider_released();
 			}
 

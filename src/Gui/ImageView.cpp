@@ -288,9 +288,9 @@ namespace BlendInt {
 
 	ResponseType ImageView::MousePressEvent (const MouseEvent& event)
 	{
-		if(hbar()->Contain(event.position())) {
+		if(hbar()->Contain(event.global_position())) {
 			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->Contain(event.position())) {
+		} else if (vbar()->Contain(event.global_position())) {
 			return DispatchMousePressEvent(vbar(), event);
 		}
 
