@@ -220,7 +220,11 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
 				0);
 
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.4f, 0.65f, 0.2f, 1.f);
+		if(hover()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.6f, 0.75f, 0.4f, 1.f);
+		} else {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.4f, 0.65f, 0.2f, 1.f);
+		}
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -243,6 +247,11 @@ namespace BlendInt {
 
 	ResponseType Viewport::CursorEnterEvent(bool entered)
 	{
+		if(entered) {
+		} else {
+			ClearHoverWidgets();
+		}
+
 		return Ignore;
 	}
 
@@ -331,13 +340,9 @@ namespace BlendInt {
 
 		set_event_viewport(event);
 
-		if(Contain(event.global_position())) {
-			const_cast<MouseEvent&>(event).set_local_position(
-					event.global_position().x() - position().x(),
-					event.global_position().y() - position().y());
-		} else {
-			return Ignore;
-		}
+		const_cast<MouseEvent&>(event).set_local_position(
+				event.global_position().x() - position().x(),
+				event.global_position().y() - position().y());
 
 		CheckAndUpdateHoverWidget(event);
 

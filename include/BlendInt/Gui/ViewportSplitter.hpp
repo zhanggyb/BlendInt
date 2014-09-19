@@ -133,7 +133,11 @@ namespace BlendInt {
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
+		void OnHoverViewportDestroyed (AbstractWidget* widget);
+
 		Orientation orientation_;
+
+		AbstractViewport* hover_;
 	};
 }
 

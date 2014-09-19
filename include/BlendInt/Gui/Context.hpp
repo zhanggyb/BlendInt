@@ -78,16 +78,12 @@ namespace BlendInt {
 		 */
 		Section* Remove (AbstractWidget* widget);
 
+		void SetFocusedViewport (AbstractViewport* viewport);
+
 		/**
 		 * @brief Always return true
 		 */
 		virtual bool Contain (const Point& point) const;
-
-		AbstractWidget* focused_widget () const
-		{
-			//return m_focused_widget;
-			return 0;
-		}
 
 		/**
 		 * @brief Set the cursor
@@ -156,9 +152,13 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
+		void OnHoverViewportDestroyed (AbstractWidget* widget);
+
 		Profile profile_;
 
 		int current_cursor_;
+
+		AbstractViewport* hover_;
 
 		std::stack<int> cursor_stack_;
 

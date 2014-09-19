@@ -190,7 +190,11 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
 				0);
 
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.9f, 0.05f, 0.05f, 1.f);
+		if(hover()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.9f, 0.05f, 0.05f, 1.f);
+		} else {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
+		}
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -254,7 +258,8 @@ namespace BlendInt {
 
 	ViewportSplitter::ViewportSplitter(Orientation orientation)
 	: AbstractViewport(),
-	  orientation_(orientation)
+	  orientation_(orientation),
+	  hover_(0)
 	{
 		set_size(500, 500);
 	}
@@ -407,6 +412,15 @@ namespace BlendInt {
 
 	ResponseType ViewportSplitter::CursorEnterEvent(bool entered)
 	{
+		if(entered) {
+			// TODO: do sth.
+		} else {
+			if(hover_) {
+				set_widget_hover_event(hover_, false);
+				hover_->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+				hover_ = 0;
+			}
+		}
 		return Ignore;
 	}
 
@@ -465,20 +479,49 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		if(Contain(event.global_position())) {
+		AbstractViewport* original_hover = hover_;
 
-			for(AbstractWidget* p = last(); p; p = p->previous()) {
+		if(hover_) {
+			if(hover_->Contain(event.global_position())) {
 
-				if(p->Contain(event.global_position())) {
+			} else {
 
-					response = assign_mouse_move_event(p, event);
-					if(response == Accept) break;
+				hover_ = 0;
+				for(AbstractWidget* p = last(); p; p = p->previous()) {
+					if(p->Contain(event.global_position())) {
+						hover_ = dynamic_cast<AbstractViewport*>(p);
+						break;
+					}
 				}
 
 			}
-
 		} else {
-			return Ignore;
+
+			for(AbstractWidget* p = last(); p; p = p->previous()) {
+				if(p->Contain(event.global_position())) {
+					hover_ = dynamic_cast<AbstractViewport*>(p);
+					break;
+				}
+			}
+
+		}
+
+		if(original_hover != hover_) {
+
+			if(original_hover) {
+				set_widget_hover_event(original_hover, false);
+				original_hover->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+			}
+
+			if(hover_) {
+				set_widget_hover_event(hover_, true);
+				events()->connect(hover_->destroyed(), this, &ViewportSplitter::OnHoverViewportDestroyed);
+			}
+
+		}
+
+		if(hover_) {
+			response = assign_mouse_move_event(hover_, event);
 		}
 
 		return response;
@@ -522,6 +565,17 @@ namespace BlendInt {
 		room = room / ((sum + 1) / 2);
 
 		return room;
+	}
+
+	void ViewportSplitter::OnHoverViewportDestroyed(AbstractWidget* widget)
+	{
+		assert(widget->hover());
+		assert(hover_ == widget);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+
+		hover_ = 0;
 	}
 
 }

@@ -26,14 +26,16 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Viewport* vp = Manage(new Viewport);
+	DBG_SET_NAME(vp, "Viewport");
 	Button* btn = Manage(new Button("Button"));
 	vp->AddWidget(btn);
 
 	vp->SetPosition(400, 300);
 
+	btn->SetPosition(100, 100);
+
 	AddViewport(vp);
 
-	/*
 	Viewport* vp1 = Manage(new Viewport);
 	DBG_SET_NAME(vp1, "Viewport1");
 	Viewport* vp2 = Manage(new Viewport);
@@ -57,5 +59,4 @@ void GLFWDemoContext::Initialize ()
 
 	Button* btn2 = Manage(new Button("Hello2"));
 	vp2->AddWidget(btn2);
-	*/
 }

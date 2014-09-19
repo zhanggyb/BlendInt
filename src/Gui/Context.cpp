@@ -170,7 +170,8 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractContainer()
+	: AbstractContainer(),
+	  hover_(0)
 	{
 		set_size(640, 480);
 
@@ -515,10 +516,38 @@ namespace BlendInt
 
 		ResponseType response = Ignore;
 
-		for(AbstractWidget* p = last(); p; p = p->previous()) {
-			response = p->MouseMoveEvent(event);
+		AbstractViewport* original_hover = hover_;
 
-			if(response == Accept) break;
+		hover_ = 0;
+		for(AbstractWidget* p = last(); p; p = p->previous()) {
+			if(p->Contain(event.global_position())) {
+				hover_ = dynamic_cast<AbstractViewport*>(p);
+				break;
+			}
+		}
+
+		if(original_hover != hover_) {
+
+			if(original_hover) {
+				original_hover->set_hover(false);
+				original_hover->CursorEnterEvent(false);
+				original_hover->destroyed().disconnectOne(this, &Context::OnHoverViewportDestroyed);
+			}
+
+			if(hover_) {
+				hover_->set_hover(true);
+				hover_->CursorEnterEvent(true);
+				events()->connect(hover_->destroyed(), this, &Context::OnHoverViewportDestroyed);
+			}
+
+		}
+
+		if(last()) {
+			response = last()->MouseMoveEvent(event);
+		}
+
+		if(hover_ && hover_ != last()) {
+			hover_->MouseMoveEvent(event);
 		}
 
 		return response;
@@ -570,6 +599,17 @@ namespace BlendInt
 
 		Shaders::instance->SetUIProjectionMatrix(projection);
 		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+	}
+
+	void Context::OnHoverViewportDestroyed(AbstractWidget* widget)
+	{
+		assert(widget->hover());
+		assert(hover_ == widget);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &Context::OnHoverViewportDestroyed);
+
+		hover_ = 0;
 	}
 
 }
