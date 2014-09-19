@@ -26,94 +26,36 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Viewport* vp = Manage(new Viewport);
-	vp->SetPosition(200, 100);
-	vp->SetPosition(200, 200);
+	Button* btn = Manage(new Button("Button"));
+	vp->AddWidget(btn);
+
+	vp->SetPosition(400, 300);
 
 	AddViewport(vp);
 
-	Button* widget = Manage(new Button("Hello World!"));
-
-	vp->AddWidget(widget);
-
-	Point pos = widget->GetGlobalPosition ();
-
-	DBG_PRINT_MSG("widget position: %d, %d", pos.x(), pos.y());
-
-	DBG_PRINT_MSG("viewport: %d, %d, %d, %d", vp->position().x(), vp->position().y(), vp->size().width(), vp->size().height());
-
-	vp->SetPosition(300, 200);
-
-//	Viewport* vp2 = Manage(new Viewport);
-//
-//	vp->SetPosition(350, 300);
-//
-//	AddViewport(vp2);
-
-	ViewportSplitterHandle* vp_sp = Manage(new ViewportSplitterHandle);
-
-	Button* btn2 = Manage(new Button("SplitterHandle"));
-
-	vp_sp->SetHandleWidget(btn2);
-	vp_sp->Resize(vp_sp->GetPreferredSize());
-
-	AddViewport(vp_sp);
-
 	/*
-	Workspace* ws = Manage(new Workspace);
-	DBG_SET_NAME(ws, "Workspace");
-	ws->SetPosition(200, 100);
+	Viewport* vp1 = Manage(new Viewport);
+	DBG_SET_NAME(vp1, "Viewport1");
+	Viewport* vp2 = Manage(new Viewport);
+	DBG_SET_NAME(vp2, "Viewport2");
 
-	Append(ws);
+	ViewportSplitter* vs = Manage(new ViewportSplitter);
+	vs->Resize(600, 400);
+	DBG_SET_NAME(vs, "Viewport Splitter");
 
-	Viewport3D* view = Manage(new Viewport3D);
-	ws->SetViewport(view);
+	vs->AppendViewport(vp1);
+	vs->AppendViewport(vp2);
 
-	ToolBar* tb = Manage(new ToolBar);
-	ws->SetHeader(tb);
+	AddViewport(vs);
 
-	ToolBox* box1 = Manage(new ToolBox);
-	ws->SetLeftSideBar(box1);
+	Button* btn1 = Manage(new Button("Hello1"));
+	vp1->AddWidget(btn1);
 
-	ToolBox* box2 = Manage(new ToolBox);
-	ws->SetRightSideBar(box2);
+	AbstractViewport* view = AbstractViewport::GetViewport(btn1);
 
-	StaticPanel* panel = Manage(new StaticPanel);
-	DBG_SET_NAME(panel, "Static Panel");
-	panel->SetPosition(1020, 200);
-	panel->SetSpace(0);
+	DBG_PRINT_MSG("viewport: %s", view->name().c_str());
 
-	Decoration* dec = Manage(new Decoration);
-	DBG_SET_NAME(dec, "Decoration");
-	dec->SetRoundType(RoundTopLeft | RoundTopRight);
-
-	ColorSelector* cs = Manage(new ColorSelector);
-	DBG_SET_NAME(cs, "ColorSelector");
-	cs->SetRoundType(RoundBottomLeft | RoundBottomRight);
-
-	panel->SetDecoration(dec);
-	panel->SetContent(cs);
-
-	panel->Resize(panel->GetPreferredSize());
-
-	Append(panel);
+	Button* btn2 = Manage(new Button("Hello2"));
+	vp2->AddWidget(btn2);
 	*/
-
-	/*
-    Tab* tab = Manage (new Tab);
-    tab->SetPosition(100, 100);
-
-    Button* btn1 = Manage (new Button("Button1"));
-    btn1->SetRoundType(RoundNone);
-
-    Button* btn2 = Manage (new Button("Button2"));
-    btn2->SetRoundType(RoundNone);
-
-    tab->Add(String("Title1"), btn1);
-    tab->Resize(400, 300);
-
-    tab->Add(String("Title2"), btn2);
-
-    PushBack(tab);
-    */
-
 }

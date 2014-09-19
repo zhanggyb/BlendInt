@@ -46,16 +46,9 @@ namespace BlendInt {
 
 		virtual ~AbstractViewport ();
 
-		void SetFocused (AbstractWidget* widget);
-
-		AbstractWidget* focused() const
+		inline DisplayMode display_mode () const
 		{
-			return focused_;
-		}
-
-		AbstractWidget* top_hovered () const
-		{
-			return top_hovered_;
+			return display_mode_;
 		}
 
 		static AbstractViewport* GetViewport (AbstractWidget* widget);
@@ -78,49 +71,62 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		//virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-	private:
-
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
 		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
 
-		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
+		ResponseType assign_key_press_event (AbstractWidget* widget, const KeyEvent& event)
+		{
+			return widget->KeyPressEvent(event);
+		}
 
-		void UpdateHoverWidgetSubs (const MouseEvent& event);
+		ResponseType assign_mouse_press_event (AbstractWidget* widget, const MouseEvent& event)
+		{
+			return widget->MousePressEvent(event);
+		}
 
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+		ResponseType assign_mouse_release_event(AbstractWidget* widget, const MouseEvent& event)
+		{
+			return widget->MouseReleaseEvent(event);
+		}
 
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+		ResponseType assign_mouse_move_event(AbstractWidget* widget, const MouseEvent& event)
+		{
+			return widget->MouseMoveEvent(event);
+		}
 
-		void ClearHoverWidgets ();
+		void set_widget_focus_event (AbstractWidget* widget, bool focus)
+		{
+			widget->set_focus(focus);
+			widget->FocusEvent(focus);
+		}
 
-		AbstractWidget* focused_;
+		// NOT USED, remove later
+		void set_widget_focus_status (AbstractWidget* widget, bool focus)
+		{
+			widget->set_focus(focus);
+		}
 
-		AbstractWidget* top_hovered_;
+		void set_widget_hover_event (AbstractWidget* widget, bool hover)
+		{
+			widget->set_hover(hover);
+			widget->CursorEnterEvent(hover);
+		}
+
+		// NOT USED, remove later
+		void set_widget_hover_status (AbstractWidget* widget, bool hover)
+		{
+			widget->set_hover(hover);
+		}
+
+		void set_event_viewport (const DeviceEvent& event)
+		{
+			const_cast<DeviceEvent&>(event).viewport_ = this;
+		}
+
+	private:
 
 		DisplayMode display_mode_;
-
-		bool custom_focused_widget_;
-
-		Point cursor_;
 
 		static glm::mat4 default_view_matrix;
 	};

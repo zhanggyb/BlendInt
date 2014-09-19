@@ -54,6 +54,22 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
 
 		glm::mat4 projection_matrix_;
@@ -81,15 +97,41 @@ namespace BlendInt {
 
 		virtual ~ViewportSplitter ();
 
+		void PrependViewport (AbstractViewport* viewport);
 
+		void AppendViewport (AbstractViewport* viewport);
+
+		void Insert (int index, AbstractViewport* viewport);
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
 
 		friend class ViewportSplitterHandle;
+
+		void AlignSubViewports (Orientation orientation, const Size& size);
+
+		int GetAverageRoom (Orientation orientation, const Size& size);
 
 		Orientation orientation_;
 	};

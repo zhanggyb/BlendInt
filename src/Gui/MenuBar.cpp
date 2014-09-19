@@ -335,7 +335,7 @@ namespace BlendInt {
 			menu->SetPosition(m_active_button->position().x(), y);
 			context->Append(menu.get());
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
-			context->SetFocusedWidget(menu.get());
+			//context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
 		}

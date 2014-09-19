@@ -170,9 +170,7 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractContainer(),
-	  focused_widget_(0),
-	  custom_focus_widget_(false)
+	: AbstractContainer()
 	{
 		set_size(640, 480);
 
@@ -186,13 +184,6 @@ namespace BlendInt
 		if(container() != 0) {
 			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
 		}
-
-		if (focused_widget_) {
-			focused_widget_->set_focus(false);
-			focused_widget_->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_ = 0;
-		}
-
 		context_set.erase(this);
 	}
 
@@ -299,28 +290,6 @@ namespace BlendInt
 	bool Context::Contain (const Point& point) const
 	{
 		return true;
-	}
-
-	void Context::SetFocusedWidget (AbstractWidget* widget)
-	{
-		custom_focus_widget_ = true;
-
-		if(focused_widget_ == widget) {
-			return;
-		}
-
-		if (focused_widget_) {
-			focused_widget_->set_focus(false);
-			focused_widget_->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_->FocusEvent(false);
-		}
-
-		focused_widget_ = widget;
-		if (focused_widget_) {
-			focused_widget_->set_focus(true);
-			events()->connect(focused_widget_->destroyed(), this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_->FocusEvent(true);
-		}
 	}
 
 	void Context::SetCursor (int cursor_type)
@@ -463,6 +432,8 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
+		glViewport(0, 0, size().width(), size().height());
+
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
 			p->Draw(profile);
@@ -484,12 +455,6 @@ namespace BlendInt
 
 		if(last()) {
 			response = last()->KeyPressEvent(event);
-		}
-
-		return response;
-
-		if(focused_widget_) {
-			response = focused_widget_->KeyPressEvent(event);
 		}
 
 		return response;
@@ -527,39 +492,6 @@ namespace BlendInt
 		}
 
 		return response;
-
-		AbstractWidget* widget = 0;	// widget may be focused
-
-		const_cast<MouseEvent&>(event).context_ = this;
-
-		custom_focus_widget_ = false;
-		for (Section::iterator_ptr = last(); Section::iterator_ptr;
-		        Section::iterator_ptr = Section::iterator_ptr->previous()) {
-			response = Section::iterator_ptr->MousePressEvent(event);
-
-			if (response == Accept)	break;
-		}
-
-		if(response == Accept && Section::iterator_ptr) {
-			widget = dynamic_cast<Section*>(Section::iterator_ptr)->last_hover_widget_;
-		}
-
-		Section::iterator_ptr = 0;
-
-		if(!custom_focus_widget_) {
-			SetFocusedWidget(widget);
-		}
-		custom_focus_widget_ = false;
-
-		/*
-		if(focused_widget_) {
-			DBG_PRINT_MSG("focus widget: %s", focused_widget_->name().c_str());
-		} else {
-			DBG_PRINT_MSG("%s", "focus widget unset");
-		}
-		*/
-
-		return response;
 	}
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
@@ -575,64 +507,18 @@ namespace BlendInt
 		}
 
 		return response;
-
-		// tell the focused widget first
-		if(focused_widget_) {
-			response = focused_widget_->MouseReleaseEvent(event);
-		}
-
-		if(response == Accept) {
-			return response;
-		}
-
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			response = p->MouseReleaseEvent(event);
-			if (response == Accept) {
-				break;
-			}
-		}
-
-		return response;
 	}
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
 		const_cast<MouseEvent&>(event).context_ = this;
 
-		ResponseType response;
+		ResponseType response = Ignore;
 
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
 			response = p->MouseMoveEvent(event);
 
 			if(response == Accept) break;
-		}
-
-		return response;
-
-		// tell the focused widget first
-		if (focused_widget_) {
-			response = focused_widget_->MouseMoveEvent(event);
-		}
-
-		if(response == Accept) {
-
-			// still set cursor hover
-			for(AbstractWidget* p = last(); p; p = p->previous())
-			{
-				if(dynamic_cast<Section*>(p)->CheckAndUpdateHoverWidget(event)) break;
-			}
-
-			return response;	// return Accept
-		}
-
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			response = p->MouseMoveEvent(event);
-
-			if (response == Accept) {
-				break;
-			}
 		}
 
 		return response;
@@ -684,25 +570,6 @@ namespace BlendInt
 
 		Shaders::instance->SetUIProjectionMatrix(projection);
 		Shaders::instance->SetUIViewMatrix(default_view_matrix);
-	}
-
-	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)
-	{
-		return 0;
-	}
-
-	void Context::OnFocusedWidgetDestroyed (AbstractWidget* widget)
-	{
-		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-
-		assert(focused_widget_ == widget);
-
-		if(widget->focused()) {
-			widget->set_focus(false);
-			widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-		}
-
-		focused_widget_ = 0;
 	}
 
 }

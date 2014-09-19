@@ -41,6 +41,20 @@ namespace BlendInt {
 
 		void AddWidget (Widget* widget);
 
+		void SetFocused (AbstractWidget* widget);
+
+		AbstractWidget* focused() const
+		{
+			return focused_;
+		}
+
+		AbstractWidget* top_hovered () const
+		{
+			return top_hovered_;
+		}
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
@@ -49,7 +63,41 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
+
+		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
+
+		void UpdateHoverWidgetSubs (const MouseEvent& event);
+
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
+		void ClearHoverWidgets ();
+
+		AbstractWidget* focused_;
+
+		AbstractWidget* top_hovered_;
+
+		bool custom_focused_widget_;
+
+		Point cursor_;
 
 		glm::mat4 projection_matrix_;
 

@@ -624,12 +624,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void Splitter::AlignSubWidgets (Orientation orienation, const Size& out_size, const Margin& margin)
+	void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size, const Margin& margin)
 	{
-		int room = GetAverageRoom(orienation, out_size, margin);
+		int room = GetAverageRoom(orientation, out_size, margin);
 		int x = position().x() + margin.left();
 
-		if(orienation == Horizontal) {
+		if(orientation == Horizontal) {
 
 			int y = position().y() + margin.bottom();
 			int h = out_size.height() - margin.vsum();

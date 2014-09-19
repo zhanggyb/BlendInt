@@ -104,7 +104,7 @@ namespace BlendInt {
 				cursor_position_ = event.global_position();
 				pressed_ = true;
 
-				event.context()->SetFocusedWidget(this);
+				//event.context()->SetFocusedWidget(this);
 
 				return Accept;
 			}

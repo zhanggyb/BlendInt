@@ -78,8 +78,6 @@ namespace BlendInt {
 		 */
 		Section* Remove (AbstractWidget* widget);
 
-		void SetFocusedWidget (AbstractWidget* widget);
-
 		/**
 		 * @brief Always return true
 		 */
@@ -158,15 +156,7 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
-
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
-
 		Profile profile_;
-
-		AbstractWidget* focused_widget_;
-
-		bool custom_focus_widget_;
 
 		int current_cursor_;
 

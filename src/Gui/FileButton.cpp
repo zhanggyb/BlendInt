@@ -269,7 +269,7 @@ namespace BlendInt {
 			panel_->SetContent(file_selector);
 			Section* section = context->Append(panel_);
 			section->set_mode(Section::Modal);
-			context->SetFocusedWidget(file_selector);
+			//context->SetFocusedWidget(file_selector);
 
 			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
 			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
