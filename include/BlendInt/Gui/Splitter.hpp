@@ -24,14 +24,15 @@
 #ifndef _BLENDINT_GUI_SPLITTER_HPP_
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt
 {
 
 	class Splitter;
 
-	class SplitterHandle: public AbstractWidget
+	class SplitterHandle: public Widget
 	{
 	DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
@@ -104,7 +105,7 @@ namespace BlendInt
 	 * A Splitter lets the user control the size of the sub widgets by dragging
 	 * the splitter handler between them.
 	 */
-	class Splitter: public AbstractContainer
+	class Splitter: public Container
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
 

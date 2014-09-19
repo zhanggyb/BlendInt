@@ -196,7 +196,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	void Context::AddViewport (Viewport* vp)
+	void Context::AddViewport (AbstractViewport* vp)
 	{
 		if(PushBackSubWidget(vp)) {
 			// TODO: 			
@@ -404,10 +404,10 @@ namespace BlendInt
 	{
 		if (request.source() == this) {
 
-			glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
-			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
+			//glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
+			//        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
-			Shaders::instance->SetUIProjectionMatrix(projection);
+			//Shaders::instance->SetUIProjectionMatrix(projection);
 
 			/*
 			for(AbstractWidget* p = first(); p; p = p->next())
@@ -517,9 +517,13 @@ namespace BlendInt
 		ResponseType response;
 
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
-			response = p->MousePressEvent(event);
 
-			if(response == Accept) break;
+			if(p->Contain(event.global_position())) {
+				response = p->MousePressEvent(event);
+
+				p->MoveToLast();
+				break;
+			}
 		}
 
 		return response;

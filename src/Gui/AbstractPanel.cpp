@@ -26,7 +26,8 @@
 namespace BlendInt {
 
 	AbstractPanel::AbstractPanel ()
-	: decoration_(0),
+	: Container(),
+	  decoration_(0),
 	  content_(0),
 	  space_(2)
 	{

@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractContainer()
+	: Container()
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);

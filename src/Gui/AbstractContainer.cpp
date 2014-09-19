@@ -577,29 +577,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::PerformMarginUpdate(const Margin& margin)
-	{
-	}
-
-	void AbstractContainer::SetMargin (const Margin& margin)
-	{
-		if (margin_.equal(margin))
-			return;
-
-		PerformMarginUpdate(margin);
-		margin_ = margin;
-	}
-
-	void AbstractContainer::SetMargin (int left, int right, int top, int bottom)
-	{
-		if (margin_.equal(left, right, top, bottom))
-			return;
-
-		Margin new_margin(left, right, top, bottom);
-		PerformMarginUpdate(new_margin);
-		margin_ = new_margin;
-	}
-	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
 					int width, int height)
 	{

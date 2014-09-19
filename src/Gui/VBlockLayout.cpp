@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	VBlockLayout::VBlockLayout ()
-	: AbstractContainer()
+	: Container()
 	{
 		set_size(80, 60);
 		set_margin(0, 0, 0, 0);

@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 #define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
-	class StackLayout: public AbstractContainer
+	class StackLayout: public Container
 	{
 		DISALLOW_COPY_AND_ASSIGN(StackLayout);
 

@@ -44,7 +44,7 @@
 namespace BlendInt {
 
 	MenuBar::MenuBar ()
-	: AbstractContainer(), m_vao(0), m_space(2), m_active_button(0)
+	: Container(), m_vao(0), m_space(2), m_active_button(0)
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);

@@ -21,38 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOOLBOX_HPP_
-#define _BLENDINT_GUI_TOOLBOX_HPP_
+#ifndef _BLENDINT_GUI_CONTAINER_HPP_
+#define _BLENDINT_GUI_CONTAINER_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public Container
+	class Container: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBox);
 
 	public:
 
-		ToolBox();
+		Container ();
 
-		virtual ~ToolBox();
+		virtual ~Container ();
 
-		void Append (AbstractWidget* widget);
+		const Margin& margin () const {return margin_;}
 
-		virtual bool IsExpandY () const;
+		void SetMargin (const Margin& margin);
 
-		virtual Size GetPreferredSize () const;
+		void SetMargin (int left, int right, int top, int bottom);
 
 	protected:
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformMarginUpdate (const Margin& margin);
 
 		virtual ResponseType Draw (Profile& profile);
 
@@ -60,9 +53,11 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (
+		        const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (
+		        const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -70,22 +65,25 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		inline void set_margin (const Margin& margin)
+		{
+			margin_ = margin;
+		}
+
+		inline void set_margin (int left, int right, int top, int bottom)
+		{
+			margin_.set_left(left);
+			margin_.set_right(right);
+			margin_.set_top(top);
+			margin_.set_bottom(bottom);
+		}
+
 	private:
 
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
-
-		void FillSubWidgets (int x, int y, int width, int height, int space);
-
-		int GetLastPosition () const;
-
-		GLuint vao_;
-
-		int space_;
-
-		RefPtr<GLArrayBuffer> inner_;
+		Margin margin_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_TOOLBOX_HPP_ */
+#endif /* _BLENDINT_GUI_CONTAINER_HPP_ */

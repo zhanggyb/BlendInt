@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SCROLLVIEW_HPP_
 #define _BLENDINT_GUI_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
@@ -32,7 +32,7 @@ namespace BlendInt {
 	 * @brief A widget container in which a sub widget can be scrolled
 	 *
 	 */
-	class ScrollView: public AbstractContainer
+	class ScrollView: public Container
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 

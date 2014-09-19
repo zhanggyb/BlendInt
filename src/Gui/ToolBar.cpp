@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ToolBar::ToolBar ()
-	: AbstractContainer(),
+	: Container(),
 	  vao_(0),
 	  space_(4),
 	  move_status_(false),

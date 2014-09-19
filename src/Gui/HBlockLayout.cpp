@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	HBlockLayout::HBlockLayout ()
-	: AbstractContainer()
+	: Container()
 	{
 		set_size(100, 20);
 		set_margin(0, 0, 0, 0);

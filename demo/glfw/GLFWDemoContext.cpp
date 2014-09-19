@@ -9,6 +9,7 @@
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/ViewportSplitter.hpp>
 
 GLFWDemoContext::GLFWDemoContext()
 : BI::Context()
@@ -41,6 +42,21 @@ void GLFWDemoContext::Initialize ()
 	DBG_PRINT_MSG("viewport: %d, %d, %d, %d", vp->position().x(), vp->position().y(), vp->size().width(), vp->size().height());
 
 	vp->SetPosition(300, 200);
+
+//	Viewport* vp2 = Manage(new Viewport);
+//
+//	vp->SetPosition(350, 300);
+//
+//	AddViewport(vp2);
+
+	ViewportSplitterHandle* vp_sp = Manage(new ViewportSplitterHandle);
+
+	Button* btn2 = Manage(new Button("SplitterHandle"));
+
+	vp_sp->SetHandleWidget(btn2);
+	vp_sp->Resize(vp_sp->GetPreferredSize());
+
+	AddViewport(vp_sp);
 
 	/*
 	Workspace* ws = Manage(new Workspace);

@@ -48,7 +48,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
-	: AbstractWidget(),
+	: Widget(),
 	  orientation_(orientation),
 	  vao_(0),
 	  highlight_(false),
@@ -328,7 +328,7 @@ namespace BlendInt {
 	}
 
 	Splitter::Splitter(Orientation orientation)
-	: AbstractContainer(),
+	: Container(),
 	  orientation_(orientation)
 	{
 		set_size(400, 400);

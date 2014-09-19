@@ -21,34 +21,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOOLBOX_HPP_
-#define _BLENDINT_GUI_TOOLBOX_HPP_
+#ifndef _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_
+#define _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/AbstractViewport.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public Container
-	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBox);
+	class Widget;
+	class ViewportSplitter;
 
+	class ViewportSplitterHandle: public AbstractViewport
+	{
 	public:
 
-		ToolBox();
+		ViewportSplitterHandle (Orientation orientation = Horizontal);
 
-		virtual ~ToolBox();
+		virtual ~ViewportSplitterHandle ();
 
-		void Append (AbstractWidget* widget);
-
-		virtual bool IsExpandY () const;
+		void SetHandleWidget (Widget* widget);
 
 		virtual Size GetPreferredSize () const;
 
 	protected:
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual void PerformMarginUpdate (const Margin& request);
+		friend class ViewportSplitter;
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -56,36 +54,45 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		glm::mat4 projection_matrix_;
 
-		void FillSubWidgets (int x, int y, int width, int height, int space);
+		glm::mat4 model_matrix_;
 
-		int GetLastPosition () const;
+		Orientation orientation_;
 
 		GLuint vao_;
 
-		int space_;
+		GLBuffer<ARRAY_BUFFER> buffer_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		AbstractViewport* previous_viewport_;
 
+		AbstractViewport* next_viewport_;
 	};
 
+	// -------------------------------
+
+	class ViewportSplitter: public AbstractViewport
+	{
+	public:
+
+		ViewportSplitter (Orientation orientation = Horizontal);
+
+		virtual ~ViewportSplitter ();
+
+
+
+	protected:
+
+		virtual ResponseType Draw (Profile& profile);
+
+	private:
+
+		friend class ViewportSplitterHandle;
+
+		Orientation orientation_;
+	};
 }
 
-#endif /* _BLENDINT_GUI_TOOLBOX_HPP_ */
+#endif /* _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_ */

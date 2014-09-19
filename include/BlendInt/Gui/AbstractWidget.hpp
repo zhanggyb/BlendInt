@@ -282,7 +282,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class Viewport;
+		friend class AbstractViewport;
 		friend class AbstractContainer;
 
 		template <typename T> friend T* Manage (T* obj, bool val);

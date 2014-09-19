@@ -27,7 +27,7 @@ namespace BlendInt {
 
 
 	StackLayout::StackLayout ()
-	: AbstractContainer(),
+	: Container(),
 	  active_widget_(0)
 	{
 	}

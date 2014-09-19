@@ -35,7 +35,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class Viewport;
+		friend class AbstractViewport;
 		friend class AbstractWidget;
 
 	public:
@@ -43,12 +43,6 @@ namespace BlendInt {
 		AbstractContainer ();
 
 		virtual ~AbstractContainer ();
-
-		const Margin& margin () const {return margin_;}
-
-		void SetMargin (const Margin& margin);
-
-		void SetMargin (int left, int right, int top, int bottom);
 
 		AbstractWidget* first () const
 		{
@@ -128,8 +122,6 @@ namespace BlendInt {
 
 		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
 
-		virtual void PerformMarginUpdate (const Margin& margin);
-
 		virtual ResponseType FocusEvent (bool focus);
 
 		void MoveSubWidgets (int offset_x, int offset_y);
@@ -160,19 +152,6 @@ namespace BlendInt {
 						int height, Orientation orientation,
 						int alignment, int space);
 
-		inline void set_margin (const Margin& margin)
-		{
-			margin_ = margin;
-		}
-
-		inline void set_margin (int left, int right, int top, int bottom)
-		{
-			margin_.set_left(left);
-			margin_.set_right(right);
-			margin_.set_top(top);
-			margin_.set_bottom(bottom);
-		}
-
 		inline void set_offset_x (int x)
 		{
 			offset_x_ = x;
@@ -198,8 +177,6 @@ namespace BlendInt {
 		void AlignHorizontally (int y, int height, int alignment);
 
 		void AlignVertically (int x, int width, int alignment);
-
-		Margin margin_;
 
 		AbstractWidget* first_;
 		AbstractWidget* last_;

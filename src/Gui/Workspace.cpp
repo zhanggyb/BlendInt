@@ -171,7 +171,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	EdgeButtonLayer::EdgeButtonLayer()
-	: AbstractContainer()
+	: Container()
 	{
 		set_margin(0, 0, 0, 0);
 		InitializeSideButtonLayer();
@@ -333,7 +333,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: AbstractContainer(),
+	: Container(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),

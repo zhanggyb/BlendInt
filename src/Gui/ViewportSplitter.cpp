@@ -34,20 +34,29 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/ViewportSplitter.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
+
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Viewport::Viewport ()
+	ViewportSplitterHandle::ViewportSplitterHandle(Orientation orientation)
 	: AbstractViewport(),
-	  vao_(0)
+	  orientation_(orientation),
+	  vao_(0),
+	  previous_viewport_(0),
+	  next_viewport_(0)
 	{
-		set_size(500, 400);
+		if(orientation == Horizontal) {
+			set_size(200, 1);
+		} else {
+			set_size(1, 200);
+		}
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
@@ -73,19 +82,36 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	Viewport::~Viewport()
+	ViewportSplitterHandle::~ViewportSplitterHandle()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Viewport::AddWidget(Widget* widget)
+	void ViewportSplitterHandle::SetHandleWidget(Widget* widget)
 	{
+		if(widget_count()) {
+			Clear();
+		}
+
 		if(PushBackSubWidget(widget)) {
-			// set position
+			widget->SetPosition(0, 0);
+			widget->Resize(size().width(),
+					size().height());
 		}
 	}
 
-	void Viewport::PerformPositionUpdate(
+	Size ViewportSplitterHandle::GetPreferredSize() const
+	{
+		Size preferred_size(1, 1);
+
+		if(widget_count()) {
+			preferred_size = first()->GetPreferredSize();
+		}
+
+		return preferred_size;
+	}
+
+	void ViewportSplitterHandle::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -109,7 +135,8 @@ namespace BlendInt {
 		}
 	}
 
-	void Viewport::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void ViewportSplitterHandle::PerformSizeUpdate(
+			const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -134,6 +161,10 @@ namespace BlendInt {
 			GLArrayBuffer::reset();
 
 			set_size(*request.size());
+
+			if(widget_count()) {
+				first()->Resize(*request.size());
+			}
 		}
 
 		if(request.source() == this) {
@@ -141,7 +172,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::Draw (Profile& profile)
+	ResponseType ViewportSplitterHandle::Draw(Profile& profile)
 	{
 		glViewport(position().x(), position().y(), size().width(), size().height());
 		glEnable(GL_SCISSOR_TEST);
@@ -168,6 +199,28 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
+		for(AbstractWidget* p = first(); p; p = p->next()) {
+			DispatchDrawEvent (p, profile);
+		}
+
+		return Ignore;
+	}
+
+	// --------------------------------
+
+	ViewportSplitter::ViewportSplitter(Orientation orientation)
+	: AbstractViewport()
+	{
+
+	}
+
+	ViewportSplitter::~ViewportSplitter()
+	{
+
+	}
+
+	ResponseType ViewportSplitter::Draw(Profile& profile)
+	{
 		for(AbstractWidget* p = first(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}

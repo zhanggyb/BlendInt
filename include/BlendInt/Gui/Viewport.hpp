@@ -24,26 +24,16 @@
 #ifndef _BLENDINT_GUI_VIEWPORT_HPP_
 #define _BLENDINT_GUI_VIEWPORT_HPP_
 
-#include <glm/glm.hpp>
-
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractViewport.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Viewport: public AbstractContainer
+	class Viewport: public AbstractViewport
 	{
 	public:
-
-		enum  DisplayMode {
-			Normal,
-			Modal,
-			Popup
-		};
-
-		friend class Context;
 
 		Viewport ();
 
@@ -51,91 +41,23 @@ namespace BlendInt {
 
 		void AddWidget (Widget* widget);
 
-		void SetFocused (AbstractWidget* widget);
-
-		AbstractWidget* focused() const
-		{
-			return focused_;
-		}
-
-		AbstractWidget* top_hovered () const
-		{
-			return top_hovered_;
-		}
-
-		static Viewport* GetViewport (AbstractWidget* widget);
-
 	protected:
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
-
-		virtual bool RoundTypeUpdateTest (const RoundTypeUpdateRequest& request);
-
-		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
-
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
-
-		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
-
-		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
-
-		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
-
-		void UpdateHoverWidgetSubs (const MouseEvent& event);
-
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
-
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void ClearHoverWidgets ();
 
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
 
-		GLuint vao_[2];
+		GLuint vao_;
 
-		GLBuffer<ARRAY_BUFFER, 2> buffers_;
-
-		AbstractWidget* focused_;
-
-		AbstractWidget* top_hovered_;
-
-		DisplayMode display_mode_;
-
-		bool custom_focused_widget_;
-
-		Point cursor_;
-
-		static glm::mat4 default_view_matrix;
+		GLBuffer<ARRAY_BUFFER> buffer_;
 	};
 
 }

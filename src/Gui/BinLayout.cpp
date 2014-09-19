@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	BinLayout::BinLayout()
-	: AbstractContainer()
+	: Container()
 	{
 	}
 

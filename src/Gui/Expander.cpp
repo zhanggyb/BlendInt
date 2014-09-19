@@ -187,7 +187,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: AbstractContainer(), vao_(0), frame_height_(0)
+	: Container(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Frame* frame = Manage(new Frame);
@@ -221,7 +221,7 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: AbstractContainer(), vao_(0), frame_height_(0)
+	: Container(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Frame* frame = Manage(new Frame);

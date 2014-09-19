@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_ABSTRACTPANEL_HPP_
 #define _BLENDINT_GUI_ABSTRACTPANEL_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
@@ -33,7 +33,7 @@ namespace BlendInt {
 	 *
 	 * The margin of a VirtualWindow is always zero.
 	 */
-	class AbstractPanel: public AbstractContainer
+	class AbstractPanel: public Container
 	{
 	public:
 

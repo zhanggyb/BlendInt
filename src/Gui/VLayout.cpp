@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	VLayout::VLayout (int align, int space)
-	: AbstractContainer(), m_alignment(align), m_space(space)
+	: Container(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}

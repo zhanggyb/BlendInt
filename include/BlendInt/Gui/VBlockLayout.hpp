@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
 #define _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class VBlockLayout: public AbstractContainer
+	class VBlockLayout: public Container
 	{
 		DISALLOW_COPY_AND_ASSIGN(VBlockLayout);
 

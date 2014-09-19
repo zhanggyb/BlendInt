@@ -70,37 +70,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 	};
 
-	class Container: public AbstractContainer
-	{
-
-	public:
-
-		Container ();
-
-		virtual ~Container ();
-
-	protected:
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-	};
-
 }
 
 #endif /* _BLENDINT_FORM_HPP_ */

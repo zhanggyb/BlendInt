@@ -21,39 +21,54 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_DECORATION_HPP_
-#define _BLENDINT_GUI_DECORATION_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_
+#define _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_
 
-#include <Cpp/Events.hpp>
+#include <glm/glm.hpp>
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special widget used in virtual window only as the decoration
-	 */
-	class Decoration:  public Container
+	class AbstractViewport: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(Decoration);
-
 	public:
 
-		Decoration ();
+		enum  DisplayMode {
+			Normal,
+			Modal,
+			Popup
+		};
 
-		virtual ~Decoration ();
+		friend class Context;
 
-		void Prepend (AbstractWidget* widget);
+		AbstractViewport ();
 
-		void Append (AbstractWidget* widget);
+		virtual ~AbstractViewport ();
 
-		virtual bool IsExpandX () const;
+		void SetFocused (AbstractWidget* widget);
 
-		virtual bool IsExpandY () const;
+		AbstractWidget* focused() const
+		{
+			return focused_;
+		}
 
-		virtual Size GetPreferredSize () const;
+		AbstractWidget* top_hovered () const
+		{
+			return top_hovered_;
+		}
+
+		static AbstractViewport* GetViewport (AbstractWidget* widget);
 
 	protected:
+
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+
+		virtual bool RoundTypeUpdateTest (const RoundTypeUpdateRequest& request);
+
+		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -63,7 +78,9 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		//virtual ResponseType Draw (Profile& profile);
+
+		virtual ResponseType FocusEvent (bool focus);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 
@@ -81,27 +98,33 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeDecoration ();
+		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
 
-		void FillSubWidgets (int x, int y, int width, int height, int space);
+		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
 
-		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
+		void UpdateHoverWidgetSubs (const MouseEvent& event);
 
-		int GetLastPosition () const;
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		GLuint vao_[1];
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		/**
-		 * space between tool buttons
-		 */
-		int space_;
+		void ClearHoverWidgets ();
 
-		RefPtr<GLArrayBuffer> inner_;
+		AbstractWidget* focused_;
+
+		AbstractWidget* top_hovered_;
+
+		DisplayMode display_mode_;
+
+		bool custom_focused_widget_;
+
+		Point cursor_;
+
+		static glm::mat4 default_view_matrix;
 	};
 
 }
 
-
-#endif /* _BLENDINT_GUI_DECORATION_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_ */

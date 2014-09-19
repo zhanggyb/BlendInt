@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	TabHeader::TabHeader()
-	: AbstractContainer(),
+	: Container(),
 	  vao_(0)
 	{
 		set_size(400, 24);

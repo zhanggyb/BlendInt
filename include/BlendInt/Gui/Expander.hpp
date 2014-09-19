@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
 #include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
@@ -70,7 +70,7 @@ namespace BlendInt {
 	/**
 	 * @brief Expander
 	 */
-	class Expander: public AbstractContainer
+	class Expander: public Container
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
 

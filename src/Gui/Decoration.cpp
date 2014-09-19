@@ -48,7 +48,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration()
-	: AbstractContainer(),
+	: Container(),
 	  space_(4)
 	{
 		set_size(200, 20);
