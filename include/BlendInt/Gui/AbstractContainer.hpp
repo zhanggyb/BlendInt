@@ -130,7 +130,7 @@ namespace BlendInt {
 
 		void ResizeSubWidgets (int w, int h);
 
-		void FillSingleWidget (int index, const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillSingleWidget (int index, const Size& size, const Margin& margin);
 
 		void FillSingleWidget (int index, const Point& pos, const Size& size);
 

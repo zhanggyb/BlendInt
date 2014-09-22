@@ -292,9 +292,9 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
 	{
-		if (hbar()->visiable() && hbar()->Contain(event.global_position())) {
+		if (hbar()->visiable() && hbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->visiable() && vbar()->Contain(event.global_position())) {
+		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(vbar(), event);
 		}
 
@@ -308,9 +308,9 @@ namespace BlendInt {
 
 			int i = 0;
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - event.global_position().y();
+				i = position().y() + vbar()->value() - event.position().y();
 			} else {	// no vbar
-				i = position().y() + size().height() - event.global_position().y();
+				i = position().y() + size().height() - event.position().y();
 			}
 
 			i = i / h;

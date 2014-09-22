@@ -55,9 +55,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+		virtual void PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

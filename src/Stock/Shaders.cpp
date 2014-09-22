@@ -686,6 +686,28 @@ namespace BlendInt {
 			ui_matrix_->reset();
 		}
 
+		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
+		{
+			ui_matrix_->bind();
+			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
+			ui_matrix_->reset();
+		}
+
+		void Shaders::PushUIProjectionMatrix()
+		{
+			glm::mat4 matrix;
+			GetUIProjectionMatrix(matrix);
+			ui_projection_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopUIProjectionMatrix()
+		{
+			if(ui_projection_matrix_stack.size()) {
+				SetUIProjectionMatrix(ui_projection_matrix_stack.top());
+				ui_projection_matrix_stack.pop();
+			}
+		}
+
 		void Shaders::GetUIViewMatrix(glm::mat4& matrix)
 		{
 			ui_matrix_->bind();
@@ -695,6 +717,28 @@ namespace BlendInt {
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+		}
+
+		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
+		{
+			ui_matrix_->bind();
+			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_offset_[2]- ui_matrix_offset_[1], glm::value_ptr(matrix));
+			ui_matrix_->reset();
+		}
+
+		void Shaders::PushUIViewMatrix()
+		{
+			glm::mat4 matrix;
+			GetUIViewMatrix(matrix);
+			ui_view_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopUIViewMatrix()
+		{
+			if(ui_view_matrix_stack.size()) {
+				SetUIViewMatrix(ui_view_matrix_stack.top());
+				ui_view_matrix_stack.pop();
+			}
 		}
 
 		void Shaders::GetUIModelMatrix(glm::mat4& matrix)
@@ -708,25 +752,26 @@ namespace BlendInt {
 			ui_matrix_->reset();
 		}
 
-		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
-		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
-			ui_matrix_->reset();
-		}
-
-		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
-		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_offset_[2]- ui_matrix_offset_[1], glm::value_ptr(matrix));
-			ui_matrix_->reset();
-		}
-
 		void Shaders::SetUIModelMatrix (const glm::mat4& matrix)
 		{
 			ui_matrix_->bind();
 			ui_matrix_->set_sub_data(ui_matrix_offset_[2], ui_matrix_block_size_- ui_matrix_offset_[2], glm::value_ptr(matrix));
 			ui_matrix_->reset();
+		}
+
+		void Shaders::PushUIModelMatrix()
+		{
+			glm::mat4 matrix;
+			GetUIModelMatrix(matrix);
+			ui_model_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopUIModelMatrix()
+		{
+			if(ui_model_matrix_stack.size()) {
+				SetUIModelMatrix(ui_model_matrix_stack.top());
+				ui_model_matrix_stack.pop();
+			}
 		}
 
 		bool Shaders::Setup ()

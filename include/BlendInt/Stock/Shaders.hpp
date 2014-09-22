@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_STOCK_SHADERS_HPP_
 #define _BLENDINT_STOCK_SHADERS_HPP_
 
+#include <stack>
+
 #include <glm/glm.hpp>
 
 #include <BlendInt/Core/RefPtr.hpp>
@@ -128,15 +130,27 @@ namespace BlendInt {
 
 			void GetUIProjectionMatrix (glm::mat4& matrix);
 
-			void GetUIViewMatrix (glm::mat4& matrix);
-
 			void SetUIProjectionMatrix (const glm::mat4& matrix);
 
+			void PushUIProjectionMatrix ();
+
+			void PopUIProjectionMatrix ();
+
+			void GetUIViewMatrix (glm::mat4& matrix);
+
 			void SetUIViewMatrix (const glm::mat4& matrix);
+
+			void PushUIViewMatrix ();
+
+			void PopUIViewMatrix ();
 
 			void SetUIModelMatrix (const glm::mat4& matrix);
 
 			void GetUIModelMatrix (glm::mat4& matrix);
+
+			void PushUIModelMatrix ();
+
+			void PopUIModelMatrix ();
 
 			inline GLint location (LocationType index) const
 			{
@@ -188,6 +202,12 @@ namespace BlendInt {
 			GLint ui_matrix_block_size_;
 			
 			GLuint ui_matrix_binding_point_;
+
+			std::stack<glm::mat4> ui_projection_matrix_stack;
+
+			std::stack<glm::mat4> ui_view_matrix_stack;
+
+			std::stack<glm::mat4> ui_model_matrix_stack;
 
 			static const char* text_vertex_shader;
 

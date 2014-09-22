@@ -502,8 +502,14 @@ namespace BlendInt {
 	{
 		if (widget && widget->visiable()) {
 
+			widget->PreDraw(profile);
+
 			ResponseType response = widget->Draw(profile);
-			if(response == Accept) return;
+
+			if(response == Accept) {
+				widget->PostDraw(profile);
+				return;
+			}
 
 			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
 			if (parent) {
@@ -514,6 +520,8 @@ namespace BlendInt {
 				}
 
 			}
+
+			widget->PostDraw(profile);
 
 		}
 	}
@@ -637,6 +645,16 @@ namespace BlendInt {
 		if(container_) {
 			container_->PerformVisibilityUpdate(request);
 		}
+	}
+
+	void AbstractWidget::PreDraw(Profile& profile)
+	{
+		// TODO: override this
+	}
+
+	void AbstractWidget::PostDraw(Profile& profile)
+	{
+		// TODO: override this
 	}
 
 	int AbstractWidget::GetHalfOutlineVertices(int round_type) const

@@ -296,8 +296,8 @@ namespace BlendInt {
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
-			m_move_start_pos.set_x(event.global_position().x());
-			m_move_start_pos.set_y(event.global_position().y());
+			m_move_start_pos.set_x(event.position().x());
+			m_move_start_pos.set_y(event.position().y());
 			m_origin_pos = p->position();
 		} else {
 			//dispatch_mouse_press_event(m_viewport, event);
@@ -356,9 +356,9 @@ namespace BlendInt {
 				AbstractWidget* p = first();
 
 				SetSubWidgetPosition(p,
-				        m_origin_pos.x() + event.global_position().x()
+				        m_origin_pos.x() + event.position().x()
 				                - m_move_start_pos.x(),
-				        m_origin_pos.y() + event.global_position().y()
+				        m_origin_pos.y() + event.position().y()
 				                - m_move_start_pos.y());
 				/*
 				int w = size().width() - margin().left() - margin().right();

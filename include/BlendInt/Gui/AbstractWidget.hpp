@@ -545,7 +545,11 @@ namespace BlendInt {
 			size_ = size;
 		}
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile) = 0;
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
 

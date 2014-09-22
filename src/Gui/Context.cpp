@@ -437,7 +437,9 @@ namespace BlendInt
 
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
+			p->PreDraw(profile);
 			p->Draw(profile);
+			p->PostDraw(profile);
 		}
 
 		return Accept;
@@ -484,7 +486,7 @@ namespace BlendInt
 
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
 
-			if(p->Contain(event.global_position())) {
+			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
 
 				p->MoveToLast();
@@ -520,7 +522,7 @@ namespace BlendInt
 
 		hover_ = 0;
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
-			if(p->Contain(event.global_position())) {
+			if(p->Contain(event.position())) {
 				hover_ = dynamic_cast<AbstractViewport*>(p);
 				break;
 			}

@@ -55,7 +55,7 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 		if (widget_count()) {
 			assert(widget_count() == 1);
-			FillSingleWidget(0, position(), *request.size(), margin());
+			FillSingleWidget(0, *request.size(), margin());
 		}
 	}
 

@@ -86,17 +86,20 @@ namespace BlendInt {
 			focused_ = 0;
 		}
 
-		if(top_hovered_) {
-			set_widget_hover_status(top_hovered_, false);
-			top_hovered_->destroyed().disconnectOne(this, &Viewport::OnHoverWidgetDestroyed);
-			top_hovered_ = 0;
-		}
+		ClearHoverWidgets();
 	}
 
 	void Viewport::AddWidget(Widget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			// set position
+		}
+	}
+
+	void Viewport::AddContainer(Container* container)
+	{
+		if(PushBackSubWidget(container)) {
+			//
 		}
 	}
 
@@ -201,7 +204,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::Draw (Profile& profile)
+	void Viewport::PreDraw(Profile& profile)
 	{
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -210,7 +213,10 @@ namespace BlendInt {
 
 		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetUIModelMatrix(model_matrix_);
+	}
 
+	ResponseType Viewport::Draw (Profile& profile)
+	{
 		Shaders::instance->widget_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
@@ -235,9 +241,16 @@ namespace BlendInt {
 
 		for(AbstractWidget* p = first(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
+
+			Shaders::instance->SetUIModelMatrix(model_matrix_);	// TODO: temporary use, remove later
 		}
 
 		return Ignore;
+	}
+
+	void Viewport::PostDraw(Profile& profile)
+	{
+		// Do nothing
 	}
 
 	ResponseType Viewport::FocusEvent(bool focus)
@@ -288,6 +301,8 @@ namespace BlendInt {
 		CheckAndUpdateHoverWidget(event);
 
 		if(top_hovered_) {
+
+			DBG_PRINT_MSG("top hover widget: %s", top_hovered_->name().c_str());
 
 			AbstractWidget* widget = 0;	// widget may be focused
 
@@ -340,10 +355,6 @@ namespace BlendInt {
 
 		set_event_viewport(event);
 
-		const_cast<MouseEvent&>(event).set_local_position(
-				event.global_position().x() - position().x(),
-				event.global_position().y() - position().y());
-
 		CheckAndUpdateHoverWidget(event);
 
 		if(top_hovered_) {
@@ -359,88 +370,110 @@ namespace BlendInt {
 
 	bool Viewport::CheckAndUpdateHoverWidget(const MouseEvent& event)
 	{
+		Point local_cursor;
+
+		// find the new top hovered widget
 		if (top_hovered_) {
 
-			if (IsHoverThroughExt (top_hovered_->container(),
-					event.global_position ())) {
+			AbstractContainer* parent = top_hovered_->container();
 
-				if (top_hovered_->Contain (event.local_position ())) {
+			Point global_position = parent->GetGlobalPosition();
+
+			bool not_hover_through = event.position().x() < global_position.x() ||
+					event.position().y() < global_position.y() ||
+					event.position().x() > (global_position.x() + parent->size().width()) ||
+					event.position().y() > (global_position.y() + parent->size().height());
+
+			local_cursor.set_x(event.position().x() - global_position.x() - parent->offset_x());
+			local_cursor.set_y(event.position().y() - global_position.y() - parent->offset_y());
+
+			if(!not_hover_through) {
+
+				if(top_hovered_->Contain(local_cursor)) {
 
 					AbstractWidget* orig = top_hovered_;
-					UpdateHoverWidgetSubs (event);
 
-					if (orig != top_hovered_) {
-						orig->destroyed ().disconnectOne (this,
+					UpdateHoverWidgetSubs(local_cursor);
+
+					if(orig != top_hovered_) {
+						orig->destroyed().disconnectOne(this,
 								&Viewport::OnHoverWidgetDestroyed);
-						events ()->connect (top_hovered_->destroyed (),
-								this, &Viewport::OnHoverWidgetDestroyed);
+						events()->connect(top_hovered_->destroyed(), this,
+						        &Viewport::OnHoverWidgetDestroyed);
 					}
 
 				} else {
 
 					top_hovered_->destroyed ().disconnectOne (this,
-							&Viewport::OnHoverWidgetDestroyed);
+								&Viewport::OnHoverWidgetDestroyed);
 					set_widget_hover_event(top_hovered_, false);
 
 					// find which contianer contains cursor position
-					while (top_hovered_->container ()) {
+					while (parent) {
 
-						if (top_hovered_->container () == this) {	// FIXME: the widget may be mvoed to another context
-							top_hovered_ = 0;
+						if (parent == this) {	// FIXME: the widget may be mvoed to another context
+							parent = 0;
 							break;
-						} else {
-							top_hovered_ =
-									top_hovered_->container ();
-
-							if (top_hovered_->Contain (
-									event.local_position ())) {
-								break;
-							}
 						}
+
+						local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset_x());
+						local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset_y());
+
+						if (parent->Contain(local_cursor)) break;
+
+						parent = parent->container();
 					}
 
-					if (top_hovered_) {
-						UpdateHoverWidgetSubs (event);
-						events()->connect(top_hovered_->destroyed (),
-								this, &Viewport::OnHoverWidgetDestroyed);
+					top_hovered_ = parent;
+
+					if(top_hovered_) {
+						UpdateHoverWidgetSubs(local_cursor);
+						events()->connect(top_hovered_->destroyed(), this,
+						        &Viewport::OnHoverWidgetDestroyed);
 					}
+
 				}
 
 			} else {
 
 				top_hovered_->destroyed().disconnectOne(this,
-				        &Viewport::OnHoverWidgetDestroyed);
+					        &Viewport::OnHoverWidgetDestroyed);
 				set_widget_hover_event(top_hovered_, false);
 
 				// find which contianer contains cursor position
-				while (top_hovered_->container()) {
+				parent = parent->container();
+				while (parent) {
 
-					if (top_hovered_->container() == this) {	// FIXME: the widget may be mvoed to another context
-						top_hovered_ = 0;
+					if (parent == this) {	// FIXME: the widget may be mvoed to another context
+						parent = 0;
 						break;
-					} else {
-						top_hovered_ = top_hovered_->container();
-
-						if (IsHoverThroughExt(top_hovered_, event.local_position())) {
-							break;
-						}
 					}
+
+					local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset_x());
+					local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset_y());
+
+					if(IsHoverThroughExt(parent, event.position())) break;
+					parent = parent->container();
 				}
 
-				if (top_hovered_) {
-					UpdateHoverWidgetSubs(event);
-					events()->connect(top_hovered_->destroyed(), this, &Viewport::OnHoverWidgetDestroyed);
+				top_hovered_ = parent;
+				if(top_hovered_) {
+					UpdateHoverWidgetSubs(local_cursor);
+					events()->connect(top_hovered_->destroyed(), this,
+					        &Viewport::OnHoverWidgetDestroyed);
 				}
 
 			}
 
 		} else {
 
+			local_cursor.set_x(event.position().x() - position().x() - offset_x());
+			local_cursor.set_y(event.position().y() - position().y() - offset_y());
+
 			for(AbstractWidget* p = last(); p; p = p->previous())
 			{
-				if (p->visiable() && p->Contain(event.local_position())) {
+				if (p->visiable() && p->Contain(local_cursor)) {
 
-					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					top_hovered_ = p;
 					set_widget_hover_event(top_hovered_, true);
 
@@ -449,9 +482,7 @@ namespace BlendInt {
 			}
 
 			if(top_hovered_) {
-
-				UpdateHoverWidgetSubs(event);
-
+				UpdateHoverWidgetSubs(local_cursor);
 				events()->connect(top_hovered_->destroyed(), this,
 				        &Viewport::OnHoverWidgetDestroyed);
 			}
@@ -461,25 +492,29 @@ namespace BlendInt {
 		return top_hovered_ != 0;
 	}
 
-	void Viewport::UpdateHoverWidgetSubs(const MouseEvent& event)
+	void Viewport::UpdateHoverWidgetSubs(Point& cursor)
 	{
 		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(top_hovered_);
 
 		if (parent) {
 
+			cursor.set_x(cursor.x() - parent->position().x() - parent->offset_x());
+			cursor.set_y(cursor.y() - parent->position().y() - parent->offset_y());
+
 			for(AbstractWidget* p = parent->last(); p; p = p->previous())
 			{
-				if(p->visiable() && p->Contain(event.local_position())) {
+				if(p->visiable() && p->Contain(cursor)) {
 
 					top_hovered_ = p;
 					set_widget_hover_event(top_hovered_, true);
 
-					UpdateHoverWidgetSubs(event);
+					UpdateHoverWidgetSubs(cursor);
 					break;
 				}
 			}
 
 		}
+
 	}
 
 	void Viewport::OnFocusedWidgetDestroyed(AbstractWidget* widget)

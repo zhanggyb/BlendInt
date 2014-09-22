@@ -689,14 +689,13 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::FillSingleWidget (int index, const Point& out_pos,
-	        const Size& out_size, const Margin& margin)
+	void AbstractContainer::FillSingleWidget (int index, const Size& size, const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int w = size.width() - margin.hsum();
+		int h = size.height() - margin.vsum();
 
 		FillSingleWidget(index, x, y, w, h);
 	}

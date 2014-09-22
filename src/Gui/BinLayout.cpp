@@ -21,9 +21,26 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/BinLayout.hpp>
 
+#include <BlendInt/Stock/Shaders.hpp>
+
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	BinLayout::BinLayout()
 	: Container()
@@ -47,7 +64,7 @@ namespace BlendInt {
 		}
 
 		if (PushBackSubWidget(widget)) {
-			FillSingleWidget(0, position(), size(), margin());
+			FillSingleWidget(0, size(), margin());
 			ret = true;
 		}
 
@@ -101,7 +118,7 @@ namespace BlendInt {
 
 		if(widget_count()) {
 			assert(widget_count() == 1);
-			FillSingleWidget(0, position(), size(), request);
+			FillSingleWidget(0, size(), request);
 		}
 	}
 
@@ -112,7 +129,7 @@ namespace BlendInt {
 
 			if (widget_count()) {
 				assert(widget_count() == 1);
-				FillSingleWidget(0, position(), *request.size(), margin());
+				FillSingleWidget(0, *request.size(), margin());
 			}
 		}
 
@@ -121,27 +138,29 @@ namespace BlendInt {
 		}
 	}
 
-	void BinLayout::PerformPositionUpdate (const PositionUpdateRequest& request)
+	void BinLayout::PreDraw(Profile& profile)
 	{
-		if(request.target() == this) {
-			set_position(*request.position());
+//		glm::mat4 model;
+//		Shaders::instance->GetUIModelMatrix(model);
 
-			if(widget_count()) {
-				assert(widget_count() == 1);
-				SetSubWidgetPosition(first(),
-						request.position()->x() + margin().left(),
-						request.position()->y() + margin().bottom());
-			}
-		}
+		Point pos = GetGlobalPosition();
 
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
+//		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(position().x() + offset_x(), position().y() + offset_y(), 0.f));
+		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
+
+//		Shaders::instance->PushUIModelMatrix();
+		Shaders::instance->SetUIModelMatrix(matrix);
+//		Shaders::instance->SetUIModelMatrix(model * matrix);
 	}
 
 	ResponseType BinLayout::Draw (Profile& profile)
 	{
 		return Ignore;
+	}
+
+	void BinLayout::PostDraw(Profile& profile)
+	{
+//		Shaders::instance->PopUIModelMatrix();
 	}
 
 	ResponseType BinLayout::CursorEnterEvent (bool entered)

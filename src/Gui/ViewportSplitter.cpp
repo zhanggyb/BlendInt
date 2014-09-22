@@ -447,7 +447,7 @@ namespace BlendInt {
 
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
 
-			if(p->Contain(event.global_position())) {
+			if(p->Contain(event.position())) {
 
 				response = assign_mouse_press_event(p, event);
 				if(response == Accept) break;
@@ -464,7 +464,7 @@ namespace BlendInt {
 
 		for(AbstractWidget* p = last(); p; p = p->previous()) {
 
-			if(p->Contain(event.global_position())) {
+			if(p->Contain(event.position())) {
 
 				response = assign_mouse_release_event(p, event);
 				if(response == Accept) break;
@@ -482,13 +482,11 @@ namespace BlendInt {
 		AbstractViewport* original_hover = hover_;
 
 		if(hover_) {
-			if(hover_->Contain(event.global_position())) {
-
-			} else {
+			if(!hover_->Contain(event.position())) {
 
 				hover_ = 0;
 				for(AbstractWidget* p = last(); p; p = p->previous()) {
-					if(p->Contain(event.global_position())) {
+					if(p->Contain(event.position())) {
 						hover_ = dynamic_cast<AbstractViewport*>(p);
 						break;
 					}
@@ -498,7 +496,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractWidget* p = last(); p; p = p->previous()) {
-				if(p->Contain(event.global_position())) {
+				if(p->Contain(event.position())) {
 					hover_ = dynamic_cast<AbstractViewport*>(p);
 					break;
 				}

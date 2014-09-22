@@ -297,9 +297,9 @@ namespace BlendInt {
 
 	ResponseType CVImageView::MousePressEvent (const MouseEvent& event)
 	{
-		if(hbar()->Contain(event.global_position())) {
+		if(hbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->Contain(event.global_position())) {
+		} else if (vbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(vbar(), event);
 		}
 

@@ -28,6 +28,7 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/Container.hpp>
 
 namespace BlendInt {
 
@@ -40,6 +41,8 @@ namespace BlendInt {
 		virtual ~Viewport ();
 
 		void AddWidget (Widget* widget);
+
+		void AddContainer (Container* container);
 
 		void SetFocused (AbstractWidget* widget);
 
@@ -61,7 +64,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual ResponseType FocusEvent (bool focus);
 
@@ -83,7 +90,7 @@ namespace BlendInt {
 
 		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
 
-		void UpdateHoverWidgetSubs (const MouseEvent& event);
+		void UpdateHoverWidgetSubs (Point& cursor);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 

@@ -125,8 +125,8 @@ namespace BlendInt {
 	{
 		m_button_down = event.button();
 
-		m_last_x = event.global_position().x();
-		m_last_y = event.global_position().y();
+		m_last_x = event.position().x();
+		m_last_y = event.position().y();
 
 		if (m_button_down == MouseButtonMiddle) {
 
@@ -186,20 +186,20 @@ namespace BlendInt {
 				if (event.modifiers() == ModifierShift) {
 
 					float dx = static_cast<float>(m_last_x
-					        - event.global_position().x());
+					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.global_position().y());
+					        - event.position().y());
 					default_camera_->Pan(dx, dy);
 
 				} else if (event.modifiers() == ModifierControl) {
 
-					default_camera_->Zoom(m_last_y - event.global_position().y());
+					default_camera_->Zoom(m_last_y - event.position().y());
 
 				} else if (event.modifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
-					        - event.global_position().x());
+					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.global_position().y());
+					        - event.position().y());
 					default_camera_->Orbit(dx, dy);
 				}
 
