@@ -122,6 +122,9 @@ namespace BlendInt {
 
 			if(widget->container()) {
 				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
+					const_cast<MouseEvent&>(event).set_local_position(
+							event.local_position().x() - widget->position().x() - widget->container()->offset_x(),
+							event.local_position().y() - widget->position().y() - widget->container()->offset_y());
 					return widget->MousePressEvent(event);
 				} else {
 					return Accept;

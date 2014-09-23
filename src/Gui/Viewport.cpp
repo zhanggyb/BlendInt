@@ -300,11 +300,13 @@ namespace BlendInt {
 
 		if(top_hovered_) {
 
-			DBG_PRINT_MSG("top hover widget: %s", top_hovered_->name().c_str());
-
 			AbstractWidget* widget = 0;	// widget may be focused
 
 			custom_focused_widget_ = false;
+
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - position().x() - offset_x(),
+					event.position().y() - position().y() - offset_y());
 
 			retval = DispatchMousePressEvent(top_hovered_, event);
 
@@ -375,15 +377,15 @@ namespace BlendInt {
 
 			AbstractContainer* parent = top_hovered_->container();
 
-			Point global_position = parent->GetGlobalPosition();
+			Point parent_position = parent->GetGlobalPosition();
 
-			bool not_hover_through = event.position().x() < global_position.x() ||
-					event.position().y() < global_position.y() ||
-					event.position().x() > (global_position.x() + parent->size().width()) ||
-					event.position().y() > (global_position.y() + parent->size().height());
+			bool not_hover_through = event.position().x() < parent_position.x() ||
+					event.position().y() < parent_position.y() ||
+					event.position().x() > (parent_position.x() + parent->size().width()) ||
+					event.position().y() > (parent_position.y() + parent->size().height());
 
-			local_cursor.set_x(event.position().x() - global_position.x() - parent->offset_x());
-			local_cursor.set_y(event.position().y() - global_position.y() - parent->offset_y());
+			local_cursor.set_x(event.position().x() - parent_position.x() - parent->offset_x());
+			local_cursor.set_y(event.position().y() - parent_position.y() - parent->offset_y());
 
 			if(!not_hover_through) {
 

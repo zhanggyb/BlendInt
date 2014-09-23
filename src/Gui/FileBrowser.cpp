@@ -308,9 +308,9 @@ namespace BlendInt {
 
 			int i = 0;
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - event.position().y();
+				i = position().y() + vbar()->value() - event.local_position().y();
 			} else {	// no vbar
-				i = position().y() + size().height() - event.position().y();
+				i = position().y() + size().height() - event.local_position().y();
 			}
 
 			i = i / h;

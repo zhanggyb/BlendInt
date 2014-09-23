@@ -373,37 +373,9 @@ namespace BlendInt
 	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.source() == this) {
-
-			//glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
-			//        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
-
-			//Shaders::instance->SetUIProjectionMatrix(projection);
-
-			/*
-			for(AbstractWidget* p = first(); p; p = p->next())
-			{
-				ResizeSubWidget(p, *request.size());
-			}
-			*/
-
 			set_size(*request.size());
-
 			resized_.fire(size());
-
-		} else if (request.source()->container() == this) {
-
-		} else {
-
-			// if(request.target()->container()->hover()) {
-			//	m_layers[request.source()->z()].m_hover_list_valid = false;
-			// }
-
-			//DBG_PRINT_MSG("%s", "get widget geometry change update");
-
-			//DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
-
 		}
-
 	}
 
 	void Context::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
@@ -417,9 +389,6 @@ namespace BlendInt
 
 	ResponseType Context::Draw (Profile& profile)
 	{
-		//glm::vec3 pos(position().x(), position().y(), z());
-		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearStencil(0);
 		glClearDepth(1.0);

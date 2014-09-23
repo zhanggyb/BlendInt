@@ -62,6 +62,12 @@ namespace BlendInt {
 			return *this;
 		}
 
+		void reset (int x, int y)
+		{
+			x_ = x;
+			y_ = y;
+		}
+
 		int x (void) const
 		{
 			return x_;
