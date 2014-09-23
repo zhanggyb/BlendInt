@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include <Cpp/Events.hpp>
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Gui/CVImageView.hpp>
@@ -31,13 +30,10 @@ int main(int argc, char* argv[])
 
 	GLFWContext* context = Manage(new GLFWContext);
 	DBG_SET_NAME(context, "Context");
-	Interface::instance->SetCurrentContext(context);
-	Interface::instance->Resize(1280, 800);
+	SetContext(context);
+	context->Resize(1280, 800);
 
 	RunLoop (win);
-
-	Interface::Release();
-
 	Terminate();
 
 	return 0;

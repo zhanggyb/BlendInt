@@ -45,7 +45,6 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -65,6 +64,11 @@ namespace BlendInt {
 	ResponseType Widget::Draw(Profile& profile)
 	{
 		return Accept;
+	}
+
+	ResponseType Widget::FocusEvent (bool focus)
+	{
+		return Ignore;
 	}
 
 	ResponseType Widget::CursorEnterEvent(bool entered)
@@ -97,11 +101,6 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	ResponseType Widget::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
 	ResponseType Widget::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Accept;

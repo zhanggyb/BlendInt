@@ -35,8 +35,6 @@
 
 namespace BlendInt {
 
-	class Interface;
-
 	/**
 	 * @brief Container to hold and manage all widgets in a OpenGL window
 	 *
@@ -46,8 +44,6 @@ namespace BlendInt {
 	class Context: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
-
-		friend class Interface;
 
 	public:
 
@@ -77,6 +73,12 @@ namespace BlendInt {
 		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
 		 */
 		Section* Remove (AbstractWidget* widget);
+
+		void Draw ();
+
+		void DispatchKeyEvent (const KeyEvent& event);
+
+		void DispatchMouseEvent (const MouseEvent& event);
 
 		void SetFocusedViewport (AbstractViewport* viewport);
 

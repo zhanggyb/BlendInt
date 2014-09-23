@@ -355,6 +355,16 @@ namespace BlendInt {
 
 		set_event_viewport(event);
 
+		// TODO: make sure focused widget is still in this viewport
+		if(focused_) {
+			retval = assign_mouse_move_event(focused_, event);
+		}
+
+		if(retval == Accept) {
+			CheckAndUpdateHoverWidget(event);
+			return retval;
+		}
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(top_hovered_) {

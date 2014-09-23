@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Label::Label (const String& text)
-		: AbstractWidget(),
+		: Widget(),
 		  text_(text),
 		  text_length_(0),
 		  background_color_(0x00000000),
@@ -211,46 +211,6 @@ namespace BlendInt {
 	bool Label::IsExpandX() const
 	{
 		return true;
-	}
-
-	ResponseType Label::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Label::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void Label::InitializeLabel (const String& text)

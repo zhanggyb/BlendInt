@@ -43,7 +43,7 @@
 namespace BlendInt {
 
 	ColorWheel::ColorWheel()
-	: AbstractWidget()
+	: Widget()
 	{
 		set_size(160, 160);
 
@@ -185,48 +185,6 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	ResponseType ColorWheel::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void ColorWheel::GenerateWheelVertices (int radius,

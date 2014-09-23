@@ -288,6 +288,63 @@ namespace BlendInt
 		return 0;
 	}
 
+	void Context::Draw()
+	{
+		Draw(profile_);
+	}
+
+	void Context::DispatchKeyEvent(const KeyEvent& event)
+	{
+		switch (event.action()) {
+
+			case KeyPress: {
+				KeyPressEvent(event);
+				break;
+			}
+
+			case KeyRelease: {
+				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+				//cm->m_focus->KeyReleaseEvent(event);
+				break;
+			}
+
+			case KeyRepeat: {
+				// item->KeyRepeatEvent(&event);
+				break;
+			}
+
+			default:
+			break;
+		}
+	}
+
+	void Context::DispatchMouseEvent(const MouseEvent& event)
+	{
+		switch (event.action()) {
+
+			case MouseMove: {
+				//DispatchCursorMoveEvent(event);
+				MouseMoveEvent(event);
+				return;
+			}
+
+			case MousePress: {
+				//DispatchMousePressEvent(event);
+				MousePressEvent(event);
+				return;
+			}
+
+			case MouseRelease: {
+				//DispatchMouseReleaseEvent(event);
+				MouseReleaseEvent(event);
+				return;
+			}
+
+			default:
+				break;
+		}
+	}
+
 	bool Context::Contain (const Point& point) const
 	{
 		return true;

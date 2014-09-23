@@ -32,7 +32,7 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
@@ -40,7 +40,7 @@ namespace BlendInt {
 	/**
 	 * @brief A one-line text editor
 	 */
-	class TextEntry: public AbstractWidget
+	class TextEntry: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TextEntry);
 
@@ -82,19 +82,9 @@ namespace BlendInt {
 
 		virtual ResponseType FocusEvent (bool focus);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

@@ -47,7 +47,7 @@ namespace BlendInt {
 	Margin TextEntry::default_padding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: AbstractWidget(),
+	: Widget(),
 	  start_(0),
 	  length_(0),
 	  index_(0)
@@ -602,33 +602,6 @@ namespace BlendInt {
 
 			Refresh();
 		}
-	}
-
-	ResponseType TextEntry::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)

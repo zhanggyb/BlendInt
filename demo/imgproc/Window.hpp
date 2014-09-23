@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -20,5 +20,6 @@ namespace BlendInt {
 
 	extern bool CheckAllocatedObjects ();
 
+	extern void SetContext (Context* context);
 }
 

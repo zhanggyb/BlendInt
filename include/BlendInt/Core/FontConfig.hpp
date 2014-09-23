@@ -33,13 +33,11 @@ using namespace std;
 
 namespace BlendInt {
 
-	class Interface;
+	class Context;
 
 	class FontConfig
 	{
 	public:
-
-		friend class Interface;
 
 		/**
 		 * @brief generate a FontConfig instance and assign to FontConfig::service
@@ -88,6 +86,8 @@ namespace BlendInt {
 		static void release ();
 
 	private:
+
+		friend class Context;
 
 		/**
 		 * @brief Default constructor

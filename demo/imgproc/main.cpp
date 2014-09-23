@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include <Cpp/Events.hpp>
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Core/Types.hpp>
 
 #include "Window.hpp"
@@ -28,13 +27,10 @@ int main(int argc, char* argv[])
 #ifdef DEBUG
 	context->set_name("GLFWContext");
 #endif
-	Interface::instance->SetCurrentContext(context);
+	SetContext(context);
 	context->Resize(1280, 800);
 
 	RunLoop (win);
-
-	Interface::Release();
-
 	Terminate();
 
 	return 0;

@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FolderList::FolderList()
-	: AbstractWidget()
+	: Widget()
 	{
 		set_round_type(RoundAll);
 		set_size(240, 160);
@@ -98,48 +98,6 @@ namespace BlendInt {
 		Shaders::instance->triangle_program()->reset();
 
 		return Accept;
-	}
-
-	ResponseType FolderList::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::ContextMenuPressEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::ContextMenuReleaseEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void FolderList::PerformSizeUpdate (const SizeUpdateRequest& request)

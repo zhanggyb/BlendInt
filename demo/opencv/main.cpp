@@ -9,7 +9,6 @@
 
 #include <QtCore/qmath.h>
 
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 
@@ -17,6 +16,8 @@
 #include <BlendInt/Window/MouseEvent.hpp>
 
 namespace BI = BlendInt;
+
+using namespace BI;
 
 static BI::KeyEvent kKeyEvent;
 static BI::MouseEvent kMouseEvent;
@@ -61,7 +62,7 @@ DemoWindow::DemoWindow()
 
 DemoWindow::~DemoWindow()
 {
-	BI::Interface::Release();
+	Context::Release();
 }
 
 int main(int argc, char **argv)
@@ -98,26 +99,23 @@ GLuint DemoWindow::loadShader(GLenum type, const char *source)
 void DemoWindow::initialize()
 {
 	/* initialize BlendInt after OpenGL content is created */
-	if (!BI::Interface::Initialize()) {
+	if (!Context::Initialize()) {
 		exit(-1);
 	}
 
-	BI::Interface::instance->Resize(1280, 800);
-
 	m_context = Manage (new Qt5Context(this));
-	BI::Interface::instance->SetCurrentContext(m_context);
 	m_context->Resize(1280, 800);
 }
 
 void DemoWindow::render()
 {
-	BI::Interface::instance->Draw();
+	m_context->Draw();
 }
 
 void DemoWindow::resizeEvent(QResizeEvent* ev)
 {
-	if(BI::Interface::instance) {
-		BI::Interface::instance->Resize(ev->size().width(), ev->size().height());
+	if(m_context) {
+		m_context->Resize(ev->size().width(), ev->size().height());
 		ev->accept();
 	}
 }
@@ -160,7 +158,7 @@ void DemoWindow::keyPressEvent(QKeyEvent* ev)
 		kKeyEvent.set_text(ev->text().toStdString());
 	}
 
-	BI::Interface::instance->DispatchKeyEvent(kKeyEvent);
+	m_context->DispatchKeyEvent(kKeyEvent);
 }
 
 void DemoWindow::keyReleaseEvent(QKeyEvent* ev)
@@ -172,9 +170,9 @@ void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 {
 	kMouseEvent.set_action(BI::MouseMove);
 	kMouseEvent.set_button(BI::MouseButtonNone);
-	kMouseEvent.set_position(ev->pos().x(), BI::Interface::instance->GetCurrentContextHeight() - ev->pos().y());
+	kMouseEvent.set_position(ev->pos().x(), m_context->size().height() - ev->pos().y());
 
-	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	m_context->DispatchMouseEvent(kMouseEvent);
 	ev->accept();
 }
 
@@ -207,7 +205,7 @@ void DemoWindow::mousePressEvent(QMouseEvent* ev)
 	kMouseEvent.set_action(mouse_action);
 	kMouseEvent.set_modifiers(BI::ModifierNone);
 
-	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	m_context->DispatchMouseEvent(kMouseEvent);
 	ev->accept();
 }
 
@@ -240,6 +238,6 @@ void DemoWindow::mouseReleaseEvent(QMouseEvent* ev)
 	kMouseEvent.set_action(mouse_action);
 	kMouseEvent.set_modifiers(BI::ModifierNone);
 
-	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	m_context->DispatchMouseEvent(kMouseEvent);
 	ev->accept();
 }

@@ -197,23 +197,26 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+
 		if(highlight_) {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
+			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 		}
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+		//glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Accept;
 	}
@@ -257,28 +260,6 @@ namespace BlendInt {
 		pressed_ = false;
 
 		return Accept;
-	}
-
-	ResponseType SplitterHandle::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)
