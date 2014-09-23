@@ -83,25 +83,6 @@ namespace BlendInt {
 		}
 	}
 
-	void StaticPanel::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			if(!pressed_) {
-				int x = request.position()->x() - position().x();
-				int y = request.position()->y() - position().y();
-
-				MoveSubWidgets(x, y);
-			}
-
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void StaticPanel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -117,7 +98,7 @@ namespace BlendInt {
 
 			shadow_->Resize(size());
 
-			FillSubWidgets(position(), *request.size(), margin());
+			FillSubWidgets(*request.size(), margin());
 
 			refresh_ = true;
 			Refresh();
@@ -216,7 +197,7 @@ namespace BlendInt {
 
 			if(realign_) {
 				DBG_PRINT_MSG("%s", "now fill subwidgets");
-				FillSubWidgets(position(), size(), margin());
+				FillSubWidgets(size(), margin());
 			}
 
 			realign_ = false;

@@ -241,8 +241,6 @@ namespace BlendInt {
 
 		for(AbstractWidget* p = first(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
-
-			Shaders::instance->SetUIModelMatrix(model_matrix_);	// TODO: temporary use, remove later
 		}
 
 		return Ignore;

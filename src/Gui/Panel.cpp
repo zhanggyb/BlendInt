@@ -67,11 +67,9 @@ namespace BlendInt {
 
 	ResponseType Panel::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
@@ -88,7 +86,8 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->reset();
+
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -134,24 +133,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Panel::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			MoveSubWidgets(x, y);
-
-			set_position(*request.position());
-
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void Panel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -165,7 +146,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			FillSubWidgets(position(), *request.size(), margin());
+			FillSubWidgets(*request.size(), margin());
 			Refresh();
 		}
 

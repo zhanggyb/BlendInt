@@ -29,56 +29,32 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	glm::mat4 matrix(1.f);
+	glm::mat4 model;
+
+	Shaders::instance->SetUIProjectionMatrix(matrix);
+	Shaders::instance->GetUIProjectionMatrix(model);
+
+//	Shaders::instance->SetUIViewMatrix(matrix);
+//	Shaders::instance->GetUIViewMatrix(model);
+
+	if(matrix == model) {
+		DBG_PRINT_MSG("%s", "Equal");
+	} else {
+		DBG_PRINT_MSG("%s", "Not Equal");
+	}
+
 	Viewport* vp = Manage(new Viewport);
-	DBG_SET_NAME(vp, "Viewport");
-
-	Frame* f = Manage(new Frame);
-	DBG_SET_NAME(f, "Frame");
-	Button* btn = Manage(new Button("Button"));
-	DBG_SET_NAME(btn, "Button");
-
-	f->Setup(btn);
-	f->Resize(200, 100);
-
-	vp->AddContainer(f);
-
-	vp->SetPosition(400, 300);
-
-	f->SetPosition(100, 100);
 
 	AddViewport(vp);
 
-	glm::mat4 model;
-	Shaders::instance->GetUIModelMatrix(model);
+	vp->Resize(1000, 800);
+	vp->SetPosition(20, 20);
 
-	Button* btn2 = Manage(new Button("Button2"));
-	vp->AddWidget(btn2);
-	btn2->SetPosition(200, 300);
+    FileSelector* fb = Manage(new FileSelector);
+    fb->SetPosition(100, 100);
+	fb->Resize(800, 600);
+	fb->SetRoundType(RoundAll);
 
-	//Point pos = btn->position();
-	//DBG_PRINT_MSG("button position: %d, %d", pos.x(), pos.y());
-
-//	Viewport* vp1 = Manage(new Viewport);
-//	DBG_SET_NAME(vp1, "Viewport1");
-//	Viewport* vp2 = Manage(new Viewport);
-//	DBG_SET_NAME(vp2, "Viewport2");
-//
-//	ViewportSplitter* vs = Manage(new ViewportSplitter);
-//	vs->Resize(600, 400);
-//	DBG_SET_NAME(vs, "Viewport Splitter");
-//
-//	vs->AppendViewport(vp1);
-//	vs->AppendViewport(vp2);
-//
-//	AddViewport(vs);
-//
-//	Button* btn1 = Manage(new Button("Hello1"));
-//	vp1->AddWidget(btn1);
-//
-//	AbstractViewport* view = AbstractViewport::GetViewport(btn1);
-//
-//	DBG_PRINT_MSG("viewport: %s", view->name().c_str());
-//
-//	Button* btn2 = Manage(new Button("Hello2"));
-//	vp2->AddWidget(btn2);
+	vp->AddContainer(fb);
 }

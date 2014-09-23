@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		if(InsertSubWidget(DecorationIndex, widget)) {
 			decoration_ = widget;
-			FillSubWidgets(position(), size(), margin());
+			FillSubWidgets(size(), margin());
 		}
 	}
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		if(InsertSubWidget(ContentIndex, widget)) {
 			content_ = widget;
-			FillSubWidgets(position(), size(), margin());
+			FillSubWidgets(size(), margin());
 		}
 	}
 
@@ -90,7 +90,7 @@ namespace BlendInt {
 	{
 		space_ = space;
 
-		FillSubWidgets(position(), size(), margin());
+		FillSubWidgets(size(), margin());
 	}
 
 	Size AbstractPanel::GetPreferredSize () const
@@ -120,7 +120,7 @@ namespace BlendInt {
 
 	void AbstractPanel::PerformMarginUpdate (const Margin& margin)
 	{
-		FillSubWidgets(position(), size(), margin);
+		FillSubWidgets(size(), margin);
 	}
 
 	ResponseType AbstractPanel::CursorEnterEvent (bool entered)
@@ -145,11 +145,10 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void AbstractPanel::FillSubWidgets (const Point& out_pos,
-	        const Size& size, const Margin& margin)
+	void AbstractPanel::FillSubWidgets (const Size& size, const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = size.width() - margin.hsum();
 		int h = size.height() - margin.vsum();
 

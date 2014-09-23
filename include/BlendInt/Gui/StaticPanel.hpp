@@ -44,8 +44,6 @@ namespace BlendInt {
 
 		virtual void PerformRefresh (const RefreshRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);

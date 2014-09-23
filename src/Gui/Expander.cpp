@@ -212,7 +212,7 @@ namespace BlendInt {
 		height = height + margin().vsum();
 		set_size(width, height);
 
-		FillInExpander(position(), size(), margin());
+		FillInExpander(size(), margin());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
@@ -246,7 +246,7 @@ namespace BlendInt {
 		set_size(width, height);
 		set_margin(2, 2, 2, 2);
 
-		FillInExpander(position(), size(), margin());
+		FillInExpander(size(), margin());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
@@ -319,13 +319,13 @@ namespace BlendInt {
 
 	void Expander::PerformMarginUpdate(const Margin& request)
 	{
-		FillInExpander(position(), size(), request);
+		FillInExpander(size(), request);
 	}
 
 	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillInExpander(position(), *request.size(), margin());
+			FillInExpander(*request.size(), margin());
 
 			VertexTool tool;
 			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
@@ -339,33 +339,17 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Expander::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		ReportPositionUpdate(request);
-	}
-
 	ResponseType Expander::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
-		program->SetUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
+				0.f, 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
 				0);
 
-		program->SetVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
 				0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
@@ -373,7 +357,7 @@ namespace BlendInt {
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -415,11 +399,10 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void Expander::FillInExpander (const Point& out_pos,
-					const Size& out_size, const Margin& margin)
+	void Expander::FillInExpander (const Size& out_size, const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 

@@ -47,7 +47,11 @@ namespace BlendInt {
 
 		virtual void PerformMarginUpdate (const Margin& margin);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 

@@ -51,7 +51,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInHBlock(position(), size(), margin());
+			FillInHBlock(size(), margin());
 
 		}
 	}
@@ -71,7 +71,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInHBlock(position(), size(), margin());
+			FillInHBlock(size(), margin());
 
 		}
 	}
@@ -144,7 +144,7 @@ namespace BlendInt {
 	
 	void HBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillInHBlock(position(), size(), request);
+		FillInHBlock(size(), request);
 	}
 
 	bool HBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -171,7 +171,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInHBlock(position(), *request.size(), margin());
+			FillInHBlock(*request.size(), margin());
 		}
 
 		if(request.source() == this) {
@@ -179,22 +179,6 @@ namespace BlendInt {
 		}
 	}
 	
-	void HBlockLayout::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	ResponseType HBlockLayout::Draw (Profile& profile)
 	{
 		return Ignore;
@@ -235,11 +219,11 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void HBlockLayout::FillInHBlock (const Point& out_pos, const Size& out_size,
+	void HBlockLayout::FillInHBlock (const Size& out_size,
 					const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 

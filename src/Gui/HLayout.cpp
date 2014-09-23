@@ -49,7 +49,7 @@ namespace BlendInt {
 	bool HLayout::Prepend (AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
-			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -59,7 +59,7 @@ namespace BlendInt {
 	bool HLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
-			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -69,7 +69,7 @@ namespace BlendInt {
 	bool HLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 		if(m_alignment == align) return;
 
 		m_alignment = align;
-		FillSubWidgetsInHBox(position(), size(), margin(), align, m_space);
+		FillSubWidgetsInHBox(size(), margin(), align, m_space);
 	}
 
 	void HLayout::SetSpace (int space)
@@ -89,7 +89,7 @@ namespace BlendInt {
 		if(m_space == space) return;
 
 		m_space = space;
-		FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
+		FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 	}
 
 	Size BlendInt::HLayout::GetPreferredSize () const
@@ -155,7 +155,7 @@ namespace BlendInt {
 
 	void HLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInHBox(position(), size(), request, m_alignment, m_space);
+		FillSubWidgetsInHBox(size(), request, m_alignment, m_space);
 	}
 
 	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -178,27 +178,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	void HLayout::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void HLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInHBox(position(), *request.size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInHBox(*request.size(), margin(), m_alignment, m_space);
 		}
 
 		if(request.source() == this) {
@@ -248,20 +232,15 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void HLayout::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	void HLayout::FillSubWidgetsInHBox (const Size& out_size, const Margin& margin,
 	        int alignment, int space)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
+		int width = out_size.width() - margin.hsum();
+		int height = out_size.height() - margin.vsum();
 
 		FillSubWidgetsProportionallyInHBox(x, y, width, height, alignment, space);
-	}
-
-	void HLayout::FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space)
-	{
-		FillSubWidgetsProportionallyInHBox(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
 	void HLayout::FillSubWidgetsProportionallyInHBox (int x, int y, int width,

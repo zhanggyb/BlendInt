@@ -128,21 +128,19 @@ namespace BlendInt {
 
 	ResponseType FileSelector::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->triangle_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
-		program->reset();
+
+		GLSLProgram::reset();
 
 		return Ignore;
 	}

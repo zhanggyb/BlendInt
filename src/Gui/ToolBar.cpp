@@ -65,7 +65,7 @@ namespace BlendInt {
 	void ToolBar::Append (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
-		int y = position().y() + margin().bottom();
+		int y = margin().bottom();
 		int h = size().height() - margin().vsum();
 
 		if(PushBackSubWidget(widget)) {
@@ -96,8 +96,8 @@ namespace BlendInt {
 	{
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();
-		int y = position().y() + margin().bottom();
-		int h = size().height() - margin().top() - margin().bottom();
+		int y = margin().bottom();
+		int h = size().height() - margin().vsum();
 
 		if(PushBackSubWidget(button)) {
 
@@ -182,21 +182,6 @@ namespace BlendInt {
 		FillSubWidgets(x, y, w, h, space_);
 	}
 
-	void ToolBar::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position (*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -207,12 +192,8 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 			inner_->reset();
 
-			int x = position().x() + margin().left();
-			if (first()) {
-				x = first()->position().x();
-			}
-
-			int y = position().y() + margin().bottom();
+			int x = margin().left();
+			int y = margin().bottom();
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
@@ -222,7 +203,7 @@ namespace BlendInt {
 
 		} else if (request.target()->container() == this) {
 			// if a sub widget changed its size, re-align all
-			FillSubWidgets(position(), size(), margin(), space_);
+			FillSubWidgets(size(), margin(), space_);
 		}
 
 		if(request.source() == this) {
@@ -238,7 +219,7 @@ namespace BlendInt {
 		program->use();
 
 		program->SetUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
+		        0.f, 0.f, 0.f);
 		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
 		        0);
@@ -397,9 +378,9 @@ namespace BlendInt {
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,
 			int space)
 	{
-		int x = position().x();
-		int y = position().y();
-		int h = size.height() - margin.top() - margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
+		int h = size.height() - margin.vsum();
 
 		if (h < 0) {
 			DBG_PRINT_MSG(
@@ -407,8 +388,6 @@ namespace BlendInt {
 					h);
 		}
 
-		x += margin.left();
-		y += margin.bottom();
 		for(AbstractWidget* p = first(); p; p = p->next())
 		{
 			SetSubWidgetPosition(p, x, y);
@@ -417,11 +396,11 @@ namespace BlendInt {
 		}
 	}
 	
-	void ToolBar::FillSubWidgets (const Point& out_pos, const Size& out_size,
+	void ToolBar::FillSubWidgets (const Size& out_size,
 			const Margin& margin, int space)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int width = out_size.width() - margin.left() - margin.right();
 		int height = out_size.height() - margin.top() - margin.bottom();
 
@@ -454,7 +433,7 @@ namespace BlendInt {
 
 	int ToolBar::GetLastPosition () const
 	{
-		int x = position().x() + margin().left();
+		int x = margin().left();
 
 		if (last()) {
 			x = last()->position().x();

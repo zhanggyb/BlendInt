@@ -128,6 +128,21 @@ namespace BlendInt {
 				return image_program_;
 			}
 
+			const glm::mat4& ui_projection_matrix () const
+			{
+				return ui_projection_matrix_;
+			}
+
+			const glm::mat4& ui_view_matrix () const
+			{
+				return ui_view_matrix_;
+			}
+
+			const glm::mat4& ui_model_matrix () const
+			{
+				return ui_model_matrix_;
+			}
+
 			void GetUIProjectionMatrix (glm::mat4& matrix);
 
 			void SetUIProjectionMatrix (const glm::mat4& matrix);
@@ -202,6 +217,12 @@ namespace BlendInt {
 			GLint ui_matrix_block_size_;
 			
 			GLuint ui_matrix_binding_point_;
+
+			glm::mat4 ui_projection_matrix_;
+
+			glm::mat4 ui_view_matrix_;
+
+			glm::mat4 ui_model_matrix_;
 
 			std::stack<glm::mat4> ui_projection_matrix_stack;
 

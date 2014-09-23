@@ -72,8 +72,6 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -92,9 +90,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin, int alignment, int space);
-
-		void FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space);
+		void FillSubWidgetsInHBox (const Size& out_size, const Margin& margin, int alignment, int space);
 
 		void FillSubWidgetsProportionallyInHBox (int x, int y, int width, int height, int alignment, int space);
 

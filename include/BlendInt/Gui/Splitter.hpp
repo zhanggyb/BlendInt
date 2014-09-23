@@ -147,8 +147,6 @@ namespace BlendInt
 
 		virtual void PerformMarginUpdate (const Margin& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -169,11 +167,7 @@ namespace BlendInt
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgetsInSplitter (const Point& out_pos,
-		        const Size& out_size, const Margin& margin,
-		        Orientation orientation);
-
-		void FillSubWidgetsInSplitter (const Point& pos, const Size& size,
+		void FillSubWidgetsInSplitter (const Size& out_size, const Margin& margin,
 		        Orientation orientation);
 
 		/**

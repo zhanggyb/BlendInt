@@ -49,7 +49,7 @@ namespace BlendInt {
 	bool VLayout::Prepend (AbstractWidget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -59,7 +59,7 @@ namespace BlendInt {
 	bool VLayout::Append (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -69,7 +69,7 @@ namespace BlendInt {
 	bool VLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 		if(m_alignment == align) return;
 
 		m_alignment = align;
-		FillSubWidgetsInVBox(position(), size(), margin(), align, m_space);
+		FillSubWidgetsInVBox(size(), margin(), align, m_space);
 	}
 
 	void VLayout::SetSpace (int space)
@@ -89,7 +89,7 @@ namespace BlendInt {
 		if(m_space == space) return;
 
 		m_space = space;
-		FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+		FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 	}
 
 	Size BlendInt::VLayout::GetPreferredSize () const
@@ -155,7 +155,7 @@ namespace BlendInt {
 
 	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInVBox(position(), size(), request, m_alignment, m_space);
+		FillSubWidgetsInVBox(size(), request, m_alignment, m_space);
 	}
 
 	bool VLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -178,27 +178,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	void VLayout::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void VLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInVBox(position(), *request.size(), margin(), m_alignment,
+			FillSubWidgetsInVBox(*request.size(), margin(), m_alignment,
 											m_space);		}
 
 		if(request.source() == this) {
@@ -247,20 +231,15 @@ namespace BlendInt {
 	}
 
 
-	void VLayout::FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	void VLayout::FillSubWidgetsInVBox (const Size& out_size, const Margin& margin,
 			int alignment, int space)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
+		int width = out_size.width() - margin.hsum();
+		int height = out_size.height() - margin.vsum();
 
 		FillSubWidgetsProportionallyInVBox(x, y, width, height, alignment, space);
-	}
-
-	void VLayout::FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space)
-	{
-		FillSubWidgetsProportionallyInVBox(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
 	void VLayout::FillSubWidgetsProportionallyInVBox (int x, int y, int width,

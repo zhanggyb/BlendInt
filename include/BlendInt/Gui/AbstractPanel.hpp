@@ -81,7 +81,7 @@ namespace BlendInt {
 
 		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
-		void FillSubWidgets (const Point& out_pos, const Size& size, const Margin& margin);
+		void FillSubWidgets (const Size& size, const Margin& margin);
 
 		void FillSubWidgets (int x, int y, int w, int h);
 

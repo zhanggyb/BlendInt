@@ -51,7 +51,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInVBlock(position(), size(), margin());
+			FillInVBlock(size(), margin());
 
 		}
 	}
@@ -72,7 +72,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInVBlock(position(), size(), margin());
+			FillInVBlock(size(), margin());
 
 		}
 	}
@@ -145,7 +145,7 @@ namespace BlendInt {
 
 	void VBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillInVBlock(position(), size(), request);
+		FillInVBlock(size(), request);
 	}
 
 	bool VBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -172,27 +172,11 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInVBlock(position(), *request.size(), margin());
+			FillInVBlock(*request.size(), margin());
 		}
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
-		}
-	}
-
-	void VBlockLayout::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
 		}
 	}
 
@@ -236,11 +220,11 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void VBlockLayout::FillInVBlock (const Point& out_pos, const Size& out_size,
+	void VBlockLayout::FillInVBlock (const Size& out_size,
 					const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 

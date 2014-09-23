@@ -400,9 +400,9 @@ namespace BlendInt {
 	{
 		if(RemoveSubWidget(widget)) {
 			if(orientation_ == Horizontal) {
-				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), margin(), orientation_);
 			} else {
-				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), margin(), orientation_);
 			}
 		}
 	}
@@ -551,29 +551,14 @@ namespace BlendInt {
 
 	void Splitter::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInSplitter(position(), size(), request, orientation_);
-	}
-
-	void Splitter::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
+		FillSubWidgetsInSplitter(size(), request, orientation_);
 	}
 
 	void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
-			FillSubWidgetsInSplitter(position(), *request.size(), margin(), orientation_);
+			FillSubWidgetsInSplitter(*request.size(), margin(), orientation_);
 
 			set_size(*request.size());
 		}
@@ -677,21 +662,14 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::FillSubWidgetsInSplitter (const Point& out_pos,
-	        const Size& out_size, const Margin& margin, Orientation orientation)
+	void Splitter::FillSubWidgetsInSplitter (const Size& out_size, const Margin& margin, Orientation orientation)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int width = out_size.width() - margin.left() - margin.right();
 		int height = out_size.height() - margin.top() - margin.bottom();
 
 		FillSubWidgetsInSplitter(x, y, width, height, orientation);
-	}
-
-	void Splitter::FillSubWidgetsInSplitter (const Point& pos, const Size& size,
-			Orientation orientation)
-	{
-		FillSubWidgetsInSplitter(pos.x(), pos.y(), size.width(), size.height(), orientation);
 	}
 
 	void Splitter::FillSubWidgetsInSplitter (int x, int y, int width,

@@ -61,8 +61,6 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
@@ -79,7 +77,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillInVBlock (const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillInVBlock (const Size& out_size, const Margin& margin);
 
 		void FillInVBlock (int x, int y, int w, int h);
 

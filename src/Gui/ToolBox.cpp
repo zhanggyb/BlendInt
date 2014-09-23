@@ -76,7 +76,7 @@ namespace BlendInt {
 	
 	void ToolBox::Append (AbstractWidget* widget)
 	{
-		int x = position().x() + margin().left();
+		int x = margin().left();
 		int y = GetLastPosition();
 		int w = size().width() - margin().hsum();
 
@@ -139,27 +139,12 @@ namespace BlendInt {
 
 	void ToolBox::PerformMarginUpdate (const Margin& request)
 	{
-		int x = position().x() + request.left();
-		int y = position().y() + request.bottom();
+		int x = request.left();
+		int y = request.bottom();
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
 
 		FillSubWidgets(x, y, w, h, space_);
-	}
-	
-	void ToolBox::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
 	}
 
 	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -181,7 +166,7 @@ namespace BlendInt {
 			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
-			FillSubWidgets(position(), size(), margin(), space_);
+			FillSubWidgets(size(), margin(), space_);
 		}
 
 		if(request.source() == this) {
@@ -191,10 +176,9 @@ namespace BlendInt {
 
 	ResponseType ToolBox::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
@@ -203,7 +187,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -245,7 +229,7 @@ namespace BlendInt {
 
 	int ToolBox::GetLastPosition () const
 	{
-		int y = position().y() + size().height() - margin().top();
+		int y = size().height() - margin().top();
 
 		if(last()) {
 			y = last()->position().y();
@@ -255,11 +239,11 @@ namespace BlendInt {
 		return y;
 	}
 
-	void ToolBox::FillSubWidgets (const Point& out_pos, const Size& out_size,
+	void ToolBox::FillSubWidgets (const Size& out_size,
 					const Margin& margin, int space)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int width = out_size.width() - margin.hsum();
 		int height = out_size.height() - margin.vsum();
 

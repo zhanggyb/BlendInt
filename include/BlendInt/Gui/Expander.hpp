@@ -100,8 +100,6 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual ResponseType Draw (Profile& profile);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
@@ -122,7 +120,7 @@ namespace BlendInt {
 
 		void InitializeExpander ();
 
-		void FillInExpander (const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillInExpander (const Size& out_size, const Margin& margin);
 
 		void FillInExpander (int x, int y, int width, int height);
 

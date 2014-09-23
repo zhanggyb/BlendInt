@@ -677,6 +677,7 @@ namespace BlendInt {
 
 		void Shaders::GetUIProjectionMatrix(glm::mat4& matrix)
 		{
+			/*
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
@@ -684,6 +685,9 @@ namespace BlendInt {
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+
+			matrix = ui_projection_matrix_;
 		}
 
 		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
@@ -691,6 +695,8 @@ namespace BlendInt {
 			ui_matrix_->bind();
 			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
 			ui_matrix_->reset();
+
+			ui_projection_matrix_ = matrix;
 		}
 
 		void Shaders::PushUIProjectionMatrix()
@@ -710,6 +716,9 @@ namespace BlendInt {
 
 		void Shaders::GetUIViewMatrix(glm::mat4& matrix)
 		{
+			// FIXME: the following commented lines does not work, but I don't know why
+			// cause the same code in GetUIProjectionMatrix() works
+			/*
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
@@ -717,6 +726,8 @@ namespace BlendInt {
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+			matrix = ui_view_matrix_;
 		}
 
 		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
@@ -724,6 +735,8 @@ namespace BlendInt {
 			ui_matrix_->bind();
 			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_offset_[2]- ui_matrix_offset_[1], glm::value_ptr(matrix));
 			ui_matrix_->reset();
+
+			ui_view_matrix_ = matrix;
 		}
 
 		void Shaders::PushUIViewMatrix()
@@ -743,6 +756,7 @@ namespace BlendInt {
 
 		void Shaders::GetUIModelMatrix(glm::mat4& matrix)
 		{
+			/*
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
@@ -750,6 +764,8 @@ namespace BlendInt {
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+			matrix = ui_model_matrix_;
 		}
 
 		void Shaders::SetUIModelMatrix (const glm::mat4& matrix)
@@ -757,6 +773,7 @@ namespace BlendInt {
 			ui_matrix_->bind();
 			ui_matrix_->set_sub_data(ui_matrix_offset_[2], ui_matrix_block_size_- ui_matrix_offset_[2], glm::value_ptr(matrix));
 			ui_matrix_->reset();
+			ui_model_matrix_ = matrix;
 		}
 
 		void Shaders::PushUIModelMatrix()

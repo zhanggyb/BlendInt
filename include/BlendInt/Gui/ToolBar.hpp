@@ -56,8 +56,6 @@ namespace BlendInt {
 
 		virtual void PerformMarginUpdate (const Margin& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -80,7 +78,7 @@ namespace BlendInt {
 
 		void InitializeToolBar ();
 
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		void FillSubWidgets (const Size& out_size, const Margin& margin, int space);
 
 		void FillSubWidgets (int x, int y, int width, int height, int space);
 
