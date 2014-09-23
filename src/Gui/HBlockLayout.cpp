@@ -179,46 +179,6 @@ namespace BlendInt {
 		}
 	}
 	
-	ResponseType HBlockLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void HBlockLayout::FillInHBlock (const Size& out_size,
 					const Margin& margin)
 	{

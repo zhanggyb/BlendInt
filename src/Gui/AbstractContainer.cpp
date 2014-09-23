@@ -116,12 +116,6 @@ namespace BlendInt {
 		last_ = 0;
 	}
 
-
-	ResponseType AbstractContainer::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
 	void AbstractContainer::FillSubWidgetsAveragely (const Point& out_pos,
 					const Size& out_size, const Margin& margin,
 					Orientation orientation, int alignment, int space)

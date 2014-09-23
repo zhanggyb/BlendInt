@@ -97,6 +97,11 @@ namespace BlendInt {
 		Shaders::instance->PopUIModelMatrix();
 	}
 
+	ResponseType Container::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
 	ResponseType Container::CursorEnterEvent (bool entered)
 	{
 		return Ignore;

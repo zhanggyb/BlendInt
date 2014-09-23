@@ -192,41 +192,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ToolBox::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ToolBox::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	int ToolBox::GetLastPosition () const
 	{
 		int y = size().height() - margin().top();

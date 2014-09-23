@@ -190,48 +190,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType HLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType HLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void HLayout::FillSubWidgetsInHBox (const Size& out_size, const Margin& margin,
 	        int alignment, int space)
 	{

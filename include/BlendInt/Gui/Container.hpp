@@ -53,15 +53,15 @@ namespace BlendInt {
 
 		virtual void PostDraw (Profile& profile);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (
-		        const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (
-		        const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

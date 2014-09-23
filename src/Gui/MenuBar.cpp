@@ -188,41 +188,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType MenuBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	Size MenuBar::GetPreferredSize () const
 	{
 		Size preferred_size;

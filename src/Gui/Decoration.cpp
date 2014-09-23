@@ -177,8 +177,7 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
@@ -191,30 +190,8 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 		return Accept;
-	}
-
-	ResponseType Decoration::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	void Decoration::InitializeDecoration()
@@ -251,21 +228,6 @@ namespace BlendInt {
 	void Decoration::RealignSubWidgets (const Size& size, const Margin& margin,
 	        int space)
 	{
-	}
-
-	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	int Decoration::GetLastPosition () const

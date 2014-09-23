@@ -235,28 +235,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ToolBar::CursorEnterEvent (bool entered)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::ContextMenuPressEvent (
-					const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::ContextMenuReleaseEvent (
-					const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
 	ResponseType ToolBar::MousePressEvent (const MouseEvent& event)
 	{
 		if(event.button() == MouseButtonMiddle) {

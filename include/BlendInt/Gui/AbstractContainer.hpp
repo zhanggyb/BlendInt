@@ -122,8 +122,6 @@ namespace BlendInt {
 
 		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
 
-		virtual ResponseType FocusEvent (bool focus);
-
 		void MoveSubWidgets (int offset_x, int offset_y);
 
 		void ResizeSubWidgets (const Size& size);

@@ -208,33 +208,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType ListView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
 	{
 		if (hbar()->visiable() && hbar()->Contain(event.position())) {

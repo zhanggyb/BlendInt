@@ -180,46 +180,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType VBlockLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
 	void VBlockLayout::FillInVBlock (const Size& out_size,
 					const Margin& margin)
 	{
