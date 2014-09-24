@@ -21,24 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_
-#define _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_
+#ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
+#define _BLENDINT_GUI_SCREENSPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractViewport.hpp>
+#include <BlendInt/Gui/AbstractScreen.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
 	class Widget;
-	class ViewportSplitter;
+	class ScreenSplitter;
 
-	class ViewportSplitterHandle: public AbstractViewport
+	class ScreenSplitterHandle: public AbstractScreen
 	{
 	public:
 
-		ViewportSplitterHandle (Orientation orientation = Horizontal);
+		ScreenSplitterHandle (Orientation orientation = Horizontal);
 
-		virtual ~ViewportSplitterHandle ();
+		virtual ~ScreenSplitterHandle ();
 
 		void SetHandleWidget (Widget* widget);
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 
 	protected:
 
-		friend class ViewportSplitter;
+		friend class ScreenSplitter;
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -82,26 +82,26 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER> buffer_;
 
-		AbstractViewport* previous_viewport_;
+		AbstractScreen* previous_viewport_;
 
-		AbstractViewport* next_viewport_;
+		AbstractScreen* next_viewport_;
 	};
 
 	// -------------------------------
 
-	class ViewportSplitter: public AbstractViewport
+	class ScreenSplitter: public AbstractScreen
 	{
 	public:
 
-		ViewportSplitter (Orientation orientation = Horizontal);
+		ScreenSplitter (Orientation orientation = Horizontal);
 
-		virtual ~ViewportSplitter ();
+		virtual ~ScreenSplitter ();
 
-		void PrependViewport (AbstractViewport* viewport);
+		void PrependViewport (AbstractScreen* viewport);
 
-		void AppendViewport (AbstractViewport* viewport);
+		void AppendViewport (AbstractScreen* viewport);
 
-		void Insert (int index, AbstractViewport* viewport);
+		void Insert (int index, AbstractScreen* viewport);
 
 		virtual Size GetPreferredSize () const;
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class ViewportSplitterHandle;
+		friend class ScreenSplitterHandle;
 
 		void AlignSubViewports (Orientation orientation, const Size& size);
 
@@ -137,8 +137,8 @@ namespace BlendInt {
 
 		Orientation orientation_;
 
-		AbstractViewport* hover_;
+		AbstractScreen* hover_;
 	};
 }
 
-#endif /* _BLENDINT_GUI_VIEWPORTSPLITTER_HPP_ */
+#endif /* _BLENDINT_GUI_SCREENSPLITTER_HPP_ */

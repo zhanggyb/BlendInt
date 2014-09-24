@@ -8,8 +8,9 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
-#include <BlendInt/Gui/Viewport.hpp>
-#include <BlendInt/Gui/ViewportSplitter.hpp>
+#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/ScreenSplitter.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -29,32 +30,14 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	glm::mat4 matrix(1.f);
-	glm::mat4 model;
+	Screen* vp = Manage(new Screen);
 
-	Shaders::instance->SetUIProjectionMatrix(matrix);
-	Shaders::instance->GetUIProjectionMatrix(model);
+	AddScreen(vp);
 
-//	Shaders::instance->SetUIViewMatrix(matrix);
-//	Shaders::instance->GetUIViewMatrix(model);
+	FileButton* btn = Manage(new FileButton);
+	btn->SetPosition(200, 200);
 
-	if(matrix == model) {
-		DBG_PRINT_MSG("%s", "Equal");
-	} else {
-		DBG_PRINT_MSG("%s", "Not Equal");
-	}
+	vp->AddWidget(btn);
 
-	Viewport* vp = Manage(new Viewport);
-
-	AddViewport(vp);
-
-	vp->Resize(1000, 800);
-	vp->SetPosition(20, 20);
-
-    FileSelector* fb = Manage(new FileSelector);
-    fb->SetPosition(100, 100);
-	fb->Resize(800, 600);
-	fb->SetRoundType(RoundAll);
-
-	vp->AddContainer(fb);
+	events()->connect(resized(), vp, static_cast<void (AbstractWidget::*)(const Size&) >(&Screen::Resize));
 }

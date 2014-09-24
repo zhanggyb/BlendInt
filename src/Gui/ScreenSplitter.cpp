@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/ViewportSplitter.hpp>
+#include <BlendInt/Gui/ScreenSplitter.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
@@ -45,8 +45,8 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	ViewportSplitterHandle::ViewportSplitterHandle(Orientation orientation)
-	: AbstractViewport(),
+	ScreenSplitterHandle::ScreenSplitterHandle(Orientation orientation)
+	: AbstractScreen(),
 	  orientation_(orientation),
 	  vao_(0),
 	  previous_viewport_(0),
@@ -82,12 +82,12 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	ViewportSplitterHandle::~ViewportSplitterHandle()
+	ScreenSplitterHandle::~ScreenSplitterHandle()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ViewportSplitterHandle::SetHandleWidget(Widget* widget)
+	void ScreenSplitterHandle::SetHandleWidget(Widget* widget)
 	{
 		if(widget_count()) {
 			Clear();
@@ -100,7 +100,7 @@ namespace BlendInt {
 		}
 	}
 
-	Size ViewportSplitterHandle::GetPreferredSize() const
+	Size ScreenSplitterHandle::GetPreferredSize() const
 	{
 		Size preferred_size(1, 1);
 
@@ -111,7 +111,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void ViewportSplitterHandle::PerformPositionUpdate(
+	void ScreenSplitterHandle::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -135,7 +135,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ViewportSplitterHandle::PerformSizeUpdate(
+	void ScreenSplitterHandle::PerformSizeUpdate(
 			const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -172,7 +172,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ViewportSplitterHandle::Draw(Profile& profile)
+	ResponseType ScreenSplitterHandle::Draw(Profile& profile)
 	{
 		glViewport(position().x(), position().y(), size().width(), size().height());
 		glEnable(GL_SCISSOR_TEST);
@@ -210,87 +210,87 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::FocusEvent(bool focus)
+	ResponseType ScreenSplitterHandle::FocusEvent(bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::CursorEnterEvent(bool entered)
+	ResponseType ScreenSplitterHandle::CursorEnterEvent(bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::KeyPressEvent(const KeyEvent& event)
+	ResponseType ScreenSplitterHandle::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::ContextMenuPressEvent(
+	ResponseType ScreenSplitterHandle::ContextMenuPressEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::ContextMenuReleaseEvent(
+	ResponseType ScreenSplitterHandle::ContextMenuReleaseEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::MousePressEvent(
+	ResponseType ScreenSplitterHandle::MousePressEvent(
 			const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::MouseReleaseEvent(
+	ResponseType ScreenSplitterHandle::MouseReleaseEvent(
 			const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitterHandle::MouseMoveEvent(const MouseEvent& event)
+	ResponseType ScreenSplitterHandle::MouseMoveEvent(const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
 	// --------------------------------
 
-	ViewportSplitter::ViewportSplitter(Orientation orientation)
-	: AbstractViewport(),
+	ScreenSplitter::ScreenSplitter(Orientation orientation)
+	: AbstractScreen(),
 	  orientation_(orientation),
 	  hover_(0)
 	{
 		set_size(500, 500);
 	}
 
-	ViewportSplitter::~ViewportSplitter()
+	ScreenSplitter::~ScreenSplitter()
 	{
 
 	}
 
-	void ViewportSplitter::PrependViewport(AbstractViewport* viewport)
+	void ScreenSplitter::PrependViewport(AbstractScreen* viewport)
 	{
 	}
 
-	void ViewportSplitter::AppendViewport(AbstractViewport* viewport)
+	void ScreenSplitter::AppendViewport(AbstractScreen* viewport)
 	{
 		if(viewport && viewport->container() != this) {
 
 			if(first() == 0) {
 				PushBackSubWidget(viewport);
 			} else {
-				ViewportSplitterHandle* handle = 0;
+				ScreenSplitterHandle* handle = 0;
 
 				if(orientation_ == Horizontal) {
-					handle = Manage(new ViewportSplitterHandle(Vertical));
+					handle = Manage(new ScreenSplitterHandle(Vertical));
 				} else {
-					handle = Manage(new ViewportSplitterHandle(Horizontal));
+					handle = Manage(new ScreenSplitterHandle(Horizontal));
 				}
 
 				AbstractWidget* p = last();
 				PushBackSubWidget(handle);
-				handle->previous_viewport_ = dynamic_cast<AbstractViewport*>(p);
+				handle->previous_viewport_ = dynamic_cast<AbstractScreen*>(p);
 				handle->next_viewport_ = viewport;
 				PushBackSubWidget(viewport);
 			}
@@ -299,11 +299,11 @@ namespace BlendInt {
 		}
 	}
 
-	void ViewportSplitter::Insert(int index, AbstractViewport* viewport)
+	void ScreenSplitter::Insert(int index, AbstractScreen* viewport)
 	{
 	}
 
-	Size ViewportSplitter::GetPreferredSize() const
+	Size ScreenSplitter::GetPreferredSize() const
 	{
 		Size preferred_size;
 
@@ -341,7 +341,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	ResponseType ViewportSplitter::Draw(Profile& profile)
+	ResponseType ScreenSplitter::Draw(Profile& profile)
 	{
 		for(AbstractWidget* p = first(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
@@ -350,7 +350,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ViewportSplitter::AlignSubViewports(Orientation orientation,
+	void ScreenSplitter::AlignSubViewports(Orientation orientation,
 			const Size& size)
 	{
 		int room = GetAverageRoom(orientation, size);
@@ -405,43 +405,43 @@ namespace BlendInt {
 
 	}
 
-	ResponseType ViewportSplitter::FocusEvent(bool focus)
+	ResponseType ScreenSplitter::FocusEvent(bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitter::CursorEnterEvent(bool entered)
+	ResponseType ScreenSplitter::CursorEnterEvent(bool entered)
 	{
 		if(entered) {
 			// TODO: do sth.
 		} else {
 			if(hover_) {
 				set_widget_hover_event(hover_, false);
-				hover_->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+				hover_->destroyed().disconnectOne(this, &ScreenSplitter::OnHoverViewportDestroyed);
 				hover_ = 0;
 			}
 		}
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitter::KeyPressEvent(const KeyEvent& event)
+	ResponseType ScreenSplitter::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitter::ContextMenuPressEvent(
+	ResponseType ScreenSplitter::ContextMenuPressEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitter::ContextMenuReleaseEvent(
+	ResponseType ScreenSplitter::ContextMenuReleaseEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ViewportSplitter::MousePressEvent(const MouseEvent& event)
+	ResponseType ScreenSplitter::MousePressEvent(const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
 
@@ -458,7 +458,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ViewportSplitter::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType ScreenSplitter::MouseReleaseEvent(const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
 
@@ -475,11 +475,11 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ViewportSplitter::MouseMoveEvent(const MouseEvent& event)
+	ResponseType ScreenSplitter::MouseMoveEvent(const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
 
-		AbstractViewport* original_hover = hover_;
+		AbstractScreen* original_hover = hover_;
 
 		if(hover_) {
 			if(!hover_->Contain(event.position())) {
@@ -487,7 +487,7 @@ namespace BlendInt {
 				hover_ = 0;
 				for(AbstractWidget* p = last(); p; p = p->previous()) {
 					if(p->Contain(event.position())) {
-						hover_ = dynamic_cast<AbstractViewport*>(p);
+						hover_ = dynamic_cast<AbstractScreen*>(p);
 						break;
 					}
 				}
@@ -497,7 +497,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = last(); p; p = p->previous()) {
 				if(p->Contain(event.position())) {
-					hover_ = dynamic_cast<AbstractViewport*>(p);
+					hover_ = dynamic_cast<AbstractScreen*>(p);
 					break;
 				}
 			}
@@ -508,12 +508,12 @@ namespace BlendInt {
 
 			if(original_hover) {
 				set_widget_hover_event(original_hover, false);
-				original_hover->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+				original_hover->destroyed().disconnectOne(this, &ScreenSplitter::OnHoverViewportDestroyed);
 			}
 
 			if(hover_) {
 				set_widget_hover_event(hover_, true);
-				events()->connect(hover_->destroyed(), this, &ViewportSplitter::OnHoverViewportDestroyed);
+				events()->connect(hover_->destroyed(), this, &ScreenSplitter::OnHoverViewportDestroyed);
 			}
 
 		}
@@ -525,7 +525,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	int ViewportSplitter::GetAverageRoom(Orientation orientation,
+	int ScreenSplitter::GetAverageRoom(Orientation orientation,
 			const Size& size)
 	{
 		int room = 0;
@@ -565,13 +565,13 @@ namespace BlendInt {
 		return room;
 	}
 
-	void ViewportSplitter::OnHoverViewportDestroyed(AbstractWidget* widget)
+	void ScreenSplitter::OnHoverViewportDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hover_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &ViewportSplitter::OnHoverViewportDestroyed);
+		widget->destroyed().disconnectOne(this, &ScreenSplitter::OnHoverViewportDestroyed);
 
 		hover_ = 0;
 	}

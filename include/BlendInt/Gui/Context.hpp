@@ -31,7 +31,7 @@
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/Section.hpp>
-#include <BlendInt/Gui/AbstractViewport.hpp>
+#include <BlendInt/Gui/AbstractScreen.hpp>
 
 namespace BlendInt {
 
@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		void AddViewport (AbstractViewport* vp);
+		void AddScreen (AbstractScreen* vp);
 
 		/**
 		 * @brief Add a widget in a new section
@@ -80,7 +80,7 @@ namespace BlendInt {
 
 		void DispatchMouseEvent (const MouseEvent& event);
 
-		void SetFocusedViewport (AbstractViewport* viewport);
+		void SetFocusedViewport (AbstractScreen* viewport);
 
 		/**
 		 * @brief Always return true
@@ -160,7 +160,7 @@ namespace BlendInt {
 
 		int current_cursor_;
 
-		AbstractViewport* hover_;
+		AbstractScreen* hover_;
 
 		std::stack<int> cursor_stack_;
 

@@ -21,10 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VIEWPORT_HPP_
-#define _BLENDINT_GUI_VIEWPORT_HPP_
+#ifndef _BLENDINT_GUI_SCREEN_HPP_
+#define _BLENDINT_GUI_SCREEN_HPP_
 
-#include <BlendInt/Gui/AbstractViewport.hpp>
+#include <BlendInt/Gui/AbstractScreen.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
@@ -32,13 +32,13 @@
 
 namespace BlendInt {
 
-	class Viewport: public AbstractViewport
+	class Screen: public AbstractScreen
 	{
 	public:
 
-		Viewport ();
+		Screen ();
 
-		virtual ~Viewport ();
+		virtual ~Screen ();
 
 		void AddWidget (Widget* widget);
 
@@ -117,4 +117,4 @@ namespace BlendInt {
 
 }
 
- #endif	// _BLENDINT_GUI_VIEWPORT_HPP_
+ #endif	// _BLENDINT_GUI_SCREEN_HPP_

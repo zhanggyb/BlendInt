@@ -24,6 +24,8 @@
 #include <BlendInt/Gui/ImagePlane2D.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;

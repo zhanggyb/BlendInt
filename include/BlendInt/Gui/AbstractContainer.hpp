@@ -35,7 +35,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class AbstractViewport;
+		friend class AbstractScreen;
 		friend class AbstractWidget;
 
 	public:

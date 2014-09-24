@@ -44,7 +44,7 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
-	class AbstractViewport;
+	class AbstractScreen;
 
 	/**
 	 * @brief the basic event class
@@ -86,11 +86,11 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class AbstractViewport;
+		friend class AbstractScreen;
 
 		Context* context_;
 		Section* section_;
-		AbstractViewport* viewport_;
+		AbstractScreen* viewport_;
 	};
 
 } /* namespace BlendInt */

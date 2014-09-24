@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_
-#define _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTSCREEN_HPP_
+#define _BLENDINT_GUI_ABSTRACTSCREEN_HPP_
 
 #include <glm/glm.hpp>
 
@@ -30,7 +30,7 @@
 
 namespace BlendInt {
 
-	class AbstractViewport: public AbstractContainer
+	class AbstractScreen: public AbstractContainer
 	{
 	public:
 
@@ -42,16 +42,16 @@ namespace BlendInt {
 
 		friend class Context;
 
-		AbstractViewport ();
+		AbstractScreen ();
 
-		virtual ~AbstractViewport ();
+		virtual ~AbstractScreen ();
 
 		inline DisplayMode display_mode () const
 		{
 			return display_mode_;
 		}
 
-		static AbstractViewport* GetViewport (AbstractWidget* widget);
+		static AbstractScreen* GetViewport (AbstractWidget* widget);
 
 	protected:
 
@@ -133,4 +133,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_ABSTRACTVIEWPORT_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTSCREEN_HPP_ */

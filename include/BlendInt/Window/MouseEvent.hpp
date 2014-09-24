@@ -34,7 +34,7 @@ namespace BlendInt {
 
 	class InputEvent;
 
-	class Viewport;
+	class Screen;
 
 	/**
 	 * @brief Mouse event class
@@ -118,7 +118,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class Viewport;
+		friend class Screen;
 
 		MouseAction m_action;
 

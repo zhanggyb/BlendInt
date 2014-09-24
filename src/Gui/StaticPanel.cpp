@@ -55,8 +55,7 @@ namespace BlendInt {
 	: AbstractPanel(),
 	  refresh_(true),
 	  pressed_(false),
-	  realign_(false),
-	  shadow_(0)
+	  realign_(false)
 	{
 		//set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
@@ -67,8 +66,6 @@ namespace BlendInt {
 	StaticPanel::~StaticPanel ()
 	{
 		glDeleteVertexArrays(2, vao_);
-
-		if(shadow_) delete shadow_;
 	}
 
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
@@ -96,8 +93,6 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			shadow_->Resize(size());
-
 			FillSubWidgets(*request.size(), margin());
 
 			refresh_ = true;
@@ -122,8 +117,6 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
-			shadow_->SetRoundType(*request.round_type());
-
 			Refresh();
 		}
 
@@ -144,7 +137,6 @@ namespace BlendInt {
 			outer_->bind();
 			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
-			shadow_->SetRadius(*request.round_radius());
 			Refresh();
 		}
 
@@ -155,17 +147,13 @@ namespace BlendInt {
 
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
-		shadow_->Draw(glm::vec3(position().x(), position().y(), 0.f));
-
 		if(refresh_) {
 			RenderToBuffer();
 			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-		tex_buffer_.Draw(position().x(), position().y());
-
+		tex_buffer_.Draw(0.f, 0.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Accept;
@@ -254,20 +242,12 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
-
-		shadow_ = new Shadow(size(), round_type(), round_radius());
 	}
 
 	void StaticPanel::RenderToBuffer ()
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
-
-		GLfloat left = position().x();
-		GLfloat bottom = position().y();
-
-		GLfloat right = left + width;
-		GLfloat top = bottom + height;
 
 		tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 		// Create and set texture to render to.
@@ -308,6 +288,12 @@ namespace BlendInt {
 
 			fb->bind();
 
+			Profile off_screen_profile;
+
+			glm::mat4 identity(1.f);
+			Shaders::instance->PushUIModelMatrix();
+			Shaders::instance->SetUIModelMatrix(identity);
+
 			glClearColor(0.f, 0.f, 0.f, 0.f);
 			glClearDepth(1.0);
 			glClearStencil(0);
@@ -317,23 +303,24 @@ namespace BlendInt {
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 
-			glm::mat4 origin;
-
-			Shaders::instance->GetUIProjectionMatrix(origin);
-
-			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
 			        -100.f);
 
+			Shaders::instance->PushUIProjectionMatrix();
 			Shaders::instance->SetUIProjectionMatrix(projection);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, size().width(), size().height());
 
+			GLboolean scissor_test;
+			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
+			glDisable(GL_SCISSOR_TEST);
+
 			// Draw frame panel
 			Shaders::instance->triangle_program()->use();
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
 			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
@@ -351,8 +338,6 @@ namespace BlendInt {
 			glBindVertexArray(0);
 			GLSLProgram::reset();
 
-			Profile off_screen_profile(position());
-
 			for(AbstractWidget* p = first(); p; p = p->next()) {
 				DispatchDrawEvent(p, off_screen_profile);
 			}
@@ -360,10 +345,14 @@ namespace BlendInt {
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-			Shaders::instance->SetUIProjectionMatrix(origin);
+			Shaders::instance->PopUIProjectionMatrix();
+			Shaders::instance->PopUIModelMatrix();
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+			if(scissor_test) {
+				glEnable(GL_SCISSOR_TEST);
+			}
 		}
 
 		fb->reset();

@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/Screen.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -43,8 +43,8 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Viewport::Viewport ()
-	: AbstractViewport(),
+	Screen::Screen ()
+	: AbstractScreen(),
 	  focused_(0),
 	  top_hovered_(0),
 	  custom_focused_widget_(false),
@@ -76,34 +76,34 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	Viewport::~Viewport()
+	Screen::~Screen()
 	{
 		glDeleteVertexArrays(1, &vao_);
 
 		if(focused_) {
 			set_widget_focus_status(focused_, false);
-			focused_->destroyed().disconnectOne(this, &Viewport::OnFocusedWidgetDestroyed);
+			focused_->destroyed().disconnectOne(this, &Screen::OnFocusedWidgetDestroyed);
 			focused_ = 0;
 		}
 
 		ClearHoverWidgets();
 	}
 
-	void Viewport::AddWidget(Widget* widget)
+	void Screen::AddWidget(Widget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			// set position
 		}
 	}
 
-	void Viewport::AddContainer(Container* container)
+	void Screen::AddContainer(Container* container)
 	{
 		if(PushBackSubWidget(container)) {
 			//
 		}
 	}
 
-	void Viewport::SetFocused(AbstractWidget* widget)
+	void Screen::SetFocused(AbstractWidget* widget)
 	{
 		custom_focused_widget_ = true;
 
@@ -112,17 +112,17 @@ namespace BlendInt {
 
 		if (focused_) {
 			set_widget_focus_event(focused_, false);
-			focused_->destroyed().disconnectOne(this, &Viewport::OnFocusedWidgetDestroyed);
+			focused_->destroyed().disconnectOne(this, &Screen::OnFocusedWidgetDestroyed);
 		}
 
 		focused_ = widget;
 		if (focused_) {
 			set_widget_focus_event(focused_, true);
-			events()->connect(focused_->destroyed(), this, &Viewport::OnFocusedWidgetDestroyed);
+			events()->connect(focused_->destroyed(), this, &Screen::OnFocusedWidgetDestroyed);
 		}
 	}
 
-	Size Viewport::GetPreferredSize() const
+	Size Screen::GetPreferredSize() const
 	{
 		Size prefer;
 
@@ -148,7 +148,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Viewport::PerformPositionUpdate(
+	void Screen::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -172,7 +172,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Viewport::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Screen::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -204,7 +204,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Viewport::PreDraw(Profile& profile)
+	void Screen::PreDraw(Profile& profile)
 	{
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -215,7 +215,7 @@ namespace BlendInt {
 		Shaders::instance->SetUIModelMatrix(model_matrix_);
 	}
 
-	ResponseType Viewport::Draw (Profile& profile)
+	ResponseType Screen::Draw (Profile& profile)
 	{
 		Shaders::instance->widget_program()->use();
 
@@ -246,17 +246,17 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Viewport::PostDraw(Profile& profile)
+	void Screen::PostDraw(Profile& profile)
 	{
 		// Do nothing
 	}
 
-	ResponseType Viewport::FocusEvent(bool focus)
+	ResponseType Screen::FocusEvent(bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType Viewport::CursorEnterEvent(bool entered)
+	ResponseType Screen::CursorEnterEvent(bool entered)
 	{
 		if(entered) {
 		} else {
@@ -266,7 +266,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Viewport::KeyPressEvent(const KeyEvent& event)
+	ResponseType Screen::KeyPressEvent(const KeyEvent& event)
 	{
 		set_event_viewport(event);
 
@@ -279,18 +279,18 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Viewport::ContextMenuPressEvent(const ContextMenuEvent& event)
+	ResponseType Screen::ContextMenuPressEvent(const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Viewport::ContextMenuReleaseEvent(
+	ResponseType Screen::ContextMenuReleaseEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
+	ResponseType Screen::MousePressEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -328,7 +328,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Viewport::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Screen::MouseReleaseEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -349,7 +349,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Viewport::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Screen::MouseMoveEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -378,7 +378,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	bool Viewport::CheckAndUpdateHoverWidget(const MouseEvent& event)
+	bool Screen::CheckAndUpdateHoverWidget(const MouseEvent& event)
 	{
 		Point local_cursor;
 
@@ -407,15 +407,15 @@ namespace BlendInt {
 
 					if(orig != top_hovered_) {
 						orig->destroyed().disconnectOne(this,
-								&Viewport::OnHoverWidgetDestroyed);
+								&Screen::OnHoverWidgetDestroyed);
 						events()->connect(top_hovered_->destroyed(), this,
-						        &Viewport::OnHoverWidgetDestroyed);
+						        &Screen::OnHoverWidgetDestroyed);
 					}
 
 				} else {
 
 					top_hovered_->destroyed ().disconnectOne (this,
-								&Viewport::OnHoverWidgetDestroyed);
+								&Screen::OnHoverWidgetDestroyed);
 					set_widget_hover_event(top_hovered_, false);
 
 					// find which contianer contains cursor position
@@ -439,7 +439,7 @@ namespace BlendInt {
 					if(top_hovered_) {
 						UpdateHoverWidgetSubs(local_cursor);
 						events()->connect(top_hovered_->destroyed(), this,
-						        &Viewport::OnHoverWidgetDestroyed);
+						        &Screen::OnHoverWidgetDestroyed);
 					}
 
 				}
@@ -447,7 +447,7 @@ namespace BlendInt {
 			} else {
 
 				top_hovered_->destroyed().disconnectOne(this,
-					        &Viewport::OnHoverWidgetDestroyed);
+					        &Screen::OnHoverWidgetDestroyed);
 				set_widget_hover_event(top_hovered_, false);
 
 				// find which contianer contains cursor position
@@ -470,7 +470,7 @@ namespace BlendInt {
 				if(top_hovered_) {
 					UpdateHoverWidgetSubs(local_cursor);
 					events()->connect(top_hovered_->destroyed(), this,
-					        &Viewport::OnHoverWidgetDestroyed);
+					        &Screen::OnHoverWidgetDestroyed);
 				}
 
 			}
@@ -494,7 +494,7 @@ namespace BlendInt {
 			if(top_hovered_) {
 				UpdateHoverWidgetSubs(local_cursor);
 				events()->connect(top_hovered_->destroyed(), this,
-				        &Viewport::OnHoverWidgetDestroyed);
+				        &Screen::OnHoverWidgetDestroyed);
 			}
 
 		}
@@ -502,7 +502,7 @@ namespace BlendInt {
 		return top_hovered_ != 0;
 	}
 
-	void Viewport::UpdateHoverWidgetSubs(Point& cursor)
+	void Screen::UpdateHoverWidgetSubs(Point& cursor)
 	{
 		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(top_hovered_);
 
@@ -527,34 +527,34 @@ namespace BlendInt {
 
 	}
 
-	void Viewport::OnFocusedWidgetDestroyed(AbstractWidget* widget)
+	void Screen::OnFocusedWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(focused_ == widget);
 		assert(widget->focused());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Viewport::OnFocusedWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &Screen::OnFocusedWidgetDestroyed);
 
 		focused_ = 0;
 	}
 
-	void Viewport::OnHoverWidgetDestroyed(AbstractWidget* widget)
+	void Screen::OnHoverWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(top_hovered_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Viewport::OnHoverWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &Screen::OnHoverWidgetDestroyed);
 
 		top_hovered_ = 0;
 	}
 
-	void Viewport::ClearHoverWidgets()
+	void Screen::ClearHoverWidgets()
 	{
 		if(top_hovered_) {
 
-			top_hovered_->destroyed().disconnectOne(this, &Viewport::OnHoverWidgetDestroyed);
+			top_hovered_->destroyed().disconnectOne(this, &Screen::OnHoverWidgetDestroyed);
 
 			while (top_hovered_ && top_hovered_ != this) {
 				set_widget_hover_event(top_hovered_, false);

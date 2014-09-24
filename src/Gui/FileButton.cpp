@@ -41,6 +41,7 @@
 #include <BlendInt/Gui/FileButton.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Screen.hpp>
 
 namespace BlendInt {
 
@@ -265,11 +266,14 @@ namespace BlendInt {
 			int y = (context->size().height() - h) / 2;
 
 			panel_->Resize(w, h);
-			panel_->SetPosition(x, y);
 			panel_->SetContent(file_selector);
-			Section* section = context->Append(panel_);
-			section->set_mode(Section::Modal);
-			//context->SetFocusedWidget(file_selector);
+
+			Screen* screen = Manage(new Screen);
+			screen->Resize(panel_->size());
+			screen->SetPosition(x, y);
+			screen->AddContainer(panel_);
+
+			context->AddScreen(screen);
 
 			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
 			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
@@ -282,7 +286,9 @@ namespace BlendInt {
 		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
-		delete panel_;
+
+		AbstractContainer* screen = panel_->container();
+		delete screen;
 		panel_ = 0;
 
 		file_selected_.fire();
@@ -292,7 +298,9 @@ namespace BlendInt {
 	{
 		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
-		delete panel_;
+
+		AbstractContainer* screen = panel_->container();
+		delete screen;
 		panel_ = 0;
 	}
 
