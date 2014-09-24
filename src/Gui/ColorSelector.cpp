@@ -57,6 +57,7 @@
 namespace BlendInt {
 
 	using Stock::Icons;
+	using Stock::Shaders;
 
 	ColorSelector::ColorSelector()
 	: VLayout (), stack_(0)
@@ -208,30 +209,26 @@ namespace BlendInt {
 
 	ResponseType ColorSelector::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->triangle_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		program->use();
-
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().inner.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->menu().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->menu().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		return Ignore;
 	}

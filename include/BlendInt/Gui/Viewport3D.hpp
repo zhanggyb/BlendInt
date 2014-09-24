@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_VIEWPORT3D_HPP_
 #define _BLENDINT_GUI_VIEWPORT3D_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/GridFloor.hpp>
 #include <BlendInt/Gui/Cube.hpp>
@@ -39,7 +39,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Viewport3D: public AbstractWidget
+	class Viewport3D: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport3D);
 
@@ -64,15 +64,9 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType FocusEvent (bool focus);
-
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

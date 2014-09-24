@@ -15,6 +15,7 @@
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/Screen.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
@@ -36,6 +37,10 @@ void TexBufContext::CreateWidgets ()
 {
 	using namespace BlendInt;
 	using Stock::Icons;
+
+	Screen* screen = Manage(new Screen);
+	screen->Resize(size());
+	AddScreen(screen);
 
 	m_button = Manage(new Button("Take Screenshot"));
 
@@ -74,12 +79,14 @@ void TexBufContext::CreateWidgets ()
 
 	m_button->SetPosition(750, 20);
 
-	Section* section = Append(label1);
-	section->Append(label2);
-	Append(m_panel1);
-	Append(m_panel2);
-	Append(m_button);
+	screen->AddWidget(label1);
+	screen->AddWidget(label2);
+	screen->AddContainer(m_panel1);
+	screen->AddContainer(m_panel2);
+	screen->AddWidget(m_button);
+
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
+	events()->connect(resized(), screen, static_cast<void (AbstractWidget::*)(const Size&) >(&Screen::Resize));
 
 }
 
@@ -87,5 +94,5 @@ void TexBufContext::OnTakeScreenShot ()
 {
 	DBG_PRINT_MSG("%s", "Take a screen shot of panel");
 
-	m_panel2->RenderToFile("Panel2.png");
+	//m_panel2->RenderToFile("Panel2.png");
 }

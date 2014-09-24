@@ -43,7 +43,7 @@ namespace BlendInt {
 			int h = size().height() - margin().vsum();
 
 			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
 
 			if(widget_count() == 1) {
 				active_widget_ = widget;
@@ -61,7 +61,7 @@ namespace BlendInt {
 			int h = size().height() - margin().vsum();
 
 			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
 
 			if(widget_count() == 1) {
 				active_widget_ = widget;
@@ -75,11 +75,11 @@ namespace BlendInt {
 	void StackLayout::Insert (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
-			int w = size().width() - margin().left() - margin().right();
-			int h = size().height() - margin().top() - margin().bottom();
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
 
 			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
 
 			widget->SetVisible(false);
 		}
@@ -202,22 +202,6 @@ namespace BlendInt {
 		ResizeSubWidgets(w, h);
 	}
 
-	void StackLayout::PerformPositionUpdate (
-			const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void StackLayout::PerformSizeUpdate (
 			const SizeUpdateRequest& request)
 	{
@@ -233,51 +217,6 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	ResponseType StackLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::ContextMenuPressEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::ContextMenuReleaseEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::MousePressEvent (
-			const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::MouseReleaseEvent (
-			const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType StackLayout::MouseMoveEvent (
-			const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void BlendInt::StackLayout::HideSubWidget (int index)

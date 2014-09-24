@@ -43,6 +43,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	MenuBar::MenuBar ()
 	: Container(), m_vao(0), m_space(2), m_active_button(0)
 	{
@@ -87,7 +89,7 @@ namespace BlendInt {
 		if(0 == button) return 0;
 
 		int x = GetLastPosition();
-		int y = position().y() + margin().bottom();
+		int y = margin().bottom();
 		int h = size().height() - margin().vsum();
 
 		if(PushBackSubWidget(button)) {
@@ -134,21 +136,6 @@ namespace BlendInt {
 		// TODO: change margin
 	}
 
-	void MenuBar::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -167,23 +154,20 @@ namespace BlendInt {
 
 	ResponseType MenuBar::Draw (Profile& profile)
 	{
-		using namespace BlendInt::Stock;
+		Shaders::instance->triangle_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -347,7 +331,7 @@ namespace BlendInt {
 
 	int MenuBar::GetLastPosition ()
 	{
-		int pos = position().x() + margin().left();
+		int pos = margin().left();
 
 		if(last()) {
 			pos = last()->position().x() + last()->size().width() + m_space;

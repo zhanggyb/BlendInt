@@ -53,9 +53,7 @@ namespace BlendInt {
 
 	StaticPanel::StaticPanel ()
 	: AbstractPanel(),
-	  refresh_(true),
-	  pressed_(false),
-	  realign_(false)
+	  refresh_(true)
 	{
 		//set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
@@ -70,13 +68,9 @@ namespace BlendInt {
 
 	void StaticPanel::PerformRefresh (const RefreshRequest& request)
 	{
-		if(!pressed_) {
-
-			if(!refresh_) {
-				refresh_ = true;
-				ReportRefresh(request);
-			}
-
+		if(!refresh_) {
+			refresh_ = true;
+			ReportRefresh(request);
 		}
 	}
 
@@ -159,61 +153,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType StaticPanel::MousePressEvent (const MouseEvent& event)
-	{
-		if(container() == event.section()) {
-			if(event.section()->last_hover_widget() == this ||
-					event.section()->last_hover_widget() == decoration()) {
-				MoveToLast();
-
-				last_position_ = position();
-				cursor_position_ = event.position();
-				pressed_ = true;
-
-				//event.context()->SetFocusedWidget(this);
-
-				return Accept;
-			}
-		}
-
-		return Ignore;
-	}
-
-	ResponseType StaticPanel::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(pressed_) {
-
-			if(realign_) {
-				DBG_PRINT_MSG("%s", "now fill subwidgets");
-				FillSubWidgets(size(), margin());
-			}
-
-			realign_ = false;
-
-		}
-
-		pressed_ = false;
-		return Accept;
-	}
-
-	ResponseType StaticPanel::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(pressed_) {
-
-			int offset_x = event.position().x() - cursor_position_.x();
-			int offset_y = event.position().y() - cursor_position_.y();
-
-			SetPosition(last_position_.x() + offset_x,
-					last_position_.y() + offset_y);
-
-			realign_ = true;
-
-			return Accept;
-		}
-
-		return Ignore;
-	}
-
 	void StaticPanel::InitializeStaticPanelOnce ()
 	{
 		VertexTool tool;
@@ -249,7 +188,7 @@ namespace BlendInt {
 		GLsizei width = size().width();
 		GLsizei height = size().height();
 
-		tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
+		tex_buffer_.SetCoord(0.f, 0.f, (float)width, (float)height);
 		// Create and set texture to render to.
 		GLTexture2D* tex = tex_buffer_.texture();
 		if(!tex->texture())
@@ -311,7 +250,7 @@ namespace BlendInt {
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
-			glViewport(0, 0, size().width(), size().height());
+			glViewport(0, 0, width, height);
 
 			GLboolean scissor_test;
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);

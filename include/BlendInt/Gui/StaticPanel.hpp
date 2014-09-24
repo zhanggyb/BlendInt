@@ -52,12 +52,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
 		void InitializeStaticPanelOnce ();
@@ -67,14 +61,6 @@ namespace BlendInt {
 		ImagePlane2D tex_buffer_;
 
 		bool refresh_;
-
-		bool pressed_;
-
-		bool realign_;
-
-		Point last_position_;
-
-		Point cursor_position_;
 
 		GLuint vao_[2];
 

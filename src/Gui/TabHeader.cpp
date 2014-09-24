@@ -84,7 +84,7 @@ namespace BlendInt {
 	void TabHeader::Append (TabButton* button)
 	{
 		int x = GetLastPosition ();
-		int y = position().y() + margin().bottom();
+		int y = margin().bottom();
 		int h = size().height() - margin().vsum();
 
 		if (PushBackSubWidget(button)) {
@@ -146,20 +146,6 @@ namespace BlendInt {
 		// TODO: change sub widgets
 	}
 
-	void TabHeader::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -180,7 +166,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
@@ -196,43 +182,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType TabHeader::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
 	{
 		m_button_index_toggled.fire(index, toggled);
@@ -240,7 +189,7 @@ namespace BlendInt {
 
 	int TabHeader::GetLastPosition() const
 	{
-		int x = position().x() + margin().left();
+		int x = margin().left();
 
 		if(first()) {
 			x = last()->position().x();

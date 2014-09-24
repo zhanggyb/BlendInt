@@ -49,7 +49,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Viewport3D::Viewport3D ()
-	: AbstractWidget(),
+	: Widget(),
 	  vao_(0),
 	  m_last_x(0),
 	  m_last_y(0),
@@ -294,8 +294,10 @@ namespace BlendInt {
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-		glViewport(position().x() - profile.origin().x(),
-		        position().y() - profile.origin().y(),
+        Point pos = GetGlobalPosition();
+
+		glViewport(pos.x(),
+		        pos.y(),
 		        size().width(),
 		        size().height());
 
@@ -342,23 +344,6 @@ namespace BlendInt {
 	bool Viewport3D::IsExpandY() const
 	{
 		return true;
-	}
-
-	ResponseType Viewport3D::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Viewport3D::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Viewport3D::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	void Viewport3D::PushBack (const RefPtr<AbstractPrimitive>& primitive)

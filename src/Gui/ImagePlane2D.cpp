@@ -72,8 +72,8 @@ namespace BlendInt {
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		vertex_buffer_.reset();
 		glBindVertexArray(0);
+		vertex_buffer_.reset();
 	}
 
 	void ImagePlane2D::Draw(GLfloat x, GLfloat y)

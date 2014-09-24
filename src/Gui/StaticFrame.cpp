@@ -65,8 +65,10 @@ namespace BlendInt {
 
 	void StaticFrame::PerformRefresh(const RefreshRequest& request)
 	{
-		refresh_ = true;
-		ReportRefresh(request);
+		if(!refresh_) {
+			refresh_ = true;
+			ReportRefresh(request);
+		}
 	}
 
 	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -79,14 +81,14 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 			inner_->reset();
 
-			refresh_ = true;
-
 			set_size(*request.size());
 
 			if (widget_count()) {
 				assert(widget_count() == 1);
 				FillSingleWidget(0, *request.size(), margin());
 			}
+
+			Refresh();
 		}
 
 		if(request.source() == this) {
@@ -97,15 +99,12 @@ namespace BlendInt {
 	ResponseType StaticFrame::Draw (Profile& profile)
 	{
 		if(refresh_) {
-
-			RenderToBuffer(profile);
-
+			RenderToBuffer();
 			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		tex_buffer_.Draw(position().x(), position().y());
-
+		tex_buffer_.Draw(0.f, 0.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Accept;
@@ -138,18 +137,12 @@ namespace BlendInt {
 		tex_buffer_.texture()->reset();
 	}
 
-	void StaticFrame::RenderToBuffer (Profile& profile)
+	void StaticFrame::RenderToBuffer ()
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
 
-		GLfloat left = position().x();
-		GLfloat bottom = position().y();
-
-		GLfloat right = left + width;
-		GLfloat top = bottom + height;
-
-		tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
+		tex_buffer_.SetCoord(0.f, 0.f, (float)width, (float)height);
 		// Create and set texture to render to.
 		GLTexture2D* tex = tex_buffer_.texture();
 		if(!tex->texture())
@@ -188,6 +181,12 @@ namespace BlendInt {
 
 			fb->bind();
 
+			Profile off_screen_profile;
+
+			glm::mat4 identity(1.f);
+			Shaders::instance->PushUIModelMatrix();
+			Shaders::instance->SetUIModelMatrix(identity);
+
 			glClearColor(0.f, 0.f, 0.f, 0.f);
 			glClearDepth(1.0);
 			glClearStencil(0);
@@ -197,24 +196,25 @@ namespace BlendInt {
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
 
-			glm::mat4 origin;
-			Shaders::instance->GetUIProjectionMatrix(origin);
-
-			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
 			        -100.f);
 
+			Shaders::instance->PushUIProjectionMatrix();
 			Shaders::instance->SetUIProjectionMatrix(projection);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
-			glViewport(0, 0, size().width(), size().height());
+			glViewport(0, 0, width, height);
+
+			GLboolean scissor_test;
+			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
+			glDisable(GL_SCISSOR_TEST);
 
 			// Draw frame panel
-			RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-			program->use();
+			Shaders::instance->triangle_program()->use();
 
 			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-					(float) position().x(), (float) position().y(), 0.f);
+					0.f, 0.f, 0.f);
 			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
 					0.447f, 0.447f, 1.0f);
 			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
@@ -224,9 +224,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
 
-			program->reset();
-
-			Profile off_screen_profile(position());
+			GLSLProgram::reset();
 
 			if(first()) {
 				DispatchDrawEvent(first(), off_screen_profile);
@@ -235,10 +233,14 @@ namespace BlendInt {
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-			Shaders::instance->SetUIProjectionMatrix(origin);
+			Shaders::instance->PopUIProjectionMatrix();
+			Shaders::instance->PopUIModelMatrix();
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+			if(scissor_test) {
+				glEnable(GL_SCISSOR_TEST);
+			}
 		}
 
 		fb->reset();
