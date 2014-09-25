@@ -35,28 +35,16 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
-		texture_.reset(new GLTexture2D);
-	}
-
-	ImagePlane2D::~ImagePlane2D()
-	{
-		glDeleteVertexArrays(1, &vao_);
-	}
-
-	void ImagePlane2D::SetCoord(GLfloat x0, GLfloat y0, GLfloat x1,
-			GLfloat y1)
-	{
 		glBindVertexArray(vao_);
-		if(vertex_buffer_.id() == 0) {
-			vertex_buffer_.generate();
-		}
+
+		vertex_buffer_.generate();
 
 		GLfloat vertices[] = {
 				// coord	uv
-				x0, y0,		0.f, 0.f,
-				x1, y0,		1.f, 0.f,
-				x0, y1,		0.f, 1.f,
-				x1, y1,		1.f, 1.f
+				0.f, 0.f,		0.f, 0.f,
+				200.f, 0.f,		1.f, 0.f,
+				0.f, 200.f,		0.f, 1.f,
+				200.f, 200.f,		1.f, 1.f
 		};
 
 		vertex_buffer_.bind();
@@ -74,11 +62,34 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		vertex_buffer_.reset();
+
+		texture_.reset(new GLTexture2D);
+	}
+
+	ImagePlane2D::~ImagePlane2D()
+	{
+		glDeleteVertexArrays(1, &vao_);
+	}
+
+	void ImagePlane2D::SetCoord(GLfloat x0, GLfloat y0, GLfloat x1,
+			GLfloat y1)
+	{
+		GLfloat vertices[] = {
+				// coord	uv
+				x0, y0,		0.f, 0.f,
+				x1, y0,		1.f, 0.f,
+				x0, y1,		0.f, 1.f,
+				x1, y1,		1.f, 1.f
+		};
+
+		vertex_buffer_.bind();
+		vertex_buffer_.set_data(sizeof(vertices), vertices);
+		vertex_buffer_.reset();
 	}
 
 	void ImagePlane2D::Draw(GLfloat x, GLfloat y)
 	{
-		if(texture_->texture()) {
+		if(texture_->id()) {
 
 			texture_->bind();
 			Shaders::instance->image_program()->use();

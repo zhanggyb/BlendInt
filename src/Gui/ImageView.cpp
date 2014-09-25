@@ -119,7 +119,7 @@ namespace BlendInt {
 
 	Size ImageView::GetPreferredSize () const
 	{
-		if(texture_ && glIsTexture(texture_->texture())) {
+		if(texture_ && glIsTexture(texture_->id())) {
 			return image_size_;
 		}
 

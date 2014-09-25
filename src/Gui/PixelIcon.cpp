@@ -280,7 +280,7 @@ namespace BlendInt {
 					const GLfloat* uv)
 	{
 		if(!texture) return;
-		if(texture->texture() == 0) return;
+		if(texture->id() == 0) return;
 
 		texture_ = texture;
 

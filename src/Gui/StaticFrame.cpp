@@ -145,7 +145,7 @@ namespace BlendInt {
 		tex_buffer_.SetCoord(0.f, 0.f, (float)width, (float)height);
 		// Create and set texture to render to.
 		GLTexture2D* tex = tex_buffer_.texture();
-		if(!tex->texture())
+		if(!tex->id())
 			tex->generate();
 
 		tex->bind();
@@ -161,7 +161,7 @@ namespace BlendInt {
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-				GL_TEXTURE_2D, tex->texture(), 0);
+				GL_TEXTURE_2D, tex->id(), 0);
 		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 		// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering

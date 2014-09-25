@@ -210,7 +210,7 @@ namespace BlendInt {
 
 			for (size_t i = 0; i < str_length; it++, i++) {
 				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
+				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
 
 				advance += glyph_p->advance_x;
 				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
@@ -236,7 +236,7 @@ namespace BlendInt {
 		for (size_t i = 0; i < str_length; it++, i++) {
 
 			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
+			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
 
 			advance += glyph_p->advance_x;
 
@@ -331,7 +331,7 @@ namespace BlendInt {
 
 			for (size_t i = 0; i < str_length; it++, i++) {
 				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
+				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
 
 				advance += glyph_p->advance_x;
 				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
@@ -357,7 +357,7 @@ namespace BlendInt {
 		for (size_t i = 0; i < str_length; it++, i++) {
 
 			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
+			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
 
 			advance += glyph_p->advance_x;
 

@@ -747,7 +747,7 @@ namespace BlendInt {
 
 	void Theme::GenerateShadowTexture ()
 	{
-		if(shadow_texture_->texture() == 0) {
+		if(shadow_texture_->id() == 0) {
 			shadow_texture_->generate();
 		}
 

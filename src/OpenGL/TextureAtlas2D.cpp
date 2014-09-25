@@ -59,7 +59,7 @@ namespace BlendInt {
 	{
 		GLTexture2D::generate();
 
-		glBindTexture(GL_TEXTURE_2D, texture());
+		glBindTexture(GL_TEXTURE_2D, id());
 
 #ifdef DEBUG
 #ifdef __APPLE__

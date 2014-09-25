@@ -128,7 +128,7 @@ void MainLayout::RenderToBuffer()
 	buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 	// Create and set texture to render to.
 	GLTexture2D* tex = buffer_.texture();
-	if(!tex->texture())
+	if(tex->id() == 0)
 		tex->generate();
 
 	tex->bind();
@@ -144,7 +144,7 @@ void MainLayout::RenderToBuffer()
 
 	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D, tex->texture(), 0);
+			GL_TEXTURE_2D, tex->id(), 0);
 	//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 	// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
