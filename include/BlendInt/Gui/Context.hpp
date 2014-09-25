@@ -57,23 +57,6 @@ namespace BlendInt {
 
 		void AddScreen (AbstractScreen* vp);
 
-		/**
-		 * @brief Add a widget in a new section
-		 *
-		 * @note The section will be deleted if the last sub widget is removed or destroyed.
-		 *
-		 * The widget could also be a Section object
-		 *
-		 */
-		Section* Append (AbstractWidget* widget);
-
-		/**
-		 * @brief Remove widget from this context
-		 *
-		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
-		 */
-		Section* Remove (AbstractWidget* widget);
-
 		void Draw ();
 
 		void DispatchKeyEvent (const KeyEvent& event);

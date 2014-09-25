@@ -43,6 +43,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Screen.hpp>
 
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
@@ -279,8 +280,8 @@ namespace BlendInt {
 		Context* context = event.context();
 
 		if(list_) {
-			context->Remove(list_);
-			delete list_;
+			AbstractContainer* container = list_->container();
+			delete container;
 			list_ = 0;
 			SetRoundType(RoundAll);
 		} else {
@@ -292,7 +293,15 @@ namespace BlendInt {
 
 			list_->Resize(200, list_->size().height());
 			list_->SetPosition(position().x(), position().y() + size().height());
-			context->Append(list_);
+
+			Screen* screen = Manage(new Screen);
+			screen->Resize(list_->size());
+			screen->Setup(list_);
+
+			Point pos = GetGlobalPosition();
+
+			screen->SetPosition(pos.x(), pos.y() + size().height());
+			context->AddScreen(screen);
 			SetRoundType(RoundBottomLeft | RoundBottomRight);
 			//context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}

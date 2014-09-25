@@ -14,7 +14,7 @@ GLFWContext::GLFWContext()
 	m_layout->Resize(size());
 
 	BI::Screen* screen = BI::Manage(new BI::Screen);
-	screen->AddContainer(m_layout);
+	screen->Setup(m_layout);
 
 	AddScreen(screen);
 	//Append(m_layout);

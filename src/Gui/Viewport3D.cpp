@@ -294,10 +294,8 @@ namespace BlendInt {
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-        Point pos = GetGlobalPosition();
-
-		glViewport(pos.x(),
-		        pos.y(),
+        glViewport(profile.origin().x() + position().x(),
+		        profile.origin().y() + position().y(),
 		        size().width(),
 		        size().height());
 

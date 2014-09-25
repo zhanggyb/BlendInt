@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_ABSTRACTSCROLLABLE_HPP_
 #define _BLENDINT_GUI_ABSTRACTSCROLLABLE_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/ScrollBar.hpp>
 
@@ -33,7 +33,7 @@ namespace BlendInt {
 	/**
 	 * @brief Base class for widgets with native scroll bar
 	 */
-	class AbstractScrollable: public AbstractWidget
+	class AbstractScrollable: public Widget
 	{
 	public:
 

@@ -87,6 +87,16 @@ namespace BlendInt {
 
 		void EndPopStencil ();
 
+		void set_origin (const Point& origin)
+		{
+			origin_ = origin;
+		}
+
+		void set_origin (int x, int y)
+		{
+			origin_.reset(x, y);
+		}
+
 		const Point& origin () const
 		{
 			return origin_;

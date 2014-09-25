@@ -38,9 +38,20 @@ void TexBufContext::CreateWidgets ()
 	using namespace BlendInt;
 	using Stock::Icons;
 
-	Screen* screen = Manage(new Screen);
-	screen->Resize(size());
-	AddScreen(screen);
+	Screen* screen1 = Manage(new Screen);
+	AddScreen(screen1);
+
+	Screen* screen2 = Manage(new Screen);
+	AddScreen(screen2);
+
+	Screen* screen3 = Manage(new Screen);
+	AddScreen(screen3);
+
+	Screen* screen4 = Manage(new Screen);
+	AddScreen(screen4);
+
+	Screen* screen5 = Manage(new Screen);
+	AddScreen(screen5);
 
 	m_button = Manage(new Button("Take Screenshot"));
 
@@ -69,24 +80,27 @@ void TexBufContext::CreateWidgets ()
 	m_panel1->Setup(view1);
 	m_panel2->Setup(view2);
 
-	label1->SetPosition(50, 700);
-	m_panel1->SetPosition(50, 100);
 	m_panel1->Resize(720, 600);
 
-	label2->SetPosition(830, 700);
-	m_panel2->SetPosition(830, 100);
 	m_panel2->Resize(720, 600);
 
-	m_button->SetPosition(750, 20);
+	screen1->Setup(label1);
+	screen1->SetPosition(50, 700);
 
-	screen->AddWidget(label1);
-	screen->AddWidget(label2);
-	screen->AddContainer(m_panel1);
-	screen->AddContainer(m_panel2);
-	screen->AddWidget(m_button);
+	screen2->Setup(label2);
+	screen2->SetPosition(830, 700);
+
+	screen3->Setup(m_panel1);
+	screen3->SetPosition(50, 100);
+
+	screen4->Setup(m_panel2);
+	screen4->SetPosition(830, 100);
+
+	screen5->Setup(m_button);
+	screen5->SetPosition(750, 20);
 
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
-	events()->connect(resized(), screen, static_cast<void (AbstractWidget::*)(const Size&) >(&Screen::Resize));
+	//events()->connect(resized(), screen, static_cast<void (AbstractWidget::*)(const Size&) >(&Screen::Resize));
 
 }
 

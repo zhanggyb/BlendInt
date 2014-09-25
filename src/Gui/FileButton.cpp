@@ -271,7 +271,7 @@ namespace BlendInt {
 			Screen* screen = Manage(new Screen);
 			screen->Resize(panel_->size());
 			screen->SetPosition(x, y);
-			screen->AddContainer(panel_);
+			screen->Setup(panel_);
 
 			context->AddScreen(screen);
 

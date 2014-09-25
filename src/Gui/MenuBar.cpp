@@ -41,6 +41,8 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Screen.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -262,8 +264,9 @@ namespace BlendInt {
 
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
-			Context* context = Context::GetContext(this);
-			context->Remove(menu.get());
+
+			AbstractContainer* container = menu->container();
+			delete container;
 			original_active->SetRoundType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
@@ -281,8 +284,14 @@ namespace BlendInt {
 				y = 0;
 			}
 
-			menu->SetPosition(m_active_button->position().x(), y);
-			context->Append(menu.get());
+			//menu->SetPosition(m_active_button->position().x(), y);
+
+			Screen* screen = Manage(new Screen);
+
+			screen->Resize(menu->size());
+			screen->Setup(menu.get());
+			context->AddScreen(screen);
+
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
 			//context->SetFocusedWidget(menu.get());
 
@@ -298,8 +307,8 @@ namespace BlendInt {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				Context* context = Context::GetContext(this);
-				context->Remove(menu.get());
+				AbstractContainer* container = menu->container();
+				delete container;
 				m_active_button->SetRoundType(RoundAll);
 			}
 
@@ -314,12 +323,8 @@ namespace BlendInt {
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
-
-			//if(type == WidgetVisibility) {
-				Context* context = Context::GetContext(this);
-				context->Remove(menu);
-			//}
+			AbstractContainer* container = menu->container();
+			delete container;
 		}
 
 		if(m_active_button) {

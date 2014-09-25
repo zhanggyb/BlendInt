@@ -195,99 +195,6 @@ namespace BlendInt
 		}
 	}
 
-	Section* Context::Append (AbstractWidget* widget)
-	{
-		/*
-		if(!widget) {
-			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return 0;
-		}
-
-		Section* section = Section::GetSection(widget);
-
-		if(section) {
-
-			if(section->container_ == this) {
-				DBG_PRINT_MSG("Widget %s is already in context %s",
-									widget->name().c_str(),
-									name().c_str());
-				return section;
-			} else {
-				if(section->container_) {
-					section->container_->RemoveSubWidget(section);
-				}
-			}
-
-		} else {
-			section = Manage(new Section);
-			section->Append(widget);
-		}
-
-#ifdef DEBUG
-		if(!section->managed()) {
-			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
-		}
-
-		if(section->first_ == 0) {
-			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
-		}
-
-		int count = widget_count();
-		char buf[32];
-		sprintf(buf, "Section %d", count);
-		DBG_SET_NAME(section, buf);
-#endif
-
-		PushBackSubWidget(section);
-
-		ResizeSubWidget(section, size());
-
-		return section;
-		*/
-
-		return 0;
-	}
-
-	Section* Context::Remove (AbstractWidget* widget)
-	{
-		/*
-		if(!widget) {
-			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return 0;
-		}
-
-		// if the container is a section, the section will destroy itself if it's empty
-		Section* section = Section::GetSection(widget);
-		assert(section->container() == this);
-
-		widget->container_->RemoveSubWidget(widget);
-
-		if(widget->focused()) {
-
-			assert(focused_widget_ == widget);
-
-			widget->set_focus(false);
-			widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_ = 0;
-
-		}
-
-		if(section->first_ == 0) {
-			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
-			if(section->managed() && (section->reference_count() == 0)) {
-				delete section;
-				section = 0;
-			} else {
-				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
-						", and it's referenced by a smart pointer, it will not be deleted automatically");
-			}
-		}
-
-		return section;
-		*/
-		return 0;
-	}
-
 	void Context::Draw()
 	{
 		Draw(profile_);
@@ -424,7 +331,6 @@ namespace BlendInt
 
 	void Context::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		// nothing need to do.
 	}
 
 	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)

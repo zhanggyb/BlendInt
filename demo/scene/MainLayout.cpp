@@ -93,8 +93,10 @@ void MainLayout::InitOnce ()
 
 void MainLayout::PerformRefresh(const RefreshRequest& request)
 {
-	refresh_ = true;
-	ReportRefresh(request);
+	if(!refresh_) {
+		refresh_ = true;
+		ReportRefresh(request);
+	}
 }
 
 void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)

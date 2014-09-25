@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractScrollable::AbstractScrollable()
-	: AbstractWidget()
+	: Widget()
 	{
 		hbar_.reset(new NativeScrollBar(Horizontal));
 		vbar_.reset(new NativeScrollBar(Vertical));

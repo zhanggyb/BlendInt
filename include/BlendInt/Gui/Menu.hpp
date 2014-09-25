@@ -30,8 +30,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/Shadow.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Action.hpp>
 
 #include <Cpp/Events.hpp>
@@ -41,7 +40,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public AbstractWidget
+	class Menu: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 

@@ -25,7 +25,6 @@
 #define _BLENDINT_GUI_SCREEN_HPP_
 
 #include <BlendInt/Gui/AbstractScreen.hpp>
-#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Container.hpp>
@@ -40,25 +39,29 @@ namespace BlendInt {
 
 		virtual ~Screen ();
 
-		void AddWidget (Widget* widget);
+		void Setup (Widget* widget);
 
-		void AddContainer (Container* container);
+		void Setup (Container* container);
 
 		void SetFocused (AbstractWidget* widget);
 
-		AbstractWidget* focused() const
+		AbstractWidget* focused_widget() const
 		{
-			return focused_;
+			return focused_widget_;
 		}
 
 		AbstractWidget* top_hovered () const
 		{
-			return top_hovered_;
+			return top_hovered_widget_;
 		}
 
 		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -98,9 +101,9 @@ namespace BlendInt {
 
 		void ClearHoverWidgets ();
 
-		AbstractWidget* focused_;
+		AbstractWidget* focused_widget_;
 
-		AbstractWidget* top_hovered_;
+		AbstractWidget* top_hovered_widget_;
 
 		bool custom_focused_widget_;
 
@@ -109,10 +112,6 @@ namespace BlendInt {
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
-
-		GLuint vao_;
-
-		GLBuffer<ARRAY_BUFFER> buffer_;
 	};
 
 }

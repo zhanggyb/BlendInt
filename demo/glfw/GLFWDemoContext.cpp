@@ -31,22 +31,18 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Screen* screen = Manage(new Screen);
-	screen->Resize(size());
 
 	AddScreen(screen);
 
 	StaticFrame* f = Manage(new StaticFrame);
-	f->Resize(400, 300);
+//	Frame* f = Manage(new Frame);
 
-	Button* btn = Manage(new Button("hello there!"));
-	//Viewport3D* view = Manage(new Viewport3D);
-	//view->SetPosition(100, 100);
-	//view->Resize(600, 500);
+	Viewport3D* view3d = Manage(new Viewport3D);
 
-	f->Setup(btn);
-	f->SetPosition(200, 100);
+	f->Setup(view3d);
+	f->Resize(600, 500);
 
-	screen->AddContainer(f);
+	screen->SetPosition(200, 100);
 
-	events()->connect(resized(), screen, static_cast<void (AbstractWidget::*)(const Size&) >(&Screen::Resize));
+	screen->Setup(f);
 }
