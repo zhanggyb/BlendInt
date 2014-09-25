@@ -7,7 +7,9 @@ add_subdirectory(Gui)
 add_subdirectory(Stock)
 add_subdirectory(CppEvents)
 
-file(GLOB libBlendInt_SRC "*.cpp")
+file(WRITE ${CMAKE_BINARY_DIR}/src/dummy.cpp)
+#file(GLOB libBlendInt_SRC "*.cpp")
+set(libBlendInt_SRC "${CMAKE_BINARY_DIR}/src/dummy.cpp")
 
 if(BUILD_STATIC_LIBRARY)
     add_library (BlendInt ${libBlendInt_SRC})

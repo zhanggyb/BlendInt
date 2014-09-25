@@ -281,7 +281,7 @@ namespace BlendInt {
 
 		Shaders::instance->widget_outer_program()->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
+		glUniform3fv(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 1, glm::value_ptr(pos));
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->regular().outline.data());
 
