@@ -62,6 +62,24 @@ namespace BlendInt {
 			WIDGET_ANTI_ALIAS,
 			WIDGET_GAMMA,
 
+			WIDGET_INNER_COORD,
+			WIDGET_INNER_COLOR,
+			//WIDGET_INNER_PROJECTION,
+			//WIDGET_INNER_VIEW,
+			WIDGET_INNER_POSITION,
+			WIDGET_INNER_ROTATION,
+			WIDGET_INNER_SCALE,
+			WIDGET_INNER_ANTI_ALIAS,
+			WIDGET_INNER_GAMMA,
+
+			WIDGET_OUTER_COORD,
+			WIDGET_OUTER_COLOR,
+			//WIDGET_OUTER_PROJECTION,
+			//WIDGET_OUTER_VIEW,
+			WIDGET_OUTER_POSITION,
+			WIDGET_OUTER_ROTATION,
+			WIDGET_OUTER_SCALE,
+
 			// Text
 			TEXT_COORD,
 			//TEXT_PROJECTION,
@@ -120,6 +138,16 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& widget_program () const
 			{
 				return widget_program_;
+			}
+
+			const RefPtr<GLSLProgram>& widget_inner_program () const
+			{
+				return widget_inner_program_;
+			}
+
+			const RefPtr<GLSLProgram>& widget_outer_program () const
+			{
+				return widget_outer_program_;
 			}
 
 			const RefPtr<GLSLProgram>& image_program () const
@@ -187,6 +215,10 @@ namespace BlendInt {
 
 			bool SetupWidgetProgram ();
 
+			bool SetupWidgetInnerProgram ();
+
+			bool SetupWidgetOuterProgram ();
+
 			bool SetupTextProgram ();
 
 			bool SetupTriangleProgram ();
@@ -202,6 +234,10 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> triangle_program_;
 
 			RefPtr<GLSLProgram> widget_program_;
+
+			RefPtr<GLSLProgram> widget_inner_program_;
+
+			RefPtr<GLSLProgram> widget_outer_program_;
 
 			RefPtr<GLSLProgram> image_program_;
 
@@ -242,11 +278,23 @@ namespace BlendInt {
 
 			static const char* triangle_fragment_shader;
 
-			static const char* widget_vertex_shader_ext;
+			static const char* widget_vertex_shader;
 
-			static const char* widget_geometry_shader_ext;
+			static const char* widget_geometry_shader;
 
-			static const char* widget_fragment_shader_ext;
+			static const char* widget_fragment_shader;
+
+			static const char* widget_inner_vertex_shader;
+
+			static const char* widget_inner_geometry_shader;
+
+			static const char* widget_inner_fragment_shader;
+
+			static const char* widget_outer_vertex_shader;
+
+			static const char* widget_outer_geometry_shader;
+
+			static const char* widget_outer_fragment_shader;
 
 			static const char* context_vertex_shader;
 

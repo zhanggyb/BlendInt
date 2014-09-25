@@ -31,18 +31,11 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Screen* screen = Manage(new Screen);
-
+	screen->SetPosition(200, 200);
 	AddScreen(screen);
 
-	StaticFrame* f = Manage(new StaticFrame);
-//	Frame* f = Manage(new Frame);
+	ColorButton* cb = Manage(new ColorButton);
+	cb->SetColor(Color(0xFF88449F));
 
-	Viewport3D* view3d = Manage(new Viewport3D);
-
-	f->Setup(view3d);
-	f->Resize(600, 500);
-
-	screen->SetPosition(200, 100);
-
-	screen->Setup(f);
+	screen->Setup(cb);
 }

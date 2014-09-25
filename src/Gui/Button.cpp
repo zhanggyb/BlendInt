@@ -155,12 +155,12 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(),
 						round_type(), round_radius(), Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown);
 			} else {
-				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(),
 						round_type(), round_radius());
 			}
 			buffer_.bind(0);
@@ -186,12 +186,12 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
 						*request.round_type(), round_radius(), Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown);
 			} else {
-				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
 						*request.round_type(), round_radius());
 			}
 			buffer_.bind(0);
@@ -217,12 +217,12 @@ namespace BlendInt {
 		if(request.target() == this) {
 			VertexTool tool;
 			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
 						round_type(), *request.round_radius(), Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown);
 			} else {
-				tool.GenerateShadedVertices(size(), DefaultBorderWidth(),
+				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
 						round_type(), *request.round_radius());
 			}
 			buffer_.bind(0);
@@ -245,32 +245,33 @@ namespace BlendInt {
 
 	ResponseType Button::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->use();
+		Shaders::instance->widget_inner_program()->use();
 
 		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
+		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
 		if (is_down()) {
-			glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 			}
 
-			glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 					Theme::instance->regular().inner.data());
 		}
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -278,17 +279,17 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f,
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		if(show_icon_ && icon_) {
 			if(hover()) {
@@ -438,7 +439,7 @@ namespace BlendInt {
 		VertexTool tool;
 
 		if(Theme::instance->regular().shaded) {
-			tool.GenerateShadedVertices(size(),
+			tool.GenerateShadedVerticesExt(size(),
 					DefaultBorderWidth(),
 					round_type(),
 					round_radius(),
@@ -446,7 +447,7 @@ namespace BlendInt {
 					Theme::instance->regular().shadetop,
 					Theme::instance->regular().shadedown);
 		} else {
-			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
+			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), round_type(), round_radius());
 		}
 
 		glGenVertexArrays(2, vao_);
@@ -456,15 +457,15 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

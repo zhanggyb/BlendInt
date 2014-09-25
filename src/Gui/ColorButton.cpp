@@ -85,7 +85,7 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(), round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -106,7 +106,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), *request.round_type(),
+			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), *request.round_type(),
 			        round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -127,7 +127,7 @@ namespace BlendInt {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
 			VertexTool tool;
-			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), round_type(),
 			        *request.round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -145,35 +145,35 @@ namespace BlendInt {
 	{
 		int outline_vertices = GetOutlineVertices(round_type());
 
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->widget_program();
-		program->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
 				(float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, color_.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, color_.data());
 
 		if(hover()) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 		}
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
-				1);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, Theme::instance->regular().outline.data());
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+				(float) position().x(), (float) position().y(), 0.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 					(float) position().x(), (float) position().y() - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -181,7 +181,7 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -193,7 +193,7 @@ namespace BlendInt {
 	void ColorButton::InitializeColorButton ()
 	{
 		VertexTool tool;
-		tool.GenerateShadedVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateShadedVerticesExt (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -204,8 +204,8 @@ namespace BlendInt {
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
@@ -215,9 +215,9 @@ namespace BlendInt {
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+				Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
