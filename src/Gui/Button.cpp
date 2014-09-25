@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -153,23 +152,27 @@ namespace BlendInt {
 	void Button::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(),
-						round_type(), round_radius(), Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown);
-			} else {
-				tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(),
-						round_type(), round_radius());
-			}
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, tool.inner_size(), tool.inner_data());
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->regular().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->regular().shadetop,
+						Theme::instance->regular().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
@@ -184,23 +187,27 @@ namespace BlendInt {
 	void Button::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
-						*request.round_type(), round_radius(), Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown);
-			} else {
-				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
-						*request.round_type(), round_radius());
-			}
-			buffer_.bind(0);
-			buffer_.set_data(tool.inner_size(), tool.inner_data());
-			buffer_.bind(1);
-			buffer_.set_data(tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
 
 			set_round_type(*request.round_type());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->regular().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->regular().shadetop,
+						Theme::instance->regular().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
@@ -215,23 +222,27 @@ namespace BlendInt {
 	void Button::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if (Theme::instance->regular().shaded) {
-				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
-						round_type(), *request.round_radius(), Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown);
-			} else {
-				tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(),
-						round_type(), *request.round_radius());
-			}
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, tool.inner_size(), tool.inner_data());
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
 
 			set_round_radius(*request.round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->regular().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->regular().shadetop,
+						Theme::instance->regular().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
@@ -436,18 +447,17 @@ namespace BlendInt {
 
 	void Button::InitializeButtonOnce ()
 	{
-		VertexTool tool;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		if(Theme::instance->regular().shaded) {
-			tool.GenerateShadedVerticesExt(size(),
-					DefaultBorderWidth(),
-					round_type(),
-					round_radius(),
-					Vertical,
+		if (Theme::instance->regular().shaded) {
+			GenerateVertices(Vertical,
 					Theme::instance->regular().shadetop,
-					Theme::instance->regular().shadedown);
+					Theme::instance->regular().shadedown,
+					&inner_verts,
+					&outer_verts);
 		} else {
-			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), round_type(), round_radius());
+			GenerateVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(2, vao_);
@@ -456,14 +466,14 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 
 		buffer_.bind(0);
-		buffer_.set_data(tool.inner_size(), tool.inner_data());
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
-		buffer_.set_data(tool.outer_size(), tool.outer_data());
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);

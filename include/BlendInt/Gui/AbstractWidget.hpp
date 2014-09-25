@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
 
 #include <stack>
+#include <vector>
 
 #include <boost/smart_ptr.hpp>
 
@@ -659,6 +660,17 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
+		void GenerateVertices (
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		void GenerateVertices (
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
 	private:
 
 		enum WidgetFlagIndex {
@@ -685,6 +697,14 @@ namespace BlendInt {
 
 		};
 
+		void GenerateTriangleStripVertices (
+						const std::vector<GLfloat>* inner,
+						const std::vector<GLfloat>* edge,
+						unsigned int num,
+						std::vector<GLfloat>* strip);
+
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+
 		void set_manage (bool val)
 		{
 			if(val) {
@@ -702,21 +722,23 @@ namespace BlendInt {
 
 		float round_radius_;
 
-		boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-		Cpp::Event<AbstractWidget*> destroyed_;
-
 		AbstractContainer* container_;
 
 		AbstractWidget* previous_;
 
 		AbstractWidget* next_;
 
+		boost::scoped_ptr<Cpp::ConnectionScope> events_;
+
+		Cpp::Event<AbstractWidget*> destroyed_;
+
 #ifdef DEBUG
 		std::string name_;
 #endif
 
 		static float default_border_width;
+
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
 	};
 

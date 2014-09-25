@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ColorButton.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -84,15 +83,19 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVerticesExt(*request.size(), DefaultBorderWidth(), round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -105,15 +108,18 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-
 			set_round_type(*request.round_type());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -126,15 +132,18 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVerticesExt(size(), DefaultBorderWidth(), round_type(),
-			        *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-
 			set_round_radius(*request.round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -192,8 +201,10 @@ namespace BlendInt {
 
 	void ColorButton::InitializeColorButton ()
 	{
-		VertexTool tool;
-		tool.GenerateShadedVerticesExt (size(), DefaultBorderWidth(), round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -201,7 +212,7 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
 				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
@@ -212,7 +223,7 @@ namespace BlendInt {
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
 				Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
