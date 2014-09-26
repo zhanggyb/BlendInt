@@ -197,7 +197,9 @@ namespace BlendInt
 
 	void Context::Draw()
 	{
+		PreDraw(profile_);
 		Draw(profile_);
+		PostDraw(profile_);
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
@@ -375,6 +377,11 @@ namespace BlendInt
 		}
 
 		return Accept;
+	}
+
+	void Context::PostDraw(Profile& profile)
+	{
+		set_refresh(false);
 	}
 
 	ResponseType Context::CursorEnterEvent (bool entered)

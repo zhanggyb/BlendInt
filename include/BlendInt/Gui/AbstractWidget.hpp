@@ -380,7 +380,7 @@ namespace BlendInt {
 			return flags_ & WidgetFlagFireEvents;
 		}
 
-		inline bool focused () const
+		inline bool focus () const
 		{
 			return flags_ & WidgetFlagFocus;
 		}
@@ -405,14 +405,19 @@ namespace BlendInt {
 			return flags_ & WidgetFlagEmboss;
 		}
 
-		int round_type () const
+		inline int round_type () const
 		{
 			return flags_ & 0x0F;
 		}
 
-		float round_radius () const
+		inline float round_radius () const
 		{
 			return round_radius_;
+		}
+
+		inline bool refresh () const
+		{
+			return flags_ & WidgetFlagRefresh;
 		}
 
 		/**
@@ -612,7 +617,17 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
-		void set_focus (bool focus)
+		inline void set_round_type (int type)
+		{
+			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
+		}
+
+		inline void set_round_radius (float radius)
+		{
+			round_radius_ = radius;
+		}
+
+		inline void set_focus (bool focus)
 		{
 			if(focus) {
 				SETBIT(flags_, WidgetFlagFocus);
@@ -621,7 +636,7 @@ namespace BlendInt {
 			}
 		}
 
-		void set_hover (bool hover)
+		inline void set_hover (bool hover)
 		{
 			if(hover) {
 				SETBIT(flags_, WidgetFlagHover);
@@ -630,7 +645,7 @@ namespace BlendInt {
 			}
 		}
 
-		void set_visible (bool visiable)
+		inline void set_visible (bool visiable)
 		{
 			if(visiable) {
 				SETBIT(flags_, WidgetFlagVisibility);
@@ -639,7 +654,7 @@ namespace BlendInt {
 			}
 		}
 
-		void set_emboss (bool emboss)
+		inline void set_emboss (bool emboss)
 		{
 			if (emboss) {
 				SETBIT(flags_, WidgetFlagEmboss);
@@ -648,14 +663,13 @@ namespace BlendInt {
 			}
 		}
 
-		void set_round_type (int type)
+		inline void set_refresh (bool refresh)
 		{
-			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
-		}
-
-		void set_round_radius (float radius)
-		{
-			round_radius_ = radius;
+			if(refresh) {
+				SETBIT(flags_, WidgetFlagRefresh);
+			} else {
+				CLRBIT(flags_, WidgetFlagRefresh);
+			}
 		}
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
@@ -674,6 +688,7 @@ namespace BlendInt {
 	private:
 
 		enum WidgetFlagIndex {
+
 			WidgetFlagRoundTopLeft = (1 << 0),
 
 			WidgetFlagRoundTopRight = (1 << 1),
@@ -693,7 +708,10 @@ namespace BlendInt {
 
 			WidgetFlagVisibility = (1 << 8),
 
-			WidgetFlagEmboss = (1 << 10)
+			WidgetFlagEmboss = (1 << 9),
+
+			// only valid when use off-screen render in container
+			WidgetFlagRefresh = (1 << 10)
 
 		};
 

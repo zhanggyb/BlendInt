@@ -42,8 +42,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformRefresh (const RefreshRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
@@ -59,8 +57,6 @@ namespace BlendInt {
 		void RenderToBuffer ();
 
 		ImagePlane2D tex_buffer_;
-
-		bool refresh_;
 
 		GLuint vao_[2];
 

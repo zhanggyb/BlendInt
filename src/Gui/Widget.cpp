@@ -66,6 +66,11 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void Widget::PostDraw(Profile& profile)
+	{
+		set_refresh(false);
+	}
+
 	ResponseType Widget::FocusEvent (bool focus)
 	{
 		return Ignore;

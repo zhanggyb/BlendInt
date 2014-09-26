@@ -53,6 +53,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual void PostDraw (Profile& profile);
+
 		virtual ResponseType FocusEvent (bool focus);
 
 		virtual ResponseType CursorEnterEvent (bool entered);

@@ -83,7 +83,8 @@ namespace BlendInt {
 	{
 		events_.reset(new Cpp::ConnectionScope);
 
-		SETBIT(flags_, WidgetFlagVisibility);
+		set_visible(true);
+		set_refresh(true);
 	}
 
 	AbstractWidget::~AbstractWidget ()
@@ -291,10 +292,13 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		RefreshRequest request (this, container_);
+		if(!refresh()) {
+			set_refresh(true);
 
-		if(container_) {
-			container_->PerformRefresh(request);
+			if(container_) {
+				RefreshRequest request (this, container_);
+				container_->PerformRefresh(request);
+			}
 		}
 	}
 
@@ -622,7 +626,10 @@ namespace BlendInt {
 
 	void AbstractWidget::PerformRefresh(const RefreshRequest& request)
 	{
-		ReportRefresh(request);
+		if(!refresh()) {
+			set_refresh(true);
+			ReportRefresh(request);
+		}
 	}
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)

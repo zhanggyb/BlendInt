@@ -52,7 +52,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	StaticFrame::StaticFrame()
-	: BinLayout(), refresh_(true)
+	: BinLayout()
 	{
 		set_size(400, 300);
 		InitializeFramePanel();
@@ -61,14 +61,6 @@ namespace BlendInt {
 	StaticFrame::~StaticFrame ()
 	{
 		glDeleteVertexArrays(1, &vao_);
-	}
-
-	void StaticFrame::PerformRefresh(const RefreshRequest& request)
-	{
-		if(!refresh_) {
-			refresh_ = true;
-			ReportRefresh(request);
-		}
 	}
 
 	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -98,9 +90,8 @@ namespace BlendInt {
 
 	ResponseType StaticFrame::Draw (Profile& profile)
 	{
-		if(refresh_) {
+		if(refresh()) {
 			RenderToBuffer();
-			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);

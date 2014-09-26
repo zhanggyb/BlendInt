@@ -52,8 +52,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	StaticPanel::StaticPanel ()
-	: AbstractPanel(),
-	  refresh_(true)
+	: AbstractPanel()
 	{
 		//set_margin(10, 10, 10, 10);
 		set_round_type(RoundAll);
@@ -64,14 +63,6 @@ namespace BlendInt {
 	StaticPanel::~StaticPanel ()
 	{
 		glDeleteVertexArrays(2, vao_);
-	}
-
-	void StaticPanel::PerformRefresh (const RefreshRequest& request)
-	{
-		if(!refresh_) {
-			refresh_ = true;
-			ReportRefresh(request);
-		}
 	}
 
 	void StaticPanel::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -89,7 +80,6 @@ namespace BlendInt {
 
 			FillSubWidgets(*request.size(), margin());
 
-			refresh_ = true;
 			Refresh();
 		}
 
@@ -141,9 +131,9 @@ namespace BlendInt {
 
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
-		if(refresh_) {
+		if(refresh()) {
+			DBG_PRINT_MSG("%s", "refresh");
 			RenderToBuffer();
-			refresh_ = false;
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);

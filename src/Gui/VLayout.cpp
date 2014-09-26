@@ -183,7 +183,8 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 			FillSubWidgetsInVBox(*request.size(), margin(), m_alignment,
-											m_space);		}
+											m_space);
+		}
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);

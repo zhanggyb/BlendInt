@@ -256,7 +256,7 @@ namespace BlendInt {
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
-				if(menubutton->focused()) {
+				if(menubutton->focus()) {
 					m_active_button = menubutton;
 				}
 			}

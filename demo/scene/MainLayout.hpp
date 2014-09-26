@@ -34,8 +34,6 @@ public:
 
 protected:
 
-	virtual void PerformRefresh (const BI::RefreshRequest& request);
-
 	virtual void PerformSizeUpdate (const BI::SizeUpdateRequest& request);
 
 	virtual BI::ResponseType Draw (BI::Profile& profile);
@@ -84,8 +82,6 @@ private:
 	BI::Button* m_btn_open;
 
 	BI::Label* m_msg_label;
-
-	bool refresh_;
 
 	BI::ImagePlane2D buffer_;
 };

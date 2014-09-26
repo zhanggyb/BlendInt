@@ -47,8 +47,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformRefresh (const RefreshRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -64,7 +62,6 @@ namespace BlendInt {
 
 		ImagePlane2D tex_buffer_;
 
-		bool refresh_;
 	};
 
 }

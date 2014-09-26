@@ -368,7 +368,7 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		if(focused()) {			// draw a cursor
+		if(focus()) {			// draw a cursor
 			unsigned int cursor_pos = font_.GetTextWidth(text_,
 						        index_ - start_, start_);
 			cursor_pos += round_radius();

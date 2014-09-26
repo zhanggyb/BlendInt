@@ -91,18 +91,10 @@ void MainLayout::InitOnce ()
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
 
-void MainLayout::PerformRefresh(const RefreshRequest& request)
-{
-	if(!refresh_) {
-		refresh_ = true;
-		ReportRefresh(request);
-	}
-}
-
 void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-		refresh_ = true;
+		Refresh();
 	}
 
 	VLayout::PerformSizeUpdate(request);
@@ -110,9 +102,8 @@ void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainLayout::Draw(Profile& profile)
 {
-	if(refresh_) {
+	if(refresh()) {
 		RenderToBuffer();
-		refresh_ = false;
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);

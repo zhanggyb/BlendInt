@@ -237,7 +237,7 @@ namespace BlendInt {
 
 	void Screen::PostDraw(Profile& profile)
 	{
-		// Do nothing
+		set_refresh(false);
 	}
 
 	ResponseType Screen::FocusEvent(bool focus)
@@ -519,7 +519,7 @@ namespace BlendInt {
 	void Screen::OnFocusedWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
-		assert(widget->focused());
+		assert(widget->focus());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
