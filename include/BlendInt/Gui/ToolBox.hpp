@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
 #include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -66,7 +67,7 @@ namespace BlendInt {
 
 		int space_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> inner_;
 
 	};
 

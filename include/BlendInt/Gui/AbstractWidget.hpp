@@ -685,6 +685,25 @@ namespace BlendInt {
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
 
+		static void GenerateVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		static void GenerateVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
 	private:
 
 		enum WidgetFlagIndex {
@@ -715,13 +734,13 @@ namespace BlendInt {
 
 		};
 
-		void GenerateTriangleStripVertices (
+		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,
 						const std::vector<GLfloat>* edge,
 						unsigned int num,
 						std::vector<GLfloat>* strip);
 
-		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
 		void set_manage (bool val)
 		{

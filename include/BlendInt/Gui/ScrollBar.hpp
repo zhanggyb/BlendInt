@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		bool pressed () const
 		{
-			return m_pressed;
+			return pressed_;
 		}
 
 	protected:
@@ -122,9 +122,9 @@ namespace BlendInt {
 		 */
 		int GetSlidePosition ();
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		Point m_cursor_origin;
 		SlideIcon m_slide;
@@ -134,7 +134,7 @@ namespace BlendInt {
 		/**
 		 * @brief If the slide switch is pressed
 		 */
-		bool m_pressed;
+		bool pressed_;
 
 	};
 

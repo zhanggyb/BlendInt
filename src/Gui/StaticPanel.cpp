@@ -131,10 +131,7 @@ namespace BlendInt {
 
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
-		if(refresh()) {
-			DBG_PRINT_MSG("%s", "refresh");
-			RenderToBuffer();
-		}
+		if(refresh()) RenderToBuffer();
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 		tex_buffer_.Draw(0.f, 0.f);

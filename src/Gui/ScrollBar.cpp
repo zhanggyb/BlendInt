@@ -46,7 +46,7 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
 	  m_last_value(0),
-	  m_pressed(false)
+	  pressed_(false)
 	{
 		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
@@ -56,12 +56,14 @@ namespace BlendInt {
 			set_size(14, 200);
 		}
 
+		set_round_type(RoundAll);
+
 		InitOnce();
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void ScrollBar::SetSliderPercentage (int percentage)
@@ -141,23 +143,46 @@ namespace BlendInt {
 				m_slide.SetRadius(radius);
 			}
 
-			const Color& color = Theme::instance->scroll().inner;
-			short shadetop = Theme::instance->scroll().shadetop;
-			short shadedown = Theme::instance->scroll().shadedown;
-			if (orientation() == Vertical) {
-				shadetop = Theme::instance->scroll().shadedown;
-				shadedown = Theme::instance->scroll().shadetop;
+			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if(Theme::instance->scroll().shaded) {
+
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
+				if(orientation() == Vertical) {
+					shadetop = Theme::instance->scroll().shadedown;
+					shadedown = Theme::instance->scroll().shadetop;
+				}
+
+				GenerateVertices(size(),
+						DefaultBorderWidth(),
+						round_type(),
+						radius,
+						slot_orient,
+						shadetop,
+						shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(size(),
+						DefaultBorderWidth(),
+						round_type(),
+						radius,
+						&inner_verts,
+						&outer_verts);
 			}
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), radius, color, slot_orient,
-							shadetop, shadedown);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-			set_size(*request.size());
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+			buffer_.reset();
+
 		}
 
 		if(request.source() == this) {
@@ -193,36 +218,41 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
 		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
-		glBindVertexArray(m_vao[0]);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
+				Theme::instance->scroll().inner.data());
+
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
-		        Theme::instance->scroll().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		Shaders::instance->widget_outer_program()->use();
 
-		glBindVertexArray(m_vao[1]);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+		        (float) position().x(), (float) position().y(), 0.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
+		        Theme::instance->scroll().outline.data());
+
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.f,
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
+			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		glm::vec3 pos(position().x(), position().y(), 0.f);
 
@@ -238,7 +268,7 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
 	{
-		if (m_pressed) {
+		if (pressed_) {
 
 			int new_value = value();
 
@@ -273,7 +303,7 @@ namespace BlendInt {
 
 			m_cursor_origin = event.position();
 			m_last_value = value();
-			m_pressed = true;
+			pressed_ = true;
 			fire_slider_pressed();
 
 			return Accept;
@@ -284,8 +314,8 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
 	{
-		if (m_pressed) {
-			m_pressed = false;
+		if (pressed_) {
+			pressed_ = false;
 
 			if (CursorOnSlideIcon(event.position())) {
 				fire_slider_released();
@@ -299,9 +329,7 @@ namespace BlendInt {
 
 	void ScrollBar::InitOnce ()
 	{
-		set_round_type(RoundAll);
-
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vao_);
 
 		Size slot_size = m_slide.size();
 		float slot_radius;
@@ -316,49 +344,56 @@ namespace BlendInt {
 			slot_orient = Horizontal;
 		}
 
-		const Color& color = Theme::instance->scroll().inner;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
-		if(orientation() == Vertical) {
-			shadetop = Theme::instance->scroll().shadedown;
-			shadedown = Theme::instance->scroll().shadetop;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if(Theme::instance->scroll().shaded) {
+
+			short shadetop = Theme::instance->scroll().shadetop;
+			short shadedown = Theme::instance->scroll().shadedown;
+			if(orientation() == Vertical) {
+				shadetop = Theme::instance->scroll().shadedown;
+				shadedown = Theme::instance->scroll().shadetop;
+			}
+
+			GenerateVertices(slot_size,
+					DefaultBorderWidth(),
+					round_type(),
+					slot_radius,
+					slot_orient,
+					shadetop,
+					shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateVertices(slot_size,
+					DefaultBorderWidth(),
+					round_type(),
+					slot_radius,
+					&inner_verts,
+					&outer_verts);
 		}
 
-		VertexTool tool;
-		tool.GenerateVertices(slot_size,
-						DefaultBorderWidth(),
-						round_type(),
-						slot_radius,
-						color,
-						slot_orient,
-						shadetop,
-						shadedown
-						);
+		buffer_.generate();
 
-		glBindVertexArray(m_vao[0]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		glBindVertexArray(vao_[0]);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0,
 		        BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(m_vao[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::reset();
 		glBindVertexArray(0);
+		buffer_.reset();
 	}
 
 	int ScrollBar::GetSpace ()

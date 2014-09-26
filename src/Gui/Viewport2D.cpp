@@ -51,7 +51,7 @@ namespace BlendInt {
 	const float Viewport2D::camera_factor = 50.f;
 
 	Viewport2D::Viewport2D()
-	: AbstractWidget(),
+	: Widget(),
 	  vao_(0),
 	  gridfloor_(0)
 	{
@@ -106,48 +106,6 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	ResponseType Viewport2D::FocusEvent(bool focus)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::CursorEnterEvent(bool entered)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::KeyPressEvent(const KeyEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::MousePressEvent(const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::MouseReleaseEvent(const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Viewport2D::MouseMoveEvent(const MouseEvent& event)
-	{
-		return Accept;
 	}
 
 	ResponseType Viewport2D::Draw(Profile& profile)

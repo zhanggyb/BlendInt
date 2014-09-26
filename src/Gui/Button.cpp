@@ -479,7 +479,7 @@ namespace BlendInt {
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		buffer_.reset();
 	}
 
 	void Button::InitializeButtonOnce (const String& text)

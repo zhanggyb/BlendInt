@@ -1231,6 +1231,514 @@ namespace BlendInt {
 		(*strip)[count * 2 + 3] = (*edge)[1];
 	}
 
+	void AbstractWidget::GenerateVertices(const Size& size, float border,
+			int round_type, float radius, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		border *= Theme::instance->pixel();
+
+		float rad = radius * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border; 	// U.pixelsize;
+		float minyi = miny + border;		// U.pixelsize;
+		float maxyi = maxy - border;		// U.pixelsize;
+
+		int minsize = 0;
+		int corner = round_type;
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type;
+
+		minsize = std::min(size.width() * hnum, size.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			((*inner_ptr))[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+			(*inner_ptr)[2] = 0.f;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			(*inner_ptr)[count * 3] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = 0.f;
+		}
+
+		if(outer) {
+
+			if(border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+	}
+
+	void AbstractWidget::GenerateVertices(const Size& size, float border,
+			int round_type, float radius, Orientation shadedir, short shadetop,
+			short shadedown, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		border *= Theme::instance->pixel();
+
+		float rad = radius * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;
+		float maxxi = maxx - border;
+		float minyi = miny + border;
+		float maxyi = maxy - border;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		int corner = round_type;
+		int minsize = 0;
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight	| RoundBottomLeft))	== (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		float offset = 0.f;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type;
+
+		minsize = std::min(size.width() * hnum, size.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			(*inner_ptr)[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+
+			if (shadedir == Vertical) {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facyi * ((*inner_ptr)[1] - minyi));
+			} else {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facxi * ((*inner_ptr)[0] - minxi));
+			}
+			(*inner_ptr)[2] = offset;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			(*inner_ptr)[count * 3 + 0] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = (*inner_ptr)[3 + 2];
+
+		}
+
+		if(outer) {
+
+			if (border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+
+	}
+
 	float AbstractWidget::make_shaded_offset (short shadetop, short shadedown, float fact)
 	{
 		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);

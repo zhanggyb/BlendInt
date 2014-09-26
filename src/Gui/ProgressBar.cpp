@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	ProgressBar::ProgressBar(Orientation orientation)
-	: AbstractWidget(),
+	: Widget(),
 	  m_orientation(orientation)
 	{
 		if(orientation == Horizontal) {
@@ -166,48 +166,6 @@ namespace BlendInt {
 		program->reset();
 
 		return Accept;
-	}
-
-	ResponseType ProgressBar::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void ProgressBar::InitializeProgressBar ()

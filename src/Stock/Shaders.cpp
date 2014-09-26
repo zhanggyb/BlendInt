@@ -546,6 +546,27 @@ namespace BlendInt {
 				"	FragmentColor = vec4(PreFragShade, PreFragShade, PreFragShade, 0.f) + color_calib + color;"
 				"}";
 
+		const char* Shaders::widget_split_inner_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float PreFragShade;"
+				"uniform vec4 u_color;"
+				"uniform bool u_AA = false;"
+				"uniform int u_gamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color = u_color;"
+				"	vec4 color_calib = vec4(0.0);"
+				"	if(u_AA) {"
+				"		color.a = color.a / 8.f;"
+				"		color_calib = vec4(vec3(clamp(u_gamma/255.0/8.0, -1.0, 1.0)), 0.0);"
+				"	} else {"
+				"		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
+				"	}"
+				"	FragmentColor = vec4(PreFragShade, PreFragShade, PreFragShade, 0.f) + color_calib + color;"
+				"}";
+
 		// ---------------------------------------------------------------
 
 		const char* Shaders::widget_outer_vertex_shader =
@@ -918,6 +939,7 @@ namespace BlendInt {
 			triangle_program_.reset(new GLSLProgram);
 			widget_program_.reset(new GLSLProgram);
 			widget_inner_program_.reset(new GLSLProgram);
+			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
 			image_program_.reset(new GLSLProgram);
 		}
@@ -1050,6 +1072,9 @@ namespace BlendInt {
 			if(!SetupWidgetInnerProgram())
 				return false;
 
+			if(!SetupWidgetSplitInnerProgram())
+				return false;
+
 			if(!SetupWidgetOuterProgram())
 				return false;
 
@@ -1119,6 +1144,13 @@ namespace BlendInt {
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
 			glUniformBlockBinding(widget_inner_program_->id(), block_index, ui_matrix_binding_point_);
+
+			block_index = glGetUniformBlockIndex(widget_split_inner_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(text_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
+			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, ui_matrix_binding_point_);
 
 			block_index = glGetUniformBlockIndex(widget_outer_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
@@ -1272,6 +1304,38 @@ namespace BlendInt {
 			locations_[WIDGET_INNER_SCALE] = widget_inner_program_->GetUniformLocation("u_scale");
 			locations_[WIDGET_INNER_ANTI_ALIAS] = widget_inner_program_->GetUniformLocation("u_AA");
 			locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation("u_gamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetSplitInnerProgram()
+		{
+			if (!widget_split_inner_program_->Create()) {
+				return false;
+			}
+
+			widget_split_inner_program_->AttachShader(
+			        widget_inner_vertex_shader, GL_VERTEX_SHADER);
+			widget_split_inner_program_->AttachShader(
+			        widget_inner_geometry_shader,
+			        GL_GEOMETRY_SHADER);
+			widget_split_inner_program_->AttachShader(
+			        widget_split_inner_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_split_inner_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget split inner program: %d",
+						widget_split_inner_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_INNER_COORD] = widget_split_inner_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_INNER_COLOR] = widget_split_inner_program_->GetUniformLocation("u_color");
+			//locations_[WIDGET_INNER_PROJECTION] = widget_split_inner_program_->GetUniformLocation("u_projection");
+			//locations_[WIDGET_INNER_VIEW] = widget_split_inner_program_->GetUniformLocation("u_view");
+			locations_[WIDGET_INNER_POSITION] = widget_split_inner_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_INNER_ROTATION] = widget_split_inner_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_INNER_SCALE] = widget_split_inner_program_->GetUniformLocation("u_scale");
+			locations_[WIDGET_INNER_ANTI_ALIAS] = widget_split_inner_program_->GetUniformLocation("u_AA");
+			locations_[WIDGET_INNER_GAMMA] = widget_split_inner_program_->GetUniformLocation("u_gamma");
 
 			return true;
 		}

@@ -145,6 +145,11 @@ namespace BlendInt {
 				return widget_inner_program_;
 			}
 
+			const RefPtr<GLSLProgram>& widget_split_inner_program () const
+			{
+				return widget_split_inner_program_;
+			}
+
 			const RefPtr<GLSLProgram>& widget_outer_program () const
 			{
 				return widget_outer_program_;
@@ -217,6 +222,8 @@ namespace BlendInt {
 
 			bool SetupWidgetInnerProgram ();
 
+			bool SetupWidgetSplitInnerProgram ();
+
 			bool SetupWidgetOuterProgram ();
 
 			bool SetupTextProgram ();
@@ -236,6 +243,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> widget_program_;
 
 			RefPtr<GLSLProgram> widget_inner_program_;
+
+			RefPtr<GLSLProgram> widget_split_inner_program_;
 
 			RefPtr<GLSLProgram> widget_outer_program_;
 
@@ -289,6 +298,8 @@ namespace BlendInt {
 			static const char* widget_inner_geometry_shader;
 
 			static const char* widget_inner_fragment_shader;
+
+			static const char* widget_split_inner_fragment_shader;
 
 			static const char* widget_outer_vertex_shader;
 

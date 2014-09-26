@@ -45,7 +45,7 @@
 namespace BlendInt {
 
 	Clock::Clock()
-	: AbstractWidget(), angle_(0), timer_(0)
+	: Widget(), angle_(0), timer_(0)
 	{
 		InitializeClock();
 	}
@@ -118,48 +118,6 @@ namespace BlendInt {
 		}
 
 		ReportSizeUpdate(request);
-	}
-
-	ResponseType Clock::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void Clock::GenerateClockVertices (int radius, float border,

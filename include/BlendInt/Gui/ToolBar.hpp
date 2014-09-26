@@ -24,8 +24,7 @@
 #ifndef _BLENDINT_GUI_TOOLBAR_HPP_
 #define _BLENDINT_GUI_TOOLBAR_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Container.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
@@ -90,7 +89,7 @@ namespace BlendInt {
 		int last_x_;
 		int start_x_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> inner_;
 	};
 
 }

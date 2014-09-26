@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -186,12 +185,6 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
 			int x = margin().left();
 			int y = margin().bottom();
 			int w = request.size()->width() - margin().hsum();
@@ -200,6 +193,13 @@ namespace BlendInt {
 			FillSubWidgets(x, y, w, h, space_);
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
+
+			inner_.bind();
+			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_.reset();
 
 		} else if (request.target()->container() == this) {
 			// if a sub widget changed its size, re-align all
@@ -213,24 +213,21 @@ namespace BlendInt {
 
 	ResponseType ToolBar::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->widget_inner_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
-
-		program->SetUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
 		        0.f, 0.f, 0.f);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS),
 		        0);
-		program->SetVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR),
 		        0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -334,23 +331,21 @@ namespace BlendInt {
 	{
 		glGenVertexArrays(1, &vao_);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 
 		glBindVertexArray(vao_);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
+		inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_.reset();
 	}
 	
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,

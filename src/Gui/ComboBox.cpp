@@ -55,7 +55,7 @@ namespace BlendInt {
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
-	: AbstractWidget(),
+	: Widget(),
 	  status_down_(false),
 	  list_(0)
 	{
@@ -323,32 +323,6 @@ namespace BlendInt {
 	{
 		Refresh();
 		return Accept;
-	}
-
-	ResponseType ComboBox::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ComboBox::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ComboBox::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ComboBox::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ComboBox::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void ComboBox::InitializeComboBox()

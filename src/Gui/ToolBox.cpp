@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -50,23 +49,22 @@ namespace BlendInt {
 	{
 		set_size(200, 400);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
+		inner_.generate();
+		inner_.bind();
 
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_.reset();
 	}
 
 	ToolBox::~ToolBox()
@@ -150,20 +148,22 @@ namespace BlendInt {
 	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
 
-			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
+			int x = margin().left();
+			int y = margin().bottom();
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
 			FillSubWidgets(x, y, w, h, space_);
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
+
+			inner_.bind();
+			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_.reset();
 
 		} else if (request.target()->container() == this) {
 			FillSubWidgets(size(), margin(), space_);
@@ -176,12 +176,12 @@ namespace BlendInt {
 
 	ResponseType ToolBox::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 0.f, 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -233,8 +233,8 @@ namespace BlendInt {
 				if(p->size().width() > width) {
 					ResizeSubWidget(p, width, p->size().height());
 				} else {
-					//SetSubWidgetPosition(widget, x,
-					//				y + (height - widget->size().height()) / 2);
+					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2,
+									y);
 				}
 
 			}

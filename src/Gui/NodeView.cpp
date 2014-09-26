@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	NodeView::NodeView()
-	: AbstractWidget()
+	: Widget()
 	{
 		set_size (400, 300);
 		set_round_type(RoundAll);
@@ -230,47 +230,6 @@ namespace BlendInt {
 
 		program->reset();
 
-		return Accept;
-	}
-
-	ResponseType NodeView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType NodeView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType NodeView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NodeView::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NodeView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NodeView::MousePressEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType NodeView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType NodeView::MouseMoveEvent (const MouseEvent& event)
-	{
 		return Accept;
 	}
 
