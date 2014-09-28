@@ -137,7 +137,7 @@ namespace BlendInt {
 		program->use();
 
 		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
+		        0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
@@ -171,7 +171,7 @@ namespace BlendInt {
 			        1.0f, 1.0f, 0.16f);
 
 			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+					0.f, 0.f - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -180,7 +180,7 @@ namespace BlendInt {
 		program->reset();
 
 		if (text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Accept;
@@ -287,7 +287,7 @@ namespace BlendInt {
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
 
-		AbstractContainer* screen = panel_->container();
+		AbstractWidget* screen = panel_->container();
 		delete screen;
 		panel_ = 0;
 
@@ -299,7 +299,7 @@ namespace BlendInt {
 		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
 
-		AbstractContainer* screen = panel_->container();
+		AbstractWidget* screen = panel_->container();
 		delete screen;
 		panel_ = 0;
 	}

@@ -132,7 +132,7 @@ namespace BlendInt {
 	ResponseType ExpandButton::Draw (Profile& profile)
 	{
 		if(text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		float rotate = 0.f;
@@ -142,7 +142,7 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 		pos.x += Icons::instance->num()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 
@@ -274,7 +274,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -291,7 +291,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -306,7 +306,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;

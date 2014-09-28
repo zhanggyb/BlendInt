@@ -95,14 +95,14 @@ namespace BlendInt {
 
 	Size AbstractPanel::GetPreferredSize () const
 	{
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			return Size(360, 360);
 		}
 
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 
@@ -110,7 +110,7 @@ namespace BlendInt {
 			prefer.add_height(tmp.height());
 		}
 
-		prefer.add_height((widget_count() - 1) * space_);
+		prefer.add_height((subs_count() - 1) * space_);
 
 		prefer.add_width(margin().hsum());
 		prefer.add_height(margin().vsum());

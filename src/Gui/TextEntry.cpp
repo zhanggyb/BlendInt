@@ -350,7 +350,7 @@ namespace BlendInt {
 		program->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
+				0.f, 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
 				Theme::instance->text().inner.data());
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
@@ -373,7 +373,7 @@ namespace BlendInt {
 						        index_ - start_, start_);
 			cursor_pos += round_radius();
 
-			glm::vec3 pos(position().x() + cursor_pos, position().y() + 1, 0.f);
+			glm::vec3 pos(0.f + cursor_pos, 0.f + 1, 0.f);
 
 			glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
 					glm::value_ptr(pos));
@@ -389,7 +389,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->reset();
 
-		font_.Print(position(), text_, length_, start_);
+		font_.Print(0.f, 0.f, text_, length_, start_);
 
 		return Accept;
 	}

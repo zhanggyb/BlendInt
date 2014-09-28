@@ -260,7 +260,7 @@ namespace BlendInt {
 				Shaders::instance->triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
 		if(hover()) {
 			program->SetUniform1i("u_gamma", 15);
 		} else {
@@ -294,7 +294,7 @@ namespace BlendInt {
 
 		if (emboss()) {
 			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
+			program->SetUniform3f("u_position", 0.f, 0.f - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_type()) * 2);
@@ -305,7 +305,7 @@ namespace BlendInt {
 		program->reset();
 
 		if(m_title.size()) {
-			m_font.Print(position(), m_title);
+			m_font.Print(0.f, 0.f, m_title);
 		}
 
 		return Accept;

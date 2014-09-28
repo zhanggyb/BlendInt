@@ -170,7 +170,7 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractContainer(),
+	: AbstractWidget(),
 	  hover_(0)
 	{
 		set_size(640, 480);
@@ -284,7 +284,7 @@ namespace BlendInt
 
 	Context* Context::GetContext (AbstractWidget* widget)
 	{
-		AbstractContainer* container = widget->container();
+		AbstractWidget* container = widget->container();
 
 		if(container == 0) {
 			return dynamic_cast<Context*>(widget);
@@ -370,7 +370,7 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
@@ -397,8 +397,8 @@ namespace BlendInt
 
 		ResponseType response;
 
-		if(last()) {
-			response = last()->KeyPressEvent(event);
+		if(last_sub_widget()) {
+			response = last_sub_widget()->KeyPressEvent(event);
 		}
 
 		return response;
@@ -425,7 +425,7 @@ namespace BlendInt
 
 		ResponseType response;
 
-		for(AbstractWidget* p = last(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
@@ -444,7 +444,7 @@ namespace BlendInt
 
 		ResponseType response;
 
-		for(AbstractWidget* p = last(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
 			response = p->MouseReleaseEvent(event);
 
 			if(response == Accept) break;
@@ -462,7 +462,7 @@ namespace BlendInt
 		AbstractScreen* original_hover = hover_;
 
 		hover_ = 0;
-		for(AbstractWidget* p = last(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
 			if(p->Contain(event.position())) {
 				hover_ = dynamic_cast<AbstractScreen*>(p);
 				break;
@@ -485,11 +485,11 @@ namespace BlendInt
 
 		}
 
-		if(last()) {
-			response = last()->MouseMoveEvent(event);
+		if(last_sub_widget()) {
+			response = last_sub_widget()->MouseMoveEvent(event);
 		}
 
-		if(hover_ && hover_ != last()) {
+		if(hover_ && hover_ != last_sub_widget()) {
 			hover_->MouseMoveEvent(event);
 		}
 

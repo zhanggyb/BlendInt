@@ -42,6 +42,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Container::Container ()
+	: Widget()
 	{
 	}
 
@@ -70,89 +71,7 @@ namespace BlendInt {
 
 	void Container::PerformMarginUpdate(const Margin& margin)
 	{
-	}
-
-	void Container::PreDraw(Profile& profile)
-	{
-		//glm::mat4 model;
-		//Shaders::instance->GetUIModelMatrix(model);
-
-//		Point pos = GetGlobalPosition();
-
-		int ox = position().x() + offset_x();
-		int oy = position().y() + offset_y();
-
-		profile.set_origin(
-				profile.origin().x() + ox,
-				profile.origin().y() + oy
-		);
-
-		glm::mat4 matrix = glm::translate(Shaders::instance->ui_model_matrix(), glm::vec3(ox, oy, 0.f));
-//		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
-
-		Shaders::instance->PushUIModelMatrix();
-		Shaders::instance->SetUIModelMatrix(matrix);
-	}
-
-	ResponseType Container::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	void Container::PostDraw(Profile& profile)
-	{
-		profile.set_origin(
-				profile.origin().x() - position().x() - offset_x(),
-				profile.origin().y() - position().y() - offset_y()
-		);
-
-		Shaders::instance->PopUIModelMatrix();
-	}
-
-	ResponseType Container::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::KeyPressEvent (
-	        const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::MousePressEvent (
-	        const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::MouseReleaseEvent (
-	        const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Container::MouseMoveEvent (
-	        const MouseEvent& event)
-	{
-		return Ignore;
+		margin_ = margin;
 	}
 
 }

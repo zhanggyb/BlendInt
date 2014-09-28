@@ -80,8 +80,8 @@ namespace BlendInt {
 		program->use();
 
 		program->SetUniform3f("u_position",
-		        (float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f), 0.f);
+		        (float) (0.f + size().width() / 2.f),
+		        (float) (0.f + size().height() / 2.f), 0.f);
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
@@ -99,7 +99,7 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		picker_.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
+		picker_.Draw(glm::vec3(0.f + size().width() / 2.f + 8.f, 0.f + 12.f, 0.f));
 
 		return Accept;
 	}

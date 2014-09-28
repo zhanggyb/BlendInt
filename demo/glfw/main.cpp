@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
 	SetContext(context);
 	context->Resize(1280, 800);
 
+	DBG_PRINT_MSG("sizeof AbstractWidget: %ld", sizeof(AbstractWidget));
+
 	RunLoop(win);
 	Terminate();
 

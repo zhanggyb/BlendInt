@@ -74,8 +74,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			if (widget_count()) {
-				assert(widget_count() == 1);
+			if (subs_count()) {
+				assert(subs_count() == 1);
 				FillSingleWidget(0, *request.size(), margin());
 			}
 		}

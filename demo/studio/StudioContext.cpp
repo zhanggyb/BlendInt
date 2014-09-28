@@ -71,10 +71,10 @@ void StudioContext::OnSaveTextureToFile()
 {
 	std::string filename;
 	
-	if(frame_->first()->name().empty()) {
+	if(frame_->first_sub_widget()->name().empty()) {
 		filename = "Widget.png";
 	} else {
-		filename = frame_->first()->name() + ".png";
+		filename = frame_->first_sub_widget()->name() + ".png";
 	}
 		
 	frame_->RenderToFile(filename);

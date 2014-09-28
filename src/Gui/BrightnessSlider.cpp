@@ -88,7 +88,7 @@ namespace BlendInt {
 						Shaders::instance->triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
@@ -113,8 +113,8 @@ namespace BlendInt {
 
 		m_dot.Draw(
 		        glm::vec3(
-		                position().x() + size().width() / 2
-		                        - m_dot.size().width() / 2, position().y() + 12.f, 0.f));
+		                0.f + size().width() / 2
+		                        - m_dot.size().width() / 2, 0.f + 12.f, 0.f));
 
 		return Accept;
 	}

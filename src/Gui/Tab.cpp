@@ -77,7 +77,7 @@ namespace BlendInt {
 		header->Append(btn);
 		stack->Append(widget);
 
-		if(header->widget_count() == 1) {
+		if(header->subs_count() == 1) {
 			btn->SetChecked(true);
 		}
 	}

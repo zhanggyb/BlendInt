@@ -50,7 +50,7 @@ namespace BlendInt {
 	AbstractWidget* Section::iterator_ptr = 0;
 
 	Section::Section ()
-	: AbstractContainer(),
+	: AbstractWidget(),
 	  m_focused_widget(0),
 	  last_hover_widget_(0),
 	  mode_(Normal)
@@ -60,7 +60,7 @@ namespace BlendInt {
 
 	Section::~Section ()
 	{
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			p->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 		}
@@ -108,7 +108,7 @@ namespace BlendInt {
 
 			}
 
-			if(first() == 0) {
+			if(first_sub_widget() == 0) {
 
 				if(managed() && (reference_count() == 0)) {
 					DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
@@ -130,7 +130,7 @@ namespace BlendInt {
 
 	Section* Section::GetSection (AbstractWidget* widget)
 	{
-		AbstractContainer* container = widget->container();
+		AbstractWidget* container = widget->container();
 		AbstractWidget* section = 0;
 
 		if(container == 0) {
@@ -195,7 +195,7 @@ namespace BlendInt {
 
 	ResponseType Section::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, profile);
 		}
@@ -376,7 +376,7 @@ namespace BlendInt {
 
 		} else {
 
-			for(AbstractWidget* p = last(); p; p = p->previous())
+			for(AbstractWidget* p = last_sub_widget(); p; p = p->previous())
 			{
 				if (p->visiable() && p->Contain(event.position())) {
 
@@ -404,23 +404,17 @@ namespace BlendInt {
 
 	void Section::UpdateHoverWidgetSubs (const MouseEvent& event)
 	{
-		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(last_hover_widget_);
+		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous())
+		{
+			if(p->visiable() && p->Contain(event.position())) {
 
-		if (parent) {
+				last_hover_widget_ = p;
+				last_hover_widget_->set_hover(true);
+				last_hover_widget_->CursorEnterEvent(true);
 
-			for(AbstractWidget* p = parent->last(); p; p = p->previous())
-			{
-				if(p->visiable() && p->Contain(event.position())) {
-
-					last_hover_widget_ = p;
-					last_hover_widget_->set_hover(true);
-					last_hover_widget_->CursorEnterEvent(true);
-
-					UpdateHoverWidgetSubs(event);
-					break;
-				}
+				UpdateHoverWidgetSubs(event);
+				break;
 			}
-
 		}
 	}
 
@@ -428,7 +422,7 @@ namespace BlendInt {
 	{
 		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 
-		if(first() == 0) {
+		if(first_sub_widget() == 0) {
 
 			if(managed() && (reference_count() == 0)) {
 				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
@@ -441,7 +435,7 @@ namespace BlendInt {
 			return;
 		}
 
-		if((first() == widget) && (last() == widget)) {
+		if((first_sub_widget() == widget) && (last_sub_widget() == widget)) {
 
 			if(managed() && (reference_count() == 0)) {
 				DBG_PRINT_MSG("the last widget is removed, delete this section: %s", name().c_str());

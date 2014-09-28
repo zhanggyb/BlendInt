@@ -26,11 +26,11 @@
 
 #include <glm/glm.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
-	class AbstractScreen: public AbstractContainer
+	class AbstractScreen: public AbstractWidget
 	{
 	public:
 

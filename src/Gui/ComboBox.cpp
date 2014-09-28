@@ -219,7 +219,7 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(Profile& profile)
 	{
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
 		program->use();
@@ -280,7 +280,7 @@ namespace BlendInt {
 		Context* context = event.context();
 
 		if(list_) {
-			AbstractContainer* container = list_->container();
+			AbstractWidget* container = list_->container();
 			delete container;
 			list_ = 0;
 			SetRoundType(RoundAll);

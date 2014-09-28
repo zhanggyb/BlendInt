@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_CONTAINER_HPP_
 #define _BLENDINT_GUI_CONTAINER_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Container: public AbstractContainer
+	class Container: public Widget
 	{
 
 	public:
@@ -46,28 +46,6 @@ namespace BlendInt {
 	protected:
 
 		virtual void PerformMarginUpdate (const Margin& margin);
-
-		virtual void PreDraw (Profile& profile);
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual void PostDraw (Profile& profile);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		inline void set_margin (const Margin& margin)
 		{

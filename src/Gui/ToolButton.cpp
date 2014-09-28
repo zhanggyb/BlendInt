@@ -133,10 +133,9 @@ namespace BlendInt {
 
 	ResponseType ToolButton::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->triangle_program()->use();
 
-		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 
 		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
@@ -170,14 +169,14 @@ namespace BlendInt {
 			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			       0.f, 0.f - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		if(icon_) {
 			pos.x += (size().width() - icon_->size().width()) / 2;

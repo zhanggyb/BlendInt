@@ -117,14 +117,14 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		if(first() == 0) {
+		if(first_sub_widget() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
 			prefer.set_height(max_font_height + margin().vsum());
 		} else {
 			Size tmp_size;
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -191,9 +191,9 @@ namespace BlendInt {
 	{
 		int x = margin().left();
 
-		if(first()) {
-			x = last()->position().x();
-			x += last()->size().width();
+		if(first_sub_widget()) {
+			x = last_sub_widget()->position().x();
+			x += last_sub_widget()->size().width();
 		}
 
 		return x;

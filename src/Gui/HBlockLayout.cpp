@@ -38,7 +38,7 @@ namespace BlendInt {
 	
 	void HBlockLayout::Prepend (AbstractWidget* widget)
 	{
-		AbstractWidget* orig_first = first();
+		AbstractWidget* orig_first = first_sub_widget();
 
 		if(PushFrontSubWidget(widget)) {
 
@@ -58,7 +58,7 @@ namespace BlendInt {
 
 	void HBlockLayout::Append (AbstractWidget* widget)
 	{
-		AbstractWidget* orig_last = last();
+		AbstractWidget* orig_last = last_sub_widget();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -110,7 +110,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_sub_widget() == 0) {
 
 			preferred_size.set_width(100);
 			preferred_size.set_height(20);
@@ -122,7 +122,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -192,11 +192,11 @@ namespace BlendInt {
 
 	void HBlockLayout::FillInHBlock (int x, int y, int w, int h)
 	{
-		int count = widget_count();
+		int count = subs_count();
 		if(count == 0) return;
 		int average_width = w / count + 1;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			ResizeSubWidget(p, average_width, h);
 			SetSubWidgetPosition(p, x, y);

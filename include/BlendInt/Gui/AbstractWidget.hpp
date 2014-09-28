@@ -48,7 +48,6 @@
 namespace BlendInt {
 
 	class AbstractWidget;
-	class AbstractContainer;
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
@@ -62,7 +61,7 @@ namespace BlendInt {
 	/**
 	 * @brief Check if a widget is contained in a container
 	 */
-	extern bool IsContained (AbstractContainer* container, AbstractWidget* widget);
+	extern bool IsContained (AbstractWidget* container, AbstractWidget* widget);
 
 	class WidgetUpdateRequest
 	{
@@ -284,7 +283,6 @@ namespace BlendInt {
 		friend class Context;
 		friend class Section;
 		friend class AbstractScreen;
-		friend class AbstractContainer;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
 
@@ -297,11 +295,6 @@ namespace BlendInt {
 		 * @brief Destructor
 		 */
 		virtual ~AbstractWidget ();
-
-		const Point& position () const
-		{
-			return position_;
-		}
 
 		Point GetGlobalPosition () const;
 
@@ -352,6 +345,10 @@ namespace BlendInt {
 
 		void Refresh ();
 
+		AbstractWidget* operator [] (int i) const;
+
+		AbstractWidget* GetWidgetAt (int i) const;
+
 		void MoveBackward ();
 
 		void MoveForward ();
@@ -359,6 +356,16 @@ namespace BlendInt {
 		void MoveToFirst ();
 
 		void MoveToLast ();
+
+		const Point& position () const
+		{
+			return position_;
+		}
+
+		const Point& offset () const
+		{
+			return offset_;
+		}
 
 		const Size& size () const
 		{
@@ -420,40 +427,12 @@ namespace BlendInt {
 			return flags_ & WidgetFlagRefresh;
 		}
 
-		/**
-		 * @brief move this object along x axis
-		 * @param offset_x
-		 */
-		inline void move_x (int offset_x)
+		inline int subs_count () const
 		{
-			SetPosition(position().x() + offset_x, position().y());
+			return subs_count_;
 		}
 
-		/**
-		 * @brief move this object along y axis
-		 * @param offset_y
-		 */
-		inline void move_y (int offset_y)
-		{
-			SetPosition(position().x(), position().y() + offset_y);
-		}
-
-		/**
-		 * @brief move this object
-		 * @param offset_x
-		 * @param offset_y
-		 */
-		inline void move (int offset_x, int offset_y)
-		{
-			SetPosition(position().x() + offset_x, position().y() + offset_y);
-		}
-
-		Cpp::EventRef<AbstractWidget*> destroyed ()
-		{
-			return *destroyed_;
-		}
-
-		inline AbstractContainer* container() const
+		inline AbstractWidget* container() const
 		{
 			return container_;
 		}
@@ -466,6 +445,21 @@ namespace BlendInt {
 		inline AbstractWidget* next () const
 		{
 			return next_;
+		}
+
+		inline AbstractWidget* first_sub_widget () const
+		{
+			return first_sub_widget_;
+		}
+
+		inline AbstractWidget* last_sub_widget() const
+		{
+			return last_sub_widget_;
+		}
+
+		Cpp::EventRef<AbstractWidget*> destroyed ()
+		{
+			return *destroyed_;
 		}
 
 		/**
@@ -500,7 +494,7 @@ namespace BlendInt {
 	protected:
 
 		/**
-		 * @brief preset the form's position
+		 * @brief preset the position of this widget
 		 * @param x
 		 * @param y
 		 *
@@ -509,12 +503,11 @@ namespace BlendInt {
 		 */
 		void set_position (int x, int y)
 		{
-			position_.set_x(x);
-			position_.set_y(y);
+			position_.reset(x, y);
 		}
 
 		/**
-		 * @brief preset the form's position
+		 * @brief preset the position of this widget
 		 * @param pos
 		 *
 		 * @note this function should be called only in the constructor of subclass
@@ -523,6 +516,16 @@ namespace BlendInt {
 		void set_position (const Point& pos)
 		{
 			position_ = pos;
+		}
+
+		void set_offset (int x, int y)
+		{
+			offset_.reset(x, y);
+		}
+
+		void set_offset (const Point& pos)
+		{
+			offset_ = pos;
 		}
 
 		/**
@@ -535,8 +538,7 @@ namespace BlendInt {
 		 */
 		inline void set_size (int width, int height)
 		{
-			size_.set_width(width);
-			size_.set_height(height);
+			size_.reset(width, height);
 		}
 
 		/**
@@ -549,6 +551,61 @@ namespace BlendInt {
 		inline void set_size (const Size& size)
 		{
 			size_ = size;
+		}
+
+		inline void set_round_type (int type)
+		{
+			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
+		}
+
+		inline void set_round_radius (float radius)
+		{
+			round_radius_ = radius;
+		}
+
+		inline void set_focus (bool focus)
+		{
+			if(focus) {
+				SETBIT(flags_, WidgetFlagFocus);
+			} else {
+				CLRBIT(flags_, WidgetFlagFocus);
+			}
+		}
+
+		inline void set_hover (bool hover)
+		{
+			if(hover) {
+				SETBIT(flags_, WidgetFlagHover);
+			} else {
+				CLRBIT(flags_, WidgetFlagHover);
+			}
+		}
+
+		inline void set_visible (bool visiable)
+		{
+			if(visiable) {
+				SETBIT(flags_, WidgetFlagVisibility);
+			} else {
+				CLRBIT(flags_, WidgetFlagVisibility);
+			}
+		}
+
+		inline void set_emboss (bool emboss)
+		{
+			if (emboss) {
+				SETBIT(flags_, WidgetFlagEmboss);
+			} else {
+				CLRBIT(flags_, WidgetFlagEmboss);
+			}
+		}
+
+		inline void set_refresh (bool refresh)
+		{
+			if(refresh) {
+				SETBIT(flags_, WidgetFlagRefresh);
+			} else {
+				CLRBIT(flags_, WidgetFlagRefresh);
+			}
 		}
 
 		virtual void PreDraw (Profile& profile);
@@ -607,70 +664,63 @@ namespace BlendInt {
 
 		void ReportRefresh (const RefreshRequest& request);
 
-		static int GetOutlineVertices (int round_type);
+		bool PushFrontSubWidget (AbstractWidget* widget);
 
-		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
+		bool InsertSubWidget (int index, AbstractWidget* widget);
+
+		bool PushBackSubWidget (AbstractWidget* widget);
+
+		bool RemoveSubWidget (AbstractWidget* widget);
+
+		void ClearSubWidgets ();
+
+		void ResizeSubWidget (AbstractWidget* sub, int width, int height);
+
+		void ResizeSubWidget (AbstractWidget* sub, const Size& size);
+
+		void SetSubWidgetPosition (AbstractWidget* sub, int x, int y);
+
+		void SetSubWidgetPosition (AbstractWidget* sub, const Point& pos);
+
+		void SetSubWidgetRoundType (AbstractWidget* sub, int type);
+
+		void SetSubWidgetRoundRadius (AbstractWidget* sub, float radius);
+
+		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
+
+		void MoveSubWidgets (int offset_x, int offset_y);
+
+		void ResizeSubWidgets (const Size& size);
+
+		void ResizeSubWidgets (int w, int h);
+
+		void FillSingleWidget (int index, const Size& size, const Margin& margin);
+
+		void FillSingleWidget (int index, const Point& pos, const Size& size);
+
+		void FillSingleWidget (int index, int left, int bottom, int width, int height);
+
+		void FillSubWidgetsAveragely (const Point& out_pos, const Size& out_size,
+						const Margin& margin, Orientation orientation,
+						int alignment, int space);
+
+		void FillSubWidgetsAveragely (const Point& pos, const Size& size,
+						Orientation orientation, int alignment, int space);
+
+		/**
+		 * @brief Fill in the container with average size
+		 * @param[in] x the left position
+		 * @param[in] y the bottom position
+		 */
+		void FillSubWidgetsAveragely (int x, int y, int width,
+						int height, Orientation orientation,
+						int alignment, int space);
 
 		/**
 		 * @brief Used to get emboss vertices
 		 * @return
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
-
-		inline void set_round_type (int type)
-		{
-			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
-		}
-
-		inline void set_round_radius (float radius)
-		{
-			round_radius_ = radius;
-		}
-
-		inline void set_focus (bool focus)
-		{
-			if(focus) {
-				SETBIT(flags_, WidgetFlagFocus);
-			} else {
-				CLRBIT(flags_, WidgetFlagFocus);
-			}
-		}
-
-		inline void set_hover (bool hover)
-		{
-			if(hover) {
-				SETBIT(flags_, WidgetFlagHover);
-			} else {
-				CLRBIT(flags_, WidgetFlagHover);
-			}
-		}
-
-		inline void set_visible (bool visiable)
-		{
-			if(visiable) {
-				SETBIT(flags_, WidgetFlagVisibility);
-			} else {
-				CLRBIT(flags_, WidgetFlagVisibility);
-			}
-		}
-
-		inline void set_emboss (bool emboss)
-		{
-			if (emboss) {
-				SETBIT(flags_, WidgetFlagEmboss);
-			} else {
-				CLRBIT(flags_, WidgetFlagEmboss);
-			}
-		}
-
-		inline void set_refresh (bool refresh)
-		{
-			if(refresh) {
-				SETBIT(flags_, WidgetFlagRefresh);
-			} else {
-				CLRBIT(flags_, WidgetFlagRefresh);
-			}
-		}
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
@@ -703,6 +753,10 @@ namespace BlendInt {
 				short shadedown,
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
+
+		static int GetOutlineVertices (int round_type);
+
+		static void DispatchDrawEvent (AbstractWidget* widget, Profile& profile);
 
 	private:
 
@@ -742,6 +796,14 @@ namespace BlendInt {
 
 		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
+		void DistributeHorizontally (int x, int width, int space);
+
+		void DistributeVertically (int y, int height, int space);
+
+		void AlignHorizontally (int y, int height, int alignment);
+
+		void AlignVertically (int x, int width, int alignment);
+
 		void set_manage (bool val)
 		{
 			if(val) {
@@ -753,17 +815,25 @@ namespace BlendInt {
 
 		Point position_;
 
+		Point offset_;
+
 		Size size_;
 
 		unsigned int flags_;
 
 		float round_radius_;
 
-		AbstractContainer* container_;
+		int subs_count_;	// count of sub widgets
+
+		AbstractWidget* container_;
 
 		AbstractWidget* previous_;
 
 		AbstractWidget* next_;
+
+		AbstractWidget* first_sub_widget_;
+
+		AbstractWidget* last_sub_widget_;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 

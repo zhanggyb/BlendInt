@@ -63,7 +63,7 @@ namespace BlendInt {
 
 	ResponseType Widget::Draw(Profile& profile)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Widget::FocusEvent (bool focus)
@@ -73,37 +73,37 @@ namespace BlendInt {
 
 	ResponseType Widget::CursorEnterEvent(bool entered)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Widget::KeyPressEvent (const KeyEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Widget::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Widget::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Widget::MousePressEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Widget::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 	
 	ResponseType Widget::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return subs_count() ? Ignore : Accept;
 	}
 
 }

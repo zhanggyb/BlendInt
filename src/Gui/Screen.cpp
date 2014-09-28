@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		if(widget->container() == this) return;
 
-		if(widget_count() > 0) Clear();
+		if(subs_count() > 0) ClearSubWidgets();
 
 		Resize(widget->size());
 
@@ -86,7 +86,7 @@ namespace BlendInt {
 
 		if(container->container() == this) return;
 
-		if(widget_count() > 0) Clear();
+		if(subs_count() > 0) ClearSubWidgets();
 
 		Resize(container->size());
 
@@ -118,13 +118,13 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		if(widget_count()) {
+		if(subs_count()) {
 			int minx = 0;
 			int miny = 0;
 			int maxx = 0;
 			int maxy = 0;
 
-			for(AbstractWidget* p = first(); p; p = p->next()) {
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
 				minx = std::min(p->position().x(), minx);
 				miny = std::min(p->position().y(), miny);
 				maxx = std::max(p->position().x() + p->size().width(), maxx);
@@ -162,8 +162,8 @@ namespace BlendInt {
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset_x());
-			float y = static_cast<float>(request.position()->y()  + offset_y());
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -186,8 +186,8 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(position().x() + offset_x());
-			float y = static_cast<float>(position().y() + offset_y());
+			float x = static_cast<float>(position().x() + offset().x());
+			float y = static_cast<float>(position().y() + offset().y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -198,8 +198,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			if (widget_count()) {
-				assert(widget_count() == 1);
+			if (subs_count()) {
+				assert(subs_count() == 1);
 				FillSingleWidget(0, 0, 0, size().width(), size().height());
 			}
 
@@ -218,8 +218,8 @@ namespace BlendInt {
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
 		profile.set_origin(
-				position().x() + offset_x(),
-				position().y() + offset_y()
+				position().x() + offset().x(),
+				position().y() + offset().y()
 		);
 
 		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
@@ -228,7 +228,7 @@ namespace BlendInt {
 
 	ResponseType Screen::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first(); p; p = p->next()) {
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
@@ -294,8 +294,8 @@ namespace BlendInt {
 			custom_focused_widget_ = false;
 
 			const_cast<MouseEvent&>(event).set_local_position(
-					event.position().x() - position().x() - offset_x(),
-					event.position().y() - position().y() - offset_y());
+					event.position().x() - position().x() - offset().x(),
+					event.position().y() - position().y() - offset().y());
 
 			retval = DispatchMousePressEvent(top_hovered_widget_, event);
 
@@ -374,7 +374,7 @@ namespace BlendInt {
 		// find the new top hovered widget
 		if (top_hovered_widget_) {
 
-			AbstractContainer* parent = top_hovered_widget_->container();
+			AbstractWidget* parent = top_hovered_widget_->container();
 
 			Point parent_position = parent->GetGlobalPosition();
 
@@ -383,8 +383,8 @@ namespace BlendInt {
 					event.position().x() > (parent_position.x() + parent->size().width()) ||
 					event.position().y() > (parent_position.y() + parent->size().height());
 
-			local_cursor.set_x(event.position().x() - parent_position.x() - parent->offset_x());
-			local_cursor.set_y(event.position().y() - parent_position.y() - parent->offset_y());
+			local_cursor.set_x(event.position().x() - parent_position.x() - parent->offset().x());
+			local_cursor.set_y(event.position().y() - parent_position.y() - parent->offset().y());
 
 			if(!not_hover_through) {
 
@@ -415,8 +415,8 @@ namespace BlendInt {
 							break;
 						}
 
-						local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset_x());
-						local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset_y());
+						local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset().x());
+						local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset().y());
 
 						if (parent->Contain(local_cursor)) break;
 
@@ -448,8 +448,8 @@ namespace BlendInt {
 						break;
 					}
 
-					local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset_x());
-					local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset_y());
+					local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset().x());
+					local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset().y());
 
 					if(IsHoverThroughExt(parent, event.position())) break;
 					parent = parent->container();
@@ -466,10 +466,10 @@ namespace BlendInt {
 
 		} else {
 
-			local_cursor.set_x(event.position().x() - position().x() - offset_x());
-			local_cursor.set_y(event.position().y() - position().y() - offset_y());
+			local_cursor.set_x(event.position().x() - position().x() - offset().x());
+			local_cursor.set_y(event.position().y() - position().y() - offset().y());
 
-			for(AbstractWidget* p = last(); p; p = p->previous())
+			for(AbstractWidget* p = last_sub_widget(); p; p = p->previous())
 			{
 				if (p->visiable() && p->Contain(local_cursor)) {
 
@@ -493,25 +493,23 @@ namespace BlendInt {
 
 	void Screen::UpdateHoverWidgetSubs(Point& cursor)
 	{
-		AbstractContainer* parent = dynamic_cast<AbstractContainer*>(top_hovered_widget_);
+		cursor.set_x (
+				cursor.x () - top_hovered_widget_->position ().x ()
+						- top_hovered_widget_->offset ().x ());
+		cursor.set_y (
+				cursor.y () - top_hovered_widget_->position ().y ()
+						- top_hovered_widget_->offset ().y ());
 
-		if (parent) {
+		for (AbstractWidget* p = top_hovered_widget_->last_sub_widget (); p;
+				p = p->previous ()) {
+			if (p->visiable () && p->Contain (cursor)) {
 
-			cursor.set_x(cursor.x() - parent->position().x() - parent->offset_x());
-			cursor.set_y(cursor.y() - parent->position().y() - parent->offset_y());
+				top_hovered_widget_ = p;
+				set_widget_hover_event (top_hovered_widget_, true);
 
-			for(AbstractWidget* p = parent->last(); p; p = p->previous())
-			{
-				if(p->visiable() && p->Contain(cursor)) {
-
-					top_hovered_widget_ = p;
-					set_widget_hover_event(top_hovered_widget_, true);
-
-					UpdateHoverWidgetSubs(cursor);
-					break;
-				}
+				UpdateHoverWidgetSubs (cursor);
+				break;
 			}
-
 		}
 
 	}

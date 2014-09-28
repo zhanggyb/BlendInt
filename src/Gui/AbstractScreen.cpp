@@ -44,7 +44,7 @@ namespace BlendInt {
 	         	glm::vec3(0.f, 1.f, 0.f));
 
 	AbstractScreen::AbstractScreen()
-	: AbstractContainer(),
+	: AbstractWidget(),
 	  display_mode_(Normal)
 	{
 	}
@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	AbstractScreen* AbstractScreen::GetViewport(AbstractWidget* widget)
 	{
-		AbstractContainer* container = widget->container();
+		AbstractWidget* container = widget->container();
 		AbstractScreen* viewport = 0;
 
 		if(container == 0) {
@@ -123,8 +123,8 @@ namespace BlendInt {
 			if(widget->container()) {
 				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
 					const_cast<MouseEvent&>(event).set_local_position(
-							event.local_position().x() - widget->position().x() - widget->container()->offset_x(),
-							event.local_position().y() - widget->position().y() - widget->container()->offset_y());
+							event.local_position().x() - widget->position().x() - widget->container()->offset().x(),
+							event.local_position().y() - widget->position().y() - widget->container()->offset().y());
 					return widget->MousePressEvent(event);
 				} else {
 					return Accept;

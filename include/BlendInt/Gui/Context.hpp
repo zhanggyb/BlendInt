@@ -29,7 +29,7 @@
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/Section.hpp>
 #include <BlendInt/Gui/AbstractScreen.hpp>
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
-	class Context: public AbstractContainer
+	class Context: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
 

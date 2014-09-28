@@ -186,7 +186,7 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next()) {
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
 
 			if(p->visiable()) {
 				retval = p->Contain(point);
@@ -297,11 +297,11 @@ namespace BlendInt {
 
 	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
 	{
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_sub_widget();
 
 		SetSubWidgetPosition(p, x, y + h * 9 / 10);
 		p = p->next();
-		SetSubWidgetPosition(p, x + w - last()->size().width(), y + h * 9 / 10);
+		SetSubWidgetPosition(p, x + w - last_sub_widget()->size().width(), y + h * 9 / 10);
 		p = p->next();
 		SetSubWidgetPosition(p, x + w * 9 / 10, y);
 	}
@@ -391,7 +391,7 @@ namespace BlendInt {
 	{
 		if(header_ == widget) return;
 
-		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first());
+		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first_sub_widget());
 
 		if(header_)
 			v->Remove(header_);
@@ -414,11 +414,11 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));

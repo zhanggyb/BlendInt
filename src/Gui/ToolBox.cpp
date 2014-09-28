@@ -103,7 +103,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_sub_widget() == 0) {
 
 			preferred_size.set_width(200);
 			preferred_size.set_height(400);
@@ -113,7 +113,7 @@ namespace BlendInt {
 			Size tmp_size;
 			preferred_size.set_height(-space_);
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -196,8 +196,8 @@ namespace BlendInt {
 	{
 		int y = size().height() - margin().top();
 
-		if(last()) {
-			y = last()->position().y();
+		if(last_sub_widget()) {
+			y = last_sub_widget()->position().y();
 			y -= space_;
 		}
 
@@ -220,7 +220,7 @@ namespace BlendInt {
 	{
 		y = y + height + space;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			y = y - p->size().height() - space;
 

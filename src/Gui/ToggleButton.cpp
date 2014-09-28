@@ -271,7 +271,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), (GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
 		if (hover()) {
@@ -314,7 +314,7 @@ namespace BlendInt {
 			        1.0f, 1.0f, 0.16f);
 
 			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			        0.f, 0.f - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -325,21 +325,21 @@ namespace BlendInt {
 		if(show_icon_ && icon_) {
 			if(hover()) {
 				icon_->Draw(
-						(GLfloat)position().x() + icon_offset_x_,
-						(GLfloat)position().y() + icon_offset_y_,
+						0.f + icon_offset_x_,
+						0.f + icon_offset_y_,
 						15
 				);
 			} else {
 				icon_->Draw(
-						(GLfloat)position().x() + icon_offset_x_,
-						(GLfloat)position().y() + icon_offset_y_,
+						0.f + icon_offset_x_,
+						0.f + icon_offset_y_,
 						0
 				);
 			}
 		}
 
 		if (text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Accept;

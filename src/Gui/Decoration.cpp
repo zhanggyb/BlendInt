@@ -114,8 +114,8 @@ namespace BlendInt {
 			inner_->reset();
 
 			int x = position().x() + margin().left();
-			if (first()) {
-				x = first()->position().x();
+			if (first_sub_widget()) {
+				x = first_sub_widget()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();

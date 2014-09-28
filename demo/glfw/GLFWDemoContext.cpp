@@ -11,6 +11,7 @@
 #include <BlendInt/Gui/Screen.hpp>
 #include <BlendInt/Gui/ScreenSplitter.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/ColorWheel.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -43,18 +44,11 @@ void GLFWDemoContext::Initialize ()
 	screen2->SetPosition(400, 200);
 	AddScreen(screen2);
 
-	ToolBox* tb = Manage(new ToolBox);
-	screen2->Setup(tb);
+	ColorSelector* exp = Manage(new ColorSelector);
 
-	Button* btn1 = Manage(new Button("Button1"));
-	Button* btn2 = Manage(new Button("Button1"));
-	Button* btn3 = Manage(new Button("Button1"));
-
-	tb->Append(btn1);
-	tb->Append(btn2);
-	tb->Append(btn3);
+	screen2->Setup(exp);
 
 	screen2->SetPosition(600, 200);
 
-	screen2->Resize(tb->GetPreferredSize());
+	screen2->Resize(exp->GetPreferredSize());
 }

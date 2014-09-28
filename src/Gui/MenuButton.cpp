@@ -125,7 +125,7 @@ namespace BlendInt {
 					Shaders::instance->triangle_program();
 			program->use();
 
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+			program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
 			program->SetUniform1i("u_gamma", 0);
 			program->SetUniform1i("u_AA", 1);
 
@@ -141,7 +141,7 @@ namespace BlendInt {
 		}
 
 		if(text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Accept;

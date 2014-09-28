@@ -271,7 +271,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 
 		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
@@ -316,7 +316,7 @@ namespace BlendInt {
 			        1.0f, 1.0f, 0.16f);
 
 			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			        0.f, 0.f - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -333,7 +333,7 @@ namespace BlendInt {
 		}
 
 		if (text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Accept;

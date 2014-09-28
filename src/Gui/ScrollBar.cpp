@@ -221,7 +221,7 @@ namespace BlendInt {
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
+		        0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
@@ -234,7 +234,7 @@ namespace BlendInt {
 		Shaders::instance->widget_outer_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
+		        0.f, 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->scroll().outline.data());
 
@@ -246,7 +246,7 @@ namespace BlendInt {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
 			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+					0.f, 0.f - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -254,7 +254,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		glm::vec3 pos(position().x(), position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 
 		if (orientation() == Horizontal) {
 			pos.x += GetSlidePosition();

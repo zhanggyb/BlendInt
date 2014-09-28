@@ -186,7 +186,7 @@ void MainLayout::RenderToBuffer()
 
 		// Draw frame panel
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}

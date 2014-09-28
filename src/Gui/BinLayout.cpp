@@ -59,8 +59,8 @@ namespace BlendInt {
 
 		if(widget->container() == this) return true;
 
-		if(widget_count() > 0) {
-			Clear();
+		if(subs_count() > 0) {
+			ClearSubWidgets();
 		}
 
 		if (PushBackSubWidget(widget)) {
@@ -78,21 +78,21 @@ namespace BlendInt {
 
 	bool BinLayout::IsExpandX () const
 	{
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			return false;
 		} else {
-			assert(widget_count() == 1);	// DEBUG
-			return first()->IsExpandX();
+			assert(subs_count() == 1);	// DEBUG
+			return first_sub_widget()->IsExpandX();
 		}
 	}
 
 	bool BinLayout::IsExpandY () const
 	{
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			return false;
 		} else {
-			assert(widget_count() == 1);	// DEBUG
-			return first()->IsExpandY();
+			assert(subs_count() == 1);	// DEBUG
+			return first_sub_widget()->IsExpandY();
 		}
 	}
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		const AbstractWidget* widget = first();
+		const AbstractWidget* widget = first_sub_widget();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -116,8 +116,8 @@ namespace BlendInt {
 	{
 		set_margin(request);
 
-		if(widget_count()) {
-			assert(widget_count() == 1);
+		if(subs_count()) {
+			assert(subs_count() == 1);
 			FillSingleWidget(0, size(), request);
 		}
 	}
@@ -127,8 +127,8 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (widget_count()) {
-				assert(widget_count() == 1);
+			if (subs_count()) {
+				assert(subs_count() == 1);
 				FillSingleWidget(0, *request.size(), margin());
 			}
 		}

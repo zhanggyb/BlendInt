@@ -37,17 +37,19 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	bool IsContained (AbstractContainer* container, AbstractWidget* widget)
+	using Stock::Shaders;
+
+	bool IsContained (AbstractWidget* container, AbstractWidget* widget)
 	{
 		bool retval = false;
 
-		AbstractContainer* p = widget->container();
+		AbstractWidget* p = widget->container();
 		while(p) {
 			if(p == container) {
 				retval = true;
@@ -76,10 +78,13 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 	: Object(),
 	  flags_(0),
-	  round_radius_(5),
+	  round_radius_(5.f),
+	  subs_count_(0),
 	  container_(0),
 	  previous_(0),
-	  next_(0)
+	  next_(0),
+	  first_sub_widget_(0),
+	  last_sub_widget_(0)
 	{
 		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
@@ -90,24 +95,26 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
+		ClearSubWidgets();
+
 		if(container_) {
 
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_ == this);
-				container_->first_ = next_;
+				assert(container_->first_sub_widget_ == this);
+				container_->first_sub_widget_ = next_;
 			}
 
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_ == this);
-				container_->last_ = previous_;
+				assert(container_->last_sub_widget_ == this);
+				container_->last_sub_widget_ = previous_;
 			}
 
-			container_->widget_count_--;
-			assert(container_->widget_count_ >= 0);
+			container_->subs_count_--;
+			assert(container_->subs_count_ >= 0);
 
 			previous_ = 0;
 			next_ = 0;
@@ -126,11 +133,11 @@ namespace BlendInt {
 	{
 		Point retval = position_;;
 
-		AbstractContainer* container = container_;
+		AbstractWidget* container = container_;
 
 		while(container) {
-			retval.set_x(retval.x() + container->position().x() + container->offset_x());
-			retval.set_y(retval.y() + container->position().y() + container->offset_y());
+			retval.set_x(retval.x() + container->position().x() + container->offset().x());
+			retval.set_y(retval.y() + container->position().y() + container->offset().y());
 			container = container->container_;
 		}
 
@@ -315,8 +322,8 @@ namespace BlendInt {
 				if(next_) {
 					next_->previous_ = tmp;
 				} else {
-					assert(container_->last_ == this);
-					container_->last_ = tmp;
+					assert(container_->last_sub_widget_ == this);
+					container_->last_sub_widget_ = tmp;
 				}
 
 				next_ = tmp;
@@ -327,8 +334,8 @@ namespace BlendInt {
 				tmp->previous_ = this;
 
 				if(previous_ == 0) {
-					assert(container_->first_ == tmp);
-					container_->first_ = this;
+					assert(container_->first_sub_widget_ == tmp);
+					container_->first_sub_widget_ = this;
 				}
 
 				DBG_PRINT_MSG("this: %s", name_.c_str());
@@ -342,7 +349,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->first_ == this);
+				assert(container_->first_sub_widget_ == this);
 			}
 
 		}
@@ -360,8 +367,8 @@ namespace BlendInt {
 				if(previous_) {
 					previous_->next_ = tmp;
 				} else {
-					assert(container_->first_ == this);
-					container_->first_ = tmp;
+					assert(container_->first_sub_widget_ == this);
+					container_->first_sub_widget_ = tmp;
 				}
 
 				previous_ = tmp;
@@ -372,8 +379,8 @@ namespace BlendInt {
 				tmp->next_ = this;
 
 				if(next_ == 0) {
-					assert(container_->last_ == tmp);
-					container_->last_ = this;
+					assert(container_->last_sub_widget_ == tmp);
+					container_->last_sub_widget_ = this;
 				}
 
 				if(previous_) {
@@ -384,7 +391,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->last_ == this);
+				assert(container_->last_sub_widget_ == this);
 			}
 
 		}
@@ -394,7 +401,7 @@ namespace BlendInt {
 	{
 		if(container_) {
 
-			if(container_->first_ == this) {
+			if(container_->first_sub_widget_ == this) {
 				assert(previous_ == 0);
 				return;	// already at first
 			}
@@ -403,14 +410,14 @@ namespace BlendInt {
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_ == this);
-				container_->last_ = previous_;
+				assert(container_->last_sub_widget_ == this);
+				container_->last_sub_widget_ = previous_;
 			}
 
 			previous_ = 0;
-			next_ = container_->first_;
-			container_->first_->previous_ = this;
-			container_->first_ = this;
+			next_ = container_->first_sub_widget_;
+			container_->first_sub_widget_->previous_ = this;
+			container_->first_sub_widget_ = this;
 
 		}
 	}
@@ -419,7 +426,7 @@ namespace BlendInt {
 	{
 		if(container_) {
 
-			if(container_->last_ == this) {
+			if(container_->last_sub_widget_ == this) {
 				assert(next_ == 0);
 				return;	// already at last
 			}
@@ -429,14 +436,14 @@ namespace BlendInt {
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_ == this);
-				container_->first_ = next_;
+				assert(container_->first_sub_widget_ == this);
+				container_->first_sub_widget_ = next_;
 			}
 
 			next_ = 0;
-			previous_ = container_->last_;
-			container_->last_->next_ = this;
-			container_->last_ = this;
+			previous_ = container_->last_sub_widget_;
+			container_->last_sub_widget_->next_ = this;
+			container_->last_sub_widget_ = this;
 
 		}
 	}
@@ -462,7 +469,7 @@ namespace BlendInt {
 
 	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		AbstractContainer* container = widget->container_;
+		AbstractWidget* container = widget->container_;
 		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
 		if(widget->visiable() && widget->Contain(cursor)) {
@@ -535,14 +542,9 @@ namespace BlendInt {
 				return;
 			}
 
-			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
-			if (parent) {
-
-				for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
-				{
-					DispatchDrawEvent(sub, profile);
-				}
-
+			for(AbstractWidget* sub = widget->first_sub_widget(); sub; sub = sub->next())
+			{
+				DispatchDrawEvent(sub, profile);
 			}
 
 			widget->PostDraw(profile);
@@ -552,13 +554,19 @@ namespace BlendInt {
 
 	bool AbstractWidget::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
-		return true;
-	}
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}	}
 
 	bool AbstractWidget::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
-		return true;
-	}
+		if(request.source()->container() == this) {
+			return false;
+		} else {
+			return true;
+		}	}
 
 	void AbstractWidget::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
@@ -676,12 +684,34 @@ namespace BlendInt {
 
 	void AbstractWidget::PreDraw(Profile& profile)
 	{
-		// TODO: override this
+		//glm::mat4 model;
+		//Shaders::instance->GetUIModelMatrix(model);
+
+//		Point pos = GetGlobalPosition();
+
+		int ox = position_.x() + offset_.x();
+		int oy = position_.y() + offset_.y();
+
+		profile.set_origin(
+				profile.origin().x() + ox,
+				profile.origin().y() + oy
+		);
+
+		glm::mat4 matrix = glm::translate(Shaders::instance->ui_model_matrix(), glm::vec3(ox, oy, 0.f));
+//		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
+
+		Shaders::instance->PushUIModelMatrix();
+		Shaders::instance->SetUIModelMatrix(matrix);
 	}
 
 	void AbstractWidget::PostDraw(Profile& profile)
 	{
-		// TODO: override this
+		profile.set_origin(
+				profile.origin().x() - position_.x() - offset_.x(),
+				profile.origin().y() - position_.y() - offset_.y()
+		);
+
+		Shaders::instance->PopUIModelMatrix();
 	}
 
 	int AbstractWidget::GetHalfOutlineVertices(int round_type) const
@@ -1745,12 +1775,612 @@ namespace BlendInt {
 
 	}
 
+	AbstractWidget* AbstractWidget::operator [](int i) const
+	{
+		if((i < 0) || (i >= subs_count_)) return 0;
+
+		AbstractWidget* widget = 0;
+
+		if(i < ((subs_count_ + 1)/ 2)) {
+
+			widget = first_sub_widget_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_sub_widget_;
+			int max = subs_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
+		}
+
+		//assert(widget != 0);
+
+		return widget;
+	}
+
+	AbstractWidget* AbstractWidget::GetWidgetAt(int i) const
+	{
+		if((i < 0) || (i >= subs_count_)) return 0;
+
+		AbstractWidget* widget = 0;
+
+		if(i < ((subs_count_ + 1)/ 2)) {
+
+			widget = first_sub_widget_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_sub_widget_;
+			int max = subs_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
+		}
+
+		//assert(widget != 0);
+
+		return widget;
+	}
+
+	bool AbstractWidget::PushFrontSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(first_sub_widget_) {
+			first_sub_widget_->previous_ = widget;
+			widget->next_ = first_sub_widget_;
+		} else {
+			assert(last_sub_widget_ == 0);
+			widget->next_ = 0;
+			last_sub_widget_ = widget;
+		}
+		first_sub_widget_ = widget;
+
+		widget->previous_ = 0;
+		widget->container_ = this;
+		subs_count_++;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::InsertSubWidget(int index, AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(first_sub_widget_ == 0) {
+			assert(last_sub_widget_ == 0);
+
+			widget->next_ = 0;
+			last_sub_widget_ = widget;
+			first_sub_widget_ = widget;
+			widget->previous_ = 0;
+
+		} else {
+
+			AbstractWidget* p = first_sub_widget_;
+
+			if(index > 0) {
+
+				while(p && (index > 0)) {
+					if(p->next_ == 0)
+						break;
+
+					p = p->next_;
+					index--;
+				}
+
+				if(index == 0) {	// insert
+
+					widget->previous_ = p->previous_;
+					widget->next_ = p;
+					p->previous_->next_ = widget;
+					p->previous_ = widget;
+
+				} else {	// same as push back
+
+					assert(p == last_sub_widget_);
+					last_sub_widget_->next_ = widget;
+					widget->previous_ = last_sub_widget_;
+					last_sub_widget_ = widget;
+					widget->next_ = 0;
+
+				}
+
+			} else {	// same as push front
+
+				first_sub_widget_->previous_ = widget;
+				widget->next_ = first_sub_widget_;
+				first_sub_widget_ = widget;
+				widget->previous_ = 0;
+
+			}
+
+		}
+
+		widget->container_ = this;
+		subs_count_++;
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::PushBackSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container_) {
+
+			if (widget->container_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->container_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->container_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->container_ == 0);
+
+		if(last_sub_widget_) {
+			last_sub_widget_->next_ = widget;
+			widget->previous_ = last_sub_widget_;
+		} else {
+			assert(first_sub_widget_ == 0);
+			widget->previous_ = 0;
+			first_sub_widget_ = widget;
+		}
+		last_sub_widget_ = widget;
+
+		widget->next_ = 0;
+		widget->container_ = this;
+		subs_count_++;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::RemoveSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		assert(widget->container_ == this);
+
+		//widget->destroyed().disconnectOne(this,
+		//        &AbstractContainer::OnSubWidgetDestroyed);
+
+		if (widget->previous_) {
+			widget->previous_->next_ = widget->next_;
+		} else {
+			assert(first_sub_widget_ == widget);
+			first_sub_widget_ = widget->next_;
+		}
+
+		if (widget->next_) {
+			widget->next_->previous_ = widget->previous_;
+		} else {
+			assert(last_sub_widget_ == widget);
+			last_sub_widget_ = widget->previous_;
+		}
+
+		widget->previous_ = 0;
+		widget->next_ = 0;
+		widget->container_ = 0;
+		subs_count_--;
+
+		if(widget->hover()) {
+			widget->set_hover(false);
+		}
+
+		return true;
+	}
+
+	void AbstractWidget::ClearSubWidgets()
+	{
+		AbstractWidget* widget = first_sub_widget_;
+		AbstractWidget* next = 0;
+
+		while(widget) {
+
+			next = widget->next_;
+
+			widget->previous_ = 0;
+			widget->next_ = 0;
+			widget->container_ = 0;
+
+			if(widget->managed() && widget->reference_count() == 0) {
+				delete widget;
+			} else {
+				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
+			}
+
+			widget = next;
+		}
+
+		subs_count_ = 0;
+		first_sub_widget_ = 0;
+		last_sub_widget_ = 0;
+	}
+
+	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, int width,
+			int height)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->size().width() == width &&
+				sub->size().height() == height)
+			return;
+
+		Size new_size (width, height);
+		SizeUpdateRequest request(this, sub, &new_size);
+
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
+			sub->set_size(width, height);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, const Size& size)
+	{
+		if (!sub || sub->container() != this)
+			return;
+
+		if (sub->size() == size)
+			return;
+
+		SizeUpdateRequest request(this, sub, &size);
+
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
+			sub->set_size(size);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub, int x, int y)
+	{
+		if (!sub || sub->container() != this)
+			return;
+
+		if (sub->position().x() == x && sub->position().y() == y)
+			return;
+
+		Point new_pos(x, y);
+
+		PositionUpdateRequest request(this, sub, &new_pos);
+
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
+			sub->set_position(x, y);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub,
+			const Point& pos)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->position() == pos) return;
+
+		PositionUpdateRequest request (this, sub, &pos);
+
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
+			sub->set_position(pos);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetRoundType(AbstractWidget* sub, int type)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_type() == (type & 0x0F)) return;
+
+		RoundTypeUpdateRequest request (this, sub, &type);
+
+		if(sub->RoundTypeUpdateTest(request)) {
+			sub->PerformRoundTypeUpdate(request);
+			sub->set_round_type(type);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetRoundRadius(AbstractWidget* sub,
+			float radius)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->round_radius() == radius) return;
+
+		RoundRadiusUpdateRequest request(this, sub, &radius);
+
+		if(sub->RoundRadiusUpdateTest(request)) {
+			sub->PerformRoundRadiusUpdate(request);
+			sub->set_round_radius(radius);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetVisibility(AbstractWidget* sub,
+			bool visible)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->visiable() == visible) return;
+
+		VisibilityUpdateRequest request (this, sub, &visible);
+
+		if(sub->VisibilityUpdateTest(request)) {
+			sub->PerformVisibilityUpdate(request);
+			sub->set_visible(visible);
+		}
+	}
+
+	void AbstractWidget::MoveSubWidgets(int offset_x, int offset_y)
+	{
+		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+			SetSubWidgetPosition(p, p->position().x() + offset_x,
+			        p->position().y() + offset_y);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidgets(const Size& size)
+	{
+		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+			ResizeSubWidget(p, size);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidgets(int w, int h)
+	{
+		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+			ResizeSubWidget(p, w, h);
+		}
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, const Size& size,
+			const Margin& margin)
+	{
+		int x = margin.left();
+		int y = margin.bottom();
+
+		int w = size.width() - margin.hsum();
+		int h = size.height() - margin.vsum();
+
+		FillSingleWidget(index, x, y, w, h);
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, const Point& pos,
+			const Size& size)
+	{
+		FillSingleWidget(index, pos.x(), pos.y(), size.width(), size.height());
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, int left, int bottom,
+			int width, int height)
+	{
+		AbstractWidget* widget = GetWidgetAt(index);
+
+		if (widget) {
+			ResizeSubWidget(widget, width, height);
+			SetSubWidgetPosition(widget, left, bottom);
+
+			if (widget->size().width() < width) {
+				SetSubWidgetPosition(widget,
+				        left + (width - widget->size().width()) / 2, bottom);
+			}
+
+			if (widget->size().height() < height) {
+				SetSubWidgetPosition(widget, left,
+				        bottom + (height - widget->size().height() / 2));
+			}
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(const Point& out_pos,
+			const Size& out_size, const Margin& margin, Orientation orientation,
+			int alignment, int space)
+	{
+		if(first_sub_widget_ == 0) return;
+
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(const Point& pos,
+			const Size& size, Orientation orientation, int alignment, int space)
+	{
+		if(first_sub_widget_ == 0) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(pos.x(), size.width(), space);
+			AlignHorizontally(pos.y(), size.height(), alignment);
+		} else {
+			DistributeVertically(pos.y(), size.height(), space);
+			AlignVertically(pos.x(), size.width(), alignment);
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(int x, int y, int width,
+			int height, Orientation orientation, int alignment, int space)
+	{
+		if(first_sub_widget_ == 0) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
 	float AbstractWidget::make_shaded_offset (short shadetop, short shadedown, float fact)
 	{
 		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
 		float facm = 1.f - fact;
 
 		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
+	}
+
+	void AbstractWidget::DistributeHorizontally(int x, int width, int space)
+	{
+		int sum = subs_count();
+
+		if (sum) {
+			int average_width = (width - (sum - 1)* space) / sum;
+
+			if (average_width > 0) {
+
+				for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+					ResizeSubWidget(p, average_width, p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
+					x += average_width + space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractWidget::DistributeVertically(int y, int height, int space)
+	{
+		int sum = subs_count();
+
+		y = y + height;
+		if (sum) {
+			int average_height = (height - (sum - 1)* space) / sum;
+
+			if (average_height > 0) {
+
+				for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+					ResizeSubWidget(p, p->size().width(), average_height);
+					y -= average_height;
+					SetSubWidgetPosition(p, p->position().x(), y);
+					y -= space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractWidget::AlignHorizontally(int y, int height, int alignment)
+	{
+		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+			if(p->IsExpandY()) {
+				ResizeSubWidget(p, p->size().width(), height);
+				SetSubWidgetPosition(p, p->position().x(), y);
+			} else {
+
+				if (alignment & AlignTop) {
+					SetSubWidgetPosition(p, p->position().x(),
+					        y + (height - p->size().height()));
+				} else if (alignment & AlignBottom) {
+					SetSubWidgetPosition(p, p->position().x(), y);
+				} else if (alignment & AlignHorizontalCenter) {
+					SetSubWidgetPosition(p, p->position().x(),
+					        y + (height - p->size().height()) / 2);
+				}
+
+			}
+		}
+	}
+
+	void AbstractWidget::AlignVertically(int x, int width, int alignment)
+	{
+		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+			if (p->IsExpandX()) {
+				ResizeSubWidget(p, width, p->size().height());
+				SetSubWidgetPosition(p, x, p->position().y());
+			} else {
+
+				if (alignment & AlignLeft) {
+					SetSubWidgetPosition(p, x, p->position().y());
+				} else if (alignment & AlignRight) {
+					SetSubWidgetPosition(p, x + (width - p->size().width()), p->position().y());
+				} else if (alignment & AlignVerticalCenter) {
+					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2, p->position().y());
+				}
+
+			}
+		}
 	}
 
 } /* namespace BlendInt */

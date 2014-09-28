@@ -178,7 +178,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_sub_widget() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -195,7 +195,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -252,7 +252,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
@@ -265,7 +265,7 @@ namespace BlendInt {
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
 
-			AbstractContainer* container = menu->container();
+			AbstractWidget* container = menu->container();
 			delete container;
 			original_active->SetRoundType(RoundAll);
 
@@ -307,7 +307,7 @@ namespace BlendInt {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				AbstractContainer* container = menu->container();
+				AbstractWidget* container = menu->container();
 				delete container;
 				m_active_button->SetRoundType(RoundAll);
 			}
@@ -323,7 +323,7 @@ namespace BlendInt {
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			AbstractContainer* container = menu->container();
+			AbstractWidget* container = menu->container();
 			delete container;
 		}
 
@@ -338,8 +338,8 @@ namespace BlendInt {
 	{
 		int pos = margin().left();
 
-		if(last()) {
-			pos = last()->position().x() + last()->size().width() + m_space;
+		if(last_sub_widget()) {
+			pos = last_sub_widget()->position().x() + last_sub_widget()->size().width() + m_space;
 		}
 		return pos;
 	}

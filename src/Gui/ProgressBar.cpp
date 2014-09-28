@@ -149,7 +149,7 @@ namespace BlendInt {
 						Shaders::instance->triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 

@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_SECTION_HPP_
 #define _BLENDINT_GUI_SECTION_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special container used in Context as a layer
 	 */
-	class Section: public AbstractContainer
+	class Section: public AbstractWidget
 	{
 	public:
 
