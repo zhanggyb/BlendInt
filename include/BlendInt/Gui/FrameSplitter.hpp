@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
 #define _BLENDINT_GUI_SCREENSPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractScreen.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
@@ -32,7 +32,7 @@ namespace BlendInt {
 	class Widget;
 	class ScreenSplitter;
 
-	class ScreenSplitterHandle: public AbstractScreen
+	class ScreenSplitterHandle: public AbstractFrame
 	{
 	public:
 
@@ -82,14 +82,14 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER> buffer_;
 
-		AbstractScreen* previous_viewport_;
+		AbstractFrame* previous_viewport_;
 
-		AbstractScreen* next_viewport_;
+		AbstractFrame* next_viewport_;
 	};
 
 	// -------------------------------
 
-	class ScreenSplitter: public AbstractScreen
+	class ScreenSplitter: public AbstractFrame
 	{
 	public:
 
@@ -97,11 +97,11 @@ namespace BlendInt {
 
 		virtual ~ScreenSplitter ();
 
-		void PrependViewport (AbstractScreen* viewport);
+		void PrependViewport (AbstractFrame* viewport);
 
-		void AppendViewport (AbstractScreen* viewport);
+		void AppendViewport (AbstractFrame* viewport);
 
-		void Insert (int index, AbstractScreen* viewport);
+		void Insert (int index, AbstractFrame* viewport);
 
 		virtual Size GetPreferredSize () const;
 
@@ -137,7 +137,7 @@ namespace BlendInt {
 
 		Orientation orientation_;
 
-		AbstractScreen* hover_;
+		AbstractFrame* hover_;
 	};
 }
 

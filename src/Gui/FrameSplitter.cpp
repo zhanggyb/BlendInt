@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/ScreenSplitter.hpp>
+#include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
@@ -46,7 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ScreenSplitterHandle::ScreenSplitterHandle(Orientation orientation)
-	: AbstractScreen(),
+	: AbstractFrame(),
 	  orientation_(orientation),
 	  vao_(0),
 	  previous_viewport_(0),
@@ -257,7 +257,7 @@ namespace BlendInt {
 	// --------------------------------
 
 	ScreenSplitter::ScreenSplitter(Orientation orientation)
-	: AbstractScreen(),
+	: AbstractFrame(),
 	  orientation_(orientation),
 	  hover_(0)
 	{
@@ -269,11 +269,11 @@ namespace BlendInt {
 
 	}
 
-	void ScreenSplitter::PrependViewport(AbstractScreen* viewport)
+	void ScreenSplitter::PrependViewport(AbstractFrame* viewport)
 	{
 	}
 
-	void ScreenSplitter::AppendViewport(AbstractScreen* viewport)
+	void ScreenSplitter::AppendViewport(AbstractFrame* viewport)
 	{
 		if(viewport && viewport->parent() != this) {
 
@@ -290,7 +290,7 @@ namespace BlendInt {
 
 				AbstractWidget* p = last_child();
 				PushBackSubWidget(handle);
-				handle->previous_viewport_ = dynamic_cast<AbstractScreen*>(p);
+				handle->previous_viewport_ = dynamic_cast<AbstractFrame*>(p);
 				handle->next_viewport_ = viewport;
 				PushBackSubWidget(viewport);
 			}
@@ -299,7 +299,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScreenSplitter::Insert(int index, AbstractScreen* viewport)
+	void ScreenSplitter::Insert(int index, AbstractFrame* viewport)
 	{
 	}
 
@@ -479,7 +479,7 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		AbstractScreen* original_hover = hover_;
+		AbstractFrame* original_hover = hover_;
 
 		if(hover_) {
 			if(!hover_->Contain(event.position())) {
@@ -487,7 +487,7 @@ namespace BlendInt {
 				hover_ = 0;
 				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 					if(p->Contain(event.position())) {
-						hover_ = dynamic_cast<AbstractScreen*>(p);
+						hover_ = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
 				}
@@ -497,7 +497,7 @@ namespace BlendInt {
 
 			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 				if(p->Contain(event.position())) {
-					hover_ = dynamic_cast<AbstractScreen*>(p);
+					hover_ = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}
 			}

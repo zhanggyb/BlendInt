@@ -44,7 +44,7 @@ namespace BlendInt {
 
 	class Context;
 	class Section;
-	class AbstractScreen;
+	class AbstractFrame;
 
 	/**
 	 * @brief the basic event class
@@ -58,7 +58,7 @@ namespace BlendInt {
 		DeviceEvent ()
 		: context_(0),
 		  section_(0),
-		  viewport_(0)
+		  frame_(0)
 		{
 		}
 
@@ -66,7 +66,7 @@ namespace BlendInt {
 		{
 			context_ = orig.context_;
 			section_ = orig.section_;
-			viewport_ = orig.viewport_;
+			frame_ = orig.frame_;
 		}
 
 		~DeviceEvent ()
@@ -86,11 +86,11 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class Section;
-		friend class AbstractScreen;
+		friend class AbstractFrame;
 
 		Context* context_;
 		Section* section_;
-		AbstractScreen* viewport_;
+		AbstractFrame* frame_;
 	};
 
 } /* namespace BlendInt */

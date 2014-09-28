@@ -34,86 +34,86 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/AbstractScreen.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
 
-	glm::mat4 AbstractScreen::default_view_matrix = glm::lookAt(
+	glm::mat4 AbstractFrame::default_view_matrix = glm::lookAt(
 		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(0.f, 0.f, 0.f),
 	         	glm::vec3(0.f, 1.f, 0.f));
 
-	AbstractScreen::AbstractScreen()
+	AbstractFrame::AbstractFrame()
 	: AbstractWidget(),
 	  display_mode_(Normal)
 	{
 	}
 
-	AbstractScreen::~AbstractScreen()
+	AbstractFrame::~AbstractFrame()
 	{
 	}
 
-	AbstractScreen* AbstractScreen::GetViewport(AbstractWidget* widget)
+	AbstractFrame* AbstractFrame::GetFrame(AbstractWidget* widget)
 	{
 		AbstractWidget* container = widget->parent ();
-		AbstractScreen* viewport = 0;
+		AbstractFrame* frame = 0;
 
 		if(container == 0) {
-			return dynamic_cast<AbstractScreen*>(widget);
+			return dynamic_cast<AbstractFrame*>(widget);
 		} else {
 			while(container) {
-				viewport = dynamic_cast<AbstractScreen*>(container);
-				if(viewport) break;
+				frame = dynamic_cast<AbstractFrame*>(container);
+				if(frame) break;
 				container = container->parent ();
 			}
 		}
 
-		return viewport;
+		return frame;
 	}
 
-	bool AbstractScreen::SizeUpdateTest(const SizeUpdateRequest& request)
+	bool AbstractFrame::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
 		return true;
 	}
 
-	bool AbstractScreen::PositionUpdateTest(
+	bool AbstractFrame::PositionUpdateTest(
 			const PositionUpdateRequest& request)
 	{
 		return true;
 	}
 
-	bool AbstractScreen::RoundTypeUpdateTest(
+	bool AbstractFrame::RoundTypeUpdateTest(
 			const RoundTypeUpdateRequest& request)
 	{
 		return true;
 	}
 
-	bool AbstractScreen::RoundRadiusUpdateTest(
+	bool AbstractFrame::RoundRadiusUpdateTest(
 			const RoundRadiusUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void AbstractScreen::PerformPositionUpdate(
+	void AbstractFrame::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
 	}
 
-	void AbstractScreen::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void AbstractFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 	}
 
-	void AbstractScreen::PerformRoundTypeUpdate(
+	void AbstractFrame::PerformRoundTypeUpdate(
 			const RoundTypeUpdateRequest& request)
 	{
 	}
 
-	void AbstractScreen::PerformRoundRadiusUpdate(
+	void AbstractFrame::PerformRoundRadiusUpdate(
 			const RoundRadiusUpdateRequest& request)
 	{
 	}
 
-	ResponseType AbstractScreen::DispatchMousePressEvent(
+	ResponseType AbstractFrame::DispatchMousePressEvent(
 			AbstractWidget* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
@@ -137,7 +137,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractScreen::DispatchMouseReleaseEvent(
+	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
 			AbstractWidget* widget, const MouseEvent& event)
 	{
 		if(widget == this) {

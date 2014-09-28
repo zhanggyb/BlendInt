@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTSCREEN_HPP_
-#define _BLENDINT_GUI_ABSTRACTSCREEN_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTFRAME_HPP_
+#define _BLENDINT_GUI_ABSTRACTFRAME_HPP_
 
 #include <glm/glm.hpp>
 
@@ -30,7 +30,7 @@
 
 namespace BlendInt {
 
-	class AbstractScreen: public AbstractWidget
+	class AbstractFrame: public AbstractWidget
 	{
 	public:
 
@@ -42,16 +42,16 @@ namespace BlendInt {
 
 		friend class Context;
 
-		AbstractScreen ();
+		AbstractFrame ();
 
-		virtual ~AbstractScreen ();
+		virtual ~AbstractFrame ();
 
 		inline DisplayMode display_mode () const
 		{
 			return display_mode_;
 		}
 
-		static AbstractScreen* GetViewport (AbstractWidget* widget);
+		static AbstractFrame* GetFrame (AbstractWidget* widget);
 
 	protected:
 
@@ -119,7 +119,7 @@ namespace BlendInt {
 
 		void set_event_viewport (const DeviceEvent& event)
 		{
-			const_cast<DeviceEvent&>(event).viewport_ = this;
+			const_cast<DeviceEvent&>(event).frame_ = this;
 		}
 
 	private:
@@ -131,4 +131,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_ABSTRACTSCREEN_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTFRAME_HPP_ */

@@ -188,7 +188,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	void Context::AddScreen (AbstractScreen* vp)
+	void Context::AddScreen (AbstractFrame* vp)
 	{
 		if(PushBackSubWidget(vp)) {
 			// TODO: 			
@@ -459,12 +459,12 @@ namespace BlendInt
 
 		ResponseType response = Ignore;
 
-		AbstractScreen* original_hover = hover_;
+		AbstractFrame* original_hover = hover_;
 
 		hover_ = 0;
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 			if(p->Contain(event.position())) {
-				hover_ = dynamic_cast<AbstractScreen*>(p);
+				hover_ = dynamic_cast<AbstractFrame*>(p);
 				break;
 			}
 		}

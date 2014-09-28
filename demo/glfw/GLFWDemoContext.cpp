@@ -9,7 +9,7 @@
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
 #include <BlendInt/Gui/Screen.hpp>
-#include <BlendInt/Gui/ScreenSplitter.hpp>
+#include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 

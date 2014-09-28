@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Screen::Screen ()
-	: AbstractScreen(),
+	: AbstractFrame(),
 	  focused_widget_(0),
 	  top_hovered_widget_(0),
 	  custom_focused_widget_(false)

@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_SCREEN_HPP_
 #define _BLENDINT_GUI_SCREEN_HPP_
 
-#include <BlendInt/Gui/AbstractScreen.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
-	class Screen: public AbstractScreen
+	class Screen: public AbstractFrame
 	{
 	public:
 
