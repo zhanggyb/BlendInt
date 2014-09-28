@@ -82,6 +82,7 @@ namespace BlendInt {
 	  next_(0)
 	{
 		events_.reset(new Cpp::ConnectionScope);
+		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 
 		set_visible(true);
 		set_refresh(true);
@@ -117,7 +118,7 @@ namespace BlendInt {
 			assert(next_ == 0);
 		}
 
-		destroyed_.fire(this);
+		destroyed_->fire(this);
 		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
@@ -518,11 +519,16 @@ namespace BlendInt {
 	void AbstractWidget::DispatchDrawEvent (AbstractWidget* widget,
 	        Profile& profile)
 	{
-		if (widget && widget->visiable()) {
+#ifdef DEBUG
+		assert(widget != 0);
+#endif
+
+		if (widget->visiable()) {
 
 			widget->PreDraw(profile);
 
 			ResponseType response = widget->Draw(profile);
+			widget->set_refresh(false);
 
 			if(response == Accept) {
 				widget->PostDraw(profile);

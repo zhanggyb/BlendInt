@@ -107,7 +107,6 @@ namespace BlendInt {
 		);
 
 		Shaders::instance->PopUIModelMatrix();
-		set_refresh(false);
 	}
 
 	ResponseType Container::FocusEvent (bool focus)

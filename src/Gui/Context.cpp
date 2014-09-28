@@ -199,6 +199,7 @@ namespace BlendInt
 	{
 		PreDraw(profile_);
 		Draw(profile_);
+		set_refresh(false);
 		PostDraw(profile_);
 	}
 
@@ -373,6 +374,7 @@ namespace BlendInt
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
+			p->set_refresh(false);
 			p->PostDraw(profile);
 		}
 

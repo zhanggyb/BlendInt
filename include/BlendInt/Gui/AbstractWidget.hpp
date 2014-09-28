@@ -450,7 +450,7 @@ namespace BlendInt {
 
 		Cpp::EventRef<AbstractWidget*> destroyed ()
 		{
-			return destroyed_;
+			return *destroyed_;
 		}
 
 		inline AbstractContainer* container() const
@@ -767,7 +767,7 @@ namespace BlendInt {
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
-		Cpp::Event<AbstractWidget*> destroyed_;
+		boost::scoped_ptr<Cpp::Event<AbstractWidget*> > destroyed_;
 
 #ifdef DEBUG
 		std::string name_;

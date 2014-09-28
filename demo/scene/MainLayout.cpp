@@ -102,9 +102,7 @@ void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainLayout::Draw(Profile& profile)
 {
-	if(refresh()) {
-		RenderToBuffer();
-	}
+	if(refresh()) RenderToBuffer();
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	buffer_.Draw(0.f, 0.f);
