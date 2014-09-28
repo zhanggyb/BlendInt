@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_VBOX_HPP_
 #define _BLENDINT_GUI_VBOX_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
-	class VLayout: public Container
+	class VLayout: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(VLayout);
 

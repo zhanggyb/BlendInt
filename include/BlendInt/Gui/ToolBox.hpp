@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_GUI_TOOLBOX_HPP_
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public Container
+	class ToolBox: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToolBox);
 

@@ -48,7 +48,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration()
-	: Container(),
+	: Layout(),
 	  space_(4)
 	{
 		set_size(200, 20);
@@ -114,8 +114,8 @@ namespace BlendInt {
 			inner_->reset();
 
 			int x = position().x() + margin().left();
-			if (first_sub_widget()) {
-				x = first_sub_widget()->position().x();
+			if (first_child()) {
+				x = first_child()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-		} else if (request.target()->container() == this) {
+		} else if (request.target()->parent() == this) {
 
 			FillSubWidgets(position(), size(), margin(), space_);
 

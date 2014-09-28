@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	TabHeader::TabHeader()
-	: Container(),
+	: Layout(),
 	  vao_(0)
 	{
 		set_size(400, 24);
@@ -117,14 +117,14 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
 			prefer.set_height(max_font_height + margin().vsum());
 		} else {
 			Size tmp_size;
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -191,9 +191,9 @@ namespace BlendInt {
 	{
 		int x = margin().left();
 
-		if(first_sub_widget()) {
-			x = last_sub_widget()->position().x();
-			x += last_sub_widget()->size().width();
+		if(first_child()) {
+			x = last_child()->position().x();
+			x += last_child()->size().width();
 		}
 
 		return x;

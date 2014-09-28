@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_BINLAYOUT_HPP_
 #define _BLENDINT_GUI_BINLAYOUT_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container with just one sub widget
 	 */
-	class BinLayout: public Container
+	class BinLayout: public Layout
 	{
 	public:
 

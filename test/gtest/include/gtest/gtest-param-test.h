@@ -256,7 +256,7 @@ internal::ParamGenerator<T> Range(T start, T end) {
 // ValuesIn(const T (&array)[N])
 //   - returns a generator producing sequences with elements from
 //     a C-style array.
-// ValuesIn(const Container& container)
+// ValuesIn(const Layout& container)
 //   - returns a generator producing sequences with elements from
 //     an STL-style container.
 // ValuesIn(Iterator begin, Iterator end)
@@ -319,9 +319,9 @@ internal::ParamGenerator<T> ValuesIn(const T (&array)[N]) {
   return ValuesIn(array, array + N);
 }
 
-template <class Container>
-internal::ParamGenerator<typename Container::value_type> ValuesIn(
-    const Container& container) {
+template <class Layout>
+internal::ParamGenerator<typename Layout::value_type> ValuesIn(
+    const Layout& container) {
   return ValuesIn(container.begin(), container.end());
 }
 

@@ -105,7 +105,7 @@ namespace BlendInt {
 		Size preferred_size(1, 1);
 
 		if(subs_count()) {
-			preferred_size = first_sub_widget()->GetPreferredSize();
+			preferred_size = first_child()->GetPreferredSize();
 		}
 
 		return preferred_size;
@@ -163,7 +163,7 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			if(subs_count()) {
-				first_sub_widget()->Resize(*request.size());
+				first_child()->Resize(*request.size());
 			}
 		}
 
@@ -203,7 +203,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
@@ -275,9 +275,9 @@ namespace BlendInt {
 
 	void ScreenSplitter::AppendViewport(AbstractScreen* viewport)
 	{
-		if(viewport && viewport->container() != this) {
+		if(viewport && viewport->parent() != this) {
 
-			if(first_sub_widget() == 0) {
+			if(first_child() == 0) {
 				PushBackSubWidget(viewport);
 			} else {
 				ScreenSplitterHandle* handle = 0;
@@ -288,7 +288,7 @@ namespace BlendInt {
 					handle = Manage(new ScreenSplitterHandle(Horizontal));
 				}
 
-				AbstractWidget* p = last_sub_widget();
+				AbstractWidget* p = last_child();
 				PushBackSubWidget(handle);
 				handle->previous_viewport_ = dynamic_cast<AbstractScreen*>(p);
 				handle->next_viewport_ = viewport;
@@ -307,14 +307,14 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 			preferred_size.set_width(400);
 			preferred_size.set_height(400);
 		} else {
 			Size tmp;
 
 			if (orientation_ == Horizontal) {
-				for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+				for(AbstractWidget* p = first_child(); p; p = p->next())
 				{
 					if (p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -325,7 +325,7 @@ namespace BlendInt {
 					}
 				}
 			} else {
-				for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+				for(AbstractWidget* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -343,7 +343,7 @@ namespace BlendInt {
 
 	ResponseType ScreenSplitter::Draw(Profile& profile)
 	{
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
@@ -363,7 +363,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_width = 0;
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					ResizeSubWidget(p, room, h);
@@ -385,7 +385,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_height = 0;
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					y = y - room;
@@ -445,7 +445,7 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 
@@ -462,7 +462,7 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 
@@ -485,7 +485,7 @@ namespace BlendInt {
 			if(!hover_->Contain(event.position())) {
 
 				hover_ = 0;
-				for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 					if(p->Contain(event.position())) {
 						hover_ = dynamic_cast<AbstractScreen*>(p);
 						break;
@@ -495,7 +495,7 @@ namespace BlendInt {
 			}
 		} else {
 
-			for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 				if(p->Contain(event.position())) {
 					hover_ = dynamic_cast<AbstractScreen*>(p);
 					break;
@@ -536,7 +536,7 @@ namespace BlendInt {
 			room = size.height();
 		}
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 			return room;
 		}
 
@@ -544,7 +544,7 @@ namespace BlendInt {
 		int space = 0;
 		int sum = 0;
 
-		AbstractWidget* p = first_sub_widget()->next();
+		AbstractWidget* p = first_child()->next();
 		sum += 1;
 
 		while (p) {

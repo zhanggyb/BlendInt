@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractPanel::AbstractPanel ()
-	: Container(),
+	: Layout(),
 	  decoration_(0),
 	  content_(0),
 	  space_(2)
@@ -102,7 +102,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 

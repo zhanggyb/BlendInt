@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	HBlockLayout::HBlockLayout ()
-	: Container()
+	: Layout()
 	{
 		set_size(100, 20);
 		set_margin(0, 0, 0, 0);
@@ -38,7 +38,7 @@ namespace BlendInt {
 	
 	void HBlockLayout::Prepend (AbstractWidget* widget)
 	{
-		AbstractWidget* orig_first = first_sub_widget();
+		AbstractWidget* orig_first = first_child();
 
 		if(PushFrontSubWidget(widget)) {
 
@@ -58,7 +58,7 @@ namespace BlendInt {
 
 	void HBlockLayout::Append (AbstractWidget* widget)
 	{
-		AbstractWidget* orig_last = last_sub_widget();
+		AbstractWidget* orig_last = last_child();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -110,7 +110,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(100);
 			preferred_size.set_height(20);
@@ -122,7 +122,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -150,7 +150,7 @@ namespace BlendInt {
 	bool HBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ namespace BlendInt {
 	bool HBlockLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -196,7 +196,7 @@ namespace BlendInt {
 		if(count == 0) return;
 		int average_width = w / count + 1;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, average_width, h);
 			SetSubWidgetPosition(p, x, y);

@@ -48,7 +48,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	MenuBar::MenuBar ()
-	: Container(), m_vao(0), m_space(2), m_active_button(0)
+	: Layout(), m_vao(0), m_space(2), m_active_button(0)
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
@@ -128,7 +128,7 @@ namespace BlendInt {
 
 	void MenuBar::SetMenu (MenuButton* button, const RefPtr<Menu>& menu)
 	{
-		if(!button || button->container() != this) return;
+		if(!button || button->parent() != this) return;
 
 		button->SetMenu(menu);
 	}
@@ -178,7 +178,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -195,7 +195,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -252,7 +252,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
@@ -265,8 +265,8 @@ namespace BlendInt {
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
 
-			AbstractWidget* container = menu->container();
-			delete container;
+			AbstractWidget* parent = menu->parent();
+			delete parent;
 			original_active->SetRoundType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
@@ -307,8 +307,8 @@ namespace BlendInt {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				AbstractWidget* container = menu->container();
-				delete container;
+				AbstractWidget* parent = menu->parent();
+				delete parent;
 				m_active_button->SetRoundType(RoundAll);
 			}
 
@@ -323,8 +323,8 @@ namespace BlendInt {
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			AbstractWidget* container = menu->container();
-			delete container;
+			AbstractWidget* parent = menu->parent();
+			delete parent;
 		}
 
 		if(m_active_button) {
@@ -338,8 +338,8 @@ namespace BlendInt {
 	{
 		int pos = margin().left();
 
-		if(last_sub_widget()) {
-			pos = last_sub_widget()->position().x() + last_sub_widget()->size().width() + m_space;
+		if(last_child()) {
+			pos = last_child()->position().x() + last_child()->size().width() + m_space;
 		}
 		return pos;
 	}

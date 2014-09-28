@@ -49,13 +49,13 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		AbstractWidget* p = widget->container();
+		AbstractWidget* p = widget->parent();
 		while(p) {
 			if(p == container) {
 				retval = true;
 				break;
 			}
-			p = p->container();
+			p = p->parent();
 		}
 
 		return retval;
@@ -80,11 +80,11 @@ namespace BlendInt {
 	  flags_(0),
 	  round_radius_(5.f),
 	  subs_count_(0),
-	  container_(0),
+	  parent_(0),
 	  previous_(0),
 	  next_(0),
-	  first_sub_widget_(0),
-	  last_sub_widget_(0)
+	  first_child_(0),
+	  last_child_(0)
 	{
 		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
@@ -97,28 +97,28 @@ namespace BlendInt {
 	{
 		ClearSubWidgets();
 
-		if(container_) {
+		if(parent_) {
 
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_sub_widget_ == this);
-				container_->first_sub_widget_ = next_;
+				assert(parent_->first_child_ == this);
+				parent_->first_child_ = next_;
 			}
 
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_sub_widget_ == this);
-				container_->last_sub_widget_ = previous_;
+				assert(parent_->last_child_ == this);
+				parent_->last_child_ = previous_;
 			}
 
-			container_->subs_count_--;
-			assert(container_->subs_count_ >= 0);
+			parent_->subs_count_--;
+			assert(parent_->subs_count_ >= 0);
 
 			previous_ = 0;
 			next_ = 0;
-			container_ = 0;
+			parent_ = 0;
 
 		} else {
 			assert(previous_ == 0);
@@ -133,12 +133,12 @@ namespace BlendInt {
 	{
 		Point retval = position_;;
 
-		AbstractWidget* container = container_;
+		AbstractWidget* container = parent_;
 
 		while(container) {
 			retval.set_x(retval.x() + container->position().x() + container->offset().x());
 			retval.set_y(retval.y() + container->position().y() + container->offset().y());
-			container = container->container_;
+			container = container->parent_;
 		}
 
 		return retval;
@@ -156,8 +156,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, this, &new_size);
 
-		if(container_) {
-			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(width, height);
 			}
@@ -175,8 +175,8 @@ namespace BlendInt {
 
 		SizeUpdateRequest request(this, this, &size);
 
-		if(container_) {
-			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(size);
 			}
@@ -195,8 +195,8 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		PositionUpdateRequest request(this, this, &new_pos);
 
-		if(container_) {
-			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(x, y);
 			}
@@ -214,8 +214,8 @@ namespace BlendInt {
 
 		PositionUpdateRequest request(this, this, &pos);
 
-		if(container_) {
-			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(pos);
 			}
@@ -233,8 +233,8 @@ namespace BlendInt {
 
 		RoundTypeUpdateRequest request(this, this, &type);
 
-		if(container_) {
-			if(container_->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
 				PerformRoundTypeUpdate(request);
 				set_round_type(type);
 			}
@@ -252,8 +252,8 @@ namespace BlendInt {
 
 		RoundRadiusUpdateRequest request(this, this, &radius);
 
-		if(container_) {
-			if(container_->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
 				PerformRoundRadiusUpdate(request);
 				round_radius_ = radius;
 			}
@@ -272,8 +272,8 @@ namespace BlendInt {
 
 		VisibilityUpdateRequest request(this, this, &visible);
 
-		if(container_) {
-			if(container_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
 				PerformVisibilityUpdate(request);
 				set_visible(visible);
 			}
@@ -303,16 +303,16 @@ namespace BlendInt {
 		if(!refresh()) {
 			set_refresh(true);
 
-			if(container_) {
-				RefreshRequest request (this, container_);
-				container_->PerformRefresh(request);
+			if(parent_) {
+				RefreshRequest request (this, parent_);
+				parent_->PerformRefresh(request);
 			}
 		}
 	}
 
 	void AbstractWidget::MoveBackward()
 	{
-		if(container_) {
+		if(parent_) {
 
 			if(previous_) {
 
@@ -322,8 +322,8 @@ namespace BlendInt {
 				if(next_) {
 					next_->previous_ = tmp;
 				} else {
-					assert(container_->last_sub_widget_ == this);
-					container_->last_sub_widget_ = tmp;
+					assert(parent_->last_child_ == this);
+					parent_->last_child_ = tmp;
 				}
 
 				next_ = tmp;
@@ -334,8 +334,8 @@ namespace BlendInt {
 				tmp->previous_ = this;
 
 				if(previous_ == 0) {
-					assert(container_->first_sub_widget_ == tmp);
-					container_->first_sub_widget_ = this;
+					assert(parent_->first_child_ == tmp);
+					parent_->first_child_ = this;
 				}
 
 				DBG_PRINT_MSG("this: %s", name_.c_str());
@@ -349,7 +349,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->first_sub_widget_ == this);
+				assert(parent_->first_child_ == this);
 			}
 
 		}
@@ -357,7 +357,7 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveForward()
 	{
-		if(container_) {
+		if(parent_) {
 
 			if(next_) {
 
@@ -367,8 +367,8 @@ namespace BlendInt {
 				if(previous_) {
 					previous_->next_ = tmp;
 				} else {
-					assert(container_->first_sub_widget_ == this);
-					container_->first_sub_widget_ = tmp;
+					assert(parent_->first_child_ == this);
+					parent_->first_child_ = tmp;
 				}
 
 				previous_ = tmp;
@@ -379,8 +379,8 @@ namespace BlendInt {
 				tmp->next_ = this;
 
 				if(next_ == 0) {
-					assert(container_->last_sub_widget_ == tmp);
-					container_->last_sub_widget_ = this;
+					assert(parent_->last_child_ == tmp);
+					parent_->last_child_ = this;
 				}
 
 				if(previous_) {
@@ -391,7 +391,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->last_sub_widget_ == this);
+				assert(parent_->last_child_ == this);
 			}
 
 		}
@@ -399,9 +399,9 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveToFirst()
 	{
-		if(container_) {
+		if(parent_) {
 
-			if(container_->first_sub_widget_ == this) {
+			if(parent_->first_child_ == this) {
 				assert(previous_ == 0);
 				return;	// already at first
 			}
@@ -410,23 +410,23 @@ namespace BlendInt {
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_sub_widget_ == this);
-				container_->last_sub_widget_ = previous_;
+				assert(parent_->last_child_ == this);
+				parent_->last_child_ = previous_;
 			}
 
 			previous_ = 0;
-			next_ = container_->first_sub_widget_;
-			container_->first_sub_widget_->previous_ = this;
-			container_->first_sub_widget_ = this;
+			next_ = parent_->first_child_;
+			parent_->first_child_->previous_ = this;
+			parent_->first_child_ = this;
 
 		}
 	}
 
 	void AbstractWidget::MoveToLast()
 	{
-		if(container_) {
+		if(parent_) {
 
-			if(container_->last_sub_widget_ == this) {
+			if(parent_->last_child_ == this) {
 				assert(next_ == 0);
 				return;	// already at last
 			}
@@ -436,14 +436,14 @@ namespace BlendInt {
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_sub_widget_ == this);
-				container_->first_sub_widget_ = next_;
+				assert(parent_->first_child_ == this);
+				parent_->first_child_ = next_;
 			}
 
 			next_ = 0;
-			previous_ = container_->last_sub_widget_;
-			container_->last_sub_widget_->next_ = this;
-			container_->last_sub_widget_ = this;
+			previous_ = parent_->last_child_;
+			parent_->last_child_->next_ = this;
+			parent_->last_child_ = this;
 
 		}
 	}
@@ -469,7 +469,7 @@ namespace BlendInt {
 
 	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		AbstractWidget* container = widget->container_;
+		AbstractWidget* container = widget->parent_;
 		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
 		if(widget->visiable() && widget->Contain(cursor)) {
@@ -478,7 +478,7 @@ namespace BlendInt {
 				if((!container->visiable()) || (!container->Contain(cursor)))
 					return false;
 
-				container = container->container();
+				container = container->parent();
 			}
 
 			return true;
@@ -505,8 +505,8 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
 	{
-		if(container_) {
-			container_->PerformRefresh(request);
+		if(parent_) {
+			parent_->PerformRefresh(request);
 		}
 	}
 
@@ -542,7 +542,7 @@ namespace BlendInt {
 				return;
 			}
 
-			for(AbstractWidget* sub = widget->first_sub_widget(); sub; sub = sub->next())
+			for(AbstractWidget* sub = widget->first_child(); sub; sub = sub->next())
 			{
 				DispatchDrawEvent(sub, profile);
 			}
@@ -554,7 +554,7 @@ namespace BlendInt {
 
 	bool AbstractWidget::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		} else {
 			return true;
@@ -562,7 +562,7 @@ namespace BlendInt {
 
 	bool AbstractWidget::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		} else {
 			return true;
@@ -648,37 +648,37 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformSizeUpdate(request);
+		if(parent_) {
+			parent_->PerformSizeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportPositionUpdate(const PositionUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformPositionUpdate(request);
+		if(parent_) {
+			parent_->PerformPositionUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformRoundTypeUpdate(request);
+		if(parent_) {
+			parent_->PerformRoundTypeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformRoundRadiusUpdate(request);
+		if(parent_) {
+			parent_->PerformRoundRadiusUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
 	{
 
-		if(container_) {
-			container_->PerformVisibilityUpdate(request);
+		if(parent_) {
+			parent_->PerformVisibilityUpdate(request);
 		}
 	}
 
@@ -1783,7 +1783,7 @@ namespace BlendInt {
 
 		if(i < ((subs_count_ + 1)/ 2)) {
 
-			widget = first_sub_widget_;
+			widget = first_child_;
 			while(i > 0) {
 				widget = widget->next_;
 				i--;
@@ -1791,7 +1791,7 @@ namespace BlendInt {
 
 		} else {
 
-			widget = last_sub_widget_;
+			widget = last_child_;
 			int max = subs_count_ - 1;
 			while(i < max) {
 				widget = widget->previous_;
@@ -1813,7 +1813,7 @@ namespace BlendInt {
 
 		if(i < ((subs_count_ + 1)/ 2)) {
 
-			widget = first_sub_widget_;
+			widget = first_child_;
 			while(i > 0) {
 				widget = widget->next_;
 				i--;
@@ -1821,7 +1821,7 @@ namespace BlendInt {
 
 		} else {
 
-			widget = last_sub_widget_;
+			widget = last_child_;
 			int max = subs_count_ - 1;
 			while(i < max) {
 				widget = widget->previous_;
@@ -1840,36 +1840,36 @@ namespace BlendInt {
 		if (!widget)
 			return false;
 
-		if (widget->container_) {
+		if (widget->parent_) {
 
-			if (widget->container_ == this) {
+			if (widget->parent_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
 								widget->name_.c_str(),
-								widget->container_->name().c_str());
+								widget->parent_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->container_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubWidget(widget);
 			}
 
 		}
 
 		assert(widget->previous_ == 0);
 		assert(widget->next_ == 0);
-		assert(widget->container_ == 0);
+		assert(widget->parent_ == 0);
 
-		if(first_sub_widget_) {
-			first_sub_widget_->previous_ = widget;
-			widget->next_ = first_sub_widget_;
+		if(first_child_) {
+			first_child_->previous_ = widget;
+			widget->next_ = first_child_;
 		} else {
-			assert(last_sub_widget_ == 0);
+			assert(last_child_ == 0);
 			widget->next_ = 0;
-			last_sub_widget_ = widget;
+			last_child_ = widget;
 		}
-		first_sub_widget_ = widget;
+		first_child_ = widget;
 
 		widget->previous_ = 0;
-		widget->container_ = this;
+		widget->parent_ = this;
 		subs_count_++;
 
 		//events()->connect(widget->destroyed(), this,
@@ -1883,35 +1883,35 @@ namespace BlendInt {
 		if (!widget)
 			return false;
 
-		if (widget->container_) {
+		if (widget->parent_) {
 
-			if (widget->container_ == this) {
+			if (widget->parent_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
 								widget->name_.c_str(),
-								widget->container_->name().c_str());
+								widget->parent_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->container_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubWidget(widget);
 			}
 
 		}
 
 		assert(widget->previous_ == 0);
 		assert(widget->next_ == 0);
-		assert(widget->container_ == 0);
+		assert(widget->parent_ == 0);
 
-		if(first_sub_widget_ == 0) {
-			assert(last_sub_widget_ == 0);
+		if(first_child_ == 0) {
+			assert(last_child_ == 0);
 
 			widget->next_ = 0;
-			last_sub_widget_ = widget;
-			first_sub_widget_ = widget;
+			last_child_ = widget;
+			first_child_ = widget;
 			widget->previous_ = 0;
 
 		} else {
 
-			AbstractWidget* p = first_sub_widget_;
+			AbstractWidget* p = first_child_;
 
 			if(index > 0) {
 
@@ -1932,26 +1932,26 @@ namespace BlendInt {
 
 				} else {	// same as push back
 
-					assert(p == last_sub_widget_);
-					last_sub_widget_->next_ = widget;
-					widget->previous_ = last_sub_widget_;
-					last_sub_widget_ = widget;
+					assert(p == last_child_);
+					last_child_->next_ = widget;
+					widget->previous_ = last_child_;
+					last_child_ = widget;
 					widget->next_ = 0;
 
 				}
 
 			} else {	// same as push front
 
-				first_sub_widget_->previous_ = widget;
-				widget->next_ = first_sub_widget_;
-				first_sub_widget_ = widget;
+				first_child_->previous_ = widget;
+				widget->next_ = first_child_;
+				first_child_ = widget;
 				widget->previous_ = 0;
 
 			}
 
 		}
 
-		widget->container_ = this;
+		widget->parent_ = this;
 		subs_count_++;
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -1964,36 +1964,36 @@ namespace BlendInt {
 		if (!widget)
 			return false;
 
-		if (widget->container_) {
+		if (widget->parent_) {
 
-			if (widget->container_ == this) {
+			if (widget->parent_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
 								widget->name_.c_str(),
-								widget->container_->name().c_str());
+								widget->parent_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->container_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubWidget(widget);
 			}
 
 		}
 
 		assert(widget->previous_ == 0);
 		assert(widget->next_ == 0);
-		assert(widget->container_ == 0);
+		assert(widget->parent_ == 0);
 
-		if(last_sub_widget_) {
-			last_sub_widget_->next_ = widget;
-			widget->previous_ = last_sub_widget_;
+		if(last_child_) {
+			last_child_->next_ = widget;
+			widget->previous_ = last_child_;
 		} else {
-			assert(first_sub_widget_ == 0);
+			assert(first_child_ == 0);
 			widget->previous_ = 0;
-			first_sub_widget_ = widget;
+			first_child_ = widget;
 		}
-		last_sub_widget_ = widget;
+		last_child_ = widget;
 
 		widget->next_ = 0;
-		widget->container_ = this;
+		widget->parent_ = this;
 		subs_count_++;
 
 		//events()->connect(widget->destroyed(), this,
@@ -2007,7 +2007,7 @@ namespace BlendInt {
 		if (!widget)
 			return false;
 
-		assert(widget->container_ == this);
+		assert(widget->parent_ == this);
 
 		//widget->destroyed().disconnectOne(this,
 		//        &AbstractContainer::OnSubWidgetDestroyed);
@@ -2015,20 +2015,20 @@ namespace BlendInt {
 		if (widget->previous_) {
 			widget->previous_->next_ = widget->next_;
 		} else {
-			assert(first_sub_widget_ == widget);
-			first_sub_widget_ = widget->next_;
+			assert(first_child_ == widget);
+			first_child_ = widget->next_;
 		}
 
 		if (widget->next_) {
 			widget->next_->previous_ = widget->previous_;
 		} else {
-			assert(last_sub_widget_ == widget);
-			last_sub_widget_ = widget->previous_;
+			assert(last_child_ == widget);
+			last_child_ = widget->previous_;
 		}
 
 		widget->previous_ = 0;
 		widget->next_ = 0;
-		widget->container_ = 0;
+		widget->parent_ = 0;
 		subs_count_--;
 
 		if(widget->hover()) {
@@ -2040,7 +2040,7 @@ namespace BlendInt {
 
 	void AbstractWidget::ClearSubWidgets()
 	{
-		AbstractWidget* widget = first_sub_widget_;
+		AbstractWidget* widget = first_child_;
 		AbstractWidget* next = 0;
 
 		while(widget) {
@@ -2049,7 +2049,7 @@ namespace BlendInt {
 
 			widget->previous_ = 0;
 			widget->next_ = 0;
-			widget->container_ = 0;
+			widget->parent_ = 0;
 
 			if(widget->managed() && widget->reference_count() == 0) {
 				delete widget;
@@ -2061,14 +2061,14 @@ namespace BlendInt {
 		}
 
 		subs_count_ = 0;
-		first_sub_widget_ = 0;
-		last_sub_widget_ = 0;
+		first_child_ = 0;
+		last_child_ = 0;
 	}
 
 	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, int width,
 			int height)
 	{
-		if(!sub || sub->container() != this) return;
+		if(!sub || sub->parent() != this) return;
 
 		if(sub->size().width() == width &&
 				sub->size().height() == height)
@@ -2085,7 +2085,7 @@ namespace BlendInt {
 
 	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, const Size& size)
 	{
-		if (!sub || sub->container() != this)
+		if (!sub || sub->parent() != this)
 			return;
 
 		if (sub->size() == size)
@@ -2101,7 +2101,7 @@ namespace BlendInt {
 
 	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub, int x, int y)
 	{
-		if (!sub || sub->container() != this)
+		if (!sub || sub->parent() != this)
 			return;
 
 		if (sub->position().x() == x && sub->position().y() == y)
@@ -2120,7 +2120,7 @@ namespace BlendInt {
 	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub,
 			const Point& pos)
 	{
-		if(!sub || sub->container() != this) return;
+		if(!sub || sub->parent() != this) return;
 
 		if(sub->position() == pos) return;
 
@@ -2134,7 +2134,7 @@ namespace BlendInt {
 
 	void AbstractWidget::SetSubWidgetRoundType(AbstractWidget* sub, int type)
 	{
-		if(!sub || sub->container() != this) return;
+		if(!sub || sub->parent() != this) return;
 
 		if(sub->round_type() == (type & 0x0F)) return;
 
@@ -2149,7 +2149,7 @@ namespace BlendInt {
 	void AbstractWidget::SetSubWidgetRoundRadius(AbstractWidget* sub,
 			float radius)
 	{
-		if(!sub || sub->container() != this) return;
+		if(!sub || sub->parent() != this) return;
 
 		if(sub->round_radius() == radius) return;
 
@@ -2164,7 +2164,7 @@ namespace BlendInt {
 	void AbstractWidget::SetSubWidgetVisibility(AbstractWidget* sub,
 			bool visible)
 	{
-		if(!sub || sub->container() != this) return;
+		if(!sub || sub->parent() != this) return;
 
 		if(sub->visiable() == visible) return;
 
@@ -2178,7 +2178,7 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveSubWidgets(int offset_x, int offset_y)
 	{
-		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
 			SetSubWidgetPosition(p, p->position().x() + offset_x,
 			        p->position().y() + offset_y);
 		}
@@ -2186,14 +2186,14 @@ namespace BlendInt {
 
 	void AbstractWidget::ResizeSubWidgets(const Size& size)
 	{
-		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
 			ResizeSubWidget(p, size);
 		}
 	}
 
 	void AbstractWidget::ResizeSubWidgets(int w, int h)
 	{
-		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
 			ResizeSubWidget(p, w, h);
 		}
 	}
@@ -2241,7 +2241,7 @@ namespace BlendInt {
 			const Size& out_size, const Margin& margin, Orientation orientation,
 			int alignment, int space)
 	{
-		if(first_sub_widget_ == 0) return;
+		if(first_child_ == 0) return;
 
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
@@ -2260,7 +2260,7 @@ namespace BlendInt {
 	void AbstractWidget::FillSubWidgetsAveragely(const Point& pos,
 			const Size& size, Orientation orientation, int alignment, int space)
 	{
-		if(first_sub_widget_ == 0) return;
+		if(first_child_ == 0) return;
 
 		if(orientation == Horizontal) {
 			DistributeHorizontally(pos.x(), size.width(), space);
@@ -2274,7 +2274,7 @@ namespace BlendInt {
 	void AbstractWidget::FillSubWidgetsAveragely(int x, int y, int width,
 			int height, Orientation orientation, int alignment, int space)
 	{
-		if(first_sub_widget_ == 0) return;
+		if(first_child_ == 0) return;
 
 		if(orientation == Horizontal) {
 			DistributeHorizontally(x, width, space);
@@ -2302,7 +2302,7 @@ namespace BlendInt {
 
 			if (average_width > 0) {
 
-				for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+				for (AbstractWidget* p = first_child_; p; p = p->next_) {
 					ResizeSubWidget(p, average_width, p->size().height());
 					SetSubWidgetPosition(p, x, p->position().y());
 					x += average_width + space;
@@ -2326,7 +2326,7 @@ namespace BlendInt {
 
 			if (average_height > 0) {
 
-				for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+				for (AbstractWidget* p = first_child_; p; p = p->next_) {
 					ResizeSubWidget(p, p->size().width(), average_height);
 					y -= average_height;
 					SetSubWidgetPosition(p, p->position().x(), y);
@@ -2343,7 +2343,7 @@ namespace BlendInt {
 
 	void AbstractWidget::AlignHorizontally(int y, int height, int alignment)
 	{
-		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
 			if(p->IsExpandY()) {
 				ResizeSubWidget(p, p->size().width(), height);
 				SetSubWidgetPosition(p, p->position().x(), y);
@@ -2365,7 +2365,7 @@ namespace BlendInt {
 
 	void AbstractWidget::AlignVertically(int x, int width, int alignment)
 	{
-		for (AbstractWidget* p = first_sub_widget_; p; p = p->next_) {
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
 			if (p->IsExpandX()) {
 				ResizeSubWidget(p, width, p->size().height());
 				SetSubWidgetPosition(p, x, p->position().y());

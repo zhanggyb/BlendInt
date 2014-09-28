@@ -21,21 +21,21 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CONTAINER_HPP_
-#define _BLENDINT_GUI_CONTAINER_HPP_
+#ifndef _BLENDINT_GUI_LAYOUT_HPP_
+#define _BLENDINT_GUI_LAYOUT_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Container: public Widget
+	class Layout: public Widget
 	{
 
 	public:
 
-		Container ();
+		Layout ();
 
-		virtual ~Container ();
+		virtual ~Layout ();
 
 		const Margin& margin () const {return margin_;}
 
@@ -68,4 +68,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_CONTAINER_HPP_ */
+#endif /* _BLENDINT_GUI_LAYOUT_HPP_ */

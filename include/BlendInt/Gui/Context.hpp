@@ -36,7 +36,7 @@
 namespace BlendInt {
 
 	/**
-	 * @brief Container to hold and manage all widgets in a OpenGL window
+	 * @brief Layout to hold and manage all widgets in a OpenGL window
 	 *
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least one Context object to work with Interface to show and dispatch events.

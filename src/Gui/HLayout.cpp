@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	HLayout::HLayout (int align, int space)
-	: Container(), m_alignment(align), m_space(space)
+	: Layout(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
@@ -96,7 +96,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(200);
 			preferred_size.set_height(200);
@@ -106,7 +106,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -127,7 +127,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -142,7 +142,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -161,7 +161,7 @@ namespace BlendInt {
 	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -171,7 +171,7 @@ namespace BlendInt {
 	bool HLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -212,7 +212,7 @@ namespace BlendInt {
 		int unexpandable_preferred_width_sum = 0;	// the width sum of the unexpandable widgets' size
 
 		Size tmp_size;
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if (p->visiable()) {
 				tmp_size = p->GetPreferredSize();
@@ -264,7 +264,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		AbstractWidget* p = first_sub_widget();
+		AbstractWidget* p = first_child();
 
 		while (p) {
 
@@ -298,7 +298,7 @@ namespace BlendInt {
 		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
 
 		if(widgets_width <= 0) {
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				p->Resize(0, p->size().height());
 			}
@@ -309,7 +309,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		AbstractWidget* p = first_sub_widget();
+		AbstractWidget* p = first_child();
 
 		if(widgets_width <= unexpandable_prefer_sum) {
 			reference_width = widgets_width;
@@ -381,7 +381,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		AbstractWidget* p = first_sub_widget();
+		AbstractWidget* p = first_child();
 		while (p) {
 
 			if(p->visiable()) {
@@ -411,7 +411,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator unexp_it =
 		        unexpandable_preferred_heights->begin();
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if (p->IsExpandY()) {
 

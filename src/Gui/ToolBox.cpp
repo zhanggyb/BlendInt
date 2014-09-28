@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ToolBox::ToolBox()
-	: Container(),
+	: Layout(),
 	  vao_(0),
 	  space_(1)
 	{
@@ -103,7 +103,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(200);
 			preferred_size.set_height(400);
@@ -113,7 +113,7 @@ namespace BlendInt {
 			Size tmp_size;
 			preferred_size.set_height(-space_);
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -165,7 +165,7 @@ namespace BlendInt {
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			inner_.reset();
 
-		} else if (request.target()->container() == this) {
+		} else if (request.target()->parent() == this) {
 			FillSubWidgets(size(), margin(), space_);
 		}
 
@@ -196,8 +196,8 @@ namespace BlendInt {
 	{
 		int y = size().height() - margin().top();
 
-		if(last_sub_widget()) {
-			y = last_sub_widget()->position().y();
+		if(last_child()) {
+			y = last_child()->position().y();
 			y -= space_;
 		}
 
@@ -220,7 +220,7 @@ namespace BlendInt {
 	{
 		y = y + height + space;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			y = y - p->size().height() - space;
 

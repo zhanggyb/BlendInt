@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_HBLOCKLAYOUT_HPP_
 #define _BLENDINT_GUI_HBLOCKLAYOUT_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class HBlockLayout: public Container
+	class HBlockLayout: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(HBlockLayout);
 

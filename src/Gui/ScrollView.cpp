@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Container(),
+	: Layout(),
 	  m_vao(0),
 	  m_orientation(Horizontal | Vertical),
 	  m_move_status(false)
@@ -77,10 +77,10 @@ namespace BlendInt {
 	{
 		if(widget == 0) return;
 
-		if(widget->container() == this)
+		if(widget->parent() == this)
 			return;
 
-		if(first_sub_widget()) {
+		if(first_child()) {
 			ClearSubWidgets();
 		}
 
@@ -103,9 +103,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(first_sub_widget() == 0) return;
+		if(first_child() == 0) return;
 
-		AbstractWidget* p = first_sub_widget();
+		AbstractWidget* p = first_child();
 
 		int w = size().width() - margin().hsum();
 		int h = size().height() - margin().vsum();
@@ -122,8 +122,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first_sub_widget()) {
-			AbstractWidget* p = first_sub_widget();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			int w = size().width() - margin().hsum();
 
@@ -142,8 +142,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first_sub_widget()) {
-			AbstractWidget* p = first_sub_widget();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			int h = size().height() - margin().vsum();
 
@@ -160,10 +160,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(first_sub_widget()) {
+		if(first_child()) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = first_sub_widget();
+				AbstractWidget* p = first_child();
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -173,8 +173,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(first_sub_widget()) {
-			AbstractWidget* p = first_sub_widget();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -184,8 +184,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(first_sub_widget()) {
-			return first_sub_widget()->IsExpandX();
+		if(first_child()) {
+			return first_child()->IsExpandX();
 		} else {
 			return false;
 		}
@@ -193,8 +193,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(first_sub_widget()) {
-			return first_sub_widget()->IsExpandY();
+		if(first_child()) {
+			return first_child()->IsExpandY();
 		} else {
 			return false;
 		}
@@ -204,7 +204,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractWidget* widget = first_sub_widget();
+		AbstractWidget* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -229,7 +229,7 @@ namespace BlendInt {
 
 			set_position(*request.position());
 
-			if(first_sub_widget()) {
+			if(first_child()) {
 				MoveSubWidgets(x, y);
 			}
 		}
@@ -246,12 +246,12 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			// align the subwidget
-			if (first_sub_widget()) {
+			if (first_child()) {
 
 				int dy = request.size()->height() - size().height();
 
-				first_sub_widget()->SetPosition(first_sub_widget()->position().x(),
-				        first_sub_widget()->position().y() + dy);
+				first_child()->SetPosition(first_child()->position().x(),
+				        first_child()->position().y() + dy);
 			}
 
 			set_size(*request.size());
@@ -271,7 +271,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		if(first_sub_widget()) {
+		if(first_child()) {
 			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 		} else {
 			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
@@ -288,11 +288,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!first_sub_widget()) {
+		if (!first_child()) {
 			return Ignore;
 		}
 
-		AbstractWidget* p = first_sub_widget();
+		AbstractWidget* p = first_child();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -313,7 +313,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(!first_sub_widget()) {
+		if(!first_child()) {
 			return Ignore;
 		}
 
@@ -349,11 +349,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(first_sub_widget()) {
+		if(first_child()) {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = first_sub_widget();
+				AbstractWidget* p = first_child();
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

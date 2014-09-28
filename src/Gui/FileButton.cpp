@@ -287,7 +287,7 @@ namespace BlendInt {
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
 
-		AbstractWidget* screen = panel_->container();
+		AbstractWidget* screen = panel_->parent();
 		delete screen;
 		panel_ = 0;
 
@@ -299,7 +299,7 @@ namespace BlendInt {
 		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
 
-		AbstractWidget* screen = panel_->container();
+		AbstractWidget* screen = panel_->parent();
 		delete screen;
 		panel_ = 0;
 	}

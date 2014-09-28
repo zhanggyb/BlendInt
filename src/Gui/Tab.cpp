@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: Container()
+	: Layout()
 	{
 		set_size(400, 300);
 

@@ -63,7 +63,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special container used in Workspace
 	 */
-	class EdgeButtonLayer: public Container
+	class EdgeButtonLayer: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
 
@@ -136,7 +136,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public Container
+	class Workspace: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 

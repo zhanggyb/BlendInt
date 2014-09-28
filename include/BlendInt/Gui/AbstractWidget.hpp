@@ -432,9 +432,9 @@ namespace BlendInt {
 			return subs_count_;
 		}
 
-		inline AbstractWidget* container() const
+		inline AbstractWidget* parent() const
 		{
-			return container_;
+			return parent_;
 		}
 
 		inline AbstractWidget* previous () const
@@ -447,14 +447,14 @@ namespace BlendInt {
 			return next_;
 		}
 
-		inline AbstractWidget* first_sub_widget () const
+		inline AbstractWidget* first_child () const
 		{
-			return first_sub_widget_;
+			return first_child_;
 		}
 
-		inline AbstractWidget* last_sub_widget() const
+		inline AbstractWidget* last_child() const
 		{
-			return last_sub_widget_;
+			return last_child_;
 		}
 
 		Cpp::EventRef<AbstractWidget*> destroyed ()
@@ -825,15 +825,18 @@ namespace BlendInt {
 
 		int subs_count_;	// count of sub widgets
 
-		AbstractWidget* container_;
+		AbstractWidget* parent_;
 
 		AbstractWidget* previous_;
 
 		AbstractWidget* next_;
 
-		AbstractWidget* first_sub_widget_;
+		/**
+		 * @brief The first sub widget
+		 */
+		AbstractWidget* first_child_;
 
-		AbstractWidget* last_sub_widget_;
+		AbstractWidget* last_child_;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 

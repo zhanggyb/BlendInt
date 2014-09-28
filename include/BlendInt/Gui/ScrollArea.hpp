@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_SCROLLAREA_HPP_
 #define _BLENDINT_GUI_SCROLLAREA_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 
 namespace BlendInt {
 
-	class ScrollArea: public Container
+	class ScrollArea: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollArea);
 

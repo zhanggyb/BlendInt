@@ -278,12 +278,12 @@ GTEST_API_ bool ShouldRunTestOnShard(
 
 // Returns the number of elements in the given container that satisfy
 // the given predicate.
-template <class Container, typename Predicate>
-inline int CountIf(const Container& c, Predicate predicate) {
+template <class Layout, typename Predicate>
+inline int CountIf(const Layout& c, Predicate predicate) {
   // Implemented as an explicit loop since std::count_if() in libCstd on
   // Solaris has a non-standard signature.
   int count = 0;
-  for (typename Container::const_iterator it = c.begin(); it != c.end(); ++it) {
+  for (typename Layout::const_iterator it = c.begin(); it != c.end(); ++it) {
     if (predicate(*it))
       ++count;
   }
@@ -291,8 +291,8 @@ inline int CountIf(const Container& c, Predicate predicate) {
 }
 
 // Applies a function/functor to each element in the container.
-template <class Container, typename Functor>
-void ForEach(const Container& c, Functor functor) {
+template <class Layout, typename Functor>
+void ForEach(const Layout& c, Functor functor) {
   std::for_each(c.begin(), c.end(), functor);
 }
 

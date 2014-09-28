@@ -26,12 +26,12 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 
 namespace BlendInt {
 
-	class ToolBar: public Container
+	class ToolBar: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToolBar);
 

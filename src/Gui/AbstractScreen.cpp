@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	AbstractScreen* AbstractScreen::GetViewport(AbstractWidget* widget)
 	{
-		AbstractWidget* container = widget->container();
+		AbstractWidget* container = widget->parent ();
 		AbstractScreen* viewport = 0;
 
 		if(container == 0) {
@@ -64,7 +64,7 @@ namespace BlendInt {
 			while(container) {
 				viewport = dynamic_cast<AbstractScreen*>(container);
 				if(viewport) break;
-				container = container->container();
+				container = container->parent ();
 			}
 		}
 
@@ -120,11 +120,11 @@ namespace BlendInt {
 			return Ignore;
 		} else {
 
-			if(widget->container()) {
-				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
+			if(widget->parent ()) {
+				if(DispatchMousePressEvent(widget->parent (), event) == Ignore) {
 					const_cast<MouseEvent&>(event).set_local_position(
-							event.local_position().x() - widget->position().x() - widget->container()->offset().x(),
-							event.local_position().y() - widget->position().y() - widget->container()->offset().y());
+							event.local_position().x() - widget->position().x() - widget->parent ()->offset().x(),
+							event.local_position().y() - widget->position().y() - widget->parent ()->offset().y());
 					return widget->MousePressEvent(event);
 				} else {
 					return Accept;
@@ -144,8 +144,8 @@ namespace BlendInt {
 			return Ignore;
 		} else {
 
-			if(widget->container()) {
-				if(DispatchMouseReleaseEvent(widget->container(), event) == Ignore) {
+			if(widget->parent ()) {
+				if(DispatchMouseReleaseEvent(widget->parent (), event) == Ignore) {
 					return widget->MouseReleaseEvent(event);
 				} else {
 					return Accept;

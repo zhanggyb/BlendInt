@@ -27,7 +27,7 @@
 #include <BlendInt/Gui/AbstractScreen.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 
 		void Setup (Widget* widget);
 
-		void Setup (Container* container);
+		void Setup (Layout* container);
 
 		void SetFocused (AbstractWidget* widget);
 

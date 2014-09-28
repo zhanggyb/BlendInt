@@ -187,7 +187,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: Container(), vao_(0), frame_height_(0)
+	: Layout(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Frame* frame = Manage(new Frame);
@@ -221,7 +221,7 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: Container(), vao_(0), frame_height_(0)
+	: Layout(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Frame* frame = Manage(new Frame);
@@ -274,7 +274,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -291,7 +291,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -306,7 +306,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;

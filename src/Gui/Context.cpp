@@ -182,8 +182,8 @@ namespace BlendInt
 
 	Context::~Context ()
 	{
-		if(container() != 0) {
-			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
+		if(parent() != 0) {
+			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other parent");
 		}
 		context_set.erase(this);
 	}
@@ -284,19 +284,19 @@ namespace BlendInt
 
 	Context* Context::GetContext (AbstractWidget* widget)
 	{
-		AbstractWidget* container = widget->container();
+		AbstractWidget* parent = widget->parent();
 
-		if(container == 0) {
+		if(parent == 0) {
 			return dynamic_cast<Context*>(widget);
 		} else {
 
-			while(container->container()) {
-				container = container->container();
+			while(parent->parent()) {
+				parent = parent->parent();
 			}
 
 		}
 
-		return dynamic_cast<Context*>(container);
+		return dynamic_cast<Context*>(parent);
 	}
 
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -311,7 +311,7 @@ namespace BlendInt
 
 	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 
 			// don't allow section to change any geometry
 			return false;
@@ -323,7 +323,7 @@ namespace BlendInt
 	bool Context::RoundRadiusUpdateTest (
 	        const RoundRadiusUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 
 			// don't allow section to change any geometry
 			return false;
@@ -370,7 +370,7 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
@@ -397,8 +397,8 @@ namespace BlendInt
 
 		ResponseType response;
 
-		if(last_sub_widget()) {
-			response = last_sub_widget()->KeyPressEvent(event);
+		if(last_child()) {
+			response = last_child()->KeyPressEvent(event);
 		}
 
 		return response;
@@ -425,7 +425,7 @@ namespace BlendInt
 
 		ResponseType response;
 
-		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
@@ -444,7 +444,7 @@ namespace BlendInt
 
 		ResponseType response;
 
-		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 			response = p->MouseReleaseEvent(event);
 
 			if(response == Accept) break;
@@ -462,7 +462,7 @@ namespace BlendInt
 		AbstractScreen* original_hover = hover_;
 
 		hover_ = 0;
-		for(AbstractWidget* p = last_sub_widget(); p; p = p->previous()) {
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 			if(p->Contain(event.position())) {
 				hover_ = dynamic_cast<AbstractScreen*>(p);
 				break;
@@ -485,11 +485,11 @@ namespace BlendInt
 
 		}
 
-		if(last_sub_widget()) {
-			response = last_sub_widget()->MouseMoveEvent(event);
+		if(last_child()) {
+			response = last_child()->MouseMoveEvent(event);
 		}
 
-		if(hover_ && hover_ != last_sub_widget()) {
+		if(hover_ && hover_ != last_child()) {
 			hover_->MouseMoveEvent(event);
 		}
 

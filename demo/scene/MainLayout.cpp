@@ -186,7 +186,7 @@ void MainLayout::RenderToBuffer()
 
 		// Draw frame panel
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}
@@ -512,6 +512,6 @@ void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 
-	HLayout* box = dynamic_cast<HLayout*>(m_file_input->container());
+	HLayout* box = dynamic_cast<HLayout*>(m_file_input->parent());
 	box->Resize(box->GetPreferredSize());
 }

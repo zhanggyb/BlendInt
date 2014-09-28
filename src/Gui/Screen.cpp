@@ -69,7 +69,7 @@ namespace BlendInt {
 	{
 		if(widget == 0) return;
 
-		if(widget->container() == this) return;
+		if(widget->parent() == this) return;
 
 		if(subs_count() > 0) ClearSubWidgets();
 
@@ -80,18 +80,18 @@ namespace BlendInt {
 		}
 	}
 
-	void Screen::Setup(Container* container)
+	void Screen::Setup(Layout* parent)
 	{
-		if(container == 0) return;
+		if(parent == 0) return;
 
-		if(container->container() == this) return;
+		if(parent->parent() == this) return;
 
 		if(subs_count() > 0) ClearSubWidgets();
 
-		Resize(container->size());
+		Resize(parent->size());
 
-		if(PushBackSubWidget(container)) {
-			container->SetPosition(0, 0);
+		if(PushBackSubWidget(parent)) {
+			parent->SetPosition(0, 0);
 		}
 	}
 
@@ -124,7 +124,7 @@ namespace BlendInt {
 			int maxx = 0;
 			int maxy = 0;
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
+			for(AbstractWidget* p = first_child(); p; p = p->next()) {
 				minx = std::min(p->position().x(), minx);
 				miny = std::min(p->position().y(), miny);
 				maxx = std::max(p->position().x() + p->size().width(), maxx);
@@ -142,7 +142,7 @@ namespace BlendInt {
 
 	bool Screen::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		} else {
 			return true;
@@ -151,7 +151,7 @@ namespace BlendInt {
 
 	bool Screen::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		} else {
 			return true;
@@ -228,7 +228,7 @@ namespace BlendInt {
 
 	ResponseType Screen::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
@@ -374,7 +374,7 @@ namespace BlendInt {
 		// find the new top hovered widget
 		if (top_hovered_widget_) {
 
-			AbstractWidget* parent = top_hovered_widget_->container();
+			AbstractWidget* parent = top_hovered_widget_->parent();
 
 			Point parent_position = parent->GetGlobalPosition();
 
@@ -420,7 +420,7 @@ namespace BlendInt {
 
 						if (parent->Contain(local_cursor)) break;
 
-						parent = parent->container();
+						parent = parent->parent();
 					}
 
 					top_hovered_widget_ = parent;
@@ -440,7 +440,7 @@ namespace BlendInt {
 				set_widget_hover_event(top_hovered_widget_, false);
 
 				// find which contianer contains cursor position
-				parent = parent->container();
+				parent = parent->parent();
 				while (parent) {
 
 					if (parent == this) {	// FIXME: the widget may be mvoed to another context
@@ -452,7 +452,7 @@ namespace BlendInt {
 					local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset().y());
 
 					if(IsHoverThroughExt(parent, event.position())) break;
-					parent = parent->container();
+					parent = parent->parent();
 				}
 
 				top_hovered_widget_ = parent;
@@ -469,7 +469,7 @@ namespace BlendInt {
 			local_cursor.set_x(event.position().x() - position().x() - offset().x());
 			local_cursor.set_y(event.position().y() - position().y() - offset().y());
 
-			for(AbstractWidget* p = last_sub_widget(); p; p = p->previous())
+			for(AbstractWidget* p = last_child(); p; p = p->previous())
 			{
 				if (p->visiable() && p->Contain(local_cursor)) {
 
@@ -500,7 +500,7 @@ namespace BlendInt {
 				cursor.y () - top_hovered_widget_->position ().y ()
 						- top_hovered_widget_->offset ().y ());
 
-		for (AbstractWidget* p = top_hovered_widget_->last_sub_widget (); p;
+		for (AbstractWidget* p = top_hovered_widget_->last_child (); p;
 				p = p->previous ()) {
 			if (p->visiable () && p->Contain (cursor)) {
 
@@ -545,7 +545,7 @@ namespace BlendInt {
 
 			while (top_hovered_widget_ && top_hovered_widget_ != this) {
 				set_widget_hover_event(top_hovered_widget_, false);
-				top_hovered_widget_ = top_hovered_widget_->container();
+				top_hovered_widget_ = top_hovered_widget_->parent();
 			}
 
 			if(top_hovered_widget_ == this)

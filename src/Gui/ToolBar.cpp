@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ToolBar::ToolBar ()
-	: Container(),
+	: Layout(),
 	  vao_(0),
 	  space_(4),
 	  move_status_(false),
@@ -126,7 +126,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_sub_widget() == 0) {
+		if(first_child() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -140,7 +140,7 @@ namespace BlendInt {
 			Size tmp_size;
 			preferred_size.set_width(-space_);
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -170,8 +170,8 @@ namespace BlendInt {
 	void ToolBar::PerformMarginUpdate (const Margin& request)
 	{
 		int x = position().x() + request.left();
-		if (first_sub_widget()) {
-			x = first_sub_widget()->position().x();
+		if (first_child()) {
+			x = first_child()->position().x();
 		}
 
 		int y = position().y() + request.bottom();
@@ -201,7 +201,7 @@ namespace BlendInt {
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			inner_.reset();
 
-		} else if (request.target()->container() == this) {
+		} else if (request.target()->parent() == this) {
 			// if a sub widget changed its size, re-align all
 			FillSubWidgets(size(), margin(), space_);
 		}
@@ -235,10 +235,10 @@ namespace BlendInt {
 	ResponseType ToolBar::MousePressEvent (const MouseEvent& event)
 	{
 		if(event.button() == MouseButtonMiddle) {
-			if(first_sub_widget()) {
+			if(first_child()) {
 				move_status_ = true;
 				start_x_ = event.position().x();
-				last_x_ = first_sub_widget()->position().x();
+				last_x_ = first_child()->position().x();
 			}
 		}
 
@@ -256,8 +256,8 @@ namespace BlendInt {
 
 	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
 	{
-		if(move_status_ && first_sub_widget()) {
-			int xmin = first_sub_widget()->position().x();
+		if(move_status_ && first_child()) {
+			int xmin = first_child()->position().x();
 			int direction = event.position().x() - start_x_;
 			int offset = last_x_ + event.position().x() - start_x_;
 			int width = size().width() - margin().left() - margin().right();
@@ -265,7 +265,7 @@ namespace BlendInt {
 			int right = position().x() + size().width() - margin().right();
 
 			int xmax = xmin - space_;
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				xmax += p->size().width() + space_;
 			}
@@ -278,7 +278,7 @@ namespace BlendInt {
 
 					if(xmax > right) {
 						int x = last_x_;
-						for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+						for(AbstractWidget* p = first_child(); p; p = p->next())
 						{
 							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
@@ -289,7 +289,7 @@ namespace BlendInt {
 
 					if(xmin < left) {
 						int x = last_x_;
-						for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+						for(AbstractWidget* p = first_child(); p; p = p->next())
 						{
 							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
@@ -303,7 +303,7 @@ namespace BlendInt {
 				if(direction < 0) { // left
 					if(xmin > left) {
 						int x = last_x_;
-						for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+						for(AbstractWidget* p = first_child(); p; p = p->next())
 						{
 							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
@@ -312,7 +312,7 @@ namespace BlendInt {
 				} else if (direction > 0) {	// right
 					if(xmax < right) {
 						int x = last_x_;
-						for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+						for(AbstractWidget* p = first_child(); p; p = p->next())
 						{
 							SetSubWidgetPosition(p, x + event.position().x() - start_x_, p->position().y());
 							x += p->size().width() + space_;
@@ -361,7 +361,7 @@ namespace BlendInt {
 					h);
 		}
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			SetSubWidgetPosition(p, x, y);
 			ResizeSubWidget(p, p->size().width(), h);
@@ -383,7 +383,7 @@ namespace BlendInt {
 	void ToolBar::FillSubWidgets (int x, int y, int width, int height,
 			int space)
 	{
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			SetSubWidgetPosition(p, x, y);
 
@@ -408,9 +408,9 @@ namespace BlendInt {
 	{
 		int x = margin().left();
 
-		if (last_sub_widget()) {
-			x = last_sub_widget()->position().x();
-			x += last_sub_widget()->size().width() + space_;
+		if (last_child()) {
+			x = last_child()->position().x();
+			x += last_child()->size().width() + space_;
 		}
 
 		return x;

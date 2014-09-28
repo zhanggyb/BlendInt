@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	BinLayout::BinLayout()
-	: Container()
+	: Layout()
 	{
 	}
 
@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		if(!widget) return false;
 
-		if(widget->container() == this) return true;
+		if(widget->parent() == this) return true;
 
 		if(subs_count() > 0) {
 			ClearSubWidgets();
@@ -82,7 +82,7 @@ namespace BlendInt {
 			return false;
 		} else {
 			assert(subs_count() == 1);	// DEBUG
-			return first_sub_widget()->IsExpandX();
+			return first_child()->IsExpandX();
 		}
 	}
 
@@ -92,7 +92,7 @@ namespace BlendInt {
 			return false;
 		} else {
 			assert(subs_count() == 1);	// DEBUG
-			return first_sub_widget()->IsExpandY();
+			return first_child()->IsExpandY();
 		}
 	}
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		const AbstractWidget* widget = first_sub_widget();
+		const AbstractWidget* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();

@@ -217,8 +217,8 @@ namespace BlendInt {
 
 			GLSLProgram::reset();
 
-			if(first_sub_widget()) {
-				DispatchDrawEvent(first_sub_widget(), off_screen_profile);
+			if(first_child()) {
+				DispatchDrawEvent(first_child(), off_screen_profile);
 			}
 
 			// Restore the viewport setting and projection matrix

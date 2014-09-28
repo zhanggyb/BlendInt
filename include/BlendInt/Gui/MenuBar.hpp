@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_GUI_MENUBAR_HPP_
 #define _BLENDINT_GUI_MENUBAR_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public Container
+	class MenuBar: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 

@@ -26,14 +26,14 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special widget used in virtual window only as the decoration
 	 */
-	class Decoration:  public Container
+	class Decoration:  public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Decoration);
 

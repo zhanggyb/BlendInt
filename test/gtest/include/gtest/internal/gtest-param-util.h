@@ -151,7 +151,7 @@ class ParamGeneratorInterface {
 };
 
 // Wraps ParamGeneratorInterface<T> and provides general generator syntax
-// compatible with the STL Container concept.
+// compatible with the STL Layout concept.
 // This class implements copy initialization semantics and the contained
 // ParamGeneratorInterface<T> instance is shared among all copies
 // of the original object. This is possible because that instance is immutable.

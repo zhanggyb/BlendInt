@@ -27,7 +27,7 @@ namespace BlendInt {
 
 
 	StackLayout::StackLayout ()
-	: Container(),
+	: Layout(),
 	  active_widget_(0)
 	{
 	}
@@ -94,7 +94,7 @@ namespace BlendInt {
 				if(subs_count() == 0) {
 					active_widget_ = 0;
 				} else {
-					active_widget_ = first_sub_widget();
+					active_widget_ = first_child();
 					active_widget_->SetVisible(true);
 				}
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 	{
 		int index = 0;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p == active_widget_) {
 				break;
@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				ret = true;
@@ -158,7 +158,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				ret = true;
@@ -173,13 +173,13 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		if(first_sub_widget()) {
+		if(first_child()) {
 
 			prefer.set_width(0);
 			prefer.set_height(0);
 
 			Size tmp;
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));

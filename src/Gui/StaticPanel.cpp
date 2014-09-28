@@ -264,7 +264,7 @@ namespace BlendInt {
 			glBindVertexArray(0);
 			GLSLProgram::reset();
 
-			for(AbstractWidget* p = first_sub_widget(); p; p = p->next()) {
+			for(AbstractWidget* p = first_child(); p; p = p->next()) {
 				DispatchDrawEvent(p, off_screen_profile);
 			}
 

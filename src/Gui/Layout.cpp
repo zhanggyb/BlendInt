@@ -34,23 +34,23 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Container::Container ()
+	Layout::Layout ()
 	: Widget()
 	{
 	}
 
-	Container::~Container ()
+	Layout::~Layout ()
 	{
 	}
 
-	void Container::SetMargin (const Margin& margin)
+	void Layout::SetMargin (const Margin& margin)
 	{
 		if (margin_.equal(margin))
 			return;
@@ -59,7 +59,7 @@ namespace BlendInt {
 		margin_ = margin;
 	}
 
-	void Container::SetMargin (int left, int right, int top, int bottom)
+	void Layout::SetMargin (int left, int right, int top, int bottom)
 	{
 		if (margin_.equal(left, right, top, bottom))
 			return;
@@ -69,7 +69,7 @@ namespace BlendInt {
 		margin_ = new_margin;
 	}
 
-	void Container::PerformMarginUpdate(const Margin& margin)
+	void Layout::PerformMarginUpdate(const Margin& margin)
 	{
 		margin_ = margin;
 	}

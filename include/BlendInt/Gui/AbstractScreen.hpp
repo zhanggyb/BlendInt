@@ -101,7 +101,6 @@ namespace BlendInt {
 			widget->FocusEvent(focus);
 		}
 
-		// NOT USED, remove later
 		void set_widget_focus_status (AbstractWidget* widget, bool focus)
 		{
 			widget->set_focus(focus);
@@ -113,7 +112,6 @@ namespace BlendInt {
 			widget->CursorEnterEvent(hover);
 		}
 
-		// NOT USED, remove later
 		void set_widget_hover_status (AbstractWidget* widget, bool hover)
 		{
 			widget->set_hover(hover);

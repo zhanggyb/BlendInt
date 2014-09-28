@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_TAB_HPP_
 #define _BLENDINT_GUI_TAB_HPP_
 
-#include <BlendInt/Gui/Container.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
-	class Tab: public Container
+	class Tab: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Tab);
 

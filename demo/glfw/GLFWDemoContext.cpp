@@ -44,11 +44,10 @@ void GLFWDemoContext::Initialize ()
 	screen2->SetPosition(400, 200);
 	AddScreen(screen2);
 
-	ColorSelector* exp = Manage(new ColorSelector);
+	ScrollBar* exp = Manage(new ScrollBar);
+	exp->Resize(100, 14);
 
 	screen2->Setup(exp);
 
 	screen2->SetPosition(600, 200);
-
-	screen2->Resize(exp->GetPreferredSize());
 }

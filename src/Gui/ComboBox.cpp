@@ -280,8 +280,8 @@ namespace BlendInt {
 		Context* context = event.context();
 
 		if(list_) {
-			AbstractWidget* container = list_->container();
-			delete container;
+			AbstractWidget* parent = list_->parent();
+			delete parent;
 			list_ = 0;
 			SetRoundType(RoundAll);
 		} else {
