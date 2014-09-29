@@ -38,11 +38,11 @@ namespace BlendInt {
 
 		virtual ~HLayout ();
 
-		bool Prepend (AbstractWidget* widget);
+		bool Prepend (Widget* widget);
 
-		bool Append (AbstractWidget* widget);
+		bool Append (Widget* widget);
 
-		bool Remove (AbstractWidget* widget);
+		bool Remove (Widget* widget);
 
 		int alignment () const
 		{

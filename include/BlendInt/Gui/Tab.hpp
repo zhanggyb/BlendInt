@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_TAB_HPP_
 #define _BLENDINT_GUI_TAB_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Tab: public Layout
+	class Tab: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Tab);
 
@@ -49,8 +49,6 @@ namespace BlendInt {
 		int GetIndex () const;
 
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -76,7 +74,7 @@ namespace BlendInt {
 
 		void OnButtonToggled (int index, bool toggled);
 
-		void FillSubWidgetsInTab (const Size& out_size, const Margin& margin);
+		void FillSubWidgetsInTab (const Size& out_size);
 
 		void FillSubWidgetsInTab (int x, int y, int w, int h);
 	};

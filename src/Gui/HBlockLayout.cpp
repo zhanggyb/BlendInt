@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	}
 	
-	void HBlockLayout::Prepend (AbstractWidget* widget)
+	void HBlockLayout::Prepend (Widget* widget)
 	{
 		AbstractWidget* orig_first = first_child();
 
@@ -56,7 +56,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBlockLayout::Append (AbstractWidget* widget)
+	void HBlockLayout::Append (Widget* widget)
 	{
 		AbstractWidget* orig_last = last_child();
 

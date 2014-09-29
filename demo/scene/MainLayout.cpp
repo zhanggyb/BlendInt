@@ -460,7 +460,6 @@ BI::Expander* MainLayout::CreateColorExpander()
 BI::Tab* MainLayout::CreateTab ()
 {
 	Tab* tab = Manage(new Tab);
-	tab->SetMargin(0, 0, 0, 0);
 
     m_scene = Manage(new Viewport3D);
     m_image_view = Manage(new ImageView);

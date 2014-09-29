@@ -4,7 +4,7 @@
 
 #include "CVContext.hpp"
 
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 using namespace BlendInt;
 
@@ -16,11 +16,11 @@ CVContext::CVContext()
 	m_layout = Manage (new MainSpace);
 	m_layout->Resize(size());
 
-	Screen* screen = Manage(new Screen);
+	Frame* screen = Manage(new Frame);
 	screen->Resize(m_layout->size());
 	screen->Setup(m_layout);
 
-	AddScreen(screen);
+	AddFrame(screen);
 
 	events()->connect(resized(), this , &CVContext::OnResizeLayout);
 }

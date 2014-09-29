@@ -5,7 +5,7 @@
 #include "Qt5Context.hpp"
 #include <QtGui/QCursor>
 
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 using namespace BI;
 
@@ -15,10 +15,10 @@ Qt5Context::Qt5Context (QWindow* window)
 	m_layout = Manage(new MainLayout);
 	m_layout->Resize(size());
 
-	Screen* screen1 = Manage(new Screen);
+	Frame* screen1 = Manage(new Frame);
 	screen1->Resize(m_layout->size());
 	screen1->Setup(m_layout);
-	AddScreen(screen1);
+	AddFrame(screen1);
 
 	events()->connect(resized(), this , &Qt5Context::OnResizeLayout);
 }

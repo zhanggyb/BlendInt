@@ -8,7 +8,7 @@
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/HBlockLayout.hpp>
 
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 Qt5ThemeEditorContext::Qt5ThemeEditorContext (QWindow* window)
 : BI::Context (), window_(window)
@@ -41,16 +41,16 @@ void Qt5ThemeEditorContext::Initialize()
 	panel2->SetPosition(980, 200);
 	panel2->Resize(panel2->GetPreferredSize());
 
-	Screen* screen = Manage(new Screen);
+	Frame* screen = Manage(new Frame);
 	screen->Resize(panel1->size());
 	screen->Setup(panel1);
 
-	Screen* screen1 = Manage(new Screen);
+	Frame* screen1 = Manage(new Frame);
 	screen1->Resize(panel2->size());
 	screen1->Setup(panel2);
 
-	AddScreen(screen);
-	AddScreen(screen1);
+	AddFrame(screen);
+	AddFrame(screen1);
 
 }
 

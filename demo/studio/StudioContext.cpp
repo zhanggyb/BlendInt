@@ -6,7 +6,7 @@
 
 #include <BlendInt/Gui/StaticPanel.hpp>
 
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 using namespace BI;
 
@@ -36,11 +36,11 @@ void StudioContext::Initialize ()
 	
 	frame_->Setup(fs);
 
-	Screen* screen1 = Manage(new Screen);
+	Frame* screen1 = Manage(new Frame);
 	screen1->Resize(frame_->size());
 	screen1->SetPosition(100, 100);
 	screen1->Setup(frame_);
-	AddScreen(screen1);
+	AddFrame(screen1);
 
 	StaticPanel* panel = Manage(new StaticPanel);
 	button_ = Manage(new Button("Save Texture"));
@@ -48,11 +48,11 @@ void StudioContext::Initialize ()
 	panel->SetPosition(1100, 600);
 	panel->Resize(panel->GetPreferredSize());
 
-	Screen* screen2 = Manage(new Screen);
+	Frame* screen2 = Manage(new Frame);
 	screen2->Resize(panel->size());
 	screen2->SetPosition(1100, 600);
 	screen2->Setup(panel);
-	AddScreen(screen2);
+	AddFrame(screen2);
 
 	events()->connect(button_->clicked(), this, &StudioContext::OnSaveTextureToFile);
 
@@ -60,11 +60,11 @@ void StudioContext::Initialize ()
 	btn->SetPosition(20, 750);
 	btn->Resize(100, 40);
 
-	Screen* screen3 = Manage(new Screen);
+	Frame* screen3 = Manage(new Frame);
 	screen3->Resize(btn->size());
 	screen3->SetPosition(20, 750);
 	screen3->Setup(btn);
-	AddScreen(screen3);
+	AddFrame(screen3);
 }
 
 void StudioContext::OnSaveTextureToFile()

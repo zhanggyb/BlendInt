@@ -15,7 +15,7 @@
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/ListView.hpp>
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
@@ -38,20 +38,20 @@ void TexBufContext::CreateWidgets ()
 	using namespace BlendInt;
 	using Stock::Icons;
 
-	Screen* screen1 = Manage(new Screen);
-	AddScreen(screen1);
+	Frame* screen1 = Manage(new Frame);
+	AddFrame(screen1);
 
-	Screen* screen2 = Manage(new Screen);
-	AddScreen(screen2);
+	Frame* screen2 = Manage(new Frame);
+	AddFrame(screen2);
 
-	Screen* screen3 = Manage(new Screen);
-	AddScreen(screen3);
+	Frame* screen3 = Manage(new Frame);
+	AddFrame(screen3);
 
-	Screen* screen4 = Manage(new Screen);
-	AddScreen(screen4);
+	Frame* screen4 = Manage(new Frame);
+	AddFrame(screen4);
 
-	Screen* screen5 = Manage(new Screen);
-	AddScreen(screen5);
+	Frame* screen5 = Manage(new Frame);
+	AddFrame(screen5);
 
 	m_button = Manage(new Button("Take Screenshot"));
 

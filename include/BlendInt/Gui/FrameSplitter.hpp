@@ -30,15 +30,15 @@
 namespace BlendInt {
 
 	class Widget;
-	class ScreenSplitter;
+	class FrameSplitter;
 
-	class ScreenSplitterHandle: public AbstractFrame
+	class FrameSplitterHandle: public AbstractFrame
 	{
 	public:
 
-		ScreenSplitterHandle (Orientation orientation = Horizontal);
+		FrameSplitterHandle (Orientation orientation = Horizontal);
 
-		virtual ~ScreenSplitterHandle ();
+		virtual ~FrameSplitterHandle ();
 
 		void SetHandleWidget (Widget* widget);
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 
 	protected:
 
-		friend class ScreenSplitter;
+		friend class FrameSplitter;
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
@@ -89,13 +89,13 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	class ScreenSplitter: public AbstractFrame
+	class FrameSplitter: public AbstractFrame
 	{
 	public:
 
-		ScreenSplitter (Orientation orientation = Horizontal);
+		FrameSplitter (Orientation orientation = Horizontal);
 
-		virtual ~ScreenSplitter ();
+		virtual ~FrameSplitter ();
 
 		void PrependViewport (AbstractFrame* viewport);
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class ScreenSplitterHandle;
+		friend class FrameSplitterHandle;
 
 		void AlignSubViewports (Orientation orientation, const Size& size);
 

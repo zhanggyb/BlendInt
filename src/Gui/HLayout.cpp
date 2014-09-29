@@ -46,7 +46,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool HLayout::Prepend (AbstractWidget* widget)
+	bool HLayout::Prepend (Widget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
@@ -56,7 +56,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool HLayout::Append (AbstractWidget* widget)
+	bool HLayout::Append (Widget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
@@ -66,7 +66,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool HLayout::Remove (AbstractWidget* widget)
+	bool HLayout::Remove (Widget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);

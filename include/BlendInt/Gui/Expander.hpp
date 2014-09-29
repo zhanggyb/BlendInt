@@ -25,7 +25,6 @@
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
 #include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
@@ -70,7 +69,7 @@ namespace BlendInt {
 	/**
 	 * @brief Expander
 	 */
-	class Expander: public Layout
+	class Expander: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
 
@@ -96,8 +95,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -120,7 +117,7 @@ namespace BlendInt {
 
 		void InitializeExpander ();
 
-		void FillInExpander (const Size& out_size, const Margin& margin);
+		void FillInExpander (const Size& out_size);
 
 		void FillInExpander (int x, int y, int width, int height);
 

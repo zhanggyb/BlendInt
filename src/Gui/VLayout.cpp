@@ -46,7 +46,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool VLayout::Prepend (AbstractWidget* widget)
+	bool VLayout::Prepend (Widget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
@@ -56,7 +56,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool VLayout::Append (AbstractWidget* widget)
+	bool VLayout::Append (Widget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
@@ -66,7 +66,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool VLayout::Remove (AbstractWidget* widget)
+	bool VLayout::Remove (Widget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);

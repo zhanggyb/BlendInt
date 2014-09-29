@@ -146,13 +146,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (AbstractWidget* viewport);
+		void SetViewport (Widget* viewport);
 
-		void SetLeftSideBar (AbstractWidget* widget);
+		void SetLeftSideBar (Widget* widget);
 
-		void SetRightSideBar (AbstractWidget* widget);
+		void SetRightSideBar (Widget* widget);
 
-		void SetHeader (AbstractWidget* widget);
+		void SetHeader (Widget* widget);
 
 		void SwitchHeaderPosition ();
 
@@ -162,22 +162,22 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		AbstractWidget* viewport () const
+		Widget* viewport () const
 		{
 			return viewport_;
 		}
 
-		AbstractWidget* header () const
+		Widget* header () const
 		{
 			return header_;
 		}
 
-		AbstractWidget* left_sidebar() const
+		Widget* left_sidebar() const
 		{
 			return left_sidebar_;
 		}
 
-		AbstractWidget* right_sidebar() const
+		Widget* right_sidebar() const
 		{
 			return right_sidebar_;
 		}
@@ -214,13 +214,13 @@ namespace BlendInt {
 
 		void InitializeWorkspace ();
 
-		AbstractWidget* left_sidebar_;
+		Widget* left_sidebar_;
 
-		AbstractWidget* right_sidebar_;
+		Widget* right_sidebar_;
 
-		AbstractWidget* header_;
+		Widget* header_;
 
-		AbstractWidget* viewport_;
+		Widget* viewport_;
 
 		Splitter* splitter_;
 

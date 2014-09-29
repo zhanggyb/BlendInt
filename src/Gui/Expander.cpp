@@ -187,7 +187,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: Layout(), vao_(0), frame_height_(0)
+	: Widget(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Panel* frame = Manage(new Panel);
@@ -206,13 +206,9 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		set_margin(2, 2, 2, 2);
-
-		width = width + margin().hsum();
-		height = height + margin().vsum();
 		set_size(width, height);
 
-		FillInExpander(size(), margin());
+		FillInExpander(size());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
@@ -221,7 +217,7 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: Layout(), vao_(0), frame_height_(0)
+	: Widget(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Panel* frame = Manage(new Panel);
@@ -240,13 +236,9 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		width = width + margin().left() + margin().right();
-		height = height + margin().top() + margin().bottom();
-
 		set_size(width, height);
-		set_margin(2, 2, 2, 2);
 
-		FillInExpander(size(), margin());
+		FillInExpander(size());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
@@ -281,9 +273,6 @@ namespace BlendInt {
 			prefer.add_height(tmp.height());
 		}
 
-		prefer.add_width(margin().hsum());
-		prefer.add_height(margin().vsum());
-
 		return prefer;
 	}
 
@@ -317,15 +306,10 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::PerformMarginUpdate(const Margin& request)
-	{
-		FillInExpander(size(), request);
-	}
-
 	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillInExpander(*request.size(), margin());
+			FillInExpander(*request.size());
 
 			VertexTool tool;
 			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
@@ -399,12 +383,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void Expander::FillInExpander (const Size& out_size, const Margin& margin)
+	void Expander::FillInExpander (const Size& out_size)
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = 0;
+		int y = 0;
+		int w = out_size.width();
+		int h = out_size.height();
 
 		if(w >= 0 && h >= 0)
 			FillInExpander(x, y, w, h);
@@ -490,7 +474,7 @@ namespace BlendInt {
 			int y = position().y() + size().height();
 			frame->SetVisible(false);
 			frame_height_ = frame->size().height();
-			Resize(size().width(), button->size().height() + margin().vsum());
+			Resize(size().width(), button->size().height());
 			y = y - size().height();
 			SetPosition(x, y);
 		} else {
@@ -500,7 +484,7 @@ namespace BlendInt {
 			frame->SetVisible(true);
 
 			Resize(size().width(),
-							button->size().height() + frame_height_ + margin().vsum());
+							button->size().height() + frame_height_);
 			y = y - size().height();
 			SetPosition(x, y);
 		}

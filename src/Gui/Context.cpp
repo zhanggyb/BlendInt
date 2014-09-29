@@ -188,7 +188,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	void Context::AddScreen (AbstractFrame* vp)
+	void Context::AddFrame (AbstractFrame* vp)
 	{
 		if(PushBackSubWidget(vp)) {
 			// TODO: 			

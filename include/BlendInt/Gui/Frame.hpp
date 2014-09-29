@@ -31,13 +31,13 @@
 
 namespace BlendInt {
 
-	class Screen: public AbstractFrame
+	class Frame: public AbstractFrame
 	{
 	public:
 
-		Screen ();
+		Frame ();
 
-		virtual ~Screen ();
+		virtual ~Frame ();
 
 		void Setup (Widget* widget);
 

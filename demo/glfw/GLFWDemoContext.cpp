@@ -8,7 +8,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
-#include <BlendInt/Gui/Screen.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
@@ -31,23 +31,23 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	Screen* screen = Manage(new Screen);
-	screen->SetPosition(200, 200);
-	AddScreen(screen);
+	Frame* frame1 = Manage(new Frame);
+	frame1->SetPosition(200, 200);
+	AddFrame(frame1);
 
 	ColorButton* cb = Manage(new ColorButton);
 	cb->SetColor(Color(0xFF88449F));
 
-	screen->Setup(cb);
+	frame1->Setup(cb);
 
-	Screen* screen2 = Manage(new Screen);
-	screen2->SetPosition(400, 200);
-	AddScreen(screen2);
+	Frame* frame2 = Manage(new Frame);
+	frame2->SetPosition(400, 200);
+	AddFrame(frame2);
 
 	ScrollBar* exp = Manage(new ScrollBar);
 	exp->Resize(100, 14);
 
-	screen2->Setup(exp);
+	frame2->Setup(exp);
 
-	screen2->SetPosition(600, 200);
+	frame2->SetPosition(600, 200);
 }

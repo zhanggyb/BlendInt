@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		void AddScreen (AbstractFrame* vp);
+		void AddFrame (AbstractFrame* vp);
 
 		void Draw ();
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 
 		void DispatchMouseEvent (const MouseEvent& event);
 
-		void SetFocusedViewport (AbstractFrame* frame);
+		void SetFocusedFrame (AbstractFrame* frame);
 
 		/**
 		 * @brief Always return true

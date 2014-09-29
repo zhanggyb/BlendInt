@@ -352,7 +352,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Workspace::SetViewport (AbstractWidget* viewport)
+	void Workspace::SetViewport (Widget* viewport)
 	{
 		if(viewport_ == viewport) return;
 
@@ -365,7 +365,7 @@ namespace BlendInt {
 		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
 	}
 
-	void Workspace::SetLeftSideBar (AbstractWidget* widget)
+	void Workspace::SetLeftSideBar (Widget* widget)
 	{
 		if(left_sidebar_ == widget) return;
 
@@ -376,7 +376,7 @@ namespace BlendInt {
 		left_sidebar_ = widget;
 	}
 
-	void Workspace::SetRightSideBar (AbstractWidget* widget)
+	void Workspace::SetRightSideBar (Widget* widget)
 	{
 		if(right_sidebar_ == widget) return;
 
@@ -387,7 +387,7 @@ namespace BlendInt {
 		right_sidebar_ = widget;
 	}
 
-	void Workspace::SetHeader (AbstractWidget* widget)
+	void Workspace::SetHeader (Widget* widget)
 	{
 		if(header_ == widget) return;
 
