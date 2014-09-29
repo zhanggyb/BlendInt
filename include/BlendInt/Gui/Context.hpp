@@ -30,7 +30,6 @@
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/Section.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {

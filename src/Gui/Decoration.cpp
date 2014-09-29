@@ -38,7 +38,6 @@
 #include <BlendInt/Gui/Decoration.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Section.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>

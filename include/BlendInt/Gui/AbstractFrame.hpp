@@ -73,6 +73,8 @@ namespace BlendInt {
 
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
+		ResponseType DispatchMouseMoveEvent (AbstractWidget* widget, const MouseEvent& event);
+
 		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
 
 		ResponseType assign_key_press_event (AbstractWidget* widget, const KeyEvent& event)
@@ -117,7 +119,7 @@ namespace BlendInt {
 			widget->set_hover(hover);
 		}
 
-		void set_event_viewport (const DeviceEvent& event)
+		void set_event_frame (const DeviceEvent& event)
 		{
 			const_cast<DeviceEvent&>(event).frame_ = this;
 		}

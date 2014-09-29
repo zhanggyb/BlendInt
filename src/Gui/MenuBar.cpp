@@ -277,20 +277,21 @@ namespace BlendInt {
 
 			RefPtr<Menu> menu = m_active_button->menu();
 
-			int y = m_active_button->position().y();
-			y = y - menu->size().height();
+			Point pos = m_active_button->GetGlobalPosition();
 
-			if(y < 0) {
-				y = 0;
+			pos.set_y(pos.y() - menu->size().height());
+
+			if(pos.y() < 0) {
+				pos.set_y(0);
 			}
 
 			//menu->SetPosition(m_active_button->position().x(), y);
 
-			Frame* screen = Manage(new Frame);
-
-			screen->Resize(menu->size());
-			screen->Setup(menu.get());
-			context->AddFrame(screen);
+			Frame* frame = Manage(new Frame);
+			frame->SetPosition(pos);
+			frame->Resize(menu->size());
+			frame->Setup(menu.get());
+			context->AddFrame(frame);
 
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
 			//context->SetFocusedWidget(menu.get());
@@ -323,8 +324,8 @@ namespace BlendInt {
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			AbstractWidget* parent = menu->parent();
-			delete parent;
+			AbstractWidget* frame = menu->parent();
+			delete frame;
 		}
 
 		if(m_active_button) {

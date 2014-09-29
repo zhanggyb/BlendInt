@@ -98,7 +98,7 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Ignore;
+		return StackLayout::Draw(profile);
 	}
 
 	void Stack::InitializeStack()

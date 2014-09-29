@@ -88,10 +88,6 @@ namespace BlendInt {
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
 		void InitializeFileBrowserOnce ();

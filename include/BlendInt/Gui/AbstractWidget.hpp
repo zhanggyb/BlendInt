@@ -281,7 +281,6 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
-		friend class Section;
 		friend class AbstractFrame;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
@@ -465,7 +464,7 @@ namespace BlendInt {
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
 		 *
-		 * @note There's no meaning to use this function to test Context or Section.
+		 * @note There's no meaning to use this function to test Context or Frame.
 		 */
 		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
 

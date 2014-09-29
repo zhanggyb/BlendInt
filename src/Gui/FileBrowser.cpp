@@ -61,18 +61,20 @@ namespace BlendInt {
 			int h = font_.GetHeight();
 			h = model_->GetRows() * h;	// total height
 
-			if(h > size().height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(size().height());
-				vbar()->SetSliderPercentage(size().height() * 100 / h);
-			} else {
-				vbar()->SetVisible(false);
-			}
-			hbar()->SetVisible(false);
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					size().width(), size().height());
+			if(h > size().height()) {
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(size().height());
+				vbar->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar->SetVisible(false);
+			}
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 
 		return retval;
@@ -116,7 +118,7 @@ namespace BlendInt {
 
 			int i = 0;
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - point.y();
+				i = position().y() + GetVScrollBar()->value() - point.y();
 			} else {	// no vbar
 				i = position().y() + size().height() - point.y();
 			}
@@ -139,8 +141,9 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height();
 
-		if(vbar()->visiable()) {
-			y = position().y() + vbar()->value();
+		ScrollBar* vbar = GetVScrollBar();
+		if(vbar->visiable()) {
+			y = position().y() + vbar->value();
 		}
 
 		int h = font_.GetHeight();
@@ -201,8 +204,8 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			if(vbar()->visiable()) {
-				y = position().y() + vbar()->value();
+			if(vbar->visiable()) {
+				y = position().y() + vbar->value();
 			}
 
 			while(index.IsValid()) {
@@ -214,9 +217,6 @@ namespace BlendInt {
 			}
 
 		}
-
-        DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
 
 		program->use();
 
@@ -271,18 +271,20 @@ namespace BlendInt {
 
 			h = model_->GetRows() * h;	// total height
 
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 			if(h > request.size()->height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(request.size()->height());
-				vbar()->SetSliderPercentage(request.size()->height() * 100 / h);
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(request.size()->height());
+				vbar->SetSliderPercentage(request.size()->height() * 100 / h);
 			} else {
-				vbar()->SetVisible(false);
+				vbar->SetVisible(false);
 			}
-			hbar()->SetVisible(false);
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					request.size()->width(), request.size()->height());
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 
 		if(request.source() == this) {
@@ -292,12 +294,6 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
 	{
-		if (hbar()->visiable() && hbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(vbar(), event);
-		}
-
 		ModelIndex index;
 
 		int rows = model_->GetRows();
@@ -308,7 +304,7 @@ namespace BlendInt {
 
 			int i = 0;
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - event.local_position().y();
+				i = position().y() + GetVScrollBar()->value() - event.local_position().y();
 			} else {	// no vbar
 				i = position().y() + size().height() - event.local_position().y();
 			}
@@ -342,32 +338,6 @@ namespace BlendInt {
 		}
 
 		clicked_.fire();
-		return Accept;
-	}
-
-	ResponseType FileBrowser::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
-	ResponseType FileBrowser::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-
-			return DispatchMouseMoveEvent(hbar(), event);
-
-		} else if (vbar()->pressed()) {
-
-			return DispatchMouseMoveEvent(vbar(), event);
-
-		}
-
 		return Accept;
 	}
 
@@ -415,8 +385,13 @@ namespace BlendInt {
 
 		Load(getenv("PWD"));
 
-		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
-		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		SetScrollBar(hbar, vbar);
+		AdjustScrollBarGeometries(hbar, vbar);
+
+		//events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
+		//events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	void FileBrowser::OnHBarSlide (int val)

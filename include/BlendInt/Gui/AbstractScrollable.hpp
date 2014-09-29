@@ -41,69 +41,38 @@ namespace BlendInt {
 
 		virtual ~AbstractScrollable ();
 
-		Cpp::EventRef<int> hbar_moved ()
+		void SetScrollBar (ScrollBar* hbar, ScrollBar* vbar);
+
+		ScrollBar* GetHScrollBar () const;
+
+		ScrollBar* GetVScrollBar () const;
+
+		Cpp::EventRef<int> scrolled_horizontally ()
 		{
-			return hbar_moved_;
+			return *scrolled_horizontally_;
 		}
 
-		Cpp::EventRef<int> vbar_moved ()
+		Cpp::EventRef<int> scrolled_vertically ()
 		{
-			return vbar_moved_;
+			return *scrolled_vertically_;
 		}
 
 	protected:
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		ResponseType DispatchMousePressEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
-
-		ResponseType DispatchMouseReleaseEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
-
-		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
-
-		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, Profile& profile);
-
 		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
 
-		/**
-		 * @brief Get the reference to the horizontal scroll bar
-		 */
-		const RefPtr<NativeScrollBar>& hbar () const
-		{
-			return hbar_;
-		}
+		void AdjustScrollBarGeometries (ScrollBar* hbar, ScrollBar* vbar);
 
-		/**
-		 * @brief Get the reference to the vertical scroll bar
-		 */
-		const RefPtr<NativeScrollBar>& vbar () const
+		inline void fire_scrolled_event (int x)
 		{
-			return vbar_;
+			scrolled_horizontally_->fire(x);
 		}
 
 	private:
 
-		RefPtr<NativeScrollBar> hbar_;
+		boost::scoped_ptr<Cpp::Event<int> > scrolled_horizontally_;
 
-		RefPtr<NativeScrollBar> vbar_;
-
-		Cpp::Event<int> hbar_moved_;
-
-		Cpp::Event<int> vbar_moved_;
+		boost::scoped_ptr<Cpp::Event<int> > scrolled_vertically_;
 
 	};
 

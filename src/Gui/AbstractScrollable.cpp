@@ -28,102 +28,94 @@ namespace BlendInt {
 	AbstractScrollable::AbstractScrollable()
 	: Widget()
 	{
-		hbar_.reset(new NativeScrollBar(Horizontal));
-		vbar_.reset(new NativeScrollBar(Vertical));
-
-		events()->connect(hbar_->slider_moved(), &hbar_moved_, &Cpp::Event<int>::fire);
-		events()->connect(vbar_->slider_moved(), &vbar_moved_, &Cpp::Event<int>::fire);
+		scrolled_horizontally_.reset(new Cpp::Event<int>);
+		scrolled_vertically_.reset(new Cpp::Event<int>);
 	}
 
 	AbstractScrollable::~AbstractScrollable ()
 	{
 	}
 
-	ResponseType AbstractScrollable::FocusEvent (bool focus)
+	void AbstractScrollable::SetScrollBar(ScrollBar* hbar, ScrollBar* vbar)
 	{
-		return Ignore;
-	}
+		ScrollBar* hscrollbar = GetHScrollBar();
+		ScrollBar* vscrollbar = GetVScrollBar();
 
-	ResponseType AbstractScrollable::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
+		if(hscrollbar != hbar) {
 
-	ResponseType AbstractScrollable::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
+			if(hscrollbar) {
 
-	ResponseType AbstractScrollable::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
+				if(hbar != hscrollbar) {
+					if(hscrollbar->managed() && (hscrollbar->reference_count() == 0)) {
+						delete hscrollbar;
+					} else {
+						DBG_PRINT_MSG("Warning: %s", "hscrollbar is not set managed, will not be deleted");
+						RemoveSubWidget(hscrollbar);
+					}
+				}
 
-	ResponseType AbstractScrollable::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
+			}
 
-	ResponseType AbstractScrollable::MousePressEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType AbstractScrollable::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType AbstractScrollable::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType AbstractScrollable::DispatchDrawEvent (
-	        const RefPtr<NativeScrollBar>& scrollbar, Profile& profile)
-	{
-		if(scrollbar->visiable()) {
-			return scrollbar->Draw(profile);
-		} else {
-			return Ignore;
+			if(hbar) {
+				hbar->SetOrientation(Horizontal);
+			}
+			PushFrontSubWidget(hbar);
 		}
+
+		if(vscrollbar != vbar) {
+
+			if(vscrollbar) {
+
+				if(vbar != vscrollbar) {
+					if(vscrollbar->managed() && (vscrollbar->reference_count() == 0)) {
+						delete vscrollbar;
+					} else {
+						DBG_PRINT_MSG("Warning: %s", "vscrollbar is not set managed, will not be deleted");
+						RemoveSubWidget(vscrollbar);
+					}
+				}
+			}
+
+			if(vbar) {
+				vbar->SetOrientation(Vertical);
+			}
+			PushBackSubWidget(vbar);
+		}
+
+		AdjustScrollBarGeometries(hbar, vbar);
+		assert(subs_count() <= 2);
 	}
 
-	ResponseType AbstractScrollable::DispatchMousePressEvent (
-	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	ScrollBar* AbstractScrollable::GetHScrollBar() const
 	{
-		if(scrollbar->visiable()) {
-			return scrollbar->MousePressEvent(event);
-		} else {
-			return Ignore;
+		ScrollBar* bar = 0;
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			bar = dynamic_cast<ScrollBar*>(p);
+			if(bar && (bar->orientation() == Horizontal)) {
+				break;
+			}
 		}
+
+		return bar;
 	}
 
-	ResponseType AbstractScrollable::DispatchMouseReleaseEvent (
-	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	ScrollBar* AbstractScrollable::GetVScrollBar() const
 	{
-		if(scrollbar->visiable()) {
-			return scrollbar->MouseReleaseEvent(event);
-		} else {
-			return Ignore;
+		ScrollBar* bar = 0;
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+			bar = dynamic_cast<ScrollBar*>(p);
+			if(bar && (bar->orientation() == Vertical)) {
+				break;
+			}
 		}
-	}
 
-	ResponseType AbstractScrollable::DispatchMouseMoveEvent (
-	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-	{
-		if(scrollbar->visiable()) {
-			return scrollbar->MouseMoveEvent(event);
-		} else {
-			return Ignore;
-		}
+		return bar;
 	}
 
 	void AbstractScrollable::AdjustScrollBarGeometries (int left, int bottom,
 	        int width, int height)
 	{
+		/*
 		int bh = hbar_->visiable() ? hbar_->size().height() : 0;	// height of the bottom hbar
 		int rw = vbar_->visiable() ? vbar_->size().width() : 0;	// width of the right vbar
 
@@ -142,6 +134,33 @@ namespace BlendInt {
 			vbar_->SetPosition(left + width - vbar_->size().width(), bottom + hbar_->size().height());
 			vbar_->Resize (vbar_->size().width(), height - hbar_->size().height());
 		}
+		*/
+
+	}
+
+	void AbstractScrollable::AdjustScrollBarGeometries (ScrollBar* hbar, ScrollBar* vbar)
+	{
+		int bh = 0;
+		int rw = 0;
+
+		if(hbar) {
+			bh = hbar->visiable() ? hbar->size().height() : 0;	// height of the bottom hbar
+		}
+
+		if(vbar) {
+			rw = vbar->visiable() ? vbar->size().width() : 0;	// width of the right vbar
+		}
+
+		if(hbar) {
+			SetSubWidgetPosition(hbar, 0, 0);
+			ResizeSubWidget(hbar, size().width() - rw, bh);
+		}
+
+		if(vbar) {
+			SetSubWidgetPosition(vbar, size().width() - rw, bh);
+			ResizeSubWidget(vbar, rw, size().height() - bh);
+		}
+
 	}
 
 }

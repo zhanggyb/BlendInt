@@ -54,8 +54,10 @@ namespace BlendInt {
 
 		InitializeListView();
 
-		AdjustScrollBarGeometries(position().x(), position().y(),
-		        size().width(), size().height());
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		SetScrollBar(hbar, vbar);
+		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
 	ListView::~ListView ()
@@ -86,18 +88,20 @@ namespace BlendInt {
 			int h = font_.GetHeight();
 			h = model_->GetRows() * h;	// total height
 
-			if(h > size().height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(size().height());
-				vbar()->SetSliderPercentage(size().height() * 100 / h);
-			} else {
-				vbar()->SetVisible(false);
-			}
-			hbar()->SetVisible(false);
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					size().width(), size().height());
+			if(h > size().height()) {
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(size().height());
+				vbar->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar->SetVisible(false);
+			}
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 	}
 
@@ -112,8 +116,10 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height();
 
-		if(model_ && vbar()->visiable()) {
-			y = position().y() + vbar()->value();
+		ScrollBar* vbar = GetVScrollBar();
+
+		if(model_ && vbar->visiable()) {
+			y = position().y() + vbar->value();
 		}
 
 		int h = font_.GetHeight();
@@ -176,8 +182,8 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			if(vbar()->visiable()) {
-				y = position().y() + vbar()->value();
+			if(vbar->visiable()) {
+				y = position().y() + vbar->value();
 			}
 
 			while(index.IsValid()) {
@@ -189,9 +195,6 @@ namespace BlendInt {
 			}
 
 		}
-
-        DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
 
 		program->use();
 
@@ -210,12 +213,6 @@ namespace BlendInt {
 
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
 	{
-		if (hbar()->visiable() && hbar()->Contain(event.position())) {
-			DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
-			DispatchMousePressEvent(vbar(), event);
-		}
-
 		if(model_) {
 
 			ModelIndex index;
@@ -228,7 +225,7 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() + vbar()->value() - event.position().y();
+					i = position().y() + GetVScrollBar()->value() - event.position().y();
 				} else {	// no vbar
 					i = position().y() + size().height() - event.position().y();
 				}
@@ -254,41 +251,23 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
 	ModelIndex ListView::GetIndexAt (const Point& point) const
 	{
 		return ModelIndex();
 	}
 
-	ResponseType ListView::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			DispatchMouseMoveEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			DispatchMouseMoveEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
 	void ListView::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			AdjustScrollBarGeometries(request.position()->x(),
-					request.position()->y(), size().width(), size().height());
+
+			set_position(*request.position());
+
+			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)

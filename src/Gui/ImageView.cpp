@@ -129,10 +129,13 @@ namespace BlendInt {
 	void ImageView::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
+			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
+			Refresh();
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void ImageView::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -145,15 +148,17 @@ namespace BlendInt {
 			background_->set_data(tool.inner_size(), tool.inner_data());
 			background_->reset();
 
+			set_size(*request.size());
+
 			AdjustImageArea (*request.size());
 
-			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
-
-			set_size(*request.size());
+			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType ImageView::Draw (Profile& profile)
@@ -172,8 +177,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		glm::vec3 pos(0.f);
-		pos.x = position().x() + (size().width() - checkerboard_->size().width()) / 2.f;
-		pos.y = position().y() + (size().height() - checkerboard_->size().height()) / 2.f;
+		pos.x = (size().width() - checkerboard_->size().width()) / 2.f;
+		pos.y = (size().height() - checkerboard_->size().height()) / 2.f;
 
 		// draw checkerboard
 		checkerboard_->Draw(pos);
@@ -196,10 +201,7 @@ namespace BlendInt {
 		texture_->reset();
 		program->reset();
 
-		DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
-
-		return Accept;
+		return AbstractScrollable::Draw(profile);
 	}
 	
 	void ImageView::InitializeImageView ()
@@ -256,67 +258,10 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
-	}
-
-	ResponseType ImageView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ImageView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ImageView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ImageView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ImageView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ImageView::MousePressEvent (const MouseEvent& event)
-	{
-		if(hbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(vbar(), event);
-		}
-
-		return Ignore;
-	}
-
-	ResponseType ImageView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Ignore;
-	}
-
-	ResponseType ImageView::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseMoveEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseMoveEvent(vbar(), event);
-		}
-
-		return Ignore;
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		SetScrollBar(hbar, vbar);
+		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
 	void ImageView::AdjustImageArea(const Size& size)

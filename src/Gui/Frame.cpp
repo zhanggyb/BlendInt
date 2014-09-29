@@ -256,7 +256,7 @@ namespace BlendInt {
 
 	ResponseType Frame::KeyPressEvent(const KeyEvent& event)
 	{
-		set_event_viewport(event);
+		set_event_frame(event);
 
 		ResponseType response = Ignore;
 
@@ -282,7 +282,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		set_event_viewport(event);
+		set_event_frame(event);
 
 		CheckAndUpdateHoverWidget(event);
 
@@ -320,7 +320,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		set_event_viewport(event);
+		set_event_frame(event);
 
 		CheckAndUpdateHoverWidget(event);
 
@@ -341,7 +341,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		set_event_viewport(event);
+		set_event_frame(event);
 
 		// TODO: make sure focused widget is still in this viewport
 		if(focused_widget_) {
@@ -356,7 +356,14 @@ namespace BlendInt {
 		CheckAndUpdateHoverWidget(event);
 
 		if(top_hovered_widget_) {
-			retval = assign_mouse_move_event(top_hovered_widget_, event);
+
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - position().x() - offset().x(),
+					event.position().y() - position().y() - offset().y());
+
+			retval = DispatchMouseMoveEvent(top_hovered_widget_, event);
+
+			//retval = assign_mouse_move_event(top_hovered_widget_, event);
 		}
 
 		if(display_mode() == Modal) {

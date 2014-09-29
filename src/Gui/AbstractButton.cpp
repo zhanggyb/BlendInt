@@ -33,7 +33,6 @@
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Section.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 

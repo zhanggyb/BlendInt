@@ -207,9 +207,6 @@ namespace BlendInt {
 		texture_->reset();
 		program->reset();
 
-		DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
-
 		return Accept;
 	}
 	
@@ -266,66 +263,6 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 
 		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
-	}
-
-	ResponseType CVImageView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType CVImageView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType CVImageView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType CVImageView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType CVImageView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType CVImageView::MousePressEvent (const MouseEvent& event)
-	{
-		if(hbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(vbar(), event);
-		}
-
-		return Ignore;
-	}
-
-	ResponseType CVImageView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Ignore;
-	}
-
-	ResponseType CVImageView::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseMoveEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseMoveEvent(vbar(), event);
-		}
-
-		return Ignore;
 	}
 
 	void CVImageView::AdjustImageArea (const Size& size)

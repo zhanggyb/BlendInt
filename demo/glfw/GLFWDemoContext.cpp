@@ -35,19 +35,6 @@ void GLFWDemoContext::Initialize ()
 	frame1->SetPosition(200, 200);
 	AddFrame(frame1);
 
-	ColorButton* cb = Manage(new ColorButton);
-	cb->SetColor(Color(0xFF88449F));
-
-	frame1->Setup(cb);
-
-	Frame* frame2 = Manage(new Frame);
-	frame2->SetPosition(400, 200);
-	AddFrame(frame2);
-
-	ScrollBar* exp = Manage(new ScrollBar);
-	exp->Resize(100, 14);
-
-	frame2->Setup(exp);
-
-	frame2->SetPosition(600, 200);
+	ScrollBar* bar = Manage(new ScrollBar);
+	frame1->Setup(bar);
 }

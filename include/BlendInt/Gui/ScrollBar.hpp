@@ -76,16 +76,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
@@ -135,27 +125,6 @@ namespace BlendInt {
 		 * @brief If the slide switch is pressed
 		 */
 		bool pressed_;
-
-	};
-
-	class AbstractScrollable;
-
-	class NativeScrollBar: public ScrollBar
-	{
-	public:
-
-		friend class AbstractScrollable;
-
-		NativeScrollBar (Orientation orientation)
-		: ScrollBar(orientation)
-		{
-
-		}
-
-		virtual ~NativeScrollBar ()
-		{
-
-		}
 
 	};
 

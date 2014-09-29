@@ -137,6 +137,29 @@ namespace BlendInt {
 		}
 	}
 
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractWidget* widget, const MouseEvent& event)
+	{
+		if(widget == this) {
+			return Ignore;
+		} else {
+
+			if(widget->parent ()) {
+				if(DispatchMouseMoveEvent(widget->parent (), event) == Ignore) {
+					const_cast<MouseEvent&>(event).set_local_position(
+							event.local_position().x() - widget->position().x() - widget->parent ()->offset().x(),
+							event.local_position().y() - widget->position().y() - widget->parent ()->offset().y());
+					return widget->MouseMoveEvent(event);
+				} else {
+					return Accept;
+				}
+
+			} else {
+				return widget->MouseMoveEvent(event);
+			}
+
+		}
+	}
+
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
 			AbstractWidget* widget, const MouseEvent& event)
 	{

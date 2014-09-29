@@ -43,7 +43,6 @@
 namespace BlendInt {
 
 	class Context;
-	class Section;
 	class AbstractFrame;
 
 	/**
@@ -57,7 +56,6 @@ namespace BlendInt {
 
 		DeviceEvent ()
 		: context_(0),
-		  section_(0),
 		  frame_(0)
 		{
 		}
@@ -65,7 +63,6 @@ namespace BlendInt {
 		DeviceEvent (const DeviceEvent& orig)
 		{
 			context_ = orig.context_;
-			section_ = orig.section_;
 			frame_ = orig.frame_;
 		}
 
@@ -77,19 +74,17 @@ namespace BlendInt {
 			return context_;
 		}
 
-		Section* section () const
+		AbstractFrame* frame () const
 		{
-			return section_;
+			return frame_;
 		}
 
 	private:
 
 		friend class Context;
-		friend class Section;
 		friend class AbstractFrame;
 
 		Context* context_;
-		Section* section_;
 		AbstractFrame* frame_;
 	};
 

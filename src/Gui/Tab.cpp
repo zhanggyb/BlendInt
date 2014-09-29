@@ -52,7 +52,6 @@ namespace BlendInt {
 
 		TabHeader* header = Manage(new TabHeader);
 		Stack* stack = Manage(new Stack);
-		//stack->SetMargin(10, 10, 10, 10);
 
 		PushBackSubWidget(header);	// 0
 		PushBackSubWidget(stack);	// 1
@@ -152,46 +151,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Tab::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));

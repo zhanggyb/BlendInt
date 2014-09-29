@@ -282,7 +282,7 @@ namespace BlendInt {
 			return Accept;
 
 		} else {
-			if (CursorOnSlideIcon(event.position())) {
+			if (CursorOnSlideIcon(event.local_position())) {
 				m_slide.set_highlight(true);
 
 				Refresh();
@@ -290,6 +290,7 @@ namespace BlendInt {
 				return Accept;
 			} else {
 				m_slide.set_highlight(false);
+
 				Refresh();
 
 				return Accept;
@@ -299,7 +300,7 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
 	{
-		if (CursorOnSlideIcon(event.position())) {
+		if (CursorOnSlideIcon(event.local_position())) {
 
 			m_cursor_origin = event.position();
 			m_last_value = value();
@@ -317,7 +318,7 @@ namespace BlendInt {
 		if (pressed_) {
 			pressed_ = false;
 
-			if (CursorOnSlideIcon(event.position())) {
+			if (CursorOnSlideIcon(event.local_position())) {
 				fire_slider_released();
 			}
 
@@ -409,33 +410,6 @@ namespace BlendInt {
 		return space;
 	}
 
-	ResponseType ScrollBar::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	int ScrollBar::GetSlidePosition ()
 	{
 		int pos = 0;
@@ -450,39 +424,42 @@ namespace BlendInt {
 		return pos;
 	}
 
-	bool ScrollBar::CursorOnSlideIcon (const Point& cursor)
+	bool ScrollBar::CursorOnSlideIcon (const Point& local_cursor)
 	{
 		int slide_pos = GetSlidePosition();
+
+		DBG_PRINT_MSG("slide pos: %d", slide_pos);
+		DBG_PRINT_MSG("local cursor: %d, %d", local_cursor.x(), local_cursor.y());
 
 		int xmin, ymin, xmax, ymax;
 
 		if(orientation() == Horizontal) {
-			xmin = position().x() + slide_pos;
-			ymin = position().y() + (size().height() - m_slide.size().height()) / 2;
+			xmin = slide_pos;
+			ymin = (size().height() - m_slide.size().height()) / 2;
 			xmax = xmin + m_slide.size().width();
 			ymax = ymin + m_slide.size().height();
 		} else {
-			xmin = position().x() + (size().width() - m_slide.size().width()) / 2;
-			ymin = position().y() + slide_pos;
+			xmin = (size().width() - m_slide.size().width()) / 2;
+			ymin = slide_pos;
 			xmax = xmin + m_slide.size().width();
 			ymax = ymin + m_slide.size().height();
 		}
 
-		if(cursor.x() < xmin ||
-			cursor.y() < ymin ||
-			cursor.x() > xmax ||
-			cursor.y() > ymax)
+		if(local_cursor.x() < xmin ||
+			local_cursor.y() < ymin ||
+			local_cursor.x() > xmax ||
+			local_cursor.y() > ymax)
 		{
 			return false;
 		}
 
 		glm::vec2 center;
-		glm::vec2 cursor_pos(cursor.x(), cursor.y());
+		glm::vec2 cursor_pos(local_cursor.x(), local_cursor.y());
 		float distance = 0.f;
 
 		if(orientation() == Horizontal) {
 
-			if(cursor.x() < (xmin + m_slide.radius())) {
+			if(local_cursor.x() < (xmin + m_slide.radius())) {
 
 				center.x = xmin + m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
@@ -491,7 +468,7 @@ namespace BlendInt {
 
 				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.x() > (xmax - m_slide.radius())) {
+			} else if (local_cursor.x() > (xmax - m_slide.radius())) {
 
 				center.x = xmax - m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
@@ -506,7 +483,7 @@ namespace BlendInt {
 
 		} else {
 
-			if(cursor.y() < (ymin + m_slide.radius())) {
+			if(local_cursor.y() < (ymin + m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
 				center.y = ymin + m_slide.radius();
@@ -515,7 +492,7 @@ namespace BlendInt {
 
 				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.y() > (ymax - m_slide.radius())) {
+			} else if (local_cursor.y() > (ymax - m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
 				center.y = ymax - m_slide.radius();
