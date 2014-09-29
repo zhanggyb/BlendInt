@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Frame::Frame ()
+	Panel::Panel ()
 	: BinLayout(),
 	  vao_(0)
 	{
@@ -57,12 +57,12 @@ namespace BlendInt {
 		InitializeFrame();
 	}
 
-	Frame::~Frame ()
+	Panel::~Panel ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Panel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -85,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Frame::Draw (Profile& profile)
+	ResponseType Panel::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->use();
@@ -105,7 +105,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Frame::InitializeFrame ()
+	void Panel::InitializeFrame ()
 	{
 		glGenVertexArrays(1, &vao_);
 

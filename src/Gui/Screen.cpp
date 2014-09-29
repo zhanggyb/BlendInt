@@ -237,7 +237,6 @@ namespace BlendInt {
 
 	void Screen::PostDraw(Profile& profile)
 	{
-		set_refresh(false);
 	}
 
 	ResponseType Screen::FocusEvent(bool focus)

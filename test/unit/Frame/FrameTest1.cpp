@@ -34,7 +34,7 @@ TEST_F(FrameTest1, Foo1)
 	context->Resize(1280, 800);
 
     // TODO: add test code here
-    Frame* frame = Manage (new Frame);
+    Panel* frame = Manage (new Panel);
     //frame->SetMargin(10, 10, 10, 10);
     frame->SetPosition(100, 100);
 

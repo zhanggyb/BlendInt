@@ -29,9 +29,9 @@ private:
 
 	BI::Button* m_button;
 
-	BI::Frame* m_panel1;
+	BI::Panel* m_panel1;
 	
-	BI::StaticFrame* m_panel2;
+	BI::StaticPanel* m_panel2;
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

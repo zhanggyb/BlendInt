@@ -301,11 +301,11 @@ namespace BlendInt {
 	void AbstractWidget::Refresh()
 	{
 		if(!refresh()) {
-			set_refresh(true);
-
-			if(parent_) {
-				RefreshRequest request (this, parent_);
-				parent_->PerformRefresh(request);
+			AbstractWidget* p = parent();
+			while(p) {
+				if(p->refresh()) break;
+				p->set_refresh(true);
+				p = p->parent();
 			}
 		}
 	}
@@ -503,13 +503,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
-	{
-		if(parent_) {
-			parent_->PerformRefresh(request);
-		}
-	}
-
 	int AbstractWidget::GetOutlineVertices (int round_type)
 	{
 		round_type = round_type & RoundAll;
@@ -635,14 +628,6 @@ namespace BlendInt {
 
 		if(request.source() == this) {
 			ReportVisibilityRequest(request);
-		}
-	}
-
-	void AbstractWidget::PerformRefresh(const RefreshRequest& request)
-	{
-		if(!refresh()) {
-			set_refresh(true);
-			ReportRefresh(request);
 		}
 	}
 

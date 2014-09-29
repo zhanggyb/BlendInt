@@ -93,16 +93,10 @@ void MainSpace::InitOnce ()
     Append(bottom);
 }
 
-void MainSpace::PerformRefresh(const RefreshRequest& request)
-{
-	refresh_ = true;
-	ReportRefresh(request);
-}
-
 void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-		refresh_ = true;
+		Refresh();
 	}
 
 	VLayout::PerformSizeUpdate(request);
@@ -110,16 +104,12 @@ void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainSpace::Draw(Profile& profile)
 {
-	if(refresh_) {
-
+	if(refresh()) {
 		RenderToBuffer();
-
-		refresh_ = false;
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	buffer_.Draw(position().x(), position().y());
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;

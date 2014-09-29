@@ -190,7 +190,7 @@ namespace BlendInt {
 	: Layout(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		Frame* frame = Manage(new Frame);
+		Panel* frame = Manage(new Panel);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -224,7 +224,7 @@ namespace BlendInt {
 	: Layout(), vao_(0), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		Frame* frame = Manage(new Frame);
+		Panel* frame = Manage(new Panel);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -261,7 +261,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 		if(frame->Setup(widget)) {
 			return true;
 		}
@@ -415,7 +415,7 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -483,7 +483,7 @@ namespace BlendInt {
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 
 		if(toggle) {
 			int x = position().x();

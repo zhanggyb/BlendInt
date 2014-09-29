@@ -74,8 +74,8 @@ void TexBufContext::CreateWidgets ()
 	Viewport3D* view1 = Manage(new Viewport3D);
 	Viewport3D* view2 = Manage(new Viewport3D);
 
-	m_panel1 = Manage(new Frame);
-	m_panel2 = Manage(new StaticFrame);
+	m_panel1 = Manage(new Panel);
+	m_panel2 = Manage(new StaticPanel);
 	//m_panel->SetMargin(10, 10, 10, 10);
 	m_panel1->Setup(view1);
 	m_panel2->Setup(view2);

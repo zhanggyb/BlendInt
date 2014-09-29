@@ -599,15 +599,6 @@ namespace BlendInt {
 			}
 		}
 
-		inline void set_refresh (bool refresh)
-		{
-			if(refresh) {
-				SETBIT(flags_, WidgetFlagRefresh);
-			} else {
-				CLRBIT(flags_, WidgetFlagRefresh);
-			}
-		}
-
 		virtual void PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile) = 0;
@@ -650,8 +641,6 @@ namespace BlendInt {
 
 		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
-		virtual void PerformRefresh (const RefreshRequest& request);
-
 		void ReportSizeUpdate (const SizeUpdateRequest& request);
 
 		void ReportPositionUpdate (const PositionUpdateRequest& request);
@@ -661,8 +650,6 @@ namespace BlendInt {
 		void ReportRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
-
-		void ReportRefresh (const RefreshRequest& request);
 
 		bool PushFrontSubWidget (AbstractWidget* widget);
 
@@ -810,6 +797,15 @@ namespace BlendInt {
 				SETBIT(flags_, WidgetFlagManaged);
 			} else {
 				CLRBIT(flags_, WidgetFlagManaged);
+			}
+		}
+
+		inline void set_refresh (bool refresh)
+		{
+			if(refresh) {
+				SETBIT(flags_, WidgetFlagRefresh);
+			} else {
+				CLRBIT(flags_, WidgetFlagRefresh);
 			}
 		}
 

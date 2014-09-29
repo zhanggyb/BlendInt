@@ -51,19 +51,19 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	StaticFrame::StaticFrame()
+	StaticPanel::StaticPanel()
 	: BinLayout()
 	{
 		set_size(400, 300);
 		InitializeFramePanel();
 	}
 	
-	StaticFrame::~StaticFrame ()
+	StaticPanel::~StaticPanel ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void StaticFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void StaticPanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -88,7 +88,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType StaticFrame::Draw (Profile& profile)
+	ResponseType StaticPanel::Draw (Profile& profile)
 	{
 		if(refresh()) {
 			RenderToBuffer();
@@ -101,7 +101,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void StaticFrame::InitializeFramePanel()
+	void StaticPanel::InitializeFramePanel()
 	{
 		glGenVertexArrays(1, &vao_);
 
@@ -121,14 +121,14 @@ namespace BlendInt {
 		inner_->reset();
 	}
 
-	void StaticFrame::RenderToFile (const std::string& filename)
+	void StaticPanel::RenderToFile (const std::string& filename)
 	{
 		tex_buffer_.texture()->bind();
 		tex_buffer_.texture()->WriteToFile(filename);
 		tex_buffer_.texture()->reset();
 	}
 
-	void StaticFrame::RenderToBuffer ()
+	void StaticPanel::RenderToBuffer ()
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();

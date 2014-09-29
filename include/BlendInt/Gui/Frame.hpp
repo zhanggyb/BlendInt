@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAME_HPP_
-#define _BLENDINT_GUI_FRAME_HPP_
+#ifndef _BLENDINT_GUI_PANEL_HPP_
+#define _BLENDINT_GUI_PANEL_HPP_
 
 /**
  * @defgroup widgets Widgets
@@ -39,15 +39,15 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Frame: public BinLayout
+	class Panel: public BinLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(Frame);
+		DISALLOW_COPY_AND_ASSIGN(Panel);
 
 	public:
 
-		Frame ();
+		Panel ();
 
-		virtual ~Frame ();
+		virtual ~Panel ();
 
 	protected:
 
@@ -67,4 +67,4 @@ namespace BlendInt {
 
 } /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_FRAME_HPP_ */
+#endif /* _BLENDINT_GUI_PANEL_HPP_ */

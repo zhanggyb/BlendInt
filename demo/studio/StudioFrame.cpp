@@ -28,7 +28,7 @@ using namespace BlendInt;
 using Stock::Shaders;
 
 StudioFrame::StudioFrame()
-: BinLayout(), refresh_(true)
+: BinLayout()
 {
 	set_size(400, 300);
 }
@@ -37,19 +37,9 @@ StudioFrame::~StudioFrame ()
 {
 }
 
-void StudioFrame::PerformRefresh(const RefreshRequest& request)
-{
-	if(!refresh_) {
-		refresh_ = true;
-		ReportRefresh(request);
-	}
-}
-
 void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-
-		refresh_ = true;
 
 		set_size(*request.size());
 
@@ -57,6 +47,8 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 			assert(subs_count() == 1);
 			FillSingleWidget(0, *request.size(), margin());
 		}
+
+		Refresh();
 	}
 
 	if(request.source() == this) {
@@ -66,15 +58,12 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType StudioFrame::Draw (Profile& profile)
 {
-	if(refresh_) {
+	if(refresh()) {
 		RenderToBuffer();
-		refresh_ = false;
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
 	tex_buffer_.Draw(position().x(), position().y());
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;
