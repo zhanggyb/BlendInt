@@ -266,7 +266,7 @@ namespace BlendInt {
 			int y = (context->size().height() - h) / 2;
 
 			panel_->Resize(w, h);
-			panel_->SetContent(file_selector);
+			panel_->Setup(file_selector);
 
 			Screen* screen = Manage(new Screen);
 			screen->Resize(panel_->size());
@@ -283,7 +283,7 @@ namespace BlendInt {
 
 	void FileButton::OnOpened ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
 
@@ -296,7 +296,7 @@ namespace BlendInt {
 
 	void FileButton::OnCanceled ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
 
 		AbstractWidget* screen = panel_->parent();

@@ -39,9 +39,9 @@ namespace BlendInt {
 
 		virtual ~BinLayout ();
 
-		bool Setup (AbstractWidget* widget);
+		bool Setup (Widget* widget);
 
-		bool Remove (AbstractWidget* widget);
+		bool Remove (Widget* widget);
 
 		virtual bool IsExpandX () const;
 

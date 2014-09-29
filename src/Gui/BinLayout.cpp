@@ -51,7 +51,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool BinLayout::Setup (AbstractWidget* widget)
+	bool BinLayout::Setup (Widget* widget)
 	{
 		bool ret = false;
 
@@ -71,7 +71,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool BinLayout::Remove (AbstractWidget* widget)
+	bool BinLayout::Remove (Widget* widget)
 	{
 		return RemoveSubWidget(widget);
 	}

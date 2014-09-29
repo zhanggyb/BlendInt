@@ -16,7 +16,7 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/Slider.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
@@ -45,7 +45,7 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlockLayout.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/StaticFrame.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 #include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>

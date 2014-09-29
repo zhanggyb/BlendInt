@@ -7,8 +7,8 @@
 
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/StaticFrame.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 namespace BI=BlendInt;
 

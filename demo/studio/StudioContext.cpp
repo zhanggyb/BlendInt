@@ -44,7 +44,7 @@ void StudioContext::Initialize ()
 
 	StaticPanel* panel = Manage(new StaticPanel);
 	button_ = Manage(new Button("Save Texture"));
-	panel->SetContent(button_);
+	panel->Setup(button_);
 	panel->SetPosition(1100, 600);
 	panel->Resize(panel->GetPreferredSize());
 

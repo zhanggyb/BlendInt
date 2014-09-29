@@ -40,7 +40,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>

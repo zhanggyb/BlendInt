@@ -39,7 +39,7 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -259,7 +259,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	bool Expander::Setup (AbstractWidget* widget)
+	bool Expander::Setup (Widget* widget)
 	{
 		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 		if(frame->Setup(widget)) {

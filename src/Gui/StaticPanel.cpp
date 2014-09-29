@@ -45,7 +45,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/StaticFrame.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 namespace BlendInt {
 
