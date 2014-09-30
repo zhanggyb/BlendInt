@@ -97,43 +97,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollArea::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void ScrollArea::PerformMarginUpdate(const Margin& request)
 	{
 

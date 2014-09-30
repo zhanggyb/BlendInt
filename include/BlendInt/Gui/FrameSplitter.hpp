@@ -54,9 +54,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void FocusEvent (bool focus);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
@@ -109,15 +109,11 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void FocusEvent (bool focus);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

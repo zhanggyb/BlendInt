@@ -221,7 +221,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
+	void SplitterHandle::CursorEnterEvent (bool entered)
 	{
 		if(entered) {
 			highlight_ = true;
@@ -233,7 +233,6 @@ namespace BlendInt {
 		}
 
 		Refresh();
-		return Accept;
 	}
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
@@ -549,47 +548,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Splitter::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
 	void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size, const Margin& margin)
 	{
 		int room = GetAverageRoom(orientation, out_size, margin);

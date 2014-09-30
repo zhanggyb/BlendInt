@@ -311,47 +311,9 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	ResponseType NumericalSlider::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::CursorEnterEvent (bool entered)
+	void NumericalSlider::CursorEnterEvent (bool entered)
 	{
 		Refresh();
-		return Accept;
-	}
-
-	ResponseType NumericalSlider::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType NumericalSlider::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void NumericalSlider::InitOnce()

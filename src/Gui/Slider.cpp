@@ -190,31 +190,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType Slider::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)
 	{
 		if(m_pressed) {

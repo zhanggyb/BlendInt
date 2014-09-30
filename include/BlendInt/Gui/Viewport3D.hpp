@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 

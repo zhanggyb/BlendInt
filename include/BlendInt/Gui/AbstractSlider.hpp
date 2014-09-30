@@ -64,6 +64,11 @@ namespace BlendInt {
 			m_highlight = highlight;
 		}
 
+		bool highlight () const
+		{
+			return m_highlight;
+		}
+
 	protected:
 
 		virtual void PerformSizeUpdate (const Size& size);

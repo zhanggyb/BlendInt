@@ -325,28 +325,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ScrollView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
 		if(first_child()) {

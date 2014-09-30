@@ -80,7 +80,7 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void FocusEvent (bool focus);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 

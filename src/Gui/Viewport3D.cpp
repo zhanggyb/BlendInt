@@ -68,7 +68,7 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	ResponseType Viewport3D::CursorEnterEvent (bool entered)
+	void Viewport3D::CursorEnterEvent (bool entered)
 	{
 		if(entered) {
 			Cursor::instance->PushCursor();
@@ -76,8 +76,6 @@ namespace BlendInt {
 		} else {
 			Cursor::instance->PopCursor();
 		}
-
-		return Accept;
 	}
 
 	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)

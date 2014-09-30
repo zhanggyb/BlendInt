@@ -319,10 +319,9 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	ResponseType ComboBox::CursorEnterEvent (bool entered)
+	void ComboBox::CursorEnterEvent (bool entered)
 	{
 		Refresh();
-		return Accept;
 	}
 
 	void ComboBox::InitializeComboBox()

@@ -66,14 +66,12 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Accept;
 	}
 
-	ResponseType Widget::FocusEvent (bool focus)
+	void Widget::FocusEvent (bool focus)
 	{
-		return Ignore;
 	}
 
-	ResponseType Widget::CursorEnterEvent(bool entered)
+	void Widget::CursorEnterEvent(bool entered)
 	{
-		return Ignore;
 	}
 
 	ResponseType Widget::KeyPressEvent (const KeyEvent& event)

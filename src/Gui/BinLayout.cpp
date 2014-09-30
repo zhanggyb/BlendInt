@@ -138,46 +138,4 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType BinLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 }

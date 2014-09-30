@@ -35,6 +35,11 @@ void GLFWDemoContext::Initialize ()
 	frame1->SetPosition(200, 200);
 	AddFrame(frame1);
 
-	ScrollBar* bar = Manage(new ScrollBar);
-	frame1->Setup(bar);
+	Panel* panel = Manage(new Panel);
+	ImageView* iv = Manage(new ImageView);
+
+	panel->Setup(iv);
+	panel->Resize(600, 500);
+
+	frame1->Setup(panel);
 }

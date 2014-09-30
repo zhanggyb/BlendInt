@@ -176,48 +176,6 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType BrightnessSlider::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void BrightnessSlider::InitializeBrightnessSlider()
 	{
 		set_round_type(RoundAll);

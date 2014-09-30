@@ -83,22 +83,6 @@ namespace BlendInt {
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
 		void InitializeSideButtonLayer ();
@@ -193,22 +177,6 @@ namespace BlendInt {
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

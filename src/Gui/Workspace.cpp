@@ -226,48 +226,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButtonLayer::Draw(Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::CursorEnterEvent(bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::KeyPressEvent(const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MousePressEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MouseReleaseEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MouseMoveEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void EdgeButtonLayer::InitializeSideButtonLayer()
 	{
 		EdgeButton* left = Manage(new EdgeButton(RoundTopRight | RoundBottomRight));
@@ -517,48 +475,6 @@ namespace BlendInt {
 
 		program->reset();
 
-		return Ignore;
-	}
-
-	ResponseType Workspace::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MouseMoveEvent (const MouseEvent& event)
-	{
 		return Ignore;
 	}
 

@@ -51,20 +51,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);

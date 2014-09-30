@@ -113,6 +113,16 @@ namespace BlendInt {
 	{
 	}
 
+	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return subs_count() ? Ignore : Accept;
+	}
+
+	ResponseType AbstractFrame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return subs_count() ? Ignore : Accept;
+	}
+
 	ResponseType AbstractFrame::DispatchMousePressEvent(
 			AbstractWidget* widget, const MouseEvent& event)
 	{

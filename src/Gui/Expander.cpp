@@ -343,46 +343,9 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Ignore;
+		return Widget::Draw(profile);
 	}
 
-	ResponseType Expander::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
 	void Expander::FillInExpander (const Size& out_size)
 	{
 		int x = 0;

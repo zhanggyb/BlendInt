@@ -158,7 +158,7 @@ namespace BlendInt {
 		return text_length;
 	}
 
-	ResponseType AbstractButton::CursorEnterEvent(bool entered)
+	void AbstractButton::CursorEnterEvent(bool entered)
 	{
 		if(entered) {
 
@@ -184,8 +184,6 @@ namespace BlendInt {
 
 			Refresh();
 		}
-
-		return Accept;
 	}
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
@@ -330,28 +328,6 @@ namespace BlendInt {
 				toggled_.fire(m_status[ButtonChecked]);
 			}
 		}
-	}
-
-	ResponseType AbstractButton::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	int AbstractButton::GetValidTextLength(const String& text, const Font& font, int max_width)

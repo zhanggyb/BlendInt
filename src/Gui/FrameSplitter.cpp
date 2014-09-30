@@ -210,14 +210,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::FocusEvent(bool focus)
+	void FrameSplitterHandle::FocusEvent(bool focus)
 	{
-		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::CursorEnterEvent(bool entered)
+	void FrameSplitterHandle::CursorEnterEvent(bool entered)
 	{
-		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::KeyPressEvent(const KeyEvent& event)
@@ -405,12 +403,11 @@ namespace BlendInt {
 
 	}
 
-	ResponseType FrameSplitter::FocusEvent(bool focus)
+	void FrameSplitter::FocusEvent(bool focus)
 	{
-		return Ignore;
 	}
 
-	ResponseType FrameSplitter::CursorEnterEvent(bool entered)
+	void FrameSplitter::CursorEnterEvent(bool entered)
 	{
 		if(entered) {
 			// TODO: do sth.
@@ -421,22 +418,9 @@ namespace BlendInt {
 				hover_ = 0;
 			}
 		}
-		return Ignore;
 	}
 
 	ResponseType FrameSplitter::KeyPressEvent(const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FrameSplitter::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FrameSplitter::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}

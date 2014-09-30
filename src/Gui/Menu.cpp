@@ -304,7 +304,7 @@ namespace BlendInt {
 	{
 	}
 	
-	ResponseType Menu::FocusEvent (bool focus)
+	void Menu::FocusEvent (bool focus)
 	{
 		DBG_PRINT_MSG("focus %s", focus ? "on" : "off");
 
@@ -315,28 +315,6 @@ namespace BlendInt {
 		}
 
 		Refresh();
-
-		return Ignore;
-	}
-
-	ResponseType Menu::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Menu::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Menu::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Menu::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	unsigned int Menu::GetHighlightNo(int y)

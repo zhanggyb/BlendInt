@@ -394,10 +394,9 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType TextEntry::FocusEvent (bool focus)
+	void TextEntry::FocusEvent (bool focus)
 	{
 		Refresh();
-		return Accept;
 	}
 
 	void TextEntry::InitializeTextEntry ()

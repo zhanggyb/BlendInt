@@ -239,19 +239,16 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Frame::FocusEvent(bool focus)
+	void Frame::FocusEvent(bool focus)
 	{
-		return Ignore;
 	}
 
-	ResponseType Frame::CursorEnterEvent(bool entered)
+	void Frame::CursorEnterEvent(bool entered)
 	{
 		if(entered) {
 		} else {
 			ClearHoverWidgets();
 		}
-
-		return Ignore;
 	}
 
 	ResponseType Frame::KeyPressEvent(const KeyEvent& event)
@@ -265,17 +262,6 @@ namespace BlendInt {
 		}
 
 		return response;
-	}
-
-	ResponseType Frame::ContextMenuPressEvent(const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	ResponseType Frame::MousePressEvent(const MouseEvent& event)
@@ -344,7 +330,10 @@ namespace BlendInt {
 		set_event_frame(event);
 
 		// TODO: make sure focused widget is still in this viewport
+		/*
 		if(focused_widget_) {
+			Point pos = focused_widget_->GetGlobalPosition();
+			const_cast<MouseEvent&>(event).set_local_position(event.position().x() - pos.x(), event.position().y() - pos.y());
 			retval = assign_mouse_move_event(focused_widget_, event);
 		}
 
@@ -352,6 +341,7 @@ namespace BlendInt {
 			CheckAndUpdateHoverWidget(event);
 			return retval;
 		}
+		*/
 
 		CheckAndUpdateHoverWidget(event);
 

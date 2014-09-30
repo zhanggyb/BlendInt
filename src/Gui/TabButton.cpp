@@ -134,11 +134,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType TabButton::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
 	void TabButton::InitializeTabButton()
 	{
 		std::vector<GLfloat> inner;

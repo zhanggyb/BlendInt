@@ -386,11 +386,6 @@ namespace BlendInt
 		set_refresh(false);
 	}
 
-	ResponseType Context::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
 		const_cast<KeyEvent&>(event).context_ = this;
@@ -496,11 +491,6 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
 	void Context::GetGLVersion (int *major, int *minor)
 	{
 		const char* verstr = (const char*) glGetString(GL_VERSION);
@@ -542,6 +532,14 @@ namespace BlendInt
 
 		Shaders::instance->SetUIProjectionMatrix(projection);
 		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+	}
+
+	void Context::FocusEvent(bool focus)
+	{
+	}
+
+	void Context::CursorEnterEvent(bool entered)
+	{
 	}
 
 	void Context::OnHoverViewportDestroyed(AbstractWidget* widget)

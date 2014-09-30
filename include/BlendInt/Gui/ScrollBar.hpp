@@ -76,6 +76,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual void CursorEnterEvent (bool enter);
+
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);

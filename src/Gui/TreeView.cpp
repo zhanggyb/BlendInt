@@ -45,45 +45,4 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType TreeView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::ContextMenuReleaseEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TreeView::MouseMoveEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 }

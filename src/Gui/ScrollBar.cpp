@@ -266,6 +266,16 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void ScrollBar::CursorEnterEvent(bool enter)
+	{
+		if(!enter) {
+			if(m_slide.highlight()) {
+				m_slide.set_highlight(false);
+				Refresh();
+			}
+		}
+	}
+
 	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
 	{
 		if (pressed_) {
@@ -427,9 +437,6 @@ namespace BlendInt {
 	bool ScrollBar::CursorOnSlideIcon (const Point& local_cursor)
 	{
 		int slide_pos = GetSlidePosition();
-
-		DBG_PRINT_MSG("slide pos: %d", slide_pos);
-		DBG_PRINT_MSG("local cursor: %d, %d", local_cursor.x(), local_cursor.y());
 
 		int xmin, ymin, xmax, ymax;
 

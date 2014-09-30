@@ -604,9 +604,9 @@ namespace BlendInt {
 
 		virtual void PostDraw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus) = 0;
+		virtual void FocusEvent (bool focus) = 0;
 
-		virtual ResponseType CursorEnterEvent (bool entered) = 0;
+		virtual void CursorEnterEvent (bool entered) = 0;
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
 
