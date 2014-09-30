@@ -70,8 +70,14 @@ namespace BlendInt {
 	{
 	}
 
-	void Widget::CursorEnterEvent(bool entered)
+	void Widget::MouseHoverInEvent(const MouseEvent& event)
 	{
+
+	}
+
+	void Widget::MouseHoverOutEvent(const MouseEvent& event)
+	{
+
 	}
 
 	ResponseType Widget::KeyPressEvent (const KeyEvent& event)

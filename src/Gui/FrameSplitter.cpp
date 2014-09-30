@@ -214,10 +214,6 @@ namespace BlendInt {
 	{
 	}
 
-	void FrameSplitterHandle::CursorEnterEvent(bool entered)
-	{
-	}
-
 	ResponseType FrameSplitterHandle::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
@@ -407,16 +403,17 @@ namespace BlendInt {
 	{
 	}
 
-	void FrameSplitter::CursorEnterEvent(bool entered)
+	void FrameSplitter::MouseHoverInEvent(const MouseEvent& event)
 	{
-		if(entered) {
-			// TODO: do sth.
-		} else {
-			if(hover_) {
-				set_widget_hover_event(hover_, false);
-				hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
-				hover_ = 0;
-			}
+
+	}
+
+	void FrameSplitter::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		if(hover_) {
+			set_widget_mouse_hover_out_event(hover_, event);
+			hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
+			hover_ = 0;
 		}
 	}
 
@@ -491,12 +488,12 @@ namespace BlendInt {
 		if(original_hover != hover_) {
 
 			if(original_hover) {
-				set_widget_hover_event(original_hover, false);
+				set_widget_mouse_hover_out_event(original_hover, event);
 				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
 			}
 
 			if(hover_) {
-				set_widget_hover_event(hover_, true);
+				set_widget_mouse_hover_out_event(hover_, event);
 				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverViewportDestroyed);
 			}
 

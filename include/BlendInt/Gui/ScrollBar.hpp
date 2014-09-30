@@ -76,7 +76,7 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual void CursorEnterEvent (bool enter);
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
@@ -127,7 +127,6 @@ namespace BlendInt {
 		 * @brief If the slide switch is pressed
 		 */
 		bool pressed_;
-
 	};
 
 }

@@ -43,6 +43,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -221,22 +223,25 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void SplitterHandle::CursorEnterEvent (bool entered)
+	void SplitterHandle::MouseHoverInEvent(const MouseEvent& event)
 	{
-		if(entered) {
-			highlight_ = true;
-			Cursor::instance->PushCursor();
-			Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
-		} else {
-			highlight_ = false;
-			Cursor::instance->PopCursor();
-		}
+		highlight_ = true;
+		Cursor::instance->PushCursor();
+		Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
+		Refresh();
+	}
 
+	void SplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		highlight_ = false;
+		Cursor::instance->PopCursor();
 		Refresh();
 	}
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
 	{
+		event.frame()->SetCursorFollowedWidget(this);
+
 		last_ = position();
 		cursor_ = event.position();
 		pressed_ = true;
@@ -256,7 +261,10 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
 	{
-		pressed_ = false;
+		if (pressed_) {
+			event.frame()->SetCursorFollowedWidget(0);
+			pressed_ = false;
+		}
 
 		return Accept;
 	}

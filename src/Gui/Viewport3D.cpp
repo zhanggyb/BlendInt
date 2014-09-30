@@ -68,14 +68,15 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	void Viewport3D::CursorEnterEvent (bool entered)
+	void Viewport3D::MouseHoverInEvent(const MouseEvent& event)
 	{
-		if(entered) {
-			Cursor::instance->PushCursor();
-			Cursor::instance->SetCursor(CrossCursor);
-		} else {
-			Cursor::instance->PopCursor();
-		}
+		Cursor::instance->PushCursor();
+		Cursor::instance->SetCursor(CrossCursor);
+	}
+
+	void Viewport3D::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		Cursor::instance->PopCursor();
 	}
 
 	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)

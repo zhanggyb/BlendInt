@@ -468,13 +468,13 @@ namespace BlendInt
 
 			if(original_hover) {
 				original_hover->set_hover(false);
-				original_hover->CursorEnterEvent(false);
+				original_hover->MouseHoverOutEvent(event);
 				original_hover->destroyed().disconnectOne(this, &Context::OnHoverViewportDestroyed);
 			}
 
 			if(hover_) {
 				hover_->set_hover(true);
-				hover_->CursorEnterEvent(true);
+				hover_->MouseHoverInEvent(event);
 				events()->connect(hover_->destroyed(), this, &Context::OnHoverViewportDestroyed);
 			}
 
@@ -538,7 +538,11 @@ namespace BlendInt
 	{
 	}
 
-	void Context::CursorEnterEvent(bool entered)
+	void Context::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
+	void Context::MouseHoverOutEvent(const MouseEvent& event)
 	{
 	}
 

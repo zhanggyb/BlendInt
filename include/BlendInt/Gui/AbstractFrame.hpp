@@ -51,6 +51,8 @@ namespace BlendInt {
 			return display_mode_;
 		}
 
+		virtual void SetCursorFollowedWidget (AbstractWidget* widget);
+
 		static AbstractFrame* GetFrame (AbstractWidget* widget);
 
 	protected:
@@ -70,6 +72,10 @@ namespace BlendInt {
 		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
 
@@ -112,15 +118,21 @@ namespace BlendInt {
 			widget->set_focus(focus);
 		}
 
-		void set_widget_hover_event (AbstractWidget* widget, bool hover)
-		{
-			widget->set_hover(hover);
-			widget->CursorEnterEvent(hover);
-		}
-
 		void set_widget_hover_status (AbstractWidget* widget, bool hover)
 		{
 			widget->set_hover(hover);
+		}
+
+		void set_widget_mouse_hover_in_event (AbstractWidget* widget, const MouseEvent& event)
+		{
+			widget->set_hover(true);
+			widget->MouseHoverInEvent(event);
+		}
+
+		void set_widget_mouse_hover_out_event (AbstractWidget* widget, const MouseEvent& event)
+		{
+			widget->set_hover(false);
+			widget->MouseHoverOutEvent(event);
 		}
 
 		void set_event_frame (const DeviceEvent& event)

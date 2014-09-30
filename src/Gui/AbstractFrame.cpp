@@ -53,6 +53,11 @@ namespace BlendInt {
 	{
 	}
 
+	void AbstractFrame::SetCursorFollowedWidget(AbstractWidget* widget)
+	{
+
+	}
+
 	AbstractFrame* AbstractFrame::GetFrame(AbstractWidget* widget)
 	{
 		AbstractWidget* container = widget->parent ();
@@ -111,6 +116,16 @@ namespace BlendInt {
 	void AbstractFrame::PerformRoundRadiusUpdate(
 			const RoundRadiusUpdateRequest& request)
 	{
+	}
+
+	void AbstractFrame::MouseHoverInEvent(const MouseEvent& event)
+	{
+
+	}
+
+	void AbstractFrame::MouseHoverOutEvent(const MouseEvent& event)
+	{
+
 	}
 
 	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)

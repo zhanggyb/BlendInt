@@ -39,6 +39,8 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -266,13 +268,11 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ScrollBar::CursorEnterEvent(bool enter)
+	void ScrollBar::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		if(!enter) {
-			if(m_slide.highlight()) {
-				m_slide.set_highlight(false);
-				Refresh();
-			}
+		if(m_slide.highlight()) {
+			m_slide.set_highlight(false);
+			Refresh();
 		}
 	}
 
@@ -285,8 +285,8 @@ namespace BlendInt {
 			// DO not fire if cursor is out of range, otherwise too many events
 			if (GetNewValue(event.position(), &new_value)) {
 				set_value(new_value);
-				fire_slider_moved_event(value());
 				Refresh();
+				fire_slider_moved_event(value());
 			}
 
 			return Accept;
@@ -294,23 +294,21 @@ namespace BlendInt {
 		} else {
 			if (CursorOnSlideIcon(event.local_position())) {
 				m_slide.set_highlight(true);
-
 				Refresh();
-
-				return Accept;
 			} else {
 				m_slide.set_highlight(false);
-
 				Refresh();
-
-				return Accept;
 			}
+
+			return Accept;
 		}
 	}
 
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
 	{
 		if (CursorOnSlideIcon(event.local_position())) {
+
+			event.frame()->SetCursorFollowedWidget(this);
 
 			m_cursor_origin = event.position();
 			m_last_value = value();
@@ -326,9 +324,13 @@ namespace BlendInt {
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
 	{
 		if (pressed_) {
+
+			event.frame()->SetCursorFollowedWidget(0);
+
 			pressed_ = false;
 
 			if (CursorOnSlideIcon(event.local_position())) {
+				DBG_PRINT_MSG("%s", "hello");
 				fire_slider_released();
 			}
 

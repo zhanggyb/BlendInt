@@ -158,32 +158,31 @@ namespace BlendInt {
 		return text_length;
 	}
 
-	void AbstractButton::CursorEnterEvent(bool entered)
+	void AbstractButton::MouseHoverInEvent(const MouseEvent& event)
 	{
-		if(entered) {
+		if(m_status[ButtonPressed]) {
+			m_status[ButtonDown] = 1;
 
-			if(m_status[ButtonPressed]) {
-				m_status[ButtonDown] = 1;
-
-				if(m_status[ButtonCheckable]) {
-					m_status[ButtonChecked] = !m_status[ButtonChecked];
-				}
+			if(m_status[ButtonCheckable]) {
+				m_status[ButtonChecked] = !m_status[ButtonChecked];
 			}
-
-			Refresh();
-		} else {
-
-			if(m_status[ButtonPressed]) {
-				m_status[ButtonDown] = 0;
-
-				if(m_status[ButtonCheckable]) {
-					m_status[ButtonChecked] = !m_status[ButtonChecked];
-				}
-
-			}
-
-			Refresh();
 		}
+
+		Refresh();
+	}
+
+	void AbstractButton::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		if(m_status[ButtonPressed]) {
+			m_status[ButtonDown] = 0;
+
+			if(m_status[ButtonCheckable]) {
+				m_status[ButtonChecked] = !m_status[ButtonChecked];
+			}
+
+		}
+
+		Refresh();
 	}
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)

@@ -66,7 +66,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual void CursorEnterEvent (bool entered);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		/**
 		 *  Generate vertices for drawing the inner slider bar

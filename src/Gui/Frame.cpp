@@ -46,6 +46,7 @@ namespace BlendInt {
 	: AbstractFrame(),
 	  focused_widget_(0),
 	  top_hovered_widget_(0),
+	  cursor_followed_widget_(0),
 	  custom_focused_widget_(false)
 	{
 		set_size(500, 400);
@@ -95,7 +96,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::SetFocused(AbstractWidget* widget)
+	void Frame::SetFocused(Widget* widget)
 	{
 		custom_focused_widget_ = true;
 
@@ -111,6 +112,20 @@ namespace BlendInt {
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, true);
 			events()->connect(focused_widget_->destroyed(), this, &Frame::OnFocusedWidgetDestroyed);
+		}
+	}
+
+	void Frame::SetCursorFollowedWidget(AbstractWidget* widget)
+	{
+		if(cursor_followed_widget_ == widget) return;
+
+		if(cursor_followed_widget_) {
+			cursor_followed_widget_->destroyed().disconnectOne(this, &Frame::OnCursorFollowedWidgetDestroyed);
+		}
+
+		cursor_followed_widget_ = widget;
+		if(cursor_followed_widget_) {
+			events()->connect(cursor_followed_widget_->destroyed(), this, &Frame::OnCursorFollowedWidgetDestroyed);
 		}
 	}
 
@@ -243,12 +258,9 @@ namespace BlendInt {
 	{
 	}
 
-	void Frame::CursorEnterEvent(bool entered)
+	void Frame::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		if(entered) {
-		} else {
-			ClearHoverWidgets();
-		}
+		ClearHoverWidgets();
 	}
 
 	ResponseType Frame::KeyPressEvent(const KeyEvent& event)
@@ -270,7 +282,7 @@ namespace BlendInt {
 
 		set_event_frame(event);
 
-		CheckAndUpdateHoverWidget(event);
+		DispatchMouseHoverEvent(event);
 
 		if(top_hovered_widget_) {
 
@@ -289,7 +301,7 @@ namespace BlendInt {
 			}
 
 			if(!custom_focused_widget_) {
-				SetFocused(widget);
+				SetFocused(dynamic_cast<Widget*>(widget));
 			}
 			custom_focused_widget_ = false;
 
@@ -308,9 +320,13 @@ namespace BlendInt {
 
 		set_event_frame(event);
 
-		CheckAndUpdateHoverWidget(event);
+		DispatchMouseHoverEvent(event);
 
 		if(focused_widget_) {
+			Point pos = focused_widget_->GetGlobalPosition();
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - pos.x(),
+					event.position().y() - pos.y());
 			retval = assign_mouse_release_event(focused_widget_, event);
 		}
 
@@ -343,7 +359,18 @@ namespace BlendInt {
 		}
 		*/
 
-		CheckAndUpdateHoverWidget(event);
+		DispatchMouseHoverEvent(event);
+
+		if(cursor_followed_widget_) {
+
+			Point pos = cursor_followed_widget_->GetGlobalPosition();
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - pos.x(),
+					event.position().y() - pos.y());
+
+			retval = assign_mouse_move_event(cursor_followed_widget_, event);
+			return retval;
+		}
 
 		if(top_hovered_widget_) {
 
@@ -363,10 +390,8 @@ namespace BlendInt {
 		return retval;
 	}
 
-	bool Frame::CheckAndUpdateHoverWidget(const MouseEvent& event)
+	bool Frame::DispatchMouseHoverEvent(const MouseEvent& event)
 	{
-		Point local_cursor;
-
 		// find the new top hovered widget
 		if (top_hovered_widget_) {
 
@@ -379,16 +404,17 @@ namespace BlendInt {
 					event.position().x() > (parent_position.x() + parent->size().width()) ||
 					event.position().y() > (parent_position.y() + parent->size().height());
 
-			local_cursor.set_x(event.position().x() - parent_position.x() - parent->offset().x());
-			local_cursor.set_y(event.position().y() - parent_position.y() - parent->offset().y());
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - parent_position.x() - parent->offset().x(),
+					event.position().y() - parent_position.y() - parent->offset().y());
 
 			if(!not_hover_through) {
 
-				if(top_hovered_widget_->Contain(local_cursor)) {
+				if(top_hovered_widget_->Contain(event.local_position())) {
 
 					AbstractWidget* orig = top_hovered_widget_;
 
-					UpdateHoverWidgetSubs(local_cursor);
+					DispatchMouseHoverEventInSubs(event);
 
 					if(orig != top_hovered_widget_) {
 						orig->destroyed().disconnectOne(this,
@@ -401,7 +427,7 @@ namespace BlendInt {
 
 					top_hovered_widget_->destroyed ().disconnectOne (this,
 								&Frame::OnHoverWidgetDestroyed);
-					set_widget_hover_event(top_hovered_widget_, false);
+					set_widget_mouse_hover_out_event(top_hovered_widget_, event);
 
 					// find which contianer contains cursor position
 					while (parent) {
@@ -411,10 +437,11 @@ namespace BlendInt {
 							break;
 						}
 
-						local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset().x());
-						local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset().y());
+						const_cast<MouseEvent&>(event).set_local_position(
+								event.local_position().x() + parent->position().x() + parent->offset().x(),
+								event.local_position().y() + parent->position().y() + parent->offset().y());
 
-						if (parent->Contain(local_cursor)) break;
+						if (parent->Contain(event.local_position())) break;
 
 						parent = parent->parent();
 					}
@@ -422,7 +449,7 @@ namespace BlendInt {
 					top_hovered_widget_ = parent;
 
 					if(top_hovered_widget_) {
-						UpdateHoverWidgetSubs(local_cursor);
+						DispatchMouseHoverEventInSubs(event);
 						events()->connect(top_hovered_widget_->destroyed(), this,
 						        &Frame::OnHoverWidgetDestroyed);
 					}
@@ -433,7 +460,7 @@ namespace BlendInt {
 
 				top_hovered_widget_->destroyed().disconnectOne(this,
 					        &Frame::OnHoverWidgetDestroyed);
-				set_widget_hover_event(top_hovered_widget_, false);
+				set_widget_mouse_hover_out_event(top_hovered_widget_, event);
 
 				// find which contianer contains cursor position
 				parent = parent->parent();
@@ -444,8 +471,9 @@ namespace BlendInt {
 						break;
 					}
 
-					local_cursor.set_x(local_cursor.x() + parent->position().x() + parent->offset().x());
-					local_cursor.set_y(local_cursor.y() + parent->position().y() + parent->offset().y());
+					const_cast<MouseEvent&>(event).set_local_position(
+							event.local_position().x() + parent->position().x() + parent->offset().x(),
+							event.local_position().y() + parent->position().y() + parent->offset().y());
 
 					if(IsHoverThroughExt(parent, event.position())) break;
 					parent = parent->parent();
@@ -453,7 +481,7 @@ namespace BlendInt {
 
 				top_hovered_widget_ = parent;
 				if(top_hovered_widget_) {
-					UpdateHoverWidgetSubs(local_cursor);
+					DispatchMouseHoverEventInSubs(event);
 					events()->connect(top_hovered_widget_->destroyed(), this,
 					        &Frame::OnHoverWidgetDestroyed);
 				}
@@ -462,22 +490,23 @@ namespace BlendInt {
 
 		} else {
 
-			local_cursor.set_x(event.position().x() - position().x() - offset().x());
-			local_cursor.set_y(event.position().y() - position().y() - offset().y());
+			const_cast<MouseEvent&>(event).set_local_position(
+					event.position().x() - position().x() - offset().x(),
+					event.position().y() - position().y() - offset().y());
 
 			for(AbstractWidget* p = last_child(); p; p = p->previous())
 			{
-				if (p->visiable() && p->Contain(local_cursor)) {
+				if (p->visiable() && p->Contain(event.local_position())) {
 
 					top_hovered_widget_ = p;
-					set_widget_hover_event(top_hovered_widget_, true);
+					set_widget_mouse_hover_in_event(top_hovered_widget_, event);
 
 					break;
 				}
 			}
 
 			if(top_hovered_widget_) {
-				UpdateHoverWidgetSubs(local_cursor);
+				DispatchMouseHoverEventInSubs(event);
 				events()->connect(top_hovered_widget_->destroyed(), this,
 				        &Frame::OnHoverWidgetDestroyed);
 			}
@@ -487,27 +516,26 @@ namespace BlendInt {
 		return top_hovered_widget_ != 0;
 	}
 
-	void Frame::UpdateHoverWidgetSubs(Point& cursor)
+	void Frame::DispatchMouseHoverEventInSubs(const MouseEvent& event)
 	{
-		cursor.set_x (
-				cursor.x () - top_hovered_widget_->position ().x ()
-						- top_hovered_widget_->offset ().x ());
-		cursor.set_y (
-				cursor.y () - top_hovered_widget_->position ().y ()
-						- top_hovered_widget_->offset ().y ());
+		const_cast<MouseEvent&>(event).set_local_position(
+				event.local_position().x () - top_hovered_widget_->position ().x ()
+				- top_hovered_widget_->offset ().x (),
+				event.local_position().y () - top_hovered_widget_->position ().y ()
+				- top_hovered_widget_->offset ().y ()
+		);
 
 		for (AbstractWidget* p = top_hovered_widget_->last_child (); p;
 				p = p->previous ()) {
-			if (p->visiable () && p->Contain (cursor)) {
+			if (p->visiable () && p->Contain (event.local_position())) {
 
 				top_hovered_widget_ = p;
-				set_widget_hover_event (top_hovered_widget_, true);
+				set_widget_mouse_hover_in_event (top_hovered_widget_, event);
 
-				UpdateHoverWidgetSubs (cursor);
+				DispatchMouseHoverEventInSubs(event);
 				break;
 			}
 		}
-
 	}
 
 	void Frame::OnFocusedWidgetDestroyed(AbstractWidget* widget)
@@ -533,6 +561,16 @@ namespace BlendInt {
 		top_hovered_widget_ = 0;
 	}
 
+	void Frame::OnCursorFollowedWidgetDestroyed(AbstractWidget* widget)
+	{
+		assert(cursor_followed_widget_ == widget);
+
+		DBG_PRINT_MSG("cursor followed widget %s destroyed", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &Frame::OnCursorFollowedWidgetDestroyed);
+
+		cursor_followed_widget_ = 0;
+	}
+
 	void Frame::ClearHoverWidgets()
 	{
 		if(top_hovered_widget_) {
@@ -540,13 +578,18 @@ namespace BlendInt {
 			top_hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
 
 			while (top_hovered_widget_ && top_hovered_widget_ != this) {
-				set_widget_hover_event(top_hovered_widget_, false);
+				set_widget_hover_status(top_hovered_widget_, false);
 				top_hovered_widget_ = top_hovered_widget_->parent();
 			}
 
 			if(top_hovered_widget_ == this)
 				top_hovered_widget_ = 0;
 
+		}
+
+		if(cursor_followed_widget_) {
+			cursor_followed_widget_->destroyed().disconnectOne(this, &Frame::OnCursorFollowedWidgetDestroyed);
+			cursor_followed_widget_ = 0;
 		}
 	}
 

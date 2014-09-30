@@ -319,7 +319,12 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void ComboBox::CursorEnterEvent (bool entered)
+	void ComboBox::MouseHoverInEvent(const MouseEvent& event)
+	{
+		Refresh();
+	}
+
+	void ComboBox::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		Refresh();
 	}

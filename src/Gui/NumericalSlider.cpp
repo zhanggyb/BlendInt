@@ -311,7 +311,12 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void NumericalSlider::CursorEnterEvent (bool entered)
+	void NumericalSlider::MouseHoverInEvent(const MouseEvent& event)
+	{
+		Refresh();
+	}
+
+	void NumericalSlider::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		Refresh();
 	}

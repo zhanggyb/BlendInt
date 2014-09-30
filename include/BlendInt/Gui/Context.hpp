@@ -116,7 +116,9 @@ namespace BlendInt {
 
 		virtual void FocusEvent (bool focus);
 
-		virtual void CursorEnterEvent (bool entered);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
