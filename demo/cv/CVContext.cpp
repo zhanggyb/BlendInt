@@ -16,13 +16,13 @@ CVContext::CVContext()
 	m_layout = Manage (new MainSpace);
 	m_layout->Resize(size());
 
-	Frame* screen = Manage(new Frame);
-	screen->Resize(m_layout->size());
-	screen->Setup(m_layout);
+	Frame* frame = Manage(new Frame);
+	frame->Setup(m_layout);
 
-	AddFrame(screen);
+	AddFrame(frame);
 
-	events()->connect(resized(), this , &CVContext::OnResizeLayout);
+	events()->connect(resized(), frame, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::Frame::Resize));
+
 }
 
 CVContext::~CVContext ()

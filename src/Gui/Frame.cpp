@@ -232,11 +232,6 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		profile.set_origin(
-				position().x() + offset().x(),
-				position().y() + offset().y()
-		);
-
 		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetUIModelMatrix(model_matrix_);
 	}
@@ -372,6 +367,7 @@ namespace BlendInt {
 			return retval;
 		}
 
+		/*
 		if(top_hovered_widget_) {
 
 			const_cast<MouseEvent&>(event).set_local_position(
@@ -382,6 +378,7 @@ namespace BlendInt {
 
 			//retval = assign_mouse_move_event(top_hovered_widget_, event);
 		}
+		*/
 
 		if(display_mode() == Modal) {
 			retval = Accept;

@@ -189,7 +189,7 @@ void MainSpace::RenderToBuffer()
 
 		// Draw frame panel
 
-		Profile off_screen_profile(position());
+		Profile off_screen_profile(GetGlobalPosition());
 
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{

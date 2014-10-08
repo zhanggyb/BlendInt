@@ -258,6 +258,7 @@ namespace BlendInt {
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;
+        int n = GetOutlineVertices(round_type()) + 2;
 
         glGetIntegerv(GL_VIEWPORT, vp);
         //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);
@@ -277,12 +278,10 @@ namespace BlendInt {
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
 		profile.BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		profile.EndPushStencil();
 
 		glBindVertexArray(0);
@@ -293,8 +292,10 @@ namespace BlendInt {
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-        glViewport(profile.origin().x() + position().x(),
-		        profile.origin().y() + position().y(),
+        Point pos = GetGlobalPosition();
+
+        glViewport(pos.x() - profile.origin().x(),
+        		pos.y() - profile.origin().y(),
 		        size().width(),
 		        size().height());
 
@@ -319,8 +320,7 @@ namespace BlendInt {
 
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		glBindVertexArray(0);
 		profile.EndPopStencil();
 		program->reset();

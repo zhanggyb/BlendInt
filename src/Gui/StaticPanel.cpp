@@ -172,7 +172,7 @@ namespace BlendInt {
 
 			fb->bind();
 
-			Profile off_screen_profile;
+			Profile off_screen_profile(GetGlobalPosition());
 
 			glm::mat4 identity(1.f);
 			Shaders::instance->PushUIModelMatrix();

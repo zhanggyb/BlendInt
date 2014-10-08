@@ -383,12 +383,11 @@ namespace BlendInt {
 
 		model_.reset(new FileSystemModel);
 
-		Load(getenv("PWD"));
-
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 		SetScrollBar(hbar, vbar);
-		AdjustScrollBarGeometries(hbar, vbar);
+
+		Load(getenv("PWD"));
 
 		//events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
 		//events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);

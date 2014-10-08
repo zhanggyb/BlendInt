@@ -674,15 +674,8 @@ namespace BlendInt {
 
 //		Point pos = GetGlobalPosition();
 
-		int ox = position_.x() + offset_.x();
-		int oy = position_.y() + offset_.y();
-
-		profile.set_origin(
-				profile.origin().x() + ox,
-				profile.origin().y() + oy
-		);
-
-		glm::mat4 matrix = glm::translate(Shaders::instance->ui_model_matrix(), glm::vec3(ox, oy, 0.f));
+		glm::mat4 matrix = glm::translate(Shaders::instance->ui_model_matrix(),
+				glm::vec3(position_.x() + offset_.x(), position_.y() + offset_.y(), 0.f));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
 		Shaders::instance->PushUIModelMatrix();
@@ -691,11 +684,6 @@ namespace BlendInt {
 
 	void AbstractWidget::PostDraw(Profile& profile)
 	{
-		profile.set_origin(
-				profile.origin().x() - position_.x() - offset_.x(),
-				profile.origin().y() - position_.y() - offset_.y()
-		);
-
 		Shaders::instance->PopUIModelMatrix();
 	}
 

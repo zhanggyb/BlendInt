@@ -12,6 +12,7 @@
 #include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
+#include <BlendInt/Gui/Viewport2D.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -32,14 +33,20 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Frame* frame1 = Manage(new Frame);
-	frame1->SetPosition(200, 200);
+	frame1->SetPosition(20, 100);
 	AddFrame(frame1);
 
-	Panel* panel = Manage(new Panel);
-	ImageView* iv = Manage(new ImageView);
+	Viewport3D* view1 = Manage(new Viewport3D);
+	view1->Resize(600, 500);
 
-	panel->Setup(iv);
-	panel->Resize(600, 500);
+	frame1->Setup(view1);
 
-	frame1->Setup(panel);
+	Frame* frame2 = Manage(new Frame);
+	frame2->SetPosition(660, 100);
+	AddFrame(frame2);
+
+	Viewport3D* view2 = Manage(new Viewport3D);
+	view2->Resize(600, 500);
+
+	frame2->Setup(view2);
 }
