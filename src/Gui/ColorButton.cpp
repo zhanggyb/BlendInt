@@ -50,9 +50,14 @@ namespace BlendInt {
 		set_size(4 * h + round_radius() * 2 +default_padding.hsum(),
 						h + default_padding.vsum());
 
-		color_.set_red(0.3f);
-		color_.set_blue(0.8f);
-		color_.set_green(0.2f);
+		color0_.set_red(0.3f);
+		color0_.set_blue(0.8f);
+		color0_.set_green(0.2f);
+
+		color1_.set_red(0.3f);
+		color1_.set_blue(0.8f);
+		color1_.set_green(0.2f);
+		color1_.set_alpha(0.5f);
 
 		InitializeColorButton();
 	}
@@ -74,7 +79,9 @@ namespace BlendInt {
 
 	void ColorButton::SetColor(const Color& color)
 	{
-		color_ = color;
+		color0_ = color;
+		color0_.set_alpha(1.f);
+		color1_ = color;
 		Refresh();
 	}
 
@@ -152,19 +159,19 @@ namespace BlendInt {
 
 	ResponseType ColorButton::Draw (Profile& profile)
 	{
+		Point pos = GetGlobalPosition();
 		int outline_vertices = GetOutlineVertices(round_type());
 
-		Shaders::instance->widget_inner_program()->use();
+		Shaders::instance->widget_split_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
-				0.f, 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, color_.data());
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), pos.x() + size().width() / 2.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, color0_.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, color1_.data());
 
 		if(hover()) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
 		glBindVertexArray(vao_[0]);
@@ -173,7 +180,7 @@ namespace BlendInt {
 		Shaders::instance->widget_outer_program()->use();
 
 		glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
+				0.f, 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -183,7 +190,7 @@ namespace BlendInt {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
 			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-					(float) position().x(), (float) position().y() - 1.f, 0.f);
+					0.f, - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_type()) * 2);

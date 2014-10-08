@@ -27,6 +27,7 @@
 #include <BlendInt/Core/Margin.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -91,7 +92,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeNumericalSlider ();
 
 		float GetSlidePosition (float border, double value);
 
@@ -114,19 +115,13 @@ namespace BlendInt {
 		 * [1] - outer buffer
 		 * [2] - slider bar buffer
 		 */
-		GLuint m_vao[4];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<GLArrayBuffer> m_slider1;
-		RefPtr<GLArrayBuffer> m_slider2;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		Font m_font;
 
 		String m_title;
-
-		bool m_right;
 
 		static Margin default_numberslider_padding;
 	};

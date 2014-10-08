@@ -152,7 +152,9 @@ namespace BlendInt {
 			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -170,7 +172,9 @@ namespace BlendInt {
 			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType CVImageView::Draw (Profile& profile)

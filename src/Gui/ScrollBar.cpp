@@ -222,10 +222,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_INNER_POSITION),
-		        0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				Theme::instance->scroll().inner.data());

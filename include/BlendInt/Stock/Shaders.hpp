@@ -64,21 +64,17 @@ namespace BlendInt {
 
 			WIDGET_INNER_COORD,
 			WIDGET_INNER_COLOR,
-			//WIDGET_INNER_PROJECTION,
-			//WIDGET_INNER_VIEW,
-			WIDGET_INNER_POSITION,
-			WIDGET_INNER_ROTATION,
-			WIDGET_INNER_SCALE,
-			WIDGET_INNER_ANTI_ALIAS,
 			WIDGET_INNER_GAMMA,
+
+			WIDGET_SPLIT_INNER_COORD,
+			WIDGET_SPLIT_INNER_COLOR0,	// The left or bottom color
+			WIDGET_SPLIT_INNER_COLOR1,	// The right or top color
+			WIDGET_SPLIT_INNER_PARTING,
+			WIDGET_SPLIT_INNER_GAMMA,
 
 			WIDGET_OUTER_COORD,
 			WIDGET_OUTER_COLOR,
-			//WIDGET_OUTER_PROJECTION,
-			//WIDGET_OUTER_VIEW,
 			WIDGET_OUTER_POSITION,
-			WIDGET_OUTER_ROTATION,
-			WIDGET_OUTER_SCALE,
 
 			// Text
 			TEXT_COORD,
@@ -298,6 +294,8 @@ namespace BlendInt {
 			static const char* widget_inner_geometry_shader;
 
 			static const char* widget_inner_fragment_shader;
+
+			static const char* widget_split_inner_vertex_shader;
 
 			static const char* widget_split_inner_fragment_shader;
 

@@ -134,10 +134,10 @@ namespace BlendInt {
 		Point retval = position_;;
 
 		AbstractWidget* p = parent_;
-
 		while(p) {
-			retval.set_x(retval.x() + p->position().x() + p->offset().x());
-			retval.set_y(retval.y() + p->position().y() + p->offset().y());
+			retval.reset(
+					retval.x() + p->position().x() + p->offset().x(),
+					retval.y() + p->position().y() + p->offset().y());
 			p = p->parent_;
 		}
 

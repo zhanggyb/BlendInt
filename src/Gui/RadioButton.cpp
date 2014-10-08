@@ -273,9 +273,6 @@ namespace BlendInt {
 
 		glm::vec3 pos(0.f, 0.f, 0.f);
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
-
 		if (hover()) {
 
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);

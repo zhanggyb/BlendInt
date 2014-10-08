@@ -21,56 +21,58 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COLORBUTTON_HPP_
-#define _BLENDINT_GUI_COLORBUTTON_HPP_
+#ifndef _BLENDINT_GUI_CVVIDEOVIEW_HPP_
+#define _BLENDINT_GUI_CVVIDEOVIEW_HPP_
 
-#include <BlendInt/Core/String.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractButton.hpp>
+// generate makefile with cmake -DENABLE_OPENCV to activate
+#ifdef __USE_OPENCV__
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup widgets
-	 */
-	class ColorButton: public AbstractButton
+	class CVVideoView: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(ColorButton);
-
 	public:
 
-		ColorButton ();
+		CVVideoView();
 
-		virtual ~ColorButton ();
+		virtual ~CVVideoView ();
 
-		void SetColor (const Color& color);
+		bool OpenCamera (int n);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
-
 		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
-		void InitializeColorButton ();
+		void InitializeCVVideoView ();
 
-		GLuint vao_[2];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLuint vao_;
 
-		Color color0_;
-		Color color1_;
+		GLBuffer<> frame_plane_;
+
+		GLTexture2D texture_;
+
+		cv::VideoCapture video_stream_;
+
+		cv::Mat frame_;
 	};
 
 }
 
-#endif	// _BIL_BUTTON_H_
+#endif	// __USE_OPENCV__
+
+#endif /* _BLENDINT_GUI_CVVIDEOVIEW_HPP_ */

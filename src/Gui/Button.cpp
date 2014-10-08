@@ -260,9 +260,7 @@ namespace BlendInt {
 
 		glm::vec3 pos(0.f, 0.f, 0.f);
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_INNER_POSITION), 1, glm::value_ptr(pos));
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_ANTI_ALIAS), 0);
 
 		if (is_down()) {
 			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
@@ -294,7 +292,7 @@ namespace BlendInt {
 			        1.0f, 1.0f, 0.16f);
 
 			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-			        0.f, 0.f - 1.f, 0.f);
+			        0.f, - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
