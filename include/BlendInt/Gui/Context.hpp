@@ -69,20 +69,6 @@ namespace BlendInt {
 		 */
 		virtual bool Contain (const Point& point) const;
 
-		/**
-		 * @brief Set the cursor
-		 */
-		virtual void SetCursor (int cursor_type);
-
-		int current_cursor () const
-		{
-			return current_cursor_;
-		}
-
-		void PushCursor (int cursor_type);
-
-		int PopCursor ();
-
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return resized_;
@@ -140,7 +126,7 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void OnHoverViewportDestroyed (AbstractWidget* widget);
+		void OnHoverFrameDestroyed (AbstractWidget* widget);
 
 		Profile profile_;
 

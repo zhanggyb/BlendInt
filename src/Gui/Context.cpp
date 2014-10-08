@@ -260,28 +260,6 @@ namespace BlendInt
 		return true;
 	}
 
-	void Context::SetCursor (int cursor_type)
-	{
-		// TODO: overwrite this
-	}
-
-	void Context::PushCursor (int cursor_type)
-	{
-		cursor_stack_.push(cursor_type);
-	}
-
-	int Context::PopCursor ()
-	{
-		int cursor = ArrowCursor;
-
-		if(!cursor_stack_.empty()) {
-			cursor = cursor_stack_.top();
-			cursor_stack_.pop();
-		}
-
-		return cursor;
-	}
-
 	Context* Context::GetContext (AbstractWidget* widget)
 	{
 		AbstractWidget* parent = widget->parent();
@@ -311,24 +289,12 @@ namespace BlendInt
 
 	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
 	{
-		if(request.source()->parent() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
 		return true;
 	}
 
 	bool Context::RoundRadiusUpdateTest (
 	        const RoundRadiusUpdateRequest& request)
 	{
-		if(request.source()->parent() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
 		return true;
 	}
 
@@ -469,13 +435,13 @@ namespace BlendInt
 			if(original_hover) {
 				original_hover->set_hover(false);
 				original_hover->MouseHoverOutEvent(event);
-				original_hover->destroyed().disconnectOne(this, &Context::OnHoverViewportDestroyed);
+				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 			}
 
 			if(hover_) {
 				hover_->set_hover(true);
 				hover_->MouseHoverInEvent(event);
-				events()->connect(hover_->destroyed(), this, &Context::OnHoverViewportDestroyed);
+				events()->connect(hover_->destroyed(), this, &Context::OnHoverFrameDestroyed);
 			}
 
 		}
@@ -546,13 +512,13 @@ namespace BlendInt
 	{
 	}
 
-	void Context::OnHoverViewportDestroyed(AbstractWidget* widget)
+	void Context::OnHoverFrameDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hover_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Context::OnHoverViewportDestroyed);
+		widget->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 
 		hover_ = 0;
 	}

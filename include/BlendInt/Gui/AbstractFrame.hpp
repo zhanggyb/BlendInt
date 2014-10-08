@@ -27,6 +27,7 @@
 #include <glm/glm.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
@@ -52,6 +53,8 @@ namespace BlendInt {
 		}
 
 		virtual void SetCursorFollowedWidget (AbstractWidget* widget);
+
+		Point GetGlobalPosition (const Widget* widget);
 
 		static AbstractFrame* GetFrame (AbstractWidget* widget);
 

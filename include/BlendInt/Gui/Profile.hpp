@@ -29,6 +29,9 @@
 
 namespace BlendInt {
 
+	class Context;
+	class AbstractFrame;
+
 	/**
 	 * @brief Global setting for widget drawing
 	 *
@@ -59,18 +62,24 @@ namespace BlendInt {
 	public:
 
 		Profile ()
-		: stencil_count_(0)
+		: context_(0),
+		  frame_(0),
+		  stencil_count_(0)
 		{
 		}
 
 		Profile (const Point& point)
-		: origin_(point),
+		: context_(0),
+		  frame_(0),
+		  origin_(point),
 		  stencil_count_(0)
 		{
 		}
 
 		Profile (int x, int y)
-		: origin_(x, y),
+		: context_(0),
+		  frame_(0),
+		  origin_(x, y),
 		  stencil_count_(0)
 		{
 		}
@@ -94,9 +103,16 @@ namespace BlendInt {
 
 	private:
 
+		friend class Context;
+		friend class AbstractFrame;
+
 		// disable
 		Profile (const Profile& orig);
 		Profile& operator = (const Profile& orig);
+
+		Context* context_;
+
+		AbstractFrame* frame_;
 
 		Point origin_;
 

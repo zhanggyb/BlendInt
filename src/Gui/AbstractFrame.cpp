@@ -58,6 +58,27 @@ namespace BlendInt {
 
 	}
 
+	Point AbstractFrame::GetGlobalPosition (const Widget* widget)
+	{
+#ifdef DEBUG
+		assert(widget);
+#endif
+
+		Point pos = widget->position();
+
+		AbstractWidget* p = widget->parent();
+		while(p && (p != this)) {
+			pos.reset(
+					pos.x() + p->position().x() + p->offset().x(),
+					pos.y() + p->position().y() + p->offset().y());
+			p = p->parent();
+		}
+
+		pos.reset(pos.x() + position().x() + offset().x(), pos.y() + position().y() + offset().y());
+
+		return pos;
+	}
+
 	AbstractFrame* AbstractFrame::GetFrame(AbstractWidget* widget)
 	{
 		AbstractWidget* container = widget->parent ();
