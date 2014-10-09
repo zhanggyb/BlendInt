@@ -41,8 +41,6 @@ namespace BlendInt {
 
 		void Setup (Widget* widget);
 
-		void Setup (Layout* container);
-
 		void SetFocused (Widget* widget);
 
 		virtual void SetCursorFollowedWidget (AbstractWidget* widget);

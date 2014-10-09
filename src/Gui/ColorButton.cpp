@@ -38,6 +38,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -159,7 +161,8 @@ namespace BlendInt {
 
 	ResponseType ColorButton::Draw (Profile& profile)
 	{
-		Point pos = GetGlobalPosition();
+		Point pos = profile.frame()->GetGlobalPosition(this);
+
 		int outline_vertices = GetOutlineVertices(round_type());
 
 		Shaders::instance->widget_split_inner_program()->use();

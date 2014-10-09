@@ -101,6 +101,16 @@ namespace BlendInt {
 			return origin_;
 		}
 
+		Context* context () const
+		{
+			return context_;
+		}
+
+		AbstractFrame* frame () const
+		{
+			return frame_;
+		}
+
 	private:
 
 		friend class Context;

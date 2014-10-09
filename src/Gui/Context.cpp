@@ -174,7 +174,7 @@ namespace BlendInt
 	  hover_(0)
 	{
 		set_size(640, 480);
-
+		profile_.context_ = this;
 		InitializeContext();
 
 		context_set.insert(this);

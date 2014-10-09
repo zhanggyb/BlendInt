@@ -143,6 +143,11 @@ namespace BlendInt {
 			const_cast<DeviceEvent&>(event).frame_ = this;
 		}
 
+		void assign_frame (Profile& profile)
+		{
+			profile.frame_ = this;
+		}
+
 	private:
 
 		DisplayMode display_mode_;

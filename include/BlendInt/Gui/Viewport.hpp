@@ -21,58 +21,74 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CVVIDEOVIEW_HPP_
-#define _BLENDINT_GUI_CVVIDEOVIEW_HPP_
+#ifndef _BLENDINT_GUI_VIEWPORT_HPP_
+#define _BLENDINT_GUI_VIEWPORT_HPP_
 
-// generate makefile with cmake -DENABLE_OPENCV to activate
-#ifdef __USE_OPENCV__
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/GridFloor.hpp>
+#include <BlendInt/Gui/PerspectiveCamera.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
 
-	class CVVideoView: public Widget
+	class Viewport: public AbstractFrame
 	{
+		DISALLOW_COPY_AND_ASSIGN(Viewport);
+
 	public:
 
-		CVVideoView();
+		Viewport ();
 
-		virtual ~CVVideoView ();
-
-		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+		virtual ~Viewport ();
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+		virtual Size GetPreferredSize() const;
 
 	protected:
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void FocusEvent (bool focus);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 	private:
 
-		void InitializeCVVideoView ();
+		void InitializeViewport ();
 
 		GLuint vao_;
 
-		GLBuffer<> frame_plane_;
+		GLBuffer<> buffer_;
 
-		GLTexture2D texture_;
+		RefPtr<GridFloor> gridfloor_;
 
-		cv::VideoCapture video_stream_;
+		RefPtr<PerspectiveCamera> default_camera_;
 
-		cv::Mat frame_;
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
+
 	};
 
 }
 
-#endif	// __USE_OPENCV__
 
-#endif /* _BLENDINT_GUI_CVVIDEOVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_VIEWPORT_HPP_ */

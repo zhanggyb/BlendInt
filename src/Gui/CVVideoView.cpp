@@ -49,7 +49,7 @@ namespace BlendInt {
 	: Widget(),
 	  vao_(0)
 	{
-		set_size(400, 300);
+		set_size(640, 480);
 
 		InitializeCVVideoView();
 	}
@@ -120,14 +120,17 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool CVVideoView::OpenCamera(int n)
+	bool CVVideoView::OpenCamera(int n, const Size& resolution)
 	{
 		bool retval = false;
 
 		video_stream_.open(n);
 		if(video_stream_.isOpened()) {
-			retval = true;
 
+			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
+			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
+
+			retval = true;
 		} else {
 			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
 		}
@@ -157,9 +160,9 @@ namespace BlendInt {
 
 		GLfloat vertices[] = {
 			0.f, 0.f, 		0.f, 1.f,
-			400.f, 0.f, 	1.f, 1.f,
-			0.f, 300.f,		0.f, 0.f,
-			400.f, 300.f,	1.f, 0.f
+			640.f, 0.f, 	1.f, 1.f,
+			0.f, 480.f,		0.f, 0.f,
+			640.f, 480.f,	1.f, 0.f
 		};
 
 		frame_plane_.generate();

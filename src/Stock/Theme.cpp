@@ -353,7 +353,7 @@ namespace BlendInt {
 		number_slider_.inner_sel = 0x999999FF;
 		number_slider_.text = 0x000000FF;
 		number_slider_.text_sel = 0xFFFFFFFF;
-		number_slider_.shaded = false;
+		number_slider_.shaded = true;
 		number_slider_.shadetop = -20;
 		number_slider_.shadedown = 0;
 

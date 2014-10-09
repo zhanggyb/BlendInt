@@ -81,21 +81,6 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::Setup(Layout* parent)
-	{
-		if(parent == 0) return;
-
-		if(parent->parent() == this) return;
-
-		if(subs_count() > 0) ClearSubWidgets();
-
-		Resize(parent->size());
-
-		if(PushBackSubWidget(parent)) {
-			parent->SetPosition(0, 0);
-		}
-	}
-
 	void Frame::SetFocused(Widget* widget)
 	{
 		custom_focused_widget_ = true;
@@ -227,6 +212,8 @@ namespace BlendInt {
 
 	void Frame::PreDraw(Profile& profile)
 	{
+		assign_frame(profile);
+
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
@@ -247,6 +234,7 @@ namespace BlendInt {
 
 	void Frame::PostDraw(Profile& profile)
 	{
+		glDisable(GL_SCISSOR_TEST);
 	}
 
 	void Frame::FocusEvent(bool focus)
