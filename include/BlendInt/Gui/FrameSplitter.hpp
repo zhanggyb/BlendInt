@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual bool Contain (const Point& point) const;
+
 	protected:
 
 		friend class FrameSplitter;
@@ -52,9 +54,17 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
 
+		virtual void PostDraw (Profile& profile);
+
 		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
@@ -80,9 +90,9 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER> buffer_;
 
-		AbstractFrame* previous_viewport_;
+		AbstractFrame* previous_frame_;
 
-		AbstractFrame* next_viewport_;
+		AbstractFrame* next_frame_;
 	};
 
 	// -------------------------------
@@ -95,9 +105,7 @@ namespace BlendInt {
 
 		virtual ~FrameSplitter ();
 
-		void PrependViewport (AbstractFrame* viewport);
-
-		void AppendViewport (AbstractFrame* viewport);
+		void AddFrame (AbstractFrame* frame, bool append = true);
 
 		void Insert (int index, AbstractFrame* viewport);
 
@@ -125,11 +133,11 @@ namespace BlendInt {
 
 		friend class FrameSplitterHandle;
 
-		void AlignSubViewports (Orientation orientation, const Size& size);
+		void AlignSubFrames (Orientation orientation, const Size& size);
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
-		void OnHoverViewportDestroyed (AbstractWidget* widget);
+		void OnHoverFrameDestroyed (AbstractWidget* widget);
 
 		Orientation orientation_;
 

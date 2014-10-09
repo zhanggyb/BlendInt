@@ -206,7 +206,7 @@ namespace BlendInt {
 	
 	void ImageView::InitializeImageView ()
 	{
-		checkerboard_.reset(new CheckerBoard(20));
+		checkerboard_.reset(new ChessBoard(20));
 		checkerboard_->Resize(size());
 
 		texture_.reset(new GLTexture2D);

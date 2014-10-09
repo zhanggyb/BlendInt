@@ -42,7 +42,7 @@ protected:
 
 private:
 
-	void RenderToBuffer ();
+	void RenderToBuffer (BI::Profile& profile);
 
 	void InitOnce ();
 

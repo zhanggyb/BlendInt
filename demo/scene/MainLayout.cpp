@@ -102,7 +102,7 @@ void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainLayout::Draw(Profile& profile)
 {
-	if(refresh()) RenderToBuffer();
+	if(refresh()) RenderToBuffer(profile);
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	buffer_.Draw(0.f, 0.f);
@@ -111,7 +111,7 @@ ResponseType MainLayout::Draw(Profile& profile)
 	return Accept;
 }
 
-void MainLayout::RenderToBuffer()
+void MainLayout::RenderToBuffer(BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -155,7 +155,7 @@ void MainLayout::RenderToBuffer()
 
 		fb->bind();
 
-		Profile off_screen_profile(GetGlobalPosition());
+		Profile off_screen_profile(profile, GetGlobalPosition());
 
 		glm::mat4 identity(1.f);
 		Shaders::instance->PushUIModelMatrix();

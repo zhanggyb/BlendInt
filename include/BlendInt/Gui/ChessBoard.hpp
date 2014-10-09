@@ -36,13 +36,13 @@ namespace BlendInt {
 	 *
 	 * A form show a gray checkerboard: light: #999999, dark: #666666
 	 */
-	class CheckerBoard: public AbstractForm
+	class ChessBoard: public AbstractForm
 	{
 	public:
 
-		explicit CheckerBoard (size_t cell_size);
+		explicit ChessBoard (size_t cell_size);
 
-		virtual ~CheckerBoard ();
+		virtual ~ChessBoard ();
 
 		void SetCellSize (size_t size);
 

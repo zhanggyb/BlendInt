@@ -30,7 +30,7 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/CheckerBoard.hpp>
+#include <BlendInt/Gui/ChessBoard.hpp>
 #include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
@@ -78,7 +78,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> background_;
 		RefPtr<GLArrayBuffer> plane_;
 
-		RefPtr<CheckerBoard> checkerboard_;
+		RefPtr<ChessBoard> checkerboard_;
 	};
 
 }

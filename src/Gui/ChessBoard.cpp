@@ -37,13 +37,13 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Gui/CheckerBoard.hpp>
+#include <BlendInt/Gui/ChessBoard.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	CheckerBoard::CheckerBoard(size_t cell_size)
+	ChessBoard::ChessBoard(size_t cell_size)
 	: AbstractForm(),
 	  m_vao(0),
 	  light_elements_(0),
@@ -54,12 +54,12 @@ namespace BlendInt {
 		InitOnce();
 	}
 
-	CheckerBoard::~CheckerBoard()
+	ChessBoard::~ChessBoard()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void CheckerBoard::SetCellSize (size_t cell_size)
+	void ChessBoard::SetCellSize (size_t cell_size)
 	{
 		if(cell_size == 0) return;
 
@@ -89,7 +89,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void CheckerBoard::PerformSizeUpdate(const Size& size)
+	void ChessBoard::PerformSizeUpdate(const Size& size)
 	{
 		std::vector<GLfloat> vertices;
 		std::vector<unsigned int> light_indices;
@@ -120,7 +120,7 @@ namespace BlendInt {
 		set_size(size);
 	}
 
-	void CheckerBoard::Draw (const glm::vec3& pos, short gamma) const
+	void ChessBoard::Draw (const glm::vec3& pos, short gamma) const
 	{
 		using Stock::Shaders;
 
@@ -179,7 +179,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void CheckerBoard::GenerateCheckerVertices (size_t num,
+	void ChessBoard::GenerateCheckerVertices (size_t num,
 					size_t cell_size,
 					std::vector<GLfloat>* vertices,
 					std::vector<GLuint>* indices)
@@ -240,7 +240,7 @@ namespace BlendInt {
 
 	}
 	
-	void CheckerBoard::GenerateCheckerVertices (const Size& size,
+	void ChessBoard::GenerateCheckerVertices (const Size& size,
 					size_t cell_size,
 					std::vector<GLfloat>* vertices,
 					std::vector<GLuint>* light_indices,
@@ -349,7 +349,7 @@ namespace BlendInt {
 
 	}
 
-	void CheckerBoard::InitOnce()
+	void ChessBoard::InitOnce()
 	{
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

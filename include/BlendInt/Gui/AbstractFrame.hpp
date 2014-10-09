@@ -76,10 +76,6 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
-
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
-
 		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);

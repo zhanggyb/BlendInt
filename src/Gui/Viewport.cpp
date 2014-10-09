@@ -43,7 +43,8 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Viewport::Viewport()
-	: AbstractFrame()
+	: AbstractFrame(),
+	  vao_(0)
 	{
 		set_size(640, 480);
 
@@ -55,7 +56,7 @@ namespace BlendInt {
 
 	Viewport::~Viewport()
 	{
-
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Viewport::IsExpandX() const
@@ -136,6 +137,14 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	void Viewport::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
+	void Viewport::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
 	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
 	{
 		return Ignore;
@@ -167,7 +176,12 @@ namespace BlendInt {
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
+
+		if(hover()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
+		} else {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
+		}
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);

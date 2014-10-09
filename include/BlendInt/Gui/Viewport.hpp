@@ -58,6 +58,10 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);

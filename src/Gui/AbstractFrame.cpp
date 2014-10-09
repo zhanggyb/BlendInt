@@ -139,16 +139,6 @@ namespace BlendInt {
 	{
 	}
 
-	void AbstractFrame::MouseHoverInEvent(const MouseEvent& event)
-	{
-
-	}
-
-	void AbstractFrame::MouseHoverOutEvent(const MouseEvent& event)
-	{
-
-	}
-
 	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
 		return subs_count() ? Ignore : Accept;

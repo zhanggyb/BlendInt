@@ -91,7 +91,7 @@ namespace BlendInt {
 	ResponseType StaticPanel::Draw (Profile& profile)
 	{
 		if(refresh()) {
-			RenderToBuffer();
+			RenderToBuffer(profile);
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -128,7 +128,7 @@ namespace BlendInt {
 		tex_buffer_.texture()->reset();
 	}
 
-	void StaticPanel::RenderToBuffer ()
+	void StaticPanel::RenderToBuffer (Profile& profile)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -172,7 +172,7 @@ namespace BlendInt {
 
 			fb->bind();
 
-			Profile off_screen_profile(GetGlobalPosition());
+			Profile off_screen_profile(profile, GetGlobalPosition());
 
 			glm::mat4 identity(1.f);
 			Shaders::instance->PushUIModelMatrix();

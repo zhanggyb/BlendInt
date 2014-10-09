@@ -33,27 +33,16 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	Frame* frame1 = Manage(new Frame);
-	frame1->SetPosition(800, 200);
+	Viewport* vp1 = Manage(new Viewport);
+	Viewport* vp2 = Manage(new Viewport);
 
-	ColorButton* btn = Manage(new ColorButton);
-	frame1->Setup(btn);
+	FrameSplitter* splitter = Manage(new FrameSplitter);
 
-	AddFrame(frame1);
+	splitter->Resize(1200, 720);
+	splitter->SetPosition(20, 20);
 
-	Frame* frame2 = Manage(new Frame);
-	frame2->SetPosition(800, 300);
+	splitter->AddFrame(vp1);
+	splitter->AddFrame(vp2);
 
-	NumericalSlider* slider = Manage(new NumericalSlider);
-	slider->Resize(200, slider->size().height());
-	frame2->Setup(slider);
-
-	AddFrame(frame2);
-
-	Viewport* vp = Manage(new Viewport);
-	vp->SetPosition(20, 100);
-
-	AddFrame(vp);
-
-	vp->Resize(700, 600);
+	AddFrame(splitter);
 }

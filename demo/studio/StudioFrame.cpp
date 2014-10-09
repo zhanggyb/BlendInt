@@ -59,7 +59,7 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 ResponseType StudioFrame::Draw (Profile& profile)
 {
 	if(refresh()) {
-		RenderToBuffer();
+		RenderToBuffer(profile);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -76,7 +76,7 @@ void StudioFrame::RenderToFile (const std::string& filename)
 	tex_buffer_.texture()->reset();
 }
 
-void StudioFrame::RenderToBuffer ()
+void StudioFrame::RenderToBuffer (BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -150,7 +150,7 @@ void StudioFrame::RenderToBuffer ()
 
 		// Draw frame panel
 
-		Profile off_screen_profile(position());
+		Profile off_screen_profile(profile, position());
 
 		if(first_child()) {
 			DispatchDrawEvent(first_child(), off_screen_profile);

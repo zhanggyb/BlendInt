@@ -100,7 +100,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::SetCursorFollowedWidget(AbstractWidget* widget)
+	void Frame::SetCursorFollowedWidget(Widget* widget)
 	{
 		if(cursor_followed_widget_ == widget) return;
 
@@ -241,6 +241,10 @@ namespace BlendInt {
 	{
 	}
 
+	void Frame::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
 	void Frame::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		ClearHoverWidgets();
@@ -346,7 +350,7 @@ namespace BlendInt {
 
 		if(cursor_followed_widget_) {
 
-			Point pos = cursor_followed_widget_->GetGlobalPosition();
+			Point pos = GetGlobalPosition(cursor_followed_widget_);
 			const_cast<MouseEvent&>(event).set_local_position(
 					event.position().x() - pos.x(),
 					event.position().y() - pos.y());

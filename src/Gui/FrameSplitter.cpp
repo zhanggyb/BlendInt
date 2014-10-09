@@ -49,8 +49,8 @@ namespace BlendInt {
 	: AbstractFrame(),
 	  orientation_(orientation),
 	  vao_(0),
-	  previous_viewport_(0),
-	  next_viewport_(0)
+	  previous_frame_(0),
+	  next_frame_(0)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 1);
@@ -61,25 +61,22 @@ namespace BlendInt {
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
 
-		VertexTool tool;
-		tool.GenerateShadedVertices(size(),
-				0,
-				round_type(),
-				round_radius());
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
 		glGenVertexArrays(1, &vao_);
-		buffer_.generate();
-
 		glBindVertexArray(vao_);
+
+		buffer_.generate();
 		buffer_.bind();
-		buffer_.set_data(tool.inner_size(), tool.inner_data());
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::reset();
 		glBindVertexArray(0);
+		buffer_.reset();
 	}
 
 	FrameSplitterHandle::~FrameSplitterHandle()
@@ -111,6 +108,33 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	bool FrameSplitterHandle::Contain(const Point& point) const
+	{
+		if(orientation_ == Horizontal) {
+
+			if(point.x() < position().x() ||
+					point.y() < (position().y() - 2) ||
+					point.x() > static_cast<int>(position().x() + size().width()) ||
+					point.y() > static_cast<int>(position().y() + size().height() + 2))
+			{
+				return false;
+			}
+
+		} else {
+
+			if(point.x() < (position().x() - 2) ||
+					point.y() < position().y() ||
+					point.x() > static_cast<int>(position().x() + size().width() + 2) ||
+					point.y() > static_cast<int>(position().y() + size().height()))
+			{
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+
 	void FrameSplitterHandle::PerformPositionUpdate(
 			const PositionUpdateRequest& request)
 	{
@@ -118,7 +142,7 @@ namespace BlendInt {
 			float x = static_cast<float>(request.position()->x()  + offset().x());
 			float y = static_cast<float>(request.position()->y()  + offset().y());
 
-			projection_matrix_  = glm::ortho(
+			projection_matrix_ = glm::ortho(
 				x,
 				x + (float)size().width(),
 				y,
@@ -150,17 +174,14 @@ namespace BlendInt {
 				y + (float)request.size()->height(),
 				100.f, -100.f);
 
-			VertexTool tool;
-			tool.GenerateShadedVertices(*request.size(),
-				0,
-				round_type(),
-				round_radius());
+			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
 			buffer_.bind();
-			buffer_.set_sub_data(0, tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
-
-			set_size(*request.size());
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.reset();
 
 			if(subs_count()) {
 				first_child()->Resize(*request.size());
@@ -172,7 +193,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitterHandle::Draw(Profile& profile)
+	void FrameSplitterHandle::PreDraw(Profile& profile)
 	{
 		glViewport(position().x(), position().y(), size().width(), size().height());
 		glEnable(GL_SCISSOR_TEST);
@@ -180,26 +201,22 @@ namespace BlendInt {
 
 		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetUIModelMatrix(model_matrix_);
+	}
 
-		Shaders::instance->widget_program()->use();
+	ResponseType FrameSplitterHandle::Draw(Profile& profile)
+	{
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-				0.f, 0.f, 0.f);
-
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
-				0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		if(hover()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.9f, 0.05f, 0.05f, 1.f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.9f, 0.05f, 0.05f, 1.f);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
 		}
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
@@ -208,6 +225,11 @@ namespace BlendInt {
 		}
 
 		return Ignore;
+	}
+
+	void FrameSplitterHandle::PostDraw(Profile& profile)
+	{
+		glDisable(GL_SCISSOR_TEST);
 	}
 
 	void FrameSplitterHandle::FocusEvent(bool focus)
@@ -243,6 +265,14 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
+	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
 	ResponseType FrameSplitterHandle::MouseMoveEvent(const MouseEvent& event)
 	{
 		return Ignore;
@@ -263,16 +293,14 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::PrependViewport(AbstractFrame* viewport)
+	void FrameSplitter::AddFrame (AbstractFrame* frame, bool append)
 	{
-	}
+		if((frame == 0) || (frame->parent() == this)) return;
 
-	void FrameSplitter::AppendViewport(AbstractFrame* viewport)
-	{
-		if(viewport && viewport->parent() != this) {
+		if(append) {
 
 			if(first_child() == 0) {
-				PushBackSubWidget(viewport);
+				PushBackSubWidget(frame);
 			} else {
 				FrameSplitterHandle* handle = 0;
 
@@ -284,12 +312,15 @@ namespace BlendInt {
 
 				AbstractWidget* p = last_child();
 				PushBackSubWidget(handle);
-				handle->previous_viewport_ = dynamic_cast<AbstractFrame*>(p);
-				handle->next_viewport_ = viewport;
-				PushBackSubWidget(viewport);
+				handle->previous_frame_ = dynamic_cast<AbstractFrame*>(p);
+				handle->next_frame_ = frame;
+				PushBackSubWidget(frame);
 			}
 
-			AlignSubViewports(orientation_, size());
+			AlignSubFrames(orientation_, size());
+
+		} else {
+
 		}
 	}
 
@@ -344,7 +375,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void FrameSplitter::AlignSubViewports(Orientation orientation,
+	void FrameSplitter::AlignSubFrames(Orientation orientation,
 			const Size& size)
 	{
 		int room = GetAverageRoom(orientation, size);
@@ -405,14 +436,13 @@ namespace BlendInt {
 
 	void FrameSplitter::MouseHoverInEvent(const MouseEvent& event)
 	{
-
 	}
 
 	void FrameSplitter::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		if(hover_) {
 			set_widget_mouse_hover_out_event(hover_, event);
-			hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
+			hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 			hover_ = 0;
 		}
 	}
@@ -489,12 +519,12 @@ namespace BlendInt {
 
 			if(original_hover) {
 				set_widget_mouse_hover_out_event(original_hover, event);
-				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
+				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 			}
 
 			if(hover_) {
-				set_widget_mouse_hover_out_event(hover_, event);
-				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverViewportDestroyed);
+				set_widget_mouse_hover_in_event(hover_, event);
+				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
 			}
 
 		}
@@ -546,13 +576,13 @@ namespace BlendInt {
 		return room;
 	}
 
-	void FrameSplitter::OnHoverViewportDestroyed(AbstractWidget* widget)
+	void FrameSplitter::OnHoverFrameDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hover_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &FrameSplitter::OnHoverViewportDestroyed);
+		widget->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
 		hover_ = 0;
 	}

@@ -27,7 +27,6 @@
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
@@ -43,7 +42,7 @@ namespace BlendInt {
 
 		void SetFocused (Widget* widget);
 
-		virtual void SetCursorFollowedWidget (AbstractWidget* widget);
+		virtual void SetCursorFollowedWidget (Widget* widget);
 
 		AbstractWidget* focused_widget() const
 		{
@@ -77,6 +76,8 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
 		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
@@ -103,7 +104,7 @@ namespace BlendInt {
 
 		AbstractWidget* top_hovered_widget_;
 
-		AbstractWidget* cursor_followed_widget_;
+		Widget* cursor_followed_widget_;
 
 		bool custom_focused_widget_;
 

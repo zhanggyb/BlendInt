@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		void InitializeFramePanel ();
 
-		void RenderToBuffer ();
+		void RenderToBuffer (Profile& profile);
 
 		GLuint vao_;
 		RefPtr<GLArrayBuffer> inner_;

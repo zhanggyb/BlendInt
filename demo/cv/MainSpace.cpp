@@ -105,7 +105,7 @@ void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 ResponseType MainSpace::Draw(Profile& profile)
 {
 	if(refresh()) {
-		RenderToBuffer();
+		RenderToBuffer(profile);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -115,7 +115,7 @@ ResponseType MainSpace::Draw(Profile& profile)
 	return Accept;
 }
 
-void MainSpace::RenderToBuffer()
+void MainSpace::RenderToBuffer(BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -189,7 +189,7 @@ void MainSpace::RenderToBuffer()
 
 		// Draw frame panel
 
-		Profile off_screen_profile(GetGlobalPosition());
+		Profile off_screen_profile(profile, GetGlobalPosition());
 
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
