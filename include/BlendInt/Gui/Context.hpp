@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void OnHoverFrameDestroyed (AbstractWidget* widget);
+		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
 		Profile profile_;
 

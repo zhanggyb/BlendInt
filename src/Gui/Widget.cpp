@@ -55,10 +55,12 @@ namespace BlendInt {
 	Widget::Widget()
 	: AbstractWidget()
 	{
+		destroyed_.reset(new Cpp::Event<Widget*>);
 	}
 
 	Widget::~Widget()
 	{
+		destroyed_->fire(this);
 	}
 
 	ResponseType Widget::Draw(Profile& profile)

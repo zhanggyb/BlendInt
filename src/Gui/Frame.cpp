@@ -114,6 +114,34 @@ namespace BlendInt {
 		}
 	}
 
+	bool Frame::IsExpandX() const
+	{
+		bool expand = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			if(p->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool Frame::IsExpandY() const
+	{
+		bool expand = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			if(p->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
 	Size Frame::GetPreferredSize() const
 	{
 		Size prefer;
@@ -401,7 +429,7 @@ namespace BlendInt {
 
 				if(top_hovered_widget_->Contain(event.local_position())) {
 
-					AbstractWidget* orig = top_hovered_widget_;
+					Widget* orig = top_hovered_widget_;
 
 					DispatchMouseHoverEventInSubs(event);
 
@@ -435,7 +463,7 @@ namespace BlendInt {
 						parent = parent->parent();
 					}
 
-					top_hovered_widget_ = parent;
+					top_hovered_widget_ = dynamic_cast<Widget*>(parent);
 
 					if(top_hovered_widget_) {
 						DispatchMouseHoverEventInSubs(event);
@@ -468,7 +496,7 @@ namespace BlendInt {
 					parent = parent->parent();
 				}
 
-				top_hovered_widget_ = parent;
+				top_hovered_widget_ = dynamic_cast<Widget*>(parent);
 				if(top_hovered_widget_) {
 					DispatchMouseHoverEventInSubs(event);
 					events()->connect(top_hovered_widget_->destroyed(), this,
@@ -487,7 +515,7 @@ namespace BlendInt {
 			{
 				if (p->visiable() && p->Contain(event.local_position())) {
 
-					top_hovered_widget_ = p;
+					top_hovered_widget_ = dynamic_cast<Widget*>(p);
 					set_widget_mouse_hover_in_event(top_hovered_widget_, event);
 
 					break;
@@ -518,7 +546,7 @@ namespace BlendInt {
 				p = p->previous ()) {
 			if (p->visiable () && p->Contain (event.local_position())) {
 
-				top_hovered_widget_ = p;
+				top_hovered_widget_ = dynamic_cast<Widget*>(p);
 				set_widget_mouse_hover_in_event (top_hovered_widget_, event);
 
 				DispatchMouseHoverEventInSubs(event);
@@ -527,7 +555,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::OnFocusedWidgetDestroyed(AbstractWidget* widget)
+	void Frame::OnFocusedWidgetDestroyed(Widget* widget)
 	{
 		assert(focused_widget_ == widget);
 		assert(widget->focus());
@@ -539,7 +567,7 @@ namespace BlendInt {
 		focused_widget_ = 0;
 	}
 
-	void Frame::OnHoverWidgetDestroyed(AbstractWidget* widget)
+	void Frame::OnHoverWidgetDestroyed(Widget* widget)
 	{
 		assert(widget->hover());
 		assert(top_hovered_widget_ == widget);
@@ -550,7 +578,7 @@ namespace BlendInt {
 		top_hovered_widget_ = 0;
 	}
 
-	void Frame::OnCursorFollowedWidgetDestroyed(AbstractWidget* widget)
+	void Frame::OnCursorFollowedWidgetDestroyed(Widget* widget)
 	{
 		assert(cursor_followed_widget_ == widget);
 
@@ -566,12 +594,12 @@ namespace BlendInt {
 
 			top_hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
 
-			while (top_hovered_widget_ && top_hovered_widget_ != this) {
+			while (top_hovered_widget_ && dynamic_cast<AbstractWidget*>(top_hovered_widget_) != this) {
 				set_widget_hover_status(top_hovered_widget_, false);
-				top_hovered_widget_ = top_hovered_widget_->parent();
+				top_hovered_widget_ = dynamic_cast<Widget*>(top_hovered_widget_->parent());
 			}
 
-			if(top_hovered_widget_ == this)
+			if(dynamic_cast<AbstractWidget*>(top_hovered_widget_) == this)
 				top_hovered_widget_ = 0;
 
 		}

@@ -47,10 +47,12 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  display_mode_(Normal)
 	{
+		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
 	AbstractFrame::~AbstractFrame()
 	{
+		destroyed_->fire(this);
 	}
 
 	void AbstractFrame::SetCursorFollowedWidget(AbstractWidget* widget)

@@ -87,7 +87,6 @@ namespace BlendInt {
 	  last_child_(0)
 	{
 		events_.reset(new Cpp::ConnectionScope);
-		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 
 		set_visible(true);
 		set_refresh(true);
@@ -124,9 +123,6 @@ namespace BlendInt {
 			assert(previous_ == 0);
 			assert(next_ == 0);
 		}
-
-		destroyed_->fire(this);
-		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
 	}
 
 	Point AbstractWidget::GetGlobalPosition () const

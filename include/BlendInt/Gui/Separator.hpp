@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~Separator ();
 
-		void AttachWidget (AbstractWidget* widget);
+		void AttachWidget (Widget* widget);
 
 		void SetExpandX (bool expand);
 
@@ -62,13 +62,13 @@ namespace BlendInt {
 
 	private:
 
-		void OnWidgetDestroyed (AbstractWidget* widget);
+		void OnWidgetDestroyed (Widget* widget);
 
 		bool m_expand_x;
 
 		bool m_expand_y;
 
-		AbstractWidget* m_widget_attached;
+		Widget* m_widget_attached;
 	};
 
 }

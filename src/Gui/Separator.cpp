@@ -51,7 +51,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Separator::AttachWidget (AbstractWidget* widget)
+	void Separator::AttachWidget (Widget* widget)
 	{
 		if(m_widget_attached) {
 			m_widget_attached->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
@@ -142,7 +142,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Separator::OnWidgetDestroyed (AbstractWidget* widget)
+	void Separator::OnWidgetDestroyed (Widget* widget)
 	{
 		if(m_widget_attached == widget) {
 			widget->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);

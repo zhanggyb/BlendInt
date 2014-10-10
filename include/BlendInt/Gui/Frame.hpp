@@ -44,17 +44,21 @@ namespace BlendInt {
 
 		virtual void SetCursorFollowedWidget (Widget* widget);
 
-		AbstractWidget* focused_widget() const
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+		Widget* focused_widget() const
 		{
 			return focused_widget_;
 		}
 
-		AbstractWidget* top_hovered () const
+		Widget* top_hovered () const
 		{
 			return top_hovered_widget_;
 		}
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -92,17 +96,17 @@ namespace BlendInt {
 
 		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
 
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+		void OnFocusedWidgetDestroyed (Widget* widget);
 
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+		void OnHoverWidgetDestroyed (Widget* widget);
 
-		void OnCursorFollowedWidgetDestroyed (AbstractWidget* widget);
+		void OnCursorFollowedWidgetDestroyed (Widget* widget);
 
 		void ClearHoverWidgets ();
 
-		AbstractWidget* focused_widget_;
+		Widget* focused_widget_;
 
-		AbstractWidget* top_hovered_widget_;
+		Widget* top_hovered_widget_;
 
 		Widget* cursor_followed_widget_;
 

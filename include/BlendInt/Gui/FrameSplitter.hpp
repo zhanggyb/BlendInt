@@ -109,9 +109,17 @@ namespace BlendInt {
 
 		void Insert (int index, AbstractFrame* viewport);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
@@ -129,15 +137,51 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void FillSubFrames ();
+
 	private:
 
 		friend class FrameSplitterHandle;
+
+		void DistributeHorizontally ();
+
+		void DistributeHorizontallyInProportion (
+		        std::deque<int>* widget_deque, int widget_width_sum,
+		        std::deque<int>* prefer_deque, int prefer_width_sum);
+
+		void DistributeExpandableFramesHorizontally (
+		        int unexpandable_width_sum, std::deque<int>* widget_deque,
+		        int widget_width_sum, std::deque<int>* prefer_deque,
+		        int prefer_width_sum);
+
+		void DistributeUnexpandableFramesHorizontally (
+		        std::deque<int>* widget_deque, int widget_width_sum,
+		        std::deque<int>* prefer_deque, int prefer_width_sum);
+
+		void DistributeVertically ();
+
+		void DistributeVerticallyInProportion (
+		        std::deque<int>* widget_deque, int widget_height_sum,
+		        std::deque<int>* prefer_deque, int prefer_height_sum);
+
+		void DistributeExpandableFramesVertically (
+		        int unexpandable_height_sum, std::deque<int>* widget_deque,
+		        int widget_height_sum, std::deque<int>* prefer_deque,
+		        int prefer_height_sum);
+
+		void DistributeUnexpandableFramesVertically (
+		        std::deque<int>* widget_deque, int widget_height_sum,
+		        std::deque<int>* prefer_deque, int prefer_height_sum);
+
+		void AlignHorizontally ();
+
+		void AlignVertically ();
 
 		void AlignSubFrames (Orientation orientation, const Size& size);
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
-		void OnHoverFrameDestroyed (AbstractWidget* widget);
+		void OnHoverFrameDestroyed (AbstractFrame* widget);
 
 		Orientation orientation_;
 

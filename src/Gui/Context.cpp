@@ -512,13 +512,13 @@ namespace BlendInt
 	{
 	}
 
-	void Context::OnHoverFrameDestroyed(AbstractWidget* widget)
+	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
-		assert(widget->hover());
-		assert(hover_ == widget);
+		assert(frame->hover());
+		assert(hover_ == frame);
 
-		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
+		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 
 		hover_ = 0;
 	}

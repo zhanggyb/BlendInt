@@ -28,7 +28,6 @@
 #include <vector>
 
 #include <boost/smart_ptr.hpp>
-
 #include <Cpp/Events.hpp>
 
 #include <BlendInt/Core/RefPtr.hpp>
@@ -456,11 +455,6 @@ namespace BlendInt {
 			return last_child_;
 		}
 
-		Cpp::EventRef<AbstractWidget*> destroyed ()
-		{
-			return *destroyed_;
-		}
-
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
 		 *
@@ -836,8 +830,6 @@ namespace BlendInt {
 		AbstractWidget* last_child_;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-		boost::scoped_ptr<Cpp::Event<AbstractWidget*> > destroyed_;
 
 #ifdef DEBUG
 		std::string name_;

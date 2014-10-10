@@ -139,19 +139,21 @@ namespace BlendInt {
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			set_position(*request.position());
+
+			float x = static_cast<float>(position().x()  + offset().x());
+			float y = static_cast<float>(position().y()  + offset().y());
 
 			projection_matrix_ = glm::ortho(
 				x,
-				x + (float)size().width(),
+				x + size().width(),
 				y,
-				y + (float)size().height(),
+				y + size().height(),
 				100.f, -100.f);
 
 			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
 
-			set_position(*request.position());
 		}
 
 		if(request.source() == this) {
@@ -328,6 +330,34 @@ namespace BlendInt {
 	{
 	}
 
+	bool FrameSplitter::IsExpandX() const
+	{
+		bool expand = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			if(p->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool FrameSplitter::IsExpandY() const
+	{
+		bool expand = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			if(p->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
 	Size FrameSplitter::GetPreferredSize() const
 	{
 		Size preferred_size;
@@ -366,13 +396,46 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	void FrameSplitter::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			int ox = request.position()->x() - position().x();
+			int oy = request.position()->y() - position().y();
+
+			MoveSubWidgets(ox, oy);
+
+			set_position(*request.position());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
+	}
+
+	void FrameSplitter::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			set_size(*request.size());
+
+			FillSubFrames();
+
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
-		return Ignore;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void FrameSplitter::AlignSubFrames(Orientation orientation,
@@ -536,6 +599,21 @@ namespace BlendInt {
 		return response;
 	}
 
+	void FrameSplitter::FillSubFrames()
+	{
+		if(orientation_ == Horizontal) {
+
+			DistributeHorizontally();
+			AlignHorizontally();
+
+		} else {
+
+			DistributeVertically();
+			AlignVertically();
+
+		}
+	}
+
 	int FrameSplitter::GetAverageRoom(Orientation orientation,
 			const Size& size)
 	{
@@ -576,13 +654,397 @@ namespace BlendInt {
 		return room;
 	}
 
-	void FrameSplitter::OnHoverFrameDestroyed(AbstractWidget* widget)
+	void FrameSplitter::DistributeHorizontally()
 	{
-		assert(widget->hover());
-		assert(hover_ == widget);
+		boost::scoped_ptr<std::deque<int> > expandable_widths(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_widths(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > handler_prefer_widths (new std::deque<int>);
 
-		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+		int expandable_width_sum = 0;	// the width sum of the expandable widgets' size
+		int unexpandable_width_sum = 0;	// the width sum of the unexpandable widgets' size
+		int handlers_width_sum = 0;
+
+		int prefer_width;
+		int i = 0;
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {	// widgets
+
+				if (p->visiable()) {
+
+					if(p->IsExpandX()) {
+						expandable_width_sum += p->size().width();
+						expandable_widths->push_back(p->size().width());
+					} else {
+						unexpandable_width_sum += p->size().width();
+						unexpandable_widths->push_back(p->size().width());
+					}
+
+				}
+
+			} else {	// handlers
+
+				if(p->visiable()) {
+					prefer_width = p->GetPreferredSize().width();
+					handler_prefer_widths->push_back(prefer_width);
+					handlers_width_sum += prefer_width;
+				}
+
+			}
+
+			i++;
+		}
+
+		if((expandable_widths->size() + unexpandable_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
+
+		if(expandable_widths->size() == 0) {
+
+			DistributeHorizontallyInProportion(unexpandable_widths.get(), unexpandable_width_sum,
+							handler_prefer_widths.get(), handlers_width_sum);
+
+		} else if(unexpandable_widths->size() == 0) {
+
+			DistributeHorizontallyInProportion(expandable_widths.get(), expandable_width_sum,
+							handler_prefer_widths.get(), handlers_width_sum);
+
+		} else {
+
+			int exp_width = size().width() - handlers_width_sum - unexpandable_width_sum;
+
+			if(exp_width <= 0) {
+
+				DistributeUnexpandableFramesHorizontally(
+								unexpandable_widths.get(),
+								unexpandable_width_sum,
+								handler_prefer_widths.get(),
+								handlers_width_sum);
+
+			} else {
+
+				DistributeExpandableFramesHorizontally(
+								unexpandable_width_sum, expandable_widths.get(),
+								expandable_width_sum,
+								handler_prefer_widths.get(),
+								handlers_width_sum);
+
+			}
+
+		}
+
+	}
+
+	void FrameSplitter::DistributeHorizontallyInProportion(
+			std::deque<int>* widget_deque, int widget_width_sum,
+			std::deque<int>* prefer_deque, int prefer_width_sum)
+	{
+		int x = position().x();
+		int i = 0;
+		std::deque<int>::iterator width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				ResizeSubWidget(p,
+								(size().width() - prefer_width_sum) * (*width_it) / widget_width_sum,
+								p->size().height());
+				width_it++;
+
+			} else {
+
+				ResizeSubWidget(p, *handler_width_it,
+								p->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(p, x, p->position().y());
+			x += p->size().width();
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::DistributeExpandableFramesHorizontally(
+			int unexpandable_width_sum, std::deque<int>* widget_deque,
+			int widget_width_sum, std::deque<int>* prefer_deque,
+			int prefer_width_sum)
+	{
+		int x = position().x();
+		int i = 0;
+		std::deque<int>::iterator exp_width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				if (p->IsExpandX()) {
+					ResizeSubWidget(p,
+									(size().width() - prefer_width_sum
+													- unexpandable_width_sum)
+													* (*exp_width_it)
+																	/ widget_width_sum,
+									p->size().height());
+					exp_width_it++;
+				}
+
+			} else {
+				ResizeSubWidget(p, *handler_width_it, p->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(p, x, p->position().y());
+			x += p->size().width();
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::DistributeUnexpandableFramesHorizontally(
+			std::deque<int>* widget_deque, int widget_width_sum,
+			std::deque<int>* prefer_deque, int prefer_width_sum)
+	{
+		int x = position().x();
+		int i = 0;
+		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				if(!p->IsExpandX()) {
+
+					ResizeSubWidget(p,
+									(size().width() - prefer_width_sum)
+													* (*unexp_width_it)
+													/ widget_width_sum,
+									p->size().height());
+					unexp_width_it++;
+
+				}
+
+			} else {
+				ResizeSubWidget(p, *handler_width_it, p->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(p, x, p->position().y());
+			x += p->size().width();
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::DistributeVertically()
+	{
+		boost::scoped_ptr<std::deque<int> > expandable_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > handler_prefer_heights (new std::deque<int>);
+
+		int expandable_height_sum = 0;	// the width sum of the expandable widgets' size
+		int unexpandable_height_sum = 0;	// the width sum of the unexpandable widgets' size
+		int handlers_height_sum = 0;
+
+		int prefer_height;
+		int i = 0;
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {	// widgets
+
+				if (p->visiable()) {
+
+					if(p->IsExpandY()) {
+						expandable_height_sum += p->size().height();
+						expandable_heights->push_back(p->size().height());
+					} else {
+						unexpandable_height_sum += p->size().height();
+						unexpandable_heights->push_back(p->size().height());
+					}
+
+				}
+
+			} else {	// handlers
+
+				if(p->visiable()) {
+					prefer_height = p->GetPreferredSize().height();
+					handler_prefer_heights->push_back(prefer_height);
+					handlers_height_sum += prefer_height;
+				}
+
+			}
+
+			i++;
+		}
+
+		if((expandable_heights->size() + unexpandable_heights->size()) == 0) return;	// do nothing if all sub widgets are invisible
+
+		if(expandable_heights->size() == 0) {
+
+			DistributeVerticallyInProportion(unexpandable_heights.get(), unexpandable_height_sum,
+							handler_prefer_heights.get(), handlers_height_sum);
+
+		} else if(unexpandable_heights->size() == 0) {
+
+			DistributeVerticallyInProportion(expandable_heights.get(), expandable_height_sum,
+							handler_prefer_heights.get(), handlers_height_sum);
+
+		} else {
+
+			int exp_height = size().height() - handlers_height_sum - unexpandable_height_sum;
+
+			if(exp_height <= 0) {
+
+				DistributeUnexpandableFramesVertically(
+								unexpandable_heights.get(),
+								unexpandable_height_sum,
+								handler_prefer_heights.get(),
+								handlers_height_sum);
+
+			} else {
+
+				DistributeExpandableFramesVertically(
+								unexpandable_height_sum, expandable_heights.get(),
+								expandable_height_sum,
+								handler_prefer_heights.get(),
+								handlers_height_sum);
+
+			}
+
+		}
+	}
+
+	void FrameSplitter::DistributeVerticallyInProportion(
+			std::deque<int>* widget_deque, int widget_height_sum,
+			std::deque<int>* prefer_deque, int prefer_height_sum)
+	{
+		int y = position().y();
+		int i = 0;
+		std::deque<int>::iterator height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+
+		y = y + size().height();
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				ResizeSubWidget(p,
+								p->size().width(),
+								(size().height() - prefer_height_sum)
+												* (*height_it) / widget_height_sum);
+				height_it++;
+
+			} else {
+
+				ResizeSubWidget(p, p->size().width(),
+								*handler_height_it);
+				handler_height_it++;
+			}
+
+			y = y - p->size().height();
+			SetSubWidgetPosition(p, p->position().x(), y);
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::DistributeExpandableFramesVertically(
+			int unexpandable_height_sum, std::deque<int>* widget_deque,
+			int widget_height_sum, std::deque<int>* prefer_deque,
+			int prefer_height_sum)
+	{
+		int y = position().y();
+		int i = 0;
+		std::deque<int>::iterator exp_height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+		y = y + size().height();
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				if (p->IsExpandY()) {
+					ResizeSubWidget(p,
+									p->size().width(),
+									(size().height() - prefer_height_sum
+													- unexpandable_height_sum)
+													* (*exp_height_it)
+																	/ widget_height_sum);
+					exp_height_it++;
+				}
+
+			} else {
+				ResizeSubWidget(p, p->size().width(), *handler_height_it);
+				handler_height_it++;
+			}
+
+			y -= p->size().height();
+			SetSubWidgetPosition(p, p->position().x(), y);
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::DistributeUnexpandableFramesVertically(
+			std::deque<int>* widget_deque, int widget_height_sum,
+			std::deque<int>* prefer_deque, int prefer_height_sum)
+	{
+		int y = position().y();
+		int i = 0;
+		std::deque<int>::iterator unexp_height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+		y = y + size().height();
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(i % 2 == 0) {
+
+				if (!p->IsExpandY()) {
+
+					ResizeSubWidget(p, p->size().width(),
+									(size().height() - prefer_height_sum)
+													* (*unexp_height_it)
+													/ widget_height_sum);
+					unexp_height_it++;
+
+				}
+
+			} else {
+				ResizeSubWidget(p, p->size().width(), *handler_height_it);
+				handler_height_it++;
+			}
+
+			y -= p->size().width();
+			SetSubWidgetPosition(p, p->position().x(), y);
+
+			i++;
+		}
+	}
+
+	void FrameSplitter::AlignHorizontally()
+	{
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			ResizeSubWidget(p, p->size().width(), size().height());
+			SetSubWidgetPosition(p, p->position().x(), position().y());
+		}
+	}
+
+	void FrameSplitter::AlignVertically()
+	{
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			ResizeSubWidget(p, size().width(), p->size().height());
+			SetSubWidgetPosition(p, position().x(), p->position().y());
+		}
+	}
+
+	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(frame->hover());
+		assert(hover_ == frame);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
 		hover_ = 0;
 	}

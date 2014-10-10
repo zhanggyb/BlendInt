@@ -179,7 +179,7 @@ namespace BlendInt
 		        std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void DistributeExpandableWidgetsVertically (int y, int height,
-		        int unexpandable_width_sum, std::deque<int>* widget_deque,
+		        int unexpandable_height_sum, std::deque<int>* widget_deque,
 		        int widget_height_sum, std::deque<int>* prefer_deque,
 		        int prefer_height_sum);
 

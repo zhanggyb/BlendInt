@@ -56,6 +56,11 @@ namespace BlendInt {
 
 		Point GetGlobalPosition (const Widget* widget);
 
+		Cpp::EventRef<AbstractFrame*> destroyed ()
+		{
+			return *destroyed_;
+		}
+
 		static AbstractFrame* GetFrame (AbstractWidget* widget);
 
 	protected:
@@ -145,6 +150,8 @@ namespace BlendInt {
 		}
 
 	private:
+
+		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
 
 		DisplayMode display_mode_;
 
