@@ -98,10 +98,6 @@ namespace BlendInt {
 		int prev_size_;
 		int next_size_;
 		int nearby_pos_;
-
-		AbstractFrame* previous_frame_;
-
-		AbstractFrame* next_frame_;
 	};
 
 	// -------------------------------
@@ -152,6 +148,8 @@ namespace BlendInt {
 
 		friend class FrameSplitterHandle;
 
+		void SetFocused (AbstractFrame* widget);
+
 		void DistributeHorizontally ();
 
 		void DistributeHorizontallyInProportion (
@@ -190,11 +188,15 @@ namespace BlendInt {
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
-		void OnHoverFrameDestroyed (AbstractFrame* widget);
+		void OnHoverFrameDestroyed (AbstractFrame* frame);
+
+		void OnFocusFrameDestroyed (AbstractFrame* frame);
 
 		Orientation orientation_;
 
 		AbstractFrame* hover_;
+
+		AbstractFrame* focus_;
 	};
 }
 

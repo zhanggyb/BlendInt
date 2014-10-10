@@ -52,9 +52,7 @@ namespace BlendInt {
 	  pressed_(false),
 	  prev_size_(0),
 	  next_size_(0),
-	  nearby_pos_(0),
-	  previous_frame_(0),
-	  next_frame_(0)
+	  nearby_pos_(0)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 1);
@@ -267,13 +265,13 @@ namespace BlendInt {
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
-			prev_size_ = previous_frame_->size().height();
-			next_size_ = next_frame_->size().height();
-			nearby_pos_ = previous_frame_->position().y();
+			prev_size_ = previous()->size().height();
+			next_size_ = next()->size().height();
+			nearby_pos_ = previous()->position().y();
 		} else {
-			prev_size_ = previous_frame_->size().width();
-			next_size_ = next_frame_->size().width();
-			nearby_pos_ = next_frame_->position().x();
+			prev_size_ = previous()->size().width();
+			next_size_ = next()->size().width();
+			nearby_pos_ = next()->position().x();
 		}
 
 		return Accept;
@@ -316,9 +314,9 @@ namespace BlendInt {
 
 				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubWidget(previous_frame_, previous_frame_->size().width(), oy1);
-				splitter->SetSubWidgetPosition(previous_frame_, previous_frame_->position().x(), nearby_pos_ + offset);
-				splitter->ResizeSubWidget(next_frame_, next_frame_->size().width(), oy2);
+				splitter->ResizeSubWidget(previous(), previous()->size().width(), oy1);
+				splitter->SetSubWidgetPosition(previous(), previous()->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubWidget(next(), next()->size().width(), oy2);
 
 			} else {
 
@@ -332,9 +330,9 @@ namespace BlendInt {
 
 				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubWidget(previous_frame_, oy1, previous_frame_->size().height());
-				splitter->ResizeSubWidget(next_frame_, oy2, next_frame_->size().height());
-				splitter->SetSubWidgetPosition(next_frame_, nearby_pos_ + offset, next_frame_->position().y());
+				splitter->ResizeSubWidget(previous(), oy1, previous()->size().height());
+				splitter->ResizeSubWidget(next(), oy2, next()->size().height());
+				splitter->SetSubWidgetPosition(next(), nearby_pos_ + offset, next()->position().y());
 
 			}
 
@@ -349,7 +347,8 @@ namespace BlendInt {
 	FrameSplitter::FrameSplitter(Orientation orientation)
 	: AbstractFrame(),
 	  orientation_(orientation),
-	  hover_(0)
+	  hover_(0),
+	  focus_(0)
 	{
 		set_size(500, 500);
 	}
@@ -363,29 +362,28 @@ namespace BlendInt {
 	{
 		if((frame == 0) || (frame->parent() == this)) return;
 
-		if(append) {
+		if(subs_count() == 0) {
 
-			if(first_child() == 0) {
+			PushBackSubWidget(frame);
+
+		} else {
+
+			FrameSplitterHandle* handle = 0;
+			if(orientation_ == Horizontal) {
+				handle = Manage(new FrameSplitterHandle(Vertical));
+			} else {
+				handle = Manage(new FrameSplitterHandle(Horizontal));
+			}
+
+			if(append) {
+				PushBackSubWidget(handle);
 				PushBackSubWidget(frame);
 			} else {
-				FrameSplitterHandle* handle = 0;
-
-				if(orientation_ == Horizontal) {
-					handle = Manage(new FrameSplitterHandle(Vertical));
-				} else {
-					handle = Manage(new FrameSplitterHandle(Horizontal));
-				}
-
-				AbstractWidget* p = last_child();
-				PushBackSubWidget(handle);
-				handle->previous_frame_ = dynamic_cast<AbstractFrame*>(p);
-				handle->next_frame_ = frame;
-				PushBackSubWidget(frame);
+				PushFrontSubWidget(handle);
+				PushFrontSubWidget(frame);
 			}
 
 			AlignSubFrames(orientation_, size());
-
-		} else {
 
 		}
 	}
@@ -583,7 +581,8 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		AbstractWidget* p = 0;
+		for(p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 
@@ -593,6 +592,10 @@ namespace BlendInt {
 
 		}
 
+		if(response == Accept) {
+			SetFocused(dynamic_cast<AbstractFrame*>(p));
+		}
+
 		return response;
 	}
 
@@ -600,6 +603,11 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
+		if(focus_)
+			response = assign_mouse_release_event(focus_, event);
+
+		SetFocused(0);
+		/*
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
@@ -609,6 +617,7 @@ namespace BlendInt {
 			}
 
 		}
+		*/
 
 		return response;
 	}
@@ -1102,6 +1111,23 @@ namespace BlendInt {
 		}
 	}
 
+	void FrameSplitter::SetFocused(AbstractFrame* frame)
+	{
+		if(focus_ == frame)
+			return;
+
+		if (focus_) {
+			set_widget_focus_event(focus_, false);
+			focus_->destroyed().disconnectOne(this, &FrameSplitter::OnFocusFrameDestroyed);
+		}
+
+		focus_ = frame;
+		if (focus_) {
+			set_widget_focus_event(focus_, true);
+			events()->connect(focus_->destroyed(), this, &FrameSplitter::OnFocusFrameDestroyed);
+		}
+	}
+
 	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());
@@ -1111,6 +1137,18 @@ namespace BlendInt {
 		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
 		hover_ = 0;
+	}
+
+	void FrameSplitter::OnFocusFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(focus_ == frame);
+		assert(frame->focus());
+
+		//set_widget_focus_status(widget, false);
+		DBG_PRINT_MSG("focused widget %s destroyed", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &FrameSplitter::OnFocusFrameDestroyed);
+
+		focus_ = 0;
 	}
 
 }

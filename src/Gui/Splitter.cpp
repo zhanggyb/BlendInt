@@ -57,9 +57,7 @@ namespace BlendInt {
 	  pressed_(false),
 	  prev_size_(0),
 	  next_size_(0),
-	  nearby_pos_(0),
-	  prev_widget_(0),
-	  next_widget_(0)
+	  nearby_pos_(0)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 1);
@@ -247,13 +245,13 @@ namespace BlendInt {
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
-			prev_size_ = prev_widget_->size().height();
-			next_size_ = next_widget_->size().height();
-			nearby_pos_ = prev_widget_->position().y();
+			prev_size_ = previous()->size().height();
+			next_size_ = next()->size().height();
+			nearby_pos_ = previous()->position().y();
 		} else {
-			prev_size_ = prev_widget_->size().width();
-			next_size_ = next_widget_->size().width();
-			nearby_pos_ = next_widget_->position().x();
+			prev_size_ = previous()->size().width();
+			next_size_ = next()->size().width();
+			nearby_pos_ = next()->position().x();
 		}
 
 		return Accept;
@@ -287,9 +285,9 @@ namespace BlendInt {
 
 				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubWidget(prev_widget_, prev_widget_->size().width(), oy1);
-				splitter->SetSubWidgetPosition(prev_widget_, prev_widget_->position().x(), nearby_pos_ + offset);
-				splitter->ResizeSubWidget(next_widget_, next_widget_->size().width(), oy2);
+				splitter->ResizeSubWidget(previous(), previous()->size().width(), oy1);
+				splitter->SetSubWidgetPosition(previous(), previous()->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubWidget(next(), next()->size().width(), oy2);
 
 			} else {
 
@@ -303,9 +301,9 @@ namespace BlendInt {
 
 				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubWidget(prev_widget_, oy1, prev_widget_->size().height());
-				splitter->ResizeSubWidget(next_widget_, oy2, next_widget_->size().height());
-				splitter->SetSubWidgetPosition(next_widget_, nearby_pos_ + offset, next_widget_->position().y());
+				splitter->ResizeSubWidget(previous(), oy1, previous()->size().height());
+				splitter->ResizeSubWidget(next(), oy2, next()->size().height());
+				splitter->SetSubWidgetPosition(next(), nearby_pos_ + offset, next()->position().y());
 
 			}
 
@@ -341,15 +339,13 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				AbstractWidget* p = first_child();
 				PushFrontSubWidget(handle);
-				handle->prev_widget_ = widget;
-				handle->next_widget_ = p;
-
 				PushFrontSubWidget(widget);
 			}
 
 			AlignSubWidgets(orientation_, size(), margin());
+
+			// TODO: connect widget's destroyed event
 		}
 	}
 
@@ -367,15 +363,13 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				AbstractWidget* p = last_child();
 				PushBackSubWidget(handle);
-				handle->prev_widget_ = p;
-				handle->next_widget_ = widget;
-
 				PushBackSubWidget(widget);
 			}
 
 			AlignSubWidgets(orientation_, size(), margin());
+
+			// TODO: connect widget's destroyed event
 		}
 	}
 

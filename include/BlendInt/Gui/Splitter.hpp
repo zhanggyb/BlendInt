@@ -85,10 +85,6 @@ namespace BlendInt
 		int prev_size_;	// width or height of the previous widget
 		int next_size_;	// width or height of the next widget
 		int nearby_pos_;	// nearby widget position
-
-		AbstractWidget* prev_widget_;
-		AbstractWidget* next_widget_;
-
 	};
 
 	/**
