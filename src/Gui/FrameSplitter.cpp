@@ -49,6 +49,10 @@ namespace BlendInt {
 	: AbstractFrame(),
 	  orientation_(orientation),
 	  vao_(0),
+	  pressed_(false),
+	  prev_size_(0),
+	  next_size_(0),
+	  nearby_pos_(0),
 	  previous_frame_(0),
 	  next_frame_(0)
 	{
@@ -201,8 +205,8 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetUIModelMatrix(model_matrix_);
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 	}
 
 	ResponseType FrameSplitterHandle::Draw(Profile& profile)
@@ -258,13 +262,31 @@ namespace BlendInt {
 	ResponseType FrameSplitterHandle::MousePressEvent(
 			const MouseEvent& event)
 	{
-		return Ignore;
+		last_ = position();
+		cursor_ = event.position();
+		pressed_ = true;
+
+		if(orientation_ == Horizontal) {
+			prev_size_ = previous_frame_->size().height();
+			next_size_ = next_frame_->size().height();
+			nearby_pos_ = previous_frame_->position().y();
+		} else {
+			prev_size_ = previous_frame_->size().width();
+			next_size_ = next_frame_->size().width();
+			nearby_pos_ = next_frame_->position().x();
+		}
+
+		return Accept;
 	}
 
 	ResponseType FrameSplitterHandle::MouseReleaseEvent(
 			const MouseEvent& event)
 	{
-		return Ignore;
+		if (pressed_) {
+			pressed_ = false;
+		}
+
+		return Accept;
 	}
 
 	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
@@ -277,7 +299,49 @@ namespace BlendInt {
 
 	ResponseType FrameSplitterHandle::MouseMoveEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		if(pressed_) {
+
+			FrameSplitter* splitter = dynamic_cast<FrameSplitter*>(parent());
+			assert(splitter);
+
+			if(orientation_ == Horizontal) {
+
+				int offset = event.position().y() - cursor_.y();
+				int oy1 = prev_size_ - offset;
+				int oy2 = next_size_ + offset;
+
+				if((oy1 < 0) || (oy2 < 0)) {
+					return Accept;
+				}
+
+				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
+
+				splitter->ResizeSubWidget(previous_frame_, previous_frame_->size().width(), oy1);
+				splitter->SetSubWidgetPosition(previous_frame_, previous_frame_->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubWidget(next_frame_, next_frame_->size().width(), oy2);
+
+			} else {
+
+				int offset = event.position().x() - cursor_.x();
+				int oy1 = prev_size_ + offset;
+				int oy2 = next_size_ - offset;
+
+				if((oy1 < 0) || (oy2 < 0)) {
+					return Accept;
+				}
+
+				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
+
+				splitter->ResizeSubWidget(previous_frame_, oy1, previous_frame_->size().height());
+				splitter->ResizeSubWidget(next_frame_, oy2, next_frame_->size().height());
+				splitter->SetSubWidgetPosition(next_frame_, nearby_pos_ + offset, next_frame_->position().y());
+
+			}
+
+			Refresh();
+			return Accept;
+		}
+		return Accept;
 	}
 
 	// --------------------------------

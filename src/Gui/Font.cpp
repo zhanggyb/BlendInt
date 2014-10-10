@@ -141,48 +141,42 @@ namespace BlendInt {
 	int Font::Print (const Point& pos, const std::string& string,
 	        size_t start) const
 	{
-		return Print(pos.x(), pos.y(), 0.f, string, string.length(), start);
+		return Print(pos.x(), pos.y(), string, string.length(), start);
 	}
 
 	int Font::Print (const Point& pos, const std::string& string, size_t length,
 	        size_t start) const
 	{
-		return Print(pos.x(), pos.y(), 0.f, string, length, start);
+		return Print(pos.x(), pos.y(), string, length, start);
 	}
 
 	int Font::Print (const glm::vec2& pos, const std::string& string, size_t length, size_t start) const
 	{
-		return Print(pos.x, pos.y, 0.f, string, length, start);
+		return Print(pos.x, pos.y, string, length, start);
 	}
 
 	int Font::Print (const glm::vec3& pos, const std::string& string, size_t length, size_t start) const
 	{
-		return Print(pos.x, pos.y, pos.z, string, length, start);
+		return Print(pos.x, pos.y, string, length, start);
 	}
 
 	int Font::Print (float x, float y, const std::string& string, size_t start) const
 	{
-		return Print(x, y, 0.f, string, string.length(), start);
+		return Print(x, y, string, string.length(), start);
 	}
 
 	int Font::Print (float x, float y, const std::string& string, size_t length, size_t start) const
-	{
-		return Print(x, y, 0.f, string, length, start);
-	}
-
-	int Font::Print (float x, float y, float z, const std::string& string,
-	        size_t length, size_t start) const
 	{
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value
 
-		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_text_program();
 		program->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glUniform1i(Shaders::instance->location(Stock::TEXT_TEXTURE), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TEXT_TEXTURE), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -198,8 +192,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
-			glUniform4f(Shaders::instance->location(Stock::TEXT_COLOR),
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -219,7 +213,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+				glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
 			}
 
 		}
@@ -227,8 +221,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
-		glUniform4fv(Shaders::instance->location(Stock::TEXT_COLOR), 1, m_color.data());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -246,7 +240,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
 		}
 
 		glBindVertexArray(0);
@@ -260,50 +254,44 @@ namespace BlendInt {
 	int Font::Print (const Point& pos, const String& string, size_t length,
 	        size_t start) const
 	{
-		return Print(pos.x(), pos.y(), 0.f, string, length, start);
+		return Print(pos.x(), pos.y(), string, length, start);
 	}
 
 	int Font::Print (const Point& pos, const String& string, size_t start) const
 	{
-		return Print(pos.x(), pos.y(), 0.f, string, string.length(), start);
+		return Print(pos.x(), pos.y(), string, string.length(), start);
 	}
 
 	int Font::Print (const glm::vec2& pos, const String& string, size_t length,
 	        size_t start) const
 	{
-		return Print(pos.x, pos.y, 0.f, string, length, start);
+		return Print(pos.x, pos.y, string, length, start);
 	}
 
 	int Font::Print (const glm::vec3& pos, const String& string, size_t length,
 	        size_t start) const
 	{
-		return Print(pos.x, pos.y, pos.z, string, length, start);
+		return Print(pos.x, pos.y, string, length, start);
 	}
 
 	int Font::Print (float x, float y, const String& string, size_t start) const
 	{
-		return Print(x, y, 0.f, string, string.length(), start);
+		return Print(x, y, string, string.length(), start);
 	}
 
 	int Font::Print (float x, float y, const String& string, size_t length,
-	        size_t start) const
-	{
-		return Print(x, y, 0.f, string, length, start);
-	}
-
-	int Font::Print (float x, float y, float z, const String& string, size_t length,
 	        size_t start) const
 	{
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value
 
-		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_text_program();
 		program->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glUniform1i(Shaders::instance->location(Stock::TEXT_TEXTURE), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TEXT_TEXTURE), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -319,8 +307,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
-			glUniform4f(Shaders::instance->location(Stock::TEXT_COLOR),
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -340,7 +328,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+				glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
 			}
 
 		}
@@ -348,8 +336,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
-		glUniform4fv(Shaders::instance->location(Stock::TEXT_COLOR), 1, m_color.data());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -367,7 +355,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			glUniform3f(Shaders::instance->location(Stock::TEXT_POSITION), tx, ty, z);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
 		}
 
 		glBindVertexArray(0);

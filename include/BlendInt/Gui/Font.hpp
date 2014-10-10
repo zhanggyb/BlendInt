@@ -41,13 +41,13 @@ namespace BlendInt {
 	public:
 
 #ifdef __LINUX__
-		Font (const std::string& name = std::string("Sans"),
+		Font (const std::string& name = std::string("Droid Sans"),
 						unsigned int size = 12,
 						int flag = 0);
 #endif
 
 #ifdef __APPLE__
-		Font (const std::string& family = std::string("Sans-Serif"),
+		Font (const std::string& family = std::string("Droid Sans"),
 						unsigned int size = 12,
 						int flag = 0);
 #endif
@@ -102,8 +102,6 @@ namespace BlendInt {
 
 		int Print (float x, float y, const std::string& string, size_t length, size_t start) const;
 
-		int Print (float x, float y, float z, const std::string& string, size_t length, size_t start) const;
-
 		int Print (const Point& pos, const String& string, size_t start = 0) const;
 
 		int Print (const Point& pos, const String& string, size_t length, size_t start = 0) const;
@@ -115,8 +113,6 @@ namespace BlendInt {
 		int Print (float x, float y, const String& string, size_t start = 0) const;
 
 		int Print (float x, float y, const String& string, size_t length, size_t start) const;
-
-		int Print (float x, float y, float z, const String& string, size_t length, size_t start) const;
 
 		int GetHeight () const
 		{

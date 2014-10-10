@@ -271,7 +271,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glm::vec3 pos(0.f, 0.f, 0.f);
+		glm::vec2 pos(0.f, 0.f);
 
 		if (hover()) {
 
@@ -300,7 +300,7 @@ namespace BlendInt {
 
 		Shaders::instance->widget_outer_program()->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 1, glm::value_ptr(pos));
+		glUniform2fv(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 1, glm::value_ptr(pos));
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->radio_button().outline.data());
 
@@ -312,8 +312,8 @@ namespace BlendInt {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-			        0.f, 0.f - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+			        0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}

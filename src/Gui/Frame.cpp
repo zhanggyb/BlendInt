@@ -64,6 +64,8 @@ namespace BlendInt {
 		}
 
 		ClearHoverWidgets();
+
+		SetCursorFollowedWidget(0);
 	}
 
 	void Frame::Setup(Widget* widget)
@@ -247,8 +249,8 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Shaders::instance->SetUIProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetUIModelMatrix(model_matrix_);
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 	}
 
 	ResponseType Frame::Draw (Profile& profile)

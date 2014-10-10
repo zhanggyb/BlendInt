@@ -74,32 +74,36 @@ namespace BlendInt {
 
 			WIDGET_OUTER_COORD,
 			WIDGET_OUTER_COLOR,
-			WIDGET_OUTER_POSITION,
+			WIDGET_OUTER_POSITION,	// vec2 of outline or emboss vertices
 
 			// Text
-			TEXT_COORD,
+			WIDGET_TEXT_COORD,
 			//TEXT_PROJECTION,
 			//TEXT_VIEW,
-			TEXT_POSITION,
-			TEXT_ROTATION,
-			TEXT_TEXTURE,
-			TEXT_COLOR,
+			WIDGET_TEXT_POSITION,
+			WIDGET_TEXT_ROTATION,
+			WIDGET_TEXT_TEXTURE,
+			WIDGET_TEXT_COLOR,
 
 			// Image
-			IMAGE_COORD,
-			IMAGE_UV,
+			WIDGET_IMAGE_COORD,
+			WIDGET_IMAGE_UV,
 			//IMAGE_PROJECTION,
 			//IMAGE_VIEW,
-			IMAGE_POSITION,
-			IMAGE_ROTATION,
-			IMAGE_TEXTURE,
-			IMAGE_GAMMA,
+			WIDGET_IMAGE_POSITION,
+			WIDGET_IMAGE_ROTATION,
+			WIDGET_IMAGE_TEXTURE,
+			WIDGET_IMAGE_GAMMA,
 
 			PRIMITIVE_COORD,
 			PRIMITIVE_COLOR,
 			PRIMITIVE_PROJECTION,
 			PRIMITIVE_VIEW,
 			PRIMITIVE_MODEL,
+
+			FRAME_INNER_COORD,
+			FRAME_INNER_COLOR,
+			FRAME_INNER_GAMMA,
 
 			LocationLast
 		};
@@ -116,9 +120,9 @@ namespace BlendInt {
 
 			static Shaders* instance;
 
-			const RefPtr<GLSLProgram>& text_program () const
+			const RefPtr<GLSLProgram>& widget_text_program () const
 			{
-				return text_program_;
+				return widget_text_program_;
 			}
 
 			const RefPtr<GLSLProgram>& primitive_program () const
@@ -151,49 +155,49 @@ namespace BlendInt {
 				return widget_outer_program_;
 			}
 
-			const RefPtr<GLSLProgram>& image_program () const
+			const RefPtr<GLSLProgram>& widget_image_program () const
 			{
-				return image_program_;
+				return widget_image_program_;
 			}
 
 			const glm::mat4& ui_projection_matrix () const
 			{
-				return ui_projection_matrix_;
+				return widget_projection_matrix_;
 			}
 
 			const glm::mat4& ui_view_matrix () const
 			{
-				return ui_view_matrix_;
+				return widget_view_matrix_;
 			}
 
 			const glm::mat4& ui_model_matrix () const
 			{
-				return ui_model_matrix_;
+				return widget_model_matrix_;
 			}
 
-			void GetUIProjectionMatrix (glm::mat4& matrix);
+			void GetWidgetProjectionMatrix (glm::mat4& matrix);
 
-			void SetUIProjectionMatrix (const glm::mat4& matrix);
+			void SetWidgetProjectionMatrix (const glm::mat4& matrix);
 
-			void PushUIProjectionMatrix ();
+			void PushWidgetProjectionMatrix ();
 
-			void PopUIProjectionMatrix ();
+			void PopWidgetProjectionMatrix ();
 
-			void GetUIViewMatrix (glm::mat4& matrix);
+			void GetWidgetViewMatrix (glm::mat4& matrix);
 
-			void SetUIViewMatrix (const glm::mat4& matrix);
+			void SetWidgetViewMatrix (const glm::mat4& matrix);
 
-			void PushUIViewMatrix ();
+			void PushWidgetViewMatrix ();
 
-			void PopUIViewMatrix ();
+			void PopWidgetViewMatrix ();
 
-			void SetUIModelMatrix (const glm::mat4& matrix);
+			void SetWidgetModelMatrix (const glm::mat4& matrix);
 
-			void GetUIModelMatrix (glm::mat4& matrix);
+			void GetWidgetModelMatrix (glm::mat4& matrix);
 
-			void PushUIModelMatrix ();
+			void PushWidgetModelMatrix ();
 
-			void PopUIModelMatrix ();
+			void PopWidgetModelMatrix ();
 
 			inline GLint location (LocationType index) const
 			{
@@ -230,7 +234,7 @@ namespace BlendInt {
 
 			bool SetupPrimitiveProgram ();
 
-			RefPtr<GLSLProgram> text_program_;
+			RefPtr<GLSLProgram> widget_text_program_;
 
 			RefPtr<GLSLProgram> primitive_program_;
 
@@ -244,34 +248,34 @@ namespace BlendInt {
 
 			RefPtr<GLSLProgram> widget_outer_program_;
 
-			RefPtr<GLSLProgram> image_program_;
+			RefPtr<GLSLProgram> widget_image_program_;
 
 			GLint locations_[LocationLast];
 
-			RefPtr<GLBuffer<UNIFORM_BUFFER> > ui_matrix_;
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrix_;
 
 			// the offset of uniform block in shaders
-			GLint ui_matrix_offset_[3];
+			GLint widget_matrix_offset_[3];
 
-			GLint ui_matrix_block_size_;
+			GLint widget_matrix_block_size_;
 			
-			GLuint ui_matrix_binding_point_;
+			GLuint widget_matrix_binding_point_;
 
-			glm::mat4 ui_projection_matrix_;
+			glm::mat4 widget_projection_matrix_;
 
-			glm::mat4 ui_view_matrix_;
+			glm::mat4 widget_view_matrix_;
 
-			glm::mat4 ui_model_matrix_;
+			glm::mat4 widget_model_matrix_;
 
-			std::stack<glm::mat4> ui_projection_matrix_stack;
+			std::stack<glm::mat4> widget_projection_matrix_stack;
 
-			std::stack<glm::mat4> ui_view_matrix_stack;
+			std::stack<glm::mat4> widget_view_matrix_stack;
 
-			std::stack<glm::mat4> ui_model_matrix_stack;
+			std::stack<glm::mat4> widget_model_matrix_stack;
 
-			static const char* text_vertex_shader;
+			static const char* widget_text_vertex_shader;
 
-			static const char* text_fragment_shader;
+			static const char* widget_text_fragment_shader;
 
 			static const char* primitive_vertex_shader;
 
@@ -309,9 +313,13 @@ namespace BlendInt {
 
 			static const char* context_fragment_shader;
 
-			static const char* image_vertex_shader;
+			static const char* widget_image_vertex_shader;
 
-			static const char* image_fragment_shader;
+			static const char* widget_image_fragment_shader;
+
+			static const char* frame_inner_vertex_shader;
+
+			static const char* frame_inner_fragment_shader;
 		};
 
 	}

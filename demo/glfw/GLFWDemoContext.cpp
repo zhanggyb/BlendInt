@@ -34,26 +34,31 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	Viewport* vp1 = Manage(new Viewport);
+	DBG_SET_NAME(vp1, "Viewport1");
 	Viewport* vp2 = Manage(new Viewport);
+	DBG_SET_NAME(vp2, "Viewport2");
 	Viewport* vp3 = Manage(new Viewport);
+	DBG_SET_NAME(vp3, "Viewport3");
 
-	FrameSplitter* splitter = Manage(new FrameSplitter);
+	FrameSplitter* splitter1 = Manage(new FrameSplitter);
+	DBG_SET_NAME(splitter1, "Splitter1");
 
 	FrameSplitter* splitter2 = Manage(new FrameSplitter(Vertical));
+	DBG_SET_NAME(splitter2, "Splitter2");
 	splitter2->Resize(600, 720);
 
-	splitter->Resize(1200, 720);
-	//splitter->SetPosition(20, 20);
+	splitter1->Resize(1200, 720);
+	//splitter1->SetPosition(20, 20);
 
 	splitter2->AddFrame(vp2);
 	splitter2->AddFrame(vp3);
 
-	splitter->AddFrame(vp1);
-	splitter->AddFrame(splitter2);
+	splitter1->AddFrame(vp1);
+	splitter1->AddFrame(splitter2);
 
-	AddFrame(splitter);
+	AddFrame(splitter1);
 
-	splitter->Resize(1200, 760);
+	splitter1->Resize(1200, 760);
 
-	events()->connect(resized(), splitter, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 }

@@ -78,11 +78,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
@@ -137,11 +137,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
@@ -207,11 +207,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		buffer_->reset();
@@ -322,14 +322,14 @@ namespace BlendInt {
 	void PixelIcon::Draw (const glm::vec3& pos, short gamma) const
 	{
 		if(texture_) {
-			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
+			RefPtr<GLSLProgram> program = Shaders::instance->widget_image_program();
 			program->use();
 
-			glUniform3fv(Shaders::instance->location(Stock::IMAGE_POSITION), 1, glm::value_ptr(pos));
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), gamma);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), pos.x, pos.y);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
 
 			texture_->bind();
 			glBindVertexArray(vao_);

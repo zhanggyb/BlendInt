@@ -182,8 +182,8 @@ namespace BlendInt {
 
 		Shaders::instance->widget_outer_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-				0.f, 0.f, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+				0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -192,8 +192,8 @@ namespace BlendInt {
 		if (emboss()) {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
-					0.f, - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_type()) * 2);

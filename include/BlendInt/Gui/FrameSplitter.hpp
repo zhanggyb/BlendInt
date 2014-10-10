@@ -90,6 +90,15 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER> buffer_;
 
+		Point last_;
+		Point cursor_;
+
+		bool pressed_;
+
+		int prev_size_;
+		int next_size_;
+		int nearby_pos_;
+
 		AbstractFrame* previous_frame_;
 
 		AbstractFrame* next_frame_;

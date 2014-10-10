@@ -51,12 +51,12 @@ namespace BlendInt {
 		vertex_buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::IMAGE_COORD));
+				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_COORD),
+				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_UV), 2,
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
@@ -92,10 +92,10 @@ namespace BlendInt {
 		if(texture_->id()) {
 
 			texture_->bind();
-			Shaders::instance->image_program()->use();
-			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), x, y, 0.f);
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
+			Shaders::instance->widget_image_program()->use();
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

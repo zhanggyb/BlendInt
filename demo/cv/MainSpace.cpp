@@ -176,12 +176,12 @@ void MainSpace::RenderToBuffer(BI::Profile& profile)
 
 		glm::mat4 origin;
 
-		Shaders::instance->GetUIProjectionMatrix(origin);
+		Shaders::instance->GetWidgetProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -199,7 +199,7 @@ void MainSpace::RenderToBuffer(BI::Profile& profile)
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->SetUIProjectionMatrix(origin);
+		Shaders::instance->SetWidgetProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

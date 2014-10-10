@@ -47,7 +47,7 @@ namespace BlendInt {
 	namespace Stock {
 
 #ifdef __OPENGL_CORE_330__
-		const char* Shaders::text_vertex_shader =
+		const char* Shaders::widget_text_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec4 a_coord;"
 			"out vec2 uv;"
@@ -60,15 +60,15 @@ namespace BlendInt {
 			"	mat4 model;"
 			"};"
 			""
-			"uniform vec3 u_position;"// position
+			"uniform vec2 u_position;"// position
       			"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 			""
-			"mat4 TranslateMatrix (const in vec3 t)"
+			"mat4 TranslateMatrix (const in vec2 t)"
 			"{"
 			"	return mat4(1.0, 0.0, 0.0, 0.0,"
 			"				0.0, 1.0, 0.0, 0.0,"
 			"				0.0, 0.0, 1.0, 0.0,"
-			"				t.x, t.y, t.z, 1.0);"
+			"				t.x, t.y, 0.0, 1.0);"
 			"}"
 			""
 			"mat4 RotateMatrix( const in float angle,"
@@ -100,7 +100,7 @@ namespace BlendInt {
 			"	uv = a_coord.zw;"
 			"}";
 
-		const char* Shaders::text_fragment_shader =
+		const char* Shaders::widget_text_fragment_shader =
 			"#version 330\n"
 			"in vec2 uv;"
 			"uniform sampler2D u_tex;"
@@ -434,7 +434,6 @@ namespace BlendInt {
 				""
 				"in float VertexShade;"
 				"uniform vec4 u_color;"
-				"uniform bool u_AA = false;"
 				"uniform int u_gamma = 0;"
 				"out vec4 FragmentColor;"
 				""
@@ -508,7 +507,7 @@ namespace BlendInt {
 				"	mat4 model;"
 				"};"
 				""
-				"uniform vec3 u_position;"// position
+				"uniform vec2 u_position;"// position
 				""
 				"const vec2 AA_JITTER[8] = vec2[8]("
 				"	vec2(0.468813, -0.481430),"
@@ -520,12 +519,12 @@ namespace BlendInt {
 				"	vec2(-0.272855, 0.269918),"
 				"	vec2(0.095909, 0.388710));"
 				""
-				"mat4 TranslateMatrix (const in vec3 t)"
+				"mat4 TranslateMatrix (const in vec2 t)"
 				"{"
 				"	return mat4(1.0, 0.0, 0.0, 0.0,"
 				"				0.0, 1.0, 0.0, 0.0,"
 				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, t.z, 1.0);"
+				"				t.x, t.y, 0.0, 1.0);"
 				"}"
 				""
 				"void main()"
@@ -624,7 +623,7 @@ namespace BlendInt {
 				//"	}"
 				"}";
 
-		const char* Shaders::image_vertex_shader =
+		const char* Shaders::widget_image_vertex_shader =
 				"#version 330\n"
 				"layout(location = 0) in vec2 a_coord;"
 				"layout(location = 1) in vec2 a_uv;"
@@ -639,15 +638,15 @@ namespace BlendInt {
 				"	mat4 model;"
 				"};"
 				""
-				"uniform vec3 u_position;"// position
+				"uniform vec2 u_position;"// position
         		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				""
-		        "mat4 TranslateMatrix (const in vec3 t)"
+		        "mat4 TranslateMatrix (const in vec2 t)"
 		        "{"
 		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
 		        "				0.0, 1.0, 0.0, 0.0,"
 		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, t.z, 1.0);"
+		        "				t.x, t.y, 0.0, 1.0);"
 		        "}"
 		        ""
 		        "mat4 RotateMatrix( const in float angle,"
@@ -679,7 +678,7 @@ namespace BlendInt {
 				"	f_texcoord = a_uv;"
 				"}";
 
-		const char* Shaders::image_fragment_shader =
+		const char* Shaders::widget_image_fragment_shader =
 		        "#version 330\n"
 				"in vec2 f_texcoord;"
 				"uniform sampler2D TexID;"
@@ -693,9 +692,49 @@ namespace BlendInt {
 				"	FragmentColor = color + color_calib;"
 				"}";
 
+		const char* Shaders::frame_inner_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 a_coord;"
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 u_position;"
+				"out float VertexShade;"
+				""
+		        "mat4 TranslateMatrix (const in vec2 t)"
+		        "{"
+		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
+		        "				0.0, 1.0, 0.0, 0.0,"
+		        "				0.0, 0.0, 1.0, 0.0,"
+		        "				t.x, t.y, 0.0, 1.0);"
+		        "}"
+		        ""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix (u_position);"
+				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
+				"	VertexShade = a_coord.z;"
+				"}";
+
+		const char* Shaders::frame_inner_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 u_color;"
+				"uniform int u_gamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color;"
+				"}";
+
 #else	// Legacy opengl
 
-		const char* Shaders::text_vertex_shader =
+		const char* Shaders::widget_text_vertex_shader =
 		"#version 120\n"
 		"attribute vec4 coord;"
 		"uniform mat4 MVP;"
@@ -706,7 +745,7 @@ namespace BlendInt {
 		"  texpos = coord.zw;"
 		"}";
 
-		const char* Shaders::text_fragment_shader =
+		const char* Shaders::widget_text_fragment_shader =
 		"#version 120\n"
 		"varying vec2 texpos;"
 		"uniform sampler2D tex;"
@@ -813,24 +852,24 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: ui_matrix_block_size_(0),
-			ui_matrix_binding_point_(1)
+		: widget_matrix_block_size_(0),
+			widget_matrix_binding_point_(1)
 		{
-			text_program_.reset(new GLSLProgram);
+			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
 			triangle_program_.reset(new GLSLProgram);
 			widget_program_.reset(new GLSLProgram);
 			widget_inner_program_.reset(new GLSLProgram);
 			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
-			image_program_.reset(new GLSLProgram);
+			widget_image_program_.reset(new GLSLProgram);
 		}
 
 		Shaders::~Shaders ()
 		{
 		}
 
-		void Shaders::GetUIProjectionMatrix(glm::mat4& matrix)
+		void Shaders::GetWidgetProjectionMatrix(glm::mat4& matrix)
 		{
 			/*
 			ui_matrix_->bind();
@@ -842,34 +881,34 @@ namespace BlendInt {
 			ui_matrix_->reset();
 			*/
 
-			matrix = ui_projection_matrix_;
+			matrix = widget_projection_matrix_;
 		}
 
-		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
+		void Shaders::SetWidgetProjectionMatrix(const glm::mat4& matrix)
 		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
-			ui_matrix_->reset();
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[0], widget_matrix_offset_[1] - widget_matrix_offset_[0], glm::value_ptr(matrix));
+			widget_matrix_->reset();
 
-			ui_projection_matrix_ = matrix;
+			widget_projection_matrix_ = matrix;
 		}
 
-		void Shaders::PushUIProjectionMatrix()
+		void Shaders::PushWidgetProjectionMatrix()
 		{
 			glm::mat4 matrix;
-			GetUIProjectionMatrix(matrix);
-			ui_projection_matrix_stack.push(matrix);
+			GetWidgetProjectionMatrix(matrix);
+			widget_projection_matrix_stack.push(matrix);
 		}
 
-		void Shaders::PopUIProjectionMatrix()
+		void Shaders::PopWidgetProjectionMatrix()
 		{
-			if(ui_projection_matrix_stack.size()) {
-				SetUIProjectionMatrix(ui_projection_matrix_stack.top());
-				ui_projection_matrix_stack.pop();
+			if(widget_projection_matrix_stack.size()) {
+				SetWidgetProjectionMatrix(widget_projection_matrix_stack.top());
+				widget_projection_matrix_stack.pop();
 			}
 		}
 
-		void Shaders::GetUIViewMatrix(glm::mat4& matrix)
+		void Shaders::GetWidgetViewMatrix(glm::mat4& matrix)
 		{
 			// FIXME: the following commented lines does not work, but I don't know why
 			// cause the same code in GetUIProjectionMatrix() works
@@ -882,34 +921,34 @@ namespace BlendInt {
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
 			*/
-			matrix = ui_view_matrix_;
+			matrix = widget_view_matrix_;
 		}
 
-		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
+		void Shaders::SetWidgetViewMatrix(const glm::mat4& matrix)
 		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_offset_[2]- ui_matrix_offset_[1], glm::value_ptr(matrix));
-			ui_matrix_->reset();
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[1], widget_matrix_offset_[2]- widget_matrix_offset_[1], glm::value_ptr(matrix));
+			widget_matrix_->reset();
 
-			ui_view_matrix_ = matrix;
+			widget_view_matrix_ = matrix;
 		}
 
-		void Shaders::PushUIViewMatrix()
+		void Shaders::PushWidgetViewMatrix()
 		{
 			glm::mat4 matrix;
-			GetUIViewMatrix(matrix);
-			ui_view_matrix_stack.push(matrix);
+			GetWidgetViewMatrix(matrix);
+			widget_view_matrix_stack.push(matrix);
 		}
 
-		void Shaders::PopUIViewMatrix()
+		void Shaders::PopWidgetViewMatrix()
 		{
-			if(ui_view_matrix_stack.size()) {
-				SetUIViewMatrix(ui_view_matrix_stack.top());
-				ui_view_matrix_stack.pop();
+			if(widget_view_matrix_stack.size()) {
+				SetWidgetViewMatrix(widget_view_matrix_stack.top());
+				widget_view_matrix_stack.pop();
 			}
 		}
 
-		void Shaders::GetUIModelMatrix(glm::mat4& matrix)
+		void Shaders::GetWidgetModelMatrix(glm::mat4& matrix)
 		{
 			/*
 			ui_matrix_->bind();
@@ -920,29 +959,29 @@ namespace BlendInt {
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
 			*/
-			matrix = ui_model_matrix_;
+			matrix = widget_model_matrix_;
 		}
 
-		void Shaders::SetUIModelMatrix (const glm::mat4& matrix)
+		void Shaders::SetWidgetModelMatrix (const glm::mat4& matrix)
 		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[2], ui_matrix_block_size_- ui_matrix_offset_[2], glm::value_ptr(matrix));
-			ui_matrix_->reset();
-			ui_model_matrix_ = matrix;
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[2], widget_matrix_block_size_- widget_matrix_offset_[2], glm::value_ptr(matrix));
+			widget_matrix_->reset();
+			widget_model_matrix_ = matrix;
 		}
 
-		void Shaders::PushUIModelMatrix()
+		void Shaders::PushWidgetModelMatrix()
 		{
 			glm::mat4 matrix;
-			GetUIModelMatrix(matrix);
-			ui_model_matrix_stack.push(matrix);
+			GetWidgetModelMatrix(matrix);
+			widget_model_matrix_stack.push(matrix);
 		}
 
-		void Shaders::PopUIModelMatrix()
+		void Shaders::PopWidgetModelMatrix()
 		{
-			if(ui_model_matrix_stack.size()) {
-				SetUIModelMatrix(ui_model_matrix_stack.top());
-				ui_model_matrix_stack.pop();
+			if(widget_model_matrix_stack.size()) {
+				SetWidgetModelMatrix(widget_model_matrix_stack.top());
+				widget_model_matrix_stack.pop();
 			}
 		}
 
@@ -982,13 +1021,13 @@ namespace BlendInt {
 
 			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
 
-			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &ui_matrix_block_size_);
+			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &widget_matrix_block_size_);
 
-			GLubyte* buf_p = (GLubyte*)malloc(ui_matrix_block_size_);
+			GLubyte* buf_p = (GLubyte*)malloc(widget_matrix_block_size_);
 
 			GLuint indices[3];
 			glGetUniformIndices(widget_program_->id(), 3, names, indices);
-			glGetActiveUniformsiv(widget_program_->id(), 3, indices, GL_UNIFORM_OFFSET, ui_matrix_offset_);
+			glGetActiveUniformsiv(widget_program_->id(), 3, indices, GL_UNIFORM_OFFSET, widget_matrix_offset_);
 
 			// set default matrix
 			glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
@@ -997,20 +1036,20 @@ namespace BlendInt {
 					glm::vec3(0.f, 1.f, 0.f));
 			glm::mat4 model(1.f);
 
-			if(ui_matrix_block_size_ > 0) {
-				memcpy(buf_p + ui_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
-				memcpy(buf_p + ui_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
-				memcpy(buf_p + ui_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
+			if(widget_matrix_block_size_ > 0) {
+				memcpy(buf_p + widget_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
+				memcpy(buf_p + widget_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+				memcpy(buf_p + widget_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
 			}
 
-			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
-			ui_matrix_->generate();
-			ui_matrix_->bind();
-			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
-			ui_matrix_->reset();
+			widget_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			widget_matrix_->generate();
+			widget_matrix_->bind();
+			widget_matrix_->set_data(widget_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			widget_matrix_->reset();
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(widget_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_program_->id(), block_index, widget_matrix_binding_point_);
 
 			free(buf_p);
 			buf_p = 0;
@@ -1024,29 +1063,29 @@ namespace BlendInt {
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(widget_inner_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrix_binding_point_);
 
 			block_index = glGetUniformBlockIndex(widget_split_inner_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, widget_matrix_binding_point_);
 
 			block_index = glGetUniformBlockIndex(widget_outer_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(widget_outer_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_outer_program_->id(), block_index, widget_matrix_binding_point_);
 
-			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_text_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(text_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_text_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in triangle program
 
@@ -1054,42 +1093,42 @@ namespace BlendInt {
 			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(triangle_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(triangle_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in image program
 
-			block_index = glGetUniformBlockIndex(image_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_image_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(image_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(image_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrix_binding_point_);
 
 			return true;
 		}
 
 		bool Shaders::SetupTextProgram()
 		{
-			if (!text_program_->Create())
+			if (!widget_text_program_->Create())
 				return false;
 
-			text_program_->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
-			text_program_->AttachShader(text_fragment_shader,
+			widget_text_program_->AttachShader(widget_text_vertex_shader, GL_VERTEX_SHADER);
+			widget_text_program_->AttachShader(widget_text_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!text_program_->Link()) {
+			if (!widget_text_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the text program: %d",
-				        text_program_->id());
+				        widget_text_program_->id());
 				return false;
 			}
 
-			locations_[TEXT_COORD] = text_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("a_coord");
 			//locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
 			//locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
-			locations_[TEXT_POSITION] = text_program_->GetUniformLocation("u_position");
-			locations_[TEXT_ROTATION] = text_program_->GetUniformLocation("u_rotation");
-			locations_[TEXT_TEXTURE] = text_program_->GetUniformLocation("u_tex");
-			locations_[TEXT_COLOR] = text_program_->GetUniformLocation("u_color");
+			locations_[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
+			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("u_color");
 
 			return true;
 		}
@@ -1234,28 +1273,28 @@ namespace BlendInt {
 
 		bool Shaders::SetupImageProgram()
 		{
-			if (!image_program_->Create()) {
+			if (!widget_image_program_->Create()) {
 				return false;
 			}
 
-			image_program_->AttachShader(image_vertex_shader,
+			widget_image_program_->AttachShader(widget_image_vertex_shader,
 			        GL_VERTEX_SHADER);
-			image_program_->AttachShader(image_fragment_shader,
+			widget_image_program_->AttachShader(widget_image_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!image_program_->Link()) {
+			if (!widget_image_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
-				        image_program_->id());
+				        widget_image_program_->id());
 				return false;
 			}
 
-			locations_[IMAGE_COORD] = image_program_->GetAttributeLocation("a_coord");
-			locations_[IMAGE_UV] = image_program_->GetAttributeLocation("a_uv");
+			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("a_uv");
 			//locations_[IMAGE_PROJECTION] = image_program_->GetUniformLocation("u_projection");
 			//locations_[IMAGE_VIEW] = image_program_->GetUniformLocation("u_view");
-			locations_[IMAGE_POSITION] = image_program_->GetUniformLocation("u_position");
-			locations_[IMAGE_ROTATION] = image_program_->GetUniformLocation("u_rotation");
-			locations_[IMAGE_TEXTURE] = image_program_->GetUniformLocation("TexID");
-			locations_[IMAGE_GAMMA] = image_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("TexID");
+			locations_[WIDGET_IMAGE_GAMMA] = widget_image_program_->GetUniformLocation("u_gamma");
 
 			return true;
 		}

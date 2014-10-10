@@ -171,7 +171,8 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractWidget(),
-	  hover_(0)
+	  hover_(0),
+	  cursor_followed_frame_(0)
 	{
 		set_size(640, 480);
 		profile_.context_ = this;
@@ -258,6 +259,20 @@ namespace BlendInt
 	bool Context::Contain (const Point& point) const
 	{
 		return true;
+	}
+
+	void Context::SetCursorFollowedFrame(AbstractFrame* frame)
+	{
+		if(cursor_followed_frame_ == frame) return;
+
+		if(cursor_followed_frame_) {
+			cursor_followed_frame_->destroyed().disconnectOne(this, &Context::OnCursorFollowedFrameDestroyed);
+		}
+
+		cursor_followed_frame_ = frame;
+		if(cursor_followed_frame_) {
+			events()->connect(cursor_followed_frame_->destroyed(), this, &Context::OnCursorFollowedFrameDestroyed);
+		}
 	}
 
 	Context* Context::GetContext (AbstractWidget* widget)
@@ -496,8 +511,8 @@ namespace BlendInt
 	{
 		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
-		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
+		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
 	}
 
 	void Context::FocusEvent(bool focus)
@@ -521,6 +536,16 @@ namespace BlendInt
 		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 
 		hover_ = 0;
+	}
+
+	void Context::OnCursorFollowedFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(cursor_followed_frame_ == frame);
+
+		DBG_PRINT_MSG("cursor followed frame %s destroyed", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnCursorFollowedFrameDestroyed);
+
+		cursor_followed_frame_ = 0;
 	}
 
 }

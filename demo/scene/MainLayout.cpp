@@ -158,8 +158,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		Profile off_screen_profile(profile, GetGlobalPosition());
 
 		glm::mat4 identity(1.f);
-		Shaders::instance->PushUIModelMatrix();
-		Shaders::instance->SetUIModelMatrix(identity);
+		Shaders::instance->PushWidgetModelMatrix();
+		Shaders::instance->SetWidgetModelMatrix(identity);
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearDepth(1.0);
@@ -173,8 +173,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
 		        -100.f);
 
-		Shaders::instance->PushUIProjectionMatrix();
-		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->PushWidgetProjectionMatrix();
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -194,8 +194,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->PopUIProjectionMatrix();
-		Shaders::instance->PopUIModelMatrix();
+		Shaders::instance->PopWidgetProjectionMatrix();
+		Shaders::instance->PopWidgetModelMatrix();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

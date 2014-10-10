@@ -74,6 +74,8 @@ namespace BlendInt {
 			return resized_;
 		}
 
+		virtual void SetCursorFollowedFrame (AbstractFrame* widget);
+
 		static Context* GetContext (AbstractWidget* widget);
 
 		static glm::mat4 default_view_matrix;
@@ -128,11 +130,15 @@ namespace BlendInt {
 
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
+		void OnCursorFollowedFrameDestroyed (AbstractFrame* frame);
+
 		Profile profile_;
 
 		int current_cursor_;
 
 		AbstractFrame* hover_;
+
+		AbstractFrame* cursor_followed_frame_;
 
 		std::stack<int> cursor_stack_;
 
