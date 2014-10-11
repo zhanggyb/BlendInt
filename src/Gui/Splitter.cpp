@@ -44,6 +44,7 @@
 #include <BlendInt/Stock/Cursor.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -238,6 +239,7 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
 	{
+		event.context()->SetCursorFollowedFrame(event.frame());
 		event.frame()->SetCursorFollowedWidget(this);
 
 		last_ = position();
@@ -260,9 +262,11 @@ namespace BlendInt {
 	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
 	{
 		if (pressed_) {
-			event.frame()->SetCursorFollowedWidget(0);
 			pressed_ = false;
 		}
+
+		event.frame()->SetCursorFollowedWidget(0);
+		event.context()->SetCursorFollowedFrame(0);
 
 		return Accept;
 	}
@@ -279,7 +283,7 @@ namespace BlendInt {
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
@@ -295,7 +299,7 @@ namespace BlendInt {
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
@@ -314,7 +318,7 @@ namespace BlendInt {
 	}
 
 	Splitter::Splitter(Orientation orientation)
-	: Layout(),
+	: Widget(),
 	  orientation_(orientation)
 	{
 		set_size(400, 400);
@@ -343,7 +347,7 @@ namespace BlendInt {
 				PushFrontSubWidget(widget);
 			}
 
-			AlignSubWidgets(orientation_, size(), margin());
+			AlignSubWidgets(orientation_, size());
 
 			// TODO: connect widget's destroyed event
 		}
@@ -367,7 +371,7 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			}
 
-			AlignSubWidgets(orientation_, size(), margin());
+			AlignSubWidgets(orientation_, size());
 
 			// TODO: connect widget's destroyed event
 		}
@@ -382,9 +386,9 @@ namespace BlendInt {
 	{
 		if(RemoveSubWidget(widget)) {
 			if(orientation_ == Horizontal) {
-				FillSubWidgetsInSplitter(size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), orientation_);
 			} else {
-				FillSubWidgetsInSplitter(size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), orientation_);
 			}
 		}
 	}
@@ -422,8 +426,6 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
@@ -531,16 +533,11 @@ namespace BlendInt {
 	{
 	}
 
-	void Splitter::PerformMarginUpdate(const Margin& request)
-	{
-		FillSubWidgetsInSplitter(size(), request, orientation_);
-	}
-
 	void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
-			FillSubWidgetsInSplitter(*request.size(), margin(), orientation_);
+			FillSubWidgetsInSplitter(*request.size(), orientation_);
 
 			set_size(*request.size());
 		}
@@ -550,15 +547,15 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size, const Margin& margin)
+	void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size)
 	{
-		int room = GetAverageRoom(orientation, out_size, margin);
-		int x = position().x() + margin.left();
+		int room = GetAverageRoom(orientation, out_size);
+		int x = position().x();
 
 		if(orientation == Horizontal) {
 
-			int y = position().y() + margin.bottom();
-			int h = out_size.height() - margin.vsum();
+			int y = position().y();
+			int h = out_size.height();
 
 			int i = 0;
 			int handler_width = 0;
@@ -579,8 +576,8 @@ namespace BlendInt {
 
 		} else {
 
-			int y = position().y() + out_size.height() - margin.top();
-			int w = out_size.width() - margin.hsum();
+			int y = position().y() + out_size.height();
+			int w = out_size.width();
 
 			int i = 0;
 			int handler_height = 0;
@@ -603,12 +600,12 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::FillSubWidgetsInSplitter (const Size& out_size, const Margin& margin, Orientation orientation)
+	void Splitter::FillSubWidgetsInSplitter (const Size& out_size, Orientation orientation)
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int x = 0;
+		int y = 0;
+		int width = out_size.width();
+		int height = out_size.height();
 
 		FillSubWidgetsInSplitter(x, y, width, height, orientation);
 	}
@@ -903,14 +900,14 @@ namespace BlendInt {
 		}
 	}
 
-	int Splitter::GetAverageRoom (Orientation orientation, const Size& out_size, const Margin& margin)
+	int Splitter::GetAverageRoom (Orientation orientation, const Size& out_size)
 	{
 		int room = 0;
 
 		if(orientation == Horizontal) {
-			room = out_size.width() - margin.hsum();
+			room = out_size.width();
 		} else {
-			room = out_size.height() - margin.vsum();
+			room = out_size.height();
 		}
 
 		if(first_child() == 0) {
@@ -1048,15 +1045,14 @@ namespace BlendInt {
 		}
 	}
 
-	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size,
-					const Margin& margin)
+	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size)
 	{
 		int room = 0;
 
 		if(orientation == Horizontal) {
-			room = out_size.width() - margin.hsum();
+			room = out_size.width();
 		} else {
-			room = out_size.height() - margin.vsum();
+			room = out_size.height();
 		}
 
 		if(first_child() == 0) {

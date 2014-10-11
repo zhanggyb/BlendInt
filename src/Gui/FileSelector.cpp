@@ -176,7 +176,6 @@ namespace BlendInt {
 
 		Splitter* splitter = Manage(new Splitter);
 		DBG_SET_NAME(splitter, "Splitter");
-		splitter->SetMargin(0, 0, 0, 0);
 		splitter->Append(sidebar);
 		splitter->Append(area);
 

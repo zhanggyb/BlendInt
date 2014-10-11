@@ -206,6 +206,8 @@ namespace BlendInt
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
 	{
+		const_cast<KeyEvent&>(event).context_ = this;
+
 		switch (event.action()) {
 
 			case KeyPress: {
@@ -231,6 +233,8 @@ namespace BlendInt
 
 	void Context::DispatchMouseEvent(const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).context_ = this;
+
 		switch (event.action()) {
 
 			case MouseMove: {
@@ -369,8 +373,6 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		const_cast<KeyEvent&>(event).context_ = this;
-
 		ResponseType response;
 
 		if(last_child()) {
@@ -397,8 +399,6 @@ namespace BlendInt
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).context_ = this;
-
 		ResponseType response;
 
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
@@ -406,7 +406,7 @@ namespace BlendInt
 			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
 
-				p->MoveToLast();
+				//p->MoveToLast();
 				break;
 			}
 		}
@@ -416,8 +416,6 @@ namespace BlendInt
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).context_ = this;
-
 		ResponseType response;
 
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
@@ -431,42 +429,22 @@ namespace BlendInt
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).context_ = this;
-
 		ResponseType response = Ignore;
 
-		AbstractFrame* original_hover = hover_;
+		DispatchHoverEvent(event);
 
-		hover_ = 0;
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-			if(p->Contain(event.position())) {
-				hover_ = dynamic_cast<AbstractFrame*>(p);
-				break;
-			}
-		}
-
-		if(original_hover != hover_) {
-
-			if(original_hover) {
-				original_hover->set_hover(false);
-				original_hover->MouseHoverOutEvent(event);
-				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
-			}
-
-			if(hover_) {
-				hover_->set_hover(true);
-				hover_->MouseHoverInEvent(event);
-				events()->connect(hover_->destroyed(), this, &Context::OnHoverFrameDestroyed);
-			}
-
-		}
-
+		/*
 		if(last_child()) {
 			response = last_child()->MouseMoveEvent(event);
 		}
+		*/
 
-		if(hover_ && hover_ != last_child()) {
-			hover_->MouseMoveEvent(event);
+		if(hover_) {
+			hover_->DispatchHoverEvent(event);
+		}
+
+		if(cursor_followed_frame_) {
+			response = cursor_followed_frame_->MouseMoveEvent(event);
 		}
 
 		return response;
@@ -513,6 +491,35 @@ namespace BlendInt
 
 		Shaders::instance->SetWidgetProjectionMatrix(projection);
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
+	}
+
+	void Context::DispatchHoverEvent(const MouseEvent& event)
+	{
+		AbstractFrame* original_hover = hover_;
+
+		hover_ = 0;
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+			if(p->Contain(event.position())) {
+				hover_ = dynamic_cast<AbstractFrame*>(p);
+				break;
+			}
+		}
+
+		if(original_hover != hover_) {
+
+			if(original_hover) {
+				original_hover->set_hover(false);
+				original_hover->MouseHoverOutEvent(event);
+				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
+			}
+
+			if(hover_) {
+				hover_->set_hover(true);
+				hover_->MouseHoverInEvent(event);
+				events()->connect(hover_->destroyed(), this, &Context::OnHoverFrameDestroyed);
+			}
+
+		}
 	}
 
 	void Context::FocusEvent(bool focus)

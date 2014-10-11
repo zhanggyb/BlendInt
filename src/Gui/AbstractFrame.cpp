@@ -55,7 +55,7 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	void AbstractFrame::SetCursorFollowedWidget(AbstractWidget* widget)
+	void AbstractFrame::SetCursorFollowedWidget(Widget* widget)
 	{
 
 	}

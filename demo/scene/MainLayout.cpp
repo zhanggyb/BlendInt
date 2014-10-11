@@ -72,7 +72,6 @@ void MainLayout::InitOnce ()
 	m_toolbar = CreateToolBar();
 
     Splitter* splitter = Manage(new Splitter);
-    splitter->SetMargin(0, 0, 0, 0);
 
     ToolBox* tbox = CreateToolBox();
 

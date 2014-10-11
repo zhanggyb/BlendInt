@@ -696,7 +696,7 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 a_coord;"
-				"uniform UIMatrix {"
+				"uniform FrameMatrix {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -853,7 +853,9 @@ namespace BlendInt {
 
 		Shaders::Shaders ()
 		: widget_matrix_block_size_(0),
-			widget_matrix_binding_point_(1)
+		  widget_matrix_binding_point_(1),
+		  frame_matrix_block_size_(0),
+		  frame_matrix_binding_point_(2)
 		{
 			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
@@ -863,6 +865,7 @@ namespace BlendInt {
 			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
 			widget_image_program_.reset(new GLSLProgram);
+			frame_inner_program_.reset(new GLSLProgram);
 		}
 
 		Shaders::~Shaders ()
@@ -1011,6 +1014,9 @@ namespace BlendInt {
 			if(!SetupPrimitiveProgram())
 				return false;
 
+			if(!SetupFrameInnerProgram())
+				return false;
+
 			// setup uniform block
 
 			const GLchar* names[] = {
@@ -1104,6 +1110,35 @@ namespace BlendInt {
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
 			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrix_binding_point_);
+
+			// ------------------------------ Frame matrix uniform block
+
+			block_index = glGetUniformBlockIndex(frame_inner_program_->id(), "FrameMatrix");
+
+			glGetActiveUniformBlockiv(frame_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &frame_matrix_block_size_);
+
+			buf_p = (GLubyte*)malloc(frame_matrix_block_size_);
+
+			glGetUniformIndices(frame_inner_program_->id(), 3, names, indices);
+			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, frame_matrix_offset_);
+
+			if(frame_matrix_block_size_ > 0) {
+				memcpy(buf_p + frame_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
+				memcpy(buf_p + frame_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+				memcpy(buf_p + frame_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
+			}
+
+			frame_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			frame_matrix_->generate();
+			frame_matrix_->bind();
+			frame_matrix_->set_data(frame_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			frame_matrix_->reset();
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_inner_program_->id(), block_index, frame_matrix_binding_point_);
+
+			free(buf_p);
+			buf_p = 0;
 
 			return true;
 		}
@@ -1320,6 +1355,49 @@ namespace BlendInt {
 			locations_[PRIMITIVE_PROJECTION] = primitive_program_->GetUniformLocation("P");
 			locations_[PRIMITIVE_VIEW] = primitive_program_->GetUniformLocation("V");
 			locations_[PRIMITIVE_MODEL] = primitive_program_->GetUniformLocation("M");
+
+			return true;
+		}
+
+		void Shaders::SetFrameProjectionMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[0], frame_matrix_offset_[1] - frame_matrix_offset_[0], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		void Shaders::SetFrameViewMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[1], frame_matrix_offset_[2]- frame_matrix_offset_[1], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		void Shaders::SetFrameModelMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[2], frame_matrix_block_size_- frame_matrix_offset_[2], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		bool Shaders::SetupFrameInnerProgram()
+		{
+			if(!frame_inner_program_->Create()) {
+				return false;
+			}
+
+			frame_inner_program_->AttachShader(frame_inner_vertex_shader, GL_VERTEX_SHADER);
+			frame_inner_program_->AttachShader(frame_inner_fragment_shader, GL_FRAGMENT_SHADER);
+
+			if(!frame_inner_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame inner program: %d", frame_inner_program_->id());
+				return false;
+			}
+
+			locations_[FRAME_INNER_COORD] = frame_inner_program_->GetAttributeLocation("a_coord");
+			locations_[FRAME_INNER_COLOR] = frame_inner_program_->GetUniformLocation("u_color");
+			locations_[FRAME_INNER_POSITION] = frame_inner_program_->GetUniformLocation("u_position");
+			locations_[FRAME_INNER_GAMMA] = frame_inner_program_->GetUniformLocation("u_gamma");
 
 			return true;
 		}

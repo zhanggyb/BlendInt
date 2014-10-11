@@ -503,7 +503,6 @@ namespace BlendInt {
 
 		splitter_ = Manage(new Splitter);
 		DBG_SET_NAME(splitter_, "Splitter");
-		splitter_->SetMargin(0, 0, 0, 0);
 
 		ViewportLayer* vlayout = Manage(new ViewportLayer);
 		DBG_SET_NAME(vlayout, "VLayout");

@@ -25,7 +25,6 @@
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt
 {
@@ -93,7 +92,7 @@ namespace BlendInt
 	 * A Splitter lets the user control the size of the sub widgets by dragging
 	 * the splitter handler between them.
 	 */
-	class Splitter: public Layout
+	class Splitter: public Widget
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
 
@@ -133,12 +132,9 @@ namespace BlendInt
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void FillSubWidgetsInSplitter (const Size& out_size, const Margin& margin,
-		        Orientation orientation);
+		void FillSubWidgetsInSplitter (const Size& out_size, Orientation orientation);
 
 		/**
 		 * @brief Fill the sub widgets in this container based on the current size
@@ -187,14 +183,11 @@ namespace BlendInt
 
 		void AlignVertically (int x, int width);
 
-		void AlignSubWidgets (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		void AlignSubWidgets (Orientation orientation, const Size& out_size);
 
-		int GetAverageRoom (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		int GetAverageRoom (Orientation orientation, const Size& out_size);
 
-		int GetWidgetsRoom (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		int GetWidgetsRoom (Orientation orientation, const Size& out_size);
 
 		Orientation orientation_;
 	};

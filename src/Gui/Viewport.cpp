@@ -74,6 +74,10 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
+	void Viewport::DispatchHoverEvent(const MouseEvent& event)
+	{
+	}
+
 	void Viewport::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -238,3 +242,4 @@ namespace BlendInt {
 	}
 
 }
+

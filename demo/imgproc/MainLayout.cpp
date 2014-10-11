@@ -58,7 +58,6 @@ void MainLayout::InitOnce ()
 	tbox->Append(expander);
 
 	Splitter* splitter = Manage(new Splitter);
-	splitter->SetMargin(0, 0, 0, 0);
 
 	splitter->Append(m_imgview);
 	splitter->Append(tbox);

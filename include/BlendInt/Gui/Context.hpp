@@ -128,6 +128,8 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
+		void DispatchHoverEvent (const MouseEvent& event);
+
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
 		void OnCursorFollowedFrameDestroyed (AbstractFrame* frame);

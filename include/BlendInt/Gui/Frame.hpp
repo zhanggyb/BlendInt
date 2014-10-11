@@ -26,8 +26,6 @@
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
-#include <BlendInt/Gui/Widget.hpp>
-
 namespace BlendInt {
 
 	class Frame: public AbstractFrame
@@ -62,6 +60,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void DispatchHoverEvent (const MouseEvent& event);
+
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
@@ -91,8 +91,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
-
-		bool DispatchMouseHoverEvent (const MouseEvent& event);
 
 		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
 

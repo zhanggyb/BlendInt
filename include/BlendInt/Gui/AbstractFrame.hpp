@@ -52,7 +52,7 @@ namespace BlendInt {
 			return display_mode_;
 		}
 
-		virtual void SetCursorFollowedWidget (AbstractWidget* widget);
+		virtual void SetCursorFollowedWidget (Widget* widget);
 
 		Point GetGlobalPosition (const Widget* widget);
 
@@ -64,6 +64,8 @@ namespace BlendInt {
 		static AbstractFrame* GetFrame (AbstractWidget* widget);
 
 	protected:
+
+		virtual void DispatchHoverEvent (const MouseEvent& event) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
@@ -147,6 +149,11 @@ namespace BlendInt {
 		void assign_frame (Profile& profile)
 		{
 			profile.frame_ = this;
+		}
+
+		static inline void assign_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
+		{
+			frame->DispatchHoverEvent(event);
 		}
 
 	private:

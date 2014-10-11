@@ -103,6 +103,7 @@ namespace BlendInt {
 
 			FRAME_INNER_COORD,
 			FRAME_INNER_COLOR,
+			FRAME_INNER_POSITION,
 			FRAME_INNER_GAMMA,
 
 			LocationLast
@@ -160,6 +161,11 @@ namespace BlendInt {
 				return widget_image_program_;
 			}
 
+			const RefPtr<GLSLProgram>& frame_inner_program () const
+			{
+				return frame_inner_program_;
+			}
+
 			const glm::mat4& ui_projection_matrix () const
 			{
 				return widget_projection_matrix_;
@@ -199,6 +205,12 @@ namespace BlendInt {
 
 			void PopWidgetModelMatrix ();
 
+			void SetFrameProjectionMatrix (const glm::mat4& matrix);
+
+			void SetFrameViewMatrix (const glm::mat4& matrix);
+
+			void SetFrameModelMatrix (const glm::mat4& matrix);
+
 			inline GLint location (LocationType index) const
 			{
 				return locations_[index];
@@ -234,6 +246,8 @@ namespace BlendInt {
 
 			bool SetupPrimitiveProgram ();
 
+			bool SetupFrameInnerProgram ();
+
 			RefPtr<GLSLProgram> widget_text_program_;
 
 			RefPtr<GLSLProgram> primitive_program_;
@@ -250,9 +264,13 @@ namespace BlendInt {
 
 			RefPtr<GLSLProgram> widget_image_program_;
 
+			RefPtr<GLSLProgram> frame_inner_program_;
+
 			GLint locations_[LocationLast];
 
 			RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrix_;
+
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > frame_matrix_;
 
 			// the offset of uniform block in shaders
 			GLint widget_matrix_offset_[3];
@@ -260,6 +278,12 @@ namespace BlendInt {
 			GLint widget_matrix_block_size_;
 			
 			GLuint widget_matrix_binding_point_;
+
+			GLint frame_matrix_offset_[3];
+
+			GLint frame_matrix_block_size_;
+
+			GLuint frame_matrix_binding_point_;
 
 			glm::mat4 widget_projection_matrix_;
 

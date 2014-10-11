@@ -66,7 +66,6 @@ void MainSpace::InitOnce ()
 	m_toolbar = CreateToolBar();
 
     Splitter* splitter = Manage(new Splitter);
-    splitter->SetMargin(0, 0, 0, 0);
 
     ToolBox* tbox = CreateSideBox();
     ToolBar* bottom = CreateBottomBar();

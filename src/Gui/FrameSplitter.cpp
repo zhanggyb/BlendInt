@@ -37,9 +37,9 @@
 #include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -264,6 +264,8 @@ namespace BlendInt {
 		cursor_ = event.position();
 		pressed_ = true;
 
+		event.context()->SetCursorFollowedFrame(this);
+
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous()->size().height();
 			next_size_ = next()->size().height();
@@ -284,6 +286,8 @@ namespace BlendInt {
 			pressed_ = false;
 		}
 
+		event.context()->SetCursorFollowedFrame(0);
+
 		return Accept;
 	}
 
@@ -292,6 +296,10 @@ namespace BlendInt {
 	}
 
 	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
+	void FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
 	{
 	}
 
@@ -308,7 +316,7 @@ namespace BlendInt {
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
@@ -324,7 +332,7 @@ namespace BlendInt {
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
@@ -624,52 +632,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::MouseMoveEvent(const MouseEvent& event)
 	{
-		ResponseType response = Ignore;
-
-		AbstractFrame* original_hover = hover_;
-
-		if(hover_) {
-			if(!hover_->Contain(event.position())) {
-
-				hover_ = 0;
-				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-					if(p->Contain(event.position())) {
-						hover_ = dynamic_cast<AbstractFrame*>(p);
-						break;
-					}
-				}
-
-			}
-		} else {
-
-			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-				if(p->Contain(event.position())) {
-					hover_ = dynamic_cast<AbstractFrame*>(p);
-					break;
-				}
-			}
-
-		}
-
-		if(original_hover != hover_) {
-
-			if(original_hover) {
-				set_widget_mouse_hover_out_event(original_hover, event);
-				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
-			}
-
-			if(hover_) {
-				set_widget_mouse_hover_in_event(hover_, event);
-				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
-			}
-
-		}
-
-		if(hover_) {
-			response = assign_mouse_move_event(hover_, event);
-		}
-
-		return response;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void FrameSplitter::FillSubFrames()
@@ -1137,6 +1100,52 @@ namespace BlendInt {
 		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
 		hover_ = 0;
+	}
+
+	void FrameSplitter::DispatchHoverEvent(const MouseEvent& event)
+	{
+		AbstractFrame* original_hover = hover_;
+
+		if(hover_) {
+			if(!hover_->Contain(event.position())) {
+
+				hover_ = 0;
+				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+					if(p->Contain(event.position())) {
+						hover_ = dynamic_cast<AbstractFrame*>(p);
+						break;
+					}
+				}
+
+			}
+		} else {
+
+			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+				if(p->Contain(event.position())) {
+					hover_ = dynamic_cast<AbstractFrame*>(p);
+					break;
+				}
+			}
+
+		}
+
+		if(original_hover != hover_) {
+
+			if(original_hover) {
+				set_widget_mouse_hover_out_event(original_hover, event);
+				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+			}
+
+			if(hover_) {
+				set_widget_mouse_hover_in_event(hover_, event);
+				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
+			}
+
+		}
+
+		if(hover_) {
+			assign_dispatch_hover_event(hover_, event);
+		}
 	}
 
 	void FrameSplitter::OnFocusFrameDestroyed(AbstractFrame* frame)

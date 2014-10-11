@@ -50,6 +50,8 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
+		virtual void DispatchHoverEvent (const MouseEvent& event);
+
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -121,6 +123,8 @@ namespace BlendInt {
 		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual void DispatchHoverEvent (const MouseEvent& event);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
