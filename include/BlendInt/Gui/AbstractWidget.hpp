@@ -592,11 +592,11 @@ namespace BlendInt {
 			}
 		}
 
-		virtual void PreDraw (Profile& profile);
+		virtual void PreDraw (Profile& profile) = 0;
 
 		virtual ResponseType Draw (Profile& profile) = 0;
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (Profile& profile) = 0;
 
 		virtual void FocusEvent (bool focus) = 0;
 

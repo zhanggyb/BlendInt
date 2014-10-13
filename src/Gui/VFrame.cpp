@@ -26,7 +26,8 @@
 namespace BlendInt {
 
 	VFrame::VFrame()
-	: Frame()
+	: Frame(),
+	  space_(0)
 	{
 
 	}
@@ -37,6 +38,45 @@ namespace BlendInt {
 
 	void VFrame::AddWidget(Widget* widget, bool append)
 	{
+		int x = margin_.left();
+		int y = GetLastPosition();
+		int w = size().width() - margin_.hsum();
+
+		if(PushBackSubWidget(widget)) {
+
+			Size prefer = widget->GetPreferredSize();
+
+			y = y - prefer.height();
+
+			SetSubWidgetPosition(widget, x, y);
+
+			if(widget->IsExpandX()) {
+				ResizeSubWidget(widget, w, prefer.height());
+			} else {
+				if(widget->size().width() > w) {
+					ResizeSubWidget(widget, w, prefer.height());
+				} else {
+					ResizeSubWidget(widget, widget->size().width(), prefer.height());
+				}
+			}
+		}
+
+	}
+
+	void VFrame::InsertWidget(int index, Widget* widget)
+	{
+	}
+
+	int VFrame::GetLastPosition() const
+	{
+		int y = size().height() - margin_.top();
+
+		if(last_child()) {
+			y = last_child()->position().y();
+			y -= space_;
+		}
+
+		return y;
 	}
 
 }

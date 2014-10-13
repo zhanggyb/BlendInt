@@ -82,6 +82,16 @@ namespace BlendInt {
 		friend class Context;
 		friend class AbstractFrame;
 
+		void set_context(Context* context)
+		{
+			context_ = context;
+		}
+
+		void set_frame (AbstractFrame* frame)
+		{
+			frame_ = frame;
+		}
+
 		Context* context_;
 		AbstractFrame* frame_;
 

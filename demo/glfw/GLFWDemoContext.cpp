@@ -17,6 +17,7 @@
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Gui/HFrame.hpp>
+#include <BlendInt/Gui/VFrame.hpp>
 
 using BI::Stock::Shaders;
 
@@ -34,13 +35,14 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	/*
 	Viewport* vp1 = Manage(new Viewport);
 	DBG_SET_NAME(vp1, "Viewport1");
+
 	Viewport* vp2 = Manage(new Viewport);
 	DBG_SET_NAME(vp2, "Viewport2");
+
 	Viewport* vp3 = Manage(new Viewport);
-	DBG_SET_NAME(vp3, "Viewport3");
+	DBG_SET_NAME(vp3, "VFrame");
 
 	FrameSplitter* splitter1 = Manage(new FrameSplitter);
 	DBG_SET_NAME(splitter1, "Splitter1");
@@ -63,11 +65,11 @@ void GLFWDemoContext::Initialize ()
 	splitter1->Resize(1200, 760);
 
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
-	*/
 
-	HFrame* frame = Manage(new HFrame);
+	/*
+	VFrame* frame = Manage(new VFrame);
 	frame->SetPosition(200, 200);
-	frame->Resize(400, 32);
+	//frame->Resize(400, 32);
 
 	Button* btn1 = Manage(new Button("Hello"));
 	Button* btn2 = Manage(new Button("Hello"));
@@ -78,4 +80,5 @@ void GLFWDemoContext::Initialize ()
 	frame->AddWidget(btn3);
 
 	AddFrame(frame);
+	*/
 }

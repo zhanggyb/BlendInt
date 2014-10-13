@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>
-
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -392,6 +392,7 @@ namespace BlendInt {
 	void Frame::PostDraw(Profile& profile)
 	{
 		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
 	void Frame::FocusEvent(bool focus)

@@ -40,8 +40,6 @@ namespace BlendInt {
 
 		virtual ~FrameSplitterHandle ();
 
-		void SetHandleWidget (Widget* widget);
-
 		virtual Size GetPreferredSize () const;
 
 		virtual bool Contain (const Point& point) const;
@@ -81,10 +79,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
-
-		glm::mat4 projection_matrix_;
-
-		glm::mat4 model_matrix_;
 
 		Orientation orientation_;
 
@@ -130,7 +124,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual void FocusEvent (bool focus);
 

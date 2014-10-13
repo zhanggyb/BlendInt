@@ -60,9 +60,6 @@ namespace BlendInt {
 			set_size(1, 200);
 		}
 
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
-
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
@@ -73,8 +70,8 @@ namespace BlendInt {
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -84,19 +81,6 @@ namespace BlendInt {
 	FrameSplitterHandle::~FrameSplitterHandle()
 	{
 		glDeleteVertexArrays(1, &vao_);
-	}
-
-	void FrameSplitterHandle::SetHandleWidget(Widget* widget)
-	{
-		if(subs_count()) {
-			ClearSubWidgets();
-		}
-
-		if(PushBackSubWidget(widget)) {
-			widget->SetPosition(0, 0);
-			widget->Resize(size().width(),
-					size().height());
-		}
 	}
 
 	Size FrameSplitterHandle::GetPreferredSize() const
@@ -144,18 +128,6 @@ namespace BlendInt {
 
 			set_position(*request.position());
 
-			float x = static_cast<float>(position().x()  + offset().x());
-			float y = static_cast<float>(position().y()  + offset().y());
-
-			projection_matrix_ = glm::ortho(
-				x,
-				x + size().width(),
-				y,
-				y + size().height(),
-				100.f, -100.f);
-
-			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
-
 		}
 
 		if(request.source() == this) {
@@ -168,28 +140,15 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(position().x() + offset().x());
-			float y = static_cast<float>(position().y() + offset().y());
-
-			projection_matrix_  = glm::ortho(
-				x,
-				x + (float)request.size()->width(),
-				y,
-				y + (float)request.size()->height(),
-				100.f, -100.f);
-
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
 			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
 			buffer_.bind();
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.reset();
 
-			if(subs_count()) {
-				first_child()->Resize(*request.size());
-			}
 		}
 
 		if(request.source() == this) {
@@ -199,24 +158,19 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::PreDraw(Profile& profile)
 	{
-		glViewport(position().x(), position().y(), size().width(), size().height());
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(), position().y(), size().width(), size().height());
-
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 	}
 
 	ResponseType FrameSplitterHandle::Draw(Profile& profile)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Shaders::instance->frame_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
 
 		if(hover()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.9f, 0.05f, 0.05f, 1.f);
+			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 25);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
+			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
 		}
 
 		glBindVertexArray(vao_);
@@ -224,16 +178,11 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
-			DispatchDrawEvent (p, profile);
-		}
-
-		return Ignore;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void FrameSplitterHandle::PostDraw(Profile& profile)
 	{
-		glDisable(GL_SCISSOR_TEST);
 	}
 
 	void FrameSplitterHandle::FocusEvent(bool focus)
@@ -264,8 +213,6 @@ namespace BlendInt {
 		cursor_ = event.position();
 		pressed_ = true;
 
-		event.context()->SetCursorFollowedFrame(this);
-
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous()->size().height();
 			next_size_ = next()->size().height();
@@ -276,6 +223,8 @@ namespace BlendInt {
 			nearby_pos_ = next()->position().x();
 		}
 
+		set_event_frame(event);
+
 		return Accept;
 	}
 
@@ -285,8 +234,6 @@ namespace BlendInt {
 		if (pressed_) {
 			pressed_ = false;
 		}
-
-		event.context()->SetCursorFollowedFrame(0);
 
 		return Accept;
 	}
@@ -499,6 +446,10 @@ namespace BlendInt {
 		}
 	}
 
+	void FrameSplitter::PreDraw(Profile& profile)
+	{
+	}
+
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
@@ -506,6 +457,10 @@ namespace BlendInt {
 		}
 
 		return subs_count() ? Ignore : Accept;
+	}
+
+	void FrameSplitter::PostDraw(Profile& profile)
+	{
 	}
 
 	void FrameSplitter::AlignSubFrames(Orientation orientation,

@@ -53,7 +53,11 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual void FocusEvent (bool focus);
 

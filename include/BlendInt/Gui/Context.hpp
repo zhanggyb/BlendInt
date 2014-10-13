@@ -62,8 +62,6 @@ namespace BlendInt {
 
 		void DispatchMouseEvent (const MouseEvent& event);
 
-		void SetFocusedFrame (AbstractFrame* frame);
-
 		/**
 		 * @brief Always return true
 		 */
@@ -73,8 +71,6 @@ namespace BlendInt {
 		{
 			return resized_;
 		}
-
-		virtual void SetCursorFollowedFrame (AbstractFrame* widget);
 
 		static Context* GetContext (AbstractWidget* widget);
 
@@ -98,6 +94,8 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
 
 		virtual void PostDraw (Profile& profile);
@@ -120,6 +118,8 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void SetFocusedFrame (AbstractFrame* frame);
+
 	private:
 
 		static void GetGLVersion (int *major, int *minor);
@@ -132,15 +132,15 @@ namespace BlendInt {
 
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
-		void OnCursorFollowedFrameDestroyed (AbstractFrame* frame);
+		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
 		Profile profile_;
 
 		int current_cursor_;
 
-		AbstractFrame* hover_;
+		AbstractFrame* hovered_;
 
-		AbstractFrame* cursor_followed_frame_;
+		AbstractFrame* focused_;
 
 		std::stack<int> cursor_stack_;
 

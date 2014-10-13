@@ -35,6 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -151,17 +152,19 @@ namespace BlendInt {
 
 	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		set_event_frame(event);
+
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Viewport::MouseReleaseEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	ResponseType Viewport::MouseMoveEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void Viewport::PreDraw(Profile& profile)
@@ -204,6 +207,7 @@ namespace BlendInt {
 	void Viewport::PostDraw(Profile& profile)
 	{
 		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
 	void Viewport::FocusEvent(bool focus)

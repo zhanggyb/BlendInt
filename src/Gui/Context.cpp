@@ -171,8 +171,8 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractWidget(),
-	  hover_(0),
-	  cursor_followed_frame_(0)
+	  hovered_(0),
+	  focused_(0)
 	{
 		set_size(640, 480);
 		profile_.context_ = this;
@@ -207,6 +207,7 @@ namespace BlendInt
 	void Context::DispatchKeyEvent(const KeyEvent& event)
 	{
 		const_cast<KeyEvent&>(event).context_ = this;
+		const_cast<KeyEvent&>(event).frame_ = 0;
 
 		switch (event.action()) {
 
@@ -234,6 +235,7 @@ namespace BlendInt
 	void Context::DispatchMouseEvent(const MouseEvent& event)
 	{
 		const_cast<MouseEvent&>(event).context_ = this;
+		const_cast<MouseEvent&>(event).frame_ = 0;
 
 		switch (event.action()) {
 
@@ -263,20 +265,6 @@ namespace BlendInt
 	bool Context::Contain (const Point& point) const
 	{
 		return true;
-	}
-
-	void Context::SetCursorFollowedFrame(AbstractFrame* frame)
-	{
-		if(cursor_followed_frame_ == frame) return;
-
-		if(cursor_followed_frame_) {
-			cursor_followed_frame_->destroyed().disconnectOne(this, &Context::OnCursorFollowedFrameDestroyed);
-		}
-
-		cursor_followed_frame_ = frame;
-		if(cursor_followed_frame_) {
-			events()->connect(cursor_followed_frame_->destroyed(), this, &Context::OnCursorFollowedFrameDestroyed);
-		}
 	}
 
 	Context* Context::GetContext (AbstractWidget* widget)
@@ -323,8 +311,12 @@ namespace BlendInt
 
 	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.source() == this) {
+		if (request.target() == this) {
 			set_size(*request.size());
+
+			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+			Shaders::instance->SetFrameProjectionMatrix(projection);
+
 			resized_.fire(size());
 		}
 	}
@@ -336,6 +328,11 @@ namespace BlendInt
 	void Context::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
+	}
+
+	void Context::PreDraw(Profile& profile)
+	{
+
 	}
 
 	ResponseType Context::Draw (Profile& profile)
@@ -411,6 +408,8 @@ namespace BlendInt
 			}
 		}
 
+		SetFocusedFrame(event.frame());
+
 		return response;
 	}
 
@@ -423,6 +422,8 @@ namespace BlendInt
 
 			if(response == Accept) break;
 		}
+
+		SetFocusedFrame(0);
 
 		return response;
 	}
@@ -439,12 +440,12 @@ namespace BlendInt
 		}
 		*/
 
-		if(hover_) {
-			hover_->DispatchHoverEvent(event);
+		if(hovered_) {
+			hovered_->DispatchHoverEvent(event);
 		}
 
-		if(cursor_followed_frame_) {
-			response = cursor_followed_frame_->MouseMoveEvent(event);
+		if(focused_) {
+			response = focused_->MouseMoveEvent(event);
 		}
 
 		return response;
@@ -487,25 +488,30 @@ namespace BlendInt
 
 	void Context::InitializeContext ()
 	{
-		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
+		glm::mat4 identity = glm::mat4(1.f);
 
-		Shaders::instance->SetWidgetProjectionMatrix(projection);
+		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		Shaders::instance->SetFrameProjectionMatrix(projection);
+		Shaders::instance->SetFrameViewMatrix(default_view_matrix);
+		Shaders::instance->SetFrameModelMatrix(identity);
+
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
+		Shaders::instance->SetWidgetModelMatrix(identity);
 	}
 
 	void Context::DispatchHoverEvent(const MouseEvent& event)
 	{
-		AbstractFrame* original_hover = hover_;
+		AbstractFrame* original_hover = hovered_;
 
-		hover_ = 0;
+		hovered_ = 0;
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 			if(p->Contain(event.position())) {
-				hover_ = dynamic_cast<AbstractFrame*>(p);
+				hovered_ = dynamic_cast<AbstractFrame*>(p);
 				break;
 			}
 		}
 
-		if(original_hover != hover_) {
+		if(original_hover != hovered_) {
 
 			if(original_hover) {
 				original_hover->set_hover(false);
@@ -513,10 +519,10 @@ namespace BlendInt
 				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 			}
 
-			if(hover_) {
-				hover_->set_hover(true);
-				hover_->MouseHoverInEvent(event);
-				events()->connect(hover_->destroyed(), this, &Context::OnHoverFrameDestroyed);
+			if(hovered_) {
+				hovered_->set_hover(true);
+				hovered_->MouseHoverInEvent(event);
+				events()->connect(hovered_->destroyed(), this, &Context::OnHoverFrameDestroyed);
 			}
 
 		}
@@ -537,22 +543,39 @@ namespace BlendInt
 	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());
-		assert(hover_ == frame);
+		assert(hovered_ == frame);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
 		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 
-		hover_ = 0;
+		hovered_ = 0;
 	}
 
-	void Context::OnCursorFollowedFrameDestroyed(AbstractFrame* frame)
+	void Context::SetFocusedFrame(AbstractFrame* frame)
 	{
-		assert(cursor_followed_frame_ == frame);
+		if(focused_ == frame) return;
 
-		DBG_PRINT_MSG("cursor followed frame %s destroyed", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &Context::OnCursorFollowedFrameDestroyed);
+		if(focused_) {
+			focused_->set_focus(false);
+			focused_->FocusEvent(false);
+			focused_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
+		}
 
-		cursor_followed_frame_ = 0;
+		focused_ = frame;
+		if(focused_) {
+			focused_->set_focus(true);
+			focused_->FocusEvent(true);
+			events()->connect(focused_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
+		}
+	}
+
+	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(focused_ == frame);
+		DBG_PRINT_MSG("focused followed frame %s destroyed", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
+
+		focused_ = 0;
 	}
 
 }

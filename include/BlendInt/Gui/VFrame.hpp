@@ -38,7 +38,15 @@ namespace BlendInt {
 
 		void AddWidget (Widget* widget, bool append = true);
 
+		void InsertWidget (int index, Widget* widget);
+
 	private:
+
+		int GetLastPosition () const;
+
+		int space_;
+
+		Margin margin_;
 
 	};
 
