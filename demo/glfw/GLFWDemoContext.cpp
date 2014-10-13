@@ -18,6 +18,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Gui/HFrame.hpp>
 #include <BlendInt/Gui/VFrame.hpp>
+#include <BlendInt/Gui/FloatingFrame.hpp>
 
 using BI::Stock::Shaders;
 
@@ -80,5 +81,14 @@ void GLFWDemoContext::Initialize ()
 	frame->AddWidget(btn3);
 
 	AddFrame(frame);
+	*/
+
+	/*
+	FloatingFrame* ff = Manage(new FloatingFrame);
+
+	ff->SetPosition(400, 200);
+	ff->Resize(600, 400);
+
+	AddFrame(ff);
 	*/
 }
