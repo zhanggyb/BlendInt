@@ -25,14 +25,13 @@
 #define _BLENDINT_MOUSEEVENT_HPP_
 
 #include <BlendInt/Core/Types.hpp>
-
-#include <BlendInt/Window/InputEvent.hpp>
-
 #include <BlendInt/Core/Point.hpp>
+
+#include <BlendInt/HID/HIDEvent.hpp>
 
 namespace BlendInt {
 
-	class InputEvent;
+	class HIDEvent;
 
 	class Frame;
 
@@ -41,7 +40,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup device_events
 	 */
-	class MouseEvent: public InputEvent
+	class MouseEvent: public HIDEvent
 	{
 	public:
 
@@ -49,7 +48,7 @@ namespace BlendInt {
 		 * @brief Default constructor
 		 */
 		MouseEvent ()
-			: InputEvent(),
+			: HIDEvent(),
 				m_action(MouseNone),
 			  m_button(MouseButtonNone)
 			{}
@@ -59,12 +58,12 @@ namespace BlendInt {
 		 * @param[in] type one of Event::Type
 		 */
 		MouseEvent (MouseAction action, MouseButton button)
-			: InputEvent(), m_action(action), m_button(button)
+			: HIDEvent(), m_action(action), m_button(button)
 			{}
 		
 		MouseEvent (MouseAction action, MouseButton button,
 					const Point& position)
-			: InputEvent(), m_action(action), m_button(button),
+			: HIDEvent(), m_action(action), m_button(button),
 			position_(position)
 		{}
 

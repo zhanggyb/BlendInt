@@ -25,10 +25,9 @@
 #define _BLENDINT_KEYEVENT_HPP_
 
 #include <BlendInt/Core/String.hpp>
-
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Window/InputEvent.hpp>
 
+#include <BlendInt/HID/HIDEvent.hpp>
 
 namespace BlendInt {
 
@@ -37,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup device_events
 	 */
-	class KeyEvent: public InputEvent
+	class KeyEvent: public HIDEvent
 	{
 	public:
 
@@ -52,7 +51,7 @@ namespace BlendInt {
 		 * This signature a key event
 		 */
 		KeyEvent ()
-		: InputEvent(),
+		: HIDEvent(),
 		  m_action(KeyNone),
 		  m_key(Key_Unknown),
 		  m_scancode(0)
@@ -70,7 +69,7 @@ namespace BlendInt {
 		 * This signature a key event
 		 */
 		KeyEvent (KeyAction action, int key, int scancode, int mods, const String& text = String())
-		: InputEvent(mods),
+		: HIDEvent(mods),
 		  m_action(action),
 		  m_key(key),
 		  m_scancode(scancode),

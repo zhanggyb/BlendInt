@@ -37,9 +37,9 @@
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/Window/MouseEvent.hpp>
-#include <BlendInt/Window/KeyEvent.hpp>
-#include <BlendInt/Window/ContextMenuEvent.hpp>
+#include <BlendInt/HID/MouseEvent.hpp>
+#include <BlendInt/HID/KeyEvent.hpp>
+#include <BlendInt/HID/ContextMenuEvent.hpp>
 
 #include <BlendInt/Gui/Profile.hpp>
 #include <BlendInt/Gui/Shadow.hpp>

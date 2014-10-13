@@ -24,17 +24,19 @@
 #ifndef _BLENDINT_INPUTEVENT_HPP_
 #define _BLENDINT_INPUTEVENT_HPP_
 
-#include <BlendInt/Window/Input.hpp>
-#include <BlendInt/Window/DeviceEvent.hpp>
+#include <BlendInt/HID/Input.hpp>
 
 namespace BlendInt {
+
+	class Context;
+	class AbstractFrame;
 
 	/**
 	 * @brief Events for input devices including keyboard, mouse
 	 *
 	 * @ingroup device_events
 	 */
-	class InputEvent: public DeviceEvent
+	class HIDEvent
 	{
 	public:
 		
@@ -42,22 +44,48 @@ namespace BlendInt {
 		 * @brief Default Constructor
 		 * @param modifiers Bitwise conbination of KeyModifier
 		 */
-		InputEvent(int modifiers = ModifierNone)
-			: m_modifiers(modifiers)
+		HIDEvent(int modifiers = ModifierNone)
+		: context_(0),
+		  frame_(0),
+		  modifiers_(modifiers)
 		{
 		}
 
-		virtual ~InputEvent()
+		HIDEvent(const HIDEvent& orig)
+		: context_(orig.context_),
+		  frame_(orig.frame_),
+		  modifiers_(orig.modifiers_)
+		{
+
+		}
+
+		virtual ~HIDEvent()
 		{
 		}
 
-		int modifiers () const {return m_modifiers;}
+		Context* context () const
+		{
+			return context_;
+		}
 
-		void set_modifiers (int mods) {m_modifiers = mods;}
+		AbstractFrame* frame () const
+		{
+			return frame_;
+		}
+
+		int modifiers () const {return modifiers_;}
+
+		void set_modifiers (int mods) {modifiers_ = mods;}
 
 	protected:
 
-		int m_modifiers;
+		friend class Context;
+		friend class AbstractFrame;
+
+		Context* context_;
+		AbstractFrame* frame_;
+
+		int modifiers_;
 
 	};
 

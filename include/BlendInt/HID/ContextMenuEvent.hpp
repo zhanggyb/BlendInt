@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_CONTEXTMENUEVENT_HPP_
 #define _BLENDINT_CONTEXTMENUEVENT_HPP_
 
-#include <BlendInt/Window/InputEvent.hpp>
+#include <BlendInt/HID/HIDEvent.hpp>
 
 namespace BlendInt {
 
@@ -33,7 +33,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup device_events
 	 */
-	class ContextMenuEvent: public InputEvent
+	class ContextMenuEvent: public HIDEvent
 	{
 	public:
 
@@ -45,14 +45,14 @@ namespace BlendInt {
 
 		ContextMenuEvent (Source source,
 						  int mods)
-			: InputEvent(mods), source_(source)
+			: HIDEvent(mods), source_(source)
 		{}
 
 		ContextMenuEvent (Source source,
 						  int mods,
 						  const Point& local_pos,
 						  const Point& window_pos)
-			: InputEvent(mods), source_(source),
+			: HIDEvent(mods), source_(source),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
 

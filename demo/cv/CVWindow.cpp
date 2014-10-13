@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include <BlendInt/Window/KeyEvent.hpp>
-#include <BlendInt/Window/MouseEvent.hpp>
+#include <BlendInt/HID/KeyEvent.hpp>
+#include <BlendInt/HID/MouseEvent.hpp>
 
 namespace BlendInt {
 

@@ -13,8 +13,8 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 
-#include <BlendInt/Window/KeyEvent.hpp>
-#include <BlendInt/Window/MouseEvent.hpp>
+#include <BlendInt/HID/KeyEvent.hpp>
+#include <BlendInt/HID/MouseEvent.hpp>
 
 namespace BI = BlendInt;
 

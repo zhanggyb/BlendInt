@@ -141,9 +141,9 @@ namespace BlendInt {
 			widget->MouseHoverOutEvent(event);
 		}
 
-		void set_event_frame (const DeviceEvent& event)
+		void set_event_frame (const HIDEvent& event)
 		{
-			const_cast<DeviceEvent&>(event).frame_ = this;
+			const_cast<HIDEvent&>(event).frame_ = this;
 		}
 
 		void assign_frame (Profile& profile)
