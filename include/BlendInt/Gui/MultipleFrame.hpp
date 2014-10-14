@@ -37,9 +37,47 @@ namespace BlendInt {
 
 		virtual ~MultipleFrame ();
 
+		virtual Widget* GetFocusedWidget () const;
+
+		virtual Widget* GetHoveredWidget () const;
+
+	protected:
+
+		virtual void DispatchHoverEvent (const MouseEvent& event);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual ResponseType Draw (Profile& profile);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
 
+		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
 
+		void OnFocusedWidgetDestroyed (Widget* widget);
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		void ClearHoverWidgets ();
+
+		Widget* focused_widget_;
+
+		Widget* hovered_widget_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 	};
 

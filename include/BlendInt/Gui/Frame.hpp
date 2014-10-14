@@ -50,16 +50,6 @@ namespace BlendInt {
 
 		virtual Widget* GetHoveredWidget () const;
 
-		Widget* focused_widget() const
-		{
-			return focused_widget_;
-		}
-
-		Widget* hovered_widget () const
-		{
-			return hovered_widget_;
-		}
-
 	protected:
 
 		virtual void DispatchHoverEvent (const MouseEvent& event);
@@ -67,10 +57,6 @@ namespace BlendInt {
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PreDraw (Profile& profile);
 
@@ -80,11 +66,11 @@ namespace BlendInt {
 
 		virtual void FocusEvent (bool focus);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
 		virtual void MouseHoverInEvent (const MouseEvent& event);
 
 		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -94,27 +80,12 @@ namespace BlendInt {
 
 	private:
 
-		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
+		//void OnCursorFollowedWidgetDestroyed (Widget* widget);
 
-		void OnFocusedWidgetDestroyed (Widget* widget);
+		//Widget* cursor_followed_widget_;
 
-		void OnHoverWidgetDestroyed (Widget* widget);
+		//bool custom_focused_widget_;
 
-		void OnCursorFollowedWidgetDestroyed (Widget* widget);
-
-		void ClearHoverWidgets ();
-
-		Widget* focused_widget_;
-
-		Widget* hovered_widget_;
-
-		Widget* cursor_followed_widget_;
-
-		bool custom_focused_widget_;
-
-		glm::mat4 projection_matrix_;
-
-		glm::mat4 model_matrix_;
 	};
 
 }

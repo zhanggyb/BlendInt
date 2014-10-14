@@ -38,11 +38,33 @@ namespace BlendInt {
 
 		void Setup (Widget* widget);
 
+		virtual Widget* GetFocusedWidget () const;
+
+		virtual Widget* GetHoveredWidget () const;
+
 	protected:
+
+		virtual void DispatchHoverEvent (const MouseEvent& event);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual ResponseType Draw (Profile& profile);
+
 	private:
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
+
+		void ClearHoverWidgets ();
+
+		Widget* hovered_widget_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 	};
 
