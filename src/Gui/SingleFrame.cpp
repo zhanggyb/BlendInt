@@ -21,38 +21,44 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_HFRAME_HPP_
-#define _BLENDINT_GUI_HFRAME_HPP_
-
-#include <BlendInt/Gui/MultipleFrame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 namespace BlendInt {
 
-	class HFrame: public MultipleFrame
+	SingleFrame::SingleFrame()
+	: Frame()
 	{
-	public:
 
-		HFrame ();
+	}
 
-		virtual ~HFrame ();
+	SingleFrame::~SingleFrame()
+	{
 
-		void AddWidget (Widget* widget, bool append = true);
+	}
 
-		void InsertWidget (int index, Widget* widget);
+	void SingleFrame::Setup(Widget* widget)
+	{
+		if(widget == 0) return;
 
-	protected:
+		if(widget->parent() == this) return;
 
-		virtual void LayoutWidgets ();
+		if(subs_count() > 0) ClearSubWidgets();
 
-	private:
+		Resize(widget->size());
 
-		int GetLastPosition () const;
+		if(PushBackSubWidget(widget)) {
+			assert(subs_count() == 1);
+			FillSingleWidget(0, 0, 0, size().width(), size().height());
+		}
+	}
 
-		int space_;
+	void SingleFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			FillSingleWidget(0, 0, 0, request.size()->width(), request.size()->height());
+		}
 
-		Margin margin_;
-	};
+		Frame::PerformSizeUpdate(request);
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_HFRAME_HPP_ */

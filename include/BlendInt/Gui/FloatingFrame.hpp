@@ -38,9 +38,13 @@ namespace BlendInt {
 
 		virtual ~FloatingFrame();
 
+		void Setup (Widget* widget);
+
 	protected:
 
 		virtual void DispatchHoverEvent (const MouseEvent& event);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -78,6 +82,10 @@ namespace BlendInt {
 		Point cursor_;
 
 		bool pressed_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 	};
 

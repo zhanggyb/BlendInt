@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	VFrame::VFrame()
-	: Frame(),
+	: MultipleFrame(),
 	  space_(0)
 	{
 
@@ -64,6 +64,10 @@ namespace BlendInt {
 	}
 
 	void VFrame::InsertWidget(int index, Widget* widget)
+	{
+	}
+
+	void VFrame::LayoutWidgets()
 	{
 	}
 

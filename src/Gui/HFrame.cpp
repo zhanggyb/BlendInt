@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	HFrame::HFrame()
-	: Frame (),
+	: MultipleFrame (),
 	  space_(0)
 	{
 
@@ -68,6 +68,10 @@ namespace BlendInt {
 	}
 
 	void HFrame::InsertWidget(int index, Widget* widget)
+	{
+	}
+
+	void HFrame::LayoutWidgets()
 	{
 	}
 

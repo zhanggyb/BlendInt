@@ -37,6 +37,7 @@
 #include <BlendInt/Gui/FloatingFrame.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -47,6 +48,8 @@ namespace BlendInt {
 	  vao_(0),
 	  pressed_(false)
 	{
+		set_size(400, 300);
+
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
@@ -63,6 +66,9 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		buffer_.reset();
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
 	}
 
 	FloatingFrame::~FloatingFrame()
@@ -70,9 +76,34 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
+	void FloatingFrame::Setup(Widget* widget)
+	{
+		if(widget == 0) return;
+
+		if(widget->parent() == this) return;
+
+		if(subs_count() > 0) ClearSubWidgets();
+
+		Resize(widget->size());
+
+		if(PushBackSubWidget(widget)) {
+			widget->SetPosition(0, 0);
+		}
+	}
+
 	void FloatingFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			float x = static_cast<float>(position().x() + offset().x());
+			float y = static_cast<float>(position().y() + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)request.size()->width(),
+				y,
+				y + (float)request.size()->height(),
+				100.f, -100.f);
 
 			std::vector<GLfloat> inner_verts;
 			GenerateVertices(*request.size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -80,6 +111,13 @@ namespace BlendInt {
 			buffer_.bind();
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.reset();
+
+			set_size(*request.size());
+
+			if (subs_count()) {
+				assert(subs_count() == 1);
+				FillSingleWidget(0, 0, 0, size().width(), size().height());
+			}
 
 		}
 
@@ -90,6 +128,7 @@ namespace BlendInt {
 
 	void FloatingFrame::PreDraw(Profile& profile)
 	{
+		assign_profile_frame(profile);
 	}
 
 	ResponseType FloatingFrame::Draw(Profile& profile)
@@ -109,6 +148,21 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		GLSLProgram::reset();
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			DispatchDrawEvent (p, profile);
+		}
+
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 
 		return subs_count() ? Ignore : Accept;
 	}
@@ -170,6 +224,30 @@ namespace BlendInt {
 	{
 	}
 
+	void FloatingFrame::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)size().width(),
+				y,
+				y + (float)size().height(),
+				100.f, -100.f);
+
+			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+
+			set_position(*request.position());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate (request);
+		}
+	}
+
 	ResponseType FloatingFrame::MouseMoveEvent(const MouseEvent& event)
 	{
 		if(pressed_) {
@@ -189,3 +267,4 @@ namespace BlendInt {
 	}
 
 }
+

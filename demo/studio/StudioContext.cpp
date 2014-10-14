@@ -6,7 +6,7 @@
 
 #include <BlendInt/Gui/StaticPanel.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 using namespace BI;
 
@@ -36,7 +36,7 @@ void StudioContext::Initialize ()
 	
 	frame_->Setup(fs);
 
-	Frame* screen1 = Manage(new Frame);
+	SingleFrame* screen1 = Manage(new SingleFrame);
 	screen1->Resize(frame_->size());
 	screen1->SetPosition(100, 100);
 	screen1->Setup(frame_);
@@ -48,7 +48,7 @@ void StudioContext::Initialize ()
 	panel->SetPosition(1100, 600);
 	panel->Resize(panel->GetPreferredSize());
 
-	Frame* screen2 = Manage(new Frame);
+	SingleFrame* screen2 = Manage(new SingleFrame);
 	screen2->Resize(panel->size());
 	screen2->SetPosition(1100, 600);
 	screen2->Setup(panel);
@@ -60,7 +60,7 @@ void StudioContext::Initialize ()
 	btn->SetPosition(20, 750);
 	btn->Resize(100, 40);
 
-	Frame* screen3 = Manage(new Frame);
+	SingleFrame* screen3 = Manage(new SingleFrame);
 	screen3->Resize(btn->size());
 	screen3->SetPosition(20, 750);
 	screen3->Setup(btn);

@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_VFRAME_HPP_
 #define _BLENDINT_GUI_VFRAME_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/MultipleFrame.hpp>
 
 namespace BlendInt {
 
-	class VFrame: public Frame
+	class VFrame: public MultipleFrame
 	{
 	public:
 
@@ -39,6 +39,10 @@ namespace BlendInt {
 		void AddWidget (Widget* widget, bool append = true);
 
 		void InsertWidget (int index, Widget* widget);
+
+	protected:
+
+		virtual void LayoutWidgets ();
 
 	private:
 

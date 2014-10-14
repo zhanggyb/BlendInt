@@ -36,8 +36,6 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		void Setup (Widget* widget);
-
 		void SetFocused (Widget* widget);
 
 		virtual void SetCursorFollowedWidget (Widget* widget);
@@ -48,14 +46,18 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual Widget* GetFocusedWidget () const;
+
+		virtual Widget* GetHoveredWidget () const;
+
 		Widget* focused_widget() const
 		{
 			return focused_widget_;
 		}
 
-		Widget* top_hovered () const
+		Widget* hovered_widget () const
 		{
-			return top_hovered_widget_;
+			return hovered_widget_;
 		}
 
 	protected:
@@ -104,7 +106,7 @@ namespace BlendInt {
 
 		Widget* focused_widget_;
 
-		Widget* top_hovered_widget_;
+		Widget* hovered_widget_;
 
 		Widget* cursor_followed_widget_;
 

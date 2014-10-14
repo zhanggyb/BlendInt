@@ -101,19 +101,14 @@ namespace BlendInt {
 
 	protected:
 
-		void InitializeExpander ();
-
 		void FillInExpander (const Size& out_size);
 
 		void FillInExpander (int x, int y, int width, int height);
 
 		void OnToggled (bool toggle);
 
-		GLuint vao_;
-
 		int frame_height_;
 
-		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

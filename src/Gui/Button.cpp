@@ -108,6 +108,11 @@ namespace BlendInt {
 		Refresh();
 	}
 
+	bool Button::IsExpandX() const
+	{
+		return true;
+	}
+
 	Size Button::GetPreferredSize() const
 	{
 		Size prefer;

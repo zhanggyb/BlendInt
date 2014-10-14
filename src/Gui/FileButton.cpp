@@ -41,7 +41,7 @@
 #include <BlendInt/Gui/FileButton.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 namespace BlendInt {
 
@@ -268,7 +268,7 @@ namespace BlendInt {
 			panel_->Resize(w, h);
 			panel_->Setup(file_selector);
 
-			Frame* screen = Manage(new Frame);
+			SingleFrame* screen = Manage(new SingleFrame);
 			screen->Resize(panel_->size());
 			screen->SetPosition(x, y);
 			screen->Setup(panel_);

@@ -150,8 +150,6 @@ namespace BlendInt {
 
 		friend class FrameSplitterHandle;
 
-		void SetFocused (AbstractFrame* widget);
-
 		void DistributeHorizontally ();
 
 		void DistributeHorizontallyInProportion (
@@ -192,13 +190,9 @@ namespace BlendInt {
 
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
-		void OnFocusFrameDestroyed (AbstractFrame* frame);
-
 		Orientation orientation_;
 
 		AbstractFrame* hover_;
-
-		AbstractFrame* focus_;
 	};
 }
 

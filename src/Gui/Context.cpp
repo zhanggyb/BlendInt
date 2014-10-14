@@ -240,19 +240,21 @@ namespace BlendInt
 		switch (event.action()) {
 
 			case MouseMove: {
-				//DispatchCursorMoveEvent(event);
+				DispatchHoverEvent(event);
+				if(hovered_) {
+					hovered_->DispatchHoverEvent(event);
+				}
+
 				MouseMoveEvent(event);
 				return;
 			}
 
 			case MousePress: {
-				//DispatchMousePressEvent(event);
 				MousePressEvent(event);
 				return;
 			}
 
 			case MouseRelease: {
-				//DispatchMouseReleaseEvent(event);
 				MouseReleaseEvent(event);
 				return;
 			}
@@ -431,18 +433,6 @@ namespace BlendInt
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
-
-		DispatchHoverEvent(event);
-
-		/*
-		if(last_child()) {
-			response = last_child()->MouseMoveEvent(event);
-		}
-		*/
-
-		if(hovered_) {
-			hovered_->DispatchHoverEvent(event);
-		}
 
 		if(focused_) {
 			response = focused_->MouseMoveEvent(event);

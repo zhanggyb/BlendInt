@@ -21,38 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_HFRAME_HPP_
-#define _BLENDINT_GUI_HFRAME_HPP_
+#ifndef _BLENDINT_GUI_MULTIPLEFRAME_HPP_
+#define _BLENDINT_GUI_MULTIPLEFRAME_HPP_
 
-#include <BlendInt/Gui/MultipleFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class HFrame: public MultipleFrame
+	class MultipleFrame: public Frame
 	{
+
 	public:
 
-		HFrame ();
+		MultipleFrame();
 
-		virtual ~HFrame ();
-
-		void AddWidget (Widget* widget, bool append = true);
-
-		void InsertWidget (int index, Widget* widget);
-
-	protected:
-
-		virtual void LayoutWidgets ();
+		virtual ~MultipleFrame ();
 
 	private:
 
-		int GetLastPosition () const;
 
-		int space_;
 
-		Margin margin_;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_HFRAME_HPP_ */
+
+#endif /* _BLENDINT_GUI_MULTIPLEFRAME_HPP_ */

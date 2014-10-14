@@ -187,7 +187,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: Widget(), vao_(0), frame_height_(0)
+	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Panel* frame = Manage(new Panel);
@@ -212,12 +212,10 @@ namespace BlendInt {
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
-
-		InitializeExpander();
 	}
 
 	Expander::Expander (const String& title)
-	: Widget(), vao_(0), frame_height_(0)
+	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Panel* frame = Manage(new Panel);
@@ -242,13 +240,10 @@ namespace BlendInt {
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
-
-		InitializeExpander();
 	}
 
 	Expander::~Expander ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Expander::Setup (Widget* widget)
@@ -311,11 +306,6 @@ namespace BlendInt {
 		if(request.target() == this) {
 			FillInExpander(*request.size());
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-
 			set_size(*request.size());
 			Refresh();
 		}
@@ -325,25 +315,7 @@ namespace BlendInt {
 
 	ResponseType Expander::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->use();
-
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-				0.f, 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
-				0);
-
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
-				0.447f, 0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
-		return Widget::Draw(profile);
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void Expander::FillInExpander (const Size& out_size)
@@ -406,27 +378,6 @@ namespace BlendInt {
 		return button->text();
 	}
 	
-	void Expander::InitializeExpander ()
-	{
-		glGenVertexArrays(1, &vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
-
-		glBindVertexArray(vao_);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
-
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));

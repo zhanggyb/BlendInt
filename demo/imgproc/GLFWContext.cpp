@@ -4,7 +4,7 @@
 
 #include "GLFWContext.hpp"
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 using namespace BI;
 
@@ -16,7 +16,7 @@ GLFWContext::GLFWContext()
 	m_layout = Manage (new MainLayout);
 	m_layout->Resize(size());
 
-	Frame* screen = Manage(new Frame);
+	SingleFrame* screen = Manage(new SingleFrame);
 	screen->Resize(m_layout->size());
 	screen->Setup(m_layout);
 

@@ -302,8 +302,7 @@ namespace BlendInt {
 	FrameSplitter::FrameSplitter(Orientation orientation)
 	: AbstractFrame(),
 	  orientation_(orientation),
-	  hover_(0),
-	  focus_(0)
+	  hover_(0)
 	{
 		set_size(500, 500);
 	}
@@ -549,14 +548,10 @@ namespace BlendInt {
 
 			if(p->Contain(event.position())) {
 
-				response = assign_mouse_press_event(p, event);
+				response = call_mouse_press_event(p, event);
 				if(response == Accept) break;
 			}
 
-		}
-
-		if(response == Accept) {
-			SetFocused(dynamic_cast<AbstractFrame*>(p));
 		}
 
 		return response;
@@ -566,10 +561,6 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		if(focus_)
-			response = assign_mouse_release_event(focus_, event);
-
-		SetFocused(0);
 		/*
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
@@ -1029,23 +1020,6 @@ namespace BlendInt {
 		}
 	}
 
-	void FrameSplitter::SetFocused(AbstractFrame* frame)
-	{
-		if(focus_ == frame)
-			return;
-
-		if (focus_) {
-			set_widget_focus_event(focus_, false);
-			focus_->destroyed().disconnectOne(this, &FrameSplitter::OnFocusFrameDestroyed);
-		}
-
-		focus_ = frame;
-		if (focus_) {
-			set_widget_focus_event(focus_, true);
-			events()->connect(focus_->destroyed(), this, &FrameSplitter::OnFocusFrameDestroyed);
-		}
-	}
-
 	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());
@@ -1099,20 +1073,8 @@ namespace BlendInt {
 		}
 
 		if(hover_) {
-			assign_dispatch_hover_event(hover_, event);
+			delegate_dispatch_hover_event(hover_, event);
 		}
-	}
-
-	void FrameSplitter::OnFocusFrameDestroyed(AbstractFrame* frame)
-	{
-		assert(focus_ == frame);
-		assert(frame->focus());
-
-		//set_widget_focus_status(widget, false);
-		DBG_PRINT_MSG("focused widget %s destroyed", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &FrameSplitter::OnFocusFrameDestroyed);
-
-		focus_ = 0;
 	}
 
 }

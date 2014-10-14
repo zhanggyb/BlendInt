@@ -3,7 +3,7 @@
  */
 
 #include "GLFWContext.hpp"
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 GLFWContext::GLFWContext()
 : BI::Context(), m_layout(0)
@@ -13,13 +13,13 @@ GLFWContext::GLFWContext()
 	m_layout = Manage (new MainLayout);
 	m_layout->Resize(size());
 
-	BI::Frame* frame = BI::Manage(new BI::Frame);
+	BI::SingleFrame* frame = BI::Manage(new BI::SingleFrame);
 	frame->Setup(m_layout);
 
 	AddFrame(frame);
 	//Append(m_layout);
 
-	events()->connect(resized(), frame, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::Frame::Resize));
+	events()->connect(resized(), frame, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::SingleFrame::Resize));
 	events()->connect(resized(), this , &GLFWContext::OnResizeLayout);
 }
 

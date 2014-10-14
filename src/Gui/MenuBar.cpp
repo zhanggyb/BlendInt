@@ -41,7 +41,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 namespace BlendInt {
 
@@ -287,7 +287,7 @@ namespace BlendInt {
 
 			//menu->SetPosition(m_active_button->position().x(), y);
 
-			Frame* frame = Manage(new Frame);
+			SingleFrame* frame = Manage(new SingleFrame);
 			frame->SetPosition(pos);
 			frame->Resize(menu->size());
 			frame->Setup(menu.get());

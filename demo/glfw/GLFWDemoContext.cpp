@@ -83,12 +83,22 @@ void GLFWDemoContext::Initialize ()
 	AddFrame(frame);
 	*/
 
-	/*
 	FloatingFrame* ff = Manage(new FloatingFrame);
 
 	ff->SetPosition(400, 200);
 	ff->Resize(600, 400);
 
 	AddFrame(ff);
-	*/
+
+	FloatingFrame* ff2 = Manage(new FloatingFrame);
+
+	Button* btn = Manage(new Button("Test Floating Frame"));
+
+	ff2->Setup(btn);
+
+	ff2->SetPosition(500, 200);
+	ff2->Resize(500, 300);
+
+	AddFrame(ff2);
+
 }

@@ -43,7 +43,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/SingleFrame.hpp>
 
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
@@ -294,7 +294,7 @@ namespace BlendInt {
 			list_->Resize(200, list_->size().height());
 			list_->SetPosition(position().x(), position().y() + size().height());
 
-			Frame* screen = Manage(new Frame);
+			SingleFrame* screen = Manage(new SingleFrame);
 			screen->Resize(list_->size());
 			screen->Setup(list_);
 

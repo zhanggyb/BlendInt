@@ -93,22 +93,22 @@ namespace BlendInt {
 
 		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
 
-		ResponseType assign_key_press_event (AbstractWidget* widget, const KeyEvent& event)
+		ResponseType call_key_press_event (AbstractWidget* widget, const KeyEvent& event)
 		{
 			return widget->KeyPressEvent(event);
 		}
 
-		ResponseType assign_mouse_press_event (AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_press_event (AbstractWidget* widget, const MouseEvent& event)
 		{
 			return widget->MousePressEvent(event);
 		}
 
-		ResponseType assign_mouse_release_event(AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_release_event(AbstractWidget* widget, const MouseEvent& event)
 		{
 			return widget->MouseReleaseEvent(event);
 		}
 
-		ResponseType assign_mouse_move_event(AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_move_event(AbstractWidget* widget, const MouseEvent& event)
 		{
 			return widget->MouseMoveEvent(event);
 		}
@@ -146,12 +146,12 @@ namespace BlendInt {
 			const_cast<HIDEvent&>(event).frame_ = this;
 		}
 
-		void assign_frame (Profile& profile)
+		void assign_profile_frame (Profile& profile)
 		{
 			profile.frame_ = this;
 		}
 
-		static inline void assign_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
+		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
 		{
 			frame->DispatchHoverEvent(event);
 		}
