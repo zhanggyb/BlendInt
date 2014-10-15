@@ -2125,11 +2125,11 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::MoveSubWidgets(int offset_x, int offset_y)
+	void AbstractWidget::MoveSubWidgets(int move_x, int move_y)
 	{
 		for (AbstractWidget* p = first_child_; p; p = p->next_) {
-			SetSubWidgetPosition(p, p->position().x() + offset_x,
-			        p->position().y() + offset_y);
+			SetSubWidgetPosition(p, p->position().x() + move_x,
+			        p->position().y() + move_y);
 		}
 	}
 

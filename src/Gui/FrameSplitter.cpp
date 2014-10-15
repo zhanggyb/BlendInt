@@ -317,11 +317,8 @@ namespace BlendInt {
 		if((frame == 0) || (frame->parent() == this)) return;
 
 		if(subs_count() == 0) {
-
 			PushBackSubWidget(frame);
-
 		} else {
-
 			FrameSplitterHandle* handle = 0;
 			if(orientation_ == Horizontal) {
 				handle = Manage(new FrameSplitterHandle(Vertical));
@@ -336,10 +333,9 @@ namespace BlendInt {
 				PushFrontSubWidget(handle);
 				PushFrontSubWidget(frame);
 			}
-
-			AlignSubFrames(orientation_, size());
-
 		}
+
+		AlignSubFrames(orientation_, size());
 	}
 
 	void FrameSplitter::Insert(int index, AbstractFrame* viewport)

@@ -169,6 +169,8 @@ namespace BlendInt {
 
 	void Viewport::PreDraw(Profile& profile)
 	{
+		assign_profile_frame(profile);
+
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);

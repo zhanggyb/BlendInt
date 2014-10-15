@@ -41,7 +41,7 @@ namespace BlendInt {
 	glm::mat4 AbstractFrame::default_view_matrix = glm::lookAt(
 		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(0.f, 0.f, 0.f),
-	         	glm::vec3(0.f, 1.f, 0.f));
+		glm::vec3(0.f, 1.f, 0.f));
 
 	AbstractFrame::AbstractFrame()
 	: AbstractWidget(),

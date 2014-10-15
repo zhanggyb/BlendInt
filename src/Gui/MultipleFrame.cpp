@@ -204,8 +204,8 @@ namespace BlendInt {
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
+			float x = static_cast<float>(request.position()->x() + offset().x());
+			float y = static_cast<float>(request.position()->y() + offset().y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -246,28 +246,32 @@ namespace BlendInt {
 		}
 	}
 
+	void MultipleFrame::PreDraw(Profile& profile)
+	{
+		assign_profile_frame(profile);
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+	}
+
 	ResponseType MultipleFrame::Draw(Profile& profile)
 	{
-		if(subs_count()) {
-
-			glViewport(position().x(), position().y(), size().width(), size().height());
-
-			glEnable(GL_SCISSOR_TEST);
-			glScissor(position().x(), position().y(), size().width(), size().height());
-
-			Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-			Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-			for(AbstractWidget* p = first_child(); p; p = p->next()) {
-				DispatchDrawEvent (p, profile);
-			}
-
-			glDisable(GL_SCISSOR_TEST);
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			DispatchDrawEvent (p, profile);
 		}
 
 		return subs_count() ? Ignore : Accept;
+	}
+
+	void MultipleFrame::PostDraw(Profile& profile)
+	{
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
 	void MultipleFrame::DispatchMouseHoverEventInSubs(const MouseEvent& event)

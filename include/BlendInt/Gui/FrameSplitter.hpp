@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
 #define _BLENDINT_GUI_SCREENSPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
@@ -36,17 +36,17 @@ namespace BlendInt {
 	{
 	public:
 
-		FrameSplitterHandle (Orientation orientation = Horizontal);
-
-		virtual ~FrameSplitterHandle ();
-
 		virtual Size GetPreferredSize () const;
 
 		virtual bool Contain (const Point& point) const;
 
+		virtual ~FrameSplitterHandle ();
+
 	protected:
 
 		friend class FrameSplitter;
+
+		FrameSplitterHandle (Orientation orientation = Horizontal);
 
 		virtual void DispatchHoverEvent (const MouseEvent& event);
 

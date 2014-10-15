@@ -49,7 +49,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
