@@ -31,6 +31,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -303,10 +305,11 @@ namespace BlendInt {
 			int total = rows * h;
 
 			int i = 0;
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
 			if(total > size().height()) {
-				i = position().y() + GetVScrollBar()->value() - event.local_position().y();
+				i = position().y() + GetVScrollBar()->value() - local_position.y();
 			} else {	// no vbar
-				i = position().y() + size().height() - event.local_position().y();
+				i = position().y() + size().height() - local_position.y();
 			}
 
 			i = i / h;

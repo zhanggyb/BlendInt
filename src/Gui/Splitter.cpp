@@ -239,8 +239,6 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
 	{
-		event.frame()->SetCursorFollowedWidget(this);
-
 		last_ = position();
 		cursor_ = event.position();
 		pressed_ = true;
@@ -263,8 +261,6 @@ namespace BlendInt {
 		if (pressed_) {
 			pressed_ = false;
 		}
-
-		event.frame()->SetCursorFollowedWidget(0);
 
 		return Accept;
 	}

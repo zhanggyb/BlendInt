@@ -52,9 +52,7 @@ namespace BlendInt {
 			return display_mode_;
 		}
 
-		virtual void SetCursorFollowedWidget (Widget* widget);
-
-		Point GetGlobalPosition (const Widget* widget);
+		Point GetAbsolutePosition (const Widget* widget);
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
 		{

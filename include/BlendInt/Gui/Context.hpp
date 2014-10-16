@@ -138,9 +138,9 @@ namespace BlendInt {
 
 		int current_cursor_;
 
-		AbstractFrame* hovered_;
+		AbstractFrame* hovered_frame_;
 
-		AbstractFrame* focused_;
+		AbstractFrame* focused_frame_;
 
 		std::stack<int> cursor_stack_;
 

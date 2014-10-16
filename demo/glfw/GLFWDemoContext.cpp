@@ -41,10 +41,15 @@ void GLFWDemoContext::Initialize ()
 	SingleFrame* vp1 = Manage(new SingleFrame);
 	DBG_SET_NAME(vp1, "Viewport1");
 
+	VLayout* layout = Manage(new VLayout);
 	Button* btn1 = Manage(new Button("Hello"));
+	ScrollBar* bar = Manage(new ScrollBar);
 
-	vp1->Setup(btn1);
-	vp1->Resize(200, 40);
+	layout->Append(btn1);
+	layout->Append(bar);
+
+	vp1->Setup(layout);
+	vp1->Resize(200, 200);
 	vp1->SetPosition(200, 200);
 
 	AddFrame(vp1);

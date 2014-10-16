@@ -285,6 +285,23 @@ namespace BlendInt {
 		}
 	}
 
+	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
+	{
+		Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+		if (CursorOnSlideIcon(local_position)) {
+
+			m_cursor_origin = event.position();
+			m_last_value = value();
+			pressed_ = true;
+			fire_slider_pressed();
+
+			return Accept;
+		} else {
+			return Ignore;
+		}
+	}
+
 	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
 	{
 		if (pressed_) {
@@ -298,10 +315,11 @@ namespace BlendInt {
 				fire_slider_moved_event(value());
 			}
 
-			return Accept;
-
 		} else {
-			if (CursorOnSlideIcon(event.local_position())) {
+
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+			if (CursorOnSlideIcon(local_position)) {
 				m_slide.set_highlight(true);
 				Refresh();
 			} else {
@@ -309,41 +327,25 @@ namespace BlendInt {
 				Refresh();
 			}
 
-			return Accept;
 		}
-	}
 
-	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
-	{
-		if (CursorOnSlideIcon(event.local_position())) {
-
-			event.frame()->SetCursorFollowedWidget(this);
-
-			m_cursor_origin = event.position();
-			m_last_value = value();
-			pressed_ = true;
-			fire_slider_pressed();
-
-			return Accept;
-		} else {
-			return Ignore;
-		}
+		return Accept;
 	}
 
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
 	{
 		if (pressed_) {
 
-			event.frame()->SetCursorFollowedWidget(0);
-
 			pressed_ = false;
 
-			if (CursorOnSlideIcon(event.local_position())) {
-				DBG_PRINT_MSG("%s", "hello");
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+			Refresh();
+
+			if (CursorOnSlideIcon(local_position)) {
 				fire_slider_released();
 			}
 
-			Refresh();
 		}
 
 		return Accept;

@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	private:
 
-		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
+		void DispatchMouseHoverEventInSubs (const MouseEvent& event, Point& local_position);
 
 		void SetFocusedWidget (Widget* widget);
 

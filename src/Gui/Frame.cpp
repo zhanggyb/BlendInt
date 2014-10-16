@@ -50,7 +50,6 @@ namespace BlendInt {
 
 	Frame::~Frame()
 	{
-		SetCursorFollowedWidget(0);
 	}
 
 	/*

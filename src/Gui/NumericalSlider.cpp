@@ -228,7 +228,7 @@ namespace BlendInt {
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
 	{
-		Point pos = profile.frame()->GetGlobalPosition(this);
+		Point pos = profile.frame()->GetAbsolutePosition(this);
 		int outline_vertices = GetOutlineVertices(round_type());
 
 		Shaders::instance->widget_split_inner_program()->use();

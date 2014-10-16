@@ -161,7 +161,7 @@ namespace BlendInt {
 
 	ResponseType ColorButton::Draw (Profile& profile)
 	{
-		Point pos = profile.frame()->GetGlobalPosition(this);
+		Point pos = profile.frame()->GetAbsolutePosition(this);
 
 		int outline_vertices = GetOutlineVertices(round_type());
 

@@ -100,21 +100,6 @@ namespace BlendInt {
 			position_.set_y (y);
 		}
 
-		void set_local_position (const Point& pos)
-		{
-			local_position_ = pos;
-		}
-
-		void set_local_position (int x, int y)
-		{
-			local_position_.reset(x, y);
-		}
-
-		const Point& local_position () const
-		{
-			return local_position_;
-		}
-
 	private:
 
 		friend class Frame;
@@ -124,8 +109,6 @@ namespace BlendInt {
 		MouseButton m_button;
 
 		Point position_;
-
-		Point local_position_;
 	};
 
 }

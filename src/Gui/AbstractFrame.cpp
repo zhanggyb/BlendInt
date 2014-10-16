@@ -55,12 +55,7 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	void AbstractFrame::SetCursorFollowedWidget(Widget* widget)
-	{
-
-	}
-
-	Point AbstractFrame::GetGlobalPosition (const Widget* widget)
+	Point AbstractFrame::GetAbsolutePosition (const Widget* widget)
 	{
 #ifdef DEBUG
 		assert(widget);
@@ -70,14 +65,11 @@ namespace BlendInt {
 
 		AbstractWidget* p = widget->parent();
 		while(p && (p != this)) {
-			pos.reset(
-					pos.x() + p->position().x() + p->offset().x(),
-					pos.y() + p->position().y() + p->offset().y());
+			pos = pos + p->position() + p->offset();
 			p = p->parent();
 		}
 
-		pos.reset(pos.x() + position().x() + offset().x(), pos.y() + position().y() + offset().y());
-
+		pos = pos + position() + offset();
 		return pos;
 	}
 
@@ -167,10 +159,6 @@ namespace BlendInt {
 
 				if(ret_val == 0) {
 
-					const_cast<MouseEvent&>(event).set_local_position(
-							event.local_position().x() - widget->position().x() - widget->parent ()->offset().x(),
-							event.local_position().y() - widget->position().y() - widget->parent ()->offset().y());
-
 					response = widget->MousePressEvent(event);
 
 					return response == Accept ? widget : 0;
@@ -195,9 +183,6 @@ namespace BlendInt {
 
 			if(widget->parent ()) {
 				if(DispatchMouseMoveEvent(widget->parent (), event) == Ignore) {
-					const_cast<MouseEvent&>(event).set_local_position(
-							event.local_position().x() - widget->position().x() - widget->parent ()->offset().x(),
-							event.local_position().y() - widget->position().y() - widget->parent ()->offset().y());
 					return widget->MouseMoveEvent(event);
 				} else {
 					return Accept;

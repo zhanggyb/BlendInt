@@ -171,8 +171,8 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractWidget(),
-	  hovered_(0),
-	  focused_(0)
+	  hovered_frame_(0),
+	  focused_frame_(0)
 	{
 		set_size(640, 480);
 		profile_.context_ = this;
@@ -241,8 +241,8 @@ namespace BlendInt
 
 			case MouseMove: {
 				DispatchHoverEvent(event);
-				if(hovered_) {
-					hovered_->DispatchHoverEvent(event);
+				if(hovered_frame_) {
+					hovered_frame_->DispatchHoverEvent(event);
 				}
 
 				MouseMoveEvent(event);
@@ -419,8 +419,8 @@ namespace BlendInt
 	{
 		ResponseType response;
 
-		if(focused_) {
-			response = focused_->MouseReleaseEvent(event);
+		if(focused_frame_) {
+			response = focused_frame_->MouseReleaseEvent(event);
 		}
 
 //		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
@@ -438,8 +438,8 @@ namespace BlendInt
 	{
 		ResponseType response = Ignore;
 
-		if(focused_) {
-			response = focused_->MouseMoveEvent(event);
+		if(focused_frame_) {
+			response = focused_frame_->MouseMoveEvent(event);
 		}
 
 		return response;
@@ -495,17 +495,17 @@ namespace BlendInt
 
 	void Context::DispatchHoverEvent(const MouseEvent& event)
 	{
-		AbstractFrame* original_hover = hovered_;
+		AbstractFrame* original_hover = hovered_frame_;
 
-		hovered_ = 0;
+		hovered_frame_ = 0;
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 			if(p->Contain(event.position())) {
-				hovered_ = dynamic_cast<AbstractFrame*>(p);
+				hovered_frame_ = dynamic_cast<AbstractFrame*>(p);
 				break;
 			}
 		}
 
-		if(original_hover != hovered_) {
+		if(original_hover != hovered_frame_) {
 
 			if(original_hover) {
 				original_hover->set_hover(false);
@@ -513,10 +513,10 @@ namespace BlendInt
 				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 			}
 
-			if(hovered_) {
-				hovered_->set_hover(true);
-				hovered_->MouseHoverInEvent(event);
-				events()->connect(hovered_->destroyed(), this, &Context::OnHoverFrameDestroyed);
+			if(hovered_frame_) {
+				hovered_frame_->set_hover(true);
+				hovered_frame_->MouseHoverInEvent(event);
+				events()->connect(hovered_frame_->destroyed(), this, &Context::OnHoverFrameDestroyed);
 			}
 
 		}
@@ -537,39 +537,39 @@ namespace BlendInt
 	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());
-		assert(hovered_ == frame);
+		assert(hovered_frame_ == frame);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
 		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
 
-		hovered_ = 0;
+		hovered_frame_ = 0;
 	}
 
 	void Context::SetFocusedFrame(AbstractFrame* frame)
 	{
-		if(focused_ == frame) return;
+		if(focused_frame_ == frame) return;
 
-		if(focused_) {
-			focused_->set_focus(false);
-			focused_->FocusEvent(false);
-			focused_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
+		if(focused_frame_) {
+			focused_frame_->set_focus(false);
+			focused_frame_->FocusEvent(false);
+			focused_frame_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
 		}
 
-		focused_ = frame;
-		if(focused_) {
-			focused_->set_focus(true);
-			focused_->FocusEvent(true);
-			events()->connect(focused_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
+		focused_frame_ = frame;
+		if(focused_frame_) {
+			focused_frame_->set_focus(true);
+			focused_frame_->FocusEvent(true);
+			events()->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
 		}
 	}
 
 	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
 	{
-		assert(focused_ == frame);
+		assert(focused_frame_ == frame);
 		DBG_PRINT_MSG("focused followed frame %s destroyed", frame->name().c_str());
 		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
 
-		focused_ = 0;
+		focused_frame_ = 0;
 	}
 
 }
