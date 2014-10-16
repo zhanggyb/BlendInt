@@ -69,6 +69,8 @@ namespace BlendInt {
 
 		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
 
+		void SetFocusedWidget (Widget* widget);
+
 		void OnFocusedWidgetDestroyed (Widget* widget);
 
 		void OnHoverWidgetDestroyed (Widget* widget);

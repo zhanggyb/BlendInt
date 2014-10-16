@@ -151,25 +151,37 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Accept;
 	}
 
-	ResponseType AbstractFrame::DispatchMousePressEvent(
+	AbstractWidget* AbstractFrame::DispatchMousePressEvent(
 			AbstractWidget* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
-			return Ignore;
+			return 0;
 		} else {
 
+			ResponseType response = Ignore;
+			AbstractWidget* ret_val = 0;
+
 			if(widget->parent ()) {
-				if(DispatchMousePressEvent(widget->parent (), event) == Ignore) {
+
+				ret_val = DispatchMousePressEvent(widget->parent(), event);
+
+				if(ret_val == 0) {
+
 					const_cast<MouseEvent&>(event).set_local_position(
 							event.local_position().x() - widget->position().x() - widget->parent ()->offset().x(),
 							event.local_position().y() - widget->position().y() - widget->parent ()->offset().y());
-					return widget->MousePressEvent(event);
+
+					response = widget->MousePressEvent(event);
+
+					return response == Accept ? widget : 0;
+
 				} else {
-					return Accept;
+					return ret_val;
 				}
 
 			} else {
-				return widget->MousePressEvent(event);
+				response = widget->MousePressEvent(event);
+				return response == Accept ? widget : 0;
 			}
 
 		}

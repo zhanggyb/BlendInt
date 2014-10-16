@@ -129,6 +129,18 @@ namespace BlendInt {
 		}
 	}
 
+	Size ScrollBar::GetPreferredSize() const
+	{
+		Size prefer(14, 14);
+		if(orientation() == Horizontal) {
+			prefer.set_width(200);
+		} else {
+			prefer.set_height(200);
+		}
+
+		return prefer;
+	}
+
 	void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

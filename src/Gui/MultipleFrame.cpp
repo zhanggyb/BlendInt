@@ -343,35 +343,23 @@ namespace BlendInt {
 
 		set_event_frame(event);
 
-		//DispatchMouseHoverEvent(event);
-
 		if(hovered_widget_) {
 
-			/*
 			AbstractWidget* widget = 0;	// widget may be focused
-
-			custom_focused_widget_ = false;
 
 			const_cast<MouseEvent&>(event).set_local_position(
 					event.position().x() - position().x() - offset().x(),
 					event.position().y() - position().y() - offset().y());
 
-			retval = DispatchMousePressEvent(hovered_widget_, event);
+			widget = DispatchMousePressEvent(hovered_widget_, event);
 
-			if(retval == Accept) {
-				widget = hovered_widget_;
+			if(widget == 0) {
+				DBG_PRINT_MSG("%s", "widget 0");
 			}
 
-			if(!custom_focused_widget_) {
-				SetFocused(dynamic_cast<Widget*>(widget));
-			}
-			custom_focused_widget_ = false;
-
-			 */
-		}
-
-		if(display_mode() == Modal) {
-			retval = Accept;
+			SetFocusedWidget(dynamic_cast<Widget*>(widget));
+		} else {
+			SetFocusedWidget(0);
 		}
 
 		return retval;
@@ -383,8 +371,6 @@ namespace BlendInt {
 
 		set_event_frame(event);
 
-		//DispatchMouseHoverEvent(event);
-
 		if(focused_widget_) {
 			Point pos = focused_widget_->GetGlobalPosition();
 			const_cast<MouseEvent&>(event).set_local_position(
@@ -393,18 +379,16 @@ namespace BlendInt {
 			retval = call_mouse_release_event(focused_widget_, event);
 		}
 
-		if(retval == Accept) return retval;
-
-		if(display_mode() == Modal) {
-			retval = Accept;
-		}
-
 		return retval;
 	}
 
 	ResponseType MultipleFrame::MouseMoveEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
+
+		if(focused_widget_) {
+			retval = call_mouse_move_event(focused_widget_, event);
+		}
 
 		// TODO: make sure focused widget is still in this viewport
 		/*
@@ -449,6 +433,23 @@ namespace BlendInt {
 		*/
 
 		return retval;
+	}
+
+	void MultipleFrame::SetFocusedWidget(Widget* widget)
+	{
+		if(focused_widget_ == widget)
+			return;
+
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, false);
+			focused_widget_->destroyed().disconnectOne(this, &MultipleFrame::OnFocusedWidgetDestroyed);
+		}
+
+		focused_widget_ = widget;
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, true);
+			events()->connect(focused_widget_->destroyed(), this, &MultipleFrame::OnFocusedWidgetDestroyed);
+		}
 	}
 
 	void MultipleFrame::ClearHoverWidgets()

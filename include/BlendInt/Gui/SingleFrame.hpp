@@ -58,13 +58,25 @@ namespace BlendInt {
 
 		virtual void PostDraw (Profile& profile);
 
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
 
-		void OnHoverWidgetDestroyed (Widget* widget);
+		void SetFocusedWidget (Widget* widget);
 
 		void DispatchMouseHoverEventInSubs (const MouseEvent& event);
 
 		void ClearHoverWidgets ();
+
+		void OnFocusedWidgetDestroyed (Widget* widget);
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		Widget* focused_widget_;
 
 		Widget* hovered_widget_;
 

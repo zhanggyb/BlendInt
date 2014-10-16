@@ -36,10 +36,6 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		void SetFocused (Widget* widget);
-
-		virtual void SetCursorFollowedWidget (Widget* widget);
-
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;

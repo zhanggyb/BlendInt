@@ -70,43 +70,6 @@ namespace BlendInt {
 	}
 	*/
 
-	void Frame::SetFocused(Widget* widget)
-	{
-		/*
-		custom_focused_widget_ = true;
-
-		if(focused_widget_ == widget)
-			return;
-
-		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, false);
-			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-		}
-
-		focused_widget_ = widget;
-		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, true);
-			events()->connect(focused_widget_->destroyed(), this, &Frame::OnFocusedWidgetDestroyed);
-		}
-		*/
-	}
-
-	void Frame::SetCursorFollowedWidget(Widget* widget)
-	{
-		/*
-		if(cursor_followed_widget_ == widget) return;
-
-		if(cursor_followed_widget_) {
-			cursor_followed_widget_->destroyed().disconnectOne(this, &Frame::OnCursorFollowedWidgetDestroyed);
-		}
-
-		cursor_followed_widget_ = widget;
-		if(cursor_followed_widget_) {
-			events()->connect(cursor_followed_widget_->destroyed(), this, &Frame::OnCursorFollowedWidgetDestroyed);
-		}
-		*/
-	}
-
 	bool Frame::IsExpandX() const
 	{
 		bool expand = false;

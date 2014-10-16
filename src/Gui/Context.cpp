@@ -419,13 +419,17 @@ namespace BlendInt
 	{
 		ResponseType response;
 
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-			response = p->MouseReleaseEvent(event);
-
-			if(response == Accept) break;
+		if(focused_) {
+			response = focused_->MouseReleaseEvent(event);
 		}
 
-		SetFocusedFrame(0);
+//		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+//			response = p->MouseReleaseEvent(event);
+//
+//			if(response == Accept) break;
+//		}
+//
+//		SetFocusedFrame(0);
 
 		return response;
 	}

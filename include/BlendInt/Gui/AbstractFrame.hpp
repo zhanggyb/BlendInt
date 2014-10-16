@@ -87,7 +87,7 @@ namespace BlendInt {
 
 		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
-		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
+		AbstractWidget* DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
 		ResponseType DispatchMouseMoveEvent (AbstractWidget* widget, const MouseEvent& event);
 

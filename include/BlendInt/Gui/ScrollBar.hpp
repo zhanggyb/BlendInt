@@ -55,6 +55,8 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		virtual Size GetPreferredSize () const;
+
 		bool pressed () const
 		{
 			return pressed_;
