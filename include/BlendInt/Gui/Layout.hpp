@@ -28,6 +28,45 @@
 
 namespace BlendInt {
 
+	class AbstractLayout: public Widget
+	{
+	public:
+
+		AbstractLayout ();
+
+		virtual ~AbstractLayout ();
+
+		virtual void Add (Widget* widget);
+
+		const Margin& margin () const {return margin_;}
+
+		void SetMargin (const Margin& margin);
+
+		void SetMargin (int left, int right, int top, int bottom);
+
+	protected:
+
+		virtual void PerformMarginUpdate (const Margin& margin);
+
+		inline void set_margin (const Margin& margin)
+		{
+			margin_ = margin;
+		}
+
+		inline void set_margin (int left, int right, int top, int bottom)
+		{
+			margin_.set_left(left);
+			margin_.set_right(right);
+			margin_.set_top(top);
+			margin_.set_bottom(bottom);
+		}
+
+	private:
+
+		Margin margin_;
+
+	};
+
 	class Layout: public Widget
 	{
 

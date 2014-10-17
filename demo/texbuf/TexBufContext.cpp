@@ -15,7 +15,7 @@
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/ListView.hpp>
-#include <BlendInt/Gui/SingleFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 TexBufContext::TexBufContext()
 : BI::Context(),
@@ -38,19 +38,19 @@ void TexBufContext::CreateWidgets ()
 	using namespace BlendInt;
 	using Stock::Icons;
 
-	SingleFrame* screen1 = Manage(new SingleFrame);
+	Frame* screen1 = Manage(new Frame);
 	AddFrame(screen1);
 
-	SingleFrame* screen2 = Manage(new SingleFrame);
+	Frame* screen2 = Manage(new Frame);
 	AddFrame(screen2);
 
-	SingleFrame* screen3 = Manage(new SingleFrame);
+	Frame* screen3 = Manage(new Frame);
 	AddFrame(screen3);
 
-	SingleFrame* screen4 = Manage(new SingleFrame);
+	Frame* screen4 = Manage(new Frame);
 	AddFrame(screen4);
 
-	SingleFrame* screen5 = Manage(new SingleFrame);
+	Frame* screen5 = Manage(new Frame);
 	AddFrame(screen5);
 
 	m_button = Manage(new Button("Take Screenshot"));
@@ -84,19 +84,19 @@ void TexBufContext::CreateWidgets ()
 
 	m_panel2->Resize(720, 600);
 
-	screen1->Setup(label1);
+	screen1->AddWidget(label1);
 	screen1->SetPosition(50, 700);
 
-	screen2->Setup(label2);
+	screen2->AddWidget(label2);
 	screen2->SetPosition(830, 700);
 
-	screen3->Setup(m_panel1);
+	screen3->AddWidget(m_panel1);
 	screen3->SetPosition(50, 100);
 
-	screen4->Setup(m_panel2);
+	screen4->AddWidget(m_panel2);
 	screen4->SetPosition(830, 100);
 
-	screen5->Setup(m_button);
+	screen5->AddWidget(m_button);
 	screen5->SetPosition(750, 20);
 
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);

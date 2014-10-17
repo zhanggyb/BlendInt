@@ -43,7 +43,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/SingleFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
@@ -294,9 +294,9 @@ namespace BlendInt {
 			list_->Resize(200, list_->size().height());
 			list_->SetPosition(position().x(), position().y() + size().height());
 
-			SingleFrame* screen = Manage(new SingleFrame);
+			Frame* screen = Manage(new Frame);
 			screen->Resize(list_->size());
-			screen->Setup(list_);
+			screen->AddWidget(list_);
 
 			Point pos = GetGlobalPosition();
 

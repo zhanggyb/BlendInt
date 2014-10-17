@@ -16,11 +16,9 @@
 #include <BlendInt/Gui/Viewport.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Gui/HFrame.hpp>
-#include <BlendInt/Gui/VFrame.hpp>
 #include <BlendInt/Gui/FloatingFrame.hpp>
 
-#include <BlendInt/Gui/SingleFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 using BI::Stock::Shaders;
 
@@ -56,14 +54,18 @@ void GLFWDemoContext::Initialize ()
 	AddFrame(vp1);
 	*/
 
-	VFrame* vp1 = Manage(new VFrame);
+	Frame* vp1 = Manage(new Frame);
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 
 	Button* btn1 = Manage(new Button("Hello"));
+	btn1->SetPosition(10, 10);
 	Button* btn2 = Manage(new Button("Hello"));
+	btn2->SetPosition(10, 40);
 	Button* btn3 = Manage(new Button("Hello"));
+	btn3->SetPosition(10, 70);
 	ScrollBar* bar = Manage(new ScrollBar);
+	bar->SetPosition(10, 100);
 
 	vp1->AddWidget(btn1);
 	vp1->AddWidget(btn2);

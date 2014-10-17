@@ -41,6 +41,33 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
+	AbstractLayout::AbstractLayout()
+	{
+	}
+
+	AbstractLayout::~AbstractLayout()
+	{
+	}
+
+	void AbstractLayout::Add(Widget* widget)
+	{
+	}
+
+	void AbstractLayout::SetMargin(const Margin& margin)
+	{
+	}
+
+	void AbstractLayout::SetMargin(int left, int right, int top,
+			int bottom)
+	{
+	}
+
+	void AbstractLayout::PerformMarginUpdate(const Margin& margin)
+	{
+	}
+
+	// -------------------------------------------------
+
 	Layout::Layout ()
 	: Widget()
 	{
@@ -75,3 +102,4 @@ namespace BlendInt {
 	}
 
 }
+

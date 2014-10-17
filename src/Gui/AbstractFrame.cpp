@@ -358,19 +358,15 @@ namespace BlendInt {
 
 	void AbstractFrame::ClearHoverWidgets(Widget* hovered_widget)
 	{
-		if(hovered_widget) {
+		assert(hovered_widget);
 
-			//hovered_widget->destroyed().disconnectOne(this, &SingleFrame::OnHoverWidgetDestroyed);
-
-			while (hovered_widget && dynamic_cast<AbstractWidget*>(hovered_widget) != this) {
-				set_widget_hover_status(hovered_widget, false);
-				hovered_widget = dynamic_cast<Widget*>(hovered_widget->parent());
-			}
-
-			if(dynamic_cast<AbstractWidget*>(hovered_widget) == this)
-				hovered_widget = 0;
-
+		while (hovered_widget && dynamic_cast<AbstractWidget*>(hovered_widget) != this) {
+			set_widget_hover_status(hovered_widget, false);
+			hovered_widget = dynamic_cast<Widget*>(hovered_widget->parent());
 		}
+
+		if(dynamic_cast<AbstractWidget*>(hovered_widget) == this)
+			hovered_widget = 0;
 	}
 
 	void AbstractFrame::DispatchHoverEventDeeper(const MouseEvent& event,

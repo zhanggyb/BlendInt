@@ -41,7 +41,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/SingleFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
@@ -287,10 +287,10 @@ namespace BlendInt {
 
 			//menu->SetPosition(m_active_button->position().x(), y);
 
-			SingleFrame* frame = Manage(new SingleFrame);
+			Frame* frame = Manage(new Frame);
 			frame->SetPosition(pos);
 			frame->Resize(menu->size());
-			frame->Setup(menu.get());
+			frame->AddWidget(menu.get());
 			context->AddFrame(frame);
 
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);

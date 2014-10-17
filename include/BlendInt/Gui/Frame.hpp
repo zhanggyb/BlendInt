@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_SCREEN_HPP_
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
@@ -36,15 +37,25 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
+		void SetLayout (AbstractLayout* layout);
+
+		void AddWidget (Widget* widget);
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
 
-		virtual Widget* GetFocusedWidget () const;
+		Widget* focused_widget () const
+		{
+			return focused_widget_;
+		}
 
-		virtual Widget* GetHoveredWidget () const;
+		Widget* hovered_widget () const
+		{
+			return hovered_widget_;
+		}
 
 	protected:
 
@@ -53,6 +64,10 @@ namespace BlendInt {
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PreDraw (Profile& profile);
 
@@ -76,11 +91,23 @@ namespace BlendInt {
 
 	private:
 
-		//void OnCursorFollowedWidgetDestroyed (Widget* widget);
+		void SetFocusedWidget (Widget* widget);
 
-		//Widget* cursor_followed_widget_;
+		void OnFocusedWidgetDestroyed (Widget* widget);
 
-		//bool custom_focused_widget_;
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		void OnLayoutDestroyed (Widget* layout);
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
+
+		Widget* focused_widget_;
+
+		Widget* hovered_widget_;
+
+		AbstractLayout* layout_;
 
 	};
 
