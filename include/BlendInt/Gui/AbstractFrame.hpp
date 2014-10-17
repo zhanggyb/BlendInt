@@ -31,6 +31,8 @@
 
 namespace BlendInt {
 
+	class FrameSplitter;
+
 	class AbstractFrame: public AbstractWidget
 	{
 	public:
@@ -111,32 +113,15 @@ namespace BlendInt {
 			return widget->MouseMoveEvent(event);
 		}
 
+		inline void set_widget_focus_status (AbstractWidget* widget, bool focus)
+		{
+			widget->set_focus(focus);
+		}
+
 		void set_widget_focus_event (AbstractWidget* widget, bool focus)
 		{
 			widget->set_focus(focus);
 			widget->FocusEvent(focus);
-		}
-
-		void set_widget_focus_status (AbstractWidget* widget, bool focus)
-		{
-			widget->set_focus(focus);
-		}
-
-		void set_widget_hover_status (AbstractWidget* widget, bool hover)
-		{
-			widget->set_hover(hover);
-		}
-
-		void set_widget_mouse_hover_in_event (AbstractWidget* widget, const MouseEvent& event)
-		{
-			widget->set_hover(true);
-			widget->MouseHoverInEvent(event);
-		}
-
-		void set_widget_mouse_hover_out_event (AbstractWidget* widget, const MouseEvent& event)
-		{
-			widget->set_hover(false);
-			widget->MouseHoverOutEvent(event);
 		}
 
 		void set_event_frame (const HIDEvent& event)
@@ -154,7 +139,32 @@ namespace BlendInt {
 			frame->DispatchHoverEvent(event);
 		}
 
+		Widget* DispatchHoverEventsInSubWidgets (Widget* orig, const MouseEvent& event);
+
+		void ClearHoverWidgets (Widget* hovered_widget);
+
 	private:
+
+		friend class FrameSplitter;
+
+		void DispatchHoverEventDeeper (const MouseEvent& event, Point& local_position, Widget* widget);
+
+		inline void set_widget_mouse_hover_in_event (AbstractWidget* widget, const MouseEvent& event)
+		{
+			widget->set_hover(true);
+			widget->MouseHoverInEvent(event);
+		}
+
+		inline void set_widget_mouse_hover_out_event (AbstractWidget* widget, const MouseEvent& event)
+		{
+			widget->set_hover(false);
+			widget->MouseHoverOutEvent(event);
+		}
+
+		inline void set_widget_hover_status (AbstractWidget* widget, bool hover)
+		{
+			widget->set_hover(hover);
+		}
 
 		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
 

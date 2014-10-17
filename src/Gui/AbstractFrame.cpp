@@ -217,4 +217,183 @@ namespace BlendInt {
 		}
 	}
 
+	Widget* AbstractFrame::DispatchHoverEventsInSubWidgets(Widget* orig,
+			const MouseEvent& event)
+	{
+		Widget* hovered_widget = orig;
+
+		set_event_frame(event);
+		Point local_position;	// the relative local position of the cursor in a widget
+
+		// find the new top hovered widget
+		if (hovered_widget) {
+
+			AbstractWidget* parent = hovered_widget->parent();
+
+			Point parent_position = parent->GetGlobalPosition();
+
+			bool not_hover_through = event.position().x() < parent_position.x() ||
+					event.position().y() < parent_position.y() ||
+					event.position().x() > (parent_position.x() + parent->size().width()) ||
+					event.position().y() > (parent_position.y() + parent->size().height());
+
+			local_position.reset(event.position().x() - parent_position.x() - parent->offset().x(),
+					event.position().y() - parent_position.y() - parent->offset().y());
+
+			if(!not_hover_through) {
+
+				if(hovered_widget->Contain(local_position)) {
+
+					Widget* orig = hovered_widget;
+
+					DispatchHoverEventDeeper(event, local_position, hovered_widget);
+
+					if(orig != hovered_widget) {
+//						orig->destroyed().disconnectOne(this,
+//								&SingleFrame::OnHoverWidgetDestroyed);
+//						events()->connect(hovered_widget->destroyed(), this,
+//						        &SingleFrame::OnHoverWidgetDestroyed);
+					}
+
+				} else {
+
+//					hovered_widget->destroyed ().disconnectOne (this,
+//								&SingleFrame::OnHoverWidgetDestroyed);
+					set_widget_mouse_hover_out_event(hovered_widget, event);
+//					hovered_widget->set_hover(false);
+//					hovered_widget->MouseHoverOutEvent(event);
+
+
+					// find which contianer contains cursor position
+					while (parent) {
+
+						if (parent == this) {	// FIXME: the widget may be mvoed to another context
+							parent = 0;
+							break;
+						}
+
+						local_position.reset(
+								local_position.x() + parent->position().x() + parent->offset().x(),
+								local_position.y() + parent->position().y() + parent->offset().y());
+
+						if (parent->Contain(local_position)) break;
+
+						parent = parent->parent();
+					}
+
+					hovered_widget = dynamic_cast<Widget*>(parent);
+
+					if(hovered_widget) {
+						DispatchHoverEventDeeper(event, local_position, hovered_widget);
+//						events()->connect(hovered_widget->destroyed(), this,
+//						        &SingleFrame::OnHoverWidgetDestroyed);
+					}
+
+				}
+
+			} else {
+
+//				hovered_widget->destroyed().disconnectOne(this,
+//					        &SingleFrame::OnHoverWidgetDestroyed);
+				set_widget_mouse_hover_out_event(hovered_widget, event);
+//				hovered_widget->set_hover(false);
+//				hovered_widget->MouseHoverOutEvent(event);
+
+
+				// find which contianer contains cursor position
+				parent = parent->parent();
+				while (parent) {
+
+					if (parent == this) {	// FIXME: the widget may be mvoed to another context
+						parent = 0;
+						break;
+					}
+
+					local_position.reset(
+							local_position.x() + parent->position().x() + parent->offset().x(),
+							local_position.y() + parent->position().y() + parent->offset().y());
+
+					if(IsHoverThroughExt(parent, event.position())) break;
+					parent = parent->parent();
+				}
+
+				hovered_widget = dynamic_cast<Widget*>(parent);
+				if(hovered_widget) {
+					DispatchHoverEventDeeper(event, local_position, hovered_widget);
+//					events()->connect(hovered_widget->destroyed(), this,
+//					        &SingleFrame::OnHoverWidgetDestroyed);
+				}
+
+			}
+
+		} else {
+
+			local_position.reset(
+					event.position().x() - position().x() - offset().x(),
+					event.position().y() - position().y() - offset().y());
+
+			for(AbstractWidget* p = last_child(); p; p = p->previous())
+			{
+				if (p->visiable() && p->Contain(local_position)) {
+
+					hovered_widget = dynamic_cast<Widget*>(p);
+					set_widget_mouse_hover_in_event(hovered_widget, event);
+//					hovered_widget->set_hover(true);
+//					hovered_widget->MouseHoverInEvent(event);
+
+					break;
+				}
+			}
+
+			if(hovered_widget) {
+				DispatchHoverEventDeeper(event, local_position, hovered_widget);
+//				events()->connect(hovered_widget->destroyed(), this,
+//				        &SingleFrame::OnHoverWidgetDestroyed);
+			}
+
+		}
+
+		return hovered_widget;
+	}
+
+	void AbstractFrame::ClearHoverWidgets(Widget* hovered_widget)
+	{
+		if(hovered_widget) {
+
+			//hovered_widget->destroyed().disconnectOne(this, &SingleFrame::OnHoverWidgetDestroyed);
+
+			while (hovered_widget && dynamic_cast<AbstractWidget*>(hovered_widget) != this) {
+				set_widget_hover_status(hovered_widget, false);
+				hovered_widget = dynamic_cast<Widget*>(hovered_widget->parent());
+			}
+
+			if(dynamic_cast<AbstractWidget*>(hovered_widget) == this)
+				hovered_widget = 0;
+
+		}
+	}
+
+	void AbstractFrame::DispatchHoverEventDeeper(const MouseEvent& event,
+			Point& local_position, Widget* widget)
+	{
+		local_position.reset(
+				local_position.x () - widget->position ().x ()
+				- widget->offset ().x (),
+				local_position.y () - widget->position ().y ()
+				- widget->offset ().y ()
+		);
+
+		for (AbstractWidget* p = widget->last_child (); p;
+				p = p->previous ()) {
+			if (p->visiable () && p->Contain (local_position)) {
+
+				widget = dynamic_cast<Widget*>(p);
+				set_widget_mouse_hover_in_event (widget, event);
+
+				DispatchHoverEventDeeper(event, local_position, widget);
+				break;
+			}
+		}
+	}
+
 }

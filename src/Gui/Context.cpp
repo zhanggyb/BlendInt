@@ -412,6 +412,8 @@ namespace BlendInt
 
 		SetFocusedFrame(event.frame());
 
+		if(focused_frame_) focused_frame_->set_pressed(true);
+
 		return response;
 	}
 
@@ -420,6 +422,7 @@ namespace BlendInt
 		ResponseType response;
 
 		if(focused_frame_) {
+			focused_frame_->set_pressed(false);
 			response = focused_frame_->MouseReleaseEvent(event);
 		}
 
@@ -566,7 +569,7 @@ namespace BlendInt
 	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(focused_frame_ == frame);
-		DBG_PRINT_MSG("focused followed frame %s destroyed", frame->name().c_str());
+		DBG_PRINT_MSG("focused frame %s destroyed", frame->name().c_str());
 		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
 
 		focused_frame_ = 0;

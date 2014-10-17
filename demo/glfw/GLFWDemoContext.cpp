@@ -38,6 +38,7 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	/*
 	SingleFrame* vp1 = Manage(new SingleFrame);
 	DBG_SET_NAME(vp1, "Viewport1");
 
@@ -53,8 +54,8 @@ void GLFWDemoContext::Initialize ()
 	vp1->SetPosition(200, 200);
 
 	AddFrame(vp1);
+	*/
 
-	/*
 	VFrame* vp1 = Manage(new VFrame);
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
@@ -96,7 +97,6 @@ void GLFWDemoContext::Initialize ()
 	splitter1->Resize(1200, 760);
 
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
-	*/
 
 	/*
 	VFrame* frame = Manage(new VFrame);

@@ -54,7 +54,11 @@ namespace BlendInt {
 
 	SingleFrame::~SingleFrame()
 	{
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &SingleFrame::OnHoverWidgetDestroyed);
+		}
 
+		ClearHoverWidgets(hovered_widget_);
 	}
 
 	void SingleFrame::Setup(Widget* widget)
@@ -85,125 +89,20 @@ namespace BlendInt {
 
 	void SingleFrame::DispatchHoverEvent(const MouseEvent& event)
 	{
-		set_event_frame(event);
-		Point local_position;	// the relative local position of the cursor in a widget
+		Widget* original_hovered_widget = hovered_widget_;
 
-		// find the new top hovered widget
-		if (hovered_widget_) {
+		hovered_widget_ = DispatchHoverEventsInSubWidgets(original_hovered_widget, event);
 
-			AbstractWidget* parent = hovered_widget_->parent();
+		if(original_hovered_widget != hovered_widget_) {
 
-			Point parent_position = parent->GetGlobalPosition();
-
-			bool not_hover_through = event.position().x() < parent_position.x() ||
-					event.position().y() < parent_position.y() ||
-					event.position().x() > (parent_position.x() + parent->size().width()) ||
-					event.position().y() > (parent_position.y() + parent->size().height());
-
-			local_position.reset(event.position().x() - parent_position.x() - parent->offset().x(),
-					event.position().y() - parent_position.y() - parent->offset().y());
-
-			if(!not_hover_through) {
-
-				if(hovered_widget_->Contain(local_position)) {
-
-					Widget* orig = hovered_widget_;
-
-					DispatchMouseHoverEventInSubs(event, local_position);
-
-					if(orig != hovered_widget_) {
-						orig->destroyed().disconnectOne(this,
-								&SingleFrame::OnHoverWidgetDestroyed);
-						events()->connect(hovered_widget_->destroyed(), this,
-						        &SingleFrame::OnHoverWidgetDestroyed);
-					}
-
-				} else {
-
-					hovered_widget_->destroyed ().disconnectOne (this,
-								&SingleFrame::OnHoverWidgetDestroyed);
-					set_widget_mouse_hover_out_event(hovered_widget_, event);
-
-					// find which contianer contains cursor position
-					while (parent) {
-
-						if (parent == this) {	// FIXME: the widget may be mvoed to another context
-							parent = 0;
-							break;
-						}
-
-						local_position.reset(
-								local_position.x() + parent->position().x() + parent->offset().x(),
-								local_position.y() + parent->position().y() + parent->offset().y());
-
-						if (parent->Contain(local_position)) break;
-
-						parent = parent->parent();
-					}
-
-					hovered_widget_ = dynamic_cast<Widget*>(parent);
-
-					if(hovered_widget_) {
-						DispatchMouseHoverEventInSubs(event, local_position);
-						events()->connect(hovered_widget_->destroyed(), this,
-						        &SingleFrame::OnHoverWidgetDestroyed);
-					}
-
-				}
-
-			} else {
-
-				hovered_widget_->destroyed().disconnectOne(this,
-					        &SingleFrame::OnHoverWidgetDestroyed);
-				set_widget_mouse_hover_out_event(hovered_widget_, event);
-
-				// find which contianer contains cursor position
-				parent = parent->parent();
-				while (parent) {
-
-					if (parent == this) {	// FIXME: the widget may be mvoed to another context
-						parent = 0;
-						break;
-					}
-
-					local_position.reset(
-							local_position.x() + parent->position().x() + parent->offset().x(),
-							local_position.y() + parent->position().y() + parent->offset().y());
-
-					if(IsHoverThroughExt(parent, event.position())) break;
-					parent = parent->parent();
-				}
-
-				hovered_widget_ = dynamic_cast<Widget*>(parent);
-				if(hovered_widget_) {
-					DispatchMouseHoverEventInSubs(event, local_position);
-					events()->connect(hovered_widget_->destroyed(), this,
-					        &SingleFrame::OnHoverWidgetDestroyed);
-				}
-
-			}
-
-		} else {
-
-			local_position.reset(
-					event.position().x() - position().x() - offset().x(),
-					event.position().y() - position().y() - offset().y());
-
-			for(AbstractWidget* p = last_child(); p; p = p->previous())
-			{
-				if (p->visiable() && p->Contain(local_position)) {
-
-					hovered_widget_ = dynamic_cast<Widget*>(p);
-					set_widget_mouse_hover_in_event(hovered_widget_, event);
-
-					break;
-				}
+			if(original_hovered_widget) {
+				original_hovered_widget->destroyed().disconnectOne(this,
+						&SingleFrame::OnHoverWidgetDestroyed);
 			}
 
 			if(hovered_widget_) {
-				DispatchMouseHoverEventInSubs(event, local_position);
 				events()->connect(hovered_widget_->destroyed(), this,
-				        &SingleFrame::OnHoverWidgetDestroyed);
+						&SingleFrame::OnHoverWidgetDestroyed);
 			}
 
 		}
@@ -260,7 +159,11 @@ namespace BlendInt {
 
 	void SingleFrame::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		ClearHoverWidgets();
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &SingleFrame::OnHoverWidgetDestroyed);
+		}
+
+		ClearHoverWidgets(hovered_widget_);
 	}
 
 	void SingleFrame::PreDraw(Profile& profile)
@@ -331,34 +234,12 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		if(focused_widget_) {
+		if(pressed_ext() && focused_widget_) {
 			set_event_frame(event);
 			retval = call_mouse_move_event(focused_widget_, event);
 		}
 
 		return retval;
-	}
-
-	void SingleFrame::DispatchMouseHoverEventInSubs(const MouseEvent& event, Point& local_position)
-	{
-		local_position.reset(
-				local_position.x () - hovered_widget_->position ().x ()
-				- hovered_widget_->offset ().x (),
-				local_position.y () - hovered_widget_->position ().y ()
-				- hovered_widget_->offset ().y ()
-		);
-
-		for (AbstractWidget* p = hovered_widget_->last_child (); p;
-				p = p->previous ()) {
-			if (p->visiable () && p->Contain (local_position)) {
-
-				hovered_widget_ = dynamic_cast<Widget*>(p);
-				set_widget_mouse_hover_in_event (hovered_widget_, event);
-
-				DispatchMouseHoverEventInSubs(event, local_position);
-				break;
-			}
-		}
 	}
 
 	void SingleFrame::SetFocusedWidget(Widget* widget)
@@ -375,23 +256,6 @@ namespace BlendInt {
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, true);
 			events()->connect(focused_widget_->destroyed(), this, &SingleFrame::OnFocusedWidgetDestroyed);
-		}
-	}
-
-	void SingleFrame::ClearHoverWidgets()
-	{
-		if(hovered_widget_) {
-
-			hovered_widget_->destroyed().disconnectOne(this, &SingleFrame::OnHoverWidgetDestroyed);
-
-			while (hovered_widget_ && dynamic_cast<AbstractWidget*>(hovered_widget_) != this) {
-				set_widget_hover_status(hovered_widget_, false);
-				hovered_widget_ = dynamic_cast<Widget*>(hovered_widget_->parent());
-			}
-
-			if(dynamic_cast<AbstractWidget*>(hovered_widget_) == this)
-				hovered_widget_ = 0;
-
 		}
 	}
 

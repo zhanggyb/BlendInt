@@ -425,6 +425,11 @@ namespace BlendInt {
 			return flags_ & WidgetFlagRefresh;
 		}
 
+		inline bool pressed_ext () const
+		{
+			return flags_ & WidgetFlagPressed;
+		}
+
 		inline int subs_count () const
 		{
 			return subs_count_;
@@ -589,6 +594,15 @@ namespace BlendInt {
 				SETBIT(flags_, WidgetFlagEmboss);
 			} else {
 				CLRBIT(flags_, WidgetFlagEmboss);
+			}
+		}
+
+		inline void set_pressed (bool pressed)
+		{
+			if(pressed) {
+				SETBIT(flags_, WidgetFlagPressed);
+			} else {
+				CLRBIT(flags_, WidgetFlagPressed);
 			}
 		}
 
@@ -766,7 +780,10 @@ namespace BlendInt {
 			WidgetFlagEmboss = (1 << 9),
 
 			// only valid when use off-screen render in container
-			WidgetFlagRefresh = (1 << 10)
+			WidgetFlagRefresh = (1 << 10),
+
+			// set this flag when the widget or frame is pressed
+			WidgetFlagPressed = (1 << 11)
 
 		};
 
