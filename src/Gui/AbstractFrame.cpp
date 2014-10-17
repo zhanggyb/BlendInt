@@ -246,7 +246,7 @@ namespace BlendInt {
 
 					Widget* orig = hovered_widget;
 
-					DispatchHoverEventDeeper(event, local_position, hovered_widget);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 
 					if(orig != hovered_widget) {
 //						orig->destroyed().disconnectOne(this,
@@ -284,7 +284,7 @@ namespace BlendInt {
 					hovered_widget = dynamic_cast<Widget*>(parent);
 
 					if(hovered_widget) {
-						DispatchHoverEventDeeper(event, local_position, hovered_widget);
+						hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 //						events()->connect(hovered_widget->destroyed(), this,
 //						        &SingleFrame::OnHoverWidgetDestroyed);
 					}
@@ -319,7 +319,7 @@ namespace BlendInt {
 
 				hovered_widget = dynamic_cast<Widget*>(parent);
 				if(hovered_widget) {
-					DispatchHoverEventDeeper(event, local_position, hovered_widget);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 //					events()->connect(hovered_widget->destroyed(), this,
 //					        &SingleFrame::OnHoverWidgetDestroyed);
 				}
@@ -346,7 +346,7 @@ namespace BlendInt {
 			}
 
 			if(hovered_widget) {
-				DispatchHoverEventDeeper(event, local_position, hovered_widget);
+				hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 //				events()->connect(hovered_widget->destroyed(), this,
 //				        &SingleFrame::OnHoverWidgetDestroyed);
 			}
@@ -369,9 +369,11 @@ namespace BlendInt {
 			hovered_widget = 0;
 	}
 
-	void AbstractFrame::DispatchHoverEventDeeper(const MouseEvent& event,
-			Point& local_position, Widget* widget)
+	Widget* AbstractFrame::DispatchHoverEventDeeper(Widget* widget, const MouseEvent& event,
+			Point& local_position)
 	{
+		Widget* retval = widget;
+
 		local_position.reset(
 				local_position.x () - widget->position ().x ()
 				- widget->offset ().x (),
@@ -381,15 +383,18 @@ namespace BlendInt {
 
 		for (AbstractWidget* p = widget->last_child (); p;
 				p = p->previous ()) {
+
 			if (p->visiable () && p->Contain (local_position)) {
+				retval = dynamic_cast<Widget*>(p);
+				set_widget_mouse_hover_in_event (retval, event);
 
-				widget = dynamic_cast<Widget*>(p);
-				set_widget_mouse_hover_in_event (widget, event);
-
-				DispatchHoverEventDeeper(event, local_position, widget);
+				retval = DispatchHoverEventDeeper(retval, event, local_position);
 				break;
 			}
+	
 		}
+
+		return retval;
 	}
 
 }

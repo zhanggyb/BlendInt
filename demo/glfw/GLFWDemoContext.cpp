@@ -39,18 +39,24 @@ void GLFWDemoContext::Initialize ()
 	using namespace BI;
 
 	/*
-	SingleFrame* vp1 = Manage(new SingleFrame);
+	Frame* vp1 = Manage(new Frame);
 	DBG_SET_NAME(vp1, "Viewport1");
 
 	VLayout* layout = Manage(new VLayout);
-	Button* btn1 = Manage(new Button("Hello"));
-	ScrollBar* bar = Manage(new ScrollBar);
+	DBG_SET_NAME(layout, "Layout");
+	Button* btn1 = Manage(new Button("Hello1"));
+	DBG_SET_NAME(btn1, "Hello1");
+	Button* btn2 = Manage(new Button("Hello2"));
+	DBG_SET_NAME(btn2, "Hello2");
+	Button* btn3 = Manage(new Button("Hello3"));
+	DBG_SET_NAME(btn3, "Hello3");
 
 	layout->Append(btn1);
-	layout->Append(bar);
+	layout->Append(btn2);
+	layout->Append(btn3);
 
-	vp1->Setup(layout);
-	vp1->Resize(200, 200);
+	vp1->AddWidget(layout);
+	vp1->Resize(500, 400);
 	vp1->SetPosition(200, 200);
 
 	AddFrame(vp1);

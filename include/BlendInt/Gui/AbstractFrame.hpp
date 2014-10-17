@@ -147,7 +147,7 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
-		void DispatchHoverEventDeeper (const MouseEvent& event, Point& local_position, Widget* widget);
+		Widget* DispatchHoverEventDeeper (Widget* widget, const MouseEvent& event, Point& local_position);
 
 		inline void set_widget_mouse_hover_in_event (AbstractWidget* widget, const MouseEvent& event)
 		{

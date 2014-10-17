@@ -54,10 +54,29 @@ namespace BlendInt {
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
+
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		inner_.generate();
+		inner_.bind();
+
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		inner_.reset();
 	}
 
 	ToolBoxExt::~ToolBoxExt()
 	{
+		glDeleteVertexArrays(1, &vao_);
+
 		if(focused_widget_) {
 			set_widget_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
@@ -181,6 +200,13 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
+
+			inner_.bind();
+			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_.reset();
+
 			FillSubWidgets();
 
 		} else if (request.target()->parent() == this) {
@@ -207,6 +233,17 @@ namespace BlendInt {
 
 	ResponseType ToolBoxExt::Draw (Profile& profile)
 	{
+		Shaders::instance->widget_inner_program()->use();
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+
+		GLSLProgram::reset();
+
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
@@ -312,8 +349,6 @@ namespace BlendInt {
 
 			hovered_widget_ = new_hovered_widget;
 			if(hovered_widget_) {
-
-				DBG_PRINT_MSG("hover widget: %s", new_hovered_widget->name().c_str());
 
 				events()->connect(hovered_widget_->destroyed(), this,
 						&ToolBoxExt::OnHoverWidgetDestroyed);

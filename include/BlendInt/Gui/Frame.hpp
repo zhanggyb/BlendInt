@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/Layout.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 namespace BlendInt {
 
 	class Frame: public AbstractFrame
@@ -108,6 +110,10 @@ namespace BlendInt {
 		Widget* hovered_widget_;
 
 		AbstractLayout* layout_;
+
+		GLuint vao_;
+
+		GLBuffer<> inner_;
 
 	};
 

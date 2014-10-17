@@ -108,6 +108,10 @@ namespace BlendInt {
 
 		int space_;
 
+		GLuint vao_;
+
+		GLBuffer<> inner_;
+
 		Margin margin_;
 	};
 
