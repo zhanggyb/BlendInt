@@ -135,6 +135,15 @@ namespace BlendInt {
 		Size prefer;
 
 		if(subs_count()) {
+
+			if(layout_) {
+
+				assert(subs_count() == 1);
+
+				return layout_->GetPreferredSize();
+
+			}
+
 			int minx = 0;
 			int miny = 0;
 			int maxx = 0;
@@ -154,27 +163,6 @@ namespace BlendInt {
 		}
 
 		return prefer;
-	}
-
-	void Frame::DispatchHoverEvent(const MouseEvent& event)
-	{
-		Widget* original_hovered_widget = hovered_widget_;
-
-		hovered_widget_ = DispatchHoverEventsInSubWidgets(original_hovered_widget, event);
-
-		if(original_hovered_widget != hovered_widget_) {
-
-			if(original_hovered_widget) {
-				original_hovered_widget->destroyed().disconnectOne(this,
-						&Frame::OnHoverWidgetDestroyed);
-			}
-
-			if(hovered_widget_) {
-				events()->connect(hovered_widget_->destroyed(), this,
-						&Frame::OnHoverWidgetDestroyed);
-			}
-
-		}
 	}
 
 	bool Frame::SizeUpdateTest(const SizeUpdateRequest& request)
@@ -350,6 +338,26 @@ namespace BlendInt {
 		}
 
 		return retval;
+	}
+
+	void Frame::DispatchHoverEvent(const MouseEvent& event)
+	{
+		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+
+		if(new_hovered_widget != hovered_widget_) {
+
+			if(hovered_widget_) {
+				hovered_widget_->destroyed().disconnectOne(this,
+						&Frame::OnHoverWidgetDestroyed);
+			}
+
+			hovered_widget_ = new_hovered_widget;
+			if(hovered_widget_) {
+				events()->connect(hovered_widget_->destroyed(), this,
+						&Frame::OnHoverWidgetDestroyed);
+			}
+
+		}
 	}
 
 	void Frame::SetFocusedWidget(Widget* widget)

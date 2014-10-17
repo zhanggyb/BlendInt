@@ -400,6 +400,7 @@ namespace BlendInt
 	{
 		ResponseType response;
 
+		set_pressed(true);
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
@@ -421,18 +422,11 @@ namespace BlendInt
 	{
 		ResponseType response;
 
+		set_pressed(false);
 		if(focused_frame_) {
 			focused_frame_->set_pressed(false);
 			response = focused_frame_->MouseReleaseEvent(event);
 		}
-
-//		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-//			response = p->MouseReleaseEvent(event);
-//
-//			if(response == Accept) break;
-//		}
-//
-//		SetFocusedFrame(0);
 
 		return response;
 	}
@@ -441,7 +435,7 @@ namespace BlendInt
 	{
 		ResponseType response = Ignore;
 
-		if(focused_frame_) {
+		if(pressed_ext() && focused_frame_) {
 			response = focused_frame_->MouseMoveEvent(event);
 		}
 

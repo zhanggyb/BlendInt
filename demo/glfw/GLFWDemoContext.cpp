@@ -14,11 +14,13 @@
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/Viewport2D.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Gui/FloatingFrame.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
 
 using BI::Stock::Shaders;
 
@@ -54,23 +56,29 @@ void GLFWDemoContext::Initialize ()
 	AddFrame(vp1);
 	*/
 
-	Frame* vp1 = Manage(new Frame);
+	ToolBoxExt* vp1 = Manage(new ToolBoxExt);
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 
 	Button* btn1 = Manage(new Button("Hello"));
-	btn1->SetPosition(10, 10);
+	DBG_SET_NAME(btn1, "Button1");
 	Button* btn2 = Manage(new Button("Hello"));
-	btn2->SetPosition(10, 40);
+	DBG_SET_NAME(btn2, "Button2");
 	Button* btn3 = Manage(new Button("Hello"));
-	btn3->SetPosition(10, 70);
-	ScrollBar* bar = Manage(new ScrollBar);
-	bar->SetPosition(10, 100);
+	DBG_SET_NAME(btn3, "Button3");
 
-	vp1->AddWidget(btn1);
-	vp1->AddWidget(btn2);
-	vp1->AddWidget(btn3);
+	VLayout* layout = Manage(new VLayout);
+	DBG_SET_NAME(layout, "Layout");
+	layout->Append(btn1);
+	layout->Append(btn2);
+	layout->Append(btn3);
+
+	ScrollBar* bar = Manage(new ScrollBar);
+	ColorSelector* cs = Manage(new ColorSelector);
+
+	vp1->AddWidget(layout);
 	vp1->AddWidget(bar);
+	vp1->AddWidget(cs);
 
 	Viewport* vp2 = Manage(new Viewport);
 	DBG_SET_NAME(vp2, "Viewport2");
@@ -91,8 +99,8 @@ void GLFWDemoContext::Initialize ()
 	splitter2->AddFrame(vp2);
 	splitter2->AddFrame(vp3);
 
-	splitter1->AddFrame(vp1);
 	splitter1->AddFrame(splitter2);
+	splitter1->AddFrame(vp1);
 
 	AddFrame(splitter1);
 

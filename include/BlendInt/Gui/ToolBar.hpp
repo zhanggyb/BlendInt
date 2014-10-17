@@ -28,8 +28,18 @@
 
 #include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
+
+	class ToolBarExt: public AbstractFrame
+	{
+	public:
+
+		ToolBarExt ();
+
+		virtual ~ToolBarExt ();
+	};
 
 	class ToolBar: public Layout
 	{

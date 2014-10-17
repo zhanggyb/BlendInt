@@ -59,8 +59,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void DispatchHoverEvent (const MouseEvent& event);
-
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
@@ -88,6 +86,8 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual void DispatchHoverEvent (const MouseEvent& event);
 
 	private:
 

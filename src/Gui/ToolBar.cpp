@@ -42,6 +42,19 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
+	ToolBarExt::ToolBarExt ()
+	: AbstractFrame()
+	{
+
+	}
+
+	ToolBarExt::~ToolBarExt ()
+	{
+		
+	}
+
+	// ---------------------------------
+
 	ToolBar::ToolBar ()
 	: Layout(),
 	  vao_(0),

@@ -38,9 +38,373 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
+
+	ToolBoxExt::ToolBoxExt ()
+	: AbstractFrame(),
+	focused_widget_(0),
+	hovered_widget_(0),
+	space_(1)
+	{
+		set_size(400, 500);
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
+	}
+
+	ToolBoxExt::~ToolBoxExt()
+	{
+		if(focused_widget_) {
+			set_widget_focus_status(focused_widget_, false);
+			focused_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+			focused_widget_ = 0;
+		}
+
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+		}
+	}
+
+	void ToolBoxExt::AddWidget (Widget* widget)
+	{
+		int x = margin_.left();
+		int y = GetLastPosition();
+		int w = size().width() - margin_.hsum();
+
+		if(PushBackSubWidget(widget)) {
+			Size prefer = widget->GetPreferredSize();
+			y = y - prefer.height();
+			SetSubWidgetPosition(widget, x, y);
+			if(widget->IsExpandX()) {
+				ResizeSubWidget(widget, w, prefer.height());
+			} else {
+				if(widget->size().width() > w) {
+					ResizeSubWidget(widget, w, prefer.height());
+				} else {
+					ResizeSubWidget(widget, widget->size().width(), prefer.height());
+				}
+			}
+		}
+	}
+
+	bool ToolBoxExt::IsExpandX () const
+	{
+		bool expand = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			if(p->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool ToolBoxExt::IsExpandY () const
+	{
+		return true;
+	}
+
+	Size ToolBoxExt::GetPreferredSize () const
+	{
+		Size preferred_size(400, 500);
+
+		if(subs_count()) {
+
+			Size tmp_size;
+			preferred_size.set_height(-space_);
+
+			for(AbstractWidget* p = first_child(); p; p = p->next())
+			{
+				if(p->visiable()) {
+					tmp_size = p->GetPreferredSize();
+
+					preferred_size.add_height(tmp_size.height() + space_);
+					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
+				}
+			}
+
+			preferred_size.add_width(margin_.hsum());
+			preferred_size.add_height(margin_.vsum());
+		}
+
+		return preferred_size;
+	}
+
+	bool ToolBoxExt::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void ToolBoxExt::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)size().width(),
+				y,
+				y + (float)size().height(),
+				100.f, -100.f);
+
+			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+
+			set_position(*request.position());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate (request);
+		}
+	}
+
+	void ToolBoxExt::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			float x = static_cast<float>(position().x() + offset().x());
+			float y = static_cast<float>(position().y() + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)request.size()->width(),
+				y,
+				y + (float)request.size()->height(),
+				100.f, -100.f);
+
+			set_size(*request.size());
+
+			FillSubWidgets();
+
+		} else if (request.target()->parent() == this) {
+			FillSubWidgets();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void ToolBoxExt::PreDraw (Profile& profile)
+	{
+		assign_profile_frame(profile);
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+	}
+
+	ResponseType ToolBoxExt::Draw (Profile& profile)
+	{
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			DispatchDrawEvent (p, profile);
+		}
+
+		return subs_count() ? Ignore : Accept;
+	}
+
+	void ToolBoxExt::PostDraw (Profile& profile)
+	{
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+	}
+
+	void ToolBoxExt::FocusEvent (bool focus)
+	{
+	}
+
+	void ToolBoxExt::MouseHoverInEvent (const MouseEvent& event)
+	{
+	}
+
+	void ToolBoxExt::MouseHoverOutEvent (const MouseEvent& event)
+	{
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+		}
+	}
+
+	ResponseType ToolBoxExt::KeyPressEvent (const KeyEvent& event)
+	{
+		set_event_frame(event);
+
+		ResponseType response = Ignore;
+
+		if(focused_widget_) {
+			call_key_press_event(focused_widget_, event);
+		}
+
+		return response;
+	}
+
+	ResponseType ToolBoxExt::MousePressEvent (const MouseEvent& event)
+	{
+		ResponseType retval = Ignore;
+
+		set_event_frame(event);
+
+		if(hovered_widget_) {
+
+			AbstractWidget* widget = 0;	// widget may be focused
+
+			widget = DispatchMousePressEvent(hovered_widget_, event);
+
+			if(widget == 0) {
+				DBG_PRINT_MSG("%s", "widget 0");
+			}
+
+			// TODO: set pressed flag
+			SetFocusedWidget(dynamic_cast<Widget*>(widget));
+		} else {
+			SetFocusedWidget(0);
+		}
+
+		return retval;
+	}
+
+	ResponseType ToolBoxExt::MouseReleaseEvent (const MouseEvent& event)
+	{
+		ResponseType retval = Ignore;
+
+		if(focused_widget_) {
+			set_event_frame(event);
+			retval = call_mouse_release_event(focused_widget_, event);
+			// TODO: reset pressed flag
+		}
+
+		return retval;
+	}
+
+	ResponseType ToolBoxExt::MouseMoveEvent (const MouseEvent& event)
+	{
+		ResponseType retval = Ignore;
+
+		if(pressed_ext() && focused_widget_) {
+			set_event_frame(event);
+			retval = call_mouse_move_event(focused_widget_, event);
+		}
+
+		return retval;
+	}
+
+	void ToolBoxExt::DispatchHoverEvent (const MouseEvent& event)
+	{
+		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+
+		if(new_hovered_widget != hovered_widget_) {
+
+			if(hovered_widget_) {
+				hovered_widget_->destroyed().disconnectOne(this,
+						&ToolBoxExt::OnHoverWidgetDestroyed);
+			}
+
+			hovered_widget_ = new_hovered_widget;
+			if(hovered_widget_) {
+
+				DBG_PRINT_MSG("hover widget: %s", new_hovered_widget->name().c_str());
+
+				events()->connect(hovered_widget_->destroyed(), this,
+						&ToolBoxExt::OnHoverWidgetDestroyed);
+			}
+
+		}
+	}
+
+	void ToolBoxExt::FillSubWidgets ()
+	{
+		int x = margin_.left();
+		int y = size().height() - margin_.top();
+		int width = size().width() - margin_.hsum();
+		//int height = size().height() - margin_.vsum();
+
+		y = y + space_;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			y = y - p->size().height() - space_;
+
+			SetSubWidgetPosition(p, x, y);
+
+			if(p->IsExpandX()) {
+				ResizeSubWidget(p, width, p->size().height());
+			} else {
+
+				if(p->size().width() > width) {
+					ResizeSubWidget(p, width, p->size().height());
+				} else {
+					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2,
+									y);
+				}
+
+			}
+		}
+	}
+
+	int ToolBoxExt::GetLastPosition () const
+	{
+		int y = size().height() - margin_.top();
+
+		if(last_child()) {
+			y = last_child()->position().y();
+			y -= space_;
+		}
+
+		return y;
+	}
+
+	void ToolBoxExt::SetFocusedWidget (Widget* widget)
+	{
+		if(focused_widget_ == widget)
+			return;
+
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, false);
+			focused_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+		}
+
+		focused_widget_ = widget;
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, true);
+			events()->connect(focused_widget_->destroyed(), this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+		}
+	}
+
+	void ToolBoxExt::OnFocusedWidgetDestroyed (Widget* widget)
+	{
+		assert(focused_widget_ == widget);
+		assert(widget->focus());
+
+		//set_widget_focus_status(widget, false);
+		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+
+		focused_widget_ = 0;
+	}
+
+	void ToolBoxExt::OnHoverWidgetDestroyed (Widget* widget)
+	{
+		assert(widget->hover());
+		assert(hovered_widget_ == widget);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+
+		hovered_widget_ = 0;
+	}
+
+	// -------------------------------
 
 	ToolBox::ToolBox()
 	: Layout(),
