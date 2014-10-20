@@ -120,13 +120,13 @@ namespace BlendInt {
 		set_radius(radius);
 	}
 
-	void SlideIcon::Draw (const glm::vec3& pos, short gamma) const
+	void SlideIcon::Draw (float x, float y, short gamma) const
 	{
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), pos.x, pos.y, 0.f);
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), x, y, 0.f);
 
 		if (m_highlight) {
 			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);

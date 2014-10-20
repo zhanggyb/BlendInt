@@ -71,9 +71,7 @@ namespace BlendInt {
 
 	ResponseType CheckButton::Draw (Profile& profile)
 	{
-		glm::vec3 pos(position().x(), position().y(), 0.f);
-
-		shadow_->Draw(pos);
+		shadow_->Draw(position().x(), position().y());
 
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
 		program->use();

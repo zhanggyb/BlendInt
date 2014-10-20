@@ -30,6 +30,7 @@
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
@@ -49,7 +50,7 @@ namespace BlendInt {
 
 		void SetColor (const Color& color);
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
+		virtual void Draw (float x, float y, short gamma = 0) const;
 
 	protected:
 
@@ -72,6 +73,39 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> buffer_;
 
 		Color color_;
+	};
+
+	// -----------------------------------------
+
+	class ShadowMap: public AbstractRoundForm
+	{
+
+	public:
+
+		ShadowMap ();
+
+		virtual ~ShadowMap ();
+
+		virtual void Draw (float x, float y, short gamma = 0) const;
+
+	protected:
+
+		virtual void PerformSizeUpdate (const Size& size);
+
+		virtual void PerformRoundTypeUpdate (int type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
+
+	private:
+
+		void InitializeShadowMap ();
+
+		void GenerateShadowVertices (std::vector<GLfloat>& vertices);
+
+		GLuint vao_;
+
+		GLBuffer<ARRAY_BUFFER> buffer_;
+
 	};
 
 }

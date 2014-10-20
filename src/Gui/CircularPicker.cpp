@@ -117,7 +117,7 @@ namespace BlendInt {
 		set_radius(radius);
 	}
 
-	void CircularPicker::Draw (const glm::vec3& pos, short gamma) const
+	void CircularPicker::Draw (float x, float y, short gamma) const
 	{
 		using Stock::Shaders;
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 				Shaders::instance->triangle_program();
 		program->use();
 
-		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform3f("u_position", x, y, 0.f);
 		program->SetUniform1i("u_gamma", gamma);
 		program->SetUniform1i("u_AA", 0);
 

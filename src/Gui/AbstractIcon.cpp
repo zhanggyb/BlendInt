@@ -46,14 +46,4 @@ namespace BlendInt {
 	{
 	}
 
-	void AbstractIcon::Draw(float x, float y, short gamma) const
-	{
-		glm::vec3 pos(x, y, 0.f);
-		Draw(pos, gamma);
-	}
-
-	void AbstractIcon::Draw(const glm::vec3& pos, short gamma) const
-	{
-	}
-
 }

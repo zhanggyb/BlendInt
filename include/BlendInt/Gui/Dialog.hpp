@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
+#include <BlendInt/Gui/Shadow.hpp>
+
 namespace BlendInt {
 
 	class Dialog: public AbstractFrame
@@ -80,6 +82,8 @@ namespace BlendInt {
 
 		Point last_;
 		Point cursor_;
+
+		ShadowMap* shadow_;
 
 		glm::mat4 projection_matrix_;
 

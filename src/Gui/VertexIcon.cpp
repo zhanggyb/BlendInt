@@ -144,11 +144,11 @@ namespace BlendInt {
 		elements_ = indeces_size * 3;
 	}
 
-	void VertexIcon::Draw(const glm::vec3& pos, short gamma) const
+	void VertexIcon::Draw(float x, float y, short gamma) const
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
-		Draw(pos, color, gamma);
+		Draw(glm::vec3(x, y, 0.f), color, gamma);
 	}
 
 	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const

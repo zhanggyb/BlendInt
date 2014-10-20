@@ -84,7 +84,6 @@ endif()
 #    include_directories(${GLEW_INCLUDE_DIRS})
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
-add_definitions(-D__OPENGL_CORE_330__)
 
 find_package(Boost REQUIRED)
 if(Boost_FOUND)

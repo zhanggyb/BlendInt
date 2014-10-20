@@ -176,12 +176,11 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		glm::vec3 pos(0.f);
-		pos.x = (size().width() - checkerboard_->size().width()) / 2.f;
-		pos.y = (size().height() - checkerboard_->size().height()) / 2.f;
+		float x = (size().width() - checkerboard_->size().width()) / 2.f;
+		float y = (size().height() - checkerboard_->size().height()) / 2.f;
 
 		// draw checkerboard
-		checkerboard_->Draw(pos);
+		checkerboard_->Draw(x, y);
 
 		glActiveTexture(GL_TEXTURE0);
 		texture_->bind();

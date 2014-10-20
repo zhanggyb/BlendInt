@@ -135,9 +135,7 @@ namespace BlendInt {
 	{
 		Shaders::instance->triangle_program()->use();
 
-		glm::vec3 pos(0.f, 0.f, 0.f);
-
-		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
+		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
 
@@ -179,13 +177,13 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		if(icon_) {
-			pos.x += (size().width() - icon_->size().width()) / 2;
-			pos.y += (size().height() - icon_->size().height()) / 2;
+			float x = (size().width() - icon_->size().width()) / 2;
+			float y = (size().height() - icon_->size().height()) / 2;
 
 			if(hover()) {
-				icon_->Draw(pos, 15);
+				icon_->Draw(x, y, 15);
 			} else {
-				icon_->Draw(pos, 0);
+				icon_->Draw(x, y, 0);
 			}
 		}
 		return Accept;

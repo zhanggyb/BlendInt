@@ -175,17 +175,18 @@ namespace BlendInt {
 
 		// ----- end of draw line
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+		float x = position().x();
+		float y = position().y();
 
 		if (orientation() == Horizontal) {
-			pos.x += get_position();
-			pos.y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
+			x += get_position();
+			y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
 		} else {
-			pos.x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
-			pos.y += get_position();
+			x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
+			y += get_position();
 		}
 
-		m_slide_icon.Draw(pos);
+		m_slide_icon.Draw(x, y);
 
 		return Accept;
 	}

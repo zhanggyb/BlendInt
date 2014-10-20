@@ -45,7 +45,8 @@ namespace BlendInt {
 
 	Dialog::Dialog()
 	: AbstractFrame(),
-	  vao_(0)
+	  vao_(0),
+	  shadow_(0)
 	{
 		set_size(400, 300);
 
@@ -68,11 +69,16 @@ namespace BlendInt {
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
+
+		shadow_ = new ShadowMap;
+		shadow_->Resize(size());
 	}
 
 	Dialog::~Dialog()
 	{
 		glDeleteVertexArrays(1, &vao_);
+
+		delete shadow_;
 	}
 
 	void Dialog::Setup(Widget* widget)
@@ -137,6 +143,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
+			shadow_->Resize(size());
+
 			if (subs_count()) {
 				assert(subs_count() == 1);
 				FillSingleWidget(0, 0, 0, size().width(), size().height());
@@ -181,6 +189,8 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		GLSLProgram::reset();
+
+		shadow_->Draw(position().x(), position().y());
 
 		/*
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {

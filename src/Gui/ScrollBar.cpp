@@ -265,15 +265,15 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		glm::vec3 pos(0.f, 0.f, 0.f);
+		float x = 0.f, y = 0.f;
 
 		if (orientation() == Horizontal) {
-			pos.x += GetSlidePosition();
+			x = GetSlidePosition();
 		} else {
-			pos.y += GetSlidePosition();
+			y = GetSlidePosition();
 		}
 
-		m_slide.Draw(pos);
+		m_slide.Draw(x, y);
 		return Accept;
 	}
 

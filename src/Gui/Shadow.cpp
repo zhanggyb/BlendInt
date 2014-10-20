@@ -86,16 +86,15 @@ namespace BlendInt {
 		buffer_->reset();
 	}
 
-	void Shadow::Draw (const glm::vec3& pos, short gamma) const
+	void Shadow::Draw (float x, float y, short gamma) const
 	{
-		Shaders::instance->triangle_program()->use();
+		Shaders::instance->frame_shadow_program()->use();
 
 		int count = GetOutlineVertices(round_type());
 
-		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1,
-		        glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform3f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y, 0.f);
+		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_GAMMA), gamma);
+		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, (count + 1) * 2);
@@ -150,13 +149,13 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COLOR));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_SHADOW_COORD));
+		//glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_SHADOW_COLOR));
 
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_SHADOW_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
 		        BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		//glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_SHADOW_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		 //       BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -420,6 +419,173 @@ namespace BlendInt {
 		float facm = 1.f - fact;
 
 		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
+	}
+
+	// --------------------------------------------
+
+	ShadowMap::ShadowMap()
+	: AbstractRoundForm(),
+	  vao_(0)
+	{
+		set_size(100, 100);
+
+		InitializeShadowMap();
+	}
+
+	ShadowMap::~ShadowMap()
+	{
+		glDeleteVertexArrays(1, &vao_);
+	}
+
+	void ShadowMap::Draw(float x, float y, short gamma) const
+	{
+		Shaders::instance->frame_shadow_program()->use();
+
+		//int count = GetOutlineVertices(round_type());
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y);
+		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_GAMMA), gamma);
+		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
+		Theme::instance->shadow_texture()->bind();
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 5 * 2);
+		glBindVertexArray(0);
+
+		Theme::instance->shadow_texture()->reset();
+
+		GLSLProgram::reset();
+	}
+
+	void ShadowMap::PerformSizeUpdate(const Size& size)
+	{
+		set_size(size);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(vertices);
+		buffer_.bind();
+		buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_.reset();
+	}
+
+	void ShadowMap::PerformRoundTypeUpdate(int type)
+	{
+		set_round_type(type);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(vertices);
+		buffer_.bind();
+		buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_.reset();
+	}
+
+	void ShadowMap::PerformRoundRadiusUpdate(float radius)
+	{
+		set_radius(radius);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(vertices);
+		buffer_.bind();
+		buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		buffer_.reset();
+
+	}
+
+	void ShadowMap::InitializeShadowMap()
+	{
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVertices(vertices);
+
+		buffer_.generate();
+		buffer_.bind();
+		buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_SHADOW_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_SHADOW_UV));
+
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_SHADOW_COORD), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_SHADOW_UV), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		buffer_.reset();
+	}
+
+	void ShadowMap::GenerateShadowVertices(std::vector<GLfloat>& vertices)
+	{
+		const float minx = 0.0f;
+		const float miny = 0.0f;
+		const float maxx = size().width();
+		const float maxy = size().height();
+
+		if(vertices.size() != (4 * 2 * 5)) {
+			vertices.resize(4 * 2 * 5);
+		}
+
+		// ---- top-left
+
+		vertices[0] = minx;
+		vertices[1] = maxy;
+		vertices[2] = 100 / 512.f;
+		vertices[3] = 100 / 512.f;
+
+		vertices[4] = minx - 12.f;
+		vertices[5] = maxy + 12.f;
+		vertices[6] = 0.f;
+		vertices[7] = 0.f;
+
+		// ---- bottom-left
+
+		vertices[8] = minx;
+		vertices[9] = miny;
+		vertices[10] = 100 / 512.f;
+		vertices[11] = (512 - 100) / 512.f;
+
+		vertices[12] = minx - 12.f;
+		vertices[13] = miny - 12.f;
+		vertices[14] = 0.f;
+		vertices[15] = 1.f;
+
+		// ---- bottom-right
+
+		vertices[16] = maxx;
+		vertices[17] = miny;
+		vertices[18] = (512 - 100) / 512.f;
+		vertices[19] = (512 - 100) / 512.f;
+
+		vertices[20] = maxx + 12.f;
+		vertices[21] = miny - 12.f;
+		vertices[22] = 1.f;
+		vertices[23] = 1.f;
+
+		// ---- top-right
+
+		vertices[24] = maxx;
+		vertices[25] = maxy;
+		vertices[26] = (512 - 100) / 512.f;
+		vertices[27] = 100 / 512.f;
+
+		vertices[28] = maxx + 12.f;
+		vertices[29] = maxy + 12.f;
+		vertices[30] = 1.f;
+		vertices[31] = 0.f;
+
+		// ---- top-left
+
+		vertices[32] = minx;
+		vertices[33] = maxy;
+		vertices[34] = 100 / 512.f;
+		vertices[35] = 100 / 512.f;
+
+		vertices[36] = minx - 12.f;
+		vertices[37] = maxy + 12.f;
+		vertices[38] = 0.f;
+		vertices[39] = 0.f;
+
 	}
 
 }

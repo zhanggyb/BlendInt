@@ -319,13 +319,13 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (const glm::vec3& pos, short gamma) const
+	void PixelIcon::Draw (float x, float y, short gamma) const
 	{
 		if(texture_) {
 			RefPtr<GLSLProgram> program = Shaders::instance->widget_image_program();
 			program->use();
 
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), pos.x, pos.y);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), x, y);
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);

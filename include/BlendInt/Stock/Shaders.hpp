@@ -106,6 +106,11 @@ namespace BlendInt {
 			FRAME_INNER_POSITION,
 			FRAME_INNER_GAMMA,
 
+			FRAME_SHADOW_COORD,
+			FRAME_SHADOW_UV,
+			//FRAME_SHADOW_COLOR,
+			FRAME_SHADOW_POSITION,
+
 			LocationLast
 		};
 
@@ -164,6 +169,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& frame_inner_program () const
 			{
 				return frame_inner_program_;
+			}
+
+			const RefPtr<GLSLProgram>& frame_shadow_program () const
+			{
+				return frame_shadow_program_;
 			}
 
 			const glm::mat4& ui_projection_matrix () const
@@ -248,6 +258,8 @@ namespace BlendInt {
 
 			bool SetupFrameInnerProgram ();
 
+			bool SetupFrameShadowProgram ();
+
 			RefPtr<GLSLProgram> widget_text_program_;
 
 			RefPtr<GLSLProgram> primitive_program_;
@@ -265,6 +277,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> widget_image_program_;
 
 			RefPtr<GLSLProgram> frame_inner_program_;
+
+			RefPtr<GLSLProgram> frame_shadow_program_;
 
 			GLint locations_[LocationLast];
 
@@ -344,6 +358,10 @@ namespace BlendInt {
 			static const char* frame_inner_vertex_shader;
 
 			static const char* frame_inner_fragment_shader;
+
+			static const char* frame_shadow_vertex_shader;
+
+			static const char* frame_shadow_fragment_shader;
 		};
 
 	}
