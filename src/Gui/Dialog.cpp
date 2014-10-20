@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/FloatingFrame.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -43,10 +43,9 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	FloatingFrame::FloatingFrame()
+	Dialog::Dialog()
 	: AbstractFrame(),
-	  vao_(0),
-	  pressed_(false)
+	  vao_(0)
 	{
 		set_size(400, 300);
 
@@ -71,12 +70,12 @@ namespace BlendInt {
 		model_matrix_ = glm::mat4(1.f);
 	}
 
-	FloatingFrame::~FloatingFrame()
+	Dialog::~Dialog()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void FloatingFrame::Setup(Widget* widget)
+	void Dialog::Setup(Widget* widget)
 	{
 		if(widget == 0) return;
 
@@ -91,7 +90,31 @@ namespace BlendInt {
 		}
 	}
 
-	void FloatingFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void Dialog::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)size().width(),
+				y,
+				y + (float)size().height(),
+				100.f, -100.f);
+
+			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+
+			set_position(*request.position());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate (request);
+		}
+	}
+
+	void Dialog::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -126,12 +149,22 @@ namespace BlendInt {
 		}
 	}
 
-	void FloatingFrame::PreDraw(Profile& profile)
+	void Dialog::PreDraw(Profile& profile)
 	{
 		assign_profile_frame(profile);
+
+		/*
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+		*/
 	}
 
-	ResponseType FloatingFrame::Draw(Profile& profile)
+	ResponseType Dialog::Draw(Profile& profile)
 	{
 		Shaders::instance->frame_inner_program()->use();
 
@@ -149,108 +182,74 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		glViewport(position().x(), position().y(), size().width(), size().height());
-
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(), position().y(), size().width(), size().height());
-
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
+		/*
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
-
-		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		*/
 
 		return subs_count() ? Ignore : Accept;
 	}
 
-	void FloatingFrame::PostDraw(Profile& profile)
+	void Dialog::PostDraw(Profile& profile)
+	{
+		/*
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		*/
+	}
+
+	void Dialog::FocusEvent(bool focus)
 	{
 	}
 
-	void FloatingFrame::FocusEvent(bool focus)
+	void Dialog::MouseHoverInEvent(const MouseEvent& event)
 	{
 	}
 
-	void FloatingFrame::MouseHoverInEvent(const MouseEvent& event)
+	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
 	{
 	}
 
-	void FloatingFrame::MouseHoverOutEvent(const MouseEvent& event)
-	{
-	}
-
-	ResponseType FloatingFrame::KeyPressEvent(const KeyEvent& event)
+	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType FloatingFrame::ContextMenuPressEvent(
+	ResponseType Dialog::ContextMenuPressEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType FloatingFrame::ContextMenuReleaseEvent(
+	ResponseType Dialog::ContextMenuReleaseEvent(
 			const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType FloatingFrame::MousePressEvent(const MouseEvent& event)
+	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
 	{
 		set_event_frame(event);
 
 		last_ = position();
 		cursor_ = event.position();
-		pressed_ = true;
 
 		return Accept;
 	}
 
-	ResponseType FloatingFrame::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
 	{
-		if (pressed_) {
-			pressed_ = false;
-		}
-
 		return Accept;
 	}
 
-	void FloatingFrame::DispatchHoverEvent(const MouseEvent& event)
+	void Dialog::DispatchHoverEvent(const MouseEvent& event)
 	{
 	}
 
-	void FloatingFrame::PerformPositionUpdate(
-			const PositionUpdateRequest& request)
+	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
-
-			projection_matrix_  = glm::ortho(
-				x,
-				x + (float)size().width(),
-				y,
-				y + (float)size().height(),
-				100.f, -100.f);
-
-			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
-
-			set_position(*request.position());
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate (request);
-		}
-	}
-
-	ResponseType FloatingFrame::MouseMoveEvent(const MouseEvent& event)
-	{
-		if(pressed_) {
+		if(pressed_ext()) {
 
 			int ox = event.position().x() - cursor_.x();
 			int oy = event.position().y() - cursor_.y();
@@ -267,4 +266,3 @@ namespace BlendInt {
 	}
 
 }
-

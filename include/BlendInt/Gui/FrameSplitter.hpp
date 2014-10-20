@@ -89,8 +89,6 @@ namespace BlendInt {
 		Point last_;
 		Point cursor_;
 
-		bool pressed_;
-
 		int prev_size_;
 		int next_size_;
 		int nearby_pos_;

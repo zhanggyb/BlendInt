@@ -200,7 +200,6 @@ namespace BlendInt
 	{
 		PreDraw(profile_);
 		Draw(profile_);
-		set_refresh(false);
 		PostDraw(profile_);
 	}
 
@@ -354,12 +353,13 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
+		set_refresh(false);
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
-			p->set_refresh(false);
 			p->PostDraw(profile);
+			p->set_refresh(this->refresh());
 		}
 
 		return Accept;

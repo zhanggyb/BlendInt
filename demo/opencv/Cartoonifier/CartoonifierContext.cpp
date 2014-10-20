@@ -17,14 +17,14 @@
 
 #include <BlendInt/Gui/ToolBox.hpp>
 
-#include <BlendInt/Gui/FloatingFrame.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
 CartoonifierContext::CartoonifierContext()
 : BI::Context()
 {
-	FloatingFrame* frame = Manage(new FloatingFrame);
+	Dialog* frame = Manage(new Dialog);
 	frame->SetPosition(800, 200);
 
 	Expander* expander = Manage(new Expander("Light"));
@@ -50,7 +50,7 @@ CartoonifierContext::CartoonifierContext()
 	AddFrame(frame);
 
 	CVVideoView* video = Manage(new CVVideoView);
-	FloatingFrame* frame2 = Manage(new FloatingFrame);
+	Dialog* frame2 = Manage(new Dialog);
 	frame2->SetPosition(20, 100);
 
 	frame2->Setup(video);

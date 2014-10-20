@@ -21,22 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FLOATINGFRAME_HPP_
-#define _BLENDINT_GUI_FLOATINGFRAME_HPP_
+#ifndef _BLENDINT_GUI_DIALOG_HPP_
+#define _BLENDINT_GUI_DIALOG_HPP_
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class FloatingFrame: public AbstractFrame
+	class Dialog: public AbstractFrame
 	{
 
 	public:
 
-		FloatingFrame ();
+		Dialog ();
 
-		virtual ~FloatingFrame();
+		virtual ~Dialog();
 
 		void Setup (Widget* widget);
 
@@ -81,8 +81,6 @@ namespace BlendInt {
 		Point last_;
 		Point cursor_;
 
-		bool pressed_;
-
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
@@ -91,6 +89,4 @@ namespace BlendInt {
 
 }
 
-
-
-#endif /* _BLENDINT_GUI_FLOATINGFRAME_HPP_ */
+#endif /* _BLENDINT_GUI_DIALOG_HPP_ */

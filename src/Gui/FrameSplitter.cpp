@@ -49,7 +49,6 @@ namespace BlendInt {
 	: AbstractFrame(),
 	  orientation_(orientation),
 	  vao_(0),
-	  pressed_(false),
 	  prev_size_(0),
 	  next_size_(0),
 	  nearby_pos_(0)
@@ -211,7 +210,6 @@ namespace BlendInt {
 	{
 		last_ = position();
 		cursor_ = event.position();
-		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous()->size().height();
@@ -231,10 +229,6 @@ namespace BlendInt {
 	ResponseType FrameSplitterHandle::MouseReleaseEvent(
 			const MouseEvent& event)
 	{
-		if (pressed_) {
-			pressed_ = false;
-		}
-
 		return Accept;
 	}
 
@@ -252,7 +246,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitterHandle::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(pressed_) {
+		if(pressed_ext()) {
 
 			FrameSplitter* splitter = dynamic_cast<FrameSplitter*>(parent());
 			assert(splitter);

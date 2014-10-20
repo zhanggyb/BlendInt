@@ -69,7 +69,7 @@ public:
 
 private:
 
-	void Initialize ();
+	void InitializeGLFWDemoContext ();
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

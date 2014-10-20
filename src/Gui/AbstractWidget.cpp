@@ -524,7 +524,6 @@ namespace BlendInt {
 			widget->PreDraw(profile);
 
 			ResponseType response = widget->Draw(profile);
-			widget->set_refresh(false);
 
 			if(response == Accept) {
 				widget->PostDraw(profile);
@@ -538,6 +537,7 @@ namespace BlendInt {
 
 			widget->PostDraw(profile);
 
+			widget->set_refresh(widget->parent_->refresh());
 		}
 	}
 

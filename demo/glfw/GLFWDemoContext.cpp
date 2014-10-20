@@ -17,7 +17,7 @@
 #include <BlendInt/Gui/ColorSelector.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Gui/FloatingFrame.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
@@ -27,14 +27,14 @@ using BI::Stock::Shaders;
 GLFWDemoContext::GLFWDemoContext()
 : BI::Context()
 {
-	Initialize ();
+	InitializeGLFWDemoContext ();
 }
 
 GLFWDemoContext::~GLFWDemoContext ()
 {
 }
 
-void GLFWDemoContext::Initialize ()
+void GLFWDemoContext::InitializeGLFWDemoContext ()
 {
 	using namespace BI;
 

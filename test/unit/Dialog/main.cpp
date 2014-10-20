@@ -1,5 +1,5 @@
 /*
- * Unit test for Button
+ * Unit test for Dialog
  */
 
 #include <gtest/gtest.h>
