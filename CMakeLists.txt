@@ -48,6 +48,10 @@ configure_file(
 
 include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
 
+if(OS_APPLE)
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local/lib)
+endif()
+
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -58,18 +62,11 @@ if(OPENGL_FOUND)
     endif()
 endif()
 
-if(OS_APPLE)
-
-    include_directories(/usr/local/include/freetype2)
-    set(LIBS ${LIBS} freetype)
-
-elseif(OS_LINUX)
-    find_package(Freetype REQUIRED)
-    if(FREETYPE_FOUND)
-        include_directories(/usr/include/freetype2)
-        include_directories(${FREETYPE_INCLUDE_DIRS})
-        set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
-    endif()
+find_package(Freetype REQUIRED)
+if(FREETYPE_FOUND)
+    include_directories(/usr/include/freetype2)
+    include_directories(${FREETYPE_INCLUDE_DIRS})
+    set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
 endif()
 
 find_package(FontConfig REQUIRED)
