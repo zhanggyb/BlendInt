@@ -174,23 +174,23 @@ namespace BlendInt {
 
 	ResponseType Dialog::Draw(Profile& profile)
 	{
+		shadow_->Draw(position().x(), position().y());
+
 		Shaders::instance->frame_inner_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
 
 		if(hover()) {
-			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.15f, 0.15f, 0.6f);
+			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.15f, 0.15f, 1.f);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.75f, 0.75f, 0.6f);
+			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.75f, 0.75f, 1.f);
 		}
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		GLSLProgram::reset();
-
-		shadow_->Draw(position().x(), position().y());
 
 		/*
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {

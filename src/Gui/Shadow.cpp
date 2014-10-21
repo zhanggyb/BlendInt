@@ -444,12 +444,16 @@ namespace BlendInt {
 		//int count = GetOutlineVertices(round_type());
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y);
-		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_GAMMA), gamma);
-		//glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
+		glUniform1f(Shaders::instance->location(Stock::FRAME_SHADOW_FACTOR), 1.f);
 		Theme::instance->shadow_texture()->bind();
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 5 * 2);
+		//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * 2 * 3 + 2);
+
+		for(int i = 0; i < 8; i++) {
+			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
+		}
+
 		glBindVertexArray(0);
 
 		Theme::instance->shadow_texture()->reset();
@@ -488,7 +492,6 @@ namespace BlendInt {
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 		buffer_.reset();
-
 	}
 
 	void ShadowMap::InitializeShadowMap()
@@ -522,69 +525,338 @@ namespace BlendInt {
 		const float maxx = size().width();
 		const float maxy = size().height();
 
-		if(vertices.size() != (4 * 2 * 5)) {
-			vertices.resize(4 * 2 * 5);
+		float width = 25.f;
+
+		if(vertices.size() != 4 * 4 * 8) {
+			vertices.resize(4 * 4 * 8);
 		}
 
-		// ---- top-left
+		// top-left
 
 		vertices[0] = minx;
 		vertices[1] = maxy;
 		vertices[2] = 100 / 512.f;
 		vertices[3] = 100 / 512.f;
 
-		vertices[4] = minx - 12.f;
-		vertices[5] = maxy + 12.f;
-		vertices[6] = 0.f;
+		vertices[4] = minx;
+		vertices[5] = maxy + width;
+		vertices[6] = 100 / 512.f;
 		vertices[7] = 0.f;
 
-		// ---- bottom-left
+		vertices[8] = minx - width;
+		vertices[9] = maxy;
+		vertices[10] = 0.f;
+		vertices[11] = 100 / 512.f;
 
-		vertices[8] = minx;
-		vertices[9] = miny;
-		vertices[10] = 100 / 512.f;
-		vertices[11] = (512 - 100) / 512.f;
-
-		vertices[12] = minx - 12.f;
-		vertices[13] = miny - 12.f;
+		vertices[12] = minx - width;
+		vertices[13] = maxy + width;
 		vertices[14] = 0.f;
-		vertices[15] = 1.f;
+		vertices[15] = 0.f;
 
-		// ---- bottom-right
+		// left
 
-		vertices[16] = maxx;
-		vertices[17] = miny;
-		vertices[18] = (512 - 100) / 512.f;
-		vertices[19] = (512 - 100) / 512.f;
+		vertices[16] = minx;
+		vertices[17] = maxy;
+		vertices[18] = 100 / 512.f;
+		vertices[19] = 100 / 512.f;
 
-		vertices[20] = maxx + 12.f;
-		vertices[21] = miny - 12.f;
-		vertices[22] = 1.f;
-		vertices[23] = 1.f;
+		vertices[20] = minx - width;
+		vertices[21] = maxy;
+		vertices[22] = 0.f;
+		vertices[23] = 100 / 512.f;
 
-		// ---- top-right
+		vertices[24] = minx;
+		vertices[25] = miny;
+		vertices[26] = 100 / 512.f;
+		vertices[27] = 101 / 512.f;
 
-		vertices[24] = maxx;
-		vertices[25] = maxy;
-		vertices[26] = (512 - 100) / 512.f;
-		vertices[27] = 100 / 512.f;
+		vertices[28] = minx - width;
+		vertices[29] = miny;
+		vertices[30] = 0.f;
+		vertices[31] = 101 / 512.f;
 
-		vertices[28] = maxx + 12.f;
-		vertices[29] = maxy + 12.f;
-		vertices[30] = 1.f;
-		vertices[31] = 0.f;
+		// bottom-left
+
+		vertices[32] = minx;
+		vertices[33] = miny;
+		vertices[34] = 100 / 512.f;
+		vertices[35] = (512 - 100) / 512.f;
+
+		vertices[36] = minx - width;
+		vertices[37] = miny;
+		vertices[38] = 0.f;
+		vertices[39] = (512 - 100) / 512.f;
+
+		vertices[40] = minx;
+		vertices[41] = miny - width;
+		vertices[42] = 100 / 512.f;
+		vertices[43] = 1.f;
+
+		vertices[44] = minx - width;
+		vertices[45] = miny - width;
+		vertices[46] = 0.f;
+		vertices[47] = 1.f;
+
+		// bottom
+
+		vertices[48] = minx;
+		vertices[49] = miny;
+		vertices[50] = 100 / 512.f;
+		vertices[51] = (512 - 100) / 512.f;
+
+		vertices[52] = minx;
+		vertices[53] = miny - width;
+		vertices[54] = 100 / 512.f;
+		vertices[55] = 1.f;
+
+		vertices[56] = maxx;
+		vertices[57] = miny;
+		vertices[58] = 101 / 512.f;
+		vertices[59] = (512 - 100) / 512.f;
+
+		vertices[60] = maxx;
+		vertices[61] = miny - width;
+		vertices[62] = 101 / 512.f;
+		vertices[63] = 1.f;
+
+		// bottom right
+
+		vertices[64] = maxx;
+		vertices[65] = miny;
+		vertices[66] = (512 - 100) / 512.f;
+		vertices[67] = (512 - 100) / 512.f;
+
+		vertices[68] = maxx;
+		vertices[69] = miny - width;
+		vertices[70] = (512 - 100) / 512.f;
+		vertices[71] = 1.f;
+
+		vertices[72] = maxx + width;
+		vertices[73] = miny;
+		vertices[74] = 1.f;
+		vertices[75] = (512 - 100) / 512.f;
+
+		vertices[76] = maxx + width;
+		vertices[77] = miny - width;
+		vertices[78] = 1.f;
+		vertices[79] = 1.f;
+
+
+		// right
+
+		vertices[80] = maxx;
+		vertices[81] = miny;
+		vertices[82] = (512 - 100) / 512.f;
+		vertices[83] = 100 / 512.f;
+
+		vertices[84] = maxx + width;
+		vertices[85] = miny;
+		vertices[86] = 1.f;
+		vertices[87] = 100 / 512.f;
+
+		vertices[88] = maxx;
+		vertices[89] = maxy;
+		vertices[90] = (512 - 100) / 512.f;
+		vertices[91] = 101 / 512.f;
+
+		vertices[92] = maxx + width;
+		vertices[93] = maxy;
+		vertices[94] = 1.f;
+		vertices[95] = 101 / 512.f;
+
+		// top right
+
+		vertices[96] = maxx;
+		vertices[97] = maxy;
+		vertices[98] = (512 - 100) / 512.f;
+		vertices[99] = 100 / 512.f;
+
+		vertices[100] = maxx + width;
+		vertices[101] = maxy;
+		vertices[102] = 1.f;
+		vertices[103] = 100 / 512.f;
+
+		vertices[104] = maxx;
+		vertices[105] = maxy + width;
+		vertices[106] = (512 - 100) / 512.f;
+		vertices[107] = 0.f;
+
+		vertices[108] = maxx + width;
+		vertices[109] = maxy + width;
+		vertices[110] = 1.f;
+		vertices[111] = 0.f;
+
+		// top
+
+		vertices[112] = maxx;
+		vertices[113] = maxy;
+		vertices[114] = (512 - 100) / 512.f;
+		vertices[115] = 100 / 512.f;
+
+		vertices[116] = maxx;
+		vertices[117] = maxy + width;
+		vertices[118] = (512 - 100) / 512.f;
+		vertices[119] = 0.f;
+
+		vertices[120] = minx;
+		vertices[121] = maxy;
+		vertices[122] = (512 - 100 - 1) / 512.f;
+		vertices[123] = 100 / 512.f;
+
+		vertices[124] = minx;
+		vertices[125] = maxy + width;
+		vertices[126] = (512 - 100 - 1) / 512.f;
+		vertices[127] = 0.f;
+
+		/*
+
+		if(vertices.size() != (4 * 2 * 4 * 3 + 4 * 2)) {
+			vertices.resize(4 * 2 * 4 * 3 + 4 * 2);
+		}
+
+		float width = 100.f;
 
 		// ---- top-left
 
-		vertices[32] = minx;
-		vertices[33] = maxy;
-		vertices[34] = 100 / 512.f;
-		vertices[35] = 100 / 512.f;
+		vertices[0] = minx + radius();
+		vertices[1] = maxy;
+		vertices[2] = 200 / 512.f;
+		vertices[3] = 100 / 512.f;
 
-		vertices[36] = minx - 12.f;
-		vertices[37] = maxy + 12.f;
+		vertices[4] = minx + radius();
+		vertices[5] = maxy + width;
+		vertices[6] = 200 / 512.f;
+		vertices[7] = 0.f;
+
+		vertices[8] = minx;
+		vertices[9] = maxy;
+		vertices[10] = 100 / 512.f;
+		vertices[11] = 100 / 512.f;
+
+		vertices[12] = minx - width;
+		vertices[13] = maxy + width;
+		vertices[14] = 0.f;
+		vertices[15] = 0.f;
+
+		vertices[16] = minx;
+		vertices[17] = maxy - radius();
+		vertices[18] = 100 / 512.f;
+		vertices[19] = 200 / 512.f;
+
+		vertices[20] = minx - width;
+		vertices[21] = maxy - radius();
+		vertices[22] = 0.f;
+		vertices[23] = 200 / 512.f;
+
+		// ---- bottom-left
+
+		vertices[24] = minx;
+		vertices[25] = miny + radius();
+		vertices[26] = 100 / 512.f;
+		vertices[27] = (512 - 200) / 512.f;
+
+		vertices[28] = minx - width;
+		vertices[29] = miny + radius();
+		vertices[30] = 0.f;
+		vertices[31] = (512 - 200) / 512.f;
+
+		vertices[32] = minx;
+		vertices[33] = miny;
+		vertices[34] = 100 / 512.f;
+		vertices[35] = (512 - 100) / 512.f;
+
+		vertices[36] = minx - width;
+		vertices[37] = miny - width;
 		vertices[38] = 0.f;
-		vertices[39] = 0.f;
+		vertices[39] = 1.f;
+
+		vertices[40] = minx + radius();
+		vertices[41] = miny;
+		vertices[42] = 200 / 512.f;
+		vertices[43] = (512 - 100) / 512.f;
+
+		vertices[44] = minx + radius();
+		vertices[45] = miny - width;
+		vertices[46] = 200 / 512.f;
+		vertices[47] = 1.f;
+
+		// ---- bottom-right
+
+		vertices[48] = maxx - radius();
+		vertices[49] = miny;
+		vertices[50] = (512 - 200) / 512.f;
+		vertices[51] = (512 - 100) / 512.f;
+
+		vertices[52] = maxx - radius();
+		vertices[53] = miny - width;
+		vertices[54] = (512 - 200) / 512.f;
+		vertices[55] = 1.f;
+
+		vertices[56] = maxx;
+		vertices[57] = miny;
+		vertices[58] = (512 - 100) / 512.f;
+		vertices[59] = (512 - 100) / 512.f;
+
+		vertices[60] = maxx + width;
+		vertices[61] = miny - width;
+		vertices[62] = 1.f;
+		vertices[63] = 1.f;
+
+		vertices[64] = maxx;
+		vertices[65] = miny + radius();
+		vertices[66] = (512 - 100) / 512.f;
+		vertices[67] = (512 - 200) / 512.f;
+
+		vertices[68] = maxx + width;
+		vertices[69] = miny + radius();
+		vertices[70] = 1.f;
+		vertices[71] = (512 - 200) / 512.f;
+
+		// ---- top-right
+
+		vertices[72] = maxx;
+		vertices[73] = maxy - radius();
+		vertices[74] = (512 - 100) / 512.f;
+		vertices[75] = 200 / 512.f;
+
+		vertices[76] = maxx + width;
+		vertices[77] = maxy - radius();
+		vertices[78] = 1.f;
+		vertices[79] = 200 / 512.f;
+
+		vertices[80] = maxx;
+		vertices[81] = maxy;
+		vertices[82] = (512 - 100) / 512.f;
+		vertices[83] = 100 / 512.f;
+
+		vertices[84] = maxx + width;
+		vertices[85] = maxy + width;
+		vertices[86] = 1.f;
+		vertices[87] = 0.f;
+
+		vertices[88] = maxx - radius();
+		vertices[89] = maxy;
+		vertices[90] = (512 - 200) / 512.f;
+		vertices[91] = 100 / 512.f;
+
+		vertices[92] = maxx - radius();
+		vertices[93] = maxy + width;
+		vertices[94] = (512 - 200) / 512.f;
+		vertices[95] = 0.f;
+
+		// ---- top-left
+
+		vertices[96] = vertices[0];
+		vertices[97] = vertices[1];
+		vertices[98] = vertices[2];
+		vertices[99] = vertices[3];
+
+		vertices[100] = vertices[4];
+		vertices[101] = vertices[5];
+		vertices[102] = vertices[6];
+		vertices[103] = vertices[7];
+
+		*/
 
 	}
 

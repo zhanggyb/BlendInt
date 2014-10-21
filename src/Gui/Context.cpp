@@ -338,8 +338,8 @@ namespace BlendInt
 
 	ResponseType Context::Draw (Profile& profile)
 	{
-		//glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-		glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+		//glClearColor(1.f, 1.f, 1.f, 1.f);
 		glClearStencil(0);
 		glClearDepth(1.0);
 

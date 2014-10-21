@@ -765,10 +765,11 @@ namespace BlendInt {
 				""
 				"in vec2 fUV;"
 				"uniform sampler2D TexID;"
+				"uniform float uFactor = 1.f;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	FragmentColor = texture(TexID, fUV);"
+				"	FragmentColor = texture(TexID, fUV) * uFactor;"
 				"}";
 
 		Shaders* Shaders::instance = 0;
@@ -1385,6 +1386,7 @@ namespace BlendInt {
 			locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
 			locations_[FRAME_SHADOW_UV] = frame_shadow_program_->GetAttributeLocation("aUV");
 			locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_SHADOW_FACTOR] = frame_shadow_program_->GetUniformLocation("uFactor");
 
 			return true;
 		}
