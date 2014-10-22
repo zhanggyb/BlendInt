@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual void DispatchHoverEvent (const MouseEvent& event);
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
 	private:
 

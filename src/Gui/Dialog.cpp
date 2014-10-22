@@ -251,7 +251,7 @@ namespace BlendInt {
 
 	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
 	{
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		last_ = position();
 		cursor_ = event.position();
@@ -282,7 +282,7 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			set_event_frame(event);
+			set_event_frame(event, this);
 			retval = call_mouse_release_event(focused_widget_, event);
 			// TODO: reset pressed flag
 		}
@@ -298,7 +298,7 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				set_event_frame(event);
+				set_event_frame(event, this);
 				retval = call_mouse_move_event(focused_widget_, event);
 
 			} else {
@@ -317,24 +317,33 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void Dialog::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
 	{
-		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+		if(Contain(event.position())) {
 
-		if(new_hovered_widget != hovered_widget_) {
+			Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
-			if(hovered_widget_) {
-				hovered_widget_->destroyed().disconnectOne(this,
-						&Dialog::OnHoverWidgetDestroyed);
+			if(new_hovered_widget != hovered_widget_) {
+
+				if(hovered_widget_) {
+					hovered_widget_->destroyed().disconnectOne(this,
+							&Dialog::OnHoverWidgetDestroyed);
+				}
+
+				hovered_widget_ = new_hovered_widget;
+				if(hovered_widget_) {
+					events()->connect(hovered_widget_->destroyed(), this,
+							&Dialog::OnHoverWidgetDestroyed);
+				}
+
 			}
 
-			hovered_widget_ = new_hovered_widget;
-			if(hovered_widget_) {
-				events()->connect(hovered_widget_->destroyed(), this,
-						&Dialog::OnHoverWidgetDestroyed);
-			}
-
+			set_event_frame(event, this);
+		} else {
+			set_event_frame(event, 0);
 		}
+
+		return Accept;
 	}
 
 	void Dialog::SetFocusedWidget(Widget* widget)

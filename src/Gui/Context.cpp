@@ -400,8 +400,11 @@ namespace BlendInt
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
 		ResponseType response;
+		assert(event.frame() == 0);
 
 		set_pressed(true);
+
+		/*
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
@@ -410,6 +413,11 @@ namespace BlendInt
 				//p->MoveToLast();
 				break;
 			}
+		}
+		*/
+
+		if(hovered_frame_ && hovered_frame_->Contain(event.position())) {
+			response = hovered_frame_->MousePressEvent(event);
 		}
 
 		SetFocusedFrame(event.frame());
@@ -495,13 +503,22 @@ namespace BlendInt
 	{
 		AbstractFrame* original_hover = hovered_frame_;
 
+		ResponseType response = Ignore;
 		hovered_frame_ = 0;
+		AbstractFrame* temp = 0;
+
 		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-			if(p->Contain(event.position())) {
-				hovered_frame_ = dynamic_cast<AbstractFrame*>(p);
+
+			temp = dynamic_cast<AbstractFrame*>(p);
+			response = temp->DispatchHoverEvent(event);
+
+			if(response == Accept) {
 				break;
 			}
+
 		}
+
+		hovered_frame_ = event.frame();
 
 		if(original_hover != hovered_frame_) {
 

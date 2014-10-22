@@ -221,7 +221,7 @@ namespace BlendInt {
 			nearby_pos_ = next()->position().x();
 		}
 
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		return Accept;
 	}
@@ -240,8 +240,15 @@ namespace BlendInt {
 	{
 	}
 
-	void FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
 	{
+		if(Contain(event.position())) {
+			set_event_frame(event, this);
+			return Accept;
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
+		}
 	}
 
 	ResponseType FrameSplitterHandle::MouseMoveEvent(const MouseEvent& event)
@@ -569,6 +576,63 @@ namespace BlendInt {
 	ResponseType FrameSplitter::MouseMoveEvent(const MouseEvent& event)
 	{
 		return subs_count() ? Ignore : Accept;
+	}
+
+	ResponseType FrameSplitter::DispatchHoverEvent(const MouseEvent& event)
+	{
+		if(Contain(event.position())) {
+
+			AbstractFrame* original_hover = hover_;
+
+			if(hover_) {
+				if(!hover_->Contain(event.position())) {
+
+					hover_ = 0;
+					for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+						if(p->Contain(event.position())) {
+							hover_ = dynamic_cast<AbstractFrame*>(p);
+							break;
+						}
+					}
+
+				}
+			} else {
+
+				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+					if(p->Contain(event.position())) {
+						hover_ = dynamic_cast<AbstractFrame*>(p);
+						break;
+					}
+				}
+
+			}
+
+			if(original_hover != hover_) {
+
+				if(original_hover) {
+					set_widget_mouse_hover_out_event(original_hover, event);
+					original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+				}
+
+				if(hover_) {
+					set_widget_mouse_hover_in_event(hover_, event);
+					events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
+				}
+
+			}
+
+			if(hover_) {
+				delegate_dispatch_hover_event(hover_, event);
+			}
+
+			set_event_frame(event, this);
+			return Accept;
+
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
+		}
+
 	}
 
 	void FrameSplitter::FillSubFrames()
@@ -1019,52 +1083,6 @@ namespace BlendInt {
 		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
 		hover_ = 0;
-	}
-
-	void FrameSplitter::DispatchHoverEvent(const MouseEvent& event)
-	{
-		AbstractFrame* original_hover = hover_;
-
-		if(hover_) {
-			if(!hover_->Contain(event.position())) {
-
-				hover_ = 0;
-				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-					if(p->Contain(event.position())) {
-						hover_ = dynamic_cast<AbstractFrame*>(p);
-						break;
-					}
-				}
-
-			}
-		} else {
-
-			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
-				if(p->Contain(event.position())) {
-					hover_ = dynamic_cast<AbstractFrame*>(p);
-					break;
-				}
-			}
-
-		}
-
-		if(original_hover != hover_) {
-
-			if(original_hover) {
-				set_widget_mouse_hover_out_event(original_hover, event);
-				original_hover->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
-			}
-
-			if(hover_) {
-				set_widget_mouse_hover_in_event(hover_, event);
-				events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
-			}
-
-		}
-
-		if(hover_) {
-			delegate_dispatch_hover_event(hover_, event);
-		}
 	}
 
 }

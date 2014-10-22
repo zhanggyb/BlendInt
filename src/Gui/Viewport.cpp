@@ -75,8 +75,15 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	void Viewport::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Viewport::DispatchHoverEvent(const MouseEvent& event)
 	{
+		if(Contain(event.position())) {
+			set_event_frame(event, this);
+			return Accept;
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
+		}
 	}
 
 	void Viewport::PerformPositionUpdate(const PositionUpdateRequest& request)
@@ -152,7 +159,7 @@ namespace BlendInt {
 
 	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
 	{
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		return subs_count() ? Ignore : Accept;
 	}

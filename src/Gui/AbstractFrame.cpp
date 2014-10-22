@@ -222,7 +222,7 @@ namespace BlendInt {
 	{
 		Widget* hovered_widget = orig;
 
-		set_event_frame(event);
+		set_event_frame(event, this);
 		Point local_position;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget

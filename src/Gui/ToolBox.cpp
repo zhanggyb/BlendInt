@@ -275,7 +275,7 @@ namespace BlendInt {
 
 	ResponseType ToolBoxExt::KeyPressEvent (const KeyEvent& event)
 	{
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		ResponseType response = Ignore;
 
@@ -290,7 +290,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		if(hovered_widget_) {
 
@@ -316,7 +316,7 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			set_event_frame(event);
+			set_event_frame(event, this);
 			retval = call_mouse_release_event(focused_widget_, event);
 			// TODO: reset pressed flag
 		}
@@ -329,31 +329,40 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(pressed_ext() && focused_widget_) {
-			set_event_frame(event);
+			set_event_frame(event, this);
 			retval = call_mouse_move_event(focused_widget_, event);
 		}
 
 		return retval;
 	}
 
-	void ToolBoxExt::DispatchHoverEvent (const MouseEvent& event)
+	ResponseType ToolBoxExt::DispatchHoverEvent (const MouseEvent& event)
 	{
-		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+		if(Contain(event.position())) {
 
-		if(new_hovered_widget != hovered_widget_) {
+			Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
-			if(hovered_widget_) {
-				hovered_widget_->destroyed().disconnectOne(this,
-						&ToolBoxExt::OnHoverWidgetDestroyed);
+			if(new_hovered_widget != hovered_widget_) {
+
+				if(hovered_widget_) {
+					hovered_widget_->destroyed().disconnectOne(this,
+							&ToolBoxExt::OnHoverWidgetDestroyed);
+				}
+
+				hovered_widget_ = new_hovered_widget;
+				if(hovered_widget_) {
+
+					events()->connect(hovered_widget_->destroyed(), this,
+							&ToolBoxExt::OnHoverWidgetDestroyed);
+				}
+
 			}
 
-			hovered_widget_ = new_hovered_widget;
-			if(hovered_widget_) {
-
-				events()->connect(hovered_widget_->destroyed(), this,
-						&ToolBoxExt::OnHoverWidgetDestroyed);
-			}
-
+			set_event_frame(event, this);
+			return Accept;
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
 		}
 	}
 

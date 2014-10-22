@@ -65,8 +65,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void DispatchHoverEvent (const MouseEvent& event) = 0;
-
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
@@ -86,6 +84,8 @@ namespace BlendInt {
 		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event) = 0;
 
 		AbstractWidget* DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
@@ -124,24 +124,24 @@ namespace BlendInt {
 			widget->FocusEvent(focus);
 		}
 
-		void set_event_frame (const HIDEvent& event)
-		{
-			const_cast<HIDEvent&>(event).frame_ = this;
-		}
-
 		void assign_profile_frame (Profile& profile)
 		{
 			profile.frame_ = this;
 		}
+
+		Widget* DispatchHoverEventsInSubWidgets (Widget* orig, const MouseEvent& event);
+
+		void ClearHoverWidgets (Widget* hovered_widget);
 
 		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
 		{
 			frame->DispatchHoverEvent(event);
 		}
 
-		Widget* DispatchHoverEventsInSubWidgets (Widget* orig, const MouseEvent& event);
-
-		void ClearHoverWidgets (Widget* hovered_widget);
+		static inline void set_event_frame (const HIDEvent& event, AbstractFrame* frame)
+		{
+			const_cast<HIDEvent&>(event).frame_ = frame;
+		}
 
 	private:
 

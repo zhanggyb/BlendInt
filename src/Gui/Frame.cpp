@@ -316,7 +316,7 @@ namespace BlendInt {
 
 	ResponseType Frame::KeyPressEvent(const KeyEvent& event)
 	{
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		ResponseType response = Ignore;
 
@@ -329,7 +329,7 @@ namespace BlendInt {
 
 	ResponseType Frame::MousePressEvent(const MouseEvent& event)
 	{
-		set_event_frame(event);
+		set_event_frame(event, this);
 
 		ResponseType retval = Ignore;
 
@@ -357,7 +357,7 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			set_event_frame(event);
+			set_event_frame(event, this);
 			retval = call_mouse_release_event(focused_widget_, event);
 			// TODO: reset pressed flag
 		}
@@ -370,31 +370,43 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(pressed_ext() && focused_widget_) {
-			set_event_frame(event);
+			set_event_frame(event, this);
 			retval = call_mouse_move_event(focused_widget_, event);
 		}
 
 		return retval;
 	}
 
-	void Frame::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Frame::DispatchHoverEvent(const MouseEvent& event)
 	{
-		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+		if(Contain(event.position())) {
 
-		if(new_hovered_widget != hovered_widget_) {
+			set_event_frame(event, this);
 
-			if(hovered_widget_) {
-				hovered_widget_->destroyed().disconnectOne(this,
-						&Frame::OnHoverWidgetDestroyed);
+			Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+
+			if(new_hovered_widget != hovered_widget_) {
+
+				if(hovered_widget_) {
+					hovered_widget_->destroyed().disconnectOne(this,
+							&Frame::OnHoverWidgetDestroyed);
+				}
+
+				hovered_widget_ = new_hovered_widget;
+				if(hovered_widget_) {
+					events()->connect(hovered_widget_->destroyed(), this,
+							&Frame::OnHoverWidgetDestroyed);
+				}
+
 			}
 
-			hovered_widget_ = new_hovered_widget;
-			if(hovered_widget_) {
-				events()->connect(hovered_widget_->destroyed(), this,
-						&Frame::OnHoverWidgetDestroyed);
-			}
+			return Accept;
 
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
 		}
+
 	}
 
 	void Frame::SetFocusedWidget(Widget* widget)
