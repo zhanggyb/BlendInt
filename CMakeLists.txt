@@ -82,10 +82,12 @@ endif()
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    set(LIBS ${LIBS} ${Boost_LIBRARIES} boost_system boost_filesystem)
+    set(LIBS ${LIBS} ${Boost_LIBRARIES})
+    #message(STATUS "Use the Boost libraries: ${Boost_LIBRARIES}")
+    #message(STATUS "Use the Boost libraries in: ${Boost_LIBRARY_DIRS}")
 endif()
 
 #add OpenImageIO link
