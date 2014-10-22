@@ -46,9 +46,15 @@ namespace BlendInt {
 	Dialog::Dialog()
 	: AbstractFrame(),
 	  vao_(0),
-	  shadow_(0)
+	  shadow_(0),
+	  focused_widget_(0),
+	  hovered_widget_(0),
+	  layout_(0)
 	{
 		set_size(400, 300);
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
 
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -67,9 +73,6 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
-
 		shadow_ = new ShadowMap;
 		shadow_->Resize(size());
 	}
@@ -81,18 +84,37 @@ namespace BlendInt {
 		delete shadow_;
 	}
 
-	void Dialog::Setup(Widget* widget)
+	void Dialog::SetLayout(AbstractLayout* layout)
 	{
-		if(widget == 0) return;
+		if(!layout) return;
 
-		if(widget->parent() == this) return;
+		if(layout == layout_) {
+			DBG_PRINT_MSG("layout %s is already in this frame, skip this function", layout->name().c_str());
+			return;
+		}
 
-		if(subs_count() > 0) ClearSubWidgets();
+		layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
 
-		Resize(widget->size());
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+			layout->Add(dynamic_cast<Widget*>(p));
+		}
 
-		if(PushBackSubWidget(widget)) {
-			widget->SetPosition(0, 0);
+		if(PushBackSubWidget(layout)) {
+			layout_ = layout;
+			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
+			SetSubWidgetPosition(layout_, 0, 0);
+			ResizeSubWidget(layout_, size());
+		} else {
+			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
+		}
+	}
+
+	void Dialog::AddWidget(Widget* widget)
+	{
+		if(layout_) {
+			layout_->Add(widget);
+		} else {
+			PushBackSubWidget(widget);
 		}
 	}
 
@@ -161,7 +183,19 @@ namespace BlendInt {
 	{
 		assign_profile_frame(profile);
 
-		/*
+		shadow_->Draw(position().x(), position().y());
+
+		Shaders::instance->frame_inner_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+		GLSLProgram::reset();
+
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
@@ -169,44 +203,21 @@ namespace BlendInt {
 
 		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-		*/
 	}
 
 	ResponseType Dialog::Draw(Profile& profile)
 	{
-		shadow_->Draw(position().x(), position().y());
-
-		Shaders::instance->frame_inner_program()->use();
-
-		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-
-		if(hover()) {
-			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.15f, 0.15f, 1.f);
-		} else {
-			glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.75f, 0.75f, 0.75f, 1.f);
-		}
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
-		/*
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
-		*/
 
 		return subs_count() ? Ignore : Accept;
 	}
 
 	void Dialog::PostDraw(Profile& profile)
 	{
-		/*
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-		*/
 	}
 
 	void Dialog::FocusEvent(bool focus)
@@ -245,34 +256,134 @@ namespace BlendInt {
 		last_ = position();
 		cursor_ = event.position();
 
-		return Accept;
+		ResponseType retval = Ignore;
+
+		if(hovered_widget_) {
+
+			AbstractWidget* widget = 0;	// widget may be focused
+
+			widget = DispatchMousePressEvent(hovered_widget_, event);
+
+			if(widget == 0) {
+				DBG_PRINT_MSG("%s", "widget 0");
+			}
+
+			// TODO: set pressed flag
+			SetFocusedWidget(dynamic_cast<Widget*>(widget));
+		} else {
+			SetFocusedWidget(0);
+		}
+
+		return retval;
 	}
 
 	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
 	{
-		return Accept;
-	}
+		ResponseType retval = Ignore;
 
-	void Dialog::DispatchHoverEvent(const MouseEvent& event)
-	{
+		if(focused_widget_) {
+			set_event_frame(event);
+			retval = call_mouse_release_event(focused_widget_, event);
+			// TODO: reset pressed flag
+		}
+
+		return retval;
 	}
 
 	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
 	{
+		ResponseType retval = Ignore;
+
 		if(pressed_ext()) {
 
-			int ox = event.position().x() - cursor_.x();
-			int oy = event.position().y() - cursor_.y();
+			if(focused_widget_) {
 
-			set_position(last_.x() + ox, last_.y() + oy);
+				set_event_frame(event);
+				retval = call_mouse_move_event(focused_widget_, event);
 
-			Refresh();
+			} else {
 
-			return Accept;
+				int ox = event.position().x() - cursor_.x();
+				int oy = event.position().y() - cursor_.y();
+
+				set_position(last_.x() + ox, last_.y() + oy);
+
+				Refresh();
+				retval = Accept;
+			}
 
 		}
 
-		return Ignore;
+		return retval;
+	}
+
+	void Dialog::DispatchHoverEvent(const MouseEvent& event)
+	{
+		Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+
+		if(new_hovered_widget != hovered_widget_) {
+
+			if(hovered_widget_) {
+				hovered_widget_->destroyed().disconnectOne(this,
+						&Dialog::OnHoverWidgetDestroyed);
+			}
+
+			hovered_widget_ = new_hovered_widget;
+			if(hovered_widget_) {
+				events()->connect(hovered_widget_->destroyed(), this,
+						&Dialog::OnHoverWidgetDestroyed);
+			}
+
+		}
+	}
+
+	void Dialog::SetFocusedWidget(Widget* widget)
+	{
+		if(focused_widget_ == widget)
+			return;
+
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, false);
+			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+		}
+
+		focused_widget_ = widget;
+		if (focused_widget_) {
+			set_widget_focus_event(focused_widget_, true);
+			events()->connect(focused_widget_->destroyed(), this, &Dialog::OnFocusedWidgetDestroyed);
+		}
+	}
+
+	void Dialog::OnFocusedWidgetDestroyed(Widget* widget)
+	{
+		assert(focused_widget_ == widget);
+		assert(widget->focus());
+
+		//set_widget_focus_status(widget, false);
+		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+
+		focused_widget_ = 0;
+	}
+
+	void Dialog::OnHoverWidgetDestroyed(Widget* widget)
+	{
+		assert(widget->hover());
+		assert(hovered_widget_ == widget);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+		widget->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+
+		hovered_widget_ = 0;
+	}
+
+	void Dialog::OnLayoutDestroyed(Widget* layout)
+	{
+		assert(layout == layout_);
+
+		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
+		layout->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
+		layout_ = 0;
 	}
 
 }

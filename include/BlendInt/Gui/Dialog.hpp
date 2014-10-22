@@ -24,9 +24,10 @@
 #ifndef _BLENDINT_GUI_DIALOG_HPP_
 #define _BLENDINT_GUI_DIALOG_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
@@ -40,7 +41,9 @@ namespace BlendInt {
 
 		virtual ~Dialog();
 
-		void Setup (Widget* widget);
+		void SetLayout (AbstractLayout* layout);
+
+		void AddWidget (Widget* widget);
 
 	protected:
 
@@ -76,9 +79,17 @@ namespace BlendInt {
 
 	private:
 
+		void SetFocusedWidget (Widget* widget);
+
+		void OnFocusedWidgetDestroyed (Widget* widget);
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		void OnLayoutDestroyed (Widget* layout);
+
 		GLuint vao_;
 
-		GLBuffer<ARRAY_BUFFER> buffer_;
+		GLBuffer<> buffer_;
 
 		Point last_;
 		Point cursor_;
@@ -88,6 +99,12 @@ namespace BlendInt {
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
+
+		Widget* focused_widget_;
+
+		Widget* hovered_widget_;
+
+		AbstractLayout* layout_;
 
 	};
 

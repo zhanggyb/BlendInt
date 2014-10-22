@@ -24,8 +24,8 @@ using namespace BlendInt;
 CartoonifierContext::CartoonifierContext()
 : BI::Context()
 {
-	Dialog* frame = Manage(new Dialog);
-	frame->SetPosition(800, 200);
+	Dialog* dialog = Manage(new Dialog);
+	dialog->SetPosition(800, 200);
 
 	Expander* expander = Manage(new Expander("Light"));
 
@@ -45,15 +45,15 @@ CartoonifierContext::CartoonifierContext()
 	ToolBox* toolbox = Manage(new ToolBox);
 	toolbox->Append(expander);
 
-	frame->Setup(toolbox);
+	dialog->AddWidget(toolbox);
 
-	AddFrame(frame);
+	AddFrame(dialog);
 
 	CVVideoView* video = Manage(new CVVideoView);
 	Dialog* frame2 = Manage(new Dialog);
 	frame2->SetPosition(20, 100);
 
-	frame2->Setup(video);
+	frame2->AddWidget(video);
 
 	video->OpenCamera(0);
 

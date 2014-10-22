@@ -3,6 +3,7 @@
 
 add_subdirectory(Button)
 add_subdirectory(Dialog)
+add_subdirectory(NumericalSlider)
 
 #add_subdirectory(ClockWidget)
 #add_subdirectory(Layout)

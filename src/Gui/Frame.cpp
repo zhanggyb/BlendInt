@@ -329,9 +329,9 @@ namespace BlendInt {
 
 	ResponseType Frame::MousePressEvent(const MouseEvent& event)
 	{
-		ResponseType retval = Ignore;
-
 		set_event_frame(event);
+
+		ResponseType retval = Ignore;
 
 		if(hovered_widget_) {
 

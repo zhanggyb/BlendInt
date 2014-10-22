@@ -117,6 +117,9 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	Dialog* dlg = Manage(new Dialog);
 	AddFrame(dlg);
 
+	Button* foo = Manage(new Button("Drag me!"));
+	dlg->AddWidget(foo);
+
 	/*
 	VFrame* frame = Manage(new VFrame);
 	frame->SetPosition(200, 200);
