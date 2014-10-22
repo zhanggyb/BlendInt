@@ -5,7 +5,7 @@
 
 SCRIPT_FILE=`readlink -f $0`
 SOURCE_DIR=`dirname $SCRIPT_FILE`
-CMAKE_OPTIONS="-DBUILD_STATIC_LIBRARY=TRUE -DCMAKE_BUILD_TYPE=Debug -DWITH_UNIT_TEST=True -DWITH_GLFW3_DEMO=TRUE -DWITH_QT5_DEMO=TRUE -DENABLE_OPENCV=TRUE -DCMAKE_INSTALL_PREFIX=$HOME/BlendInt $@"
+CMAKE_OPTIONS="-DBUILD_STATIC_LIBRARY=TRUE -DCMAKE_BUILD_TYPE=Debug -DWITH_UNIT_TEST=True -DWITH_GLFW3_DEMO=TRUE -DENABLE_OPENCV=TRUE -DCMAKE_INSTALL_PREFIX=$HOME/BlendInt $@"
 SYSTEM=`uname -o`
 
 # help info
@@ -48,12 +48,12 @@ then
 elif [ "$SYSTEM"x = "Darwin"x ]
 then
     #echo "OS is Mac OS X"
-    #cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
+    cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
     #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" $CMAKE_OPTIONS
     #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
     #    -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
     #cmake $SOURCE_DIR $CMAKE_OPTIONS
-    cmake $SOURCE_DIR -G"Sublime Text 2 - Unix Makefiles" $CMAKE_OPTIONS
+    #cmake $SOURCE_DIR -G"Sublime Text 2 - Unix Makefiles" $CMAKE_OPTIONS
 fi
 
 exit 0

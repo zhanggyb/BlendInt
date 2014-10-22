@@ -91,10 +91,10 @@ if(Boost_FOUND)
 endif()
 
 #add OpenImageIO link
-if(OS_APPLE)
-    set(LIBS ${LIBS} OpenImageIO)
-else()
-    set(LIBS ${LIBS} OpenImageIO)
+find_package(OpenImageIO REQUIRED)
+if(OPENIMAGEIO_FOUND)
+    include_directories(${OPENIMAGEIO_INCLUDE_DIR})
+    set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARY})
 endif()
 
 if(OS_APPLE)
