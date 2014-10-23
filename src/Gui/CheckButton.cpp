@@ -46,8 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	CheckButton::CheckButton()
-	: AbstractButton(),
-	  shadow_(0)
+	: AbstractButton()
 	{
 		set_size(200, 100);
 		set_round_type(RoundAll);
@@ -56,85 +55,67 @@ namespace BlendInt {
 	}
 
 	CheckButton::CheckButton (const String& text)
-	: AbstractButton(),
-	  shadow_(0)
+	: AbstractButton()
 	{
 	}
 
 	CheckButton::~CheckButton ()
 	{
 		glDeleteVertexArrays(2, vao_);
-
-		if(shadow_)
-			delete shadow_;
 	}
 
 	ResponseType CheckButton::Draw (Profile& profile)
 	{
-		shadow_->Draw(position().x(), position().y());
+		Shaders::instance->widget_inner_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->use();
-
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
-				0);
-
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.f, 219 / 255.f, 97 / 255.f, 1.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1.f, 219 / 255.f, 97 / 255.f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f, 0.f, 0.f, 1.f);
+		Shaders::instance->widget_outer_program()->use();
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		return Accept;
 	}
 
 	void CheckButton::InitializeCheckButton ()
 	{
-		VertexTool tool;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		tool.GenerateShadedVertices(size(),
-				DefaultBorderWidth(),
-				round_type(),
-				round_radius(),
-				Vertical,
-				25,
-				-25);
+		GenerateVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		buffer_.generate();
 
 		glBindVertexArray(vao_[0]);
 		buffer_.bind(0);
-		buffer_.set_data(tool.inner_size(), tool.inner_data());
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
-		buffer_.set_data(tool.outer_size(), tool.outer_data());
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
-
-		shadow_ = new Shadow(size(), RoundAll, round_radius());
 	}
 
 }

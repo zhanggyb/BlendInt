@@ -287,11 +287,8 @@ namespace BlendInt {
 
 			//menu->SetPosition(m_active_button->position().x(), y);
 
-			Frame* frame = Manage(new Frame);
-			frame->SetPosition(pos);
-			frame->Resize(menu->size());
-			frame->AddWidget(menu.get());
-			context->AddFrame(frame);
+			menu->SetPosition(pos);
+			context->AddFrame(menu.get());
 
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
 			//context->SetFocusedWidget(menu.get());

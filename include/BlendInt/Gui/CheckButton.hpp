@@ -28,8 +28,6 @@
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 
-#include <BlendInt/Gui/Shadow.hpp>
-
 namespace BlendInt {
 
 	class CheckButton: public AbstractButton
@@ -55,8 +53,6 @@ namespace BlendInt {
 		GLuint vao_[2];
 
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
-
-		Shadow* shadow_;
 	};
 }
 

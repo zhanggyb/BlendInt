@@ -71,49 +71,17 @@ namespace BlendInt {
 
 		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
-		/**
-		 *  Generate vertices for drawing the inner slider bar
-		 *  size The size of this widget
-		 *  border The border width of this widget
-		 *  round_type The round corner type of this widget
-		 *  radius The round coner radius of this widget
-		 *  slide_verts The vertices output for drawing the slider bar
-		 */
-
-		void GenerateSliderVertices (const Size& out_size,
-						float border,
-						int round_type,
-						float out_radius,
-						double value,
-						double minimum,
-						double maximum,
-						std::vector<GLfloat>& left_vertices,
-						std::vector<GLfloat>& right_vertices);
-
 	private:
 
 		void InitializeNumericalSlider ();
 
 		float GetSlidePosition (float border, double value);
 
-		void GenerateLeftSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
-
-		void GenerateRightSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
-
-		void GenerateSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
-
 		/**
 		 * @brief VertexArray objects used in this widget
 		 *
 		 * [0] - inner buffer
 		 * [1] - outer buffer
-		 * [2] - slider bar buffer
 		 */
 		GLuint vao_[2];
 

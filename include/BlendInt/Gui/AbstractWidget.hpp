@@ -606,7 +606,7 @@ namespace BlendInt {
 			}
 		}
 
-		virtual void PreDraw (Profile& profile) = 0;
+		virtual bool PreDraw (Profile& profile) = 0;
 
 		virtual ResponseType Draw (Profile& profile) = 0;
 

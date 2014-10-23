@@ -27,11 +27,12 @@
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Action.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Shadow.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -40,7 +41,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public Widget
+	class Menu: public AbstractFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 
@@ -75,21 +76,39 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual void FocusEvent (bool focus);
 
-		virtual ResponseType MouseMoveEvent(const MouseEvent& event);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
 	private:
 
@@ -99,9 +118,7 @@ namespace BlendInt {
 
 		unsigned int GetHighlightNo (int y);
 
-		GLuint m_vao[3];
-
-		String m_title;
+		GLuint vao_[3];
 
 		/**
 		 * @brief The highlight item in Menu
@@ -110,6 +127,10 @@ namespace BlendInt {
 		 * 	- n: the n'th item in the Menu
 		 */
 		unsigned int m_highlight;	// the highlight item index
+
+		ShadowMap* shadow_;
+
+		String m_title;
 
 		Font m_font;
 
@@ -123,6 +144,10 @@ namespace BlendInt {
 		Cpp::Event<Action*> m_hovered;
 
 		Cpp::Event<Action*> m_triggered;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 		//Cpp::Event<ActionItem*> m_triggered;
 		static int DefaultMenuItemHeight;

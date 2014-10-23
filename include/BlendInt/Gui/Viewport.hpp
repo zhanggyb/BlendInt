@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
-		virtual void PreDraw (Profile& profile);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 

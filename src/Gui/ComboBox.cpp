@@ -123,27 +123,27 @@ namespace BlendInt {
 	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if(Theme::instance->menu().shaded) {
-				tool.GenerateShadedVertices(*request.size(),
-								DefaultBorderWidth(),
-								round_type(),
-								round_radius(),
-								Vertical,
-								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown);
-			} else {
-				tool.GenerateShadedVertices(*request.size(),
-								DefaultBorderWidth(),
-								round_type(),
-								round_radius());
-			}
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->menu().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu().shadetop,
+						Theme::instance->menu().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
 			Refresh();
 		}
 
@@ -155,27 +155,27 @@ namespace BlendInt {
 	void ComboBox::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if(Theme::instance->menu().shaded) {
-				tool.GenerateShadedVertices(size(),
-								DefaultBorderWidth(),
-								*request.round_type(),
-								round_radius(),
-								Vertical,
-								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown);
-			} else {
-				tool.GenerateShadedVertices(size(),
-								DefaultBorderWidth(),
-								*request.round_type(),
-								round_radius());
-			}
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_type(*request.round_type());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->menu().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu().shadetop,
+						Theme::instance->menu().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
 			Refresh();
 		}
 
@@ -188,27 +188,27 @@ namespace BlendInt {
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			if(Theme::instance->menu().shaded) {
-				tool.GenerateShadedVertices(size(),
-								DefaultBorderWidth(),
-								round_type(),
-								*request.round_radius(),
-								Vertical,
-								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown);
-			} else {
-				tool.GenerateShadedVertices(size(),
-								DefaultBorderWidth(),
-								round_type(),
-								*request.round_radius());
-			}
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_round_radius(*request.round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->menu().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu().shadetop,
+						Theme::instance->menu().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
 			Refresh();
 		}
 
@@ -219,25 +219,19 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(Profile& profile)
 	{
-		glm::vec3 pos(0.f, 0.f, 0.f);
+		Shaders::instance->widget_inner_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->use();
-
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
-				glm::value_ptr(pos));
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				Theme::instance->menu().inner.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
 
 		if (status_down_) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 20);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 20);
 		} else {
 			if (hover()) {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA),
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA),
 						15);
 			} else {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA),
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA),
 						0);
 			}
 		}
@@ -245,17 +239,27 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 				Theme::instance->menu().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 				GetOutlineVertices(round_type()) * 2 + 2);
 
+//		if (emboss()) {
+//			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
+//			        1.0f, 1.0f, 0.16f);
+//			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+//			        0.f, - 1.f);
+//			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+//			        GetHalfOutlineVertices(round_type()) * 2);
+//		}
+
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		//RefPtr<VertexIcon> icon = Icons::instance->icon_menu();
 
@@ -265,10 +269,10 @@ namespace BlendInt {
 
 		//icon->Draw(mvp * translate * rotate * scale);
 
-		pos.x += size().width() - Icons::instance->menu()->size().width()/2.f;
-		pos.y += size().height()/2.f;
+		float x = size().width() - Icons::instance->menu()->size().width()/2.f;
+		float y = size().height()/2.f;
 
-		Icons::instance->menu()->Draw(pos, 0, 1.f, Color(0xEFEFEFFF));
+		Icons::instance->menu()->Draw(x, y, Color(0xEFEFEFFF));
 
 		return Accept;
 	}
@@ -331,45 +335,42 @@ namespace BlendInt {
 
 	void ComboBox::InitializeComboBox()
 	{
-		glGenVertexArrays(2, vaos_);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		VertexTool tool;
-		if(Theme::instance->menu().shaded) {
-			tool.GenerateShadedVertices(size(),
-							DefaultBorderWidth(),
-							round_type(),
-							round_radius(),
-							Vertical,
-							Theme::instance->menu().shadetop,
-							Theme::instance->menu().shadedown);
+		if (Theme::instance->menu().shaded) {
+			GenerateVertices(Vertical,
+					Theme::instance->menu().shadetop,
+					Theme::instance->menu().shadedown,
+					&inner_verts,
+					&outer_verts);
 		} else {
-			tool.GenerateShadedVertices(size(),
-							DefaultBorderWidth(),
-							round_type(),
-							round_radius());
+			GenerateVertices(&inner_verts, &outer_verts);
 		}
+
+		glGenVertexArrays(2, vaos_);
 
 		glBindVertexArray(vaos_[0]);
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+				Shaders::instance->location (Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

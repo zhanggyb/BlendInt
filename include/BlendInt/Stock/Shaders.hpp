@@ -52,16 +52,6 @@ namespace BlendInt {
 			TRIANGLE_ANTI_ALIAS,
 			TRIANGLE_GAMMA,
 
-			WIDGET_COORD,
-			WIDGET_COLOR,
-			//WIDGET_PROJECTION,
-			//WIDGET_VIEW,
-			WIDGET_POSITION,
-			WIDGET_ROTATION,
-			WIDGET_SCALE,
-			WIDGET_ANTI_ALIAS,
-			WIDGET_GAMMA,
-
 			WIDGET_INNER_COORD,
 			WIDGET_INNER_COLOR,
 			WIDGET_INNER_GAMMA,
@@ -106,6 +96,10 @@ namespace BlendInt {
 			FRAME_INNER_POSITION,
 			FRAME_INNER_GAMMA,
 
+			FRAME_OUTER_COORD,
+			FRAME_OUTER_COLOR,
+			FRAME_OUTER_POSITION,	// vec2 of outline or emboss vertices
+
 			FRAME_SHADOW_COORD,
 			FRAME_SHADOW_UV,
 			//FRAME_SHADOW_COLOR,
@@ -142,11 +136,6 @@ namespace BlendInt {
 				return triangle_program_;
 			}
 
-			const RefPtr<GLSLProgram>& widget_program () const
-			{
-				return widget_program_;
-			}
-
 			const RefPtr<GLSLProgram>& widget_inner_program () const
 			{
 				return widget_inner_program_;
@@ -170,6 +159,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& frame_inner_program () const
 			{
 				return frame_inner_program_;
+			}
+
+			const RefPtr<GLSLProgram>& frame_outer_program () const
+			{
+				return frame_outer_program_;
 			}
 
 			const RefPtr<GLSLProgram>& frame_shadow_program () const
@@ -241,8 +235,6 @@ namespace BlendInt {
 
 			bool Setup ();
 
-			bool SetupWidgetProgram ();
-
 			bool SetupWidgetInnerProgram ();
 
 			bool SetupWidgetSplitInnerProgram ();
@@ -259,6 +251,8 @@ namespace BlendInt {
 
 			bool SetupFrameInnerProgram ();
 
+			bool SetupFrameOuterProgram ();
+
 			bool SetupFrameShadowProgram ();
 
 			RefPtr<GLSLProgram> widget_text_program_;
@@ -266,8 +260,6 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> primitive_program_;
 
 			RefPtr<GLSLProgram> triangle_program_;
-
-			RefPtr<GLSLProgram> widget_program_;
 
 			RefPtr<GLSLProgram> widget_inner_program_;
 
@@ -278,6 +270,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> widget_image_program_;
 
 			RefPtr<GLSLProgram> frame_inner_program_;
+
+			RefPtr<GLSLProgram> frame_outer_program_;
 
 			RefPtr<GLSLProgram> frame_shadow_program_;
 
@@ -326,12 +320,6 @@ namespace BlendInt {
 
 			static const char* triangle_fragment_shader;
 
-			static const char* widget_vertex_shader;
-
-			static const char* widget_geometry_shader;
-
-			static const char* widget_fragment_shader;
-
 			static const char* widget_inner_vertex_shader;
 
 			static const char* widget_inner_geometry_shader;
@@ -359,6 +347,12 @@ namespace BlendInt {
 			static const char* frame_inner_vertex_shader;
 
 			static const char* frame_inner_fragment_shader;
+
+			static const char* frame_outer_vertex_shader;
+
+			static const char* frame_outer_geometry_shader;
+
+			static const char* frame_outer_fragment_shader;
 
 			static const char* frame_shadow_vertex_shader;
 

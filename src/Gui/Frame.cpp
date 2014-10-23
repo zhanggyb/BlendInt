@@ -259,8 +259,10 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::PreDraw(Profile& profile)
+	bool Frame::PreDraw(Profile& profile)
 	{
+		if(!visiable()) return false;
+
 		assign_profile_frame(profile);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
@@ -270,6 +272,8 @@ namespace BlendInt {
 
 		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
+		return true;
 	}
 
 	ResponseType Frame::Draw (Profile& profile)

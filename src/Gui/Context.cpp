@@ -198,9 +198,10 @@ namespace BlendInt
 
 	void Context::Draw()
 	{
-		PreDraw(profile_);
-		Draw(profile_);
-		PostDraw(profile_);
+		if(PreDraw(profile_)) {
+			Draw(profile_);
+			PostDraw(profile_);
+		}
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
@@ -331,9 +332,9 @@ namespace BlendInt
 	{
 	}
 
-	void Context::PreDraw(Profile& profile)
+	bool Context::PreDraw(Profile& profile)
 	{
-
+		return true;
 	}
 
 	ResponseType Context::Draw (Profile& profile)
@@ -373,10 +374,11 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		ResponseType response;
+		ResponseType response = Ignore;
 
-		if(last_child()) {
-			response = last_child()->KeyPressEvent(event);
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+			response = p->KeyPressEvent(event);
+			if(response == Accept) break;
 		}
 
 		return response;

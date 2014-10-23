@@ -155,8 +155,9 @@ namespace BlendInt {
 		}
 	}
 
-	void FrameSplitterHandle::PreDraw(Profile& profile)
+	bool FrameSplitterHandle::PreDraw(Profile& profile)
 	{
+		return visiable();
 	}
 
 	ResponseType FrameSplitterHandle::Draw(Profile& profile)
@@ -442,8 +443,9 @@ namespace BlendInt {
 		}
 	}
 
-	void FrameSplitter::PreDraw(Profile& profile)
+	bool FrameSplitter::PreDraw(Profile& profile)
 	{
+		return visiable();
 	}
 
 	ResponseType FrameSplitter::Draw(Profile& profile)

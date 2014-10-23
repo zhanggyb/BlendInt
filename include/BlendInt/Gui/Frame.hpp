@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PreDraw (Profile& profile);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 

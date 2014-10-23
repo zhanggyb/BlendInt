@@ -63,8 +63,10 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	void Widget::PreDraw(Profile& profile)
+	bool Widget::PreDraw(Profile& profile)
 	{
+		if(!visiable()) return false;
+
 		//glm::mat4 model;
 		//Shaders::instance->GetUIModelMatrix(model);
 
@@ -76,6 +78,8 @@ namespace BlendInt {
 
 		Shaders::instance->PushWidgetModelMatrix();
 		Shaders::instance->SetWidgetModelMatrix(matrix);
+
+		return true;
 	}
 
 	ResponseType Widget::Draw(Profile& profile)

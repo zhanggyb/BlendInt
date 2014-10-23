@@ -179,8 +179,10 @@ namespace BlendInt {
 		}
 	}
 
-	void Dialog::PreDraw(Profile& profile)
+	bool Dialog::PreDraw(Profile& profile)
 	{
+		if(!visiable()) return false;
+
 		assign_profile_frame(profile);
 
 		shadow_->Draw(position().x(), position().y());
@@ -203,6 +205,8 @@ namespace BlendInt {
 
 		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
+		return true;
 	}
 
 	ResponseType Dialog::Draw(Profile& profile)
@@ -234,6 +238,12 @@ namespace BlendInt {
 
 	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
 	{
+		if(event.key() == Key_Escape) {
+			Refresh();
+			delete this;
+			return Accept;
+		}
+
 		return Ignore;
 	}
 

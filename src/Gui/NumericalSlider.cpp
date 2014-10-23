@@ -230,6 +230,7 @@ namespace BlendInt {
 	{
 		Point pos = profile.frame()->GetAbsolutePosition(this);
 		int outline_vertices = GetOutlineVertices(round_type());
+		float len = GetSlidePosition(DefaultBorderWidth(), value());
 
 		Shaders::instance->widget_split_inner_program()->use();
 
@@ -239,7 +240,7 @@ namespace BlendInt {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
-		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), pos.x() + size().width() / 2.f);
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), pos.x() + len);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Theme::instance->number_slider().inner_sel.data());
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Theme::instance->number_slider().inner.data());
 
@@ -310,8 +311,8 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
@@ -331,172 +332,9 @@ namespace BlendInt {
 	{
 		float minxi = 0.f + border * Theme::instance->pixel();
 		float maxxi = size().width() - border * Theme::instance->pixel();
-		float radi = (round_radius() - border) * Theme::instance->pixel();
+		//float radi = (round_radius() - border) * Theme::instance->pixel();
 
-		return round_radius() + (maxxi - minxi - radi) * v / (maximum() - minimum());
+		return (maxxi - minxi) * v / (maximum() - minimum());
 	}
 	
-	void NumericalSlider::GenerateLeftSliderVertices (float minx, float maxx,
-					float miny, float maxy, int round_type, float radius,
-					std::vector<GLfloat>& verts)
-	{
-		round_type = round_type & ~(RoundTopRight | RoundBottomRight);
-		int minsize = 0;
-		const int hnum = (
-                (round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
-                ||
-                (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)
-                ) ? 1 : 2;
-		const int vnum = (
-                (round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
-                ||
-                (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
-                ) ? 1 : 2;
-
-		minsize = std::min((maxx - minx) * hnum, (maxy - miny) * vnum);
-
-		if (2.0f * radius > minsize)
-			radius = 0.5f * minsize;
-
-		GenerateSliderVertices(minx, maxx, miny, maxy, round_type, radius, verts);
-	}
-	
-	void NumericalSlider::GenerateRightSliderVertices (float minx, float maxx,
-					float miny, float maxy, int round_type, float radius,
-					std::vector<GLfloat>& vertices)
-	{
-		round_type = round_type & ~(RoundTopLeft | RoundBottomLeft);
-		int minsize = 0;
-		const int hnum = (
-                (round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
-                ||
-                (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)
-                ) ? 1 : 2;
-		const int vnum = (
-                (round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
-                ||
-                (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
-                ) ? 1 : 2;
-
-		minsize = std::min((maxx - minx) * hnum, (maxy - miny) * vnum);
-
-		if (2.0f * radius > minsize)
-			radius = 0.5f * minsize;
-
-		GenerateSliderVertices(minx, maxx, miny, maxy, round_type, radius, vertices);
-	}
-	
-	void NumericalSlider::GenerateSliderVertices (const Size& out_size,
-					float border, int round_type, float out_radius,
-					double value, double minimum, double maximum,
-					std::vector<GLfloat>& left_vertices,
-					std::vector<GLfloat>& right_vertices)
-	{
-		float radi = (out_radius - border) * Theme::instance->pixel();
-
-		float minx = 0.0;
-		float miny = 0.0;
-		float maxx = out_size.width();	// test code
-		float maxy = out_size.height();
-
-		float minxi = minx + border * Theme::instance->pixel();		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - border * Theme::instance->pixel(); 	// U.pixelsize;
-		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
-		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
-
-		float mid = out_radius + (maxxi - minxi - radi) * value / (maximum - minimum);
-
-		if(mid <= (maxxi - radi)) {
-			GenerateLeftSliderVertices(minxi, mid, minyi, maxyi, round_type, radi, left_vertices);
-		} else {
-			GenerateLeftSliderVertices(minxi, maxxi - radi, minyi, maxyi, round_type, radi, left_vertices);
-			GenerateRightSliderVertices(maxxi - radi, mid, minyi, maxyi, round_type, radi, right_vertices);
-		}
-	}
-
-	void NumericalSlider::GenerateSliderVertices (
-					float minx, float maxx,
-					float miny, float maxy,
-					int round_type, float radius,
-					std::vector<GLfloat>& vertices)
-	{
-		float veci[WIDGET_CURVE_RESOLU][2];
-
-		int count = 0;
-		unsigned int corner = round_type & RoundAll;
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
-		}
-		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
-
-		// mult
-		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
-			veci[i][0] = radius * VertexTool::cornervec[i][0];
-			veci[i][1] = radius * VertexTool::cornervec[i][1];
-		}
-
-		if (vertices.size() != ((outline_vertex_number + 2) * 2)) {
-			vertices.resize((outline_vertex_number + 2) * 2);
-		}
-
-		// inner[0, 0] is the center of a triangle fan
-		vertices[0] = minx + (maxx - minx) / 2.f;
-		vertices[1] = miny + (maxy - miny) / 2.f;
-
-		count = 1;
-
-		// corner left-bottom
-		if (round_type & RoundBottomLeft) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[count * 2] = minx + veci[i][1];
-				vertices[count * 2 + 1] = miny + radius - veci[i][0];
-			}
-		} else {
-			vertices[count * 2] = minx;
-			vertices[count * 2 + 1] = miny;
-			count++;
-		}
-
-		// corner right-bottom
-		if (round_type & RoundBottomRight) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[count * 2] = maxx - radius + veci[i][0];
-				vertices[count * 2 + 1] = miny + veci[i][1];
-			}
-		} else {
-			vertices[count * 2] = maxx;
-			vertices[count * 2 + 1] = miny;
-			count++;
-		}
-
-		// corner right-top
-		if (round_type & RoundTopRight) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[count * 2] = maxx - veci[i][1];
-				vertices[count * 2 + 1] = maxy - radius + veci[i][0];
-			}
-		} else {
-			vertices[count * 2] = maxx;
-			vertices[count * 2 + 1] = maxy;
-			count++;
-		}
-
-		// corner left-top
-		if (round_type & RoundTopLeft) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[count * 2] = minx + radius - veci[i][0];
-				vertices[count * 2 + 1] = maxy - veci[i][1];
-			}
-
-		} else {
-			vertices[count * 2] = minx;
-			vertices[count * 2 + 1] = maxy;
-			count++;
-		}
-
-		vertices[count * 2] = vertices[2];
-		vertices[count * 2 + 1] = vertices[3];
-	}
-
 }

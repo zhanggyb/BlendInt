@@ -519,24 +519,18 @@ namespace BlendInt {
 		assert(widget != 0);
 #endif
 
-		if (widget->visiable()) {
-
-			widget->PreDraw(profile);
+		if (widget->PreDraw(profile)) {
 
 			ResponseType response = widget->Draw(profile);
 
-			if(response == Accept) {
-				widget->PostDraw(profile);
-				return;
-			}
-
-			for(AbstractWidget* sub = widget->first_child(); sub; sub = sub->next())
-			{
-				DispatchDrawEvent(sub, profile);
+			if(response == Ignore) {
+				for(AbstractWidget* sub = widget->first_child(); sub; sub = sub->next())
+				{
+					DispatchDrawEvent(sub, profile);
+				}
 			}
 
 			widget->PostDraw(profile);
-
 			widget->set_refresh(widget->parent_->refresh());
 		}
 	}

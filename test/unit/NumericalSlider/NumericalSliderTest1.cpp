@@ -37,6 +37,7 @@ TEST_F(NumericalSliderTest1, Foo1)
 	NumericalSlider* slider = Manage(new NumericalSlider);
 	slider->Resize(200, slider->size().height());
 	slider->SetPosition(20, 100);
+	slider->SetValue(20.0);
 
 	dialog->AddWidget(slider);
 

@@ -151,6 +151,11 @@ namespace BlendInt {
 		Draw(glm::vec3(x, y, 0.f), color, gamma);
 	}
 
+	void VertexIcon::Draw (float x, float y, const Color& color, short gamma) const
+	{
+		Draw(glm::vec3(x, y, 0.f), color, gamma);
+	}
+
 	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();

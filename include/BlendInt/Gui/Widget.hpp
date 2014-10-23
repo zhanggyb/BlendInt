@@ -53,7 +53,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PreDraw (Profile& profile);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 

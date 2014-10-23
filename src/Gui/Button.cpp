@@ -263,8 +263,6 @@ namespace BlendInt {
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glm::vec2 pos(0.f, 0.f);
-
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		if (is_down()) {
@@ -284,7 +282,7 @@ namespace BlendInt {
 
 		Shaders::instance->widget_outer_program()->use();
 
-		glUniform2fv(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 1, glm::value_ptr(pos));
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->regular().outline.data());
 
@@ -295,7 +293,6 @@ namespace BlendInt {
 		if (emboss()) {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-
 			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 			        0.f, - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -307,9 +304,9 @@ namespace BlendInt {
 
 		if(show_icon_ && icon_) {
 			if(hover()) {
-				icon_->Draw(pos.x + icon_offset_x_, pos.y + icon_offset_y_, 15);
+				icon_->Draw(0.f + icon_offset_x_, 0.f + icon_offset_y_, 15);
 			} else {
-				icon_->Draw(pos.x + icon_offset_x_, pos.y + icon_offset_y_, 0);
+				icon_->Draw(0.f + icon_offset_x_, 0.f + icon_offset_y_, 0);
 			}
 		}
 

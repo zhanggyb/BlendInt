@@ -94,7 +94,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual void PreDraw (Profile& profile);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 

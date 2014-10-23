@@ -1,6 +1,5 @@
 #include "MenuTest1.hpp"
 #include <BlendInt/Gui/Menu.hpp>
-#include "InfoWidget.hpp"
 #include <BlendInt/Stock/Icons.hpp>
 
 using namespace BlendInt;
@@ -26,12 +25,13 @@ TEST_F(MenuTest1, Foo1)
 	Init ();
 	GLFWwindow* window = CreateWindow("Menu - Foo1", 640, 480);
 
-	Context* context = Manage(new Context);
-	Interface::instance->SetCurrentContext(context);
+	Context* context = Manage (new Context);
+	SetContext(context);
+	context->Resize(640, 480);
 
 	// TODO: add test code here
 	Menu* menu = Manage(new Menu);
-	menu->SetRoundType(RoundAll);
+	//menu->SetRoundType(RoundAll);
 
 	menu->SetPosition(200, 200);
 	//menu->Resize (200, 200);
@@ -42,10 +42,9 @@ TEST_F(MenuTest1, Foo1)
 	menu->AddAction("MenuItem4", "Ctrl + 1");
 	menu->AddAction("MenuItem5");
 
-	context->Append(menu);
+	context->AddFrame(menu);
 
 	RunLoop(window);
-
 	Terminate();
 
 	ASSERT_TRUE(true);
