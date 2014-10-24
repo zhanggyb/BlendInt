@@ -125,7 +125,7 @@ static const char* text_fragment_shader =
 */
 
 FontView::FontView ()
-//: m_vao(0), m_vbo(0)
+//: vao_(0), m_vbo(0)
 {
 	set_size(200, 200);
 
@@ -139,8 +139,8 @@ FontView::FontView ()
 	DBG_PRINT_MSG("cache size: %ld", size);
 
 	/*
-	glGenVertexArrays(1, &m_vao);
-    glBindVertexArray(m_vao);
+	glGenVertexArrays(1, &vao_);
+    glBindVertexArray(vao_);
     glGenBuffers(1, &m_vbo);
     glBindVertexArray(0);
 
@@ -150,7 +150,7 @@ FontView::FontView ()
 
 FontView::~FontView ()
 {
-	//glDeleteVertexArrays(1, &m_vao);
+	//glDeleteVertexArrays(1, &vao_);
 }
 
 void FontView::LoadCharacter ()
@@ -169,7 +169,7 @@ void FontView::LoadCharacter ()
 
     m_glyph.Load(ft, L'佛');
 
-    glBindVertexArray(m_vao);
+    glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 4, &(m_glyph.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -197,7 +197,7 @@ BI::ResponseType FontView::Draw (const BI::Profile& event)
 	//DBG_PRINT_MSG("advance: %d", advance);
 
 	/*
-	glBindVertexArray(m_vao);
+	glBindVertexArray(vao_);
 
 	m_program->Use();
 

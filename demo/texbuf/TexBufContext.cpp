@@ -61,14 +61,10 @@ void TexBufContext::CreateWidgets ()
 	
 	Label* label1 = Manage(new Label("Realtime Render"));
 	label1->SetFont(my_font);
-	label1->SetForegroundColor(Color(0xF0B0E0EF));
-	label1->SetBackgroundColor(Color(0x101010A0));
 	label1->Resize(label1->GetPreferredSize());
 	
 	Label* label2 = Manage(new Label("Off-screen Render Once"));
 	label2->SetFont(my_font);
-	label2->SetForegroundColor(Color(0xF0B0E0EF));
-	label2->SetBackgroundColor(Color(0x101010A0));
 	label2->Resize(label2->GetPreferredSize());
 
 	Viewport3D* view1 = Manage(new Viewport3D);

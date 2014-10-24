@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -43,18 +42,15 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Label::Label (const String& text)
-		: Widget(),
-		  text_(text),
-		  text_length_(0),
-		  background_color_(0x00000000),
-		  vao_(0)
+    : Widget(),
+	  text_(text),
+	  text_length_(0)
 	{
 		InitializeLabel(text);
 	}
 
 	Label::~Label ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Label::SetText (const String& text)
@@ -78,13 +74,6 @@ namespace BlendInt {
 		if (request.target() == this) {
 			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
-
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
-
 			set_size (*request.size());
 			Refresh();
 		}
@@ -96,21 +85,6 @@ namespace BlendInt {
 
 	ResponseType Label::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
-
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), 0.f, 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), background_color_.data());
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-
-		program->reset();
-
 		if(text_.length()) {
 			font_.Print(0.f, 0.f, text_, text_length_, 0);
 		}
@@ -196,18 +170,6 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void Label::SetForegroundColor (const Color& fg)
-	{
-		font_.set_color(fg);
-		Refresh();
-	}
-
-	void Label::SetBackgroundColor (const Color& color)
-	{
-		background_color_ = color;
-		Refresh();
-	}
-
 	bool Label::IsExpandX() const
 	{
 		return true;
@@ -233,24 +195,6 @@ namespace BlendInt {
 							(height - font_.GetHeight()) / 2 +
 											std::abs(font_.GetDescender()));
 		}
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
-
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));	// 0 is the locaiton in shader
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		GLArrayBuffer::reset();
-		glBindVertexArray(0);
 	}
 
 } /* namespace BlendInt */

@@ -44,7 +44,7 @@ namespace BlendInt {
 
 	Slider::Slider (Orientation orientation)
 	: AbstractSlider<int>(orientation),
-	  //m_vao(0),
+	  //vao_(0),
 	  m_last_value(0),
 	  m_pressed(false)
 	{
@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	Slider::~Slider()
 	{
-		//glDeleteVertexArrays(1, &m_vao);
+		//glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Slider::IsExpandX() const
@@ -150,7 +150,7 @@ namespace BlendInt {
 		// ----- draw line
 
 		/*
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
 		program->Use();
 
@@ -253,9 +253,9 @@ namespace BlendInt {
 	void Slider::InitOnce ()
 	{
 		/*
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
 		m_line.reset(new GLArrayBuffer);
 		m_line->generate();

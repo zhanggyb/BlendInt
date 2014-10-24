@@ -71,10 +71,6 @@ namespace BlendInt {
 			return font_;
 		}
 
-		void SetForegroundColor (const Color& fg);
-
-		void SetBackgroundColor (const Color& color);
-
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
@@ -100,20 +96,13 @@ namespace BlendInt {
 		 */
 		String text_;
 
-		/**
-		 * @brief the text string length to be printed
-		 */
-		size_t text_length_;
-
 		Font font_;
 
-		/** Background color, default: transparent */
-		Color background_color_;
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
-	};
+        /**
+        * @brief the text string length to be printed
+        */
+        size_t text_length_;
+    };
 
 } /* namespace BlendInt */
 #endif /* _BlendIntLABEL_HPP_ */

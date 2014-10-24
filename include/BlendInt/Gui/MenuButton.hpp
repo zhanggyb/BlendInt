@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		void InitializeMenuButton (const String& text);
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		RefPtr<GLArrayBuffer> inner_;
 

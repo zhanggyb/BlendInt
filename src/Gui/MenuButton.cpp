@@ -36,36 +36,41 @@
 
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-	
+
+    using Stock::Shaders;
+
 	MenuButton::MenuButton (const String& text)
-	: AbstractButton(), m_vao(0)
+	: AbstractButton(), vao_(0)
 	{
 		InitializeMenuButton(text);
 	}
 	
 	MenuButton::~MenuButton ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 	
 	void MenuButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
 			UpdateTextPosition(*request.size(), round_type(),
 			        round_radius(), text());
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
-			        round_type(), round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
 
-			set_size(*request.size());
+            set_size(*request.size());
+
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(&inner_verts, 0);
+
+			inner_->bind();
+			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_->reset();
+
 			Refresh();
 		}
 
@@ -79,13 +84,16 @@ namespace BlendInt {
 		if(request.target() == this) {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
 
-			set_round_type(*request.round_type());
+            set_round_type(*request.round_type());
+
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(&inner_verts, 0);
+
+            inner_->bind();
+            inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_->reset();
+
 			Refresh();
 		}
 
@@ -100,14 +108,17 @@ namespace BlendInt {
 		if(request.target() == this) {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(),
-			        round_type(), *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			set_round_radius(*request.round_radius());
-			Refresh();
+
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(&inner_verts, 0);
+
+            inner_->bind();
+            inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_->reset();
+
+            Refresh();
 		}
 
 		if(request.source() == this) {
@@ -117,26 +128,19 @@ namespace BlendInt {
 
 	ResponseType MenuButton::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		if (hover()) {
 
-			RefPtr<GLSLProgram> program =
-					Shaders::instance->triangle_program();
-			program->use();
+			Shaders::instance->widget_inner_program()->use();
 
-			program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
-			program->SetUniform1i("u_gamma", 0);
-			program->SetUniform1i("u_AA", 1);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Theme::instance->menu_item().inner_sel.data());
 
-			program->SetVertexAttrib4fv("a_color", Theme::instance->menu_item().inner_sel.data());
-
-			glBindVertexArray(m_vao);
+			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 			glBindVertexArray(0);
 
-			program->reset();
+            GLSLProgram::reset();
 
 		}
 
@@ -176,19 +180,19 @@ namespace BlendInt {
 											+ std::abs(font().GetDescender()));
 		}
 
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
+        std::vector<GLfloat> inner_verts;
+        GenerateVertices(&inner_verts, 0);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
