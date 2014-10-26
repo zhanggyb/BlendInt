@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_STACKPANEL_HPP_
 
 #include <BlendInt/Gui/StackLayout.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -50,7 +51,7 @@ namespace BlendInt {
 
 		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> inner_;
+        GLBuffer<> inner_;
 
 	};
 

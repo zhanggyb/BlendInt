@@ -36,8 +36,6 @@
 
 #include <algorithm>
 
-#include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -61,17 +59,22 @@ namespace BlendInt {
 	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
 
 			int w = request.size()->width() - margin().hsum();
 			int h = request.size()->height() - margin().vsum();
 
 			set_size(*request.size());
+            
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(&inner_verts, 0);
+            
+            inner_.bind();
+            inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_.reset();
+            
 			ResizeSubWidgets(w, h);
+            
+            Refresh();
 		}
 
 		if(request.source() == this) {
@@ -103,21 +106,20 @@ namespace BlendInt {
 
 	void Stack::InitializeStack()
 	{
-		glGenVertexArrays(1, &vao_);
+        std::vector<GLfloat> inner_verts;
+        GenerateVertices(&inner_verts, 0);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		glGenVertexArrays(1, &vao_);
 
 		glBindVertexArray(vao_);
 
-		inner_.reset(new GLArrayBuffer);
+        inner_.generate();
 
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+        inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

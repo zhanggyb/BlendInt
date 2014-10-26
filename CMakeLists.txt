@@ -107,7 +107,6 @@ endif()
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt/CppEvents)
-include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -158,6 +157,9 @@ if(WITH_BUILTIN_GLFW3)
         set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
     endif()
 endif()
+
+# add rapidxml header files
+include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 # include GLM
 if(WITH_BUILTIN_GLM)

@@ -41,7 +41,6 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -67,13 +66,15 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
 			set_size(*request.size());
+
+            std::vector<GLfloat> inner_verts;
+            
+            GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+            inner_.bind();
+            inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_.reset();
 
 			if (subs_count()) {
 				assert(subs_count() == 1);
@@ -103,22 +104,22 @@ namespace BlendInt {
 
 	void StaticPanel::InitializeFramePanel()
 	{
+        std::vector<GLfloat> inner_verts;
+        
+        GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+        
 		glGenVertexArrays(1, &vao_);
-
 		glBindVertexArray(vao_);
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+        inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		inner_->reset();
+        inner_.reset();
 	}
 
 	void StaticPanel::RenderToFile (const std::string& filename)
@@ -202,14 +203,11 @@ namespace BlendInt {
 			glDisable(GL_SCISSOR_TEST);
 
 			// Draw frame panel
-			Shaders::instance->triangle_program()->use();
+			Shaders::instance->widget_inner_program()->use();
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-					0.f, 0.f, 0.f);
-			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
-					0.447f, 0.447f, 1.0f);
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.847f,
+					0.247f, 0.247f, .5f);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);

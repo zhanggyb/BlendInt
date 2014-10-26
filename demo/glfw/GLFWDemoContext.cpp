@@ -115,10 +115,12 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	Dialog* dlg = Manage(new Dialog);
+    dlg->Resize(400, 300);
 	AddFrame(dlg);
 
-	Button* foo = Manage(new Button("Drag me!"));
-	dlg->AddWidget(foo);
+    StaticPanel* panel = Manage(new StaticPanel);
+    panel->Resize(300, 250);
+	dlg->AddWidget(panel);
 
 	/*
 	VFrame* frame = Manage(new VFrame);

@@ -27,10 +27,10 @@
 #include <stack>
 #include <set>
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
+
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 namespace BlendInt {
 
@@ -134,15 +134,15 @@ namespace BlendInt {
 
 		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
+        void RenderToBuffer (Profile& profile);
+        
 		Profile profile_;
-
-		int current_cursor_;
 
 		AbstractFrame* hovered_frame_;
 
 		AbstractFrame* focused_frame_;
-
-		std::stack<int> cursor_stack_;
+        
+        ImagePlane2D texture_buffer_;
 
 		Cpp::Event<const Size&> resized_;
 
