@@ -315,6 +315,7 @@ namespace BlendInt {
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
+			Refresh();
 		}
 	}
 

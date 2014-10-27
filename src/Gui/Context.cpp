@@ -174,6 +174,8 @@ namespace BlendInt
 	  focused_frame_(0)
 	{
 		set_size(640, 480);
+		set_refresh(true);
+
 		profile_.context_ = this;
 		InitializeContext();
 
@@ -191,16 +193,61 @@ namespace BlendInt
 	void Context::AddFrame (AbstractFrame* vp)
 	{
 		if(PushBackSubWidget(vp)) {
-			// TODO: 			
+			// TODO:
+			Refresh();
 		}
 	}
 
 	void Context::Draw()
 	{
-		if(PreDraw(profile_)) {
-			Draw(profile_);
-			PostDraw(profile_);
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+		//glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearStencil(0);
+		glClearDepth(1.0);
+
+		glClear(GL_COLOR_BUFFER_BIT |
+				GL_DEPTH_BUFFER_BIT |
+				GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+		glViewport(0, 0, size().width(), size().height());
+
+		if(refresh()) {
+
+			DBG_PRINT_MSG("%s", "Render to texture once");
+			set_refresh(false);
+			RenderToBuffer(profile_);
+
+//			texture_buffer_.texture()->bind();
+//			texture_buffer_.texture()->WriteToFile("texture.png");
+//			texture_buffer_.texture()->reset();
 		}
+
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		Shaders::instance->frame_image_program()->use();
+		texture_buffer_.bind();
+		glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
+		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+
+		texture_buffer_.reset();
+		GLSLProgram::reset();
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+//		if(PreDraw(profile_)) {
+//			Draw(profile_);
+//			PostDraw(profile_);
+//		}
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
@@ -318,6 +365,20 @@ namespace BlendInt
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 			Shaders::instance->SetFrameProjectionMatrix(projection);
 
+			GLfloat vertices[] = {
+					// coord						uv
+					0.f, 0.f,						0.f, 0.f,
+					(float)size().width(), 0.f,		1.f, 0.f,
+					0.f, (float)size().height(),	0.f, 1.f,
+					(float)size().width(), (float)size().height(),		1.f, 1.f
+			};
+
+			vertex_buffer_.bind();
+			vertex_buffer_.set_data(sizeof(vertices), vertices);
+			vertex_buffer_.reset();
+
+			set_refresh(true);
+
 			resized_.fire(size());
 		}
 	}
@@ -338,29 +399,13 @@ namespace BlendInt
 
 	ResponseType Context::Draw (Profile& profile)
 	{
-		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-		//glClearColor(1.f, 1.f, 1.f, 1.f);
-		glClearStencil(0);
-		glClearDepth(1.0);
-
-		glClear(GL_COLOR_BUFFER_BIT |
-				GL_DEPTH_BUFFER_BIT |
-				GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
-		glViewport(0, 0, size().width(), size().height());
-
-		set_refresh(false);
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
+			p->set_refresh(this->refresh());
+
 			p->PreDraw(profile);
 			p->Draw(profile);
 			p->PostDraw(profile);
-			p->set_refresh(this->refresh());
 		}
 
 		return Accept;
@@ -368,7 +413,6 @@ namespace BlendInt
 
 	void Context::PostDraw(Profile& profile)
 	{
-		set_refresh(false);
 	}
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
@@ -498,6 +542,35 @@ namespace BlendInt
 
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
 		Shaders::instance->SetWidgetModelMatrix(identity);
+
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		vertex_buffer_.generate();
+
+		GLfloat vertices[] = {
+				// coord											uv
+				0.f, 0.f,											0.f, 0.f,
+				(float)size().width(), 0.f,							1.f, 0.f,
+				0.f, (float)size().height(),						0.f, 1.f,
+				(float)size().width(), (float)size().height(),		1.f, 1.f
+		};
+
+		vertex_buffer_.bind();
+		vertex_buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		vertex_buffer_.reset();
 	}
 
 	void Context::DispatchHoverEvent(const MouseEvent& event)
@@ -550,17 +623,6 @@ namespace BlendInt
 	{
 	}
 
-	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
-	{
-		assert(frame->hover());
-		assert(hovered_frame_ == frame);
-
-		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
-
-		hovered_frame_ = 0;
-	}
-
 	void Context::SetFocusedFrame(AbstractFrame* frame)
 	{
 		if(focused_frame_ == frame) return;
@@ -579,6 +641,19 @@ namespace BlendInt
 		}
 	}
 
+	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(frame->hover());
+		assert(hovered_frame_ == frame);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
+
+		hovered_frame_ = 0;
+
+		Refresh();
+	}
+
 	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(focused_frame_ == frame);
@@ -586,16 +661,14 @@ namespace BlendInt
 		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
 
 		focused_frame_ = 0;
+
+		Refresh();
 	}
 
     void Context::RenderToBuffer(Profile &profile)
     {
-        GLsizei width = size().width();
-        GLsizei height = size().height();
-        
-        texture_buffer_.SetCoord(0.f, 0.f, (float)width, (float)height);
         // Create and set texture to render to.
-        GLTexture2D* tex = texture_buffer_.texture();
+        GLTexture2D* tex = &texture_buffer_;
         if(!tex->id())
             tex->generate();
         
@@ -631,53 +704,26 @@ namespace BlendInt
         if(GLFramebuffer::CheckStatus()) {
             
             fb->bind();
-            
-            Profile off_screen_profile(profile, GetGlobalPosition());
-            
-            glm::mat4 identity(1.f);
-            Shaders::instance->PushWidgetModelMatrix();
-            Shaders::instance->SetWidgetModelMatrix(identity);
-            
+
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClearDepth(1.0);
             glClearStencil(0);
-            
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glEnable(GL_BLEND);
             
-            glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
-                                              -100.f);
-            
-            Shaders::instance->PushWidgetProjectionMatrix();
-            Shaders::instance->SetWidgetProjectionMatrix(projection);
-            
-            GLint vp[4];
-            glGetIntegerv(GL_VIEWPORT, vp);
-            glViewport(0, 0, width, height);
-            
-            GLboolean scissor_test;
-            glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
-            glDisable(GL_SCISSOR_TEST);
-            
-
             // Draw context:
+    		if(PreDraw(profile_)) {
+    			Draw(profile_);
+    			PostDraw(profile_);
+    		}
 
-            
-            // Restore the viewport setting and projection matrix
-            glViewport(vp[0], vp[1], vp[2], vp[3]);
-            
-            Shaders::instance->PopWidgetProjectionMatrix();
-            Shaders::instance->PopWidgetModelMatrix();
-            
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             
-            if(scissor_test) {
-                glEnable(GL_SCISSOR_TEST);
-            }
         }
-        
+
         fb->reset();
         tex->reset();
         

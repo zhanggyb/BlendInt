@@ -89,7 +89,7 @@ namespace BlendInt {
 		events_.reset(new Cpp::ConnectionScope);
 
 		set_visible(true);
-		set_refresh(true);
+		//set_refresh(true);
 	}
 
 	AbstractWidget::~AbstractWidget ()
@@ -298,11 +298,13 @@ namespace BlendInt {
 	{
 		if(!refresh()) {
 			AbstractWidget* p = parent();
-			while(p) {
-				if(p->refresh()) break;
+
+			while(p && (!p->refresh())) {
 				p->set_refresh(true);
 				p = p->parent();
 			}
+
+			set_refresh(true);
 		}
 	}
 
@@ -521,6 +523,7 @@ namespace BlendInt {
 
 		if (widget->PreDraw(profile)) {
 
+			widget->set_refresh(widget->parent_->refresh());
 			ResponseType response = widget->Draw(profile);
 
 			if(response == Ignore) {
@@ -531,7 +534,6 @@ namespace BlendInt {
 			}
 
 			widget->PostDraw(profile);
-			widget->set_refresh(widget->parent_->refresh());
 		}
 	}
 

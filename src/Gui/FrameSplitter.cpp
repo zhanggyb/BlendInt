@@ -235,10 +235,12 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
 	{
+		Refresh();
 	}
 
 	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
 	{
+		Refresh();
 	}
 
 	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)

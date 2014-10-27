@@ -234,6 +234,11 @@ namespace BlendInt {
 
 	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
 	{
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+			Refresh();
+		}
 	}
 
 	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)

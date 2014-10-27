@@ -7,6 +7,8 @@ add_subdirectory(NumericalSlider)
 add_subdirectory(Menu)
 add_subdirectory(FileButton)
 add_subdirectory(MenuButton)
+add_subdirectory(Viewport)
+add_subdirectory(FrameSplitter)
 
 #add_subdirectory(ClockWidget)
 #add_subdirectory(Layout)

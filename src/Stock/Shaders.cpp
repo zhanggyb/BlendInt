@@ -672,6 +672,50 @@ namespace BlendInt {
 
 		// -----------------------------------
 
+		const char* Shaders::frame_image_vertex_shader =
+				"#version 330\n"
+				"layout(location = 0) in vec2 aCoord;"
+				"layout(location = 1) in vec2 aUV;"
+				"out vec2 fTexcoord;"
+				""
+				"uniform FrameMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				""
+		        "mat4 TranslateMatrix (const in vec2 t)"
+		        "{"
+		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
+		        "				0.0, 1.0, 0.0, 0.0,"
+		        "				0.0, 0.0, 1.0, 0.0,"
+		        "				t.x, t.y, 0.0, 1.0);"
+		        "}"
+		        ""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
+				"	fTexcoord = aUV;"
+				"}";
+
+		const char* Shaders::frame_image_fragment_shader =
+		        "#version 330\n"
+				"in vec2 fTexcoord;"
+				"uniform sampler2D uTexture;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(0.f);"
+				"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
+				"	vec4 color = texture(uTexture, fTexcoord);"
+				"	FragmentColor = color + color_calib;"
+				"}";
+
+		// -----------------------------------
+
 		const char* Shaders::frame_shadow_vertex_shader =
 				"#version 330\n"
 				""
@@ -755,6 +799,7 @@ namespace BlendInt {
 			widget_image_program_.reset(new GLSLProgram);
 			frame_inner_program_.reset(new GLSLProgram);
 			frame_outer_program_.reset(new GLSLProgram);
+			frame_image_program_.reset(new GLSLProgram);
 			frame_shadow_program_.reset(new GLSLProgram);
 		}
 
@@ -907,6 +952,9 @@ namespace BlendInt {
 			if(!SetupFrameOuterProgram())
 				return false;
 
+			if(!SetupFrameImageProgram())
+				return false;
+
 			if(!SetupFrameShadowProgram())
 				return false;
 
@@ -1036,6 +1084,15 @@ namespace BlendInt {
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
 			glUniformBlockBinding(frame_outer_program_->id(), block_index, frame_matrix_binding_point_);
+
+			// set uniform block in frame image program
+
+			block_index = glGetUniformBlockIndex(frame_image_program_->id(), "FrameMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_image_program_->id(), block_index, frame_matrix_binding_point_);
 
 			// set uniform block in frame shadow program
 
@@ -1298,6 +1355,31 @@ namespace BlendInt {
 			return true;
 		}
 
+		bool Shaders::SetupFrameImageProgram()
+		{
+			if (!frame_image_program_->Create()) {
+				return false;
+			}
+
+			frame_image_program_->AttachShader(frame_image_vertex_shader,
+			        GL_VERTEX_SHADER);
+			frame_image_program_->AttachShader(frame_image_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!frame_image_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame image program: %d",
+						frame_image_program_->id());
+				return false;
+			}
+
+			locations_[FRAME_IMAGE_COORD] = frame_image_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_IMAGE_UV] = frame_image_program_->GetAttributeLocation("aUV");
+			locations_[FRAME_IMAGE_POSITION] = frame_image_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_IMAGE_TEXTURE] = frame_image_program_->GetUniformLocation("uTexture");
+			locations_[FRAME_IMAGE_GAMMA] = frame_image_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
 		bool Shaders::SetupFrameShadowProgram()
 		{
 			if(!frame_shadow_program_->Create()) {
@@ -1327,3 +1409,4 @@ namespace BlendInt {
 	}
 
 }
+

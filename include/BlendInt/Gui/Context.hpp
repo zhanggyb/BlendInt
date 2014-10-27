@@ -135,6 +135,8 @@ namespace BlendInt {
 		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
         void RenderToBuffer (Profile& profile);
+
+        GLuint vao_;
         
 		Profile profile_;
 
@@ -142,7 +144,9 @@ namespace BlendInt {
 
 		AbstractFrame* focused_frame_;
         
-        ImagePlane2D texture_buffer_;
+        GLTexture2D texture_buffer_;
+
+		GLBuffer<> vertex_buffer_;
 
 		Cpp::Event<const Size&> resized_;
 

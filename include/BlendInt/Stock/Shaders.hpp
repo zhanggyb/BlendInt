@@ -100,6 +100,13 @@ namespace BlendInt {
 			FRAME_OUTER_COLOR,
 			FRAME_OUTER_POSITION,	// vec2 of outline or emboss vertices
 
+			// Frmae Image
+			FRAME_IMAGE_COORD,
+			FRAME_IMAGE_UV,
+			FRAME_IMAGE_POSITION,
+			FRAME_IMAGE_TEXTURE,
+			FRAME_IMAGE_GAMMA,
+
 			FRAME_SHADOW_COORD,
 			FRAME_SHADOW_UV,
 			//FRAME_SHADOW_COLOR,
@@ -164,6 +171,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& frame_outer_program () const
 			{
 				return frame_outer_program_;
+			}
+
+			const RefPtr<GLSLProgram>& frame_image_program () const
+			{
+				return frame_image_program_;
 			}
 
 			const RefPtr<GLSLProgram>& frame_shadow_program () const
@@ -253,6 +265,8 @@ namespace BlendInt {
 
 			bool SetupFrameOuterProgram ();
 
+			bool SetupFrameImageProgram ();
+
 			bool SetupFrameShadowProgram ();
 
 			RefPtr<GLSLProgram> widget_text_program_;
@@ -272,6 +286,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> frame_inner_program_;
 
 			RefPtr<GLSLProgram> frame_outer_program_;
+
+			RefPtr<GLSLProgram> frame_image_program_;
 
 			RefPtr<GLSLProgram> frame_shadow_program_;
 
@@ -353,6 +369,10 @@ namespace BlendInt {
 			static const char* frame_outer_geometry_shader;
 
 			static const char* frame_outer_fragment_shader;
+
+			static const char* frame_image_vertex_shader;
+
+			static const char* frame_image_fragment_shader;
 
 			static const char* frame_shadow_vertex_shader;
 
