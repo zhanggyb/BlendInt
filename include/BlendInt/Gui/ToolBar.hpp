@@ -39,7 +39,84 @@ namespace BlendInt {
 		ToolBarExt ();
 
 		virtual ~ToolBarExt ();
+
+		void Add (Widget* widget, bool append = true);
+
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
+
+		Widget* focused_widget () const
+		{
+			return focused_widget_;
+		}
+
+		Widget* hovered_widget () const
+		{
+			return hovered_widget_;
+		}
+
+	protected:
+
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual bool PreDraw (Profile& profile);
+
+		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
+
+		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+
+	private:
+
+		void FillSubWidgets ();
+
+		int GetLastPosition () const;
+
+		void SetFocusedWidget (Widget* widget);
+
+		void OnFocusedWidgetDestroyed (Widget* widget);
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
+
+		Widget* focused_widget_;
+
+		Widget* hovered_widget_;
+
+		int space_;
+
+		GLuint vao_;
+
+		GLBuffer<> inner_;
+
+		Margin margin_;
+
 	};
+
+	// -------------------------------------------------------------
 
 	class ToolBar: public Layout
 	{

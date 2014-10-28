@@ -1,5 +1,6 @@
 #include "ToolBarTest1.hpp"
 #include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 using namespace BlendInt;
 
@@ -26,47 +27,41 @@ TEST_F(ToolBarTest1, Foo1)
     GLFWwindow* win = CreateWindow("ToolBar - Foo1", 640, 480);
 
     // TODO: add test code here
+    // TODO: add test code here
 	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+	SetContext(context);
+	context->Resize(640, 480);
 	
-    ToolBar* toolbar = Manage (new ToolBar);
+    ToolBarExt* toolbar = Manage (new ToolBarExt);
     toolbar->SetPosition(100, 100);
 
     ToolButton* btn1 = Manage (new ToolButton);
     //btn->SetPosition(200, 200);
 
     ToolButton* btn2 = Manage (new ToolButton);
-
     ToolButton* btn3 = Manage (new ToolButton);
-
     ToolButton* btn4 = Manage (new ToolButton);
-
     ToolButton* btn5 = Manage (new ToolButton);
-
     ToolButton* btn6 = Manage (new ToolButton);
-
     ToolButton* btn7 = Manage (new ToolButton);
-
     ToolButton* btn8 = Manage (new ToolButton);
 
-	toolbar->Append(btn1);
-	toolbar->Append(btn2);
-	toolbar->Append(btn3);
-	toolbar->Append(btn4);
-	toolbar->Append(btn5);
-	toolbar->Append(btn6);
-	toolbar->Append(btn7);
-	toolbar->Append(btn8);
+	toolbar->Add(btn1);
+	toolbar->Add(btn2);
+	toolbar->Add(btn3);
+	toolbar->Add(btn4);
+	toolbar->Add(btn5);
+	toolbar->Add(btn6);
+	toolbar->Add(btn7);
+	toolbar->Add(btn8);
 
     //toolbar->SetPosition(100, 100);
+	toolbar->Resize(toolbar->GetPreferredSize());
 
-	context->Append(toolbar);
+	context->AddFrame(toolbar);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
-	ASSERT_TRUE(true);
+    ASSERT_TRUE(true);
 }

@@ -26,8 +26,8 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {

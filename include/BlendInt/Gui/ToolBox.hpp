@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~ToolBoxExt ();
 
-		void AddWidget (Widget* widget);
+		void Add (Widget* widget, bool append = true);
 
 		virtual bool IsExpandX () const;
 

@@ -166,18 +166,29 @@ namespace BlendInt {
 		}
 	}
 
+	void ToolButton::MouseHoverInEvent(const MouseEvent& event)
+	{
+		Refresh();
+	}
+
+	void ToolButton::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		Refresh();
+	}
+
 	ResponseType ToolButton::Draw (Profile& profile)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-
 		if (is_down()) {
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
 				glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
+			} else {
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			}
 
             glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,

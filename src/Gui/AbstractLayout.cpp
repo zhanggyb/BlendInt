@@ -21,51 +21,59 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LAYOUT_HPP_
-#define _BLENDINT_GUI_LAYOUT_HPP_
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	class Layout: public Widget
+	using Stock::Shaders;
+
+	AbstractLayout::AbstractLayout()
+	{
+	}
+
+	AbstractLayout::~AbstractLayout()
+	{
+	}
+
+	void AbstractLayout::Add(Widget* widget, bool append)
+	{
+	}
+
+	void AbstractLayout::Insert(int index, Widget* widget)
 	{
 
-	public:
+	}
 
-		Layout ();
+	void AbstractLayout::Insert(int row, int column, Widget* widget)
+	{
 
-		virtual ~Layout ();
+	}
 
-		const Margin& margin () const {return margin_;}
+	void AbstractLayout::SetMargin(const Margin& margin)
+	{
+	}
 
-		void SetMargin (const Margin& margin);
+	void AbstractLayout::SetMargin(int left, int right, int top,
+			int bottom)
+	{
+	}
 
-		void SetMargin (int left, int right, int top, int bottom);
-
-	protected:
-
-		virtual void PerformMarginUpdate (const Margin& margin);
-
-		inline void set_margin (const Margin& margin)
-		{
-			margin_ = margin;
-		}
-
-		inline void set_margin (int left, int right, int top, int bottom)
-		{
-			margin_.set_left(left);
-			margin_.set_right(right);
-			margin_.set_top(top);
-			margin_.set_bottom(bottom);
-		}
-
-	private:
-
-		Margin margin_;
-
-	};
+	void AbstractLayout::PerformMarginUpdate(const Margin& margin)
+	{
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_LAYOUT_HPP_ */

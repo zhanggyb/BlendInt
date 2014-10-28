@@ -21,21 +21,26 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LAYOUT_HPP_
-#define _BLENDINT_GUI_LAYOUT_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
+#define _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Layout: public Widget
+	class AbstractLayout: public Widget
 	{
-
 	public:
 
-		Layout ();
+		AbstractLayout ();
 
-		virtual ~Layout ();
+		virtual ~AbstractLayout ();
+
+		virtual void Add (Widget* widget, bool append = true);
+
+		virtual void Insert (int index, Widget* widget);
+
+		virtual void Insert (int row, int column, Widget* widget);
 
 		const Margin& margin () const {return margin_;}
 
@@ -68,4 +73,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_LAYOUT_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_ */

@@ -58,9 +58,9 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	ScrollBar* bar = Manage(new ScrollBar);
 	ColorSelector* cs = Manage(new ColorSelector);
 
-	vp1->AddWidget(layout);
-	vp1->AddWidget(bar);
-	vp1->AddWidget(cs);
+	vp1->Add(layout);
+	vp1->Add(bar);
+	vp1->Add(cs);
 
 	Viewport* vp2 = Manage(new Viewport);
 	DBG_SET_NAME(vp2, "Viewport2");

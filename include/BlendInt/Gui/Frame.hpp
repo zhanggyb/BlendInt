@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_SCREEN_HPP_
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 

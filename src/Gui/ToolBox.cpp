@@ -89,7 +89,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBoxExt::AddWidget (Widget* widget)
+	void ToolBoxExt::Add (Widget* widget, bool append)
 	{
 		int x = margin_.left();
 		int y = GetLastPosition();
@@ -115,16 +115,17 @@ namespace BlendInt {
 
 	bool ToolBoxExt::IsExpandX () const
 	{
-		bool expand = false;
-
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
-			if(p->IsExpandX()) {
-				expand = true;
-				break;
-			}
-		}
-
-		return expand;
+		return false;
+//		bool expand = false;
+//
+//		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+//			if(p->IsExpandX()) {
+//				expand = true;
+//				break;
+//			}
+//		}
+//
+//		return expand;
 	}
 
 	bool ToolBoxExt::IsExpandY () const
@@ -407,8 +408,7 @@ namespace BlendInt {
 		int y = size().height() - margin_.top();
 
 		if(last_child()) {
-			y = last_child()->position().y();
-			y -= space_;
+			y = last_child()->position().y() - space_;
 		}
 
 		return y;
