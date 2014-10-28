@@ -216,15 +216,12 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
+		/*
 		if(refresh()) {
 
 			DBG_PRINT_MSG("%s", "Render to texture once");
 			set_refresh(false);
 			RenderToBuffer(profile_);
-
-//			texture_buffer_.texture()->bind();
-//			texture_buffer_.texture()->WriteToFile("texture.png");
-//			texture_buffer_.texture()->reset();
 		}
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -243,11 +240,13 @@ namespace BlendInt
 		GLSLProgram::reset();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		*/
 
-//		if(PreDraw(profile_)) {
-//			Draw(profile_);
-//			PostDraw(profile_);
-//		}
+		set_refresh(false);
+		if(PreDraw(profile_)) {
+			Draw(profile_);
+			PostDraw(profile_);
+		}
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
@@ -365,6 +364,7 @@ namespace BlendInt
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 			Shaders::instance->SetFrameProjectionMatrix(projection);
 
+			/*
 			GLfloat vertices[] = {
 					// coord						uv
 					0.f, 0.f,						0.f, 0.f,
@@ -376,6 +376,7 @@ namespace BlendInt
 			vertex_buffer_.bind();
 			vertex_buffer_.set_data(sizeof(vertices), vertices);
 			vertex_buffer_.reset();
+			*/
 
 			set_refresh(true);
 
@@ -543,6 +544,7 @@ namespace BlendInt
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
 		Shaders::instance->SetWidgetModelMatrix(identity);
 
+		/*
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
 
@@ -571,6 +573,7 @@ namespace BlendInt
 
 		glBindVertexArray(0);
 		vertex_buffer_.reset();
+		*/
 	}
 
 	void Context::DispatchHoverEvent(const MouseEvent& event)
@@ -665,6 +668,7 @@ namespace BlendInt
 		Refresh();
 	}
 
+	/*
     void Context::RenderToBuffer(Profile &profile)
     {
         // Create and set texture to render to.
@@ -735,5 +739,6 @@ namespace BlendInt
         fb->reset();
         delete fb; fb = 0;
     }
+    */
     
 }

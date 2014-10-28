@@ -117,6 +117,8 @@ namespace BlendInt {
 		texture_.reset();
 		GLSLProgram::reset();
 
+		Refresh();
+
 		return Accept;
 	}
 

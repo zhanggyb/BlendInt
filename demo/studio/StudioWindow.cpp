@@ -162,16 +162,17 @@ namespace BlendInt {
 	{
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
-			/* Render here */
-			main_context->Draw();
 
-            if(callback) {
-                (*callback)(param);
+			if(main_context->refresh()) {
+    			/* Render here */
+    			main_context->Draw();
+                if(callback) {
+                    (*callback)(param);
+                }
+    			/* Swap front and back buffers */
+    			glfwSwapBuffers(window);
             }
 
-			/* Swap front and back buffers */
-			glfwSwapBuffers(window);
-		
 			/* Poll for and process events */
 #ifdef __APPLE__
             glfwWaitEvents();
