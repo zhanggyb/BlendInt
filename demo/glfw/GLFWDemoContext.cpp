@@ -146,5 +146,4 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	AddFrame(ff2);
 	*/
-
 }

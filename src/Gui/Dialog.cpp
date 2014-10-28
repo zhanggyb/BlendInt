@@ -80,8 +80,18 @@ namespace BlendInt {
 	Dialog::~Dialog()
 	{
 		glDeleteVertexArrays(1, &vao_);
-
 		delete shadow_;
+
+		if(focused_widget_) {
+			set_widget_focus_status(focused_widget_, false);
+			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+			focused_widget_ = 0;
+		}
+
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+		}
 	}
 
 	void Dialog::SetLayout(AbstractLayout* layout)
@@ -107,6 +117,8 @@ namespace BlendInt {
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
+
+		Refresh();
 	}
 
 	void Dialog::AddWidget(Widget* widget)
@@ -116,6 +128,8 @@ namespace BlendInt {
 		} else {
 			PushBackSubWidget(widget);
 		}
+
+		Refresh();
 	}
 
 	void Dialog::PerformPositionUpdate(
@@ -156,14 +170,14 @@ namespace BlendInt {
 				y + (float)request.size()->height(),
 				100.f, -100.f);
 
+			set_size(*request.size());
+
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(*request.size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
 			buffer_.bind();
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.reset();
-
-			set_size(*request.size());
 
 			shadow_->Resize(size());
 

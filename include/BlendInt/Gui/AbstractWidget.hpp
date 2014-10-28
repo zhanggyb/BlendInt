@@ -606,6 +606,15 @@ namespace BlendInt {
 			}
 		}
 
+		inline void set_refresh (bool refresh)
+		{
+			if(refresh) {
+				SETBIT(flags_, WidgetFlagRefresh);
+			} else {
+				CLRBIT(flags_, WidgetFlagRefresh);
+			}
+		}
+
 		virtual bool PreDraw (Profile& profile) = 0;
 
 		virtual ResponseType Draw (Profile& profile) = 0;
@@ -809,15 +818,6 @@ namespace BlendInt {
 				SETBIT(flags_, WidgetFlagManaged);
 			} else {
 				CLRBIT(flags_, WidgetFlagManaged);
-			}
-		}
-
-		inline void set_refresh (bool refresh)
-		{
-			if(refresh) {
-				SETBIT(flags_, WidgetFlagRefresh);
-			} else {
-				CLRBIT(flags_, WidgetFlagRefresh);
 			}
 		}
 

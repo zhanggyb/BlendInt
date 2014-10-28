@@ -64,8 +64,8 @@ namespace BlendInt {
 
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_.reset();
@@ -265,6 +265,18 @@ namespace BlendInt {
 
 		assign_profile_frame(profile);
 
+		Shaders::instance->frame_inner_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+
+		GLSLProgram::reset();
+
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
@@ -278,17 +290,6 @@ namespace BlendInt {
 
 	ResponseType Frame::Draw (Profile& profile)
 	{
-		Shaders::instance->widget_inner_program()->use();
-
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
