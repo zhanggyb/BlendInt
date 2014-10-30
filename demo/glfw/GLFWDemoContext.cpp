@@ -38,7 +38,7 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 {
 	using namespace BI;
 
-	ToolBoxExt* vp1 = Manage(new ToolBoxExt);
+	ToolBox* vp1 = Manage(new ToolBox(Vertical));
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 

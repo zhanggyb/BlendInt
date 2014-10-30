@@ -53,14 +53,14 @@ void MainLayout::InitOnce ()
 	m_toolbar->Append(m_combo);
 	m_toolbar->Append(box);
 
-	ToolBox* tbox = Manage(new ToolBox);
-	Expander* expander = CreateExpander();
-	tbox->Append(expander);
+	//ToolBox* tbox = Manage(new ToolBox);
+	//Expander* expander = CreateExpander();
+	//tbox->Append(expander);
 
 	Splitter* splitter = Manage(new Splitter);
 
 	splitter->Append(m_imgview);
-	splitter->Append(tbox);
+	//splitter->Append(tbox);
 
 	Append(splitter);
 	Append(m_toolbar);

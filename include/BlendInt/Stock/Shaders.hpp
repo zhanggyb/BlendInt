@@ -42,15 +42,15 @@ namespace BlendInt {
 		enum LocationType {
 
 			// Triangles
-			TRIANGLE_COORD,
-			TRIANGLE_COLOR,
+			WIDGET_TRIANGLE_COORD,
+			WIDGET_TRIANGLE_COLOR,
 			//TRIANGLE_PROJECTION,
 			//TRIANGLE_VIEW,
-			TRIANGLE_POSITION,
-			TRIANGLE_ROTATION,
-			TRIANGLE_SCALE,
-			TRIANGLE_ANTI_ALIAS,
-			TRIANGLE_GAMMA,
+			WIDGET_TRIANGLE_POSITION,
+			WIDGET_TRIANGLE_ROTATION,
+			WIDGET_TRIANGLE_SCALE,
+			WIDGET_TRIANGLE_ANTI_ALIAS,
+			WIDGET_TRIANGLE_GAMMA,
 
 			WIDGET_INNER_COORD,
 			WIDGET_INNER_COLOR,
@@ -138,9 +138,9 @@ namespace BlendInt {
 				return primitive_program_;
 			}
 
-			const RefPtr<GLSLProgram>& triangle_program () const
+			const RefPtr<GLSLProgram>& widget_triangle_program () const
 			{
-				return triangle_program_;
+				return widget_triangle_program_;
 			}
 
 			const RefPtr<GLSLProgram>& widget_inner_program () const
@@ -273,7 +273,7 @@ namespace BlendInt {
 
 			RefPtr<GLSLProgram> primitive_program_;
 
-			RefPtr<GLSLProgram> triangle_program_;
+			RefPtr<GLSLProgram> widget_triangle_program_;
 
 			RefPtr<GLSLProgram> widget_inner_program_;
 
@@ -330,11 +330,11 @@ namespace BlendInt {
 
 			static const char* primitive_fragment_shader;
 
-			static const char* triangle_vertex_shader;
+			static const char* widget_triangle_vertex_shader;
 
-			static const char* triangle_geometry_shader;
+			static const char* widget_triangle_geometry_shader;
 
-			static const char* triangle_fragment_shader;
+			static const char* widget_triangle_fragment_shader;
 
 			static const char* widget_inner_vertex_shader;
 

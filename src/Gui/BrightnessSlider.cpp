@@ -85,7 +85,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
+						Shaders::instance->widget_triangle_program();
 		program->use();
 
 		program->SetUniform3f("u_position", 0.f, 0.f, 0.f);

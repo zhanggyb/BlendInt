@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
 		program->SetUniform3f("u_position", x, y, 0.f);

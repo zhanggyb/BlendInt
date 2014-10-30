@@ -80,7 +80,7 @@ namespace BlendInt {
 
 		ToolBar* CreateToolBarOnce ();
 
-		ToolBox* CreateSideBarOnce ();
+		//ToolBox* CreateSideBarOnce ();
 
 		Expander* CreateSystemDevicesOnce ();
 

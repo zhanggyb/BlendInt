@@ -67,7 +67,7 @@ void MainSpace::InitOnce ()
 
     Splitter* splitter = Manage(new Splitter);
 
-    ToolBox* tbox = CreateSideBox();
+    //ToolBox* tbox = CreateSideBox();
     ToolBar* bottom = CreateBottomBar();
 
     workspace_ = Manage(new Workspace);
@@ -78,14 +78,14 @@ void MainSpace::InitOnce ()
 	ToolBar* tb = Manage(new ToolBar);
 	workspace_->SetHeader(tb);
 
-	ToolBox* box1 = Manage(new ToolBox);
-	workspace_->SetLeftSideBar(box1);
+	//ToolBox* box1 = Manage(new ToolBox);
+	//workspace_->SetLeftSideBar(box1);
 
-	ToolBox* box2 = Manage(new ToolBox);
-	workspace_->SetRightSideBar(box2);
+	//ToolBox* box2 = Manage(new ToolBox);
+	//workspace_->SetRightSideBar(box2);
 
     splitter->Append(workspace_);
-    splitter->Append(tbox);
+    //splitter->Append(tbox);
 
 	Append(m_toolbar);
     Append(splitter);
@@ -242,6 +242,7 @@ BI::ToolBar* MainSpace::CreateToolBar()
 	return toolbar;
 }
 
+/*
 BI::ToolBox* MainSpace::CreateSideBox()
 {
 	ToolBox* toolbox = Manage(new ToolBox);
@@ -270,6 +271,7 @@ BI::ToolBox* MainSpace::CreateSideBox()
 
 	return toolbox;
 }
+*/
 
 BI::Expander* MainSpace::CreateTransformExpander()
 {

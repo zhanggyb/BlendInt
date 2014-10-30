@@ -44,127 +44,178 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	ToolBoxExt::ToolBoxExt ()
+	ToolBox::ToolBox (Orientation orientation)
 	: AbstractFrame(),
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),
-	vao_(0)
+	vao_(0),
+	orientation_(orientation)
 	{
-		set_size(400, 500);
+		if(orientation_ == Horizontal) {
+			set_size(400, 240);
+		} else {
+			set_size(240, 400);
+		}
 
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
-
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		inner_.generate();
-		inner_.bind();
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		inner_.reset();
+		InitializeToolBoxOnce();
 	}
 
-	ToolBoxExt::~ToolBoxExt()
+	ToolBox::ToolBox (int width, int height, Orientation orientation)
+	: AbstractFrame(),
+	focused_widget_(0),
+	hovered_widget_(0),
+	space_(1),
+	vao_(0),
+	orientation_(orientation)
+	{
+		set_size(width, height);
+
+		InitializeToolBoxOnce();
+	}
+
+	ToolBox::~ToolBox()
 	{
 		glDeleteVertexArrays(1, &vao_);
 
 		if(focused_widget_) {
 			set_widget_focus_status(focused_widget_, false);
-			focused_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
 
 		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
 		}
 	}
 
-	void ToolBoxExt::Add (Widget* widget, bool append)
+	void ToolBox::Add (Widget* widget, bool append)
 	{
-		int x = margin_.left();
-		int y = GetLastPosition();
-		int w = size().width() - margin_.hsum();
+		if(orientation_ == Horizontal) {
 
-		if(PushBackSubWidget(widget)) {
-			Size prefer = widget->GetPreferredSize();
-			y = y - prefer.height();
-			SetSubWidgetPosition(widget, x, y);
-			if(widget->IsExpandX()) {
-				ResizeSubWidget(widget, w, prefer.height());
-			} else {
-				if(widget->size().width() > w) {
-					ResizeSubWidget(widget, w, prefer.height());
+			int x = GetLastPosition();
+			int y = margin_.bottom();
+			int h = size().height() - margin_.vsum();
+
+			if(PushBackSubWidget(widget)) {
+
+				Size prefer = widget->GetPreferredSize();
+				SetSubWidgetPosition(widget, x, y);
+				if(widget->IsExpandY()) {
+					ResizeSubWidget(widget, prefer.width(), h);
 				} else {
-					ResizeSubWidget(widget, widget->size().width(), prefer.height());
+					if(widget->size().height() > h) {
+						ResizeSubWidget(widget, prefer.width(), h);
+					} else {
+						ResizeSubWidget(widget, prefer.width(), widget->size().height());
+						SetSubWidgetPosition(widget, x,
+										y + (h - widget->size().height()) / 2);
+					}
 				}
+
+				Refresh();
 			}
 
-			Refresh();
+		} else {
+
+			int x = margin_.left();
+			int y = GetLastPosition();
+			int w = size().width() - margin_.hsum();
+
+			if(PushBackSubWidget(widget)) {
+				Size prefer = widget->GetPreferredSize();
+				y = y - prefer.height();
+				SetSubWidgetPosition(widget, x, y);
+				if(widget->IsExpandX()) {
+					ResizeSubWidget(widget, w, prefer.height());
+				} else {
+					if(widget->size().width() > w) {
+						ResizeSubWidget(widget, w, prefer.height());
+					} else {
+						ResizeSubWidget(widget, widget->size().width(), prefer.height());
+					}
+				}
+
+				Refresh();
+			}
+
 		}
 	}
 
-	bool ToolBoxExt::IsExpandX () const
+	bool ToolBox::IsExpandX () const
 	{
-		return false;
-//		bool expand = false;
-//
-//		for(AbstractWidget* p = first_child(); p; p = p->next()) {
-//			if(p->IsExpandX()) {
-//				expand = true;
-//				break;
-//			}
-//		}
-//
-//		return expand;
+		return orientation_ == Horizontal ? true : false;
 	}
 
-	bool ToolBoxExt::IsExpandY () const
+	bool ToolBox::IsExpandY () const
 	{
-		return true;
+		return orientation_ == Vertical ? true : false;
 	}
 
-	Size ToolBoxExt::GetPreferredSize () const
+	Size ToolBox::GetPreferredSize () const
 	{
-		Size preferred_size(400, 500);
+		Size preferred_size;
 
-		if(subs_count()) {
+		if(subs_count() == 0) {
 
-			Size tmp_size;
-			preferred_size.set_height(-space_);
-
-			for(AbstractWidget* p = first_child(); p; p = p->next())
-			{
-				if(p->visiable()) {
-					tmp_size = p->GetPreferredSize();
-
-					preferred_size.add_height(tmp_size.height() + space_);
-					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
-				}
+			if(orientation_ == Horizontal) {
+				preferred_size.reset(400, 240);
+			} else {
+				preferred_size.reset(240, 400);
 			}
 
-			preferred_size.add_width(margin_.hsum());
-			preferred_size.add_height(margin_.vsum());
+		} else {
+
+			Size tmp;
+
+			if(orientation_ == Horizontal) {
+
+				preferred_size.set_width(-space_);
+
+				for(AbstractWidget* p = first_child(); p; p = p->next())
+				{
+					if(p->visiable()) {
+						tmp = p->GetPreferredSize();
+
+						preferred_size.add_width(tmp.width() + space_);
+						preferred_size.set_height(std::max(preferred_size.height(), tmp.height()));
+					}
+				}
+
+				preferred_size.add_width(margin_.hsum());
+				preferred_size.add_height(margin_.vsum());
+
+			} else {
+
+				preferred_size.set_height(-space_);
+
+				for(AbstractWidget* p = first_child(); p; p = p->next())
+				{
+					if(p->visiable()) {
+						tmp = p->GetPreferredSize();
+
+						preferred_size.add_height(tmp.height() + space_);
+						preferred_size.set_width(std::max(preferred_size.width(), tmp.width()));
+					}
+				}
+
+				preferred_size.add_width(margin_.hsum());
+				preferred_size.add_height(margin_.vsum());
+
+			}
+
 		}
 
 		return preferred_size;
 	}
 
-	bool ToolBoxExt::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool ToolBox::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ToolBoxExt::PerformPositionUpdate(const PositionUpdateRequest& request)
+	void ToolBox::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			float x = static_cast<float>(request.position()->x()  + offset().x());
@@ -187,7 +238,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBoxExt::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -221,7 +272,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool ToolBoxExt::PreDraw (Profile& profile)
+	bool ToolBox::PreDraw (Profile& profile)
 	{
 		if(!visiable()) return false;
 
@@ -249,7 +300,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ToolBoxExt::Draw (Profile& profile)
+	ResponseType ToolBox::Draw (Profile& profile)
 	{
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
@@ -258,29 +309,29 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Accept;
 	}
 
-	void ToolBoxExt::PostDraw (Profile& profile)
+	void ToolBox::PostDraw (Profile& profile)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
-	void ToolBoxExt::FocusEvent (bool focus)
+	void ToolBox::FocusEvent (bool focus)
 	{
 	}
 
-	void ToolBoxExt::MouseHoverInEvent (const MouseEvent& event)
+	void ToolBox::MouseHoverInEvent (const MouseEvent& event)
 	{
 	}
 
-	void ToolBoxExt::MouseHoverOutEvent (const MouseEvent& event)
+	void ToolBox::MouseHoverOutEvent (const MouseEvent& event)
 	{
 		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
 		}
 	}
 
-	ResponseType ToolBoxExt::KeyPressEvent (const KeyEvent& event)
+	ResponseType ToolBox::KeyPressEvent (const KeyEvent& event)
 	{
 		set_event_frame(event, this);
 
@@ -293,7 +344,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ToolBoxExt::MousePressEvent (const MouseEvent& event)
+	ResponseType ToolBox::MousePressEvent (const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -318,7 +369,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType ToolBoxExt::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -331,7 +382,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType ToolBoxExt::MouseMoveEvent (const MouseEvent& event)
+	ResponseType ToolBox::MouseMoveEvent (const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -343,7 +394,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType ToolBoxExt::DispatchHoverEvent (const MouseEvent& event)
+	ResponseType ToolBox::DispatchHoverEvent (const MouseEvent& event)
 	{
 		if(Contain(event.position())) {
 
@@ -353,14 +404,14 @@ namespace BlendInt {
 
 				if(hovered_widget_) {
 					hovered_widget_->destroyed().disconnectOne(this,
-							&ToolBoxExt::OnHoverWidgetDestroyed);
+							&ToolBox::OnHoverWidgetDestroyed);
 				}
 
 				hovered_widget_ = new_hovered_widget;
 				if(hovered_widget_) {
 
 					events()->connect(hovered_widget_->destroyed(), this,
-							&ToolBoxExt::OnHoverWidgetDestroyed);
+							&ToolBox::OnHoverWidgetDestroyed);
 				}
 
 			}
@@ -373,7 +424,66 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBoxExt::FillSubWidgets ()
+	void ToolBox::InitializeToolBoxOnce()
+	{
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		inner_.reset();
+	}
+
+	void ToolBox::FillSubWidgets ()
+	{
+		if(orientation_ == Horizontal) {
+			FillSubWidgetsHorizontally();
+		} else {
+			FillSubWidgetsVertically();
+		}
+	}
+
+	void ToolBox::FillSubWidgetsHorizontally()
+	{
+		int x = margin_.left();
+		int y = margin_.bottom();
+		//int width = size().width() - margin_.hsum();
+		int height = size().height() - margin_.vsum();
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			SetSubWidgetPosition(p, x, y);
+
+			if (p->IsExpandY()) {
+				ResizeSubWidget(p, p->size().width(), height);
+			} else {
+
+				if (p->size().height() > height) {
+					ResizeSubWidget(p, p->size().width(), height);
+				} else {
+					SetSubWidgetPosition(p, x,
+							y + (height - p->size().height()) / 2);
+				}
+
+			}
+
+			x += p->size().width() + space_;
+		}
+	}
+
+	void ToolBox::FillSubWidgetsVertically()
 	{
 		int x = margin_.left();
 		int y = size().height() - margin_.top();
@@ -403,254 +513,67 @@ namespace BlendInt {
 		}
 	}
 
-	int ToolBoxExt::GetLastPosition () const
+	int ToolBox::GetLastPosition () const
 	{
-		int y = size().height() - margin_.top();
+		int retval = 0;
 
-		if(last_child()) {
-			y = last_child()->position().y() - space_;
+		if(orientation_ == Horizontal) {
+
+			retval = margin_.left();
+			if (last_child()) {
+				retval = last_child()->position().x() + last_child()->size().width() + space_;
+			}
+
+		} else {
+
+			retval = size().height() - margin_.top();
+			if(last_child()) {
+				retval = last_child()->position().y() - space_;
+			}
+
 		}
 
-		return y;
+		return retval;
 	}
 
-	void ToolBoxExt::SetFocusedWidget (Widget* widget)
+	void ToolBox::SetFocusedWidget (Widget* widget)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, false);
-			focused_widget_->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, true);
-			events()->connect(focused_widget_->destroyed(), this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+			events()->connect(focused_widget_->destroyed(), this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 	}
 
-	void ToolBoxExt::OnFocusedWidgetDestroyed (Widget* widget)
+	void ToolBox::OnFocusedWidgetDestroyed (Widget* widget)
 	{
 		assert(focused_widget_ == widget);
 		assert(widget->focus());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &ToolBoxExt::OnFocusedWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 
 		focused_widget_ = 0;
 	}
 
-	void ToolBoxExt::OnHoverWidgetDestroyed (Widget* widget)
+	void ToolBox::OnHoverWidgetDestroyed (Widget* widget)
 	{
 		assert(widget->hover());
 		assert(hovered_widget_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &ToolBoxExt::OnHoverWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = 0;
-	}
-
-	// -------------------------------
-
-	ToolBox::ToolBox()
-	: Layout(),
-	  vao_(0),
-	  space_(1)
-	{
-		set_size(200, 400);
-
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		inner_.generate();
-		inner_.bind();
-
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		inner_.reset();
-	}
-
-	ToolBox::~ToolBox()
-	{
-		glDeleteVertexArrays(1, &vao_);
-	}
-	
-	void ToolBox::Append (AbstractWidget* widget)
-	{
-		int x = margin().left();
-		int y = GetLastPosition();
-		int w = size().width() - margin().hsum();
-
-		if(PushBackSubWidget(widget)) {
-			Size prefer = widget->GetPreferredSize();
-			y = y - prefer.height();
-			SetSubWidgetPosition(widget, x, y);
-			if(widget->IsExpandX()) {
-				ResizeSubWidget(widget, w, prefer.height());
-			} else {
-				if(widget->size().width() > w) {
-					ResizeSubWidget(widget, w, prefer.height());
-				} else {
-					ResizeSubWidget(widget, widget->size().width(), prefer.height());
-				}
-			}
-		}
-	}
-	
-	bool ToolBox::IsExpandY () const
-	{
-		return true;
-	}
-	
-	Size ToolBox::GetPreferredSize () const
-	{
-		Size preferred_size;
-
-		if(first_child() == 0) {
-
-			preferred_size.set_width(200);
-			preferred_size.set_height(400);
-
-		} else {
-
-			Size tmp_size;
-			preferred_size.set_height(-space_);
-
-			for(AbstractWidget* p = first_child(); p; p = p->next())
-			{
-				if(p->visiable()) {
-					tmp_size = p->GetPreferredSize();
-
-					preferred_size.add_height(tmp_size.height() + space_);
-					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
-				}
-			}
-
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
-		}
-
-		return preferred_size;
-	}
-
-	bool ToolBox::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ToolBox::PerformMarginUpdate (const Margin& request)
-	{
-		int x = request.left();
-		int y = request.bottom();
-		int w = size().width() - request.hsum();
-		int h = size().height() - request.vsum();
-
-		FillSubWidgets(x, y, w, h, space_);
-	}
-
-	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			int x = margin().left();
-			int y = margin().bottom();
-			int w = request.size()->width() - margin().hsum();
-			int h = request.size()->height() - margin().vsum();
-
-			FillSubWidgets(x, y, w, h, space_);
-
-			set_size(*request.size());
-
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
-
-			inner_.bind();
-			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			inner_.reset();
-
-		} else if (request.target()->parent() == this) {
-			FillSubWidgets(size(), margin(), space_);
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	ResponseType ToolBox::Draw (Profile& profile)
-	{
-		Shaders::instance->widget_inner_program()->use();
-
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
-		return Ignore;
-	}
-
-	int ToolBox::GetLastPosition () const
-	{
-		int y = size().height() - margin().top();
-
-		if(last_child()) {
-			y = last_child()->position().y();
-			y -= space_;
-		}
-
-		return y;
-	}
-
-	void ToolBox::FillSubWidgets (const Size& out_size,
-					const Margin& margin, int space)
-	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int width = out_size.width() - margin.hsum();
-		int height = out_size.height() - margin.vsum();
-
-		FillSubWidgets (x, y, width, height, space);
-	}
-
-	void ToolBox::FillSubWidgets (int x, int y, int width, int height,
-					int space)
-	{
-		y = y + height + space;
-
-		for(AbstractWidget* p = first_child(); p; p = p->next())
-		{
-			y = y - p->size().height() - space;
-
-			SetSubWidgetPosition(p, x, y);
-
-			if(p->IsExpandX()) {
-				ResizeSubWidget(p, width, p->size().height());
-			} else {
-
-				if(p->size().width() > width) {
-					ResizeSubWidget(p, width, p->size().height());
-				} else {
-					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2,
-									y);
-				}
-
-			}
-		}
 	}
 
 }

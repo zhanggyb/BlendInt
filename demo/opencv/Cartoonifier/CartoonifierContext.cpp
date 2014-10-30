@@ -42,11 +42,6 @@ CartoonifierContext::CartoonifierContext()
 
 	expander->Resize(expander->GetPreferredSize());
 
-	ToolBox* toolbox = Manage(new ToolBox);
-	toolbox->Append(expander);
-
-	dialog->AddWidget(toolbox);
-
 	AddFrame(dialog);
 
 	CVVideoView* video = Manage(new CVVideoView);

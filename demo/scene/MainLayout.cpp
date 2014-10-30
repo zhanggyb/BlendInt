@@ -73,14 +73,14 @@ void MainLayout::InitOnce ()
 
     Splitter* splitter = Manage(new Splitter);
 
-    ToolBox* tbox = CreateToolBox();
+    //ToolBox* tbox = CreateToolBox();
 
     m_tab = CreateTab();
 
     ToolBar* bottom = CreateBottomBar();
 
     splitter->Append(m_tab);
-    splitter->Append(tbox);
+    //splitter->Append(tbox);
 
 	Append(m_menubar);
 	Append(m_toolbar);
@@ -393,6 +393,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	return menubar;
 }
 
+/*
 BI::ToolBox* MainLayout::CreateToolBox()
 {
 	ToolBox* toolbox = Manage(new ToolBox);
@@ -408,6 +409,7 @@ BI::ToolBox* MainLayout::CreateToolBox()
 
 	return toolbox;
 }
+*/
 
 BI::Expander* MainLayout::CreateTransformExpander()
 {

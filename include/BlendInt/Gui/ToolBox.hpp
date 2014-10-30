@@ -30,13 +30,15 @@
 
 namespace BlendInt {
 
-	class ToolBoxExt: public AbstractFrame
+	class ToolBox: public AbstractFrame
 	{
 	public:
 
-		ToolBoxExt ();
+		ToolBox (Orientation orientation = Horizontal);
 
-		virtual ~ToolBoxExt ();
+		ToolBox (int width, int height, Orientation orientation = Horizontal);
+
+		virtual ~ToolBox ();
 
 		void Add (Widget* widget, bool append = true);
 
@@ -88,7 +90,13 @@ namespace BlendInt {
 
 	private:
 
+		void InitializeToolBoxOnce ();
+
 		void FillSubWidgets ();
+
+		void FillSubWidgetsHorizontally ();
+
+		void FillSubWidgetsVertically ();
 
 		int GetLastPosition () const;
 
@@ -113,50 +121,9 @@ namespace BlendInt {
 		GLBuffer<> inner_;
 
 		Margin margin_;
-	};
 
-	// -------------------------------------
-
-	class ToolBox: public Layout
-	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBox);
-
-	public:
-
-		ToolBox();
-
-		virtual ~ToolBox();
-
-		void Append (AbstractWidget* widget);
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-	protected:
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
-	private:
-
-		void FillSubWidgets (const Size& out_size, const Margin& margin, int space);
-
-		void FillSubWidgets (int x, int y, int width, int height, int space);
-
-		int GetLastPosition () const;
-
-		GLuint vao_;
-
-		int space_;
-
-		GLBuffer<> inner_;
-
+		// Layout orientation
+		Orientation orientation_;
 	};
 
 }

@@ -186,7 +186,7 @@ namespace BlendInt {
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
-				glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);
 			} else {
 				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			}

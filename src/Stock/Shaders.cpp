@@ -136,7 +136,7 @@ namespace BlendInt {
 			"	vFragColor = vColor;"
 			"}";
 
-		const char* Shaders::triangle_vertex_shader =
+		const char* Shaders::widget_triangle_vertex_shader =
 			"#version 330\n"
 			""
 			"layout(location=0) in vec2 a_coord;"
@@ -148,7 +148,7 @@ namespace BlendInt {
 			"	VertexColor = a_color;"
 			"}";
 
-		const char* Shaders::triangle_geometry_shader =
+		const char* Shaders::widget_triangle_geometry_shader =
 		        "#version 330\n"
 			""
 			"layout (triangles) in;"
@@ -253,7 +253,7 @@ namespace BlendInt {
 				        ""
 				        "}";
 
-		const char* Shaders::triangle_fragment_shader =
+		const char* Shaders::widget_triangle_fragment_shader =
 		        "#version 330\n"
 				        ""
 				        "in vec4 PreFragColor;"
@@ -792,7 +792,7 @@ namespace BlendInt {
 		{
 			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
-			triangle_program_.reset(new GLSLProgram);
+			widget_triangle_program_.reset(new GLSLProgram);
 			widget_inner_program_.reset(new GLSLProgram);
 			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
@@ -1031,12 +1031,12 @@ namespace BlendInt {
 
 			// set uniform block in triangle program
 
-			block_index = glGetUniformBlockIndex(triangle_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_triangle_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(triangle_program_->id(), block_index, widget_matrix_binding_point_);
+			glUniformBlockBinding(widget_triangle_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in image program
 
@@ -1133,32 +1133,32 @@ namespace BlendInt {
 
 		bool Shaders::SetupTriangleProgram()
 		{
-			if (!triangle_program_->Create()) {
+			if (!widget_triangle_program_->Create()) {
 				return false;
 			}
 
-			triangle_program_->AttachShader(
-			        triangle_vertex_shader, GL_VERTEX_SHADER);
-			triangle_program_->AttachShader(
-			        triangle_geometry_shader,
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_vertex_shader, GL_VERTEX_SHADER);
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_geometry_shader,
 			        GL_GEOMETRY_SHADER);
-			triangle_program_->AttachShader(
-			        triangle_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!triangle_program_->Link()) {
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_triangle_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        triangle_program_->id());
+				        widget_triangle_program_->id());
 				return false;
 			}
 
-			locations_[TRIANGLE_COORD] = triangle_program_->GetAttributeLocation("a_coord");
-			locations_[TRIANGLE_COLOR] = triangle_program_->GetAttributeLocation("a_color");
+			locations_[WIDGET_TRIANGLE_COORD] = widget_triangle_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_TRIANGLE_COLOR] = widget_triangle_program_->GetAttributeLocation("a_color");
 			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
 			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
-			locations_[TRIANGLE_POSITION] = triangle_program_->GetUniformLocation("u_position");
-			locations_[TRIANGLE_ROTATION] = triangle_program_->GetUniformLocation("u_rotation");
-			locations_[TRIANGLE_SCALE] = triangle_program_->GetUniformLocation("u_scale");
-			locations_[TRIANGLE_ANTI_ALIAS] = triangle_program_->GetUniformLocation("u_AA");
-			locations_[TRIANGLE_GAMMA] = triangle_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_TRIANGLE_POSITION] = widget_triangle_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_TRIANGLE_ROTATION] = widget_triangle_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("u_scale");
+			locations_[WIDGET_TRIANGLE_ANTI_ALIAS] = widget_triangle_program_->GetUniformLocation("u_AA");
+			locations_[WIDGET_TRIANGLE_GAMMA] = widget_triangle_program_->GetUniformLocation("u_gamma");
 
 			return true;
 		}
