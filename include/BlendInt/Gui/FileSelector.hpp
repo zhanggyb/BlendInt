@@ -32,8 +32,7 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/FileBrowser.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
-#include <BlendInt/Gui/ToolBar.hpp>
-#include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 
 #include <Cpp/Events.hpp>
@@ -78,7 +77,7 @@ namespace BlendInt {
 
 		VLayout* CreateBrowserAreaOnce ();
 
-		ToolBar* CreateToolBarOnce ();
+		HLayout* CreateToolButtonsOnce ();
 
 		//ToolBox* CreateSideBarOnce ();
 

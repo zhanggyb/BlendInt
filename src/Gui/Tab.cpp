@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Tab::Add (const String& title, AbstractWidget* widget)
+	void Tab::Add (const String& title, Widget* widget)
 	{
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);

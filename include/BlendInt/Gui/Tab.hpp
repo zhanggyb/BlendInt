@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~Tab ();
 
-		void Add (const String& title, AbstractWidget* widget);
+		void Add (const String& title, Widget* widget);
 
 		virtual bool IsExpandX () const;
 

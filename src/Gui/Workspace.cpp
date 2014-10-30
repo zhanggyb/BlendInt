@@ -40,7 +40,6 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
-#include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>

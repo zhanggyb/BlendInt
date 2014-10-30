@@ -24,12 +24,11 @@
 #ifndef _BLENDINT_GUI_STACKPANEL_HPP_
 #define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <BlendInt/Gui/StackLayout.hpp>
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Stack: public StackLayout
+	class Stack: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 
@@ -39,19 +38,38 @@ namespace BlendInt {
 
 		virtual ~Stack ();
 
+		void Prepend (Widget* widget);
+
+		void Append (Widget* widget);
+
+		void Insert (int index, Widget* widget);
+
+		void Remove (Widget* widget);
+
+		int GetIndex () const;
+
+		void SetIndex (int index);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+		inline Widget* active_widget () const
+		{
+			return active_widget_;
+		}
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		void HideSubWidget (int index);
 
 	private:
 
-		void InitializeStack ();
-
-		GLuint vao_;
-
-        GLBuffer<> inner_;
+		Widget* active_widget_;
 
 	};
 

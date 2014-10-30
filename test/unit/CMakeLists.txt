@@ -13,7 +13,7 @@ add_subdirectory(Viewport)
 add_subdirectory(FrameSplitter)
 add_subdirectory(ToolBox)
 add_subdirectory(Frame)
-add_subdirectory(ToolBar)
+#add_subdirectory(ToolBar)
 add_subdirectory(TextEntry)
 
 #add_subdirectory(ClockWidget)

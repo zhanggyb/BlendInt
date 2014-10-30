@@ -170,7 +170,7 @@ namespace BlendInt {
 		layout->SetMargin(2, 2, 2, 2);
 		layout->SetSpace(0);
 
-		ToolBar* toolbar = CreateToolBarOnce();
+		HLayout* toolbar = CreateToolButtonsOnce();
 		//ToolBox* sidebar = CreateSideBarOnce();
 		VLayout* area = CreateBrowserAreaOnce();
 
@@ -245,9 +245,9 @@ namespace BlendInt {
 		return vbox;
 	}
 
-	ToolBar* FileSelector::CreateToolBarOnce()
+	HLayout* FileSelector::CreateToolButtonsOnce()
 	{
-		ToolBar* toolbar = Manage(new ToolBar);
+		HLayout* toolbar = Manage(new HLayout);
 		DBG_SET_NAME(toolbar, "ToolBar");
 		toolbar->SetMargin(2, 2, 2, 2);
 
