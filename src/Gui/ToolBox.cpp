@@ -45,7 +45,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ToolBox::ToolBox (Orientation orientation)
-	: AbstractFrame(),
+	: Frame(),
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),
@@ -62,7 +62,7 @@ namespace BlendInt {
 	}
 
 	ToolBox::ToolBox (int width, int height, Orientation orientation)
-	: AbstractFrame(),
+	: Frame(),
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),

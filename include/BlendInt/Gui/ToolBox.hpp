@@ -26,11 +26,11 @@
 
 #include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public AbstractFrame
+	class ToolBox: public Frame
 	{
 	public:
 

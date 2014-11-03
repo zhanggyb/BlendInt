@@ -1,6 +1,6 @@
 #include "ButtonTest1.hpp"
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 #include <Common/Window.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
@@ -32,7 +32,7 @@ TEST_F(ButtonTest1, Foo1)
 	SetContext(context);
 	context->Resize(640, 480);
 
-	Frame* frame = Manage(new Frame);
+	Dialog* frame = Manage(new Dialog);
 	frame->Resize(640, 480);
 
 	context->AddFrame(frame);
@@ -65,7 +65,7 @@ TEST_F(ButtonTest1, SetIcon1)
 	SetContext(context);
 	context->Resize(640, 480);
 
-	Frame* frame = Manage(new Frame);
+	Dialog* frame = Manage(new Dialog);
 	frame->Resize(640, 480);
 
 	context->AddFrame(frame);
@@ -128,7 +128,7 @@ TEST_F(ButtonTest1, PreferSizing1)
 	SetContext(context);
 	context->Resize(640, 480);
 
-	Frame* frame = Manage(new Frame);
+	Dialog* frame = Manage(new Dialog);
 	frame->Resize(640, 480);
 
 	context->AddFrame(frame);
@@ -191,7 +191,7 @@ TEST_F(ButtonTest1, PreferSizing2)
 	SetContext(context);
 	context->Resize(640, 480);
 
-	Frame* frame = Manage(new Frame);
+	Dialog* frame = Manage(new Dialog);
 	frame->Resize(640, 480);
 
 	context->AddFrame(frame);

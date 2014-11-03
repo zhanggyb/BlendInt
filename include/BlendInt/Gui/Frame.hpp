@@ -39,35 +39,7 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		void SetLayout (AbstractLayout* layout);
-
-		void AddWidget (Widget* widget);
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-		Widget* focused_widget () const
-		{
-			return focused_widget_;
-		}
-
-		Widget* hovered_widget () const
-		{
-			return hovered_widget_;
-		}
-
 	protected:
-
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual bool PreDraw (Profile& profile);
 
@@ -90,30 +62,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
-
-	private:
-
-		void SetFocusedWidget (Widget* widget);
-
-		void OnFocusedWidgetDestroyed (Widget* widget);
-
-		void OnHoverWidgetDestroyed (Widget* widget);
-
-		void OnLayoutDestroyed (Widget* layout);
-
-		glm::mat4 projection_matrix_;
-
-		glm::mat4 model_matrix_;
-
-		Widget* focused_widget_;
-
-		Widget* hovered_widget_;
-
-		AbstractLayout* layout_;
-
-		GLuint vao_;
-
-		GLBuffer<> inner_;
 
 	};
 

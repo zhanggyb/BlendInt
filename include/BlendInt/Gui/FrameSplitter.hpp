@@ -32,7 +32,7 @@ namespace BlendInt {
 	class Widget;
 	class FrameSplitter;
 
-	class FrameSplitterHandle: public AbstractFrame
+	class FrameSplitterHandle: public Frame
 	{
 	public:
 
@@ -96,7 +96,7 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	class FrameSplitter: public AbstractFrame
+	class FrameSplitter: public Frame
 	{
 	public:
 
@@ -104,9 +104,9 @@ namespace BlendInt {
 
 		virtual ~FrameSplitter ();
 
-		void AddFrame (AbstractFrame* frame, bool append = true);
+		void AddFrame (Frame* frame, bool append = true);
 
-		void Insert (int index, AbstractFrame* viewport);
+		void Insert (int index, Frame* frame);
 
 		virtual bool IsExpandX () const;
 

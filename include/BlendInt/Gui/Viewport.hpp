@@ -28,11 +28,11 @@
 #include <BlendInt/Gui/PerspectiveCamera.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class Viewport: public AbstractFrame
+	class Viewport: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport);
 

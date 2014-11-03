@@ -3,6 +3,7 @@
 
 add_subdirectory(Object)
 
+add_subdirectory(Bezier)
 add_subdirectory(Button)
 add_subdirectory(Dialog)
 add_subdirectory(NumericalSlider)

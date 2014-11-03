@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Viewport::Viewport()
-	: AbstractFrame(),
+	: Frame(),
 	  vao_(0)
 	{
 		set_size(640, 480);

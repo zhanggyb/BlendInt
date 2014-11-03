@@ -46,7 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FrameSplitterHandle::FrameSplitterHandle(Orientation orientation)
-	: AbstractFrame(),
+	: Frame(),
 	  orientation_(orientation),
 	  vao_(0),
 	  prev_size_(0),
@@ -304,7 +304,7 @@ namespace BlendInt {
 	// --------------------------------
 
 	FrameSplitter::FrameSplitter(Orientation orientation)
-	: AbstractFrame(),
+	: Frame(),
 	  orientation_(orientation),
 	  hover_(0)
 	{
@@ -316,7 +316,7 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::AddFrame (AbstractFrame* frame, bool append)
+	void FrameSplitter::AddFrame (Frame* frame, bool append)
 	{
 		if((frame == 0) || (frame->parent() == this)) return;
 
@@ -342,7 +342,7 @@ namespace BlendInt {
 		AlignSubFrames(orientation_, size());
 	}
 
-	void FrameSplitter::Insert(int index, AbstractFrame* viewport)
+	void FrameSplitter::Insert(int index, Frame* frame)
 	{
 	}
 
