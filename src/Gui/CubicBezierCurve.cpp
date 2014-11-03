@@ -36,12 +36,35 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/CubicBezierCurve.hpp>
 
+#include <BlendInt/Stock/Shaders.hpp>
+
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	CubicBezierCurve::CubicBezierCurve ()
 	: AbstractCurve(),
 	  vao_(0)
 	{
+		GLfloat vertices[] = {
+				0.f, 0.f,	0.f,
+				100.f, 100.f, 	0.f
+		};
+
+		glGenVertexArrays(1, &vao_);
+
+		glBindVertexArray(vao_);
+		buffer_.generate();
+		buffer_.bind();
+
+		buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_LINE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_LINE_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		buffer_.reset();
 	}
 
 	CubicBezierCurve::~CubicBezierCurve()
@@ -51,23 +74,39 @@ namespace BlendInt {
 
 	void CubicBezierCurve::Unpack()
 	{
+		// demo and test
+
 		size_t n = 0;
 		n = GetPointNumber(max_subdiv_count);
 		DBG_PRINT_MSG("10, points: %ld", n);
 
 		glm::vec2 p1(0.f, 0.f);
-		glm::vec2 p2(10.f, 10.f);
-		glm::vec2 p3(20.f, 10.f);
-		glm::vec2 p4(30.f, 0.f);
-		std::vector<GLfloat> verts(n * 2, 0.f);
+		glm::vec2 p2(100.f, 100.f);
+		glm::vec2 p3(200.f, 100.f);
+		glm::vec2 p4(300.f, 0.f);
+		std::vector<GLfloat> verts(n * 3, 0.f);
 
 		size_t index = 0;
 		GenerateBezierCurveVertices(p1, p2, p3, p4, 0, &index, verts);
+
+		buffer_.bind();
+		buffer_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+		buffer_.reset();
 	}
 
 	void CubicBezierCurve::Draw()
 	{
+		Shaders::instance->widget_line_program()->use();
 
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_LINE_COLOR), 1.f, 0.1f, 0.1f, 1.f);
+
+		size_t n = GetPointNumber(max_subdiv_count);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_LINE_STRIP, 0, n);
+		glBindVertexArray(0);
+
+		GLSLProgram::reset();
 	}
 
 	/*
@@ -99,10 +138,10 @@ namespace BlendInt {
 		if(level > (max_subdiv_count - 1)) {
 
 			// draw line from p1 to p4
-			vertices[(*index) * 2 + 0] = p1.x;
-			vertices[(*index) * 2 + 1] = p1.y;
-			vertices[(*index + 1) * 2 + 0] = p4.x;
-			vertices[(*index + 1) * 2 + 1] = p4.y;
+			vertices[(*index) * 3 + 0] = p1.x;
+			vertices[(*index) * 3 + 1] = p1.y;
+			vertices[(*index + 1) * 3 + 0] = p4.x;
+			vertices[(*index + 1) * 3 + 1] = p4.y;
 
 			(*index)++;
 

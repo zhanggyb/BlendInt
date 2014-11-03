@@ -554,6 +554,41 @@ namespace BlendInt {
 				"	FragmentColor = color + color_calib;"
 				"}";
 
+		// -------------------------------------------
+
+		const char* Shaders::widget_line_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"out float VertexShade;"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
+
+		const char* Shaders::widget_line_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+				"}";
+
+		// ---------------------------------------------------------------
+
 		const char* Shaders::frame_inner_vertex_shader =
 				"#version 330\n"
 				""
@@ -797,6 +832,7 @@ namespace BlendInt {
 			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
 			widget_image_program_.reset(new GLSLProgram);
+			widget_line_program_.reset(new GLSLProgram);
 			frame_inner_program_.reset(new GLSLProgram);
 			frame_outer_program_.reset(new GLSLProgram);
 			frame_image_program_.reset(new GLSLProgram);
@@ -934,13 +970,16 @@ namespace BlendInt {
 			if(!SetupWidgetOuterProgram())
 				return false;
 
-			if(!SetupTextProgram())
+			if(!SetupWidgetTextProgram())
 				return false;
 
-			if(!SetupTriangleProgram())
+			if(!SetupWidgetTriangleProgram())
 				return false;
 
-			if(!SetupImageProgram())
+			if(!SetupWidgetImageProgram())
+				return false;
+
+			if(!SetupWidgetLineProgram())
 				return false;
 
 			if(!SetupPrimitiveProgram())
@@ -1047,6 +1086,15 @@ namespace BlendInt {
 			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
 			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrix_binding_point_);
 
+			// set uniform block in line program
+
+			block_index = glGetUniformBlockIndex(widget_line_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_line_program_->id(), block_index, widget_matrix_binding_point_);
+
 			// ------------------------------ Frame matrix uniform block
 
 			block_index = glGetUniformBlockIndex(frame_inner_program_->id(), "FrameMatrix");
@@ -1106,7 +1154,7 @@ namespace BlendInt {
 			return true;
 		}
 
-		bool Shaders::SetupTextProgram()
+		bool Shaders::SetupWidgetTextProgram()
 		{
 			if (!widget_text_program_->Create())
 				return false;
@@ -1131,7 +1179,7 @@ namespace BlendInt {
 			return true;
 		}
 
-		bool Shaders::SetupTriangleProgram()
+		bool Shaders::SetupWidgetTriangleProgram()
 		{
 			if (!widget_triangle_program_->Create()) {
 				return false;
@@ -1237,7 +1285,7 @@ namespace BlendInt {
 			return true;
 		}
 
-		bool Shaders::SetupImageProgram()
+		bool Shaders::SetupWidgetImageProgram()
 		{
 			if (!widget_image_program_->Create()) {
 				return false;
@@ -1261,6 +1309,28 @@ namespace BlendInt {
 			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("u_rotation");
 			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("TexID");
 			locations_[WIDGET_IMAGE_GAMMA] = widget_image_program_->GetUniformLocation("u_gamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetLineProgram()
+		{
+			if (!widget_line_program_->Create()) {
+				return false;
+			}
+
+			widget_line_program_->AttachShader(widget_line_vertex_shader,
+			        GL_VERTEX_SHADER);
+			widget_line_program_->AttachShader(widget_line_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!widget_line_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget line program: %d",
+						widget_line_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_LINE_COORD] = widget_line_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_LINE_COLOR] = widget_line_program_->GetUniformLocation("uColor");
 
 			return true;
 		}

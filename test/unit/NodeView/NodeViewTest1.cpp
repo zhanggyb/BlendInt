@@ -1,5 +1,6 @@
 #include "NodeViewTest1.hpp"
 #include <BlendInt/Gui/NodeView.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -27,18 +28,20 @@ TEST_F(NodeViewTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+	SetContext(context);
+	context->Resize(640, 480);
+
+	Dialog* dialog = Manage(new Dialog);
+	context->AddFrame(dialog);
+	dialog->SetPosition(100, 100);
+	dialog->Resize(500, 500);
 
     NodeView* nv = Manage(new NodeView);
+    nv->SetPosition(20, 20);
 
-    nv->SetPosition(100, 100);
-
-    context->Append(nv);
+    dialog->AddWidget(nv);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

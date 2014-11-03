@@ -85,6 +85,9 @@ namespace BlendInt {
 			WIDGET_IMAGE_TEXTURE,
 			WIDGET_IMAGE_GAMMA,
 
+			WIDGET_LINE_COORD,
+			WIDGET_LINE_COLOR,
+
 			PRIMITIVE_COORD,
 			PRIMITIVE_COLOR,
 			PRIMITIVE_PROJECTION,
@@ -161,6 +164,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& widget_image_program () const
 			{
 				return widget_image_program_;
+			}
+
+			const RefPtr<GLSLProgram>& widget_line_program () const
+			{
+				return widget_line_program_;
 			}
 
 			const RefPtr<GLSLProgram>& frame_inner_program () const
@@ -253,11 +261,13 @@ namespace BlendInt {
 
 			bool SetupWidgetOuterProgram ();
 
-			bool SetupTextProgram ();
+			bool SetupWidgetTextProgram ();
 
-			bool SetupTriangleProgram ();
+			bool SetupWidgetTriangleProgram ();
 
-			bool SetupImageProgram ();
+			bool SetupWidgetImageProgram ();
+
+			bool SetupWidgetLineProgram ();
 
 			bool SetupPrimitiveProgram ();
 
@@ -282,6 +292,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> widget_outer_program_;
 
 			RefPtr<GLSLProgram> widget_image_program_;
+
+			RefPtr<GLSLProgram> widget_line_program_;
 
 			RefPtr<GLSLProgram> frame_inner_program_;
 
@@ -351,6 +363,10 @@ namespace BlendInt {
 			static const char* widget_outer_geometry_shader;
 
 			static const char* widget_outer_fragment_shader;
+
+			static const char* widget_line_vertex_shader;
+
+			static const char* widget_line_fragment_shader;
 
 			static const char* context_vertex_shader;
 

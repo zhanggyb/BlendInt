@@ -17,6 +17,8 @@ add_subdirectory(Frame)
 #add_subdirectory(ToolBar)
 add_subdirectory(TextEntry)
 
+add_subdirectory(NodeView)
+
 #add_subdirectory(ClockWidget)
 #add_subdirectory(Layout)
 #add_subdirectory(Stack)
@@ -64,4 +66,3 @@ add_subdirectory(TextEntry)
 #add_subdirectory(Section)
 #add_subdirectory(ToolButton)
 #add_subdirectory(HBlock)
-#add_subdirectory(NodeView)

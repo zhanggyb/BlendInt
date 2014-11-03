@@ -25,6 +25,7 @@
 #define _BLENDINT_NODEVIEW_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/CubicBezierCurve.hpp>
 
 namespace BlendInt {
 
@@ -50,13 +51,7 @@ namespace BlendInt {
 
 	private:
 
-		GLuint vaos_[4];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<GLArrayBuffer> area_;
-
-		RefPtr<GLArrayBuffer> rect_;	// used for test stencil stack only, temporarily
+		CubicBezierCurve* curve_;
 
 	};
 
