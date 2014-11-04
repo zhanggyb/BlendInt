@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 #include <Common/Window.hpp>
-#include <BlendInt/Core/Object.hpp>
 
 class FileBrowserTest1: public testing::Test
 {

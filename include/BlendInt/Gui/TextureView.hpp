@@ -21,30 +21,33 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CVVIDEOVIEW_HPP_
-#define _BLENDINT_GUI_CVVIDEOVIEW_HPP_
+#ifndef _BLENDINT_IMAGEVIEW_HPP_
+#define _BLENDINT_IMAGEVIEW_HPP_
 
-// generate makefile with cmake -DENABLE_OPENCV to activate
-#ifdef __USE_OPENCV__
+#include <BlendInt/Core/Image.hpp>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+
+#include <BlendInt/Gui/ChessBoard.hpp>
+#include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
 
-	class CVVideoView: public Widget
+	class TextureView: public AbstractScrollable
 	{
 	public:
 
-		CVVideoView();
+		TextureView ();
 
-		virtual ~CVVideoView ();
+		virtual ~TextureView ();
 
-		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+		bool Open (const char* filename);
+
+		void Load (const RefPtr<Image>& image);
+
+		void Clear ();
 
 		virtual bool IsExpandX () const;
 
@@ -54,25 +57,30 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
 		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
-		void InitializeCVVideoView ();
+		void InitializeImageView ();
 
-		GLuint vao_;
+		void AdjustImageArea (const Size& size);
 
-		GLBuffer<> frame_plane_;
+		Size image_size_;
 
-		GLTexture2D texture_;
+		GLuint vaos_[2];
 
-		cv::VideoCapture video_stream_;
+		RefPtr<GLTexture2D> texture_;
 
-		cv::Mat frame_;
+		RefPtr<GLArrayBuffer> background_;
+		RefPtr<GLArrayBuffer> plane_;
+
+		RefPtr<ChessBoard> checkerboard_;
 	};
 
 }
 
-#endif	// __USE_OPENCV__
-
-#endif /* _BLENDINT_GUI_CVVIDEOVIEW_HPP_ */
+#endif /* _BIL_IMAGEVIEW_HPP_ */

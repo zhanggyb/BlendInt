@@ -34,7 +34,7 @@ void MainLayout::InitOnce ()
 
 	m_menubar = CreateMenuBar();
 	m_toolbar = Manage(new ToolBar);
-	m_imgview = Manage(new ImageView);
+	m_imgview = Manage(new TextureView);
 
 	m_combo = Manage(new ComboBox);
 

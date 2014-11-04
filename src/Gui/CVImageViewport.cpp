@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __USE_OPENCV__
+
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
@@ -35,102 +37,118 @@
 #include <glm/gtx/transform.hpp>
 
 #include <algorithm>
+#include <opencv2/highgui/highgui.hpp>
 
+#include <BlendInt/Gui/CVImageViewport.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	ImageView::ImageView ()
-	: AbstractScrollable()
-	{
-		set_size(400, 300);
+	Color CVImageViewport::background_color = Color(Color::Gray);
 
-		InitializeImageView();
+	CVImageViewport::CVImageViewport ()
+	: Frame()
+	{
+		InitializeCVImageView();
 	}
 
-	ImageView::~ImageView ()
+	CVImageViewport::~CVImageViewport ()
 	{
 		glDeleteVertexArrays(2, vaos_);
 	}
 
-	bool ImageView::Open (const char* filename)
+	bool CVImageViewport::IsExpandX () const
 	{
-		bool retval = false;
+		return true;
+	}
 
-		Image image;
+	bool CVImageViewport::IsExpandY () const
+	{
+		return true;
+	}
 
-		if(image.Read(filename)) {
+	Size CVImageViewport::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(cv_image_.data) {
+			prefer.reset(cv_image_.cols, cv_image_.rows);
+		}
+
+		return prefer;
+	}
+
+	void CVImageViewport::Open (const char* filename)
+	{
+		cv_image_ = cv::imread(filename);
+
+		if(cv_image_.data) {
+
 			texture_->bind();
+			switch (cv_image_.channels()) {
 
-			switch(image.channels()) {
-				case 3:
+				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_->SetImage(0, GL_RGB, image.width(),
-					        image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
-					        image.pixels());
+					texture_->SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
 					break;
+				}
 
-				case 4:
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_->SetImage(0, GL_RGBA, image.width(),
-					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-					        image.pixels());
+					texture_->SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
 					break;
+				}
 
 				default:
 					break;
 			}
-
 			texture_->reset();
 
-			image_size_.set_width(image.width());
-			image_size_.set_height(image.height());
+			AdjustImageArea(size());
+		}
+	}
+
+	void CVImageViewport::Load (const cv::Mat& image)
+	{
+		cv_image_ = image;
+		if(cv_image_.data) {
+
+			texture_->bind();
+			switch (cv_image_.channels()) {
+
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_->SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
+					break;
+				}
+
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_->SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
+					break;
+				}
+
+				default:
+					break;
+			}
+			texture_->reset();
 
 			AdjustImageArea(size());
-
-			retval = true;
 		}
-
-		return retval;
 	}
 
-	void ImageView::Load (const RefPtr<Image>& image)
-	{
-	}
-
-	void ImageView::Clear()
-	{
-
-	}
-
-	bool ImageView::IsExpandX () const
-	{
-		return true;
-	}
-
-	bool ImageView::IsExpandY () const
-	{
-		return true;
-	}
-
-	Size ImageView::GetPreferredSize () const
-	{
-		if(texture_ && glIsTexture(texture_->id())) {
-			return image_size_;
-		}
-
-		return Size(400, 300);
-	}
-
-	void ImageView::PerformPositionUpdate(const PositionUpdateRequest& request)
+	void CVImageViewport::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
-			Refresh();
 		}
 
 		if(request.source() == this) {
@@ -138,22 +156,17 @@ namespace BlendInt {
 		}
 	}
 
-	void ImageView::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void CVImageViewport::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
-
-			background_->bind();
+		if(request.target() == this) {
 			VertexTool tool;
 			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
+			background_->bind();
 			background_->set_data(tool.inner_size(), tool.inner_data());
 			background_->reset();
 
 			set_size(*request.size());
-
-			AdjustImageArea (*request.size());
-
-			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
-			Refresh();
+			AdjustImageArea(*request.size());
 		}
 
 		if(request.source() == this) {
@@ -161,35 +174,30 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ImageView::Draw (Profile& profile)
+	ResponseType CVImageViewport::Draw (Profile& profile)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f, 0.f);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), background_color.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		float x = (size().width() - checkerboard_->size().width()) / 2.f;
-		float y = (size().height() - checkerboard_->size().height()) / 2.f;
-
-		// draw checkerboard
-		checkerboard_->Draw(x, y);
-
 		glActiveTexture(GL_TEXTURE0);
 		texture_->bind();
 
 		if (texture_->GetWidth() > 0) {
+
 			program = Shaders::instance->widget_image_program();
 			program->use();
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), 0.f, 0.f);
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), (float) position().x(), (float) position().y());
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vaos_[1]);
@@ -200,13 +208,12 @@ namespace BlendInt {
 		texture_->reset();
 		program->reset();
 
-		return AbstractScrollable::Draw(profile);
+		return Accept;
 	}
 	
-	void ImageView::InitializeImageView ()
+	void CVImageViewport::InitializeCVImageView ()
 	{
-		checkerboard_.reset(new ChessBoard(20));
-		checkerboard_->Resize(size());
+		set_size(400, 300);
 
 		texture_.reset(new GLTexture2D);
 		texture_->generate();
@@ -228,7 +235,8 @@ namespace BlendInt {
 		background_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vaos_[1]);
 
@@ -239,45 +247,33 @@ namespace BlendInt {
 			400.f, 300.f,	1.f, 0.f
 		};
 
-		plane_.reset(new GLArrayBuffer);
-		plane_->generate();
-		plane_->bind();
-		plane_->set_data(sizeof(vertices), vertices);
+		image_plane_.reset(new GLArrayBuffer);
+		image_plane_->generate();
+		image_plane_->bind();
+		image_plane_->set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
-
-		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
-		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-		SetScrollBar(hbar, vbar);
-		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
-	void ImageView::AdjustImageArea(const Size& size)
+	void CVImageViewport::AdjustImageArea (const Size& size)
 	{
-		if(image_size_.width() == 0 || image_size_.height() == 0) {
-			//checkerboard_->Resize(size);
-			return;
-		}
-
-		int w = std::min(size.width(), image_size_.width());
-		int h = std::min(size.height(), image_size_.height());
+		int w = std::min(size.width(), cv_image_.cols);
+		int h = std::min(size.height(), cv_image_.rows);
 
 		if(h == 0) {
 			w = 0;
 		} else {
 			float ratio = (float)w / h;
-			float ref_ratio = (float)image_size_.width() / image_size_.height();
+			float ref_ratio = (float)cv_image_.cols / cv_image_.rows;
 			if(ratio > ref_ratio) {
 				w = h * ref_ratio;
 			} else if (ratio < ref_ratio) {
@@ -285,11 +281,8 @@ namespace BlendInt {
 			}
 		}
 
-		checkerboard_->Resize(w, h);
-
 		GLfloat x = (size.width() - w) / 2.f;
 		GLfloat y = (size.height() - h) / 2.f;
-
 		GLfloat vertices[] = {
 			x, y,	0.f, 1.f,
 			x + (GLfloat)w, y,		1.f, 1.f,
@@ -297,9 +290,16 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		plane_->bind();
-		plane_->set_data(sizeof(vertices), vertices);
-		plane_->reset();
+		image_plane_->bind();
+		image_plane_->set_data(sizeof(vertices), vertices);
+		image_plane_->reset();
+	}
+
+	void CVImageViewport::AdjustScrollArea(const Size& size)
+	{
+		//cv_image_.cols;
 	}
 
 }
+
+#endif	// __USE_OPENCV__

@@ -38,15 +38,15 @@
 
 //#include <opencv2/imgproc/imgproc.hpp>
 
-#include <BlendInt/Gui/CVVideoView.hpp>
+#include <BlendInt/Gui/CVVideoViewport.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	CVVideoView::CVVideoView()
-	: Widget(),
+	CVVideoViewport::CVVideoViewport()
+	: Frame(),
 	  vao_(0)
 	{
 		set_size(640, 480);
@@ -54,22 +54,22 @@ namespace BlendInt {
 		InitializeCVVideoView();
 	}
 
-	CVVideoView::~CVVideoView()
+	CVVideoViewport::~CVVideoViewport()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	bool CVVideoView::IsExpandX() const
+	bool CVVideoViewport::IsExpandX() const
 	{
 		return true;
 	}
 
-	bool CVVideoView::IsExpandY() const
+	bool CVVideoViewport::IsExpandY() const
 	{
 		return true;
 	}
 
-	ResponseType CVVideoView::Draw(Profile& profile)
+	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
 		if(!video_stream_.isOpened()) {
 			return Accept;
@@ -122,7 +122,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool CVVideoView::OpenCamera(int n, const Size& resolution)
+	bool CVVideoViewport::OpenCamera(int n, const Size& resolution)
 	{
 		bool retval = false;
 
@@ -140,7 +140,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	Size CVVideoView::GetPreferredSize() const
+	Size CVVideoViewport::GetPreferredSize() const
 	{
 		Size prefer (640, 480);
 
@@ -155,7 +155,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void CVVideoView::InitializeCVVideoView()
+	void CVVideoViewport::InitializeCVVideoView()
 	{
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);

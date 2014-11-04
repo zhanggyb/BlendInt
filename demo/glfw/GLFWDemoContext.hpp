@@ -22,7 +22,7 @@
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>

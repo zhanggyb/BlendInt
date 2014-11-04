@@ -44,7 +44,7 @@ CartoonifierContext::CartoonifierContext()
 
 	AddFrame(dialog);
 
-	CVVideoView* video = Manage(new CVVideoView);
+	CVVideoViewport* video = Manage(new CVVideoViewport);
 	Dialog* frame2 = Manage(new Dialog);
 	frame2->SetPosition(20, 100);
 

@@ -74,7 +74,7 @@ private:
 	BI::Tab* m_tab;
 
 	BI::Viewport3D* m_scene;
-	BI::ImageView* m_image_view;
+	BI::TextureView* m_image_view;
 
 	BI::TextEntry* m_file_input;
 	BI::FileButton* m_file_button;

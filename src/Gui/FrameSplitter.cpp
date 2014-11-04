@@ -657,25 +657,24 @@ namespace BlendInt {
 	int FrameSplitter::GetAverageRoom(Orientation orientation,
 			const Size& size)
 	{
-		int room = 0;
+		int retval = 0;
 
 		if(orientation == Horizontal) {
-			room = size.width();
+			retval = size.width();
 		} else {
-			room = size.height();
+			retval = size.height();
 		}
 
 		if(first_child() == 0) {
-			return room;
+			return retval;
 		}
 
 		Size prefer;
 		int space = 0;
-		int sum = 0;
+		int sum = 1;
 
+		// get all the total width/height of splitter handlers
 		AbstractWidget* p = first_child()->next();
-		sum += 1;
-
 		while (p) {
 			prefer = p->GetPreferredSize();
 			if(orientation == Horizontal) {
@@ -688,10 +687,10 @@ namespace BlendInt {
 			sum += 2;
 		}
 
-		room = room - space;
-		room = room / ((sum + 1) / 2);
+		retval = retval - space;
+		retval = retval / ((sum + 1) / 2);
 
-		return room;
+		return retval;
 	}
 
 	void FrameSplitter::DistributeHorizontally()

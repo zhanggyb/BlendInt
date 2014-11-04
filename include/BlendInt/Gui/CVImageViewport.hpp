@@ -35,7 +35,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/ChessBoard.hpp>
-#include <BlendInt/Gui/AbstractScrollable.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
@@ -47,13 +47,13 @@ namespace BlendInt {
 	 *
 	 * Due to opencv design, this widget cannot display images with alpha channel.
 	 */
-	class CVImageView: public AbstractScrollable
+	class CVImageViewport: public Frame
 	{
 	public:
 
-		CVImageView ();
+		CVImageViewport ();
 
-		virtual ~CVImageView ();
+		virtual ~CVImageViewport ();
 
 		virtual bool IsExpandX () const;
 

@@ -463,7 +463,7 @@ BI::Tab* MainLayout::CreateTab ()
 	Tab* tab = Manage(new Tab);
 
     m_scene = Manage(new Viewport3D);
-    m_image_view = Manage(new ImageView);
+    m_image_view = Manage(new TextureView);
 
     tab->Add("3D View", m_scene);
     tab->Add("Image", m_image_view);

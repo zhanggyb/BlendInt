@@ -31,7 +31,7 @@ TEST_F(ImageViewTest1, Foo1)
 
     // TODO: add test code here
 
-    ImageView* view = Manage(new ImageView);
+    TextureView* view = Manage(new TextureView);
     view->SetPosition(20, 20);
 
 	//view->Open("test.png");
