@@ -67,6 +67,8 @@ namespace BlendInt {
 		 */
 		virtual bool Contain (const Point& point) const;
 
+		virtual void SynchronizeWindow ();
+
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return resized_;

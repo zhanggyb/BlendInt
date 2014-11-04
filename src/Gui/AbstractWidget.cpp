@@ -37,6 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -297,11 +298,21 @@ namespace BlendInt {
 	void AbstractWidget::Refresh()
 	{
 		if(!refresh()) {
-			AbstractWidget* p = parent();
 
+			AbstractWidget* root = this;
+
+			AbstractWidget* p = parent();
 			while(p && (!p->refresh())) {
+				root = p;
 				p->set_refresh(true);
 				p = p->parent();
+			}
+
+			if(root->parent() == 0) {
+				Context* context = dynamic_cast<Context*>(root);
+				if(context) {
+					context->SynchronizeWindow();
+				}
 			}
 
 			set_refresh(true);

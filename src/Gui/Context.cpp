@@ -314,6 +314,11 @@ namespace BlendInt
 		return true;
 	}
 
+	void Context::SynchronizeWindow()
+	{
+		// TODO: override this function
+	}
+
 	Context* Context::GetContext (AbstractWidget* widget)
 	{
 		AbstractWidget* parent = widget->parent();

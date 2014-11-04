@@ -17,6 +17,8 @@ public:
 
 	virtual ~CartoonifierContext ();
 
+	virtual void SynchronizeWindow ();
+
 protected:
 
 private:

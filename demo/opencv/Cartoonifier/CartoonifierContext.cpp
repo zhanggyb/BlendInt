@@ -2,6 +2,8 @@
  * GLFWContext.cpp
  */
 
+#include <GLFW/glfw3.h>
+
 #include "CartoonifierContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
@@ -39,6 +41,11 @@ CartoonifierContext::CartoonifierContext()
 CartoonifierContext::~CartoonifierContext ()
 {
 
+}
+
+void CartoonifierContext::SynchronizeWindow()
+{
+	glfwPostEmptyEvent();
 }
 
 ToolBox* CartoonifierContext::CreateToolBoxOnce()

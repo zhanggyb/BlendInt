@@ -250,22 +250,6 @@ namespace BlendInt {
 		const bool* m_visibility;
 	};
 
-	class RefreshRequest: public WidgetUpdateRequest
-	{
-	public:
-
-		RefreshRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target)
-		{
-
-		}
-
-		~RefreshRequest ()
-		{
-
-		}
-	};
-
 	// ----------------------------------------------------
 
 	/**
