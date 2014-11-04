@@ -54,8 +54,6 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void FocusEvent (bool focus);
-
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
 		virtual void MouseHoverInEvent (const MouseEvent& event);

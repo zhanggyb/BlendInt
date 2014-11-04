@@ -6,6 +6,7 @@
 #define _CARTOONIFIERCONTEXT_HPP_
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
 
 namespace BI=BlendInt;
 
@@ -19,6 +20,8 @@ public:
 protected:
 
 private:
+
+	BI::ToolBox* CreateToolBoxOnce ();
 
 	void OnResizeLayout (const BI::Size& size);
 };

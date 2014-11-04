@@ -44,9 +44,13 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Clock::Clock()
 	: Widget(), angle_(0), timer_(0)
 	{
+		set_size(160, 160);
+
 		InitializeClock();
 	}
 
@@ -57,25 +61,24 @@ namespace BlendInt {
 
 	ResponseType Clock::Draw(Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position",
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
 		        (float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		        (float) (position().y() + size().height() / 2.f),
+				0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.75f, 0.95f, 0.75f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.75f, 0.95f, 0.75f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
@@ -181,8 +184,6 @@ namespace BlendInt {
 
 	void Clock::InitializeClock ()
 	{
-		set_size(160, 160);
-
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
@@ -197,8 +198,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 
@@ -207,8 +208,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

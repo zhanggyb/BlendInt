@@ -54,7 +54,15 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 	private:
 
@@ -69,6 +77,11 @@ namespace BlendInt {
 		cv::VideoCapture video_stream_;
 
 		cv::Mat frame_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
+
 	};
 
 }

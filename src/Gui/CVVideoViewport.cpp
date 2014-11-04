@@ -41,6 +41,8 @@
 #include <BlendInt/Gui/CVVideoViewport.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -50,6 +52,9 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		set_size(640, 480);
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
 
 		InitializeCVVideoView();
 	}
@@ -66,6 +71,104 @@ namespace BlendInt {
 
 	bool CVVideoViewport::IsExpandY() const
 	{
+		return true;
+	}
+
+	bool CVVideoViewport::OpenCamera(int n, const Size& resolution)
+	{
+		bool retval = false;
+
+		video_stream_.open(n);
+		if(video_stream_.isOpened()) {
+
+			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
+			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
+
+			retval = true;
+		} else {
+			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
+		}
+
+		return retval;
+	}
+
+	Size CVVideoViewport::GetPreferredSize() const
+	{
+		Size prefer (640, 480);
+
+		if(video_stream_.isOpened()) {
+
+			double width = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_WIDTH);
+			double height = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_HEIGHT);
+
+			prefer.reset(width, height);
+		}
+
+		return prefer;
+	}
+
+	void CVVideoViewport::PerformPositionUpdate(
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)size().width(),
+				y,
+				y + (float)size().height(),
+				100.f, -100.f);
+
+			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+
+			set_position(*request.position());
+
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
+	}
+
+	void CVVideoViewport::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			float x = static_cast<float>(position().x() + offset().x());
+			float y = static_cast<float>(position().y() + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)request.size()->width(),
+				y,
+				y + (float)request.size()->height(),
+				100.f, -100.f);
+
+			set_size(*request.size());
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	bool CVVideoViewport::PreDraw(Profile& profile)
+	{
+		if(!visiable()) return false;
+
+		assign_profile_frame(profile);
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
 		return true;
 	}
 
@@ -122,37 +225,10 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool CVVideoViewport::OpenCamera(int n, const Size& resolution)
+	void CVVideoViewport::PostDraw(Profile& profile)
 	{
-		bool retval = false;
-
-		video_stream_.open(n);
-		if(video_stream_.isOpened()) {
-
-			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
-			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
-
-			retval = true;
-		} else {
-			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
-		}
-
-		return retval;
-	}
-
-	Size CVVideoViewport::GetPreferredSize() const
-	{
-		Size prefer (640, 480);
-
-		if(video_stream_.isOpened()) {
-
-			double width = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_WIDTH);
-			double height = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_HEIGHT);
-
-			prefer.reset(width, height);
-		}
-
-		return prefer;
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
 	void CVVideoViewport::InitializeCVVideoView()

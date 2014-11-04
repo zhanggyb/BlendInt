@@ -225,10 +225,6 @@ namespace BlendInt {
 		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
-	void Viewport::FocusEvent(bool focus)
-	{
-	}
-
 	void Viewport::InitializeViewport()
 	{
 		std::vector<GLfloat> inner_verts;

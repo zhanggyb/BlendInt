@@ -21,6 +21,8 @@ add_subdirectory(NodeView)
 add_subdirectory(FileSystemModel)
 add_subdirectory(FileBrowser)
 
+add_subdirectory(Clock)
+
 #add_subdirectory(ClockWidget)
 #add_subdirectory(Layout)
 #add_subdirectory(Stack)
