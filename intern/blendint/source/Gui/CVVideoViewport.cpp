@@ -59,7 +59,7 @@ namespace BlendInt {
 		InitializeCVVideoView();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 25);	// 25 fps
+		timer_->SetInterval(1000 / 30);	// 30 fps
 
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 	}
@@ -193,38 +193,38 @@ namespace BlendInt {
 
 	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
-//		if(!video_stream_.isOpened()) {
-//			return Accept;
-//		}
-//
-//		video_stream_ >> frame_;
+		if(!video_stream_.isOpened()) {
+			return Accept;
+		}
+
+		video_stream_ >> frame_;
 
 		glActiveTexture(GL_TEXTURE0);
 		texture_.bind();
 
-//		switch (frame_.channels()) {
-//
-//			case 3: {
-//				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-//				texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-//								0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-//				break;
-//			}
-//
-//			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-//			{
-//				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-//				texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-//								0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-//				break;
-//			}
-//
-//			default: {
-//				texture_.reset();
-//				return Accept;
-//				break;
-//			}
-//		}
+		switch (frame_.channels()) {
+
+			case 3: {
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+				texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+								0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+				break;
+			}
+
+			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+			{
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+				texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+								0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+				break;
+			}
+
+			default: {
+				texture_.reset();
+				return Accept;
+				break;
+			}
+		}
 
 		Shaders::instance->widget_image_program()->use();
 
@@ -240,8 +240,6 @@ namespace BlendInt {
 
 		texture_.reset();
 		GLSLProgram::reset();
-
-//		Refresh();
 
 		return Accept;
 	}
@@ -278,51 +276,20 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		frame_plane_.reset();
-
+        
 		texture_.generate();
 		texture_.bind();
 		texture_.SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture_.SetMinFilter(GL_LINEAR);
 		texture_.SetMagFilter(GL_LINEAR);
+        //texture_.SetImage(0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, dummy);
 		texture_.reset();
 	}
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-		if(!video_stream_.isOpened()) {
-			return;
-		}
-
-		video_stream_ >> frame_;
-		//cv::imwrite("video.png", frame_);
-		//cv::GaussianBlur(frame_, frame_, cv::Size(7, 7), 1.5, 1.5);
-
-		if(frame_.data) {
-
-			texture_.bind();
-			switch (frame_.channels()) {
-				case 3: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-					break;
-				}
-				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-				{
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-			texture_.reset();
-
-			Refresh();
-
-		}
+        // FIXME: cannot capture from camera and upload to texture in this callback function
+        Refresh();
 	}
 
 }
