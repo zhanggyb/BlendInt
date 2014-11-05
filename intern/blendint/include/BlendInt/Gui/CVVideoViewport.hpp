@@ -30,6 +30,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <BlendInt/Core/Timer.hpp>
+
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
@@ -45,6 +47,10 @@ namespace BlendInt {
 		virtual ~CVVideoViewport ();
 
 		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+
+		void Play ();
+
+		void Pause ();
 
 		virtual bool IsExpandX () const;
 
@@ -68,6 +74,8 @@ namespace BlendInt {
 
 		void InitializeCVVideoView ();
 
+		void OnUpdateFrame (Timer* t);
+
 		GLuint vao_;
 
 		GLBuffer<> frame_plane_;
@@ -77,6 +85,8 @@ namespace BlendInt {
 		cv::VideoCapture video_stream_;
 
 		cv::Mat frame_;
+
+		RefPtr<Timer> timer_;
 
 		glm::mat4 projection_matrix_;
 

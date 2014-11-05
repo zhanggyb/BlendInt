@@ -23,6 +23,10 @@ add_subdirectory(FileBrowser)
 
 add_subdirectory(Clock)
 
+if(ENABLE_OPENCV)
+	add_subdirectory(CVVideoViewport)
+endif()
+
 #add_subdirectory(ClockWidget)
 #add_subdirectory(Layout)
 #add_subdirectory(Stack)
@@ -68,3 +72,4 @@ add_subdirectory(Clock)
 #add_subdirectory(Section)
 #add_subdirectory(ToolButton)
 #add_subdirectory(HBlock)
+

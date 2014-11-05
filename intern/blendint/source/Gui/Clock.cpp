@@ -47,7 +47,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Clock::Clock()
-	: Widget(), angle_(0), timer_(0)
+	: Widget(), angle_(-90), timer_(0)
 	{
 		set_size(160, 160);
 
@@ -56,14 +56,12 @@ namespace BlendInt {
 
 	Clock::~Clock ()
 	{
-		glDeleteVertexArrays(2, vao_);
+		glDeleteVertexArrays(3, vao_);
 	}
 
 	ResponseType Clock::Draw(Profile& profile)
 	{
-		RefPtr<GLSLProgram> program =
-						Shaders::instance->widget_triangle_program();
-		program->use();
+		Shaders::instance->widget_triangle_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
 		        (float) (position().x() + size().width() / 2.f),
@@ -71,7 +69,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.75f, 0.95f, 0.75f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.35f, 0.45f, 0.75f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
@@ -82,17 +80,24 @@ namespace BlendInt {
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
+		glBindVertexArray(vao_[2]);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.f, 0.f, 0.f, 1.f);
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), -(float)angle_);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 		glBindVertexArray(0);
 
-		program->reset();
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
+		GLSLProgram::reset();
 
 		return Accept;
 	}
 
-	void Clock::UpdateClockHands()
+	void Clock::OnUpdateClockHands(Timer* t)
 	{
 		angle_ = angle_ + 6;
-		if(angle_ > 360) {
+		if(angle_ < 360) {
 			angle_ = angle_ % 360;
 		}
 
@@ -113,9 +118,20 @@ namespace BlendInt {
 			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
 
 			set_size(*request.size());
+
+			GLfloat second_hand_vertices[] = {
+					-5.f, -1.f,
+					size().width() / 2.f, -1.f,
+					-5.f, 1.f,
+					size().width() / 2.f, 1.f
+			};
+
+			buffer_.bind(2);
+			buffer_.set_sub_data(0, sizeof(second_hand_vertices), second_hand_vertices);
+			buffer_.reset();
+
 			Refresh();
 		}
 
@@ -190,9 +206,9 @@ namespace BlendInt {
 
 		GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
 
-		glGenVertexArrays(2, vao_);
-		glBindVertexArray(vao_[0]);
+		glGenVertexArrays(3, vao_);
 
+		glBindVertexArray(vao_[0]);
 		buffer_.generate();
 
 		buffer_.bind(0);
@@ -209,13 +225,28 @@ namespace BlendInt {
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
+		glBindVertexArray(vao_[2]);
+
+		GLfloat second_hand_vertices[] = {
+				-5.f, -1.f,
+				size().width() / 2.f, -1.f,
+				-5.f, 1.f,
+				size().width() / 2.f, 1.f
+		};
+
+		buffer_.bind(2);
+		buffer_.set_data(sizeof(second_hand_vertices), second_hand_vertices);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
 		timer_.reset(new Timer);
 		timer_->SetInterval(1000);
 
-		events()->connect(timer_->timeout(), this, &Clock::UpdateClockHands);
+		events()->connect(timer_->timeout(), this, &Clock::OnUpdateClockHands);
 		timer_->Start();
 	}
 

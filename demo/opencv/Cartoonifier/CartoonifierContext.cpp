@@ -14,7 +14,6 @@
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/CVVideoViewport.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
@@ -22,15 +21,16 @@
 using namespace BlendInt;
 
 CartoonifierContext::CartoonifierContext()
-: BI::Context()
+: BI::Context(),
+  video_(0)
 {
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	CVVideoViewport* video = Manage(new CVVideoViewport);
-	video->OpenCamera(0);
+	video_ = Manage(new CVVideoViewport);
+	video_->OpenCamera(0);
 
-	splitter->AddFrame(video);
+	splitter->AddFrame(video_);
 	splitter->AddFrame(tools);
 
 	AddFrame(splitter);
@@ -66,7 +66,27 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());
 
+	Button* play = Manage(new Button("Play"));
+	Button* stop = Manage(new Button("Stop"));
+
 	tools->Add(expander);
+	tools->Add(play);
+	tools->Add(stop);
+
+	events()->connect(play->clicked(), this, &CartoonifierContext::OnPlay);
+	events()->connect(stop->clicked(), this, &CartoonifierContext::OnStop);
 
 	return tools;
+}
+
+void CartoonifierContext::OnPlay()
+{
+	DBG_PRINT_MSG("%s", "Start Play");
+	video_->Play();
+}
+
+void CartoonifierContext::OnStop()
+{
+	DBG_PRINT_MSG("%s", "Stop Play");
+	video_->Pause();
 }

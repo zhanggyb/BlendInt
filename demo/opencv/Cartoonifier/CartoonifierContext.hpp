@@ -8,6 +8,8 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
+#include <BlendInt/Gui/CVVideoViewport.hpp>
+
 namespace BI=BlendInt;
 
 class CartoonifierContext: public BI::Context
@@ -25,7 +27,11 @@ private:
 
 	BI::ToolBox* CreateToolBoxOnce ();
 
-	void OnResizeLayout (const BI::Size& size);
+	void OnPlay ();
+
+	void OnStop();
+
+	BI::CVVideoViewport* video_;
 };
 
 #endif /* _CARTOONIFIERCONTEXT_HPP_ */

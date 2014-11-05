@@ -1,4 +1,7 @@
 #include "ClockTest1.hpp"
+
+#include <Common/UnitTestContext.hpp>
+
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
@@ -28,7 +31,7 @@ TEST_F(ClockTest1, Foo1)
     GLFWwindow* win = CreateWindow("Clock - Foo1", 640, 480);
 
     // TODO: add test code here
-	Context* context = Manage (new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
 	SetContext(context);
 	context->Resize(640, 480);
 

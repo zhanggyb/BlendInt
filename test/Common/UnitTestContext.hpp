@@ -9,12 +9,14 @@
 
 namespace BI=BlendInt;
 
-class GLFWContext: public BI::Context
+class UnitTestContext: public BI::Context
 {
 public:
-	GLFWContext ();
+	UnitTestContext ();
 
-	virtual ~GLFWContext ();
+	virtual ~UnitTestContext ();
+
+	virtual void SynchronizeWindow ();
 
 };
 

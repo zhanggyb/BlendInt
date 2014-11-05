@@ -35,7 +35,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget to show a clock
 	 *
-	 * This widget is used for demo or test also.
+	 * This widget is used for demo or timer testing.
 	 */
 	class Clock: public Widget
 	{
@@ -64,13 +64,16 @@ namespace BlendInt {
 
 	private:
 
-		void UpdateClockHands();
+		void OnUpdateClockHands(Timer* t);
 
 		void InitializeClock ();
 
-		GLuint vao_[2];
+		// 0 - inner
+		// 1 - outer
+		// 2 - second hand
+		GLuint vao_[3];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 3> buffer_;
 
 		int angle_;
 

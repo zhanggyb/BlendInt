@@ -57,6 +57,11 @@ namespace BlendInt {
 		model_matrix_ = glm::mat4(1.f);
 
 		InitializeCVVideoView();
+
+		timer_.reset(new Timer);
+		timer_->SetInterval(1000 / 25);	// 25 fps
+
+		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 	}
 
 	CVVideoViewport::~CVVideoViewport()
@@ -92,6 +97,20 @@ namespace BlendInt {
 		return retval;
 	}
 
+	void CVVideoViewport::Play()
+	{
+		if(video_stream_.isOpened())
+			timer_->Start();
+	}
+
+	void CVVideoViewport::Pause()
+	{
+		if(timer_->enabled()) {
+			timer_->Stop();
+			//video_stream_.release();
+		}
+	}
+
 	Size CVVideoViewport::GetPreferredSize() const
 	{
 		Size prefer (640, 480);
@@ -112,8 +131,8 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
+			float x = static_cast<float>(request.position()->x() + offset().x());
+			float y = static_cast<float>(request.position()->y() + offset().y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -174,43 +193,45 @@ namespace BlendInt {
 
 	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
-		if(!video_stream_.isOpened()) {
-			return Accept;
-		}
-
-		video_stream_ >> frame_;
-		//cv::GaussianBlur(frame_, frame_, cv::Size(7, 7), 1.5, 1.5);
+//		if(!video_stream_.isOpened()) {
+//			return Accept;
+//		}
+//
+//		video_stream_ >> frame_;
 
 		glActiveTexture(GL_TEXTURE0);
 		texture_.bind();
 
-		switch (frame_.channels()) {
-
-			case 3: {
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-				texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-								0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-				break;
-			}
-
-			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-			{
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-				texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-								0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-				break;
-			}
-
-			default: {
-				texture_.reset();
-				return Accept;
-				break;
-			}
-		}
+//		switch (frame_.channels()) {
+//
+//			case 3: {
+//				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+//				texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+//								0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+//				break;
+//			}
+//
+//			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+//			{
+//				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+//				texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+//								0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+//				break;
+//			}
+//
+//			default: {
+//				texture_.reset();
+//				return Accept;
+//				break;
+//			}
+//		}
 
 		Shaders::instance->widget_image_program()->use();
+
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), 0.f, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
+				(size().width() - 640)/2.f,
+				(size().height() - 480) / 2.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 		glBindVertexArray(vao_);
@@ -220,7 +241,7 @@ namespace BlendInt {
 		texture_.reset();
 		GLSLProgram::reset();
 
-		Refresh();
+//		Refresh();
 
 		return Accept;
 	}
@@ -256,7 +277,7 @@ namespace BlendInt {
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		frame_plane_.reset();
 
 		texture_.generate();
 		texture_.bind();
@@ -264,6 +285,44 @@ namespace BlendInt {
 		texture_.SetMinFilter(GL_LINEAR);
 		texture_.SetMagFilter(GL_LINEAR);
 		texture_.reset();
+	}
+
+	void CVVideoViewport::OnUpdateFrame(Timer* t)
+	{
+		if(!video_stream_.isOpened()) {
+			return;
+		}
+
+		video_stream_ >> frame_;
+		//cv::imwrite("video.png", frame_);
+		//cv::GaussianBlur(frame_, frame_, cv::Size(7, 7), 1.5, 1.5);
+
+		if(frame_.data) {
+
+			texture_.bind();
+			switch (frame_.channels()) {
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+			texture_.reset();
+
+			Refresh();
+
+		}
 	}
 
 }
