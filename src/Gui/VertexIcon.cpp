@@ -161,7 +161,7 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 1, glm::value_ptr(pos));
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
@@ -189,7 +189,7 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 1, glm::value_ptr(pos));
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 

@@ -126,7 +126,7 @@ namespace BlendInt {
 						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
 
 		if (m_highlight) {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);

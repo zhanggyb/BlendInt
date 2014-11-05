@@ -42,6 +42,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	TabButton::TabButton ()
 	: AbstractButton()
 	{
@@ -92,40 +94,36 @@ namespace BlendInt {
 
 	ResponseType TabButton::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->widget_triangle_program()->use();
 
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->widget_triangle_program();
-		program->use();
-
-		program->SetUniform3f("u_position", 0.f, 0.f, 0.f);
-		program->SetUniform1i("u_gamma", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 
 		// draw inner, simple fill
 		if (is_checked()) {
-			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
-			program->SetUniform1i("u_AA", 0);
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
-			program->SetVertexAttrib4fv("a_color", Theme::instance->tab().item.data());
-			program->SetUniform1i("u_AA", 1);
+			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().item.data());
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
 		if (is_checked()) {
-			program->SetUniform1i("u_AA", 1);
-			program->SetVertexAttrib4fv("a_color", Theme::instance->tab().outline.data());
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().outline.data());
 
 			glBindVertexArray(m_vao[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		if(text().size()) {
 			font().Print(0.f, 0.f, text(), text_length(), 0);
@@ -152,8 +150,8 @@ namespace BlendInt {
 		m_inner_buffer->bind();
 		m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(m_vao[1]);
 
@@ -161,8 +159,8 @@ namespace BlendInt {
 		m_outer_buffer->bind();
 		m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

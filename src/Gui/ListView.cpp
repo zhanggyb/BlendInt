@@ -154,8 +154,8 @@ namespace BlendInt {
 			y -= h;
 
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
-					(float) position().x(), (float) y, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+					(float) position().x(), (float) y);
 
 			if(i == highlight_index_) {	// TODO: use different functions for performance
 				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), -35);

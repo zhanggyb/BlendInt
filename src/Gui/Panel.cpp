@@ -90,7 +90,7 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
 		//glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float)position().x(), (float)position().y(), 0.f);
 		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);

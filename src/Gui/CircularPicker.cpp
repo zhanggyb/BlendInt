@@ -127,31 +127,31 @@ namespace BlendInt {
 				Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", x, y, 0.f);
-		program->SetUniform1i("u_gamma", gamma);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetVertexAttrib4f("a_color", 1.f, 1.f, 1.f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
 
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 
 		inner_->bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						inner_->get_buffer_size()
 										/ (2 * sizeof(GLfloat)));
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->scroll().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 		outer_->bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 						outer_->get_buffer_size()
 						/ (2 * sizeof(GLfloat)));
 		outer_->reset();
 
-		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 		program->reset();
 
 		glBindVertexArray(0);

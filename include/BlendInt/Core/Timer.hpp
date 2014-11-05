@@ -48,7 +48,7 @@ namespace BlendInt {
 	 * To use it, create a timer and connect the timeout() event to the appropriate event callee,
 	 * and call Start() to enable the timer.
 	 *
-	 * For example:
+	 * Example code for usage:
 	 * @code
 	 	 Timer* timer = new Timer;
 	 	 events()->connect(timer->timeout(), this, &Foo::do_sth);
@@ -94,19 +94,19 @@ namespace BlendInt {
 		 * @brief Get the interval time
 		 * @return
 		 */
-		unsigned int interval () const {return m_interval;}
+		unsigned int interval () const {return interval_;}
 
 		/**
 		 * @brief Check if the timer is active (enabled)
 		 * @return true: enabled
 		 */
-		bool enabled () const {return m_enabled;}
+		bool enabled () const {return enabled_;}
 
 		/**
 		 * @brief The timeout event
 		 * @return Reference to a Cpp::Event
 		 */
-		Cpp::EventRef<> timeout() {return m_timeout;}
+		Cpp::EventRef<Timer*> timeout() {return timeout_;}
 
 	protected:
 
@@ -118,7 +118,7 @@ namespace BlendInt {
 
 		void set_interval (unsigned int interval)
 		{
-			m_interval = interval;
+			interval_ = interval;
 		}
 
 	private:
@@ -136,14 +136,14 @@ namespace BlendInt {
 		 *
 		 * The default is 40ms: 25fps
 		 */
-		unsigned int m_interval;
+		unsigned int interval_;
 
-		bool m_enabled;
+		bool enabled_;
 
 		/**
 		 * @brief the time out event
 		 */
-		Cpp::Event<> m_timeout;
+		Cpp::Event<Timer*> timeout_;
 
 	};
 

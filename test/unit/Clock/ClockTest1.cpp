@@ -36,8 +36,8 @@ TEST_F(ClockTest1, Foo1)
 	dialog->SetPosition(100, 100);
 
 	Clock* clock = Manage(new Clock);
-	//clock->Resize(120, 120);
-	clock->SetPosition(50, 50);
+	clock->Resize(200, 200);
+	clock->SetPosition(25, 25);
 	dialog->AddWidget(clock);
 
 	context->AddFrame(dialog);

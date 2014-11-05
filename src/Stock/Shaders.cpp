@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		const char* Shaders::widget_text_vertex_shader =
 			"#version 330\n"
-			"layout(location = 0) in vec4 a_coord;"
+			"layout(location = 0) in vec4 aCoord;"
 			"out vec2 uv;"
 			""
 			//"uniform mat4 u_projection;"	// projection matrix
@@ -59,8 +59,8 @@ namespace BlendInt {
 			"	mat4 model;"
 			"};"
 			""
-			"uniform vec2 u_position;"// position
-      			"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+			"uniform vec2 uPosition;"// position
+      			"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 			""
 			"mat4 TranslateMatrix (const in vec2 t)"
 			"{"
@@ -93,22 +93,22 @@ namespace BlendInt {
 			"}"
 			""
 			"void main(void) {"
-			//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-			"	mat4 mvp = projection * view * model * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-			"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-			"	uv = a_coord.zw;"
+			//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+			"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+			"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+			"	uv = aCoord.zw;"
 			"}";
 
 		const char* Shaders::widget_text_fragment_shader =
 			"#version 330\n"
 			"in vec2 uv;"
 			"uniform sampler2D u_tex;"
-			"uniform vec4 u_color;"
+			"uniform vec4 uColor;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
 			"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
-			"	FragmentColor = vec4(u_color.rgb, u_color.a * alpha);"
+			"	FragmentColor = vec4(uColor.rgb, uColor.a * alpha);"
 			"}";
 
 		const char* Shaders::primitive_vertex_shader = "#version 330\n"
@@ -139,144 +139,144 @@ namespace BlendInt {
 		const char* Shaders::widget_triangle_vertex_shader =
 			"#version 330\n"
 			""
-			"layout(location=0) in vec2 a_coord;"
-			"layout(location=1) in vec4 a_color;"
+			"layout(location=0) in vec2 aCoord;"
+			"layout(location=1) in vec4 aColor;"
 			"out vec4 VertexColor;"
 			""
 			"void main(void) {"
-			"	gl_Position = vec4(a_coord, 0.0, 1.0);"
-			"	VertexColor = a_color;"
+			"	gl_Position = vec4(aCoord, 0.0, 1.0);"
+			"	VertexColor = aColor;"
 			"}";
 
 		const char* Shaders::widget_triangle_geometry_shader =
-		        "#version 330\n"
-			""
-			"layout (triangles) in;"
-			"layout (triangle_strip, max_vertices = 24) out;"
-			"in vec4 VertexColor[];"
-			"out vec4 PreFragColor;"
-			//"uniform mat4 u_projection;"	// projection matrix
-		       	//"uniform mat4 u_view;"// view matrix
-			""
-			"uniform UIMatrix {"
-			"	mat4 projection;"
-			"	mat4 view;"
-			"	mat4 model;"
-			"};"
-			""
-			"uniform vec3 u_position;"// position
-			"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-			"uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
-			"uniform bool u_AA = false;"
-			""
-			"const vec2 AA_JITTER[8] = vec2[8]("
-			"	vec2(0.468813, -0.481430),"
-			"	vec2(-0.155755, -0.352820),"
-			"	vec2(0.219306, -0.238501),"
-			"	vec2(-0.393286,-0.110949),"
-			"	vec2(-0.024699, 0.013908),"
-			"	vec2(0.343805, 0.147431),"
-			"	vec2(-0.272855, 0.269918),"
-			"	vec2(0.095909, 0.388710));"
-			""
-			"mat4 ScaleMatrix (const in vec3 s)"
-			"{"
-			"	return mat4(s.x, 0.0, 0.0, 0.0,"
-			"				0.0, s.y, 0.0, 0.0,"
-			"				0.0, 0.0, s.z, 0.0,"
-			"				0.0, 0.0, 0.0, 1.0);"
-			"}"
-			""
-			"mat4 TranslateMatrix (const in vec3 t)"
-			"{"
-				        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-				        "				0.0, 1.0, 0.0, 0.0,"
-				        "				0.0, 0.0, 1.0, 0.0,"
-				        "				t.x, t.y, t.z, 1.0);"
-				        "}"
-				        ""
-				        "mat4 RotateMatrix( const in float angle,"
-				        "					const in vec3 axis )"
-				        "{"
-				        "	vec3 n = normalize( axis );"
-				        "	float theta = radians( angle );"
-				        "	float c = cos( theta );"
-				        "	float s = sin( theta );"
-				        "	mat3 R;"
-				        "	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-				        "	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-				        "	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-				        "	return mat4( R[0],	0.0,"
-				        "				 R[1],	0.0,"
-				        "				 R[2],	0.0,"
-				        "				 0.0, 0.0, 0.0, 1.0 );"
-				        "}"
-				        ""
-				        "mat4 RotateMatrixAlongZ (const in float angle)"
-				        "{"
-				        "	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-				        "}"
-				        ""
-				        "void main()"
-				        "{"
-						//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-					"	mat4 mvp = projection * view *  model * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-				        "	vec4 vertex;"
-				        ""
-				        "	if(u_AA) {"
-				        "		mat4 aa_matrix = mat4(1.0);"
-				        "		vec4 col_calib;"
-				        "		for(int jit = 0; jit < 8; jit++) {"
-				        "			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-				        "			for(int n = 0; n < gl_in.length(); n++)"
-				        "			{"
-				        "				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				        "				col_calib = VertexColor[n];"
-				        "				col_calib.a = col_calib.a/8;"
-				        "				PreFragColor = col_calib;"
-				        "				gl_Position = vertex;"
-				        "				EmitVertex();"
-				        "			}"
-				        "			EndPrimitive();"
-				        "		}"
-				        "		return;"
-				        "	} else {"
-				        "		for(int n = 0; n < gl_in.length(); n++) {"
-				        "			vertex = mvp * gl_in[n].gl_Position;"
-				        "			PreFragColor = VertexColor[n];"
-				        "			gl_Position = vertex;"
-				        "			EmitVertex();"
-				        "		}"
-				        "		EndPrimitive();"
-				        "		return;"
-				        "	}"
-				        ""
-				        "}";
+				"#version 330\n"
+				""
+				"layout (triangles) in;"
+				"layout (triangle_strip, max_vertices = 24) out;"
+				"in vec4 VertexColor[];"
+				"out vec4 PreFragColor;"
+				//"uniform mat4 u_projection;"	// projection matrix
+				//"uniform mat4 u_view;"// view matrix
+				""
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+				"uniform vec2 uScale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
+				"uniform bool uAA = false;"
+				""
+				"const vec2 AA_JITTER[8] = vec2[8]("
+				"	vec2(0.468813, -0.481430),"
+				"	vec2(-0.155755, -0.352820),"
+				"	vec2(0.219306, -0.238501),"
+				"	vec2(-0.393286,-0.110949),"
+				"	vec2(-0.024699, 0.013908),"
+				"	vec2(0.343805, 0.147431),"
+				"	vec2(-0.272855, 0.269918),"
+				"	vec2(0.095909, 0.388710));"
+				""
+				"mat4 ScaleMatrix (const in vec2 s)"
+				"{"
+				"	return mat4(s.x, 0.0, 0.0, 0.0,"
+				"				0.0, s.y, 0.0, 0.0,"
+				"				0.0, 0.0, 0.0, 0.0,"
+				"				0.0, 0.0, 0.0, 1.0);"
+				"}"
+				""
+				"mat4 TranslateMatrix (const in vec2 t)"
+				"{"
+				"	return mat4(1.0, 0.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0, 0.0,"
+				"				0.0, 0.0, 1.0, 0.0,"
+				"				t.x, t.y, 0.0, 1.0);"
+				"}"
+				""
+				"mat4 RotateMatrix( const in float angle,"
+				"					const in vec3 axis )"
+				"{"
+				"	vec3 n = normalize( axis );"
+				"	float theta = radians( angle );"
+				"	float c = cos( theta );"
+				"	float s = sin( theta );"
+				"	mat3 R;"
+				"	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
+				"	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
+				"	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
+				"	return mat4( R[0],	0.0,"
+				"				 R[1],	0.0,"
+				"				 R[2],	0.0,"
+				"				 0.0, 0.0, 0.0, 1.0 );"
+				"}"
+				""
+				"mat4 RotateMatrixAlongZ (const in float angle)"
+				"{"
+				"	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
+				"}"
+				""
+				"void main()"
+				"{"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(vec3(uScale.xy, 1.f));"
+				"	mat4 mvp = projection * view *  model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(uScale);"
+				"	vec4 vertex;"
+				""
+				"	if(uAA) {"
+				"		mat4 aa_matrix = mat4(1.0);"
+				"		vec4 col_calib;"
+				"		for(int jit = 0; jit < 8; jit++) {"
+				"			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"			for(int n = 0; n < gl_in.length(); n++)"
+				"			{"
+				"				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
+				"				col_calib = VertexColor[n];"
+				"				col_calib.a = col_calib.a/8;"
+				"				PreFragColor = col_calib;"
+				"				gl_Position = vertex;"
+				"				EmitVertex();"
+				"			}"
+				"			EndPrimitive();"
+				"		}"
+				"		return;"
+				"	} else {"
+				"		for(int n = 0; n < gl_in.length(); n++) {"
+				"			vertex = mvp * gl_in[n].gl_Position;"
+				"			PreFragColor = VertexColor[n];"
+				"			gl_Position = vertex;"
+				"			EmitVertex();"
+				"		}"
+				"		EndPrimitive();"
+				"		return;"
+				"	}"
+				""
+				"}";
 
 		const char* Shaders::widget_triangle_fragment_shader =
-		        "#version 330\n"
-				        ""
-				        "in vec4 PreFragColor;"
-				        "uniform bool u_AA = false;"
-				        "uniform int u_gamma = 0;"
-				        "out vec4 FragmentColor;"
-				        ""
-				        "void main(void) {"
-				        "	vec4 color_calib = vec4(0.0);"
-				        "	if(u_AA) {"
-				        "		color_calib = vec4(vec3(clamp(u_gamma/255.0/8.0, -1.0, 1.0)), 0.0);"
-				        "	} else {"
-				        "		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
-				        "	}"
-				        "	FragmentColor = PreFragColor + color_calib;"
-				        "}";
+				"#version 330\n"
+				""
+				"in vec4 PreFragColor;"
+				"uniform bool uAA = false;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(0.0);"
+				"	if(uAA) {"
+				"		color_calib = vec4(vec3(clamp(uGamma/255.0/8.0, -1.0, 1.0)), 0.0);"
+				"	} else {"
+				"		color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	}"
+				"	FragmentColor = PreFragColor + color_calib;"
+				"}";
 
 		// ---------------------------------------------------------------
 
 		const char* Shaders::widget_inner_vertex_shader =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec3 a_coord;"
+				"layout(location=0) in vec3 aCoord;"
 				"uniform UIMatrix {"
 				"	mat4 projection;"
 				"	mat4 view;"
@@ -287,27 +287,27 @@ namespace BlendInt {
 				""
 				"void main(void) {"
 				"	mat4 mvp = projection * view * model;"
-				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-				"	VertexShade = a_coord.z;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
 				"}";
 
 		const char* Shaders::widget_inner_fragment_shader =
 		        "#version 330\n"
 				""
 				"in float VertexShade;"
-				"uniform vec4 u_color;"
-				"uniform int u_gamma = 0;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
-				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color;"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
 				"}";
 
 		const char* Shaders::widget_split_inner_vertex_shader =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec3 a_coord;"
+				"layout(location=0) in vec3 aCoord;"
 				""
 				"uniform UIMatrix {"
 				"	mat4 projection;"
@@ -319,8 +319,8 @@ namespace BlendInt {
 				""
 				"void main(void) {"
 				"	mat4 mvp = projection * view * model;"
-				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-				"	VertexShade = a_coord.z;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
 				"}";
 
 		const char* Shaders::widget_split_inner_fragment_shader =
@@ -329,12 +329,12 @@ namespace BlendInt {
 				"in float VertexShade;"
 				"uniform vec4 u_color0;"
 				"uniform vec4 u_color1;"
-				"uniform int u_gamma = 0;"
+				"uniform int uGamma = 0;"
 				"uniform float u_parting = 10.f;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
 				""
 				"	if(gl_FragCoord.x <= u_parting) {"
 				"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
@@ -348,10 +348,10 @@ namespace BlendInt {
 		const char* Shaders::widget_outer_vertex_shader =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec2 a_coord;"
+				"layout(location=0) in vec2 aCoord;"
 				""
 				"void main(void) {"
-				"	gl_Position = vec4(a_coord.xy, 0.0, 1.0);"
+				"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
 				"}";
 
 		const char* Shaders::widget_outer_geometry_shader =
@@ -369,7 +369,7 @@ namespace BlendInt {
 				"	mat4 model;"
 				"};"
 				""
-				"uniform vec2 u_position;"// position
+				"uniform vec2 uPosition;"// position
 				""
 				"const vec2 AA_JITTER[8] = vec2[8]("
 				"	vec2(0.468813, -0.481430),"
@@ -391,7 +391,7 @@ namespace BlendInt {
 				""
 				"void main()"
 				"{"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(u_position);"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
 				"	vec4 vertex;"
 				""
 				"	mat4 aa_matrix = mat4(1.0);"
@@ -412,11 +412,11 @@ namespace BlendInt {
 		const char* Shaders::widget_outer_fragment_shader =
 		        "#version 330\n"
 				""
-				"uniform vec4 u_color;"
+				"uniform vec4 uColor;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color = u_color;"
+				"	vec4 color = uColor;"
 				"	color.a = color.a / 8.f;"
 				""
 				"	FragmentColor = color;"
@@ -425,19 +425,19 @@ namespace BlendInt {
 		// ---------------------------------------------------------------
 
 		const char* Shaders::context_vertex_shader = "#version 330\n"
-				"layout(location = 0) in vec2 a_coord;"
+				"layout(location = 0) in vec2 aCoord;"
 				"layout(location = 1) in vec2 UVCoord;"
 				"uniform mat4 MVP;"
 				"out vec2 f_texcoord;"
 				""
 				"void main(void) {"
-				"	gl_Position = MVP * vec4(a_coord, 0.0, 1.0);"
+				"	gl_Position = MVP * vec4(aCoord, 0.0, 1.0);"
 				"	f_texcoord = UVCoord;"
 				"}";
 
 		const char* Shaders::context_fragment_shader = "#version 330\n"
 				"in vec2 f_texcoord;"
-				"uniform sampler2D TexID;"
+				"uniform sampler2D uTexture;"
 				//"uniform bool Blur = false;"
 				"out vec4 FragmentColor;"
 				//"const float gaussian_kernel[9] = float[9]("
@@ -456,7 +456,7 @@ namespace BlendInt {
 				 "		float grey;"
 				 "		color = vec4(grey, grey, grey, 0.25f);"
 				 ""
-				 "		ivec2 tex_size = textureSize(TexID, 0);"
+				 "		ivec2 tex_size = textureSize(uTexture, 0);"
 				 "		float s = float(tex_size.s);"
 				 "		float t = float(tex_size.t);"
 				 "		vec4 sum = vec4(0.0);"
@@ -469,7 +469,7 @@ namespace BlendInt {
 				 ""
 				 "		for(int i = 0; i < 9; i++)"
 				 "		{"
-				 "			color = texture(TexID, f_texcoord + offset[i]);"
+				 "			color = texture(uTexture, f_texcoord + offset[i]);"
 				 "			grey = dot(color.rgb, vec3(0.25, 0.25, 0.25));"
 				 "			sample[i] = vec4(grey, grey, grey, color.a * 0.25);"
 				 "			sum += sample[i] * gaussian_kernel[i];"
@@ -481,13 +481,13 @@ namespace BlendInt {
 				 ""
 				 "	} else {"
 				 */
-				"		FragmentColor = texture(TexID, f_texcoord);"
+				"		FragmentColor = texture(uTexture, f_texcoord);"
 				//"	}"
 				"}";
 
 		const char* Shaders::widget_image_vertex_shader =
 				"#version 330\n"
-				"layout(location = 0) in vec2 a_coord;"
+				"layout(location = 0) in vec2 aCoord;"
 				"layout(location = 1) in vec2 a_uv;"
 				"out vec2 f_texcoord;"
 				""
@@ -500,8 +500,8 @@ namespace BlendInt {
 				"	mat4 model;"
 				"};"
 				""
-				"uniform vec2 u_position;"// position
-        		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+				"uniform vec2 uPosition;"// position
+        		"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				""
 		        "mat4 TranslateMatrix (const in vec2 t)"
 		        "{"
@@ -534,23 +534,23 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	gl_Position = mvp * vec4(a_coord, 0.0, 1.0);"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
 				"	f_texcoord = a_uv;"
 				"}";
 
 		const char* Shaders::widget_image_fragment_shader =
 		        "#version 330\n"
 				"in vec2 f_texcoord;"
-				"uniform sampler2D TexID;"
-				"uniform int u_gamma = 0;"
+				"uniform sampler2D uTexture;"
+				"uniform int uGamma = 0;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
 				"	vec4 color_calib = vec4(0.f);"
-				"	color_calib = vec4(vec3(clamp(u_gamma/255.f, -1.f, 1.f)), 0.f);"
-				"	vec4 color = texture(TexID, f_texcoord);"
+				"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
+				"	vec4 color = texture(uTexture, f_texcoord);"
 				"	FragmentColor = color + color_calib;"
 				"}";
 
@@ -592,14 +592,14 @@ namespace BlendInt {
 		const char* Shaders::frame_inner_vertex_shader =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec3 a_coord;"
+				"layout(location=0) in vec3 aCoord;"
 				"uniform FrameMatrix {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
 				"};"
 				""
-				"uniform vec2 u_position;"
+				"uniform vec2 uPosition;"
 				"out float VertexShade;"
 				""
 		        "mat4 TranslateMatrix (const in vec2 t)"
@@ -611,22 +611,22 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				"	mat4 mvp = projection * view * model * TranslateMatrix (u_position);"
-				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-				"	VertexShade = a_coord.z;"
+				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
 				"}";
 
 		const char* Shaders::frame_inner_fragment_shader =
 		        "#version 330\n"
 				""
 				"in float VertexShade;"
-				"uniform vec4 u_color;"
-				"uniform int u_gamma = 0;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
-				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color;"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
 				"}";
 
 		// -----------------------------------
@@ -784,12 +784,12 @@ namespace BlendInt {
 		        "#version 330\n"
 				""
 				"in vec2 fUV;"
-				"uniform sampler2D TexID;"
+				"uniform sampler2D uTexture;"
 				"uniform float uFactor = 1.f;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	FragmentColor = texture(TexID, fUV) * uFactor;"
+				"	FragmentColor = texture(uTexture, fUV) * uFactor;"
 				"}";
 
 		Shaders* Shaders::instance = 0;
@@ -1168,13 +1168,23 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
 			//locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
 			//locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
-			locations_[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("u_position");
-			locations_[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("u_rotation");
+			locations_[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
 			locations_[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
-			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("u_color");
+			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
+
+			/*
+			Stock::location[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
+			//location[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
+			//location[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
+			Stock::location[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
+			Stock::location[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
+			Stock::location[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
+			Stock::location[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
+			*/
 
 			return true;
 		}
@@ -1198,15 +1208,15 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_TRIANGLE_COORD] = widget_triangle_program_->GetAttributeLocation("a_coord");
-			locations_[WIDGET_TRIANGLE_COLOR] = widget_triangle_program_->GetAttributeLocation("a_color");
+			locations_[WIDGET_TRIANGLE_COORD] = widget_triangle_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_TRIANGLE_COLOR] = widget_triangle_program_->GetAttributeLocation("aColor");
 			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
 			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
-			locations_[WIDGET_TRIANGLE_POSITION] = widget_triangle_program_->GetUniformLocation("u_position");
-			locations_[WIDGET_TRIANGLE_ROTATION] = widget_triangle_program_->GetUniformLocation("u_rotation");
-			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("u_scale");
-			locations_[WIDGET_TRIANGLE_ANTI_ALIAS] = widget_triangle_program_->GetUniformLocation("u_AA");
-			locations_[WIDGET_TRIANGLE_GAMMA] = widget_triangle_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_TRIANGLE_POSITION] = widget_triangle_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_TRIANGLE_ROTATION] = widget_triangle_program_->GetUniformLocation("uRotation");
+			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("uScale");
+			locations_[WIDGET_TRIANGLE_ANTI_ALIAS] = widget_triangle_program_->GetUniformLocation("uAA");
+			locations_[WIDGET_TRIANGLE_GAMMA] = widget_triangle_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}
@@ -1227,9 +1237,9 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_INNER_COORD] = widget_inner_program_->GetAttributeLocation("a_coord");
-			locations_[WIDGET_INNER_COLOR] = widget_inner_program_->GetUniformLocation("u_color");
-			locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_INNER_COORD] = widget_inner_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_INNER_COLOR] = widget_inner_program_->GetUniformLocation("uColor");
+			locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}
@@ -1250,11 +1260,11 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_SPLIT_INNER_COORD] = widget_split_inner_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_SPLIT_INNER_COORD] = widget_split_inner_program_->GetAttributeLocation("aCoord");
 			locations_[WIDGET_SPLIT_INNER_COLOR0] = widget_split_inner_program_->GetUniformLocation("u_color0");
 			locations_[WIDGET_SPLIT_INNER_COLOR1] = widget_split_inner_program_->GetUniformLocation("u_color1");
 			locations_[WIDGET_SPLIT_INNER_PARTING] = widget_split_inner_program_->GetUniformLocation("u_parting");
-			locations_[WIDGET_SPLIT_INNER_GAMMA] = widget_split_inner_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_SPLIT_INNER_GAMMA] = widget_split_inner_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}
@@ -1278,9 +1288,9 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_OUTER_COORD] = widget_outer_program_->GetAttributeLocation("a_coord");
-			locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation("u_color");
-			locations_[WIDGET_OUTER_POSITION] = widget_outer_program_->GetUniformLocation("u_position");
+			locations_[WIDGET_OUTER_COORD] = widget_outer_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation("uColor");
+			locations_[WIDGET_OUTER_POSITION] = widget_outer_program_->GetUniformLocation("uPosition");
 
 			return true;
 		}
@@ -1301,14 +1311,14 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("aCoord");
 			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("a_uv");
 			//locations_[IMAGE_PROJECTION] = image_program_->GetUniformLocation("u_projection");
 			//locations_[IMAGE_VIEW] = image_program_->GetUniformLocation("u_view");
-			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("u_position");
-			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("u_rotation");
-			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("TexID");
-			locations_[WIDGET_IMAGE_GAMMA] = widget_image_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("uRotation");
+			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("uTexture");
+			locations_[WIDGET_IMAGE_GAMMA] = widget_image_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}
@@ -1395,10 +1405,10 @@ namespace BlendInt {
 				return false;
 			}
 
-			locations_[FRAME_INNER_COORD] = frame_inner_program_->GetAttributeLocation("a_coord");
-			locations_[FRAME_INNER_COLOR] = frame_inner_program_->GetUniformLocation("u_color");
-			locations_[FRAME_INNER_POSITION] = frame_inner_program_->GetUniformLocation("u_position");
-			locations_[FRAME_INNER_GAMMA] = frame_inner_program_->GetUniformLocation("u_gamma");
+			locations_[FRAME_INNER_COORD] = frame_inner_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_INNER_COLOR] = frame_inner_program_->GetUniformLocation("uColor");
+			locations_[FRAME_INNER_POSITION] = frame_inner_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_INNER_GAMMA] = frame_inner_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}

@@ -129,19 +129,19 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", x, y, 0.f);
-		program->SetUniform1i("u_gamma", gamma);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);
-		program->SetVertexAttrib4fv("a_color", color.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glEnableVertexAttribArray(0);
 
 		m_vbo->bind();	// bind ARRAY BUFFER
 		m_light_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(0, // attribute
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -154,11 +154,11 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		program->SetVertexAttrib4fv("a_color", color.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
 
 		m_dark_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(0, // attribute
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -372,7 +372,6 @@ namespace BlendInt {
 		m_dark_ibo->bind();
 		m_dark_ibo->set_data(0, 0, 0);
 		m_dark_ibo->reset();
-
 
 		glBindVertexArray(0);
 	}

@@ -119,6 +119,8 @@ namespace BlendInt {
 			LocationLast
 		};
 
+		//extern GLint location[LocationLast];
+
 		/**
 		 * @brief A class which provide pre-defined shaders
 		 *

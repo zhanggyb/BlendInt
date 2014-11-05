@@ -136,8 +136,8 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
-		        0.f, 0.f, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+		        0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
@@ -170,8 +170,8 @@ namespace BlendInt {
 			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
-					0.f, 0.f - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+					0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}

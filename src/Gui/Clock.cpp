@@ -65,10 +65,9 @@ namespace BlendInt {
 						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
 		        (float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f),
-				0.f);
+		        (float) (position().y() + size().height() / 2.f));
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
@@ -108,19 +107,21 @@ namespace BlendInt {
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
-			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
+			GenerateClockVertices(radius, 1.f, inner_verts, outer_verts);
 
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Clock::GenerateClockVertices (int radius, float border,
@@ -190,23 +191,20 @@ namespace BlendInt {
 		GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
 
 		glGenVertexArrays(2, vao_);
-
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.generate();
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
