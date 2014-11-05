@@ -54,6 +54,8 @@ namespace BlendInt {
 
 		void SetIcon (const RefPtr<AbstractIcon>& icon);
 
+		virtual bool IsExpandX () const;
+
 		virtual Size GetPreferredSize () const;
 
 	protected:

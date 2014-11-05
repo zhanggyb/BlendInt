@@ -36,10 +36,6 @@ namespace BlendInt {
 
 		virtual ~AbstractIcon ();
 
-		void Draw (float x, float y, short gamma = 0) const;
-
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
-
 	};
 
 }

@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	TabHeader::TabHeader()
-	: AbstractContainer(),
+	: Layout(),
 	  vao_(0)
 	{
 		set_size(400, 24);
@@ -84,7 +84,7 @@ namespace BlendInt {
 	void TabHeader::Append (TabButton* button)
 	{
 		int x = GetLastPosition ();
-		int y = position().y() + margin().bottom();
+		int y = margin().bottom();
 		int h = size().height() - margin().vsum();
 
 		if (PushBackSubWidget(button)) {
@@ -117,14 +117,14 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
 			prefer.set_height(max_font_height + margin().vsum());
 		} else {
 			Size tmp_size;
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -146,20 +146,6 @@ namespace BlendInt {
 		// TODO: change sub widgets
 	}
 
-	void TabHeader::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -178,58 +164,21 @@ namespace BlendInt {
 
 	ResponseType TabHeader::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->use();
+		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		Shaders::instance->triangle_program()->reset();
+		GLSLProgram::reset();
 
-		return Ignore;
-	}
-
-	ResponseType TabHeader::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseMoveEvent (const MouseEvent& event)
-	{
 		return Ignore;
 	}
 
@@ -240,11 +189,11 @@ namespace BlendInt {
 
 	int TabHeader::GetLastPosition() const
 	{
-		int x = position().x() + margin().left();
+		int x = margin().left();
 
-		if(first()) {
-			x = last()->position().x();
-			x += last()->size().width();
+		if(first_child()) {
+			x = last_child()->position().x();
+			x += last_child()->size().width();
 		}
 
 		return x;

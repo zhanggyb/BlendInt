@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SCROLLBAR_HPP_
 #define _BLENDINT_GUI_SCROLLBAR_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/Slider.hpp>
 
 #include <BlendInt/Gui/AbstractButton.hpp>
@@ -55,9 +55,11 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		virtual Size GetPreferredSize () const;
+
 		bool pressed () const
 		{
-			return m_pressed;
+			return pressed_;
 		}
 
 	protected:
@@ -76,19 +78,11 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
@@ -122,9 +116,9 @@ namespace BlendInt {
 		 */
 		int GetSlidePosition ();
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		Point m_cursor_origin;
 		SlideIcon m_slide;
@@ -134,29 +128,7 @@ namespace BlendInt {
 		/**
 		 * @brief If the slide switch is pressed
 		 */
-		bool m_pressed;
-
-	};
-
-	class AbstractScrollable;
-
-	class NativeScrollBar: public ScrollBar
-	{
-	public:
-
-		friend class AbstractScrollable;
-
-		NativeScrollBar (Orientation orientation)
-		: ScrollBar(orientation)
-		{
-
-		}
-
-		virtual ~NativeScrollBar ()
-		{
-
-		}
-
+		bool pressed_;
 	};
 
 }

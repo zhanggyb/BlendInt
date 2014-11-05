@@ -66,9 +66,9 @@ ValuesIn(ForwardIterator begin, ForwardIterator end);
 template <typename T, size_t N>
 internal::ParamGenerator<T> ValuesIn(const T (&array)[N]);
 
-template <class Container>
-internal::ParamGenerator<typename Container::value_type> ValuesIn(
-    const Container& container);
+template <class Layout>
+internal::ParamGenerator<typename Layout::value_type> ValuesIn(
+    const Layout& container);
 
 namespace internal {
 

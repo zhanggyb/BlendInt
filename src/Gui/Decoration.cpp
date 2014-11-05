@@ -38,7 +38,6 @@
 #include <BlendInt/Gui/Decoration.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Section.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -48,7 +47,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration()
-	: AbstractContainer(),
+	: Layout(),
 	  space_(4)
 	{
 		set_size(200, 20);
@@ -114,8 +113,8 @@ namespace BlendInt {
 			inner_->reset();
 
 			int x = position().x() + margin().left();
-			if (first()) {
-				x = first()->position().x();
+			if (first_child()) {
+				x = first_child()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();
@@ -126,7 +125,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-		} else if (request.target()->container() == this) {
+		} else if (request.target()->parent() == this) {
 
 			FillSubWidgets(position(), size(), margin(), space_);
 
@@ -177,44 +176,21 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Color(Color::DarkGray).data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Color(Color::DarkGray).data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 		return Accept;
-	}
-
-	ResponseType Decoration::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	void Decoration::InitializeDecoration()
@@ -231,8 +207,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -251,21 +227,6 @@ namespace BlendInt {
 	void Decoration::RealignSubWidgets (const Size& size, const Margin& margin,
 	        int space)
 	{
-	}
-
-	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	int Decoration::GetLastPosition () const

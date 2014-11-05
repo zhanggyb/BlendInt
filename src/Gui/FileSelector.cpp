@@ -128,21 +128,19 @@ namespace BlendInt {
 
 	ResponseType FileSelector::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->widget_triangle_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
-		program->reset();
+
+		GLSLProgram::reset();
 
 		return Ignore;
 	}
@@ -172,18 +170,18 @@ namespace BlendInt {
 		layout->SetMargin(2, 2, 2, 2);
 		layout->SetSpace(0);
 
-		ToolBar* toolbar = CreateToolBarOnce();
-		ToolBox* sidebar = CreateSideBarOnce();
+		HLayout* toolbar = CreateToolButtonsOnce();
+		//ToolBox* sidebar = CreateSideBarOnce();
 		VLayout* area = CreateBrowserAreaOnce();
 
-		Splitter* splitter = Manage(new Splitter);
-		DBG_SET_NAME(splitter, "Splitter");
-		splitter->SetMargin(0, 0, 0, 0);
-		splitter->Append(sidebar);
-		splitter->Append(area);
+		//Splitter* splitter = Manage(new Splitter);
+		//DBG_SET_NAME(splitter, "Splitter");
+		//splitter->Append(sidebar);
+		//splitter->Append(area);
 
 		layout->Append(toolbar);
-		layout->Append(splitter);
+		//layout->Append(splitter);
+		layout->Append(area);
 
 		Setup(layout);
 
@@ -247,9 +245,9 @@ namespace BlendInt {
 		return vbox;
 	}
 
-	ToolBar* FileSelector::CreateToolBarOnce()
+	HLayout* FileSelector::CreateToolButtonsOnce()
 	{
-		ToolBar* toolbar = Manage(new ToolBar);
+		HLayout* toolbar = Manage(new HLayout);
 		DBG_SET_NAME(toolbar, "ToolBar");
 		toolbar->SetMargin(2, 2, 2, 2);
 
@@ -302,6 +300,7 @@ namespace BlendInt {
 		return toolbar;
 	}
 
+	/*
 	ToolBox* FileSelector::CreateSideBarOnce ()
 	{
 		ToolBox* toolbox = Manage(new ToolBox);
@@ -316,6 +315,7 @@ namespace BlendInt {
 
 		return toolbox;
 	}
+	*/
 
 	Expander* FileSelector::CreateSystemDevicesOnce ()
 	{

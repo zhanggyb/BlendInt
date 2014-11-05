@@ -66,9 +66,8 @@ void MainSpace::InitOnce ()
 	m_toolbar = CreateToolBar();
 
     Splitter* splitter = Manage(new Splitter);
-    splitter->SetMargin(0, 0, 0, 0);
 
-    ToolBox* tbox = CreateSideBox();
+    //ToolBox* tbox = CreateSideBox();
     ToolBar* bottom = CreateBottomBar();
 
     workspace_ = Manage(new Workspace);
@@ -79,30 +78,24 @@ void MainSpace::InitOnce ()
 	ToolBar* tb = Manage(new ToolBar);
 	workspace_->SetHeader(tb);
 
-	ToolBox* box1 = Manage(new ToolBox);
-	workspace_->SetLeftSideBar(box1);
+	//ToolBox* box1 = Manage(new ToolBox);
+	//workspace_->SetLeftSideBar(box1);
 
-	ToolBox* box2 = Manage(new ToolBox);
-	workspace_->SetRightSideBar(box2);
+	//ToolBox* box2 = Manage(new ToolBox);
+	//workspace_->SetRightSideBar(box2);
 
     splitter->Append(workspace_);
-    splitter->Append(tbox);
+    //splitter->Append(tbox);
 
 	Append(m_toolbar);
     Append(splitter);
     Append(bottom);
 }
 
-void MainSpace::PerformRefresh(const RefreshRequest& request)
-{
-	refresh_ = true;
-	ReportRefresh(request);
-}
-
 void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-		refresh_ = true;
+		Refresh();
 	}
 
 	VLayout::PerformSizeUpdate(request);
@@ -110,22 +103,18 @@ void MainSpace::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainSpace::Draw(Profile& profile)
 {
-	if(refresh_) {
-
-		RenderToBuffer();
-
-		refresh_ = false;
+	if(refresh()) {
+		RenderToBuffer(profile);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	buffer_.Draw(position().x(), position().y());
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;
 }
 
-void MainSpace::RenderToBuffer()
+void MainSpace::RenderToBuffer(BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -139,7 +128,7 @@ void MainSpace::RenderToBuffer()
 	buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 	// Create and set texture to render to.
 	GLTexture2D* tex = buffer_.texture();
-	if(!tex->texture())
+	if(!tex->id())
 		tex->generate();
 
 	tex->bind();
@@ -155,7 +144,7 @@ void MainSpace::RenderToBuffer()
 
 	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D, tex->texture(), 0);
+			GL_TEXTURE_2D, tex->id(), 0);
 	//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 	// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
@@ -186,12 +175,12 @@ void MainSpace::RenderToBuffer()
 
 		glm::mat4 origin;
 
-		Shaders::instance->GetUIProjectionMatrix(origin);
+		Shaders::instance->GetWidgetProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -199,9 +188,9 @@ void MainSpace::RenderToBuffer()
 
 		// Draw frame panel
 
-		Profile off_screen_profile(position());
+		Profile off_screen_profile(profile, GetGlobalPosition());
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}
@@ -209,7 +198,7 @@ void MainSpace::RenderToBuffer()
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->SetUIProjectionMatrix(origin);
+		Shaders::instance->SetWidgetProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -253,6 +242,7 @@ BI::ToolBar* MainSpace::CreateToolBar()
 	return toolbar;
 }
 
+/*
 BI::ToolBox* MainSpace::CreateSideBox()
 {
 	ToolBox* toolbox = Manage(new ToolBox);
@@ -281,6 +271,7 @@ BI::ToolBox* MainSpace::CreateSideBox()
 
 	return toolbox;
 }
+*/
 
 BI::Expander* MainSpace::CreateTransformExpander()
 {

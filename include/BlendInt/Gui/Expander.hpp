@@ -25,7 +25,6 @@
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
 #include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
@@ -70,7 +69,7 @@ namespace BlendInt {
 	/**
 	 * @brief Expander
 	 */
-	class Expander: public AbstractContainer
+	class Expander: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
 
@@ -82,7 +81,7 @@ namespace BlendInt {
 
 		virtual ~Expander ();
 
-		bool Setup (AbstractWidget* widget);
+		bool Setup (Widget* widget);
 
 		void SetTitle (const String& text);
 
@@ -96,43 +95,20 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	protected:
 
-		void InitializeExpander ();
-
-		void FillInExpander (const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillInExpander (const Size& out_size);
 
 		void FillInExpander (int x, int y, int width, int height);
 
 		void OnToggled (bool toggle);
 
-		GLuint vao_;
-
 		int frame_height_;
 
-		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

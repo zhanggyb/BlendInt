@@ -41,8 +41,10 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ProgressBar::ProgressBar(Orientation orientation)
-	: AbstractWidget(),
+	: Widget(),
 	  m_orientation(orientation)
 	{
 		if(orientation == Horizontal) {
@@ -146,18 +148,18 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
+						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
-		program->SetUniform1i("u_AA", 1);
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -166,48 +168,6 @@ namespace BlendInt {
 		program->reset();
 
 		return Accept;
-	}
-
-	ResponseType ProgressBar::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ProgressBar::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void ProgressBar::InitializeProgressBar ()
@@ -245,10 +205,10 @@ namespace BlendInt {
 		inner_->set_data(36 * sizeof(GLfloat), verts);
 		//tool.SetInnerBufferData(m_inner.get());
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		//glEnableVertexAttribArray(0);
 		//glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
@@ -258,8 +218,8 @@ namespace BlendInt {
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

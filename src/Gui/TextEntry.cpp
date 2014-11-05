@@ -47,7 +47,7 @@ namespace BlendInt {
 	Margin TextEntry::default_padding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: AbstractWidget(),
+	: Widget(),
 	  start_(0),
 	  length_(0),
 	  index_(0)
@@ -235,25 +235,25 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			VertexTool tool;
-			if(Theme::instance->text().shaded) {
-				tool.GenerateShadedVertices(*request.size(),
-						DefaultBorderWidth(),
-						round_type(),
-				        round_radius(),
-				        Vertical,
-				        Theme::instance->instance->text().shadetop,
-				        Theme::instance->instance->text().shadedown);
+			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->text().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->text().shadetop,
+						Theme::instance->text().shadedown,
+						&inner_verts,
+						&outer_verts);
 			} else {
-				tool.GenerateShadedVertices(*request.size(),
-						DefaultBorderWidth(),
-						round_type(),
-				        round_radius());
+				GenerateVertices(&inner_verts, &outer_verts);
 			}
+
 			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 			cursor_buffer_->bind();
 			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
@@ -264,7 +264,6 @@ namespace BlendInt {
 			cursor_buffer_->unmap();
 			cursor_buffer_->reset();
 
-			set_size(*request.size());
 			Refresh();
 		}
 
@@ -278,27 +277,26 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			VertexTool tool;
-			if(Theme::instance->text().shaded) {
-				tool.GenerateShadedVertices(size(),
-						DefaultBorderWidth(),
-						*request.round_type(),
-				        round_radius(),
-				        Vertical,
-				        Theme::instance->instance->text().shadetop,
-				        Theme::instance->instance->text().shadedown);
-			} else {
-				tool.GenerateShadedVertices(size(),
-						DefaultBorderWidth(),
-						*request.round_type(),
-				        round_radius());
-			}
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-
 			set_round_type(*request.round_type());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->text().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->text().shadetop,
+						Theme::instance->text().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
 			Refresh();
 		}
 
@@ -311,31 +309,31 @@ namespace BlendInt {
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			VertexTool tool;
-			if(Theme::instance->text().shaded) {
-				tool.GenerateShadedVertices(size(),
-						DefaultBorderWidth(),
-						round_type(),
-						*request.round_radius(),
-				        Vertical,
-				        Theme::instance->instance->text().shadetop,
-				        Theme::instance->instance->text().shadedown);
+
+			set_round_radius(*request.round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->text().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->text().shadetop,
+						Theme::instance->text().shadedown,
+						&inner_verts,
+						&outer_verts);
 			} else {
-				tool.GenerateShadedVertices(size(),
-						DefaultBorderWidth(),
-						round_type(),
-						*request.round_radius());
+				GenerateVertices(&inner_verts, &outer_verts);
 			}
+
 			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 			font_.set_pen(
 			        *request.round_radius(),
 			        font_.pen().y());
 
-			set_round_radius(*request.round_radius());
 			Refresh();
 		}
 
@@ -346,34 +344,41 @@ namespace BlendInt {
 
 	ResponseType TextEntry::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_program();
-		program->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				Theme::instance->text().inner.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
-				0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 				Theme::instance->text().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		if(focused()) {			// draw a cursor
+		if (emboss()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
+			        1.0f, 1.0f, 0.16f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+			        0.f, - 1.f);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+			        GetHalfOutlineVertices(round_type()) * 2);
+		}
+
+		/*
+		if(focus()) {			// draw a cursor
 			unsigned int cursor_pos = font_.GetTextWidth(text_,
 						        index_ - start_, start_);
 			cursor_pos += round_radius();
 
-			glm::vec3 pos(position().x() + cursor_pos, position().y() + 1, 0.f);
+			glm::vec3 pos(0.f + cursor_pos, 0.f + 1, 0.f);
 
 			glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
 					glm::value_ptr(pos));
@@ -385,37 +390,34 @@ namespace BlendInt {
 			glBindVertexArray(vaos_[2]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
+		*/
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
-		font_.Print(position(), text_, length_, start_);
+		font_.Print(0.f, 0.f, text_, length_, start_);
 
 		return Accept;
 	}
 
-	ResponseType TextEntry::FocusEvent (bool focus)
+	void TextEntry::FocusEvent (bool focus)
 	{
 		Refresh();
-		return Accept;
 	}
 
 	void TextEntry::InitializeTextEntry ()
 	{
-		VertexTool tool;
-		if(Theme::instance->text().shaded) {
-			tool.GenerateShadedVertices(size(),
-					DefaultBorderWidth(),
-					round_type(),
-					round_radius(),
-					Vertical,
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Theme::instance->text().shaded) {
+			GenerateVertices(Vertical,
 					Theme::instance->text().shadetop,
-					Theme::instance->text().shadedown);
+					Theme::instance->text().shadedown,
+					&inner_verts,
+					&outer_verts);
 		} else {
-			tool.GenerateShadedVertices(size(),
-					DefaultBorderWidth(),
-					round_type(),
-					round_radius());
+			GenerateVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(3, vaos_);
@@ -424,21 +426,21 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		std::vector<GLfloat> cursor_vertices(12, 0.f);
 
@@ -463,8 +465,8 @@ namespace BlendInt {
 		cursor_buffer_->bind();
 		cursor_buffer_->set_data(sizeof(GLfloat) * cursor_vertices.size(), &cursor_vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
@@ -602,33 +604,6 @@ namespace BlendInt {
 
 			Refresh();
 		}
-	}
-
-	ResponseType TextEntry::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TextEntry::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)

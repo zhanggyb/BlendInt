@@ -42,8 +42,10 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ColorWheel::ColorWheel()
-	: AbstractWidget()
+	: Widget()
 	{
 		set_size(160, 160);
 
@@ -73,23 +75,21 @@ namespace BlendInt {
 
 	ResponseType ColorWheel::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
+						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position",
-		        (float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+		        (float) (0.f + size().width() / 2.f),
+		        (float) (0.f + size().height() / 2.f));
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
@@ -99,7 +99,7 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		picker_.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
+		picker_.Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);
 
 		return Accept;
 	}
@@ -185,48 +185,6 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	ResponseType ColorWheel::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ColorWheel::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void ColorWheel::GenerateWheelVertices (int radius,
@@ -377,11 +335,11 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR));
 
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(vaos_[1]);
 
@@ -390,8 +348,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

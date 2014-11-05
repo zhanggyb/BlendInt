@@ -44,9 +44,13 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Clock::Clock()
-	: AbstractWidget(), angle_(0), timer_(0)
+	: Widget(), angle_(0), timer_(0)
 	{
+		set_size(160, 160);
+
 		InitializeClock();
 	}
 
@@ -57,25 +61,23 @@ namespace BlendInt {
 
 	ResponseType Clock::Draw(Profile& profile)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
+						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position",
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
 		        (float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		        (float) (position().y() + size().height() / 2.f));
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.75f, 0.95f, 0.75f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.75f, 0.95f, 0.75f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
@@ -105,61 +107,21 @@ namespace BlendInt {
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
-			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
+			GenerateClockVertices(radius, 1.f, inner_verts, outer_verts);
 
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			set_size(*request.size());
 			Refresh();
 		}
 
-		ReportSizeUpdate(request);
-	}
-
-	ResponseType Clock::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Clock::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Clock::GenerateClockVertices (int radius, float border,
@@ -223,34 +185,29 @@ namespace BlendInt {
 
 	void Clock::InitializeClock ()
 	{
-		set_size(160, 160);
-
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
 		GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
 
 		glGenVertexArrays(2, vao_);
-
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.generate();
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

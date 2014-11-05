@@ -133,8 +133,8 @@ namespace BlendInt {
 		element_buffer_->bind();
 		element_buffer_->set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 
@@ -144,23 +144,28 @@ namespace BlendInt {
 		elements_ = indeces_size * 3;
 	}
 
-	void VertexIcon::Draw(const glm::vec3& pos, short gamma) const
+	void VertexIcon::Draw(float x, float y, short gamma) const
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
-		Draw(pos, color, gamma);
+		Draw(glm::vec3(x, y, 0.f), color, gamma);
+	}
+
+	void VertexIcon::Draw (float x, float y, const Color& color, short gamma) const
+	{
+		Draw(glm::vec3(x, y, 0.f), color, gamma);
 	}
 
 	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma) const
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -181,16 +186,16 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3fv(Shaders::instance->location(Stock::TRIANGLE_POSITION), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glUniform1f(Shaders::instance->location(Stock::TRIANGLE_ROTATION), angle);
-		glUniform2f(Shaders::instance->location(Stock::TRIANGLE_SCALE), scale, scale);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), color.data());
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), angle);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), scale, scale);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -205,8 +210,8 @@ namespace BlendInt {
 		element_buffer_->reset();
 		vertex_buffer_->reset();
 
-		glUniform1f(Shaders::instance->location(Stock::TRIANGLE_ROTATION), 0.f);
-		glUniform2f(Shaders::instance->location(Stock::TRIANGLE_SCALE), 1.f, 1.f);
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 
 		program->reset();
 	}

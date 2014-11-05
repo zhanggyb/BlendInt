@@ -39,6 +39,8 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -46,7 +48,7 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
 	  m_last_value(0),
-	  m_pressed(false)
+	  pressed_(false)
 	{
 		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
@@ -56,12 +58,14 @@ namespace BlendInt {
 			set_size(14, 200);
 		}
 
+		set_round_type(RoundAll);
+
 		InitOnce();
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void ScrollBar::SetSliderPercentage (int percentage)
@@ -125,6 +129,18 @@ namespace BlendInt {
 		}
 	}
 
+	Size ScrollBar::GetPreferredSize() const
+	{
+		Size prefer(14, 14);
+		if(orientation() == Horizontal) {
+			prefer.set_width(200);
+		} else {
+			prefer.set_height(200);
+		}
+
+		return prefer;
+	}
+
 	void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -141,23 +157,46 @@ namespace BlendInt {
 				m_slide.SetRadius(radius);
 			}
 
-			const Color& color = Theme::instance->scroll().inner;
-			short shadetop = Theme::instance->scroll().shadetop;
-			short shadedown = Theme::instance->scroll().shadedown;
-			if (orientation() == Vertical) {
-				shadetop = Theme::instance->scroll().shadedown;
-				shadedown = Theme::instance->scroll().shadetop;
+			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if(Theme::instance->scroll().shaded) {
+
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
+				if(orientation() == Vertical) {
+					shadetop = Theme::instance->scroll().shadedown;
+					shadedown = Theme::instance->scroll().shadetop;
+				}
+
+				GenerateVertices(size(),
+						DefaultBorderWidth(),
+						round_type(),
+						radius,
+						slot_orient,
+						shadetop,
+						shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(size(),
+						DefaultBorderWidth(),
+						round_type(),
+						radius,
+						&inner_verts,
+						&outer_verts);
 			}
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), radius, color, slot_orient,
-							shadetop, shadedown);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-			set_size(*request.size());
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+			buffer_.reset();
+
 		}
 
 		if(request.source() == this) {
@@ -193,87 +232,68 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
-		glBindVertexArray(m_vao[0]);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
+				Theme::instance->scroll().inner.data());
+
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
-		        Theme::instance->scroll().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		Shaders::instance->widget_outer_program()->use();
 
-		glBindVertexArray(m_vao[1]);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+		        0.f, 0.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
+		        Theme::instance->scroll().outline.data());
+
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.f,
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+					0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
-		glm::vec3 pos(position().x(), position().y(), 0.f);
+		float x = 0.f, y = 0.f;
 
 		if (orientation() == Horizontal) {
-			pos.x += GetSlidePosition();
+			x = GetSlidePosition();
 		} else {
-			pos.y += GetSlidePosition();
+			y = GetSlidePosition();
 		}
 
-		m_slide.Draw(pos);
+		m_slide.Draw(x, y);
 		return Accept;
 	}
 
-	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
+	void ScrollBar::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		if (m_pressed) {
-
-			int new_value = value();
-
-			// DO not fire if cursor is out of range, otherwise too many events
-			if (GetNewValue(event.position(), &new_value)) {
-				set_value(new_value);
-				fire_slider_moved_event(value());
-				Refresh();
-			}
-
-			return Accept;
-
-		} else {
-			if (CursorOnSlideIcon(event.position())) {
-				m_slide.set_highlight(true);
-
-				Refresh();
-
-				return Accept;
-			} else {
-				m_slide.set_highlight(false);
-				Refresh();
-
-				return Accept;
-			}
+		if(m_slide.highlight()) {
+			m_slide.set_highlight(false);
+			Refresh();
 		}
 	}
 
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
 	{
-		if (CursorOnSlideIcon(event.position())) {
+		Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+		if (CursorOnSlideIcon(local_position)) {
 
 			m_cursor_origin = event.position();
 			m_last_value = value();
-			m_pressed = true;
+			pressed_ = true;
 			fire_slider_pressed();
 
 			return Accept;
@@ -282,16 +302,50 @@ namespace BlendInt {
 		}
 	}
 
+	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
+	{
+		if (pressed_) {
+
+			int new_value = value();
+
+			// DO not fire if cursor is out of range, otherwise too many events
+			if (GetNewValue(event.position(), &new_value)) {
+				set_value(new_value);
+				Refresh();
+				fire_slider_moved_event(value());
+			}
+
+		} else {
+
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+			if (CursorOnSlideIcon(local_position)) {
+				m_slide.set_highlight(true);
+				Refresh();
+			} else {
+				m_slide.set_highlight(false);
+				Refresh();
+			}
+
+		}
+
+		return Accept;
+	}
+
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
 	{
-		if (m_pressed) {
-			m_pressed = false;
+		if (pressed_) {
 
-			if (CursorOnSlideIcon(event.position())) {
+			pressed_ = false;
+
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+
+			Refresh();
+
+			if (CursorOnSlideIcon(local_position)) {
 				fire_slider_released();
 			}
 
-			Refresh();
 		}
 
 		return Accept;
@@ -299,9 +353,7 @@ namespace BlendInt {
 
 	void ScrollBar::InitOnce ()
 	{
-		set_round_type(RoundAll);
-
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vao_);
 
 		Size slot_size = m_slide.size();
 		float slot_radius;
@@ -316,49 +368,56 @@ namespace BlendInt {
 			slot_orient = Horizontal;
 		}
 
-		const Color& color = Theme::instance->scroll().inner;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
-		if(orientation() == Vertical) {
-			shadetop = Theme::instance->scroll().shadedown;
-			shadedown = Theme::instance->scroll().shadetop;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if(Theme::instance->scroll().shaded) {
+
+			short shadetop = Theme::instance->scroll().shadetop;
+			short shadedown = Theme::instance->scroll().shadedown;
+			if(orientation() == Vertical) {
+				shadetop = Theme::instance->scroll().shadedown;
+				shadedown = Theme::instance->scroll().shadetop;
+			}
+
+			GenerateVertices(slot_size,
+					DefaultBorderWidth(),
+					round_type(),
+					slot_radius,
+					slot_orient,
+					shadetop,
+					shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateVertices(slot_size,
+					DefaultBorderWidth(),
+					round_type(),
+					slot_radius,
+					&inner_verts,
+					&outer_verts);
 		}
 
-		VertexTool tool;
-		tool.GenerateVertices(slot_size,
-						DefaultBorderWidth(),
-						round_type(),
-						slot_radius,
-						color,
-						slot_orient,
-						shadetop,
-						shadedown
-						);
+		buffer_.generate();
 
-		glBindVertexArray(m_vao[0]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		glBindVertexArray(vao_[0]);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0,
 		        BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(m_vao[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::reset();
 		glBindVertexArray(0);
+		buffer_.reset();
 	}
 
 	int ScrollBar::GetSpace ()
@@ -372,33 +431,6 @@ namespace BlendInt {
 		}
 
 		return space;
-	}
-
-	ResponseType ScrollBar::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollBar::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	int ScrollBar::GetSlidePosition ()
@@ -415,39 +447,39 @@ namespace BlendInt {
 		return pos;
 	}
 
-	bool ScrollBar::CursorOnSlideIcon (const Point& cursor)
+	bool ScrollBar::CursorOnSlideIcon (const Point& local_cursor)
 	{
 		int slide_pos = GetSlidePosition();
 
 		int xmin, ymin, xmax, ymax;
 
 		if(orientation() == Horizontal) {
-			xmin = position().x() + slide_pos;
-			ymin = position().y() + (size().height() - m_slide.size().height()) / 2;
+			xmin = slide_pos;
+			ymin = (size().height() - m_slide.size().height()) / 2;
 			xmax = xmin + m_slide.size().width();
 			ymax = ymin + m_slide.size().height();
 		} else {
-			xmin = position().x() + (size().width() - m_slide.size().width()) / 2;
-			ymin = position().y() + slide_pos;
+			xmin = (size().width() - m_slide.size().width()) / 2;
+			ymin = slide_pos;
 			xmax = xmin + m_slide.size().width();
 			ymax = ymin + m_slide.size().height();
 		}
 
-		if(cursor.x() < xmin ||
-			cursor.y() < ymin ||
-			cursor.x() > xmax ||
-			cursor.y() > ymax)
+		if(local_cursor.x() < xmin ||
+			local_cursor.y() < ymin ||
+			local_cursor.x() > xmax ||
+			local_cursor.y() > ymax)
 		{
 			return false;
 		}
 
 		glm::vec2 center;
-		glm::vec2 cursor_pos(cursor.x(), cursor.y());
+		glm::vec2 cursor_pos(local_cursor.x(), local_cursor.y());
 		float distance = 0.f;
 
 		if(orientation() == Horizontal) {
 
-			if(cursor.x() < (xmin + m_slide.radius())) {
+			if(local_cursor.x() < (xmin + m_slide.radius())) {
 
 				center.x = xmin + m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
@@ -456,7 +488,7 @@ namespace BlendInt {
 
 				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.x() > (xmax - m_slide.radius())) {
+			} else if (local_cursor.x() > (xmax - m_slide.radius())) {
 
 				center.x = xmax - m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
@@ -471,7 +503,7 @@ namespace BlendInt {
 
 		} else {
 
-			if(cursor.y() < (ymin + m_slide.radius())) {
+			if(local_cursor.y() < (ymin + m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
 				center.y = ymin + m_slide.radius();
@@ -480,7 +512,7 @@ namespace BlendInt {
 
 				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.y() > (ymax - m_slide.radius())) {
+			} else if (local_cursor.y() > (ymax - m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
 				center.y = ymax - m_slide.radius();

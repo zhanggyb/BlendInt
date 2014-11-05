@@ -48,6 +48,10 @@ configure_file(
 
 include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
 
+if(OS_APPLE)
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local/lib)
+endif()
+
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -58,18 +62,11 @@ if(OPENGL_FOUND)
     endif()
 endif()
 
-if(OS_APPLE)
-
-    include_directories(/usr/local/include/freetype2)
-    set(LIBS ${LIBS} freetype)
-
-elseif(OS_LINUX)
-    find_package(Freetype REQUIRED)
-    if(FREETYPE_FOUND)
-        include_directories(/usr/include/freetype2)
-        include_directories(${FREETYPE_INCLUDE_DIRS})
-        set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
-    endif()
+find_package(Freetype REQUIRED)
+if(FREETYPE_FOUND)
+    include_directories(/usr/include/freetype2)
+    include_directories(${FREETYPE_INCLUDE_DIRS})
+    set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
 endif()
 
 find_package(FontConfig REQUIRED)
@@ -84,19 +81,20 @@ endif()
 #    include_directories(${GLEW_INCLUDE_DIRS})
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
-add_definitions(-D__OPENGL_CORE_330__)
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    set(LIBS ${LIBS} ${Boost_LIBRARIES} boost_system boost_filesystem)
+    set(LIBS ${LIBS} ${Boost_LIBRARIES})
+    #message(STATUS "Use the Boost libraries: ${Boost_LIBRARIES}")
+    #message(STATUS "Use the Boost libraries in: ${Boost_LIBRARY_DIRS}")
 endif()
 
 #add OpenImageIO link
-if(OS_APPLE)
-    set(LIBS ${LIBS} OpenImageIO)
-else()
-    set(LIBS ${LIBS} OpenImageIO)
+find_package(OpenImageIO REQUIRED)
+if(OPENIMAGEIO_FOUND)
+    include_directories(${OPENIMAGEIO_INCLUDE_DIR})
+    set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARY})
 endif()
 
 if(OS_APPLE)
@@ -109,7 +107,6 @@ endif()
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt/CppEvents)
-include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -160,6 +157,9 @@ if(WITH_BUILTIN_GLFW3)
         set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
     endif()
 endif()
+
+# add rapidxml header files
+include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 # include GLM
 if(WITH_BUILTIN_GLM)

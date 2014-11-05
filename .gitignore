@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# temp files in Linux
+*~
+
 # temp files in Mac
 *.DS_Store
 

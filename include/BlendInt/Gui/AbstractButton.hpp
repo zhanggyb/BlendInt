@@ -32,13 +32,13 @@
 #include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	class ButtonGroup;
 
-	class AbstractButton: public AbstractWidget
+	class AbstractButton: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
@@ -84,15 +84,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual ResponseType Draw (Profile& profile) = 0;
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

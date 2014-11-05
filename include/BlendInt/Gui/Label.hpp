@@ -33,14 +33,14 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 
 namespace BlendInt {
 
-	class Label: public AbstractWidget
+	class Label: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Label);
 
@@ -71,10 +71,6 @@ namespace BlendInt {
 			return font_;
 		}
 
-		void SetForegroundColor (const Color& fg);
-
-		void SetBackgroundColor (const Color& color);
-
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
@@ -84,22 +80,6 @@ namespace BlendInt {
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		size_t UpdateTextPosition (const Size& size, const String& text, Font& font);
 
@@ -116,20 +96,13 @@ namespace BlendInt {
 		 */
 		String text_;
 
-		/**
-		 * @brief the text string length to be printed
-		 */
-		size_t text_length_;
-
 		Font font_;
 
-		/** Background color, default: transparent */
-		Color background_color_;
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
-	};
+        /**
+        * @brief the text string length to be printed
+        */
+        size_t text_length_;
+    };
 
 } /* namespace BlendInt */
 #endif /* _BlendIntLABEL_HPP_ */

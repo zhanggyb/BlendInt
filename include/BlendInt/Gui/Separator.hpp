@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_SPACEAREA_HPP_
 #define _BLENDINT_GUI_SPACEAREA_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Separator: public AbstractWidget
+	class Separator: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Separator);
 
@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~Separator ();
 
-		void AttachWidget (AbstractWidget* widget);
+		void AttachWidget (Widget* widget);
 
 		void SetExpandX (bool expand);
 
@@ -60,31 +60,15 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
-		void OnWidgetDestroyed (AbstractWidget* widget);
+		void OnWidgetDestroyed (Widget* widget);
 
 		bool m_expand_x;
 
 		bool m_expand_y;
 
-		AbstractWidget* m_widget_attached;
+		Widget* m_widget_attached;
 	};
 
 }

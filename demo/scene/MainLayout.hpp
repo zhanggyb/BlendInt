@@ -34,15 +34,13 @@ public:
 
 protected:
 
-	virtual void PerformRefresh (const BI::RefreshRequest& request);
-
 	virtual void PerformSizeUpdate (const BI::SizeUpdateRequest& request);
 
 	virtual BI::ResponseType Draw (BI::Profile& profile);
 
 private:
 
-	void RenderToBuffer ();
+	void RenderToBuffer (BI::Profile& profile);
 
 	void InitOnce ();
 
@@ -54,7 +52,7 @@ private:
 
 	BI::MenuBar* CreateMenuBar ();
 
-	BI::ToolBox* CreateToolBox ();
+	//BI::ToolBox* CreateToolBox ();
 
 	BI::Expander* CreateTransformExpander ();
 
@@ -76,7 +74,7 @@ private:
 	BI::Tab* m_tab;
 
 	BI::Viewport3D* m_scene;
-	BI::ImageView* m_image_view;
+	BI::TextureView* m_image_view;
 
 	BI::TextEntry* m_file_input;
 	BI::FileButton* m_file_button;
@@ -84,8 +82,6 @@ private:
 	BI::Button* m_btn_open;
 
 	BI::Label* m_msg_label;
-
-	bool refresh_;
 
 	BI::ImagePlane2D buffer_;
 };

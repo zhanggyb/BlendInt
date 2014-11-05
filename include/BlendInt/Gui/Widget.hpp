@@ -21,13 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FORM_HPP_
-#define _BLENDINT_FORM_HPP_
+#ifndef _BLENDINT_GUI_WIDGET_HPP_
+#define _BLENDINT_GUI_WIDGET_HPP_
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -49,13 +46,24 @@ namespace BlendInt {
 
 		virtual ~Widget();
 
+		Cpp::EventRef<Widget*> destroyed ()
+		{
+			return *destroyed_;
+		}
+
 	protected:
+
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void PostDraw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
@@ -71,45 +79,10 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeWidgetOnce();
-
-		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> buffers_;
-
-	};
-
-	class Container: public AbstractContainer
-	{
-
-	public:
-
-		Container ();
-
-		virtual ~Container ();
-
-	protected:
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		boost::scoped_ptr<Cpp::Event<Widget*> > destroyed_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_FORM_HPP_ */
+#endif /* _BLENDINT_GUI_WIDGET_HPP_ */

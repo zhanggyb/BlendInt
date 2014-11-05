@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_SPLITTER_HPP_
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt
 {
 
 	class Splitter;
 
-	class SplitterHandle: public AbstractWidget
+	class SplitterHandle: public Widget
 	{
 	DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
@@ -57,17 +57,9 @@ namespace BlendInt
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (
-		        const ContextMenuEvent& event);
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -92,10 +84,6 @@ namespace BlendInt
 		int prev_size_;	// width or height of the previous widget
 		int next_size_;	// width or height of the next widget
 		int nearby_pos_;	// nearby widget position
-
-		AbstractWidget* prev_widget_;
-		AbstractWidget* next_widget_;
-
 	};
 
 	/**
@@ -104,7 +92,7 @@ namespace BlendInt
 	 * A Splitter lets the user control the size of the sub widgets by dragging
 	 * the splitter handler between them.
 	 */
-	class Splitter: public AbstractContainer
+	class Splitter: public Widget
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
 
@@ -116,19 +104,19 @@ namespace BlendInt
 
 		virtual ~Splitter ();
 
-		void Prepend (AbstractWidget* widget);
+		void Prepend (Widget* widget);
 
-		void Append (AbstractWidget* widget);
+		void Append (Widget* widget);
 
-		void Insert (int index, AbstractWidget* widget);
+		void Insert (int index, Widget* widget);
 
-		void Remove (AbstractWidget* widget);
+		void Remove (Widget* widget);
 
-		int GetWidgetIndex (AbstractWidget* widget) const;
+		int GetWidgetIndex (Widget* widget) const;
 
 		int GetHandleIndex (SplitterHandle* handle) const;
 
-		AbstractWidget* GetWidget (int index) const;
+		Widget* GetWidget (int index) const;
 
 		SplitterHandle* GetHandle (int index) const;
 
@@ -144,36 +132,9 @@ namespace BlendInt
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (
-		        const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		void FillSubWidgetsInSplitter (const Point& out_pos,
-		        const Size& out_size, const Margin& margin,
-		        Orientation orientation);
-
-		void FillSubWidgetsInSplitter (const Point& pos, const Size& size,
-		        Orientation orientation);
+		void FillSubWidgetsInSplitter (const Size& out_size, Orientation orientation);
 
 		/**
 		 * @brief Fill the sub widgets in this container based on the current size
@@ -210,7 +171,7 @@ namespace BlendInt
 		        std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void DistributeExpandableWidgetsVertically (int y, int height,
-		        int unexpandable_width_sum, std::deque<int>* widget_deque,
+		        int unexpandable_height_sum, std::deque<int>* widget_deque,
 		        int widget_height_sum, std::deque<int>* prefer_deque,
 		        int prefer_height_sum);
 
@@ -222,14 +183,11 @@ namespace BlendInt
 
 		void AlignVertically (int x, int width);
 
-		void AlignSubWidgets (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		void AlignSubWidgets (Orientation orientation, const Size& out_size);
 
-		int GetAverageRoom (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		int GetAverageRoom (Orientation orientation, const Size& out_size);
 
-		int GetWidgetsRoom (Orientation orientation, const Size& out_size,
-		        const Margin& margin);
+		int GetWidgetsRoom (Orientation orientation, const Size& out_size);
 
 		Orientation orientation_;
 	};

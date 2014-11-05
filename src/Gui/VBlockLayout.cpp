@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	VBlockLayout::VBlockLayout ()
-	: AbstractContainer()
+	: Layout()
 	{
 		set_size(80, 60);
 		set_margin(0, 0, 0, 0);
@@ -36,9 +36,9 @@ namespace BlendInt {
 	{
 	}
 
-	void VBlockLayout::Prepend (AbstractWidget* widget)
+	void VBlockLayout::Prepend (Widget* widget)
 	{
-		AbstractWidget* orig_first = first();
+		AbstractWidget* orig_first = first_child();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -51,14 +51,14 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInVBlock(position(), size(), margin());
+			FillInVBlock(size(), margin());
 
 		}
 	}
 
-	void VBlockLayout::Append (AbstractWidget* widget)
+	void VBlockLayout::Append (Widget* widget)
 	{
-		AbstractWidget* orig_last = last();
+		AbstractWidget* orig_last = last_child();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -72,7 +72,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInVBlock(position(), size(), margin());
+			FillInVBlock(size(), margin());
 
 		}
 	}
@@ -81,7 +81,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -96,7 +96,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -111,7 +111,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(80);
 			preferred_size.set_height(60);
@@ -123,7 +123,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					sum++;
@@ -145,13 +145,13 @@ namespace BlendInt {
 
 	void VBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillInVBlock(position(), size(), request);
+		FillInVBlock(size(), request);
 	}
 
 	bool VBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -161,7 +161,7 @@ namespace BlendInt {
 	bool VBlockLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -172,7 +172,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInVBlock(position(), *request.size(), margin());
+			FillInVBlock(*request.size(), margin());
 		}
 
 		if(request.source() == this) {
@@ -180,67 +180,11 @@ namespace BlendInt {
 		}
 	}
 
-	void VBlockLayout::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
-	ResponseType VBlockLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VBlockLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	void VBlockLayout::FillInVBlock (const Point& out_pos, const Size& out_size,
+	void VBlockLayout::FillInVBlock (const Size& out_size,
 					const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 
@@ -249,12 +193,12 @@ namespace BlendInt {
 
 	void VBlockLayout::FillInVBlock (int x, int y, int w, int h)
 	{
-		int count = widget_count();
+		int count = subs_count();
 		if(count == 0) return;
 		int average_height = h / count + 1;
 
 		y = y + h;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, w, average_height);
 			y = y - average_height + 1;

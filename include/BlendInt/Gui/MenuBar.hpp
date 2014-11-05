@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_GUI_MENUBAR_HPP_
 #define _BLENDINT_GUI_MENUBAR_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public AbstractContainer
+	class MenuBar: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 
@@ -66,25 +66,9 @@ namespace BlendInt {
 
 		virtual void PerformMarginUpdate (const Margin& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

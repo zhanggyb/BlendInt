@@ -31,6 +31,8 @@
 
 #include <BlendInt/Core/Image.hpp>
 
+#include "ShadowImage.hpp"
+
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -276,7 +278,6 @@ namespace BlendInt {
 
 	Theme::~Theme ()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	void Theme::Reset()
@@ -748,7 +749,7 @@ namespace BlendInt {
 
 	void Theme::GenerateShadowTexture ()
 	{
-		if(shadow_texture_->texture() == 0) {
+		if(shadow_texture_->id() == 0) {
 			shadow_texture_->generate();
 		}
 
@@ -769,9 +770,6 @@ namespace BlendInt {
 		}
 		*/
 
-		Image image;
-		image.Read("shadow.png");
-
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
 		shadow_texture_->bind();
@@ -779,7 +777,7 @@ namespace BlendInt {
 		shadow_texture_->SetMinFilter(GL_NEAREST);
 		shadow_texture_->SetMagFilter(GL_NEAREST);
 		//shadow_texture_->SetImage(0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-		shadow_texture_->SetImage(0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
+		shadow_texture_->SetImage(0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, GIMP_IMAGE_pixel_data);
 		//shadow_texture_->WriteToFile("test.png");
 		shadow_texture_->reset();
 	}

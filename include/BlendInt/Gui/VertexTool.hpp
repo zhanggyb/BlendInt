@@ -56,7 +56,17 @@ namespace BlendInt {
 
 		void GenerateShadedVertices (const Size& size, float border, int round_type, float radius);
 
+		void GenerateShadedVerticesExt (const Size& size, float border, int round_type, float radius);
+
 		void GenerateShadedVertices (const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown);
+
+		void GenerateShadedVerticesExt (const Size& size,
 				float border,
 				int round_type,
 				float radius,
@@ -119,6 +129,12 @@ namespace BlendInt {
 						unsigned int num,
 						std::vector<GLfloat>& strip);
 
+		void GenerateOutlineTriangleStripVertices (
+						const std::vector<GLfloat>& inner,
+						const std::vector<GLfloat>& outer,
+						unsigned int num,
+						std::vector<GLfloat>& strip);
+
 		void GenerateOpenTriangleStripVertices (
 						const std::vector<GLfloat>& outer,
 						unsigned int num,
@@ -131,6 +147,51 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_;
 
 		std::vector<GLfloat> shadow_;
+	};
+
+	class VertexToolExt
+	{
+	public:
+
+		VertexToolExt ();
+
+		~VertexToolExt ();
+
+		void GenerateVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer
+		);
+
+		void GenerateInnerVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+
+	private:
+
+		void GenerateOutlineTriangleStripVertices (
+						const std::vector<GLfloat>& inner,
+						const std::vector<GLfloat>& outer,
+						unsigned int num,
+						std::vector<GLfloat>& strip);
+
+		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+
+		std::vector<GLfloat> edge_;
+
+
 	};
 
 }

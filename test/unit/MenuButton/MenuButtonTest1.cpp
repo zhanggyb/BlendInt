@@ -1,6 +1,7 @@
 #include "MenuButtonTest1.hpp"
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -27,8 +28,9 @@ TEST_F(MenuButtonTest1, Foo1)
     GLFWwindow* win = CreateWindow("MenuButton - Foo1", 640, 480);
 
     // TODO: add test code here
-    Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+	Context* context = Manage (new Context);
+	SetContext(context);
+	context->Resize(640, 480);
 
     MenuButton* button = Manage(new MenuButton("File"));
     button->SetPosition(200, 200);
@@ -49,12 +51,12 @@ TEST_F(MenuButtonTest1, Foo1)
 
     button->SetMenu(menu);
 
-    context->Append(button);
+    Dialog* dialog = Manage(new Dialog);
+    dialog->AddWidget(button);
+
+    context->AddFrame(dialog);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

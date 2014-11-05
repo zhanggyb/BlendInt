@@ -34,7 +34,7 @@ void MainLayout::InitOnce ()
 
 	m_menubar = CreateMenuBar();
 	m_toolbar = Manage(new ToolBar);
-	m_imgview = Manage(new ImageView);
+	m_imgview = Manage(new TextureView);
 
 	m_combo = Manage(new ComboBox);
 
@@ -53,15 +53,14 @@ void MainLayout::InitOnce ()
 	m_toolbar->Append(m_combo);
 	m_toolbar->Append(box);
 
-	ToolBox* tbox = Manage(new ToolBox);
-	Expander* expander = CreateExpander();
-	tbox->Append(expander);
+	//ToolBox* tbox = Manage(new ToolBox);
+	//Expander* expander = CreateExpander();
+	//tbox->Append(expander);
 
 	Splitter* splitter = Manage(new Splitter);
-	splitter->SetMargin(0, 0, 0, 0);
 
 	splitter->Append(m_imgview);
-	splitter->Append(tbox);
+	//splitter->Append(tbox);
 
 	Append(splitter);
 	Append(m_toolbar);

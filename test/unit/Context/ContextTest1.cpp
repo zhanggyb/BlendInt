@@ -74,7 +74,7 @@ TEST_F(ContextTest1, AddSubWidget02)
     Widget* w2 = new Widget;
     w2->SetPosition(400, 200);
 
-    Frame* f1 = new Frame;
+    Panel* f1 = new Panel;
     f1->SetPosition(240, 320);
     f1->Setup(w2);
 
@@ -119,7 +119,7 @@ TEST_F(ContextTest1, AddSubWidget03)
     Widget* w2 = new Widget;
     w2->SetPosition(400, 200);
 
-    Frame* f1 = new Frame;
+    Panel* f1 = new Panel;
     f1->SetPosition(240, 320);
     f1->Setup(w2);
 
@@ -165,7 +165,7 @@ TEST_F(ContextTest1, DestructorInContainer01)
 	Widget* w1 = new Widget;
 	w1->SetPosition(200, 200);
 
-	Frame* f1 = new Frame;
+	Panel* f1 = new Panel;
 	f1->SetPosition(240, 320);
 
 	f1->Setup(w1);
@@ -209,7 +209,7 @@ TEST_F(ContextTest1, DestructorInContainer02)
 	w1->SetPosition(100, 100);
 	context->Append(w1);
 
-	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
+	Panel* f1 = Manage(new Panel);  // now f1 should be deleted automatically
 	f1->SetPosition(240, 320);
 	f1->Setup(w1);
 

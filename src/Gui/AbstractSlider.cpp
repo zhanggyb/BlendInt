@@ -120,28 +120,28 @@ namespace BlendInt {
 		set_radius(radius);
 	}
 
-	void SlideIcon::Draw (const glm::vec3& pos, short gamma) const
+	void SlideIcon::Draw (float x, float y, short gamma) const
 	{
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
+						Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), pos.x, pos.y, 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
 
 		if (m_highlight) {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		}
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->scroll().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->scroll().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

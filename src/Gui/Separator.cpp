@@ -39,7 +39,7 @@
 namespace BlendInt {
 
 	Separator::Separator ()
-	: AbstractWidget(),
+	: Widget(),
 	  m_expand_x(false),
 	  m_expand_y(false),
 	  m_widget_attached(0)
@@ -51,7 +51,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Separator::AttachWidget (AbstractWidget* widget)
+	void Separator::AttachWidget (Widget* widget)
 	{
 		if(m_widget_attached) {
 			m_widget_attached->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
@@ -139,52 +139,10 @@ namespace BlendInt {
 
 	ResponseType Separator::Draw (Profile& profile)
 	{
-		return Ignore;
+		return Accept;
 	}
 
-	ResponseType Separator::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Separator::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	void Separator::OnWidgetDestroyed (AbstractWidget* widget)
+	void Separator::OnWidgetDestroyed (Widget* widget)
 	{
 		if(m_widget_attached == widget) {
 			widget->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);

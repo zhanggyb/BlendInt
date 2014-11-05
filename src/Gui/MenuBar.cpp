@@ -41,10 +41,14 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Frame.hpp>
+
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	MenuBar::MenuBar ()
-	: AbstractContainer(), m_vao(0), m_space(2), m_active_button(0)
+	: Layout(), m_vao(0), m_space(2), m_active_button(0)
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
@@ -87,7 +91,7 @@ namespace BlendInt {
 		if(0 == button) return 0;
 
 		int x = GetLastPosition();
-		int y = position().y() + margin().bottom();
+		int y = margin().bottom();
 		int h = size().height() - margin().vsum();
 
 		if(PushBackSubWidget(button)) {
@@ -124,7 +128,7 @@ namespace BlendInt {
 
 	void MenuBar::SetMenu (MenuButton* button, const RefPtr<Menu>& menu)
 	{
-		if(!button || button->container() != this) return;
+		if(!button || button->parent() != this) return;
 
 		button->SetMenu(menu);
 	}
@@ -132,21 +136,6 @@ namespace BlendInt {
 	void MenuBar::PerformMarginUpdate(const Margin& request)
 	{
 		// TODO: change margin
-	}
-
-	void MenuBar::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
 	}
 
 	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -167,59 +156,21 @@ namespace BlendInt {
 
 	ResponseType MenuBar::Draw (Profile& profile)
 	{
-		using namespace BlendInt::Stock;
+		Shaders::instance->widget_triangle_program()->use();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
-		return Ignore;
-	}
-
-	ResponseType MenuBar::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType MenuBar::MouseMoveEvent (const MouseEvent& event)
-	{
 		return Ignore;
 	}
 
@@ -227,7 +178,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
@@ -244,7 +195,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -301,11 +252,11 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
-				if(menubutton->focused()) {
+				if(menubutton->focus()) {
 					m_active_button = menubutton;
 				}
 			}
@@ -313,8 +264,9 @@ namespace BlendInt {
 
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
-			Context* context = Context::GetContext(this);
-			context->Remove(menu.get());
+
+			AbstractWidget* parent = menu->parent();
+			delete parent;
 			original_active->SetRoundType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
@@ -325,17 +277,21 @@ namespace BlendInt {
 
 			RefPtr<Menu> menu = m_active_button->menu();
 
-			int y = m_active_button->position().y();
-			y = y - menu->size().height();
+			Point pos = m_active_button->GetGlobalPosition();
 
-			if(y < 0) {
-				y = 0;
+			pos.set_y(pos.y() - menu->size().height());
+
+			if(pos.y() < 0) {
+				pos.set_y(0);
 			}
 
-			menu->SetPosition(m_active_button->position().x(), y);
-			context->Append(menu.get());
+			//menu->SetPosition(m_active_button->position().x(), y);
+
+			menu->SetPosition(pos);
+			context->AddFrame(menu.get());
+
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
-			context->SetFocusedWidget(menu.get());
+			//context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
 		}
@@ -349,8 +305,8 @@ namespace BlendInt {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				Context* context = Context::GetContext(this);
-				context->Remove(menu.get());
+				AbstractWidget* parent = menu->parent();
+				delete parent;
 				m_active_button->SetRoundType(RoundAll);
 			}
 
@@ -365,12 +321,8 @@ namespace BlendInt {
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
-
-			//if(type == WidgetVisibility) {
-				Context* context = Context::GetContext(this);
-				context->Remove(menu);
-			//}
+			AbstractWidget* frame = menu->parent();
+			delete frame;
 		}
 
 		if(m_active_button) {
@@ -382,10 +334,10 @@ namespace BlendInt {
 
 	int MenuBar::GetLastPosition ()
 	{
-		int pos = position().x() + margin().left();
+		int pos = margin().left();
 
-		if(last()) {
-			pos = last()->position().x() + last()->size().width() + m_space;
+		if(last_child()) {
+			pos = last_child()->position().x() + last_child()->size().width() + m_space;
 		}
 		return pos;
 	}

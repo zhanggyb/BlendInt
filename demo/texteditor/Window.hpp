@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -17,6 +17,8 @@ namespace BlendInt {
 	extern void RunLoop (GLFWwindow* window, RenderCallback callback = 0, void* param = 0);
 
 	extern void Terminate ();
+
+	extern void SetContext (Context* context);
 
 }
 

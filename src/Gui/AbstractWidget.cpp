@@ -37,21 +37,26 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Context.hpp>
+
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	bool IsContained (AbstractContainer* container, AbstractWidget* widget)
+	using Stock::Shaders;
+
+	bool IsContained (AbstractWidget* container, AbstractWidget* widget)
 	{
 		bool retval = false;
 
-		AbstractContainer* p = widget->container();
+		AbstractWidget* p = widget->parent();
 		while(p) {
 			if(p == container) {
 				retval = true;
 				break;
 			}
-			p = p->container();
+			p = p->parent();
 		}
 
 		return retval;
@@ -59,51 +64,81 @@ namespace BlendInt {
 
 	float AbstractWidget::default_border_width = 1.f;
 
+	const float AbstractWidget::cornervec[WIDGET_CURVE_RESOLU][2] = {
+        { 0.0, 0.0 },
+        { 0.195, 0.02 },
+        { 0.383, 0.067 },
+        { 0.55,	0.169 },
+        { 0.707, 0.293 },
+        { 0.831, 0.45 },
+        { 0.924, 0.617 },
+        { 0.98, 0.805 },
+        { 1.0, 1.0 }
+    };
+
 	AbstractWidget::AbstractWidget ()
 	: Object(),
 	  flags_(0),
-	  round_radius_(5),
-	  container_(0),
+	  round_radius_(5.f),
+	  subs_count_(0),
+	  parent_(0),
 	  previous_(0),
-	  next_(0)
+	  next_(0),
+	  first_child_(0),
+	  last_child_(0)
 	{
 		events_.reset(new Cpp::ConnectionScope);
 
-		SETBIT(flags_, WidgetFlagVisibility);
+		set_visible(true);
+		//set_refresh(true);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(container_) {
+		ClearSubWidgets();
+
+		if(parent_) {
 
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_ == this);
-				container_->first_ = next_;
+				assert(parent_->first_child_ == this);
+				parent_->first_child_ = next_;
 			}
 
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_ == this);
-				container_->last_ = previous_;
+				assert(parent_->last_child_ == this);
+				parent_->last_child_ = previous_;
 			}
 
-			container_->widget_count_--;
-			assert(container_->widget_count_ >= 0);
+			parent_->subs_count_--;
+			assert(parent_->subs_count_ >= 0);
 
 			previous_ = 0;
 			next_ = 0;
-			container_ = 0;
+			parent_ = 0;
 
 		} else {
 			assert(previous_ == 0);
 			assert(next_ == 0);
 		}
+	}
 
-		destroyed_.fire(this);
-		//DBG_PRINT_MSG("Widget %s destroyed", name_.c_str());
+	Point AbstractWidget::GetGlobalPosition () const
+	{
+		Point retval = position_;;
+
+		AbstractWidget* p = parent_;
+		while(p) {
+			retval.reset(
+					retval.x() + p->position().x() + p->offset().x(),
+					retval.y() + p->position().y() + p->offset().y());
+			p = p->parent_;
+		}
+
+		return retval;
 	}
 
 	Size AbstractWidget::GetPreferredSize() const
@@ -118,8 +153,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, this, &new_size);
 
-		if(container_) {
-			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(width, height);
 			}
@@ -137,8 +172,8 @@ namespace BlendInt {
 
 		SizeUpdateRequest request(this, this, &size);
 
-		if(container_) {
-			if(container_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(size);
 			}
@@ -157,8 +192,8 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		PositionUpdateRequest request(this, this, &new_pos);
 
-		if(container_) {
-			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(x, y);
 			}
@@ -176,8 +211,8 @@ namespace BlendInt {
 
 		PositionUpdateRequest request(this, this, &pos);
 
-		if(container_) {
-			if(container_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(pos);
 			}
@@ -195,8 +230,8 @@ namespace BlendInt {
 
 		RoundTypeUpdateRequest request(this, this, &type);
 
-		if(container_) {
-			if(container_->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->RoundTypeUpdateTest(request) && RoundTypeUpdateTest(request)) {
 				PerformRoundTypeUpdate(request);
 				set_round_type(type);
 			}
@@ -214,8 +249,8 @@ namespace BlendInt {
 
 		RoundRadiusUpdateRequest request(this, this, &radius);
 
-		if(container_) {
-			if(container_->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->RoundRadiusUpdateTest(request) && RoundRadiusUpdateTest(request)) {
 				PerformRoundRadiusUpdate(request);
 				round_radius_ = radius;
 			}
@@ -234,8 +269,8 @@ namespace BlendInt {
 
 		VisibilityUpdateRequest request(this, this, &visible);
 
-		if(container_) {
-			if(container_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
+		if(parent_) {
+			if(parent_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
 				PerformVisibilityUpdate(request);
 				set_visible(visible);
 			}
@@ -251,8 +286,8 @@ namespace BlendInt {
 	{
 		if(point.x() < position_.x() ||
 				point.y() < position_.y() ||
-				point.x() > static_cast<int>(position_.x() + size_.width()) ||
-				point.y() > static_cast<int>(position_.y() + size_.height()))
+				point.x() > (position_.x() + size_.width()) ||
+				point.y() > (position_.y() + size_.height()))
 		{
 			return false;
 		}
@@ -262,16 +297,31 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		RefreshRequest request (this, container_);
+		if(!refresh()) {
 
-		if(container_) {
-			container_->PerformRefresh(request);
+			AbstractWidget* root = this;
+
+			AbstractWidget* p = parent();
+			while(p && (!p->refresh())) {
+				root = p;
+				p->set_refresh(true);
+				p = p->parent();
+			}
+
+			if(root->parent() == 0) {
+				Context* context = dynamic_cast<Context*>(root);
+				if(context) {
+					context->SynchronizeWindow();
+				}
+			}
+
+			set_refresh(true);
 		}
 	}
 
 	void AbstractWidget::MoveBackward()
 	{
-		if(container_) {
+		if(parent_) {
 
 			if(previous_) {
 
@@ -281,8 +331,8 @@ namespace BlendInt {
 				if(next_) {
 					next_->previous_ = tmp;
 				} else {
-					assert(container_->last_ == this);
-					container_->last_ = tmp;
+					assert(parent_->last_child_ == this);
+					parent_->last_child_ = tmp;
 				}
 
 				next_ = tmp;
@@ -293,8 +343,8 @@ namespace BlendInt {
 				tmp->previous_ = this;
 
 				if(previous_ == 0) {
-					assert(container_->first_ == tmp);
-					container_->first_ = this;
+					assert(parent_->first_child_ == tmp);
+					parent_->first_child_ = this;
 				}
 
 				DBG_PRINT_MSG("this: %s", name_.c_str());
@@ -308,7 +358,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->first_ == this);
+				assert(parent_->first_child_ == this);
 			}
 
 		}
@@ -316,7 +366,7 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveForward()
 	{
-		if(container_) {
+		if(parent_) {
 
 			if(next_) {
 
@@ -326,8 +376,8 @@ namespace BlendInt {
 				if(previous_) {
 					previous_->next_ = tmp;
 				} else {
-					assert(container_->first_ == this);
-					container_->first_ = tmp;
+					assert(parent_->first_child_ == this);
+					parent_->first_child_ = tmp;
 				}
 
 				previous_ = tmp;
@@ -338,8 +388,8 @@ namespace BlendInt {
 				tmp->next_ = this;
 
 				if(next_ == 0) {
-					assert(container_->last_ == tmp);
-					container_->last_ = this;
+					assert(parent_->last_child_ == tmp);
+					parent_->last_child_ = this;
 				}
 
 				if(previous_) {
@@ -350,7 +400,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				assert(container_->last_ == this);
+				assert(parent_->last_child_ == this);
 			}
 
 		}
@@ -358,9 +408,9 @@ namespace BlendInt {
 
 	void AbstractWidget::MoveToFirst()
 	{
-		if(container_) {
+		if(parent_) {
 
-			if(container_->first_ == this) {
+			if(parent_->first_child_ == this) {
 				assert(previous_ == 0);
 				return;	// already at first
 			}
@@ -369,23 +419,23 @@ namespace BlendInt {
 			if(next_) {
 				next_->previous_ = previous_;
 			} else {
-				assert(container_->last_ == this);
-				container_->last_ = previous_;
+				assert(parent_->last_child_ == this);
+				parent_->last_child_ = previous_;
 			}
 
 			previous_ = 0;
-			next_ = container_->first_;
-			container_->first_->previous_ = this;
-			container_->first_ = this;
+			next_ = parent_->first_child_;
+			parent_->first_child_->previous_ = this;
+			parent_->first_child_ = this;
 
 		}
 	}
 
 	void AbstractWidget::MoveToLast()
 	{
-		if(container_) {
+		if(parent_) {
 
-			if(container_->last_ == this) {
+			if(parent_->last_child_ == this) {
 				assert(next_ == 0);
 				return;	// already at last
 			}
@@ -395,14 +445,14 @@ namespace BlendInt {
 			if(previous_) {
 				previous_->next_ = next_;
 			} else {
-				assert(container_->first_ == this);
-				container_->first_ = next_;
+				assert(parent_->first_child_ == this);
+				parent_->first_child_ = next_;
 			}
 
 			next_ = 0;
-			previous_ = container_->last_;
-			container_->last_->next_ = this;
-			container_->last_ = this;
+			previous_ = parent_->last_child_;
+			parent_->last_child_->next_ = this;
+			parent_->last_child_ = this;
 
 		}
 	}
@@ -428,7 +478,7 @@ namespace BlendInt {
 
 	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		AbstractContainer* container = widget->container_;
+		AbstractWidget* container = widget->parent_;
 		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
 		if(widget->visiable() && widget->Contain(cursor)) {
@@ -437,7 +487,7 @@ namespace BlendInt {
 				if((!container->visiable()) || (!container->Contain(cursor)))
 					return false;
 
-				container = container->container();
+				container = container->parent();
 			}
 
 			return true;
@@ -447,11 +497,19 @@ namespace BlendInt {
 		return false;
 	}
 
-	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
+	bool AbstractWidget::IsHoverThroughExt (const AbstractWidget* widget, const Point& global_cursor_position)
 	{
-		if(container_) {
-			container_->PerformRefresh(request);
+		Point global_position = widget->GetGlobalPosition();
+
+		if(global_cursor_position.x() < global_position.x() ||
+				global_cursor_position.y() < global_position.y() ||
+				global_cursor_position.x() > (global_position.x() + widget->size().width()) ||
+				global_cursor_position.y() > (global_position.y() + widget->size().height()))
+		{
+			return false;
 		}
+
+		return true;
 	}
 
 	int AbstractWidget::GetOutlineVertices (int round_type)
@@ -470,33 +528,41 @@ namespace BlendInt {
 	void AbstractWidget::DispatchDrawEvent (AbstractWidget* widget,
 	        Profile& profile)
 	{
-		if (widget && widget->visiable()) {
+#ifdef DEBUG
+		assert(widget != 0);
+#endif
 
+		if (widget->PreDraw(profile)) {
+
+			widget->set_refresh(widget->parent_->refresh());
 			ResponseType response = widget->Draw(profile);
-			if(response == Accept) return;
 
-			AbstractContainer* parent = dynamic_cast<AbstractContainer*>(widget);
-			if (parent) {
-
-				for(AbstractWidget* sub = parent->first(); sub; sub = sub->next())
+			if(response == Ignore) {
+				for(AbstractWidget* sub = widget->first_child(); sub; sub = sub->next())
 				{
 					DispatchDrawEvent(sub, profile);
 				}
-
 			}
 
+			widget->PostDraw(profile);
 		}
 	}
 
 	bool AbstractWidget::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
-		return true;
-	}
+		if(request.source()->parent() == this) {
+			return false;
+		} else {
+			return true;
+		}	}
 
 	bool AbstractWidget::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
-		return true;
-	}
+		if(request.source()->parent() == this) {
+			return false;
+		} else {
+			return true;
+		}	}
 
 	void AbstractWidget::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
@@ -568,44 +634,39 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::PerformRefresh(const RefreshRequest& request)
-	{
-		ReportRefresh(request);
-	}
-
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformSizeUpdate(request);
+		if(parent_) {
+			parent_->PerformSizeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportPositionUpdate(const PositionUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformPositionUpdate(request);
+		if(parent_) {
+			parent_->PerformPositionUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformRoundTypeUpdate(request);
+		if(parent_) {
+			parent_->PerformRoundTypeUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
-		if(container_) {
-			container_->PerformRoundRadiusUpdate(request);
+		if(parent_) {
+			parent_->PerformRoundRadiusUpdate(request);
 		}
 	}
 
 	void AbstractWidget::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
 	{
 
-		if(container_) {
-			container_->PerformVisibilityUpdate(request);
+		if(parent_) {
+			parent_->PerformVisibilityUpdate(request);
 		}
 	}
 
@@ -619,6 +680,1663 @@ namespace BlendInt {
 		}
 
 		return 2 - count + count * WIDGET_CURVE_RESOLU;
+	}
+
+	void AbstractWidget::GenerateVertices(std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		float border = default_border_width * Theme::instance->pixel();
+
+		float rad = round_radius_ * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size_.width();
+		float maxy = size_.height();
+
+		float minxi = minx + border;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border; 	// U.pixelsize;
+		float minyi = miny + border;		// U.pixelsize;
+		float maxyi = maxy - border;		// U.pixelsize;
+
+		int minsize = 0;
+		int corner = round_type();
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type();
+
+		minsize = std::min(size_.width() * hnum, size_.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			((*inner_ptr))[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+			(*inner_ptr)[2] = 0.f;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			(*inner_ptr)[count * 3] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = 0.f;
+		}
+
+		if(outer) {
+
+			if(border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+	}
+
+	void AbstractWidget::GenerateVertices(Orientation shadedir, short shadetop,
+			short shadedown, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		float border = default_border_width * Theme::instance->pixel();
+
+		float rad = round_radius_ * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size_.width();
+		float maxy = size_.height();
+
+		float minxi = minx + border;
+		float maxxi = maxx - border;
+		float minyi = miny + border;
+		float maxyi = maxy - border;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		int corner = round_type();
+		int minsize = 0;
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight	| RoundBottomLeft))	== (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		float offset = 0.f;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type();
+
+		minsize = std::min(size_.width() * hnum, size_.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			(*inner_ptr)[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+
+			if (shadedir == Vertical) {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facyi * ((*inner_ptr)[1] - minyi));
+			} else {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facxi * ((*inner_ptr)[0] - minxi));
+			}
+			(*inner_ptr)[2] = offset;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			(*inner_ptr)[count * 3 + 0] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = (*inner_ptr)[3 + 2];
+
+		}
+
+		if(outer) {
+
+			if (border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+
+	}
+
+	void AbstractWidget::GenerateTriangleStripVertices(
+			const std::vector<GLfloat>* inner,
+			const std::vector<GLfloat>* edge,
+			unsigned int num,
+			std::vector<GLfloat>* strip)
+	{
+		if (num > edge->size() / 2) {
+			DBG_PRINT_MSG("Attempt to process %u vertices, but maximum is %ld",
+					num, edge->size() / 2);
+			return;
+		}
+
+		if (strip->size() != (num * 2 + 2) * 2) {
+			strip->resize((num * 2 + 2) * 2);
+		}
+
+		size_t count = 0;
+		for (int i = 0, j = 0; count < num * 2; count++) {
+			if (count % 2 == 0) {
+				(*strip)[count * 2] = (*inner)[3 + i];
+				(*strip)[count * 2 + 1] = (*inner)[3 + i + 1];
+				i += 3;
+			} else {
+				(*strip)[count * 2] = (*edge)[j];
+				(*strip)[count * 2 + 1] = (*edge)[j + 1];
+				j += 2;
+			}
+		}
+
+		(*strip)[count * 2] = (*inner)[3 + 0];
+		(*strip)[count * 2 + 1] = (*inner)[3 + 1];
+		(*strip)[count * 2 + 2] = (*edge)[0];
+		(*strip)[count * 2 + 3] = (*edge)[1];
+	}
+
+	void AbstractWidget::GenerateVertices(const Size& size, float border,
+			int round_type, float radius, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		border *= Theme::instance->pixel();
+
+		float rad = radius * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border; 	// U.pixelsize;
+		float minyi = miny + border;		// U.pixelsize;
+		float maxyi = maxy - border;		// U.pixelsize;
+
+		int minsize = 0;
+		int corner = round_type;
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type;
+
+		minsize = std::min(size.width() * hnum, size.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			((*inner_ptr))[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+			(*inner_ptr)[2] = 0.f;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+			} else {
+				(*inner_ptr)[count * 3] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+					(*inner_ptr)[count * 3 + 2] = 0.f;
+				}
+
+			} else {
+				(*inner_ptr)[count * 3] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+				(*inner_ptr)[count * 3 + 2] = 0.f;
+				count++;
+			}
+
+			(*inner_ptr)[count * 3] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = 0.f;
+		}
+
+		if(outer) {
+
+			if(border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+	}
+
+	void AbstractWidget::GenerateVertices(const Size& size, float border,
+			int round_type, float radius, Orientation shadedir, short shadetop,
+			short shadedown, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		if(inner == 0 && outer == 0) return;
+
+		std::vector<GLfloat>* inner_ptr = 0;
+
+		if(inner == 0) {
+			inner_ptr = new std::vector<GLfloat>;
+		} else {
+			inner_ptr = inner;
+		}
+
+		border *= Theme::instance->pixel();
+
+		float rad = radius * Theme::instance->pixel();
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;
+		float maxxi = maxx - border;
+		float minyi = miny + border;
+		float maxyi = maxy - border;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		int corner = round_type;
+		int minsize = 0;
+		const int hnum = (
+                (corner & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight)
+                ||
+                (corner & (RoundBottomRight	| RoundBottomLeft))	== (RoundBottomRight | RoundBottomLeft)
+                ) ? 1 : 2;
+		const int vnum = (
+                (corner & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft)
+                ||
+                (corner & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)
+                ) ? 1 : 2;
+
+		float offset = 0.f;
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		corner = round_type;
+
+		minsize = std::min(size.width() * hnum, size.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + border) > minsize)
+			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		{	// generate inner vertices
+
+			if(inner_ptr->size() != ((outline_vertex_number + 2) * 3)) {
+				inner_ptr->resize((outline_vertex_number + 2) * 3);
+			}
+
+			// inner_ptr[0, 0] is the center of a triangle fan
+			(*inner_ptr)[0] = minxi + (maxxi - minxi) / 2.f;
+			(*inner_ptr)[1] = minyi + (maxyi - minyi) / 2.f;
+
+			if (shadedir == Vertical) {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facyi * ((*inner_ptr)[1] - minyi));
+			} else {
+				offset = make_shaded_offset(shadetop, shadedown,
+								facxi * ((*inner_ptr)[0] - minxi));
+			}
+			(*inner_ptr)[2] = offset;
+
+			count = 1;
+
+			// corner left-bottom
+			if (corner & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = minyi + radi - veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-bottom
+			if (corner & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - radi + veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = minyi + veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = minyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner right-top
+			if (corner & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = maxxi - veci[i][1];
+					(*inner_ptr)[count * 3 + 1] = maxyi - radi + veci[i][0];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+				(*inner_ptr)[count * 3 + 0] = maxxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			// corner left-top
+			if (corner & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner_ptr)[count * 3 + 0] = minxi + radi - veci[i][0];
+					(*inner_ptr)[count * 3 + 1] = maxyi - veci[i][1];
+
+					if (shadedir == Vertical) {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facyi * ((*inner_ptr)[count * 3 + 1] - minyi));
+					} else {
+						offset = make_shaded_offset(shadetop, shadedown,
+										facxi * ((*inner_ptr)[count * 3 + 0] - minxi));
+					}
+					(*inner_ptr)[count * 3 + 2] = offset;
+				}
+			} else {
+
+				(*inner_ptr)[count * 3 + 0] = minxi;
+				(*inner_ptr)[count * 3 + 1] = maxyi;
+
+				if (shadedir == Vertical) {
+					offset = make_shaded_offset(shadetop, shadedown, 1.0f);
+				} else {
+					offset = make_shaded_offset(shadetop, shadedown, 0.0f);
+				}
+				(*inner_ptr)[count * 3 + 2] = offset;
+
+				count++;
+			}
+
+			(*inner_ptr)[count * 3 + 0] = (*inner_ptr)[3 + 0];
+			(*inner_ptr)[count * 3 + 1] = (*inner_ptr)[3 + 1];
+			(*inner_ptr)[count * 3 + 2] = (*inner_ptr)[3 + 2];
+
+		}
+
+		if(outer) {
+
+			if (border > 0.f) {
+
+				std::vector<GLfloat> edge_vertices(outline_vertex_number * 2);
+
+				count = 0;
+
+				// corner left-bottom
+				if (corner & RoundBottomLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + vec[i][1];
+						edge_vertices[count * 2 + 1] = miny + rad - vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// corner right-bottom
+				if (corner & RoundBottomRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - rad + vec[i][0];
+						edge_vertices[count * 2 + 1] = miny + vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = miny;
+					count++;
+				}
+
+				// m_half = count;
+
+				// corner right-top
+				if (corner & RoundTopRight) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = maxx - vec[i][1];
+						edge_vertices[count * 2 + 1] = maxy - rad + vec[i][0];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = maxx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				// corner left-top
+				if (corner & RoundTopLeft) {
+					for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+						edge_vertices[count * 2 + 0] = minx + rad - vec[i][0];
+						edge_vertices[count * 2 + 1] = maxy - vec[i][1];
+					}
+				} else {
+					edge_vertices[count * 2 + 0] = minx;
+					edge_vertices[count * 2 + 1] = maxy;
+					count++;
+				}
+
+				GenerateTriangleStripVertices(inner_ptr, &edge_vertices, count, outer);
+
+			} else {
+
+				outer->clear();
+
+			}
+
+		}
+
+		if(inner == 0) {
+			delete inner_ptr;
+		}
+
+	}
+
+	AbstractWidget* AbstractWidget::operator [](int i) const
+	{
+		if((i < 0) || (i >= subs_count_)) return 0;
+
+		AbstractWidget* widget = 0;
+
+		if(i < ((subs_count_ + 1)/ 2)) {
+
+			widget = first_child_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_child_;
+			int max = subs_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
+		}
+
+		//assert(widget != 0);
+
+		return widget;
+	}
+
+	AbstractWidget* AbstractWidget::GetWidgetAt(int i) const
+	{
+		if((i < 0) || (i >= subs_count_)) return 0;
+
+		AbstractWidget* widget = 0;
+
+		if(i < ((subs_count_ + 1)/ 2)) {
+
+			widget = first_child_;
+			while(i > 0) {
+				widget = widget->next_;
+				i--;
+			}
+
+		} else {
+
+			widget = last_child_;
+			int max = subs_count_ - 1;
+			while(i < max) {
+				widget = widget->previous_;
+				i++;
+			}
+
+		}
+
+		//assert(widget != 0);
+
+		return widget;
+	}
+
+	bool AbstractWidget::PushFrontSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->parent_) {
+
+			if (widget->parent_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->parent_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->parent_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->parent_ == 0);
+
+		if(first_child_) {
+			first_child_->previous_ = widget;
+			widget->next_ = first_child_;
+		} else {
+			assert(last_child_ == 0);
+			widget->next_ = 0;
+			last_child_ = widget;
+		}
+		first_child_ = widget;
+
+		widget->previous_ = 0;
+		widget->parent_ = this;
+		subs_count_++;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::InsertSubWidget(int index, AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->parent_) {
+
+			if (widget->parent_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->parent_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->parent_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->parent_ == 0);
+
+		if(first_child_ == 0) {
+			assert(last_child_ == 0);
+
+			widget->next_ = 0;
+			last_child_ = widget;
+			first_child_ = widget;
+			widget->previous_ = 0;
+
+		} else {
+
+			AbstractWidget* p = first_child_;
+
+			if(index > 0) {
+
+				while(p && (index > 0)) {
+					if(p->next_ == 0)
+						break;
+
+					p = p->next_;
+					index--;
+				}
+
+				if(index == 0) {	// insert
+
+					widget->previous_ = p->previous_;
+					widget->next_ = p;
+					p->previous_->next_ = widget;
+					p->previous_ = widget;
+
+				} else {	// same as push back
+
+					assert(p == last_child_);
+					last_child_->next_ = widget;
+					widget->previous_ = last_child_;
+					last_child_ = widget;
+					widget->next_ = 0;
+
+				}
+
+			} else {	// same as push front
+
+				first_child_->previous_ = widget;
+				widget->next_ = first_child_;
+				first_child_ = widget;
+				widget->previous_ = 0;
+
+			}
+
+		}
+
+		widget->parent_ = this;
+		subs_count_++;
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::PushBackSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->parent_) {
+
+			if (widget->parent_ == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name_.c_str(),
+								widget->parent_->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				widget->parent_->RemoveSubWidget(widget);
+			}
+
+		}
+
+		assert(widget->previous_ == 0);
+		assert(widget->next_ == 0);
+		assert(widget->parent_ == 0);
+
+		if(last_child_) {
+			last_child_->next_ = widget;
+			widget->previous_ = last_child_;
+		} else {
+			assert(first_child_ == 0);
+			widget->previous_ = 0;
+			first_child_ = widget;
+		}
+		last_child_ = widget;
+
+		widget->next_ = 0;
+		widget->parent_ = this;
+		subs_count_++;
+
+		//events()->connect(widget->destroyed(), this,
+		//				&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractWidget::RemoveSubWidget(AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		assert(widget->parent_ == this);
+
+		//widget->destroyed().disconnectOne(this,
+		//        &AbstractContainer::OnSubWidgetDestroyed);
+
+		if (widget->previous_) {
+			widget->previous_->next_ = widget->next_;
+		} else {
+			assert(first_child_ == widget);
+			first_child_ = widget->next_;
+		}
+
+		if (widget->next_) {
+			widget->next_->previous_ = widget->previous_;
+		} else {
+			assert(last_child_ == widget);
+			last_child_ = widget->previous_;
+		}
+
+		widget->previous_ = 0;
+		widget->next_ = 0;
+		widget->parent_ = 0;
+		subs_count_--;
+
+		if(widget->hover()) {
+			widget->set_hover(false);
+		}
+
+		return true;
+	}
+
+	void AbstractWidget::ClearSubWidgets()
+	{
+		AbstractWidget* widget = first_child_;
+		AbstractWidget* next = 0;
+
+		while(widget) {
+
+			next = widget->next_;
+
+			widget->previous_ = 0;
+			widget->next_ = 0;
+			widget->parent_ = 0;
+
+			if(widget->managed() && widget->reference_count() == 0) {
+				delete widget;
+			} else {
+				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
+			}
+
+			widget = next;
+		}
+
+		subs_count_ = 0;
+		first_child_ = 0;
+		last_child_ = 0;
+	}
+
+	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, int width,
+			int height)
+	{
+		if(!sub || sub->parent() != this) return;
+
+		if(sub->size().width() == width &&
+				sub->size().height() == height)
+			return;
+
+		Size new_size (width, height);
+		SizeUpdateRequest request(this, sub, &new_size);
+
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
+			sub->set_size(width, height);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidget(AbstractWidget* sub, const Size& size)
+	{
+		if (!sub || sub->parent() != this)
+			return;
+
+		if (sub->size() == size)
+			return;
+
+		SizeUpdateRequest request(this, sub, &size);
+
+		if(sub->SizeUpdateTest(request)) {
+			sub->PerformSizeUpdate(request);
+			sub->set_size(size);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub, int x, int y)
+	{
+		if (!sub || sub->parent() != this)
+			return;
+
+		if (sub->position().x() == x && sub->position().y() == y)
+			return;
+
+		Point new_pos(x, y);
+
+		PositionUpdateRequest request(this, sub, &new_pos);
+
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
+			sub->set_position(x, y);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetPosition(AbstractWidget* sub,
+			const Point& pos)
+	{
+		if(!sub || sub->parent() != this) return;
+
+		if(sub->position() == pos) return;
+
+		PositionUpdateRequest request (this, sub, &pos);
+
+		if(sub->PositionUpdateTest(request)) {
+			sub->PerformPositionUpdate(request);
+			sub->set_position(pos);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetRoundType(AbstractWidget* sub, int type)
+	{
+		if(!sub || sub->parent() != this) return;
+
+		if(sub->round_type() == (type & 0x0F)) return;
+
+		RoundTypeUpdateRequest request (this, sub, &type);
+
+		if(sub->RoundTypeUpdateTest(request)) {
+			sub->PerformRoundTypeUpdate(request);
+			sub->set_round_type(type);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetRoundRadius(AbstractWidget* sub,
+			float radius)
+	{
+		if(!sub || sub->parent() != this) return;
+
+		if(sub->round_radius() == radius) return;
+
+		RoundRadiusUpdateRequest request(this, sub, &radius);
+
+		if(sub->RoundRadiusUpdateTest(request)) {
+			sub->PerformRoundRadiusUpdate(request);
+			sub->set_round_radius(radius);
+		}
+	}
+
+	void AbstractWidget::SetSubWidgetVisibility(AbstractWidget* sub,
+			bool visible)
+	{
+		if(!sub || sub->parent() != this) return;
+
+		if(sub->visiable() == visible) return;
+
+		VisibilityUpdateRequest request (this, sub, &visible);
+
+		if(sub->VisibilityUpdateTest(request)) {
+			sub->PerformVisibilityUpdate(request);
+			sub->set_visible(visible);
+		}
+	}
+
+	void AbstractWidget::MoveSubWidgets(int move_x, int move_y)
+	{
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
+			SetSubWidgetPosition(p, p->position().x() + move_x,
+			        p->position().y() + move_y);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidgets(const Size& size)
+	{
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
+			ResizeSubWidget(p, size);
+		}
+	}
+
+	void AbstractWidget::ResizeSubWidgets(int w, int h)
+	{
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
+			ResizeSubWidget(p, w, h);
+		}
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, const Size& size,
+			const Margin& margin)
+	{
+		int x = margin.left();
+		int y = margin.bottom();
+
+		int w = size.width() - margin.hsum();
+		int h = size.height() - margin.vsum();
+
+		FillSingleWidget(index, x, y, w, h);
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, const Point& pos,
+			const Size& size)
+	{
+		FillSingleWidget(index, pos.x(), pos.y(), size.width(), size.height());
+	}
+
+	void AbstractWidget::FillSingleWidget(int index, int left, int bottom,
+			int width, int height)
+	{
+		AbstractWidget* widget = GetWidgetAt(index);
+
+		if (widget) {
+			ResizeSubWidget(widget, width, height);
+			SetSubWidgetPosition(widget, left, bottom);
+
+			if (widget->size().width() < width) {
+				SetSubWidgetPosition(widget,
+				        left + (width - widget->size().width()) / 2, bottom);
+			}
+
+			if (widget->size().height() < height) {
+				SetSubWidgetPosition(widget, left,
+				        bottom + (height - widget->size().height() / 2));
+			}
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(const Point& out_pos,
+			const Size& out_size, const Margin& margin, Orientation orientation,
+			int alignment, int space)
+	{
+		if(first_child_ == 0) return;
+
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(const Point& pos,
+			const Size& size, Orientation orientation, int alignment, int space)
+	{
+		if(first_child_ == 0) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(pos.x(), size.width(), space);
+			AlignHorizontally(pos.y(), size.height(), alignment);
+		} else {
+			DistributeVertically(pos.y(), size.height(), space);
+			AlignVertically(pos.x(), size.width(), alignment);
+		}
+	}
+
+	void AbstractWidget::FillSubWidgetsAveragely(int x, int y, int width,
+			int height, Orientation orientation, int alignment, int space)
+	{
+		if(first_child_ == 0) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	float AbstractWidget::make_shaded_offset (short shadetop, short shadedown, float fact)
+	{
+		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
+		float facm = 1.f - fact;
+
+		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
+	}
+
+	void AbstractWidget::DistributeHorizontally(int x, int width, int space)
+	{
+		int sum = subs_count();
+
+		if (sum) {
+			int average_width = (width - (sum - 1)* space) / sum;
+
+			if (average_width > 0) {
+
+				for (AbstractWidget* p = first_child_; p; p = p->next_) {
+					ResizeSubWidget(p, average_width, p->size().height());
+					SetSubWidgetPosition(p, x, p->position().y());
+					x += average_width + space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractWidget::DistributeVertically(int y, int height, int space)
+	{
+		int sum = subs_count();
+
+		y = y + height;
+		if (sum) {
+			int average_height = (height - (sum - 1)* space) / sum;
+
+			if (average_height > 0) {
+
+				for (AbstractWidget* p = first_child_; p; p = p->next_) {
+					ResizeSubWidget(p, p->size().width(), average_height);
+					y -= average_height;
+					SetSubWidgetPosition(p, p->position().x(), y);
+					y -= space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractWidget::AlignHorizontally(int y, int height, int alignment)
+	{
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
+			if(p->IsExpandY()) {
+				ResizeSubWidget(p, p->size().width(), height);
+				SetSubWidgetPosition(p, p->position().x(), y);
+			} else {
+
+				if (alignment & AlignTop) {
+					SetSubWidgetPosition(p, p->position().x(),
+					        y + (height - p->size().height()));
+				} else if (alignment & AlignBottom) {
+					SetSubWidgetPosition(p, p->position().x(), y);
+				} else if (alignment & AlignHorizontalCenter) {
+					SetSubWidgetPosition(p, p->position().x(),
+					        y + (height - p->size().height()) / 2);
+				}
+
+			}
+		}
+	}
+
+	void AbstractWidget::AlignVertically(int x, int width, int alignment)
+	{
+		for (AbstractWidget* p = first_child_; p; p = p->next_) {
+			if (p->IsExpandX()) {
+				ResizeSubWidget(p, width, p->size().height());
+				SetSubWidgetPosition(p, x, p->position().y());
+			} else {
+
+				if (alignment & AlignLeft) {
+					SetSubWidgetPosition(p, x, p->position().y());
+				} else if (alignment & AlignRight) {
+					SetSubWidgetPosition(p, x + (width - p->size().width()), p->position().y());
+				} else if (alignment & AlignVerticalCenter) {
+					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2, p->position().y());
+				}
+
+			}
+		}
 	}
 
 } /* namespace BlendInt */

@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_VIEWPORT2D_HPP_
 #define _BLENDINT_GUI_VIEWPORT2D_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/OrthoCamera.hpp>
 
 #include <BlendInt/Gui/GridFloor.hpp>
@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special viewport with a OrthoCamera
 	 */
-	class Viewport2D: public AbstractWidget
+	class Viewport2D: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport2D);
 
@@ -53,22 +53,6 @@ namespace BlendInt {
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual ResponseType Draw (Profile& profile);
 

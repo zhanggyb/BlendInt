@@ -2,7 +2,6 @@
  * BlendInt demo
  */
 
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Core/Types.hpp>
 
 #include "EditorContext.hpp"
@@ -22,12 +21,9 @@ int main(int argc, char* argv[])
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
 	EditorContext* context = Manage (new EditorContext);
-	Interface::instance->SetCurrentContext(context);
+	SetContext(context);
 
 	RunLoop(win);
-
-	Interface::Release();
-
 	Terminate();
 
 	return 0;

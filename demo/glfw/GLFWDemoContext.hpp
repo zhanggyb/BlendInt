@@ -16,13 +16,13 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/Slider.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
@@ -45,7 +45,7 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlockLayout.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
-#include <BlendInt/Gui/StaticFrame.hpp>
+#include <BlendInt/Gui/StaticPanel.hpp>
 
 #include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
@@ -63,25 +63,13 @@ class GLFWDemoContext: public BI::Context
 {
 public:
 
-	explicit GLFWDemoContext (GLFWwindow* window);
+	GLFWDemoContext ();
 
 	virtual ~GLFWDemoContext ();
 
-	virtual void SetCursor (int cursor_type);
-
 private:
 
-	void InitializeGLFWCursors ();
-
-	void Initialize ();
-
-	void ReleaseGLFWCursors ();
-
-	GLFWcursor* arrow_;
-
-	GLFWcursor* cross_;
-
-	GLFWwindow* window_;
+	void InitializeGLFWDemoContext ();
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

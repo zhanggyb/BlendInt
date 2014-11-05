@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	HBlockLayout::HBlockLayout ()
-	: AbstractContainer()
+	: Layout()
 	{
 		set_size(100, 20);
 		set_margin(0, 0, 0, 0);
@@ -36,9 +36,9 @@ namespace BlendInt {
 	{
 	}
 	
-	void HBlockLayout::Prepend (AbstractWidget* widget)
+	void HBlockLayout::Prepend (Widget* widget)
 	{
-		AbstractWidget* orig_first = first();
+		AbstractWidget* orig_first = first_child();
 
 		if(PushFrontSubWidget(widget)) {
 
@@ -51,14 +51,14 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInHBlock(position(), size(), margin());
+			FillInHBlock(size(), margin());
 
 		}
 	}
 
-	void HBlockLayout::Append (AbstractWidget* widget)
+	void HBlockLayout::Append (Widget* widget)
 	{
-		AbstractWidget* orig_last = last();
+		AbstractWidget* orig_last = last_child();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -71,7 +71,7 @@ namespace BlendInt {
 				SetSubWidgetRoundType(widget, RoundAll);
 			}
 
-			FillInHBlock(position(), size(), margin());
+			FillInHBlock(size(), margin());
 
 		}
 	}
@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -110,7 +110,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(100);
 			preferred_size.set_height(20);
@@ -122,7 +122,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -144,13 +144,13 @@ namespace BlendInt {
 	
 	void HBlockLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillInHBlock(position(), size(), request);
+		FillInHBlock(size(), request);
 	}
 
 	bool HBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ namespace BlendInt {
 	bool HBlockLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -171,7 +171,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInHBlock(position(), *request.size(), margin());
+			FillInHBlock(*request.size(), margin());
 		}
 
 		if(request.source() == this) {
@@ -179,67 +179,11 @@ namespace BlendInt {
 		}
 	}
 	
-	void HBlockLayout::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
-	ResponseType HBlockLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	ResponseType HBlockLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	void HBlockLayout::FillInHBlock (const Point& out_pos, const Size& out_size,
+	void HBlockLayout::FillInHBlock (const Size& out_size,
 					const Margin& margin)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
 		int w = out_size.width() - margin.hsum();
 		int h = out_size.height() - margin.vsum();
 
@@ -248,11 +192,11 @@ namespace BlendInt {
 
 	void HBlockLayout::FillInHBlock (int x, int y, int w, int h)
 	{
-		int count = widget_count();
+		int count = subs_count();
 		if(count == 0) return;
 		int average_width = w / count + 1;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, average_width, h);
 			SetSubWidgetPosition(p, x, y);

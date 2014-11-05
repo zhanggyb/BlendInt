@@ -33,7 +33,6 @@
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Section.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -46,7 +45,7 @@ namespace BlendInt {
 	int AbstractButton::icon_text_space = 2;
 
 	AbstractButton::AbstractButton ()
-	: AbstractWidget(),
+	: Widget(),
 	  text_length_(0),
 	  group_(0)
 	{
@@ -159,34 +158,31 @@ namespace BlendInt {
 		return text_length;
 	}
 
-	ResponseType AbstractButton::CursorEnterEvent(bool entered)
+	void AbstractButton::MouseHoverInEvent(const MouseEvent& event)
 	{
-		if(entered) {
+		if(m_status[ButtonPressed]) {
+			m_status[ButtonDown] = 1;
 
-			if(m_status[ButtonPressed]) {
-				m_status[ButtonDown] = 1;
-
-				if(m_status[ButtonCheckable]) {
-					m_status[ButtonChecked] = !m_status[ButtonChecked];
-				}
+			if(m_status[ButtonCheckable]) {
+				m_status[ButtonChecked] = !m_status[ButtonChecked];
 			}
-
-			Refresh();
-		} else {
-
-			if(m_status[ButtonPressed]) {
-				m_status[ButtonDown] = 0;
-
-				if(m_status[ButtonCheckable]) {
-					m_status[ButtonChecked] = !m_status[ButtonChecked];
-				}
-
-			}
-
-			Refresh();
 		}
 
-		return Accept;
+		Refresh();
+	}
+
+	void AbstractButton::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		if(m_status[ButtonPressed]) {
+			m_status[ButtonDown] = 0;
+
+			if(m_status[ButtonCheckable]) {
+				m_status[ButtonChecked] = !m_status[ButtonChecked];
+			}
+
+		}
+
+		Refresh();
 	}
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
@@ -331,28 +327,6 @@ namespace BlendInt {
 				toggled_.fire(m_status[ButtonChecked]);
 			}
 		}
-	}
-
-	ResponseType AbstractButton::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractButton::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	int AbstractButton::GetValidTextLength(const String& text, const Font& font, int max_width)

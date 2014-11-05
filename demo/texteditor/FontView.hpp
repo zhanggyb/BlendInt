@@ -28,7 +28,7 @@ protected:
 private:
 
 	/*
-	GLuint m_vao;
+	GLuint vao_;
 	GLuint m_vbo;
 
     BI::TextureGlyph m_glyph;

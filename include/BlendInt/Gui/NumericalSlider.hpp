@@ -27,6 +27,7 @@
 #include <BlendInt/Core/Margin.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -66,79 +67,29 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void MouseHoverInEvent (const MouseEvent& event);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		/**
-		 *  Generate vertices for drawing the inner slider bar
-		 *  size The size of this widget
-		 *  border The border width of this widget
-		 *  round_type The round corner type of this widget
-		 *  radius The round coner radius of this widget
-		 *  slide_verts The vertices output for drawing the slider bar
-		 */
-
-		void GenerateSliderVertices (const Size& out_size,
-						float border,
-						int round_type,
-						float out_radius,
-						double value,
-						double minimum,
-						double maximum,
-						std::vector<GLfloat>& left_vertices,
-						std::vector<GLfloat>& right_vertices);
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 	private:
 
-		void InitOnce ();
+		void InitializeNumericalSlider ();
 
 		float GetSlidePosition (float border, double value);
-
-		void GenerateLeftSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
-
-		void GenerateRightSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
-
-		void GenerateSliderVertices (float minx, float maxx, float miny,
-						float maxy, int round_type, float radius,
-						std::vector<GLfloat>& verts);
 
 		/**
 		 * @brief VertexArray objects used in this widget
 		 *
 		 * [0] - inner buffer
 		 * [1] - outer buffer
-		 * [2] - slider bar buffer
 		 */
-		GLuint m_vao[4];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<GLArrayBuffer> m_slider1;
-		RefPtr<GLArrayBuffer> m_slider2;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		Font m_font;
 
 		String m_title;
-
-		bool m_right;
 
 		static Margin default_numberslider_padding;
 	};

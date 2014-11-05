@@ -28,7 +28,7 @@ using namespace BlendInt;
 using Stock::Shaders;
 
 StudioFrame::StudioFrame()
-: BinLayout(), refresh_(true)
+: BinLayout()
 {
 	set_size(400, 300);
 }
@@ -37,26 +37,18 @@ StudioFrame::~StudioFrame ()
 {
 }
 
-void StudioFrame::PerformRefresh(const RefreshRequest& request)
-{
-	if(!refresh_) {
-		refresh_ = true;
-		ReportRefresh(request);
-	}
-}
-
 void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
 
-		refresh_ = true;
-
 		set_size(*request.size());
 
-		if (widget_count()) {
-			assert(widget_count() == 1);
-			FillSingleWidget(0, position(), *request.size(), margin());
+		if (subs_count()) {
+			assert(subs_count() == 1);
+			FillSingleWidget(0, *request.size(), margin());
 		}
+
+		Refresh();
 	}
 
 	if(request.source() == this) {
@@ -66,15 +58,12 @@ void StudioFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType StudioFrame::Draw (Profile& profile)
 {
-	if(refresh_) {
-		RenderToBuffer();
-		refresh_ = false;
+	if(refresh()) {
+		RenderToBuffer(profile);
 	}
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
 	tex_buffer_.Draw(position().x(), position().y());
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;
@@ -87,7 +76,7 @@ void StudioFrame::RenderToFile (const std::string& filename)
 	tex_buffer_.texture()->reset();
 }
 
-void StudioFrame::RenderToBuffer ()
+void StudioFrame::RenderToBuffer (BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
@@ -101,7 +90,7 @@ void StudioFrame::RenderToBuffer ()
 	tex_buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 	// Create and set texture to render to.
 	GLTexture2D* tex = tex_buffer_.texture();
-	if(!tex->texture())
+	if(tex->id() == 0)
 		tex->generate();
 
 	tex->bind();
@@ -117,7 +106,7 @@ void StudioFrame::RenderToBuffer ()
 
 	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D, tex->texture(), 0);
+			GL_TEXTURE_2D, tex->id(), 0);
 	//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 	// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
@@ -148,12 +137,12 @@ void StudioFrame::RenderToBuffer ()
 
 		glm::mat4 origin;
 
-		Shaders::instance->GetUIProjectionMatrix(origin);
+		Shaders::instance->GetWidgetProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -161,16 +150,16 @@ void StudioFrame::RenderToBuffer ()
 
 		// Draw frame panel
 
-		Profile off_screen_profile(position());
+		Profile off_screen_profile(profile, position());
 
-		if(first()) {
-			DispatchDrawEvent(first(), off_screen_profile);
+		if(first_child()) {
+			DispatchDrawEvent(first_child(), off_screen_profile);
 		}
 
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->SetUIProjectionMatrix(origin);
+		Shaders::instance->SetWidgetProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

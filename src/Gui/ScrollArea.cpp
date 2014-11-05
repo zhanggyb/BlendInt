@@ -40,8 +40,10 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ScrollArea::ScrollArea ()
-	: AbstractContainer()
+	: Layout()
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
@@ -97,43 +99,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollArea::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollArea::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void ScrollArea::PerformMarginUpdate(const Margin& request)
 	{
 
@@ -141,16 +106,14 @@ namespace BlendInt {
 
 	ResponseType ScrollArea::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
-
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -173,8 +136,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

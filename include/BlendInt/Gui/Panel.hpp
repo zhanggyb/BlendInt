@@ -15,28 +15,34 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VIRTUALWINDOW_HPP_
-#define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
+#ifndef _BLENDINT_GUI_PANEL_HPP_
+#define _BLENDINT_GUI_PANEL_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+/**
+ * @defgroup widgets Widgets
+ *
+ * @ingroup gui
+ */
 
-#include <BlendInt/Gui/AbstractPanel.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A special container works as a window in desktop
+	 * @brief A widget usually contains other Form or widget in a box with padding
 	 *
-	 * The margin of a VirtualWindow is always zero.
+	 * @ingroup widgets
 	 */
-	class Panel: public AbstractPanel
+	class Panel: public BinLayout
 	{
+		DISALLOW_COPY_AND_ASSIGN(Panel);
+
 	public:
 
 		Panel ();
@@ -45,39 +51,20 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
-		void InitializePanelOnce ();
+		void InitializeFrame ();
 
-		bool pressed_;
-
-		Point last_position_;
-
-		Point cursor_position_;
-
-		GLuint vao_[2];
+		GLuint vao_;
 
 		RefPtr<GLArrayBuffer> inner_;
 
-		RefPtr<GLArrayBuffer> outer_;
 	};
 
-}
+} /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_VIRTUALWINDOW_HPP_ */
+#endif /* _BLENDINT_GUI_PANEL_HPP_ */

@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -24,149 +24,60 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
-#include <gl3ext.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
-#endif	// __UNIX__
+#endif  // __UNIX__
+
+#include <assert.h>
+#include <algorithm>
+
+#include <iostream>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/OpenGL/GLFramebuffer.hpp>
-
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Panel.hpp>
-#include <BlendInt/Gui/Decoration.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Section.hpp>
-
-#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
 	Panel::Panel ()
-	: AbstractPanel(),
-	  pressed_(false)
+	: BinLayout(),
+	  vao_(0)
 	{
-		set_margin(10, 10, 10, 10);
-		set_round_type(RoundAll);
-
-		InitializePanelOnce();
+		set_size(400, 300);
+		InitializeFrame();
 	}
 
 	Panel::~Panel ()
 	{
-		glDeleteVertexArrays(2, vao_);
-	}
-
-	ResponseType Panel::Draw (Profile& profile)
-	{
-		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
-		program->use();
-
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->tooltip().inner.data());
-
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR), Theme::instance->tooltip().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
-
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        GetOutlineVertices(round_type()) * 2 + 2);
-
-		glBindVertexArray(0);
-		program->reset();
-
-		return Ignore;
-	}
-
-	ResponseType Panel::MousePressEvent (const MouseEvent& event)
-	{
-		if(container() == event.section()) {
-			if(event.section()->last_hover_widget() == this ||
-					event.section()->last_hover_widget() == decoration()) {
-				MoveToLast();
-
-				last_position_ = position();
-				cursor_position_ = event.position();
-				pressed_ = true;
-
-				event.context()->SetFocusedWidget(this);
-
-				return Accept;
-			}
-		}
-
-		return Ignore;
-	}
-
-	ResponseType Panel::MouseReleaseEvent (
-	        const MouseEvent& event)
-	{
-		pressed_ = false;
-		return Ignore;
-	}
-
-	ResponseType Panel::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(pressed_) {
-
-			int offset_x = event.position().x() - cursor_position_.x();
-			int offset_y = event.position().y() - cursor_position_.y();
-
-			SetPosition(last_position_.x() + offset_x,
-					last_position_.y() + offset_y);
-		}
-
-		return Ignore;
-	}
-
-	void Panel::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			MoveSubWidgets(x, y);
-
-			set_position(*request.position());
-
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Panel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(), round_radius());
 
+			VertexTool tool;
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
 			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->reset();
 
 			set_size(*request.size());
 
-			FillSubWidgets(position(), *request.size(), margin());
-			Refresh();
+			if (subs_count()) {
+				assert(subs_count() == 1);
+				FillSingleWidget(0, *request.size(), margin());
+			}
 		}
 
 		if(request.source() == this) {
@@ -174,76 +85,44 @@ namespace BlendInt {
 		}
 	}
 
-	void Panel::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	ResponseType Panel::Draw (Profile& profile)
 	{
-		if(request.target() == this) {
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
+		program->use();
 
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		//glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float)position().x(), (float)position().y(), 0.f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
 
-			Refresh();
-		}
+		program->reset();
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		return Ignore;
 	}
 
-	void Panel::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void Panel::InitializeFrame ()
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+		glGenVertexArrays(1, &vao_);
 
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
-
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
-	}
-
-	void Panel::InitializePanelOnce ()
-	{
+		glBindVertexArray(vao_);
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
-
-		glGenVertexArrays(2, vao_);
-		glBindVertexArray(vao_[0]);
+		tool.GenerateVertices(size(), 0, RoundNone, 0);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[1]);
-
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_->reset();
 	}
 
-}
-
+} /* namespace BlendInt */

@@ -21,9 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef DEBUG
 #include <iostream>
-#endif	// DEBUG
 
 #include <BlendInt/Gui/FileSystemModel.hpp>
 

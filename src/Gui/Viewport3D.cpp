@@ -42,14 +42,14 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
 	Viewport3D::Viewport3D ()
-	: AbstractWidget(),
+	: Widget(),
 	  vao_(0),
 	  m_last_x(0),
 	  m_last_y(0),
@@ -68,19 +68,15 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	ResponseType Viewport3D::CursorEnterEvent (bool entered)
+	void Viewport3D::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Context* context = Context::GetContext(this);
-		if(!context) return Ignore;
+		Cursor::instance->PushCursor();
+		Cursor::instance->SetCursor(CrossCursor);
+	}
 
-		if(entered) {
-			context->PushCursor(context->current_cursor());
-			context->SetCursor(CrossCursor);
-		} else {
-			context->SetCursor(context->PopCursor());
-		}
-
-		return Accept;
+	void Viewport3D::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		Cursor::instance->PopCursor();
 	}
 
 	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)
@@ -262,6 +258,7 @@ namespace BlendInt {
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;
+        int n = GetOutlineVertices(round_type()) + 2;
 
         glGetIntegerv(GL_VIEWPORT, vp);
         //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);
@@ -270,23 +267,21 @@ namespace BlendInt {
         //	glGetIntegerv(GL_SCISSOR_BOX, sci);
         //}
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
 		profile.BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		profile.EndPushStencil();
 
 		glBindVertexArray(0);
@@ -297,8 +292,10 @@ namespace BlendInt {
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-		glViewport(position().x() - profile.origin().x(),
-		        position().y() - profile.origin().y(),
+        Point pos = GetGlobalPosition();
+
+        glViewport(pos.x() - profile.origin().x(),
+        		pos.y() - profile.origin().y(),
 		        size().width(),
 		        size().height());
 
@@ -317,14 +314,13 @@ namespace BlendInt {
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
         program->use();
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		glBindVertexArray(0);
 		profile.EndPopStencil();
 		program->reset();
@@ -347,23 +343,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Viewport3D::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Viewport3D::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Viewport3D::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	void Viewport3D::PushBack (const RefPtr<AbstractPrimitive>& primitive)
 	{
 		m_primitives.push_back(primitive);
@@ -383,8 +362,8 @@ namespace BlendInt {
 
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

@@ -24,11 +24,12 @@
 #ifndef _BLENDINT_NODEVIEW_HPP_
 #define _BLENDINT_NODEVIEW_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/CubicBezierCurve.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public AbstractWidget
+	class NodeView: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(NodeView);
 
@@ -48,31 +49,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
-		GLuint vaos_[4];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<GLArrayBuffer> area_;
-
-		RefPtr<GLArrayBuffer> rect_;	// used for test stencil stack only, temporarily
+		CubicBezierCurve* curve_;
 
 	};
 

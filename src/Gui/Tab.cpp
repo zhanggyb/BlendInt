@@ -46,18 +46,17 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: AbstractContainer()
+	: Widget()
 	{
 		set_size(400, 300);
 
 		TabHeader* header = Manage(new TabHeader);
 		Stack* stack = Manage(new Stack);
-		//stack->SetMargin(10, 10, 10, 10);
 
 		PushBackSubWidget(header);	// 0
 		PushBackSubWidget(stack);	// 1
 
-		FillSubWidgetsInTab(size(), margin());
+		FillSubWidgetsInTab(size());
 
 		events()->connect(header->button_index_toggled(), this, &Tab::OnButtonToggled);
 	}
@@ -66,7 +65,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Tab::Add (const String& title, AbstractWidget* widget)
+	void Tab::Add (const String& title, Widget* widget)
 	{
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
@@ -77,7 +76,7 @@ namespace BlendInt {
 		header->Append(btn);
 		stack->Append(widget);
 
-		if(header->widget_count() == 1) {
+		if(header->subs_count() == 1) {
 			btn->SetChecked(true);
 		}
 	}
@@ -115,9 +114,6 @@ namespace BlendInt {
 		w = std::max(tmp1.width(), tmp2.width());
 		h = tmp1.height() + tmp2.height();
 
-		w = w + margin().hsum();
-		h = h + margin().vsum();
-
 		return Size(w, h);
 	}
 
@@ -126,11 +122,6 @@ namespace BlendInt {
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		return stack->GetIndex();
-	}
-
-	void Tab::PerformMarginUpdate(const Margin& request)
-	{
-		FillSubWidgetsInTab(size(), request);
 	}
 
 	void Tab::PerformPositionUpdate (const PositionUpdateRequest& request)
@@ -151,7 +142,7 @@ namespace BlendInt {
 	void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillSubWidgetsInTab(*request.size(), margin());
+			FillSubWidgetsInTab(*request.size());
 			set_size(*request.size());
 		}
 
@@ -160,46 +151,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Tab::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Tab::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
@@ -208,19 +159,19 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void Tab::FillSubWidgetsInTab(const Size& out_size, const Margin& margin)
+	void Tab::FillSubWidgetsInTab(const Size& out_size)
 	{
-		int x = position().x() + margin.left();
-		int y = position().y() + margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = position().x();
+		int y = position().y();
+		int w = out_size.width();
+		int h = out_size.height();
 
 		FillSubWidgetsInTab(x, y, w, h);
 	}
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
 	{
-		int header_y = position().y() + size().height() - margin().top();
+		int header_y = position().y() + size().height();
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));

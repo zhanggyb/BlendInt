@@ -34,13 +34,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+
+#ifdef USE_FONTCONFIG
+#include <BlendInt/Core/FontConfig.hpp>
+#endif
+
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
 {
@@ -52,13 +58,125 @@ namespace BlendInt
 
 	std::set<Context*> Context::context_set;
 
+	bool Context::Initialize()
+	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
+		bool success = true;
+
+#ifdef DEBUG
+		int major, minor;
+		GetGLVersion(&major, &minor);
+		DBG_PRINT_MSG("OpenGL version: %d.%d", major, minor);
+		GetGLSLVersion(&major, &minor);
+		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
+#endif
+
+#ifdef USE_FONTCONFIG
+		if (success && FontConfig::initialize()) {
+
+			/*
+			 FontConfig* ftconfig = FontConfig::instance();
+			 if (!ftconfig->loadDefaultFontToMem()) {
+			 cerr << "Cannot load default font into memory" << endl;
+			 success = false;
+			 }
+			 */
+
+		} else {
+
+			DBG_PRINT_MSG("%s", "Cannot initialize FontConfig");
+			success = false;
+
+		}
+#endif
+
+		if (success && Theme::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
+			success = false;
+		}
+
+		if (success && Shaders::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
+			success = false;
+		}
+
+		if (success && Icons::Initialize()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
+			success = false;
+		}
+
+		if (success && Cursor::Initialize()) {
+			// do nothing;
+		} else {
+			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
+			success = false;
+		}
+
+#ifdef USE_FONTCONFIG
+
+#ifdef __APPLE__
+
+		// Create a default font
+		//FontCache::Create("Sans-Serif", 9, 96, false, false);
+
+#endif
+
+#ifdef __LINUX__
+
+		// Create a default font
+		//FontCache::Create("Sans", 9, 96, false, false);
+
+#endif
+
+#endif
+
+		return success;
+	}
+
+	void Context::Release()
+	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
+		while(context_set.size()) {
+			std::set<Context*>::iterator it = context_set.begin();
+
+			if((*it)->managed() && ((*it)->reference_count() == 0)) {
+				DBG_PRINT_MSG("%s", "Delete context");
+				delete (*it);	// this will erase the context from the set
+			} else {
+				context_set.erase(it);
+			}
+		}
+
+		Icons::Release();
+		Shaders::Release();
+		Theme::Release();
+		FontCache::ReleaseAll();
+		Cursor::Release();
+
+#ifdef USE_FONTCONFIG
+		FontConfig::release();
+#endif
+	}
+
 	Context::Context ()
-	: AbstractContainer(),
-	  focused_widget_(0),
-	  custom_focus_widget_(false)
+	: AbstractWidget(),
+	  hovered_frame_(0),
+	  focused_frame_(0)
 	{
 		set_size(640, 480);
+		set_refresh(true);
 
+		profile_.context_ = this;
 		InitializeContext();
 
 		context_set.insert(this);
@@ -66,269 +184,24 @@ namespace BlendInt
 
 	Context::~Context ()
 	{
-		if(container() != 0) {
-			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
+		if(parent() != 0) {
+			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other parent");
 		}
-
-		if (focused_widget_) {
-			focused_widget_->set_focus(false);
-			focused_widget_->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_ = 0;
-		}
-
 		context_set.erase(this);
 	}
 
-	Section* Context::Append (AbstractWidget* widget)
+	void Context::AddFrame (AbstractFrame* vp)
 	{
-		if(!widget) {
-			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return 0;
-		}
-
-		Section* section = Section::GetSection(widget);
-
-		if(section) {
-
-			if(section->container_ == this) {
-				DBG_PRINT_MSG("Widget %s is already in context %s",
-									widget->name().c_str(),
-									name().c_str());
-				return section;
-			} else {
-				if(section->container_) {
-					section->container_->RemoveSubWidget(section);
-				}
-			}
-
-		} else {
-			section = Manage(new Section);
-			section->Append(widget);
-		}
-
-#ifdef DEBUG
-		if(!section->managed()) {
-			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
-		}
-
-		if(section->first_ == 0) {
-			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
-		}
-
-		int count = widget_count();
-		char buf[32];
-		sprintf(buf, "Section %d", count);
-		DBG_SET_NAME(section, buf);
-#endif
-
-		PushBackSubWidget(section);
-
-		ResizeSubWidget(section, size());
-
-		return section;
-	}
-
-	Section* Context::Remove (AbstractWidget* widget)
-	{
-		if(!widget) {
-			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return 0;
-		}
-
-		// if the container is a section, the section will destroy itself if it's empty
-		Section* section = Section::GetSection(widget);
-		assert(section->container() == this);
-
-		widget->container_->RemoveSubWidget(widget);
-
-		if(widget->focused()) {
-
-			assert(focused_widget_ == widget);
-
-			widget->set_focus(false);
-			widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_ = 0;
-
-		}
-
-		if(section->first_ == 0) {
-			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
-			if(section->managed() && (section->reference_count() == 0)) {
-				delete section;
-				section = 0;
-			} else {
-				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
-						", and it's referenced by a smart pointer, it will not be deleted automatically");
-			}
-		}
-
-		return section;
-	}
-
-	bool Context::Contain (const Point& point) const
-	{
-		return true;
-	}
-
-	void Context::SetFocusedWidget (AbstractWidget* widget)
-	{
-		custom_focus_widget_ = true;
-
-		if(focused_widget_ == widget) {
-			return;
-		}
-
-		if (focused_widget_) {
-			focused_widget_->set_focus(false);
-			focused_widget_->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_->FocusEvent(false);
-		}
-
-		focused_widget_ = widget;
-		if (focused_widget_) {
-			focused_widget_->set_focus(true);
-			events()->connect(focused_widget_->destroyed(), this, &Context::OnFocusedWidgetDestroyed);
-			focused_widget_->FocusEvent(true);
+		if(PushBackSubWidget(vp)) {
+			// TODO:
+			Refresh();
 		}
 	}
 
-	void Context::SetCursor (int cursor_type)
+	void Context::Draw()
 	{
-		// TODO: overwrite this
-	}
-
-	void Context::PushCursor (int cursor_type)
-	{
-		cursor_stack_.push(cursor_type);
-	}
-
-	int Context::PopCursor ()
-	{
-		int cursor = ArrowCursor;
-
-		if(!cursor_stack_.empty()) {
-			cursor = cursor_stack_.top();
-			cursor_stack_.pop();
-		}
-
-		return cursor;
-	}
-
-	Context* Context::GetContext (AbstractWidget* widget)
-	{
-		AbstractContainer* container = widget->container();
-
-		if(container == 0) {
-			return dynamic_cast<Context*>(widget);
-		} else {
-
-			while(container->container()) {
-				container = container->container();
-			}
-
-		}
-
-		return dynamic_cast<Context*>(container);
-	}
-
-	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-			// don't allow section to change any geometry
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Context::PositionUpdateTest (const PositionUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
-		return true;
-	}
-
-	bool Context::RoundRadiusUpdateTest (
-	        const RoundRadiusUpdateRequest& request)
-	{
-		if(request.source()->container() == this) {
-
-			// don't allow section to change any geometry
-			return false;
-		}
-
-		return true;
-	}
-
-	void Context::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		// nothing need to do.
-	}
-
-	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if (request.source() == this) {
-
-			glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
-			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
-
-			Shaders::instance->SetUIProjectionMatrix(projection);
-
-			for(AbstractWidget* p = first(); p; p = p->next())
-			{
-				ResizeSubWidget(p, *request.size());
-			}
-
-			set_size(*request.size());
-
-			resized_.fire(size());
-
-		} else if (request.source()->container() == this) {
-
-		} else {
-
-			// if(request.target()->container()->hover()) {
-			//	m_layers[request.source()->z()].m_hover_list_valid = false;
-			// }
-
-			//DBG_PRINT_MSG("%s", "get widget geometry change update");
-
-			//DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
-
-		}
-
-	}
-
-	void Context::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
-	{
-	}
-
-	void Context::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
-	{
-	}
-
-	ResponseType Context::Draw (Profile& profile)
-	{
-		//glm::vec3 pos(position().x(), position().y(), z());
-		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+		//glClearColor(1.f, 1.f, 1.f, 1.f);
 		glClearStencil(0);
 		glClearDepth(1.0);
 
@@ -343,27 +216,218 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		/*
+		if(refresh()) {
+
+			DBG_PRINT_MSG("%s", "Render to texture once");
+			set_refresh(false);
+			RenderToBuffer(profile_);
+		}
+
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		Shaders::instance->frame_image_program()->use();
+		texture_buffer_.bind();
+		glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
+		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+
+		texture_buffer_.reset();
+		GLSLProgram::reset();
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		*/
+
+		set_refresh(false);
+		if(PreDraw(profile_)) {
+			Draw(profile_);
+			PostDraw(profile_);
+		}
+	}
+
+	void Context::DispatchKeyEvent(const KeyEvent& event)
+	{
+		const_cast<KeyEvent&>(event).context_ = this;
+		const_cast<KeyEvent&>(event).frame_ = 0;
+
+		switch (event.action()) {
+
+			case KeyPress: {
+				KeyPressEvent(event);
+				break;
+			}
+
+			case KeyRelease: {
+				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+				//cm->m_focus->KeyReleaseEvent(event);
+				break;
+			}
+
+			case KeyRepeat: {
+				// item->KeyRepeatEvent(&event);
+				break;
+			}
+
+			default:
+			break;
+		}
+	}
+
+	void Context::DispatchMouseEvent(const MouseEvent& event)
+	{
+		const_cast<MouseEvent&>(event).context_ = this;
+		const_cast<MouseEvent&>(event).frame_ = 0;
+
+		switch (event.action()) {
+
+			case MouseMove: {
+				DispatchHoverEvent(event);
+				if(hovered_frame_) {
+					hovered_frame_->DispatchHoverEvent(event);
+				}
+
+				MouseMoveEvent(event);
+				return;
+			}
+
+			case MousePress: {
+				MousePressEvent(event);
+				return;
+			}
+
+			case MouseRelease: {
+				MouseReleaseEvent(event);
+				return;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	bool Context::Contain (const Point& point) const
+	{
+		return true;
+	}
+
+	void Context::SynchronizeWindow()
+	{
+		// TODO: override this function
+	}
+
+	Context* Context::GetContext (AbstractWidget* widget)
+	{
+		AbstractWidget* parent = widget->parent();
+
+		if(parent == 0) {
+			return dynamic_cast<Context*>(widget);
+		} else {
+
+			while(parent->parent()) {
+				parent = parent->parent();
+			}
+
+		}
+
+		return dynamic_cast<Context*>(parent);
+	}
+
+	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Context::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Context::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void Context::PerformPositionUpdate (const PositionUpdateRequest& request)
+	{
+	}
+
+	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			set_size(*request.size());
+
+			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+			Shaders::instance->SetFrameProjectionMatrix(projection);
+
+			/*
+			GLfloat vertices[] = {
+					// coord						uv
+					0.f, 0.f,						0.f, 0.f,
+					(float)size().width(), 0.f,		1.f, 0.f,
+					0.f, (float)size().height(),	0.f, 1.f,
+					(float)size().width(), (float)size().height(),		1.f, 1.f
+			};
+
+			vertex_buffer_.bind();
+			vertex_buffer_.set_data(sizeof(vertices), vertices);
+			vertex_buffer_.reset();
+			*/
+
+			set_refresh(true);
+
+			resized_.fire(size());
+		}
+	}
+
+	void Context::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+	}
+
+	void Context::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+	}
+
+	bool Context::PreDraw(Profile& profile)
+	{
+		return true;
+	}
+
+	ResponseType Context::Draw (Profile& profile)
+	{
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
+			p->set_refresh(this->refresh());
+
+			p->PreDraw(profile);
 			p->Draw(profile);
+			p->PostDraw(profile);
 		}
 
 		return Accept;
 	}
 
-	ResponseType Context::CursorEnterEvent (bool entered)
+	void Context::PostDraw(Profile& profile)
 	{
-		return Ignore;
 	}
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		const_cast<KeyEvent&>(event).m_context = this;
+		ResponseType response = Ignore;
 
-		ResponseType response;
-
-		if(focused_widget_) {
-			response = focused_widget_->KeyPressEvent(event);
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+			response = p->KeyPressEvent(event);
+			if(response == Accept) break;
 		}
 
 		return response;
@@ -371,7 +435,7 @@ namespace BlendInt
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_context = this;
+		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
@@ -379,72 +443,49 @@ namespace BlendInt
 	ResponseType Context::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		const_cast<ContextMenuEvent&>(event).m_context = this;
+		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		ResponseType response = Ignore;
+		assert(event.frame() == 0);
 
-		ResponseType response;
-
-		AbstractWidget* widget = 0;	// widget may be focused
-
-		const_cast<MouseEvent&>(event).m_context = this;
-
-		custom_focus_widget_ = false;
-		for (Section::iterator_ptr = last(); Section::iterator_ptr;
-		        Section::iterator_ptr = Section::iterator_ptr->previous()) {
-			response = Section::iterator_ptr->MousePressEvent(event);
-
-			if (response == Accept)	break;
-		}
-
-		if(response == Accept && Section::iterator_ptr) {
-			widget = dynamic_cast<Section*>(Section::iterator_ptr)->last_hover_widget_;
-		}
-
-		Section::iterator_ptr = 0;
-
-		if(!custom_focus_widget_) {
-			SetFocusedWidget(widget);
-		}
-		custom_focus_widget_ = false;
+		set_pressed(true);
 
 		/*
-		if(focused_widget_) {
-			DBG_PRINT_MSG("focus widget: %s", focused_widget_->name().c_str());
-		} else {
-			DBG_PRINT_MSG("%s", "focus widget unset");
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+
+			if(p->Contain(event.position())) {
+				response = p->MousePressEvent(event);
+
+				//p->MoveToLast();
+				break;
+			}
 		}
 		*/
+
+		if(hovered_frame_ && hovered_frame_->Contain(event.position())) {
+			response = hovered_frame_->MousePressEvent(event);
+		}
+
+		SetFocusedFrame(event.frame());
+
+		if(focused_frame_) focused_frame_->set_pressed(true);
 
 		return response;
 	}
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		ResponseType response = Ignore;
 
-		ResponseType response;
-
-		// tell the focused widget first
-		if(focused_widget_) {
-			response = focused_widget_->MouseReleaseEvent(event);
-		}
-
-		if(response == Accept) {
-			return response;
-		}
-
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			response = p->MouseReleaseEvent(event);
-			if (response == Accept) {
-				break;
-			}
+		set_pressed(false);
+		if(focused_frame_) {
+			focused_frame_->set_pressed(false);
+			response = focused_frame_->MouseReleaseEvent(event);
 		}
 
 		return response;
@@ -452,68 +493,257 @@ namespace BlendInt
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
-		const_cast<MouseEvent&>(event).m_context = this;
+		ResponseType response = Ignore;
 
-		ResponseType response;
-
-		// tell the focused widget first
-		if (focused_widget_) {
-			response = focused_widget_->MouseMoveEvent(event);
-		}
-
-		if(response == Accept) {
-
-			// still set cursor hover
-			for(AbstractWidget* p = last(); p; p = p->previous())
-			{
-				if(dynamic_cast<Section*>(p)->CheckAndUpdateHoverWidget(event)) break;
-			}
-
-			return response;	// return Accept
-		}
-
-		for(AbstractWidget* p = last(); p; p = p->previous())
-		{
-			response = p->MouseMoveEvent(event);
-
-			if (response == Accept) {
-				break;
-			}
+		if(pressed_ext() && focused_frame_) {
+			response = focused_frame_->MouseMoveEvent(event);
 		}
 
 		return response;
 	}
 
-	ResponseType Context::FocusEvent (bool focus)
+	void Context::GetGLVersion (int *major, int *minor)
 	{
-		return Ignore;
+		const char* verstr = (const char*) glGetString(GL_VERSION);
+		if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2)) {
+			*major = *minor = 0;
+			fprintf(stderr, "Invalid GL_VERSION format!!!\n");
+		}
+	}
+
+	void Context::GetGLSLVersion (int *major, int *minor)
+	{
+		int gl_major, gl_minor;
+		GetGLVersion(&gl_major, &gl_minor);
+
+		*major = *minor = 0;
+		if(gl_major == 1) {
+			/* GL v1.x can provide GLSL v1.00 only as an extension */
+			const char* extstr = (const char*)glGetString(GL_EXTENSIONS);
+			if((extstr != NULL) && (strstr(extstr, "GL_ARB_shading_language_100") != NULL))
+			{
+				*major = 1;
+				*minor = 0;
+			}
+		} else if (gl_major >= 2) {
+			/* GL v2.0 and greater must parse the version string */
+			const char* verstr = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+			if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2))
+			{
+				*major = *minor = 0;
+				fprintf(stderr, "Invalid GL_SHADING_LANGUAGE_VERSION format!!!\n");
+			}
+		}
 	}
 
 	void Context::InitializeContext ()
 	{
-		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
+		glm::mat4 identity = glm::mat4(1.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
-		Shaders::instance->SetUIViewMatrix(default_view_matrix);
+		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		Shaders::instance->SetFrameProjectionMatrix(projection);
+		Shaders::instance->SetFrameViewMatrix(default_view_matrix);
+		Shaders::instance->SetFrameModelMatrix(identity);
+
+		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
+		Shaders::instance->SetWidgetModelMatrix(identity);
+
+		/*
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		vertex_buffer_.generate();
+
+		GLfloat vertices[] = {
+				// coord											uv
+				0.f, 0.f,											0.f, 0.f,
+				(float)size().width(), 0.f,							1.f, 0.f,
+				0.f, (float)size().height(),						0.f, 1.f,
+				(float)size().width(), (float)size().height(),		1.f, 1.f
+		};
+
+		vertex_buffer_.bind();
+		vertex_buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		vertex_buffer_.reset();
+		*/
 	}
 
-	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)
+	void Context::DispatchHoverEvent(const MouseEvent& event)
 	{
-		return 0;
-	}
+		AbstractFrame* original_hover = hovered_frame_;
 
-	void Context::OnFocusedWidgetDestroyed (AbstractWidget* widget)
-	{
-		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+		ResponseType response = Ignore;
+		hovered_frame_ = 0;
+		AbstractFrame* temp = 0;
 
-		assert(focused_widget_ == widget);
+		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
 
-		if(widget->focused()) {
-			widget->set_focus(false);
-			widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
+			temp = dynamic_cast<AbstractFrame*>(p);
+			response = temp->DispatchHoverEvent(event);
+
+			if(response == Accept) {
+				break;
+			}
+
 		}
 
-		focused_widget_ = 0;
+		hovered_frame_ = event.frame();
+
+		if(original_hover != hovered_frame_) {
+
+			if(original_hover) {
+				original_hover->set_hover(false);
+				original_hover->MouseHoverOutEvent(event);
+				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
+			}
+
+			if(hovered_frame_) {
+				hovered_frame_->set_hover(true);
+				hovered_frame_->MouseHoverInEvent(event);
+				events()->connect(hovered_frame_->destroyed(), this, &Context::OnHoverFrameDestroyed);
+			}
+
+		}
 	}
 
+	void Context::FocusEvent(bool focus)
+	{
+	}
+
+	void Context::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
+	void Context::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
+	void Context::SetFocusedFrame(AbstractFrame* frame)
+	{
+		if(focused_frame_ == frame) return;
+
+		if(focused_frame_) {
+			focused_frame_->set_focus(false);
+			focused_frame_->FocusEvent(false);
+			focused_frame_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
+		}
+
+		focused_frame_ = frame;
+		if(focused_frame_) {
+			focused_frame_->set_focus(true);
+			focused_frame_->FocusEvent(true);
+			events()->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
+		}
+	}
+
+	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(frame->hover());
+		assert(hovered_frame_ == frame);
+
+		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
+
+		hovered_frame_ = 0;
+
+		Refresh();
+	}
+
+	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(focused_frame_ == frame);
+		DBG_PRINT_MSG("focused frame %s destroyed", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
+
+		focused_frame_ = 0;
+
+		Refresh();
+	}
+
+	/*
+    void Context::RenderToBuffer(Profile &profile)
+    {
+        // Create and set texture to render to.
+        GLTexture2D* tex = &texture_buffer_;
+        if(!tex->id())
+            tex->generate();
+        
+        tex->bind();
+        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+        tex->SetMinFilter(GL_NEAREST);
+        tex->SetMagFilter(GL_NEAREST);
+        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        
+        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+        GLFramebuffer* fb = new GLFramebuffer;
+        fb->generate();
+        fb->bind();
+        
+        // Set "renderedTexture" as our colour attachement #0
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, tex->id(), 0);
+        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+        
+        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+        GLuint rb;
+        glGenRenderbuffers(1, &rb);
+        
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+                              size().width(), size().height());
+        //Attach depth buffer to FBO
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+        
+        if(GLFramebuffer::CheckStatus()) {
+            
+            fb->bind();
+
+            glClearColor(0.f, 0.f, 0.f, 0.f);
+            glClearDepth(1.0);
+            glClearStencil(0);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+            
+            // Draw context:
+    		if(PreDraw(profile_)) {
+    			Draw(profile_);
+    			PostDraw(profile_);
+    		}
+
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
+        }
+
+        fb->reset();
+        tex->reset();
+        
+        //delete tex; tex = 0;
+        
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glDeleteRenderbuffers(1, &rb);
+        
+        fb->reset();
+        delete fb; fb = 0;
+    }
+    */
+    
 }

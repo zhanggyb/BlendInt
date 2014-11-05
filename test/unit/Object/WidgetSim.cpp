@@ -12,7 +12,8 @@ namespace BlendInt {
 	}
 
 	WidgetSim::WidgetSim()
-	: Object()
+	: Object(),
+	  m_parent(0)
 	{
 
 	}

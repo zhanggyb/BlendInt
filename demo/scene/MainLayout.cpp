@@ -72,16 +72,15 @@ void MainLayout::InitOnce ()
 	m_toolbar = CreateToolBar();
 
     Splitter* splitter = Manage(new Splitter);
-    splitter->SetMargin(0, 0, 0, 0);
 
-    ToolBox* tbox = CreateToolBox();
+    //ToolBox* tbox = CreateToolBox();
 
     m_tab = CreateTab();
 
     ToolBar* bottom = CreateBottomBar();
 
     splitter->Append(m_tab);
-    splitter->Append(tbox);
+    //splitter->Append(tbox);
 
 	Append(m_menubar);
 	Append(m_toolbar);
@@ -91,16 +90,10 @@ void MainLayout::InitOnce ()
 	events()->connect(m_tool_open->clicked(), this, &MainLayout::OnOpenClick);
 }
 
-void MainLayout::PerformRefresh(const RefreshRequest& request)
-{
-	refresh_ = true;
-	ReportRefresh(request);
-}
-
 void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 {
 	if(request.target() == this) {
-		refresh_ = true;
+		Refresh();
 	}
 
 	VLayout::PerformSizeUpdate(request);
@@ -108,36 +101,24 @@ void MainLayout::PerformSizeUpdate(const SizeUpdateRequest& request)
 
 ResponseType MainLayout::Draw(Profile& profile)
 {
-	if(refresh_) {
-
-		RenderToBuffer();
-
-		refresh_ = false;
-	}
+	if(refresh()) RenderToBuffer(profile);
 
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	buffer_.Draw(position().x(), position().y());
-
+	buffer_.Draw(0.f, 0.f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return Accept;
 }
 
-void MainLayout::RenderToBuffer()
+void MainLayout::RenderToBuffer(BI::Profile& profile)
 {
 	GLsizei width = size().width();
 	GLsizei height = size().height();
 
-	GLfloat left = position().x();
-	GLfloat bottom = position().y();
-
-	GLfloat right = left + width;
-	GLfloat top = bottom + height;
-
 	buffer_.SetCoord(0.f, 0.f, size().width(), size().height());
 	// Create and set texture to render to.
 	GLTexture2D* tex = buffer_.texture();
-	if(!tex->texture())
+	if(tex->id() == 0)
 		tex->generate();
 
 	tex->bind();
@@ -153,7 +134,7 @@ void MainLayout::RenderToBuffer()
 
 	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_2D, tex->texture(), 0);
+			GL_TEXTURE_2D, tex->id(), 0);
 	//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 	// Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
@@ -173,6 +154,12 @@ void MainLayout::RenderToBuffer()
 
 		fb->bind();
 
+		Profile off_screen_profile(profile, GetGlobalPosition());
+
+		glm::mat4 identity(1.f);
+		Shaders::instance->PushWidgetModelMatrix();
+		Shaders::instance->SetWidgetModelMatrix(identity);
+
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearDepth(1.0);
 		glClearStencil(0);
@@ -182,23 +169,23 @@ void MainLayout::RenderToBuffer()
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-		glm::mat4 origin;
-		Shaders::instance->GetUIProjectionMatrix(origin);
-
-		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+		glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
 		        -100.f);
 
-		Shaders::instance->SetUIProjectionMatrix(projection);
+		Shaders::instance->PushWidgetProjectionMatrix();
+		Shaders::instance->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
-		glViewport(0, 0, size().width(), size().height());
+		glViewport(0, 0, width, height);
+
+		GLboolean scissor_test;
+		glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
+		glDisable(GL_SCISSOR_TEST);
 
 		// Draw frame panel
 
-		Profile off_screen_profile(position());
-
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}
@@ -206,10 +193,14 @@ void MainLayout::RenderToBuffer()
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->SetUIProjectionMatrix(origin);
+		Shaders::instance->PopWidgetProjectionMatrix();
+		Shaders::instance->PopWidgetModelMatrix();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		if(scissor_test) {
+			glEnable(GL_SCISSOR_TEST);
+		}
 	}
 
 	fb->reset();
@@ -402,6 +393,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	return menubar;
 }
 
+/*
 BI::ToolBox* MainLayout::CreateToolBox()
 {
 	ToolBox* toolbox = Manage(new ToolBox);
@@ -417,6 +409,7 @@ BI::ToolBox* MainLayout::CreateToolBox()
 
 	return toolbox;
 }
+*/
 
 BI::Expander* MainLayout::CreateTransformExpander()
 {
@@ -468,10 +461,9 @@ BI::Expander* MainLayout::CreateColorExpander()
 BI::Tab* MainLayout::CreateTab ()
 {
 	Tab* tab = Manage(new Tab);
-	tab->SetMargin(0, 0, 0, 0);
 
     m_scene = Manage(new Viewport3D);
-    m_image_view = Manage(new ImageView);
+    m_image_view = Manage(new TextureView);
 
     tab->Add("3D View", m_scene);
     tab->Add("Image", m_image_view);
@@ -520,6 +512,6 @@ void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 
-	HLayout* box = dynamic_cast<HLayout*>(m_file_input->container());
+	HLayout* box = dynamic_cast<HLayout*>(m_file_input->parent());
 	box->Resize(box->GetPreferredSize());
 }

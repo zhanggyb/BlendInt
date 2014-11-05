@@ -58,8 +58,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
 #ifndef DEBUG
 
 		void GenerateTabButtonVertices (const Size& size, float border,

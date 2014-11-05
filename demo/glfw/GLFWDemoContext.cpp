@@ -8,140 +8,142 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/RadioButton.hpp>
 #include <BlendInt/Gui/CheckButton.hpp>
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/FrameSplitter.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/ColorWheel.hpp>
+#include <BlendInt/Gui/Viewport2D.hpp>
+#include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
 
-GLFWDemoContext::GLFWDemoContext(GLFWwindow* window)
-: BI::Context(),
-  arrow_(0),
-  cross_(0),
-  window_(window)
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
+
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+
+using BI::Stock::Shaders;
+
+GLFWDemoContext::GLFWDemoContext()
+: BI::Context()
 {
-	InitializeGLFWCursors();
-
-	Initialize ();
+	InitializeGLFWDemoContext ();
 }
 
 GLFWDemoContext::~GLFWDemoContext ()
 {
-	ReleaseGLFWCursors();
 }
 
-void GLFWDemoContext::SetCursor (int cursor_type)
-{
-	using namespace BlendInt;
-
-	if(cursor_type < 0 || cursor_type >= CursorShapeLast) {
-		return;
-	}
-
-	switch (cursor_type) {
-
-		case ArrowCursor: {
-			glfwSetCursor(window_, arrow_);
-			break;
-		}
-
-		case CrossCursor: {
-			glfwSetCursor(window_, cross_);
-			break;
-		}
-
-		default: {
-			glfwSetCursor(window_, arrow_);
-			break;
-		}
-	}
-}
-
-void GLFWDemoContext::InitializeGLFWCursors()
+void GLFWDemoContext::InitializeGLFWDemoContext ()
 {
 	using namespace BI;
 
-	GLFWimage cursor;
-	Image img;
+	ToolBox* vp1 = Manage(new ToolBox(Vertical));
+	//vp1->SetPosition(200, 200);
+	//frame->Resize(400, 32);
 
-	if(img.Read("0.png")) {
-		cursor.width = img.width();
-		cursor.height = img.height();
-		cursor.pixels = const_cast<unsigned char*>(img.pixels());
+	Button* btn1 = Manage(new Button("Hello"));
+	DBG_SET_NAME(btn1, "Button1");
+	Button* btn2 = Manage(new Button("Hello"));
+	DBG_SET_NAME(btn2, "Button2");
+	Button* btn3 = Manage(new Button("Hello"));
+	DBG_SET_NAME(btn3, "Button3");
 
-		arrow_ = glfwCreateCursor(&cursor, 3, 3);
-		assert(arrow_ != 0);
-	}
+	VLayout* layout = Manage(new VLayout);
+	DBG_SET_NAME(layout, "Layout");
+	layout->Append(btn1);
+	layout->Append(btn2);
+	layout->Append(btn3);
 
-	if(img.Read("2.png")) {
-		cursor.width = img.width();
-		cursor.height = img.height();
-		cursor.pixels = const_cast<unsigned char*>(img.pixels());
-
-		cross_ = glfwCreateCursor(&cursor, 12, 12);
-		assert(cross_ != 0);
-	}
-}
-
-void GLFWDemoContext::Initialize ()
-{
-	using namespace BI;
-
-	Workspace* ws = Manage(new Workspace);
-	DBG_SET_NAME(ws, "Workspace");
-	ws->SetPosition(200, 100);
-
-	Append(ws);
-
-	Viewport3D* view = Manage(new Viewport3D);
-	ws->SetViewport(view);
-
-	ToolBar* tb = Manage(new ToolBar);
-	ws->SetHeader(tb);
-
-	ToolBox* box1 = Manage(new ToolBox);
-	ws->SetLeftSideBar(box1);
-
-	ToolBox* box2 = Manage(new ToolBox);
-	ws->SetRightSideBar(box2);
-
-	StaticPanel* panel = Manage(new StaticPanel);
-	DBG_SET_NAME(panel, "Static Panel");
-	panel->SetPosition(1020, 200);
-	panel->SetSpace(0);
-
-	Decoration* dec = Manage(new Decoration);
-	DBG_SET_NAME(dec, "Decoration");
-	dec->SetRoundType(RoundTopLeft | RoundTopRight);
-
+	ScrollBar* bar = Manage(new ScrollBar);
 	ColorSelector* cs = Manage(new ColorSelector);
-	DBG_SET_NAME(cs, "ColorSelector");
-	cs->SetRoundType(RoundBottomLeft | RoundBottomRight);
 
-	panel->SetDecoration(dec);
-	panel->SetContent(cs);
+	vp1->Add(layout);
+	vp1->Add(bar);
+	vp1->Add(cs);
 
-	panel->Resize(panel->GetPreferredSize());
+	Viewport* vp2 = Manage(new Viewport);
+	DBG_SET_NAME(vp2, "Viewport2");
 
-	Append(panel);
+	Viewport* vp3 = Manage(new Viewport);
+	DBG_SET_NAME(vp3, "VFrame");
+
+	FrameSplitter* splitter1 = Manage(new FrameSplitter);
+	DBG_SET_NAME(splitter1, "Splitter1");
+
+	FrameSplitter* splitter2 = Manage(new FrameSplitter(Vertical));
+	DBG_SET_NAME(splitter2, "Splitter2");
+	splitter2->Resize(600, 720);
+
+	splitter1->Resize(1200, 720);
+	//splitter1->SetPosition(20, 20);
+
+	splitter2->AddFrame(vp2);
+	splitter2->AddFrame(vp3);
+
+	splitter1->AddFrame(splitter2);
+	splitter1->AddFrame(vp1);
+
+	AddFrame(splitter1);
+
+	splitter1->Resize(1200, 760);
+
+	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+
+	Dialog* dlg = Manage(new Dialog);
+    dlg->Resize(400, 300);
+	AddFrame(dlg);
+
+//    StaticPanel* panel = Manage(new StaticPanel);
+//    panel->Resize(300, 250);
+//	dlg->AddWidget(panel);
 
 	/*
-    Tab* tab = Manage (new Tab);
-    tab->SetPosition(100, 100);
+	VFrame* frame = Manage(new VFrame);
+	frame->SetPosition(200, 200);
+	//frame->Resize(400, 32);
 
-    Button* btn1 = Manage (new Button("Button1"));
-    btn1->SetRoundType(RoundNone);
+	Button* btn1 = Manage(new Button("Hello"));
+	Button* btn2 = Manage(new Button("Hello"));
+	Button* btn3 = Manage(new Button("Hello"));
 
-    Button* btn2 = Manage (new Button("Button2"));
-    btn2->SetRoundType(RoundNone);
+	frame->AddWidget(btn1);
+	frame->AddWidget(btn2);
+	frame->AddWidget(btn3);
 
-    tab->Add(String("Title1"), btn1);
-    tab->Resize(400, 300);
+	AddFrame(frame);
+	*/
 
-    tab->Add(String("Title2"), btn2);
+	/*
+	FloatingFrame* ff = Manage(new FloatingFrame);
 
-    PushBack(tab);
-    */
+	ff->SetPosition(400, 200);
+	ff->Resize(600, 400);
 
-}
+	AddFrame(ff);
 
-void GLFWDemoContext::ReleaseGLFWCursors()
-{
-	glfwDestroyCursor(arrow_);
-	glfwDestroyCursor(cross_);
+	FloatingFrame* ff2 = Manage(new FloatingFrame);
+
+	Button* btn = Manage(new Button("Test Floating Frame"));
+
+	ff2->Setup(btn);
+
+	ff2->SetPosition(500, 200);
+	ff2->Resize(500, 300);
+
+	AddFrame(ff2);
+	*/
+
+	/*
+	FloatingFrame* ff2 = Manage(new FloatingFrame);
+
+	Button* btn = Manage(new Button("Test Floating Frame"));
+
+	ff2->Setup(btn);
+
+	ff2->SetPosition(500, 200);
+	ff2->Resize(500, 300);
+
+	AddFrame(ff2);
+	*/
 }

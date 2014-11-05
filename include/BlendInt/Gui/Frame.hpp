@@ -21,28 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAME_HPP_
-#define _BLENDINT_GUI_FRAME_HPP_
+#ifndef _BLENDINT_GUI_SCREEN_HPP_
+#define _BLENDINT_GUI_SCREEN_HPP_
 
-/**
- * @defgroup widgets Widgets
- *
- * @ingroup gui
- */
+#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
-#include <BlendInt/Gui/BinLayout.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A widget usually contains other Form or widget in a box with padding
-	 *
-	 * @ingroup widgets
-	 */
-	class Frame: public BinLayout
+	class Frame: public AbstractFrame
 	{
-		DISALLOW_COPY_AND_ASSIGN(Frame);
-
 	public:
 
 		Frame ();
@@ -51,20 +41,30 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
 
-	private:
+		virtual void PostDraw (Profile& profile);
 
-		void InitializeFrame ();
+		virtual void FocusEvent (bool focus);
 
-		GLuint vao_;
+		virtual void MouseHoverInEvent (const MouseEvent& event);
 
-		RefPtr<GLArrayBuffer> inner_;
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
 	};
 
-} /* namespace BlendInt */
+}
 
-#endif /* _BLENDINT_GUI_FRAME_HPP_ */
+ #endif	// _BLENDINT_GUI_SCREEN_HPP_

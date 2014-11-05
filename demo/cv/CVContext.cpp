@@ -4,6 +4,10 @@
 
 #include "CVContext.hpp"
 
+#include <BlendInt/Gui/Frame.hpp>
+
+using namespace BlendInt;
+
 CVContext::CVContext()
 : BI::Context(), m_layout(0)
 {
@@ -12,9 +16,13 @@ CVContext::CVContext()
 	m_layout = Manage (new MainSpace);
 	m_layout->Resize(size());
 
-	Append(m_layout);
+	Frame* frame = Manage(new Frame);
+	frame->AddWidget(m_layout);
 
-	events()->connect(resized(), this , &CVContext::OnResizeLayout);
+	AddFrame(frame);
+
+	events()->connect(resized(), frame, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::Frame::Resize));
+
 }
 
 CVContext::~CVContext ()

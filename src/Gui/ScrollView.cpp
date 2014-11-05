@@ -41,8 +41,10 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ScrollView::ScrollView()
-	: AbstractContainer(),
+	: Layout(),
 	  m_vao(0),
 	  m_orientation(Horizontal | Vertical),
 	  m_move_status(false)
@@ -61,8 +63,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -77,11 +79,11 @@ namespace BlendInt {
 	{
 		if(widget == 0) return;
 
-		if(widget->container() == this)
+		if(widget->parent() == this)
 			return;
 
-		if(first()) {
-			Clear();
+		if(first_child()) {
+			ClearSubWidgets();
 		}
 
 		if (PushBackSubWidget(widget)) {
@@ -103,9 +105,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(first() == 0) return;
+		if(first_child() == 0) return;
 
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		int w = size().width() - margin().hsum();
 		int h = size().height() - margin().vsum();
@@ -122,8 +124,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first()) {
-			AbstractWidget* p = first();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			int w = size().width() - margin().hsum();
 
@@ -142,8 +144,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first()) {
-			AbstractWidget* p = first();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			int h = size().height() - margin().vsum();
 
@@ -160,10 +162,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(first()) {
+		if(first_child()) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = first();
+				AbstractWidget* p = first_child();
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -173,8 +175,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(first()) {
-			AbstractWidget* p = first();
+		if(first_child()) {
+			AbstractWidget* p = first_child();
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -184,8 +186,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(first()) {
-			return first()->IsExpandX();
+		if(first_child()) {
+			return first_child()->IsExpandX();
 		} else {
 			return false;
 		}
@@ -193,8 +195,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(first()) {
-			return first()->IsExpandY();
+		if(first_child()) {
+			return first_child()->IsExpandY();
 		} else {
 			return false;
 		}
@@ -204,7 +206,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractWidget* widget = first();
+		AbstractWidget* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -229,7 +231,7 @@ namespace BlendInt {
 
 			set_position(*request.position());
 
-			if(first()) {
+			if(first_child()) {
 				MoveSubWidgets(x, y);
 			}
 		}
@@ -246,12 +248,12 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			// align the subwidget
-			if (first()) {
+			if (first_child()) {
 
 				int dy = request.size()->height() - size().height();
 
-				first()->SetPosition(first()->position().x(),
-				        first()->position().y() + dy);
+				first_child()->SetPosition(first_child()->position().x(),
+				        first_child()->position().y() + dy);
 			}
 
 			set_size(*request.size());
@@ -264,17 +266,17 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		if(first()) {
-			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		if(first_child()) {
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 		} else {
-			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 		}
 
 		glBindVertexArray(m_vao);
@@ -288,11 +290,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!first()) {
+		if (!first_child()) {
 			return Ignore;
 		}
 
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -313,7 +315,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(!first()) {
+		if(!first_child()) {
 			return Ignore;
 		}
 
@@ -325,35 +327,13 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ScrollView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ScrollView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(first()) {
+		if(first_child()) {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = first();
+				AbstractWidget* p = first_child();
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

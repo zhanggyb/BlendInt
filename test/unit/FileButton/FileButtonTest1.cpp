@@ -1,5 +1,6 @@
 #include "FileButtonTest1.hpp"
 #include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -27,18 +28,19 @@ TEST_F(FileButtonTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
-    context->Resize(1280, 800);
+	SetContext(context);
+	context->Resize(1280, 800);
+
+	Dialog* dialog = Manage(new Dialog);
 
     FileButton* fb = Manage(new FileButton);
 	fb->SetPosition(100, 100);
 
-	context->Append(fb);
+	dialog->AddWidget(fb);
+
+	context->AddFrame(dialog);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

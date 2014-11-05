@@ -38,26 +38,27 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
-#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
+
+#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
-	: AbstractWidget(),
+	: Widget(),
 	  orientation_(orientation),
 	  vao_(0),
 	  highlight_(false),
 	  pressed_(false),
 	  prev_size_(0),
 	  next_size_(0),
-	  nearby_pos_(0),
-	  prev_widget_(0),
-	  next_widget_(0)
+	  nearby_pos_(0)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 1);
@@ -97,8 +98,8 @@ namespace BlendInt {
 
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -197,42 +198,43 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+
 		if(highlight_) {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
+			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 		}
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+		//glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
 		return Accept;
 	}
 
-	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
+	void SplitterHandle::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Context* context = Context::GetContext(this);
-
-		if(entered) {
-			highlight_ = true;
-			context->PushCursor(context->current_cursor());
-			context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
-		} else {
-			highlight_ = false;
-			context->SetCursor(context->PopCursor());
-		}
-
+		highlight_ = true;
+		Cursor::instance->PushCursor();
+		Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		Refresh();
-		return Accept;
+	}
+
+	void SplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	{
+		highlight_ = false;
+		Cursor::instance->PopCursor();
+		Refresh();
 	}
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
@@ -242,13 +244,13 @@ namespace BlendInt {
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
-			prev_size_ = prev_widget_->size().height();
-			next_size_ = next_widget_->size().height();
-			nearby_pos_ = prev_widget_->position().y();
+			prev_size_ = previous()->size().height();
+			next_size_ = next()->size().height();
+			nearby_pos_ = previous()->position().y();
 		} else {
-			prev_size_ = prev_widget_->size().width();
-			next_size_ = next_widget_->size().width();
-			nearby_pos_ = next_widget_->position().x();
+			prev_size_ = previous()->size().width();
+			next_size_ = next()->size().width();
+			nearby_pos_ = next()->position().x();
 		}
 
 		return Accept;
@@ -256,38 +258,18 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
 	{
-		pressed_ = false;
+		if (pressed_) {
+			pressed_ = false;
+		}
 
 		return Accept;
-	}
-
-	ResponseType SplitterHandle::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType SplitterHandle::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)
 	{
 		if(pressed_) {
 
-			Splitter* splitter = dynamic_cast<Splitter*>(container());
+			Splitter* splitter = dynamic_cast<Splitter*>(parent());
 
 			if(orientation_ == Horizontal) {
 
@@ -295,15 +277,15 @@ namespace BlendInt {
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
 				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubWidget(prev_widget_, prev_widget_->size().width(), oy1);
-				splitter->SetSubWidgetPosition(prev_widget_, prev_widget_->position().x(), nearby_pos_ + offset);
-				splitter->ResizeSubWidget(next_widget_, next_widget_->size().width(), oy2);
+				splitter->ResizeSubWidget(previous(), previous()->size().width(), oy1);
+				splitter->SetSubWidgetPosition(previous(), previous()->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubWidget(next(), next()->size().width(), oy2);
 
 			} else {
 
@@ -311,15 +293,15 @@ namespace BlendInt {
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
-				if((oy1 < 0) || (oy2 < 0)) {
+				if((oy1 <= 0) || (oy2 <= 0)) {
 					return Accept;
 				}
 
 				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubWidget(prev_widget_, oy1, prev_widget_->size().height());
-				splitter->ResizeSubWidget(next_widget_, oy2, next_widget_->size().height());
-				splitter->SetSubWidgetPosition(next_widget_, nearby_pos_ + offset, next_widget_->position().y());
+				splitter->ResizeSubWidget(previous(), oy1, previous()->size().height());
+				splitter->ResizeSubWidget(next(), oy2, next()->size().height());
+				splitter->SetSubWidgetPosition(next(), nearby_pos_ + offset, next()->position().y());
 
 			}
 
@@ -330,7 +312,7 @@ namespace BlendInt {
 	}
 
 	Splitter::Splitter(Orientation orientation)
-	: AbstractContainer(),
+	: Widget(),
 	  orientation_(orientation)
 	{
 		set_size(400, 400);
@@ -341,11 +323,11 @@ namespace BlendInt {
 
 	}
 	
-	void Splitter::Prepend (AbstractWidget* widget)
+	void Splitter::Prepend (Widget* widget)
 	{
-		if(widget && widget->container() != this) {
+		if(widget && widget->parent() != this) {
 
-			if(first() == 0) {
+			if(first_child() == 0) {
 				PushFrontSubWidget(widget);
 			} else {
 				SplitterHandle* handle = 0;
@@ -355,23 +337,21 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				AbstractWidget* p = first();
 				PushFrontSubWidget(handle);
-				handle->prev_widget_ = widget;
-				handle->next_widget_ = p;
-
 				PushFrontSubWidget(widget);
 			}
 
-			AlignSubWidgets(orientation_, size(), margin());
+			AlignSubWidgets(orientation_, size());
+
+			// TODO: connect widget's destroyed event
 		}
 	}
 
-	void Splitter::Append (AbstractWidget* widget)
+	void Splitter::Append (Widget* widget)
 	{
-		if(widget && widget->container() != this) {
+		if(widget && widget->parent() != this) {
 
-			if(first() == 0) {
+			if(first_child() == 0) {
 				PushBackSubWidget(widget);
 			} else {
 				SplitterHandle* handle = 0;
@@ -381,30 +361,28 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				AbstractWidget* p = last();
 				PushBackSubWidget(handle);
-				handle->prev_widget_ = p;
-				handle->next_widget_ = widget;
-
 				PushBackSubWidget(widget);
 			}
 
-			AlignSubWidgets(orientation_, size(), margin());
+			AlignSubWidgets(orientation_, size());
+
+			// TODO: connect widget's destroyed event
 		}
 	}
 
-	void Splitter::Insert(int index, AbstractWidget* widget)
+	void Splitter::Insert(int index, Widget* widget)
 	{
 
 	}
 
-	void Splitter::Remove (AbstractWidget* widget)
+	void Splitter::Remove (Widget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			if(orientation_ == Horizontal) {
-				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), orientation_);
 			} else {
-				FillSubWidgetsInSplitter(position(), size(), margin(), orientation_);
+				FillSubWidgetsInSplitter(size(), orientation_);
 			}
 		}
 	}
@@ -413,14 +391,14 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 			preferred_size.set_width(400);
 			preferred_size.set_height(400);
 		} else {
 			Size tmp;
 
 			if (orientation_ == Horizontal) {
-				for(AbstractWidget* p = first(); p; p = p->next())
+				for(AbstractWidget* p = first_child(); p; p = p->next())
 				{
 					if (p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -431,7 +409,7 @@ namespace BlendInt {
 					}
 				}
 			} else {
-				for(AbstractWidget* p = first(); p; p = p->next())
+				for(AbstractWidget* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -442,8 +420,6 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
@@ -453,7 +429,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -469,7 +445,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -481,12 +457,12 @@ namespace BlendInt {
 	}
 
 
-	int Splitter::GetWidgetIndex (AbstractWidget* widget) const
+	int Splitter::GetWidgetIndex (Widget* widget) const
 	{
 		int index = 0;
-		if(widget->container() != this) return -1;
+		if(widget->parent() != this) return -1;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p == widget) break;
 
@@ -500,9 +476,9 @@ namespace BlendInt {
 	int Splitter::GetHandleIndex (SplitterHandle* handle) const
 	{
 		int index = 0;
-		if(handle->container() != this) return -1;
+		if(handle->parent() != this) return -1;
 
-		for(AbstractWidget* p = first()->next(); p; p = p->next())
+		for(AbstractWidget* p = first_child()->next(); p; p = p->next())
 		{
 			if(p == handle) break;
 
@@ -513,23 +489,23 @@ namespace BlendInt {
 		return index;
 	}
 
-	AbstractWidget* Splitter::GetWidget (int index) const
+	Widget* Splitter::GetWidget (int index) const
 	{
-		if(first() == 0) return 0;
+		if(first_child() == 0) return 0;
 
-		int sum = widget_count();
+		int sum = subs_count();
 
 		int max = (sum + 1) / 2;
 		if(index > max) return 0;
 
 		index = index * 2;
 
-		return GetWidgetAt(index);
+		return dynamic_cast<Widget*>(GetWidgetAt(index));
 	}
 
 	SplitterHandle* Splitter::GetHandle (int index) const
 	{
-		int sum = widget_count();
+		int sum = subs_count();
 
 		if(sum <= 1) return 0;
 
@@ -543,7 +519,7 @@ namespace BlendInt {
 
 	int Splitter::GetWidgetsHold () const
 	{
-		int sum = widget_count();
+		int sum = subs_count();
 		return (sum / 2 + 1);
 	}
 
@@ -551,31 +527,11 @@ namespace BlendInt {
 	{
 	}
 
-	void Splitter::PerformMarginUpdate(const Margin& request)
-	{
-		FillSubWidgetsInSplitter(position(), size(), request, orientation_);
-	}
-
-	void Splitter::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
-			FillSubWidgetsInSplitter(position(), *request.size(), margin(), orientation_);
+			FillSubWidgetsInSplitter(*request.size(), orientation_);
 
 			set_size(*request.size());
 		}
@@ -585,60 +541,19 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Splitter::Draw (Profile& profile)
+	void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size)
 	{
-		return Ignore;
-	}
+		int room = GetAverageRoom(orientation, out_size);
+		int x = position().x();
 
-	ResponseType Splitter::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
+		if(orientation == Horizontal) {
 
-	ResponseType Splitter::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Splitter::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	void Splitter::AlignSubWidgets (Orientation orienation, const Size& out_size, const Margin& margin)
-	{
-		int room = GetAverageRoom(orienation, out_size, margin);
-		int x = position().x() + margin.left();
-
-		if(orienation == Horizontal) {
-
-			int y = position().y() + margin.bottom();
-			int h = out_size.height() - margin.vsum();
+			int y = position().y();
+			int h = out_size.height();
 
 			int i = 0;
 			int handler_width = 0;
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					ResizeSubWidget(p, room, h);
@@ -655,12 +570,12 @@ namespace BlendInt {
 
 		} else {
 
-			int y = position().y() + out_size.height() - margin.top();
-			int w = out_size.width() - margin.hsum();
+			int y = position().y() + out_size.height();
+			int w = out_size.width();
 
 			int i = 0;
 			int handler_height = 0;
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					y = y - room;
@@ -679,21 +594,14 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::FillSubWidgetsInSplitter (const Point& out_pos,
-	        const Size& out_size, const Margin& margin, Orientation orientation)
+	void Splitter::FillSubWidgetsInSplitter (const Size& out_size, Orientation orientation)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int x = 0;
+		int y = 0;
+		int width = out_size.width();
+		int height = out_size.height();
 
 		FillSubWidgetsInSplitter(x, y, width, height, orientation);
-	}
-
-	void Splitter::FillSubWidgetsInSplitter (const Point& pos, const Size& size,
-			Orientation orientation)
-	{
-		FillSubWidgetsInSplitter(pos.x(), pos.y(), size.width(), size.height(), orientation);
 	}
 
 	void Splitter::FillSubWidgetsInSplitter (int x, int y, int width,
@@ -724,7 +632,7 @@ namespace BlendInt {
 
 		int prefer_width;
 		int i = 0;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -803,7 +711,7 @@ namespace BlendInt {
 
 		int prefer_height;
 		int i = 0;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -872,7 +780,7 @@ namespace BlendInt {
 
 	void Splitter::AlignHorizontally (int y, int height)
 	{
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, p->size().width(), height);
 			SetSubWidgetPosition(p, p->position().x(), y);
@@ -881,7 +789,7 @@ namespace BlendInt {
 
 	void Splitter::AlignVertically (int x, int width)
 	{
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, width, p->size().height());
 			SetSubWidgetPosition(p, x, p->position().y());
@@ -895,7 +803,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -926,7 +834,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator exp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -959,7 +867,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -986,17 +894,17 @@ namespace BlendInt {
 		}
 	}
 
-	int Splitter::GetAverageRoom (Orientation orientation, const Size& out_size, const Margin& margin)
+	int Splitter::GetAverageRoom (Orientation orientation, const Size& out_size)
 	{
 		int room = 0;
 
 		if(orientation == Horizontal) {
-			room = out_size.width() - margin.hsum();
+			room = out_size.width();
 		} else {
-			room = out_size.height() - margin.vsum();
+			room = out_size.height();
 		}
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 			return room;
 		}
 
@@ -1004,7 +912,7 @@ namespace BlendInt {
 		int space = 0;
 		int sum = 0;
 
-		AbstractWidget* p = first()->next();
+		AbstractWidget* p = first_child()->next();
 		sum += 1;
 
 		while (p) {
@@ -1035,7 +943,7 @@ namespace BlendInt {
 
 		y = y + height;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1069,7 +977,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1105,7 +1013,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1131,25 +1039,24 @@ namespace BlendInt {
 		}
 	}
 
-	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size,
-					const Margin& margin)
+	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size)
 	{
 		int room = 0;
 
 		if(orientation == Horizontal) {
-			room = out_size.width() - margin.hsum();
+			room = out_size.width();
 		} else {
-			room = out_size.height() - margin.vsum();
+			room = out_size.height();
 		}
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 			return room;
 		}
 
 		Size prefer;
 		int space = 0;
 
-		AbstractWidget* p = first()->next();
+		AbstractWidget* p = first_child()->next();
 		while (p) {
 			prefer = p->GetPreferredSize();
 			if(orientation == Horizontal) {

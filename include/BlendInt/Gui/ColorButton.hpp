@@ -67,7 +67,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		Color color_;
+		Color color0_;
+		Color color1_;
 	};
 
 }

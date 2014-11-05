@@ -2,13 +2,14 @@
  * BlendInt demo
  */
 
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include "GLFWDemoContext.hpp"
 #include "Window.hpp"
 
-#include <BlendInt/Gui/Splitter.hpp>
-#include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
+
+#include "GLFWCursor.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -20,13 +21,16 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
-	GLFWDemoContext* context = Manage (new GLFWDemoContext(win));
+	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
+
+	GLFWDemoContext* context = Manage (new GLFWDemoContext);
 	DBG_SET_NAME(context, "Context");
-	Interface::instance->SetCurrentContext(context);
+	SetContext(context);
 	context->Resize(1280, 800);
 
+	DBG_PRINT_MSG("sizeof AbstractWidget: %ld", sizeof(AbstractWidget));
+
 	RunLoop(win);
-	Interface::Release();
 	Terminate();
 
 	return 0;

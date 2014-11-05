@@ -36,7 +36,6 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -54,8 +53,10 @@ namespace BlendInt {
 
 		InitializeListView();
 
-		AdjustScrollBarGeometries(position().x(), position().y(),
-		        size().width(), size().height());
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		SetScrollBar(hbar, vbar);
+		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
 	ListView::~ListView ()
@@ -86,18 +87,20 @@ namespace BlendInt {
 			int h = font_.GetHeight();
 			h = model_->GetRows() * h;	// total height
 
-			if(h > size().height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(size().height());
-				vbar()->SetSliderPercentage(size().height() * 100 / h);
-			} else {
-				vbar()->SetVisible(false);
-			}
-			hbar()->SetVisible(false);
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					size().width(), size().height());
+			if(h > size().height()) {
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(size().height());
+				vbar->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar->SetVisible(false);
+			}
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 	}
 
@@ -112,20 +115,19 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height();
 
-		if(model_ && vbar()->visiable()) {
-			y = position().y() + vbar()->value();
+		ScrollBar* vbar = GetVScrollBar();
+
+		if(model_ && vbar->visiable()) {
+			y = position().y() + vbar->value();
 		}
 
 		int h = font_.GetHeight();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
+        Shaders::instance->widget_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				Theme::instance->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
@@ -137,9 +139,11 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		profile.EndPushStencil();
 
+        RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.475f,
+        glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 
@@ -149,16 +153,17 @@ namespace BlendInt {
 		while(y > position().y()) {
 			y -= h;
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-					(float) position().x(), (float) y, 0.f);
+
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+					(float) position().x(), (float) y);
 
 			if(i == highlight_index_) {	// TODO: use different functions for performance
-				glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), -35);
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
+					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -176,8 +181,8 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			if(vbar()->visiable()) {
-				y = position().y() + vbar()->value();
+			if(vbar->visiable()) {
+				y = position().y() + vbar->value();
 			}
 
 			while(index.IsValid()) {
@@ -190,12 +195,8 @@ namespace BlendInt {
 
 		}
 
-        DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
+        Shaders::instance->widget_inner_program()->use();
 
-		program->use();
-
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -208,41 +209,8 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType ListView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
 	{
-		if (hbar()->visiable() && hbar()->Contain(event.position())) {
-			DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
-			DispatchMousePressEvent(vbar(), event);
-		}
-
 		if(model_) {
 
 			ModelIndex index;
@@ -255,7 +223,7 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() + vbar()->value() - event.position().y();
+					i = position().y() + GetVScrollBar()->value() - event.position().y();
 				} else {	// no vbar
 					i = position().y() + size().height() - event.position().y();
 				}
@@ -281,46 +249,30 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
 	ModelIndex ListView::GetIndexAt (const Point& point) const
 	{
 		return ModelIndex();
 	}
 
-	ResponseType ListView::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			DispatchMouseMoveEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			DispatchMouseMoveEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
 	void ListView::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			AdjustScrollBarGeometries(request.position()->x(),
-					request.position()->y(), size().width(), size().height());
+
+			set_position(*request.position());
+
+			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
 		}
 
-		ReportPositionUpdate(request);
+		if(request.source() == this) {
+			ReportPositionUpdate(request);
+		}
 	}
 
 	void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
+
+            set_size(*request.size());
 
 			GLfloat h = font_.GetHeight();
 			GLfloat verts[] = {
@@ -333,10 +285,11 @@ namespace BlendInt {
 			row_->bind();
 			row_->set_data(sizeof(verts), verts);
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
 			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 			GLArrayBuffer::reset();
 
@@ -357,8 +310,9 @@ namespace BlendInt {
 				(GLfloat)size().width(), h
 		};
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+        std::vector<GLfloat> inner_verts;
+
+        GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
 		glGenVertexArrays(2, vaos_);
 
@@ -367,10 +321,10 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -379,8 +333,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

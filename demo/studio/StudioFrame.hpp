@@ -22,19 +22,15 @@ public:
 
 protected:
 
-	virtual void PerformRefresh (const BI::RefreshRequest& request);
-
 	virtual void PerformSizeUpdate (const BI::SizeUpdateRequest& request);
 
 	virtual BI::ResponseType Draw (BI::Profile& profile);
 
 private:
 
-	void RenderToBuffer ();
+	void RenderToBuffer (BI::Profile& profile);
 
 	BI::ImagePlane2D tex_buffer_;
-
-	bool refresh_;
 
 };
 

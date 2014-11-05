@@ -51,17 +51,17 @@ namespace BlendInt {
 
 		~GLTexture2D();
 
-		inline GLuint texture() const {return m_texture;}
+		inline GLuint id() const {return id_;}
 
 		inline void generate ()
 		{
-			if(m_texture != 0) clear();
-			glGenTextures(1, &m_texture);
+			if(id_ != 0) clear();
+			glGenTextures(1, &id_);
 		}
 
 		inline void bind () const
 		{
-			glBindTexture(GL_TEXTURE_2D, m_texture);
+			glBindTexture(GL_TEXTURE_2D, id_);
 		}
 
 		/**
@@ -185,8 +185,8 @@ namespace BlendInt {
 
 		inline void clear()
 		{
-			glDeleteTextures(1, &m_texture);
-			m_texture = 0;
+			glDeleteTextures(1, &id_);
+			id_ = 0;
 		}
 
 		static GLuint GetTextureBinding ();
@@ -207,7 +207,7 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_texture;
+		GLuint id_;
 	};
 
 }

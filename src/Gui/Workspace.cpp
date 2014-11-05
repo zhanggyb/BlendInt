@@ -40,7 +40,6 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
-#include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
@@ -56,8 +55,10 @@ namespace BlendInt {
 		set_size(14, 14);
 		set_round_type(round_type);
 
-		VertexTool tool;
-		tool.GenerateShadedVertices(size(), 1.f, this->round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -65,18 +66,18 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD), 3,
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -91,13 +92,16 @@ namespace BlendInt {
 	void EdgeButton::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-				tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(),
-						round_type(), round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+
 			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
 			set_size(*request.size());
@@ -112,31 +116,26 @@ namespace BlendInt {
 
 	ResponseType EdgeButton::Draw(Profile& profile)
 	{
-		Shaders::instance->widget_program()->use();
-
-		glm::vec3 pos((GLfloat)position().x(), (GLfloat)position().y(), 0.f);
-
-		glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
+		Shaders::instance->widget_inner_program()->use();
 
 		if (hover()) {
 
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 			if (is_checked()) {
-				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				        Theme::instance->radio_button().inner_sel.data());
 			} else {
-				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				        Theme::instance->radio_button().inner.data());
 			}
 
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			if (is_checked()) {
-				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				        Theme::instance->radio_button().inner_sel.data());
 			} else {
-				glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
 				        Theme::instance->radio_button().inner.data());
 			}
 		}
@@ -144,20 +143,22 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 1);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1,
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
 		        Theme::instance->radio_button().outline.data());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+		        0.f, 0.f);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f,
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+			        0.f, - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -171,7 +172,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	EdgeButtonLayer::EdgeButtonLayer()
-	: AbstractContainer()
+	: Layout()
 	{
 		set_margin(0, 0, 0, 0);
 		InitializeSideButtonLayer();
@@ -186,7 +187,7 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next()) {
+		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 
 			if(p->visiable()) {
 				retval = p->Contain(point);
@@ -226,48 +227,6 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButtonLayer::Draw(Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::CursorEnterEvent(bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::KeyPressEvent(const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MousePressEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MouseReleaseEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType EdgeButtonLayer::MouseMoveEvent(const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void EdgeButtonLayer::InitializeSideButtonLayer()
 	{
 		EdgeButton* left = Manage(new EdgeButton(RoundTopRight | RoundBottomRight));
@@ -297,11 +256,11 @@ namespace BlendInt {
 
 	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
 	{
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		SetSubWidgetPosition(p, x, y + h * 9 / 10);
 		p = p->next();
-		SetSubWidgetPosition(p, x + w - last()->size().width(), y + h * 9 / 10);
+		SetSubWidgetPosition(p, x + w - last_child()->size().width(), y + h * 9 / 10);
 		p = p->next();
 		SetSubWidgetPosition(p, x + w * 9 / 10, y);
 	}
@@ -333,7 +292,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: AbstractContainer(),
+	: Layout(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),
@@ -352,7 +311,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Workspace::SetViewport (AbstractWidget* viewport)
+	void Workspace::SetViewport (Widget* viewport)
 	{
 		if(viewport_ == viewport) return;
 
@@ -365,7 +324,7 @@ namespace BlendInt {
 		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
 	}
 
-	void Workspace::SetLeftSideBar (AbstractWidget* widget)
+	void Workspace::SetLeftSideBar (Widget* widget)
 	{
 		if(left_sidebar_ == widget) return;
 
@@ -376,7 +335,7 @@ namespace BlendInt {
 		left_sidebar_ = widget;
 	}
 
-	void Workspace::SetRightSideBar (AbstractWidget* widget)
+	void Workspace::SetRightSideBar (Widget* widget)
 	{
 		if(right_sidebar_ == widget) return;
 
@@ -387,11 +346,11 @@ namespace BlendInt {
 		right_sidebar_ = widget;
 	}
 
-	void Workspace::SetHeader (AbstractWidget* widget)
+	void Workspace::SetHeader (Widget* widget)
 	{
 		if(header_ == widget) return;
 
-		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first());
+		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first_child());
 
 		if(header_)
 			v->Remove(header_);
@@ -414,11 +373,11 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -463,7 +422,7 @@ namespace BlendInt {
 
 			ResizeSubWidgets(size());
 
-		} else if (request.source()->container() == this) {
+		} else if (request.source()->parent() == this) {
 
 		}
 
@@ -476,11 +435,11 @@ namespace BlendInt {
 	        const RoundTypeUpdateRequest& request)
 	{
 		/*
-		if (request.source()->container() == this) {
+		if (request.source()->parent() == this) {
 			EnableShadow(request.source());
 		}
 
-		if(request.source() != container()) {
+		if(request.source() != parent()) {
 			ReportRoundTypeUpdate(request);
 		}
 		*/
@@ -490,11 +449,11 @@ namespace BlendInt {
 	        const RoundRadiusUpdateRequest& request)
 	{
 		/*
-		if (request.source()->container() == this) {
+		if (request.source()->parent() == this) {
 			EnableShadow(request.source());
 		}
 
-		if(request.source() != container()) {
+		if(request.source() != parent()) {
 			ReportRoundRadiusUpdate(request);
 		}
 		*/
@@ -502,14 +461,14 @@ namespace BlendInt {
 
 	ResponseType Workspace::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -517,48 +476,6 @@ namespace BlendInt {
 
 		program->reset();
 
-		return Ignore;
-	}
-
-	ResponseType Workspace::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Workspace::MouseMoveEvent (const MouseEvent& event)
-	{
 		return Ignore;
 	}
 
@@ -577,9 +494,9 @@ namespace BlendInt {
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::TRIANGLE_COORD));
+				Shaders::instance->location (Stock::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer (
-				Shaders::instance->location (Stock::TRIANGLE_COORD), 2,
+				Shaders::instance->location (Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -587,7 +504,6 @@ namespace BlendInt {
 
 		splitter_ = Manage(new Splitter);
 		DBG_SET_NAME(splitter_, "Splitter");
-		splitter_->SetMargin(0, 0, 0, 0);
 
 		ViewportLayer* vlayout = Manage(new ViewportLayer);
 		DBG_SET_NAME(vlayout, "VLayout");

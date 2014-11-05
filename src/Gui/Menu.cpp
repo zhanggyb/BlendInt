@@ -36,25 +36,39 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Menu.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	int Menu::DefaultMenuItemHeight = 16;
 	int Menu::DefaultIconSpace = 4;
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: AbstractWidget(), m_highlight(0), inner_(0), outer_(0), m_highlight_buffer(0)
+	: AbstractFrame(),
+	  m_highlight(0),
+	  shadow_(0)
 	{
 		set_size (20, 20);
+
 		InitializeMenu();
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat4(1.f);
+
+		shadow_ = new ShadowMap;
+		shadow_->Resize(size());
 	}
 
 	Menu::~Menu ()
 	{
-		glDeleteVertexArrays(3, m_vao);
+		glDeleteVertexArrays(3, vao_);
 	}
 
 	void Menu::SetTitle(const String& title)
@@ -165,115 +179,130 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void Menu::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			float x = static_cast<float>(request.position()->x()  + offset().x());
+			float y = static_cast<float>(request.position()->y()  + offset().y());
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + (float)size().width(),
+				y,
+				y + (float)size().height(),
+				100.f, -100.f);
+
+			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+
+			set_position(*request.position());
+		}
+
+		if(request.source() == this) {
+			ReportPositionUpdate (request);
+		}
+	}
+
 	void Menu::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			ResetHighlightBuffer(request.size()->width());
+
 			set_size(*request.size());
+
+			float x = position().x() + offset().x();
+			float y = position().y() + offset().y();
+
+			projection_matrix_  = glm::ortho(
+				x,
+				x + request.size()->width(),
+				y,
+				y + request.size()->height(),
+				100.f, -100.f);
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->menu_back().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu_back().shadetop,
+						Theme::instance->menu_back().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			outer_->reset();
+
+			//ResetHighlightBuffer(request.size()->width());
+
+			shadow_->Resize(size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void Menu::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_type(*request.round_type());
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Theme::instance->menu_back().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu_back().shadetop,
+						Theme::instance->menu_back().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
+			}
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			outer_->reset();
 		}
 
-		ReportRoundTypeUpdate(request);
+		if(request.source() == this) {
+			ReportRoundTypeUpdate(request);
+		}
 	}
 
 	void Menu::PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(),
-			        round_type(), *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 			set_round_radius(*request.round_radius());
-		}
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
 
-		ReportRoundRadiusUpdate(request);
-	}
-
-	ResponseType Menu::Draw (Profile& profile)
-	{
-		using Stock::Shaders;
-		using std::deque;
-
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
-
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-
-		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().inner.data());
-
-		glBindVertexArray(m_vao[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-
-		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
-		program->SetUniform1i("u_AA", 1);
-
-		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
-		if(m_highlight) {
-			program->SetUniform1i("u_AA", 0);
-
-			glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-			pos.y = pos.y + size().height() - round_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight);
-
-			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-
-			glBindVertexArray(m_vao[2]);
-			glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
-		}
-
-		glBindVertexArray(0);
-		program->reset();
-
-		float h = size().height() - round_radius();
-
-		int advance = 0;
-		for(deque<RefPtr<Action> >::iterator it = m_list.begin(); it != m_list.end(); it++)
-		{
-			h = h - DefaultMenuItemHeight;
-
-			if((*it)->icon()) {
-				//(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
+			if (Theme::instance->menu_back().shaded) {
+				GenerateVertices(Vertical,
+						Theme::instance->menu_back().shadetop,
+						Theme::instance->menu_back().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateVertices(&inner_verts, &outer_verts);
 			}
-			advance = m_font.Print(position().x() + 16 + DefaultIconSpace,
-			        position().y() + h - m_font.GetDescender(), (*it)->text());
-			m_font.Print(
-			        position().x() + 16 + DefaultIconSpace + advance
-			                + DefaultShortcutSpace,
-			        position().y() + h - m_font.GetDescender(),
-			        (*it)->shortcut());
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			outer_->reset();
 		}
 
-		return Accept;
+		if(request.source() == this) {
+			ReportRoundRadiusUpdate(request);
+		}
 	}
 
 	void Menu::ResetHighlightBuffer (int width)
@@ -304,7 +333,7 @@ namespace BlendInt {
 	{
 	}
 	
-	ResponseType Menu::FocusEvent (bool focus)
+	void Menu::FocusEvent (bool focus)
 	{
 		DBG_PRINT_MSG("focus %s", focus ? "on" : "off");
 
@@ -315,26 +344,119 @@ namespace BlendInt {
 		}
 
 		Refresh();
-
-		return Ignore;
 	}
 
-	ResponseType Menu::CursorEnterEvent (bool entered)
+	bool Menu::PreDraw(Profile& profile)
+	{
+		if(!visiable()) return false;
+
+		assign_profile_frame(profile);
+
+		shadow_->Draw(position().x(), position().y());
+
+		Shaders::instance->frame_inner_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_type()) + 2);
+
+		Shaders::instance->frame_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
+		        Theme::instance->menu_back().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+
+		glBindVertexArray(0);
+		GLSLProgram::reset();
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(), size().height());
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
+		return true;
+	}
+
+	ResponseType Menu::Draw (Profile& profile)
+	{
+		/*
+		if(m_highlight) {
+			program->SetUniform1i("u_AA", 0);
+
+			glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+			pos.y = pos.y + size().height() - round_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight);
+
+			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+
+			glBindVertexArray(vao_[2]);
+			glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_type()) + 2);
+		}
+		*/
+
+		float h = size().height() - round_radius();
+
+		int advance = 0;
+		int descender = m_font.GetDescender();
+		for(deque<RefPtr<Action> >::iterator it = m_list.begin(); it != m_list.end(); it++)
+		{
+			h = h - DefaultMenuItemHeight;
+
+			if((*it)->icon()) {
+				//(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
+			}
+			advance = m_font.Print(0.f + 16 + DefaultIconSpace,
+			        0.f + h - descender, (*it)->text());
+			m_font.Print(
+			        0.f + 16 + DefaultIconSpace + advance
+			                + DefaultShortcutSpace,
+			        0.f + h - descender,
+			        (*it)->shortcut());
+		}
+
+		return Accept;
+	}
+
+	void Menu::PostDraw(Profile& profile)
+	{
+		glDisable(GL_SCISSOR_TEST);
+		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+	}
+
+	void Menu::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
+
+	void Menu::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
+	ResponseType Menu::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::KeyPressEvent (const KeyEvent& event)
+	ResponseType Menu::ContextMenuPressEvent(const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType Menu::ContextMenuReleaseEvent(const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType Menu::DispatchHoverEvent(const MouseEvent& event)
 	{
 		return Ignore;
 	}
@@ -352,51 +474,61 @@ namespace BlendInt {
 
 	void Menu::InitializeMenu ()
 	{
-		glGenVertexArrays(3, m_vao);
+		glGenVertexArrays(3, vao_);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		glBindVertexArray(m_vao[0]);
+		if (Theme::instance->menu_back().shaded) {
+			GenerateVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateVertices(&inner_verts, &outer_verts);
+		}
+
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,	GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		// Now set buffer for hightlight bar
-		Size highlight_size(size().width(), DefaultMenuItemHeight);
-		tool.GenerateVertices(highlight_size,
-				DefaultBorderWidth(),
-				RoundNone,
-				0,
-				Theme::instance->menu_item().inner_sel,
-				Vertical,
-				Theme::instance->menu_item().shadetop,
-				Theme::instance->menu_item().shadedown
-				);
-
-		glBindVertexArray(m_vao[2]);
-		m_highlight_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer->generate();
-		m_highlight_buffer->bind();
-
-		m_highlight_buffer->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+//		Size highlight_size(size().width(), DefaultMenuItemHeight);
+//		tool.GenerateVertices(highlight_size,
+//				DefaultBorderWidth(),
+//				RoundNone,
+//				0,
+//				Theme::instance->menu_item().inner_sel,
+//				Vertical,
+//				Theme::instance->menu_item().shadetop,
+//				Theme::instance->menu_item().shadedown
+//				);
+//
+//		glBindVertexArray(vao_[2]);
+//		m_highlight_buffer.reset(new GLArrayBuffer);
+//		m_highlight_buffer->generate();
+//		m_highlight_buffer->bind();
+//
+//		m_highlight_buffer->set_data(tool.inner_size(), tool.inner_data());
+//
+//		glEnableVertexAttribArray(0);
+//		glEnableVertexAttribArray(1);
+//		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+//		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

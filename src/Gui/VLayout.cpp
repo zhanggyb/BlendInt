@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	VLayout::VLayout (int align, int space)
-	: AbstractContainer(), m_alignment(align), m_space(space)
+	: Layout(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
@@ -46,30 +46,30 @@ namespace BlendInt {
 	{
 	}
 
-	bool VLayout::Prepend (AbstractWidget* widget)
+	bool VLayout::Prepend (Widget* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
 		return false;
 	}
 
-	bool VLayout::Append (AbstractWidget* widget)
+	bool VLayout::Append (Widget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
 		return false;
 	}
 
-	bool VLayout::Remove (AbstractWidget* widget)
+	bool VLayout::Remove (Widget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 		if(m_alignment == align) return;
 
 		m_alignment = align;
-		FillSubWidgetsInVBox(position(), size(), margin(), align, m_space);
+		FillSubWidgetsInVBox(size(), margin(), align, m_space);
 	}
 
 	void VLayout::SetSpace (int space)
@@ -89,14 +89,14 @@ namespace BlendInt {
 		if(m_space == space) return;
 
 		m_space = space;
-		FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
+		FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 	}
 
 	Size BlendInt::VLayout::GetPreferredSize () const
 	{
 		Size preferred_size;
 
-		if(first() == 0) {
+		if(first_child() == 0) {
 
 			preferred_size.set_width(200);
 			preferred_size.set_height(200);
@@ -106,7 +106,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -127,7 +127,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -142,7 +142,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -155,13 +155,13 @@ namespace BlendInt {
 
 	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInVBox(position(), size(), request, m_alignment, m_space);
+		FillSubWidgetsInVBox(size(), request, m_alignment, m_space);
 	}
 
 	bool VLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
@@ -171,96 +171,35 @@ namespace BlendInt {
 	bool VLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->container() == this) {
+		if(request.source()->parent() == this) {
 			return false;
 		}
 
 		return true;
 	}
 
-	void VLayout::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void VLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInVBox(position(), *request.size(), margin(), m_alignment,
-											m_space);		}
+			FillSubWidgetsInVBox(*request.size(), margin(), m_alignment,
+											m_space);
+		}
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}
 
-	ResponseType VLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType VLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-
-	void VLayout::FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	void VLayout::FillSubWidgetsInVBox (const Size& out_size, const Margin& margin,
 			int alignment, int space)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int x = margin.left();
+		int y = margin.bottom();
+		int width = out_size.width() - margin.hsum();
+		int height = out_size.height() - margin.vsum();
 
 		FillSubWidgetsProportionallyInVBox(x, y, width, height, alignment, space);
-	}
-
-	void VLayout::FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space)
-	{
-		FillSubWidgetsProportionallyInVBox(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
 	void VLayout::FillSubWidgetsProportionallyInVBox (int x, int y, int width,
@@ -274,7 +213,7 @@ namespace BlendInt {
 		int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
 
 		Size tmp_size;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if (p->visiable()) {
 				tmp_size = p->GetPreferredSize();
@@ -328,7 +267,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		y = y + height;
 		while (p) {
@@ -365,7 +304,7 @@ namespace BlendInt {
 		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		if(widgets_height <= 0) {
-			for(AbstractWidget* p = first(); p; p = p->next())
+			for(AbstractWidget* p = first_child(); p; p = p->next())
 			{
 				p->Resize(p->size().width(), 0);
 			}
@@ -376,7 +315,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		y = y + height;
 		if(widgets_height <= unexpandable_prefer_sum) {
@@ -454,7 +393,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first();
+		AbstractWidget* p = first_child();
 
 		y = y + height;
 		while (p) {
@@ -489,7 +428,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator unexp_it =
 				unexpandable_preferred_widths->begin();
 
-		for (AbstractWidget* p = first(); p; p = p->next()) {
+		for (AbstractWidget* p = first_child(); p; p = p->next()) {
 
 			if (p->IsExpandX()) {
 

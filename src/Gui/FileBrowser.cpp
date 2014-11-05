@@ -31,6 +31,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -61,18 +63,20 @@ namespace BlendInt {
 			int h = font_.GetHeight();
 			h = model_->GetRows() * h;	// total height
 
-			if(h > size().height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(size().height());
-				vbar()->SetSliderPercentage(size().height() * 100 / h);
-			} else {
-				vbar()->SetVisible(false);
-			}
-			hbar()->SetVisible(false);
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					size().width(), size().height());
+			if(h > size().height()) {
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(size().height());
+				vbar->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar->SetVisible(false);
+			}
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 
 		return retval;
@@ -116,7 +120,7 @@ namespace BlendInt {
 
 			int i = 0;
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - point.y();
+				i = position().y() + GetVScrollBar()->value() - point.y();
 			} else {	// no vbar
 				i = position().y() + size().height() - point.y();
 			}
@@ -139,20 +143,21 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height();
 
-		if(vbar()->visiable()) {
-			y = position().y() + vbar()->value();
+		ScrollBar* vbar = GetVScrollBar();
+		if(vbar->visiable()) {
+			y = position().y() + vbar->value();
 		}
 
 		int h = font_.GetHeight();
 
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				Theme::instance->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
@@ -165,8 +170,8 @@ namespace BlendInt {
 		profile.EndPushStencil();
 
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.475f,
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 		glBindVertexArray(vaos_[1]);
@@ -175,16 +180,16 @@ namespace BlendInt {
 		while(y > position().y()) {
 			y -= h;
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-					(float) position().x(), (float) y, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+					(float) position().x(), (float) y);
 
 			if(i == highlight_index_) {
-				glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), -35);
+				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
+					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 15);
+					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -201,8 +206,8 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			if(vbar()->visiable()) {
-				y = position().y() + vbar()->value();
+			if(vbar->visiable()) {
+				y = position().y() + vbar->value();
 			}
 
 			while(index.IsValid()) {
@@ -215,12 +220,9 @@ namespace BlendInt {
 
 		}
 
-        DispatchDrawEvent(hbar(), profile);
-		DispatchDrawEvent(vbar(), profile);
-
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (float) position().x(), (float) position().y(), 0.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -271,18 +273,20 @@ namespace BlendInt {
 
 			h = model_->GetRows() * h;	// total height
 
+			ScrollBar* hbar = GetHScrollBar();
+			ScrollBar* vbar = GetVScrollBar();
 			if(h > request.size()->height()) {
-				vbar()->SetVisible(true);
-				vbar()->SetMaximum(h);
-				vbar()->SetMinimum(request.size()->height());
-				vbar()->SetSliderPercentage(request.size()->height() * 100 / h);
+				vbar->SetVisible(true);
+				vbar->SetMaximum(h);
+				vbar->SetMinimum(request.size()->height());
+				vbar->SetSliderPercentage(request.size()->height() * 100 / h);
 			} else {
-				vbar()->SetVisible(false);
+				vbar->SetVisible(false);
 			}
-			hbar()->SetVisible(false);
 
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					request.size()->width(), request.size()->height());
+			hbar->SetVisible(false);
+
+			AdjustScrollBarGeometries(hbar, vbar);
 		}
 
 		if(request.source() == this) {
@@ -292,12 +296,6 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
 	{
-		if (hbar()->visiable() && hbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(hbar(), event);
-		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
-			return DispatchMousePressEvent(vbar(), event);
-		}
-
 		ModelIndex index;
 
 		int rows = model_->GetRows();
@@ -307,10 +305,11 @@ namespace BlendInt {
 			int total = rows * h;
 
 			int i = 0;
+			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
 			if(total > size().height()) {
-				i = position().y() + vbar()->value() - event.position().y();
+				i = position().y() + GetVScrollBar()->value() - local_position.y();
 			} else {	// no vbar
-				i = position().y() + size().height() - event.position().y();
+				i = position().y() + size().height() - local_position.y();
 			}
 
 			i = i / h;
@@ -345,32 +344,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	ResponseType FileBrowser::MouseReleaseEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-			return DispatchMouseReleaseEvent(hbar(), event);
-		} else if (vbar()->pressed()) {
-			return DispatchMouseReleaseEvent(vbar(), event);
-		}
-
-		return Accept;
-	}
-
-	ResponseType FileBrowser::MouseMoveEvent (const MouseEvent& event)
-	{
-		if(hbar()->pressed()) {
-
-			return DispatchMouseMoveEvent(hbar(), event);
-
-		} else if (vbar()->pressed()) {
-
-			return DispatchMouseMoveEvent(vbar(), event);
-
-		}
-
-		return Accept;
-	}
-
 	void FileBrowser::InitializeFileBrowserOnce ()
 	{
 		GLfloat row_height = (GLfloat)font_.GetHeight();
@@ -393,8 +366,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 		row_.reset(new GLArrayBuffer);
@@ -402,8 +375,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		row_->reset();
@@ -413,10 +386,14 @@ namespace BlendInt {
 
 		model_.reset(new FileSystemModel);
 
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		SetScrollBar(hbar, vbar);
+
 		Load(getenv("PWD"));
 
-		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
-		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
+		//events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
+		//events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	void FileBrowser::OnHBarSlide (int val)

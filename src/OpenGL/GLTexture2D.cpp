@@ -44,15 +44,15 @@ namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
 	: Object(),
-	  m_texture(0)
+	  id_(0)
 	{
 
 	}
 
 	GLTexture2D::~GLTexture2D ()
 	{
-		if(m_texture) {
-			glDeleteTextures(1, &m_texture);
+		if(id_) {
+			glDeleteTextures(1, &id_);
 		}
 	}
 

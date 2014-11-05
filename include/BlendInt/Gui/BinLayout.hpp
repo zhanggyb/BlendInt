@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_BINLAYOUT_HPP_
 #define _BLENDINT_GUI_BINLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container with just one sub widget
 	 */
-	class BinLayout: public AbstractContainer
+	class BinLayout: public Layout
 	{
 	public:
 
@@ -39,9 +39,9 @@ namespace BlendInt {
 
 		virtual ~BinLayout ();
 
-		bool Setup (AbstractWidget* widget);
+		bool Setup (Widget* widget);
 
-		bool Remove (AbstractWidget* widget);
+		bool Remove (Widget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -54,24 +54,6 @@ namespace BlendInt {
 		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	};
 

@@ -24,6 +24,8 @@
 #include <BlendInt/Gui/ImagePlane2D.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -33,6 +35,34 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		vertex_buffer_.generate();
+
+		GLfloat vertices[] = {
+				// coord	uv
+				0.f, 0.f,		0.f, 0.f,
+				200.f, 0.f,		1.f, 0.f,
+				0.f, 200.f,		0.f, 1.f,
+				200.f, 200.f,		1.f, 1.f
+		};
+
+		vertex_buffer_.bind();
+		vertex_buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		vertex_buffer_.reset();
+
 		texture_.reset(new GLTexture2D);
 	}
 
@@ -44,11 +74,6 @@ namespace BlendInt {
 	void ImagePlane2D::SetCoord(GLfloat x0, GLfloat y0, GLfloat x1,
 			GLfloat y1)
 	{
-		glBindVertexArray(vao_);
-		if(vertex_buffer_.id() == 0) {
-			vertex_buffer_.generate();
-		}
-
 		GLfloat vertices[] = {
 				// coord	uv
 				x0, y0,		0.f, 0.f,
@@ -59,30 +84,18 @@ namespace BlendInt {
 
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::IMAGE_COORD));
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
 		vertex_buffer_.reset();
-		glBindVertexArray(0);
 	}
 
 	void ImagePlane2D::Draw(GLfloat x, GLfloat y)
 	{
-		if(texture_->texture()) {
+		if(texture_->id()) {
 
 			texture_->bind();
-			Shaders::instance->image_program()->use();
-			glUniform3f(Shaders::instance->location(Stock::IMAGE_POSITION), x, y, 0.f);
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_TEXTURE), 0);
-			glUniform1i(Shaders::instance->location(Stock::IMAGE_GAMMA), 0);
+			Shaders::instance->widget_image_program()->use();
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

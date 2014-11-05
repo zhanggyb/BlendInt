@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_THEME_HPP_
-#define _BLENDINT_THEME_HPP_
+#ifndef _BLENDINT_STOCK_THEME_HPP_
+#define _BLENDINT_STOCK_THEME_HPP_
 
 #include <rapidxml.hpp>
 #include <rapidxml_utils.hpp>
@@ -36,7 +36,7 @@
 
 namespace BlendInt {
 
-	class Interface;
+	class Context;
 
 	class Theme;
 
@@ -216,7 +216,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class Interface;
+		friend class Context;
 
 		static bool Initialize ();
 

@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include <Cpp/Events.hpp>
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Core/Types.hpp>
 
 #include "TexBufWindow.hpp"
@@ -28,13 +27,10 @@ int main(int argc, char* argv[])
 #ifdef DEBUG
 	context->set_name("TexBufContext");
 #endif
-	Interface::instance->SetCurrentContext(context);
+	SetContext(context);
 	context->Resize(1600, 800);
 
 	RunLoop (win);
-
-	Interface::Release();
-
 	Terminate();
 
 	return 0;

@@ -44,7 +44,7 @@ namespace BlendInt {
 
 	Slider::Slider (Orientation orientation)
 	: AbstractSlider<int>(orientation),
-	  //m_vao(0),
+	  //vao_(0),
 	  m_last_value(0),
 	  m_pressed(false)
 	{
@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	Slider::~Slider()
 	{
-		//glDeleteVertexArrays(1, &m_vao);
+		//glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool Slider::IsExpandX() const
@@ -150,7 +150,7 @@ namespace BlendInt {
 		// ----- draw line
 
 		/*
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
 		program->Use();
 
@@ -175,44 +175,20 @@ namespace BlendInt {
 
 		// ----- end of draw line
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+		float x = position().x();
+		float y = position().y();
 
 		if (orientation() == Horizontal) {
-			pos.x += get_position();
-			pos.y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
+			x += get_position();
+			y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
 		} else {
-			pos.x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
-			pos.y += get_position();
+			x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
+			y += get_position();
 		}
 
-		m_slide_icon.Draw(pos);
+		m_slide_icon.Draw(x, y);
 
 		return Accept;
-	}
-
-	ResponseType Slider::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Slider::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Ignore;
 	}
 
 	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)
@@ -277,9 +253,9 @@ namespace BlendInt {
 	void Slider::InitOnce ()
 	{
 		/*
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 
 		m_line.reset(new GLArrayBuffer);
 		m_line->generate();

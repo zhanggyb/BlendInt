@@ -1,5 +1,6 @@
 #include "FileBrowserTest1.hpp"
 #include <BlendInt/Gui/FileBrowser.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -27,18 +28,19 @@ TEST_F(FileBrowserTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+	SetContext(context);
+	context->Resize(640, 480);
 
 	FileBrowser* fb = Manage(new FileBrowser);
-	fb->SetPosition(100, 100);
 	fb->Load(getenv("HOME"));
+
+	Dialog* dialog = Manage(new Dialog);
+	dialog->Resize(600, 480);
+	dialog->AddWidget(fb);
 	
-	context->Append(fb);
+	context->AddFrame(dialog);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

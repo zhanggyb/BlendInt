@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_HBLOCKLAYOUT_HPP_
 #define _BLENDINT_GUI_HBLOCKLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class HBlockLayout: public AbstractContainer
+	class HBlockLayout: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(HBlockLayout);
 
@@ -41,9 +41,9 @@ namespace BlendInt {
 
 		virtual ~HBlockLayout ();
 
-		void Prepend (AbstractWidget* widget);
+		void Prepend (Widget* widget);
 
-		void Append (AbstractWidget* widget);
+		void Append (Widget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -61,25 +61,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		void FillInHBlock (const Point& out_pos, const Size& out_size, const Margin& margin);
+		void FillInHBlock (const Size& out_size, const Margin& margin);
 
 		void FillInHBlock (int x, int y, int w, int h);
 

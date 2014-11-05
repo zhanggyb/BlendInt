@@ -41,6 +41,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	BrightnessSlider::BrightnessSlider(Orientation orientation)
 	: AbstractSlider<int>(orientation)
 	{
@@ -82,28 +84,24 @@ namespace BlendInt {
 
 	ResponseType BrightnessSlider::Draw (Profile& profile)
 	{
-		using Stock::Shaders;
+		Shaders::instance->widget_triangle_program()->use();
 
-		RefPtr<GLSLProgram> program =
-						Shaders::instance->triangle_program();
-		program->use();
-
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->number_slider().outline.data());
-		program->SetUniform1i("u_AA", 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->number_slider().outline.data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		glm::mat4 icon_mvp;
 
@@ -111,10 +109,8 @@ namespace BlendInt {
 //				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
 //						12, 0.0));
 
-		m_dot.Draw(
-		        glm::vec3(
-		                position().x() + size().width() / 2
-		                        - m_dot.size().width() / 2, position().y() + 12.f, 0.f));
+		m_dot.Draw (0.f + size ().width () / 2 - m_dot.size ().width () / 2,
+				0.f + 12.f);
 
 		return Accept;
 	}
@@ -176,48 +172,6 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	ResponseType BrightnessSlider::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BrightnessSlider::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
 	void BrightnessSlider::InitializeBrightnessSlider()
 	{
 		set_round_type(RoundAll);
@@ -241,10 +195,10 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(m_vao[1]);
 		outer_.reset(new GLArrayBuffer);
@@ -252,8 +206,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
 		glBindVertexArray(0);

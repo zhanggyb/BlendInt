@@ -63,7 +63,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special container used in Workspace
 	 */
-	class EdgeButtonLayer: public AbstractContainer
+	class EdgeButtonLayer: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
 
@@ -82,22 +82,6 @@ namespace BlendInt {
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 
@@ -136,7 +120,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public AbstractContainer
+	class Workspace: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 
@@ -146,13 +130,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (AbstractWidget* viewport);
+		void SetViewport (Widget* viewport);
 
-		void SetLeftSideBar (AbstractWidget* widget);
+		void SetLeftSideBar (Widget* widget);
 
-		void SetRightSideBar (AbstractWidget* widget);
+		void SetRightSideBar (Widget* widget);
 
-		void SetHeader (AbstractWidget* widget);
+		void SetHeader (Widget* widget);
 
 		void SwitchHeaderPosition ();
 
@@ -162,22 +146,22 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		AbstractWidget* viewport () const
+		Widget* viewport () const
 		{
 			return viewport_;
 		}
 
-		AbstractWidget* header () const
+		Widget* header () const
 		{
 			return header_;
 		}
 
-		AbstractWidget* left_sidebar() const
+		Widget* left_sidebar() const
 		{
 			return left_sidebar_;
 		}
 
-		AbstractWidget* right_sidebar() const
+		Widget* right_sidebar() const
 		{
 			return right_sidebar_;
 		}
@@ -194,33 +178,17 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	private:
 
 		void InitializeWorkspace ();
 
-		AbstractWidget* left_sidebar_;
+		Widget* left_sidebar_;
 
-		AbstractWidget* right_sidebar_;
+		Widget* right_sidebar_;
 
-		AbstractWidget* header_;
+		Widget* header_;
 
-		AbstractWidget* viewport_;
+		Widget* viewport_;
 
 		Splitter* splitter_;
 

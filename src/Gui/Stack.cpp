@@ -36,42 +36,187 @@
 
 #include <algorithm>
 
-#include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Gui/Stack.hpp>
+
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
 	Stack::Stack()
-	: StackLayout(),
-	  vao_(0)
+	: Widget(),
+	  active_widget_(0)
 	{
-		InitializeStack();
+		set_size(400, 300);
 	}
 
 	Stack::~Stack ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Stack::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void Stack::Prepend (Widget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			int w = size().width();
+			int h = size().height();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, 0, 0);
+
+			if(subs_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void Stack::Append (Widget* widget)
+	{
+		if(PushBackSubWidget(widget)) {
+			int w = size().width();
+			int h = size().height();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, 0, 0);
+
+			if(subs_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void Stack::Insert (int index, Widget* widget)
+	{
+		if(InsertSubWidget(index, widget)) {
+			int w = size().width();
+			int h = size().height();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, 0, 0);
+
+			widget->SetVisible(false);
+		}
+	}
+
+	void Stack::Remove (Widget* widget)
+	{
+		if(RemoveSubWidget(widget)) {
+
+			if(active_widget_ == widget) {
+
+				if(subs_count() == 0) {
+					active_widget_ = 0;
+				} else {
+					active_widget_ = dynamic_cast<Widget*>(first_child());
+					active_widget_->SetVisible(true);
+				}
+
+			}
+		}
+	}
+
+	int Stack::GetIndex () const
+	{
+		int index = 0;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(p == active_widget_) {
+				break;
+			}
+
+			index++;
+		}
+
+		if(index >= subs_count()) index = -1;
+
+		return index;
+	}
+
+	void Stack::SetIndex (int index)
+	{
+		int count = subs_count();
+
+		if(index > (count - 1)) return;
+
+		if(count) {
+
+			AbstractWidget* widget = GetWidgetAt(index);
+			if(active_widget_ == widget) {
+				return;
+			}
+
+			active_widget_->SetVisible(false);
+			active_widget_ = dynamic_cast<Widget*>(widget);
+			active_widget_->SetVisible(true);
+		}
+	}
+
+	bool Stack::IsExpandX () const
+	{
+		bool ret = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(p->IsExpandX()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	bool Stack::IsExpandY () const
+	{
+		bool ret = false;
+
+		for(AbstractWidget* p = first_child(); p; p = p->next())
+		{
+			if(p->IsExpandY()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	Size Stack::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(first_child()) {
+
+			prefer.set_width(0);
+			prefer.set_height(0);
+
+			Size tmp;
+			for(AbstractWidget* p = first_child(); p; p = p->next())
+			{
+				tmp = p->GetPreferredSize();
+				prefer.set_width(std::max(prefer.width(), tmp.width()));
+				prefer.set_height(std::max(prefer.height(), tmp.height()));
+			}
+
+		}
+
+		return prefer;
+	}
+
+	void Stack::PerformSizeUpdate (
+			const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
-			int w = request.size()->width() - margin().hsum();
-			int h = request.size()->height() - margin().vsum();
 
 			set_size(*request.size());
-			ResizeSubWidgets(w, h);
+			ResizeSubWidgets(size().width(), size().height());
 		}
 
 		if(request.source() == this) {
@@ -79,49 +224,12 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Stack::Draw (Profile& profile)
+	void BlendInt::Stack::HideSubWidget (int index)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
-		program->use();
-
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.447f,
-		        0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        GetOutlineVertices(round_type()) * 2 + 2);
-		glBindVertexArray(0);
-
-		program->reset();
-
-		return Ignore;
-	}
-
-	void Stack::InitializeStack()
-	{
-		glGenVertexArrays(1, &vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
-
-		glBindVertexArray(vao_);
-
-		inner_.reset(new GLArrayBuffer);
-
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		if(subs_count() && index < (subs_count() - 1)) {
+			AbstractWidget* p = GetWidgetAt(index);
+			p->SetVisible(false);
+		}
 	}
 
 }

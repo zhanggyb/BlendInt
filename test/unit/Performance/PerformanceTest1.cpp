@@ -36,7 +36,7 @@ TEST_F(PerformanceTest1, Layout1)
 
     VLayout* layout1 = Manage(new VLayout);
 
-    Frame* frame1 = Manage(new Frame);
+    Panel* frame1 = Manage(new Panel);
 
     frame1->SetPosition(20, 20);
 
@@ -94,7 +94,7 @@ TEST_F(PerformanceTest1, Layout2)
 
     VLayout* layout2 = Manage(new VLayout);
 
-    StaticFrame* frame2 = Manage(new StaticFrame);
+    StaticPanel* frame2 = Manage(new StaticPanel);
 
     frame2->SetPosition(620, 20);
 
@@ -142,11 +142,11 @@ TEST_F(PerformanceTest1, Layout3)
 	Interface::instance->SetCurrentContext(context);
 	Interface::instance->Resize(1280, 800);
 
-    StaticFrame* mainframe = Manage(new StaticFrame);
+    StaticPanel* mainframe = Manage(new StaticPanel);
 
-    StaticFrame* frame1 = Manage(new StaticFrame);
-    StaticFrame* frame2 = Manage(new StaticFrame);
-    StaticFrame* frame3 = Manage(new StaticFrame);
+    StaticPanel* frame1 = Manage(new StaticPanel);
+    StaticPanel* frame2 = Manage(new StaticPanel);
+    StaticPanel* frame3 = Manage(new StaticPanel);
 
     mainframe->SetPosition(100, 100);
 

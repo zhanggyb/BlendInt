@@ -34,10 +34,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ColorButton.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
 
@@ -51,9 +52,14 @@ namespace BlendInt {
 		set_size(4 * h + round_radius() * 2 +default_padding.hsum(),
 						h + default_padding.vsum());
 
-		color_.set_red(0.3f);
-		color_.set_blue(0.8f);
-		color_.set_green(0.2f);
+		color0_.set_red(0.3f);
+		color0_.set_blue(0.8f);
+		color0_.set_green(0.2f);
+
+		color1_.set_red(0.3f);
+		color1_.set_blue(0.8f);
+		color1_.set_green(0.2f);
+		color1_.set_alpha(0.5f);
 
 		InitializeColorButton();
 	}
@@ -75,7 +81,9 @@ namespace BlendInt {
 
 	void ColorButton::SetColor(const Color& color)
 	{
-		color_ = color;
+		color0_ = color;
+		color0_.set_alpha(1.f);
+		color1_ = color;
 		Refresh();
 	}
 
@@ -84,15 +92,19 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVertices(*request.size(), DefaultBorderWidth(), round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -105,15 +117,18 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-
 			set_round_type(*request.round_type());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -126,15 +141,18 @@ namespace BlendInt {
 		if (request.target() == this) {
 			UpdateTextPosition(size(), round_type(), *request.round_radius(),
 			        text());
-			VertexTool tool;
-			tool.GenerateShadedVertices(size(), DefaultBorderWidth(), round_type(),
-			        *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-
 			set_round_radius(*request.round_radius());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateVertices(&inner_verts, &outer_verts);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			Refresh();
 		}
 
@@ -143,45 +161,46 @@ namespace BlendInt {
 
 	ResponseType ColorButton::Draw (Profile& profile)
 	{
+		Point pos = profile.frame()->GetAbsolutePosition(this);
+
 		int outline_vertices = GetOutlineVertices(round_type());
 
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->widget_program();
-		program->use();
+		Shaders::instance->widget_split_inner_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, color_.data());
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), pos.x() + size().width() / 2.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, color0_.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, color1_.data());
 
 		if(hover()) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 15);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS),
-				1);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_COLOR), 1, Theme::instance->regular().outline.data());
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+				0.f, 0.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::WIDGET_POSITION),
-					(float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		program->reset();
+		GLSLProgram::reset();
 
 		if(text().size()) {
 			font().Print(position(), text(), text_length(), 0);
@@ -192,8 +211,10 @@ namespace BlendInt {
 
 	void ColorButton::InitializeColorButton ()
 	{
-		VertexTool tool;
-		tool.GenerateShadedVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -201,23 +222,23 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
+				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+				Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

@@ -27,76 +27,47 @@
 #include <stack>
 #include <set>
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/Section.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
 
 namespace BlendInt {
 
-	class Interface;
-
 	/**
-	 * @brief Container to hold and manage all widgets in a OpenGL window
+	 * @brief Layout to hold and manage all widgets in a OpenGL window
 	 *
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
-	class Context: public AbstractContainer
+	class Context: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
 
-		friend class Interface;
-
 	public:
+
+		static bool Initialize ();
+
+		static void Release ();
 
 		Context ();
 
 		virtual ~Context ();
 
-		/**
-		 * @brief Add a widget in a new section
-		 *
-		 * @note The section will be deleted if the last sub widget is removed or destroyed.
-		 *
-		 * The widget could also be a Section object
-		 *
-		 */
-		Section* Append (AbstractWidget* widget);
+		void AddFrame (AbstractFrame* vp);
 
-		/**
-		 * @brief Remove widget from this context
-		 *
-		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
-		 */
-		Section* Remove (AbstractWidget* widget);
+		void Draw ();
 
-		void SetFocusedWidget (AbstractWidget* widget);
+		void DispatchKeyEvent (const KeyEvent& event);
+
+		void DispatchMouseEvent (const MouseEvent& event);
 
 		/**
 		 * @brief Always return true
 		 */
 		virtual bool Contain (const Point& point) const;
 
-		AbstractWidget* focused_widget () const
-		{
-			//return m_focused_widget;
-			return 0;
-		}
-
-		/**
-		 * @brief Set the cursor
-		 */
-		virtual void SetCursor (int cursor_type);
-
-		int current_cursor () const
-		{
-			return current_cursor_;
-		}
-
-		void PushCursor (int cursor_type);
-
-		int PopCursor ();
+		virtual void SynchronizeWindow ();
 
 		Cpp::EventRef<const Size&> resized ()
 		{
@@ -125,11 +96,17 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType FocusEvent (bool focus);
+		virtual void PostDraw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
@@ -143,23 +120,35 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void SetFocusedFrame (AbstractFrame* frame);
+
 	private:
+
+		static void GetGLVersion (int *major, int *minor);
+
+		static void GetGLSLVersion (int *major, int *minor);
 
 		void InitializeContext ();
 
-		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
+		void DispatchHoverEvent (const MouseEvent& event);
 
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
+		void OnFocusedFrameDestroyed (AbstractFrame* frame);
+
+        //void RenderToBuffer (Profile& profile);
+
+        //GLuint vao_;
+        
 		Profile profile_;
 
-		AbstractWidget* focused_widget_;
+		AbstractFrame* hovered_frame_;
 
-		bool custom_focus_widget_;
+		AbstractFrame* focused_frame_;
+        
+        //GLTexture2D texture_buffer_;
 
-		int current_cursor_;
-
-		std::stack<int> cursor_stack_;
+		//GLBuffer<> vertex_buffer_;
 
 		Cpp::Event<const Size&> resized_;
 

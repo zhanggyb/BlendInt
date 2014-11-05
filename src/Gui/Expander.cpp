@@ -39,7 +39,7 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -132,7 +132,7 @@ namespace BlendInt {
 	ResponseType ExpandButton::Draw (Profile& profile)
 	{
 		if(text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		float rotate = 0.f;
@@ -142,7 +142,7 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 		pos.x += Icons::instance->num()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 
@@ -187,10 +187,10 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: AbstractContainer(), vao_(0), frame_height_(0)
+	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		Frame* frame = Manage(new Frame);
+		Panel* frame = Manage(new Panel);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -206,25 +206,19 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		set_margin(2, 2, 2, 2);
-
-		width = width + margin().hsum();
-		height = height + margin().vsum();
 		set_size(width, height);
 
-		FillInExpander(position(), size(), margin());
+		FillInExpander(size());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
-
-		InitializeExpander();
 	}
 
 	Expander::Expander (const String& title)
-	: AbstractContainer(), vao_(0), frame_height_(0)
+	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		Frame* frame = Manage(new Frame);
+		Panel* frame = Manage(new Panel);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -240,28 +234,21 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		width = width + margin().left() + margin().right();
-		height = height + margin().top() + margin().bottom();
-
 		set_size(width, height);
-		set_margin(2, 2, 2, 2);
 
-		FillInExpander(position(), size(), margin());
+		FillInExpander(size());
 		frame_height_ = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
-
-		InitializeExpander();
 	}
 
 	Expander::~Expander ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
-	bool Expander::Setup (AbstractWidget* widget)
+	bool Expander::Setup (Widget* widget)
 	{
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 		if(frame->Setup(widget)) {
 			return true;
 		}
@@ -274,15 +261,12 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
 			prefer.add_height(tmp.height());
 		}
-
-		prefer.add_width(margin().hsum());
-		prefer.add_height(margin().vsum());
 
 		return prefer;
 	}
@@ -291,7 +275,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -306,7 +290,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first(); p; p = p->next())
+		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -317,20 +301,10 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::PerformMarginUpdate(const Margin& request)
-	{
-		FillInExpander(position(), size(), request);
-	}
-
 	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillInExpander(position(), *request.size(), margin());
-
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+			FillInExpander(*request.size());
 
 			set_size(*request.size());
 			Refresh();
@@ -339,89 +313,17 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Expander::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		ReportPositionUpdate(request);
-	}
-
 	ResponseType Expander::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->triangle_program();
-		program->use();
-
-		program->SetUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-				(float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		program->SetUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS),
-				0);
-
-		program->SetVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR),
-				0.447f, 0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
-
-		program->reset();
-
-		return Ignore;
+		return subs_count() ? Ignore : Accept;
 	}
 
-	ResponseType Expander::CursorEnterEvent (bool entered)
+	void Expander::FillInExpander (const Size& out_size)
 	{
-		return Ignore;
-	}
-
-	ResponseType Expander::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType Expander::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-	
-	void Expander::FillInExpander (const Point& out_pos,
-					const Size& out_size, const Margin& margin)
-	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = 0;
+		int y = 0;
+		int w = out_size.width();
+		int h = out_size.height();
 
 		if(w >= 0 && h >= 0)
 			FillInExpander(x, y, w, h);
@@ -432,7 +334,7 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -476,38 +378,17 @@ namespace BlendInt {
 		return button->text();
 	}
 	
-	void Expander::InitializeExpander ()
-	{
-		glGenVertexArrays(1, &vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
-
-		glBindVertexArray(vao_);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
-
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Frame* frame = dynamic_cast<Frame*>(GetWidgetAt(1));
+		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
 
 		if(toggle) {
 			int x = position().x();
 			int y = position().y() + size().height();
 			frame->SetVisible(false);
 			frame_height_ = frame->size().height();
-			Resize(size().width(), button->size().height() + margin().vsum());
+			Resize(size().width(), button->size().height());
 			y = y - size().height();
 			SetPosition(x, y);
 		} else {
@@ -517,7 +398,7 @@ namespace BlendInt {
 			frame->SetVisible(true);
 
 			Resize(size().width(),
-							button->size().height() + frame_height_ + margin().vsum());
+							button->size().height() + frame_height_);
 			y = y - size().height();
 			SetPosition(x, y);
 		}

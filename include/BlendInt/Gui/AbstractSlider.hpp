@@ -28,7 +28,7 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
@@ -53,7 +53,7 @@ namespace BlendInt {
 		/**
 		 * @brief Draw the icon
 		 */
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
+		virtual void Draw (float x, float y, short gamma = 0) const;
 
 		/**
 		 * @brief Set the highlight status of this icon
@@ -62,6 +62,11 @@ namespace BlendInt {
 		void set_highlight (bool highlight)
 		{
 			m_highlight = highlight;
+		}
+
+		bool highlight () const
+		{
+			return m_highlight;
 		}
 
 	protected:
@@ -85,7 +90,7 @@ namespace BlendInt {
 	};
 
 	template<typename T>
-	class AbstractSlider: public AbstractWidget
+	class AbstractSlider: public Widget
 	{
 	public:
 
@@ -190,7 +195,7 @@ namespace BlendInt {
 
 	template <typename T>
 	AbstractSlider<T>::AbstractSlider (Orientation orientation)
-	: AbstractWidget(),
+	: Widget(),
 	  m_orientation(orientation),
 	  m_value(T(0)),
 	  m_minimum(T(0)),

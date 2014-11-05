@@ -41,6 +41,7 @@
 #include <BlendInt/Gui/FileButton.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 namespace BlendInt {
 
@@ -132,24 +133,24 @@ namespace BlendInt {
 
 	ResponseType FileButton::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-		        (float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+		        0.f, 0.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		if (is_down()) {
-			glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
 				Color color = Theme::instance->regular().inner + 15;
-				glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+				glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				        color.data());
 			} else {
-				glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+				glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				        Theme::instance->regular().inner.data());
 			}
 		}
@@ -157,8 +158,8 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 		        Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -166,11 +167,11 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.0f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+					0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -179,7 +180,7 @@ namespace BlendInt {
 		program->reset();
 
 		if (text().size()) {
-			font().Print(position(), text(), text_length(), 0);
+			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Accept;
@@ -220,8 +221,8 @@ namespace BlendInt {
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
@@ -229,8 +230,8 @@ namespace BlendInt {
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -265,11 +266,14 @@ namespace BlendInt {
 			int y = (context->size().height() - h) / 2;
 
 			panel_->Resize(w, h);
-			panel_->SetPosition(x, y);
-			panel_->SetContent(file_selector);
-			Section* section = context->Append(panel_);
-			section->set_mode(Section::Modal);
-			context->SetFocusedWidget(file_selector);
+			panel_->Setup(file_selector);
+
+			Dialog* screen = Manage(new Dialog);
+			screen->Resize(panel_->size());
+			screen->SetPosition(x, y);
+			screen->AddWidget(panel_);
+
+			context->AddFrame(screen);
 
 			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
 			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
@@ -279,10 +283,12 @@ namespace BlendInt {
 
 	void FileButton::OnOpened ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
-		delete panel_;
+
+		AbstractWidget* screen = panel_->parent();
+		delete screen;
 		panel_ = 0;
 
 		file_selected_.fire();
@@ -290,9 +296,11 @@ namespace BlendInt {
 
 	void FileButton::OnCanceled ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->content());
+		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
-		delete panel_;
+
+		AbstractWidget* screen = panel_->parent();
+		delete screen;
 		panel_ = 0;
 	}
 

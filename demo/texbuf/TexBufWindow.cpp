@@ -2,15 +2,14 @@
 
 #include <iostream>
 
-//using BlendInt::Interface;
-#include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Window/KeyEvent.hpp>
-#include <BlendInt/Window/MouseEvent.hpp>
+#include <BlendInt/HID/KeyEvent.hpp>
+#include <BlendInt/HID/MouseEvent.hpp>
 
 namespace BlendInt {
 
 	static KeyEvent global_key_event;
 	static MouseEvent global_mouse_event;
+	static Context* main_context = 0;
 
 	static void CbError (int error, const char* description)
 	{
@@ -21,7 +20,7 @@ namespace BlendInt {
 
 	static void CbWindowSize(GLFWwindow* window, int w, int h)
 	{
-		Interface::instance->Resize(w, h);
+		main_context->Resize(w, h);
 	}
 
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
@@ -47,14 +46,14 @@ namespace BlendInt {
 		global_key_event.set_modifiers(mods);
         global_key_event.clear_text();
 
-		Interface::instance->DispatchKeyEvent(global_key_event);
+		main_context->DispatchKeyEvent(global_key_event);
 	}
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
 	{
 		global_key_event.set_text(character);
 
-		Interface::instance->DispatchKeyEvent(global_key_event);
+		main_context->DispatchKeyEvent(global_key_event);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
@@ -96,16 +95,16 @@ namespace BlendInt {
 		global_mouse_event.set_action(mouse_action);
 		global_mouse_event.set_modifiers(mods);
 
-		Interface::instance->DispatchMouseEvent(global_mouse_event);
+		main_context->DispatchMouseEvent(global_mouse_event);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
         global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->GetCurrentContextHeight() - static_cast<int>(ypos));
+		global_mouse_event.set_position(static_cast<int>(xpos), main_context->size().height() - static_cast<int>(ypos));
 
-		Interface::instance->DispatchMouseEvent(global_mouse_event);
+		main_context->DispatchMouseEvent(global_mouse_event);
 	}
 
 	void Init ()
@@ -142,13 +141,11 @@ namespace BlendInt {
 		glfwMakeContextCurrent(window);
 	
 		/* initialize BlendInt after OpenGL content is created */
-		if (!Interface::Initialize()) {
+		if (!Context::Initialize()) {
 			glfwTerminate();
 			exit(-1);
 		}
 
-		Interface::instance->Resize(width, height);
-	
 		return window;
 	}
 
@@ -156,15 +153,16 @@ namespace BlendInt {
 	{
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
-			/* Render here */
-			Interface::instance->Draw();
 
-            if(callback) {
-                (*callback)(param);
+			if(main_context->refresh()) {
+    			/* Render here */
+    			main_context->Draw();
+                if(callback) {
+                    (*callback)(param);
+                }
+    			/* Swap front and back buffers */
+    			glfwSwapBuffers(window);
             }
-
-			/* Swap front and back buffers */
-			glfwSwapBuffers(window);
 		
 			/* Poll for and process events */
 #ifdef __APPLE__
@@ -179,9 +177,19 @@ namespace BlendInt {
 	void Terminate ()
 	{
 		/* release BlendInt */
-		Interface::Release();
-	
+		Context::Release();
 		glfwTerminate();
+		main_context = 0;
+	}
+
+	void SetContext (Context* context)
+	{
+		if(main_context) {
+			delete main_context;
+			main_context = 0;
+		}
+
+		main_context = context;
 	}
 
 }

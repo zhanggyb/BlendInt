@@ -44,7 +44,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FolderList::FolderList()
-	: AbstractWidget()
+	: Widget()
 	{
 		set_round_type(RoundAll);
 		set_size(240, 160);
@@ -64,20 +64,20 @@ namespace BlendInt {
 
 	ResponseType FolderList::Draw (Profile& profile)
 	{
-		Shaders::instance->triangle_program()->use();
+		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION), (GLfloat)position().x(), (GLfloat)position().y(), 0.f);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (GLfloat)position().x(), (GLfloat)position().y());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				Theme::instance->regular().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Shaders::instance->location(Stock::TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::TRIANGLE_COLOR),
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
 				Theme::instance->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -85,61 +85,19 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 1.0f,
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 
-			glUniform3f(Shaders::instance->location(Stock::TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+			        (float) position().x(), (float) position().y() - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
-		Shaders::instance->triangle_program()->reset();
+		GLSLProgram::reset();
 
 		return Accept;
-	}
-
-	ResponseType FolderList::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::ContextMenuPressEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::ContextMenuReleaseEvent (
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FolderList::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 	void FolderList::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -216,8 +174,8 @@ namespace BlendInt {
 		inner_->generate();
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
@@ -225,8 +183,8 @@ namespace BlendInt {
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

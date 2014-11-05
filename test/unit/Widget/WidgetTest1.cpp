@@ -59,8 +59,8 @@ TEST_F(WidgetTest1, Pointer2)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
 
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
@@ -98,8 +98,8 @@ TEST_F(WidgetTest1, PushBack1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -141,7 +141,7 @@ TEST_F(WidgetTest1, PushBack2)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container1 = Manage(new Container);
+    Layout* container1 = Manage(new Layout);
     DBG_SET_NAME(container1, "Container1");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
@@ -151,7 +151,7 @@ TEST_F(WidgetTest1, PushBack2)
     container1->PushBackSubWidget(widget1);
     container1->PushBackSubWidget(widget2);
 
-    Container* container2 = Manage(new Container);
+    Layout* container2 = Manage(new Layout);
     DBG_SET_NAME(container2, "Container2");
     container2->PushBackSubWidget(widget2);
     container2->PushBackSubWidget(widget1);
@@ -190,7 +190,7 @@ TEST_F(WidgetTest1, PushBack3)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container1 = Manage(new Container);
+    Layout* container1 = Manage(new Layout);
     DBG_SET_NAME(container1, "Container1");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
@@ -238,8 +238,8 @@ TEST_F(WidgetTest1, Insert1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -279,8 +279,8 @@ TEST_F(WidgetTest1, Insert2)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -320,8 +320,8 @@ TEST_F(WidgetTest1, Insert3)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -368,8 +368,8 @@ TEST_F(WidgetTest1, PushFront1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -409,7 +409,7 @@ TEST_F(WidgetTest1, PushFront2)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container1 = Manage(new Container);
+    Layout* container1 = Manage(new Layout);
     DBG_SET_NAME(container1, "Container1");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
@@ -419,7 +419,7 @@ TEST_F(WidgetTest1, PushFront2)
     container1->PushFrontSubWidget(widget1);
     container1->PushFrontSubWidget(widget2);
 
-    Container* container2 = Manage(new Container);
+    Layout* container2 = Manage(new Layout);
     DBG_SET_NAME(container2, "Container2");
     container2->PushFrontSubWidget(widget2);
     container2->PushFrontSubWidget(widget1);
@@ -464,8 +464,8 @@ TEST_F(WidgetTest1, Remove1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -519,8 +519,8 @@ TEST_F(WidgetTest1, GetWidgetAt1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -595,8 +595,8 @@ TEST_F(WidgetTest1, MoveToFirst1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -676,8 +676,8 @@ TEST_F(WidgetTest1, MoveToLast1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -757,8 +757,8 @@ TEST_F(WidgetTest1, MoveForward1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);
@@ -838,8 +838,8 @@ TEST_F(WidgetTest1, MoveBackward1)
     Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    Container* container = Manage(new Container);
-    DBG_SET_NAME(container, "Container");
+    Layout* container = Manage(new Layout);
+    DBG_SET_NAME(container, "Layout");
     Widget* widget1 = Manage(new Widget);
     DBG_SET_NAME(widget1, "Widget1");
     Widget* widget2 = Manage(new Widget);

@@ -1,7 +1,7 @@
 #include "ToolBoxTest1.hpp"
 #include <BlendInt/Gui/ToolBox.hpp>
-
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 using namespace BlendInt;
 
@@ -25,39 +25,38 @@ TEST_F(ToolBoxTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("ToolBox - Foo1", 640, 480);
+    GLFWwindow* win = CreateWindow("ToolBox - Foo1", 1280, 800);
 
     // TODO: add test code here
-
 	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+	SetContext(context);
+	context->Resize(1280, 800);
 
-    ToolBox* tb = Manage(new ToolBox);
+    ToolBox* tb1 = Manage(new ToolBox);
+    tb1->SetPosition(200, 200);
 
-    Button* btn1 = Manage(new Button("Hello World 1!"));
-    Button* btn2 = Manage(new Button("Hello World 2!"));
-    Button* btn3 = Manage(new Button("Hello World 3!"));
+//    ToolBox* tb2 = Manage(new ToolBox(Vertical));
+//    tb2->SetPosition(700, 100);
 
-    tb->Append(btn1);
-    tb->Append(btn2);
-    tb->Append(btn3);
+    context->AddFrame(tb1);
+//    context->AddFrame(tb2);
 
-    tb->SetPosition(100, 100);
-    tb->Resize(160, 300);
+    Button* btn1 = Manage(new Button("Hello1"));
+    Button* btn2 = Manage(new Button("Hello2"));
+    Button* btn3 = Manage(new Button("Hello3"));
+//    Button* btn4 = Manage(new Button("Hello4"));
+//    Button* btn5 = Manage(new Button("Hello5"));
+//    Button* btn6 = Manage(new Button("Hello6"));
 
-    //btn1->Resize(200, 40);
-    //btn1->SetPosition(105, 300);
+    tb1->Add(btn1);
+    tb1->Add(btn2);
+    tb1->Add(btn3);
 
-    DBG_PRINT_MSG("Button 1 position: %d %d", btn1->position().x(), btn1->position().y());
-    DBG_PRINT_MSG("Button 2 position: %d %d", btn1->position().x(), btn2->position().y());
-    DBG_PRINT_MSG("Button 3 position: %d %d", btn1->position().x(), btn3->position().y());
-
-    context->Append(tb);
+//    tb2->Add(btn4);
+//    tb2->Add(btn5);
+//    tb2->Add(btn6);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

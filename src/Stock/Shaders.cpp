@@ -46,263 +46,128 @@ namespace BlendInt {
 
 	namespace Stock {
 
-#ifdef __OPENGL_CORE_330__
-		const char* Shaders::text_vertex_shader =
-				"#version 330\n"
-				"layout(location = 0) in vec4 a_coord;"
-				"out vec2 uv;"
-				""
-				//"uniform mat4 u_projection;"	// projection matrix
-        		//"uniform mat4 u_view;"// view matrix
-				"uniform UIMatrix {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"};"
-				""
-				"uniform vec3 u_position;"// position
-        		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-				""
-		        "mat4 TranslateMatrix (const in vec3 t)"
-		        "{"
-		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-		        "				0.0, 1.0, 0.0, 0.0,"
-		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, t.z, 1.0);"
-		        "}"
-		        ""
-		        "mat4 RotateMatrix( const in float angle,"
-		        "					const in vec3 axis )"
-		        "{"
-		        "	vec3 n = normalize( axis );"
-		        "	float theta = radians( angle );"
-		        "	float c = cos( theta );"
-		        "	float s = sin( theta );"
-		        "	mat3 R;"
-		        "	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-		        "	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-		        "	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-		        "	return mat4( R[0],	0.0,"
-		        "				 R[1],	0.0,"
-		        "				 R[2],	0.0,"
-		        "				 0.0, 0.0, 0.0, 1.0 );"
-		        "}"
-		        ""
-		        "mat4 RotateMatrixAlongZ (const in float angle)"
-		        "{"
-		        "	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-		        "}"
-		        ""
-				"void main(void) {"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-				"	uv = a_coord.zw;"
-				"}";
+		const char* Shaders::widget_text_vertex_shader =
+			"#version 330\n"
+			"layout(location = 0) in vec4 aCoord;"
+			"out vec2 uv;"
+			""
+			//"uniform mat4 u_projection;"	// projection matrix
+			//"uniform mat4 u_view;"// view matrix
+			"uniform UIMatrix {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat4 model;"
+			"};"
+			""
+			"uniform vec2 uPosition;"// position
+      			"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+			""
+			"mat4 TranslateMatrix (const in vec2 t)"
+			"{"
+			"	return mat4(1.0, 0.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0, 0.0,"
+			"				0.0, 0.0, 1.0, 0.0,"
+			"				t.x, t.y, 0.0, 1.0);"
+			"}"
+			""
+			"mat4 RotateMatrix( const in float angle,"
+			"					const in vec3 axis )"
+			"{"
+			"	vec3 n = normalize( axis );"
+			"	float theta = radians( angle );"
+			"	float c = cos( theta );"
+			"	float s = sin( theta );"
+			"	mat3 R;"
+			"	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
+			"	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
+			"	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
+			"	return mat4( R[0],	0.0,"
+			"				 R[1],	0.0,"
+			"				 R[2],	0.0,"
+			"				 0.0, 0.0, 0.0, 1.0 );"
+			"}"
+			""
+			"mat4 RotateMatrixAlongZ (const in float angle)"
+			"{"
+			"	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
+			"}"
+			""
+			"void main(void) {"
+			//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+			"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+			"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+			"	uv = aCoord.zw;"
+			"}";
 
-		const char* Shaders::text_fragment_shader =
-				"#version 330\n"
-				"in vec2 uv;"
-				"uniform sampler2D u_tex;"
-				"uniform vec4 u_color;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
-				"	FragmentColor = vec4(u_color.rgb, u_color.a * alpha);"
-				"}";
+		const char* Shaders::widget_text_fragment_shader =
+			"#version 330\n"
+			"in vec2 uv;"
+			"uniform sampler2D u_tex;"
+			"uniform vec4 uColor;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+			"	FragmentColor = vec4(uColor.rgb, uColor.a * alpha);"
+			"}";
 
 		const char* Shaders::primitive_vertex_shader = "#version 330\n"
-				""
-				"layout(location = 0) in vec3 coord;"
-				"layout(location = 1) in vec4 color;"
-				"uniform mat4 P;"
-				"uniform mat4 V;"
-				"uniform mat4 M;"
-				""
-				"out vec4 vColor;"
-				""
-				"void main(void) {"
-				"	gl_Position = P * V * M * vec4(coord, 1.0);"
-				"	vColor = color;"
-				"}";
+			""
+			"layout(location = 0) in vec3 coord;"
+			"layout(location = 1) in vec4 color;"
+			"uniform mat4 P;"
+			"uniform mat4 V;"
+			"uniform mat4 M;"
+			""
+			"out vec4 vColor;"
+			""
+			"void main(void) {"
+			"	gl_Position = P * V * M * vec4(coord, 1.0);"
+			"	vColor = color;"
+			"}";
 
 		const char* Shaders::primitive_fragment_shader =
-				"#version 330\n"
-				""
-				"in vec4 vColor;"
-				"out vec4 vFragColor;"
-				""
-				"void main(void) {"
-				"	vFragColor = vColor;"
-				"}";
+			"#version 330\n"
+			""
+			"in vec4 vColor;"
+			"out vec4 vFragColor;"
+			""
+			"void main(void) {"
+			"	vFragColor = vColor;"
+			"}";
 
-		const char* Shaders::triangle_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec2 a_coord;"
-				"layout(location=1) in vec4 a_color;"
-				"out vec4 VertexColor;"
-				""
-				"void main(void) {"
-				"	gl_Position = vec4(a_coord, 0.0, 1.0);"
-				"	VertexColor = a_color;"
-				"}";
+		const char* Shaders::widget_triangle_vertex_shader =
+			"#version 330\n"
+			""
+			"layout(location=0) in vec2 aCoord;"
+			"layout(location=1) in vec4 aColor;"
+			"out vec4 VertexColor;"
+			""
+			"void main(void) {"
+			"	gl_Position = vec4(aCoord, 0.0, 1.0);"
+			"	VertexColor = aColor;"
+			"}";
 
-		const char* Shaders::triangle_geometry_shader =
-		        "#version 330\n"
+		const char* Shaders::widget_triangle_geometry_shader =
+				"#version 330\n"
 				""
 				"layout (triangles) in;"
 				"layout (triangle_strip, max_vertices = 24) out;"
 				"in vec4 VertexColor[];"
 				"out vec4 PreFragColor;"
 				//"uniform mat4 u_projection;"	// projection matrix
-		       	//"uniform mat4 u_view;"// view matrix
+				//"uniform mat4 u_view;"// view matrix
 				""
 				"uniform UIMatrix {"
 				"	mat4 projection;"
 				"	mat4 view;"
+				"	mat4 model;"
 				"};"
 				""
-				"uniform vec3 u_position;"// position
-		        "uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-		        "uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
-		        "uniform bool u_AA = false;"
-				""
-				"const vec2 AA_JITTER[8] = vec2[8]("
-				"	vec2(0.468813, -0.481430),"
-				"	vec2(-0.155755, -0.352820),"
-				        "	vec2(0.219306, -0.238501),"
-				        "	vec2(-0.393286,-0.110949),"
-				        "	vec2(-0.024699, 0.013908),"
-				        "	vec2(0.343805, 0.147431),"
-				        "	vec2(-0.272855, 0.269918),"
-				        "	vec2(0.095909, 0.388710));"
-				        ""
-				        "mat4 ScaleMatrix (const in vec3 s)"
-				        "{"
-				        "	return mat4(s.x, 0.0, 0.0, 0.0,"
-				        "				0.0, s.y, 0.0, 0.0,"
-				        "				0.0, 0.0, s.z, 0.0,"
-				        "				0.0, 0.0, 0.0, 1.0);"
-				        "}"
-				        ""
-				        "mat4 TranslateMatrix (const in vec3 t)"
-				        "{"
-				        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-				        "				0.0, 1.0, 0.0, 0.0,"
-				        "				0.0, 0.0, 1.0, 0.0,"
-				        "				t.x, t.y, t.z, 1.0);"
-				        "}"
-				        ""
-				        "mat4 RotateMatrix( const in float angle,"
-				        "					const in vec3 axis )"
-				        "{"
-				        "	vec3 n = normalize( axis );"
-				        "	float theta = radians( angle );"
-				        "	float c = cos( theta );"
-				        "	float s = sin( theta );"
-				        "	mat3 R;"
-				        "	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-				        "	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-				        "	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-				        "	return mat4( R[0],	0.0,"
-				        "				 R[1],	0.0,"
-				        "				 R[2],	0.0,"
-				        "				 0.0, 0.0, 0.0, 1.0 );"
-				        "}"
-				        ""
-				        "mat4 RotateMatrixAlongZ (const in float angle)"
-				        "{"
-				        "	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-				        "}"
-				        ""
-				        "void main()"
-				        "{"
-						//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-					"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-				        "	vec4 vertex;"
-				        ""
-				        "	if(u_AA) {"
-				        "		mat4 aa_matrix = mat4(1.0);"
-				        "		vec4 col_calib;"
-				        "		for(int jit = 0; jit < 8; jit++) {"
-				        "			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-				        "			for(int n = 0; n < gl_in.length(); n++)"
-				        "			{"
-				        "				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				        "				col_calib = VertexColor[n];"
-				        "				col_calib.a = col_calib.a/8;"
-				        "				PreFragColor = col_calib;"
-				        "				gl_Position = vertex;"
-				        "				EmitVertex();"
-				        "			}"
-				        "			EndPrimitive();"
-				        "		}"
-				        "		return;"
-				        "	} else {"
-				        "		for(int n = 0; n < gl_in.length(); n++) {"
-				        "			vertex = mvp * gl_in[n].gl_Position;"
-				        "			PreFragColor = VertexColor[n];"
-				        "			gl_Position = vertex;"
-				        "			EmitVertex();"
-				        "		}"
-				        "		EndPrimitive();"
-				        "		return;"
-				        "	}"
-				        ""
-				        "}";
-
-		const char* Shaders::triangle_fragment_shader =
-		        "#version 330\n"
-				        ""
-				        "in vec4 PreFragColor;"
-				        "uniform bool u_AA = false;"
-				        "uniform int u_gamma = 0;"
-				        "out vec4 FragmentColor;"
-				        ""
-				        "void main(void) {"
-				        "	vec4 color_calib = vec4(0.0);"
-				        "	if(u_AA) {"
-				        "		color_calib = vec4(vec3(clamp(u_gamma/255.0/8.0, -1.0, 1.0)), 0.0);"
-				        "	} else {"
-				        "		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
-				        "	}"
-				        "	FragmentColor = PreFragColor + color_calib;"
-				        "}";
-
-		// ---------------------------------------------------------------
-
-		const char* Shaders::widget_vertex_shader_ext =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec3 a_coord;"
-				"out float VertexShade;"
-				""
-				"void main(void) {"
-				"	gl_Position = vec4(a_coord.xy, 0.0, 1.0);"
-				"	VertexShade = a_coord.z;"
-				"}";
-
-		const char* Shaders::widget_geometry_shader_ext =
-		        "#version 330\n"
-				""
-				"layout (triangles) in;"
-				"layout (triangle_strip, max_vertices = 24) out;"
-				"in float VertexShade[];"
-				""
-				//"uniform mat4 u_projection;"	// projection matrix
-				//"uniform mat4 u_view;"			// view matrix
-				//""
-				"uniform UIMatrix {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"};"
-				""
-				"uniform vec3 u_position;"// position
-				"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-				"uniform vec2 u_scale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
-				"uniform bool u_AA = false;"
-				"out float PreFragShade;"
+				"uniform vec2 uPosition;"// position
+				"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+				"uniform vec2 uScale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
+				"uniform bool uAA = false;"
 				""
 				"const vec2 AA_JITTER[8] = vec2[8]("
 				"	vec2(0.468813, -0.481430),"
@@ -314,20 +179,20 @@ namespace BlendInt {
 				"	vec2(-0.272855, 0.269918),"
 				"	vec2(0.095909, 0.388710));"
 				""
-				"mat4 ScaleMatrix (const in vec3 s)"
+				"mat4 ScaleMatrix (const in vec2 s)"
 				"{"
 				"	return mat4(s.x, 0.0, 0.0, 0.0,"
 				"				0.0, s.y, 0.0, 0.0,"
-				"				0.0, 0.0, s.z, 0.0,"
+				"				0.0, 0.0, 0.0, 0.0,"
 				"				0.0, 0.0, 0.0, 1.0);"
 				"}"
 				""
-				"mat4 TranslateMatrix (const in vec3 t)"
+				"mat4 TranslateMatrix (const in vec2 t)"
 				"{"
 				"	return mat4(1.0, 0.0, 0.0, 0.0,"
 				"				0.0, 1.0, 0.0, 0.0,"
 				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, t.z, 1.0);"
+				"				t.x, t.y, 0.0, 1.0);"
 				"}"
 				""
 				"mat4 RotateMatrix( const in float angle,"
@@ -354,18 +219,21 @@ namespace BlendInt {
 				""
 				"void main()"
 				"{"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
-				"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation) * ScaleMatrix(vec3(u_scale.xy, 1.f));"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(vec3(uScale.xy, 1.f));"
+				"	mat4 mvp = projection * view *  model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(uScale);"
 				"	vec4 vertex;"
 				""
-				"	if(u_AA) {"
+				"	if(uAA) {"
 				"		mat4 aa_matrix = mat4(1.0);"
+				"		vec4 col_calib;"
 				"		for(int jit = 0; jit < 8; jit++) {"
 				"			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
 				"			for(int n = 0; n < gl_in.length(); n++)"
 				"			{"
 				"				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				"				PreFragShade = VertexShade[n];"
+				"				col_calib = VertexColor[n];"
+				"				col_calib.a = col_calib.a/8;"
+				"				PreFragColor = col_calib;"
 				"				gl_Position = vertex;"
 				"				EmitVertex();"
 				"			}"
@@ -375,7 +243,7 @@ namespace BlendInt {
 				"	} else {"
 				"		for(int n = 0; n < gl_in.length(); n++) {"
 				"			vertex = mvp * gl_in[n].gl_Position;"
-				"			PreFragShade = VertexShade[n];"
+				"			PreFragColor = VertexColor[n];"
 				"			gl_Position = vertex;"
 				"			EmitVertex();"
 				"		}"
@@ -385,43 +253,191 @@ namespace BlendInt {
 				""
 				"}";
 
-		const char* Shaders::widget_fragment_shader_ext =
-		        "#version 330\n"
+		const char* Shaders::widget_triangle_fragment_shader =
+				"#version 330\n"
 				""
-				"in float PreFragShade;"
-				"uniform vec4 u_color;"
-				"uniform bool u_AA = false;"
-				"uniform int u_gamma = 0;"
+				"in vec4 PreFragColor;"
+				"uniform bool uAA = false;"
+				"uniform int uGamma = 0;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color = u_color;"
 				"	vec4 color_calib = vec4(0.0);"
-				"	if(u_AA) {"
-				"		color.a = color.a / 8.f;"
-				"		color_calib = vec4(vec3(clamp(u_gamma/255.0/8.0, -1.0, 1.0)), 0.0);"
+				"	if(uAA) {"
+				"		color_calib = vec4(vec3(clamp(uGamma/255.0/8.0, -1.0, 1.0)), 0.0);"
 				"	} else {"
-				"		color_calib = vec4(vec3(clamp(u_gamma/255.0, -1.0, 1.0)), 0.0);"
+				"		color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
 				"	}"
-				"	FragmentColor = vec4(PreFragShade, PreFragShade, PreFragShade, 0.f) + color_calib + color;"
+				"	FragmentColor = PreFragColor + color_calib;"
+				"}";
+
+		// ---------------------------------------------------------------
+
+		const char* Shaders::widget_inner_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"out float VertexShade;"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
+
+		const char* Shaders::widget_inner_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+				"}";
+
+		const char* Shaders::widget_split_inner_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				""
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"out float VertexShade;"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
+
+		const char* Shaders::widget_split_inner_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 u_color0;"
+				"uniform vec4 u_color1;"
+				"uniform int uGamma = 0;"
+				"uniform float u_parting = 10.f;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				""
+				"	if(gl_FragCoord.x <= u_parting) {"
+				"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
+				"	} else {"
+				"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color1;"
+				"	}"
+				"}";
+
+		// ---------------------------------------------------------------
+
+		const char* Shaders::widget_outer_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec2 aCoord;"
+				""
+				"void main(void) {"
+				"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
+				"}";
+
+		const char* Shaders::widget_outer_geometry_shader =
+		        "#version 330\n"
+				""
+				"layout (triangles) in;"
+				"layout (triangle_strip, max_vertices = 24) out;"
+				""
+				//"uniform mat4 u_projection;"	// projection matrix
+				//"uniform mat4 u_view;"			// view matrix
+				//""
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				""
+				"const vec2 AA_JITTER[8] = vec2[8]("
+				"	vec2(0.468813, -0.481430),"
+				"	vec2(-0.155755, -0.352820),"
+				"	vec2(0.219306, -0.238501),"
+				"	vec2(-0.393286,-0.110949),"
+				"	vec2(-0.024699, 0.013908),"
+				"	vec2(0.343805, 0.147431),"
+				"	vec2(-0.272855, 0.269918),"
+				"	vec2(0.095909, 0.388710));"
+				""
+				"mat4 TranslateMatrix (const in vec2 t)"
+				"{"
+				"	return mat4(1.0, 0.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0, 0.0,"
+				"				0.0, 0.0, 1.0, 0.0,"
+				"				t.x, t.y, 0.0, 1.0);"
+				"}"
+				""
+				"void main()"
+				"{"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	vec4 vertex;"
+				""
+				"	mat4 aa_matrix = mat4(1.0);"
+				"	for(int jit = 0; jit < 8; jit++) {"
+				"		aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"		for(int n = 0; n < gl_in.length(); n++)"
+				"		{"
+				"			vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
+				"			gl_Position = vertex;"
+				"			EmitVertex();"
+				"		}"
+				"		EndPrimitive();"
+				"	}"
+				"	return;"
+				""
+				"}";
+
+		const char* Shaders::widget_outer_fragment_shader =
+		        "#version 330\n"
+				""
+				"uniform vec4 uColor;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color = uColor;"
+				"	color.a = color.a / 8.f;"
+				""
+				"	FragmentColor = color;"
 				"}";
 
 		// ---------------------------------------------------------------
 
 		const char* Shaders::context_vertex_shader = "#version 330\n"
-				"layout(location = 0) in vec2 a_coord;"
+				"layout(location = 0) in vec2 aCoord;"
 				"layout(location = 1) in vec2 UVCoord;"
 				"uniform mat4 MVP;"
 				"out vec2 f_texcoord;"
 				""
 				"void main(void) {"
-				"	gl_Position = MVP * vec4(a_coord, 0.0, 1.0);"
+				"	gl_Position = MVP * vec4(aCoord, 0.0, 1.0);"
 				"	f_texcoord = UVCoord;"
 				"}";
 
 		const char* Shaders::context_fragment_shader = "#version 330\n"
 				"in vec2 f_texcoord;"
-				"uniform sampler2D TexID;"
+				"uniform sampler2D uTexture;"
 				//"uniform bool Blur = false;"
 				"out vec4 FragmentColor;"
 				//"const float gaussian_kernel[9] = float[9]("
@@ -440,7 +456,7 @@ namespace BlendInt {
 				 "		float grey;"
 				 "		color = vec4(grey, grey, grey, 0.25f);"
 				 ""
-				 "		ivec2 tex_size = textureSize(TexID, 0);"
+				 "		ivec2 tex_size = textureSize(uTexture, 0);"
 				 "		float s = float(tex_size.s);"
 				 "		float t = float(tex_size.t);"
 				 "		vec4 sum = vec4(0.0);"
@@ -453,7 +469,7 @@ namespace BlendInt {
 				 ""
 				 "		for(int i = 0; i < 9; i++)"
 				 "		{"
-				 "			color = texture(TexID, f_texcoord + offset[i]);"
+				 "			color = texture(uTexture, f_texcoord + offset[i]);"
 				 "			grey = dot(color.rgb, vec3(0.25, 0.25, 0.25));"
 				 "			sample[i] = vec4(grey, grey, grey, color.a * 0.25);"
 				 "			sum += sample[i] * gaussian_kernel[i];"
@@ -465,13 +481,13 @@ namespace BlendInt {
 				 ""
 				 "	} else {"
 				 */
-				"		FragmentColor = texture(TexID, f_texcoord);"
+				"		FragmentColor = texture(uTexture, f_texcoord);"
 				//"	}"
 				"}";
 
-		const char* Shaders::image_vertex_shader =
+		const char* Shaders::widget_image_vertex_shader =
 				"#version 330\n"
-				"layout(location = 0) in vec2 a_coord;"
+				"layout(location = 0) in vec2 aCoord;"
 				"layout(location = 1) in vec2 a_uv;"
 				"out vec2 f_texcoord;"
 				""
@@ -481,17 +497,18 @@ namespace BlendInt {
 				"uniform UIMatrix {"
 				"	mat4 projection;"
 				"	mat4 view;"
+				"	mat4 model;"
 				"};"
 				""
-				"uniform vec3 u_position;"// position
-        		"uniform float u_rotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+				"uniform vec2 uPosition;"// position
+        		"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
 				""
-		        "mat4 TranslateMatrix (const in vec3 t)"
+		        "mat4 TranslateMatrix (const in vec2 t)"
 		        "{"
 		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
 		        "				0.0, 1.0, 0.0, 0.0,"
 		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, t.z, 1.0);"
+		        "				t.x, t.y, 0.0, 1.0);"
 		        "}"
 		        ""
 		        "mat4 RotateMatrix( const in float angle,"
@@ -517,117 +534,263 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	mat4 mvp = projection * view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"	gl_Position = mvp * vec4(a_coord, 0.0, 1.0);"
+				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
+				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
 				"	f_texcoord = a_uv;"
 				"}";
 
-		const char* Shaders::image_fragment_shader =
+		const char* Shaders::widget_image_fragment_shader =
 		        "#version 330\n"
 				"in vec2 f_texcoord;"
-				"uniform sampler2D TexID;"
-				"uniform int u_gamma = 0;"
+				"uniform sampler2D uTexture;"
+				"uniform int uGamma = 0;"
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
 				"	vec4 color_calib = vec4(0.f);"
-				"	color_calib = vec4(vec3(clamp(u_gamma/255.f, -1.f, 1.f)), 0.f);"
-				"	vec4 color = texture(TexID, f_texcoord);"
+				"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
+				"	vec4 color = texture(uTexture, f_texcoord);"
 				"	FragmentColor = color + color_calib;"
 				"}";
 
-#else	// Legacy opengl
+		// -------------------------------------------
 
-		const char* Shaders::text_vertex_shader =
-		"#version 120\n"
-		"attribute vec4 coord;"
-		"uniform mat4 MVP;"
-		"varying vec2 texpos;"
-		""
-		"void main(void) {"
-		"  gl_Position = MVP * vec4(coord.xy, 0.0, 1.0);"
-		"  texpos = coord.zw;"
-		"}";
+		const char* Shaders::widget_line_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"out float VertexShade;"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
 
-		const char* Shaders::text_fragment_shader =
-		"#version 120\n"
-		"varying vec2 texpos;"
-		"uniform sampler2D tex;"
-		"uniform vec4 color;"
-		""
-		"void main(void) {"
-		"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
-		"}";
+		const char* Shaders::widget_line_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+				"}";
 
-		const char* Shaders::primitive_vertex_shader =
-		"#version 120\n"
-		""
-		"attribute vec3 coord3d;"
-		"attribute vec3 v_color;"
-		"uniform mat4 ModelViewProjectionMatrix;"
-		"varying vec3 f_color;"
-		""
-		"void main(void) {"
-		"	gl_Position = ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
-		"	f_color = v_color;"
-		"}";
+		// ---------------------------------------------------------------
 
-		const char* Shaders::primitive_fragment_shader =
-		"#version 120\n"
-		""
-		"varying vec3 f_color;"
-		""
-		"void main(void) {"
-		"	gl_FragColor = vec4(f_color, 1.0);"
-		"}";
+		const char* Shaders::frame_inner_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				"uniform FrameMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"
+				"out float VertexShade;"
+				""
+		        "mat4 TranslateMatrix (const in vec2 t)"
+		        "{"
+		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
+		        "				0.0, 1.0, 0.0, 0.0,"
+		        "				0.0, 0.0, 1.0, 0.0,"
+		        "				t.x, t.y, 0.0, 1.0);"
+		        "}"
+		        ""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
 
-		const char* Shaders::triangle_vertex_shader =
-		"#version 120\n"
-		""
-		"attribute vec2 xy;"
-		"attribute float z;"
-		"attribute vec4 color;"
-		"uniform mat4 MVP;"
-		"varying vec4 f_color;"
-		""
-		"void main(void) {"
-		"	gl_Position = MVP * vec4(xy, z, 1.0);"
-		"	f_color = color;"
-		"}";
+		const char* Shaders::frame_inner_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+				"}";
 
-		const char* Shaders::triangle_fragment_shader =
-		"#version 120\n"
-		""
-		"varying vec4 f_color;"
-		""
-		"void main(void) {"
-		"	gl_FragColor = f_color;"
-		"}";
+		// -----------------------------------
 
-		const char* Shaders::default_form_vertex_shader =
-		"#version 120\n"
-		""
-		"attribute vec2 xy;"
-		"attribute vec4 color;"
-		"uniform mat4 MVP;"
-		"varying vec4 f_color;"
-		""
-		"void main(void) {"
-		"	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
-		"	f_color = color;"
-		"}";
+		const char* Shaders::frame_outer_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec2 aCoord;"
+				""
+				"void main(void) {"
+				"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
+				"}";
 
-		const char* Shaders::default_form_fragment_shader =
-		"#version 120\n"
-		""
-		"varying vec4 f_color;"
-		""
-		"void main(void) {"
-		"	gl_FragColor = f_color;"
-		"}";
+		const char* Shaders::frame_outer_geometry_shader =
+		        "#version 330\n"
+				""
+				"layout (triangles) in;"
+				"layout (triangle_strip, max_vertices = 24) out;"
+				""
+				"uniform FrameMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				""
+				"const vec2 AA_JITTER[8] = vec2[8]("
+				"	vec2(0.468813, -0.481430),"
+				"	vec2(-0.155755, -0.352820),"
+				"	vec2(0.219306, -0.238501),"
+				"	vec2(-0.393286,-0.110949),"
+				"	vec2(-0.024699, 0.013908),"
+				"	vec2(0.343805, 0.147431),"
+				"	vec2(-0.272855, 0.269918),"
+				"	vec2(0.095909, 0.388710));"
+				""
+				"mat4 TranslateMatrix (const in vec2 t)"
+				"{"
+				"	return mat4(1.0, 0.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0, 0.0,"
+				"				0.0, 0.0, 1.0, 0.0,"
+				"				t.x, t.y, 0.0, 1.0);"
+				"}"
+				""
+				"void main()"
+				"{"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	vec4 vertex;"
+				""
+				"	mat4 aa_matrix = mat4(1.0);"
+				"	for(int jit = 0; jit < 8; jit++) {"
+				"		aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"		for(int n = 0; n < gl_in.length(); n++)"
+				"		{"
+				"			vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
+				"			gl_Position = vertex;"
+				"			EmitVertex();"
+				"		}"
+				"		EndPrimitive();"
+				"	}"
+				"	return;"
+				""
+				"}";
 
-#endif
+		const char* Shaders::frame_outer_fragment_shader =
+		        "#version 330\n"
+				""
+				"uniform vec4 uColor;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color = uColor;"
+				"	color.a = color.a / 8.f;"
+				""
+				"	FragmentColor = color;"
+				"}";
+
+		// -----------------------------------
+
+		const char* Shaders::frame_image_vertex_shader =
+				"#version 330\n"
+				"layout(location = 0) in vec2 aCoord;"
+				"layout(location = 1) in vec2 aUV;"
+				"out vec2 fTexcoord;"
+				""
+				"uniform FrameMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				""
+		        "mat4 TranslateMatrix (const in vec2 t)"
+		        "{"
+		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
+		        "				0.0, 1.0, 0.0, 0.0,"
+		        "				0.0, 0.0, 1.0, 0.0,"
+		        "				t.x, t.y, 0.0, 1.0);"
+		        "}"
+		        ""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
+				"	fTexcoord = aUV;"
+				"}";
+
+		const char* Shaders::frame_image_fragment_shader =
+		        "#version 330\n"
+				"in vec2 fTexcoord;"
+				"uniform sampler2D uTexture;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(0.f);"
+				"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
+				"	vec4 color = texture(uTexture, fTexcoord);"
+				"	FragmentColor = color + color_calib;"
+				"}";
+
+		// -----------------------------------
+
+		const char* Shaders::frame_shadow_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec2 aCoord;"
+				"layout(location=1) in vec2 aUV;"
+				""
+				"uniform FrameMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"
+				"out vec2 fUV;"
+				""
+		        "mat4 TranslateMatrix (const in vec2 t)"
+		        "{"
+		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
+		        "				0.0, 1.0, 0.0, 0.0,"
+		        "				0.0, 0.0, 1.0, 0.0,"
+		        "				t.x, t.y, 0.0, 1.0);"
+		        "}"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
+				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
+				"	fUV = aUV;"
+				"}";
+
+		const char* Shaders::frame_shadow_fragment_shader =
+		        "#version 330\n"
+				""
+				"in vec2 fUV;"
+				"uniform sampler2D uTexture;"
+				"uniform float uFactor = 1.f;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	FragmentColor = texture(uTexture, fUV) * uFactor;"
+				"}";
 
 		Shaders* Shaders::instance = 0;
 
@@ -657,22 +820,32 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: ui_matrix_block_size_(0),
-			ui_matrix_binding_point_(1)
+		: widget_matrix_block_size_(0),
+		  widget_matrix_binding_point_(1),
+		  frame_matrix_block_size_(0),
+		  frame_matrix_binding_point_(2)
 		{
-			text_program_.reset(new GLSLProgram);
+			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
-			triangle_program_.reset(new GLSLProgram);
-			widget_program_.reset(new GLSLProgram);
-			image_program_.reset(new GLSLProgram);
+			widget_triangle_program_.reset(new GLSLProgram);
+			widget_inner_program_.reset(new GLSLProgram);
+			widget_split_inner_program_.reset(new GLSLProgram);
+			widget_outer_program_.reset(new GLSLProgram);
+			widget_image_program_.reset(new GLSLProgram);
+			widget_line_program_.reset(new GLSLProgram);
+			frame_inner_program_.reset(new GLSLProgram);
+			frame_outer_program_.reset(new GLSLProgram);
+			frame_image_program_.reset(new GLSLProgram);
+			frame_shadow_program_.reset(new GLSLProgram);
 		}
 
 		Shaders::~Shaders ()
 		{
 		}
 
-		void Shaders::GetUIProjectionMatrix(glm::mat4& matrix)
+		void Shaders::GetWidgetProjectionMatrix(glm::mat4& matrix)
 		{
+			/*
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
@@ -680,86 +853,189 @@ namespace BlendInt {
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+
+			matrix = widget_projection_matrix_;
 		}
 
-		void Shaders::GetUIViewMatrix(glm::mat4& matrix)
+		void Shaders::SetWidgetProjectionMatrix(const glm::mat4& matrix)
 		{
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[0], widget_matrix_offset_[1] - widget_matrix_offset_[0], glm::value_ptr(matrix));
+			widget_matrix_->reset();
+
+			widget_projection_matrix_ = matrix;
+		}
+
+		void Shaders::PushWidgetProjectionMatrix()
+		{
+			glm::mat4 matrix;
+			GetWidgetProjectionMatrix(matrix);
+			widget_projection_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopWidgetProjectionMatrix()
+		{
+			if(widget_projection_matrix_stack.size()) {
+				SetWidgetProjectionMatrix(widget_projection_matrix_stack.top());
+				widget_projection_matrix_stack.pop();
+			}
+		}
+
+		void Shaders::GetWidgetViewMatrix(glm::mat4& matrix)
+		{
+			// FIXME: the following commented lines does not work, but I don't know why
+			// cause the same code in GetUIProjectionMatrix() works
+			/*
 			ui_matrix_->bind();
 			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
 
-			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[1], ui_matrix_block_size_ - ui_matrix_offset_[1]);
+			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[2], ui_matrix_offset_[2] - ui_matrix_offset_[1]);
 
 			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+			matrix = widget_view_matrix_;
 		}
 
-		void Shaders::SetUIProjectionMatrix(const glm::mat4& matrix)
+		void Shaders::SetWidgetViewMatrix(const glm::mat4& matrix)
 		{
-			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[0], ui_matrix_offset_[1] - ui_matrix_offset_[0], glm::value_ptr(matrix));
-			ui_matrix_->reset();
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[1], widget_matrix_offset_[2]- widget_matrix_offset_[1], glm::value_ptr(matrix));
+			widget_matrix_->reset();
+
+			widget_view_matrix_ = matrix;
 		}
 
-		void Shaders::SetUIViewMatrix(const glm::mat4& matrix)
+		void Shaders::PushWidgetViewMatrix()
 		{
+			glm::mat4 matrix;
+			GetWidgetViewMatrix(matrix);
+			widget_view_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopWidgetViewMatrix()
+		{
+			if(widget_view_matrix_stack.size()) {
+				SetWidgetViewMatrix(widget_view_matrix_stack.top());
+				widget_view_matrix_stack.pop();
+			}
+		}
+
+		void Shaders::GetWidgetModelMatrix(glm::mat4& matrix)
+		{
+			/*
 			ui_matrix_->bind();
-			ui_matrix_->set_sub_data(ui_matrix_offset_[1], ui_matrix_block_size_ - ui_matrix_offset_[1], glm::value_ptr(matrix));
+			float* buf_p = (float*)ui_matrix_->map(GL_READ_ONLY);
+
+			memcpy(glm::value_ptr(matrix), buf_p + ui_matrix_offset_[2], ui_matrix_block_size_ - ui_matrix_offset_[2]);
+
+			ui_matrix_->unmap();
 			ui_matrix_->reset();
+			*/
+			matrix = widget_model_matrix_;
+		}
+
+		void Shaders::SetWidgetModelMatrix (const glm::mat4& matrix)
+		{
+			widget_matrix_->bind();
+			widget_matrix_->set_sub_data(widget_matrix_offset_[2], widget_matrix_block_size_- widget_matrix_offset_[2], glm::value_ptr(matrix));
+			widget_matrix_->reset();
+			widget_model_matrix_ = matrix;
+		}
+
+		void Shaders::PushWidgetModelMatrix()
+		{
+			glm::mat4 matrix;
+			GetWidgetModelMatrix(matrix);
+			widget_model_matrix_stack.push(matrix);
+		}
+
+		void Shaders::PopWidgetModelMatrix()
+		{
+			if(widget_model_matrix_stack.size()) {
+				SetWidgetModelMatrix(widget_model_matrix_stack.top());
+				widget_model_matrix_stack.pop();
+			}
 		}
 
 		bool Shaders::Setup ()
 		{
-			if(!SetupWidgetProgram())
+			if(!SetupWidgetInnerProgram())
 				return false;
 
-			if(!SetupTextProgram())
+			if(!SetupWidgetSplitInnerProgram())
 				return false;
 
-			if(!SetupTriangleProgram())
+			if(!SetupWidgetOuterProgram())
 				return false;
 
-			if(!SetupImageProgram())
+			if(!SetupWidgetTextProgram())
+				return false;
+
+			if(!SetupWidgetTriangleProgram())
+				return false;
+
+			if(!SetupWidgetImageProgram())
+				return false;
+
+			if(!SetupWidgetLineProgram())
 				return false;
 
 			if(!SetupPrimitiveProgram())
+				return false;
+
+			if(!SetupFrameInnerProgram())
+				return false;
+
+			if(!SetupFrameOuterProgram())
+				return false;
+
+			if(!SetupFrameImageProgram())
+				return false;
+
+			if(!SetupFrameShadowProgram())
 				return false;
 
 			// setup uniform block
 
 			const GLchar* names[] = {
 				"projection",
-				"view"
+				"view",
+				"model"
 			};
 
-			GLuint block_index = glGetUniformBlockIndex(widget_program_->id(), "UIMatrix");
+			GLuint block_index = glGetUniformBlockIndex(widget_inner_program_->id(), "UIMatrix");
 
-			glGetActiveUniformBlockiv(widget_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &ui_matrix_block_size_);
+			glGetActiveUniformBlockiv(widget_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &widget_matrix_block_size_);
 
-			GLubyte* buf_p = (GLubyte*)malloc(ui_matrix_block_size_);
+			GLubyte* buf_p = (GLubyte*)malloc(widget_matrix_block_size_);
 
-			GLuint indices[2];
-			glGetUniformIndices(widget_program_->id(), 2, names, indices);
-			glGetActiveUniformsiv(widget_program_->id(), 2, indices, GL_UNIFORM_OFFSET, ui_matrix_offset_);
+			GLuint indices[3];
+			glGetUniformIndices(widget_inner_program_->id(), 3, names, indices);
+			glGetActiveUniformsiv(widget_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, widget_matrix_offset_);
 
 			// set default matrix
 			glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
 			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
 					glm::vec3(0.f, 0.f, 0.f),
 					glm::vec3(0.f, 1.f, 0.f));
+			glm::mat4 model(1.f);
 
-			if(ui_matrix_block_size_ > 0) {
-				memcpy(buf_p + ui_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
-				memcpy(buf_p + ui_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+			if(widget_matrix_block_size_ > 0) {
+				memcpy(buf_p + widget_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
+				memcpy(buf_p + widget_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+				memcpy(buf_p + widget_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
 			}
 
-			ui_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
-			ui_matrix_->generate();
-			ui_matrix_->bind();
-			ui_matrix_->set_data(ui_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
-			ui_matrix_->reset();
+			widget_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			widget_matrix_->generate();
+			widget_matrix_->bind();
+			widget_matrix_->set_data(widget_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			widget_matrix_->reset();
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(widget_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrix_binding_point_);
 
 			free(buf_p);
 			buf_p = 0;
@@ -769,147 +1045,302 @@ namespace BlendInt {
 			//GLint block_size = 0;
 			//GLint offset[2];
 
-			block_index = glGetUniformBlockIndex(text_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_split_inner_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(text_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(text_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, widget_matrix_binding_point_);
+
+			block_index = glGetUniformBlockIndex(widget_outer_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(text_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_outer_program_->id(), block_index, widget_matrix_binding_point_);
+
+			// set uniform block in text program
+
+			block_index = glGetUniformBlockIndex(widget_text_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(text_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_text_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in triangle program
 
-			block_index = glGetUniformBlockIndex(triangle_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_triangle_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(triangle_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_triangle_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in image program
 
-			block_index = glGetUniformBlockIndex(image_program_->id(), "UIMatrix");
+			block_index = glGetUniformBlockIndex(widget_image_program_->id(), "UIMatrix");
 			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 			//glGetUniformIndices(image_program_->id(), 2, names, indices);
 			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, ui_matrix_binding_point_, ui_matrix_->id());
-			glUniformBlockBinding(image_program_->id(), block_index, ui_matrix_binding_point_);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrix_binding_point_);
+
+			// set uniform block in line program
+
+			block_index = glGetUniformBlockIndex(widget_line_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_line_program_->id(), block_index, widget_matrix_binding_point_);
+
+			// ------------------------------ Frame matrix uniform block
+
+			block_index = glGetUniformBlockIndex(frame_inner_program_->id(), "FrameMatrix");
+
+			glGetActiveUniformBlockiv(frame_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &frame_matrix_block_size_);
+
+			buf_p = (GLubyte*)malloc(frame_matrix_block_size_);
+
+			glGetUniformIndices(frame_inner_program_->id(), 3, names, indices);
+			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, frame_matrix_offset_);
+
+			if(frame_matrix_block_size_ > 0) {
+				memcpy(buf_p + frame_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
+				memcpy(buf_p + frame_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
+				memcpy(buf_p + frame_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
+			}
+
+			frame_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			frame_matrix_->generate();
+			frame_matrix_->bind();
+			frame_matrix_->set_data(frame_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+			frame_matrix_->reset();
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_inner_program_->id(), block_index, frame_matrix_binding_point_);
+
+			free(buf_p);
+			buf_p = 0;
+
+			// set uniform block in frame outer program
+
+			block_index = glGetUniformBlockIndex(frame_outer_program_->id(), "FrameMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_outer_program_->id(), block_index, frame_matrix_binding_point_);
+
+			// set uniform block in frame image program
+
+			block_index = glGetUniformBlockIndex(frame_image_program_->id(), "FrameMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_image_program_->id(), block_index, frame_matrix_binding_point_);
+
+			// set uniform block in frame shadow program
+
+			block_index = glGetUniformBlockIndex(frame_shadow_program_->id(), "FrameMatrix");
+			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(image_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
+			glUniformBlockBinding(frame_shadow_program_->id(), block_index, frame_matrix_binding_point_);
 
 			return true;
 		}
 
-		bool Shaders::SetupTextProgram()
+		bool Shaders::SetupWidgetTextProgram()
 		{
-			if (!text_program_->Create())
+			if (!widget_text_program_->Create())
 				return false;
 
-			text_program_->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
-			text_program_->AttachShader(text_fragment_shader,
+			widget_text_program_->AttachShader(widget_text_vertex_shader, GL_VERTEX_SHADER);
+			widget_text_program_->AttachShader(widget_text_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!text_program_->Link()) {
+			if (!widget_text_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the text program: %d",
-				        text_program_->id());
+				        widget_text_program_->id());
 				return false;
 			}
 
-			locations_[TEXT_COORD] = text_program_->GetAttributeLocation("a_coord");
+			locations_[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
 			//locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
 			//locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
-			locations_[TEXT_POSITION] = text_program_->GetUniformLocation("u_position");
-			locations_[TEXT_ROTATION] = text_program_->GetUniformLocation("u_rotation");
-			locations_[TEXT_TEXTURE] = text_program_->GetUniformLocation("u_tex");
-			locations_[TEXT_COLOR] = text_program_->GetUniformLocation("u_color");
+			locations_[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
+			locations_[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
+			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
+
+			/*
+			Stock::location[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
+			//location[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
+			//location[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
+			Stock::location[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
+			Stock::location[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
+			Stock::location[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
+			Stock::location[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
+			*/
 
 			return true;
 		}
 
-		bool Shaders::SetupTriangleProgram()
+		bool Shaders::SetupWidgetTriangleProgram()
 		{
-			if (!triangle_program_->Create()) {
+			if (!widget_triangle_program_->Create()) {
 				return false;
 			}
 
-			triangle_program_->AttachShader(
-			        triangle_vertex_shader, GL_VERTEX_SHADER);
-			triangle_program_->AttachShader(
-			        triangle_geometry_shader,
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_vertex_shader, GL_VERTEX_SHADER);
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_geometry_shader,
 			        GL_GEOMETRY_SHADER);
-			triangle_program_->AttachShader(
-			        triangle_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!triangle_program_->Link()) {
+			widget_triangle_program_->AttachShader(
+			        widget_triangle_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_triangle_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        triangle_program_->id());
+				        widget_triangle_program_->id());
 				return false;
 			}
 
-			locations_[TRIANGLE_COORD] = triangle_program_->GetAttributeLocation("a_coord");
-			locations_[TRIANGLE_COLOR] = triangle_program_->GetAttributeLocation("a_color");
+			locations_[WIDGET_TRIANGLE_COORD] = widget_triangle_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_TRIANGLE_COLOR] = widget_triangle_program_->GetAttributeLocation("aColor");
 			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
 			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
-			locations_[TRIANGLE_POSITION] = triangle_program_->GetUniformLocation("u_position");
-			locations_[TRIANGLE_ROTATION] = triangle_program_->GetUniformLocation("u_rotation");
-			locations_[TRIANGLE_SCALE] = triangle_program_->GetUniformLocation("u_scale");
-			locations_[TRIANGLE_ANTI_ALIAS] = triangle_program_->GetUniformLocation("u_AA");
-			locations_[TRIANGLE_GAMMA] = triangle_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_TRIANGLE_POSITION] = widget_triangle_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_TRIANGLE_ROTATION] = widget_triangle_program_->GetUniformLocation("uRotation");
+			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("uScale");
+			locations_[WIDGET_TRIANGLE_ANTI_ALIAS] = widget_triangle_program_->GetUniformLocation("uAA");
+			locations_[WIDGET_TRIANGLE_GAMMA] = widget_triangle_program_->GetUniformLocation("uGamma");
 
 			return true;
 		}
 
-		bool Shaders::SetupWidgetProgram()
+		bool Shaders::SetupWidgetInnerProgram()
 		{
-			if (!widget_program_->Create()) {
+			if (!widget_inner_program_->Create()) {
 				return false;
 			}
 
-			widget_program_->AttachShader(
-			        widget_vertex_shader_ext, GL_VERTEX_SHADER);
-			widget_program_->AttachShader(
-			        widget_geometry_shader_ext,
+			widget_inner_program_->AttachShader(
+			        widget_inner_vertex_shader, GL_VERTEX_SHADER);
+			widget_inner_program_->AttachShader(
+			        widget_inner_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_inner_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget inner program: %d",
+						widget_inner_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_INNER_COORD] = widget_inner_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_INNER_COLOR] = widget_inner_program_->GetUniformLocation("uColor");
+			locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetSplitInnerProgram()
+		{
+			if (!widget_split_inner_program_->Create()) {
+				return false;
+			}
+
+			widget_split_inner_program_->AttachShader(
+			        widget_split_inner_vertex_shader, GL_VERTEX_SHADER);
+			widget_split_inner_program_->AttachShader(
+			        widget_split_inner_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_split_inner_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget split inner program: %d",
+						widget_split_inner_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_SPLIT_INNER_COORD] = widget_split_inner_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_SPLIT_INNER_COLOR0] = widget_split_inner_program_->GetUniformLocation("u_color0");
+			locations_[WIDGET_SPLIT_INNER_COLOR1] = widget_split_inner_program_->GetUniformLocation("u_color1");
+			locations_[WIDGET_SPLIT_INNER_PARTING] = widget_split_inner_program_->GetUniformLocation("u_parting");
+			locations_[WIDGET_SPLIT_INNER_GAMMA] = widget_split_inner_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetOuterProgram()
+		{
+			if (!widget_outer_program_->Create()) {
+				return false;
+			}
+
+			widget_outer_program_->AttachShader(
+			        widget_outer_vertex_shader, GL_VERTEX_SHADER);
+			widget_outer_program_->AttachShader(
+			        widget_outer_geometry_shader,
 			        GL_GEOMETRY_SHADER);
-			widget_program_->AttachShader(
-			        widget_fragment_shader_ext, GL_FRAGMENT_SHADER);
-			if (!widget_program_->Link()) {
-				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        widget_program_->id());
+			widget_outer_program_->AttachShader(
+			        widget_outer_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_outer_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget outer program: %d",
+						widget_outer_program_->id());
 				return false;
 			}
 
-			locations_[WIDGET_COORD] = widget_program_->GetAttributeLocation("a_coord");
-			locations_[WIDGET_COLOR] = widget_program_->GetUniformLocation("u_color");
-			//locations_[WIDGET_PROJECTION] = widget_program_->GetUniformLocation("u_projection");
-			//locations_[WIDGET_VIEW] = widget_program_->GetUniformLocation("u_view");
-			locations_[WIDGET_POSITION] = widget_program_->GetUniformLocation("u_position");
-			locations_[WIDGET_ROTATION] = widget_program_->GetUniformLocation("u_rotation");
-			locations_[WIDGET_SCALE] = widget_program_->GetUniformLocation("u_scale");
-			locations_[WIDGET_ANTI_ALIAS] = widget_program_->GetUniformLocation("u_AA");
-			locations_[WIDGET_GAMMA] = widget_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_OUTER_COORD] = widget_outer_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation("uColor");
+			locations_[WIDGET_OUTER_POSITION] = widget_outer_program_->GetUniformLocation("uPosition");
 
 			return true;
 		}
 
-		bool Shaders::SetupImageProgram()
+		bool Shaders::SetupWidgetImageProgram()
 		{
-			if (!image_program_->Create()) {
+			if (!widget_image_program_->Create()) {
 				return false;
 			}
 
-			image_program_->AttachShader(image_vertex_shader,
+			widget_image_program_->AttachShader(widget_image_vertex_shader,
 			        GL_VERTEX_SHADER);
-			image_program_->AttachShader(image_fragment_shader,
+			widget_image_program_->AttachShader(widget_image_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!image_program_->Link()) {
+			if (!widget_image_program_->Link()) {
 				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
-				        image_program_->id());
+				        widget_image_program_->id());
 				return false;
 			}
 
-			locations_[IMAGE_COORD] = image_program_->GetAttributeLocation("a_coord");
-			locations_[IMAGE_UV] = image_program_->GetAttributeLocation("a_uv");
+			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("a_uv");
 			//locations_[IMAGE_PROJECTION] = image_program_->GetUniformLocation("u_projection");
 			//locations_[IMAGE_VIEW] = image_program_->GetUniformLocation("u_view");
-			locations_[IMAGE_POSITION] = image_program_->GetUniformLocation("u_position");
-			locations_[IMAGE_ROTATION] = image_program_->GetUniformLocation("u_rotation");
-			locations_[IMAGE_TEXTURE] = image_program_->GetUniformLocation("TexID");
-			locations_[IMAGE_GAMMA] = image_program_->GetUniformLocation("u_gamma");
+			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("uRotation");
+			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("uTexture");
+			locations_[WIDGET_IMAGE_GAMMA] = widget_image_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetLineProgram()
+		{
+			if (!widget_line_program_->Create()) {
+				return false;
+			}
+
+			widget_line_program_->AttachShader(widget_line_vertex_shader,
+			        GL_VERTEX_SHADER);
+			widget_line_program_->AttachShader(widget_line_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!widget_line_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget line program: %d",
+						widget_line_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_LINE_COORD] = widget_line_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_LINE_COLOR] = widget_line_program_->GetUniformLocation("uColor");
 
 			return true;
 		}
@@ -939,6 +1370,123 @@ namespace BlendInt {
 			return true;
 		}
 
+		void Shaders::SetFrameProjectionMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[0], frame_matrix_offset_[1] - frame_matrix_offset_[0], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		void Shaders::SetFrameViewMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[1], frame_matrix_offset_[2]- frame_matrix_offset_[1], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		void Shaders::SetFrameModelMatrix(const glm::mat4& matrix)
+		{
+			frame_matrix_->bind();
+			frame_matrix_->set_sub_data(frame_matrix_offset_[2], frame_matrix_block_size_- frame_matrix_offset_[2], glm::value_ptr(matrix));
+			frame_matrix_->reset();
+		}
+
+		bool Shaders::SetupFrameInnerProgram()
+		{
+			if(!frame_inner_program_->Create()) {
+				return false;
+			}
+
+			frame_inner_program_->AttachShader(frame_inner_vertex_shader, GL_VERTEX_SHADER);
+			frame_inner_program_->AttachShader(frame_inner_fragment_shader, GL_FRAGMENT_SHADER);
+
+			if(!frame_inner_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame inner program: %d", frame_inner_program_->id());
+				return false;
+			}
+
+			locations_[FRAME_INNER_COORD] = frame_inner_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_INNER_COLOR] = frame_inner_program_->GetUniformLocation("uColor");
+			locations_[FRAME_INNER_POSITION] = frame_inner_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_INNER_GAMMA] = frame_inner_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupFrameOuterProgram()
+		{
+			if(!frame_outer_program_->Create()) {
+				return false;
+			}
+
+			frame_outer_program_->AttachShader(frame_outer_vertex_shader, GL_VERTEX_SHADER);
+			frame_outer_program_->AttachShader(frame_outer_geometry_shader, GL_GEOMETRY_SHADER);
+			frame_outer_program_->AttachShader(frame_outer_fragment_shader, GL_FRAGMENT_SHADER);
+
+			if(!frame_outer_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame outer program: %d", frame_outer_program_->id());
+				return false;
+			}
+
+			locations_[FRAME_OUTER_COORD] = frame_outer_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_OUTER_COLOR] = frame_outer_program_->GetUniformLocation("uColor");
+			locations_[FRAME_OUTER_POSITION] = frame_outer_program_->GetUniformLocation("uPosition");
+
+			return true;
+		}
+
+		bool Shaders::SetupFrameImageProgram()
+		{
+			if (!frame_image_program_->Create()) {
+				return false;
+			}
+
+			frame_image_program_->AttachShader(frame_image_vertex_shader,
+			        GL_VERTEX_SHADER);
+			frame_image_program_->AttachShader(frame_image_fragment_shader,
+			        GL_FRAGMENT_SHADER);
+			if (!frame_image_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame image program: %d",
+						frame_image_program_->id());
+				return false;
+			}
+
+			locations_[FRAME_IMAGE_COORD] = frame_image_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_IMAGE_UV] = frame_image_program_->GetAttributeLocation("aUV");
+			locations_[FRAME_IMAGE_POSITION] = frame_image_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_IMAGE_TEXTURE] = frame_image_program_->GetUniformLocation("uTexture");
+			locations_[FRAME_IMAGE_GAMMA] = frame_image_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupFrameShadowProgram()
+		{
+			if(!frame_shadow_program_->Create()) {
+				return false;
+			}
+
+			frame_shadow_program_->AttachShader(frame_shadow_vertex_shader, GL_VERTEX_SHADER);
+			frame_shadow_program_->AttachShader(frame_shadow_fragment_shader, GL_FRAGMENT_SHADER);
+
+			if(!frame_shadow_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the frame shadow program: %d", frame_shadow_program_->id());
+				return false;
+			}
+
+			//locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
+			//locations_[FRAME_SHADOW_COLOR] = frame_shadow_program_->GetUniformLocation("uColor");
+			//locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
+
+			locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
+			locations_[FRAME_SHADOW_UV] = frame_shadow_program_->GetAttributeLocation("aUV");
+			locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_SHADOW_FACTOR] = frame_shadow_program_->GetUniformLocation("uFactor");
+
+			return true;
+		}
+
 	}
 
 }
+

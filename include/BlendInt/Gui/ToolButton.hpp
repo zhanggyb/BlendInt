@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_GUI_TOOLBUTTON_HPP_
 #define _BLENDINT_GUI_TOOLBUTTON_HPP_
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
@@ -64,16 +66,19 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
 		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
 		void InitializeToolButton ();
 
-		GLuint vaos_[2];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+        GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		RefPtr<Action> action_;
 

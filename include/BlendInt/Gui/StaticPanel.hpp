@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -24,67 +24,46 @@
 #ifndef _BLENDINT_GUI_STATICPANEL_HPP_
 #define _BLENDINT_GUI_STATICPANEL_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/ImagePlane2D.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
-#include <BlendInt/Gui/AbstractPanel.hpp>
-#include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Gui/ImagePlane2D.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class StaticPanel: public AbstractPanel
+	/**
+	 * @brief A Frame container for demo only
+	 */
+	class StaticPanel: public BinLayout
 	{
+		DISALLOW_COPY_AND_ASSIGN(StaticPanel);
+
 	public:
 
 		StaticPanel ();
 
 		virtual ~StaticPanel ();
 
+		void RenderToFile (const std::string& filename);
+
 	protected:
-
-		virtual void PerformRefresh (const RefreshRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
-
 		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 
-		void InitializeStaticPanelOnce ();
+		void InitializeFramePanel ();
 
-		void RenderToBuffer ();
+		void RenderToBuffer (Profile& profile);
+
+		GLuint vao_;
+        
+        GLBuffer<> inner_;
 
 		ImagePlane2D tex_buffer_;
 
-		bool refresh_;
-
-		bool pressed_;
-
-		bool realign_;
-
-		Point last_position_;
-
-		Point cursor_position_;
-
-		GLuint vao_[2];
-
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
-
-		Shadow* shadow_;
 	};
 
 }

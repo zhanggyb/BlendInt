@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_SCROLLAREA_HPP_
 #define _BLENDINT_GUI_SCROLLAREA_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 
 namespace BlendInt {
 
-	class ScrollArea: public AbstractContainer
+	class ScrollArea: public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollArea);
 
@@ -50,20 +50,6 @@ namespace BlendInt {
 		void CentralizeViewport () const;
 
 	protected:
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual void PerformMarginUpdate (const Margin& request);
 

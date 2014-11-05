@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		void SetTexture (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
-		virtual void Draw (const glm::vec3& pos, short gamma = 0) const;
+		virtual void Draw (float x, float y, short gamma = 0) const;
 
 	protected:
 

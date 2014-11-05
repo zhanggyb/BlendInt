@@ -26,14 +26,14 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special widget used in virtual window only as the decoration
 	 */
-	class Decoration:  public AbstractContainer
+	class Decoration:  public Layout
 	{
 		DISALLOW_COPY_AND_ASSIGN(Decoration);
 
@@ -64,20 +64,6 @@ namespace BlendInt {
 		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

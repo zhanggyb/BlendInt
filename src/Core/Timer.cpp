@@ -34,8 +34,8 @@ namespace BlendInt {
 #if BLENDINT_USE_POSIX_TIMER
 			m_id (0),
 #endif
-			m_interval(40),
-			m_enabled(false)
+			interval_(40),
+			enabled_(false)
 	{
 		Create();
 	}
@@ -56,8 +56,8 @@ namespace BlendInt {
 #if BLENDINT_USE_POSIX_TIMER
 		struct itimerspec ts;
 
-		unsigned int sec = m_interval / 1000;
-		long nsec = (m_interval % 1000) * 1000 * 1000;
+		unsigned int sec = interval_ / 1000;
+		long nsec = (interval_ % 1000) * 1000 * 1000;
 
 		ts.it_interval.tv_sec = sec;
 		ts.it_interval.tv_nsec = nsec;
@@ -68,20 +68,20 @@ namespace BlendInt {
 
 		if(ret < 0) {
 			std::cerr << "Fail to start timer in " << __func__ << std::endl;
-			m_enabled = false;
+			enabled_ = false;
 		} else {
-			m_enabled = true;
+			enabled_ = true;
 		}
 #else
-		if(m_enabled) Stop();
+		if(enabled_) Stop();
 		
 		// Create a thread		
 		ret = pthread_create (&m_id, NULL, Timer::ThreadCallback, this);
 		if(ret == 0) {
-			m_enabled = true;
+			enabled_ = true;
 		} else {
 			std::cerr << "Fail to start timer in " << __func__ << std::endl;
-			m_enabled = false;
+			enabled_ = false;
 		}
 #endif
 
@@ -90,7 +90,7 @@ namespace BlendInt {
 	void Timer::Stop ()
 	{
 #if BLENDINT_USE_POSIX_TIMER
-		if(! m_enabled) return;
+		if(! enabled_) return;
 
 		int ret = -1;
 		struct itimerspec ts;
@@ -102,29 +102,29 @@ namespace BlendInt {
 			std::cerr << "Fail to stop timer in " << __func__ << std::endl;
 		}
 
-		m_enabled = false;
+		enabled_ = false;
 #else
-		if(m_enabled) {
+		if(enabled_) {
 			int ret = pthread_cancel(m_id);
 			if(ret != 0) {
 				std::cerr << "Error: Fail to cancel the timer thread!" << std::endl;
 			}
 			
-			m_enabled = false;
+			enabled_ = false;
 		}
 #endif
 	}
 
 	void Timer::SetInterval(unsigned int interval)
 	{
-		if(m_interval == interval) return;
+		if(interval_ == interval) return;
 
-		m_interval = interval;
+		interval_ = interval;
 
 #if BLENDINT_USE_POSIX_TIMER
-		if(m_enabled) Start ();
+		if(enabled_) Start ();
 #else
-		if(m_enabled) {
+		if(enabled_) {
 			Stop();
 			Start();
 		}
@@ -157,7 +157,7 @@ namespace BlendInt {
 	void Timer::ThreadCallback(union sigval sigev_value)
 	{
 		Timer* timer = static_cast<Timer*>(sigev_value.sival_ptr);
-		timer->m_timeout.fire();
+		timer->timeout_.fire(timer);
 	}
 
 #else
@@ -170,8 +170,8 @@ namespace BlendInt {
 
 		pthread_detach(pthread_self());
 
-		unsigned int sec = timer->m_interval / 1000;
-		long nsec = (timer->m_interval % 1000) * 1000 * 1000;
+		unsigned int sec = timer->interval_ / 1000;
+		long nsec = (timer->interval_ % 1000) * 1000 * 1000;
 
 		ts.tv_sec = sec;
 		ts.tv_nsec = nsec;
@@ -182,7 +182,7 @@ namespace BlendInt {
 			nanosleep (&ts, NULL);
 
 			if(timer->enabled()) {
-				timer->m_timeout.fire();
+				timer->timeout_.fire(timer);
 			} else {
 				break;
 			}

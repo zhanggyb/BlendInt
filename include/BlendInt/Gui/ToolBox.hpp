@@ -24,45 +24,61 @@
 #ifndef _BLENDINT_GUI_TOOLBOX_HPP_
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public AbstractContainer
+	class ToolBox: public Frame
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBox);
-
 	public:
 
-		ToolBox();
+		ToolBox (Orientation orientation = Horizontal);
 
-		virtual ~ToolBox();
+		ToolBox (int width, int height, Orientation orientation = Horizontal);
 
-		void Append (AbstractWidget* widget);
+		virtual ~ToolBox ();
+
+		void Add (Widget* widget, bool append = true);
+
+		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
 
+		Widget* focused_widget () const
+		{
+			return focused_widget_;
+		}
+
+		Widget* hovered_widget () const
+		{
+			return hovered_widget_;
+		}
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+		virtual void PostDraw (Profile& profile);
+
+		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -70,20 +86,44 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+
 	private:
 
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		void InitializeToolBoxOnce ();
 
-		void FillSubWidgets (int x, int y, int width, int height, int space);
+		void FillSubWidgets ();
+
+		void FillSubWidgetsHorizontally ();
+
+		void FillSubWidgetsVertically ();
 
 		int GetLastPosition () const;
 
-		GLuint vao_;
+		void SetFocusedWidget (Widget* widget);
+
+		void OnFocusedWidgetDestroyed (Widget* widget);
+
+		void OnHoverWidgetDestroyed (Widget* widget);
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
+
+		Widget* focused_widget_;
+
+		Widget* hovered_widget_;
 
 		int space_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLuint vao_;
 
+		GLBuffer<> inner_;
+
+		Margin margin_;
+
+		// Layout orientation
+		Orientation orientation_;
 	};
 
 }

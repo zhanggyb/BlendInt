@@ -21,12 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/BinLayout.hpp>
+
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	BinLayout::BinLayout()
-	: AbstractContainer()
+	: Layout()
 	{
 	}
 
@@ -34,48 +51,48 @@ namespace BlendInt {
 	{
 	}
 
-	bool BinLayout::Setup (AbstractWidget* widget)
+	bool BinLayout::Setup (Widget* widget)
 	{
 		bool ret = false;
 
 		if(!widget) return false;
 
-		if(widget->container() == this) return true;
+		if(widget->parent() == this) return true;
 
-		if(widget_count() > 0) {
-			Clear();
+		if(subs_count() > 0) {
+			ClearSubWidgets();
 		}
 
 		if (PushBackSubWidget(widget)) {
-			FillSingleWidget(0, position(), size(), margin());
+			FillSingleWidget(0, size(), margin());
 			ret = true;
 		}
 
 		return ret;
 	}
 
-	bool BinLayout::Remove (AbstractWidget* widget)
+	bool BinLayout::Remove (Widget* widget)
 	{
 		return RemoveSubWidget(widget);
 	}
 
 	bool BinLayout::IsExpandX () const
 	{
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			return false;
 		} else {
-			assert(widget_count() == 1);	// DEBUG
-			return first()->IsExpandX();
+			assert(subs_count() == 1);	// DEBUG
+			return first_child()->IsExpandX();
 		}
 	}
 
 	bool BinLayout::IsExpandY () const
 	{
-		if(widget_count() == 0) {
+		if(subs_count() == 0) {
 			return false;
 		} else {
-			assert(widget_count() == 1);	// DEBUG
-			return first()->IsExpandY();
+			assert(subs_count() == 1);	// DEBUG
+			return first_child()->IsExpandY();
 		}
 	}
 
@@ -83,7 +100,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		const AbstractWidget* widget = first();
+		const AbstractWidget* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -99,9 +116,9 @@ namespace BlendInt {
 	{
 		set_margin(request);
 
-		if(widget_count()) {
-			assert(widget_count() == 1);
-			FillSingleWidget(0, position(), size(), request);
+		if(subs_count()) {
+			assert(subs_count() == 1);
+			FillSingleWidget(0, size(), request);
 		}
 	}
 
@@ -110,75 +127,15 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (widget_count()) {
-				assert(widget_count() == 1);
-				FillSingleWidget(0, position(), *request.size(), margin());
+			if (subs_count()) {
+				assert(subs_count() == 1);
+				FillSingleWidget(0, *request.size(), margin());
 			}
 		}
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	void BinLayout::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			set_position(*request.position());
-
-			if(widget_count()) {
-				assert(widget_count() == 1);
-				SetSubWidgetPosition(first(),
-						request.position()->x() + margin().left(),
-						request.position()->y() + margin().bottom());
-			}
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
-	ResponseType BinLayout::Draw (Profile& profile)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType BinLayout::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
 	}
 
 }
