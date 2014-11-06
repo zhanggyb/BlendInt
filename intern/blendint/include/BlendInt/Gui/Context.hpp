@@ -30,8 +30,6 @@
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
-#include <BlendInt/Gui/ImagePlane2D.hpp>
-
 namespace BlendInt {
 
 	/**

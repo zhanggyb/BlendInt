@@ -39,6 +39,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 namespace BlendInt {
 
@@ -49,7 +50,6 @@ namespace BlendInt {
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),
-	vao_(0),
 	orientation_(orientation)
 	{
 		if(orientation_ == Horizontal) {
@@ -66,7 +66,6 @@ namespace BlendInt {
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),
-	vao_(0),
 	orientation_(orientation)
 	{
 		set_size(width, height);
@@ -76,7 +75,7 @@ namespace BlendInt {
 
 	ToolBox::~ToolBox()
 	{
-		glDeleteVertexArrays(1, &vao_);
+		glDeleteVertexArrays(2, vao_);
 
 		if(focused_widget_) {
 			set_widget_focus_status(focused_widget_, false);
@@ -90,7 +89,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::Add (Widget* widget, bool append)
+	void ToolBox::AddWidget (Widget* widget, bool append)
 	{
 		if(orientation_ == Horizontal) {
 
@@ -257,8 +256,17 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 
-			inner_.bind();
+			inner_.bind(0);
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+			inner_.bind(1);
+			float* ptr = (float*)inner_.map();
+			*(ptr + 4) = (float)size().width();
+			*(ptr + 9) = (float)size().height();
+			*(ptr + 12) = (float)size().width();
+			*(ptr + 13) = (float)size().height();
+			inner_.unmap();
+
 			inner_.reset();
 
 			FillSubWidgets();
@@ -284,29 +292,56 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
 		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
-		glBindVertexArray(vao_);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 		GLSLProgram::reset();
+
+		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+
+        // TODO: render to buffer only when refresh flag set
+		RenderToBuffer(profile);
+
+		//texture_buffer_.bind();
+		//texture_buffer_.WriteToFile("file.png");
+		//texture_buffer_.reset();
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
 		return true;
 	}
 
 	ResponseType ToolBox::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
-			DispatchDrawEvent (p, profile);
-		}
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        
+        Shaders::instance->widget_image_program()->use();
+        
+        texture_buffer_.bind();
+        glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), 0.f, 0.f);
+        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
+        
+        glBindVertexArray(vao_[1]);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+        
+        texture_buffer_.reset();
+        GLSLProgram::reset();
+        
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		return subs_count() ? Ignore : Accept;
+		return Accept;
+
+//		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+//			DispatchDrawEvent (p, profile);
+//		}
+//
+//		return subs_count() ? Ignore : Accept;
 	}
 
 	void ToolBox::PostDraw (Profile& profile)
@@ -432,15 +467,38 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
 		inner_.generate();
-		inner_.bind();
+		inner_.bind(0);
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		GLfloat vertices[] = {
+				// coord											uv
+				0.f, 0.f,											0.f, 0.f,
+				(float)size().width(), 0.f,							1.f, 0.f,
+				0.f, (float)size().height(),						0.f, 1.f,
+				(float)size().width(), (float)size().height(),		1.f, 1.f
+		};
+
+		inner_.bind(1);
+		inner_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		inner_.reset();
@@ -574,6 +632,86 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = 0;
+	}
+
+	void ToolBox::RenderToBuffer(Profile& profile)
+	{
+		DBG_PRINT_MSG("%s", "Render to buffer");
+
+        // Create and set texture to render to.
+        GLTexture2D* tex = &texture_buffer_;
+        if(!tex->id())
+            tex->generate();
+
+        tex->bind();
+        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+        tex->SetMinFilter(GL_NEAREST);
+        tex->SetMagFilter(GL_NEAREST);
+        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+        GLFramebuffer* fb = new GLFramebuffer;
+        fb->generate();
+        fb->bind();
+
+        // Set "renderedTexture" as our colour attachement #0
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, tex->id(), 0);
+        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+        GLuint rb;
+        glGenRenderbuffers(1, &rb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+                              size().width(), size().height());
+        //Attach depth buffer to FBO
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+
+        if(GLFramebuffer::CheckStatus()) {
+
+            fb->bind();
+
+            glm::mat4 widget_projection  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+            glm::mat4 widget_model = glm::mat4(1.f);
+
+            Shaders::instance->SetWidgetProjectionMatrix(widget_projection);
+            Shaders::instance->SetWidgetModelMatrix(widget_model);
+
+            glClearColor(0.f, 0.f, 0.f, 0.f);
+            glClearDepth(1.0);
+            glClearStencil(0);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+
+            glViewport(0, 0, size().width(), size().height());
+
+            // Draw context:
+    		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+    			DispatchDrawEvent (p, profile);
+    		}
+
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        }
+
+        fb->reset();
+        tex->reset();
+
+        //delete tex; tex = 0;
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glDeleteRenderbuffers(1, &rb);
+
+        fb->reset();
+        delete fb; fb = 0;
 	}
 
 }

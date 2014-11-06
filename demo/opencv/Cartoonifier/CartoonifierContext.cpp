@@ -69,10 +69,10 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	Button* pause = Manage(new Button("Pause"));
 	Button* stop = Manage(new Button("Stop"));
 
-	tools->Add(expander);
-	tools->Add(play);
-	tools->Add(pause);
-	tools->Add(stop);
+	tools->AddWidget(expander);
+	tools->AddWidget(play);
+	tools->AddWidget(pause);
+	tools->AddWidget(stop);
 
 	events()->connect(play->clicked(), this, &CartoonifierContext::OnPlay);
 	events()->connect(pause->clicked(), this, &CartoonifierContext::OnPause);

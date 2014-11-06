@@ -103,6 +103,8 @@ namespace BlendInt {
 			frame_plane_.reset();
 
 			retval = true;
+
+			Refresh();
 		} else {
 			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
 		}
@@ -114,6 +116,7 @@ namespace BlendInt {
 	{
 		if(video_stream_.isOpened()) {
 			status_ = VideoPlay;
+			Refresh();
 			timer_->Start();
 		} else {
 			DBG_PRINT_MSG("%s", "video stream is not opened");
@@ -125,15 +128,21 @@ namespace BlendInt {
 		if(timer_->enabled()) {
 			status_ = VideoPause;
 			timer_->Stop();
+			Refresh();
 		}
 	}
 
 	void CVVideoViewport::Stop()
 	{
 		timer_->Stop();
-		video_stream_.release();
-		frame_.release();
 		status_ = VideoStop;
+
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+			frame_.release();
+
+			Refresh();
+		}
 	}
 
 	Size CVVideoViewport::GetPreferredSize() const
@@ -209,9 +218,6 @@ namespace BlendInt {
 
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
-
-		glClearColor(0.208f, 0.208f, 0.208f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 
 		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);

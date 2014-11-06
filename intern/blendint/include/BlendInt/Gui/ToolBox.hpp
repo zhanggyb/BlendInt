@@ -28,6 +28,8 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
 namespace BlendInt {
 
 	class ToolBox: public Frame
@@ -40,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~ToolBox ();
 
-		void Add (Widget* widget, bool append = true);
+		void AddWidget (Widget* widget, bool append = true);
 
 		virtual bool IsExpandX () const;
 
@@ -106,6 +108,8 @@ namespace BlendInt {
 
 		void OnHoverWidgetDestroyed (Widget* widget);
 
+		void RenderToBuffer (Profile& profile);
+
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
@@ -116,14 +120,18 @@ namespace BlendInt {
 
 		int space_;
 
-		GLuint vao_;
-
-		GLBuffer<> inner_;
+		// 0 - for inner
+		// 1 - for texture buffer
+		GLuint vao_[2];
+		GLBuffer<ARRAY_BUFFER, 2> inner_;
 
 		Margin margin_;
 
 		// Layout orientation
 		Orientation orientation_;
+
+        GLTexture2D texture_buffer_;
+
 	};
 
 }
