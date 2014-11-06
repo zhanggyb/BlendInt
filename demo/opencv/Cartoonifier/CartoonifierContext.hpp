@@ -29,6 +29,8 @@ private:
 
 	void OnPlay ();
 
+	void OnPause ();
+
 	void OnStop();
 
 	BI::CVVideoViewport* video_;

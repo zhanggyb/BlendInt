@@ -48,9 +48,13 @@ namespace BlendInt {
 
 		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
 
+		bool OpenFile (const std::string& filename);
+
 		void Play ();
 
 		void Pause ();
+
+		void Stop ();
 
 		virtual bool IsExpandX () const;
 
@@ -72,11 +76,19 @@ namespace BlendInt {
 
 	private:
 
+		enum Status {
+			VideoPlay,
+			VideoPause,
+			VideoStop
+		};
+
 		void InitializeCVVideoView ();
 
 		void OnUpdateFrame (Timer* t);
 
 		GLuint vao_;
+
+		Status status_;
 
 		GLBuffer<> frame_plane_;
 

@@ -49,7 +49,8 @@ namespace BlendInt {
 
 	CVVideoViewport::CVVideoViewport()
 	: Frame(),
-	  vao_(0)
+	  vao_(0),
+	  status_(VideoStop)
 	{
 		set_size(640, 480);
 
@@ -89,6 +90,18 @@ namespace BlendInt {
 			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
 			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
 
+			float w = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_WIDTH);
+			float h = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_HEIGHT);
+
+			frame_plane_.bind();
+			float* ptr = (float*)frame_plane_.map();
+			*(ptr + 4) = w;
+			*(ptr + 9) = h;
+			*(ptr + 12) = w;
+			*(ptr + 13) = h;
+			frame_plane_.unmap();
+			frame_plane_.reset();
+
 			retval = true;
 		} else {
 			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
@@ -99,16 +112,28 @@ namespace BlendInt {
 
 	void CVVideoViewport::Play()
 	{
-		if(video_stream_.isOpened())
+		if(video_stream_.isOpened()) {
+			status_ = VideoPlay;
 			timer_->Start();
+		} else {
+			DBG_PRINT_MSG("%s", "video stream is not opened");
+		}
 	}
 
 	void CVVideoViewport::Pause()
 	{
 		if(timer_->enabled()) {
+			status_ = VideoPause;
 			timer_->Stop();
-			//video_stream_.release();
 		}
+	}
+
+	void CVVideoViewport::Stop()
+	{
+		timer_->Stop();
+		video_stream_.release();
+		frame_.release();
+		status_ = VideoStop;
 	}
 
 	Size CVVideoViewport::GetPreferredSize() const
@@ -185,6 +210,9 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
+		glClearColor(0.208f, 0.208f, 0.208f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 
@@ -193,11 +221,28 @@ namespace BlendInt {
 
 	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
-		if(!video_stream_.isOpened()) {
-			return Accept;
+		switch (status_) {
+
+			case VideoPlay: {
+				if(!video_stream_.isOpened()) return Accept;
+				video_stream_ >> frame_;
+				break;
+			}
+
+			case VideoPause: {
+				break;
+			}
+
+			default: {	// Stop
+				return Accept;
+				break;
+			}
+
 		}
 
-		video_stream_ >> frame_;
+		if(frame_.data == 0) {
+			return Accept;
+		}
 
 		glActiveTexture(GL_TEXTURE0);
 		texture_.bind();
@@ -230,8 +275,8 @@ namespace BlendInt {
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
-				(size().width() - 640)/2.f,
-				(size().height() - 480) / 2.f);
+				(size().width() - frame_.cols)/2.f,
+				(size().height() - frame_.rows) / 2.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 		glBindVertexArray(vao_);

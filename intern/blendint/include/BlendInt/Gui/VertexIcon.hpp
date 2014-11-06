@@ -66,9 +66,9 @@ namespace BlendInt {
 
 		void Draw (float x, float y, const Color& color, short gamma = 0) const;
 
-		void Draw (const glm::vec3& pos, const Color& color, short gamma = 0) const;
+		void Draw (const glm::vec2& pos, const Color& color, short gamma = 0) const;
 
-		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0) const;
+		void Draw (const glm::vec2& pos, float angle, float scale, const Color& color, short gamma = 0) const;
 
 	protected:
 

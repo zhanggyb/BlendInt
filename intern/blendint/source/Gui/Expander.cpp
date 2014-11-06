@@ -142,7 +142,7 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		glm::vec3 pos(0.f, 0.f, 0.f);
+		glm::vec2 pos(0.f, 0.f);
 		pos.x += Icons::instance->num()->size().width()/2.f;
 		pos.y += size().height()/2.f;
 

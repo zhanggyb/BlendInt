@@ -28,7 +28,6 @@ CartoonifierContext::CartoonifierContext()
 
 	ToolBox* tools = CreateToolBoxOnce();
 	video_ = Manage(new CVVideoViewport);
-	video_->OpenCamera(0);
 
 	splitter->AddFrame(video_);
 	splitter->AddFrame(tools);
@@ -67,13 +66,16 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	expander->Resize(expander->GetPreferredSize());
 
 	Button* play = Manage(new Button("Play"));
+	Button* pause = Manage(new Button("Pause"));
 	Button* stop = Manage(new Button("Stop"));
 
 	tools->Add(expander);
 	tools->Add(play);
+	tools->Add(pause);
 	tools->Add(stop);
 
 	events()->connect(play->clicked(), this, &CartoonifierContext::OnPlay);
+	events()->connect(pause->clicked(), this, &CartoonifierContext::OnPause);
 	events()->connect(stop->clicked(), this, &CartoonifierContext::OnStop);
 
 	return tools;
@@ -82,11 +84,18 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 void CartoonifierContext::OnPlay()
 {
 	DBG_PRINT_MSG("%s", "Start Play");
+	video_->OpenCamera(0, Size(800, 600));
 	video_->Play();
+}
+
+void CartoonifierContext::OnPause ()
+{
+	DBG_PRINT_MSG("%s", "Pause");
+	video_->Pause();
 }
 
 void CartoonifierContext::OnStop()
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
-	video_->Pause();
+	video_->Stop();
 }
