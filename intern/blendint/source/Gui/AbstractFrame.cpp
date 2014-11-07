@@ -91,48 +91,6 @@ namespace BlendInt {
 		return frame;
 	}
 
-	bool AbstractFrame::SizeUpdateTest(const SizeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool AbstractFrame::PositionUpdateTest(
-			const PositionUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool AbstractFrame::RoundTypeUpdateTest(
-			const RoundTypeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool AbstractFrame::RoundRadiusUpdateTest(
-			const RoundRadiusUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void AbstractFrame::PerformPositionUpdate(
-			const PositionUpdateRequest& request)
-	{
-	}
-
-	void AbstractFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
-	{
-	}
-
-	void AbstractFrame::PerformRoundTypeUpdate(
-			const RoundTypeUpdateRequest& request)
-	{
-	}
-
-	void AbstractFrame::PerformRoundRadiusUpdate(
-			const RoundRadiusUpdateRequest& request)
-	{
-	}
-
 	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
 		return subs_count() ? Ignore : Accept;

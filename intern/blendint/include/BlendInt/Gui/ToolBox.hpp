@@ -64,8 +64,6 @@ namespace BlendInt {
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual bool PreDraw (Profile& profile);

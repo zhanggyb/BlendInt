@@ -214,41 +214,15 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBox::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
-
-			projection_matrix_  = glm::ortho(
-				x,
-				x + (float)size().width(),
-				y,
-				y + (float)size().height(),
-				100.f, -100.f);
-
-			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
-
-			set_position(*request.position());
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate (request);
-		}
-	}
-
 	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(position().x() + offset().x());
-			float y = static_cast<float>(position().y() + offset().y());
-
 			projection_matrix_  = glm::ortho(
-				x,
-				x + (float)request.size()->width(),
-				y,
-				y + (float)request.size()->height(),
+				0.f,
+				0.f + (float)request.size()->width(),
+				0.f,
+				0.f + (float)request.size()->height(),
 				100.f, -100.f);
 
 			set_size(*request.size());
@@ -286,21 +260,6 @@ namespace BlendInt {
 
 		assign_profile_frame(profile);
 
-		Shaders::instance->frame_inner_program()->use();
-
-		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
-
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-        // TODO: render to buffer only when refresh flag set
 		if(refresh()) {
 			set_refresh(false);
 			RenderToBuffer(profile);
@@ -310,22 +269,26 @@ namespace BlendInt {
 		//texture_buffer_.WriteToFile("file.png");
 		//texture_buffer_.reset();
 
-		glViewport(position().x(), position().y(), size().width(), size().height());
-
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(), position().y(), size().width(), size().height());
-
 		return true;
 	}
 
 	ResponseType ToolBox::Draw (Profile& profile)
 	{
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        
-        Shaders::instance->widget_image_program()->use();
+
+		Shaders::instance->frame_inner_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+        Shaders::instance->frame_image_program()->use();
         
         texture_buffer_.bind();
-        glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), 0.f, 0.f);
+        glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), position().x(), position().y());
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
         
@@ -339,18 +302,10 @@ namespace BlendInt {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Accept;
-
-//		for(AbstractWidget* p = first_child(); p; p = p->next()) {
-//			DispatchDrawEvent (p, profile);
-//		}
-//
-//		return subs_count() ? Ignore : Accept;
 	}
 
 	void ToolBox::PostDraw (Profile& profile)
 	{
-		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
 	void ToolBox::FocusEvent (bool focus)
@@ -494,12 +449,12 @@ namespace BlendInt {
 		inner_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
+				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
+				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
@@ -679,11 +634,8 @@ namespace BlendInt {
 
             fb->bind();
 
-            glm::mat4 widget_projection  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-            glm::mat4 widget_model = glm::mat4(1.f);
-
-            Shaders::instance->SetWidgetProjectionMatrix(widget_projection);
-            Shaders::instance->SetWidgetModelMatrix(widget_model);
+            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
+            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClearDepth(1.0);
@@ -702,6 +654,8 @@ namespace BlendInt {
     		}
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 
         }
 

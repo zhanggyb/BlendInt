@@ -168,7 +168,6 @@ namespace BlendInt {
 			}
 		}
 
-		DBG_PRINT_MSG("%s", "hover in");
 		Refresh();
 	}
 
@@ -183,7 +182,6 @@ namespace BlendInt {
 
 		}
 
-		DBG_PRINT_MSG("%s", "hover out");
 		Refresh();
 	}
 
