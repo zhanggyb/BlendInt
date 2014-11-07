@@ -301,7 +301,10 @@ namespace BlendInt {
 		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
 
         // TODO: render to buffer only when refresh flag set
-		RenderToBuffer(profile);
+		if(refresh()) {
+			set_refresh(false);
+			RenderToBuffer(profile);
+		}
 
 		//texture_buffer_.bind();
 		//texture_buffer_.WriteToFile("file.png");
@@ -362,7 +365,7 @@ namespace BlendInt {
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_);
+			ClearHoverWidgets(hovered_widget_, event);
 		}
 	}
 
@@ -502,6 +505,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		inner_.reset();
+
+		set_refresh(true);
 	}
 
 	void ToolBox::FillSubWidgets ()
@@ -636,8 +641,6 @@ namespace BlendInt {
 
 	void ToolBox::RenderToBuffer(Profile& profile)
 	{
-		DBG_PRINT_MSG("%s", "Render to buffer");
-
         // Create and set texture to render to.
         GLTexture2D* tex = &texture_buffer_;
         if(!tex->id())

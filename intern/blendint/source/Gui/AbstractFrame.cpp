@@ -356,16 +356,34 @@ namespace BlendInt {
 		return hovered_widget;
 	}
 
-	void AbstractFrame::ClearHoverWidgets(Widget* hovered_widget)
+	void AbstractFrame::ClearHoverWidgets(AbstractWidget* hovered_widget)
 	{
+#ifdef DEBUG
 		assert(hovered_widget);
+#endif
 
-		while (hovered_widget && dynamic_cast<AbstractWidget*>(hovered_widget) != this) {
+		while (hovered_widget && (hovered_widget != this)) {
 			set_widget_hover_status(hovered_widget, false);
-			hovered_widget = dynamic_cast<Widget*>(hovered_widget->parent());
+			hovered_widget = hovered_widget->parent();
 		}
 
-		if(dynamic_cast<AbstractWidget*>(hovered_widget) == this)
+		if(hovered_widget == this)
+			hovered_widget = 0;
+	}
+
+	void AbstractFrame::ClearHoverWidgets(AbstractWidget* hovered_widget, const MouseEvent& event)
+	{
+#ifdef DEBUG
+		assert(hovered_widget);
+#endif
+
+		while (hovered_widget && (hovered_widget != this)) {
+			hovered_widget->set_hover(false);
+			hovered_widget->MouseHoverOutEvent(event);
+			hovered_widget = hovered_widget->parent();
+		}
+
+		if(hovered_widget == this)
 			hovered_widget = 0;
 	}
 

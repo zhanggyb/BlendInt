@@ -29,10 +29,12 @@ TEST_F(ToolBoxTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
+	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);
 
     ToolBox* tb1 = Manage(new ToolBox(Vertical));
+    DBG_SET_NAME(tb1, "ToolBox1");
     tb1->SetPosition(200, 200);
 
 //    ToolBox* tb2 = Manage(new ToolBox(Vertical));
@@ -42,6 +44,7 @@ TEST_F(ToolBoxTest1, Foo1)
 //    context->AddFrame(tb2);
 
     Button* btn1 = Manage(new Button("Hello, World!"));
+    DBG_SET_NAME(btn1, "Button1");
     btn1->Resize(200, 50);
     //Button* btn2 = Manage(new Button("Hello2"));
     //Button* btn3 = Manage(new Button("Hello3"));
@@ -56,6 +59,8 @@ TEST_F(ToolBoxTest1, Foo1)
 //    tb2->Add(btn4);
 //    tb2->Add(btn5);
 //    tb2->Add(btn6);
+
+    tb1->Refresh();
 
     RunLoop(win);
     Terminate();

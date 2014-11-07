@@ -250,8 +250,7 @@ namespace BlendInt {
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_);
-			Refresh();
+			ClearHoverWidgets(hovered_widget_, event);
 		}
 	}
 

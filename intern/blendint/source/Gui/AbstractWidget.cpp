@@ -302,6 +302,15 @@ namespace BlendInt {
 			AbstractWidget* root = this;
 
 			AbstractWidget* p = parent();
+
+			/*
+			while(p) {
+				DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+				p = p->parent();
+			}
+			p = parent();
+			*/
+
 			while(p && (!p->refresh())) {
 				root = p;
 				p->set_refresh(true);
