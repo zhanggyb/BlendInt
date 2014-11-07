@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_DIALOG_HPP_
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
@@ -46,8 +47,6 @@ namespace BlendInt {
 		void AddWidget (Widget* widget);
 
 	protected:
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -87,24 +86,28 @@ namespace BlendInt {
 
 		void OnLayoutDestroyed (Widget* layout);
 
-		GLuint vao_;
+		void RenderToBuffer (Profile& profile);
 
-		GLBuffer<> buffer_;
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 		Point last_;
 		Point cursor_;
 
 		ShadowMap* shadow_;
 
-		glm::mat4 projection_matrix_;
-
-		glm::mat4 model_matrix_;
-
 		Widget* focused_widget_;
 
 		Widget* hovered_widget_;
 
 		AbstractLayout* layout_;
+
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+
+        GLTexture2D texture_buffer_;
 
 	};
 

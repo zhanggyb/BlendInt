@@ -34,12 +34,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 namespace BlendInt {
 
@@ -274,8 +275,6 @@ namespace BlendInt {
 
 	ResponseType ToolBox::Draw (Profile& profile)
 	{
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
 		Shaders::instance->frame_inner_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
@@ -284,6 +283,8 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         Shaders::instance->frame_image_program()->use();
         

@@ -59,6 +59,16 @@ namespace BlendInt {
 		glDeleteVertexArrays(3, vao_);
 	}
 
+	void Clock::Start()
+	{
+		timer_->Start();
+	}
+
+	void Clock::Stop()
+	{
+		timer_->Stop();
+	}
+
 	ResponseType Clock::Draw(Profile& profile)
 	{
 		Shaders::instance->widget_triangle_program()->use();
@@ -247,7 +257,6 @@ namespace BlendInt {
 		timer_->SetInterval(1000);
 
 		events()->connect(timer_->timeout(), this, &Clock::OnUpdateClockHands);
-		timer_->Start();
 	}
 
 }

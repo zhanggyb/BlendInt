@@ -45,6 +45,8 @@ TEST_F(ClockTest1, Foo1)
 
 	context->AddFrame(dialog);
 
+	clock->Start();
+
     RunLoop(win);
     Terminate();
 

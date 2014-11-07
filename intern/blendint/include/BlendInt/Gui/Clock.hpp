@@ -47,6 +47,10 @@ namespace BlendInt {
 
 		virtual ~Clock();
 
+		void Start ();
+
+		void Stop ();
+
 		void set_background (const Color& color)
 		{
 			background_ = color;

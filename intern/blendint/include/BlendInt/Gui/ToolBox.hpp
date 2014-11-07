@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_TOOLBOX_HPP_
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-#include <BlendInt/Gui/Frame.hpp>
-
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
+
+#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
