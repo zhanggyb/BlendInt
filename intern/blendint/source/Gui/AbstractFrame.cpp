@@ -314,6 +314,36 @@ namespace BlendInt {
 		return hovered_widget;
 	}
 
+	AbstractFrame* AbstractFrame::CheckHoveredFrame(AbstractFrame* old, const MouseEvent& event)
+	{
+		AbstractFrame* frame_hovered = old;
+
+		if(frame_hovered) {
+			if(!frame_hovered->Contain(event.position())) {
+
+				frame_hovered = 0;
+				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+					if(p->Contain(event.position())) {
+						frame_hovered = dynamic_cast<AbstractFrame*>(p);
+						break;
+					}
+				}
+
+			}
+		} else {
+
+			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+				if(p->Contain(event.position())) {
+					frame_hovered = dynamic_cast<AbstractFrame*>(p);
+					break;
+				}
+			}
+
+		}
+
+		return frame_hovered;
+	}
+
 	void AbstractFrame::ClearHoverWidgets(AbstractWidget* hovered_widget)
 	{
 #ifdef DEBUG

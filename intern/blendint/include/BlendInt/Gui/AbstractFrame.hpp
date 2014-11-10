@@ -115,6 +115,8 @@ namespace BlendInt {
 
 		Widget* DispatchHoverEventsInSubWidgets (Widget* orig, const MouseEvent& event);
 
+		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const MouseEvent& event);
+
 		void ClearHoverWidgets (AbstractWidget* hovered_widget);
 
 		void ClearHoverWidgets (AbstractWidget* hovered_widget, const MouseEvent& event);

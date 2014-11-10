@@ -246,6 +246,8 @@ namespace BlendInt {
 
 			FillSubWidgets();
 
+			Refresh();
+
 		} else if (request.target()->parent() == this) {
 			FillSubWidgets();
 		}

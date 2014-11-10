@@ -30,9 +30,10 @@
 #include <opencv2/core/core.hpp>
 
 #include <BlendInt/Core/Color.hpp>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/ChessBoard.hpp>
 #include <BlendInt/Gui/Frame.hpp>
@@ -40,7 +41,7 @@
 namespace BlendInt {
 
 	/**
-	 * @brief A widget to display opencv image
+	 * @brief A frame to display opencv image
 	 *
 	 * This class provides similar functions as ImageView except that it
 	 * get image data from an opencv matrix.
@@ -55,15 +56,15 @@ namespace BlendInt {
 
 		virtual ~CVImageViewport ();
 
+		void OpenFile (const char* filename);
+
+		void LoadImage (const cv::Mat& image);
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
-
-		void Open (const char* filename);
-
-		void Load (const cv::Mat& image);
 
 	protected:
 
@@ -71,7 +72,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 	private:
 
@@ -87,14 +92,17 @@ namespace BlendInt {
 		 * 0 - for background
 		 * 1 - for plane to display image texture
 		 */
-		GLuint vaos_[2];
+		GLuint vao_;
 
-		RefPtr<GLTexture2D> texture_;
+		GLTexture2D texture_;
 
-		RefPtr<GLArrayBuffer> background_;
-		RefPtr<GLArrayBuffer> image_plane_;
+		GLBuffer<> image_plane_;
 
 		cv::Mat cv_image_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat4 model_matrix_;
 
 		static Color background_color;
 	};

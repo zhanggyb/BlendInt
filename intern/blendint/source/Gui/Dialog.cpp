@@ -193,6 +193,7 @@ namespace BlendInt {
 				FillSingleWidget(0, 0, 0, size().width(), size().height());
 			}
 
+			Refresh();
 		}
 
 		if(request.source() == this) {

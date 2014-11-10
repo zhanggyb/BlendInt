@@ -300,7 +300,6 @@ namespace BlendInt {
 		if(!refresh()) {
 
 			AbstractWidget* root = this;
-
 			AbstractWidget* p = parent();
 
 			/*
@@ -311,7 +310,7 @@ namespace BlendInt {
 			p = parent();
 			*/
 
-			while(p && (!p->refresh())) {
+			while(p && (!p->refresh()) && (p->visiable())) {
 				root = p;
 				p->set_refresh(true);
 				p = p->parent();
