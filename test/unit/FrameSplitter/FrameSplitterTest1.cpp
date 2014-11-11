@@ -37,32 +37,36 @@ TEST_F(FrameSplitterTest1, Foo1)
 	SetContext(context);
 	context->Resize(1280, 800);
 
-	FrameSplitter* fs = Manage(new FrameSplitter(Vertical));
+	FrameSplitter* fs = Manage(new FrameSplitter(Horizontal));
 	DBG_SET_NAME(fs, "FrameSplitter");
 
 	Viewport* f1 = Manage(new Viewport);
 	DBG_SET_NAME(f1, "Frame1");
-	Viewport* f2 = Manage(new Viewport);
+	ToolBox* f2 = Manage(new ToolBox);
 	DBG_SET_NAME(f2, "Frame2");
 
 	//Viewport* f3 = Manage(new Viewport);
 	//DBG_SET_NAME(f3, "Frame3");
 
-	ToolBox* f3 = Manage(new ToolBox(Vertical));
+	ToolBox* f3 = Manage(new ToolBox(Horizontal));
 	DBG_SET_NAME(f3, "Frame3");
 
 	Button* btn1 = Manage(new Button("Hello"));
+	DBG_SET_NAME(btn1, "Button1");
 	f3->AddWidget(btn1);
+	Button* btn2 = Manage(new Button("Hello"));
+	DBG_SET_NAME(btn2, "Button2");
+	f3->AddWidget(btn2);
 
 	fs->AddFrame(f1);
 	fs->AddFrame(f2);
 
-	FrameSplitter* vsplitter = Manage(new FrameSplitter(Horizontal));
+	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
 	vsplitter->SetPosition(100, 100);
 	vsplitter->Resize(1000, 700);
 
-	vsplitter->AddFrame(fs);
 	vsplitter->AddFrame(f3);
+	vsplitter->AddFrame(fs);
 
 	context->AddFrame(vsplitter);
 

@@ -65,11 +65,11 @@ namespace BlendInt {
             set_size(*request.size());
 
             std::vector<GLfloat> inner_verts;
-            GenerateVertices(&inner_verts, 0);
+            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-			inner_->bind();
-			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_->reset();
+			inner_.bind();
+			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_.reset();
 
 			Refresh();
 		}
@@ -88,11 +88,11 @@ namespace BlendInt {
             set_round_type(*request.round_type());
 
             std::vector<GLfloat> inner_verts;
-            GenerateVertices(&inner_verts, 0);
+            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-            inner_->bind();
-            inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_->reset();
+            inner_.bind();
+            inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_.reset();
 
 			Refresh();
 		}
@@ -112,11 +112,11 @@ namespace BlendInt {
 			set_round_radius(*request.round_radius());
 
             std::vector<GLfloat> inner_verts;
-            GenerateVertices(&inner_verts, 0);
+            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-            inner_->bind();
-            inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_->reset();
+            inner_.bind();
+            inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            inner_.reset();
 
             Refresh();
 		}
@@ -183,16 +183,15 @@ namespace BlendInt {
 		glGenVertexArrays(1, &vao_);
 
         std::vector<GLfloat> inner_verts;
-        GenerateVertices(&inner_verts, 0);
+        GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
 		glBindVertexArray(vao_);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

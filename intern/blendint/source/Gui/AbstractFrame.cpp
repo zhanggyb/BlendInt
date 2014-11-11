@@ -187,8 +187,15 @@ namespace BlendInt {
 		if (hovered_widget) {
 
 			AbstractWidget* parent = hovered_widget->parent();
+			Point parent_position;
 
-			Point parent_position = parent->GetGlobalPosition();
+			Widget* parent_widget = dynamic_cast<Widget*>(parent);
+			if(parent_widget) {
+				parent_position = this->GetAbsolutePosition(parent_widget);
+			} else {
+				assert(parent == this);
+				parent_position = position();
+			}
 
 			bool not_hover_through = event.position().x() < parent_position.x() ||
 					event.position().y() < parent_position.y() ||
@@ -254,6 +261,7 @@ namespace BlendInt {
 //				hovered_widget->destroyed().disconnectOne(this,
 //					        &SingleFrame::OnHoverWidgetDestroyed);
 				set_widget_mouse_hover_out_event(hovered_widget, event);
+
 //				hovered_widget->set_hover(false);
 //				hovered_widget->MouseHoverOutEvent(event);
 

@@ -36,13 +36,10 @@ MarkerBasedARContext::MarkerBasedARContext()
 
 	ToolBox* bar = CreateToolBarOnce();
 
-	DBG_PRINT_MSG("bar geometry: %d, %d, %d, %d", bar->position().x(), bar->position().y(), bar->size().width(), bar->size().height());
-
 	vsplitter->AddFrame(bar);
 	vsplitter->AddFrame(splitter);
 
-	AddFrame(splitter);
-
+	AddFrame(vsplitter);
 
 	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 }

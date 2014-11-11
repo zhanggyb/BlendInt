@@ -340,6 +340,8 @@ namespace BlendInt {
 		}
 
 		AlignSubFrames(orientation_, size());
+
+		Refresh();
 	}
 
 	void FrameSplitter::Insert(int index, Frame* frame)
@@ -586,28 +588,28 @@ namespace BlendInt {
 	{
 		if(Contain(event.position())) {
 
-			AbstractFrame* new_hovered_frame = CheckHoveredFrame(hover_, event);
+			AbstractFrame* new_hovered = CheckHoveredFrame(hover_, event);
 
-			if(new_hovered_frame != hover_) {
+			if(new_hovered != hover_) {
 
 				if(hover_) {
 					set_widget_mouse_hover_out_event(hover_, event);
 					hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
-				if(new_hovered_frame) {
-					set_widget_mouse_hover_in_event(new_hovered_frame, event);
-					events()->connect(new_hovered_frame->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
+				if(new_hovered) {
+					set_widget_mouse_hover_in_event(new_hovered, event);
+					events()->connect(new_hovered->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
-				hover_ = new_hovered_frame;
+				hover_ = new_hovered;
 			}
 
 			if(hover_) {
 				delegate_dispatch_hover_event(hover_, event);
 			}
 
-			// make sure to set event frame in this function, to tell context set this hover flag
+			// make sure to set event frame in this function, to tell parent frame or context to set this hover flag
 			set_event_frame(event, this);
 
 			return Accept;

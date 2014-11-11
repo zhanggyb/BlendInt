@@ -405,7 +405,6 @@ namespace BlendInt {
 
 				hovered_widget_ = new_hovered_widget;
 				if(hovered_widget_) {
-
 					events()->connect(hovered_widget_->destroyed(), this,
 							&ToolBox::OnHoverWidgetDestroyed);
 				}

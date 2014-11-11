@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
 #define _BLENDINT_GUI_MENUBUTTON_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 
 		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> inner_;
 
 		RefPtr<Menu> m_menu;
 	};
