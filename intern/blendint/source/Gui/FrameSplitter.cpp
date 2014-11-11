@@ -597,12 +597,12 @@ namespace BlendInt {
 					hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
-				if(new_hovered) {
-					set_widget_mouse_hover_in_event(new_hovered, event);
-					events()->connect(new_hovered->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
+				hover_ = new_hovered;
+				if(hover_) {
+					set_widget_mouse_hover_in_event(hover_, event);
+					events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
-				hover_ = new_hovered;
 			}
 
 			if(hover_) {

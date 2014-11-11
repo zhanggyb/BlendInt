@@ -2,6 +2,7 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Context.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -28,7 +29,7 @@ TEST_F(ToolBoxTest1, Foo1)
     GLFWwindow* win = CreateWindow("ToolBox - Foo1", 1280, 800);
 
     // TODO: add test code here
-	Context* context = Manage (new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);

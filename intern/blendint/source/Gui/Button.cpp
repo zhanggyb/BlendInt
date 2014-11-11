@@ -177,7 +177,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
@@ -212,7 +212,7 @@ namespace BlendInt {
 			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
@@ -247,7 +247,7 @@ namespace BlendInt {
 			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.reset();
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 

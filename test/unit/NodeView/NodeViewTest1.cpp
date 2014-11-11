@@ -1,6 +1,7 @@
 #include "NodeViewTest1.hpp"
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 

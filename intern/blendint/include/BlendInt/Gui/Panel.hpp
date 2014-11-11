@@ -30,7 +30,10 @@
  * @ingroup gui
  */
 
-#include <BlendInt/Gui/BinLayout.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
@@ -39,7 +42,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Panel: public BinLayout
+	class Panel: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Panel);
 
@@ -49,9 +52,23 @@ namespace BlendInt {
 
 		virtual ~Panel ();
 
+		void SetLayout (AbstractLayout* layout);
+
+		void AddWidget (Widget* widget, bool append = true);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
@@ -59,9 +76,11 @@ namespace BlendInt {
 
 		void InitializeFrame ();
 
-		GLuint vao_;
+		AbstractLayout* layout_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 	};
 

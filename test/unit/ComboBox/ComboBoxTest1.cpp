@@ -1,6 +1,8 @@
 #include "ComboBoxTest1.hpp"
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/FileSystemModel.hpp>
+#include <Common/UnitTestContext.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -26,26 +28,28 @@ TEST_F(ComboBoxTest1, Foo1)
 
     GLFWwindow* win = CreateWindow("ComboBox - Foo1", 640, 480);
 
-	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
+	SetContext(context);
+	context->Resize(640, 480);
 
     ComboBox* combo = Manage(new ComboBox);
-
-    combo->SetPosition(200, 20);
+    combo->SetPosition(20, 20);
 
     FileSystemModel* fs = new FileSystemModel;
     fs->Load(getenv("PWD"));
 
     RefPtr<AbstractItemModel> model(fs);
-
     combo->SetModel(model);
 
-    context->Append(combo);
+	Dialog* dialog = Manage(new Dialog);
+	dialog->Resize(400, 300);
+
+	dialog->AddWidget(combo);
+
+	context->AddFrame(dialog);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

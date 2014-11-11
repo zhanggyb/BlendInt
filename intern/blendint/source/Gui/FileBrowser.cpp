@@ -153,7 +153,7 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
@@ -181,7 +181,7 @@ namespace BlendInt {
 			y -= h;
 
 			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
-					(float) position().x(), (float) y);
+					0.f, (float) y);
 
 			if(i == highlight_index_) {
 				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), -35);
@@ -213,7 +213,7 @@ namespace BlendInt {
 			while(index.IsValid()) {
 
 				y -= h;
-				font_.Print(position().x(), y, *index.GetData());
+				font_.Print(0.f, y, *index.GetData());
 
 				index = index.GetDownIndex();
 			}
@@ -222,7 +222,7 @@ namespace BlendInt {
 
 		program->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
 		profile.BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,

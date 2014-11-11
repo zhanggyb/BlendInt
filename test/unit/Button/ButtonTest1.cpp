@@ -4,6 +4,7 @@
 #include <Common/Window.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -28,7 +29,8 @@ TEST_F(ButtonTest1, Foo1)
     Init();
     GLFWwindow* win = CreateWindow("Button Test - Foo1", 640, 480);
 
-	Context* context = Manage (new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(640, 480);
 

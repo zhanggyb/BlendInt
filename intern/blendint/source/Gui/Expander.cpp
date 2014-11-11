@@ -39,7 +39,7 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Gui/Panel.hpp>
+#include <BlendInt/Gui/BinLayout.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -190,7 +190,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		Panel* frame = Manage(new Panel);
+		BinLayout* frame = Manage(new BinLayout);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -218,7 +218,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		Panel* frame = Manage(new Panel);
+		BinLayout* frame = Manage(new BinLayout);
 
 		PushBackSubWidget(title_button);	// 0
 		PushBackSubWidget(frame);	// 1
@@ -248,7 +248,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (Widget* widget)
 	{
-		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
+		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
 		if(frame->Setup(widget)) {
 			return true;
 		}
@@ -334,7 +334,7 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
+		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -381,7 +381,7 @@ namespace BlendInt {
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		Panel* frame = dynamic_cast<Panel*>(GetWidgetAt(1));
+		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
 
 		if(toggle) {
 			int x = position().x();

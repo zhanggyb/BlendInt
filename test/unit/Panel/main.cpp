@@ -1,5 +1,5 @@
 /*
- * Unit test for ComboBox
+ * Unit test for Panel
  */
 
 #include <gtest/gtest.h>

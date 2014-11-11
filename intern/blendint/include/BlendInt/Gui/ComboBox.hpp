@@ -21,13 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_COMBOBOX_HPP_
-#define _BLENDINT_COMBOBOX_HPP_
+#ifndef _BLENDINT_GUI_COMBOBOX_HPP_
+#define _BLENDINT_GUI_COMBOBOX_HPP_
+
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
-
 #include <BlendInt/Gui/Menu.hpp>
-
 #include <BlendInt/Gui/ListView.hpp>
 
 namespace BlendInt {
@@ -77,8 +77,7 @@ namespace BlendInt {
 
 		GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		bool status_down_;
 
@@ -96,4 +95,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_COMBOBOX_HPP_ */
+#endif /* _BLENDINT_GUI_COMBOBOX_HPP_ */
