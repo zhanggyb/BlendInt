@@ -82,7 +82,7 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	splitter2->AddFrame(vp3);
 
 	splitter1->AddFrame(splitter2);
-	splitter1->AddFrame(vp1);
+	splitter1->AddFrame(vp1, PreferredWidth);
 
 	AddFrame(splitter1);
 

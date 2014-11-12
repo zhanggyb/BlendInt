@@ -40,114 +40,49 @@ namespace BlendInt {
 
 	Separator::Separator ()
 	: Widget(),
-	  m_expand_x(false),
-	  m_expand_y(false),
-	  m_widget_attached(0)
+	  expand_x_(false),
+	  expand_y_(false),
+	  preferred_size_(10, 10)
 	{
-		set_size(1, 1);
+		set_size(10, 10);
 	}
 
 	Separator::~Separator ()
 	{
 	}
 
-	void Separator::AttachWidget (Widget* widget)
-	{
-		if(m_widget_attached) {
-			m_widget_attached->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
-		}
-
-		m_widget_attached = widget;
-		if(m_widget_attached) {
-			events()->connect(m_widget_attached->destroyed(), this, &Separator::OnWidgetDestroyed);
-
-			m_expand_x = m_widget_attached->IsExpandX();
-			m_expand_y = m_widget_attached->IsExpandY();
-		}
-	}
-
 	Size Separator::GetPreferredSize() const
 	{
-		if(m_widget_attached) {
-			return m_widget_attached->GetPreferredSize();
-		}
-
-		Size preferred_size(1, 1);
-
-		return preferred_size;
+		return preferred_size_;
 	}
 
 	void Separator::SetExpandX (bool expand)
 	{
-		if(!m_widget_attached) {
-			m_expand_x = expand;
-		}
+		expand_x_ = expand;
+		// TODO: call parent widget to update layout
 	}
 
 	void Separator::SetExpandY (bool expand)
 	{
-		if(!m_widget_attached) {
-			m_expand_y = expand;
-		}
+		expand_y_ = expand;
+		// TODO: call parent widget to update layout
 	}
 
 	void Separator::SetExpand (bool expand_x, bool expand_y)
 	{
-		if(!m_widget_attached) {
-			m_expand_x = expand_x;
-			m_expand_y = expand_y;
-		}
+		expand_x_ = expand_x;
+		expand_y_ = expand_y;
+		// TODO: call parent widget to update layout
 	}
 
 	bool Separator::IsExpandX() const
 	{
-		return m_expand_x;
+		return expand_x_;
 	}
 
 	bool Separator::IsExpandY() const
 	{
-		return m_expand_y;
-	}
-
-	void Separator::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			if(m_widget_attached)
-				m_widget_attached->SetPosition(*request.position());
-
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
-	void Separator::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			if(m_widget_attached)
-				m_widget_attached->Resize(*request.size());
-
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	ResponseType Separator::Draw (Profile& profile)
-	{
-		return Accept;
-	}
-
-	void Separator::OnWidgetDestroyed (Widget* widget)
-	{
-		if(m_widget_attached == widget) {
-			widget->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
-			m_widget_attached = 0;
-		}
+		return expand_y_;
 	}
 
 }

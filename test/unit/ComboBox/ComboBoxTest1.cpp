@@ -34,7 +34,7 @@ TEST_F(ComboBoxTest1, Foo1)
 	context->Resize(640, 480);
 
     ComboBox* combo = Manage(new ComboBox);
-    combo->SetPosition(20, 20);
+    combo->MoveTo(20, 20);
 
     FileSystemModel* fs = new FileSystemModel;
     fs->Load(getenv("PWD"));

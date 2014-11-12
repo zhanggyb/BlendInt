@@ -485,7 +485,8 @@ namespace BlendInt {
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			SetSubWidgetPosition(p, x, y);
-
+			ResizeSubWidget(p, p->size().width(), height);
+			/*
 			if (p->IsExpandY()) {
 				ResizeSubWidget(p, p->size().width(), height);
 			} else {
@@ -498,6 +499,7 @@ namespace BlendInt {
 				}
 
 			}
+			*/
 
 			x += p->size().width() + space_;
 		}
@@ -517,7 +519,8 @@ namespace BlendInt {
 			y = y - p->size().height() - space_;
 
 			SetSubWidgetPosition(p, x, y);
-
+			ResizeSubWidget(p, width, p->size().height());
+			/*
 			if(p->IsExpandX()) {
 				ResizeSubWidget(p, width, p->size().height());
 			} else {
@@ -530,6 +533,7 @@ namespace BlendInt {
 				}
 
 			}
+			*/
 		}
 	}
 

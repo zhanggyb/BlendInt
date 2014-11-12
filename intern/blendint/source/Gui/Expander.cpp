@@ -390,7 +390,7 @@ namespace BlendInt {
 			frame_height_ = frame->size().height();
 			Resize(size().width(), button->size().height());
 			y = y - size().height();
-			SetPosition(x, y);
+			MoveTo(x, y);
 		} else {
 			int x = position().x();
 			int y = position().y() + size().height();
@@ -400,7 +400,7 @@ namespace BlendInt {
 			Resize(size().width(),
 							button->size().height() + frame_height_);
 			y = y - size().height();
-			SetPosition(x, y);
+			MoveTo(x, y);
 		}
 
 		Refresh();

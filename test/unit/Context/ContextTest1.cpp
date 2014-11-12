@@ -33,10 +33,10 @@ TEST_F(ContextTest1, AddSubWidget01)
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->SetPosition(200, 200);
+    w1->MoveTo(200, 200);
 
     Widget* w2 = new Widget;
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
 
     context->Append(w1);
     context->Append(w2);
@@ -69,13 +69,13 @@ TEST_F(ContextTest1, AddSubWidget02)
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->SetPosition(200, 200);
+    w1->MoveTo(200, 200);
 
     Widget* w2 = new Widget;
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
 
     Panel* f1 = new Panel;
-    f1->SetPosition(240, 320);
+    f1->MoveTo(240, 320);
     f1->Setup(w2);
 
     context->Append(w1);
@@ -114,19 +114,19 @@ TEST_F(ContextTest1, AddSubWidget03)
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->SetPosition(200, 200);
+    w1->MoveTo(200, 200);
 
     Widget* w2 = new Widget;
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
 
     Panel* f1 = new Panel;
-    f1->SetPosition(240, 320);
+    f1->MoveTo(240, 320);
     f1->Setup(w2);
 
     context->Append(w2);
     context->Append(f1);
 
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
 
     f1->Setup(w1);
 
@@ -163,10 +163,10 @@ TEST_F(ContextTest1, DestructorInContainer01)
 
 	// TODO: add test code here
 	Widget* w1 = new Widget;
-	w1->SetPosition(200, 200);
+	w1->MoveTo(200, 200);
 
 	Panel* f1 = new Panel;
-	f1->SetPosition(240, 320);
+	f1->MoveTo(240, 320);
 
 	f1->Setup(w1);
 
@@ -206,11 +206,11 @@ TEST_F(ContextTest1, DestructorInContainer02)
 
 	// TODO: add test code here
 	Widget* w1 = Manage(new Widget);
-	w1->SetPosition(100, 100);
+	w1->MoveTo(100, 100);
 	context->Append(w1);
 
 	Panel* f1 = Manage(new Panel);  // now f1 should be deleted automatically
-	f1->SetPosition(240, 320);
+	f1->MoveTo(240, 320);
 	f1->Setup(w1);
 
 	context->Append(f1);
@@ -245,11 +245,11 @@ TEST_F(ContextTest1, Layer1)
 
     // TODO: add test code here
     Widget* w1 = Manage(new Widget);
-    w1->SetPosition(200, 200);
+    w1->MoveTo(200, 200);
     context->Append(w1);
         
     Widget* w2 = Manage(new Widget);
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
     context->Append(w2);
 
     RunLoop(win);
@@ -277,11 +277,11 @@ TEST_F(ContextTest1, Layer2)
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->SetPosition(200, 200);
+    w1->MoveTo(200, 200);
     context->Append(w1);
 
     Widget* w2 = new Widget;
-    w2->SetPosition(400, 200);
+    w2->MoveTo(400, 200);
     context->Append(w2);
 
     Widget* w3 = new Widget;
@@ -316,19 +316,19 @@ TEST_F(ContextTest1, Layer3)
 	Interface::instance->SetCurrentContext(context);
 
 	Widget* w1 = Manage(new Widget);
-	w1->SetPosition(100, 100);
+	w1->MoveTo(100, 100);
 	context->Append(w1);
 
 	Widget* w2 = Manage(new Widget);
-	w2->SetPosition(150, 150);
+	w2->MoveTo(150, 150);
 	context->Append(w2);
 
 	Widget* w3 = Manage(new Widget);
-	w3->SetPosition(200, 200);
+	w3->MoveTo(200, 200);
 	context->Append(w3);
 
 	Widget* w4 = Manage(new Widget);
-	w4->SetPosition(250, 250);
+	w4->MoveTo(250, 250);
 	context->Append(w4);
 
 	delete w4;
@@ -336,11 +336,11 @@ TEST_F(ContextTest1, Layer3)
 	delete w2;
 
 	Widget* w5 = Manage(new Widget);
-	w5->SetPosition(300, 300);
+	w5->MoveTo(300, 300);
 	context->Append(w5);
 
 	Widget* w6 = Manage(new Widget);
-	w6->SetPosition(350, 350);
+	w6->MoveTo(350, 350);
 	context->Append(w6);
 
 	RunLoop(win);

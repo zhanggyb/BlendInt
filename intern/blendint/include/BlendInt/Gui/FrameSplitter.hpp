@@ -150,6 +150,10 @@ namespace BlendInt {
 
 		friend class FrameSplitterHandle;
 
+		void AddColumn (Frame* frame, SizePolicy policy);
+
+		void AddRow (Frame* frame, SizePolicy policy);
+
 		void DistributeHorizontally ();
 
 		void DistributeHorizontallyInProportion (

@@ -299,7 +299,7 @@ namespace BlendInt {
 			}
 
 			list_->Resize(200, list_->size().height());
-			list_->SetPosition(position().x(), position().y() + size().height());
+			list_->MoveTo(position().x(), position().y() + size().height());
 
 			Dialog* screen = Manage(new Dialog);
 			screen->Resize(list_->size());
@@ -307,7 +307,7 @@ namespace BlendInt {
 
 			Point pos = GetGlobalPosition();
 
-			screen->SetPosition(pos.x(), pos.y() + size().height());
+			screen->MoveTo(pos.x(), pos.y() + size().height());
 			context->AddFrame(screen);
 			SetRoundType(RoundBottomLeft | RoundBottomRight);
 			//context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.

@@ -30,7 +30,7 @@ TEST_F(ExpanderTest1, Foo1)
 	Interface::instance->SetCurrentContext(context);
 
 	Expander* expander = Manage(new Expander("Hello"));
-	expander->SetPosition(200, 200);
+	expander->MoveTo(200, 200);
 	//expander->Resize(200, 200);
 
 	context->Append(expander);

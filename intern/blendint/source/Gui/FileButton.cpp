@@ -270,7 +270,7 @@ namespace BlendInt {
 
 			Dialog* screen = Manage(new Dialog);
 			screen->Resize(panel_->size());
-			screen->SetPosition(x, y);
+			screen->MoveTo(x, y);
 			screen->AddWidget(panel_);
 
 			context->AddFrame(screen);

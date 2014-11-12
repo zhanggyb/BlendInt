@@ -52,7 +52,7 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
     btngroup.Append(btn2);
     btngroup.Append(btn3);
 
-    hblock->SetPosition(200, 200);
+    hblock->MoveTo(200, 200);
     hblock->Resize(hblock->GetPreferredSize());
 
     btn1->SetChecked(true);

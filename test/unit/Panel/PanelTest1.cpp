@@ -36,7 +36,7 @@ TEST_F(PanelTest1, Foo1)
 	Panel* p = Manage(new Panel);
 	p->SetRoundType(RoundAll);
 	p->SetRoundRadius(10.f);
-	p->SetPosition(50, 50);
+	p->MoveTo(50, 50);
 
 	Dialog* dialog = Manage(new Dialog);
 	dialog->Resize(600, 500);

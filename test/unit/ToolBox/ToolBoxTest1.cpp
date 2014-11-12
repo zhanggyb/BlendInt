@@ -36,7 +36,7 @@ TEST_F(ToolBoxTest1, Foo1)
 
     ToolBox* tb1 = Manage(new ToolBox(Vertical));
     DBG_SET_NAME(tb1, "ToolBox1");
-    tb1->SetPosition(200, 200);
+    tb1->MoveTo(200, 200);
 
 //    ToolBox* tb2 = Manage(new ToolBox(Vertical));
 //    tb2->SetPosition(700, 100);

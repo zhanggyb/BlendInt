@@ -32,7 +32,7 @@ TEST_F(ViewportTest1, Foo1)
 	context->Resize(1280, 800);
 
 	Viewport* vp = Manage(new Viewport);
-	vp->SetPosition(100, 100);
+	vp->MoveTo(100, 100);
 
 	context->AddFrame(vp);
 

@@ -287,7 +287,7 @@ namespace BlendInt {
 
 			//menu->SetPosition(m_active_button->position().x(), y);
 
-			menu->SetPosition(pos);
+			menu->MoveTo(pos);
 			context->AddFrame(menu.get());
 
 			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);

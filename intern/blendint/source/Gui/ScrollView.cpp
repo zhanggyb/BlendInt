@@ -252,7 +252,7 @@ namespace BlendInt {
 
 				int dy = request.size()->height() - size().height();
 
-				first_child()->SetPosition(first_child()->position().x(),
+				first_child()->MoveTo(first_child()->position().x(),
 				        first_child()->position().y() + dy);
 			}
 

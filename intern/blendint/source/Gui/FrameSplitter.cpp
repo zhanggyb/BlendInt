@@ -325,113 +325,13 @@ namespace BlendInt {
 			AlignSubFrames(orientation_, size());
 		} else {
 
-			Size squeezed_size = size();
-			Size frame_size = frame->size();
-			FrameSplitterHandle* handle = 0;
-
 			if(orientation_ == Horizontal) {
-				handle = Manage(new FrameSplitterHandle(Vertical));
-
-				squeezed_size.set_width(squeezed_size.width() - handle->size().width());
-
-				switch (policy) {
-					case PreferredWidth: {
-
-						frame_size.set_width(frame->GetPreferredSize().width());
-						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
-
-						break;
-					}
-					case CurrentWidth: {
-
-						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
-
-						break;
-					}
-					default: {
-
-						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
-						break;
-
-					}
-				}
-
-				if((squeezed_size.width() < 0) || (frame->IsExpandX())) {
-					PushBackSubWidget(handle);
-					PushBackSubWidget(frame);
-					AlignSubFrames(orientation_, size());
-				} else {
-					AlignSubFrames(orientation_, squeezed_size);
-
-					Point pos = last_child()->position();
-					pos.set_x(pos.x() + last_child()->size().width());
-
-					PushBackSubWidget(handle);
-					PushBackSubWidget(frame);
-
-					ResizeSubWidget(handle, handle->size().width(), size().height());
-					frame_size.set_height(size().height());
-					ResizeSubWidget(frame, frame_size);
-
-					SetSubWidgetPosition(handle, pos);
-					pos.set_x(pos.x() + handle->size().width());
-					SetSubWidgetPosition(frame, pos);
-
-				}
-
+				AddColumn(frame, policy);
 			} else {
-				handle = Manage(new FrameSplitterHandle(Horizontal));
-
-				squeezed_size.set_height(squeezed_size.height() - handle->size().height());
-
-				switch (policy) {
-					case PreferredHeight: {
-
-						frame_size.set_height(frame->GetPreferredSize().height());
-						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
-
-						break;
-					}
-					case CurrentHeight: {
-
-						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
-
-						break;
-					}
-					default: {
-
-						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
-						break;
-
-					}
-				}
-
-				if((squeezed_size.height() < 0) || (frame->IsExpandY())) {
-					PushBackSubWidget(handle);
-					PushBackSubWidget(frame);
-					AlignSubFrames(orientation_, size());
-				} else {
-					AlignSubFrames(orientation_, squeezed_size);
-
-					Point pos = last_child()->position();
-
-					PushBackSubWidget(handle);
-					PushBackSubWidget(frame);
-
-					ResizeSubWidget(handle, size().width(), handle->size().height());
-					frame_size.set_width(size().width());
-					ResizeSubWidget(frame, frame_size);
-
-					pos.set_y(pos.y() - handle->size().height());
-					SetSubWidgetPosition(handle, pos);
-					pos.set_y(pos.y() - frame->size().height());
-					SetSubWidgetPosition(frame, pos);
-
-				}
+				AddRow(frame, policy);
 			}
 
 		}
-
 
 		Refresh();
 	}
@@ -765,6 +665,125 @@ namespace BlendInt {
 		retval = retval / ((sum + 1) / 2);
 
 		return retval;
+	}
+
+	void FrameSplitter::AddColumn(Frame* frame, SizePolicy policy)
+	{
+#ifdef DEBUG
+		assert(orientation_ == Horizontal);
+#endif
+
+		Size squeezed_size = size();
+		Size frame_size = frame->size();
+		FrameSplitterHandle* handle = 0;
+
+		handle = Manage(new FrameSplitterHandle(Vertical));
+
+		switch (policy) {
+			case PreferredWidth: {
+				frame_size.set_width(frame->GetPreferredSize().width());
+				break;
+			}
+			case CurrentWidth: {
+				break;
+			}
+			case ExpandX: {
+				int w = 0;
+				for(AbstractWidget* p = first_child(); p; p = p->next()) {
+					w = p->GetPreferredSize().width();
+				}
+				frame_size.set_height(size().width() - handle->size().width() - w);
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		squeezed_size.set_width(squeezed_size.width() - handle->size().width() - frame_size.width());
+
+		if((squeezed_size.width() < 0) || (policy == DefaultSizePolicy)) {
+			PushBackSubWidget(handle);
+			PushBackSubWidget(frame);
+			AlignSubFrames(orientation_, size());
+		} else {
+			AlignSubFrames(orientation_, squeezed_size);
+
+			Point pos = last_child()->position();
+			pos.set_x(pos.x() + last_child()->size().width());
+
+			PushBackSubWidget(handle);
+			PushBackSubWidget(frame);
+
+			ResizeSubWidget(handle, handle->size().width(), size().height());
+			frame_size.set_height(size().height());
+			ResizeSubWidget(frame, frame_size);
+
+			SetSubWidgetPosition(handle, pos);
+			pos.set_x(pos.x() + handle->size().width());
+			SetSubWidgetPosition(frame, pos);
+
+		}
+
+	}
+
+	void FrameSplitter::AddRow(Frame* frame, SizePolicy policy)
+	{
+#ifdef DEBUG
+		assert(orientation_ == Vertical);
+#endif
+
+		Size squeezed_size = size();
+		Size frame_size = frame->size();
+		FrameSplitterHandle* handle = 0;
+
+		handle = Manage(new FrameSplitterHandle(Horizontal));
+
+		switch (policy) {
+			case PreferredHeight: {
+				frame_size.set_height(frame->GetPreferredSize().height());
+				break;
+			}
+			case CurrentHeight: {
+				break;
+			}
+			case ExpandY: {
+				int h = 0;
+				for(AbstractWidget* p = first_child(); p; p = p->next()) {
+					h = p->GetPreferredSize().height();
+				}
+				frame_size.set_height(size().height() - handle->size().height() - h);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+		squeezed_size.set_height(size().height() - handle->size().height() - frame_size.height());
+
+		if((squeezed_size.height() < 0) || (policy == DefaultSizePolicy)) {
+			PushBackSubWidget(handle);
+			PushBackSubWidget(frame);
+			AlignSubFrames(orientation_, size());
+		} else {
+			AlignSubFrames(orientation_, squeezed_size);
+
+			Point pos = last_child()->position();
+
+			PushBackSubWidget(handle);
+			PushBackSubWidget(frame);
+
+			ResizeSubWidget(handle, size().width(), handle->size().height());
+			frame_size.set_width(size().width());
+			ResizeSubWidget(frame, frame_size);
+
+			pos.set_y(pos.y() - handle->size().height());
+			SetSubWidgetPosition(handle, pos);
+			pos.set_y(pos.y() - frame->size().height());
+			SetSubWidgetPosition(frame, pos);
+
+		}
+
 	}
 
 	void FrameSplitter::DistributeHorizontally()

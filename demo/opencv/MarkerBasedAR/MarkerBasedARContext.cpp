@@ -14,6 +14,7 @@
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
+#include <BlendInt/Gui/ComboBox.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
@@ -32,12 +33,12 @@ MarkerBasedARContext::MarkerBasedARContext()
 	video_ = Manage(new CVVideoViewport);
 
 	splitter->AddFrame(video_);
-	splitter->AddFrame(tools);
+	splitter->AddFrame(tools, PreferredWidth);
 
 	ToolBox* bar = CreateToolBarOnce();
 
 	vsplitter->AddFrame(bar);
-	vsplitter->AddFrame(splitter);
+	vsplitter->AddFrame(splitter, ExpandY);
 
 	AddFrame(vsplitter);
 
@@ -92,9 +93,19 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 {
 	ToolBox* bar = Manage(new ToolBox(Horizontal));
 
-	MenuButton* btn1 = Manage(new MenuButton("File"));
+	ComboBox* combo = Manage(new ComboBox);
+	combo->Resize(48, combo->size().height());
 
+	MenuButton* btn1 = Manage(new MenuButton("File"));
+	MenuButton* btn2 = Manage(new MenuButton("Edit"));
+	MenuButton* btn3 = Manage(new MenuButton("View"));
+
+	bar->AddWidget(combo);
 	bar->AddWidget(btn1);
+	bar->AddWidget(btn2);
+	bar->AddWidget(btn3);
+
+	bar->Resize(bar->GetPreferredSize());
 
 	return bar;
 }

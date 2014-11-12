@@ -39,7 +39,7 @@ TEST_F(FrameSplitterTest1, Foo1)
 
 	FrameSplitter* fs = Manage(new FrameSplitter(Vertical));
 	DBG_SET_NAME(fs, "FrameSplitter");
-	fs->SetPosition(20, 20);
+	fs->MoveTo(20, 20);
 	fs->Resize(1240, 760);
 
 	Viewport* f1 = Manage(new Viewport);

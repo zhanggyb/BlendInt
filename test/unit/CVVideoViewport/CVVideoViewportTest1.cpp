@@ -32,7 +32,7 @@ TEST_F(CVVideoViewportTest1, Foo1)
 	context->Resize(1280, 800);
 
 	CVVideoViewport* video = Manage(new CVVideoViewport);
-	video->SetPosition((1280 - video->size().width()) / 2.f, (800 - video->size().height()) / 2.f);
+	video->MoveTo((1280 - video->size().width()) / 2.f, (800 - video->size().height()) / 2.f);
 	video->OpenCamera(0);
 	video->Play();
 

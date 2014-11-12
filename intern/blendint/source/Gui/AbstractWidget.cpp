@@ -185,7 +185,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetPosition (int x, int y)
+	void AbstractWidget::MoveTo (int x, int y)
 	{
 		if(position().x() == x && position().y() == y) return;
 
@@ -205,7 +205,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetPosition (const Point& pos)
+	void AbstractWidget::MoveTo (const Point& pos)
 	{
 		if(position() == pos) return;
 

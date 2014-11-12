@@ -36,11 +36,11 @@ TEST_F(ClockTest1, Foo1)
 	context->Resize(640, 480);
 
 	Dialog* dialog = Manage(new Dialog);
-	dialog->SetPosition(100, 100);
+	dialog->MoveTo(100, 100);
 
 	Clock* clock = Manage(new Clock);
 	clock->Resize(200, 200);
-	clock->SetPosition(25, 25);
+	clock->MoveTo(25, 25);
 	dialog->AddWidget(clock);
 
 	context->AddFrame(dialog);

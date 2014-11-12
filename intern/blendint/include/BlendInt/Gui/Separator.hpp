@@ -38,8 +38,6 @@ namespace BlendInt {
 
 		virtual ~Separator ();
 
-		void AttachWidget (Widget* widget);
-
 		void SetExpandX (bool expand);
 
 		void SetExpandY (bool expand);
@@ -52,23 +50,13 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
-	protected:
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual ResponseType Draw (Profile& profile);
-
 	private:
 
-		void OnWidgetDestroyed (Widget* widget);
+		bool expand_x_;
 
-		bool m_expand_x;
+		bool expand_y_;
 
-		bool m_expand_y;
-
-		Widget* m_widget_attached;
+		Size preferred_size_;
 	};
 
 }

@@ -301,9 +301,9 @@ namespace BlendInt {
 		 */
 		void Resize (const Size& size);
 
-		void SetPosition (int x, int y);
+		void MoveTo (int x, int y);
 
-		void SetPosition (const Point& pos);
+		void MoveTo (const Point& pos);
 
 		void SetRoundType (int type);
 

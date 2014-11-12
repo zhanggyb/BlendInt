@@ -30,7 +30,7 @@ TEST_F(ColorSelectorTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
 
     ColorSelector* cs = Manage(new ColorSelector);
-    cs->SetPosition(200, 50);
+    cs->MoveTo(200, 50);
 
     context->Append(cs);
 

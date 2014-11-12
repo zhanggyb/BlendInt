@@ -34,7 +34,7 @@ TEST_F(FileButtonTest1, Foo1)
 	Dialog* dialog = Manage(new Dialog);
 
     FileButton* fb = Manage(new FileButton);
-	fb->SetPosition(100, 100);
+	fb->MoveTo(100, 100);
 
 	dialog->AddWidget(fb);
 
