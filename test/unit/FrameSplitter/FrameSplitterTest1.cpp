@@ -37,41 +37,49 @@ TEST_F(FrameSplitterTest1, Foo1)
 	SetContext(context);
 	context->Resize(1280, 800);
 
-	FrameSplitter* fs = Manage(new FrameSplitter(Horizontal));
+	FrameSplitter* fs = Manage(new FrameSplitter(Vertical));
 	DBG_SET_NAME(fs, "FrameSplitter");
+	fs->SetPosition(20, 20);
+	fs->Resize(1240, 760);
 
 	Viewport* f1 = Manage(new Viewport);
 	DBG_SET_NAME(f1, "Frame1");
 	ToolBox* f2 = Manage(new ToolBox);
 	DBG_SET_NAME(f2, "Frame2");
+	f2->Resize(240, 100);
+
+	fs->AddFrame(f1);
+	fs->AddFrame(f2, PreferredHeight);
+
+	context->AddFrame(fs);
 
 	//Viewport* f3 = Manage(new Viewport);
 	//DBG_SET_NAME(f3, "Frame3");
 
-	ToolBox* f3 = Manage(new ToolBox(Horizontal));
-	DBG_SET_NAME(f3, "Frame3");
-
-	Button* btn1 = Manage(new Button("Hello"));
-	DBG_SET_NAME(btn1, "Button1");
-	f3->AddWidget(btn1);
-	Button* btn2 = Manage(new Button("Hello"));
-	DBG_SET_NAME(btn2, "Button2");
-	f3->AddWidget(btn2);
-
-	fs->AddFrame(f1);
-	fs->AddFrame(f2);
-
-	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
-	vsplitter->SetPosition(100, 100);
-	vsplitter->Resize(1000, 700);
-
-	vsplitter->AddFrame(f3);
-	vsplitter->AddFrame(fs);
-
-	context->AddFrame(vsplitter);
-
-	vsplitter->SetPosition(20, 20);
-	vsplitter->Resize(1240, 760);
+//	ToolBox* f3 = Manage(new ToolBox(Horizontal));
+//	DBG_SET_NAME(f3, "Frame3");
+//
+//	Button* btn1 = Manage(new Button("Hello"));
+//	DBG_SET_NAME(btn1, "Button1");
+//	f3->AddWidget(btn1);
+//	Button* btn2 = Manage(new Button("Hello"));
+//	DBG_SET_NAME(btn2, "Button2");
+//	f3->AddWidget(btn2);
+//
+//	fs->AddFrame(f1);
+//	fs->AddFrame(f2);
+//
+//	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
+//	vsplitter->SetPosition(100, 100);
+//	vsplitter->Resize(1000, 700);
+//
+//	vsplitter->AddFrame(f3);
+//	vsplitter->AddFrame(fs);
+//
+//	context->AddFrame(vsplitter);
+//
+//	vsplitter->SetPosition(20, 20);
+//	vsplitter->Resize(1240, 760);
 
     RunLoop(win);
     Terminate();

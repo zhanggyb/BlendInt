@@ -316,35 +316,127 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::AddFrame (Frame* frame, bool append)
+	void FrameSplitter::AddFrame (Frame* frame, SizePolicy policy)
 	{
 		if((frame == 0) || (frame->parent() == this)) return;
 
 		if(subs_count() == 0) {
 			PushBackSubWidget(frame);
+			AlignSubFrames(orientation_, size());
 		} else {
+
+			Size squeezed_size = size();
+			Size frame_size = frame->size();
 			FrameSplitterHandle* handle = 0;
+
 			if(orientation_ == Horizontal) {
 				handle = Manage(new FrameSplitterHandle(Vertical));
+
+				squeezed_size.set_width(squeezed_size.width() - handle->size().width());
+
+				switch (policy) {
+					case PreferredWidth: {
+
+						frame_size.set_width(frame->GetPreferredSize().width());
+						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
+
+						break;
+					}
+					case CurrentWidth: {
+
+						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
+
+						break;
+					}
+					default: {
+
+						squeezed_size.set_width(squeezed_size.width() - frame_size.width());
+						break;
+
+					}
+				}
+
+				if((squeezed_size.width() < 0) || (frame->IsExpandX())) {
+					PushBackSubWidget(handle);
+					PushBackSubWidget(frame);
+					AlignSubFrames(orientation_, size());
+				} else {
+					AlignSubFrames(orientation_, squeezed_size);
+
+					Point pos = last_child()->position();
+					pos.set_x(pos.x() + last_child()->size().width());
+
+					PushBackSubWidget(handle);
+					PushBackSubWidget(frame);
+
+					ResizeSubWidget(handle, handle->size().width(), size().height());
+					frame_size.set_height(size().height());
+					ResizeSubWidget(frame, frame_size);
+
+					SetSubWidgetPosition(handle, pos);
+					pos.set_x(pos.x() + handle->size().width());
+					SetSubWidgetPosition(frame, pos);
+
+				}
+
 			} else {
 				handle = Manage(new FrameSplitterHandle(Horizontal));
+
+				squeezed_size.set_height(squeezed_size.height() - handle->size().height());
+
+				switch (policy) {
+					case PreferredHeight: {
+
+						frame_size.set_height(frame->GetPreferredSize().height());
+						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
+
+						break;
+					}
+					case CurrentHeight: {
+
+						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
+
+						break;
+					}
+					default: {
+
+						squeezed_size.set_height(squeezed_size.height() - frame_size.height());
+						break;
+
+					}
+				}
+
+				if((squeezed_size.height() < 0) || (frame->IsExpandY())) {
+					PushBackSubWidget(handle);
+					PushBackSubWidget(frame);
+					AlignSubFrames(orientation_, size());
+				} else {
+					AlignSubFrames(orientation_, squeezed_size);
+
+					Point pos = last_child()->position();
+
+					PushBackSubWidget(handle);
+					PushBackSubWidget(frame);
+
+					ResizeSubWidget(handle, size().width(), handle->size().height());
+					frame_size.set_width(size().width());
+					ResizeSubWidget(frame, frame_size);
+
+					pos.set_y(pos.y() - handle->size().height());
+					SetSubWidgetPosition(handle, pos);
+					pos.set_y(pos.y() - frame->size().height());
+					SetSubWidgetPosition(frame, pos);
+
+				}
 			}
 
-			if(append) {
-				PushBackSubWidget(handle);
-				PushBackSubWidget(frame);
-			} else {
-				PushFrontSubWidget(handle);
-				PushFrontSubWidget(frame);
-			}
 		}
 
-		AlignSubFrames(orientation_, size());
 
 		Refresh();
 	}
 
-	void FrameSplitter::Insert(int index, Frame* frame)
+	void FrameSplitter::InsertFrame(int index, Frame* frame, SizePolicy policy)
 	{
 	}
 
@@ -495,7 +587,7 @@ namespace BlendInt {
 
 		} else {
 
-			int y = position().y() + size.height();
+			int y = position().y() + this->size().height();
 			int w = size.width();
 
 			int i = 0;

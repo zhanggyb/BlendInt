@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
 #define _BLENDINT_GUI_SCREENSPLITTER_HPP_
 
+#include <BlendInt/Core/Types.hpp>
+
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
@@ -104,9 +106,9 @@ namespace BlendInt {
 
 		virtual ~FrameSplitter ();
 
-		void AddFrame (Frame* frame, bool append = true);
+		void AddFrame (Frame* frame, SizePolicy policy = DefaultSizePolicy);
 
-		void Insert (int index, Frame* frame);
+		void InsertFrame (int index, Frame* frame, SizePolicy policy = DefaultSizePolicy);
 
 		virtual bool IsExpandX () const;
 

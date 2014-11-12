@@ -95,6 +95,17 @@ namespace BlendInt {
 		        | AlignVerticalCenter
 	};
 
+	enum SizePolicy
+	{
+		DefaultSizePolicy = 0x0,
+		PreferredWidth = (1 << 0),
+		PreferredHeight = (1 << 1),
+		CurrentWidth = (1 << 2),
+		CurrentHeight = (1 << 3),
+		ExpandX = (1 << 4),
+		ExpandY = (1 << 5)
+	};
+
 	/**
 	 * flags to set which corners will become rounded:
 	 *
