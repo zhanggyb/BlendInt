@@ -21,35 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
-	Widget::Widget()
-	: AbstractWidget(),
+	AbstractFloatingFrame::AbstractFloatingFrame()
+	: AbstractFrame(),
 	  round_radius_(5.f)
 	{
 	}
 
-	Widget::~Widget()
+	AbstractFloatingFrame::~AbstractFloatingFrame()
 	{
 	}
 
-	void Widget::SetRoundRadius(float radius)
+	void AbstractFloatingFrame::SetRoundRadius(float radius)
 	{
 		if(round_radius_ == radius) return;
 
 		PerformRoundRadiusUpdate(radius);
 	}
 
-	void Widget::PerformRoundRadiusUpdate(float radius)
-	{
-		round_radius_ = radius;
-	}
-
-	void Widget::GenerateRoundedVertices(std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
+	void AbstractFloatingFrame::GenerateRoundedVertices(
+			std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
 				DefaultBorderWidth() * Theme::instance->pixel(),
@@ -59,9 +54,9 @@ namespace BlendInt {
 				outer);
 	}
 
-	void Widget::GenerateRoundedVertices(Orientation shadedir, short shadetop,
-			short shadedown, std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
+	void AbstractFloatingFrame::GenerateRoundedVertices(
+			Orientation shadedir, short shadetop, short shadedown,
+			std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
 				DefaultBorderWidth() * Theme::instance->pixel(),
@@ -74,9 +69,9 @@ namespace BlendInt {
 				outer);
 	}
 
-	ResponseType Widget::Draw(Profile& profile)
+	void AbstractFloatingFrame::PerformRoundRadiusUpdate(float radius)
 	{
-		return subs_count() ? Ignore : Accept;
+		round_radius_ = radius;
 	}
 
 }

@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
 #define _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
-	class AbstractLayout: public Widget
+	class AbstractLayout: public AbstractWidget
 	{
 	public:
 
@@ -36,11 +36,11 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		virtual void Add (Widget* widget, bool append = true);
+		virtual void Add (AbstractWidget* widget, bool append = true);
 
-		virtual void Insert (int index, Widget* widget);
+		virtual void Insert (int index, AbstractWidget* widget);
 
-		virtual void Insert (int row, int column, Widget* widget);
+		virtual void Insert (int row, int column, AbstractWidget* widget);
 
 		const Margin& margin () const {return margin_;}
 

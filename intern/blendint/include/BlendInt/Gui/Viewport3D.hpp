@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_VIEWPORT3D_HPP_
 #define _BLENDINT_GUI_VIEWPORT3D_HPP_
 
+#include <deque>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/GridFloor.hpp>

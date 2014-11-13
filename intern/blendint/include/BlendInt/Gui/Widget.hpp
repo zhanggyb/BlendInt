@@ -28,9 +28,6 @@
 
 namespace BlendInt {
 
-	struct WidgetTheme;
-	class Color;
-
 	/**
 	 * @brief A Normal widget
 	 *
@@ -46,51 +43,38 @@ namespace BlendInt {
 
 		virtual ~Widget();
 
-		Cpp::EventRef<Widget*> destroyed ()
-		{
-			return *destroyed_;
-		}
+		void SetRoundRadius (float radius);
 
-		inline glm::vec2 get_relative_position (const glm::mat4& model_matrix)
+		inline float round_radius () const
 		{
-			return glm::vec2(model_matrix[0][0] * position().x() + model_matrix[1][0] * position().y(),
-					model_matrix[0][1] * position().x() + model_matrix[1][1] * position().y());
-		}
-
-		inline glm::vec2 get_relative_position (const glm::mat2& model_matrix)
-		{
-			return model_matrix * glm::vec2 (position().x(), position().y());
+			return round_radius_;
 		}
 
 	protected:
 
-		virtual bool PreDraw (Profile& profile);
+		void GenerateRoundedVertices (
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		void GenerateRoundedVertices (
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual void PostDraw (Profile& profile);
-
-		virtual void FocusEvent (bool focus);
-
-		virtual void MouseHoverInEvent (const MouseEvent& event);
-
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		inline void set_round_radius (float radius)
+		{
+			round_radius_ = radius;
+		}
 
 	private:
 
-		boost::scoped_ptr<Cpp::Event<Widget*> > destroyed_;
+		float round_radius_;
 
 	};
 

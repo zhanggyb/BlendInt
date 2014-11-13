@@ -43,9 +43,9 @@ namespace BlendInt {
 
 		virtual ~Decoration ();
 
-		void Prepend (AbstractWidget* widget);
+		void Prepend (AbstractInteractiveForm* widget);
 
-		void Append (AbstractWidget* widget);
+		void Append (AbstractInteractiveForm* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -59,9 +59,9 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+		virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 		virtual ResponseType Draw (Profile& profile);
 

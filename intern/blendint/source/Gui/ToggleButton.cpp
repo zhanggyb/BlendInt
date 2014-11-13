@@ -170,13 +170,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if(Theme::instance->toggle().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->toggle().shadetop,
 						Theme::instance->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -195,60 +195,49 @@ namespace BlendInt {
 		}
 	}
 
-	void ToggleButton::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void ToggleButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
+		set_round_type(round_type);
 
-			set_round_type(*request.round_type());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if(Theme::instance->toggle().shaded) {
-				GenerateVertices(Vertical,
+		if(Theme::instance->toggle().shaded) {
+			GenerateRoundedVertices(Vertical,
 						Theme::instance->toggle().shadetop,
 						Theme::instance->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
-
-			CalculateIconTextPosition(size(), round_type(), round_radius());
-
-			Refresh();
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
+		CalculateIconTextPosition(size(), round_type, round_radius());
+
+		Refresh();
 	}
 
-	void ToggleButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void ToggleButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
-
-			set_round_radius(*request.round_radius());
+			set_round_radius(radius);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
 			if(Theme::instance->toggle().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->toggle().shadetop,
 						Theme::instance->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -260,11 +249,6 @@ namespace BlendInt {
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
 			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
 	}
 
 	ResponseType ToggleButton::Draw (Profile& profile)
@@ -475,13 +459,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if(Theme::instance->toggle().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->toggle().shadetop,
 					Theme::instance->toggle().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(2, vao_);

@@ -42,6 +42,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	AbstractLayout::AbstractLayout()
+	: AbstractWidget()
 	{
 	}
 
@@ -49,16 +50,16 @@ namespace BlendInt {
 	{
 	}
 
-	void AbstractLayout::Add(Widget* widget, bool append)
+	void AbstractLayout::Add(AbstractWidget* widget, bool append)
 	{
 	}
 
-	void AbstractLayout::Insert(int index, Widget* widget)
+	void AbstractLayout::Insert(int index, AbstractWidget* widget)
 	{
 
 	}
 
-	void AbstractLayout::Insert(int row, int column, Widget* widget)
+	void AbstractLayout::Insert(int row, int column, AbstractWidget* widget)
 	{
 
 	}
@@ -74,6 +75,7 @@ namespace BlendInt {
 
 	void AbstractLayout::PerformMarginUpdate(const Margin& margin)
 	{
+		set_margin(margin);
 	}
 
 }

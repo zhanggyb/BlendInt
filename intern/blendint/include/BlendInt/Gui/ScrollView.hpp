@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~ScrollView ();
 
-		void Setup (AbstractWidget* widget);
+		void Setup (AbstractInteractiveForm* widget);
 
 		/**
 		 * @brief set the scrollable orientation
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		void SetReletivePosition (int x, int y);
 
-		AbstractWidget* viewport () const
+		AbstractInteractiveForm* viewport () const
 		{
 			return first_child();
 		}

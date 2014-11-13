@@ -44,9 +44,10 @@ namespace BlendInt {
 		glm::vec3(0.f, 1.f, 0.f));
 
 	AbstractFrame::AbstractFrame()
-	: AbstractWidget(),
+	: AbstractInteractiveForm(),
 	  display_mode_(Normal)
 	{
+		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
@@ -55,7 +56,7 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	Point AbstractFrame::GetAbsolutePosition (const Widget* widget)
+	Point AbstractFrame::GetAbsolutePosition (const AbstractWidget* widget)
 	{
 #ifdef DEBUG
 		assert(widget);
@@ -63,7 +64,7 @@ namespace BlendInt {
 
 		Point pos = widget->position();
 
-		AbstractWidget* p = widget->parent();
+		AbstractInteractiveForm* p = widget->parent();
 		while(p && (p != this)) {
 			pos = pos + p->position() + p->offset();
 			p = p->parent();
@@ -73,9 +74,9 @@ namespace BlendInt {
 		return pos;
 	}
 
-	AbstractFrame* AbstractFrame::GetFrame(AbstractWidget* widget)
+	AbstractFrame* AbstractFrame::GetFrame(AbstractInteractiveForm* widget)
 	{
-		AbstractWidget* container = widget->parent ();
+		AbstractInteractiveForm* container = widget->parent ();
 		AbstractFrame* frame = 0;
 
 		if(container == 0) {
@@ -101,15 +102,15 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Accept;
 	}
 
-	AbstractWidget* AbstractFrame::DispatchMousePressEvent(
-			AbstractWidget* widget, const MouseEvent& event)
+	AbstractInteractiveForm* AbstractFrame::DispatchMousePressEvent(
+			AbstractInteractiveForm* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
 			return 0;
 		} else {
 
 			ResponseType response = Ignore;
-			AbstractWidget* ret_val = 0;
+			AbstractInteractiveForm* ret_val = 0;
 
 			if(widget->parent ()) {
 
@@ -133,7 +134,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractWidget* widget, const MouseEvent& event)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractInteractiveForm* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
 			return Ignore;
@@ -154,7 +155,7 @@ namespace BlendInt {
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractWidget* widget, const MouseEvent& event)
+			AbstractInteractiveForm* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
 			return Ignore;
@@ -175,10 +176,10 @@ namespace BlendInt {
 		}
 	}
 
-	Widget* AbstractFrame::DispatchHoverEventsInSubWidgets(Widget* orig,
+	AbstractWidget* AbstractFrame::DispatchHoverEventsInSubWidgets(AbstractWidget* orig,
 			const MouseEvent& event)
 	{
-		Widget* hovered_widget = orig;
+		AbstractWidget* hovered_widget = orig;
 
 		set_event_frame(event, this);
 		Point local_position;	// the relative local position of the cursor in a widget
@@ -186,10 +187,10 @@ namespace BlendInt {
 		// find the new top hovered widget
 		if (hovered_widget) {
 
-			AbstractWidget* parent = hovered_widget->parent();
+			AbstractInteractiveForm* parent = hovered_widget->parent();
 			Point parent_position;
 
-			Widget* parent_widget = dynamic_cast<Widget*>(parent);
+			AbstractWidget* parent_widget = dynamic_cast<AbstractWidget*>(parent);
 			if(parent_widget) {
 				parent_position = this->GetAbsolutePosition(parent_widget);
 			} else {
@@ -209,7 +210,7 @@ namespace BlendInt {
 
 				if(hovered_widget->Contain(local_position)) {
 
-					Widget* orig = hovered_widget;
+					AbstractWidget* orig = hovered_widget;
 
 					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 
@@ -298,7 +299,7 @@ namespace BlendInt {
 					event.position().x() - position().x() - offset().x(),
 					event.position().y() - position().y() - offset().y());
 
-			for(AbstractWidget* p = last_child(); p; p = p->previous())
+			for(AbstractInteractiveForm* p = last_child(); p; p = p->previous())
 			{
 				if (p->visiable() && p->Contain(local_position)) {
 
@@ -330,7 +331,7 @@ namespace BlendInt {
 			if(!frame_hovered->Contain(event.position())) {
 
 				frame_hovered = 0;
-				for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+				for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 					if(p->Contain(event.position())) {
 						frame_hovered = dynamic_cast<AbstractFrame*>(p);
 						break;
@@ -340,7 +341,7 @@ namespace BlendInt {
 			}
 		} else {
 
-			for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+			for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 				if(p->Contain(event.position())) {
 					frame_hovered = dynamic_cast<AbstractFrame*>(p);
 					break;
@@ -352,7 +353,7 @@ namespace BlendInt {
 		return frame_hovered;
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractWidget* hovered_widget)
+	void AbstractFrame::ClearHoverWidgets(AbstractInteractiveForm* hovered_widget)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -367,7 +368,7 @@ namespace BlendInt {
 			hovered_widget = 0;
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractWidget* hovered_widget, const MouseEvent& event)
+	void AbstractFrame::ClearHoverWidgets(AbstractInteractiveForm* hovered_widget, const MouseEvent& event)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -383,10 +384,10 @@ namespace BlendInt {
 			hovered_widget = 0;
 	}
 
-	Widget* AbstractFrame::DispatchHoverEventDeeper(Widget* widget, const MouseEvent& event,
+	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const MouseEvent& event,
 			Point& local_position)
 	{
-		Widget* retval = widget;
+		AbstractWidget* retval = widget;
 
 		local_position.reset(
 				local_position.x () - widget->position ().x ()
@@ -395,7 +396,7 @@ namespace BlendInt {
 				- widget->offset ().y ()
 		);
 
-		for (AbstractWidget* p = widget->last_child (); p;
+		for (AbstractInteractiveForm* p = widget->last_child (); p;
 				p = p->previous ()) {
 
 			if (p->visiable () && p->Contain (local_position)) {

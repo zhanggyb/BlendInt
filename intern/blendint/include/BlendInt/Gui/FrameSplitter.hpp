@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
 #define _BLENDINT_GUI_SCREENSPLITTER_HPP_
 
+#include <deque>
 #include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>

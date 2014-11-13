@@ -75,7 +75,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollView::Setup (AbstractWidget* widget)
+	void ScrollView::Setup (AbstractInteractiveForm* widget)
 	{
 		if(widget == 0) return;
 
@@ -107,7 +107,7 @@ namespace BlendInt {
 	{
 		if(first_child() == 0) return;
 
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		int w = size().width() - margin().hsum();
 		int h = size().height() - margin().vsum();
@@ -125,7 +125,7 @@ namespace BlendInt {
 		int percentage = 0;
 
 		if(first_child()) {
-			AbstractWidget* p = first_child();
+			AbstractInteractiveForm* p = first_child();
 
 			int w = size().width() - margin().hsum();
 
@@ -145,7 +145,7 @@ namespace BlendInt {
 		int percentage = 0;
 
 		if(first_child()) {
-			AbstractWidget* p = first_child();
+			AbstractInteractiveForm* p = first_child();
 
 			int h = size().height() - margin().vsum();
 
@@ -165,7 +165,7 @@ namespace BlendInt {
 		if(first_child()) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = first_child();
+				AbstractInteractiveForm* p = first_child();
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -176,7 +176,7 @@ namespace BlendInt {
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
 		if(first_child()) {
-			AbstractWidget* p = first_child();
+			AbstractInteractiveForm* p = first_child();
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -206,7 +206,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractWidget* widget = first_child();
+		AbstractInteractiveForm* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -294,7 +294,7 @@ namespace BlendInt {
 			return Ignore;
 		}
 
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -319,7 +319,7 @@ namespace BlendInt {
 			return Ignore;
 		}
 
-		//AbstractWidget* p = sub_widgets()->front();
+		//AbstractInteractiveForm* p = sub_widgets()->front();
 
 		//if(!m_viewport) return;
 		//dispatch_mouse_release_event(m_viewport, event);
@@ -333,7 +333,7 @@ namespace BlendInt {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = first_child();
+				AbstractInteractiveForm* p = first_child();
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

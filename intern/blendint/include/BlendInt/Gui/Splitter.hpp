@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_SPLITTER_HPP_
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
+#include <deque>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt

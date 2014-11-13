@@ -195,7 +195,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -252,7 +252,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(p);
 			if(menubutton) {
@@ -265,7 +265,7 @@ namespace BlendInt {
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
 
-			AbstractWidget* parent = menu->parent();
+			AbstractInteractiveForm* parent = menu->parent();
 			delete parent;
 			original_active->SetRoundType(RoundAll);
 
@@ -305,7 +305,7 @@ namespace BlendInt {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				AbstractWidget* parent = menu->parent();
+				AbstractInteractiveForm* parent = menu->parent();
 				delete parent;
 				m_active_button->SetRoundType(RoundAll);
 			}
@@ -314,14 +314,14 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuBar::OnMenuHide(AbstractWidget* widget, int type)
+	void MenuBar::OnMenuHide(AbstractInteractiveForm* widget, int type)
 	{
 		DBG_PRINT_MSG("%s", "hello");
 		Menu* menu = dynamic_cast<Menu*>(widget);
 		if(menu) {
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			AbstractWidget* frame = menu->parent();
+			AbstractInteractiveForm* frame = menu->parent();
 			delete frame;
 		}
 

@@ -93,7 +93,7 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		GenerateVertices(&inner_verts, &outer_verts);
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		buffer_.generate();

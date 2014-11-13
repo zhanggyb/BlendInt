@@ -56,7 +56,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollArea::SetViewport (AbstractWidget* widget)
+	void ScrollArea::SetViewport (AbstractInteractiveForm* widget)
 	{
 		if (!widget)
 			return;
@@ -206,7 +206,7 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
-			AbstractWidget* widget = view->viewport();
+			AbstractInteractiveForm* widget = view->viewport();
 
 			int width = request.size()->width() - margin().hsum();
 			int height = request.size()->height() - margin().vsum();
@@ -253,7 +253,7 @@ namespace BlendInt {
 		SetSubWidgetPosition(view, x, y + bh);
 		ResizeSubWidget (view, width - rw, height - bh);
 
-		AbstractWidget* widget = view->viewport();
+		AbstractInteractiveForm* widget = view->viewport();
 
 		if(hbar->visiable()) {
 			SetSubWidgetPosition(hbar, x, y);
@@ -284,7 +284,7 @@ namespace BlendInt {
 	{
 		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
-		AbstractWidget* p = view->viewport();
+		AbstractInteractiveForm* p = view->viewport();
 
 		if (p) {
 			view->SetReletivePosition(view->size().width() - value,
@@ -296,7 +296,7 @@ namespace BlendInt {
 	{
 		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
-		AbstractWidget* p = view->viewport();
+		AbstractInteractiveForm* p = view->viewport();
 		if (p) {
 			view->SetReletivePosition(
 			        p->position().x() - view->position().x(),

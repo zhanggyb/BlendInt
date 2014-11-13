@@ -50,12 +50,12 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		Widget* focused_widget () const
+		AbstractWidget* focused_widget () const
 		{
 			return focused_widget_;
 		}
 
-		Widget* hovered_widget () const
+		AbstractWidget* hovered_widget () const
 		{
 			return hovered_widget_;
 		}
@@ -100,11 +100,11 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		void SetFocusedWidget (Widget* widget);
+		void SetFocusedWidget (AbstractWidget* widget);
 
-		void OnFocusedWidgetDestroyed (Widget* widget);
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		void OnHoverWidgetDestroyed (Widget* widget);
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
 		void RenderToBuffer (Profile& profile);
 
@@ -112,9 +112,9 @@ namespace BlendInt {
 
 		glm::mat4 model_matrix_;
 
-		Widget* focused_widget_;
+		AbstractWidget* focused_widget_;
 
-		Widget* hovered_widget_;
+		AbstractWidget* hovered_widget_;
 
 		int space_;
 

@@ -120,46 +120,36 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void FolderList::PerformRoundTypeUpdate (
-			const RoundTypeUpdateRequest& request)
+	void FolderList::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+				round_radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
 
-			set_round_type(*request.round_type());
+		set_round_type(round_type);
 
-			Refresh();
-		}
-
-		ReportRoundTypeUpdate(request);
+		Refresh();
 	}
 
-	void FolderList::PerformRoundRadiusUpdate (
-			const RoundRadiusUpdateRequest& request)
+	void FolderList::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(),
-			        round_type(), *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(),
+				round_type(), radius);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		GLArrayBuffer::reset();
 
-			set_round_radius(*request.round_radius());
+		set_round_radius(radius);
 
-			Refresh();
-		}
-
-		ReportRoundRadiusUpdate(request);
+		Refresh();
 	}
 
 	void FolderList::InitializeFolderListOnce ()

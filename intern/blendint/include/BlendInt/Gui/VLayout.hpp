@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_VBOX_HPP_
 #define _BLENDINT_GUI_VBOX_HPP_
 
+#include <deque>
 #include <BlendInt/Gui/Layout.hpp>
 
 namespace BlendInt {

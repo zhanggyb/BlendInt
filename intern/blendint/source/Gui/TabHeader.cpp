@@ -124,7 +124,7 @@ namespace BlendInt {
 		} else {
 			Size tmp_size;
 
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();

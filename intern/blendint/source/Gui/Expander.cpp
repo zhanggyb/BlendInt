@@ -96,37 +96,23 @@ namespace BlendInt {
 		}
 	}
 
-	void ExpandButton::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void ExpandButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), *request.round_type(), round_radius(),
-			        text());
+		UpdateTextPosition(size(), round_type, round_radius(),
+				text());
 
-			set_round_type(*request.round_type());
+		set_round_type(round_type);
 
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		Refresh();
 	}
 
-	void ExpandButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void ExpandButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), round_type(), *request.round_radius(),
-			        text());
+		UpdateTextPosition(size(), round_type(), radius,
+				text());
 
-			set_round_radius(*request.round_radius());
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		set_round_radius(radius);
+		Refresh();
 	}
 
 	ResponseType ExpandButton::Draw (Profile& profile)
@@ -261,7 +247,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			tmp = p->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -275,7 +261,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -290,7 +276,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;

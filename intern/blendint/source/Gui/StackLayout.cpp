@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	}
 
-	void StackLayout::Prepend (AbstractWidget* widget)
+	void StackLayout::Prepend (AbstractInteractiveForm* widget)
 	{
 		if(PushFrontSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -54,7 +54,7 @@ namespace BlendInt {
 		}
 	}
 
-	void StackLayout::Append (AbstractWidget* widget)
+	void StackLayout::Append (AbstractInteractiveForm* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -72,7 +72,7 @@ namespace BlendInt {
 		}
 	}
 
-	void StackLayout::Insert (int index, AbstractWidget* widget)
+	void StackLayout::Insert (int index, AbstractInteractiveForm* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().hsum();
@@ -85,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	void StackLayout::Remove (AbstractWidget* widget)
+	void StackLayout::Remove (AbstractInteractiveForm* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 	{
 		int index = 0;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p == active_widget_) {
 				break;
@@ -128,7 +128,7 @@ namespace BlendInt {
 
 		if(count) {
 
-			AbstractWidget* widget = GetWidgetAt(index);
+			AbstractInteractiveForm* widget = GetWidgetAt(index);
 			if(active_widget_ == widget) {
 				return;
 			}
@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				ret = true;
@@ -158,7 +158,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				ret = true;
@@ -179,7 +179,7 @@ namespace BlendInt {
 			prefer.set_height(0);
 
 			Size tmp;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -222,7 +222,7 @@ namespace BlendInt {
 	void BlendInt::StackLayout::HideSubWidget (int index)
 	{
 		if(subs_count() && index < (subs_count() - 1)) {
-			AbstractWidget* p = GetWidgetAt(index);
+			AbstractInteractiveForm* p = GetWidgetAt(index);
 			p->SetVisible(false);
 		}
 	}

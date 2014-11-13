@@ -65,7 +65,7 @@ namespace BlendInt {
             set_size(*request.size());
 
             std::vector<GLfloat> inner_verts;
-            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+            AbstractInteractiveForm::GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
 			inner_.bind();
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -79,37 +79,29 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuButton::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void MenuButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			UpdateTextPosition(size(), round_type, round_radius(),
 			        text());
 
-            set_round_type(*request.round_type());
+            set_round_type(round_type);
 
             std::vector<GLfloat> inner_verts;
-            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+            GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
 
             inner_.bind();
             inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
             inner_.reset();
 
 			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
 	}
 
-	void MenuButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void MenuButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			UpdateTextPosition(size(), round_type(), radius,
 			        text());
 
-			set_round_radius(*request.round_radius());
+			set_round_radius(radius);
 
             std::vector<GLfloat> inner_verts;
             GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
@@ -119,11 +111,6 @@ namespace BlendInt {
             inner_.reset();
 
             Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
 	}
 
 	ResponseType MenuButton::Draw (Profile& profile)

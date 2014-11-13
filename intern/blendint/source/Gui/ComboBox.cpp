@@ -130,13 +130,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->menu().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->menu().shadetop,
 						Theme::instance->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			buffer_.bind(0);
@@ -153,71 +153,56 @@ namespace BlendInt {
 		}
 	}
 
-	void ComboBox::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void ComboBox::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
+		set_round_type(round_type);
 
-			set_round_type(*request.round_type());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->menu().shaded) {
-				GenerateVertices(Vertical,
+		if (Theme::instance->menu().shaded) {
+			GenerateRoundedVertices(Vertical,
 						Theme::instance->menu().shadetop,
 						Theme::instance->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
-
-			Refresh();
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		Refresh();
 	}
 
-	void ComboBox::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void ComboBox::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
+		set_round_radius(radius);
 
-			set_round_radius(*request.round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->menu().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->menu().shadetop,
-						Theme::instance->menu().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
-
-			Refresh();
+		if (Theme::instance->menu().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu().shadetop,
+					Theme::instance->menu().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		Refresh();
 	}
 
 	ResponseType ComboBox::Draw(Profile& profile)
@@ -287,7 +272,7 @@ namespace BlendInt {
 		Context* context = event.context();
 
 		if(list_) {
-			AbstractWidget* parent = list_->parent();
+			AbstractInteractiveForm* parent = list_->parent();
 			delete parent;
 			list_ = 0;
 			SetRoundType(RoundAll);
@@ -342,13 +327,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->menu().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->menu().shadetop,
 					Theme::instance->menu().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		buffer_.generate();

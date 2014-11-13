@@ -174,7 +174,7 @@ namespace BlendInt {
 
 				preferred_size.set_width(-space_);
 
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -191,7 +191,7 @@ namespace BlendInt {
 
 				preferred_size.set_height(-space_);
 
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -349,7 +349,7 @@ namespace BlendInt {
 
 		if(hovered_widget_) {
 
-			AbstractWidget* widget = 0;	// widget may be focused
+			AbstractInteractiveForm* widget = 0;	// widget may be focused
 
 			widget = DispatchMousePressEvent(hovered_widget_, event);
 
@@ -395,7 +395,7 @@ namespace BlendInt {
 	{
 		if(Contain(event.position())) {
 
-			Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -483,7 +483,7 @@ namespace BlendInt {
 		//int width = size().width() - margin_.hsum();
 		int height = size().height() - margin_.vsum();
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			SetSubWidgetPosition(p, x, y);
 			ResizeSubWidget(p, p->size().width(), height);
@@ -515,7 +515,7 @@ namespace BlendInt {
 
 		y = y + space_;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			y = y - p->size().height() - space_;
 
@@ -561,7 +561,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void ToolBox::SetFocusedWidget (Widget* widget)
+	void ToolBox::SetFocusedWidget (AbstractWidget* widget)
 	{
 		if(focused_widget_ == widget)
 			return;
@@ -578,7 +578,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::OnFocusedWidgetDestroyed (Widget* widget)
+	void ToolBox::OnFocusedWidgetDestroyed (AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
 		assert(widget->focus());
@@ -590,7 +590,7 @@ namespace BlendInt {
 		focused_widget_ = 0;
 	}
 
-	void ToolBox::OnHoverWidgetDestroyed (Widget* widget)
+	void ToolBox::OnHoverWidgetDestroyed (AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hovered_widget_ == widget);
@@ -656,7 +656,7 @@ namespace BlendInt {
             glViewport(0, 0, size().width(), size().height());
 
             // Draw context:
-    		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+    		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
     			DispatchDrawEvent (p, profile);
     		}
 

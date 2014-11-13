@@ -89,7 +89,7 @@ namespace BlendInt {
 	ScrollBar* AbstractScrollable::GetHScrollBar() const
 	{
 		ScrollBar* bar = 0;
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			bar = dynamic_cast<ScrollBar*>(p);
 			if(bar && (bar->orientation() == Horizontal)) {
 				break;
@@ -102,7 +102,7 @@ namespace BlendInt {
 	ScrollBar* AbstractScrollable::GetVScrollBar() const
 	{
 		ScrollBar* bar = 0;
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 			bar = dynamic_cast<ScrollBar*>(p);
 			if(bar && (bar->orientation() == Vertical)) {
 				break;

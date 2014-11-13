@@ -133,43 +133,33 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void BrightnessSlider::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void BrightnessSlider::PerformRoundTypeUpdate (int round_type)
 	{
-		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+				round_radius(), Color(0x000000FF), orientation(), 255, 0);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
-			set_round_type(*request.round_type());
-			Refresh();
-		}
-
-		ReportRoundTypeUpdate(request);
+		set_round_type(round_type);
+		Refresh();
 	}
 
-	void BrightnessSlider::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void BrightnessSlider::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
-			        *request.round_radius(), Color(0x000000FF), orientation(),
-			        255, 0);
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
+				radius, Color(0x000000FF), orientation(),
+				255, 0);
+		inner_->bind();
+		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
-			set_round_radius(*request.round_radius());
-			Refresh();
-		}
-
-		ReportRoundRadiusUpdate(request);
+		set_round_radius(radius);
+		Refresh();
 	}
 
 	void BrightnessSlider::InitializeBrightnessSlider()

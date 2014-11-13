@@ -38,17 +38,17 @@ namespace BlendInt {
 	
 	void HBlockLayout::Prepend (Widget* widget)
 	{
-		AbstractWidget* orig_first = first_child();
+		AbstractInteractiveForm* orig_first = first_child();
 
 		if(PushFrontSubWidget(widget)) {
 
 			widget->SetEmboss(true);
 
 			if(orig_first) {
-				SetSubWidgetRoundType(orig_first, orig_first->round_type() & ~(RoundTopLeft | RoundBottomLeft));
-				SetSubWidgetRoundType(widget, RoundTopLeft | RoundBottomLeft);
+				orig_first->SetRoundType(orig_first->round_type() & ~(RoundTopLeft | RoundBottomLeft));
+				widget->SetRoundType(RoundTopLeft | RoundBottomLeft);
 			} else {
-				SetSubWidgetRoundType(widget, RoundAll);
+				widget->SetRoundType(RoundAll);
 			}
 
 			FillInHBlock(size(), margin());
@@ -58,17 +58,17 @@ namespace BlendInt {
 
 	void HBlockLayout::Append (Widget* widget)
 	{
-		AbstractWidget* orig_last = last_child();
+		AbstractInteractiveForm* orig_last = last_child();
 
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
 
 			if(orig_last) {
-				SetSubWidgetRoundType(orig_last, orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
-				SetSubWidgetRoundType(widget, RoundTopRight | RoundBottomRight);
+				orig_last->SetRoundType(orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
+				widget->SetRoundType(RoundTopRight | RoundBottomRight);
 			} else {
-				SetSubWidgetRoundType(widget, RoundAll);
+				widget->SetRoundType(RoundAll);
 			}
 
 			FillInHBlock(size(), margin());
@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -122,7 +122,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -196,7 +196,7 @@ namespace BlendInt {
 		if(count == 0) return;
 		int average_width = w / count + 1;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, average_width, h);
 			SetSubWidgetPosition(p, x, y);

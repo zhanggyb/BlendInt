@@ -38,13 +38,13 @@ namespace BlendInt {
 
 		virtual ~StackLayout ();
 
-		void Prepend (AbstractWidget* widget);
+		void Prepend (AbstractInteractiveForm* widget);
 
-		void Append (AbstractWidget* widget);
+		void Append (AbstractInteractiveForm* widget);
 
-		void Insert (int index, AbstractWidget* widget);
+		void Insert (int index, AbstractInteractiveForm* widget);
 
-		void Remove (AbstractWidget* widget);
+		void Remove (AbstractInteractiveForm* widget);
 
 		int GetIndex () const;
 
@@ -56,7 +56,7 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		inline AbstractWidget* active_widget () const
+		inline AbstractInteractiveForm* active_widget () const
 		{
 			return active_widget_;
 		}
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	private:
 
-		AbstractWidget* active_widget_;
+		AbstractInteractiveForm* active_widget_;
 
 	};
 

@@ -89,41 +89,28 @@ namespace BlendInt {
 		}
 	}
 
-	void FileSelector::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void FileSelector::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), 0, round_type,
+				round_radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		GLArrayBuffer::reset();
 
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		Refresh();
 	}
 
-	void FileSelector::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void FileSelector::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, round_type(),
-			        *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), 0, round_type(),
+				radius);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		GLArrayBuffer::reset();
 
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		Refresh();
 	}
 
 	ResponseType FileSelector::Draw (Profile& profile)

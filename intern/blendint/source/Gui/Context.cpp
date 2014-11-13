@@ -169,7 +169,7 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractWidget(),
+	: AbstractInteractiveForm(),
 	  hovered_frame_(0),
 	  focused_frame_(0)
 	{
@@ -177,6 +177,9 @@ namespace BlendInt
 		set_refresh(true);
 
 		profile_.context_ = this;
+
+		events_.reset(new Cpp::ConnectionScope);
+
 		InitializeContext();
 
 		context_set.insert(this);
@@ -319,9 +322,9 @@ namespace BlendInt
 		// TODO: override this function
 	}
 
-	Context* Context::GetContext (AbstractWidget* widget)
+	Context* Context::GetContext (AbstractInteractiveForm* widget)
 	{
-		AbstractWidget* parent = widget->parent();
+		AbstractInteractiveForm* parent = widget->parent();
 
 		if(parent == 0) {
 			return dynamic_cast<Context*>(widget);
@@ -405,7 +408,7 @@ namespace BlendInt
 
 	ResponseType Context::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
@@ -424,7 +427,7 @@ namespace BlendInt
 	{
 		ResponseType response = Ignore;
 
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 			response = p->KeyPressEvent(event);
 			if(response == Accept) break;
 		}
@@ -455,7 +458,7 @@ namespace BlendInt
 		set_pressed(true);
 
 		/*
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
@@ -588,7 +591,7 @@ namespace BlendInt
 		hovered_frame_ = 0;
 		AbstractFrame* temp = 0;
 
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 
 			temp = dynamic_cast<AbstractFrame*>(p);
 			response = temp->DispatchHoverEvent(event);
@@ -612,7 +615,7 @@ namespace BlendInt
 			if(hovered_frame_) {
 				hovered_frame_->set_hover(true);
 				hovered_frame_->MouseHoverInEvent(event);
-				events()->connect(hovered_frame_->destroyed(), this, &Context::OnHoverFrameDestroyed);
+				events_->connect(hovered_frame_->destroyed(), this, &Context::OnHoverFrameDestroyed);
 			}
 
 		}
@@ -644,7 +647,7 @@ namespace BlendInt
 		if(focused_frame_) {
 			focused_frame_->set_focus(true);
 			focused_frame_->FocusEvent(true);
-			events()->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
+			events_->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
 		}
 	}
 

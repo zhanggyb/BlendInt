@@ -46,7 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Dialog::Dialog()
-	: AbstractFrame(),
+	: AbstractFloatingFrame(),
 	  shadow_(0),
 	  focused_widget_(0),
 	  hovered_widget_(0),
@@ -130,7 +130,7 @@ namespace BlendInt {
 
 		layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			layout->Add(dynamic_cast<Widget*>(p));
 		}
 
@@ -304,7 +304,7 @@ namespace BlendInt {
 
 		if(hovered_widget_) {
 
-			AbstractWidget* widget = 0;	// widget may be focused
+			AbstractInteractiveForm* widget = 0;	// widget may be focused
 
 			widget = DispatchMousePressEvent(hovered_widget_, event);
 
@@ -367,7 +367,7 @@ namespace BlendInt {
 	{
 		if(Contain(event.position())) {
 
-			Widget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -392,7 +392,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Dialog::SetFocusedWidget(Widget* widget)
+	void Dialog::SetFocusedWidget(AbstractWidget* widget)
 	{
 		if(focused_widget_ == widget)
 			return;
@@ -409,7 +409,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Dialog::OnFocusedWidgetDestroyed(Widget* widget)
+	void Dialog::OnFocusedWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
 		assert(widget->focus());
@@ -421,7 +421,7 @@ namespace BlendInt {
 		focused_widget_ = 0;
 	}
 
-	void Dialog::OnHoverWidgetDestroyed(Widget* widget)
+	void Dialog::OnHoverWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hovered_widget_ == widget);
@@ -432,7 +432,7 @@ namespace BlendInt {
 		hovered_widget_ = 0;
 	}
 
-	void Dialog::OnLayoutDestroyed(Widget* layout)
+	void Dialog::OnLayoutDestroyed(AbstractWidget* layout)
 	{
 		assert(layout == layout_);
 
@@ -496,7 +496,7 @@ namespace BlendInt {
             glViewport(0, 0, size().width(), size().height());
 
             // Draw context:
-    		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+    		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
     			DispatchDrawEvent (p, profile);
     		}
 

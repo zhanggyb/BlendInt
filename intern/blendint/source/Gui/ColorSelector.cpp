@@ -171,40 +171,26 @@ namespace BlendInt {
 		}
 	}
 
-	void ColorSelector::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void ColorSelector::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			set_round_type(*request.round_type());
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type, round_radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		set_round_type(round_type);
 	}
 
-	void ColorSelector::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void ColorSelector::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			set_round_radius(*request.round_radius());
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius);
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
+		set_round_radius(radius);
 	}
 
 	ResponseType ColorSelector::Draw (Profile& profile)

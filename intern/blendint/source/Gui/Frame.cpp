@@ -59,7 +59,7 @@ namespace BlendInt {
 
 	ResponseType Frame::Draw (Profile& profile)
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 

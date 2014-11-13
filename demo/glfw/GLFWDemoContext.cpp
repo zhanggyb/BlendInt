@@ -88,7 +88,7 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	splitter1->Resize(1200, 760);
 
-	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	Dialog* dlg = Manage(new Dialog);
     dlg->Resize(400, 300);

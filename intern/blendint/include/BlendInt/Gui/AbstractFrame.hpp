@@ -26,14 +26,16 @@
 
 #include <glm/glm.hpp>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <boost/smart_ptr.hpp>
+
+#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	class FrameSplitter;
 
-	class AbstractFrame: public AbstractWidget
+	class AbstractFrame: public AbstractInteractiveForm
 	{
 	public:
 
@@ -54,14 +56,14 @@ namespace BlendInt {
 			return display_mode_;
 		}
 
-		Point GetAbsolutePosition (const Widget* widget);
+		Point GetAbsolutePosition (const AbstractWidget* widget);
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
 		{
 			return *destroyed_;
 		}
 
-		static AbstractFrame* GetFrame (AbstractWidget* widget);
+		static AbstractFrame* GetFrame (AbstractInteractiveForm* widget);
 
 	protected:
 
@@ -71,38 +73,38 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event) = 0;
 
-		AbstractWidget* DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
+		AbstractInteractiveForm* DispatchMousePressEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
 
-		ResponseType DispatchMouseMoveEvent (AbstractWidget* widget, const MouseEvent& event);
+		ResponseType DispatchMouseMoveEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
+		ResponseType DispatchMouseReleaseEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
 
-		ResponseType call_key_press_event (AbstractWidget* widget, const KeyEvent& event)
+		ResponseType call_key_press_event (AbstractInteractiveForm* widget, const KeyEvent& event)
 		{
 			return widget->KeyPressEvent(event);
 		}
 
-		ResponseType call_mouse_press_event (AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_press_event (AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			return widget->MousePressEvent(event);
 		}
 
-		ResponseType call_mouse_release_event(AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_release_event(AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			return widget->MouseReleaseEvent(event);
 		}
 
-		ResponseType call_mouse_move_event(AbstractWidget* widget, const MouseEvent& event)
+		ResponseType call_mouse_move_event(AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			return widget->MouseMoveEvent(event);
 		}
 
-		inline void set_widget_focus_status (AbstractWidget* widget, bool focus)
+		inline void set_widget_focus_status (AbstractInteractiveForm* widget, bool focus)
 		{
 			widget->set_focus(focus);
 		}
 
-		void set_widget_focus_event (AbstractWidget* widget, bool focus)
+		void set_widget_focus_event (AbstractInteractiveForm* widget, bool focus)
 		{
 			widget->set_focus(focus);
 			widget->FocusEvent(focus);
@@ -113,13 +115,15 @@ namespace BlendInt {
 			profile.frame_ = this;
 		}
 
-		Widget* DispatchHoverEventsInSubWidgets (Widget* orig, const MouseEvent& event);
+		AbstractWidget* DispatchHoverEventsInSubWidgets (AbstractWidget* orig, const MouseEvent& event);
 
 		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const MouseEvent& event);
 
-		void ClearHoverWidgets (AbstractWidget* hovered_widget);
+		void ClearHoverWidgets (AbstractInteractiveForm* hovered_widget);
 
-		void ClearHoverWidgets (AbstractWidget* hovered_widget, const MouseEvent& event);
+		void ClearHoverWidgets (AbstractInteractiveForm* hovered_widget, const MouseEvent& event);
+
+		Cpp::ConnectionScope* events() const {return events_.get();}
 
 		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
 		{
@@ -135,24 +139,26 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
-		Widget* DispatchHoverEventDeeper (Widget* widget, const MouseEvent& event, Point& local_position);
+		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* widget, const MouseEvent& event, Point& local_position);
 
-		inline void set_widget_mouse_hover_in_event (AbstractWidget* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_in_event (AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			widget->set_hover(true);
 			widget->MouseHoverInEvent(event);
 		}
 
-		inline void set_widget_mouse_hover_out_event (AbstractWidget* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_out_event (AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			widget->set_hover(false);
 			widget->MouseHoverOutEvent(event);
 		}
 
-		inline void set_widget_hover_status (AbstractWidget* widget, bool hover)
+		inline void set_widget_hover_status (AbstractInteractiveForm* widget, bool hover)
 		{
 			widget->set_hover(hover);
 		}
+
+		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
 		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
 

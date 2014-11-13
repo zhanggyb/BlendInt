@@ -88,7 +88,7 @@ namespace BlendInt {
 
 		void Toggle (AbstractButton* button, bool toggled);
 
-		void OnButtonDestroyed (AbstractWidget* button);
+		void OnButtonDestroyed (AbstractInteractiveForm* button);
 
 		std::deque<AbstractButton*> buttons_;
 

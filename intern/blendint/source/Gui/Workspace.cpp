@@ -58,7 +58,7 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		GenerateVertices(&inner_verts, &outer_verts);
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -96,7 +96,7 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 
 			inner_->bind();
 			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -187,7 +187,7 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 
 			if(p->visiable()) {
 				retval = p->Contain(point);
@@ -256,7 +256,7 @@ namespace BlendInt {
 
 	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
 	{
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		SetSubWidgetPosition(p, x, y + h * 9 / 10);
 		p = p->next();
@@ -377,7 +377,7 @@ namespace BlendInt {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));

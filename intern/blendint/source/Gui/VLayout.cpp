@@ -106,7 +106,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -127,7 +127,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -142,7 +142,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -213,7 +213,7 @@ namespace BlendInt {
 		int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
 
 		Size tmp_size;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if (p->visiable()) {
 				tmp_size = p->GetPreferredSize();
@@ -267,7 +267,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		y = y + height;
 		while (p) {
@@ -304,7 +304,7 @@ namespace BlendInt {
 		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		if(widgets_height <= 0) {
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				p->Resize(p->size().width(), 0);
 			}
@@ -315,7 +315,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		y = y + height;
 		if(widgets_height <= unexpandable_prefer_sum) {
@@ -393,7 +393,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidget* p = first_child();
+		AbstractInteractiveForm* p = first_child();
 
 		y = y + height;
 		while (p) {
@@ -428,7 +428,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator unexp_it =
 				unexpandable_preferred_widths->begin();
 
-		for (AbstractWidget* p = first_child(); p; p = p->next()) {
+		for (AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 
 			if (p->IsExpandX()) {
 

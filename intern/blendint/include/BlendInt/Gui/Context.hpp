@@ -24,10 +24,11 @@
 #ifndef _BLENDINT_GUI_CONTEXT_HPP_
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
-#include <stack>
 #include <set>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <boost/smart_ptr.hpp>
+
+#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -38,7 +39,7 @@ namespace BlendInt {
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
-	class Context: public AbstractWidget
+	class Context: public AbstractInteractiveForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
 
@@ -72,7 +73,7 @@ namespace BlendInt {
 			return resized_;
 		}
 
-		static Context* GetContext (AbstractWidget* widget);
+		static Context* GetContext (AbstractInteractiveForm* widget);
 
 		static glm::mat4 default_view_matrix;
 
@@ -120,6 +121,8 @@ namespace BlendInt {
 
 		void SetFocusedFrame (AbstractFrame* frame);
 
+		Cpp::ConnectionScope* events() const {return events_.get();}
+
 	private:
 
 		static void GetGLVersion (int *major, int *minor);
@@ -134,7 +137,9 @@ namespace BlendInt {
 
 		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
-        //void RenderToBuffer (Profile& profile);
+		boost::scoped_ptr<Cpp::ConnectionScope> events_;
+
+		//void RenderToBuffer (Profile& profile);
 
         //GLuint vao_;
         

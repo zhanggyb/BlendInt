@@ -344,7 +344,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			if(p->IsExpandX()) {
 				expand = true;
 				break;
@@ -358,7 +358,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			if(p->IsExpandY()) {
 				expand = true;
 				break;
@@ -379,7 +379,7 @@ namespace BlendInt {
 			Size tmp;
 
 			if (orientation_ == Horizontal) {
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if (p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -390,7 +390,7 @@ namespace BlendInt {
 					}
 				}
 			} else {
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -447,7 +447,7 @@ namespace BlendInt {
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
 		set_refresh(false);
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}
 
@@ -471,7 +471,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_width = 0;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					ResizeSubWidget(p, room, h);
@@ -493,7 +493,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_height = 0;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					y = y - room;
@@ -539,7 +539,7 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		AbstractWidget* p = 0;
+		AbstractInteractiveForm* p = 0;
 		for(p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
@@ -558,7 +558,7 @@ namespace BlendInt {
 		ResponseType response = Ignore;
 
 		/*
-		for(AbstractWidget* p = last_child(); p; p = p->previous()) {
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
 
 			if(p->Contain(event.position())) {
 
@@ -649,7 +649,7 @@ namespace BlendInt {
 		int sum = 1;
 
 		// get all the total width/height of splitter handlers
-		AbstractWidget* p = first_child()->next();
+		AbstractInteractiveForm* p = first_child()->next();
 		while (p) {
 			prefer = p->GetPreferredSize();
 			if(orientation == Horizontal) {
@@ -690,7 +690,7 @@ namespace BlendInt {
 			}
 			case ExpandX: {
 				int w = 0;
-				for(AbstractWidget* p = first_child(); p; p = p->next()) {
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 					w = p->GetPreferredSize().width();
 				}
 				frame_size.set_height(size().width() - handle->size().width() - w);
@@ -749,7 +749,7 @@ namespace BlendInt {
 			}
 			case ExpandY: {
 				int h = 0;
-				for(AbstractWidget* p = first_child(); p; p = p->next()) {
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 					h = p->GetPreferredSize().height();
 				}
 				frame_size.set_height(size().height() - handle->size().height() - h);
@@ -799,7 +799,7 @@ namespace BlendInt {
 
 		int prefer_width;
 		int i = 0;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -874,7 +874,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -906,7 +906,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator exp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -940,7 +940,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -979,7 +979,7 @@ namespace BlendInt {
 
 		int prefer_height;
 		int i = 0;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -1056,7 +1056,7 @@ namespace BlendInt {
 
 		y = y + size().height();
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1091,7 +1091,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + size().height();
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1127,7 +1127,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + size().height();
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1155,7 +1155,7 @@ namespace BlendInt {
 
 	void FrameSplitter::AlignHorizontally()
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, p->size().width(), size().height());
 			SetSubWidgetPosition(p, p->position().x(), position().y());
@@ -1164,7 +1164,7 @@ namespace BlendInt {
 
 	void FrameSplitter::AlignVertically()
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, size().width(), p->size().height());
 			SetSubWidgetPosition(p, position().x(), p->position().y());

@@ -62,11 +62,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, vao_);
 	}
 
-	void Decoration::Prepend (AbstractWidget* widget)
+	void Decoration::Prepend (AbstractInteractiveForm* widget)
 	{
 	}
 
-	void Decoration::Append (AbstractWidget* widget)
+	void Decoration::Append (AbstractInteractiveForm* widget)
 	{
 	}
 
@@ -136,42 +136,27 @@ namespace BlendInt {
 		}
 	}
 
-	void Decoration::PerformRoundTypeUpdate (
-			const RoundTypeUpdateRequest& request)
+	void Decoration::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, *request.round_type(),
-					round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), 0, round_type,
+				round_radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		GLArrayBuffer::reset();
 
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		Refresh();
 	}
 
-	void Decoration::PerformRoundRadiusUpdate (
-			const RoundRadiusUpdateRequest& request)
+	void Decoration::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(size(), 0, round_type(),
-					*request.round_radius());
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
+		VertexTool tool;
+		tool.GenerateVertices(size(), 0, round_type(), radius);
+		inner_->bind();
+		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+		GLArrayBuffer::reset();
 
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		Refresh();
 	}
 
 	ResponseType Decoration::Draw (Profile& profile)

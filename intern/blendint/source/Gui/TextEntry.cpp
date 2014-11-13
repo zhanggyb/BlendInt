@@ -241,13 +241,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->text().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->text().shadetop,
 						Theme::instance->text().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -272,74 +272,57 @@ namespace BlendInt {
 		}
 	}
 
-	void TextEntry::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void TextEntry::PerformRoundTypeUpdate (int round_type)
 	{
-		if (request.target() == this) {
+		set_round_type(round_type);
 
-			set_round_type(*request.round_type());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->text().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->text().shadetop,
-						Theme::instance->text().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-			Refresh();
+		if (Theme::instance->text().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->text().shadetop,
+					Theme::instance->text().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+		Refresh();
 	}
 
-	void TextEntry::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void TextEntry::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
+		set_round_radius(radius);
 
-			set_round_radius(*request.round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->text().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->text().shadetop,
-						Theme::instance->text().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-			font_.set_pen(
-			        *request.round_radius(),
-			        font_.pen().y());
-
-			Refresh();
+		if (Theme::instance->text().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->text().shadetop,
+					Theme::instance->text().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+		font_.set_pen(radius,
+				font_.pen().y());
+
+		Refresh();
 	}
 
 	ResponseType TextEntry::Draw (Profile& profile)
@@ -411,13 +394,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->text().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->text().shadetop,
 					Theme::instance->text().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(3, vaos_);

@@ -98,7 +98,7 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 			inner_->bind();
 			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
@@ -111,18 +111,16 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ColorButton::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void ColorButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if (request.target() == this) {
-			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			UpdateTextPosition(size(), round_type, round_radius(),
 			        text());
-			set_round_type(*request.round_type());
+			set_round_type(round_type);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 			inner_->bind();
 			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
@@ -130,23 +128,18 @@ namespace BlendInt {
 			GLArrayBuffer::reset();
 
 			Refresh();
-		}
-
-		ReportRoundTypeUpdate(request);
 	}
 
-	void ColorButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void ColorButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
-			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			UpdateTextPosition(size(), round_type(), radius,
 			        text());
-			set_round_radius(*request.round_radius());
+			set_round_radius(radius);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 			inner_->bind();
 			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			outer_->bind();
@@ -154,9 +147,6 @@ namespace BlendInt {
 			GLArrayBuffer::reset();
 
 			Refresh();
-		}
-
-		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType ColorButton::Draw (Profile& profile)
@@ -214,7 +204,7 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		GenerateVertices(&inner_verts, &outer_verts);
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);

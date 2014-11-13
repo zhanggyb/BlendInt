@@ -76,7 +76,7 @@ namespace BlendInt {
 
 		void OnMenuItemTriggered (Action* item);
 
-		void OnMenuHide (AbstractWidget* widget, int type);
+		void OnMenuHide (AbstractInteractiveForm* widget, int type);
 
 		void InitializeMenuBar ();
 

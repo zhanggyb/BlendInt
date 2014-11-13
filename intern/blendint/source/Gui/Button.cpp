@@ -164,13 +164,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			buffer_.bind(0);
@@ -189,58 +189,49 @@ namespace BlendInt {
 		}
 	}
 
-	void Button::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
+	void Button::PerformRoundTypeUpdate(int type)
 	{
-		if(request.target() == this) {
+		set_round_type(type);
 
-			set_round_type(*request.round_type());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
-
-			CalculateIconTextPosition(size(), round_type(), round_radius());
-
-			Refresh();
+		if (Theme::instance->regular().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->regular().shadetop,
+					Theme::instance->regular().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		CalculateIconTextPosition(size(), round_type(), round_radius());
+
+		Refresh();
 	}
 
-	void Button::PerformRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
+	void Button::PerformRoundRadiusUpdate(float radius)
 	{
-		if(request.target() == this) {
-
-			set_round_radius(*request.round_radius());
+			set_round_radius(radius);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			buffer_.bind(0);
@@ -252,11 +243,6 @@ namespace BlendInt {
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
 			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
 	}
 
 	ResponseType Button::Draw (Profile& profile)
@@ -451,13 +437,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->regular().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->regular().shadetop,
 					Theme::instance->regular().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(2, vao_);

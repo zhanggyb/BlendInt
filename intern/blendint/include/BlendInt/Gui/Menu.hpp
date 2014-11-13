@@ -31,7 +31,7 @@
 
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Action.hpp>
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 #include <Cpp/Events.hpp>
@@ -41,7 +41,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public AbstractFrame
+	class Menu: public AbstractFloatingFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 
@@ -80,9 +80,9 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+		virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 		virtual bool PreDraw (Profile& profile);
 

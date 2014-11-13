@@ -70,29 +70,16 @@ namespace BlendInt {
 		}
 	}
 
-	void NodeView::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void NodeView::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			set_round_type(*request.round_type());
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		set_round_type(round_type);
+		Refresh();
 	}
 
-	void NodeView::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void NodeView::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			set_round_radius(*request.round_radius());
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		set_round_radius(radius);
+		Refresh();
 	}
 
 	ResponseType NodeView::Draw(Profile& profile)

@@ -398,7 +398,7 @@ namespace BlendInt {
 			Size tmp;
 
 			if (orientation_ == Horizontal) {
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if (p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -409,7 +409,7 @@ namespace BlendInt {
 					}
 				}
 			} else {
-				for(AbstractWidget* p = first_child(); p; p = p->next())
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -429,7 +429,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -445,7 +445,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -462,7 +462,7 @@ namespace BlendInt {
 		int index = 0;
 		if(widget->parent() != this) return -1;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(p == widget) break;
 
@@ -478,7 +478,7 @@ namespace BlendInt {
 		int index = 0;
 		if(handle->parent() != this) return -1;
 
-		for(AbstractWidget* p = first_child()->next(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child()->next(); p; p = p->next())
 		{
 			if(p == handle) break;
 
@@ -553,7 +553,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_width = 0;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					ResizeSubWidget(p, room, h);
@@ -575,7 +575,7 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_height = 0;
-			for(AbstractWidget* p = first_child(); p; p = p->next())
+			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
 					y = y - room;
@@ -632,7 +632,7 @@ namespace BlendInt {
 
 		int prefer_width;
 		int i = 0;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -711,7 +711,7 @@ namespace BlendInt {
 
 		int prefer_height;
 		int i = 0;
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -780,7 +780,7 @@ namespace BlendInt {
 
 	void Splitter::AlignHorizontally (int y, int height)
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, p->size().width(), height);
 			SetSubWidgetPosition(p, p->position().x(), y);
@@ -789,7 +789,7 @@ namespace BlendInt {
 
 	void Splitter::AlignVertically (int x, int width)
 	{
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			ResizeSubWidget(p, width, p->size().height());
 			SetSubWidgetPosition(p, x, p->position().y());
@@ -803,7 +803,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -834,7 +834,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator exp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -867,7 +867,7 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -912,7 +912,7 @@ namespace BlendInt {
 		int space = 0;
 		int sum = 0;
 
-		AbstractWidget* p = first_child()->next();
+		AbstractInteractiveForm* p = first_child()->next();
 		sum += 1;
 
 		while (p) {
@@ -943,7 +943,7 @@ namespace BlendInt {
 
 		y = y + height;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -977,7 +977,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1013,7 +1013,7 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
 			if(i % 2 == 0) {
 
@@ -1056,7 +1056,7 @@ namespace BlendInt {
 		Size prefer;
 		int space = 0;
 
-		AbstractWidget* p = first_child()->next();
+		AbstractInteractiveForm* p = first_child()->next();
 		while (p) {
 			prefer = p->GetPreferredSize();
 			if(orientation == Horizontal) {

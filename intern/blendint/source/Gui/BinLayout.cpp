@@ -100,7 +100,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		const AbstractWidget* widget = first_child();
+		const AbstractInteractiveForm* widget = first_child();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();

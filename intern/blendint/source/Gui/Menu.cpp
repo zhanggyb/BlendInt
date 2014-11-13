@@ -51,7 +51,7 @@ namespace BlendInt {
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: AbstractFrame(),
+	: AbstractFloatingFrame(),
 	  m_highlight(0),
 	  shadow_(0)
 	{
@@ -222,13 +222,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->menu_back().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->menu_back().shadetop,
 						Theme::instance->menu_back().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -247,62 +247,50 @@ namespace BlendInt {
 		}
 	}
 
-	void Menu::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void Menu::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			set_round_type(*request.round_type());
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+		set_round_type(round_type);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->menu_back().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->menu_back().shadetop,
-						Theme::instance->menu_back().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			outer_->reset();
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_->reset();
 	}
 
-	void Menu::PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request)
+	void Menu::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			set_round_radius(*request.round_radius());
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+		set_round_radius(radius);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->menu_back().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->menu_back().shadetop,
-						Theme::instance->menu_back().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			outer_->reset();
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_->reset();
 	}
 
 	void Menu::ResetHighlightBuffer (int width)
@@ -480,13 +468,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->menu_back().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->menu_back().shadetop,
 					Theme::instance->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glBindVertexArray(vao_[0]);

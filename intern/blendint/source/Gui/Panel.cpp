@@ -87,7 +87,7 @@ namespace BlendInt {
 			return layout_->IsExpandX();
 		}
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			if(p->IsExpandX()) return true;
 		}
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 			return layout_->IsExpandY();
 		}
 
-		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
 			if(p->IsExpandY()) return true;
 		}
 
@@ -122,13 +122,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->regular().shadetop,
 						Theme::instance->regular().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			buffer_.bind(0);
@@ -154,71 +154,56 @@ namespace BlendInt {
 		}
 	}
 
-	void Panel::PerformRoundTypeUpdate(const RoundTypeUpdateRequest& request)
+	void Panel::PerformRoundTypeUpdate(int round_type)
 	{
-		if(request.target() == this) {
+		set_round_type(round_type);
 
-			set_round_type(*request.round_type());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
-
-			Refresh();
+		if (Theme::instance->regular().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->regular().shadetop,
+					Theme::instance->regular().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		Refresh();
 	}
 
-	void Panel::PerformRoundRadiusUpdate(
-			const RoundRadiusUpdateRequest& request)
+	void Panel::PerformRoundRadiusUpdate(float radius)
 	{
-		if(request.target() == this) {
+		set_round_radius(radius);
 
-			set_round_radius(*request.round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->regular().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
-
-			Refresh();
+		if (Theme::instance->regular().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->regular().shadetop,
+					Theme::instance->regular().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		Refresh();
 	}
 
 	ResponseType Panel::Draw (Profile& profile)
@@ -257,13 +242,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->regular().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->regular().shadetop,
 					Theme::instance->regular().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(3, vao_);
@@ -387,7 +372,7 @@ namespace BlendInt {
 			DrawPanel();
 
             // Draw context:
-    		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+    		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
     			DispatchDrawEvent (p, profile);
     		}
 

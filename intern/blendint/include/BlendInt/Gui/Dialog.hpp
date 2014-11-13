@@ -27,13 +27,13 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
-	class Dialog: public AbstractFrame
+	class Dialog: public AbstractFloatingFrame
 	{
 
 	public:
@@ -78,13 +78,13 @@ namespace BlendInt {
 
 	private:
 
-		void SetFocusedWidget (Widget* widget);
+		void SetFocusedWidget (AbstractWidget* widget);
 
-		void OnFocusedWidgetDestroyed (Widget* widget);
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		void OnHoverWidgetDestroyed (Widget* widget);
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		void OnLayoutDestroyed (Widget* layout);
+		void OnLayoutDestroyed (AbstractWidget* layout);
 
 		void RenderToBuffer (Profile& profile);
 
@@ -97,9 +97,9 @@ namespace BlendInt {
 
 		ShadowMap* shadow_;
 
-		Widget* focused_widget_;
+		AbstractWidget* focused_widget_;
 
-		Widget* hovered_widget_;
+		AbstractWidget* hovered_widget_;
 
 		AbstractLayout* layout_;
 

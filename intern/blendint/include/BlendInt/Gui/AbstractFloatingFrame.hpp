@@ -21,40 +21,54 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_NODEVIEW_HPP_
-#define _BLENDINT_NODEVIEW_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTFLOATINGFRAME_HPP_
+#define _BLENDINT_GUI_ABSTRACTFLOATINGFRAME_HPP_
 
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/CubicBezierCurve.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public Widget
+	class AbstractFloatingFrame: public AbstractFrame
 	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
-
 	public:
 
-		NodeView ();
+		AbstractFloatingFrame ();
 
-		virtual ~NodeView ();
+		virtual ~AbstractFloatingFrame ();
+
+		void SetRoundRadius (float radius);
+
+		inline float round_radius () const
+		{
+			return round_radius_;
+		}
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		void GenerateRoundedVertices (
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+		void GenerateRoundedVertices (
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		inline void set_round_radius (float radius)
+		{
+			round_radius_ = radius;
+		}
 
 	private:
 
-		CubicBezierCurve* curve_;
+		float round_radius_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_NODEVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTFLOATINGFRAME_HPP_ */

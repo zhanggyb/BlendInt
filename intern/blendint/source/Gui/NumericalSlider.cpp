@@ -137,13 +137,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->number_slider().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->number_slider().shadetop,
 						Theme::instance->number_slider().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			buffer_.bind(0);
@@ -160,70 +160,54 @@ namespace BlendInt {
 		}
 	}
 
-	void NumericalSlider::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void NumericalSlider::PerformRoundTypeUpdate (int round_type)
 	{
-		if (request.target() == this) {
+		set_round_type(round_type);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			set_round_type(*request.round_type());
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->number_slider().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->number_slider().shadetop,
-						Theme::instance->number_slider().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
-
-			Refresh();
+		if (Theme::instance->number_slider().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->number_slider().shadetop,
+					Theme::instance->number_slider().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
+		Refresh();
 	}
 
-	void NumericalSlider::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void NumericalSlider::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
+		set_round_radius(radius);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			set_round_radius(*request.round_radius());
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->number_slider().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->number_slider().shadetop,
-						Theme::instance->number_slider().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
-
-			Refresh();
+		if (Theme::instance->number_slider().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->number_slider().shadetop,
+					Theme::instance->number_slider().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		buffer_.bind(0);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
+		Refresh();
 	}
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
@@ -294,13 +278,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->number_slider().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->number_slider().shadetop,
 					Theme::instance->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(2, vao_);

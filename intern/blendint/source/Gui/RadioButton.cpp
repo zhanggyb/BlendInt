@@ -170,13 +170,13 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->radio_button().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->radio_button().shadetop,
 						Theme::instance->radio_button().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -195,24 +195,21 @@ namespace BlendInt {
 		}
 	}
 
-	void RadioButton::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void RadioButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-
-			set_round_type(*request.round_type());
+			set_round_type(round_type);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
 			if (Theme::instance->radio_button().shaded) {
-				GenerateVertices(Vertical,
+				GenerateRoundedVertices(Vertical,
 						Theme::instance->radio_button().shadetop,
 						Theme::instance->radio_button().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
 			inner_->bind();
@@ -221,50 +218,37 @@ namespace BlendInt {
 			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			CalculateIconTextPosition(size(), round_type(), round_radius());
+			CalculateIconTextPosition(size(), round_type, round_radius());
 
 			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
 	}
 
-	void RadioButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void RadioButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if (request.target() == this) {
+		set_round_radius(radius);
 
-			set_round_radius(*request.round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (Theme::instance->radio_button().shaded) {
-				GenerateVertices(Vertical,
-						Theme::instance->radio_button().shadetop,
-						Theme::instance->radio_button().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateVertices(&inner_verts, &outer_verts);
-			}
-
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
-
-			CalculateIconTextPosition(size(), round_type(), round_radius());
-
-			Refresh();
+		if (Theme::instance->radio_button().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->radio_button().shadetop,
+					Theme::instance->radio_button().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
+		CalculateIconTextPosition(size(), round_type(), round_radius());
+
+		Refresh();
 	}
 
 	ResponseType RadioButton::Draw (Profile& profile)
@@ -467,13 +451,13 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		if (Theme::instance->radio_button().shaded) {
-			GenerateVertices(Vertical,
+			GenerateRoundedVertices(Vertical,
 					Theme::instance->radio_button().shadetop,
 					Theme::instance->radio_button().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
 		glGenVertexArrays(2, vao_);

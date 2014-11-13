@@ -85,50 +85,35 @@ namespace BlendInt {
 		}
 	}
 
-	void FileButton::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	void FileButton::PerformRoundTypeUpdate (int round_type)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), *request.round_type(), round_radius(),
-			        text());
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(), *request.round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
+		UpdateTextPosition(size(), round_type, round_radius(),
+				text());
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+				round_radius());
+		inner_->bind();
+		inner_->set_data(tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_data(tool.outer_size(), tool.outer_data());
 
-			set_round_type(*request.round_type());
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundTypeUpdate(request);
-		}
+		set_round_type(round_type);
+		Refresh();
 	}
 
-	void FileButton::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
+	void FileButton::PerformRoundRadiusUpdate (float radius)
 	{
-		if(request.target() == this) {
-			UpdateTextPosition(size(), round_type(), *request.round_radius(),
-			        text());
-			VertexTool tool;
-			tool.GenerateVertices(size(), DefaultBorderWidth(),
-			        round_type(), *request.round_radius());
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
+		UpdateTextPosition(size(), round_type(), radius, text());
+		VertexTool tool;
+		tool.GenerateVertices(size(), DefaultBorderWidth(),
+			        round_type(), radius);
+		inner_->bind();
+		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+		outer_->bind();
+		outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
-			set_round_radius(*request.round_radius());
-			Refresh();
-		}
-
-		if(request.source() == this) {
-			ReportRoundRadiusUpdate(request);
-		}
+		set_round_radius(radius);
+		Refresh();
 	}
 
 	ResponseType FileButton::Draw (Profile& profile)
@@ -287,7 +272,7 @@ namespace BlendInt {
 		fs->opened().disconnectOne(this, &FileButton::OnOpened);
 		file_ = fs->file_selected();
 
-		AbstractWidget* screen = panel_->parent();
+		AbstractInteractiveForm* screen = panel_->parent();
 		delete screen;
 		panel_ = 0;
 
@@ -299,7 +284,7 @@ namespace BlendInt {
 		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
 		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
 
-		AbstractWidget* screen = panel_->parent();
+		AbstractInteractiveForm* screen = panel_->parent();
 		delete screen;
 		panel_ = 0;
 	}
