@@ -446,6 +446,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
+		set_refresh(false);
 		for(AbstractWidget* p = first_child(); p; p = p->next()) {
 			DispatchDrawEvent (p, profile);
 		}

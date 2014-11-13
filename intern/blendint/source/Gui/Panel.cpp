@@ -42,6 +42,10 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -51,21 +55,30 @@ namespace BlendInt {
 	  layout_(0)
 	{
 		set_size(400, 300);
+		set_refresh(true);
 
 		InitializeFrame();
 	}
 
 	Panel::~Panel ()
 	{
-		glDeleteVertexArrays(2, vao_);
+		glDeleteVertexArrays(3, vao_);
 	}
 
 	void Panel::SetLayout(AbstractLayout* layout)
 	{
 	}
 
-	void Panel::AddWidget(Widget* widget, bool append)
+	void Panel::AddWidget(Widget* widget)
 	{
+		if(PushBackSubWidget(widget)) {
+			Refresh();
+		}
+	}
+
+	void Panel::InsertWidget(int index, Widget* widget)
+	{
+
 	}
 
 	bool Panel::IsExpandX() const
@@ -122,6 +135,15 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+			buffer_.bind(1);
+			float* ptr = (float*)buffer_.map();
+			*(ptr + 4) = (float)size().width();
+			*(ptr + 9) = (float)size().height();
+			*(ptr + 12) = (float)size().width();
+			*(ptr + 13) = (float)size().height();
+			buffer_.unmap();
+
 			buffer_.reset();
 
 			Refresh();
@@ -201,6 +223,202 @@ namespace BlendInt {
 
 	ResponseType Panel::Draw (Profile& profile)
 	{
+		if(refresh()) {
+			DBG_PRINT_MSG("%s", "refresh once");
+			set_refresh(false);
+			RenderToBuffer(profile);
+		}
+
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        Shaders::instance->widget_image_program()->use();
+
+        texture_buffer_.bind();
+        glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), 0.f, 0.f);
+        glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+        glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
+
+        glBindVertexArray(vao_[2]);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+
+        texture_buffer_.reset();
+        GLSLProgram::reset();
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        return Accept;
+
+	}
+
+	void Panel::InitializeFrame ()
+	{
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Theme::instance->regular().shaded) {
+			GenerateVertices(Vertical,
+					Theme::instance->regular().shadetop,
+					Theme::instance->regular().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateVertices(&inner_verts, &outer_verts);
+		}
+
+		glGenVertexArrays(3, vao_);
+		buffer_.generate ();
+
+		glBindVertexArray(vao_[0]);
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[2]);
+		GLfloat vertices[] = {
+				// coord											uv
+				0.f, 0.f,											0.f, 0.f,
+				(float)size().width(), 0.f,							1.f, 0.f,
+				0.f, (float)size().height(),						0.f, 1.f,
+				(float)size().width(), (float)size().height(),		1.f, 1.f
+		};
+
+		buffer_.bind(2);
+		buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::WIDGET_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::WIDGET_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		buffer_.reset();
+	}
+
+	void Panel::RenderToBuffer(Profile& profile)
+	{
+        // Create and set texture to render to.
+        GLTexture2D* tex = &texture_buffer_;
+        if(!tex->id())
+            tex->generate();
+
+        tex->bind();
+        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+        tex->SetMinFilter(GL_NEAREST);
+        tex->SetMagFilter(GL_NEAREST);
+        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        GLint current_framebuffer = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &current_framebuffer);
+
+        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+        GLuint fbo = 0;
+		glGenFramebuffers (1, &fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+        // Set "renderedTexture" as our colour attachement #0
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, tex->id(), 0);
+        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+        GLuint rb;
+        glGenRenderbuffers(1, &rb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+                              size().width(), size().height());
+        //Attach depth buffer to FBO
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+
+        if(GLFramebuffer::CheckStatus()) {
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+
+			GLboolean scissor_test;
+			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
+
+            glm::vec2 pos = get_relative_position(Shaders::instance->widget_model_matrix());
+			Profile off_screen_profile(profile, pos.x, pos.y);
+
+            glm::mat4 identity(1.f);
+			Shaders::instance->PushWidgetModelMatrix();
+			Shaders::instance->SetWidgetModelMatrix(identity);
+
+			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f,
+			        -100.f);
+
+			Shaders::instance->PushWidgetProjectionMatrix();
+			Shaders::instance->SetWidgetProjectionMatrix(projection);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+            glClearColor(0.f, 0.f, 0.f, 0.f);
+            glClearDepth(1.0);
+            glClearStencil(0);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+
+            glViewport(0, 0, size().width(), size().height());
+			glDisable(GL_SCISSOR_TEST);
+
+			DrawPanel();
+
+            // Draw context:
+    		for(AbstractWidget* p = first_child(); p; p = p->next()) {
+    			DispatchDrawEvent (p, profile);
+    		}
+
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // restore viewport and framebuffer
+
+			Shaders::instance->PopWidgetProjectionMatrix();
+			Shaders::instance->PopWidgetModelMatrix();
+
+			if(scissor_test) {
+				glEnable(GL_SCISSOR_TEST);
+			}
+
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+        }
+
+        tex->reset();
+
+        //delete tex; tex = 0;
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glDeleteRenderbuffers(1, &rb);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+		glDeleteFramebuffers(1, &fbo);
+	}
+
+	void Panel::DrawPanel()
+	{
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
@@ -232,45 +450,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLSLProgram::reset();
-
-		return subs_count()? Ignore:Accept;
-	}
-
-	void Panel::InitializeFrame ()
-	{
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
-
-		if (Theme::instance->regular().shaded) {
-			GenerateVertices(Vertical,
-					Theme::instance->regular().shadetop,
-					Theme::instance->regular().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateVertices(&inner_verts, &outer_verts);
-		}
-
-		glGenVertexArrays(2, vao_);
-		buffer_.generate ();
-
-		glBindVertexArray(vao_[0]);
-
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		buffer_.reset();
 	}
 
 } /* namespace BlendInt */

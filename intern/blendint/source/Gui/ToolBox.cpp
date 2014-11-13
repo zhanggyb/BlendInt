@@ -51,6 +51,7 @@ namespace BlendInt {
 	focused_widget_(0),
 	hovered_widget_(0),
 	space_(1),
+	margin_(2, 2, 2, 2),
 	orientation_(orientation)
 	{
 		if(orientation_ == Horizontal) {

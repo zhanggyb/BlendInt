@@ -228,7 +228,7 @@ namespace BlendInt {
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
 	{
-		Point pos = profile.frame()->GetAbsolutePosition(this);
+		float x = get_relative_position(Shaders::instance->widget_model_matrix()).x;
 		int outline_vertices = GetOutlineVertices(round_type());
 		float len = GetSlidePosition(DefaultBorderWidth(), value());
 
@@ -240,7 +240,7 @@ namespace BlendInt {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
-		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), pos.x() + len);
+		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), x + len);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Theme::instance->number_slider().inner_sel.data());
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Theme::instance->number_slider().inner.data());
 

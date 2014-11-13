@@ -72,7 +72,7 @@ namespace BlendInt {
 
 //		Point pos = GetGlobalPosition();
 
-		glm::mat4 matrix = glm::translate(Shaders::instance->ui_model_matrix(),
+		glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
 				glm::vec3(position().x() + offset().x(), position().y() + offset().y(), 0.f));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 

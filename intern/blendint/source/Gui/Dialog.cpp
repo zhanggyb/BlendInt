@@ -208,6 +208,7 @@ namespace BlendInt {
 		assign_profile_frame(profile);
 
 		if(refresh()) {
+			DBG_PRINT_MSG("%s", "refresh once");
 			set_refresh(false);
 			RenderToBuffer(profile);
 		}

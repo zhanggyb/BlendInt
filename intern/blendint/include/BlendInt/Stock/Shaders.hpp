@@ -193,17 +193,17 @@ namespace BlendInt {
 				return frame_shadow_program_;
 			}
 
-			const glm::mat4& ui_projection_matrix () const
+			const glm::mat4& widget_projection_matrix () const
 			{
 				return widget_projection_matrix_;
 			}
 
-			const glm::mat4& ui_view_matrix () const
+			const glm::mat4& widget_view_matrix () const
 			{
 				return widget_view_matrix_;
 			}
 
-			const glm::mat4& ui_model_matrix () const
+			const glm::mat4& widget_model_matrix () const
 			{
 				return widget_model_matrix_;
 			}

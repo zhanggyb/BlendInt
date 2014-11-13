@@ -2,6 +2,7 @@
 #include <BlendInt/Gui/Panel.hpp>
 #include <Common/UnitTestContext.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 using namespace BlendInt;
 
@@ -39,9 +40,13 @@ TEST_F(PanelTest1, Foo1)
 	p->MoveTo(50, 50);
 
 	Dialog* dialog = Manage(new Dialog);
+	dialog->MoveTo(100, 100);
 	dialog->Resize(600, 500);
 
 	dialog->AddWidget(p);
+
+	Button* btn = Manage(new Button("Click to check"));
+	p->AddWidget(btn);
 
 	context->AddFrame(dialog);
 

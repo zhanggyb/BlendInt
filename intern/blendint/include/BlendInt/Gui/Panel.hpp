@@ -31,6 +31,7 @@
  */
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
@@ -54,7 +55,9 @@ namespace BlendInt {
 
 		void SetLayout (AbstractLayout* layout);
 
-		void AddWidget (Widget* widget, bool append = true);
+		void AddWidget (Widget* widget);
+
+		void InsertWidget (int index, Widget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -76,11 +79,17 @@ namespace BlendInt {
 
 		void InitializeFrame ();
 
+		void RenderToBuffer (Profile& profile);
+
+		void DrawPanel ();
+
 		AbstractLayout* layout_;
 
-		GLuint vao_[2];
+		GLuint vao_[3];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 3> buffer_;
+
+        GLTexture2D texture_buffer_;
 
 	};
 

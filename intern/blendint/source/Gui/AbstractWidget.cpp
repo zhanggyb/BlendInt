@@ -542,8 +542,8 @@ namespace BlendInt {
 
 		if (widget->PreDraw(profile)) {
 
-			widget->set_refresh(widget->parent_->refresh());
 			ResponseType response = widget->Draw(profile);
+			widget->set_refresh(widget->parent_->refresh());
 
 			if(response == Ignore) {
 				for(AbstractWidget* sub = widget->first_child(); sub; sub = sub->next())

@@ -408,8 +408,8 @@ namespace BlendInt
 		for(AbstractWidget* p = first_child(); p; p = p->next())
 		{
 			p->PreDraw(profile);
-			p->set_refresh(this->refresh());
 			p->Draw(profile);
+			p->set_refresh(this->refresh());
 			p->PostDraw(profile);
 		}
 

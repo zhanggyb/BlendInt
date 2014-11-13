@@ -69,7 +69,6 @@ namespace BlendInt {
 			set_size(*request.size());
 
             std::vector<GLfloat> inner_verts;
-            
             GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
             inner_.bind();
@@ -230,9 +229,10 @@ namespace BlendInt {
 			if(scissor_test) {
 				glEnable(GL_SCISSOR_TEST);
 			}
+
+			fb->reset();
 		}
 
-		fb->reset();
 		tex->reset();
 
 		//delete tex; tex = 0;
