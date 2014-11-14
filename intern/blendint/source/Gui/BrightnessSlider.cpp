@@ -119,7 +119,7 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
+			tool.GenerateVertices(*request.size(), default_border_width(), round_type(),
 			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
 			inner_->bind();
 			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
@@ -136,7 +136,7 @@ namespace BlendInt {
 	void BrightnessSlider::PerformRoundTypeUpdate (int round_type)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+		tool.GenerateVertices(size(), default_border_width(), round_type,
 				round_radius(), Color(0x000000FF), orientation(), 255, 0);
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -150,7 +150,7 @@ namespace BlendInt {
 	void BrightnessSlider::PerformRoundRadiusUpdate (float radius)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
+		tool.GenerateVertices(size(), default_border_width(), round_type(),
 				radius, Color(0x000000FF), orientation(),
 				255, 0);
 		inner_->bind();
@@ -175,7 +175,7 @@ namespace BlendInt {
 		Color black(0x000000FF);
 
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(),
+		tool.GenerateVertices(size(), default_border_width(), round_type(),
 						round_radius(), black, orientation(), 255, 0);
 
 		glBindVertexArray(m_vao[0]);

@@ -69,7 +69,7 @@ namespace BlendInt {
 			UpdateTextPosition(*request.size(), round_type(),
 			        round_radius(), text());
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), default_border_width(),
 			        round_type(), round_radius());
 			inner_->bind();
 			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
@@ -90,7 +90,7 @@ namespace BlendInt {
 		UpdateTextPosition(size(), round_type, round_radius(),
 				text());
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+		tool.GenerateVertices(size(), default_border_width(), round_type,
 				round_radius());
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -105,7 +105,7 @@ namespace BlendInt {
 	{
 		UpdateTextPosition(size(), round_type(), radius, text());
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(),
+		tool.GenerateVertices(size(), default_border_width(),
 			        round_type(), radius);
 		inner_->bind();
 		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
@@ -197,7 +197,7 @@ namespace BlendInt {
 		                + std::abs(font().GetDescender()));
 
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), default_border_width(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
@@ -251,7 +251,7 @@ namespace BlendInt {
 			int y = (context->size().height() - h) / 2;
 
 			panel_->Resize(w, h);
-			panel_->Setup(file_selector);
+			panel_->AddWidget(file_selector);
 
 			Dialog* screen = Manage(new Dialog);
 			screen->Resize(panel_->size());

@@ -38,13 +38,11 @@ namespace BlendInt {
 
 		virtual ~Stack ();
 
-		void Prepend (Widget* widget);
+		void AddWidget (AbstractWidget* widget);
 
-		void Append (Widget* widget);
+		void InsertWidget (int index, AbstractWidget* widget);
 
-		void Insert (int index, Widget* widget);
-
-		void Remove (Widget* widget);
+		void Remove (AbstractWidget* widget);
 
 		int GetIndex () const;
 
@@ -56,7 +54,7 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		inline Widget* active_widget () const
+		inline AbstractWidget* active_widget () const
 		{
 			return active_widget_;
 		}
@@ -69,7 +67,7 @@ namespace BlendInt {
 
 	private:
 
-		Widget* active_widget_;
+		AbstractWidget* active_widget_;
 
 	};
 

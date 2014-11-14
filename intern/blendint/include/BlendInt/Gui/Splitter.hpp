@@ -105,19 +105,19 @@ namespace BlendInt
 
 		virtual ~Splitter ();
 
-		void Prepend (Widget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void Append (Widget* widget);
+		void Append (AbstractWidget* widget);
 
-		void Insert (int index, Widget* widget);
+		void Insert (int index, AbstractWidget* widget);
 
-		void Remove (Widget* widget);
+		void Remove (AbstractWidget* widget);
 
-		int GetWidgetIndex (Widget* widget) const;
+		int GetWidgetIndex (AbstractWidget* widget) const;
 
 		int GetHandleIndex (SplitterHandle* handle) const;
 
-		Widget* GetWidget (int index) const;
+		AbstractWidget* GetWidget (int index) const;
 
 		SplitterHandle* GetHandle (int index) const;
 

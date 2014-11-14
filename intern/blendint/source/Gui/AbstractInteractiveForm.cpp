@@ -62,7 +62,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	float AbstractInteractiveForm::default_border_width = 1.f;
+	float AbstractInteractiveForm::border_width = 1.f;
 
 	const float AbstractInteractiveForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
         { 0.0, 0.0 },
@@ -433,12 +433,7 @@ namespace BlendInt {
 
 	void AbstractInteractiveForm::SetDefaultBorderWidth(float border)
 	{
-		default_border_width = border;
-	}
-
-	float AbstractInteractiveForm::DefaultBorderWidth()
-	{
-		return default_border_width;
+		border_width = border;
 	}
 
 	void AbstractInteractiveForm::SetEmboss(bool emboss)

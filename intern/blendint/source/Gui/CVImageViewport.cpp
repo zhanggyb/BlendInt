@@ -96,6 +96,15 @@ namespace BlendInt {
 
 		if(cv_image_.data) {
 
+			image_plane_.bind();
+			float* ptr = (float*)image_plane_.map();
+			*(ptr + 4) = cv_image_.cols;
+			*(ptr + 9) = cv_image_.rows;
+			*(ptr + 12) = cv_image_.cols;
+			*(ptr + 13) = cv_image_.rows;
+			image_plane_.unmap();
+			image_plane_.reset();
+
 			texture_.bind();
 			switch (cv_image_.channels()) {
 
@@ -119,7 +128,7 @@ namespace BlendInt {
 			}
 			texture_.reset();
 
-			AdjustImageArea(size());
+			//AdjustImageArea(size());
 		}
 	}
 
@@ -128,6 +137,15 @@ namespace BlendInt {
 		cv_image_ = image;
 		if(cv_image_.data) {
 
+			image_plane_.bind();
+			float* ptr = (float*)image_plane_.map();
+			*(ptr + 4) = cv_image_.cols;
+			*(ptr + 9) = cv_image_.rows;
+			*(ptr + 12) = cv_image_.cols;
+			*(ptr + 13) = cv_image_.rows;
+			image_plane_.unmap();
+			image_plane_.reset();
+
 			texture_.bind();
 			switch (cv_image_.channels()) {
 
@@ -151,7 +169,7 @@ namespace BlendInt {
 			}
 			texture_.reset();
 
-			AdjustImageArea(size());
+			//AdjustImageArea(size());
 		}
 	}
 
@@ -194,7 +212,7 @@ namespace BlendInt {
 				100.f, -100.f);
 
 			set_size(*request.size());
-			AdjustImageArea(*request.size());
+			//AdjustImageArea(*request.size());
 		}
 
 		if(request.source() == this) {
@@ -221,18 +239,18 @@ namespace BlendInt {
 
 	ResponseType CVImageViewport::Draw (Profile& profile)
 	{
-		if(cv_image_.data == 0)
-			return Accept;
-
 		glActiveTexture(GL_TEXTURE0);
 		texture_.bind();
+
+		float w = texture_.GetWidth();
+		float h = texture_.GetHeight();
 
 		Shaders::instance->widget_image_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
-				(size().width() - cv_image_.cols)/2.f,
-				(size().height() - cv_image_.rows) / 2.f);
+				(size().width() - w)/2.f,
+				(size().height() - h) / 2.f);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
 
 		glBindVertexArray(vao_);
@@ -283,7 +301,7 @@ namespace BlendInt {
 		texture_.SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		texture_.SetMinFilter(GL_LINEAR);
 		texture_.SetMagFilter(GL_LINEAR);
-		//texture_.SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		texture_.SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		texture_.reset();
 
 	}

@@ -43,9 +43,8 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ScrollArea::ScrollArea ()
-	: Layout()
+	: Widget()
 	{
-		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
 
 		InitializeScrollArea();
@@ -64,8 +63,8 @@ namespace BlendInt {
 		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 		view->Setup(widget);
 
-		int width = size().width() - margin().hsum();
-		int height = size().height() - margin().vsum();
+		int width = size().width();
+		int height = size().height();
 
 		if (widget->size().width() <= width) {
 			GetWidgetAt(HScrollBarIndex)->SetVisible(false);
@@ -79,8 +78,8 @@ namespace BlendInt {
 			GetWidgetAt(VScrollBarIndex)->SetVisible(true);
 		}
 
-		AdjustGeometries(position().x() + margin().left(),
-						position().y() + margin().bottom(), width, height);
+		AdjustGeometries(position().x(),
+						position().y(), width, height);
 	}
 
 	void ScrollArea::CentralizeViewport () const
@@ -155,10 +154,10 @@ namespace BlendInt {
 		//hbar->SetVisible(false);
 		//vbar->SetVisible(false);
 
-		int x = position().x() + margin().left();
-		int y = position().y() + margin().bottom();
-		int w = size().width() - margin().hsum();
-		int h = size().height() - margin().vsum();
+		int x = position().x();
+		int y = position().y();
+		int w = size().width();
+		int h = size().height();
 		int bh = hbar->size().height();
 		int rw = vbar->size().width();
 
@@ -208,8 +207,8 @@ namespace BlendInt {
 			ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 			AbstractInteractiveForm* widget = view->viewport();
 
-			int width = request.size()->width() - margin().hsum();
-			int height = request.size()->height() - margin().vsum();
+			int width = request.size()->width();
+			int height = request.size()->height();
 
 			if(widget) {
 				if (widget->size().width() <= width) {
@@ -225,8 +224,8 @@ namespace BlendInt {
 				}
 			}
 
-			AdjustGeometries(position().x() + margin().left(),
-					position().y() + margin().bottom(), width, height);
+			AdjustGeometries(position().x(),
+					position().y(), width, height);
 			set_size(*request.size());
 		}
 

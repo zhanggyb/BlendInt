@@ -104,7 +104,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), default_border_width(),
 			        round_type(), round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -123,7 +123,7 @@ namespace BlendInt {
 	void FolderList::PerformRoundTypeUpdate (int round_type)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+		tool.GenerateVertices(size(), default_border_width(), round_type,
 				round_radius());
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -139,7 +139,7 @@ namespace BlendInt {
 	void FolderList::PerformRoundRadiusUpdate (float radius)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(),
+		tool.GenerateVertices(size(), default_border_width(),
 				round_type(), radius);
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -155,7 +155,7 @@ namespace BlendInt {
 	void FolderList::InitializeFolderListOnce ()
 	{
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), default_border_width(), round_type(), round_radius());
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);

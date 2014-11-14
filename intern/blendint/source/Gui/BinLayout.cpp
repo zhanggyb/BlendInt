@@ -43,7 +43,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	BinLayout::BinLayout()
-	: Layout()
+	: AbstractLayout()
 	{
 	}
 
@@ -51,13 +51,11 @@ namespace BlendInt {
 	{
 	}
 
-	bool BinLayout::Setup (Widget* widget)
+	void BinLayout::AddWidget (AbstractWidget* widget)
 	{
-		bool ret = false;
+		if(!widget) return;
 
-		if(!widget) return false;
-
-		if(widget->parent() == this) return true;
+		if(widget->parent() == this) return;
 
 		if(subs_count() > 0) {
 			ClearSubWidgets();
@@ -65,13 +63,12 @@ namespace BlendInt {
 
 		if (PushBackSubWidget(widget)) {
 			FillSingleWidget(0, size(), margin());
-			ret = true;
 		}
 
-		return ret;
+		Refresh();
 	}
 
-	bool BinLayout::Remove (Widget* widget)
+	bool BinLayout::Remove (AbstractWidget* widget)
 	{
 		return RemoveSubWidget(widget);
 	}
@@ -120,6 +117,14 @@ namespace BlendInt {
 			assert(subs_count() == 1);
 			FillSingleWidget(0, size(), request);
 		}
+	}
+
+	void BinLayout::InsertWidget(int index, AbstractWidget* widget)
+	{
+	}
+
+	void BinLayout::InsertWidget(int row, int column, AbstractWidget* widget)
+	{
 	}
 
 	void BinLayout::PerformSizeUpdate (const SizeUpdateRequest& request)

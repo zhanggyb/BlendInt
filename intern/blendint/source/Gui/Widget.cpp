@@ -52,7 +52,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				DefaultBorderWidth() * Theme::instance->pixel(),
+				default_border_width() * Theme::instance->pixel(),
 				round_type(),
 				round_radius_,
 				inner,
@@ -64,7 +64,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				DefaultBorderWidth() * Theme::instance->pixel(),
+				default_border_width() * Theme::instance->pixel(),
 				round_type(),
 				round_radius_,
 				shadedir,

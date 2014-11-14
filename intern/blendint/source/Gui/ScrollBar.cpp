@@ -172,7 +172,7 @@ namespace BlendInt {
 				}
 
 				GenerateVertices(size(),
-						DefaultBorderWidth(),
+						default_border_width(),
 						round_type(),
 						radius,
 						slot_orient,
@@ -182,7 +182,7 @@ namespace BlendInt {
 						&outer_verts);
 			} else {
 				GenerateVertices(size(),
-						DefaultBorderWidth(),
+						default_border_width(),
 						round_type(),
 						radius,
 						&inner_verts,
@@ -381,7 +381,7 @@ namespace BlendInt {
 			}
 
 			GenerateVertices(slot_size,
-					DefaultBorderWidth(),
+					default_border_width(),
 					round_type(),
 					slot_radius,
 					slot_orient,
@@ -391,7 +391,7 @@ namespace BlendInt {
 					&outer_verts);
 		} else {
 			GenerateVertices(slot_size,
-					DefaultBorderWidth(),
+					default_border_width(),
 					round_type(),
 					slot_radius,
 					&inner_verts,

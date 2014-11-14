@@ -44,11 +44,10 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	TabHeader::TabHeader()
-	: Layout(),
+	: Widget(),
 	  vao_(0)
 	{
 		set_size(400, 24);
-		set_margin(2, 2, 0, 0);
 
 		glGenVertexArrays(1, &vao_);
 
@@ -81,11 +80,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void TabHeader::Append (TabButton* button)
+	void TabHeader::AddButton (TabButton* button)
 	{
 		int x = GetLastPosition ();
-		int y = margin().bottom();
-		int h = size().height() - margin().vsum();
+		int y = 0;
+		int h = size().height();
 
 		if (PushBackSubWidget(button)) {
 
@@ -120,7 +119,7 @@ namespace BlendInt {
 		if(first_child() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
-			prefer.set_height(max_font_height + margin().vsum());
+			prefer.set_height(max_font_height);
 		} else {
 			Size tmp_size;
 
@@ -134,16 +133,9 @@ namespace BlendInt {
 				}
 			}
 
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
 		}
 
 		return prefer;
-	}
-
-	void TabHeader::PerformMarginUpdate(const Margin& request)
-	{
-		// TODO: change sub widgets
 	}
 
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -189,7 +181,7 @@ namespace BlendInt {
 
 	int TabHeader::GetLastPosition() const
 	{
-		int x = margin().left();
+		int x = 0;
 
 		if(first_child()) {
 			x = last_child()->position().x();

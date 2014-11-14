@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Tab::Add (const String& title, Widget* widget)
+	void Tab::AddWidget (const String& title, AbstractWidget* widget)
 	{
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
@@ -73,8 +73,8 @@ namespace BlendInt {
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
-		header->Append(btn);
-		stack->Append(widget);
+		header->AddButton(btn);
+		stack->AddWidget(widget);
 
 		if(header->subs_count() == 1) {
 			btn->SetChecked(true);

@@ -27,7 +27,7 @@ namespace BlendInt {
 
 
 	StackLayout::StackLayout ()
-	: Layout(),
+	: AbstractLayout(),
 	  active_widget_(0)
 	{
 	}
@@ -36,25 +36,7 @@ namespace BlendInt {
 	{
 	}
 
-	void StackLayout::Prepend (AbstractInteractiveForm* widget)
-	{
-		if(PushFrontSubWidget(widget)) {
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
-
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
-
-			if(subs_count() == 1) {
-				active_widget_ = widget;
-				active_widget_->SetVisible(true);
-			} else {
-				widget->SetVisible(false);
-			}
-		}
-	}
-
-	void StackLayout::Append (AbstractInteractiveForm* widget)
+	void StackLayout::AddWidget (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -72,7 +54,7 @@ namespace BlendInt {
 		}
 	}
 
-	void StackLayout::Insert (int index, AbstractInteractiveForm* widget)
+	void StackLayout::InsertWidget (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width() - margin().hsum();
@@ -85,7 +67,25 @@ namespace BlendInt {
 		}
 	}
 
-	void StackLayout::Remove (AbstractInteractiveForm* widget)
+	void StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
+
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
+
+			if(subs_count() == 1) {
+				active_widget_ = widget;
+				active_widget_->SetVisible(true);
+			} else {
+				widget->SetVisible(false);
+			}
+		}
+	}
+
+	void StackLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
@@ -94,7 +94,7 @@ namespace BlendInt {
 				if(subs_count() == 0) {
 					active_widget_ = 0;
 				} else {
-					active_widget_ = first_child();
+					active_widget_ = dynamic_cast<AbstractWidget*>(first_child());
 					active_widget_->SetVisible(true);
 				}
 
@@ -134,7 +134,7 @@ namespace BlendInt {
 			}
 
 			active_widget_->SetVisible(false);
-			active_widget_ = widget;
+			active_widget_ = dynamic_cast<AbstractWidget*>(widget);
 			active_widget_->SetVisible(true);
 		}
 	}

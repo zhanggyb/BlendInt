@@ -63,7 +63,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special container used in Workspace
 	 */
-	class EdgeButtonLayer: public Layout
+	class EdgeButtonLayer: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
 
@@ -77,8 +77,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
@@ -87,7 +85,7 @@ namespace BlendInt {
 
 		void InitializeSideButtonLayer ();
 
-		void AlighButtons (const Point& out_pos, const Size& out_size, const Margin& margin);
+		void AlighButtons (const Point& out_pos, const Size& out_size);
 
 		void AlignButtons (int x, int y, int w, int h);
 
@@ -120,7 +118,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public Layout
+	class Workspace: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 

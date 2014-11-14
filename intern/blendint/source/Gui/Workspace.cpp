@@ -172,9 +172,8 @@ namespace BlendInt {
 	// -------------------------------
 
 	EdgeButtonLayer::EdgeButtonLayer()
-	: Layout()
+	: Widget()
 	{
-		set_margin(0, 0, 0, 0);
 		InitializeSideButtonLayer();
 	}
 
@@ -199,15 +198,10 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void EdgeButtonLayer::PerformMarginUpdate(const Margin& request)
-	{
-		AlighButtons(position(), size(), request);
-	}
-
 	void EdgeButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			AlighButtons(position(), *request.size(), margin());
+			AlighButtons(position(), *request.size());
 		}
 
 		if(request.source() == this) {
@@ -219,7 +213,7 @@ namespace BlendInt {
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			AlighButtons(*request.position(), size(), margin());
+			AlighButtons(*request.position(), size());
 		}
 
 		if(request.source() == this) {
@@ -240,16 +234,16 @@ namespace BlendInt {
 		PushBackSubWidget(right);
 		PushBackSubWidget(head);
 
-		AlighButtons(position(), size(), margin());
+		AlighButtons(position(), size());
 	}
 
 	void EdgeButtonLayer::AlighButtons(const Point& out_pos,
-			const Size& out_size, const Margin& margin)
+			const Size& out_size)
 	{
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = out_pos.x();
+		int y = out_pos.y();
+		int w = out_size.width();
+		int h = out_size.height();
 
 		AlignButtons(x, y, w, h);
 	}
@@ -269,7 +263,6 @@ namespace BlendInt {
 
 	ViewportLayer::ViewportLayer()
 	{
-		set_margin(0, 0, 0, 0);
 	}
 
 	ViewportLayer::~ViewportLayer()
@@ -292,7 +285,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: Layout(),
+	: Widget(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),
@@ -301,7 +294,6 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		set_size(800, 600);
-		set_margin(0, 0, 0, 0);
 
 		InitializeWorkspace();
 	}
@@ -355,7 +347,7 @@ namespace BlendInt {
 		if(header_)
 			v->Remove(header_);
 
-		v->Append(widget);
+		v->AddWidget(widget);
 		header_ = widget;
 	}
 
@@ -384,8 +376,6 @@ namespace BlendInt {
 				prefer.set_height(std::max(prefer.height(), tmp.height()));
 			}
 
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
 		}
 
 		return prefer;
@@ -409,8 +399,8 @@ namespace BlendInt {
 	void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			Size inner_size(request.size()->width() - margin().hsum(),
-			        request.size()->height() - margin().vsum());
+			Size inner_size(request.size()->width(),
+			        request.size()->height());
 
 			VertexTool tool;
 			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
@@ -508,7 +498,7 @@ namespace BlendInt {
 		ViewportLayer* vlayout = Manage(new ViewportLayer);
 		DBG_SET_NAME(vlayout, "VLayout");
 		vlayout->SetSpace(1);
-		vlayout->Append(splitter_);
+		vlayout->AddWidget(splitter_);
 
 		EdgeButtonLayer* btnlayout = Manage(new EdgeButtonLayer);
 		DBG_SET_NAME(btnlayout, "SideButton Layer");

@@ -21,14 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_HBOX_HPP_
-#define _BLENDINT_GUI_HBOX_HPP_
+#ifndef _BLENDINT_GUI_HLAYOUT_HPP_
+#define _BLENDINT_GUI_HLAYOUT_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	class HLayout: public Layout
+	class HLayout: public AbstractLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(HLayout);
 
@@ -38,11 +38,14 @@ namespace BlendInt {
 
 		virtual ~HLayout ();
 
-		bool Prepend (Widget* widget);
+		virtual void AddWidget (AbstractWidget* widget);
 
-		bool Append (Widget* widget);
+		virtual void InsertWidget (int index, AbstractWidget* widget);
 
-		bool Remove (Widget* widget);
+		// row must be 0
+		virtual void InsertWidget (int row, int column, AbstractWidget* widget);
+
+		bool Remove (AbstractWidget* widget);
 
 		int alignment () const
 		{
@@ -124,4 +127,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_HBOX_HPP_ */
+#endif /* _BLENDINT_GUI_HLAYOUT_HPP_ */

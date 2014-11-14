@@ -21,10 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENUITEMBIN_HPP_
-#define _BLENDINT_MENUITEMBIN_HPP_
-
-#include <boost/smart_ptr.hpp>
+#ifndef _BLENDINT_GUI_MENU_HPP_
+#define _BLENDINT_GUI_MENU_HPP_
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>

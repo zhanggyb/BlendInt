@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
@@ -52,64 +51,31 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
-#include <BlendInt/Gui/Stack.hpp>
-
 namespace BlendInt {
 
 	using Stock::Icons;
 	using Stock::Shaders;
 
 	ColorSelector::ColorSelector()
-	: VLayout (), stack_(0)
+	: PopupFrame(), stack_(0)
 	{
-		set_size(200, 320);
-		set_round_type(RoundAll);
-		set_margin(4, 4, 4, 4);
-
 		InitializeColorSelector();
 	}
 
 	ColorSelector::~ColorSelector()
 	{
-		glDeleteVertexArrays(2, vaos_);
 	}
 
 	void ColorSelector::InitializeColorSelector()
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), round_radius());
-
-		glGenVertexArrays(2, vaos_);
-
-		glBindVertexArray(vaos_[0]);
-
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vaos_[1]);
-
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		VLayout* main_layout = Manage(new VLayout);
 
 		HLayout* hbox1 = Manage(new HLayout);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
 		BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
 
-		hbox1->Append(colorwheel);
-		hbox1->Append(br_slider);
+		hbox1->AddWidget(colorwheel);
+		hbox1->AddWidget(br_slider);
 
 		RadioButton* btn1 = Manage(new RadioButton("RGB"));
 		RadioButton* btn2 = Manage(new RadioButton("HSV"));
@@ -122,7 +88,6 @@ namespace BlendInt {
 		btn1->SetChecked(true);
 
 		HBlockLayout* btn_block = Manage(new HBlockLayout);
-		btn_block->SetMargin(4, 4, 4, 4);
 		btn_block->Append(btn1);
 		btn_block->Append(btn2);
 		btn_block->Append(btn3);
@@ -132,93 +97,26 @@ namespace BlendInt {
 		alpha_slider->SetEmboss(true);
 
 		VLayout* color_box = Manage(new VLayout);
-		color_box->SetMargin(0, 0, 0, 0);
-		color_box->Append(stack_);
-		color_box->Append(alpha_slider);
+		color_box->SetMargin(Margin(0, 0, 0, 0));
+		color_box->AddWidget(stack_);
+		color_box->AddWidget(alpha_slider);
 
 		Button* pick_btn = Manage(new Button(Icons::instance->icon_16x16(Stock::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));
-		hbox2->Append(color_box);
-		hbox2->Append(pick_btn);
+		hbox2->AddWidget(color_box);
+		hbox2->AddWidget(pick_btn);
 
-		Append(hbox1);
-		Append(btn_block);
-		Append(hbox2);
+		main_layout->AddWidget(hbox1);
+		main_layout->AddWidget(btn_block);
+		main_layout->AddWidget(hbox2);
 
 		events()->connect(radio_group_.button_index_toggled(), this, &ColorSelector::OnButtonToggled);
+
+		SetLayout(main_layout);
 	}
 
-	void ColorSelector::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(), round_type(),
-			        round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			set_size(*request.size());
-
-			VLayout::PerformSizeUpdate(request);
-			return;	// return to avoid double report of size update
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void ColorSelector::PerformRoundTypeUpdate (int round_type)
-	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type, round_radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		set_round_type(round_type);
-	}
-
-	void ColorSelector::PerformRoundRadiusUpdate (float radius)
-	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		set_round_radius(radius);
-	}
-
-	ResponseType ColorSelector::Draw (Profile& profile)
-	{
-		Shaders::instance->widget_triangle_program()->use();
-
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->menu().inner.data());
-
-		glBindVertexArray(vaos_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->menu().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		glBindVertexArray(vaos_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
-		return Ignore;
-	}
-	
 	VBlockLayout* ColorSelector::CreateRGBBlock ()
 	{
 		VBlockLayout* block = Manage(new VBlockLayout);
@@ -252,13 +150,13 @@ namespace BlendInt {
 	VLayout* ColorSelector::CreateHexBlock ()
 	{
 		VLayout* box = Manage(new VLayout(AlignLeft, 0));
-		box->SetMargin(2, 2, 2, 2);
+		box->SetMargin(Margin(2, 2, 2, 2));
 
 		TextEntry* hex_edit = Manage(new TextEntry);
 		Label* label = Manage(new Label("Gamma Corrected"));
 
-		box->Append(hex_edit);
-		box->Append(label);
+		box->AddWidget(hex_edit);
+		box->AddWidget(label);
 
 		return box;
 	}
@@ -269,18 +167,17 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	StackLayout* ColorSelector::CreateBlockStack()
+	Stack* ColorSelector::CreateBlockStack()
 	{
-		StackLayout* stack = Manage(new StackLayout);
-		stack->SetMargin(0, 0, 0, 0);
+		Stack* stack = Manage(new Stack);
 
 		VBlockLayout* rgb_block = CreateRGBBlock();
 		VBlockLayout* hsv_block = CreateHSVBlock();
 		VLayout* hex_box = CreateHexBlock();
 
-		stack->Append(rgb_block);
-		stack->Append(hsv_block);
-		stack->Append(hex_box);
+		stack->AddWidget(rgb_block);
+		stack->AddWidget(hsv_block);
+		stack->AddWidget(hex_box);
 
 		return stack;
 	}

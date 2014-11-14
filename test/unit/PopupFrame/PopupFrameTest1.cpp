@@ -1,16 +1,16 @@
-#include "ColorSelectorTest1.hpp"
-#include <BlendInt/Gui/ColorSelector.hpp>
+#include "PopupFrameTest1.hpp"
+#include <BlendInt/Gui/PopupFrame.hpp>
 #include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
-ColorSelectorTest1::ColorSelectorTest1()
+PopupFrameTest1::PopupFrameTest1()
 : testing::Test()
 {
 	// TODO: add constructor code
 }
 
-ColorSelectorTest1::~ColorSelectorTest1()
+PopupFrameTest1::~PopupFrameTest1()
 {
 	// TODO: add destructor code
 }
@@ -20,11 +20,11 @@ ColorSelectorTest1::~ColorSelectorTest1()
  *
  * Expected result: 
  */
-TEST_F(ColorSelectorTest1, Foo1)
+TEST_F(PopupFrameTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("ColorSelector - Foo1", 640, 480);
+    GLFWwindow* win = CreateWindow("PopupFrame - Foo1", 640, 480);
 
     // TODO: add test code here
     UnitTestContext* context = Manage (new UnitTestContext);
@@ -32,11 +32,10 @@ TEST_F(ColorSelectorTest1, Foo1)
 	SetContext(context);
 	context->Resize(640, 480);
 
-    ColorSelector* cs = Manage(new ColorSelector);
-    cs->Resize(220, 320);
-    cs->MoveTo(200, 50);
-
-    context->AddFrame(cs);
+	PopupFrame* frame = Manage(new PopupFrame);
+	frame->Resize(300, 200);
+	frame->MoveTo(200, 200);
+	context->AddFrame(frame);
 
     RunLoop(win);
     Terminate();

@@ -247,7 +247,7 @@ namespace BlendInt {
 						parent = parent->parent();
 					}
 
-					hovered_widget = dynamic_cast<Widget*>(parent);
+					hovered_widget = dynamic_cast<AbstractWidget*>(parent);
 
 					if(hovered_widget) {
 						hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
@@ -284,7 +284,7 @@ namespace BlendInt {
 					parent = parent->parent();
 				}
 
-				hovered_widget = dynamic_cast<Widget*>(parent);
+				hovered_widget = dynamic_cast<AbstractWidget*>(parent);
 				if(hovered_widget) {
 					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
 //					events()->connect(hovered_widget->destroyed(), this,
@@ -303,7 +303,7 @@ namespace BlendInt {
 			{
 				if (p->visiable() && p->Contain(local_position)) {
 
-					hovered_widget = dynamic_cast<Widget*>(p);
+					hovered_widget = dynamic_cast<AbstractWidget*>(p);
 					set_widget_mouse_hover_in_event(hovered_widget, event);
 //					hovered_widget->set_hover(true);
 //					hovered_widget->MouseHoverInEvent(event);
@@ -400,7 +400,7 @@ namespace BlendInt {
 				p = p->previous ()) {
 
 			if (p->visiable () && p->Contain (local_position)) {
-				retval = dynamic_cast<Widget*>(p);
+				retval = dynamic_cast<AbstractWidget*>(p);
 				set_widget_mouse_hover_in_event (retval, event);
 
 				retval = DispatchHoverEventDeeper(retval, event, local_position);

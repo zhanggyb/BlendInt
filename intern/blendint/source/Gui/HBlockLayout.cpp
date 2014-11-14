@@ -26,17 +26,16 @@
 namespace BlendInt {
 
 	HBlockLayout::HBlockLayout ()
-	: Layout()
+	: Widget()
 	{
 		set_size(100, 20);
-		set_margin(0, 0, 0, 0);
 	}
 	
 	HBlockLayout::~HBlockLayout ()
 	{
 	}
 	
-	void HBlockLayout::Prepend (Widget* widget)
+	void HBlockLayout::Prepend (AbstractWidget* widget)
 	{
 		AbstractInteractiveForm* orig_first = first_child();
 
@@ -51,12 +50,12 @@ namespace BlendInt {
 				widget->SetRoundType(RoundAll);
 			}
 
-			FillInHBlock(size(), margin());
+			FillInHBlock(size());
 
 		}
 	}
 
-	void HBlockLayout::Append (Widget* widget)
+	void HBlockLayout::Append (AbstractWidget* widget)
 	{
 		AbstractInteractiveForm* orig_last = last_child();
 
@@ -71,7 +70,7 @@ namespace BlendInt {
 				widget->SetRoundType(RoundAll);
 			}
 
-			FillInHBlock(size(), margin());
+			FillInHBlock(size());
 
 		}
 	}
@@ -134,19 +133,11 @@ namespace BlendInt {
 			}
 			preferred_size.set_width(sum * (max_width - 1));
 			preferred_size.set_height(max_height);
-
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
 	}
 	
-	void HBlockLayout::PerformMarginUpdate(const Margin& request)
-	{
-		FillInHBlock(size(), request);
-	}
-
 	bool HBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
@@ -171,7 +162,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInHBlock(*request.size(), margin());
+			FillInHBlock(*request.size());
 		}
 
 		if(request.source() == this) {
@@ -179,13 +170,12 @@ namespace BlendInt {
 		}
 	}
 	
-	void HBlockLayout::FillInHBlock (const Size& out_size,
-					const Margin& margin)
+	void HBlockLayout::FillInHBlock (const Size& out_size)
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = 0;
+		int y = 0;
+		int w = out_size.width();
+		int h = out_size.height();
 
 		FillInHBlock(x, y, w, h);
 	}

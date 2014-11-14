@@ -24,13 +24,13 @@
 #ifndef _BLENDINT_GUI_TABHEADER_HPP_
 #define _BLENDINT_GUI_TABHEADER_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/ButtonGroup.hpp>
 #include <BlendInt/Gui/TabButton.hpp>
 
 namespace BlendInt {
 
-	class TabHeader: public Layout
+	class TabHeader: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabHeader);
 
@@ -40,7 +40,7 @@ namespace BlendInt {
 
 		virtual ~TabHeader ();
 
-		void Append (TabButton* button);
+		void AddButton (TabButton* button);
 
 		virtual bool IsExpandX () const;
 
@@ -57,8 +57,6 @@ namespace BlendInt {
 		}
 
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 

@@ -323,7 +323,7 @@ namespace BlendInt {
 
 	}
 	
-	void Splitter::Prepend (Widget* widget)
+	void Splitter::Prepend (AbstractWidget* widget)
 	{
 		if(widget && widget->parent() != this) {
 
@@ -347,7 +347,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::Append (Widget* widget)
+	void Splitter::Append (AbstractWidget* widget)
 	{
 		if(widget && widget->parent() != this) {
 
@@ -371,12 +371,12 @@ namespace BlendInt {
 		}
 	}
 
-	void Splitter::Insert(int index, Widget* widget)
+	void Splitter::Insert(int index, AbstractWidget* widget)
 	{
 
 	}
 
-	void Splitter::Remove (Widget* widget)
+	void Splitter::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			if(orientation_ == Horizontal) {
@@ -457,7 +457,7 @@ namespace BlendInt {
 	}
 
 
-	int Splitter::GetWidgetIndex (Widget* widget) const
+	int Splitter::GetWidgetIndex (AbstractWidget* widget) const
 	{
 		int index = 0;
 		if(widget->parent() != this) return -1;
@@ -489,7 +489,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	Widget* Splitter::GetWidget (int index) const
+	AbstractWidget* Splitter::GetWidget (int index) const
 	{
 		if(first_child() == 0) return 0;
 
@@ -500,7 +500,7 @@ namespace BlendInt {
 
 		index = index * 2;
 
-		return dynamic_cast<Widget*>(GetWidgetAt(index));
+		return dynamic_cast<AbstractWidget*>(GetWidgetAt(index));
 	}
 
 	SplitterHandle* Splitter::GetHandle (int index) const

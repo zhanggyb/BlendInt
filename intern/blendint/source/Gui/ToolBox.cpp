@@ -91,7 +91,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::AddWidget (Widget* widget, bool append)
+	void ToolBox::AddWidget (AbstractWidget* widget)
 	{
 		if(orientation_ == Horizontal) {
 
@@ -358,7 +358,7 @@ namespace BlendInt {
 			}
 
 			// TODO: set pressed flag
-			SetFocusedWidget(dynamic_cast<Widget*>(widget));
+			SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 		} else {
 			SetFocusedWidget(0);
 		}

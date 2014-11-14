@@ -214,7 +214,7 @@ namespace BlendInt {
 	{
 		float x = get_relative_position(Shaders::instance->widget_model_matrix()).x;
 		int outline_vertices = GetOutlineVertices(round_type());
-		float len = GetSlidePosition(DefaultBorderWidth(), value());
+		float len = GetSlidePosition(default_border_width(), value());
 
 		Shaders::instance->widget_split_inner_program()->use();
 

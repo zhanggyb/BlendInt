@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
 #define _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class VBlockLayout: public Layout
+	class VBlockLayout: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(VBlockLayout);
 
@@ -41,9 +41,9 @@ namespace BlendInt {
 
 		virtual ~VBlockLayout ();
 
-		void Prepend (Widget* widget);
+		void Prepend (AbstractWidget* widget);
 
-		void Append (Widget* widget);
+		void Append (AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -53,15 +53,13 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
-
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void FillInVBlock (const Size& out_size, const Margin& margin);
+		void FillInVBlock (const Size& out_size);
 
 		void FillInVBlock (int x, int y, int w, int h);
 

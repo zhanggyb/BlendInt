@@ -59,7 +59,6 @@ namespace BlendInt {
 	  file_entry_(0)
 	{
 		set_size(500, 400);
-		set_margin(2, 2, 2, 2);
 
 		InitializeFileSelector();
 
@@ -75,7 +74,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
+			tool.GenerateVertices(*request.size(), 0, RoundNone, 5.f);
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 			inner_->reset();
@@ -92,8 +91,8 @@ namespace BlendInt {
 	void FileSelector::PerformRoundTypeUpdate (int round_type)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), 0, round_type,
-				round_radius());
+		tool.GenerateVertices(size(), 0, RoundNone,
+				5.f);
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 		GLArrayBuffer::reset();
@@ -154,7 +153,7 @@ namespace BlendInt {
 		// create sub widgets
 		VLayout* layout = Manage(new VLayout);
 		DBG_SET_NAME(layout, "Main Layout");
-		layout->SetMargin(2, 2, 2, 2);
+		layout->SetMargin(Margin(2, 2, 2, 2));
 		layout->SetSpace(0);
 
 		HLayout* toolbar = CreateToolButtonsOnce();
@@ -166,11 +165,11 @@ namespace BlendInt {
 		//splitter->Append(sidebar);
 		//splitter->Append(area);
 
-		layout->Append(toolbar);
+		layout->AddWidget(toolbar);
 		//layout->Append(splitter);
-		layout->Append(area);
+		layout->AddWidget(area);
 
-		Setup(layout);
+		AddWidget(layout);
 
 		std::string pwd =getenv("PWD");
 		pwd.append("/");
@@ -191,7 +190,7 @@ namespace BlendInt {
 	{
 		VLayout* vbox = Manage(new VLayout);
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
-		vbox->SetMargin(2, 2, 2, 2);
+		vbox->SetMargin(Margin(2, 2, 2, 2));
 		vbox->SetSpace(4);
 
 		path_entry_ = Manage(new TextEntry);
@@ -204,9 +203,9 @@ namespace BlendInt {
 		HLayout* dir_layout = Manage(new HLayout);
 		DBG_SET_NAME(dir_layout, "DIR Layout");
 
-		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->Append(path_entry_);
-		dir_layout->Append(open_);
+		dir_layout->SetMargin(Margin(0, 0, 0, 0));
+		dir_layout->AddWidget(path_entry_);
+		dir_layout->AddWidget(open_);
 
 		file_entry_ = Manage(new TextEntry);
 		DBG_SET_NAME(file_entry_, "File Entry");
@@ -218,16 +217,16 @@ namespace BlendInt {
 		HLayout* file_layout = Manage(new HLayout);
 		DBG_SET_NAME(file_layout, "File Layout");
 
-		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->Append(file_entry_);
-		file_layout->Append(cancel_);
+		file_layout->SetMargin(Margin(0, 0, 0, 0));
+		file_layout->AddWidget(file_entry_);
+		file_layout->AddWidget(cancel_);
 
 		browser_ = Manage(new FileBrowser);
 		DBG_SET_NAME(browser_, "FileBrowser");
 
-		vbox->Append(dir_layout);
-		vbox->Append(file_layout);
-		vbox->Append(browser_);
+		vbox->AddWidget(dir_layout);
+		vbox->AddWidget(file_layout);
+		vbox->AddWidget(browser_);
 
 		return vbox;
 	}
@@ -236,7 +235,6 @@ namespace BlendInt {
 	{
 		HLayout* toolbar = Manage(new HLayout);
 		DBG_SET_NAME(toolbar, "ToolBar");
-		toolbar->SetMargin(2, 2, 2, 2);
 
 		// directory control group
 		HBlockLayout* block1 = Manage(new HBlockLayout);
@@ -279,10 +277,10 @@ namespace BlendInt {
 		block3->Append(btn_sort_time);
 		block3->Append(btn_sort_size);
 
-		toolbar->Append(block1);
-		toolbar->Append(btn_new);
-		toolbar->Append(block2);
-		toolbar->Append(block3);
+		toolbar->AddWidget(block1);
+		toolbar->AddWidget(btn_new);
+		toolbar->AddWidget(block2);
+		toolbar->AddWidget(block3);
 
 		return toolbar;
 	}

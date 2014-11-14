@@ -72,7 +72,7 @@ namespace BlendInt {
 		if(request.target() == this) {
 			std::vector<GLfloat> inner;
 			std::vector<GLfloat> outer;
-			GenerateTabButtonVertices(*request.size(), DefaultBorderWidth(),
+			GenerateTabButtonVertices(*request.size(), default_border_width(),
 			        inner, outer);
 
 			m_inner_buffer->bind();
@@ -137,7 +137,7 @@ namespace BlendInt {
 		std::vector<GLfloat> inner;
 		std::vector<GLfloat> outer;
 
-		GenerateTabButtonVertices(size(), DefaultBorderWidth(), inner, outer);
+		GenerateTabButtonVertices(size(), default_border_width(), inner, outer);
 
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);

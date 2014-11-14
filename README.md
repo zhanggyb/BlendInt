@@ -37,10 +37,6 @@ improved with some new technologies:
 
 Here're some example widgets:
 
-| ------------ | ------------- | ------------ |
-| Button       | ToggleButton  | Label        |
-| Viewport3D   | NumericalSlider | FileSelector |
-
 ## Usage
 
 Useing **BlendInt** is as simple as any C++ object-oriented GUI
@@ -63,25 +59,28 @@ int main (int argc, char* argv[])
 	// Create opengl context and make it current in your favoriate
 	// OpenGL window system such as GLUT, GLFW, Cocoa
 
-	Interface::Initialize();
+	Context::Initialize();
 
-	// Create a root container called Context too in BlendInt
+	// Context is a special object, create at least one and set in GL Window
 	Context* context = Manage(new Context);
-	Instance::instance->SetCurrentContext(context);
 
 	// Create a button
 	Button* btn = Manage(new Button);
 	btn->SetText("Hello World!");
 	btn->SetPosition(200, 200); 
 
-	// Add widgets to the context
-	context->PushBack(btn);
+	// Create a dialog
+	Dialog* dlg = Manage(new Dialog);
+	dlg->AddWidget(btn);
+
+	// Add dialog to the context
+	context->AddFrame(dlg);
 
 	// In the event-render loop
-	Interface::instance->Draw();
+	context->Draw();
 
 	// Ready to close application
-	Interface::Release();
+	Context::Release();
 }
 ```
 
@@ -103,7 +102,7 @@ libraries are installed:
 
 The source code is verified to be built and workable on:
 
-* Mac OS X 10.9 (Mavericks)
+* Mac OS X 10.9 (Mavericks), 10.10 (Yosemite)
 * ArchLinux
 * Ubuntu 13.10, 14.04(LTS)
 * Fedora 20
@@ -158,7 +157,7 @@ To build and run the demos, use additional cmake options:
 $ cmake <source dir> -DWITH_GLFW3_DEMO=TRUE
 ```
 
-To run glfw3 demo:
+To run a demo:
 
 ```shell
 $ ./bin/glfw_demo

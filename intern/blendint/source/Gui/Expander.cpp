@@ -232,14 +232,11 @@ namespace BlendInt {
 	{
 	}
 
-	bool Expander::Setup (Widget* widget)
+	bool Expander::Setup (AbstractWidget* widget)
 	{
 		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
-		if(frame->Setup(widget)) {
-			return true;
-		}
-
-		return false;
+		frame->AddWidget(widget);
+		return true;
 	}
 
 	Size Expander::GetPreferredSize() const

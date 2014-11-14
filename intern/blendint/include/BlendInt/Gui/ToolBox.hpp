@@ -27,7 +27,7 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~ToolBox ();
 
-		void AddWidget (Widget* widget, bool append = true);
+		void AddWidget (AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 

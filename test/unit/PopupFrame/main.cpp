@@ -1,5 +1,5 @@
 /*
- * Unit test for ColorSelector
+ * Unit test for PopupFrame
  */
 
 #include <gtest/gtest.h>

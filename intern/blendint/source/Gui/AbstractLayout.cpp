@@ -50,32 +50,18 @@ namespace BlendInt {
 	{
 	}
 
-	void AbstractLayout::Add(AbstractWidget* widget, bool append)
-	{
-	}
-
-	void AbstractLayout::Insert(int index, AbstractWidget* widget)
-	{
-
-	}
-
-	void AbstractLayout::Insert(int row, int column, AbstractWidget* widget)
-	{
-
-	}
-
 	void AbstractLayout::SetMargin(const Margin& margin)
 	{
 	}
 
-	void AbstractLayout::SetMargin(int left, int right, int top,
-			int bottom)
+	ResponseType BlendInt::AbstractLayout::Draw(Profile& profile)
 	{
+		return subs_count() ? Ignore : Accept;
 	}
 
 	void AbstractLayout::PerformMarginUpdate(const Margin& margin)
 	{
-		set_margin(margin);
+		margin_ = margin;
 	}
 
 }

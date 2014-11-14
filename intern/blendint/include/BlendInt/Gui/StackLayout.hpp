@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 #define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	class StackLayout: public Layout
+	class StackLayout: public AbstractLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(StackLayout);
 
@@ -38,13 +38,13 @@ namespace BlendInt {
 
 		virtual ~StackLayout ();
 
-		void Prepend (AbstractInteractiveForm* widget);
+		void AddWidget (AbstractWidget* widget);
 
-		void Append (AbstractInteractiveForm* widget);
+		void InsertWidget (int index, AbstractWidget* widget);
 
-		void Insert (int index, AbstractInteractiveForm* widget);
+		void InsertWidget (int row, int column, AbstractWidget* widget);
 
-		void Remove (AbstractInteractiveForm* widget);
+		void Remove (AbstractWidget* widget);
 
 		int GetIndex () const;
 
@@ -56,7 +56,7 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		inline AbstractInteractiveForm* active_widget () const
+		inline AbstractWidget* active_widget () const
 		{
 			return active_widget_;
 		}
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	private:
 
-		AbstractInteractiveForm* active_widget_;
+		AbstractWidget* active_widget_;
 
 	};
 

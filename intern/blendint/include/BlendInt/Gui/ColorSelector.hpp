@@ -27,14 +27,16 @@
 #include <BlendInt/Gui/HBlockLayout.hpp>
 #include <BlendInt/Gui/VBlockLayout.hpp>
 #include <BlendInt/Gui/StackLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
-#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/PopupFrame.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {
 
-	class ColorSelector: public VLayout
+	class ColorSelector: public PopupFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
@@ -43,16 +45,6 @@ namespace BlendInt {
 		ColorSelector ();
 
 		virtual ~ColorSelector();
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual ResponseType Draw (Profile& profile);
 
 	private:
 
@@ -66,16 +58,11 @@ namespace BlendInt {
 
 		VLayout* CreateHexBlock ();
 
-		StackLayout* CreateBlockStack ();
+		Stack* CreateBlockStack ();
 
 		ButtonGroup radio_group_;
 
-		GLuint vaos_[2];
-
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		StackLayout* stack_;
+		Stack* stack_;
 
 	};
 }

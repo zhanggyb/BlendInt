@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_GUI_MENUBAR_HPP_
 #define _BLENDINT_GUI_MENUBAR_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public Layout
+	class MenuBar: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 
@@ -63,8 +63,6 @@ namespace BlendInt {
 		}
 
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 

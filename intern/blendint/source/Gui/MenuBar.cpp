@@ -48,9 +48,8 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	MenuBar::MenuBar ()
-	: Layout(), m_vao(0), m_space(2), m_active_button(0)
+	: Widget(), m_vao(0), m_space(2), m_active_button(0)
 	{
-		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
 		InitializeMenuBar();
 	}
@@ -91,8 +90,8 @@ namespace BlendInt {
 		if(0 == button) return 0;
 
 		int x = GetLastPosition();
-		int y = margin().bottom();
-		int h = size().height() - margin().vsum();
+		int y = 0;
+		int h = size().height();
 
 		if(PushBackSubWidget(button)) {
 
@@ -131,11 +130,6 @@ namespace BlendInt {
 		if(!button || button->parent() != this) return;
 
 		button->SetMenu(menu);
-	}
-
-	void MenuBar::PerformMarginUpdate(const Margin& request)
-	{
-		// TODO: change margin
 	}
 
 	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -188,8 +182,6 @@ namespace BlendInt {
 			preferred_size.set_height(
 			        max_font_height + AbstractButton::default_padding.vsum());// top padding: 2, bottom padding: 2
 
-			preferred_size.add_height(margin().vsum());
-
 		} else {
 
 			Size tmp_size;
@@ -205,8 +197,6 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
@@ -334,7 +324,7 @@ namespace BlendInt {
 
 	int MenuBar::GetLastPosition ()
 	{
-		int pos = margin().left();
+		int pos = 0;
 
 		if(last_child()) {
 			pos = last_child()->position().x() + last_child()->size().width() + m_space;

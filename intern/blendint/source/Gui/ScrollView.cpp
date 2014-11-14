@@ -44,12 +44,11 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ScrollView::ScrollView()
-	: Layout(),
+	: Widget(),
 	  m_vao(0),
 	  m_orientation(Horizontal | Vertical),
 	  m_move_status(false)
 	{
-		set_margin(0, 0, 0, 0);
 		set_size(400, 300);
 
 		glGenVertexArrays(1, &m_vao);
@@ -87,8 +86,8 @@ namespace BlendInt {
 		}
 
 		if (PushBackSubWidget(widget)) {
-			int x = position().x() + margin().left();
-			int y = position().y() + size().height() - margin().top();
+			int x = position().x();
+			int y = position().y() + size().height();
 
 			// move widget to align the top-left of the viewport
 			SetSubWidgetPosition(widget, x, y - widget->size().height());
@@ -109,12 +108,12 @@ namespace BlendInt {
 
 		AbstractInteractiveForm* p = first_child();
 
-		int w = size().width() - margin().hsum();
-		int h = size().height() - margin().vsum();
+		int w = size().width();
+		int h = size().height();
 
-		int x = position().x() + margin().left();
+		int x = position().x();
 		x += (w - static_cast<int>(p->size().width())) / 2;
-		int y = position().y() + margin().bottom();
+		int y = position().y();
 		y += (h - static_cast<int>(p->size().height())) / 2;
 
 		SetSubWidgetPosition(p, x, y);
@@ -127,7 +126,7 @@ namespace BlendInt {
 		if(first_child()) {
 			AbstractInteractiveForm* p = first_child();
 
-			int w = size().width() - margin().hsum();
+			int w = size().width();
 
 			if (p->size().width() <= w) {
 				percentage = 100;
@@ -147,7 +146,7 @@ namespace BlendInt {
 		if(first_child()) {
 			AbstractInteractiveForm* p = first_child();
 
-			int h = size().height() - margin().vsum();
+			int h = size().height();
 
 			if (p->size().height() <= h) {
 				percentage = 100;
@@ -210,16 +209,9 @@ namespace BlendInt {
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
 		}
 
 		return prefer;
-	}
-
-	void ScrollView::PerformMarginUpdate(const Margin& request)
-	{
-		// nothing to do
 	}
 
 	void ScrollView::PerformPositionUpdate (

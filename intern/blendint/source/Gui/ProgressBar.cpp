@@ -92,7 +92,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			VertexTool tool;
-			tool.GenerateVertices(*request.size(), DefaultBorderWidth(),
+			tool.GenerateVertices(*request.size(), default_border_width(),
 			        round_type(), round_radius());
 			inner_->bind();
 			inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -111,7 +111,7 @@ namespace BlendInt {
 	void ProgressBar::PerformRoundTypeUpdate (int round_type)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type,
+		tool.GenerateVertices(size(), default_border_width(), round_type,
 				round_radius());
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -125,7 +125,7 @@ namespace BlendInt {
 	void ProgressBar::PerformRoundRadiusUpdate (float radius)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(),
+		tool.GenerateVertices(size(), default_border_width(),
 				round_type(), radius);
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -165,10 +165,10 @@ namespace BlendInt {
 
 	void ProgressBar::InitializeProgressBar ()
 	{
-		float minxi = DefaultBorderWidth();
-		float maxxi = size().width() - DefaultBorderWidth();
-		float minyi = DefaultBorderWidth();
-		float maxyi = size().height() - DefaultBorderWidth();
+		float minxi = default_border_width();
+		float maxxi = size().width() - default_border_width();
+		float minyi = default_border_width();
+		float maxyi = size().height() - default_border_width();
 
 		float midx = (minxi + maxxi) / 2.f;
 
@@ -186,7 +186,7 @@ namespace BlendInt {
 		};
 
 		VertexTool tool;
-		tool.GenerateVertices (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.GenerateVertices (size(), default_border_width(), round_type(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);

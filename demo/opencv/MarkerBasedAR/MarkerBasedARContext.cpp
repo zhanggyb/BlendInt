@@ -23,16 +23,17 @@ using namespace BlendInt;
 
 MarkerBasedARContext::MarkerBasedARContext()
 : BI::Context(),
-  video_(0)
+  viewport_(0),
+  status_(VideoStop)
 {
 	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
 
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	video_ = Manage(new CVVideoViewport);
+	viewport_ = Manage(new CVImageViewport);
 
-	splitter->AddFrame(video_);
+	splitter->AddFrame(viewport_);
 	splitter->AddFrame(tools, PreferredWidth);
 
 	ToolBox* bar = CreateToolBarOnce();
@@ -43,6 +44,13 @@ MarkerBasedARContext::MarkerBasedARContext()
 	AddFrame(vsplitter);
 
 	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+
+	timer_.reset(new Timer);
+	timer_->SetInterval(1000 / 30);	// 30 fps
+
+	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
+
+	viewport_->OpenFile("test.jpg");
 }
 
 MarkerBasedARContext::~MarkerBasedARContext ()
@@ -77,10 +85,13 @@ ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 	Button* pause = Manage(new Button("Pause"));
 	Button* stop = Manage(new Button("Stop"));
 
+	VBlockLayout* vblock1 = Manage(new VBlockLayout);
+	vblock1->Append(play);
+	vblock1->Append(pause);
+	vblock1->Append(stop);
+
 	tools->AddWidget(expander);
-	tools->AddWidget(play);
-	tools->AddWidget(pause);
-	tools->AddWidget(stop);
+	tools->AddWidget(vblock1);
 
 	events()->connect(play->clicked(), this, &MarkerBasedARContext::OnPlay);
 	events()->connect(pause->clicked(), this, &MarkerBasedARContext::OnPause);
@@ -110,21 +121,51 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 	return bar;
 }
 
+bool MarkerBasedARContext::OpenCamera(int n, const BI::Size& resolution)
+{
+	bool retval = false;
+
+	video_stream_.open(n);
+	if(video_stream_.isOpened()) {
+
+		video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
+		video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
+
+		Refresh();
+	} else {
+		DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
+	}
+
+	return retval;
+}
+
 void MarkerBasedARContext::OnPlay()
 {
 	DBG_PRINT_MSG("%s", "Start Play");
-	video_->OpenCamera(0, Size(800, 600));
-	video_->Play();
+	//viewport_->OpenCamera(0, Size(800, 600));
+	//viewport_->Play();
+	timer_->Start();
 }
 
 void MarkerBasedARContext::OnPause ()
 {
 	DBG_PRINT_MSG("%s", "Pause");
-	video_->Pause();
+	//viewport_->Pause();
+	timer_->Stop();
 }
 
 void MarkerBasedARContext::OnStop()
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
-	video_->Stop();
+	//viewport_->Stop();
+	timer_->Stop();
+}
+
+void MarkerBasedARContext::OnTimeout(Timer* t)
+{
+	DBG_PRINT_MSG("%s", "refresh");
+
+	// TODO: create opengl context and load texture
+
+	Refresh();
 }

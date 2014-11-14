@@ -36,33 +36,25 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		virtual void Add (AbstractWidget* widget, bool append = true);
+		virtual void AddWidget (AbstractWidget* widget) = 0;
 
-		virtual void Insert (int index, AbstractWidget* widget);
+		virtual void InsertWidget (int index, AbstractWidget* widget) = 0;
 
-		virtual void Insert (int row, int column, AbstractWidget* widget);
+		virtual void InsertWidget (int row, int column, AbstractWidget* widget) = 0;
 
 		const Margin& margin () const {return margin_;}
 
 		void SetMargin (const Margin& margin);
 
-		void SetMargin (int left, int right, int top, int bottom);
-
 	protected:
+
+		virtual ResponseType Draw (Profile& profile);
 
 		virtual void PerformMarginUpdate (const Margin& margin);
 
 		inline void set_margin (const Margin& margin)
 		{
 			margin_ = margin;
-		}
-
-		inline void set_margin (int left, int right, int top, int bottom)
-		{
-			margin_.set_left(left);
-			margin_.set_right(right);
-			margin_.set_top(top);
-			margin_.set_bottom(bottom);
 		}
 
 	private:

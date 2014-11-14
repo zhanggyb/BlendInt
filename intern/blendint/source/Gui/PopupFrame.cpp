@@ -37,17 +37,17 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
-#include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/PopupFrame.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Dialog::Dialog()
+	PopupFrame::PopupFrame()
 	: AbstractFloatingFrame(),
-	  shadow_(0),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  layout_(0)
@@ -59,13 +59,22 @@ namespace BlendInt {
 		model_matrix_ = glm::mat4(1.f);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+		std::vector<GLfloat> outer_verts;
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
 
-		glGenVertexArrays(2, vao_);
+		glGenVertexArrays(3, vao_);
 		glBindVertexArray(vao_[0]);
 
 		buffer_.generate();
-		buffer_.bind();
+		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
@@ -73,6 +82,12 @@ namespace BlendInt {
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[2]);
 
 		GLfloat vertices[] = {
 				// coord											uv
@@ -82,7 +97,7 @@ namespace BlendInt {
 				(float)size().width(), (float)size().height(),		1.f, 1.f
 		};
 
-		buffer_.bind(1);
+		buffer_.bind(2);
 		buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
@@ -100,25 +115,26 @@ namespace BlendInt {
 
 		shadow_.reset(new ShadowMap);
 		shadow_->Resize(size());
+
 	}
 
-	Dialog::~Dialog()
+	PopupFrame::~PopupFrame()
 	{
-		glDeleteVertexArrays(2, vao_);
+		glDeleteVertexArrays(3, vao_);
 
 		if(focused_widget_) {
 			set_widget_focus_status(focused_widget_, false);
-			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+			focused_widget_->destroyed().disconnectOne(this, &PopupFrame::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
 
 		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
 		}
 	}
 
-	void Dialog::SetLayout(AbstractLayout* layout)
+	void PopupFrame::SetLayout(AbstractLayout* layout)
 	{
 		if(!layout) return;
 
@@ -128,7 +144,7 @@ namespace BlendInt {
 		}
 
 		if(layout_) {
-			layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
+			layout_->destroyed().disconnectOne(this, &PopupFrame::OnLayoutDestroyed);
 		}
 
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
@@ -137,7 +153,7 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(layout)) {
 			layout_ = layout;
-			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
+			events()->connect(layout_->destroyed(), this, &PopupFrame::OnLayoutDestroyed);
 			SetSubWidgetPosition(layout_, 0, 0);
 			ResizeSubWidget(layout_, size());
 		} else {
@@ -147,7 +163,7 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void Dialog::AddWidget(AbstractWidget* widget)
+	void PopupFrame::AddWidget(AbstractWidget* widget)
 	{
 		if(layout_) {
 			layout_->AddWidget(widget);
@@ -158,7 +174,18 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void Dialog::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void PopupFrame::InsertWidget(int index, AbstractWidget* widget)
+	{
+		if(layout_) {
+			layout_->InsertWidget(index, widget);
+		} else {
+			InsertSubWidget(index, widget);
+		}
+
+		Refresh();
+	}
+
+	void PopupFrame::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -172,12 +199,24 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+			std::vector<GLfloat> outer_verts;
 
-			buffer_.bind();
+			if (Theme::instance->menu_back().shaded) {
+				GenerateRoundedVertices(Vertical,
+						Theme::instance->menu_back().shadetop,
+						Theme::instance->menu_back().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
+			}
+
+			buffer_.bind(0);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
 			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+			buffer_.bind(2);
 			float* ptr = (float*)buffer_.map();
 			*(ptr + 4) = (float)size().width();
 			*(ptr + 9) = (float)size().height();
@@ -187,11 +226,11 @@ namespace BlendInt {
 
 			buffer_.reset();
 
-			shadow_->Resize(size());
-
 			if(layout_) {
-				layout_->Resize(size());
+				ResizeSubWidget(layout_, size());
 			}
+
+			shadow_->Resize(size());
 
 			Refresh();
 		}
@@ -201,14 +240,14 @@ namespace BlendInt {
 		}
 	}
 
-	bool Dialog::PreDraw(Profile& profile)
+	bool PopupFrame::PreDraw(Profile& profile)
 	{
 		if(!visiable()) return false;
 
 		assign_profile_frame(profile);
 
 		if(refresh()) {
-			DBG_PRINT_MSG("%s", "refresh once");
+			//DBG_PRINT_MSG("%s", "refresh once");
 			set_refresh(false);
 			RenderToBuffer(profile);
 		}
@@ -216,7 +255,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Dialog::Draw(Profile& profile)
+	ResponseType PopupFrame::Draw(Profile& profile)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -224,10 +263,19 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+		Shaders::instance->frame_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
+		        Theme::instance->menu_back().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -238,7 +286,7 @@ namespace BlendInt {
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
 
-        glBindVertexArray(vao_[1]);
+        glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
 
@@ -250,55 +298,47 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Dialog::PostDraw(Profile& profile)
+	void PopupFrame::PostDraw(Profile& profile)
 	{
 	}
 
-	void Dialog::FocusEvent(bool focus)
+	void PopupFrame::FocusEvent(bool focus)
 	{
 	}
 
-	void Dialog::MouseHoverInEvent(const MouseEvent& event)
+	void PopupFrame::MouseHoverInEvent(const MouseEvent& event)
 	{
 	}
 
-	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
+	void PopupFrame::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_, event);
 		}
 	}
 
-	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
-	{
-		if(event.key() == Key_Escape) {
-			Refresh();
-			delete this;
-			return Accept;
-		}
-
-		return Ignore;
-	}
-
-	ResponseType Dialog::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
+	ResponseType PopupFrame::KeyPressEvent(const KeyEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
+	ResponseType PopupFrame::ContextMenuPressEvent(const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
+	ResponseType PopupFrame::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType PopupFrame::MousePressEvent(const MouseEvent& event)
 	{
 		set_event_frame(event, this);
 
-		last_ = position();
-		cursor_ = event.position();
+		//last_ = position();
+		//cursor_ = event.position();
 
 		ResponseType retval = Ignore;
 
@@ -321,7 +361,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType PopupFrame::MouseReleaseEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -334,7 +374,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
+	ResponseType PopupFrame::MouseMoveEvent(const MouseEvent& event)
 	{
 		ResponseType retval = Ignore;
 
@@ -347,10 +387,10 @@ namespace BlendInt {
 
 			} else {
 
-				int ox = event.position().x() - cursor_.x();
-				int oy = event.position().y() - cursor_.y();
-
-				set_position(last_.x() + ox, last_.y() + oy);
+//				int ox = event.position().x() - cursor_.x();
+//				int oy = event.position().y() - cursor_.y();
+//
+//				set_position(last_.x() + ox, last_.y() + oy);
 
 				if(parent()) {
 					parent()->Refresh();
@@ -363,7 +403,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType PopupFrame::DispatchHoverEvent(const MouseEvent& event)
 	{
 		if(Contain(event.position())) {
 
@@ -373,13 +413,13 @@ namespace BlendInt {
 
 				if(hovered_widget_) {
 					hovered_widget_->destroyed().disconnectOne(this,
-							&Dialog::OnHoverWidgetDestroyed);
+							&PopupFrame::OnHoverWidgetDestroyed);
 				}
 
 				hovered_widget_ = new_hovered_widget;
 				if(hovered_widget_) {
 					events()->connect(hovered_widget_->destroyed(), this,
-							&Dialog::OnHoverWidgetDestroyed);
+							&PopupFrame::OnHoverWidgetDestroyed);
 				}
 
 			}
@@ -392,56 +432,56 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Dialog::SetFocusedWidget(AbstractWidget* widget)
+	void PopupFrame::SetFocusedWidget(AbstractWidget* widget)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, false);
-			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+			focused_widget_->destroyed().disconnectOne(this, &PopupFrame::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
 			set_widget_focus_event(focused_widget_, true);
-			events()->connect(focused_widget_->destroyed(), this, &Dialog::OnFocusedWidgetDestroyed);
+			events()->connect(focused_widget_->destroyed(), this, &PopupFrame::OnFocusedWidgetDestroyed);
 		}
 	}
 
-	void Dialog::OnFocusedWidgetDestroyed(AbstractWidget* widget)
+	void PopupFrame::OnFocusedWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
 		assert(widget->focus());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &PopupFrame::OnFocusedWidgetDestroyed);
 
 		focused_widget_ = 0;
 	}
 
-	void Dialog::OnHoverWidgetDestroyed(AbstractWidget* widget)
+	void PopupFrame::OnHoverWidgetDestroyed(AbstractWidget* widget)
 	{
 		assert(widget->hover());
 		assert(hovered_widget_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = 0;
 	}
 
-	void Dialog::OnLayoutDestroyed(AbstractWidget* layout)
+	void PopupFrame::OnLayoutDestroyed(AbstractWidget* layout)
 	{
 		assert(layout == layout_);
 
 		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
-		layout->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
+		layout->destroyed().disconnectOne(this, &PopupFrame::OnLayoutDestroyed);
 		layout_ = 0;
 	}
 
-	void Dialog::RenderToBuffer(Profile& profile)
+	void PopupFrame::RenderToBuffer(Profile& profile)
 	{
         // Create and set texture to render to.
         GLTexture2D* tex = &texture_buffer_;

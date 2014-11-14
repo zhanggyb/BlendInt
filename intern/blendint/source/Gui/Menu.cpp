@@ -299,7 +299,7 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.GenerateVertices(size,
-				DefaultBorderWidth(),
+				default_border_width(),
 				RoundNone,
 				0,
 				Theme::instance->menu_item().inner_sel,

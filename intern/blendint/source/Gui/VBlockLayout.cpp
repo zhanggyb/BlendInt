@@ -26,17 +26,16 @@
 namespace BlendInt {
 
 	VBlockLayout::VBlockLayout ()
-	: Layout()
+	: Widget()
 	{
 		set_size(80, 60);
-		set_margin(0, 0, 0, 0);
 	}
 
 	VBlockLayout::~VBlockLayout ()
 	{
 	}
 
-	void VBlockLayout::Prepend (Widget* widget)
+	void VBlockLayout::Prepend (AbstractWidget* widget)
 	{
 		AbstractInteractiveForm* orig_first = first_child();
 
@@ -51,12 +50,12 @@ namespace BlendInt {
 				widget->SetRoundType(RoundAll);
 			}
 
-			FillInVBlock(size(), margin());
+			FillInVBlock(size());
 
 		}
 	}
 
-	void VBlockLayout::Append (Widget* widget)
+	void VBlockLayout::Append (AbstractWidget* widget)
 	{
 		AbstractInteractiveForm* orig_last = last_child();
 
@@ -72,7 +71,7 @@ namespace BlendInt {
 				widget->SetRoundType(RoundAll);
 			}
 
-			FillInVBlock(size(), margin());
+			FillInVBlock(size());
 
 		}
 	}
@@ -136,16 +135,9 @@ namespace BlendInt {
 			preferred_size.set_width(max_width);
 			preferred_size.set_height(sum * (max_height - 1));
 
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
-	}
-
-	void VBlockLayout::PerformMarginUpdate(const Margin& request)
-	{
-		FillInVBlock(size(), request);
 	}
 
 	bool VBlockLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -172,7 +164,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillInVBlock(*request.size(), margin());
+			FillInVBlock(*request.size());
 		}
 
 		if(request.source() == this) {
@@ -180,13 +172,12 @@ namespace BlendInt {
 		}
 	}
 
-	void VBlockLayout::FillInVBlock (const Size& out_size,
-					const Margin& margin)
+	void VBlockLayout::FillInVBlock (const Size& out_size)
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int w = out_size.width() - margin.hsum();
-		int h = out_size.height() - margin.vsum();
+		int x = 0;
+		int y = 0;
+		int w = out_size.width();
+		int h = out_size.height();
 
 		FillInVBlock(x, y, w, h);
 	}

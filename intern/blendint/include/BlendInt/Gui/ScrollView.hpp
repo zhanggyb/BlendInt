@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SCROLLVIEW_HPP_
 #define _BLENDINT_GUI_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/Layout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
@@ -32,7 +32,7 @@ namespace BlendInt {
 	 * @brief A widget container in which a sub widget can be scrolled
 	 *
 	 */
-	class ScrollView: public Layout
+	class ScrollView: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 
@@ -78,8 +78,6 @@ namespace BlendInt {
 		virtual Size GetPreferredSize () const;
 
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 

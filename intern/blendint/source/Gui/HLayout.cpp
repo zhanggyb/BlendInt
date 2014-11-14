@@ -38,7 +38,7 @@
 namespace BlendInt {
 
 	HLayout::HLayout (int align, int space)
-	: Layout(), m_alignment(align), m_space(space)
+	: AbstractLayout(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
@@ -47,27 +47,36 @@ namespace BlendInt {
 	{
 	}
 
-	bool HLayout::Prepend (Widget* widget)
-	{
-		if(PushFrontSubWidget(widget)) {
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			return true;
-		}
-
-		return false;
-	}
-
-	bool HLayout::Append (Widget* widget)
+	void HLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			return true;
+			Refresh();
 		}
-
-		return false;
 	}
 
-	bool HLayout::Remove (Widget* widget)
+	void HLayout::InsertWidget(int index, AbstractWidget* widget)
+	{
+		if(InsertSubWidget(index, widget)) {
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			Refresh();
+		}
+	}
+
+	void HLayout::InsertWidget(int row, int column,
+			AbstractWidget* widget)
+	{
+		if(row != 0) {
+			DBG_PRINT_MSG("Error: %s", "HLayout contains only 1 row, and the 1st parameter will be ignored");
+		}
+
+		if(InsertSubWidget(column, widget)) {
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			Refresh();
+		}
+	}
+
+	bool HLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);

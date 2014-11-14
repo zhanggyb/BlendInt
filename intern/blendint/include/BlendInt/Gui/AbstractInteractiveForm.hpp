@@ -429,7 +429,10 @@ namespace BlendInt {
 
 		static void SetDefaultBorderWidth (float border);
 
-		static float DefaultBorderWidth ();
+		static inline float default_border_width ()
+		{
+			return border_width;
+		}
 
 #ifdef DEBUG
 
@@ -772,7 +775,7 @@ namespace BlendInt {
 		std::string name_;
 #endif
 
-		static float default_border_width;
+		static float border_width;
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 

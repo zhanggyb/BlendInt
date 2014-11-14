@@ -51,16 +51,14 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	VLayout* layout = Manage(new VLayout);
 	DBG_SET_NAME(layout, "Layout");
-	layout->Append(btn1);
-	layout->Append(btn2);
-	layout->Append(btn3);
+	layout->AddWidget(btn1);
+	layout->AddWidget(btn2);
+	layout->AddWidget(btn3);
 
 	ScrollBar* bar = Manage(new ScrollBar);
-	ColorSelector* cs = Manage(new ColorSelector);
 
 	vp1->AddWidget(layout);
 	vp1->AddWidget(bar);
-	vp1->AddWidget(cs);
 
 	Viewport* vp2 = Manage(new Viewport);
 	DBG_SET_NAME(vp2, "Viewport2");

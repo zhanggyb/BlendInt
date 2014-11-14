@@ -47,7 +47,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration()
-	: Layout(),
+	: Widget(),
 	  space_(4)
 	{
 		set_size(200, 20);
@@ -112,14 +112,14 @@ namespace BlendInt {
 			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 			inner_->reset();
 
-			int x = position().x() + margin().left();
+			int x = position().x();
 			if (first_child()) {
 				x = first_child()->position().x();
 			}
 
-			int y = position().y() + margin().bottom();
-			int w = request.size()->width() - margin().hsum();
-			int h = request.size()->height() - margin().vsum();
+			int y = position().y();
+			int w = request.size()->width();
+			int h = request.size()->height();
 
 			FillSubWidgets(x, y, w, h, space_);
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 		} else if (request.target()->parent() == this) {
 
-			FillSubWidgets(position(), size(), margin(), space_);
+			FillSubWidgets(position(), size(), space_);
 
 		}
 
@@ -199,8 +199,7 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 	}
 
-	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size,
-	        const Margin& margin, int space)
+	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size, int space)
 	{
 	}
 

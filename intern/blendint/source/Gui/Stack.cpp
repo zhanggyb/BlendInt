@@ -55,25 +55,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Stack::Prepend (Widget* widget)
-	{
-		if(PushFrontSubWidget(widget)) {
-			int w = size().width();
-			int h = size().height();
-
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, 0, 0);
-
-			if(subs_count() == 1) {
-				active_widget_ = widget;
-				active_widget_->SetVisible(true);
-			} else {
-				widget->SetVisible(false);
-			}
-		}
-	}
-
-	void Stack::Append (Widget* widget)
+	void Stack::AddWidget (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width();
@@ -91,7 +73,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Insert (int index, Widget* widget)
+	void Stack::InsertWidget (int index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
 			int w = size().width();
@@ -104,7 +86,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Remove (Widget* widget)
+	void Stack::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
 
@@ -113,7 +95,7 @@ namespace BlendInt {
 				if(subs_count() == 0) {
 					active_widget_ = 0;
 				} else {
-					active_widget_ = dynamic_cast<Widget*>(first_child());
+					active_widget_ = dynamic_cast<AbstractWidget*>(first_child());
 					active_widget_->SetVisible(true);
 				}
 
@@ -153,7 +135,7 @@ namespace BlendInt {
 			}
 
 			active_widget_->SetVisible(false);
-			active_widget_ = dynamic_cast<Widget*>(widget);
+			active_widget_ = dynamic_cast<AbstractWidget*>(widget);
 			active_widget_->SetVisible(true);
 		}
 	}

@@ -81,7 +81,7 @@ namespace BlendInt {
 
 		virtual ~Expander ();
 
-		bool Setup (Widget* widget);
+		bool Setup (AbstractWidget* widget);
 
 		void SetTitle (const String& text);
 
