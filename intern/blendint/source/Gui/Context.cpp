@@ -195,7 +195,7 @@ namespace BlendInt
 
 	void Context::AddFrame (AbstractFrame* vp)
 	{
-		if(PushBackSubWidget(vp)) {
+		if(PushBackSubForm(vp)) {
 			// TODO:
 			Refresh();
 		}

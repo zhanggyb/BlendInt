@@ -135,11 +135,11 @@ namespace BlendInt {
 			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 		}
 
-		if(PushBackSubWidget(layout)) {
+		if(PushBackSubForm(layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
-			SetSubWidgetPosition(layout_, 0, 0);
-			ResizeSubWidget(layout_, size());
+			MoveSubFormTo(layout_, 0, 0);
+			ResizeSubForm(layout_, size());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -152,7 +152,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->AddWidget(widget);
 		} else {
-			PushBackSubWidget(widget);
+			PushBackSubForm(widget);
 		}
 
 		Refresh();
@@ -208,7 +208,6 @@ namespace BlendInt {
 		assign_profile_frame(profile);
 
 		if(refresh()) {
-			DBG_PRINT_MSG("%s", "refresh once");
 			set_refresh(false);
 			RenderToBuffer(profile);
 		}

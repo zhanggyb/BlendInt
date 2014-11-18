@@ -29,6 +29,10 @@
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/FrameSplitter.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -118,7 +122,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public Widget
+	class Workspace: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 
@@ -128,13 +132,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (Widget* viewport);
+		void SetViewport (Frame* viewport);
 
-		void SetLeftSideBar (Widget* widget);
+		void SetLeftSideBar (ToolBox* leftbar);
 
-		void SetRightSideBar (Widget* widget);
+		void SetRightSideBar (ToolBox* sidebar);
 
-		void SetHeader (Widget* widget);
+		void SetHeader (ToolBox* header);
 
 		void SwitchHeaderPosition ();
 
@@ -144,55 +148,51 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		Widget* viewport () const
-		{
-			return viewport_;
-		}
-
-		Widget* header () const
-		{
-			return header_;
-		}
-
-		Widget* left_sidebar() const
-		{
-			return left_sidebar_;
-		}
-
-		Widget* right_sidebar() const
-		{
-			return right_sidebar_;
-		}
-
 	protected:
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
+
+		virtual void FocusEvent (bool focus);
+
+		virtual void MouseHoverInEvent (const MouseEvent& event);
+
+		virtual void MouseHoverOutEvent (const MouseEvent& event);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
 	private:
 
 		void InitializeWorkspace ();
 
-		Widget* left_sidebar_;
+		void OnHoverFrameDestroyed (AbstractFrame* frame);
 
-		Widget* right_sidebar_;
+		ToolBox* left_sidebar_;
 
-		Widget* header_;
+		ToolBox* right_sidebar_;
 
-		Widget* viewport_;
+		ToolBox* header_;
 
-		Splitter* splitter_;
+		Frame* viewport_;
 
-		GLuint vao_;
+		FrameSplitter* splitter_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		AbstractFrame* hover_;
 
 	};
 

@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	void Panel::AddWidget(Widget* widget)
 	{
-		if(PushBackSubWidget(widget)) {
+		if(PushBackSubForm(widget)) {
 			Refresh();
 		}
 	}

@@ -25,7 +25,8 @@ FrameSplitterTest1::~FrameSplitterTest1()
  *
  * Expected result: 
  */
-TEST_F(FrameSplitterTest1, Foo1)
+/*
+TEST_F(FrameSplitterTest1, AddFrame1)
 {
 	Init ();
 
@@ -80,6 +81,92 @@ TEST_F(FrameSplitterTest1, Foo1)
 //
 //	vsplitter->SetPosition(20, 20);
 //	vsplitter->Resize(1240, 760);
+
+    RunLoop(win);
+    Terminate();
+
+	ASSERT_TRUE(true);
+}
+*/
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+/*
+TEST_F(FrameSplitterTest1, GetFrame1)
+{
+	Init ();
+
+    GLFWwindow* win = CreateWindow("FrameSplitter - Foo1", 1280, 800);
+
+    // TODO: add test code here
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
+	SetContext(context);
+	context->Resize(1280, 800);
+
+	FrameSplitter* fs = Manage(new FrameSplitter(Horizontal));
+	DBG_SET_NAME(fs, "FrameSplitter");
+	fs->MoveTo(20, 20);
+	fs->Resize(1240, 760);
+
+	Viewport* f1 = Manage(new Viewport);
+	DBG_SET_NAME(f1, "Frame1");
+	ToolBox* f2 = Manage(new ToolBox);
+	DBG_SET_NAME(f2, "Frame2");
+	f2->Resize(240, 100);
+
+	fs->AddFrame(f1);
+	fs->AddFrame(f2);
+
+	Frame* frame1 = fs->GetFrame(0);
+	Frame* frame2 = fs->GetFrame(1);
+
+	Frame* frame0 = fs->GetFrame(2);
+
+	context->AddFrame(fs);
+
+    RunLoop(win);
+    Terminate();
+
+	ASSERT_TRUE((frame1 == f1) && (frame2 == f2) && (frame0 == 0));
+}
+*/
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+TEST_F(FrameSplitterTest1, InsertFrame1)
+{
+	Init ();
+
+    GLFWwindow* win = CreateWindow("FrameSplitter - Foo1", 1280, 800);
+
+    // TODO: add test code here
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
+	SetContext(context);
+	context->Resize(1280, 800);
+
+	FrameSplitter* fs = Manage(new FrameSplitter(Horizontal));
+	DBG_SET_NAME(fs, "FrameSplitter");
+	fs->MoveTo(20, 20);
+	fs->Resize(1240, 760);
+
+	Viewport* f1 = Manage(new Viewport);
+	DBG_SET_NAME(f1, "Frame1");
+	ToolBox* f2 = Manage(new ToolBox);
+	DBG_SET_NAME(f2, "Frame2");
+	f2->Resize(240, 100);
+
+	fs->InsertFrame(0, f1);
+	fs->InsertFrame(0, f2);
+
+	context->AddFrame(fs);
 
     RunLoop(win);
     Terminate();

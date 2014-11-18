@@ -271,11 +271,11 @@ namespace BlendInt {
 					return Accept;
 				}
 
-				splitter->SetSubWidgetPosition(this, last_.x(), last_.y() + offset);
+				splitter->MoveSubFormTo(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubWidget(previous(), previous()->size().width(), oy1);
-				splitter->SetSubWidgetPosition(previous(), previous()->position().x(), nearby_pos_ + offset);
-				splitter->ResizeSubWidget(next(), next()->size().width(), oy2);
+				splitter->ResizeSubForm(previous(), previous()->size().width(), oy1);
+				splitter->MoveSubFormTo(previous(), previous()->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubForm(next(), next()->size().width(), oy2);
 
 			} else {
 
@@ -287,11 +287,11 @@ namespace BlendInt {
 					return Accept;
 				}
 
-				splitter->SetSubWidgetPosition(this, last_.x() + offset, last_.y());
+				splitter->MoveSubFormTo(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubWidget(previous(), oy1, previous()->size().height());
-				splitter->ResizeSubWidget(next(), oy2, next()->size().height());
-				splitter->SetSubWidgetPosition(next(), nearby_pos_ + offset, next()->position().y());
+				splitter->ResizeSubForm(previous(), oy1, previous()->size().height());
+				splitter->ResizeSubForm(next(), oy2, next()->size().height());
+				splitter->MoveSubFormTo(next(), nearby_pos_ + offset, next()->position().y());
 
 			}
 
@@ -321,7 +321,7 @@ namespace BlendInt {
 		if((frame == 0) || (frame->parent() == this)) return;
 
 		if(subs_count() == 0) {
-			PushBackSubWidget(frame);
+			PushBackSubForm(frame);
 			AlignSubFrames(orientation_, size());
 		} else {
 
@@ -338,6 +338,84 @@ namespace BlendInt {
 
 	void FrameSplitter::InsertFrame(int index, Frame* frame, SizePolicy policy)
 	{
+		if((frame == 0) || (frame->parent() == this)) return;
+
+		if(subs_count() == 0) {
+			PushBackSubForm(frame);
+			AlignSubFrames(orientation_, size());
+		} else {
+
+			if(orientation_ == Horizontal) {
+				InsertColumn(index, frame, policy);
+			} else {
+				InsertRow(index, frame, policy);
+			}
+
+		}
+
+		Refresh();
+	}
+
+	int FrameSplitter::GetFrameIndex (Frame* frame) const
+	{
+		if(frame->parent() != this) return -1;
+
+		int index = 0;
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		{
+			if(p == frame) break;
+
+			index++;
+			p = p->next()->next();
+		}
+
+		return index;
+	}
+
+	int FrameSplitter::GetHandleIndex (FrameSplitterHandle* handle) const
+	{
+		if(handle->parent() != this) return -1;
+
+		int index = 0;
+		for(AbstractInteractiveForm* p = first_child()->next(); p; p = p->next())
+		{
+			if(p == handle) break;
+
+			index++;
+			p = p->next()->next();
+		}
+
+		return index;
+	}
+
+	Frame* FrameSplitter::GetFrame (int index) const
+	{
+		if(subs_count() == 0) return 0;
+
+		int max = (subs_count() + 1) / 2;
+		if(index > max) return 0;
+
+		index = index * 2;
+
+		return dynamic_cast<Frame*>(GetWidgetAt(index));
+	}
+
+	FrameSplitterHandle* FrameSplitter::GetHandle (int index) const
+	{
+		if(subs_count() <= 1) return 0;
+
+		int max = (subs_count() - 1) / 2;
+		if(index > max) return 0;
+
+		index = index * 2 + 1;
+
+		return dynamic_cast<FrameSplitterHandle*>(GetWidgetAt(index));
+	}
+
+	int FrameSplitter::GetFramesCount () const
+	{
+		int sum = subs_count();
+		return (sum / 2 + 1);
 	}
 
 	bool FrameSplitter::IsExpandX() const
@@ -410,12 +488,9 @@ namespace BlendInt {
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
 			int ox = request.position()->x() - position().x();
 			int oy = request.position()->y() - position().y();
-
 			MoveSubWidgets(ox, oy);
-
 			set_position(*request.position());
 		}
 
@@ -427,11 +502,8 @@ namespace BlendInt {
 	void FrameSplitter::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
 			set_size(*request.size());
-
 			FillSubFrames();
-
 		}
 
 		if(request.source() == this) {
@@ -474,13 +546,13 @@ namespace BlendInt {
 			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 			{
 				if(i % 2 == 0) {
-					ResizeSubWidget(p, room, h);
-					SetSubWidgetPosition(p, x, y);
+					ResizeSubForm(p, room, h);
+					MoveSubFormTo(p, x, y);
 					x = x + room;
 				} else {
 					handler_width = p->GetPreferredSize().width();
-					ResizeSubWidget(p, handler_width, h);
-					SetSubWidgetPosition(p, x, y);
+					ResizeSubForm(p, handler_width, h);
+					MoveSubFormTo(p, x, y);
 					x = x + handler_width;
 				}
 				i++;
@@ -497,13 +569,13 @@ namespace BlendInt {
 			{
 				if(i % 2 == 0) {
 					y = y - room;
-					ResizeSubWidget(p, w, room);
-					SetSubWidgetPosition(p, x, y);
+					ResizeSubForm(p, w, room);
+					MoveSubFormTo(p, x, y);
 				} else {
 					handler_height = p->GetPreferredSize().height();
 					y = y - handler_height;
-					ResizeSubWidget(p, w, handler_height);
-					SetSubWidgetPosition(p, x, y);
+					ResizeSubForm(p, w, handler_height);
+					MoveSubFormTo(p, x, y);
 				}
 
 				i++;
@@ -611,7 +683,6 @@ namespace BlendInt {
 			set_event_frame(event, 0);
 			return Ignore;
 		}
-
 	}
 
 	void FrameSplitter::FillSubFrames()
@@ -676,9 +747,7 @@ namespace BlendInt {
 
 		Size squeezed_size = size();
 		Size frame_size = frame->size();
-		FrameSplitterHandle* handle = 0;
-
-		handle = Manage(new FrameSplitterHandle(Vertical));
+		FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Vertical));
 
 		switch (policy) {
 			case PreferredWidth: {
@@ -703,8 +772,8 @@ namespace BlendInt {
 		squeezed_size.set_width(squeezed_size.width() - handle->size().width() - frame_size.width());
 
 		if((squeezed_size.width() < 0) || (policy == DefaultSizePolicy)) {
-			PushBackSubWidget(handle);
-			PushBackSubWidget(frame);
+			PushBackSubForm(handle);
+			PushBackSubForm(frame);
 			AlignSubFrames(orientation_, size());
 		} else {
 			AlignSubFrames(orientation_, squeezed_size);
@@ -712,16 +781,16 @@ namespace BlendInt {
 			Point pos = last_child()->position();
 			pos.set_x(pos.x() + last_child()->size().width());
 
-			PushBackSubWidget(handle);
-			PushBackSubWidget(frame);
+			PushBackSubForm(handle);
+			PushBackSubForm(frame);
 
-			ResizeSubWidget(handle, handle->size().width(), size().height());
+			ResizeSubForm(handle, handle->size().width(), size().height());
 			frame_size.set_height(size().height());
-			ResizeSubWidget(frame, frame_size);
+			ResizeSubForm(frame, frame_size);
 
-			SetSubWidgetPosition(handle, pos);
+			MoveSubFormTo(handle, pos);
 			pos.set_x(pos.x() + handle->size().width());
-			SetSubWidgetPosition(frame, pos);
+			MoveSubFormTo(frame, pos);
 
 		}
 
@@ -735,9 +804,7 @@ namespace BlendInt {
 
 		Size squeezed_size = size();
 		Size frame_size = frame->size();
-		FrameSplitterHandle* handle = 0;
-
-		handle = Manage(new FrameSplitterHandle(Horizontal));
+		FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Horizontal));
 
 		switch (policy) {
 			case PreferredHeight: {
@@ -763,28 +830,168 @@ namespace BlendInt {
 		squeezed_size.set_height(size().height() - handle->size().height() - frame_size.height());
 
 		if((squeezed_size.height() < 0) || (policy == DefaultSizePolicy)) {
-			PushBackSubWidget(handle);
-			PushBackSubWidget(frame);
+			PushBackSubForm(handle);
+			PushBackSubForm(frame);
 			AlignSubFrames(orientation_, size());
 		} else {
 			AlignSubFrames(orientation_, squeezed_size);
 
 			Point pos = last_child()->position();
 
-			PushBackSubWidget(handle);
-			PushBackSubWidget(frame);
+			PushBackSubForm(handle);
+			PushBackSubForm(frame);
 
-			ResizeSubWidget(handle, size().width(), handle->size().height());
+			ResizeSubForm(handle, size().width(), handle->size().height());
 			frame_size.set_width(size().width());
-			ResizeSubWidget(frame, frame_size);
+			ResizeSubForm(frame, frame_size);
 
 			pos.set_y(pos.y() - handle->size().height());
-			SetSubWidgetPosition(handle, pos);
+			MoveSubFormTo(handle, pos);
 			pos.set_y(pos.y() - frame->size().height());
-			SetSubWidgetPosition(frame, pos);
+			MoveSubFormTo(frame, pos);
 
 		}
 
+	}
+
+	void FrameSplitter::InsertColumn(int index, Frame* frame, SizePolicy policy)
+	{
+#ifdef DEBUG
+		assert(orientation_ == Horizontal);
+#endif
+
+		Size squeezed_size = size();
+		Size frame_size = frame->size();
+		FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Vertical));
+
+		switch (policy) {
+			case PreferredWidth: {
+				frame_size.set_width(frame->GetPreferredSize().width());
+				break;
+			}
+			case CurrentWidth: {
+				break;
+			}
+			case ExpandX: {
+				int w = 0;
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+					w = p->GetPreferredSize().width();
+				}
+				frame_size.set_height(size().width() - handle->size().width() - w);
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		squeezed_size.set_width(squeezed_size.width() - handle->size().width() - frame_size.width());
+
+		if((squeezed_size.width() < 0) || (policy == DefaultSizePolicy)) {
+
+			index = index * 2;
+
+			if(index > (subs_count() - 1)) {
+				// append
+				InsertSubForm(index, handle);
+				InsertSubForm(index + 1, frame);
+			} else {
+				InsertSubForm(index, frame);
+				InsertSubForm(index + 1, handle);
+			}
+
+			AlignSubFrames(orientation_, size());
+
+		} else {
+
+			index = index * 2;
+
+			if(index > (subs_count() - 1)) {
+				// append
+				InsertSubForm(index, handle);
+				InsertSubForm(index + 1, frame);
+			} else {
+				InsertSubForm(index, frame);
+				InsertSubForm(index + 1, handle);
+			}
+
+			ResizeSubForm(handle, handle->size().width(), size().height());
+			frame_size.set_height(size().height());
+			ResizeSubForm(frame, frame_size);
+
+			//AlignSubFrames(orientation_, squeezed_size);
+			AlignSubFrames(orientation_, size());
+		}
+	}
+
+	void FrameSplitter::InsertRow(int index, Frame* frame, SizePolicy policy)
+	{
+#ifdef DEBUG
+		assert(orientation_ == Vertical);
+#endif
+
+		Size squeezed_size = size();
+		Size frame_size = frame->size();
+		FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Horizontal));
+
+		switch (policy) {
+			case PreferredHeight: {
+				frame_size.set_height(frame->GetPreferredSize().height());
+				break;
+			}
+			case CurrentHeight: {
+				break;
+			}
+			case ExpandY: {
+				int h = 0;
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+					h = p->GetPreferredSize().height();
+				}
+				frame_size.set_height(size().height() - handle->size().height() - h);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+		squeezed_size.set_height(size().height() - handle->size().height() - frame_size.height());
+
+		if((squeezed_size.height() < 0) || (policy == DefaultSizePolicy)) {
+
+			index = index * 2;
+
+			if(index > (subs_count() - 1)) {
+				// append
+				InsertSubForm(index, handle);
+				InsertSubForm(index + 1, frame);
+			} else {
+				InsertSubForm(index, frame);
+				InsertSubForm(index + 1, handle);
+			}
+
+			AlignSubFrames(orientation_, size());
+
+		} else {
+
+			index = index * 2;
+
+			if(index > (subs_count() - 1)) {
+				// append
+				InsertSubForm(index, handle);
+				InsertSubForm(index + 1, frame);
+			} else {
+				InsertSubForm(index, frame);
+				InsertSubForm(index + 1, handle);
+			}
+
+			ResizeSubForm(handle, size().width(), handle->size().height());
+			frame_size.set_width(size().width());
+			ResizeSubForm(frame, frame_size);
+
+			//AlignSubFrames(orientation_, squeezed_size);
+			AlignSubFrames(orientation_, size());
+
+		}
 	}
 
 	void FrameSplitter::DistributeHorizontally()
@@ -878,19 +1085,19 @@ namespace BlendInt {
 		{
 			if(i % 2 == 0) {
 
-				ResizeSubWidget(p,
+				ResizeSubForm(p,
 								(size().width() - prefer_width_sum) * (*width_it) / widget_width_sum,
 								p->size().height());
 				width_it++;
 
 			} else {
 
-				ResizeSubWidget(p, *handler_width_it,
+				ResizeSubForm(p, *handler_width_it,
 								p->size().height());
 				handler_width_it++;
 			}
 
-			SetSubWidgetPosition(p, x, p->position().y());
+			MoveSubFormTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -911,7 +1118,7 @@ namespace BlendInt {
 			if(i % 2 == 0) {
 
 				if (p->IsExpandX()) {
-					ResizeSubWidget(p,
+					ResizeSubForm(p,
 									(size().width() - prefer_width_sum
 													- unexpandable_width_sum)
 													* (*exp_width_it)
@@ -921,11 +1128,11 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubWidget(p, *handler_width_it, p->size().height());
+				ResizeSubForm(p, *handler_width_it, p->size().height());
 				handler_width_it++;
 			}
 
-			SetSubWidgetPosition(p, x, p->position().y());
+			MoveSubFormTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -946,7 +1153,7 @@ namespace BlendInt {
 
 				if(!p->IsExpandX()) {
 
-					ResizeSubWidget(p,
+					ResizeSubForm(p,
 									(size().width() - prefer_width_sum)
 													* (*unexp_width_it)
 													/ widget_width_sum,
@@ -956,11 +1163,11 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubWidget(p, *handler_width_it, p->size().height());
+				ResizeSubForm(p, *handler_width_it, p->size().height());
 				handler_width_it++;
 			}
 
-			SetSubWidgetPosition(p, x, p->position().y());
+			MoveSubFormTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -1060,7 +1267,7 @@ namespace BlendInt {
 		{
 			if(i % 2 == 0) {
 
-				ResizeSubWidget(p,
+				ResizeSubForm(p,
 								p->size().width(),
 								(size().height() - prefer_height_sum)
 												* (*height_it) / widget_height_sum);
@@ -1068,13 +1275,13 @@ namespace BlendInt {
 
 			} else {
 
-				ResizeSubWidget(p, p->size().width(),
+				ResizeSubForm(p, p->size().width(),
 								*handler_height_it);
 				handler_height_it++;
 			}
 
 			y = y - p->size().height();
-			SetSubWidgetPosition(p, p->position().x(), y);
+			MoveSubFormTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -1096,7 +1303,7 @@ namespace BlendInt {
 			if(i % 2 == 0) {
 
 				if (p->IsExpandY()) {
-					ResizeSubWidget(p,
+					ResizeSubForm(p,
 									p->size().width(),
 									(size().height() - prefer_height_sum
 													- unexpandable_height_sum)
@@ -1106,12 +1313,12 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubWidget(p, p->size().width(), *handler_height_it);
+				ResizeSubForm(p, p->size().width(), *handler_height_it);
 				handler_height_it++;
 			}
 
 			y -= p->size().height();
-			SetSubWidgetPosition(p, p->position().x(), y);
+			MoveSubFormTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -1133,7 +1340,7 @@ namespace BlendInt {
 
 				if (!p->IsExpandY()) {
 
-					ResizeSubWidget(p, p->size().width(),
+					ResizeSubForm(p, p->size().width(),
 									(size().height() - prefer_height_sum)
 													* (*unexp_height_it)
 													/ widget_height_sum);
@@ -1142,12 +1349,12 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubWidget(p, p->size().width(), *handler_height_it);
+				ResizeSubForm(p, p->size().width(), *handler_height_it);
 				handler_height_it++;
 			}
 
 			y -= p->size().width();
-			SetSubWidgetPosition(p, p->position().x(), y);
+			MoveSubFormTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -1157,8 +1364,8 @@ namespace BlendInt {
 	{
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
-			ResizeSubWidget(p, p->size().width(), size().height());
-			SetSubWidgetPosition(p, p->position().x(), position().y());
+			ResizeSubForm(p, p->size().width(), size().height());
+			MoveSubFormTo(p, p->position().x(), position().y());
 		}
 	}
 
@@ -1166,8 +1373,8 @@ namespace BlendInt {
 	{
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
-			ResizeSubWidget(p, size().width(), p->size().height());
-			SetSubWidgetPosition(p, position().x(), p->position().y());
+			ResizeSubForm(p, size().width(), p->size().height());
+			MoveSubFormTo(p, position().x(), p->position().y());
 		}
 	}
 

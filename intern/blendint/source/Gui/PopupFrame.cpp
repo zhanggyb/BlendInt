@@ -151,11 +151,11 @@ namespace BlendInt {
 			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 		}
 
-		if(PushBackSubWidget(layout)) {
+		if(PushBackSubForm(layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &PopupFrame::OnLayoutDestroyed);
-			SetSubWidgetPosition(layout_, 0, 0);
-			ResizeSubWidget(layout_, size());
+			MoveSubFormTo(layout_, 0, 0);
+			ResizeSubForm(layout_, size());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -168,7 +168,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->AddWidget(widget);
 		} else {
-			PushBackSubWidget(widget);
+			PushBackSubForm(widget);
 		}
 
 		Refresh();
@@ -179,7 +179,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->InsertWidget(index, widget);
 		} else {
-			InsertSubWidget(index, widget);
+			InsertSubForm(index, widget);
 		}
 
 		Refresh();
@@ -227,7 +227,7 @@ namespace BlendInt {
 			buffer_.reset();
 
 			if(layout_) {
-				ResizeSubWidget(layout_, size());
+				ResizeSubForm(layout_, size());
 			}
 
 			shadow_->Resize(size());

@@ -111,6 +111,16 @@ namespace BlendInt {
 
 		void InsertFrame (int index, Frame* frame, SizePolicy policy = DefaultSizePolicy);
 
+		int GetFrameIndex (Frame* frame) const;
+
+		int GetHandleIndex (FrameSplitterHandle* handle) const;
+
+		Frame* GetFrame (int index) const;
+
+		FrameSplitterHandle* GetHandle (int index) const;
+
+		int GetFramesCount () const;
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
@@ -154,6 +164,10 @@ namespace BlendInt {
 		void AddColumn (Frame* frame, SizePolicy policy);
 
 		void AddRow (Frame* frame, SizePolicy policy);
+
+		void InsertColumn (int index, Frame* frame, SizePolicy policy);
+
+		void InsertRow (int index, Frame* frame, SizePolicy policy);
 
 		void DistributeHorizontally ();
 

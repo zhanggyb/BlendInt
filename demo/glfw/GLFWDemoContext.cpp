@@ -21,6 +21,7 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Block.hpp>
 
 using BI::Stock::Shaders;
 
@@ -42,6 +43,8 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 
+	Block* block = Manage(new Block(Vertical));
+
 	Button* btn1 = Manage(new Button("Hello"));
 	DBG_SET_NAME(btn1, "Button1");
 	Button* btn2 = Manage(new Button("Hello"));
@@ -49,15 +52,13 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	Button* btn3 = Manage(new Button("Hello"));
 	DBG_SET_NAME(btn3, "Button3");
 
-	VLayout* layout = Manage(new VLayout);
-	DBG_SET_NAME(layout, "Layout");
-	layout->AddWidget(btn1);
-	layout->AddWidget(btn2);
-	layout->AddWidget(btn3);
+	block->AddWidget(btn1);
+	block->AddWidget(btn2);
+	block->AddWidget(btn3);
 
 	ScrollBar* bar = Manage(new ScrollBar);
 
-	vp1->AddWidget(layout);
+	vp1->AddWidget(block);
 	vp1->AddWidget(bar);
 
 	Viewport* vp2 = Manage(new Viewport);

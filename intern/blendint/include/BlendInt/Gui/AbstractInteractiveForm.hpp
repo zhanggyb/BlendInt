@@ -615,25 +615,25 @@ namespace BlendInt {
 
 		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
 
-		bool PushFrontSubWidget (AbstractInteractiveForm* widget);
+		bool PushFrontSubForm (AbstractInteractiveForm* widget);
 
-		bool InsertSubWidget (int index, AbstractInteractiveForm* widget);
+		bool InsertSubForm (int index, AbstractInteractiveForm* widget);
 
-		bool PushBackSubWidget (AbstractInteractiveForm* widget);
+		bool PushBackSubForm (AbstractInteractiveForm* widget);
 
-		bool RemoveSubWidget (AbstractInteractiveForm* widget);
+		bool RemoveSubForm (AbstractInteractiveForm* widget);
 
-		void ClearSubWidgets ();
+		void ClearSubForms ();
 
-		void ResizeSubWidget (AbstractInteractiveForm* sub, int width, int height);
+		void ResizeSubForm (AbstractInteractiveForm* sub, int width, int height);
 
-		void ResizeSubWidget (AbstractInteractiveForm* sub, const Size& size);
+		void ResizeSubForm (AbstractInteractiveForm* sub, const Size& size);
 
-		void SetSubWidgetPosition (AbstractInteractiveForm* sub, int x, int y);
+		void MoveSubFormTo (AbstractInteractiveForm* sub, int x, int y);
 
-		void SetSubWidgetPosition (AbstractInteractiveForm* sub, const Point& pos);
+		void MoveSubFormTo (AbstractInteractiveForm* sub, const Point& pos);
 
-		void SetSubWidgetVisibility (AbstractInteractiveForm* sub, bool visible);
+		void SetSubFormVisibility (AbstractInteractiveForm* sub, bool visible);
 
 		void MoveSubWidgets (int offset_x, int offset_y);
 

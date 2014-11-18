@@ -110,7 +110,7 @@ namespace BlendInt {
 
 	bool Button::IsExpandX() const
 	{
-		return true;
+		return false;
 	}
 
 	Size Button::GetPreferredSize() const

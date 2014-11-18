@@ -36,7 +36,7 @@ EOF
  */
 
 #include <gtest/gtest.h>
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -55,7 +55,6 @@ EOF
 
 #include <gtest/gtest.h>
 #include <Common/Window.hpp>
-#include <BlendInt/Core/Object.hpp>
 
 class $1Test1: public testing::Test
 {
@@ -67,16 +66,10 @@ protected:
 
 	virtual void SetUp ()
 	{
-#ifdef DEBUG
-		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
-#endif
 	}
 
 	virtual void TearDown ()
 	{
-#ifdef DEBUG
-		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
-#endif
 	}
 };
 
@@ -85,7 +78,8 @@ EOF
 
 	cat << EOF >> $1Test1.cpp
 #include "$1Test1.hpp"
-#include <BlendInt/$1.hpp>
+#include <Common/UnitTestContext.hpp>
+#include <BlendInt/Gui/$1.hpp>
 
 using namespace BlendInt;
 
@@ -109,14 +103,15 @@ TEST_F($1Test1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("$1 - Foo1");
+    GLFWwindow* win = CreateWindow("$1 - Foo1", 640, 480);
 
+    UnitTestContext* context = Manage (new UnitTestContext);
+	SetContext(context);
+	context->Resize(640, 480);
+	
     // TODO: add test code here
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

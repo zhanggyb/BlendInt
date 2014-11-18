@@ -125,6 +125,18 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
+		inline void set_widget_mouse_hover_in_event (AbstractInteractiveForm* widget, const MouseEvent& event)
+		{
+			widget->set_hover(true);
+			widget->MouseHoverInEvent(event);
+		}
+
+		inline void set_widget_mouse_hover_out_event (AbstractInteractiveForm* widget, const MouseEvent& event)
+		{
+			widget->set_hover(false);
+			widget->MouseHoverOutEvent(event);
+		}
+
 		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
 		{
 			frame->DispatchHoverEvent(event);
@@ -140,18 +152,6 @@ namespace BlendInt {
 		friend class FrameSplitter;
 
 		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* widget, const MouseEvent& event, Point& local_position);
-
-		inline void set_widget_mouse_hover_in_event (AbstractInteractiveForm* widget, const MouseEvent& event)
-		{
-			widget->set_hover(true);
-			widget->MouseHoverInEvent(event);
-		}
-
-		inline void set_widget_mouse_hover_out_event (AbstractInteractiveForm* widget, const MouseEvent& event)
-		{
-			widget->set_hover(false);
-			widget->MouseHoverOutEvent(event);
-		}
 
 		inline void set_widget_hover_status (AbstractInteractiveForm* widget, bool hover)
 		{

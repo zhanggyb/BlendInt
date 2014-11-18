@@ -16,6 +16,10 @@ public:
 
 	virtual ~UnitTestContext ();
 
+	void LinkResizeEvent (BI::AbstractFrame* frame);
+
+	void UnlinkResizeEvent (BI::AbstractFrame* frame);
+
 	virtual void SynchronizeWindow ();
 
 };

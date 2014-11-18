@@ -230,9 +230,9 @@ namespace BlendInt {
 		EdgeButton* head = Manage(new EdgeButton(RoundTopLeft | RoundTopRight));
 		DBG_SET_NAME(head, "HeadButton");
 
-		PushBackSubWidget(left);
-		PushBackSubWidget(right);
-		PushBackSubWidget(head);
+		PushBackSubForm(left);
+		PushBackSubForm(right);
+		PushBackSubForm(head);
 
 		AlighButtons(position(), size());
 	}
@@ -252,11 +252,11 @@ namespace BlendInt {
 	{
 		AbstractInteractiveForm* p = first_child();
 
-		SetSubWidgetPosition(p, x, y + h * 9 / 10);
+		MoveSubFormTo(p, x, y + h * 9 / 10);
 		p = p->next();
-		SetSubWidgetPosition(p, x + w - last_child()->size().width(), y + h * 9 / 10);
+		MoveSubFormTo(p, x + w - last_child()->size().width(), y + h * 9 / 10);
 		p = p->next();
-		SetSubWidgetPosition(p, x + w * 9 / 10, y);
+		MoveSubFormTo(p, x + w * 9 / 10, y);
 	}
 
 	// -------------------------------
@@ -285,13 +285,13 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: Widget(),
+	: Frame(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),
 	  viewport_(0),
 	  splitter_(0),
-	  vao_(0)
+	  hover_(0)
 	{
 		set_size(800, 600);
 
@@ -300,55 +300,55 @@ namespace BlendInt {
 
 	Workspace::~Workspace()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Workspace::SetViewport (Widget* viewport)
+	void Workspace::SetViewport (Frame* viewport)
 	{
 		if(viewport_ == viewport) return;
 
+		/*
 		if(viewport_)
 			splitter_->Remove(viewport_);
+		*/
 
-		splitter_->Append(viewport);
+		splitter_->AddFrame(viewport);
 		viewport_ = viewport;
 
 		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
 	}
 
-	void Workspace::SetLeftSideBar (Widget* widget)
+	void Workspace::SetLeftSideBar (ToolBox* leftbar)
 	{
-		if(left_sidebar_ == widget) return;
+		if(leftbar || (leftbar->parent() == this)) return;
 
+		/*
 		if(left_sidebar_)
 			splitter_->Remove(left_sidebar_);
+		*/
 
-		splitter_->Prepend(widget);
-		left_sidebar_ = widget;
+		splitter_->AddFrame(leftbar);
+		left_sidebar_ = leftbar;
 	}
 
-	void Workspace::SetRightSideBar (Widget* widget)
+	void Workspace::SetRightSideBar (ToolBox* rightbar)
 	{
-		if(right_sidebar_ == widget) return;
+		if(rightbar || (rightbar->parent() == this)) return;
 
+		/*
 		if(right_sidebar_)
 			splitter_->Remove(right_sidebar_);
+		*/
 
-		splitter_->Append(widget);
-		right_sidebar_ = widget;
+		splitter_->AddFrame(rightbar);
+		right_sidebar_ = rightbar;
 	}
 
-	void Workspace::SetHeader (Widget* widget)
+	void Workspace::SetHeader (ToolBox* header)
 	{
-		if(header_ == widget) return;
+		if(header_ == header) return;
 
-		ViewportLayer* v = dynamic_cast<ViewportLayer*>(first_child());
-
-		if(header_)
-			v->Remove(header_);
-
-		v->AddWidget(widget);
-		header_ = widget;
+		// TODO: check null and resize
+		header_ = header;
 	}
 
 	bool Workspace::IsExpandX () const
@@ -375,7 +375,6 @@ namespace BlendInt {
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
 				prefer.set_height(std::max(prefer.height(), tmp.height()));
 			}
-
 		}
 
 		return prefer;
@@ -384,11 +383,10 @@ namespace BlendInt {
 	void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
+			int ox = request.position()->x() - position().x();
+			int oy = request.position()->y() - position().y();
 			set_position(*request.position());
-			MoveSubWidgets(x, y);
+			MoveSubWidgets(ox, oy);
 		}
 
 		if(request.source() == this) {
@@ -399,115 +397,149 @@ namespace BlendInt {
 	void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			Size inner_size(request.size()->width(),
-			        request.size()->height());
-
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
 			set_size(*request.size());
 
 			ResizeSubWidgets(size());
 
-		} else if (request.source()->parent() == this) {
-
 		}
-
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
 	}
 
-	void Workspace::PerformRoundTypeUpdate (
-	        const RoundTypeUpdateRequest& request)
+	bool Workspace::PreDraw(Profile& profile)
 	{
-		/*
-		if (request.source()->parent() == this) {
-			EnableShadow(request.source());
-		}
-
-		if(request.source() != parent()) {
-			ReportRoundTypeUpdate(request);
-		}
-		*/
-	}
-
-	void Workspace::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
-	{
-		/*
-		if (request.source()->parent() == this) {
-			EnableShadow(request.source());
-		}
-
-		if(request.source() != parent()) {
-			ReportRoundRadiusUpdate(request);
-		}
-		*/
+		return visiable();
 	}
 
 	ResponseType Workspace::Draw (Profile& profile)
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
-		program->use();
+		set_refresh(false);
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+			DispatchDrawEvent (p, profile);
+		}
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		return subs_count() ? Ignore : Accept;
+	}
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+	void Workspace::PostDraw(Profile& profile)
+	{
+	}
 
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
+	void Workspace::FocusEvent(bool focus)
+	{
+	}
 
-		program->reset();
+	void Workspace::MouseHoverInEvent(const MouseEvent& event)
+	{
+	}
 
+	void Workspace::MouseHoverOutEvent(const MouseEvent& event)
+	{
+	}
+
+	ResponseType Workspace::KeyPressEvent(const KeyEvent& event)
+	{
 		return Ignore;
+	}
+
+	ResponseType Workspace::MousePressEvent(const MouseEvent& event)
+	{
+		ResponseType response = Ignore;
+
+		AbstractInteractiveForm* p = 0;
+		for(p = last_child(); p; p = p->previous()) {
+
+			if(p->Contain(event.position())) {
+
+				response = call_mouse_press_event(p, event);
+				if(response == Accept) break;
+			}
+
+		}
+
+		return response;
+	}
+
+	ResponseType Workspace::MouseReleaseEvent(const MouseEvent& event)
+	{
+		ResponseType response = Ignore;
+
+		/*
+		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
+
+			if(p->Contain(event.position())) {
+
+				response = assign_mouse_release_event(p, event);
+				if(response == Accept) break;
+			}
+
+		}
+		*/
+
+		return response;
+	}
+
+	ResponseType Workspace::MouseMoveEvent(const MouseEvent& event)
+	{
+		return subs_count() ? Ignore : Accept;
+	}
+
+	ResponseType Workspace::DispatchHoverEvent(const MouseEvent& event)
+	{
+		if(Contain(event.position())) {
+
+			AbstractFrame* new_hovered = CheckHoveredFrame(hover_, event);
+
+			if(new_hovered != hover_) {
+
+				if(hover_) {
+					set_widget_mouse_hover_out_event(hover_, event);
+					hover_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
+				}
+
+				hover_ = new_hovered;
+				if(hover_) {
+					set_widget_mouse_hover_in_event(hover_, event);
+					events()->connect(hover_->destroyed(), this, &Workspace::OnHoverFrameDestroyed);
+				}
+
+			}
+
+			if(hover_) {
+				delegate_dispatch_hover_event(hover_, event);
+			}
+
+			// make sure to set event frame in this function, to tell parent frame or context to set this hover flag
+			set_event_frame(event, this);
+
+			return Accept;
+
+		} else {
+			set_event_frame(event, 0);
+			return Ignore;
+		}
 	}
 
 	void Workspace::InitializeWorkspace ()
 	{
-		glGenVertexArrays(1, &vao_);
-
-		glBindVertexArray(vao_);
-
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
-
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer (
-				Shaders::instance->location (Stock::WIDGET_TRIANGLE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-
-		splitter_ = Manage(new Splitter);
+		splitter_ = Manage(new FrameSplitter);
 		DBG_SET_NAME(splitter_, "Splitter");
 
-		ViewportLayer* vlayout = Manage(new ViewportLayer);
-		DBG_SET_NAME(vlayout, "VLayout");
-		vlayout->SetSpace(1);
-		vlayout->AddWidget(splitter_);
+		PushBackSubForm(splitter_);
+		ResizeSubForm(splitter_, size());
+		MoveSubFormTo(splitter_, position());
+	}
 
-		EdgeButtonLayer* btnlayout = Manage(new EdgeButtonLayer);
-		DBG_SET_NAME(btnlayout, "SideButton Layer");
+	void Workspace::OnHoverFrameDestroyed(AbstractFrame* frame)
+	{
+		assert(frame->hover());
+		assert(hover_ == frame);
 
-		PushBackSubWidget(vlayout);
-		PushBackSubWidget(btnlayout);
+		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
+		frame->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
 
-		ResizeSubWidget(vlayout, size());
-		ResizeSubWidget(btnlayout, size());
+		hover_ = 0;
 	}
 
 }

@@ -50,7 +50,7 @@ namespace BlendInt {
 						delete hscrollbar;
 					} else {
 						DBG_PRINT_MSG("Warning: %s", "hscrollbar is not set managed, will not be deleted");
-						RemoveSubWidget(hscrollbar);
+						RemoveSubForm(hscrollbar);
 					}
 				}
 
@@ -59,7 +59,7 @@ namespace BlendInt {
 			if(hbar) {
 				hbar->SetOrientation(Horizontal);
 			}
-			PushFrontSubWidget(hbar);
+			PushFrontSubForm(hbar);
 		}
 
 		if(vscrollbar != vbar) {
@@ -71,7 +71,7 @@ namespace BlendInt {
 						delete vscrollbar;
 					} else {
 						DBG_PRINT_MSG("Warning: %s", "vscrollbar is not set managed, will not be deleted");
-						RemoveSubWidget(vscrollbar);
+						RemoveSubForm(vscrollbar);
 					}
 				}
 			}
@@ -79,7 +79,7 @@ namespace BlendInt {
 			if(vbar) {
 				vbar->SetOrientation(Vertical);
 			}
-			PushBackSubWidget(vbar);
+			PushBackSubForm(vbar);
 		}
 
 		AdjustScrollBarGeometries(hbar, vbar);
@@ -152,13 +152,13 @@ namespace BlendInt {
 		}
 
 		if(hbar) {
-			SetSubWidgetPosition(hbar, 0, 0);
-			ResizeSubWidget(hbar, size().width() - rw, bh);
+			MoveSubFormTo(hbar, 0, 0);
+			ResizeSubForm(hbar, size().width() - rw, bh);
 		}
 
 		if(vbar) {
-			SetSubWidgetPosition(vbar, size().width() - rw, bh);
-			ResizeSubWidget(vbar, rw, size().height() - bh);
+			MoveSubFormTo(vbar, size().width() - rw, bh);
+			ResizeSubForm(vbar, rw, size().height() - bh);
 		}
 
 	}

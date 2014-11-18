@@ -145,9 +145,9 @@ namespace BlendInt {
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 		ScrollView* view = Manage(new ScrollView);
 
-		PushBackSubWidget(hbar);	// HScrollBarIndex
-		PushBackSubWidget(vbar);	// VScrollBarIndex
-		PushBackSubWidget(view);	// ScrollViewIndex
+		PushBackSubForm(hbar);	// HScrollBarIndex
+		PushBackSubForm(vbar);	// VScrollBarIndex
+		PushBackSubForm(view);	// ScrollViewIndex
 
 		hbar->SetSliderPercentage(100);
 		vbar->SetSliderPercentage(100);
@@ -161,13 +161,13 @@ namespace BlendInt {
 		int bh = hbar->size().height();
 		int rw = vbar->size().width();
 
-		SetSubWidgetPosition(hbar, x, y);
-		SetSubWidgetPosition(vbar, x + w - rw, y + bh);
-		SetSubWidgetPosition(view, x, y + bh);
+		MoveSubFormTo(hbar, x, y);
+		MoveSubFormTo(vbar, x + w - rw, y + bh);
+		MoveSubFormTo(view, x, y + bh);
 
-		ResizeSubWidget (hbar, w - rw, bh);
-		ResizeSubWidget (vbar, rw, h - bh);
-		ResizeSubWidget (view, w - rw, h - bh);
+		ResizeSubForm (hbar, w - rw, bh);
+		ResizeSubForm (vbar, rw, h - bh);
+		ResizeSubForm (view, w - rw, h - bh);
 
 		events()->connect(hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
 		events()->connect(vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
@@ -249,14 +249,14 @@ namespace BlendInt {
 			rw = vbar->size().width();
 		}
 
-		SetSubWidgetPosition(view, x, y + bh);
-		ResizeSubWidget (view, width - rw, height - bh);
+		MoveSubFormTo(view, x, y + bh);
+		ResizeSubForm (view, width - rw, height - bh);
 
 		AbstractInteractiveForm* widget = view->viewport();
 
 		if(hbar->visiable()) {
-			SetSubWidgetPosition(hbar, x, y);
-			ResizeSubWidget (hbar, width - rw, bh);
+			MoveSubFormTo(hbar, x, y);
+			ResizeSubForm (hbar, width - rw, bh);
 
 			if(widget) {
 				int percent = view->GetHPercentage();
@@ -267,8 +267,8 @@ namespace BlendInt {
 		}
 
 		if(vbar->visiable()) {
-			SetSubWidgetPosition(vbar, x + width - rw, y + bh);
-			ResizeSubWidget (vbar, rw, height - bh);
+			MoveSubFormTo(vbar, x + width - rw, y + bh);
+			ResizeSubForm (vbar, rw, height - bh);
 
 			if(widget) {
 				int percent = view->GetVPercentage();

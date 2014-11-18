@@ -99,18 +99,18 @@ namespace BlendInt {
 			int y = margin_.bottom();
 			int h = size().height() - margin_.vsum();
 
-			if(PushBackSubWidget(widget)) {
+			if(PushBackSubForm(widget)) {
 
 				Size prefer = widget->GetPreferredSize();
-				SetSubWidgetPosition(widget, x, y);
+				MoveSubFormTo(widget, x, y);
 				if(widget->IsExpandY()) {
-					ResizeSubWidget(widget, prefer.width(), h);
+					ResizeSubForm(widget, prefer.width(), h);
 				} else {
 					if(widget->size().height() > h) {
-						ResizeSubWidget(widget, prefer.width(), h);
+						ResizeSubForm(widget, prefer.width(), h);
 					} else {
-						ResizeSubWidget(widget, prefer.width(), widget->size().height());
-						SetSubWidgetPosition(widget, x,
+						ResizeSubForm(widget, prefer.width(), widget->size().height());
+						MoveSubFormTo(widget, x,
 										y + (h - widget->size().height()) / 2);
 					}
 				}
@@ -124,17 +124,17 @@ namespace BlendInt {
 			int y = GetLastPosition();
 			int w = size().width() - margin_.hsum();
 
-			if(PushBackSubWidget(widget)) {
+			if(PushBackSubForm(widget)) {
 				Size prefer = widget->GetPreferredSize();
 				y = y - prefer.height();
-				SetSubWidgetPosition(widget, x, y);
+				MoveSubFormTo(widget, x, y);
 				if(widget->IsExpandX()) {
-					ResizeSubWidget(widget, w, prefer.height());
+					ResizeSubForm(widget, w, prefer.height());
 				} else {
 					if(widget->size().width() > w) {
-						ResizeSubWidget(widget, w, prefer.height());
+						ResizeSubForm(widget, w, prefer.height());
 					} else {
-						ResizeSubWidget(widget, widget->size().width(), prefer.height());
+						ResizeSubForm(widget, widget->size().width(), prefer.height());
 					}
 				}
 
@@ -485,8 +485,8 @@ namespace BlendInt {
 
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
-			SetSubWidgetPosition(p, x, y);
-			ResizeSubWidget(p, p->size().width(), height);
+			MoveSubFormTo(p, x, y);
+			ResizeSubForm(p, p->size().width(), height);
 			/*
 			if (p->IsExpandY()) {
 				ResizeSubWidget(p, p->size().width(), height);
@@ -519,8 +519,8 @@ namespace BlendInt {
 		{
 			y = y - p->size().height() - space_;
 
-			SetSubWidgetPosition(p, x, y);
-			ResizeSubWidget(p, width, p->size().height());
+			MoveSubFormTo(p, x, y);
+			ResizeSubForm(p, width, p->size().height());
 			/*
 			if(p->IsExpandX()) {
 				ResizeSubWidget(p, width, p->size().height());

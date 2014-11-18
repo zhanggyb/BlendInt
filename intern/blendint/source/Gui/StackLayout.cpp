@@ -38,12 +38,12 @@ namespace BlendInt {
 
 	void StackLayout::AddWidget (AbstractWidget* widget)
 	{
-		if(PushBackSubWidget(widget)) {
+		if(PushBackSubForm(widget)) {
 			int w = size().width() - margin().hsum();
 			int h = size().height() - margin().vsum();
 
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
+			ResizeSubForm(widget, w, h);
+			MoveSubFormTo(widget, margin().left(), margin().bottom());
 
 			if(subs_count() == 1) {
 				active_widget_ = widget;
@@ -56,12 +56,12 @@ namespace BlendInt {
 
 	void StackLayout::InsertWidget (int index, AbstractWidget* widget)
 	{
-		if(InsertSubWidget(index, widget)) {
+		if(InsertSubForm(index, widget)) {
 			int w = size().width() - margin().hsum();
 			int h = size().height() - margin().vsum();
 
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
+			ResizeSubForm(widget, w, h);
+			MoveSubFormTo(widget, margin().left(), margin().bottom());
 
 			widget->SetVisible(false);
 		}
@@ -69,12 +69,12 @@ namespace BlendInt {
 
 	void StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
 	{
-		if(PushFrontSubWidget(widget)) {
+		if(PushFrontSubForm(widget)) {
 			int w = size().width() - margin().hsum();
 			int h = size().height() - margin().vsum();
 
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, margin().left(), margin().bottom());
+			ResizeSubForm(widget, w, h);
+			MoveSubFormTo(widget, margin().left(), margin().bottom());
 
 			if(subs_count() == 1) {
 				active_widget_ = widget;
@@ -87,7 +87,7 @@ namespace BlendInt {
 
 	void StackLayout::Remove (AbstractWidget* widget)
 	{
-		if(RemoveSubWidget(widget)) {
+		if(RemoveSubForm(widget)) {
 
 			if(active_widget_ == widget) {
 

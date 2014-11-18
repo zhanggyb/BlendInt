@@ -1,5 +1,5 @@
 /*
- * Unit test for FileBrowser
+ * Unit test for Workspace
  */
 
 #include <gtest/gtest.h>

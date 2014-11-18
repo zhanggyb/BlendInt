@@ -53,8 +53,8 @@ namespace BlendInt {
 		TabHeader* header = Manage(new TabHeader);
 		Stack* stack = Manage(new Stack);
 
-		PushBackSubWidget(header);	// 0
-		PushBackSubWidget(stack);	// 1
+		PushBackSubForm(header);	// 0
+		PushBackSubForm(stack);	// 1
 
 		FillSubWidgetsInTab(size());
 
@@ -189,11 +189,11 @@ namespace BlendInt {
 		}
 
 		header_y = header_y - header_size.height();
-		SetSubWidgetPosition(header, x, header_y);
-		ResizeSubWidget(header, w, header_size.height());
+		MoveSubFormTo(header, x, header_y);
+		ResizeSubForm(header, w, header_size.height());
 
-		SetSubWidgetPosition(stack, x, y);
-		ResizeSubWidget(stack, w, h - header_size.height());
+		MoveSubFormTo(stack, x, y);
+		ResizeSubForm(stack, w, h - header_size.height());
 	}
 
 }

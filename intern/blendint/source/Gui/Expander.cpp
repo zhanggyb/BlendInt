@@ -178,8 +178,8 @@ namespace BlendInt {
 		ExpandButton* title_button = Manage(new ExpandButton);
 		BinLayout* frame = Manage(new BinLayout);
 
-		PushBackSubWidget(title_button);	// 0
-		PushBackSubWidget(frame);	// 1
+		PushBackSubForm(title_button);	// 0
+		PushBackSubForm(frame);	// 1
 
 		int width = 0;
 		int height = 0;
@@ -206,8 +206,8 @@ namespace BlendInt {
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		BinLayout* frame = Manage(new BinLayout);
 
-		PushBackSubWidget(title_button);	// 0
-		PushBackSubWidget(frame);	// 1
+		PushBackSubForm(title_button);	// 0
+		PushBackSubForm(frame);	// 1
 
 		int width = 0;
 		int height = 0;
@@ -326,26 +326,26 @@ namespace BlendInt {
 			if(button_preferred_height < height) {
 
 				y = y + height;
-				ResizeSubWidget(button, width, button_preferred_height);
+				ResizeSubForm(button, width, button_preferred_height);
 				y -= button_preferred_height;
-				SetSubWidgetPosition(button, x, y);
+				MoveSubFormTo(button, x, y);
 
-				ResizeSubWidget(frame, width, height - button_preferred_height);
+				ResizeSubForm(frame, width, height - button_preferred_height);
 				y -= frame->size().height();
 
-				SetSubWidgetPosition(frame, x, y);
+				MoveSubFormTo(frame, x, y);
 
 			} else {
 
-				ResizeSubWidget(button, width, height);
-				SetSubWidgetPosition(button, x, y);
-				ResizeSubWidget(frame, width, 0);
-				SetSubWidgetPosition(frame, x, y);
+				ResizeSubForm(button, width, height);
+				MoveSubFormTo(button, x, y);
+				ResizeSubForm(frame, width, 0);
+				MoveSubFormTo(frame, x, y);
 			}
 
 		} else {
-			ResizeSubWidget(button, width, height);
-			SetSubWidgetPosition(button, x, y);
+			ResizeSubForm(button, width, height);
+			MoveSubFormTo(button, x, y);
 		}
 	}
 	

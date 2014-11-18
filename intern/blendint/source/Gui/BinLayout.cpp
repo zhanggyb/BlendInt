@@ -58,10 +58,10 @@ namespace BlendInt {
 		if(widget->parent() == this) return;
 
 		if(subs_count() > 0) {
-			ClearSubWidgets();
+			ClearSubForms();
 		}
 
-		if (PushBackSubWidget(widget)) {
+		if (PushBackSubForm(widget)) {
 			FillSingleWidget(0, size(), margin());
 		}
 
@@ -70,7 +70,7 @@ namespace BlendInt {
 
 	bool BinLayout::Remove (AbstractWidget* widget)
 	{
-		return RemoveSubWidget(widget);
+		return RemoveSubForm(widget);
 	}
 
 	bool BinLayout::IsExpandX () const

@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	void VLayout::AddWidget(AbstractWidget* widget)
 	{
-		if(PushBackSubWidget(widget)) {
+		if(PushBackSubForm(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			Refresh();
 		}
@@ -56,7 +56,7 @@ namespace BlendInt {
 
 	void VLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
-		if(InsertSubWidget(index, widget)) {
+		if(InsertSubForm(index, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			Refresh();
 		}
@@ -69,7 +69,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Error: %s", "HLayout contains only 1 row, and the 1st parameter will be ignored");
 		}
 
-		if(InsertSubWidget(row, widget)) {
+		if(InsertSubForm(row, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			Refresh();
 		}
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 	bool VLayout::Remove (AbstractWidget* widget)
 	{
-		if(RemoveSubWidget(widget)) {
+		if(RemoveSubForm(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			return true;
 		}
@@ -284,14 +284,14 @@ namespace BlendInt {
 			if(p->visiable()) {
 
 				if(p->IsExpandY()) {
-					ResizeSubWidget(p, p->size().width(), (*exp_it));
+					ResizeSubForm(p, p->size().width(), (*exp_it));
 					y = y - p->size().height();
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 					exp_it++;
 				} else {
-					ResizeSubWidget(p, p->size().width(), (*unexp_it));
+					ResizeSubForm(p, p->size().width(), (*unexp_it));
 					y = y - p->size().height();
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 					unexp_it++;
 				}
 
@@ -335,18 +335,18 @@ namespace BlendInt {
 				if(p->visiable()) {
 
 					if (p->IsExpandY()) {
-						ResizeSubWidget(p, p->size().width(), 0);
+						ResizeSubForm(p, p->size().width(), 0);
 						y = y - p->size().height();
-						SetSubWidgetPosition(p, p->position().x(), y);
+						MoveSubFormTo(p, p->position().x(), y);
 						exp_it++;
 					} else {
-						ResizeSubWidget(p,
+						ResizeSubForm(p,
 										p->size().width(),
 										reference_height * (*unexp_it)
 														/ unexpandable_prefer_sum
 										);
 						y = y - p->size().height();
-						SetSubWidgetPosition(p, p->position().x(), y);
+						MoveSubFormTo(p, p->position().x(), y);
 						unexp_it++;
 					}
 
@@ -364,17 +364,17 @@ namespace BlendInt {
 				if(p->visiable()) {
 
 					if (p->IsExpandY()) {
-						ResizeSubWidget(p,
+						ResizeSubForm(p,
 										p->size().width(),
 										reference_height * (*exp_it)
 														/ expandable_prefer_sum);
 						y = y - p->size().height();
-						SetSubWidgetPosition(p, p->position().x(), y);
+						MoveSubFormTo(p, p->position().x(), y);
 						exp_it++;
 					} else {
-						ResizeSubWidget(p, p->size().width(), (*unexp_it));
+						ResizeSubForm(p, p->size().width(), (*unexp_it));
 						y = y - p->size().height();
-						SetSubWidgetPosition(p, p->position().x(), y);
+						MoveSubFormTo(p, p->position().x(), y);
 						unexp_it++;
 					}
 
@@ -410,17 +410,17 @@ namespace BlendInt {
 			if(p->visiable()) {
 
 				if (p->IsExpandY()) {
-					ResizeSubWidget(p,
+					ResizeSubForm(p,
 									p->size().width(),
 									expandable_height * (*exp_it)
 													/ expandable_prefer_sum);
 					y = y - p->size().height();
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 					exp_it++;
 				} else {
-					ResizeSubWidget(p, p->size().width(), (*unexp_it));
+					ResizeSubForm(p, p->size().width(), (*unexp_it));
 					y = y - p->size().height();
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 					unexp_it++;
 				}
 
@@ -441,27 +441,27 @@ namespace BlendInt {
 
 			if (p->IsExpandX()) {
 
-				ResizeSubWidget(p, width, p->size().height());
-				SetSubWidgetPosition(p, x, p->position().y());
+				ResizeSubForm(p, width, p->size().height());
+				MoveSubFormTo(p, x, p->position().y());
 
 			} else {
 
 				if ((*unexp_it) >= width) {
-					ResizeSubWidget(p, width, p->size().height());
-					SetSubWidgetPosition(p, x, p->position().y());
+					ResizeSubForm(p, width, p->size().height());
+					MoveSubFormTo(p, x, p->position().y());
 				} else {
 
-					ResizeSubWidget(p, (*unexp_it),
+					ResizeSubForm(p, (*unexp_it),
 					        p->size().height());
 
 					if (alignment & AlignLeft) {
-						SetSubWidgetPosition(p, x, p->position().y());
+						MoveSubFormTo(p, x, p->position().y());
 					} else if (alignment & AlignRight) {
-						SetSubWidgetPosition(p,
+						MoveSubFormTo(p,
 						        x + (width - p->size().width()),
 						        p->position().y());
 					} else if (alignment & AlignVerticalCenter) {
-						SetSubWidgetPosition(p,
+						MoveSubFormTo(p,
 						        x + (width - p->size().width()) / 2,
 						        p->position().y());
 					}

@@ -44,7 +44,7 @@ namespace BlendInt {
 	{
 		AbstractInteractiveForm* orig_last = last_child();
 
-		if(PushBackSubWidget(widget)) {
+		if(PushBackSubForm(widget)) {
 
 			widget->SetEmboss(true);
 
@@ -188,8 +188,8 @@ namespace BlendInt {
 
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
-			ResizeSubWidget(p, average_width, h);
-			SetSubWidgetPosition(p, x, y);
+			ResizeSubForm(p, average_width, h);
+			MoveSubFormTo(p, x, y);
 			x = x + average_width - 1;
 		}
 	}
@@ -213,9 +213,9 @@ namespace BlendInt {
 		y = y + h;
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
 		{
-			ResizeSubWidget(p, w, average_height);
+			ResizeSubForm(p, w, average_height);
 			y = y - average_height + 1;
-			SetSubWidgetPosition(p, x, y);
+			MoveSubFormTo(p, x, y);
 		}
 	}
 

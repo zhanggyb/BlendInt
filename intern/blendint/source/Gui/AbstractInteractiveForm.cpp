@@ -92,7 +92,7 @@ namespace BlendInt {
 
 	AbstractInteractiveForm::~AbstractInteractiveForm ()
 	{
-		ClearSubWidgets();
+		ClearSubForms();
 
 		if(parent_) {
 
@@ -1723,7 +1723,7 @@ namespace BlendInt {
 		return widget;
 	}
 
-	bool AbstractInteractiveForm::PushFrontSubWidget(AbstractInteractiveForm* widget)
+	bool AbstractInteractiveForm::PushFrontSubForm(AbstractInteractiveForm* widget)
 	{
 		if (!widget)
 			return false;
@@ -1737,7 +1737,7 @@ namespace BlendInt {
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubForm(widget);
 			}
 
 		}
@@ -1766,7 +1766,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::InsertSubWidget(int index, AbstractInteractiveForm* widget)
+	bool AbstractInteractiveForm::InsertSubForm(int index, AbstractInteractiveForm* widget)
 	{
 		if (!widget)
 			return false;
@@ -1780,7 +1780,7 @@ namespace BlendInt {
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubForm(widget);
 			}
 
 		}
@@ -1847,7 +1847,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::PushBackSubWidget(AbstractInteractiveForm* widget)
+	bool AbstractInteractiveForm::PushBackSubForm(AbstractInteractiveForm* widget)
 	{
 		if (!widget)
 			return false;
@@ -1861,7 +1861,7 @@ namespace BlendInt {
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubWidget(widget);
+				widget->parent_->RemoveSubForm(widget);
 			}
 
 		}
@@ -1890,7 +1890,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::RemoveSubWidget(AbstractInteractiveForm* widget)
+	bool AbstractInteractiveForm::RemoveSubForm(AbstractInteractiveForm* widget)
 	{
 		if (!widget)
 			return false;
@@ -1926,7 +1926,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractInteractiveForm::ClearSubWidgets()
+	void AbstractInteractiveForm::ClearSubForms()
 	{
 		AbstractInteractiveForm* widget = first_child_;
 		AbstractInteractiveForm* next = 0;
@@ -1953,7 +1953,7 @@ namespace BlendInt {
 		last_child_ = 0;
 	}
 
-	void AbstractInteractiveForm::ResizeSubWidget(AbstractInteractiveForm* sub, int width,
+	void AbstractInteractiveForm::ResizeSubForm(AbstractInteractiveForm* sub, int width,
 			int height)
 	{
 		if(!sub || sub->parent() != this) return;
@@ -1971,7 +1971,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::ResizeSubWidget(AbstractInteractiveForm* sub, const Size& size)
+	void AbstractInteractiveForm::ResizeSubForm(AbstractInteractiveForm* sub, const Size& size)
 	{
 		if (!sub || sub->parent() != this)
 			return;
@@ -1987,7 +1987,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::SetSubWidgetPosition(AbstractInteractiveForm* sub, int x, int y)
+	void AbstractInteractiveForm::MoveSubFormTo(AbstractInteractiveForm* sub, int x, int y)
 	{
 		if (!sub || sub->parent() != this)
 			return;
@@ -2005,7 +2005,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::SetSubWidgetPosition(AbstractInteractiveForm* sub,
+	void AbstractInteractiveForm::MoveSubFormTo(AbstractInteractiveForm* sub,
 			const Point& pos)
 	{
 		if(!sub || sub->parent() != this) return;
@@ -2020,7 +2020,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::SetSubWidgetVisibility(AbstractInteractiveForm* sub,
+	void AbstractInteractiveForm::SetSubFormVisibility(AbstractInteractiveForm* sub,
 			bool visible)
 	{
 		if(!sub || sub->parent() != this) return;
@@ -2038,7 +2038,7 @@ namespace BlendInt {
 	void AbstractInteractiveForm::MoveSubWidgets(int move_x, int move_y)
 	{
 		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			SetSubWidgetPosition(p, p->position().x() + move_x,
+			MoveSubFormTo(p, p->position().x() + move_x,
 			        p->position().y() + move_y);
 		}
 	}
@@ -2046,14 +2046,14 @@ namespace BlendInt {
 	void AbstractInteractiveForm::ResizeSubWidgets(const Size& size)
 	{
 		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			ResizeSubWidget(p, size);
+			ResizeSubForm(p, size);
 		}
 	}
 
 	void AbstractInteractiveForm::ResizeSubWidgets(int w, int h)
 	{
 		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			ResizeSubWidget(p, w, h);
+			ResizeSubForm(p, w, h);
 		}
 	}
 
@@ -2081,16 +2081,16 @@ namespace BlendInt {
 		AbstractInteractiveForm* widget = GetWidgetAt(index);
 
 		if (widget) {
-			ResizeSubWidget(widget, width, height);
-			SetSubWidgetPosition(widget, left, bottom);
+			ResizeSubForm(widget, width, height);
+			MoveSubFormTo(widget, left, bottom);
 
 			if (widget->size().width() < width) {
-				SetSubWidgetPosition(widget,
+				MoveSubFormTo(widget,
 				        left + (width - widget->size().width()) / 2, bottom);
 			}
 
 			if (widget->size().height() < height) {
-				SetSubWidgetPosition(widget, left,
+				MoveSubFormTo(widget, left,
 				        bottom + (height - widget->size().height() / 2));
 			}
 		}
@@ -2162,8 +2162,8 @@ namespace BlendInt {
 			if (average_width > 0) {
 
 				for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-					ResizeSubWidget(p, average_width, p->size().height());
-					SetSubWidgetPosition(p, x, p->position().y());
+					ResizeSubForm(p, average_width, p->size().height());
+					MoveSubFormTo(p, x, p->position().y());
 					x += average_width + space;
 				}
 
@@ -2186,9 +2186,9 @@ namespace BlendInt {
 			if (average_height > 0) {
 
 				for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-					ResizeSubWidget(p, p->size().width(), average_height);
+					ResizeSubForm(p, p->size().width(), average_height);
 					y -= average_height;
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 					y -= space;
 				}
 
@@ -2204,17 +2204,17 @@ namespace BlendInt {
 	{
 		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
 			if(p->IsExpandY()) {
-				ResizeSubWidget(p, p->size().width(), height);
-				SetSubWidgetPosition(p, p->position().x(), y);
+				ResizeSubForm(p, p->size().width(), height);
+				MoveSubFormTo(p, p->position().x(), y);
 			} else {
 
 				if (alignment & AlignTop) {
-					SetSubWidgetPosition(p, p->position().x(),
+					MoveSubFormTo(p, p->position().x(),
 					        y + (height - p->size().height()));
 				} else if (alignment & AlignBottom) {
-					SetSubWidgetPosition(p, p->position().x(), y);
+					MoveSubFormTo(p, p->position().x(), y);
 				} else if (alignment & AlignHorizontalCenter) {
-					SetSubWidgetPosition(p, p->position().x(),
+					MoveSubFormTo(p, p->position().x(),
 					        y + (height - p->size().height()) / 2);
 				}
 
@@ -2226,16 +2226,16 @@ namespace BlendInt {
 	{
 		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
 			if (p->IsExpandX()) {
-				ResizeSubWidget(p, width, p->size().height());
-				SetSubWidgetPosition(p, x, p->position().y());
+				ResizeSubForm(p, width, p->size().height());
+				MoveSubFormTo(p, x, p->position().y());
 			} else {
 
 				if (alignment & AlignLeft) {
-					SetSubWidgetPosition(p, x, p->position().y());
+					MoveSubFormTo(p, x, p->position().y());
 				} else if (alignment & AlignRight) {
-					SetSubWidgetPosition(p, x + (width - p->size().width()), p->position().y());
+					MoveSubFormTo(p, x + (width - p->size().width()), p->position().y());
 				} else if (alignment & AlignVerticalCenter) {
-					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2, p->position().y());
+					MoveSubFormTo(p, x + (width - p->size().width()) / 2, p->position().y());
 				}
 
 			}

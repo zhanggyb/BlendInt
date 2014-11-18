@@ -93,20 +93,20 @@ namespace BlendInt {
 		int y = 0;
 		int h = size().height();
 
-		if(PushBackSubWidget(button)) {
+		if(PushBackSubForm(button)) {
 
 			Size prefer = button->GetPreferredSize();
 
-			SetSubWidgetPosition(button, x, y);
+			MoveSubFormTo(button, x, y);
 
 			if(button->IsExpandY()) {
-				ResizeSubWidget(button, prefer.width(), h);
+				ResizeSubForm(button, prefer.width(), h);
 			} else {
 				if(button->size().height() > h) {
-					ResizeSubWidget(button, prefer.width(), h);
+					ResizeSubForm(button, prefer.width(), h);
 				} else {
-					ResizeSubWidget(button, prefer.width(), button->size().height());
-					SetSubWidgetPosition(button, x, y + (h - button->size().height()) / 2);
+					ResizeSubForm(button, prefer.width(), button->size().height());
+					MoveSubFormTo(button, x, y + (h - button->size().height()) / 2);
 				}
 			}
 

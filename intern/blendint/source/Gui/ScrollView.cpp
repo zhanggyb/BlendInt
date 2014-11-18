@@ -82,15 +82,15 @@ namespace BlendInt {
 			return;
 
 		if(first_child()) {
-			ClearSubWidgets();
+			ClearSubForms();
 		}
 
-		if (PushBackSubWidget(widget)) {
+		if (PushBackSubForm(widget)) {
 			int x = position().x();
 			int y = position().y() + size().height();
 
 			// move widget to align the top-left of the viewport
-			SetSubWidgetPosition(widget, x, y - widget->size().height());
+			MoveSubFormTo(widget, x, y - widget->size().height());
 
 			/*
 			ResizeSubWidget(widget,
@@ -116,7 +116,7 @@ namespace BlendInt {
 		int y = position().y();
 		y += (h - static_cast<int>(p->size().height())) / 2;
 
-		SetSubWidgetPosition(p, x, y);
+		MoveSubFormTo(p, x, y);
 	}
 
 	int BlendInt::ScrollView::GetHPercentage () const
@@ -165,7 +165,7 @@ namespace BlendInt {
 
 			if(x != 0 || y != 0) {
 				AbstractInteractiveForm* p = first_child();
-				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
+				MoveSubFormTo(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
 			}
@@ -177,7 +177,7 @@ namespace BlendInt {
 		if(first_child()) {
 			AbstractInteractiveForm* p = first_child();
 
-			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
+			MoveSubFormTo(p, position().x() + x, position().y() + y);
 
 			Refresh();
 		}
@@ -327,7 +327,7 @@ namespace BlendInt {
 
 				AbstractInteractiveForm* p = first_child();
 
-				SetSubWidgetPosition(p,
+				MoveSubFormTo(p,
 				        m_origin_pos.x() + event.position().x()
 				                - m_move_start_pos.x(),
 				        m_origin_pos.y() + event.position().y()

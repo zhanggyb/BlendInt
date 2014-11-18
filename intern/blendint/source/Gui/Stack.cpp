@@ -57,12 +57,12 @@ namespace BlendInt {
 
 	void Stack::AddWidget (AbstractWidget* widget)
 	{
-		if(PushBackSubWidget(widget)) {
+		if(PushBackSubForm(widget)) {
 			int w = size().width();
 			int h = size().height();
 
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, 0, 0);
+			ResizeSubForm(widget, w, h);
+			MoveSubFormTo(widget, 0, 0);
 
 			if(subs_count() == 1) {
 				active_widget_ = widget;
@@ -75,12 +75,12 @@ namespace BlendInt {
 
 	void Stack::InsertWidget (int index, AbstractWidget* widget)
 	{
-		if(InsertSubWidget(index, widget)) {
+		if(InsertSubForm(index, widget)) {
 			int w = size().width();
 			int h = size().height();
 
-			ResizeSubWidget(widget, w, h);
-			SetSubWidgetPosition(widget, 0, 0);
+			ResizeSubForm(widget, w, h);
+			MoveSubFormTo(widget, 0, 0);
 
 			widget->SetVisible(false);
 		}
@@ -88,7 +88,7 @@ namespace BlendInt {
 
 	void Stack::Remove (AbstractWidget* widget)
 	{
-		if(RemoveSubWidget(widget)) {
+		if(RemoveSubForm(widget)) {
 
 			if(active_widget_ == widget) {
 
