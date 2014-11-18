@@ -21,29 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
-#define _BLENDINT_GUI_VBLOCKLAYOUT_HPP_
+#ifndef _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
+#define _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A container looks like an entirety
-	 */
-	class VBlockLayout: public Widget
+	class Block: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(VBlockLayout);
-
 	public:
 
-		VBlockLayout ();
+		Block (Orientation orienation = Horizontal);
 
-		virtual ~VBlockLayout ();
+		virtual ~Block ();
 
-		void Prepend (AbstractWidget* widget);
+		void AddWidget (Widget* widget);
 
-		void Append (AbstractWidget* widget);
+		void InsertWidget (int index, Widget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -53,11 +48,13 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
-
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+	private:
+
+		void FillInHBlock (const Size& out_size);
+
+		void FillInHBlock (int x, int y, int w, int h);
 
 		void FillInVBlock (const Size& out_size);
 
@@ -65,8 +62,11 @@ namespace BlendInt {
 
 	private:
 
+		Orientation orientation_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_VBLOCKLAYOUT_HPP_ */
+
+#endif /* _INCLUDE_BLENDINT_GUI_BLOCK_HPP_ */

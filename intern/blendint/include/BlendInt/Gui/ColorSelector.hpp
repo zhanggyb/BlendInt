@@ -24,8 +24,7 @@
 #ifndef _BLENDINT_GUI_COLORSELECTOR_HPP_
 #define _BLENDINT_GUI_COLORSELECTOR_HPP_
 
-#include <BlendInt/Gui/HBlockLayout.hpp>
-#include <BlendInt/Gui/VBlockLayout.hpp>
+#include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/StackLayout.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 
@@ -52,9 +51,9 @@ namespace BlendInt {
 
 		void OnButtonToggled (int index, bool toggled);
 
-		VBlockLayout* CreateRGBBlock ();
+		Block* CreateRGBBlock ();
 
-		VBlockLayout* CreateHSVBlock ();
+		Block* CreateHSVBlock ();
 
 		VLayout* CreateHexBlock ();
 

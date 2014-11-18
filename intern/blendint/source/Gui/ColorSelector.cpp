@@ -87,10 +87,10 @@ namespace BlendInt {
 
 		btn1->SetChecked(true);
 
-		HBlockLayout* btn_block = Manage(new HBlockLayout);
-		btn_block->Append(btn1);
-		btn_block->Append(btn2);
-		btn_block->Append(btn3);
+		Block* btn_block = Manage(new Block(Horizontal));
+		btn_block->AddWidget(btn1);
+		btn_block->AddWidget(btn2);
+		btn_block->AddWidget(btn3);
 
 		stack_ = CreateBlockStack();
 		NumericalSlider* alpha_slider = Manage(new NumericalSlider);
@@ -117,32 +117,32 @@ namespace BlendInt {
 		SetLayout(main_layout);
 	}
 
-	VBlockLayout* ColorSelector::CreateRGBBlock ()
+	Block* ColorSelector::CreateRGBBlock ()
 	{
-		VBlockLayout* block = Manage(new VBlockLayout);
+		Block* block = Manage(new Block(Vertical));
 
 		NumericalSlider* red_slider = Manage(new NumericalSlider);
 		NumericalSlider* green_slider = Manage(new NumericalSlider);
 		NumericalSlider* blue_slider = Manage(new NumericalSlider);
 
-		block->Append(red_slider);
-		block->Append(green_slider);
-		block->Append(blue_slider);
+		block->AddWidget(red_slider);
+		block->AddWidget(green_slider);
+		block->AddWidget(blue_slider);
 
 		return block;
 	}
 	
-	VBlockLayout* ColorSelector::CreateHSVBlock ()
+	Block* ColorSelector::CreateHSVBlock ()
 	{
-		VBlockLayout* block = Manage(new VBlockLayout);
+		Block* block = Manage(new Block(Vertical));
 
 		NumericalSlider* h_slider = Manage(new NumericalSlider);
 		NumericalSlider* s_slider = Manage(new NumericalSlider);
 		NumericalSlider* v_slider = Manage(new NumericalSlider);
 
-		block->Append(h_slider);
-		block->Append(s_slider);
-		block->Append(v_slider);
+		block->AddWidget(h_slider);
+		block->AddWidget(s_slider);
+		block->AddWidget(v_slider);
 
 		return block;
 	}
@@ -171,8 +171,8 @@ namespace BlendInt {
 	{
 		Stack* stack = Manage(new Stack);
 
-		VBlockLayout* rgb_block = CreateRGBBlock();
-		VBlockLayout* hsv_block = CreateHSVBlock();
+		Block* rgb_block = CreateRGBBlock();
+		Block* hsv_block = CreateHSVBlock();
 		VLayout* hex_box = CreateHexBlock();
 
 		stack->AddWidget(rgb_block);

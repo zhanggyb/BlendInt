@@ -43,8 +43,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
-#include <BlendInt/Gui/HBlockLayout.hpp>
-#include <BlendInt/Gui/VBlockLayout.hpp>
+#include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/StaticPanel.hpp>
 
 #include <BlendInt/Gui/Panel.hpp>

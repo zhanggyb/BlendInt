@@ -13,7 +13,7 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
-#include <BlendInt/Gui/VBlockLayout.hpp>
+#include <BlendInt/Gui/Block.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
@@ -57,10 +57,10 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	NumericalSlider* ns2 = Manage(new NumericalSlider);
 	NumericalSlider* ns3 = Manage(new NumericalSlider);
 
-	VBlockLayout* vblock = Manage(new VBlockLayout);
-	vblock->Append(ns1);
-	vblock->Append(ns2);
-	vblock->Append(ns3);
+	Block* vblock = Manage(new Block(Vertical));
+	vblock->AddWidget(ns1);
+	vblock->AddWidget(ns2);
+	vblock->AddWidget(ns3);
 
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());

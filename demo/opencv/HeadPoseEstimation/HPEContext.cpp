@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "MarkerBasedARContext.hpp"
+#include "HPEContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/CVImageViewport.hpp>
@@ -21,9 +21,10 @@
 
 using namespace BlendInt;
 
-MarkerBasedARContext::MarkerBasedARContext()
+HPEContext::HPEContext()
 : BI::Context(),
-  viewport_(0),
+  viewport_image_(0),
+  viewport_3d_(0),
   status_(VideoStop)
 {
 	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
@@ -31,9 +32,11 @@ MarkerBasedARContext::MarkerBasedARContext()
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_ = Manage(new CVImageViewport);
+	viewport_image_ = Manage(new CVImageViewport);
+	viewport_3d_ = Manage(new Viewport);
 
-	splitter->AddFrame(viewport_);
+	splitter->AddFrame(viewport_image_);
+	splitter->AddFrame(viewport_3d_, ExpandX);
 	splitter->AddFrame(tools, PreferredWidth);
 
 	ToolBox* bar = CreateToolBarOnce();
@@ -48,22 +51,22 @@ MarkerBasedARContext::MarkerBasedARContext()
 	timer_.reset(new Timer);
 	timer_->SetInterval(1000 / 30);	// 30 fps
 
-	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
+	events()->connect(timer_->timeout(), this, &HPEContext::OnTimeout);
 
-	viewport_->OpenFile("test.jpg");
+	viewport_image_->OpenFile("test.jpg");
 }
 
-MarkerBasedARContext::~MarkerBasedARContext ()
+HPEContext::~HPEContext ()
 {
 
 }
 
-void MarkerBasedARContext::SynchronizeWindow()
+void HPEContext::SynchronizeWindow()
 {
 	glfwPostEmptyEvent();
 }
 
-ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
+ToolBox* HPEContext::CreateToolBoxOnce()
 {
 	ToolBox* tools = Manage(new ToolBox(Vertical));
 
@@ -93,14 +96,14 @@ ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 	tools->AddWidget(expander);
 	tools->AddWidget(vblock1);
 
-	events()->connect(play->clicked(), this, &MarkerBasedARContext::OnPlay);
-	events()->connect(pause->clicked(), this, &MarkerBasedARContext::OnPause);
-	events()->connect(stop->clicked(), this, &MarkerBasedARContext::OnStop);
+	events()->connect(play->clicked(), this, &HPEContext::OnPlay);
+	events()->connect(pause->clicked(), this, &HPEContext::OnPause);
+	events()->connect(stop->clicked(), this, &HPEContext::OnStop);
 
 	return tools;
 }
 
-ToolBox* MarkerBasedARContext::CreateToolBarOnce()
+ToolBox* HPEContext::CreateToolBarOnce()
 {
 	ToolBox* bar = Manage(new ToolBox(Horizontal));
 
@@ -121,7 +124,7 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 	return bar;
 }
 
-bool MarkerBasedARContext::OpenCamera(int n, const BI::Size& resolution)
+bool HPEContext::OpenCamera(int n, const BI::Size& resolution)
 {
 	bool retval = false;
 
@@ -139,7 +142,7 @@ bool MarkerBasedARContext::OpenCamera(int n, const BI::Size& resolution)
 	return retval;
 }
 
-void MarkerBasedARContext::OnPlay()
+void HPEContext::OnPlay()
 {
 	DBG_PRINT_MSG("%s", "Start Play");
 	//viewport_->OpenCamera(0, Size(800, 600));
@@ -147,21 +150,21 @@ void MarkerBasedARContext::OnPlay()
 	timer_->Start();
 }
 
-void MarkerBasedARContext::OnPause ()
+void HPEContext::OnPause ()
 {
 	DBG_PRINT_MSG("%s", "Pause");
 	//viewport_->Pause();
 	timer_->Stop();
 }
 
-void MarkerBasedARContext::OnStop()
+void HPEContext::OnStop()
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
 	//viewport_->Stop();
 	timer_->Stop();
 }
 
-void MarkerBasedARContext::OnTimeout(Timer* t)
+void HPEContext::OnTimeout(Timer* t)
 {
 	DBG_PRINT_MSG("%s", "refresh");
 
