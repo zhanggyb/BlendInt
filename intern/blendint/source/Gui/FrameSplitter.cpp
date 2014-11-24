@@ -1369,6 +1369,19 @@ namespace BlendInt {
 		}
 	}
 
+    void FrameSplitter::AlignHorizontallyExt()
+    {
+        int x = position().x();
+        int y = position().y();
+        
+        for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+        {
+            ResizeSubForm(p, p->size().width(), size().height());
+            MoveSubFormTo(p, x, y);
+            x += p->size().width();
+        }
+    }
+    
 	void FrameSplitter::AlignVertically()
 	{
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
@@ -1378,6 +1391,20 @@ namespace BlendInt {
 		}
 	}
 
+    void FrameSplitter::AlignVerticallyExt()
+    {
+        int x = position().x();
+        int y = position().y() + size().height();
+        
+        for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+        {
+            ResizeSubForm(p, size().width(), p->size().height());
+            
+            y = y - p->size().height();
+            MoveSubFormTo(p, x, y);
+        }
+    }
+    
 	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());

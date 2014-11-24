@@ -200,8 +200,14 @@ namespace BlendInt {
 		        std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void AlignHorizontally ();
+        
+        // this will replace AlignHorizontally later
+        void AlignHorizontallyExt ();
 
 		void AlignVertically ();
+        
+        // this will replace AlignVertically later
+        void AlignVerticallyExt ();
 
 		void AlignSubFrames (Orientation orientation, const Size& size);
 
