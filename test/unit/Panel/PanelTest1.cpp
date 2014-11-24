@@ -3,6 +3,8 @@
 #include <Common/UnitTestContext.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 using namespace BlendInt;
 
@@ -45,10 +47,21 @@ TEST_F(PanelTest1, Foo1)
 
 	dialog->AddWidget(p);
 
-	Button* btn = Manage(new Button("Click to check"));
-	p->AddWidget(btn);
+	Button* btn1 = Manage(new Button("Button1"));
+	Button* btn2 = Manage(new Button("Button2"));
+
+	HLayout* layout = Manage(new HLayout);
+	layout->AddWidget(btn1);
+	layout->AddWidget(btn2);
+
+//	dialog->AddWidget(layout);
+	p->SetLayout(layout);
 
 	context->AddFrame(dialog);
+
+	p->Resize(200, 200);
+
+	DBG_PRINT_MSG("btn1: %d, %d", btn1->position().x(), btn1->position().y());
 
     RunLoop(win);
     Terminate();

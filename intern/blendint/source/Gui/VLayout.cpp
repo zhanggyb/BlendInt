@@ -165,6 +165,7 @@ namespace BlendInt {
 	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInVBox(size(), request, m_alignment, m_space);
+		Refresh();
 	}
 
 	bool VLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -191,8 +192,9 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInVBox(*request.size(), margin(), m_alignment,
+			FillSubWidgetsInVBox(size(), margin(), m_alignment,
 											m_space);
+			Refresh();
 		}
 
 		if(request.source() == this) {

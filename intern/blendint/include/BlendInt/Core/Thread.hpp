@@ -26,8 +26,10 @@
 
 #ifdef __UNIX__
 #include <pthread.h>
-#include <auto_ptr.h>
 #endif
+
+#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/AbstractRunnable.hpp>
 
 namespace BlendInt {
 
@@ -35,16 +37,41 @@ namespace BlendInt {
 	{
 	public:
 
-		Thread (std::auto_ptr<AbstractRunnable> runnable, bool is_detached = false);
+		Thread (const RefPtr<AbstractRunnable>& runnable, bool is_detached = false);
+
+		explicit Thread (bool is_detached = false);
 
 		virtual ~Thread();
 
+		void Start ();
+
+		void* Join ();
+
+	protected:
+
+		virtual void* Run () {return 0;}
+
 	private:
 
-		pthread_t thread_id_;
+		void SetCompleted ();
 
-		bool detached_;
+		void PrintError (const char* msg, int status, const char* filename, int line_no);
 
+		static void* StartThreadRunnable (void* p);
+
+		static void* StartThread (void* p);
+
+		RefPtr<AbstractRunnable> runnable_;
+
+		pthread_t thread_id_;	// thread ID
+
+		bool detached_;		// true if thread created in detached state; false otherwise
+
+		pthread_attr_t attribute_;
+
+		void* result_;	// stores return value of run()
+
+		DISALLOW_COPY_AND_ASSIGN(Thread);
 	};
 
 }

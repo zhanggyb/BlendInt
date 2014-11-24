@@ -14,6 +14,7 @@
 #include <BlendInt/Gui/CVImageViewport.hpp>
 #include <BlendInt/Core/Timer.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
+#include <BlendInt/Gui/Panel.hpp>
 
 namespace BI=BlendInt;
 
@@ -40,6 +41,8 @@ private:
 	BI::ToolBox* CreateToolBoxOnce ();
 
 	BI::ToolBox* CreateToolBarOnce ();
+
+	BI::Panel* CreateButtons ();
 
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 

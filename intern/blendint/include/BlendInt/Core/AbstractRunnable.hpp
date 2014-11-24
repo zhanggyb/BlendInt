@@ -24,18 +24,20 @@
 #ifndef _BLENDINT_CORE_ABSTRACTRUNNABLE_HPP_
 #define _BLENDINT_CORE_ABSTRACTRUNNABLE_HPP_
 
+#include <BlendInt/Core/Object.hpp>
+
 namespace BlendInt {
 
-	class AbstractRunnable
+	class AbstractRunnable: public Object
 	{
 	public:
 
-		inline AbstractRunnable();
+		inline AbstractRunnable() {}
 
 		virtual ~AbstractRunnable ()
 		{}
 
-		virtual void* run () = 0;
+		virtual void* Run () = 0;
 	};
 
 }

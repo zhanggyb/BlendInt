@@ -82,7 +82,7 @@ endif()
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system)
+find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     set(LIBS ${LIBS} ${Boost_LIBRARIES})

@@ -55,9 +55,9 @@ namespace BlendInt {
 
 		void SetLayout (AbstractLayout* layout);
 
-		void AddWidget (Widget* widget);
+		void AddWidget (AbstractWidget* widget);
 
-		void InsertWidget (int index, Widget* widget);
+		void InsertWidget (int index, AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -82,6 +82,8 @@ namespace BlendInt {
 		void RenderToBuffer (Profile& profile);
 
 		void DrawPanel ();
+
+		void OnLayoutDestroyed (AbstractWidget* layout);
 
 		AbstractLayout* layout_;
 

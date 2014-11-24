@@ -120,12 +120,7 @@ namespace BlendInt {
 
 	void Dialog::SetLayout(AbstractLayout* layout)
 	{
-		if(!layout) return;
-
-		if(layout == layout_) {
-			DBG_PRINT_MSG("layout %s is already in this frame, skip this function", layout->name().c_str());
-			return;
-		}
+		if((layout == 0) || (layout == layout_)) return;
 
 		if(layout_) {
 			layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
@@ -156,6 +151,27 @@ namespace BlendInt {
 		}
 
 		Refresh();
+	}
+
+	void Dialog::InsertWidget(int index, AbstractWidget* widget)
+	{
+		if(layout_) {
+			layout_->InsertWidget(index, widget);
+		} else {
+			InsertSubForm(index, widget);
+		}
+
+		Refresh();
+	}
+
+	bool Dialog::SizeUpdateTest(const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool Dialog::PositionUpdateTest(const PositionUpdateRequest& request)
+	{
+		return true;
 	}
 
 	void Dialog::PerformSizeUpdate(const SizeUpdateRequest& request)

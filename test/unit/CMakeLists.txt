@@ -29,6 +29,9 @@ add_subdirectory(PopupFrame)
 add_subdirectory(ColorSelector)
 add_subdirectory(FileSelector)
 
+add_subdirectory(Workspace)
+add_subdirectory(Thread)
+
 if(ENABLE_OPENCV)
 	add_subdirectory(CVVideoViewport)
 endif()
@@ -76,4 +79,3 @@ endif()
 #add_subdirectory(ToolButton)
 #add_subdirectory(HBlock)
 
-add_subdirectory(Workspace)

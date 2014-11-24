@@ -67,18 +67,48 @@ namespace BlendInt {
 
 	void Panel::SetLayout(AbstractLayout* layout)
 	{
-	}
+		if((layout == 0) || (layout == layout_)) return;
 
-	void Panel::AddWidget(Widget* widget)
-	{
-		if(PushBackSubForm(widget)) {
-			Refresh();
+		if(layout_) {
+			layout_->destroyed().disconnectOne(this, &Panel::OnLayoutDestroyed);
 		}
+
+		for(AbstractInteractiveForm* p = first_child(); p; p->next()) {
+			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
+		}
+
+		if(PushBackSubForm(layout)) {
+			layout_ = layout;
+			events()->connect(layout_->destroyed(), this, &Panel::OnLayoutDestroyed);
+			MoveSubFormTo(layout_, 0, 0);
+			ResizeSubForm(layout_, size());
+		} else {
+			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
+		}
+
+		Refresh();
 	}
 
-	void Panel::InsertWidget(int index, Widget* widget)
+	void Panel::AddWidget(AbstractWidget* widget)
 	{
+		if(layout_) {
+			layout_->AddWidget(widget);
+		} else {
+			PushBackSubForm(widget);
+		}
 
+		Refresh();
+	}
+
+	void Panel::InsertWidget(int index, AbstractWidget* widget)
+	{
+		if(layout_) {
+			layout_->InsertWidget(index, widget);
+		} else {
+			InsertSubForm(index, widget);
+		}
+
+		Refresh();
 	}
 
 	bool Panel::IsExpandX() const
@@ -109,7 +139,34 @@ namespace BlendInt {
 
 	Size Panel::GetPreferredSize() const
 	{
-		return Size(400, 300);
+		Size prefer_size;
+
+		if(subs_count() == 0) {
+			prefer_size.reset(400, 300);
+		} else {
+
+			if(layout_) {
+				assert(subs_count() == 1);
+				prefer_size = layout_->GetPreferredSize();
+			} else {
+
+				int minx = 0;
+				int miny = 0;
+				int maxx = 0;
+				int maxy = 0;
+
+				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+					minx = std::min(minx, p->position().x());
+					miny = std::min(miny, p->position().y());
+					maxx = std::max(maxx, p->position().x() + p->size().width());
+					maxy = std::max(maxy, p->position().y() + p->size().height());
+				}
+
+				prefer_size.reset(maxx - minx, maxy - miny);
+			}
+		}
+
+		return prefer_size;
 	}
 
 	void Panel::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -136,7 +193,7 @@ namespace BlendInt {
 			buffer_.bind(1);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-			buffer_.bind(1);
+			buffer_.bind(2);
 			float* ptr = (float*)buffer_.map();
 			*(ptr + 4) = (float)size().width();
 			*(ptr + 9) = (float)size().height();
@@ -145,6 +202,10 @@ namespace BlendInt {
 			buffer_.unmap();
 
 			buffer_.reset();
+
+			if(layout_) {
+				layout_->Resize(size());
+			}
 
 			Refresh();
 		}
@@ -345,14 +406,14 @@ namespace BlendInt {
             glm::vec2 pos = get_relative_position(Shaders::instance->widget_model_matrix());
 			Profile off_screen_profile(profile, pos.x, pos.y);
 
-            glm::mat4 identity(1.f);
 			Shaders::instance->PushWidgetModelMatrix();
+			Shaders::instance->PushWidgetProjectionMatrix();
+
+			glm::mat4 identity(1.f);
 			Shaders::instance->SetWidgetModelMatrix(identity);
 
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f,
 			        -100.f);
-
-			Shaders::instance->PushWidgetProjectionMatrix();
 			Shaders::instance->SetWidgetProjectionMatrix(projection);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -435,6 +496,17 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLSLProgram::reset();
+	}
+
+	void Panel::OnLayoutDestroyed(AbstractWidget* layout)
+	{
+#ifdef DEBUG
+		assert(layout == layout_);
+#endif
+
+		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
+		layout->destroyed().disconnectOne(this, &Panel::OnLayoutDestroyed);
+		layout_ = 0;
 	}
 
 } /* namespace BlendInt */

@@ -166,6 +166,7 @@ namespace BlendInt {
 	void HLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInHBox(size(), request, m_alignment, m_space);
+		Refresh();
 	}
 
 	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -192,7 +193,8 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInHBox(*request.size(), margin(), m_alignment, m_space);
+			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			Refresh();
 		}
 
 		if(request.source() == this) {

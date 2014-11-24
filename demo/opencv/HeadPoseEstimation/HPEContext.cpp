@@ -18,6 +18,7 @@
 
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 using namespace BlendInt;
 
@@ -84,21 +85,10 @@ ToolBox* HPEContext::CreateToolBoxOnce()
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());
 
-	Button* play = Manage(new Button("Play"));
-	Button* pause = Manage(new Button("Pause"));
-	Button* stop = Manage(new Button("Stop"));
-
-	Block* vblock1 = Manage(new Block(Vertical));
-	vblock1->AddWidget(play);
-	vblock1->AddWidget(pause);
-	vblock1->AddWidget(stop);
+	Panel* btn_panel = CreateButtons();
 
 	tools->AddWidget(expander);
-	tools->AddWidget(vblock1);
-
-	events()->connect(play->clicked(), this, &HPEContext::OnPlay);
-	events()->connect(pause->clicked(), this, &HPEContext::OnPause);
-	events()->connect(stop->clicked(), this, &HPEContext::OnStop);
+	tools->AddWidget(btn_panel);
 
 	return tools;
 }
@@ -122,6 +112,31 @@ ToolBox* HPEContext::CreateToolBarOnce()
 	bar->Resize(bar->GetPreferredSize());
 
 	return bar;
+}
+
+Panel* HPEContext::CreateButtons()
+{
+	Panel* panel = Manage(new Panel);
+	panel->SetRoundType(RoundAll);
+
+	VLayout* layout = Manage(new VLayout);
+
+	Button* play = Manage(new Button("Play"));
+	Button* pause = Manage(new Button("Pause"));
+	Button* stop = Manage(new Button("Stop"));
+
+	layout->AddWidget(play);
+	layout->AddWidget(pause);
+	layout->AddWidget(stop);
+
+	panel->SetLayout(layout);
+	panel->Resize(layout->GetPreferredSize());
+
+	events()->connect(play->clicked(), this, &HPEContext::OnPlay);
+	events()->connect(pause->clicked(), this, &HPEContext::OnPause);
+	events()->connect(stop->clicked(), this, &HPEContext::OnStop);
+
+	return panel;
 }
 
 bool HPEContext::OpenCamera(int n, const BI::Size& resolution)
