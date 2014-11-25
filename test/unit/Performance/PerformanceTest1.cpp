@@ -4,8 +4,10 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/StaticFrame.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
 #include <Common/Window.hpp>
+#include <Common/UnitTestContext.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -29,16 +31,15 @@ TEST_F(PerformanceTest1, Layout1)
     GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
 
 	// TODO: add test code here
-	Context* context = Manage(new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");
-	Interface::instance->SetCurrentContext(context);
-	Interface::instance->Resize(1280, 800);
+	SetContext(context);
+	context->Resize(1280, 800);
+
+	Dialog* dlg = Manage(new Dialog);
+	dlg->Resize(800, 720);
 
     VLayout* layout1 = Manage(new VLayout);
-
-    Panel* frame1 = Manage(new Panel);
-
-    frame1->SetPosition(20, 20);
 
     int max_x = 20;
     int max_y = 20;
@@ -53,25 +54,22 @@ TEST_F(PerformanceTest1, Layout1)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->Append(btn);
+        	layout->AddWidget(btn);
         }
 
-        //layout[i]->SetPosition(x_pos, y_pos);
+        //layout[i]->MoveTo(x_pos, y_pos);
         //layout[i]->Resize(layout[i]->GetPreferredSize());
 
         //y_pos += 40;
 
-        layout1->Append(layout);
+        layout1->AddWidget(layout);
     }
+    layout1->Resize(layout1->GetPreferredSize());
 
-    frame1->Setup(layout1);
-    frame1->Resize(frame1->GetPreferredSize());
-
-    context->Append(frame1);
+    dlg->SetLayout(layout1);
+    context->AddFrame(dlg);
 
     RunLoop(win);
-    Interface::Release();
-
     Terminate();
 
     ASSERT_TRUE(true);
@@ -87,16 +85,14 @@ TEST_F(PerformanceTest1, Layout2)
     GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
 
 	// TODO: add test code here
-	Context* context = Manage(new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");
-	Interface::instance->SetCurrentContext(context);
-	Interface::instance->Resize(1280, 800);
+	SetContext(context);
+	context->Resize(1280, 800);
 
     VLayout* layout2 = Manage(new VLayout);
 
-    StaticPanel* frame2 = Manage(new StaticPanel);
-
-    frame2->SetPosition(620, 20);
+    Dialog* frame2 = Manage(new Dialog);
 
     int max_x = 20;
     int max_y = 20;
@@ -109,20 +105,18 @@ TEST_F(PerformanceTest1, Layout2)
         {
         	Button* btn = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-        	layout->Append(btn);
+        	layout->AddWidget(btn);
         }
 
-        layout2->Append(layout);
+        layout2->AddWidget(layout);
     }
 
-    frame2->Setup(layout2);
-    frame2->Resize(frame2->GetPreferredSize());
+    frame2->SetLayout(layout2);
+    frame2->Resize(800, 720);
 
-    context->Append(frame2);
+    context->AddFrame(frame2);
 
     RunLoop(win);
-    Interface::Release();
-
     Terminate();
 
     ASSERT_TRUE(true);
@@ -131,16 +125,17 @@ TEST_F(PerformanceTest1, Layout2)
 /**
  * Test layout performance
  */
+/*
 TEST_F(PerformanceTest1, Layout3)
 {
     Init();
     GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
 
 	// TODO: add test code here
-	Context* context = Manage(new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");
-	Interface::instance->SetCurrentContext(context);
-	Interface::instance->Resize(1280, 800);
+	SetContext(context);
+	context->Resize(1280, 800);
 
     StaticPanel* mainframe = Manage(new StaticPanel);
 
@@ -148,7 +143,7 @@ TEST_F(PerformanceTest1, Layout3)
     StaticPanel* frame2 = Manage(new StaticPanel);
     StaticPanel* frame3 = Manage(new StaticPanel);
 
-    mainframe->SetPosition(100, 100);
+    mainframe->MoveTo(100, 100);
 
     int max_x = 10;
     int max_y = 10;
@@ -219,13 +214,11 @@ TEST_F(PerformanceTest1, Layout3)
     context->Append(mainframe);
 
     RunLoop(win);
-    Interface::Release();
-
     Terminate();
 
     ASSERT_TRUE(true);
 }
-
+*/
 
 /**
  * test Foo() method
@@ -247,7 +240,7 @@ TEST_F(PerformanceTest1, Foo1)
     for(int i = 0, j = 1; i < max; i++, j++)
     {
         btn[i] = new Button;
-        btn[i]->SetPosition(x_pos, y_pos);
+        btn[i]->MoveTo(x_pos, y_pos);
         btn[i]->Resize(48, 24);
         btn[i]->Register();
 
@@ -281,7 +274,7 @@ TEST_F(PerformanceTest1, Performance2)
     for(int i = 0, j = 1; i < max; i++, j++)
     {
         label[i] = new Widget;
-        label[i]->SetPosition(x_pos, y_pos);
+        label[i]->MoveTo(x_pos, y_pos);
         label[i]->Resize(48, 24);
         label[i]->Register();
 

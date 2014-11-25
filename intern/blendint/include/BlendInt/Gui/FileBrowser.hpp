@@ -26,7 +26,8 @@
 
 #include <string>
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/AbstractItemView.hpp>
 #include <BlendInt/Gui/FileSystemModel.hpp>
@@ -82,8 +83,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
@@ -92,17 +91,15 @@ namespace BlendInt {
 
 		void InitializeFileBrowserOnce ();
 
-		void OnHBarSlide (int val);
-
-		void OnVBarSlide (int val);
-
 		GLuint vaos_[2];
 
 		Font font_;
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> row_;
+		/**
+		 * 0 - for inner
+		 * 1 - for row
+		 */
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		String file_selected_;
 

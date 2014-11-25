@@ -278,13 +278,17 @@ namespace BlendInt {
 		block3->AddWidget(btn_sort_time);
 		block3->AddWidget(btn_sort_size);
 
-		Separator* separator1 = Manage(new Separator(true));
+		Separator* separator1 = Manage(new Separator);
+		Separator* separator2 = Manage(new Separator);
+		Separator* separator3 = Manage(new Separator(true));
 
-		hlayout->AddWidget(block1);
 		hlayout->AddWidget(separator1);
+		hlayout->AddWidget(block1);
+		hlayout->AddWidget(separator2);
 		hlayout->AddWidget(btn_new);
 		hlayout->AddWidget(block2);
 		hlayout->AddWidget(block3);
+		hlayout->AddWidget(separator3);
 
 		return hlayout;
 	}

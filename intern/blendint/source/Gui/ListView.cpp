@@ -52,11 +52,6 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		InitializeListView();
-
-		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
-		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-		SetScrollBar(hbar, vbar);
-		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
 	ListView::~ListView ()
@@ -86,21 +81,6 @@ namespace BlendInt {
 		if(model_) {
 			int h = font_.GetHeight();
 			h = model_->GetRows() * h;	// total height
-
-			ScrollBar* hbar = GetHScrollBar();
-			ScrollBar* vbar = GetVScrollBar();
-
-			if(h > size().height()) {
-				vbar->SetVisible(true);
-				vbar->SetMaximum(h);
-				vbar->SetMinimum(size().height());
-				vbar->SetSliderPercentage(size().height() * 100 / h);
-			} else {
-				vbar->SetVisible(false);
-			}
-			hbar->SetVisible(false);
-
-			AdjustScrollBarGeometries(hbar, vbar);
 		}
 	}
 
@@ -114,13 +94,6 @@ namespace BlendInt {
 	ResponseType ListView::Draw (Profile& profile)
 	{
 		int y = position().y() + size().height();
-
-		ScrollBar* vbar = GetVScrollBar();
-
-		if(model_ && vbar->visiable()) {
-			y = position().y() + vbar->value();
-		}
-
 		int h = font_.GetHeight();
 
         Shaders::instance->widget_inner_program()->use();
@@ -181,15 +154,9 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			if(vbar->visiable()) {
-				y = position().y() + vbar->value();
-			}
-
 			while(index.IsValid()) {
-
 				y -= h;
 				font_.Print(position().x(), y, *index.GetData());
-
 				index = index.GetDownIndex();
 			}
 
@@ -223,7 +190,7 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() + GetVScrollBar()->value() - event.position().y();
+					i = position().y() - event.position().y();
 				} else {	// no vbar
 					i = position().y() + size().height() - event.position().y();
 				}
@@ -254,20 +221,6 @@ namespace BlendInt {
 		return ModelIndex();
 	}
 
-	void ListView::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-
-			set_position(*request.position());
-
-			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -292,9 +245,6 @@ namespace BlendInt {
 			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 			GLArrayBuffer::reset();
-
-			AdjustScrollBarGeometries(position().x(), position().y(),
-					request.size()->width(), request.size()->height());
 		}
 
 		ReportSizeUpdate(request);

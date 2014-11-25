@@ -129,7 +129,6 @@ namespace BlendInt {
 	void TextureView::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
 			Refresh();
 		}
 
@@ -152,7 +151,6 @@ namespace BlendInt {
 
 			AdjustImageArea (*request.size());
 
-			AdjustScrollBarGeometries(GetHScrollBar(), GetVScrollBar());
 			Refresh();
 		}
 
@@ -256,11 +254,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
-
-		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
-		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-		SetScrollBar(hbar, vbar);
-		AdjustScrollBarGeometries(hbar, vbar);
 	}
 
 	void TextureView::AdjustImageArea(const Size& size)

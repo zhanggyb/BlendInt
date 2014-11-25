@@ -32,11 +32,11 @@ TEST_F(FileBrowserTest1, Foo1)
 	context->Resize(640, 480);
 
 	FileBrowser* fb = Manage(new FileBrowser);
-	fb->MoveTo(20, 20);
+	fb->MoveTo(50, 50);
 	fb->Load(getenv("HOME"));
 
 	Dialog* dialog = Manage(new Dialog);
-	dialog->Resize(600, 480);
+	dialog->Resize(500, 400);
 	dialog->AddWidget(fb);
 	
 	context->AddFrame(dialog);

@@ -1,5 +1,6 @@
 #include "DialogTest1.hpp"
 #include <BlendInt/Gui/Dialog.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -26,7 +27,8 @@ TEST_F(DialogTest1, Foo1)
     GLFWwindow* win = CreateWindow("Dialog - Foo1", 640, 480);
 
     // TODO: add test code here
-	Context* context = Manage (new Context);
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(640, 480);
 

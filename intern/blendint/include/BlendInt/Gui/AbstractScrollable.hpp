@@ -26,8 +26,6 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Gui/ScrollBar.hpp>
-
 namespace BlendInt {
 
 	/**
@@ -41,38 +39,25 @@ namespace BlendInt {
 
 		virtual ~AbstractScrollable ();
 
-		void SetScrollBar (ScrollBar* hbar, ScrollBar* vbar);
-
-		ScrollBar* GetHScrollBar () const;
-
-		ScrollBar* GetVScrollBar () const;
-
-		Cpp::EventRef<int> scrolled_horizontally ()
+		Cpp::EventRef<int, int> scrolled ()
 		{
-			return *scrolled_horizontally_;
+			return *scrolled_;
 		}
 
-		Cpp::EventRef<int> scrolled_vertically ()
-		{
-			return *scrolled_vertically_;
-		}
+		// virtual Size GetContentSize () const;
 
 	protected:
 
-		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
+		virtual ResponseType Draw (Profile& profile) = 0;
 
-		void AdjustScrollBarGeometries (ScrollBar* hbar, ScrollBar* vbar);
-
-		inline void fire_scrolled_event (int x)
+		inline void fire_scrolled_event (int x, int y)
 		{
-			scrolled_horizontally_->fire(x);
+			scrolled_->fire(x, y);
 		}
 
 	private:
 
-		boost::scoped_ptr<Cpp::Event<int> > scrolled_horizontally_;
-
-		boost::scoped_ptr<Cpp::Event<int> > scrolled_vertically_;
+		boost::scoped_ptr<Cpp::Event<int, int> > scrolled_;
 
 	};
 
