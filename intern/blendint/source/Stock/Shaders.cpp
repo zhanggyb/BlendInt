@@ -273,6 +273,49 @@ namespace BlendInt {
 
 		// ---------------------------------------------------------------
 
+		const char* Shaders::widget_simple_triangle_vertex_shader =
+				"#version 330\n"
+				""
+				"layout(location=0) in vec3 aCoord;"
+				"uniform UIMatrix {"
+				"	mat4 projection;"
+				"	mat4 view;"
+				"	mat4 model;"
+				"};"
+				""
+				"uniform vec2 uPosition;"// position
+				""
+				"out float VertexShade;"
+				""
+				"mat4 TranslateMatrix (const in vec2 t)"
+				"{"
+				"	return mat4(1.0, 0.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0, 0.0,"
+				"				0.0, 0.0, 1.0, 0.0,"
+				"				t.x, t.y, 0.0, 1.0);"
+				"}"
+				""
+				"void main(void) {"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	VertexShade = aCoord.z;"
+				"}";
+
+		const char* Shaders::widget_simple_triangle_fragment_shader =
+		        "#version 330\n"
+				""
+				"in float VertexShade;"
+				"uniform vec4 uColor;"
+				"uniform int uGamma = 0;"
+				"out vec4 FragmentColor;"
+				""
+				"void main(void) {"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+				"}";
+
+		// ---------------------------------------------------------------
+
 		const char* Shaders::widget_inner_vertex_shader =
 				"#version 330\n"
 				""
@@ -828,6 +871,7 @@ namespace BlendInt {
 			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
 			widget_triangle_program_.reset(new GLSLProgram);
+			widget_simple_triangle_program_.reset(new GLSLProgram);
 			widget_inner_program_.reset(new GLSLProgram);
 			widget_split_inner_program_.reset(new GLSLProgram);
 			widget_outer_program_.reset(new GLSLProgram);
@@ -976,6 +1020,9 @@ namespace BlendInt {
 			if(!SetupWidgetTriangleProgram())
 				return false;
 
+			if(!SetupWidgetSimpleTriangleProgram())
+				return false;
+
 			if(!SetupWidgetImageProgram())
 				return false;
 
@@ -1076,6 +1123,15 @@ namespace BlendInt {
 			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
 			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
 			glUniformBlockBinding(widget_triangle_program_->id(), block_index, widget_matrix_binding_point_);
+
+			// set uniform block for simple triangle program
+
+			block_index = glGetUniformBlockIndex(widget_simple_triangle_program_->id(), "UIMatrix");
+			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
+			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
+			glUniformBlockBinding(widget_simple_triangle_program_->id(), block_index, widget_matrix_binding_point_);
 
 			// set uniform block in image program
 
@@ -1217,6 +1273,32 @@ namespace BlendInt {
 			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("uScale");
 			locations_[WIDGET_TRIANGLE_ANTI_ALIAS] = widget_triangle_program_->GetUniformLocation("uAA");
 			locations_[WIDGET_TRIANGLE_GAMMA] = widget_triangle_program_->GetUniformLocation("uGamma");
+
+			return true;
+		}
+
+		bool Shaders::SetupWidgetSimpleTriangleProgram()
+		{
+			if (!widget_simple_triangle_program_->Create()) {
+				return false;
+			}
+
+			widget_simple_triangle_program_->AttachShader(
+			        widget_simple_triangle_vertex_shader, GL_VERTEX_SHADER);
+			widget_simple_triangle_program_->AttachShader(
+			        widget_simple_triangle_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_simple_triangle_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget simple triangle program: %d",
+						widget_simple_triangle_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_SIMPLE_TRIANGLE_COORD] = widget_simple_triangle_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_SIMPLE_TRIANGLE_POSITION] = widget_simple_triangle_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_SIMPLE_TRIANGLE_COLOR] = widget_simple_triangle_program_->GetUniformLocation("uColor");
+			locations_[WIDGET_SIMPLE_TRIANGLE_GAMMA] = widget_simple_triangle_program_->GetUniformLocation("uGamma");
+			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
+			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
 
 			return true;
 		}

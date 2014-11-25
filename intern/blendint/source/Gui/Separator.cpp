@@ -38,10 +38,10 @@
 
 namespace BlendInt {
 
-	Separator::Separator ()
-	: Widget(),
-	  expand_x_(false),
-	  expand_y_(false),
+	Separator::Separator (bool expandx, bool expandy)
+	: AbstractWidget(),
+	  expand_x_(expandx),
+	  expand_y_(expandy),
 	  preferred_size_(10, 10)
 	{
 		set_size(10, 10);
@@ -83,6 +83,21 @@ namespace BlendInt {
 	bool Separator::IsExpandY() const
 	{
 		return expand_y_;
+	}
+
+	bool Separator::PreDraw(Profile& profile)
+	{
+		return true;
+	}
+
+	ResponseType Separator::Draw(Profile& profile)
+	{
+		return Ignore;
+	}
+
+	void Separator::PostDraw(Profile& profile)
+	{
+		return;
 	}
 
 }

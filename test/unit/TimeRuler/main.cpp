@@ -1,5 +1,5 @@
 /*
- * Unit test for HorizontalLayout
+ * Unit test for TimeRuler
  */
 
 #include <gtest/gtest.h>

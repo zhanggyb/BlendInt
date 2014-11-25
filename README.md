@@ -35,8 +35,6 @@ improved with some new technologies:
   GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW3 to display and
   manage OpenGL context for some demos and unit tests.
 
-Here're some example widgets:
-
 ## Usage
 
 Useing **BlendInt** is as simple as any C++ object-oriented GUI
@@ -96,7 +94,7 @@ libraries are installed:
 * cmake 2.8.11 or newer
 * OpenGL header and libraries, in Linux, Mesa 9.2 or newer
 * OpenImageIO 1.1+
-* boost
+* boost (system, filesystem, thread)
 * freetype
 * fontconfig (recommanded)
 

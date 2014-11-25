@@ -17,7 +17,6 @@
 #include <BlendInt/Gui/ComboBox.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
-#include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 
 using namespace BlendInt;
@@ -33,11 +32,9 @@ HPEContext::HPEContext()
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_image_ = Manage(new CVImageViewport);
-	viewport_3d_ = Manage(new Viewport);
+	FrameSplitter* workspace = CreateWorkspaceOnce();
 
-	splitter->AddFrame(viewport_image_);
-	splitter->AddFrame(viewport_3d_, ExpandX);
+	splitter->AddFrame(workspace);
 	splitter->AddFrame(tools, PreferredWidth);
 
 	ToolBox* bar = CreateToolBarOnce();
@@ -177,6 +174,24 @@ void HPEContext::OnStop()
 	DBG_PRINT_MSG("%s", "Stop Play");
 	//viewport_->Stop();
 	timer_->Stop();
+}
+
+BI::FrameSplitter* HPEContext::CreateWorkspaceOnce()
+{
+	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
+
+	FrameSplitter* hsplitter = Manage(new FrameSplitter(Horizontal));
+	viewport_image_ = Manage(new CVImageViewport);
+	viewport_3d_ = Manage(new Viewport);
+	hsplitter->AddFrame(viewport_image_);
+	hsplitter->AddFrame(viewport_3d_);
+
+	ToolBox* toolbar = Manage(new ToolBox(Horizontal));
+
+	vsplitter->AddFrame(hsplitter);
+	vsplitter->AddFrame(toolbar);
+
+	return vsplitter;
 }
 
 void HPEContext::OnTimeout(Timer* t)

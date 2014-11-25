@@ -208,13 +208,15 @@ namespace BlendInt {
 
 		} else {
 			if(CursorOnSlideIcon(event.position())) {
-				m_slide_icon.set_highlight(true);
+
+				//m_slide_icon.set_highlight(true);
 
 				Refresh();
 
 				return Accept;
 			} else {
-				m_slide_icon.set_highlight(false);
+
+				//m_slide_icon.set_highlight(false);
 				Refresh();
 				return Ignore;
 			}

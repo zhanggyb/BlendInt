@@ -52,6 +52,11 @@ namespace BlendInt {
 			WIDGET_TRIANGLE_ANTI_ALIAS,
 			WIDGET_TRIANGLE_GAMMA,
 
+			WIDGET_SIMPLE_TRIANGLE_COORD,
+			WIDGET_SIMPLE_TRIANGLE_POSITION,	// vec2 of outline or emboss vertices
+			WIDGET_SIMPLE_TRIANGLE_COLOR,
+			WIDGET_SIMPLE_TRIANGLE_GAMMA,
+
 			WIDGET_INNER_COORD,
 			WIDGET_INNER_COLOR,
 			WIDGET_INNER_GAMMA,
@@ -146,6 +151,11 @@ namespace BlendInt {
 			const RefPtr<GLSLProgram>& widget_triangle_program () const
 			{
 				return widget_triangle_program_;
+			}
+
+			const RefPtr<GLSLProgram>& widget_simple_triangle_program () const
+			{
+				return widget_simple_triangle_program_;
 			}
 
 			const RefPtr<GLSLProgram>& widget_inner_program () const
@@ -267,6 +277,8 @@ namespace BlendInt {
 
 			bool SetupWidgetTriangleProgram ();
 
+			bool SetupWidgetSimpleTriangleProgram ();
+
 			bool SetupWidgetImageProgram ();
 
 			bool SetupWidgetLineProgram ();
@@ -286,6 +298,8 @@ namespace BlendInt {
 			RefPtr<GLSLProgram> primitive_program_;
 
 			RefPtr<GLSLProgram> widget_triangle_program_;
+
+			RefPtr<GLSLProgram> widget_simple_triangle_program_;
 
 			RefPtr<GLSLProgram> widget_inner_program_;
 
@@ -350,9 +364,11 @@ namespace BlendInt {
 
 			static const char* widget_triangle_fragment_shader;
 
-			static const char* widget_inner_vertex_shader;
+			static const char* widget_simple_triangle_vertex_shader;
 
-			static const char* widget_inner_geometry_shader;
+			static const char* widget_simple_triangle_fragment_shader;
+
+			static const char* widget_inner_vertex_shader;
 
 			static const char* widget_inner_fragment_shader;
 
@@ -369,10 +385,6 @@ namespace BlendInt {
 			static const char* widget_line_vertex_shader;
 
 			static const char* widget_line_fragment_shader;
-
-			static const char* context_vertex_shader;
-
-			static const char* context_fragment_shader;
 
 			static const char* widget_image_vertex_shader;
 
@@ -395,6 +407,11 @@ namespace BlendInt {
 			static const char* frame_shadow_vertex_shader;
 
 			static const char* frame_shadow_fragment_shader;
+
+			static const char* context_vertex_shader;
+
+			static const char* context_fragment_shader;
+
 		};
 
 	}

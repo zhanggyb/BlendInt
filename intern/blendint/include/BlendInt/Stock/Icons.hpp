@@ -25,7 +25,7 @@
 #define _BLENDINT_STOCK_ICONS_HPP_
 
 #include <BlendInt/Core/RefPtr.hpp>
-#include <BlendInt/Gui/VertexIcon.hpp>
+#include <BlendInt/Gui/VectorIcon.hpp>
 #include <BlendInt/Gui/PixelIcon.hpp>
 
 namespace BlendInt {
@@ -1054,22 +1054,22 @@ namespace BlendInt {
 
 			static Icons* instance;
 
-			const RefPtr<VertexIcon>& menu () const
+			const RefPtr<VectorIcon>& menu () const
 			{
 				return menu_;
 			}
 
-			const RefPtr<VertexIcon>& circle () const
+			const RefPtr<VectorIcon>& circle () const
 			{
 				return circle_;
 			}
 
-			const RefPtr<VertexIcon>& check () const
+			const RefPtr<VectorIcon>& check () const
 			{
 				return check_;
 			}
 
-			const RefPtr<VertexIcon>& num () const
+			const RefPtr<VectorIcon>& num () const
 			{
 				return num_;
 			}
@@ -1115,10 +1115,10 @@ namespace BlendInt {
 
 			void CreatePixelIcons32x32 ();
 
-			RefPtr<VertexIcon> menu_;
-			RefPtr<VertexIcon> circle_;
-			RefPtr<VertexIcon> check_;
-			RefPtr<VertexIcon> num_;
+			RefPtr<VectorIcon> menu_;
+			RefPtr<VectorIcon> circle_;
+			RefPtr<VectorIcon> check_;
+			RefPtr<VectorIcon> num_;
 
 			std::vector<RefPtr<PixelIcon> > icons_16x16_;
 

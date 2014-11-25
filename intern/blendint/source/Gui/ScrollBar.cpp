@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -60,7 +59,7 @@ namespace BlendInt {
 
 		set_round_type(RoundAll);
 
-		InitOnce();
+		InitScrollBarOnce();
 	}
 
 	ScrollBar::~ScrollBar ()
@@ -196,7 +195,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 			buffer_.reset();
-
+			Refresh();
 		}
 
 		if(request.source() == this) {
@@ -279,10 +278,12 @@ namespace BlendInt {
 
 	void ScrollBar::MouseHoverOutEvent(const MouseEvent& event)
 	{
+		/*
 		if(m_slide.highlight()) {
 			m_slide.set_highlight(false);
 			Refresh();
 		}
+		*/
 	}
 
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
@@ -317,8 +318,9 @@ namespace BlendInt {
 
 		} else {
 
-			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+			//Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
 
+			/*
 			if (CursorOnSlideIcon(local_position)) {
 				m_slide.set_highlight(true);
 				Refresh();
@@ -326,6 +328,7 @@ namespace BlendInt {
 				m_slide.set_highlight(false);
 				Refresh();
 			}
+			*/
 
 		}
 
@@ -351,7 +354,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ScrollBar::InitOnce ()
+	void ScrollBar::InitScrollBarOnce ()
 	{
 		glGenVertexArrays(2, vao_);
 

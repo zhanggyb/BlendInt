@@ -36,26 +36,28 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexIcon.hpp>
+#include <BlendInt/Gui/VectorIcon.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#ifndef WIDGET_AA_JITTER
 #define WIDGET_AA_JITTER 8
+#endif
 
 namespace BlendInt {
 
 	using Stock::Shaders;
 
-	const float VertexIcon::num_tria_vert[3][2] ={
+	const float VectorIcon::num_tria_vert[3][2] ={
 		{ -0.352077, 0.532607 },
 		{ -0.352077, -0.549313 },
 		{ 0.330000, -0.008353 }
 	};
 
-	const unsigned int VertexIcon::num_tria_face[1][3] = {
+	const unsigned int VectorIcon::num_tria_face[1][3] = {
 		{ 0, 1, 2 }
 	};
 
-	const float VertexIcon::scroll_circle_vert[16][2] = {
+	const float VectorIcon::scroll_circle_vert[16][2] = {
 		{ 0.382684, 0.923879 }, { 0.000001, 1.000000 },
 		{ -0.382683, 0.923880 }, { -0.707107, 0.707107 },
 		{ -0.923879, 0.382684 }, { -1.000000, 0.000000 },
@@ -66,7 +68,7 @@ namespace BlendInt {
 		{ 0.923880, 0.382683 }, { 0.707107, 0.707107 }
 	};
 
-	const unsigned int VertexIcon::scroll_circle_face[14][3] = {
+	const unsigned int VectorIcon::scroll_circle_face[14][3] = {
 		{ 0, 1, 2 },
 		{2, 0, 3 },
 		{ 3, 0, 15 },
@@ -83,80 +85,75 @@ namespace BlendInt {
 		{ 8, 10, 9 }
 	};
 
-	const float VertexIcon::menu_tria_vert[6][2] = {
+	const float VectorIcon::menu_tria_vert[6][2] = {
 		{ -0.33, 0.16 }, { 0.33, 0.16 }, { 0, 0.82 },
 		{ 0, -0.82 }, {-0.33, -0.16 }, { 0.33, -0.16 }
 	};
 
-	const unsigned int VertexIcon::menu_tria_face[2][3] = {
+	const unsigned int VectorIcon::menu_tria_face[2][3] = {
 		{ 2, 0, 1 }, { 3, 5, 4 }
 	};
 
-	const float VertexIcon::check_tria_vert[6][2] = {
+	const float VectorIcon::check_tria_vert[6][2] = {
 		{ -0.578579, 0.253369 }, {-0.392773, 0.412794 },
 		{ -0.004241, -0.328551 }, { -0.003001, 0.034320 },
 		{ 1.055313, 0.864744 }, { 0.866408, 1.026895 }
 	};
 
-	const unsigned int VertexIcon::check_tria_face[4][3] = {
+	const unsigned int VectorIcon::check_tria_face[4][3] = {
 		{ 3, 2, 4 }, { 3, 4, 5 }, { 1, 0, 3 }, { 0, 2, 3 }
 	};
 
-	VertexIcon::VertexIcon (int width, int height)
+	VectorIcon::VectorIcon (int width, int height)
 	: AbstractIcon(width, height),
-	  vertex_buffer_(0),
-	  element_buffer_(0),
 	  vao_(0),
 	  elements_(0)
 	{
-		vertex_buffer_.reset(new GLArrayBuffer);
-		element_buffer_.reset(new GLElementArrayBuffer);
-
 		glGenVertexArrays(1, &vao_);
 	}
 
-	VertexIcon::~VertexIcon ()
+	VectorIcon::~VectorIcon ()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void VertexIcon::Load (const float (*vertex_array)[2], size_t array_size,
+	void VectorIcon::Load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->generate();
-		vertex_buffer_->bind();
-		vertex_buffer_->set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
+		vertex_buffer_.generate();
+		vertex_buffer_.bind();
+		vertex_buffer_.set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 
-		element_buffer_->generate();
-		element_buffer_->bind();
-		element_buffer_->set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
+		element_buffer_.generate();
+		element_buffer_.bind();
+		element_buffer_.set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 
-		vertex_buffer_->reset();
-		element_buffer_->reset();
+		vertex_buffer_.reset();
+		element_buffer_.reset();
 
 		elements_ = indeces_size * 3;
 	}
 
-	void VertexIcon::Draw(float x, float y, short gamma) const
+	void VectorIcon::Draw(float x, float y, short gamma) const
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
 		Draw(glm::vec2(x, y), color, gamma);
 	}
 
-	void VertexIcon::Draw (float x, float y, const Color& color, short gamma) const
+	void VectorIcon::Draw (float x, float y, const Color& color, short gamma) const
 	{
 		Draw(glm::vec2(x, y), color, gamma);
 	}
 
-	void VertexIcon::Draw(const glm::vec2& pos, const Color& color, short gamma) const
+	void VectorIcon::Draw(const glm::vec2& pos, const Color& color, short gamma) const
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
@@ -169,20 +166,20 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->bind();	// bind ARRAY BUFFER
-		element_buffer_->bind();	// bind ELEMENT ARRAY BUFFER
+		vertex_buffer_.bind();	// bind ARRAY BUFFER
+		element_buffer_.bind();	// bind ELEMENT ARRAY BUFFER
 
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		element_buffer_->reset();
-		vertex_buffer_->reset();
+		element_buffer_.reset();
+		vertex_buffer_.reset();
 
 		program->reset();
 	}
 
-	void VertexIcon::Draw(const glm::vec2& pos, float angle, float scale, const Color& color, short gamma) const
+	void VectorIcon::Draw(const glm::vec2& pos, float angle, float scale, const Color& color, short gamma) const
 	{
 		using Stock::Shaders;
 
@@ -199,16 +196,16 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_->bind();	// bind ARRAY BUFFER
-		element_buffer_->bind();	// bind ELEMENT ARRAY BUFFER
+		vertex_buffer_.bind();	// bind ARRAY BUFFER
+		element_buffer_.bind();	// bind ELEMENT ARRAY BUFFER
 
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 
-		element_buffer_->reset();
-		vertex_buffer_->reset();
+		element_buffer_.reset();
+		vertex_buffer_.reset();
 
 		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
@@ -216,7 +213,7 @@ namespace BlendInt {
 		program->reset();
 	}
 
-	void VertexIcon::PerformSizeUpdate(const Size& size)
+	void VectorIcon::PerformSizeUpdate(const Size& size)
 	{
 		set_size(size);
 	}

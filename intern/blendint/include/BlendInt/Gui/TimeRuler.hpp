@@ -15,57 +15,46 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SEPARATOR_HPP_
-#define _BLENDINT_GUI_SEPARATOR_HPP_
+#ifndef _BLENDINT_GUI_TIMERULER_HPP_
+#define _BLENDINT_GUI_TIMERULER_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Separator: public AbstractWidget
+	class TimeRuler: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(Separator);
-
 	public:
 
-		Separator (bool expand_x = false, bool expand_y = false);
+		TimeRuler ();
 
-		virtual ~Separator ();
-
-		void SetExpandX (bool expand);
-
-		void SetExpandY (bool expand);
-
-		void SetExpand (bool expand_x, bool expand_y);
-
-		virtual Size GetPreferredSize () const;
+		virtual ~TimeRuler ();
 
 		virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
-		virtual bool PreDraw (Profile& profile);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (Profile& profile);
 
-		virtual void PostDraw (Profile& profile);
-
 	private:
 
-		bool expand_x_;
-		bool expand_y_;
+		GLuint vao_[2];
 
-		Size preferred_size_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_SEPARATOR_HPP_ */
+#endif /* _BLENDINT_GUI_TIMERULER_HPP_ */

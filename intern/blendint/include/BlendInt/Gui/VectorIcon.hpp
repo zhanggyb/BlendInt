@@ -25,8 +25,7 @@
 #define _BLENDINT_VERTEXICON_HPP_
 
 #include <BlendInt/Core/Color.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractIcon.hpp>
 
@@ -35,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * Icon displayed with vertexes
 	 */
-	class VertexIcon: public AbstractIcon
+	class VectorIcon: public AbstractIcon
 	{
 	public:
 
@@ -55,9 +54,9 @@ namespace BlendInt {
 
 		static const unsigned int check_tria_face[4][3];
 
-		VertexIcon (int width, int height);
+		VectorIcon (int width, int height);
 
-		virtual ~VertexIcon ();
+		virtual ~VectorIcon ();
 
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
@@ -76,8 +75,8 @@ namespace BlendInt {
 
 	private:
 
-		RefPtr<GLArrayBuffer> vertex_buffer_;
-		RefPtr<GLElementArrayBuffer> element_buffer_;
+		GLBuffer<ARRAY_BUFFER, 1> vertex_buffer_;
+		GLBuffer<ELEMENT_ARRAY_BUFFER, 1> element_buffer_;
 
 		GLuint vao_;
 

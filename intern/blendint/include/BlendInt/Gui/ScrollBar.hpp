@@ -94,7 +94,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitScrollBarOnce ();
 
 		/**
 		 * @brief Check if cursor is on the slide icon

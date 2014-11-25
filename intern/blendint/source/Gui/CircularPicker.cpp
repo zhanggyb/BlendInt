@@ -69,7 +69,7 @@ namespace BlendInt {
 		set_size(dot_size);
 
 		VertexTool tool;
-		tool.GenerateVertices(dot_size, DefaultBorderWidth(), RoundAll, radius);
+		tool.GenerateVertices(dot_size, default_border_width(), RoundAll, radius);
 
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
@@ -81,7 +81,7 @@ namespace BlendInt {
 	void CircularPicker::PerformSizeUpdate(const Size& size)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size, DefaultBorderWidth(), round_type(), radius());
+		tool.GenerateVertices(size, default_border_width(), round_type(), radius());
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 		outer_->bind();
@@ -94,7 +94,7 @@ namespace BlendInt {
 	void CircularPicker::PerformRoundTypeUpdate(int type)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), type, radius());
+		tool.GenerateVertices(size(), default_border_width(), type, radius());
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 		outer_->bind();
@@ -107,7 +107,7 @@ namespace BlendInt {
 	void CircularPicker::PerformRoundRadiusUpdate(float radius)
 	{
 		VertexTool tool;
-		tool.GenerateVertices(size(), DefaultBorderWidth(), round_type(), radius);
+		tool.GenerateVertices(size(), default_border_width(), round_type(), radius);
 		inner_->bind();
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 		outer_->bind();

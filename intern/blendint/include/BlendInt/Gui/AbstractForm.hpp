@@ -117,7 +117,10 @@ namespace BlendInt {
 
 		static void SetDefaultBorderWidth (int border);
 
-		static int DefaultBorderWidth ();
+		static inline float default_border_width ()
+		{
+			return border_width;
+		}
 
 		static const Jitter kJit;
 
@@ -151,11 +154,38 @@ namespace BlendInt {
 			size_ = size;
 		}
 
+		static void GenerateVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		static void GenerateVertices (
+				const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				Orientation shadedir,
+				short shadetop,
+				short shadedown,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
 	private:
 
-		static int default_border_width;
+		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+
+		static void GenerateTriangleStripVertices (
+						const std::vector<GLfloat>* inner,
+						const std::vector<GLfloat>* edge,
+						unsigned int num,
+						std::vector<GLfloat>* strip);
+
+		static float border_width;
 
 		Size size_;
 

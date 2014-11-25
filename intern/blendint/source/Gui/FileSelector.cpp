@@ -47,6 +47,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Gui/Separator.hpp>
 
 namespace BlendInt {
 
@@ -233,8 +234,8 @@ namespace BlendInt {
 
 	HLayout* FileSelector::CreateToolButtonsOnce()
 	{
-		HLayout* toolbar = Manage(new HLayout);
-		DBG_SET_NAME(toolbar, "ToolBar");
+		HLayout* hlayout = Manage(new HLayout);
+		DBG_SET_NAME(hlayout, "ToolBar Layout");
 
 		// directory control group
 		Block* block1 = Manage(new Block);
@@ -277,12 +278,15 @@ namespace BlendInt {
 		block3->AddWidget(btn_sort_time);
 		block3->AddWidget(btn_sort_size);
 
-		toolbar->AddWidget(block1);
-		toolbar->AddWidget(btn_new);
-		toolbar->AddWidget(block2);
-		toolbar->AddWidget(block3);
+		Separator* separator1 = Manage(new Separator(true));
 
-		return toolbar;
+		hlayout->AddWidget(block1);
+		hlayout->AddWidget(separator1);
+		hlayout->AddWidget(btn_new);
+		hlayout->AddWidget(block2);
+		hlayout->AddWidget(block3);
+
+		return hlayout;
 	}
 
 	/*

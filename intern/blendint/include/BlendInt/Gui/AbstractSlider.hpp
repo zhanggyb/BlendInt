@@ -28,6 +28,8 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
@@ -55,20 +57,6 @@ namespace BlendInt {
 		 */
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
-		/**
-		 * @brief Set the highlight status of this icon
-		 * @param[in] highlight The highlight status
-		 */
-		void set_highlight (bool highlight)
-		{
-			m_highlight = highlight;
-		}
-
-		bool highlight () const
-		{
-			return m_highlight;
-		}
-
 	protected:
 
 		virtual void PerformSizeUpdate (const Size& size);
@@ -81,12 +69,8 @@ namespace BlendInt {
 
 		void InitializeSliderIcon ();
 
-		GLuint m_vao[2];
-
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		bool m_highlight;
+		GLuint vao_[2];
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 	};
 
 	template<typename T>

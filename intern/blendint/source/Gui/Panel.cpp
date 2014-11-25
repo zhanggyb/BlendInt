@@ -270,7 +270,7 @@ namespace BlendInt {
 	ResponseType Panel::Draw (Profile& profile)
 	{
 		if(refresh()) {
-			DBG_PRINT_MSG("%s", "refresh once");
+			//DBG_PRINT_MSG("%s", "refresh once");
 			set_refresh(false);
 			RenderToBuffer(profile);
 		}

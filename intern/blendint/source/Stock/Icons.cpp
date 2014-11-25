@@ -90,41 +90,41 @@ namespace BlendInt {
 		{
 			float vec[16][2];
 
-			menu_.reset(new VertexIcon(16, 16));
+			menu_.reset(new VectorIcon(16, 16));
 
 			for (size_t i = 0; i < 6; i++) {
-				vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
-				vec[i][1] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][1];
+				vec[i][0] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][0];
+				vec[i][1] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][1];
 			}
 
-			menu_->Load(vec, 6, VertexIcon::menu_tria_face, 2);
+			menu_->Load(vec, 6, VectorIcon::menu_tria_face, 2);
 
-			circle_.reset(new VertexIcon(10, 10));
+			circle_.reset(new VectorIcon(10, 10));
 
 			for (size_t i = 0; i < 16; i++) {
-				vec[i][0] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][0];
-				vec[i][1] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][1];
+				vec[i][0] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][0];
+				vec[i][1] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][1];
 			}
 
-			circle_->Load(vec, 16, VertexIcon::scroll_circle_face, 14);
+			circle_->Load(vec, 16, VectorIcon::scroll_circle_face, 14);
 
-			check_.reset(new VertexIcon(14, 14));
+			check_.reset(new VectorIcon(14, 14));
 
 			for (size_t i = 0; i < 6; i++) {
-				vec[i][0] = 0.5 * 14 * VertexIcon::check_tria_vert[i][0];
-				vec[i][1] = 0.5 * 14 * VertexIcon::check_tria_vert[i][1];
+				vec[i][0] = 0.5 * 14 * VectorIcon::check_tria_vert[i][0];
+				vec[i][1] = 0.5 * 14 * VectorIcon::check_tria_vert[i][1];
 			}
 
-			check_->Load(vec, 6, VertexIcon::check_tria_face, 4);
+			check_->Load(vec, 6, VectorIcon::check_tria_face, 4);
 
-			num_.reset(new VertexIcon(10, 10));
+			num_.reset(new VectorIcon(10, 10));
 
 			for (size_t i = 0; i < 3; i++) {
-				vec[i][0] = 0.5 * 10 * VertexIcon::num_tria_vert[i][0];
-				vec[i][1] = 0.5 * 10 * VertexIcon::num_tria_vert[i][1];
+				vec[i][0] = 0.5 * 10 * VectorIcon::num_tria_vert[i][0];
+				vec[i][1] = 0.5 * 10 * VectorIcon::num_tria_vert[i][1];
 			}
 
-			num_->Load(vec, 3, VertexIcon::num_tria_face, 1);
+			num_->Load(vec, 3, VectorIcon::num_tria_face, 1);
 		}
 
 		void Icons::CreatePixelIcons16x16 ()

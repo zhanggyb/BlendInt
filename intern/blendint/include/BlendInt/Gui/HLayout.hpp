@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_HLAYOUT_HPP_
 #define _BLENDINT_GUI_HLAYOUT_HPP_
 
+#include <deque>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {

@@ -22,6 +22,7 @@
  */
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
@@ -65,5 +66,30 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-}
+	void AbstractRoundForm::GenerateRoundedVertices(std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		GenerateVertices(size(),
+				default_border_width() * Theme::instance->pixel(),
+				round_type_,
+				radius_,
+				inner,
+				outer);
+	}
 
+	void AbstractRoundForm::GenerateRoundedVertices(Orientation shadedir,
+			short shadetop, short shadedown, std::vector<GLfloat>* inner,
+			std::vector<GLfloat>* outer)
+	{
+		GenerateVertices(size(),
+				default_border_width() * Theme::instance->pixel(),
+				round_type_,
+				radius_,
+				shadedir,
+				shadetop,
+				shadedown,
+				inner,
+				outer);
+	}
+
+}
