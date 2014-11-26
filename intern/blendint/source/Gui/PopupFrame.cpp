@@ -304,6 +304,11 @@ namespace BlendInt {
 
 	void PopupFrame::FocusEvent(bool focus)
 	{
+		if(focus) {
+			DBG_PRINT_MSG("%s", "focus");
+		} else {
+			DBG_PRINT_MSG("%s", "not focus");
+		}
 	}
 
 	void PopupFrame::MouseHoverInEvent(const MouseEvent& event)
@@ -316,10 +321,18 @@ namespace BlendInt {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_, event);
 		}
+
+		DBG_PRINT_MSG("%s", "hover out");
 	}
 
 	ResponseType PopupFrame::KeyPressEvent(const KeyEvent& event)
 	{
+		if(event.key() == Key_Escape) {
+			Refresh();
+			delete this;
+			return Accept;
+		}
+
 		return Ignore;
 	}
 
@@ -337,8 +350,8 @@ namespace BlendInt {
 	{
 		set_event_frame(event, this);
 
-		//last_ = position();
-		//cursor_ = event.position();
+		last_ = position();
+		cursor_ = event.position();
 
 		ResponseType retval = Ignore;
 
@@ -387,10 +400,10 @@ namespace BlendInt {
 
 			} else {
 
-//				int ox = event.position().x() - cursor_.x();
-//				int oy = event.position().y() - cursor_.y();
-//
-//				set_position(last_.x() + ox, last_.y() + oy);
+				int ox = event.position().x() - cursor_.x();
+				int oy = event.position().y() - cursor_.y();
+
+				set_position(last_.x() + ox, last_.y() + oy);
 
 				if(parent()) {
 					parent()->Refresh();

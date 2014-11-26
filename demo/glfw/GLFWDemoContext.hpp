@@ -26,7 +26,6 @@
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
-#include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
@@ -43,7 +42,6 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/Block.hpp>
-#include <BlendInt/Gui/StaticPanel.hpp>
 
 #include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
@@ -53,7 +51,6 @@
 #include <BlendInt/Gui/ListView.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/StaticPanel.hpp>
 
 namespace BI=BlendInt;
 

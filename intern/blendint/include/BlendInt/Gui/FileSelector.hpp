@@ -24,16 +24,15 @@
 #ifndef _BLENDINT_GUI_FILESELECTOR_HPP_
 #define _BLENDINT_GUI_FILESELECTOR_HPP_
 
-#include <BlendInt/Gui/BinLayout.hpp>
-
 #include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/FileBrowser.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Expander.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -42,7 +41,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget to browse and select local directories/files.
 	 */
-	class FileSelector: public BinLayout
+	class FileSelector: public Dialog
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileSelector);
 
@@ -61,16 +60,6 @@ namespace BlendInt {
 
 		Cpp::EventRef<> canceled () {return canceled_;}
 
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual ResponseType Draw (Profile& profile);
-
 	private:
 
 		void InitializeFileSelector ();
@@ -86,9 +75,6 @@ namespace BlendInt {
 		Expander* CreateSystemBookmarksOnce ();
 
 		void OnFileSelect ();
-
-		GLuint vao_;
-		RefPtr<GLArrayBuffer> inner_;
 
 		TextEntry* path_entry_;
 		TextEntry* file_entry_;

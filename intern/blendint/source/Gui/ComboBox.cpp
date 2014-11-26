@@ -57,7 +57,7 @@ namespace BlendInt {
 	ComboBox::ComboBox ()
 	: Widget(),
 	  status_down_(false),
-	  list_(0)
+	  popup_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -115,9 +115,9 @@ namespace BlendInt {
 	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
 	{
 		model_ = model;
-		if(list_) {
-			list_->SetModel(model_);
-		}
+		//if(list_) {
+		//	list_->SetModel(model_);
+		//}
 	}
 
 	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -271,31 +271,54 @@ namespace BlendInt {
 
 		Context* context = event.context();
 
-		if(list_) {
-			AbstractInteractiveForm* parent = list_->parent();
-			delete parent;
-			list_ = 0;
+		if(popup_) {
+			delete popup_;
+			popup_ = 0;
 			SetRoundType(RoundAll);
 		} else {
-			list_ = Manage(new ListView);
+			ListView* list = Manage(new ListView);
 
 			if(model_) {
-				list_->SetModel(model_);
+				list->SetModel(model_);
 			}
 
-			list_->Resize(200, list_->size().height());
-			list_->MoveTo(position().x(), position().y() + size().height());
+			list->Resize(200, list->size().height());
 
-			Dialog* screen = Manage(new Dialog);
-			screen->Resize(list_->size());
-			screen->AddWidget(list_);
+			popup_ = Manage(new PopupFrame);
+			popup_->Resize(list->size());
+			popup_->AddWidget(list);
 
-			Point pos = GetGlobalPosition();
+			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
 
-			screen->MoveTo(pos.x(), pos.y() + size().height());
-			context->AddFrame(screen);
-			SetRoundType(RoundBottomLeft | RoundBottomRight);
-			//context->SetFocusedWidget(list_);	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
+			Point pos = event.frame()->GetAbsolutePosition(this);
+
+			int top = pos.y() + size().height() + popup_->size().height();
+			int bottom = pos.y() - popup_->size().height();
+
+			if(top <= context->size().height()) {
+				popup_->MoveTo(pos.x(), pos.y() + size().height());
+				SetRoundType(RoundBottomLeft | RoundBottomRight);
+			} else {
+
+				if(bottom >= 0) {
+					popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+					SetRoundType(RoundTopLeft | RoundTopRight);
+				} else {
+
+					int diff = top - context->size().height() + bottom;
+					if(diff <= 0) {
+						popup_->MoveTo(pos.x(), pos.y() + size().height());
+						SetRoundType(RoundBottomLeft | RoundBottomRight);
+					} else {
+						popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+						SetRoundType(RoundTopLeft | RoundTopRight);
+					}
+
+				}
+
+			}
+
+			context->AddFrame(popup_);
 		}
 
 		Refresh();
@@ -362,8 +385,12 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 	}
 
-	void ComboBox::OnMenuActionTriggered (Action* item)
+	void ComboBox::OnPopupListDestroyed(AbstractFrame* frame)
 	{
+		assert(frame == popup_);
+		popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
+		popup_ = 0;
+		SetRoundType(RoundAll);
 	}
 
 }

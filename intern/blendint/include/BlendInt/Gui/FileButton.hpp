@@ -27,11 +27,11 @@
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
 
-#include <BlendInt/Gui/StaticPanel.hpp>
-
 #include <Cpp/Events.hpp>
 
 namespace BlendInt {
+
+	class AbstractFrame;
 
 	/**
 	 * @brief A button used to call FileSelector
@@ -74,12 +74,14 @@ namespace BlendInt {
 
 		void OnCanceled ();
 
+		void OnDialogDestroyed (AbstractFrame* dialog);
+
 		GLuint vao_[2];
 
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		StaticPanel* panel_;
+		FileSelector* dialog_;
 
 		String file_;
 

@@ -32,16 +32,10 @@ TEST_F(FileSelectorTest1, Foo1)
 	SetContext(context);
 	context->Resize(1280, 800);
 
-    FileSelector* fb = Manage(new FileSelector);
-	fb->Resize(800, 600);
-	fb->SetRoundType(RoundAll);
+    FileSelector* fs = Manage(new FileSelector);
+	fs->Resize(800, 600);
 
-	Dialog* dialog = Manage(new Dialog);
-	dialog->Resize(800, 600);
-
-	dialog->AddWidget(fb);
-
-	context->AddFrame(dialog);
+	context->AddFrame(fs);
 
     RunLoop(win);
     Terminate();

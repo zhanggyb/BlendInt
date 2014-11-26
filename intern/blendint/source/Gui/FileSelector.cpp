@@ -55,7 +55,7 @@ namespace BlendInt {
 	using Stock::Icons;
 
 	FileSelector::FileSelector ()
-	: BinLayout(),
+	: Dialog(),
 	  path_entry_(0),
 	  file_entry_(0)
 	{
@@ -68,89 +68,10 @@ namespace BlendInt {
 
 	FileSelector::~FileSelector ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 	
-	void FileSelector::PerformSizeUpdate(const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 5.f);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
-			BinLayout::PerformSizeUpdate(request);
-			return;
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void FileSelector::PerformRoundTypeUpdate (int round_type)
-	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone,
-				5.f);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		GLArrayBuffer::reset();
-
-		Refresh();
-	}
-
-	void FileSelector::PerformRoundRadiusUpdate (float radius)
-	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, round_type(),
-				radius);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		GLArrayBuffer::reset();
-
-		Refresh();
-	}
-
-	ResponseType FileSelector::Draw (Profile& profile)
-	{
-		Shaders::instance->widget_triangle_program()->use();
-
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
-		return Ignore;
-	}
-
 	void FileSelector::InitializeFileSelector ()
 	{
-		glGenVertexArrays(1, &vao_);
-
-		glBindVertexArray(vao_);
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
-
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		inner_->reset();
-
 		// create sub widgets
 		VLayout* layout = Manage(new VLayout);
 		DBG_SET_NAME(layout, "Main Layout");
@@ -170,7 +91,7 @@ namespace BlendInt {
 		//layout->Append(splitter);
 		layout->AddWidget(area);
 
-		AddWidget(layout);
+		SetLayout(layout);
 
 		std::string pwd =getenv("PWD");
 		pwd.append("/");
@@ -192,7 +113,7 @@ namespace BlendInt {
 		VLayout* vbox = Manage(new VLayout);
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetMargin(Margin(2, 2, 2, 2));
-		vbox->SetSpace(4);
+		vbox->SetSpace(2);
 
 		path_entry_ = Manage(new TextEntry);
 		DBG_SET_NAME(path_entry_, "Path Entry");
@@ -279,16 +200,14 @@ namespace BlendInt {
 		block3->AddWidget(btn_sort_size);
 
 		Separator* separator1 = Manage(new Separator);
-		Separator* separator2 = Manage(new Separator);
-		Separator* separator3 = Manage(new Separator(true));
+		Separator* separator2 = Manage(new Separator(true));
 
-		hlayout->AddWidget(separator1);
 		hlayout->AddWidget(block1);
-		hlayout->AddWidget(separator2);
+		hlayout->AddWidget(separator1);
 		hlayout->AddWidget(btn_new);
 		hlayout->AddWidget(block2);
 		hlayout->AddWidget(block3);
-		hlayout->AddWidget(separator3);
+		hlayout->AddWidget(separator2);
 
 		return hlayout;
 	}

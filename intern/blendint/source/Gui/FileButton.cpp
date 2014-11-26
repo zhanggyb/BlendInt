@@ -43,13 +43,15 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
 
 	FileButton::FileButton ()
 	: AbstractButton(),
-	  panel_(0)
+	  dialog_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -226,15 +228,12 @@ namespace BlendInt {
 	void FileButton::OnClicked ()
 	{
 		Context* context = Context::GetContext(this);
+		assert(dialog_ == 0);
 
 		if(context) {
 
-			assert(panel_ == 0);
-
-			panel_ = Manage(new StaticPanel);
-
-			FileSelector* file_selector = Manage(new FileSelector);
-			DBG_SET_NAME(file_selector, "File Selector on File Button");
+			dialog_ = Manage(new FileSelector);
+			DBG_SET_NAME(dialog_, "File Selector on File Button");
 
 			int w = 800;
 			int h = 600;
@@ -250,43 +249,35 @@ namespace BlendInt {
 			int x = (context->size().width() - w) / 2;
 			int y = (context->size().height() - h) / 2;
 
-			panel_->Resize(w, h);
-			panel_->AddWidget(file_selector);
+			dialog_->Resize(w, h);
+			dialog_->MoveTo(x, y);
 
-			Dialog* screen = Manage(new Dialog);
-			screen->Resize(panel_->size());
-			screen->MoveTo(x, y);
-			screen->AddWidget(panel_);
+			context->AddFrame(dialog_);
 
-			context->AddFrame(screen);
+			events()->connect(dialog_->destroyed(), this, &FileButton::OnDialogDestroyed);
 
-			events()->connect(file_selector->opened(), this, &FileButton::OnOpened);
-			events()->connect(file_selector->canceled(), this, &FileButton::OnCanceled);
+			//events()->connect(dialog_->opened(), this, &FileButton::OnOpened);
+			//events()->connect(dialog_->canceled(), this, &FileButton::OnCanceled);
 
 		}
 	}
 
 	void FileButton::OnOpened ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
-		fs->opened().disconnectOne(this, &FileButton::OnOpened);
-		file_ = fs->file_selected();
-
-		AbstractInteractiveForm* screen = panel_->parent();
-		delete screen;
-		panel_ = 0;
-
-		file_selected_.fire();
+		// TODO:
+		//file_selected_.fire();
 	}
 
 	void FileButton::OnCanceled ()
 	{
-		FileSelector* fs = dynamic_cast<FileSelector*>(panel_->first_child());
-		fs->canceled().disconnectOne(this, &FileButton::OnCanceled);
-
-		AbstractInteractiveForm* screen = panel_->parent();
-		delete screen;
-		panel_ = 0;
+		// TODO:
 	}
 
+	void FileButton::OnDialogDestroyed(AbstractFrame* dialog)
+	{
+		assert(dialog == dialog_);
+
+		dialog_->destroyed().disconnectOne(this, &FileButton::OnDialogDestroyed);
+		dialog_ = 0;
+	}
 }

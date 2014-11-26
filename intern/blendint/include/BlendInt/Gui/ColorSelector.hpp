@@ -62,7 +62,6 @@ namespace BlendInt {
 		ButtonGroup radio_group_;
 
 		Stack* stack_;
-
 	};
 }
 

@@ -34,16 +34,14 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Gui/BinLayout.hpp>
-
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 namespace BlendInt {
 
@@ -176,7 +174,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		BinLayout* frame = Manage(new BinLayout);
+		VLayout* frame = Manage(new VLayout);
 
 		PushBackSubForm(title_button);	// 0
 		PushBackSubForm(frame);	// 1
@@ -204,7 +202,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		BinLayout* frame = Manage(new BinLayout);
+		VLayout* frame = Manage(new VLayout);
 
 		PushBackSubForm(title_button);	// 0
 		PushBackSubForm(frame);	// 1
@@ -234,7 +232,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
+		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
 		frame->AddWidget(widget);
 		return true;
 	}
@@ -317,7 +315,7 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
+		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -364,7 +362,7 @@ namespace BlendInt {
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		BinLayout* frame = dynamic_cast<BinLayout*>(GetWidgetAt(1));
+		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
 
 		if(toggle) {
 			int x = position().x();

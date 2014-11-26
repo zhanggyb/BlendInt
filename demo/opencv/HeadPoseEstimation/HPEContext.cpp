@@ -9,7 +9,6 @@
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/CVImageViewport.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
-#include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
@@ -18,6 +17,7 @@
 
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/MenuButton.hpp>
 
 using namespace BlendInt;
 

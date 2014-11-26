@@ -29,6 +29,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/PopupFrame.hpp>
 
 namespace BlendInt {
 
@@ -71,9 +72,9 @@ namespace BlendInt {
 
 	private:
 
-		void OnMenuActionTriggered (Action* item);
-
 		void InitializeComboBox ();
+
+		void OnPopupListDestroyed (AbstractFrame* frame);
 
 		GLuint vaos_[2];
 
@@ -85,7 +86,7 @@ namespace BlendInt {
 
 		String text_;
 
-		ListView* list_;
+		PopupFrame* popup_;
 
 		RefPtr<AbstractItemModel> model_;
 

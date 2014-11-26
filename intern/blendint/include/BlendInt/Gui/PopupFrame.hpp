@@ -95,6 +95,9 @@ namespace BlendInt {
 
 		glm::mat4 model_matrix_;
 
+		Point last_;
+		Point cursor_;
+
 		/**
 		 * - 0: inner
 		 * - 1: outer
