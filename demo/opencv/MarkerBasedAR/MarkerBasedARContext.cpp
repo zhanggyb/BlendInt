@@ -50,7 +50,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 
 	timer_.reset(new Timer);
 	//timer_->SetInterval(1000 / 30);	// 30 fps
-	timer_->SetInterval(1000 / 24);	// 25 fps
+	timer_->SetInterval(1000 / 30);	// 25 fps
 
 	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
 }

@@ -64,6 +64,8 @@ namespace BlendInt {
 
 	float AbstractInteractiveForm::border_width = 1.f;
 
+	pthread_mutex_t AbstractInteractiveForm::refresh_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 	const float AbstractInteractiveForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
         { 0.0, 0.0 },
         { 0.195, 0.02 },
@@ -263,6 +265,9 @@ namespace BlendInt {
 
 	void AbstractInteractiveForm::Refresh()
 	{
+		// TODO: mutex lock here
+		pthread_mutex_lock(&refresh_mutex);
+
 		if(!refresh()) {
 
 			AbstractInteractiveForm* root = this;
@@ -291,6 +296,9 @@ namespace BlendInt {
 
 			set_refresh(true);
 		}
+
+		// TODO: mutex unlock
+		pthread_mutex_unlock(&refresh_mutex);
 	}
 
 	void AbstractInteractiveForm::MoveBackward()

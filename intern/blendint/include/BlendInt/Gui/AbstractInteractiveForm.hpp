@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
 #define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
 
+#include <pthread.h>
 #include <vector>
 
 #include <Cpp/Events.hpp>
@@ -774,6 +775,8 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::string name_;
 #endif
+
+		static pthread_mutex_t refresh_mutex;
 
 		static float border_width;
 

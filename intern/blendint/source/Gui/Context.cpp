@@ -245,11 +245,17 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		*/
 
+		// TODO: mutex lock before render all widgets
+		pthread_mutex_lock(&refresh_mutex);
+
 		set_refresh(false);
 		if(PreDraw(profile_)) {
 			Draw(profile_);
 			PostDraw(profile_);
 		}
+
+		// TODO: mutex unlock after
+		pthread_mutex_unlock(&refresh_mutex);
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
