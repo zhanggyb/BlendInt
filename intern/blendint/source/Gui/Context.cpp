@@ -322,6 +322,11 @@ namespace BlendInt
 		// TODO: override this function
 	}
 
+	void Context::MakeGLContextCurrent()
+	{
+		// TODO: override this to support GL Context manipulation in thread
+	}
+
 	Context* Context::GetContext (AbstractInteractiveForm* widget)
 	{
 		AbstractInteractiveForm* parent = widget->parent();

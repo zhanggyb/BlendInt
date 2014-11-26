@@ -68,6 +68,8 @@ namespace BlendInt {
 
 		virtual void SynchronizeWindow ();
 
+		virtual void MakeGLContextCurrent ();
+
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return resized_;

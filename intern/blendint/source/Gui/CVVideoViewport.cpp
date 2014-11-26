@@ -339,7 +339,6 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-        // FIXME: cannot capture from camera and upload to texture in this callback function
         Refresh();
 	}
 

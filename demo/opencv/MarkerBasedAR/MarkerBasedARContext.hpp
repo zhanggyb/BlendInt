@@ -20,11 +20,13 @@ class MarkerBasedARContext: public BI::Context
 {
 public:
 
-	MarkerBasedARContext ();
+	explicit MarkerBasedARContext (GLFWwindow* window);
 
 	virtual ~MarkerBasedARContext ();
 
 	virtual void SynchronizeWindow ();
+
+	virtual void MakeGLContextCurrent ();
 
 protected:
 
@@ -42,6 +44,8 @@ private:
 
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 
+	void OnToggleCamera (bool toggled);
+
 	void OnPlay ();
 
 	void OnPause ();
@@ -56,7 +60,12 @@ private:
 
 	cv::VideoCapture video_stream_;
 
+	cv::Mat frame_;
+
 	BI::RefPtr<BI::Timer> timer_;
+
+	GLFWwindow* window_;
+
 };
 
 #endif /* _MARKERBASEDARCONTEXT_HPP_ */

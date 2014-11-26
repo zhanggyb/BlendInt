@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("OpenCV Demo", 1280, 800);
 
-	MarkerBasedARContext* context = Manage(new MarkerBasedARContext);
+	MarkerBasedARContext* context = Manage(new MarkerBasedARContext(win));
 	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);

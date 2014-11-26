@@ -54,7 +54,7 @@ TEST_F(ThreadTest1, Foo1)
 {
 	RefPtr<Runnable1> runnable(new Runnable1);
 
-	Thread thread(runnable, true);
+	Thread thread(runnable, false);
 	thread.Start();
 
 	sleep(10);
