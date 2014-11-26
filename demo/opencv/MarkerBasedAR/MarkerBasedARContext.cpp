@@ -160,7 +160,7 @@ void MarkerBasedARContext::OnToggleCamera(bool toggled)
 	}
 
 	if(toggled) {
-		OpenCamera(0, Size(800, 600));
+		OpenCamera(0, Size(1280, 720));
 	} else {
 		video_stream_.release();
 	}

@@ -29,9 +29,111 @@
 #endif
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Core/AbstractRunnable.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
+
+	class AbstractRunnable: public Object
+	{
+	public:
+
+		inline AbstractRunnable() {}
+
+		virtual ~AbstractRunnable ()
+		{}
+
+		virtual void* Run () = 0;
+	};
+
+	class ThreadMutex;
+
+	class ThreadMutexAttrib
+	{
+	public:
+		
+		enum Type {
+			NORMAL = PTHREAD_MUTEX_NORMAL,
+			ERRORCHECK = PTHREAD_MUTEX_ERRORCHECK,
+			RECURSIVE = PTHREAD_MUTEX_RECURSIVE,
+			DEFAULT = PTHREAD_MUTEX_DEFAULT	
+        };
+		
+		inline ThreadMutexAttrib () {}
+		
+		inline ~ThreadMutexAttrib () {}
+		
+		inline bool initialize ()
+		{
+			return pthread_mutexattr_init(&attribute_) == 0 ? true : false;
+		}
+		
+		inline bool destroy ()
+		{
+			return pthread_mutexattr_destroy(&attribute_) == 0 ? true : false;
+		}
+		
+        inline bool set_protocol (int protocol)
+        {
+            return pthread_mutexattr_setprotocol(&attribute_, protocol) == 0 ? true : false;
+        }
+        
+	private:
+		
+		friend class ThreadMutex;
+		
+		pthread_mutexattr_t attribute_;
+		
+	};
+
+	/**
+	 * @brief Thread Mutex
+	 *
+	 * Create static mutex by default, if dynamically, use initialize()
+	 * and destroy() when no longer used.
+	 */
+	class ThreadMutex
+	{
+	public:
+		
+		inline ThreadMutex ()
+		: mutex_(PTHREAD_MUTEX_INITIALIZER)
+		{
+		}
+		
+		~ThreadMutex ()
+		{
+		}
+
+		inline bool initialize (const ThreadMutexAttrib& attr)
+		{
+			return pthread_mutex_init(&mutex_, &attr.attribute_);
+		}
+
+		inline bool lock ()
+		{
+			return pthread_mutex_lock(&mutex_) == 0 ? true : false;
+		}
+		
+		inline bool trylock ()
+		{
+			return pthread_mutex_trylock(&mutex_) == 0 ? true : false;
+		}
+		
+		inline bool unlock ()
+		{
+			return pthread_mutex_unlock(&mutex_) == 0 ? true : false;
+		}
+		
+		inline bool destroy ()
+		{
+			return pthread_mutex_destroy(&mutex_) == 0 ? true : false;
+		}
+		
+	private:
+		
+		pthread_mutex_t mutex_;
+		
+	};
 
 	class Thread
 	{
