@@ -235,12 +235,12 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
@@ -295,7 +295,7 @@ namespace BlendInt {
 
 			}
 
-			Refresh();
+			RequestRedraw();
 			return Accept;
 		}
 		return Accept;
@@ -333,7 +333,7 @@ namespace BlendInt {
 
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void FrameSplitter::InsertFrame(int index, Frame* frame, SizePolicy policy)
@@ -353,7 +353,7 @@ namespace BlendInt {
 
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	int FrameSplitter::GetFrameIndex (Frame* frame) const

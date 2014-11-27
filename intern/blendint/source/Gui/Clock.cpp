@@ -111,7 +111,7 @@ namespace BlendInt {
 			angle_ = angle_ % 360;
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -142,7 +142,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(second_hand_vertices), second_hand_vertices);
 			buffer_.reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

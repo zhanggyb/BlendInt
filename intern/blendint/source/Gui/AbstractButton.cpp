@@ -168,7 +168,7 @@ namespace BlendInt {
 			}
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void AbstractButton::MouseHoverOutEvent(const MouseEvent& event)
@@ -182,7 +182,7 @@ namespace BlendInt {
 
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
@@ -196,7 +196,7 @@ namespace BlendInt {
 				m_status[ButtonChecked] = !m_status[ButtonChecked];
 			}
 
-			Refresh();
+			RequestRedraw();
 
 			pressed_.fire();
 		}
@@ -219,7 +219,7 @@ namespace BlendInt {
 				}
 			}
 
-			Refresh();
+			RequestRedraw();
 
 			switch (fire_event) {
 
@@ -278,7 +278,7 @@ namespace BlendInt {
 	{
 		if(m_status[ButtonCheckable]) {
 			if(m_status[ButtonChecked] != down)
-				Refresh();
+				RequestRedraw();
 
 			m_status[ButtonChecked] = down ? 1 : 0;
 
@@ -291,7 +291,7 @@ namespace BlendInt {
 		} else {
 
 			if(m_status[ButtonDown] != down)
-				Refresh();
+				RequestRedraw();
 
 			m_status[ButtonDown] = down ? 1 : 0;
 			if(group_) {
@@ -319,7 +319,7 @@ namespace BlendInt {
 				return;
 
 			m_status[ButtonChecked] = checked ? 1 : 0;
-			Refresh();
+			RequestRedraw();
 
 			if(group_) {
 				group_->Toggle(this, m_status[ButtonChecked]);

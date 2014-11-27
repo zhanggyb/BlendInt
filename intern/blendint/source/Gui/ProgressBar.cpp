@@ -100,7 +100,7 @@ namespace BlendInt {
 			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -119,7 +119,7 @@ namespace BlendInt {
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		set_round_type(round_type);
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ProgressBar::PerformRoundRadiusUpdate (float radius)
@@ -133,7 +133,7 @@ namespace BlendInt {
 		outer_->set_data(tool.outer_size(), tool.outer_data());
 
 		set_round_radius(radius);
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType ProgressBar::Draw(Profile& profile)

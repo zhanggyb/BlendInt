@@ -11,7 +11,7 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Core/Timer.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
 #include <BlendInt/Gui/Panel.hpp>
@@ -57,7 +57,7 @@ private:
 
 	void OnTimeout (BI::Timer* t);
 
-	BI::CVImageViewport* viewport_image_;
+	BI::ImageViewport* viewport_image_;
 
 	BI::Viewport* viewport_3d_;
 

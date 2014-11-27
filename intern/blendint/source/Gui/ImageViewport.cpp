@@ -39,7 +39,8 @@
 #include <algorithm>
 #include <opencv2/highgui/highgui.hpp>
 
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Core/Image.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
@@ -50,9 +51,9 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Color CVImageViewport::background_color = Color(Color::Gray);
+	Color ImageViewport::background_color = Color(Color::Gray);
 
-	CVImageViewport::CVImageViewport ()
+	ImageViewport::ImageViewport ()
 	: Frame(),
 	  vao_(0)
 	{
@@ -61,119 +62,213 @@ namespace BlendInt {
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
 
-		InitializeCVImageView();
+		texture_.reset(new GLTexture2D);
+		InitializeImageViewport();
+
+		ThreadMutexAttrib attrib;
+		attrib.initialize();
+		mutex_.initialize(attrib);
+		attrib.destroy();
 	}
 
-	CVImageViewport::~CVImageViewport ()
+	ImageViewport::~ImageViewport ()
 	{
 		glDeleteVertexArrays(1, &vao_);
+		mutex_.destroy();
 	}
 
-	bool CVImageViewport::IsExpandX () const
+	bool ImageViewport::IsExpandX () const
 	{
 		return true;
 	}
 
-	bool CVImageViewport::IsExpandY () const
+	bool ImageViewport::IsExpandY () const
 	{
 		return true;
 	}
 
-	Size CVImageViewport::GetPreferredSize () const
+	Size ImageViewport::GetPreferredSize () const
 	{
 		Size prefer(640, 480);
 
-		if(cv_image_.data) {
-			prefer.reset(cv_image_.cols, cv_image_.rows);
+		if(texture_ && glIsTexture(texture_->id())) {
+			texture_->bind();
+			prefer.reset(texture_->GetWidth(), texture_->GetHeight());
+			texture_->reset();
 		}
 
 		return prefer;
 	}
 
-	void CVImageViewport::OpenFile (const char* filename)
+	bool ImageViewport::OpenFile (const char* filename)
 	{
-		cv_image_ = cv::imread(filename);
+		bool retval = false;
 
-		if(cv_image_.data) {
+		Image image;
+
+		if(image.Read(filename)) {
 
 			image_plane_.bind();
 			float* ptr = (float*)image_plane_.map();
-			*(ptr + 4) = cv_image_.cols;
-			*(ptr + 9) = cv_image_.rows;
-			*(ptr + 12) = cv_image_.cols;
-			*(ptr + 13) = cv_image_.rows;
+			*(ptr + 4) = image.width();
+			*(ptr + 9) = image.height();
+			*(ptr + 12) = image.width();
+			*(ptr + 13) = image.height();
 			image_plane_.unmap();
 			image_plane_.reset();
 
-			texture_.bind();
-			switch (cv_image_.channels()) {
+			mutex_.lock();
 
+			if(!texture_) {
+				texture_.reset(new GLTexture2D);
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+				texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+			} else if(texture_->id() == 0) {
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+				texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			} else {
+				texture_->bind();
+			}
+
+			switch(image.channels()) {
 				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_.SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
+					texture_->SetImage(0, GL_RGB, image.width(),
+					        image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+					        image.pixels());
+					retval = true;
 					break;
 				}
 
-				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-				{
+				case 4: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_.SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
+					texture_->SetImage(0, GL_RGBA, image.width(),
+					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					        image.pixels());
+					retval = true;
 					break;
 				}
 
 				default:
 					break;
 			}
-			texture_.reset();
 
-			//AdjustImageArea(size());
+			texture_->reset();
+			mutex_.unlock();
 		}
+
+		return retval;
 	}
 
-	void CVImageViewport::LoadImage (const cv::Mat& image)
+	bool ImageViewport::SetTexture(const RefPtr<GLTexture2D>& texture)
 	{
-		cv_image_ = image;
-		if(cv_image_.data) {
+		bool retval = false;
+
+		if(texture && glIsTexture(texture->id())) {
+
+			mutex_.lock();
+
+			texture_ = texture;
+			texture_->bind();
+			image_plane_.bind();
+			float* ptr = (float*)image_plane_.map();
+			*(ptr + 4) = texture_->GetWidth();
+			*(ptr + 9) = texture_->GetHeight();
+			*(ptr + 12) = texture_->GetWidth();
+			*(ptr + 13) = texture_->GetHeight();
+			image_plane_.unmap();
+			image_plane_.reset();
+			texture_->reset();
+
+			mutex_.unlock();
+
+			retval = true;
+		}
+
+		return retval;
+	}
+
+#ifdef __USE_OPENCV__
+	bool ImageViewport::LoadCVImage (const cv::Mat& image)
+	{
+		bool retval = false;
+
+		if(image.data) {
 
 			image_plane_.bind();
 			float* ptr = (float*)image_plane_.map();
-			*(ptr + 4) = cv_image_.cols;
-			*(ptr + 9) = cv_image_.rows;
-			*(ptr + 12) = cv_image_.cols;
-			*(ptr + 13) = cv_image_.rows;
+			*(ptr + 4) = image.cols;
+			*(ptr + 9) = image.rows;
+			*(ptr + 12) = image.cols;
+			*(ptr + 13) = image.rows;
 			image_plane_.unmap();
 			image_plane_.reset();
 
-			texture_.bind();
-			switch (cv_image_.channels()) {
+			mutex_.lock();
+
+			if(!texture_) {
+				texture_.reset(new GLTexture2D);
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+				texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+			} else if(texture_->id() == 0) {
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+				texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			} else {
+				texture_->bind();
+			}
+
+			texture_->bind();
+			switch (image.channels()) {
 
 				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_.SetImage(0, GL_RGB, cv_image_.cols, cv_image_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, cv_image_.data);
+					texture_->SetImage(0, GL_RGB, image.cols, image.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+					retval = true;
 					break;
 				}
 
 				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
 				{
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_.SetImage(0, GL_RGBA, cv_image_.cols, cv_image_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, cv_image_.data);
+					texture_->SetImage(0, GL_RGBA, image.cols, image.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, image.data);
+					retval = true;
 					break;
 				}
 
 				default:
 					break;
 			}
-			texture_.reset();
+			texture_->reset();
 
-			//AdjustImageArea(size());
+			mutex_.unlock();
 		}
-	}
 
-	void CVImageViewport::PerformPositionUpdate(const PositionUpdateRequest& request)
+		return retval;
+	}
+#endif
+
+
+	void ImageViewport::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -198,7 +293,7 @@ namespace BlendInt {
 		}
 	}
 
-	void CVImageViewport::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void ImageViewport::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			float x = static_cast<float>(position().x() + offset().x());
@@ -220,7 +315,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool CVImageViewport::PreDraw(Profile& profile)
+	bool ImageViewport::PreDraw(Profile& profile)
 	{
 		if(!visiable()) return false;
 
@@ -237,39 +332,49 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType CVImageViewport::Draw (Profile& profile)
+	ResponseType ImageViewport::Draw (Profile& profile)
 	{
-		glActiveTexture(GL_TEXTURE0);
-		texture_.bind();
+		if(!mutex_.trylock()) {
+			return Accept;
+		}
 
-		float w = texture_.GetWidth();
-		float h = texture_.GetHeight();
+		if(texture_ && glIsTexture(texture_->id())) {
 
-		Shaders::instance->widget_image_program()->use();
+			glActiveTexture(GL_TEXTURE0);
+			texture_->bind();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
-				(size().width() - w)/2.f,
-				(size().height() - h) / 2.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
+			float w = texture_->GetWidth();
+			float h = texture_->GetHeight();
 
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
+			Shaders::instance->widget_image_program()->use();
 
-		texture_.reset();
-		GLSLProgram::reset();
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
+					(size().width() - w)/2.f,
+					(size().height() - h) / 2.f);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
+
+			glBindVertexArray(vao_);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glBindVertexArray(0);
+
+			texture_->reset();
+			GLSLProgram::reset();
+
+		}
+
+		mutex_.unlock();
 
 		return Accept;
 	}
 	
-	void CVImageViewport::PostDraw(Profile& profile)
+	void ImageViewport::PostDraw(Profile& profile)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
-	void CVImageViewport::InitializeCVImageView ()
+	void ImageViewport::InitializeImageViewport ()
 	{
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
@@ -296,18 +401,19 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		image_plane_.reset();
 
-		texture_.generate();
-		texture_.bind();
-		texture_.SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		texture_.SetMinFilter(GL_LINEAR);
-		texture_.SetMagFilter(GL_LINEAR);
-		texture_.SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-		texture_.reset();
+		texture_->generate();
+		texture_->bind();
+		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		texture_->SetMinFilter(GL_LINEAR);
+		texture_->SetMagFilter(GL_LINEAR);
+		texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		texture_->reset();
 
 	}
 
-	void CVImageViewport::AdjustImageArea (const Size& size)
+	void ImageViewport::AdjustImageArea (const Size& size)
 	{
+		/*
 		int w = std::min(size.width(), cv_image_.cols);
 		int h = std::min(size.height(), cv_image_.rows);
 
@@ -335,9 +441,10 @@ namespace BlendInt {
 		image_plane_.bind();
 		image_plane_.set_data(sizeof(vertices), vertices);
 		image_plane_.reset();
+		*/
 	}
 
-	void CVImageViewport::AdjustScrollArea(const Size& size)
+	void ImageViewport::AdjustScrollArea(const Size& size)
 	{
 		//cv_image_.cols;
 	}

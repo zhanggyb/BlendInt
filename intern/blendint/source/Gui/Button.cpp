@@ -105,7 +105,7 @@ namespace BlendInt {
 		icon_offset_x_ = default_padding.left();
 		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool Button::IsExpandX() const
@@ -181,7 +181,7 @@ namespace BlendInt {
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -214,7 +214,7 @@ namespace BlendInt {
 
 		CalculateIconTextPosition(size(), round_type(), round_radius());
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Button::PerformRoundRadiusUpdate(float radius)
@@ -242,7 +242,7 @@ namespace BlendInt {
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
-			Refresh();
+			RequestRedraw();
 	}
 
 	ResponseType Button::Draw (Profile& profile)

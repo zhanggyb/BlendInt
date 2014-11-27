@@ -104,7 +104,7 @@ namespace BlendInt {
 
 			retval = true;
 
-			Refresh();
+			RequestRedraw();
 		} else {
 			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
 		}
@@ -116,7 +116,7 @@ namespace BlendInt {
 	{
 		if(video_stream_.isOpened()) {
 			status_ = VideoPlay;
-			Refresh();
+			RequestRedraw();
 			timer_->Start();
 		} else {
 			DBG_PRINT_MSG("%s", "video stream is not opened");
@@ -128,7 +128,7 @@ namespace BlendInt {
 		if(timer_->enabled()) {
 			status_ = VideoPause;
 			timer_->Stop();
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -141,7 +141,7 @@ namespace BlendInt {
 			video_stream_.release();
 			frame_.release();
 
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -339,7 +339,7 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-        Refresh();
+        TryRequestRedraw();
 	}
 
 }

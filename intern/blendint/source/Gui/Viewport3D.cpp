@@ -91,7 +91,7 @@ namespace BlendInt {
 					default_camera_->LookAt(pos, center, up);
 					default_camera_->SetPerspective(default_camera_->fovy(),
 					        1.0f * size().width() / size().height());
-					Refresh();
+					RequestRedraw();
 					break;
 				}
 
@@ -202,7 +202,7 @@ namespace BlendInt {
 					default_camera_->Orbit(dx, dy);
 				}
 
-				Refresh();
+				RequestRedraw();
 
 				break;
 			}

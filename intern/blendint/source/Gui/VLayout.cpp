@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 		if(PushBackSubForm(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -58,7 +58,7 @@ namespace BlendInt {
 	{
 		if(InsertSubForm(index, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		if(InsertSubForm(row, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -165,7 +165,7 @@ namespace BlendInt {
 	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInVBox(size(), request, m_alignment, m_space);
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool VLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -194,7 +194,7 @@ namespace BlendInt {
 			set_size(*request.size());
 			FillSubWidgetsInVBox(size(), margin(), m_alignment,
 											m_space);
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

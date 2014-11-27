@@ -88,7 +88,7 @@ namespace BlendInt {
             buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
             GLArrayBuffer::reset();
 
-            Refresh();
+            RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -122,7 +122,7 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ToolButton::PerformRoundRadiusUpdate(float radius)
@@ -151,17 +151,17 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ToolButton::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ToolButton::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType ToolButton::Draw (Profile& profile)

@@ -86,7 +86,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Panel::AddWidget(AbstractWidget* widget)
@@ -97,7 +97,7 @@ namespace BlendInt {
 			PushBackSubForm(widget);
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Panel::InsertWidget(int index, AbstractWidget* widget)
@@ -108,7 +108,7 @@ namespace BlendInt {
 			InsertSubForm(index, widget);
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool Panel::IsExpandX() const
@@ -207,7 +207,7 @@ namespace BlendInt {
 				layout_->Resize(size());
 			}
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -238,7 +238,7 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Panel::PerformRoundRadiusUpdate(float radius)
@@ -264,7 +264,7 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType Panel::Draw (Profile& profile)

@@ -84,7 +84,7 @@ namespace BlendInt {
 		color0_ = color;
 		color0_.set_alpha(1.f);
 		color1_ = color;
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ColorButton::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -105,7 +105,7 @@ namespace BlendInt {
 			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		ReportSizeUpdate(request);
@@ -127,7 +127,7 @@ namespace BlendInt {
 			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			Refresh();
+			RequestRedraw();
 	}
 
 	void ColorButton::PerformRoundRadiusUpdate (float radius)
@@ -146,7 +146,7 @@ namespace BlendInt {
 			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			Refresh();
+			RequestRedraw();
 	}
 
 	ResponseType ColorButton::Draw (Profile& profile)

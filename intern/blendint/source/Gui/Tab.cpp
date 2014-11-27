@@ -156,7 +156,7 @@ namespace BlendInt {
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
 
 		stack->SetIndex(index);
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Tab::FillSubWidgetsInTab(const Size& out_size)

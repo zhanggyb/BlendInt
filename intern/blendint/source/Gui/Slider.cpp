@@ -117,7 +117,7 @@ namespace BlendInt {
 		m_line->unmap();
 		m_line->reset();
 
-		Refresh();
+		RequestRedraw();
 		*/
 	}
 
@@ -201,7 +201,7 @@ namespace BlendInt {
 			if(GetNewValue(event.position(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
-				Refresh();
+				RequestRedraw();
 			}
 
 			return Accept;
@@ -211,13 +211,13 @@ namespace BlendInt {
 
 				//m_slide_icon.set_highlight(true);
 
-				Refresh();
+				RequestRedraw();
 
 				return Accept;
 			} else {
 
 				//m_slide_icon.set_highlight(false);
-				Refresh();
+				RequestRedraw();
 				return Ignore;
 			}
 		}
@@ -246,7 +246,7 @@ namespace BlendInt {
 				fire_slider_released();
 			}
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		return Accept;

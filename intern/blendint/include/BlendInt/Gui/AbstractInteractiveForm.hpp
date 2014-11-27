@@ -320,7 +320,9 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
-		void Refresh ();
+		void RequestRedraw ();
+
+		bool TryRequestRedraw ();
 
 		AbstractInteractiveForm* operator [] (int i) const;
 

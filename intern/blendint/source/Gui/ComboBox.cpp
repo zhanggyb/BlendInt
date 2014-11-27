@@ -145,7 +145,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			buffer_.reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -176,7 +176,7 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ComboBox::PerformRoundRadiusUpdate (float radius)
@@ -202,7 +202,7 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType ComboBox::Draw(Profile& profile)
@@ -321,7 +321,7 @@ namespace BlendInt {
 			context->AddFrame(popup_);
 		}
 
-		Refresh();
+		RequestRedraw();
 
 		return Accept;
 	}
@@ -330,18 +330,18 @@ namespace BlendInt {
 	{
 		status_down_ = false;
 
-		Refresh();
+		RequestRedraw();
 		return Accept;
 	}
 	
 	void ComboBox::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ComboBox::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ComboBox::InitializeComboBox()

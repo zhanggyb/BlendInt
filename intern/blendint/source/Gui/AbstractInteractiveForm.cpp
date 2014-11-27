@@ -263,10 +263,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractInteractiveForm::Refresh()
+	void AbstractInteractiveForm::RequestRedraw()
 	{
-		// TODO: mutex lock here
-		pthread_mutex_lock(&refresh_mutex);
+		if(pthread_mutex_lock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to lock mutex");
+		}
 
 		if(!refresh()) {
 
@@ -297,8 +298,53 @@ namespace BlendInt {
 			set_refresh(true);
 		}
 
-		// TODO: mutex unlock
-		pthread_mutex_unlock(&refresh_mutex);
+		if(pthread_mutex_unlock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+		}
+	}
+
+	bool AbstractInteractiveForm::TryRequestRedraw()
+	{
+		if(pthread_mutex_trylock(&refresh_mutex) == 0) {
+
+			if(!refresh()) {
+
+				AbstractInteractiveForm* root = this;
+				AbstractInteractiveForm* p = parent();
+
+				/*
+				while(p) {
+					DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+					p = p->parent();
+				}
+				p = parent();
+				*/
+
+				while(p && (!p->refresh()) && (p->visiable())) {
+					root = p;
+					p->set_refresh(true);
+					p = p->parent();
+				}
+
+				if(root->parent() == 0) {
+					Context* context = dynamic_cast<Context*>(root);
+					if(context) {
+						context->SynchronizeWindow();
+					}
+				}
+
+				set_refresh(true);
+			}
+
+			// TODO: mutex unlock
+			pthread_mutex_unlock(&refresh_mutex);
+
+			return true;
+		} else {
+			DBG_PRINT_MSG("%s", "cannot lock mutex");
+		}
+
+		return false;
 	}
 
 	void AbstractInteractiveForm::MoveBackward()
@@ -450,7 +496,7 @@ namespace BlendInt {
 			return;
 
 		set_emboss(emboss);
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool AbstractInteractiveForm::IsHoverThrough(const AbstractInteractiveForm* widget, const Point& cursor)

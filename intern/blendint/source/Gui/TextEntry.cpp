@@ -93,7 +93,7 @@ namespace BlendInt {
 
 		index_ = text_.length();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void TextEntry::SetFont (const Font& font)
@@ -175,7 +175,7 @@ namespace BlendInt {
 				}
 			}
 
-			Refresh();
+			RequestRedraw();
 			return Accept;
 
 		} else {
@@ -225,7 +225,7 @@ namespace BlendInt {
 
 			DBG_PRINT_MSG("index: %d", index_);
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		return Accept;
@@ -264,7 +264,7 @@ namespace BlendInt {
 			cursor_buffer_->unmap();
 			cursor_buffer_->reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -294,7 +294,7 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void TextEntry::PerformRoundRadiusUpdate (float radius)
@@ -322,7 +322,7 @@ namespace BlendInt {
 		font_.set_pen(radius,
 				font_.pen().y());
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType TextEntry::Draw (Profile& profile)
@@ -385,7 +385,7 @@ namespace BlendInt {
 
 	void TextEntry::FocusEvent (bool focus)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void TextEntry::InitializeTextEntry ()
@@ -502,7 +502,7 @@ namespace BlendInt {
 			length_ = len;
 			start_ = text_.length() - length_;
 
-			Refresh();
+			RequestRedraw();
 		}
 	}
 	
@@ -529,7 +529,7 @@ namespace BlendInt {
 
 			length_ = len;
 
-			Refresh();
+			RequestRedraw();
 		}
 	}
 	
@@ -567,7 +567,7 @@ namespace BlendInt {
 
 			}
 
-			Refresh();
+			RequestRedraw();
 		}
 
 	}
@@ -585,7 +585,7 @@ namespace BlendInt {
 			//DBG_PRINT_MSG("length: %lu, start: %lu, cursor: %lu",
 			//				m_length, m_start, m_cursor_position);
 
-			Refresh();
+			RequestRedraw();
 		}
 	}
 

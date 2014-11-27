@@ -61,7 +61,7 @@ TEST_F(ToolBoxTest1, Foo1)
 //    tb2->Add(btn5);
 //    tb2->Add(btn6);
 
-    tb1->Refresh();
+    tb1->RequestRedraw();
 
     RunLoop(win);
     Terminate();

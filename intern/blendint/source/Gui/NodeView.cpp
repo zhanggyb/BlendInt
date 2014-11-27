@@ -62,7 +62,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -73,13 +73,13 @@ namespace BlendInt {
 	void NodeView::PerformRoundTypeUpdate (int round_type)
 	{
 		set_round_type(round_type);
-		Refresh();
+		RequestRedraw();
 	}
 
 	void NodeView::PerformRoundRadiusUpdate (float radius)
 	{
 		set_round_radius(radius);
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType NodeView::Draw(Profile& profile)

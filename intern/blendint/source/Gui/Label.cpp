@@ -58,7 +58,7 @@ namespace BlendInt {
 		text_ = text;
 		text_length_ = UpdateTextPosition(size(), text, font_);
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Label::SetFont (const Font& font)
@@ -66,7 +66,7 @@ namespace BlendInt {
 		font_ = font;
 		text_length_ = UpdateTextPosition(size(), text_, font_);
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -75,7 +75,7 @@ namespace BlendInt {
 			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
 
 			set_size (*request.size());
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

@@ -151,12 +151,12 @@ namespace BlendInt {
 
 	void Viewport::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Viewport::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType Viewport::MousePressEvent(const MouseEvent& event)

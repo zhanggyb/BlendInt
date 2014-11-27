@@ -167,7 +167,7 @@ namespace BlendInt {
 				AbstractInteractiveForm* p = first_child();
 				MoveSubFormTo(p, p->position().x() + x, p->position().y() + y);
 
-				Refresh();
+				RequestRedraw();
 			}
 		}
 	}
@@ -179,7 +179,7 @@ namespace BlendInt {
 
 			MoveSubFormTo(p, position().x() + x, position().y() + y);
 
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -304,7 +304,7 @@ namespace BlendInt {
 	{
 		if(m_move_status) {
 			m_move_status = false;
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(!first_child()) {
@@ -383,7 +383,7 @@ namespace BlendInt {
 				}
 				*/
 
-				Refresh();
+				RequestRedraw();
 				return Ignore;
 			}
 

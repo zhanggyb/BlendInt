@@ -106,7 +106,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

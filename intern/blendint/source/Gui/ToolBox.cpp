@@ -115,7 +115,7 @@ namespace BlendInt {
 					}
 				}
 
-				Refresh();
+				RequestRedraw();
 			}
 
 		} else {
@@ -138,7 +138,7 @@ namespace BlendInt {
 					}
 				}
 
-				Refresh();
+				RequestRedraw();
 			}
 
 		}
@@ -247,7 +247,7 @@ namespace BlendInt {
 
 			FillSubWidgets();
 
-			Refresh();
+			RequestRedraw();
 
 		} else if (request.target()->parent() == this) {
 			FillSubWidgets();

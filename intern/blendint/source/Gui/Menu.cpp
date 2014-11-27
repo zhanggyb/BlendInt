@@ -135,7 +135,7 @@ namespace BlendInt {
 			m_highlight = 0;
 
 			if(orig != m_highlight) {
-				Refresh();
+				RequestRedraw();
 			}
 			return Accept;
 		}
@@ -143,7 +143,7 @@ namespace BlendInt {
 		if(!m_list.size()) {
 			m_highlight = 0;
 			if(orig != m_highlight) {
-				Refresh();
+				RequestRedraw();
 			}
 			return Accept;
 		}
@@ -151,7 +151,7 @@ namespace BlendInt {
 		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
 
 		if(orig != m_highlight) {
-			Refresh();
+			RequestRedraw();
 		}
 		return Accept;
 	}
@@ -331,7 +331,7 @@ namespace BlendInt {
 			SetVisible(false);
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool Menu::PreDraw(Profile& profile)

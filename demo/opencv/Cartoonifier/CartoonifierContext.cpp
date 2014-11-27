@@ -7,7 +7,7 @@
 #include "CartoonifierContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Expander.hpp>

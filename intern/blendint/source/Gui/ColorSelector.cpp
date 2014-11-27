@@ -164,7 +164,7 @@ namespace BlendInt {
 	void ColorSelector::OnButtonToggled (int index, bool toggled)
 	{
 		stack_->SetIndex(index);
-		Refresh();
+		RequestRedraw();
 	}
 
 	Stack* ColorSelector::CreateBlockStack()

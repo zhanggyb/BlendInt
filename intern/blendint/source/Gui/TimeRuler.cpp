@@ -145,7 +145,7 @@ namespace BlendInt {
 
 			buffer_.reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

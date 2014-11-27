@@ -7,7 +7,7 @@
 #include "HPEContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Expander.hpp>
@@ -146,7 +146,7 @@ bool HPEContext::OpenCamera(int n, const BI::Size& resolution)
 		video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
 		video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
 
-		Refresh();
+		RequestRedraw();
 	} else {
 		DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
 	}
@@ -181,7 +181,7 @@ BI::FrameSplitter* HPEContext::CreateWorkspaceOnce()
 	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
 
 	FrameSplitter* hsplitter = Manage(new FrameSplitter(Horizontal));
-	viewport_image_ = Manage(new CVImageViewport);
+	viewport_image_ = Manage(new ImageViewport);
 	viewport_3d_ = Manage(new Viewport);
 	hsplitter->AddFrame(viewport_image_);
 	hsplitter->AddFrame(viewport_3d_);
@@ -200,5 +200,5 @@ void HPEContext::OnTimeout(Timer* t)
 
 	// TODO: create opengl context and load texture
 
-	Refresh();
+	RequestRedraw();
 }

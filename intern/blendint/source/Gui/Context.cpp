@@ -197,7 +197,7 @@ namespace BlendInt
 	{
 		if(PushBackSubForm(vp)) {
 			// TODO:
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -245,8 +245,9 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		*/
 
-		// TODO: mutex lock before render all widgets
-		pthread_mutex_lock(&refresh_mutex);
+		if(pthread_mutex_lock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to lock mutex");
+		}
 
 		set_refresh(false);
 		if(PreDraw(profile_)) {
@@ -254,8 +255,9 @@ namespace BlendInt
 			PostDraw(profile_);
 		}
 
-		// TODO: mutex unlock after
-		pthread_mutex_unlock(&refresh_mutex);
+		if(pthread_mutex_unlock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+		}
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)
@@ -672,7 +674,7 @@ namespace BlendInt
 
 		hovered_frame_ = 0;
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
@@ -683,7 +685,7 @@ namespace BlendInt
 
 		focused_frame_ = 0;
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	/*

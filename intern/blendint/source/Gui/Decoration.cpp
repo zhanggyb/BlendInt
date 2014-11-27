@@ -145,7 +145,7 @@ namespace BlendInt {
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Decoration::PerformRoundRadiusUpdate (float radius)
@@ -156,7 +156,7 @@ namespace BlendInt {
 		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType Decoration::Draw (Profile& profile)

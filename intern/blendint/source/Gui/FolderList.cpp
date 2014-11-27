@@ -114,7 +114,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		ReportSizeUpdate(request);
@@ -133,7 +133,7 @@ namespace BlendInt {
 
 		set_round_type(round_type);
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void FolderList::PerformRoundRadiusUpdate (float radius)
@@ -149,7 +149,7 @@ namespace BlendInt {
 
 		set_round_radius(radius);
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void FolderList::InitializeFolderListOnce ()

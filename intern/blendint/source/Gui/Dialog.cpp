@@ -139,7 +139,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Dialog::AddWidget(AbstractWidget* widget)
@@ -150,7 +150,7 @@ namespace BlendInt {
 			PushBackSubForm(widget);
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void Dialog::InsertWidget(int index, AbstractWidget* widget)
@@ -161,7 +161,7 @@ namespace BlendInt {
 			InsertSubForm(index, widget);
 		}
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool Dialog::SizeUpdateTest(const SizeUpdateRequest& request)
@@ -209,7 +209,7 @@ namespace BlendInt {
 				layout_->Resize(size());
 			}
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -288,7 +288,7 @@ namespace BlendInt {
 	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
 	{
 		if(event.key() == Key_Escape) {
-			Refresh();
+			RequestRedraw();
 			delete this;
 			return Accept;
 		}
@@ -368,7 +368,7 @@ namespace BlendInt {
 				set_position(last_.x() + ox, last_.y() + oy);
 
 				if(parent()) {
-					parent()->Refresh();
+					parent()->RequestRedraw();
 				}
 				retval = Accept;
 			}

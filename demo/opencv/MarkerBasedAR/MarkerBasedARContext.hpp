@@ -11,7 +11,7 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Core/Timer.hpp>
 
 namespace BI=BlendInt;
@@ -54,15 +54,15 @@ private:
 
 	void OnTimeout (BI::Timer* t);
 
-	BI::CVImageViewport* viewport_;
+	BI::ImageViewport* viewport_;
 
 	Status status_;
 
 	cv::VideoCapture video_stream_;
 
-	cv::Mat frame_;
-
 	BI::RefPtr<BI::Timer> timer_;
+
+	BI::RefPtr<BI::GLTexture2D> texture_;
 
 	GLFWwindow* window_;
 

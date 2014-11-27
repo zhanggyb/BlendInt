@@ -188,7 +188,7 @@ namespace BlendInt {
 			buffer_->reset();
 
 			set_size(*request.size());
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -227,14 +227,14 @@ namespace BlendInt {
 		highlight_ = true;
 		Cursor::instance->PushCursor();
 		Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
-		Refresh();
+		RequestRedraw();
 	}
 
 	void SplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		highlight_ = false;
 		Cursor::instance->PopCursor();
-		Refresh();
+		RequestRedraw();
 	}
 
 	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
@@ -305,7 +305,7 @@ namespace BlendInt {
 
 			}
 
-			Refresh();
+			RequestRedraw();
 			return Accept;
 		}
 		return Accept;

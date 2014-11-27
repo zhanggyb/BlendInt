@@ -21,13 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CVIMAGEVIEW_HPP_
-#define _BLENDINT_GUI_CVIMAGEVIEW_HPP_
+#ifndef _BLENDINT_GUI_IMAGEVIEWPORT_HPP_
+#define _BLENDINT_GUI_IMAGEVIEWPORT_HPP_
 
 // generate makefile with cmake -DENABLE_OPENCV to activate
 #ifdef __USE_OPENCV__
-
 #include <opencv2/core/core.hpp>
+#endif
 
 #include <BlendInt/Core/Color.hpp>
 
@@ -37,6 +37,8 @@
 
 #include <BlendInt/Gui/ChessBoard.hpp>
 #include <BlendInt/Gui/Frame.hpp>
+
+#include <BlendInt/Core/Thread.hpp>
 
 namespace BlendInt {
 
@@ -48,17 +50,21 @@ namespace BlendInt {
 	 *
 	 * Due to opencv design, this widget cannot display images with alpha channel.
 	 */
-	class CVImageViewport: public Frame
+	class ImageViewport: public Frame
 	{
 	public:
 
-		CVImageViewport ();
+		ImageViewport ();
 
-		virtual ~CVImageViewport ();
+		virtual ~ImageViewport ();
 
-		void OpenFile (const char* filename);
+		bool OpenFile (const char* filename);
 
-		void LoadImage (const cv::Mat& image);
+#ifdef __USE_OPENCV__
+		bool LoadCVImage (const cv::Mat& image);
+#endif
+
+		bool SetTexture (const RefPtr<GLTexture2D>& texture);
 
 		virtual bool IsExpandX () const;
 
@@ -80,7 +86,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeCVImageView ();
+		void InitializeImageViewport ();
 
 		void AdjustImageArea (const Size& size);
 
@@ -94,21 +100,21 @@ namespace BlendInt {
 		 */
 		GLuint vao_;
 
-		GLTexture2D texture_;
+		RefPtr<GLTexture2D> texture_;
 
 		GLBuffer<> image_plane_;
-
-		cv::Mat cv_image_;
 
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
+
+		ThreadMutex mutex_;
 
 		static Color background_color;
 	};
 
 }
 
-#endif	// __USE_OPENCV__
+//#endif	// __USE_OPENCV__
 
-#endif /* _BLENDINT_GUI_CVIMAGEVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_IMAGEVIEWPORT_HPP_ */

@@ -7,7 +7,7 @@
 #include "MarkerBasedARContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/CVImageViewport.hpp>
+#include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Expander.hpp>
@@ -34,7 +34,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_ = Manage(new CVImageViewport);
+	viewport_ = Manage(new ImageViewport);
 
 	splitter->AddFrame(viewport_);
 	splitter->AddFrame(tools, PreferredWidth);
@@ -50,9 +50,18 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 
 	timer_.reset(new Timer);
 	//timer_->SetInterval(1000 / 30);	// 30 fps
-	timer_->SetInterval(1000 / 30);	// 25 fps
+	timer_->SetInterval(1000 / 1);	// 25 fps
 
 	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
+
+	texture_.reset(new GLTexture2D);
+	texture_->generate();
+	texture_->bind();
+	texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	texture_->SetMinFilter(GL_LINEAR);
+	texture_->SetMagFilter(GL_LINEAR);
+	texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	texture_->reset();
 }
 
 MarkerBasedARContext::~MarkerBasedARContext ()
@@ -160,7 +169,7 @@ void MarkerBasedARContext::OnToggleCamera(bool toggled)
 	}
 
 	if(toggled) {
-		OpenCamera(0, Size(1280, 720));
+		OpenCamera(0, Size(640, 480));
 	} else {
 		video_stream_.release();
 	}
@@ -192,8 +201,39 @@ void MarkerBasedARContext::OnTimeout(Timer* t)
 {
 	if(video_stream_.isOpened()) {
 		MakeGLContextCurrent();
-		video_stream_ >> frame_;
-		viewport_->LoadImage(frame_);
-		Refresh();
+		cv::Mat frame;
+		video_stream_ >> frame;
+
+		if(frame.data) {
+
+			texture_->bind();
+			switch (frame.channels()) {
+
+				case 3: {
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+				texture_->SetImage(0, GL_RGB, frame.cols, frame.rows,
+								0, GL_BGR, GL_UNSIGNED_BYTE, frame.data);
+				break;
+			}
+
+			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+			{
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+				texture_->SetImage(0, GL_RGBA, frame.cols, frame.rows,
+								0, GL_BGRA, GL_UNSIGNED_BYTE, frame.data);
+				break;
+			}
+
+			default:
+				break;
+			}
+			texture_->reset();
+
+		}
+
+		//viewport_->LoadCVImage(frame);
+		viewport_->SetTexture(texture_);
+
+		RequestRedraw();
 	}
 }

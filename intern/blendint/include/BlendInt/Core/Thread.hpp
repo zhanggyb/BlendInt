@@ -106,27 +106,71 @@ namespace BlendInt {
 
 		inline bool initialize (const ThreadMutexAttrib& attr)
 		{
+#ifdef DEBUG
+			if(pthread_mutex_init(&mutex_, &attr.attribute_) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to initialize mutex");
+				return false;
+			}
+
+			return true;
+#else
 			return pthread_mutex_init(&mutex_, &attr.attribute_);
+#endif	// DEBUG
 		}
 
 		inline bool lock ()
 		{
+#ifdef DEBUG
+			if(pthread_mutex_lock(&mutex_) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to lock mutex");
+				return false;
+			}
+
+			return true;
+#else
 			return pthread_mutex_lock(&mutex_) == 0 ? true : false;
+#endif	// DEBUG
 		}
 		
 		inline bool trylock ()
 		{
+#ifdef DEBUG
+			if(pthread_mutex_trylock(&mutex_) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to trylock mutex");
+				return false;
+			}
+
+			return true;
+#else
 			return pthread_mutex_trylock(&mutex_) == 0 ? true : false;
+#endif	// DEBUG
 		}
 		
 		inline bool unlock ()
 		{
+#ifdef DEBUG
+			if(pthread_mutex_unlock(&mutex_) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+				return false;
+			}
+
+			return true;
+#else
 			return pthread_mutex_unlock(&mutex_) == 0 ? true : false;
+#endif	// DEBUG
 		}
 		
 		inline bool destroy ()
 		{
+#ifdef DEBUG
+			if(pthread_mutex_destroy(&mutex_) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to destroy mutex");
+				return false;
+			}
+			return true;
+#else
 			return pthread_mutex_destroy(&mutex_) == 0 ? true : false;
+#endif	// DEBUG
 		}
 		
 	private:

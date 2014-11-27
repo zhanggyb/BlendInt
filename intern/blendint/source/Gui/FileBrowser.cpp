@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		retval = model_->Load(pathname);
 
-		Refresh();
+		RequestRedraw();
 
 		return retval;
 	}
@@ -288,12 +288,12 @@ namespace BlendInt {
 		if(index.IsValid()) {
 			file_selected_ = *index.GetData();
 			//DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
-			Refresh();
+			RequestRedraw();
 		} else {
 
 			if(!file_selected_.empty()) {
 				file_selected_.clear();
-				Refresh();
+				RequestRedraw();
 			}
 		}
 

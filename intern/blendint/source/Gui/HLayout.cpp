@@ -51,7 +51,7 @@ namespace BlendInt {
 	{
 		if(PushBackSubForm(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -59,7 +59,7 @@ namespace BlendInt {
 	{
 		if(InsertSubForm(index, widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -72,7 +72,7 @@ namespace BlendInt {
 
 		if(InsertSubForm(column, widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 	}
 
@@ -166,7 +166,7 @@ namespace BlendInt {
 	void HLayout::PerformMarginUpdate(const Margin& request)
 	{
 		FillSubWidgetsInHBox(size(), request, m_alignment, m_space);
-		Refresh();
+		RequestRedraw();
 	}
 
 	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -194,7 +194,7 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

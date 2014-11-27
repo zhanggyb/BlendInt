@@ -111,7 +111,7 @@ namespace BlendInt {
 		icon_offset_x_ = default_padding.left();
 		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	Size ToggleButton::GetPreferredSize () const
@@ -187,7 +187,7 @@ namespace BlendInt {
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -220,7 +220,7 @@ namespace BlendInt {
 
 		CalculateIconTextPosition(size(), round_type, round_radius());
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void ToggleButton::PerformRoundRadiusUpdate (float radius)
@@ -248,7 +248,7 @@ namespace BlendInt {
 
 			CalculateIconTextPosition(size(), round_type(), round_radius());
 
-			Refresh();
+			RequestRedraw();
 	}
 
 	ResponseType ToggleButton::Draw (Profile& profile)

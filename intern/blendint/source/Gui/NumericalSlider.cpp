@@ -152,7 +152,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -182,7 +182,7 @@ namespace BlendInt {
 		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 
 	void NumericalSlider::PerformRoundRadiusUpdate (float radius)
@@ -207,7 +207,7 @@ namespace BlendInt {
 		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
-		Refresh();
+		RequestRedraw();
 	}
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
@@ -264,12 +264,12 @@ namespace BlendInt {
 	
 	void NumericalSlider::MouseHoverInEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void NumericalSlider::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		Refresh();
+		RequestRedraw();
 	}
 
 	void NumericalSlider::InitializeNumericalSlider()

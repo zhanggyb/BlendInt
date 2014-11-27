@@ -129,7 +129,7 @@ namespace BlendInt {
 	void TextureView::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -151,7 +151,7 @@ namespace BlendInt {
 
 			AdjustImageArea (*request.size());
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {

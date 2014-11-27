@@ -80,7 +80,7 @@ namespace BlendInt {
 
 			m_slide.Resize(w, m_slide.size().height());
 
-			Refresh();
+			RequestRedraw();
 
 		} else {
 
@@ -91,7 +91,7 @@ namespace BlendInt {
 
 			m_slide.Resize(m_slide.size().width(), h);
 
-			Refresh();
+			RequestRedraw();
 
 		}
 	}
@@ -195,7 +195,7 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 			buffer_.reset();
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -281,7 +281,7 @@ namespace BlendInt {
 		/*
 		if(m_slide.highlight()) {
 			m_slide.set_highlight(false);
-			Refresh();
+			RequestRedraw();
 		}
 		*/
 	}
@@ -312,7 +312,7 @@ namespace BlendInt {
 			// DO not fire if cursor is out of range, otherwise too many events
 			if (GetNewValue(event.position(), &new_value)) {
 				set_value(new_value);
-				Refresh();
+				RequestRedraw();
 				fire_slider_moved_event(value());
 			}
 
@@ -323,10 +323,10 @@ namespace BlendInt {
 			/*
 			if (CursorOnSlideIcon(local_position)) {
 				m_slide.set_highlight(true);
-				Refresh();
+				RequestRedraw();
 			} else {
 				m_slide.set_highlight(false);
-				Refresh();
+				RequestRedraw();
 			}
 			*/
 
@@ -343,7 +343,7 @@ namespace BlendInt {
 
 			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
 
-			Refresh();
+			RequestRedraw();
 
 			if (CursorOnSlideIcon(local_position)) {
 				fire_slider_released();

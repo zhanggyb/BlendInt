@@ -86,7 +86,7 @@ namespace BlendInt {
 			GLArrayBuffer::reset();
 
 			set_size(*request.size());
-			Refresh();
+			RequestRedraw();
 		}
 
 		ReportSizeUpdate(request);

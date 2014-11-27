@@ -71,7 +71,7 @@ namespace BlendInt {
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
             inner_.reset();
 
-			Refresh();
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -93,7 +93,7 @@ namespace BlendInt {
             inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
             inner_.reset();
 
-			Refresh();
+			RequestRedraw();
 	}
 
 	void MenuButton::PerformRoundRadiusUpdate (float radius)
@@ -110,7 +110,7 @@ namespace BlendInt {
             inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
             inner_.reset();
 
-            Refresh();
+            RequestRedraw();
 	}
 
 	ResponseType MenuButton::Draw (Profile& profile)
