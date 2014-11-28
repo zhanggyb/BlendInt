@@ -123,6 +123,7 @@ namespace BlendInt {
 
 		AbstractFrame* frame_;
 
+		// the viewport offset
 		Point origin_;
 
 		GLuint stencil_count_;

@@ -359,7 +359,7 @@ namespace BlendInt {
 		return button->text();
 	}
 	
-	void Expander::OnToggled (bool toggle)
+	void Expander::OnToggled (AbstractButton* sender, bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
 		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));

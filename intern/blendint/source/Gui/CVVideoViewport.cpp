@@ -60,7 +60,7 @@ namespace BlendInt {
 		InitializeCVVideoView();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 30);	// 30 fps
+		timer_->SetInterval(1000 / 30);	// default 30 fps
 
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 	}
@@ -110,6 +110,11 @@ namespace BlendInt {
 		}
 
 		return retval;
+	}
+
+	void CVVideoViewport::SetFPS (unsigned int fps)
+	{
+		timer_->SetInterval(1000 / fps);
 	}
 
 	void CVVideoViewport::Play()

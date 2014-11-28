@@ -80,20 +80,20 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	return tools;
 }
 
-void CartoonifierContext::OnPlay()
+void CartoonifierContext::OnPlay(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Start Play");
 	video_->OpenCamera(0, Size(800, 600));
 	video_->Play();
 }
 
-void CartoonifierContext::OnPause ()
+void CartoonifierContext::OnPause (AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Pause");
 	video_->Pause();
 }
 
-void CartoonifierContext::OnStop()
+void CartoonifierContext::OnStop(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
 	video_->Stop();

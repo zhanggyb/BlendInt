@@ -99,8 +99,8 @@ namespace BlendInt {
 		browser_->Load(getenv("PWD"));
 
 		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
-		events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
-		events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
+		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
+		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
 	}
 
 	void FileSelector::OnFileSelect ()

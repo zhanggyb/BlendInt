@@ -192,6 +192,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
+
 			FillSubWidgetsInVBox(size(), margin(), m_alignment,
 											m_space);
 			RequestRedraw();

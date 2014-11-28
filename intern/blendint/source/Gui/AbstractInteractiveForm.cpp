@@ -341,7 +341,7 @@ namespace BlendInt {
 
 			return true;
 		} else {
-			DBG_PRINT_MSG("%s", "cannot lock mutex");
+			DBG_PRINT_MSG("%s", "cannot lock mutex, fail to lock mutex");
 		}
 
 		return false;

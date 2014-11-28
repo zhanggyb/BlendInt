@@ -64,17 +64,11 @@ namespace BlendInt {
 
 		texture_.reset(new GLTexture2D);
 		InitializeImageViewport();
-
-		ThreadMutexAttrib attrib;
-		attrib.initialize();
-		mutex_.initialize(attrib);
-		attrib.destroy();
 	}
 
 	ImageViewport::~ImageViewport ()
 	{
 		glDeleteVertexArrays(1, &vao_);
-		mutex_.destroy();
 	}
 
 	bool ImageViewport::IsExpandX () const
@@ -116,8 +110,6 @@ namespace BlendInt {
 			*(ptr + 13) = image.height();
 			image_plane_.unmap();
 			image_plane_.reset();
-
-			mutex_.lock();
 
 			if(!texture_) {
 				texture_.reset(new GLTexture2D);
@@ -163,7 +155,6 @@ namespace BlendInt {
 			}
 
 			texture_->reset();
-			mutex_.unlock();
 		}
 
 		return retval;
@@ -174,8 +165,6 @@ namespace BlendInt {
 		bool retval = false;
 
 		if(texture && glIsTexture(texture->id())) {
-
-			mutex_.lock();
 
 			texture_ = texture;
 			texture_->bind();
@@ -188,8 +177,6 @@ namespace BlendInt {
 			image_plane_.unmap();
 			image_plane_.reset();
 			texture_->reset();
-
-			mutex_.unlock();
 
 			retval = true;
 		}
@@ -212,8 +199,6 @@ namespace BlendInt {
 			*(ptr + 13) = image.rows;
 			image_plane_.unmap();
 			image_plane_.reset();
-
-			mutex_.lock();
 
 			if(!texture_) {
 				texture_.reset(new GLTexture2D);
@@ -259,8 +244,6 @@ namespace BlendInt {
 					break;
 			}
 			texture_->reset();
-
-			mutex_.unlock();
 		}
 
 		return retval;
@@ -334,10 +317,6 @@ namespace BlendInt {
 
 	ResponseType ImageViewport::Draw (Profile& profile)
 	{
-		if(!mutex_.trylock()) {
-			return Accept;
-		}
-
 		if(texture_ && glIsTexture(texture_->id())) {
 
 			glActiveTexture(GL_TEXTURE0);
@@ -362,8 +341,6 @@ namespace BlendInt {
 			GLSLProgram::reset();
 
 		}
-
-		mutex_.unlock();
 
 		return Accept;
 	}

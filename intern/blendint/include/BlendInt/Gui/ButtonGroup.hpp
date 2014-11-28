@@ -47,13 +47,11 @@ namespace BlendInt {
 
 		~ButtonGroup ();
 
-		void Prepend (AbstractButton* button);
+		void AddButton (AbstractButton* button);
 
-		void Append (AbstractButton* button);
+		void InsertButton (int index, AbstractButton* button);
 
-		void Insert (int index, AbstractButton* button);
-
-		void Remove (AbstractButton* button);
+		void RemoveButton (AbstractButton* button);
 
 		void Clear ();
 

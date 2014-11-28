@@ -68,7 +68,7 @@ namespace BlendInt {
 
 		void InitializeFileButtonOnce ();
 
-		void OnClicked();
+		void OnClicked(AbstractButton* sender);
 
 		void OnOpened ();
 

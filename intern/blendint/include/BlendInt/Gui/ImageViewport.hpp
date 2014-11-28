@@ -38,8 +38,6 @@
 #include <BlendInt/Gui/ChessBoard.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
-#include <BlendInt/Core/Thread.hpp>
-
 namespace BlendInt {
 
 	/**
@@ -107,8 +105,6 @@ namespace BlendInt {
 		glm::mat4 projection_matrix_;
 
 		glm::mat4 model_matrix_;
-
-		ThreadMutex mutex_;
 
 		static Color background_color;
 	};

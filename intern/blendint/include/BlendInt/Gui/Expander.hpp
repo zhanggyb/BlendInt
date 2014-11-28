@@ -105,7 +105,7 @@ namespace BlendInt {
 
 		void FillInExpander (int x, int y, int width, int height);
 
-		void OnToggled (bool toggle);
+		void OnToggled (AbstractButton* sender, bool toggle);
 
 		int frame_height_;
 

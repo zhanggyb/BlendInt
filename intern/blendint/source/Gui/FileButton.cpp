@@ -225,7 +225,7 @@ namespace BlendInt {
 		GLArrayBuffer::reset();
 	}
 
-	void FileButton::OnClicked ()
+	void FileButton::OnClicked (AbstractButton* sender)
 	{
 		Context* context = Context::GetContext(this);
 		assert(dialog_ == 0);

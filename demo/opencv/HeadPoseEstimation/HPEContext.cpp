@@ -154,7 +154,7 @@ bool HPEContext::OpenCamera(int n, const BI::Size& resolution)
 	return retval;
 }
 
-void HPEContext::OnPlay()
+void HPEContext::OnPlay(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Start Play");
 	//viewport_->OpenCamera(0, Size(800, 600));
@@ -162,14 +162,14 @@ void HPEContext::OnPlay()
 	timer_->Start();
 }
 
-void HPEContext::OnPause ()
+void HPEContext::OnPause (AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Pause");
 	//viewport_->Pause();
 	timer_->Stop();
 }
 
-void HPEContext::OnStop()
+void HPEContext::OnStop(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
 	//viewport_->Stop();

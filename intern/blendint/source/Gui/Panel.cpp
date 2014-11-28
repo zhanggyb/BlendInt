@@ -204,7 +204,7 @@ namespace BlendInt {
 			buffer_.reset();
 
 			if(layout_) {
-				layout_->Resize(size());
+				ResizeSubForm(layout_, size());
 			}
 
 			RequestRedraw();

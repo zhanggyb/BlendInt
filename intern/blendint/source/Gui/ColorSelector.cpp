@@ -81,9 +81,9 @@ namespace BlendInt {
 		RadioButton* btn2 = Manage(new RadioButton("HSV"));
 		RadioButton* btn3 = Manage(new RadioButton("Hex"));
 
-		radio_group_.Append(btn1);
-		radio_group_.Append(btn2);
-		radio_group_.Append(btn3);
+		radio_group_.AddButton(btn1);
+		radio_group_.AddButton(btn2);
+		radio_group_.AddButton(btn3);
 
 		btn1->SetChecked(true);
 

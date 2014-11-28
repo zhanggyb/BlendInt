@@ -50,6 +50,8 @@ namespace BlendInt {
 
 		bool OpenFile (const std::string& filename);
 
+		void SetFPS (unsigned int fps);
+
 		void Play ();
 
 		void Pause ();

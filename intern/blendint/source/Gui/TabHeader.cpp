@@ -99,7 +99,7 @@ namespace BlendInt {
 
 			}
 
-			m_group.Append(button);
+			m_group.AddButton(button);
 
 			if(m_group.button_count() == 1) {
 				button->SetChecked(true);

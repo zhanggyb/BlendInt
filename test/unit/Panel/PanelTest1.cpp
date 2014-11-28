@@ -59,7 +59,7 @@ TEST_F(PanelTest1, Foo1)
 
 	context->AddFrame(dialog);
 
-	p->Resize(200, 200);
+	p->Resize(200, 400);
 
 	DBG_PRINT_MSG("btn1: %d, %d", btn1->position().x(), btn1->position().y());
 

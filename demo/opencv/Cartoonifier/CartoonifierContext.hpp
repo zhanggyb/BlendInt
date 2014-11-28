@@ -9,6 +9,7 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Gui/CVVideoViewport.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 namespace BI=BlendInt;
 
@@ -27,11 +28,11 @@ private:
 
 	BI::ToolBox* CreateToolBoxOnce ();
 
-	void OnPlay ();
+	void OnPlay (BI::AbstractButton* sender);
 
-	void OnPause ();
+	void OnPause (BI::AbstractButton* sender);
 
-	void OnStop();
+	void OnStop(BI::AbstractButton* sender);
 
 	BI::CVVideoViewport* video_;
 };

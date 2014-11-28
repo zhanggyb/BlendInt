@@ -70,11 +70,11 @@ namespace BlendInt {
 
 		bool is_pressed () const {return m_status[ButtonPressed];}
 
-		Cpp::EventRef<> clicked() {return clicked_;}
+		Cpp::EventRef<AbstractButton*> clicked() {return clicked_;}
 
-		Cpp::EventRef<bool> toggled() {return toggled_;}
+		Cpp::EventRef<AbstractButton*, bool> toggled() {return toggled_;}
 
-		Cpp::EventRef<> pressed () {return pressed_;}
+		Cpp::EventRef<AbstractButton*> pressed () {return pressed_;}
 
 		const Font& font () const {return font_;}
 
@@ -163,21 +163,21 @@ namespace BlendInt {
 		/**
 		 * @brief press event
 		 */
-		Cpp::Event<> pressed_;
+		Cpp::Event<AbstractButton*> pressed_;
 
 		/**
 		 * @brief release event
 		 */
-		Cpp::Event<> released_;
+		Cpp::Event<AbstractButton*> released_;
 
 		/**
 		 * @brief click event
 		 *
 		 * Mouse press and release in the button causes a clicked event.
 		 */
-		Cpp::Event<> clicked_;
+		Cpp::Event<AbstractButton*> clicked_;
 
-		Cpp::Event<bool> toggled_;
+		Cpp::Event<AbstractButton*, bool> toggled_;
 
 		ButtonGroup* group_;
 	};

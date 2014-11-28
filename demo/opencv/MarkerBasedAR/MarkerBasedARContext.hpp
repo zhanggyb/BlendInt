@@ -13,6 +13,8 @@
 
 #include <BlendInt/Gui/ImageViewport.hpp>
 #include <BlendInt/Core/Timer.hpp>
+#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/ToggleButton.hpp>
 
 namespace BI=BlendInt;
 
@@ -44,13 +46,13 @@ private:
 
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 
-	void OnToggleCamera (bool toggled);
+	void OnToggleCamera (BI::AbstractButton* sender, bool toggled);
 
-	void OnPlay ();
+	void OnPlay (BI::AbstractButton* sender);
 
-	void OnPause ();
+	void OnPause (BI::AbstractButton* sender);
 
-	void OnStop();
+	void OnStop(BI::AbstractButton* sender);
 
 	void OnTimeout (BI::Timer* t);
 

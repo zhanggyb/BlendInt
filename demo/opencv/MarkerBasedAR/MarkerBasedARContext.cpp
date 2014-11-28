@@ -50,7 +50,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 
 	timer_.reset(new Timer);
 	//timer_->SetInterval(1000 / 30);	// 30 fps
-	timer_->SetInterval(1000 / 1);	// 25 fps
+	timer_->SetInterval(1000 / 24);	// 25 fps
 
 	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
 
@@ -162,7 +162,7 @@ bool MarkerBasedARContext::OpenCamera(int n, const BI::Size& resolution)
 	return retval;
 }
 
-void MarkerBasedARContext::OnToggleCamera(bool toggled)
+void MarkerBasedARContext::OnToggleCamera(AbstractButton* sender, bool toggled)
 {
 	if(timer_->enabled()) {
 		timer_->Stop();
@@ -175,7 +175,7 @@ void MarkerBasedARContext::OnToggleCamera(bool toggled)
 	}
 }
 
-void MarkerBasedARContext::OnPlay()
+void MarkerBasedARContext::OnPlay(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Start Play");
 	//viewport_->OpenCamera(0, Size(800, 600));
@@ -183,14 +183,14 @@ void MarkerBasedARContext::OnPlay()
 	timer_->Start();
 }
 
-void MarkerBasedARContext::OnPause ()
+void MarkerBasedARContext::OnPause (AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Pause");
 	//viewport_->Pause();
 	timer_->Stop();
 }
 
-void MarkerBasedARContext::OnStop()
+void MarkerBasedARContext::OnStop(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
 	//viewport_->Stop();

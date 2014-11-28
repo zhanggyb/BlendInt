@@ -17,6 +17,8 @@
 #include <BlendInt/Gui/Panel.hpp>
 #include <BlendInt/Gui/FrameSplitter.hpp>
 
+#include <BlendInt/Gui/Button.hpp>
+
 namespace BI=BlendInt;
 
 class HPEContext: public BI::Context
@@ -49,11 +51,11 @@ private:
 
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 
-	void OnPlay ();
+	void OnPlay (BI::AbstractButton* sender);
 
-	void OnPause ();
+	void OnPause (BI::AbstractButton* sender);
 
-	void OnStop();
+	void OnStop(BI::AbstractButton* sender);
 
 	void OnTimeout (BI::Timer* t);
 

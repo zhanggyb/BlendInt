@@ -39,7 +39,7 @@ namespace BlendInt {
 		Clear();
 	}
 	
-	void ButtonGroup::Prepend (AbstractButton* button)
+	void ButtonGroup::AddButton (AbstractButton* button)
 	{
 		if(!button) return;
 
@@ -48,28 +48,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("Button %s is already in this button group", button->name().c_str());
 				return;
 			} else {
-				button->group_->Remove(button);
-			}
-		}
-
-		assert(button->group_ == 0);
-
-		buttons_.push_front(button);
-		button->group_ = this;
-
-		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
-	}
-
-	void ButtonGroup::Append (AbstractButton* button)
-	{
-		if(!button) return;
-
-		if(button->group_) {
-			if(button->group_ == this) {
-				DBG_PRINT_MSG("Button %s is already in this button group", button->name().c_str());
-				return;
-			} else {
-				button->group_->Remove(button);
+				button->group_->RemoveButton(button);
 			}
 		}
 
@@ -81,11 +60,11 @@ namespace BlendInt {
 		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
 	}
 	
-	void ButtonGroup::Insert (int index, AbstractButton* button)
+	void ButtonGroup::InsertButton (int index, AbstractButton* button)
 	{
 	}
 
-	void ButtonGroup::Remove (AbstractButton* button)
+	void ButtonGroup::RemoveButton (AbstractButton* button)
 	{
 		if(!button) return;
 
@@ -178,7 +157,7 @@ namespace BlendInt {
 	void ButtonGroup::OnButtonDestroyed (AbstractInteractiveForm* button)
 	{
 		AbstractButton* p = dynamic_cast<AbstractButton*>(button);
-		Remove(p);
+		RemoveButton(p);
 	}
 
 }
