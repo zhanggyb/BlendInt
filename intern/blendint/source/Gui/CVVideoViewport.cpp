@@ -344,7 +344,7 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-        TryRequestRedraw();
+        RequestRedraw();
 	}
 
 }

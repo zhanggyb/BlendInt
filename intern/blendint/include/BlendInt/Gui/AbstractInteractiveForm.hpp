@@ -24,7 +24,6 @@
 #ifndef _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
 #define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
 
-#include <pthread.h>
 #include <vector>
 
 #include <Cpp/Events.hpp>
@@ -321,8 +320,6 @@ namespace BlendInt {
 		virtual bool Contain (const Point& point) const;
 
 		void RequestRedraw ();
-
-		bool TryRequestRedraw ();
 
 		AbstractInteractiveForm* operator [] (int i) const;
 
@@ -693,7 +690,15 @@ namespace BlendInt {
 
 		static int GetOutlineVertices (int round_type);
 
-		static void DispatchDrawEvent (AbstractInteractiveForm* widget, Profile& profile);
+		/**
+		 * @brief Dispatch draw
+		 * @param[in] widget
+		 * @param[in] profile
+		 * @param[in] use_parent_status
+		 * 	- true: use parent refresh() status to set widget's refresh flag
+		 * 	- false: set widget's flag to false after Draw()
+		 */
+		static void DispatchDrawEvent (AbstractInteractiveForm* widget, Profile& profile, bool use_parent_status);
 
 	private:
 
@@ -777,8 +782,6 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::string name_;
 #endif
-
-		static pthread_mutex_t refresh_mutex;
 
 		static float border_width;
 

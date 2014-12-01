@@ -64,8 +64,6 @@ namespace BlendInt {
 
 	float AbstractInteractiveForm::border_width = 1.f;
 
-	pthread_mutex_t AbstractInteractiveForm::refresh_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 	const float AbstractInteractiveForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
         { 0.0, 0.0 },
         { 0.195, 0.02 },
@@ -265,10 +263,6 @@ namespace BlendInt {
 
 	void AbstractInteractiveForm::RequestRedraw()
 	{
-		if(pthread_mutex_lock(&refresh_mutex) != 0) {
-			DBG_PRINT_MSG("%s", "Fail to lock mutex");
-		}
-
 		if(!refresh()) {
 
 			AbstractInteractiveForm* root = this;
@@ -298,53 +292,6 @@ namespace BlendInt {
 			set_refresh(true);
 		}
 
-		if(pthread_mutex_unlock(&refresh_mutex) != 0) {
-			DBG_PRINT_MSG("%s", "Fail to unlock mutex");
-		}
-	}
-
-	bool AbstractInteractiveForm::TryRequestRedraw()
-	{
-		if(pthread_mutex_trylock(&refresh_mutex) == 0) {
-
-			if(!refresh()) {
-
-				AbstractInteractiveForm* root = this;
-				AbstractInteractiveForm* p = parent();
-
-				/*
-				while(p) {
-					DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-					p = p->parent();
-				}
-				p = parent();
-				*/
-
-				while(p && (!p->refresh()) && (p->visiable())) {
-					root = p;
-					p->set_refresh(true);
-					p = p->parent();
-				}
-
-				if(root->parent() == 0) {
-					Context* context = dynamic_cast<Context*>(root);
-					if(context) {
-						context->SynchronizeWindow();
-					}
-				}
-
-				set_refresh(true);
-			}
-
-			// TODO: mutex unlock
-			pthread_mutex_unlock(&refresh_mutex);
-
-			return true;
-		} else {
-			DBG_PRINT_MSG("%s", "cannot lock mutex, fail to lock mutex");
-		}
-
-		return false;
 	}
 
 	void AbstractInteractiveForm::MoveBackward()
@@ -549,7 +496,7 @@ namespace BlendInt {
 	}
 
 	void AbstractInteractiveForm::DispatchDrawEvent (AbstractInteractiveForm* widget,
-	        Profile& profile)
+	        Profile& profile, bool use_parent_status)
 	{
 #ifdef DEBUG
 		assert(widget != 0);
@@ -558,12 +505,17 @@ namespace BlendInt {
 		if (widget->PreDraw(profile)) {
 
 			ResponseType response = widget->Draw(profile);
-			widget->set_refresh(widget->parent_->refresh());
+
+			if(use_parent_status) {
+				widget->set_refresh(widget->parent_->refresh());
+			} else {
+				widget->set_refresh(false);
+			}
 
 			if(response == Ignore) {
 				for(AbstractInteractiveForm* sub = widget->first_child(); sub; sub = sub->next())
 				{
-					DispatchDrawEvent(sub, profile);
+					DispatchDrawEvent(sub, profile, true);
 				}
 			}
 

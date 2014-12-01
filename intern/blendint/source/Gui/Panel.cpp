@@ -271,7 +271,6 @@ namespace BlendInt {
 	{
 		if(refresh()) {
 			//DBG_PRINT_MSG("%s", "refresh once");
-			set_refresh(false);
 			RenderToBuffer(profile);
 		}
 
@@ -434,7 +433,7 @@ namespace BlendInt {
 
             // Draw context:
     		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
-    			DispatchDrawEvent (p, profile);
+    			DispatchDrawEvent (p, profile, false);
     		}
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

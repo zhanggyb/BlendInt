@@ -245,19 +245,12 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		*/
 
-		if(pthread_mutex_lock(&refresh_mutex) != 0) {
-			DBG_PRINT_MSG("%s", "Fail to lock mutex");
-		}
-
 		set_refresh(false);
 		if(PreDraw(profile_)) {
 			Draw(profile_);
 			PostDraw(profile_);
 		}
 
-		if(pthread_mutex_unlock(&refresh_mutex) != 0) {
-			DBG_PRINT_MSG("%s", "Fail to unlock mutex");
-		}
 	}
 
 	void Context::DispatchKeyEvent(const KeyEvent& event)

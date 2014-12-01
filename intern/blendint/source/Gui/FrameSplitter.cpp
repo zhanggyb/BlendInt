@@ -518,9 +518,8 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
-		set_refresh(false);
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
-			DispatchDrawEvent (p, profile);
+			DispatchDrawEvent (p, profile, false);
 		}
 
 		return subs_count() ? Ignore : Accept;
