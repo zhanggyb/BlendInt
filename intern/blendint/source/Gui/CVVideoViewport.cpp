@@ -50,7 +50,8 @@ namespace BlendInt {
 	CVVideoViewport::CVVideoViewport()
 	: Frame(),
 	  vao_(0),
-	  status_(VideoStop)
+	  status_(VideoStop),
+	  upload_(false)
 	{
 		set_size(640, 480);
 
@@ -60,9 +61,10 @@ namespace BlendInt {
 		InitializeCVVideoView();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 30);	// default 30 fps
+		timer_->SetInterval(1000 / 48);	// default 30 fps
 
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
+
 	}
 
 	CVVideoViewport::~CVVideoViewport()
@@ -83,6 +85,10 @@ namespace BlendInt {
 	bool CVVideoViewport::OpenCamera(int n, const Size& resolution)
 	{
 		bool retval = false;
+
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+		}
 
 		video_stream_.open(n);
 		if(video_stream_.isOpened()) {
@@ -107,9 +113,17 @@ namespace BlendInt {
 			RequestRedraw();
 		} else {
 			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
+			status_ = VideoStop;
 		}
 
 		return retval;
+	}
+
+	void CVVideoViewport::Release()
+	{
+		video_stream_.release();
+		frame_.release();
+		status_ = VideoStop;
 	}
 
 	void CVVideoViewport::SetFPS (unsigned int fps)
@@ -139,8 +153,9 @@ namespace BlendInt {
 
 	void CVVideoViewport::Stop()
 	{
-		timer_->Stop();
 		status_ = VideoStop;
+		timer_->Stop();
+		upload_ = false;
 
 		if(video_stream_.isOpened()) {
 			video_stream_.release();
@@ -232,53 +247,43 @@ namespace BlendInt {
 
 	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
-		switch (status_) {
-
-			case VideoPlay: {
-				if(!video_stream_.isOpened()) return Accept;
-				video_stream_ >> frame_;
-				break;
-			}
-
-			case VideoPause: {
-				break;
-			}
-
-			default: {	// Stop
-				return Accept;
-				break;
-			}
-
-		}
-
-		if(frame_.data == 0) {
+		if(status_ == VideoStop) {
 			return Accept;
 		}
 
-		glActiveTexture(GL_TEXTURE0);
-		texture_.bind();
-
-		switch (frame_.channels()) {
-
-			case 3: {
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-				texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-								0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-				break;
+		if(status_ == VideoPlay) {
+			if(video_stream_.isOpened()) {
+				video_stream_ >> frame_;
 			}
+		}
 
-			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-			{
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-				texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-								0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-				break;
-			}
+		if(frame_.data) {
 
-			default: {
-				texture_.reset();
-				return Accept;
-				break;
+			glActiveTexture(GL_TEXTURE0);
+			texture_.bind();
+
+			switch (frame_.channels()) {
+
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+							0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
+
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+							0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
+
+				default: {
+					texture_.reset();
+					return Accept;
+					break;
+				}
 			}
 		}
 
@@ -344,7 +349,11 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-        RequestRedraw();
+		if(!refresh()) {
+			RequestRedrawInThread();
+		} else {
+			DBG_PRINT_MSG("%s", "this viewport is refreshing");
+		}
 	}
 
 }

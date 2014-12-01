@@ -50,6 +50,8 @@ namespace BlendInt {
 
 		bool OpenFile (const std::string& filename);
 
+		void Release ();
+
 		void SetFPS (unsigned int fps);
 
 		void Play ();
@@ -99,6 +101,9 @@ namespace BlendInt {
 		cv::VideoCapture video_stream_;
 
 		cv::Mat frame_;
+
+		// if upload to GPU (texture)
+		bool upload_;
 
 		RefPtr<Timer> timer_;
 

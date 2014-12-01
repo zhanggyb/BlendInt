@@ -26,7 +26,6 @@ using namespace BlendInt;
 MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 : BI::Context(),
   viewport_(0),
-  status_(VideoStop),
   window_(window)
 {
 	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
@@ -34,7 +33,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_ = Manage(new ImageViewport);
+	viewport_ = Manage(new CVVideoViewport);
 
 	splitter->AddFrame(viewport_);
 	splitter->AddFrame(tools, PreferredWidth);
@@ -47,21 +46,6 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 	AddFrame(vsplitter);
 
 	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
-
-	timer_.reset(new Timer);
-	//timer_->SetInterval(1000 / 30);	// 30 fps
-	timer_->SetInterval(1000 / 24);	// 25 fps
-
-	events()->connect(timer_->timeout(), this, &MarkerBasedARContext::OnTimeout);
-
-	texture_.reset(new GLTexture2D);
-	texture_->generate();
-	texture_->bind();
-	texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-	texture_->SetMinFilter(GL_LINEAR);
-	texture_->SetMagFilter(GL_LINEAR);
-	texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	texture_->reset();
 }
 
 MarkerBasedARContext::~MarkerBasedARContext ()
@@ -145,95 +129,29 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 	return bar;
 }
 
-bool MarkerBasedARContext::OpenCamera(int n, const BI::Size& resolution)
-{
-	bool retval = false;
-
-	video_stream_.open(n);
-	if(video_stream_.isOpened()) {
-
-		video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
-		video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
-
-	} else {
-		DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
-	}
-
-	return retval;
-}
-
 void MarkerBasedARContext::OnToggleCamera(AbstractButton* sender, bool toggled)
 {
-	if(timer_->enabled()) {
-		timer_->Stop();
-	}
-
 	if(toggled) {
-		OpenCamera(0, Size(640, 480));
+		viewport_->OpenCamera(0, Size(640, 480));
 	} else {
-		video_stream_.release();
+		viewport_->Release();
 	}
 }
 
 void MarkerBasedARContext::OnPlay(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Start Play");
-	//viewport_->OpenCamera(0, Size(800, 600));
-	//viewport_->Play();
-	timer_->Start();
+	viewport_->Play();
 }
 
 void MarkerBasedARContext::OnPause (AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Pause");
-	//viewport_->Pause();
-	timer_->Stop();
+	viewport_->Pause();
 }
 
 void MarkerBasedARContext::OnStop(AbstractButton* sender)
 {
 	DBG_PRINT_MSG("%s", "Stop Play");
-	//viewport_->Stop();
-	timer_->Stop();
-}
-
-void MarkerBasedARContext::OnTimeout(Timer* t)
-{
-	if(video_stream_.isOpened()) {
-		MakeGLContextCurrent();
-		cv::Mat frame;
-		video_stream_ >> frame;
-
-		if(frame.data) {
-
-			texture_->bind();
-			switch (frame.channels()) {
-
-				case 3: {
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-				texture_->SetImage(0, GL_RGB, frame.cols, frame.rows,
-								0, GL_BGR, GL_UNSIGNED_BYTE, frame.data);
-				break;
-			}
-
-			case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-			{
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-				texture_->SetImage(0, GL_RGBA, frame.cols, frame.rows,
-								0, GL_BGRA, GL_UNSIGNED_BYTE, frame.data);
-				break;
-			}
-
-			default:
-				break;
-			}
-			texture_->reset();
-
-		}
-
-		//viewport_->LoadCVImage(frame);
-		viewport_->SetTexture(texture_);
-
-		RequestRedraw();
-	}
+	viewport_->Stop();
 }

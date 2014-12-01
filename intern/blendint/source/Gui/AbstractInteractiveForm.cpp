@@ -62,6 +62,8 @@ namespace BlendInt {
 		return retval;
 	}
 
+	pthread_mutex_t AbstractInteractiveForm::refresh_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 	float AbstractInteractiveForm::border_width = 1.f;
 
 	const float AbstractInteractiveForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
@@ -291,7 +293,92 @@ namespace BlendInt {
 
 			set_refresh(true);
 		}
+	}
 
+	void AbstractInteractiveForm::RequestRedrawInThread()
+	{
+		if(pthread_mutex_lock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to lock mutex");
+			return;
+		}
+
+		if(!refresh()) {
+
+			AbstractInteractiveForm* root = this;
+			AbstractInteractiveForm* p = parent();
+
+			/*
+			while(p) {
+				DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+				p = p->parent();
+			}
+			p = parent();
+			*/
+
+			while(p && (!p->refresh()) && (p->visiable())) {
+				root = p;
+				p->set_refresh(true);
+				p = p->parent();
+			}
+
+			if(root->parent() == 0) {
+				Context* context = dynamic_cast<Context*>(root);
+				if(context) {
+					context->SynchronizeWindow();
+				}
+			}
+
+			set_refresh(true);
+		}
+
+		if(pthread_mutex_unlock(&refresh_mutex) != 0) {
+			DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+		}
+	}
+
+	bool AbstractInteractiveForm::TryRequestRedrawInThread()
+	{
+		if(pthread_mutex_trylock(&refresh_mutex) == 0) {
+
+			if(!refresh()) {
+
+				AbstractInteractiveForm* root = this;
+				AbstractInteractiveForm* p = parent();
+
+				/*
+				while(p) {
+					DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+					p = p->parent();
+				}
+				p = parent();
+				*/
+
+				while(p && (!p->refresh()) && (p->visiable())) {
+					root = p;
+					p->set_refresh(true);
+					p = p->parent();
+				}
+
+				if(root->parent() == 0) {
+					Context* context = dynamic_cast<Context*>(root);
+					if(context) {
+						context->SynchronizeWindow();
+					}
+				}
+
+				set_refresh(true);
+			}
+
+			if(pthread_mutex_unlock(&refresh_mutex) != 0) {
+				DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+			}
+
+			return true;
+
+		} else {
+			//DBG_PRINT_MSG("%s", "cannot lock mutex, fail to lock mutex");
+			return false;
+		}
 	}
 
 	void AbstractInteractiveForm::MoveBackward()

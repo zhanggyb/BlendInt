@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
 
 #include <vector>
+#include <pthread.h>
 
 #include <Cpp/Events.hpp>
 
@@ -320,6 +321,10 @@ namespace BlendInt {
 		virtual bool Contain (const Point& point) const;
 
 		void RequestRedraw ();
+
+		void RequestRedrawInThread ();
+
+		bool TryRequestRedrawInThread ();
 
 		AbstractInteractiveForm* operator [] (int i) const;
 
@@ -782,6 +787,8 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::string name_;
 #endif
+
+		static pthread_mutex_t refresh_mutex;
 
 		static float border_width;
 
