@@ -74,7 +74,7 @@ ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 	NumericalSlider* ns1 = Manage(new NumericalSlider);
 	NumericalSlider* ns2 = Manage(new NumericalSlider);
 
-	ToggleButton* open = Manage(new ToggleButton("Open Camera"));
+	ToggleButton* open = Manage(new ToggleButton("Open Camera 0"));
 	Separator* separator1 = Manage(new Separator);
 	Separator* separator2 = Manage(new Separator);
 

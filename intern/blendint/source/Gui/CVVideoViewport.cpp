@@ -61,7 +61,7 @@ namespace BlendInt {
 		InitializeCVVideoView();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 48);	// default 30 fps
+		timer_->SetInterval(1000 / 24);	// default 30 fps
 
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 
@@ -352,7 +352,7 @@ namespace BlendInt {
 		if(!refresh()) {
 			RequestRedrawInThread();
 		} else {
-			DBG_PRINT_MSG("%s", "this viewport is refreshing");
+			// DBG_PRINT_MSG("%s", "this viewport is refreshing");
 		}
 	}
 
