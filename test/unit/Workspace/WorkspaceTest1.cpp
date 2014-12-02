@@ -3,6 +3,8 @@
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
 
 using namespace BlendInt;
 
@@ -29,6 +31,7 @@ TEST_F(WorkspaceTest1, Foo1)
     GLFWwindow* win = CreateWindow("Workspace - Foo1", 1280, 800);
 
     UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);
 	
@@ -38,17 +41,17 @@ TEST_F(WorkspaceTest1, Foo1)
 	workspace->Resize(1280, 800);
 
 	ToolBox* left = Manage(new ToolBox(Vertical));
-	Button* btn1 = Manage(new Button("Hello1"));
-	Button* btn2 = Manage(new Button("Hello2"));
-	Button* btn3 = Manage(new Button("Hello3"));
+	ToggleButton* btn1 = Manage(new ToggleButton("Hello1"));
+	ToggleButton* btn2 = Manage(new ToggleButton("Hello2"));
+	ToggleButton* btn3 = Manage(new ToggleButton("Hello3"));
 	left->AddWidget(btn1);
 	left->AddWidget(btn2);
 	left->AddWidget(btn3);
 
 	ToolBox* right = Manage(new ToolBox(Vertical));
-	Button* btn4 = Manage(new Button("Hello4"));
-	Button* btn5 = Manage(new Button("Hello5"));
-	Button* btn6 = Manage(new Button("Hello6"));
+	ToggleButton* btn4 = Manage(new ToggleButton("Hello4"));
+	ToggleButton* btn5 = Manage(new ToggleButton("Hello5"));
+	ToggleButton* btn6 = Manage(new ToggleButton("Hello6"));
 	right->AddWidget(btn4);
 	right->AddWidget(btn5);
 	right->AddWidget(btn6);
@@ -60,6 +63,9 @@ TEST_F(WorkspaceTest1, Foo1)
 	workspace->SetRightSideBar(right);
 
 	context->AddFrame(workspace);
+
+	Dialog* dialog = Manage(new Dialog);
+	context->AddFrame(dialog);
 
 	context->LinkResizeEvent(workspace);
     RunLoop(win);

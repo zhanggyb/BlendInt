@@ -287,6 +287,7 @@ namespace BlendInt {
 			if(root->parent() == 0) {
 				Context* context = dynamic_cast<Context*>(root);
 				if(context) {
+					//DBG_PRINT_MSG("Call %s", "virtual Context::SynchronizeWindow()");
 					context->SynchronizeWindow();
 				}
 			}

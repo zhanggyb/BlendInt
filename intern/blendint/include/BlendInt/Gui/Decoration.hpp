@@ -26,6 +26,7 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -84,7 +85,7 @@ namespace BlendInt {
 		 */
 		int space_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> inner_;
 	};
 
 }

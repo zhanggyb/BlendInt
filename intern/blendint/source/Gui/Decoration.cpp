@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
@@ -105,12 +104,13 @@ namespace BlendInt {
 	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, round_type(), round_radius());
 
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			inner_->reset();
+			std::vector<GLfloat> inner_verts;
+			GenerateRoundedVertices(&inner_verts, 0);
+
+			inner_.bind();
+			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_.reset();
 
 			int x = position().x();
 			if (first_child()) {
@@ -138,11 +138,11 @@ namespace BlendInt {
 
 	void Decoration::PerformRoundTypeUpdate (int round_type)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, round_type,
-				round_radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		std::vector<GLfloat> inner_verts;
+		GenerateRoundedVertices(&inner_verts, 0);
+
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		GLArrayBuffer::reset();
 
 		RequestRedraw();
@@ -150,10 +150,10 @@ namespace BlendInt {
 
 	void Decoration::PerformRoundRadiusUpdate (float radius)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, round_type(), radius);
-		inner_->bind();
-		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
+		std::vector<GLfloat> inner_verts;
+		GenerateRoundedVertices(&inner_verts, 0);
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		GLArrayBuffer::reset();
 
 		RequestRedraw();
@@ -161,13 +161,10 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (Profile& profile)
 	{
-		Shaders::instance->widget_triangle_program()->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Color(Color::DarkGray).data());
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Color(Color::DarkGray).data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -180,23 +177,22 @@ namespace BlendInt {
 
 	void Decoration::InitializeDecoration()
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		GenerateRoundedVertices(&inner_verts, 0);
 
 		glGenVertexArrays(1, vao_);
 
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_.reset();
 	}
 
 	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size, int space)

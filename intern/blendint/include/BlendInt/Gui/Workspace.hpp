@@ -58,9 +58,11 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
+		/**
+		 * 0 - inner
+		 * 1 - outer
+		 */
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 	};
 

@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -63,25 +62,23 @@ namespace BlendInt {
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.generate();
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		buffer_.reset();
 	}
 
 	EdgeButton::~EdgeButton()
@@ -98,11 +95,11 @@ namespace BlendInt {
 
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 
-			inner_->bind();
-			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			set_size(*request.size());
 
@@ -304,7 +301,7 @@ namespace BlendInt {
 
 	void Workspace::SetViewport (Frame* viewport)
 	{
-		if(viewport_ == viewport) return;
+		if((viewport == nullptr) || (viewport == viewport_)) return;
 
 		/*
 		if(viewport_)
@@ -315,11 +312,12 @@ namespace BlendInt {
 		viewport_ = viewport;
 
 		DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(), viewport_->size().height());
+		RequestRedraw();
 	}
 
 	void Workspace::SetLeftSideBar (ToolBox* leftbar)
 	{
-		if(leftbar || (leftbar->parent() == this)) return;
+		if((leftbar == nullptr) || (leftbar == left_sidebar_)) return;
 
 		/*
 		if(left_sidebar_)
@@ -328,11 +326,12 @@ namespace BlendInt {
 
 		splitter_->AddFrame(leftbar);
 		left_sidebar_ = leftbar;
+		RequestRedraw();
 	}
 
 	void Workspace::SetRightSideBar (ToolBox* rightbar)
 	{
-		if(rightbar || (rightbar->parent() == this)) return;
+		if((rightbar == nullptr) || (rightbar == right_sidebar_)) return;
 
 		/*
 		if(right_sidebar_)
@@ -341,6 +340,8 @@ namespace BlendInt {
 
 		splitter_->AddFrame(rightbar);
 		right_sidebar_ = rightbar;
+
+		RequestRedraw();
 	}
 
 	void Workspace::SetHeader (ToolBox* header)
@@ -387,6 +388,8 @@ namespace BlendInt {
 			int oy = request.position()->y() - position().y();
 			set_position(*request.position());
 			MoveSubWidgets(ox, oy);
+
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -399,8 +402,13 @@ namespace BlendInt {
 		if (request.target() == this) {
 			set_size(*request.size());
 
-			ResizeSubWidgets(size());
+			if(header_) {
 
+			} else {
+				ResizeSubForm(splitter_, size());
+			}
+
+			RequestRedraw();
 		}
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
@@ -415,7 +423,7 @@ namespace BlendInt {
 	ResponseType Workspace::Draw (Profile& profile)
 	{
 		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
-			DispatchDrawEvent (p, profile, true);
+			DispatchDrawEvent (p, profile, false);
 		}
 
 		return subs_count() ? Ignore : Accept;
@@ -435,6 +443,11 @@ namespace BlendInt {
 
 	void Workspace::MouseHoverOutEvent(const MouseEvent& event)
 	{
+		if(hover_) {
+			set_widget_mouse_hover_out_event(hover_, event);
+			hover_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
+			hover_ = 0;
+		}
 	}
 
 	ResponseType Workspace::KeyPressEvent(const KeyEvent& event)
