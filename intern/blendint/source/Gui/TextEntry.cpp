@@ -40,6 +40,8 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/AbstractFrame.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -611,7 +613,9 @@ namespace BlendInt {
 	
 	int TextEntry::GetCursorPosition (const MouseEvent& event)
 	{
-		int click_position = event.position().x() - position().x()
+		Point global_pos = event.frame()->GetAbsolutePosition(this);
+
+		int click_position = event.position().x() - global_pos.x()
 						- round_radius();
 
 		if((click_position < 0) ||

@@ -123,8 +123,6 @@ namespace BlendInt {
 
 		void ClearHoverWidgets (AbstractInteractiveForm* hovered_widget, const MouseEvent& event);
 
-		Cpp::ConnectionScope* events() const {return events_.get();}
-
 		inline void set_widget_mouse_hover_in_event (AbstractInteractiveForm* widget, const MouseEvent& event)
 		{
 			widget->set_hover(true);
@@ -136,6 +134,8 @@ namespace BlendInt {
 			widget->set_hover(false);
 			widget->MouseHoverOutEvent(event);
 		}
+
+		Cpp::ConnectionScope* events() const {return events_.get();}
 
 		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
 		{

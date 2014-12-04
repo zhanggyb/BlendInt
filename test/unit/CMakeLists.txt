@@ -81,3 +81,4 @@ endif()
 #add_subdirectory(ToolButton)
 #add_subdirectory(HBlock)
 
+add_subdirectory(Block)

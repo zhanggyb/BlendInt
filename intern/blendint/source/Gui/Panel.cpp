@@ -432,9 +432,7 @@ namespace BlendInt {
 			DrawPanel();
 
             // Draw context:
-    		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
-    			DispatchDrawEvent (p, profile, false);
-    		}
+			DrawSubFormsOnce(profile);
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

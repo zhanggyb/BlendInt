@@ -111,7 +111,8 @@ namespace BlendInt {
 			angle_ = angle_ % 360;
 		}
 
-		if(!refresh()) RequestRedrawInThread();
+		RequestRedraw();
+		//if(!refresh()) RequestRedrawInThread();
 	}
 
 	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)

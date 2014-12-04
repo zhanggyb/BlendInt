@@ -583,8 +583,36 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
+	void AbstractInteractiveForm::DrawSubFormsOnce(Profile& profile)
+	{
+		bool refresh_record = false;
+
+		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		{
+			set_refresh(false);	// allow pass to parent in RequestRedraw()
+			if (p->PreDraw(profile)) {
+
+				ResponseType response = p->Draw(profile);
+				p->set_refresh(refresh());
+
+				if(response == Ignore) {
+					for(AbstractInteractiveForm* sub = p->first_child(); sub; sub = sub->next())
+					{
+						DispatchDrawEvent(sub, profile);
+					}
+				}
+
+				p->PostDraw(profile);
+			}
+
+			if(refresh()) refresh_record = true;
+		}
+
+		set_refresh(refresh_record);
+	}
+
 	void AbstractInteractiveForm::DispatchDrawEvent (AbstractInteractiveForm* widget,
-	        Profile& profile, bool use_parent_status)
+	        Profile& profile)
 	{
 #ifdef DEBUG
 		assert(widget != 0);
@@ -593,17 +621,12 @@ namespace BlendInt {
 		if (widget->PreDraw(profile)) {
 
 			ResponseType response = widget->Draw(profile);
-
-			if(use_parent_status) {
-				widget->set_refresh(widget->parent_->refresh());
-			} else {
-				widget->set_refresh(false);
-			}
+			widget->set_refresh(widget->parent_->refresh());
 
 			if(response == Ignore) {
 				for(AbstractInteractiveForm* sub = widget->first_child(); sub; sub = sub->next())
 				{
-					DispatchDrawEvent(sub, profile, true);
+					DispatchDrawEvent(sub, profile);
 				}
 			}
 

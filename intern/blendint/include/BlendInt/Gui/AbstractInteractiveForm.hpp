@@ -674,6 +674,8 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
+		void DrawSubFormsOnce (Profile& profile);
+
 		static void GenerateVertices (
 				const Size& size,
 				float border,
@@ -694,16 +696,6 @@ namespace BlendInt {
 				std::vector<GLfloat>* outer);
 
 		static int GetOutlineVertices (int round_type);
-
-		/**
-		 * @brief Dispatch draw
-		 * @param[in] widget
-		 * @param[in] profile
-		 * @param[in] use_parent_status
-		 * 	- true: use parent refresh() status to set widget's refresh flag
-		 * 	- false: set widget's flag to false after Draw()
-		 */
-		static void DispatchDrawEvent (AbstractInteractiveForm* widget, Profile& profile, bool use_parent_status);
 
 	private:
 
@@ -735,6 +727,16 @@ namespace BlendInt {
 			IFRefresh = (1 << 10),
 
 		};
+
+		/**
+		 * @brief Dispatch draw
+		 * @param[in] widget
+		 * @param[in] profile
+		 * @param[in] use_parent_status
+		 * 	- true: use parent refresh() status to set widget's refresh flag
+		 * 	- false: set widget's flag to false after Draw()
+		 */
+		static void DispatchDrawEvent (AbstractInteractiveForm* widget, Profile& profile);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,

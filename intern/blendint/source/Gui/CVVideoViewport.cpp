@@ -349,11 +349,14 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
+		RequestRedraw();
+		/*
 		if(!refresh()) {
 			RequestRedrawInThread();
 		} else {
-			// DBG_PRINT_MSG("%s", "this viewport is refreshing");
+			 DBG_PRINT_MSG("%s", "this viewport is refreshing");
 		}
+		*/
 	}
 
 }

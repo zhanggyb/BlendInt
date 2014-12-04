@@ -422,9 +422,7 @@ namespace BlendInt {
 
 	ResponseType Workspace::Draw (Profile& profile)
 	{
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
-			DispatchDrawEvent (p, profile, false);
-		}
+		DrawSubFormsOnce(profile);
 
 		return subs_count() ? Ignore : Accept;
 	}
