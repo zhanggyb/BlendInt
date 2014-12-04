@@ -166,13 +166,17 @@ namespace BlendInt {
 		Shaders::instance->frame_inner_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.6f, 0.05f, 0.05f, 1.f);
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
 
+		/*
 		if(hover()) {
 			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 25);
 		} else {
 			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
 		}
+		*/
+
+		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -245,7 +249,8 @@ namespace BlendInt {
 		} else {
 			Cursor::instance->SetCursor(SplitHCursor);
 		}
-		RequestRedraw();
+
+		//RequestRedraw();
 	}
 
 	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
@@ -253,7 +258,7 @@ namespace BlendInt {
 		if(!pressed_ext())
 			Cursor::instance->PopCursor();
 
-		RequestRedraw();
+		//RequestRedraw();
 	}
 
 	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
