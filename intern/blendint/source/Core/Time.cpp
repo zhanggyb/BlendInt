@@ -21,63 +21,53 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_CURSOR_HPP_
-#define _BLENDINT_STOCK_CURSOR_HPP_
+#ifdef __UNIX__
+#include <stddef.h>
+#include <sys/time.h>
+#endif	// __UNIX__
 
-#include <stack>
-
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/CursorType.hpp>
+#include <BlendInt/Core/Time.hpp>
 
 namespace BlendInt {
 
-	class Context;
+	uint64_t Time::kSavedTime = 0;
 
-	class Cursor
+	uint64_t Time::GetIntervalOfSeconds()
 	{
-		DISALLOW_COPY_AND_ASSIGN(Cursor);
+		uint64_t current = GetMicroSeconds();
 
-	public:
+		return (current - kSavedTime) / (1000000);
+	}
 
-		static Cursor* instance;
+	uint64_t Time::GetIntervalOfMilliseconds()
+	{
+		uint64_t current = GetMicroSeconds();
 
-		void RegisterCursorType (CursorType* cursor_type);
+		return (current - kSavedTime) / (1000);
+	}
 
-		void SetCursor (int cursor_type);
+	uint64_t Time::GetIntervalOfMicroseconds()
+	{
+		uint64_t current = GetMicroSeconds();
 
-		void PushCursor ();
+		return (current - kSavedTime);
+	}
 
-		void PushCursor (int cursor_type);
+	uint64_t Time::GetMicroSeconds()
+	{
+		uint64_t retval = 0;
+		struct timeval tv = {0, 0};
 
-		void PopCursor ();
+		gettimeofday(&tv, NULL);
 
-		int cursor_type () const
-		{
-			if(cursor_type_ != nullptr) {
-				return cursor_type_->current_cursor();
-			} else {
-				return ArrowCursor;
-			}
-		}
+		retval = tv.tv_sec * 1000 * 1000 + tv.tv_usec;
 
-	private:
+		return retval;
+	}
 
-		friend class Context;
-
-		static bool Initialize ();
-
-		static void Release ();
-
-		Cursor ();
-
-		~Cursor ();
-
-		CursorType * cursor_type_;
-
-		std::stack<int> cursor_stack_;
-
-	};
+	void Time::SaveCurrent()
+	{
+		kSavedTime = GetMicroSeconds();
+	}
 
 }
-
-#endif	// _BLENDINT_STOCK_CURSOR_HPP_

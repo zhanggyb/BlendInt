@@ -34,14 +34,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#ifdef USE_FONTCONFIG
+#include <BlendInt/Core/FontConfig.hpp>
+#endif
+#include <BlendInt/Core/Time.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-
-#ifdef USE_FONTCONFIG
-#include <BlendInt/Core/FontConfig.hpp>
-#endif
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -137,6 +138,10 @@ namespace BlendInt
 #endif
 
 #endif
+
+		if(success) {
+			Time::SaveCurrent();
+		}
 
 		return success;
 	}

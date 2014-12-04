@@ -43,7 +43,7 @@ namespace BlendInt {
 		 */
 		virtual void SetCursor (int cursor_type);
 
-		int current_cursor () const
+		inline int current_cursor () const
 		{
 			return current_cursor_;
 		}

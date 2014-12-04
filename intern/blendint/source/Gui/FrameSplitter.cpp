@@ -38,6 +38,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
@@ -230,16 +231,28 @@ namespace BlendInt {
 	ResponseType FrameSplitterHandle::MouseReleaseEvent(
 			const MouseEvent& event)
 	{
+		if(!hover()) {
+			Cursor::instance->PopCursor();
+		}
 		return Accept;
 	}
 
 	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
 	{
+		Cursor::instance->PushCursor();
+		if(orientation_ == Horizontal) {
+			Cursor::instance->SetCursor(SplitVCursor);
+		} else {
+			Cursor::instance->SetCursor(SplitHCursor);
+		}
 		RequestRedraw();
 	}
 
 	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
 	{
+		if(!pressed_ext())
+			Cursor::instance->PopCursor();
+
 		RequestRedraw();
 	}
 

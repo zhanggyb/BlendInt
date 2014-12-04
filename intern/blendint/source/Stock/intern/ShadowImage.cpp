@@ -1,5 +1,7 @@
 /* GIMP RGBA C-Source image dump (shadow.c) */
 
+#include "ShadowImage.hpp"
+
 #define GIMP_IMAGE_WIDTH (512)
 #define GIMP_IMAGE_HEIGHT (512)
 #define GIMP_IMAGE_BYTES_PER_PIXEL (4) /* 3:RGB, 4:RGBA */

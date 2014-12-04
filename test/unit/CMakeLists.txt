@@ -33,6 +33,7 @@ add_subdirectory(Workspace)
 add_subdirectory(Thread)
 add_subdirectory(TimeRuler)
 add_subdirectory(HorizontalLayout)
+add_subdirectory(Time)
 
 add_subdirectory(Performance)
 

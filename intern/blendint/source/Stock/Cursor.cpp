@@ -40,12 +40,12 @@ namespace BlendInt {
 	{
 		if(instance) {
 			delete instance;
-			instance = 0;
+			instance = nullptr;
 		}
 	}
 
 	Cursor::Cursor ()
-	: cursor_type_(0)
+	: cursor_type_(nullptr)
 	{
 
 	}
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 	void Cursor::PushCursor ()
 	{
-		if(cursor_type_) {
+		if(cursor_type_ != nullptr) {
 			cursor_stack_.push(cursor_type_->current_cursor());
 		}
 	}

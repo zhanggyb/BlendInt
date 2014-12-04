@@ -18,8 +18,10 @@ public:
 	GLFWCursor (GLFWwindow* window)
 	: BI::CursorType(),
 	window_(window),
-	arrow_(0),
-	cross_(0)
+	arrow_(nullptr),
+	cross_(nullptr),
+	split_v_(nullptr),
+	split_h_(nullptr)
 	{
 		Initialize();
 	}
@@ -42,6 +44,10 @@ private:
 	GLFWcursor* arrow_;
 
 	GLFWcursor* cross_;
+
+	GLFWcursor* split_v_;
+
+	GLFWcursor* split_h_;
 };
 
 #endif	// _GLFW_CURSOR_HPP_

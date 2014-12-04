@@ -21,63 +21,44 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_CURSOR_HPP_
-#define _BLENDINT_STOCK_CURSOR_HPP_
+#ifndef _INCLUDE_BLENDINT_CORE_TIME_HPP_
+#define _INCLUDE_BLENDINT_CORE_TIME_HPP_
 
-#include <stack>
-
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/CursorType.hpp>
+#include <stdint.h>
 
 namespace BlendInt {
 
-	class Context;
-
-	class Cursor
+	class Time
 	{
-		DISALLOW_COPY_AND_ASSIGN(Cursor);
-
 	public:
 
-		static Cursor* instance;
+		Time()
+		{}
 
-		void RegisterCursorType (CursorType* cursor_type);
+		~Time ()
+		{}
 
-		void SetCursor (int cursor_type);
+		static uint64_t GetIntervalOfSeconds ();
 
-		void PushCursor ();
+		static uint64_t GetIntervalOfMilliseconds ();
 
-		void PushCursor (int cursor_type);
+		static uint64_t GetIntervalOfMicroseconds ();
 
-		void PopCursor ();
+		static uint64_t GetMicroSeconds ();
 
-		int cursor_type () const
+		static void SaveCurrent ();
+
+		static inline uint64_t saved_time ()
 		{
-			if(cursor_type_ != nullptr) {
-				return cursor_type_->current_cursor();
-			} else {
-				return ArrowCursor;
-			}
+			return kSavedTime;
 		}
 
 	private:
 
-		friend class Context;
-
-		static bool Initialize ();
-
-		static void Release ();
-
-		Cursor ();
-
-		~Cursor ();
-
-		CursorType * cursor_type_;
-
-		std::stack<int> cursor_stack_;
+		static uint64_t kSavedTime;
 
 	};
 
 }
 
-#endif	// _BLENDINT_STOCK_CURSOR_HPP_
+#endif /* _INCLUDE_BLENDINT_CORE_TIME_HPP_ */

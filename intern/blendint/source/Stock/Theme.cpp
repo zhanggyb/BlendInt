@@ -31,7 +31,7 @@
 
 #include <BlendInt/Core/Image.hpp>
 
-#include "ShadowImage.hpp"
+#include "intern/ShadowImage.hpp"
 
 namespace BlendInt {
 

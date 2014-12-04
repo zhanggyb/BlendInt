@@ -259,9 +259,9 @@ namespace BlendInt {
 
 			cursor_buffer_->bind();
 			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
-			*(buf_p + 7) = (GLfloat) (request.size()->height()
+			*(buf_p + 5) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * Theme::instance->pixel());
-			*(buf_p + 10) = (GLfloat) (request.size()->height()
+			*(buf_p + 7) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * Theme::instance->pixel());
 			cursor_buffer_->unmap();
 			cursor_buffer_->reset();
@@ -357,25 +357,25 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		/*
 		if(focus()) {			// draw a cursor
+
+			Shaders::instance->widget_triangle_program()->use();
 			unsigned int cursor_pos = font_.GetTextWidth(text_,
 						        index_ - start_, start_);
 			cursor_pos += round_radius();
 
-			glm::vec3 pos(0.f + cursor_pos, 0.f + 1, 0.f);
+			glm::vec2 pos(0.f + cursor_pos, 0.f + 1);
 
-			glUniform3fv(Shaders::instance->location(Stock::WIDGET_POSITION), 1,
+			glUniform2fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 1,
 					glm::value_ptr(pos));
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_GAMMA), 0);
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_ANTI_ALIAS), 0);
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_COLOR), 0.f,
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.f,
 					0.215f, 1.f, 0.75f);
 
 			glBindVertexArray(vaos_[2]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
-		*/
 
 		glBindVertexArray(0);
 		GLSLProgram::reset();
@@ -427,20 +427,20 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		std::vector<GLfloat> cursor_vertices(12, 0.f);
+		std::vector<GLfloat> cursor_vertices(8, 0.f);
 
 		cursor_vertices[0] = 1.f;
-		cursor_vertices[1] = (GLfloat) vertical_space;
+		cursor_vertices[1] = (GLfloat) vertical_space * Theme::instance->pixel();
 
-		cursor_vertices[3] = 3.f;
-		cursor_vertices[4] = (GLfloat) vertical_space;
+		cursor_vertices[2] = 3.f;
+		cursor_vertices[3] = (GLfloat) vertical_space * Theme::instance->pixel();
 
-		cursor_vertices[6] = 1.f;
-		cursor_vertices[7] = (GLfloat) (size().height()
+		cursor_vertices[4] = 1.f;
+		cursor_vertices[5] = (GLfloat) (size().height()
 				- vertical_space * 2 * Theme::instance->pixel());
 
-		cursor_vertices[9] = 3.f;
-		cursor_vertices[10] = (GLfloat) (size().height()
+		cursor_vertices[6] = 3.f;
+		cursor_vertices[7] = (GLfloat) (size().height()
 				- vertical_space * 2 * Theme::instance->pixel());
 
 		glBindVertexArray(vaos_[2]);
@@ -450,9 +450,9 @@ namespace BlendInt {
 		cursor_buffer_->bind();
 		cursor_buffer_->set_data(sizeof(GLfloat) * cursor_vertices.size(), &cursor_vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
 		glBindVertexArray(0);
