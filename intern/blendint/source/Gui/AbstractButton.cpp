@@ -40,7 +40,7 @@
 
 namespace BlendInt {
 
-	Margin AbstractButton::default_padding = Margin(2, 2, 2, 2);
+	Margin AbstractButton::kDefaultPadding = Margin(2, 2, 2, 2);
 
 	int AbstractButton::icon_text_space = 2;
 
@@ -74,16 +74,16 @@ namespace BlendInt {
 		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(
-				max_font_height + default_padding.vsum() * Theme::instance->pixel()); // top padding: 2, bottom padding: 2
+				max_font_height + kDefaultPadding.vsum() * Theme::instance->pixel()); // top padding: 2, bottom padding: 2
 
 		if (text_.empty()) {
 			preferred_size.set_width(
-					max_font_height + default_padding.hsum()
+					max_font_height + kDefaultPadding.hsum()
 							+ radius_plus);
 		} else {
 			int width = font().GetTextWidth(text());
 			preferred_size.set_width(
-					width + default_padding.hsum() + radius_plus); // left padding: 2, right padding: 2
+					width + kDefaultPadding.hsum() + radius_plus); // left padding: 2, right padding: 2
 		}
 
 		return preferred_size;
@@ -118,7 +118,7 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		float radius_plus = 0.f;
-		int x = default_padding.left(); int y = default_padding.bottom();
+		int x = kDefaultPadding.left(); int y = kDefaultPadding.bottom();
 
 		if((round_type & RoundTopLeft) || (round_type & RoundBottomLeft)) {
 			radius_plus += radius;
@@ -129,8 +129,8 @@ namespace BlendInt {
 			radius_plus += radius;
 		}
 
-		int valid_width = size.width() - default_padding.hsum() - (int)radius_plus;
-		int valid_height = size.height() - default_padding.vsum();
+		int valid_width = size.width() - kDefaultPadding.hsum() - (int)radius_plus;
+		int valid_height = size.height() - kDefaultPadding.vsum();
 
 		if(valid_width <= 0 || valid_height <= 0) {
 			return 0;

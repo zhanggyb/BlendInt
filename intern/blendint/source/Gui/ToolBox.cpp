@@ -48,11 +48,11 @@ namespace BlendInt {
 
 	ToolBox::ToolBox (Orientation orientation)
 	: Frame(),
-	focused_widget_(0),
-	hovered_widget_(0),
-	space_(1),
-	margin_(2, 2, 2, 2),
-	orientation_(orientation)
+	  focused_widget_(0),
+	  hovered_widget_(0),
+	  space_(1),
+	  margin_(2, 2, 2, 2),
+	  orientation_(orientation)
 	{
 		if(orientation_ == Horizontal) {
 			set_size(400, 240);
@@ -65,10 +65,10 @@ namespace BlendInt {
 
 	ToolBox::ToolBox (int width, int height, Orientation orientation)
 	: Frame(),
-	focused_widget_(0),
-	hovered_widget_(0),
-	space_(1),
-	orientation_(orientation)
+	  focused_widget_(0),
+	  hovered_widget_(0),
+	  space_(1),
+	  orientation_(orientation)
 	{
 		set_size(width, height);
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 	ToolBox::~ToolBox()
 	{
-		glDeleteVertexArrays(2, vao_);
+		glDeleteVertexArrays(3, vao_);
 
 		if(focused_widget_) {
 			set_widget_focus_status(focused_widget_, false);
@@ -230,20 +230,23 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
+			std::vector<GLfloat> outer_verts;
+			GenerateVertices(size(), 1.f * Theme::instance->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
-			inner_.bind(0);
-			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(0);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-			inner_.bind(1);
-			float* ptr = (float*)inner_.map();
+			vbo_.bind(0);
+			float* ptr = (float*)vbo_.map();
 			*(ptr + 4) = (float)size().width();
 			*(ptr + 9) = (float)size().height();
 			*(ptr + 12) = (float)size().width();
 			*(ptr + 13) = (float)size().height();
-			inner_.unmap();
+			vbo_.unmap();
 
-			inner_.reset();
+			vbo_.reset();
 
 			FillSubWidgets();
 
@@ -286,6 +289,17 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
+		Shaders::instance->frame_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
+		glBindVertexArray(vao_[1]);
+
+		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
+		glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
+
+		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         Shaders::instance->frame_image_program()->use();
@@ -295,7 +309,7 @@ namespace BlendInt {
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
         
-        glBindVertexArray(vao_[1]);
+        glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
         
@@ -425,19 +439,25 @@ namespace BlendInt {
 		model_matrix_ = glm::mat4(1.f);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+		std::vector<GLfloat> outer_verts;
+		GenerateVertices(size(), 1.f * Theme::instance->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
-		glGenVertexArrays(2, vao_);
+		buffer_.generate();
+		glGenVertexArrays(3, vao_);
+
 		glBindVertexArray(vao_[0]);
-
-		inner_.generate();
-		inner_.bind(0);
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[2]);
 
 		GLfloat vertices[] = {
 				// coord											uv
@@ -447,8 +467,9 @@ namespace BlendInt {
 				(float)size().width(), (float)size().height(),		1.f, 1.f
 		};
 
-		inner_.bind(1);
-		inner_.set_data(sizeof(vertices), vertices);
+		vbo_.generate();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
 				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
@@ -461,7 +482,7 @@ namespace BlendInt {
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		inner_.reset();
+		vbo_.reset();
 
 		set_refresh(true);
 	}

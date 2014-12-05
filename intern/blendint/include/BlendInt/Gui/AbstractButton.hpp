@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		const Font& font () const {return font_;}
 
-		static Margin default_padding;
+		static Margin kDefaultPadding;
 
 		static int icon_text_space;	// the space between icon and text
 

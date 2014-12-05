@@ -9,7 +9,6 @@
 UnitTestContext::UnitTestContext()
 : BI::Context()
 {
-
 }
 
 UnitTestContext::~UnitTestContext ()

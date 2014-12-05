@@ -1,10 +1,13 @@
 #include "WorkspaceTest1.hpp"
 #include <Common/UnitTestContext.hpp>
+#include <Common/UnitTestCursor.hpp>
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Gui/Viewport.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
+#include <BlendInt/Gui/ToolButton.hpp>
 
 using namespace BlendInt;
 
@@ -29,6 +32,7 @@ TEST_F(WorkspaceTest1, Foo1)
 	Init ();
 
     GLFWwindow* win = CreateWindow("Workspace - Foo1", 1280, 800);
+	Cursor::instance->RegisterCursorType (new UnitTestCursor(win));
 
     UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");
@@ -56,16 +60,22 @@ TEST_F(WorkspaceTest1, Foo1)
 	right->AddWidget(btn5);
 	right->AddWidget(btn6);
 
+	ToolBox* header = Manage(new ToolBox(Horizontal));
+	ToolButton* toolbtn1 = Manage(new ToolButton);
+	ToolButton* toolbtn2 = Manage(new ToolButton);
+	ToolButton* toolbtn3 = Manage(new ToolButton);
+	header->AddWidget(toolbtn1);
+	header->AddWidget(toolbtn2);
+	header->AddWidget(toolbtn3);
+
 	Viewport* view = Manage(new Viewport);
 
 	workspace->SetLeftSideBar(left);
 	workspace->SetViewport(view);
 	workspace->SetRightSideBar(right);
+	workspace->SetHeader(header);
 
 	context->AddFrame(workspace);
-
-	Dialog* dialog = Manage(new Dialog);
-	context->AddFrame(dialog);
 
 	context->LinkResizeEvent(workspace);
     RunLoop(win);

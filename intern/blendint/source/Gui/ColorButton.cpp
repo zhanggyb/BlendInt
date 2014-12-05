@@ -49,8 +49,8 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 		int h = font().GetHeight();
-		set_size(4 * h + round_radius() * 2 +default_padding.hsum(),
-						h + default_padding.vsum());
+		set_size(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
+						h + kDefaultPadding.vsum());
 
 		color0_.set_red(0.3f);
 		color0_.set_blue(0.8f);
@@ -73,8 +73,8 @@ namespace BlendInt {
 	{
 		int h = font().GetHeight();
 
-		Size prefer(4 * h + round_radius() * 2 +default_padding.hsum(),
-					h + default_padding.vsum());
+		Size prefer(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
+					h + kDefaultPadding.vsum());
 
 		return prefer;
 	}

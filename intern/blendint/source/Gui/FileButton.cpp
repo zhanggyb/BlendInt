@@ -179,10 +179,10 @@ namespace BlendInt {
 		String text("...");
 		set_text(text);
 
-		int left = default_padding.left() * Theme::instance->pixel();
-		int right = default_padding.right() * Theme::instance->pixel();
-		int top = default_padding.top() * Theme::instance->pixel();
-		int bottom = default_padding.bottom() * Theme::instance->pixel();
+		int left = kDefaultPadding.left() * Theme::instance->pixel();
+		int right = kDefaultPadding.right() * Theme::instance->pixel();
+		int top = kDefaultPadding.top() * Theme::instance->pixel();
+		int bottom = kDefaultPadding.bottom() * Theme::instance->pixel();
 		int h = font().GetHeight();
 
 		set_text_length(text.length());

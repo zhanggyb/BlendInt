@@ -626,7 +626,7 @@ namespace BlendInt {
 
 		bool PushBackSubForm (AbstractInteractiveForm* widget);
 
-		bool RemoveSubForm (AbstractInteractiveForm* widget);
+		bool RemoveSubForm (AbstractInteractiveForm* widget);		// TODO: use virtual
 
 		void ClearSubForms ();
 

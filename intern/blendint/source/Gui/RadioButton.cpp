@@ -52,8 +52,8 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_checkable(true);
 		int h = font().GetHeight();
-		set_size(h + default_padding.hsum(),
-				h + default_padding.vsum());
+		set_size(h + kDefaultPadding.hsum(),
+				h + kDefaultPadding.vsum());
 
 		InitializeRadioButtonOnce();
 	}
@@ -108,7 +108,7 @@ namespace BlendInt {
 	{
 		icon_ = icon;
 
-		icon_offset_x_ = default_padding.left();
+		icon_offset_x_ = kDefaultPadding.left();
 		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
 
 		RequestRedraw();
@@ -125,7 +125,7 @@ namespace BlendInt {
 			h = std::max(icon_->size().height(), font_height);
 		}
 
-		prefer.set_height(h + default_padding.vsum());
+		prefer.set_height(h + kDefaultPadding.vsum());
 		// top padding: 2, bottom padding: 2
 
 		int w = 0;
@@ -137,7 +137,7 @@ namespace BlendInt {
 				w = font_height;
 			}
 
-			w = w + default_padding.hsum();
+			w = w + kDefaultPadding.hsum();
 
 		} else {
 
@@ -146,7 +146,7 @@ namespace BlendInt {
 			}
 
 			int text_width = font().GetTextWidth(text());
-			w = w + text_width + default_padding.hsum(); // left padding: 2, right padding: 2
+			w = w + text_width + kDefaultPadding.hsum(); // left padding: 2, right padding: 2
 
 		}
 
@@ -320,14 +320,14 @@ namespace BlendInt {
 	void RadioButton::CalculateIconTextPosition (const Size& size, int round_type,
 	        float radius)
 	{
-		int x = default_padding.left() * Theme::instance->pixel();
-		int y = default_padding.bottom() * Theme::instance->pixel();
+		int x = kDefaultPadding.left() * Theme::instance->pixel();
+		int y = kDefaultPadding.bottom() * Theme::instance->pixel();
 
 		icon_offset_x_ = 0.f;
 		icon_offset_y_ = 0.f;
 
-		int valid_width = size.width() - default_padding.hsum() * Theme::instance->pixel();
-		int valid_height = size.height() - default_padding.vsum() * Theme::instance->pixel();
+		int valid_width = size.width() - kDefaultPadding.hsum() * Theme::instance->pixel();
+		int valid_height = size.height() - kDefaultPadding.vsum() * Theme::instance->pixel();
 
 		if(valid_width <= 0 || valid_height <= 0) {
 			show_icon_ = false;
@@ -335,7 +335,7 @@ namespace BlendInt {
 			return;
 		}
 
-		icon_offset_x_ += default_padding.left() * Theme::instance->pixel();
+		icon_offset_x_ += kDefaultPadding.left() * Theme::instance->pixel();
 
 		if(text().empty()) {
 
@@ -487,10 +487,10 @@ namespace BlendInt {
 
 	void RadioButton::InitializeRadioButtonOnce (const String& text)
 	{
-		int left = default_padding.left() * Theme::instance->pixel();
-		int right = default_padding.right() * Theme::instance->pixel();
-		int top = default_padding.top() * Theme::instance->pixel();
-		int bottom = default_padding.bottom() * Theme::instance->pixel();
+		int left = kDefaultPadding.left() * Theme::instance->pixel();
+		int right = kDefaultPadding.right() * Theme::instance->pixel();
+		int top = kDefaultPadding.top() * Theme::instance->pixel();
+		int bottom = kDefaultPadding.bottom() * Theme::instance->pixel();
 		int h = font().GetHeight();
 
 		if(text.empty()) {
@@ -518,10 +518,10 @@ namespace BlendInt {
 	void RadioButton::InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon,
 	        const String& text)
 	{
-		int left = default_padding.left() * Theme::instance->pixel();
-		int right = default_padding.right() * Theme::instance->pixel();
-		int top = default_padding.top() * Theme::instance->pixel();
-		int bottom = default_padding.bottom() * Theme::instance->pixel();
+		int left = kDefaultPadding.left() * Theme::instance->pixel();
+		int right = kDefaultPadding.right() * Theme::instance->pixel();
+		int top = kDefaultPadding.top() * Theme::instance->pixel();
+		int bottom = kDefaultPadding.bottom() * Theme::instance->pixel();
 		int font_height = font().GetHeight();
 		int h = 0;
 

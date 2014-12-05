@@ -346,10 +346,23 @@ namespace BlendInt {
 
 	void Workspace::SetHeader (ToolBox* header)
 	{
-		if(header_ == header) return;
+		if((header == nullptr) || (header_ == header)) return;
 
 		// TODO: check null and resize
 		header_ = header;
+
+		if(PushBackSubForm(header_)) {
+			Size prefer = header_->GetPreferredSize();
+			MoveSubFormTo(header_, position());
+			ResizeSubForm(header_, size().width(), prefer.height());
+
+			MoveSubFormTo(splitter_, position().x(), position().y() + prefer.height());
+			ResizeSubForm(splitter_, size().width(), size().height() - prefer.height());
+		} else {
+			DBG_PRINT_MSG("Error: %s", "cannot add header frame");
+		}
+
+		RequestRedraw();
 	}
 
 	bool Workspace::IsExpandX () const
@@ -403,7 +416,12 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			if(header_) {
+				Size prefer = header_->GetPreferredSize();
+				MoveSubFormTo(header_, position());
+				ResizeSubForm(header_, size().width(), prefer.height());
 
+				MoveSubFormTo(splitter_, position().x(), position().y() + prefer.height());
+				ResizeSubForm(splitter_, size().width(), size().height() - prefer.height());
 			} else {
 				ResizeSubForm(splitter_, size());
 			}

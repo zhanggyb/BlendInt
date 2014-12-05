@@ -119,9 +119,13 @@ namespace BlendInt {
 		int space_;
 
 		// 0 - for inner
-		// 1 - for texture buffer
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> inner_;
+		// 1 - for outer
+		// 2 - for texture buffer
+		GLuint vao_[3];
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+
+		// for texture buffer
+		GLBuffer<ARRAY_BUFFER, 1> vbo_;
 
 		Margin margin_;
 
