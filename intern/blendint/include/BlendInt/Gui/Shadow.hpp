@@ -36,53 +36,12 @@
 
 namespace BlendInt {
 
-	class Shadow: public AbstractRoundForm
-	{
-		DISALLOW_COPY_AND_ASSIGN(Shadow);
-
-	public:
-
-		Shadow();
-
-		Shadow(const Size& size, int round_type, float radius);
-
-		virtual ~Shadow ();
-
-		void SetColor (const Color& color);
-
-		virtual void Draw (float x, float y, short gamma = 0) const;
-
-	protected:
-
-		virtual void PerformSizeUpdate (const Size& size);
-
-		virtual void PerformRoundTypeUpdate (int type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-	private:
-
-		void InitializeShadow ();
-
-		void GenerateShadowVertices (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
-
-		inline float make_shaded_offset (short shadetop, short shadedown, float fact);
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> buffer_;
-
-		Color color_;
-	};
-
-	// -----------------------------------------
-
 	class ShadowMap: public AbstractRoundForm
 	{
 
 	public:
 
-		ShadowMap ();
+		ShadowMap (const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
 
 		virtual ~ShadowMap ();
 

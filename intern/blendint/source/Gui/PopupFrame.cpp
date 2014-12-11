@@ -53,6 +53,8 @@ namespace BlendInt {
 	  layout_(0)
 	{
 		set_size(400, 300);
+		set_round_type(RoundAll);
+		set_round_radius(10.f);	// DEBUG
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
@@ -240,6 +242,58 @@ namespace BlendInt {
 		}
 	}
 
+	void PopupFrame::PerformRoundTypeUpdate(int round_type)
+	{
+		set_round_type(round_type);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		buffer_.bind(0);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		// TODO: change shadow
+	}
+
+	void PopupFrame::PerformRoundRadiusUpdate(float radius)
+	{
+		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		buffer_.bind(0);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
+
+		// TODO: change shadow
+}
+
 	bool PopupFrame::PreDraw(Profile& profile)
 	{
 		if(!visiable()) return false;
@@ -265,7 +319,7 @@ namespace BlendInt {
 		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
 		Shaders::instance->frame_outer_program()->use();
 
@@ -321,7 +375,7 @@ namespace BlendInt {
 			ClearHoverWidgets(hovered_widget_, event);
 		}
 
-		DBG_PRINT_MSG("%s", "hover out");
+		//DBG_PRINT_MSG("%s", "hover out");
 	}
 
 	ResponseType PopupFrame::KeyPressEvent(const KeyEvent& event)

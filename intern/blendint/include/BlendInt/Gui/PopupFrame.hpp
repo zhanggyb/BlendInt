@@ -53,6 +53,10 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PerformRoundTypeUpdate (int round_type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
+
 		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);

@@ -90,8 +90,14 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	Dialog* dlg = Manage(new Dialog);
-    dlg->Resize(400, 300);
+    dlg->Resize(500, 400);
+    dlg->MoveTo(450, 250);
 	AddFrame(dlg);
+
+	ColorSelector* cs = Manage(new ColorSelector);
+	cs->Resize(220, 320);
+	cs->MoveTo(500, 300);
+	AddFrame(cs);
 
 //    StaticPanel* panel = Manage(new StaticPanel);
 //    panel->Resize(300, 250);
