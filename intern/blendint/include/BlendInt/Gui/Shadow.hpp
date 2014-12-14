@@ -61,6 +61,8 @@ namespace BlendInt {
 
 		void GenerateShadowVertices (std::vector<GLfloat>& vertices);
 
+		static int GetOutlineVertexCount (int round_type);
+
 		GLuint vao_;
 
 		GLBuffer<ARRAY_BUFFER> buffer_;

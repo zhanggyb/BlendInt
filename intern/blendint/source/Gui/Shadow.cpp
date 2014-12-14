@@ -66,25 +66,14 @@ namespace BlendInt {
 	{
 		Shaders::instance->frame_shadow_program()->use();
 
-		//int count = GetOutlineVertices(round_type());
-
 		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y);
 		glUniform1f(Shaders::instance->location(Stock::FRAME_SHADOW_FACTOR), 1.f);
 		Theme::instance->shadow_texture()->bind();
 
 		glBindVertexArray(vao_);
 
-		int count = 0;
-		int corner = round_type();
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
-		}
-		unsigned int total_vertex_number = (4 - count) * 3 + count * WIDGET_CURVE_RESOLU;
-
-//		glDrawArrays(GL_TRIANGLE_STRIP, 0, total_vertex_number * 2);
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 24 + 2);
+		int count = GetOutlineVertexCount(round_type());
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, count * 2 + 2);
 
 		glBindVertexArray(0);
 
@@ -167,173 +156,82 @@ namespace BlendInt {
 		const float maxy = size().height();
 
 		float width = 100.f;	// TODO: move to Theme
+		float rad = radius() * Theme::instance->pixel();
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
 		int count = 0;
-		int corner = round_type();
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
+		unsigned int total_vertex_number = GetOutlineVertexCount(round_type());
+
+		if(vertices.size() != total_vertex_number * 2 * 4 + 2 * 4) {
+			vertices.resize(total_vertex_number * 2 * 4 + 2 * 4, 0.f);
 		}
-		unsigned int total_vertex_number = (4 - count) * 3 + count * WIDGET_CURVE_RESOLU;
-		DBG_PRINT_MSG("total vertex number: %u", total_vertex_number);
-
-		// DEBUG
-
-		/*
-		vertices.resize(6 * 4, 0.f);
-
-		vertices[4 * 0 + 0] = minx;
-		vertices[4 * 0 + 1] = maxy;
-		vertices[4 * 0 + 2] = 1.f;
-		vertices[4 * 0 + 3] = 1.f;
-
-		vertices[4 * 1 + 0] = minx;
-		vertices[4 * 1 + 1] = maxy + width;
-		vertices[4 * 1 + 2] = 1.f;
-		vertices[4 * 1 + 3] = 0.f;
-
-		vertices[4 * 2 + 0] = minx;
-		vertices[4 * 2 + 1] = maxy;
-		vertices[4 * 2 + 2] = 1.f;
-		vertices[4 * 2 + 3] = 1.f;
-
-		vertices[4 * 3 + 0] = minx - width;
-		vertices[4 * 3 + 1] = maxy + width;
-		vertices[4 * 3 + 2] = 0.f;
-		vertices[4 * 3 + 3] = 0.f;
-
-		vertices[4 * 4 + 0] = minx;
-		vertices[4 * 4 + 1] = maxy;
-		vertices[4 * 4 + 2] = 1.f;
-		vertices[4 * 4 + 3] = 1.f;
-
-		vertices[4 * 5 + 0] = minx - width;
-		vertices[4 * 5 + 1] = maxy;
-		vertices[4 * 5 + 2] = 0.f;
-		vertices[4 * 5 + 3] = 1.f;
-
-		// END DEBUG
-
-		return;
-		*/
-
-		/*
-		if(vertices.size() != total_vertex_number * 2 * 4) {
-			vertices.resize(total_vertex_number * 2 * 4, 0.f);
-		}
-		*/
-		vertices.resize(24 * 4 + 2 * 4, 0.f);
 
 		count = 0;
-		corner = round_type();
+		int corner = round_type();
+
+		DBG_PRINT_MSG("corner: %d", corner);
+
+		for(int i = 0; i < WIDGET_CURVE_RESOLU; i ++) {
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
 
 		// corner left-bottom
 		if(corner & RoundBottomLeft) {
 
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
 
-				vertices[count * 8 + 0] = minx;
-				vertices[count * 8 + 1] = 0.f;
-				vertices[count * 8 + 2] = 0.f;
-				vertices[count * 8 + 3] = 0.f;
+				vertices[count * 4 + 0] = minx;
+				vertices[count * 4 + 1] = 0.f;
+				vertices[count * 4 + 2] = 0.f;
+				vertices[count * 4 + 3] = 0.f;
+				count += 4;
 
-				vertices[count * 8 + 4] = 0.f;
-				vertices[count * 8 + 5] = 0.f;
-				vertices[count * 8 + 6] = 0.f;
-				vertices[count * 8 + 7] = 0.f;
+				vertices[count * 4 + 0] = 0.f;
+				vertices[count * 4 + 1] = 0.f;
+				vertices[count * 4 + 2] = 0.f;
+				vertices[count * 4 + 3] = 0.f;
+				count += 4;
 
-				count += 8;
 			}
 
 		} else {
 
-			if(corner & RoundBottomRight) {	// the next corner is round?
+			vertices[count + 0] = minx;
+			vertices[count + 1] = miny + radius();
+			vertices[count + 2] = 100 / 512.f;
+			vertices[count + 3] = 200 / 512.f;
+			count += 4;
 
-				for(int i = 0; i < 3; i++) {
+			vertices[count + 0] = minx - width;
+			vertices[count + 1] = miny + radius();
+			vertices[count + 2] = 0.f;
+			vertices[count + 3] = 200 / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 0] = 0.f;
-					vertices[count * 8 + 1] = 0.f;
-					vertices[count * 8 + 2] = 0.f;
-					vertices[count * 8 + 3] = 0.f;
+			vertices[count + 0] = minx;
+			vertices[count + 1] = miny;
+			vertices[count + 2] = 100 / 512.f;
+			vertices[count + 3] = 100 / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 4] = 0.f;
-					vertices[count * 8 + 5] = 0.f;
-					vertices[count * 8 + 6] = 0.f;
-					vertices[count * 8 + 7] = 0.f;
+			vertices[count + 0] = minx - width;
+			vertices[count + 1] = miny - width;
+			vertices[count + 2] = 0.f;
+			vertices[count + 3] = 0.f;
+			count += 4;
 
-					count += 8;
-				}
+			vertices[count + 0] = minx + radius();
+			vertices[count + 1] = miny;
+			vertices[count + 2] = 200 / 512.f;
+			vertices[count + 3] = 100 / 512.f;
+			count += 4;
 
-			} else {
-
-				DBG_PRINT_MSG("Bottom-Left: %s", "next corner is a right-angle");
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx - width;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = 0.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx - width;
-				vertices[count + 1] = miny - width;
-				vertices[count + 2] = 0.f;
-				vertices[count + 3] = 0.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny - width;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = 0.f;
-				count += 4;
-
-				/*
-				for(int i = 0; i < 3; i++) {
-
-					vertices[count * 8 + 0] = minx;
-					vertices[count * 8 + 1] = miny;
-					vertices[count * 8 + 2] = 100 / 512.f;
-					vertices[count * 8 + 3] = 100 / 512.f;
-
-					if(i == 0) {
-						vertices[count * 8 + 4] = minx - width;
-						vertices[count * 8 + 5] = miny;
-						vertices[count * 8 + 6] = 0.f;
-						vertices[count * 8 + 7] = 100 / 512.f;
-					} else if (i == 1) {
-						vertices[count * 8 + 4] = minx - width;
-						vertices[count * 8 + 5] = miny - width;
-						vertices[count * 8 + 6] = 0.f;
-						vertices[count * 8 + 7] = 0.f;
-					} else {
-						vertices[count * 8 + 4] = minx;
-						vertices[count * 8 + 5] = miny - width;
-						vertices[count * 8 + 6] = 100 / 512.f;
-						vertices[count * 8 + 7] = 0.f;
-					}
-
-					count += 8;
-				}
-				*/
-
-			}
+			vertices[count + 0] = minx + radius();
+			vertices[count + 1] = miny - width;
+			vertices[count + 2] = 200 / 512.f;
+			vertices[count + 3] = 0.f;
+			count += 4;
 
 		}
 
@@ -357,64 +255,41 @@ namespace BlendInt {
 
 		} else {
 
-			if(corner & RoundTopRight) {	// the next corner is round?
+			vertices[count + 0] = maxx - radius();
+			vertices[count + 1] = miny;
+			vertices[count + 2] = (512 - 200) / 512.f;
+			vertices[count + 3] = 100 / 512.f;
+			count += 4;
 
-				for(int i = 0; i < 3; i++) {
+			vertices[count + 0] = maxx - radius();
+			vertices[count + 1] = miny - width;
+			vertices[count + 2] = (512 - 200) / 512.f;
+			vertices[count + 3] = 0.f;
+			count += 4;
 
-					vertices[count * 8 + 0] = 0.f;
-					vertices[count * 8 + 1] = 0.f;
-					vertices[count * 8 + 2] = 0.f;
-					vertices[count * 8 + 3] = 0.f;
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = miny;
+			vertices[count + 2] = (512 - 100) / 512.f;
+			vertices[count + 3] = 100 / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 4] = 0.f;
-					vertices[count * 8 + 5] = 0.f;
-					vertices[count * 8 + 6] = 0.f;
-					vertices[count * 8 + 7] = 0.f;
+			vertices[count + 0] = maxx + width;
+			vertices[count + 1] = miny - width;
+			vertices[count + 2] = 1.f;
+			vertices[count + 3] = 0.f;
+			count += 4;
 
-					count += 8;
-				}
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = miny + radius();
+			vertices[count + 2] = (512 - 100) / 512.f;
+			vertices[count + 3] = 200 / 512.f;
+			count += 4;
 
-			} else {
-
-				DBG_PRINT_MSG("Bottom-Right: %s", "next corner is a right-angle");
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny - width;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = 0.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx + width;
-				vertices[count + 1] = miny - width;
-				vertices[count + 2] = 1.f;
-				vertices[count + 3] = 0.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx + width;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = 1.f;
-				vertices[count + 3] = 100 / 512.f;
-				count += 4;
-
-			}
+			vertices[count + 0] = maxx + width;
+			vertices[count + 1] = miny + radius();
+			vertices[count + 2] = 1.f;
+			vertices[count + 3] = 200 / 512.f;
+			count += 4;
 
 		}
 
@@ -438,64 +313,41 @@ namespace BlendInt {
 
 		} else {
 
-			if(corner & RoundTopLeft) {	// the next corner is round?
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = maxy - radius();
+			vertices[count + 2] = (512 - 100) / 512.f;
+			vertices[count + 3] = (512 - 200) / 512.f;
+			count += 4;
 
-				for(int i = 0; i < 3; i++) {
+			vertices[count + 0] = maxx + width;
+			vertices[count + 1] = maxy - radius();
+			vertices[count + 2] = 1.f;
+			vertices[count + 3] = (512 - 200) / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 0] = 0.f;
-					vertices[count * 8 + 1] = 0.f;
-					vertices[count * 8 + 2] = 0.f;
-					vertices[count * 8 + 3] = 0.f;
+			vertices[count + 0] = maxx;
+			vertices[count + 1] = maxy;
+			vertices[count + 2] = (512 - 100) / 512.f;
+			vertices[count + 3] = (512 - 100) / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 4] = 0.f;
-					vertices[count * 8 + 5] = 0.f;
-					vertices[count * 8 + 6] = 0.f;
-					vertices[count * 8 + 7] = 0.f;
+			vertices[count + 0] = maxx + width;
+			vertices[count + 1] = maxy + width;
+			vertices[count + 2] = 1.f;
+			vertices[count + 3] = 1.f;
+			count += 4;
 
-					count += 8;
-				}
+			vertices[count + 0] = maxx - radius();
+			vertices[count + 1] = maxy;
+			vertices[count + 2] = (512 - 200) / 512.f;
+			vertices[count + 3] = (512 - 100) / 512.f;
+			count += 4;
 
-			} else {
-
-				DBG_PRINT_MSG("Top-Right: %s", "next corner is a right-angle");
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx + width;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = 1.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx + width;
-				vertices[count + 1] = maxy + width;
-				vertices[count + 2] = 1.f;
-				vertices[count + 3] = 1.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy + width;
-				vertices[count + 2] = (512 - 100) / 512.f;
-				vertices[count + 3] = 1.f;
-				count += 4;
-
-			}
+			vertices[count + 0] = maxx - radius();
+			vertices[count + 1] = maxy + width;
+			vertices[count + 2] = (512 - 200) / 512.f;
+			vertices[count + 3] = 1.f;
+			count += 4;
 
 		}
 
@@ -518,64 +370,41 @@ namespace BlendInt {
 
 		} else {
 
-			if(corner & RoundBottomLeft) {	// the next corner is round?
+			vertices[count + 0] = minx + radius();
+			vertices[count + 1] = maxy;
+			vertices[count + 2] = 200 / 512.f;
+			vertices[count + 3] = (512 - 100) / 512.f;
+			count += 4;
 
-				for(int i = 0; i < 3; i++) {
+			vertices[count + 0] = minx + radius();
+			vertices[count + 1] = maxy + width;
+			vertices[count + 2] = 200 / 512.f;
+			vertices[count + 3] = 1.f;
+			count += 4;
 
-					vertices[count * 8 + 0] = 0.f;
-					vertices[count * 8 + 1] = 0.f;
-					vertices[count * 8 + 2] = 0.f;
-					vertices[count * 8 + 3] = 0.f;
+			vertices[count + 0] = minx;
+			vertices[count + 1] = maxy;
+			vertices[count + 2] = 100 / 512.f;
+			vertices[count + 3] = (512 - 100) / 512.f;
+			count += 4;
 
-					vertices[count * 8 + 4] = 0.f;
-					vertices[count * 8 + 5] = 0.f;
-					vertices[count * 8 + 6] = 0.f;
-					vertices[count * 8 + 7] = 0.f;
+			vertices[count + 0] = minx - width;
+			vertices[count + 1] = maxy + width;
+			vertices[count + 2] = 0.f;
+			vertices[count + 3] = 1.f;
+			count += 4;
 
-					count += 8;
-				}
+			vertices[count + 0] = minx;
+			vertices[count + 1] = maxy - radius();
+			vertices[count + 2] = 100 / 512.f;
+			vertices[count + 3] = (512 - 200) / 512.f;
+			count += 4;
 
-			} else {
-
-				DBG_PRINT_MSG("Top-Left: %s", "next corner is a right-angle");
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy + width;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = 1.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx - width;
-				vertices[count + 1] = maxy + width;
-				vertices[count + 2] = 0.f;
-				vertices[count + 3] = 1.f;
-				count += 4;
-
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = 100 / 512.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-				vertices[count + 0] = minx - width;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = 0.f;
-				vertices[count + 3] = (512 - 100) / 512.f;
-				count += 4;
-
-			}
+			vertices[count + 0] = minx - width;
+			vertices[count + 1] = maxy - radius();
+			vertices[count + 2] = 0.f;
+			vertices[count + 3] = (512 - 200) / 512.f;
+			count += 4;
 
 		}
 
@@ -591,10 +420,20 @@ namespace BlendInt {
 		vertices[count + 3] = vertices[4 + 3];
 		count += 4;
 
-		assert(count == 104);
+		assert(count == (int)(total_vertex_number * 2 * 4 + 2 * 4));
+	}
 
-		//assert(count == (int)(total_vertex_number * 2 * 4));
+	int ShadowMap::GetOutlineVertexCount (int round_type)
+	{
+		round_type = round_type & RoundAll;
+		int count = 0;
 
+		while (round_type != 0) {
+			count += round_type & 0x1;
+			round_type = round_type >> 1;
+		}
+
+		return (4 - count) * 3 + count * WIDGET_CURVE_RESOLU;
 	}
 
 }

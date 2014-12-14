@@ -132,7 +132,11 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 void MarkerBasedARContext::OnToggleCamera(AbstractButton* sender, bool toggled)
 {
 	if(toggled) {
-		viewport_->OpenCamera(0, Size(640, 480));
+#ifdef __APPLE__
+		viewport_->OpenCamera(0, Size(1080, 720));
+#else
+        viewport_->OpenCamera(0, Size(640, 480));
+#endif
 	} else {
 		viewport_->Release();
 	}

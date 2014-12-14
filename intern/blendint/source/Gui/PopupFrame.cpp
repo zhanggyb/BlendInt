@@ -115,9 +115,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new ShadowMap);
-		shadow_->Resize(size());
-
+		shadow_.reset(new ShadowMap(size()));
 	}
 
 	PopupFrame::~PopupFrame()
