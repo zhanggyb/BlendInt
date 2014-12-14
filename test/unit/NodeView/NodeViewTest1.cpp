@@ -1,6 +1,7 @@
 #include "NodeViewTest1.hpp"
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -33,11 +34,11 @@ TEST_F(NodeViewTest1, Foo1)
 
 	Dialog* dialog = Manage(new Dialog);
 	context->AddFrame(dialog);
-	dialog->SetPosition(100, 100);
+	dialog->MoveTo(100, 100);
 	dialog->Resize(500, 500);
 
     NodeView* nv = Manage(new NodeView);
-    nv->SetPosition(20, 20);
+    nv->MoveTo(20, 20);
 
     dialog->AddWidget(nv);
 

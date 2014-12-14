@@ -21,6 +21,7 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Block.hpp>
 
 using BI::Stock::Shaders;
 
@@ -42,6 +43,8 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 
+	Block* block = Manage(new Block(Vertical));
+
 	Button* btn1 = Manage(new Button("Hello"));
 	DBG_SET_NAME(btn1, "Button1");
 	Button* btn2 = Manage(new Button("Hello"));
@@ -49,18 +52,14 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	Button* btn3 = Manage(new Button("Hello"));
 	DBG_SET_NAME(btn3, "Button3");
 
-	VLayout* layout = Manage(new VLayout);
-	DBG_SET_NAME(layout, "Layout");
-	layout->Append(btn1);
-	layout->Append(btn2);
-	layout->Append(btn3);
+	block->AddWidget(btn1);
+	block->AddWidget(btn2);
+	block->AddWidget(btn3);
 
 	ScrollBar* bar = Manage(new ScrollBar);
-	ColorSelector* cs = Manage(new ColorSelector);
 
-	vp1->Add(layout);
-	vp1->Add(bar);
-	vp1->Add(cs);
+	vp1->AddWidget(block);
+	vp1->AddWidget(bar);
 
 	Viewport* vp2 = Manage(new Viewport);
 	DBG_SET_NAME(vp2, "Viewport2");
@@ -82,17 +81,23 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	splitter2->AddFrame(vp3);
 
 	splitter1->AddFrame(splitter2);
-	splitter1->AddFrame(vp1);
+	splitter1->AddFrame(vp1, PreferredWidth);
 
 	AddFrame(splitter1);
 
 	splitter1->Resize(1200, 760);
 
-	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractWidget::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	Dialog* dlg = Manage(new Dialog);
-    dlg->Resize(400, 300);
+    dlg->Resize(500, 400);
+    dlg->MoveTo(450, 250);
 	AddFrame(dlg);
+
+	ColorSelector* cs = Manage(new ColorSelector);
+	cs->Resize(220, 320);
+	cs->MoveTo(500, 300);
+	AddFrame(cs);
 
 //    StaticPanel* panel = Manage(new StaticPanel);
 //    panel->Resize(300, 250);

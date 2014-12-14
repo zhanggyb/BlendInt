@@ -33,7 +33,7 @@ TEST_F(MenuButtonTest1, Foo1)
 	context->Resize(640, 480);
 
     MenuButton* button = Manage(new MenuButton("File"));
-    button->SetPosition(200, 200);
+    button->MoveTo(200, 200);
 
     RefPtr<Menu> menu(new Menu);
 

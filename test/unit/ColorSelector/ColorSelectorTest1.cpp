@@ -1,5 +1,6 @@
 #include "ColorSelectorTest1.hpp"
 #include <BlendInt/Gui/ColorSelector.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -26,18 +27,18 @@ TEST_F(ColorSelectorTest1, Foo1)
     GLFWwindow* win = CreateWindow("ColorSelector - Foo1", 640, 480);
 
     // TODO: add test code here
-	Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
+    UnitTestContext* context = Manage (new UnitTestContext);
+	DBG_SET_NAME(context, "Context");
+	SetContext(context);
+	context->Resize(640, 480);
 
     ColorSelector* cs = Manage(new ColorSelector);
-    cs->SetPosition(200, 50);
+    cs->Resize(220, 320);
+    cs->MoveTo(200, 50);
 
-    context->Append(cs);
+    context->AddFrame(cs);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
 	ASSERT_TRUE(true);

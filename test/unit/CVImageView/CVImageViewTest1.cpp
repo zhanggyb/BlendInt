@@ -30,8 +30,8 @@ TEST_F(CVImageViewTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
     context->Resize(1280, 800);
 
-    CVImageViewport* img = Manage(new CVImageViewport);
-    img->SetPosition(100, 100);
+    ImageViewport* img = Manage(new ImageViewport);
+    img->MoveTo(100, 100);
     context->Append(img);
 
     RunLoop(win);

@@ -1,5 +1,7 @@
 #include "FileSelectorTest1.hpp"
 #include <BlendInt/Gui/FileSelector.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
+#include <Common/UnitTestContext.hpp>
 
 using namespace BlendInt;
 
@@ -26,21 +28,16 @@ TEST_F(FileSelectorTest1, Foo1)
     GLFWwindow* win = CreateWindow("FileSelector - Foo1", 1280, 800);
 
     // TODO: add test code here
-    Context* context = Manage (new Context);
-    Interface::instance->SetCurrentContext(context);
-	context->Resize(1200, 800);
+    UnitTestContext* context = Manage (new UnitTestContext);
+	SetContext(context);
+	context->Resize(1280, 800);
 
-    FileSelector* fb = Manage(new FileSelector);
-    fb->SetPosition(100, 100);
-	fb->Resize(800, 600);
-	fb->SetRoundType(RoundAll);
+    FileSelector* fs = Manage(new FileSelector);
+	fs->Resize(800, 600);
 
-    context->Append(fb);
+	context->AddFrame(fs);
 
     RunLoop(win);
-
-    Interface::Release();
-
     Terminate();
 
     ASSERT_TRUE(true);

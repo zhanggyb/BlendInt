@@ -33,7 +33,7 @@ TEST_F(MenuTest1, Foo1)
 	Menu* menu = Manage(new Menu);
 	//menu->SetRoundType(RoundAll);
 
-	menu->SetPosition(200, 200);
+	menu->MoveTo(200, 200);
 	//menu->Resize (200, 200);
 
 	menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");

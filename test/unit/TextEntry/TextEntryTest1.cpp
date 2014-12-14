@@ -34,7 +34,7 @@ TEST_F(TextEntryTest1, Foo1)
 	Dialog* dialog = Manage(new Dialog);
 
     TextEntry* lineedit = Manage(new TextEntry);
- 	lineedit->SetPosition(100, 100);
+ 	lineedit->MoveTo(100, 100);
     
     lineedit->SetText("Hello World!");
 

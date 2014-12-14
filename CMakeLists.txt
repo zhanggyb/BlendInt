@@ -82,7 +82,7 @@ endif()
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system)
+find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     set(LIBS ${LIBS} ${Boost_LIBRARIES})
@@ -104,9 +104,9 @@ else()
     set(LIBS ${LIBS} rt)
 endif()
 
-include_directories(${BlendInt_SOURCE_DIR}/include)
-include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
-include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt/CppEvents)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/BlendInt)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/BlendInt/CppEvents)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -183,7 +183,7 @@ if(ENABLE_OPENCV)
     set(LIBS ${LIBS} ${OpenCV_LIBS})
 endif()
 
-add_subdirectory(src)
+add_subdirectory(intern/blendint/source)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
@@ -208,3 +208,4 @@ add_subdirectory(demo)
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)
+

@@ -10,6 +10,6 @@ if(NOT WITH_BUILTIN_GLFW3)
     endif()
 endif()
 
-add_library (CVWindow Window.cpp)
+add_library (CVWindow Window.cpp CVCursor.cpp)
 target_link_libraries(CVWindow BlendInt ${LIBS})
 
