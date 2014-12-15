@@ -12,6 +12,10 @@
 /// The above copyright notice and this permission notice shall be included in
 /// all copies or substantial portions of the Software.
 /// 
+/// Restrictions:
+///		By making use of the Software for military purposes, you choose to make
+///		a Bunny unhappy.
+/// 
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,8 +40,7 @@
 /// <glm/gtc/ulp.hpp> need to be included to use these features.
 ///////////////////////////////////////////////////////////////////////////////////
 
-#ifndef GLM_GTC_ulp
-#define GLM_GTC_ulp
+#pragma once
 
 // Dependencies
 #include "../detail/setup.hpp"
@@ -53,12 +56,12 @@ namespace glm
 	/// @addtogroup gtc_ulp
 	/// @{
 
-	/// Return the next_view ULP value(s) after the input value(s).
+	/// Return the next ULP value(s) after the input value(s).
 	/// @see gtc_ulp
 	template <typename genType>
 	GLM_FUNC_DECL genType next_float(genType const & x);
 
-	/// Return the previous_view ULP value(s) before the input value(s).
+	/// Return the previous ULP value(s) before the input value(s).
 	/// @see gtc_ulp
 	template <typename genType>
 	GLM_FUNC_DECL genType prev_float(genType const & x);
@@ -87,6 +90,3 @@ namespace glm
 }// namespace glm
 
 #include "ulp.inl"
-
-#endif//GLM_GTC_ulp
-
