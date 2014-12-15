@@ -115,7 +115,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new ShadowMap(size()));
+//		shadow_.reset(new ShadowMap(size()));
 	}
 
 	PopupFrame::~PopupFrame()
@@ -230,7 +230,7 @@ namespace BlendInt {
 				ResizeSubView(layout_, size());
 			}
 
-			shadow_->Resize(size());
+//			shadow_->Resize(size());
 
 			RequestRedraw();
 		}
@@ -308,7 +308,7 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::Draw(Profile& profile)
 	{
-		shadow_->Draw(position().x(), position().y());
+//		shadow_->Draw(position().x(), position().y());
 
 		Shaders::instance->frame_inner_program()->use();
 

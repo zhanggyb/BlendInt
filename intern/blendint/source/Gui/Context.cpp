@@ -367,17 +367,6 @@ namespace BlendInt
 		return true;
 	}
 
-	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool Context::RoundRadiusUpdateTest (
-	        const RoundRadiusUpdateRequest& request)
-	{
-		return true;
-	}
-
 	void Context::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 	}
@@ -408,15 +397,6 @@ namespace BlendInt
 
 			resized_.fire(size());
 		}
-	}
-
-	void Context::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
-	{
-	}
-
-	void Context::PerformRoundRadiusUpdate (
-	        const RoundRadiusUpdateRequest& request)
-	{
 	}
 
 	bool Context::PreDraw(Profile& profile)

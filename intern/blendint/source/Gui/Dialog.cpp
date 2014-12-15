@@ -47,7 +47,6 @@ namespace BlendInt {
 
 	Dialog::Dialog()
 	: AbstractFloatingFrame(),
-	  shadow_(0),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  layout_(0)
@@ -98,8 +97,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new ShadowMap);
-		shadow_->Resize(size());
+//		shadow_.reset(new ShadowMap);
+//		shadow_->Resize(size());
 	}
 
 	Dialog::~Dialog()
@@ -203,7 +202,7 @@ namespace BlendInt {
 
 			buffer_.reset();
 
-			shadow_->Resize(size());
+//			shadow_->Resize(size());
 
 			if(layout_) {
 				layout_->Resize(size());
@@ -232,7 +231,7 @@ namespace BlendInt {
 
 	ResponseType Dialog::Draw(Profile& profile)
 	{
-		shadow_->Draw(position().x(), position().y());
+//		shadow_->Draw(position().x(), position().y());
 
 		Shaders::instance->frame_inner_program()->use();
 

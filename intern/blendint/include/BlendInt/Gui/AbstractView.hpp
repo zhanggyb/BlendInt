@@ -156,66 +156,6 @@ namespace BlendInt {
 		const Point* m_position;
 	};
 
-	class RoundTypeUpdateRequest: public InteractiveFormUpdateRequest
-	{
-	public:
-
-		RoundTypeUpdateRequest (AbstractView* source, AbstractView* target)
-		: InteractiveFormUpdateRequest(source, target), m_round_type(0)
-		{
-		}
-
-		RoundTypeUpdateRequest (AbstractView* source, AbstractView* target, const int* pos)
-		: InteractiveFormUpdateRequest(source, target), m_round_type(pos)
-		{
-
-		}
-
-		const int* round_type() const
-		{
-			return m_round_type;
-		}
-
-		void set_round_type (const int* type)
-		{
-			m_round_type = type;
-		}
-
-	private:
-
-		const int* m_round_type;
-	};
-
-	class RoundRadiusUpdateRequest: public InteractiveFormUpdateRequest
-	{
-	public:
-
-		RoundRadiusUpdateRequest (AbstractView* source, AbstractView* target)
-		: InteractiveFormUpdateRequest(source, target), m_round_radius(0)
-		{
-		}
-
-		RoundRadiusUpdateRequest (AbstractView* source, AbstractView* target, const float* radius)
-		: InteractiveFormUpdateRequest(source, target), m_round_radius(radius)
-		{
-
-		}
-
-		const float* round_radius() const
-		{
-			return m_round_radius;
-		}
-
-		void set_round_radius (const float* radius)
-		{
-			m_round_radius = radius;
-		}
-
-	private:
-
-		const float* m_round_radius;
-	};
-
 	class VisibilityUpdateRequest: public InteractiveFormUpdateRequest
 	{
 	public:
