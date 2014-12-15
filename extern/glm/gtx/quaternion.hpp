@@ -89,7 +89,7 @@ namespace glm
 	GLM_FUNC_DECL detail::tquat<T, P> intermediate(
 		detail::tquat<T, P> const & prev,
 		detail::tquat<T, P> const & curr,
-		detail::tquat<T, P> const & next);
+		detail::tquat<T, P> const & next_view);
 
 	//! Returns a exp of a quaternion.
 	///

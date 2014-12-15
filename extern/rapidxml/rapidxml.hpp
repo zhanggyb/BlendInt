@@ -156,13 +156,13 @@ namespace rapidxml
     // Parsing flags
 
     //! Parse flag instructing the parser to not create data nodes. 
-    //! Text of first data node will still be placed in value of parent element, unless rapidxml::parse_no_element_values flag is also specified.
+    //! Text of first data node will still be placed in value of superview element, unless rapidxml::parse_no_element_values flag is also specified.
     //! Can be combined with other flags by use of | operator.
     //! <br><br>
     //! See xml_document::parse() function.
     const int parse_no_data_nodes = 0x1;            
 
-    //! Parse flag instructing the parser to not use text of first data node as a value of parent element.
+    //! Parse flag instructing the parser to not use text of first data node as a value of superview element.
     //! Can be combined with other flags by use of | operator.
     //! Note that child data nodes of element node take precendence over its value when printing. 
     //! That is, if element has one or more child data nodes <em>and</em> a value, the value will be ignored.
@@ -642,7 +642,7 @@ namespace rapidxml
     // XML base
 
     //! Base class for xml_node and xml_attribute implementing common functions: 
-    //! name(), name_size(), value(), value_size() and parent().
+    //! name(), name_size(), value(), value_size() and superview().
     //! \param Ch Character type to use
     template<class Ch = char>
     class xml_base
@@ -653,7 +653,7 @@ namespace rapidxml
         ///////////////////////////////////////////////////////////////////////////
         // Construction & destruction
     
-        // Construct a base with empty name, value and parent
+        // Construct a base with empty name, value and superview
         xml_base()
             : m_name(0)
             , m_value(0)
@@ -765,9 +765,9 @@ namespace rapidxml
         ///////////////////////////////////////////////////////////////////////////
         // Related nodes access
     
-        //! Gets node parent.
-        //! \return Pointer to parent node, or 0 if there is no parent.
-        xml_node<Ch> *parent() const
+        //! Gets node superview.
+        //! \return Pointer to superview node, or 0 if there is no superview.
+        xml_node<Ch> *superview() const
         {
             return m_parent;
         }
@@ -785,7 +785,7 @@ namespace rapidxml
         Ch *m_value;                        // Value of node, or 0 if no value
         std::size_t m_name_size;            // Length of node name, or undefined of no name
         std::size_t m_value_size;           // Length of node value, or undefined if no value
-        xml_node<Ch> *m_parent;             // Pointer to parent node, or 0 if none
+        xml_node<Ch> *m_parent;             // Pointer to superview node, or 0 if none
 
     };
 
@@ -815,21 +815,21 @@ namespace rapidxml
         // Related nodes access
     
         //! Gets document of which attribute is a child.
-        //! \return Pointer to document that contains this attribute, or 0 if there is no parent document.
+        //! \return Pointer to document that contains this attribute, or 0 if there is no superview document.
         xml_document<Ch> *document() const
         {
-            if (xml_node<Ch> *node = this->parent())
+            if (xml_node<Ch> *node = this->superview())
             {
-                while (node->parent())
-                    node = node->parent();
+                while (node->superview())
+                    node = node->superview();
                 return node->type() == node_document ? static_cast<xml_document<Ch> *>(node) : 0;
             }
             else
                 return 0;
         }
 
-        //! Gets previous attribute, optionally matching attribute name. 
-        //! \param name Name of attribute to find, or 0 to return previous attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
+        //! Gets previous_view attribute, optionally matching attribute name. 
+        //! \param name Name of attribute to find, or 0 to return previous_view attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
         //! \return Pointer to found attribute, or 0 if not found.
@@ -848,8 +848,8 @@ namespace rapidxml
                 return this->m_parent ? m_prev_attribute : 0;
         }
 
-        //! Gets next attribute, optionally matching attribute name. 
-        //! \param name Name of attribute to find, or 0 to return next attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
+        //! Gets next_view attribute, optionally matching attribute name. 
+        //! \param name Name of attribute to find, or 0 to return next_view attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
         //! \return Pointer to found attribute, or 0 if not found.
@@ -870,8 +870,8 @@ namespace rapidxml
 
     private:
 
-        xml_attribute<Ch> *m_prev_attribute;        // Pointer to previous sibling of attribute, or 0 if none; only valid if parent is non-zero
-        xml_attribute<Ch> *m_next_attribute;        // Pointer to next sibling of attribute, or 0 if none; only valid if parent is non-zero
+        xml_attribute<Ch> *m_prev_attribute;        // Pointer to previous_view sibling of attribute, or 0 if none; only valid if superview is non-zero
+        xml_attribute<Ch> *m_next_attribute;        // Pointer to next_view sibling of attribute, or 0 if none; only valid if superview is non-zero
     
     };
 
@@ -919,12 +919,12 @@ namespace rapidxml
         // Related nodes access
     
         //! Gets document of which node is a child.
-        //! \return Pointer to document that contains this node, or 0 if there is no parent document.
+        //! \return Pointer to document that contains this node, or 0 if there is no superview document.
         xml_document<Ch> *document() const
         {
             xml_node<Ch> *node = const_cast<xml_node<Ch> *>(this);
-            while (node->parent())
-                node = node->parent();
+            while (node->superview())
+                node = node->superview();
             return node->type() == node_document ? static_cast<xml_document<Ch> *>(node) : 0;
         }
 
@@ -971,16 +971,16 @@ namespace rapidxml
                 return m_last_node;
         }
 
-        //! Gets previous sibling node, optionally matching node name. 
-        //! Behaviour is undefined if node has no parent.
-        //! Use parent() to test if node has a parent.
-        //! \param name Name of sibling to find, or 0 to return previous sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
+        //! Gets previous_view sibling node, optionally matching node name. 
+        //! Behaviour is undefined if node has no superview.
+        //! Use superview() to test if node has a superview.
+        //! \param name Name of sibling to find, or 0 to return previous_view sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
         //! \return Pointer to found sibling, or 0 if not found.
         xml_node<Ch> *previous_sibling(const Ch *name = 0, std::size_t name_size = 0, bool case_sensitive = true) const
         {
-            assert(this->m_parent);     // Cannot query for siblings if node has no parent
+            assert(this->m_parent);     // Cannot query for siblings if node has no superview
             if (name)
             {
                 if (name_size == 0)
@@ -994,16 +994,16 @@ namespace rapidxml
                 return m_prev_sibling;
         }
 
-        //! Gets next sibling node, optionally matching node name. 
-        //! Behaviour is undefined if node has no parent.
-        //! Use parent() to test if node has a parent.
-        //! \param name Name of sibling to find, or 0 to return next sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
+        //! Gets next_view sibling node, optionally matching node name. 
+        //! Behaviour is undefined if node has no superview.
+        //! Use superview() to test if node has a superview.
+        //! \param name Name of sibling to find, or 0 to return next_view sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
         //! \return Pointer to found sibling, or 0 if not found.
         xml_node<Ch> *next_sibling(const Ch *name = 0, std::size_t name_size = 0, bool case_sensitive = true) const
         {
-            assert(this->m_parent);     // Cannot query for siblings if node has no parent
+            assert(this->m_parent);     // Cannot query for siblings if node has no superview
             if (name)
             {
                 if (name_size == 0)
@@ -1075,7 +1075,7 @@ namespace rapidxml
         //! \param child Node to prepend.
         void prepend_node(xml_node<Ch> *child)
         {
-            assert(child && !child->parent() && child->type() != node_document);
+            assert(child && !child->superview() && child->type() != node_document);
             if (first_node())
             {
                 child->m_next_sibling = m_first_node;
@@ -1096,7 +1096,7 @@ namespace rapidxml
         //! \param child Node to append.
         void append_node(xml_node<Ch> *child)
         {
-            assert(child && !child->parent() && child->type() != node_document);
+            assert(child && !child->superview() && child->type() != node_document);
             if (first_node())
             {
                 child->m_prev_sibling = m_last_node;
@@ -1118,8 +1118,8 @@ namespace rapidxml
         //! \param child Node to insert.
         void insert_node(xml_node<Ch> *where, xml_node<Ch> *child)
         {
-            assert(!where || where->parent() == this);
-            assert(child && !child->parent() && child->type() != node_document);
+            assert(!where || where->superview() == this);
+            assert(child && !child->superview() && child->type() != node_document);
             if (where == m_first_node)
                 prepend_node(child);
             else if (where == 0)
@@ -1170,7 +1170,7 @@ namespace rapidxml
         // \param where Pointer to child to be removed.
         void remove_node(xml_node<Ch> *where)
         {
-            assert(where && where->parent() == this);
+            assert(where && where->superview() == this);
             assert(first_node());
             if (where == m_first_node)
                 remove_first_node();
@@ -1196,7 +1196,7 @@ namespace rapidxml
         //! \param attribute Attribute to prepend.
         void prepend_attribute(xml_attribute<Ch> *attribute)
         {
-            assert(attribute && !attribute->parent());
+            assert(attribute && !attribute->superview());
             if (first_attribute())
             {
                 attribute->m_next_attribute = m_first_attribute;
@@ -1216,7 +1216,7 @@ namespace rapidxml
         //! \param attribute Attribute to append.
         void append_attribute(xml_attribute<Ch> *attribute)
         {
-            assert(attribute && !attribute->parent());
+            assert(attribute && !attribute->superview());
             if (first_attribute())
             {
                 attribute->m_prev_attribute = m_last_attribute;
@@ -1238,8 +1238,8 @@ namespace rapidxml
         //! \param attribute Attribute to insert.
         void insert_attribute(xml_attribute<Ch> *where, xml_attribute<Ch> *attribute)
         {
-            assert(!where || where->parent() == this);
-            assert(attribute && !attribute->parent());
+            assert(!where || where->superview() == this);
+            assert(attribute && !attribute->superview());
             if (where == m_first_attribute)
                 prepend_attribute(attribute);
             else if (where == 0)
@@ -1292,7 +1292,7 @@ namespace rapidxml
         //! \param where Pointer to attribute to be removed.
         void remove_attribute(xml_attribute<Ch> *where)
         {
-            assert(first_attribute() && where->parent() == this);
+            assert(first_attribute() && where->superview() == this);
             if (where == m_first_attribute)
                 remove_first_attribute();
             else if (where == m_last_attribute)
@@ -1332,15 +1332,15 @@ namespace rapidxml
         // The rules are as follows:
         // 1. first_node and first_attribute contain valid pointers, or 0 if node has no children/attributes respectively
         // 2. last_node and last_attribute are valid only if node has at least one child/attribute respectively, otherwise they contain garbage
-        // 3. prev_sibling and next_sibling are valid only if node has a parent, otherwise they contain garbage
+        // 3. prev_sibling and next_sibling are valid only if node has a superview, otherwise they contain garbage
 
         node_type m_type;                       // Type of node; always valid
         xml_node<Ch> *m_first_node;             // Pointer to first child node, or 0 if none; always valid
         xml_node<Ch> *m_last_node;              // Pointer to last child node, or 0 if none; this value is only valid if m_first_node is non-zero
         xml_attribute<Ch> *m_first_attribute;   // Pointer to first attribute of node, or 0 if none; always valid
         xml_attribute<Ch> *m_last_attribute;    // Pointer to last attribute of node, or 0 if none; this value is only valid if m_first_attribute is non-zero
-        xml_node<Ch> *m_prev_sibling;           // Pointer to previous sibling of node, or 0 if none; this value is only valid if m_parent is non-zero
-        xml_node<Ch> *m_next_sibling;           // Pointer to next sibling of node, or 0 if none; this value is only valid if m_parent is non-zero
+        xml_node<Ch> *m_prev_sibling;           // Pointer to previous_view sibling of node, or 0 if none; this value is only valid if m_parent is non-zero
+        xml_node<Ch> *m_next_sibling;           // Pointer to next_view sibling of node, or 0 if none; this value is only valid if m_parent is non-zero
 
     };
 
@@ -1375,7 +1375,7 @@ namespace rapidxml
         //! Make sure that data is zero-terminated.
         //! <br><br>
         //! Document can be parsed into multiple times. 
-        //! Each new call to parse removes previous nodes and attributes (if any), but does not clear memory pool.
+        //! Each new call to parse removes previous_view nodes and attributes (if any), but does not clear memory pool.
         //! \param text XML data to parse; pointer is non-const to denote fact that this data may be modified by the parser.
         template<int Flags>
         void parse(Ch *text)
@@ -1976,7 +1976,7 @@ namespace rapidxml
                 node->append_node(data);
             }
 
-            // Add data to parent node if no data exists yet
+            // Add data to superview node if no data exists yet
             if (!(Flags & parse_no_element_values)) 
                 if (*node->value() == Ch('\0'))
                     node->value(value, end - value);
@@ -2180,7 +2180,7 @@ namespace rapidxml
             // Also, skipping whitespace after data nodes is unnecessary.
             after_data_node:    
                 
-                // Determine what comes next: node closing, child node, data node, or 0?
+                // Determine what comes next_view: node closing, child node, data node, or 0?
                 switch (next_char)
                 {
                 

@@ -185,7 +185,7 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 
 		// Draw frame panel
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractWidget* p = first_subview(); p; p = p->next_view())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}
@@ -512,6 +512,6 @@ void MainLayout::OnFileSelected ()
 {
 	m_file_input->SetText(m_file_button->file());
 
-	HLayout* box = dynamic_cast<HLayout*>(m_file_input->parent());
+	HLayout* box = dynamic_cast<HLayout*>(m_file_input->superview());
 	box->Resize(box->GetPreferredSize());
 }

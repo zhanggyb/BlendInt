@@ -6,8 +6,8 @@
 #include <QtGui/QOpenGLPaintDevice>
 #include <QtGui/QPainter>
 
-OpenGLWindow::OpenGLWindow(QWindow *parent)
-    : QWindow(parent)
+OpenGLWindow::OpenGLWindow(QWindow *superview)
+    : QWindow(superview)
     , m_update_pending(false)
     , m_animating(false)
     , m_context(0)

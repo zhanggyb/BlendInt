@@ -108,10 +108,10 @@ namespace BlendInt {
 
 		if(node_) {
 
-			ModelNode* node = node_->parent;
+			ModelNode* node = node_->superview;
 
-			while(node->parent) {
-				node = node->parent;
+			while(node->superview) {
+				node = node->superview;
 			}
 
 			retval.node_ = node;
@@ -124,7 +124,7 @@ namespace BlendInt {
 	{
 		ModelIndex retval;
 		if(node_) {
-			retval.node_ = node_->parent;
+			retval.node_ = node_->superview;
 		}
 
 		return retval;
@@ -278,33 +278,33 @@ namespace BlendInt {
 	{
 	}
 
-	bool AbstractItemModel::HasChild (const ModelIndex& parent) const
+	bool AbstractItemModel::HasChild (const ModelIndex& superview) const
 	{
-		if(parent.node_) {
-			return parent.node_->child != 0;
+		if(superview.node_) {
+			return superview.node_->child != 0;
 		} else {
 			return false;
 		}
 	}
 
-	bool AbstractItemModel::InsertColumn (int column, const ModelIndex& parent)
+	bool AbstractItemModel::InsertColumn (int column, const ModelIndex& superview)
 	{
-		return InsertColumns (column, 1, parent);
+		return InsertColumns (column, 1, superview);
 	}
 
-	bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& parent)
+	bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& superview)
 	{
-		return RemoveColumns(column, 1, parent);
+		return RemoveColumns(column, 1, superview);
 	}
 
-	bool AbstractItemModel::RemoveRow (int row, const ModelIndex& parent)
+	bool AbstractItemModel::RemoveRow (int row, const ModelIndex& superview)
 	{
-		return RemoveRows(row, 1, parent);
+		return RemoveRows(row, 1, superview);
 	}
 
-	bool AbstractItemModel::InsertRow (int row, const ModelIndex& parent)
+	bool AbstractItemModel::InsertRow (int row, const ModelIndex& superview)
 	{
-		return InsertRows(row, 1, parent);
+		return InsertRows(row, 1, superview);
 	}
 
 	ModelIndex AbstractItemModel::GetRootIndex () const

@@ -190,7 +190,7 @@ void MainSpace::RenderToBuffer(BI::Profile& profile)
 
 		Profile off_screen_profile(profile, GetGlobalPosition());
 
-		for(AbstractWidget* p = first_child(); p; p = p->next())
+		for(AbstractWidget* p = first_subview(); p; p = p->next_view())
 		{
 			DispatchDrawEvent(p, off_screen_profile);
 		}

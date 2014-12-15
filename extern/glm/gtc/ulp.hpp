@@ -53,12 +53,12 @@ namespace glm
 	/// @addtogroup gtc_ulp
 	/// @{
 
-	/// Return the next ULP value(s) after the input value(s).
+	/// Return the next_view ULP value(s) after the input value(s).
 	/// @see gtc_ulp
 	template <typename genType>
 	GLM_FUNC_DECL genType next_float(genType const & x);
 
-	/// Return the previous ULP value(s) before the input value(s).
+	/// Return the previous_view ULP value(s) before the input value(s).
 	/// @see gtc_ulp
 	template <typename genType>
 	GLM_FUNC_DECL genType prev_float(genType const & x);

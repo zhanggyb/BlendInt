@@ -152,8 +152,8 @@ void StudioFrame::RenderToBuffer (BI::Profile& profile)
 
 		Profile off_screen_profile(profile, position());
 
-		if(first_child()) {
-			DispatchDrawEvent(first_child(), off_screen_profile);
+		if(first_subview()) {
+			DispatchDrawEvent(first_subview(), off_screen_profile);
 		}
 
 		// Restore the viewport setting and projection matrix

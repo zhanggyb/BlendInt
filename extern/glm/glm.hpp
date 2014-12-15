@@ -58,7 +58,7 @@
 /// In OpenGL's GLSL, these precision qualifiers have no effect; they are there for compatibility
 /// with OpenGL ES's precision qualifiers, where they @em do have an effect.
 /// 
-/// C++ has no language equivalent to precision qualifiers. So GLM provides the next-best thing:
+/// C++ has no language equivalent to precision qualifiers. So GLM provides the next_view-best thing:
 /// a number of typedefs of the @ref core_template that use a particular precision.
 /// 
 /// None of these types make any guarantees about the actual precision used.

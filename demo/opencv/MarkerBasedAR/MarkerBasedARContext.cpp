@@ -45,7 +45,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 
 	AddFrame(vsplitter);
 
-	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 }
 
 MarkerBasedARContext::~MarkerBasedARContext ()

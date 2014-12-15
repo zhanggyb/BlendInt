@@ -28,14 +28,14 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	class FrameSplitter;
 
-	class AbstractFrame: public AbstractInteractiveForm
+	class AbstractFrame: public AbstractView
 	{
 	public:
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 			return *destroyed_;
 		}
 
-		static AbstractFrame* GetFrame (AbstractInteractiveForm* widget);
+		static AbstractFrame* GetFrame (AbstractView* widget);
 
 	protected:
 
@@ -73,38 +73,38 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event) = 0;
 
-		AbstractInteractiveForm* DispatchMousePressEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
+		AbstractView* DispatchMousePressEvent (AbstractView* widget, const MouseEvent& event);
 
-		ResponseType DispatchMouseMoveEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
+		ResponseType DispatchMouseMoveEvent (AbstractView* widget, const MouseEvent& event);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractInteractiveForm* widget, const MouseEvent& event);
+		ResponseType DispatchMouseReleaseEvent (AbstractView* widget, const MouseEvent& event);
 
-		ResponseType call_key_press_event (AbstractInteractiveForm* widget, const KeyEvent& event)
+		ResponseType call_key_press_event (AbstractView* widget, const KeyEvent& event)
 		{
 			return widget->KeyPressEvent(event);
 		}
 
-		ResponseType call_mouse_press_event (AbstractInteractiveForm* widget, const MouseEvent& event)
+		ResponseType call_mouse_press_event (AbstractView* widget, const MouseEvent& event)
 		{
 			return widget->MousePressEvent(event);
 		}
 
-		ResponseType call_mouse_release_event(AbstractInteractiveForm* widget, const MouseEvent& event)
+		ResponseType call_mouse_release_event(AbstractView* widget, const MouseEvent& event)
 		{
 			return widget->MouseReleaseEvent(event);
 		}
 
-		ResponseType call_mouse_move_event(AbstractInteractiveForm* widget, const MouseEvent& event)
+		ResponseType call_mouse_move_event(AbstractView* widget, const MouseEvent& event)
 		{
 			return widget->MouseMoveEvent(event);
 		}
 
-		inline void set_widget_focus_status (AbstractInteractiveForm* widget, bool focus)
+		inline void set_widget_focus_status (AbstractView* widget, bool focus)
 		{
 			widget->set_focus(focus);
 		}
 
-		void set_widget_focus_event (AbstractInteractiveForm* widget, bool focus)
+		void set_widget_focus_event (AbstractView* widget, bool focus)
 		{
 			widget->set_focus(focus);
 			widget->FocusEvent(focus);
@@ -119,17 +119,17 @@ namespace BlendInt {
 
 		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const MouseEvent& event);
 
-		void ClearHoverWidgets (AbstractInteractiveForm* hovered_widget);
+		void ClearHoverWidgets (AbstractView* hovered_widget);
 
-		void ClearHoverWidgets (AbstractInteractiveForm* hovered_widget, const MouseEvent& event);
+		void ClearHoverWidgets (AbstractView* hovered_widget, const MouseEvent& event);
 
-		inline void set_widget_mouse_hover_in_event (AbstractInteractiveForm* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_in_event (AbstractView* widget, const MouseEvent& event)
 		{
 			widget->set_hover(true);
 			widget->MouseHoverInEvent(event);
 		}
 
-		inline void set_widget_mouse_hover_out_event (AbstractInteractiveForm* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_out_event (AbstractView* widget, const MouseEvent& event)
 		{
 			widget->set_hover(false);
 			widget->MouseHoverOutEvent(event);
@@ -153,7 +153,7 @@ namespace BlendInt {
 
 		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* widget, const MouseEvent& event, Point& local_position);
 
-		inline void set_widget_hover_status (AbstractInteractiveForm* widget, bool hover)
+		inline void set_widget_hover_status (AbstractView* widget, bool hover)
 		{
 			widget->set_hover(hover);
 		}

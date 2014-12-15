@@ -174,7 +174,7 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractInteractiveForm(),
+	: AbstractView(),
 	  hovered_frame_(0),
 	  focused_frame_(0)
 	{
@@ -192,15 +192,15 @@ namespace BlendInt
 
 	Context::~Context ()
 	{
-		if(parent() != 0) {
-			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other parent");
+		if(superview() != 0) {
+			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other superview");
 		}
 		context_set.erase(this);
 	}
 
 	void Context::AddFrame (AbstractFrame* vp)
 	{
-		if(PushBackSubForm(vp)) {
+		if(PushBackSubView(vp)) {
 			// TODO:
 			RequestRedraw();
 		}
@@ -340,21 +340,21 @@ namespace BlendInt
 		// TODO: override this to support GL Context manipulation in thread
 	}
 
-	Context* Context::GetContext (AbstractInteractiveForm* widget)
+	Context* Context::GetContext (AbstractView* widget)
 	{
-		AbstractInteractiveForm* parent = widget->parent();
+		AbstractView* superview = widget->superview();
 
-		if(parent == 0) {
+		if(superview == 0) {
 			return dynamic_cast<Context*>(widget);
 		} else {
 
-			while(parent->parent()) {
-				parent = parent->parent();
+			while(superview->superview()) {
+				superview = superview->superview();
 			}
 
 		}
 
-		return dynamic_cast<Context*>(parent);
+		return dynamic_cast<Context*>(superview);
 	}
 
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -426,7 +426,7 @@ namespace BlendInt
 
 	ResponseType Context::Draw (Profile& profile)
 	{
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			p->PreDraw(profile);
 			p->Draw(profile);
@@ -445,7 +445,7 @@ namespace BlendInt
 	{
 		ResponseType response = Ignore;
 
-		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			response = p->KeyPressEvent(event);
 			if(response == Accept) break;
 		}
@@ -476,7 +476,7 @@ namespace BlendInt
 		set_pressed(true);
 
 		/*
-		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
 			if(p->Contain(event.position())) {
 				response = p->MousePressEvent(event);
@@ -609,7 +609,7 @@ namespace BlendInt
 		hovered_frame_ = 0;
 		AbstractFrame* temp = 0;
 
-		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
 			temp = dynamic_cast<AbstractFrame*>(p);
 			response = temp->DispatchHoverEvent(event);

@@ -58,21 +58,21 @@ namespace BlendInt {
 
 		void Clear ();
 
-		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
+		virtual int GetRows (const ModelIndex& superview = ModelIndex()) const;
 
-		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
+		virtual int GetColumns (const ModelIndex& superview = ModelIndex()) const;
 
-		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+		virtual bool InsertColumns (int column, int count, const ModelIndex& superview = ModelIndex());
 
-		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+		virtual bool RemoveColumns (int column, int count, const ModelIndex& superview = ModelIndex());
 
-		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
+		virtual bool InsertRows (int row, int count, const ModelIndex& superview = ModelIndex());
 
-		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
+		virtual bool RemoveRows (int row, int count, const ModelIndex& superview = ModelIndex());
 
 		virtual ModelIndex GetRootIndex () const;
 
-		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent = ModelIndex()) const;
+		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& superview = ModelIndex()) const;
 
 #ifdef DEBUG
 

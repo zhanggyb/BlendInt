@@ -61,11 +61,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, vao_);
 	}
 
-	void Decoration::Prepend (AbstractInteractiveForm* widget)
+	void Decoration::Prepend (AbstractView* widget)
 	{
 	}
 
-	void Decoration::Append (AbstractInteractiveForm* widget)
+	void Decoration::Append (AbstractView* widget)
 	{
 	}
 
@@ -113,8 +113,8 @@ namespace BlendInt {
 			inner_.reset();
 
 			int x = position().x();
-			if (first_child()) {
-				x = first_child()->position().x();
+			if (first_subview()) {
+				x = first_subview()->position().x();
 			}
 
 			int y = position().y();
@@ -125,7 +125,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-		} else if (request.target()->parent() == this) {
+		} else if (request.target()->superview() == this) {
 
 			FillSubWidgets(position(), size(), space_);
 

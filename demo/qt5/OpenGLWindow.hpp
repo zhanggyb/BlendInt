@@ -9,7 +9,7 @@ class OpenGLWindow : public QWindow, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    explicit OpenGLWindow(QWindow *parent = 0);
+    explicit OpenGLWindow(QWindow *superview = 0);
     ~OpenGLWindow();
 
     virtual void render(QPainter *painter);

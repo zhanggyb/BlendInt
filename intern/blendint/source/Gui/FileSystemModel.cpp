@@ -72,7 +72,7 @@ namespace BlendInt {
 
 					if(first == 0) {
 						first = new ModelNode;
-						first->parent = root_;
+						first->superview = root_;
 						root_->child = first;
 						assert(first->up == 0);
 					} else {
@@ -156,7 +156,7 @@ namespace BlendInt {
 		}
 	}
 
-	int FileSystemModel::GetRows (const ModelIndex& parent) const
+	int FileSystemModel::GetRows (const ModelIndex& superview) const
 	{
 		if(root_->child) {
 			return rows_;
@@ -165,7 +165,7 @@ namespace BlendInt {
 		}
 	}
 
-	int FileSystemModel::GetColumns (const ModelIndex& parent) const
+	int FileSystemModel::GetColumns (const ModelIndex& superview) const
 	{
 		if(root_->child) {
 			return columns_;
@@ -175,12 +175,12 @@ namespace BlendInt {
 	}
 
 	bool FileSystemModel::InsertColumns (int column, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
-		if (!parent.IsValid())
+		if (!superview.IsValid())
 			return false;
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 		if(node->child == 0) return false;
 
 		assert(node == root_);
@@ -188,11 +188,11 @@ namespace BlendInt {
 
 		assert(node->up == 0);
 
-		ModelNode* next = 0;
+		ModelNode* next_view = 0;
 		while(node) {
-			next = node->down;
+			next_view = node->down;
 			InsertColumns (column, count, node);
-			node = next;
+			node = next_view;
 		}
 
 		columns_ += count;
@@ -200,12 +200,12 @@ namespace BlendInt {
 	}
 
 	bool FileSystemModel::RemoveColumns (int column, int count,
-	        const ModelIndex& parent)
+	        const ModelIndex& superview)
 	{
-		if (!parent.IsValid())
+		if (!superview.IsValid())
 			return false;
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 		if (node->child == 0)
 			return false;
 
@@ -214,11 +214,11 @@ namespace BlendInt {
 
 		assert(node->up == 0);
 
-		ModelNode* next = 0;
+		ModelNode* next_view = 0;
 		while (node) {
-			next = node->down;
+			next_view = node->down;
 			DestroyColumnsInRow(column, count, node);
-			node = next;
+			node = next_view;
 		}
 
 		if((column == 0) && (count == columns_)) {
@@ -239,9 +239,9 @@ namespace BlendInt {
 	}
 
 	bool FileSystemModel::InsertRows (int row, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
-		if(!parent.IsValid()) return false;
+		if(!superview.IsValid()) return false;
 
 		assert(count > 0);
 		assert(row >= 0);
@@ -250,7 +250,7 @@ namespace BlendInt {
 			columns_ = DefaultColumns;
 		}
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 
 		// create count nodes
 		ModelNode* first = 0;
@@ -295,7 +295,7 @@ namespace BlendInt {
 		// if the node has no child, create and append count rows
 		if(node->child == 0) {
 			node->child = first;
-			first->parent = node;
+			first->superview = node;
 		} else {
 			node = node->child;
 			while(node->down && (row > 0)) {
@@ -305,9 +305,9 @@ namespace BlendInt {
 
 			if(row == 0) {	// Insert
 				if(node->up == 0) {	// Insert 0
-					node->parent->child = first;
-					first->parent = node->parent;
-					node->parent = 0;
+					node->superview->child = first;
+					first->superview = node->superview;
+					node->superview = 0;
 					last->down = node;
 					node->up = last;
 				} else {
@@ -327,15 +327,15 @@ namespace BlendInt {
 	}
 
 	bool FileSystemModel::RemoveRows (int row, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
-		if (!parent.IsValid())
+		if (!superview.IsValid())
 			return false;
 
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 		if(node->child == 0)
 			return false;
 
@@ -362,14 +362,14 @@ namespace BlendInt {
 				}
 			}
 
-			node = GetIndexNode(parent);
+			node = GetIndexNode(superview);
 			if(first == 0) {
 
 				if(last == 0) {	// clear the list
 					node->child = 0;
 				} else {	// remove the first count rows from the original list
 					node->child = last;
-					last->parent = node;
+					last->superview = node;
 					last->up = 0;
 				}
 
@@ -396,12 +396,12 @@ namespace BlendInt {
 	}
 
 	ModelIndex FileSystemModel::GetIndex (int row, int column,
-			const ModelIndex& parent) const
+			const ModelIndex& superview) const
 	{
 		ModelIndex index;
-		if(!parent.IsValid()) return index;
+		if(!superview.IsValid()) return index;
 
-		ModelNode* parent_node = GetIndexNode(parent);
+		ModelNode* parent_node = GetIndexNode(superview);
 		ModelNode* node = parent_node->child;
 
 		if(node == 0) return index;
@@ -528,10 +528,10 @@ namespace BlendInt {
 
 		if(column == 0) {	// Insert
 			if(tmp->left == 0) {	// Insert 0
-				if(tmp->parent) {
-					tmp->parent->child = first;
-					first->parent = tmp->parent;
-					tmp->parent = 0;
+				if(tmp->superview) {
+					tmp->superview->child = first;
+					first->superview = tmp->superview;
+					tmp->superview = 0;
 				}
 
 				first->up = tmp->up;
@@ -584,12 +584,12 @@ namespace BlendInt {
 
 			ModelNode* up = node->up;
 			ModelNode* down = node->down;
-			ModelNode* parent = node->parent;
+			ModelNode* superview = node->superview;
 			ModelNode* tmp = 0;
 
 			if (node->left == 0) {	// the first column in this model
 
-				if (parent) {	// debug
+				if (superview) {	// debug
 					assert(up == 0);
 				}
 
@@ -613,9 +613,9 @@ namespace BlendInt {
 					if (down)
 						down->up = node;
 
-					node->parent = parent;	// mostly is 0
-					if(parent) {
-						parent->child = node;
+					node->superview = superview;	// mostly is 0
+					if(superview) {
+						superview->child = node;
 					}
 
 				} else {	// remove the whole row
@@ -624,12 +624,12 @@ namespace BlendInt {
 						up->down = down;
 
 					if (down) {
-						down->parent = parent;
+						down->superview = superview;
 						down->up = up;
 					}
 
-					if(parent) {
-						parent->child = down;
+					if(superview) {
+						superview->child = down;
 					}
 
 				}
