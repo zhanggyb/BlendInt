@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
-		set_round_radius(10.f);	// DEBUG
+		set_round_radius(5.f);
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
@@ -115,7 +115,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new FrameShadow(size()));
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
 
 	PopupFrame::~PopupFrame()
@@ -309,8 +309,6 @@ namespace BlendInt {
 	ResponseType PopupFrame::Draw(Profile& profile)
 	{
 		shadow_->Draw(position().x(), position().y());
-
-		return Accept;
 
 		Shaders::instance->frame_inner_program()->use();
 

@@ -101,7 +101,7 @@ namespace BlendInt {
 		Point last_;
 		Point cursor_;
 
-//		RefPtr<ShadowMap> shadow_;
+		RefPtr<FrameShadow> shadow_;
 
 		AbstractWidget* focused_widget_;
 

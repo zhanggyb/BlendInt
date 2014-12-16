@@ -52,8 +52,16 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		set_size(size);
-		set_round_type(RoundAll);
+
+		if(round_radius < 1.f)
+			round_radius = 1.f;
+
 		set_radius(round_radius);
+
+		round_type &= 0x0F;
+		round_type |= (RoundTopLeft | RoundTopRight);
+
+		set_round_type(round_type);
 
 		InitializeShadowMap();
 	}
@@ -71,13 +79,8 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-//		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 		int count = GetOutlineVertexCount(round_type());
-
-		//glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, 0);
-
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 12; i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
@@ -107,6 +110,11 @@ namespace BlendInt {
 
 	void FrameShadow::PerformRoundTypeUpdate(int type)
 	{
+		type &= 0x0F;
+		type |= (RoundTopLeft | RoundTopRight);
+
+		if(type == round_type()) return;
+
 		set_round_type(type);
 
 		std::vector<GLfloat> vertices;
@@ -124,6 +132,10 @@ namespace BlendInt {
 
 	void FrameShadow::PerformRoundRadiusUpdate(float radius)
 	{
+		if(radius < 1.f) radius = 1.f;
+
+		if(radius == this->radius()) return;
+
 		set_radius(radius);
 
 		std::vector<GLfloat> vertices;
@@ -170,7 +182,7 @@ namespace BlendInt {
 
 	void FrameShadow::GenerateShadowVertices(std::vector<GLfloat>& vertices, std::vector<GLuint>& elements)
 	{
-		int width = 4;
+		int width = 12;
 
 		float rad = radius() * Theme::instance->pixel();
 
@@ -178,6 +190,8 @@ namespace BlendInt {
 		float miny = 0.0f;
 		float maxx = size().width();
 		float maxy = size().height();
+
+		maxy -= 2 * rad;
 
 		float vec[WIDGET_CURVE_RESOLU][2];
 
@@ -199,7 +213,10 @@ namespace BlendInt {
 				vec[j][1] = rad * cornervec[j][1];
 			}
 
-			shade = 1.0 - std::pow(i * (1.0 / width), 4.0);
+			//shade = 1.0 - std::sqrt(i * (1.0 / width));
+			shade = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
+
+			DBG_PRINT_MSG("shade: %f", shade);
 
 			// for shadow, start from left-top
 
@@ -209,18 +226,12 @@ namespace BlendInt {
 					vertices[count + 0] = minx + rad - vec[j][0];
 					vertices[count + 1] = maxy - vec[j][1];
 					vertices[count + 2] = shade;
-
-					DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = minx;
 				vertices[count + 1] = maxy;
 				vertices[count + 2] = shade;
-
-				DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 				count += 3;
 			}
 
@@ -230,18 +241,12 @@ namespace BlendInt {
 					vertices[count + 0] = minx + vec[j][1];
 					vertices[count + 1] = miny + rad - vec[j][0];
 					vertices[count + 2] = shade;
-
-					DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = minx;
 				vertices[count + 1] = miny;
 				vertices[count + 2] = shade;
-
-				DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 				count += 3;
 			}
 
@@ -251,18 +256,12 @@ namespace BlendInt {
 					vertices[count + 0] = maxx - rad + vec[j][0];
 					vertices[count + 1] = miny + vec[j][1];
 					vertices[count + 2] = shade;
-
-					DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = maxx;
 				vertices[count + 1] = miny;
 				vertices[count + 2] = shade;
-
-				DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 				count += 3;
 			}
 
@@ -272,26 +271,20 @@ namespace BlendInt {
 					vertices[count + 0] = maxx - vec[j][1];
 					vertices[count + 1] = maxy - rad + vec[j][0];
 					vertices[count + 2] = shade;
-
-					DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = maxx;
 				vertices[count + 1] = maxy;
 				vertices[count + 2] = shade;
-
-				DBG_PRINT_MSG("vertex: (%f, %f)", vertices[count + 0], vertices[count + 1]);
-
 				count += 3;
 			}
 
 			rad += 1.f;
-			minx -= rad;
-			miny -= rad;
-			maxx += rad;
-			maxy += rad;
+			minx -= 1.f;
+			miny -= 1.f;
+			maxx += 1.f;
+			maxy += 1.f;
 		}
 
 		assert(count == (int)verts_num);
@@ -304,23 +297,14 @@ namespace BlendInt {
 
 		count = 0;
 		for(int i = 0; i < width; i++) {
-
 			for(int j = 0; j < (int)outline_vertex_count; j++) {
-
 				elements[count + 0] = i * outline_vertex_count + j;
 				elements[count + 1] = (i + 1) * outline_vertex_count + j;
-
-				DBG_PRINT_MSG("elements: (%d, %d)", elements[count + 0], elements[count + 1]);
-
 				count += 2;
-
 			}
-
 		}
 
-		DBG_PRINT_MSG("elements_num: %u", elements_num);
-		DBG_PRINT_MSG("count: %d", count);
-
+		assert(count == (int)elements_num);
 	}
 
 	int FrameShadow::GetOutlineVertexCount (int round_type)

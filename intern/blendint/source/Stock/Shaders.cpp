@@ -829,7 +829,7 @@ namespace BlendInt {
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	FragmentColor = vec4(0.25, 0.25, 0.25, 0.35) * fShade;"
+				"	FragmentColor = vec4(vec3(0.05, 0.05, 0.05), 0.65 * fShade);"
 				"}";
 
 		Shaders* Shaders::instance = 0;
