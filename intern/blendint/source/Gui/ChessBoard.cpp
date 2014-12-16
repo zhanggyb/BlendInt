@@ -43,6 +43,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ChessBoard::ChessBoard(size_t cell_size)
 	: AbstractForm(),
 	  m_vao(0),
@@ -122,8 +124,6 @@ namespace BlendInt {
 
 	void ChessBoard::Draw (float x, float y, short gamma) const
 	{
-		using Stock::Shaders;
-
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();

@@ -126,7 +126,7 @@ namespace BlendInt {
 		 */
 		unsigned int m_highlight;	// the highlight item index
 
-		ShadowMap* shadow_;
+		FrameShadow* shadow_;
 
 		String m_title;
 

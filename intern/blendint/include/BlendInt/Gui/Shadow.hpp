@@ -21,29 +21,25 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SHADOW_HPP_
-#define _BLENDINT_GUI_SHADOW_HPP_
+#ifndef _BLENDINT_GUI_FRAMESHADOW_HPP_
+#define _BLENDINT_GUI_FRAMESHADOW_HPP_
 
 #include <deque>
 
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Core/Color.hpp>
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
 
-	class ShadowMap: public AbstractRoundForm
+	class FrameShadow: public AbstractRoundForm
 	{
 
 	public:
 
-		ShadowMap (const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
+		FrameShadow (const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
 
-		virtual ~ShadowMap ();
+		virtual ~FrameShadow ();
 
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
@@ -59,16 +55,18 @@ namespace BlendInt {
 
 		void InitializeShadowMap ();
 
-		void GenerateShadowVertices (std::vector<GLfloat>& vertices);
+		void GenerateShadowVertices (std::vector<GLfloat>& vertices, std::vector<GLuint>& elements);
 
 		static int GetOutlineVertexCount (int round_type);
 
 		GLuint vao_;
 
-		GLBuffer<ARRAY_BUFFER> buffer_;
+		GLBuffer<ARRAY_BUFFER> vertex_buffer_;
+
+		GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_SHADOW_HPP_ */
+#endif /* _BLENDINT_GUI_FRAMESHADOW_HPP_ */
