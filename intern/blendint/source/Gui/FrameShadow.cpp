@@ -38,7 +38,7 @@
 
 #include <BlendInt/Core/Types.hpp>
 
-#include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -76,11 +76,12 @@ namespace BlendInt {
 		Shaders::instance->frame_shadow_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y);
+		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_SIZE), size().width(), size().height());
 
 		glBindVertexArray(vao_);
 
 		int count = GetOutlineVertexCount(round_type());
-		for(int i = 0; i < 12; i++) {
+		for(int i = 0; i < Theme::instance->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
@@ -182,7 +183,7 @@ namespace BlendInt {
 
 	void FrameShadow::GenerateShadowVertices(std::vector<GLfloat>& vertices, std::vector<GLuint>& elements)
 	{
-		int width = 12;
+		int width = Theme::instance->shadow_width();
 
 		float rad = radius() * Theme::instance->pixel();
 
@@ -190,6 +191,9 @@ namespace BlendInt {
 		float miny = 0.0f;
 		float maxx = size().width();
 		float maxy = size().height();
+
+		if(2.0f * rad > maxy)
+			rad = 0.5f * maxy;
 
 		maxy -= 2 * rad;
 
@@ -204,7 +208,7 @@ namespace BlendInt {
 			vertices.resize(verts_num);
 		}
 
-		float shade = 1.f;
+		float alpha = 1.f;
 		int count = 0;
 		for(int i = 0; i <= width; i++) {
 
@@ -214,9 +218,7 @@ namespace BlendInt {
 			}
 
 			//shade = 1.0 - std::sqrt(i * (1.0 / width));
-			shade = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
-
-			DBG_PRINT_MSG("shade: %f", shade);
+			alpha = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
 
 			// for shadow, start from left-top
 
@@ -225,13 +227,13 @@ namespace BlendInt {
 				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 					vertices[count + 0] = minx + rad - vec[j][0];
 					vertices[count + 1] = maxy - vec[j][1];
-					vertices[count + 2] = shade;
+					vertices[count + 2] = alpha;
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = minx;
 				vertices[count + 1] = maxy;
-				vertices[count + 2] = shade;
+				vertices[count + 2] = alpha;
 				count += 3;
 			}
 
@@ -240,13 +242,13 @@ namespace BlendInt {
 				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 					vertices[count + 0] = minx + vec[j][1];
 					vertices[count + 1] = miny + rad - vec[j][0];
-					vertices[count + 2] = shade;
+					vertices[count + 2] = alpha;
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = minx;
 				vertices[count + 1] = miny;
-				vertices[count + 2] = shade;
+				vertices[count + 2] = alpha;
 				count += 3;
 			}
 
@@ -255,13 +257,13 @@ namespace BlendInt {
 				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 					vertices[count + 0] = maxx - rad + vec[j][0];
 					vertices[count + 1] = miny + vec[j][1];
-					vertices[count + 2] = shade;
+					vertices[count + 2] = alpha;
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = maxx;
 				vertices[count + 1] = miny;
-				vertices[count + 2] = shade;
+				vertices[count + 2] = alpha;
 				count += 3;
 			}
 
@@ -270,13 +272,13 @@ namespace BlendInt {
 				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
 					vertices[count + 0] = maxx - vec[j][1];
 					vertices[count + 1] = maxy - rad + vec[j][0];
-					vertices[count + 2] = shade;
+					vertices[count + 2] = alpha;
 					count += 3;
 				}
 			} else {
 				vertices[count + 0] = maxx;
 				vertices[count + 1] = maxy;
-				vertices[count + 2] = shade;
+				vertices[count + 2] = alpha;
 				count += 3;
 			}
 
@@ -287,7 +289,9 @@ namespace BlendInt {
 			maxy += 1.f;
 		}
 
+#ifdef DEBUG
 		assert(count == (int)verts_num);
+#endif
 
 		unsigned int elements_num = outline_vertex_count * 2 * width;
 
@@ -304,7 +308,9 @@ namespace BlendInt {
 			}
 		}
 
+#ifdef DEBUG
 		assert(count == (int)elements_num);
+#endif
 	}
 
 	int FrameShadow::GetOutlineVertexCount (int round_type)

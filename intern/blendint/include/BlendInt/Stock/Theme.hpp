@@ -194,16 +194,6 @@ namespace BlendInt {
 			return m_shadow_fac;
 		}
 		
-		short shadow_offset_x () const
-		{
-			return shadow_offset_x_;
-		}
-
-		short shadow_offset_y () const
-		{
-			return shadow_offset_y_;
-		}
-
 		short shadow_width () const
 		{
 			return shadow_width_;
@@ -270,11 +260,8 @@ namespace BlendInt {
 		short pixel_;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
+		// NOT USED
 		float m_shadow_fac;
-
-		short shadow_offset_x_;
-
-		short shadow_offset_y_;
 
 		short shadow_width_;
 

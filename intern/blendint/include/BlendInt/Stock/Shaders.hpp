@@ -118,6 +118,7 @@ namespace BlendInt {
 			FRAME_SHADOW_COORD,
 			//FRAME_SHADOW_COLOR,
 			FRAME_SHADOW_POSITION,
+			FRAME_SHADOW_SIZE,
 
 			LocationLast
 		};
