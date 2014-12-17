@@ -62,7 +62,7 @@ namespace BlendInt {
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
 
-		shadow_ = new ShadowMap;
+		shadow_ = new FrameShadow;
 		shadow_->Resize(size());
 	}
 

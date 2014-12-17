@@ -206,7 +206,7 @@ TEST_F(WidgetTest1, PushBack3)
 	AbstractWidget* p = container1->first();
 	while(p) {
 		sum2++;
-		p = p->next();
+		p = p->next_view();
 	}
 
 #ifdef DEBUG
@@ -336,7 +336,7 @@ TEST_F(WidgetTest1, Insert3)
 	AbstractWidget* p = container->first();
 	while(p) {
 		sum2++;
-		p = p->next();
+		p = p->next_view();
 	}
 
 #ifdef DEBUG
@@ -430,7 +430,7 @@ TEST_F(WidgetTest1, PushFront2)
 	AbstractWidget* p = container2->first();
 	while(p) {
 		sum2++;
-		p = p->next();
+		p = p->next_view();
 	}
 
 #ifdef DEBUG
@@ -483,7 +483,7 @@ TEST_F(WidgetTest1, Remove1)
 	AbstractWidget* p = container->first();
 	while(p) {
 		sum2++;
-		p = p->next();
+		p = p->next_view();
 	}
 
 #ifdef DEBUG
@@ -892,7 +892,7 @@ TEST_F(WidgetTest1, MoveBackward1)
     const AbstractWidget* widget = container->last();
 	while(widget) {
 		DBG_PRINT_MSG("sub widget: %s", widget->name().c_str());
-		widget = widget->previous();
+		widget = widget->previous_view();
 	}
 
     //delete widget2;

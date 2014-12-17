@@ -33,7 +33,7 @@ CartoonifierContext::CartoonifierContext()
 
 	AddFrame(splitter);
 
-	events()->connect(resized(), splitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), splitter, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 }
 
 CartoonifierContext::~CartoonifierContext ()

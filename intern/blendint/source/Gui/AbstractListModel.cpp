@@ -43,26 +43,26 @@ namespace BlendInt {
 	}
 
 	bool AbstractListModel::InsertColumns (int column, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
 		return false;
 	}
 
 	bool AbstractListModel::RemoveColumns (int column, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
 		return false;
 	}
 
 	bool AbstractListModel::InsertRows (int row, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
-		if(!parent.IsValid()) return false;
+		if(!superview.IsValid()) return false;
 
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 
 		ModelNode* first = 0;
 		ModelNode* last = 0;
@@ -83,7 +83,7 @@ namespace BlendInt {
 		// if the node has no child, create and append count rows
 		if(node->child == 0) {
 			node->child = first;
-			first->parent = node;
+			first->superview = node;
 		} else {
 			node = node->child;
 			// find wher to insert the new list
@@ -94,9 +94,9 @@ namespace BlendInt {
 
 			if(row == 0) {	// Insert
 				if(node->up == 0) {	// Insert 0
-					node->parent->child = first;
-					first->parent = node->parent;
-					node->parent = 0;
+					node->superview->child = first;
+					first->superview = node->superview;
+					node->superview = 0;
 					last->down = node;
 					node->up = last;
 				} else {
@@ -115,15 +115,15 @@ namespace BlendInt {
 	}
 
 	bool AbstractListModel::RemoveRows (int row, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
-		if (!parent.IsValid())
+		if (!superview.IsValid())
 			return false;
 
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(parent);
+		ModelNode* node = GetIndexNode(superview);
 		if(node->child == 0)
 			return false;
 
@@ -149,14 +149,14 @@ namespace BlendInt {
 					break;
 			}
 
-			node = GetIndexNode(parent);
+			node = GetIndexNode(superview);
 			if(first == 0) {
 
 				if(last == 0) {	// clear the list
 					node->child = 0;
 				} else {	// remove the first count rows from the original list
 					node->child = last;
-					last->parent = node;
+					last->superview = node;
 					last->up = 0;
 				}
 
@@ -182,7 +182,7 @@ namespace BlendInt {
 	}
 
 	ModelIndex AbstractListModel::GetIndex (int row, int column,
-			const ModelIndex& parent) const
+			const ModelIndex& superview) const
 	{
 		ModelIndex retval;
 
@@ -199,7 +199,7 @@ namespace BlendInt {
 			node->child = 0;
 		}
 
-		ModelNode* parent = node->parent;
+		ModelNode* superview = node->superview;
 		ModelNode* tmp = 0;
 
 		while(node) {
@@ -208,7 +208,7 @@ namespace BlendInt {
 
 			DestroyRow(node);
 			node = tmp;
-			node->parent = parent;	// no needed but looks resonable
+			node->superview = superview;	// no needed but looks resonable
 
 		}
 	}
@@ -265,11 +265,11 @@ namespace BlendInt {
 
 		if(node) {
 
-			ModelNode* next = 0;
+			ModelNode* next_view = 0;
 			while(node){
-				next = node->down;
+				next_view = node->down;
 				DestroyRow(node);
-				node = next;
+				node = next_view;
 			}
 
 			root_->child = 0;

@@ -119,7 +119,7 @@ namespace BlendInt {
 
 		AbstractLayout* layout_;
 
-		RefPtr<ShadowMap> shadow_;
+		RefPtr<FrameShadow> shadow_;
 
 	};
 

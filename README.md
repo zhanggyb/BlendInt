@@ -19,8 +19,8 @@ Public License (LGPL) v3.
 ## Features
 
 Like Blender, all widgets in BlendInt are drawn in OpenGL context and
-use the same color schemes. But BlendInt is totally rewritten and
-improved with some new technologies:
+use the same color schemes. But BlendInt is totally rewritten and only
+focus on user interface and it's improved with some new technologies:
 
 - It's based on new OpenGL API (3.3 and later), all widgets are drawn
   through vertex/fragment/geometry shaders. (Legacy OpenGL APIs which
@@ -32,8 +32,9 @@ improved with some new technologies:
   a fast Event/Delegate (signal/slot) mechanism.
 - It just needs an OpenGL Context, so theoretically you can integrate
   it in any other OpenGL Window or GUI toolkit, for example, Glut,
-  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW3 to display and
-  manage OpenGL context for some demos and unit tests.
+  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 (in
+  development) to display and manage OpenGL context for some demos and
+  unit tests.
 
 ## Usage
 
@@ -193,7 +194,11 @@ To build static library, add cmake option:
 
 ## Contributing
 
+TBD
+
 ## Credits
+
+TBD
 
 ## License
 
@@ -203,7 +208,7 @@ To build static library, add cmake option:
 * BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
   sending/receiving events between objects, it's released under MIT
   License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
-* GLFW3 - used in some demos and unit tests, released under
+* GLFW 3.1+ - used in some demos and unit tests, released under
   zlib/libpng license.
 * glm - a header only C++ mathematics library for graphics software
   based on the OpenGL Shading Language (GLSL) specification and

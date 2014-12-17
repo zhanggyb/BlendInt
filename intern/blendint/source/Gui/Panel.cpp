@@ -73,15 +73,15 @@ namespace BlendInt {
 			layout_->destroyed().disconnectOne(this, &Panel::OnLayoutDestroyed);
 		}
 
-		for(AbstractInteractiveForm* p = first_child(); p; p->next()) {
+		for(AbstractView* p = first_subview(); p; p->next_view()) {
 			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 		}
 
-		if(PushBackSubForm(layout)) {
+		if(PushBackSubView(layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Panel::OnLayoutDestroyed);
-			MoveSubFormTo(layout_, 0, 0);
-			ResizeSubForm(layout_, size());
+			MoveSubViewTo(layout_, 0, 0);
+			ResizeSubView(layout_, size());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -94,7 +94,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->AddWidget(widget);
 		} else {
-			PushBackSubForm(widget);
+			PushBackSubView(widget);
 		}
 
 		RequestRedraw();
@@ -105,7 +105,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->InsertWidget(index, widget);
 		} else {
-			InsertSubForm(index, widget);
+			InsertSubView(index, widget);
 		}
 
 		RequestRedraw();
@@ -117,7 +117,7 @@ namespace BlendInt {
 			return layout_->IsExpandX();
 		}
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 			if(p->IsExpandX()) return true;
 		}
 
@@ -130,7 +130,7 @@ namespace BlendInt {
 			return layout_->IsExpandY();
 		}
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 			if(p->IsExpandY()) return true;
 		}
 
@@ -155,7 +155,7 @@ namespace BlendInt {
 				int maxx = 0;
 				int maxy = 0;
 
-				for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+				for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 					minx = std::min(minx, p->position().x());
 					miny = std::min(miny, p->position().y());
 					maxx = std::max(maxx, p->position().x() + p->size().width());
@@ -204,7 +204,7 @@ namespace BlendInt {
 			buffer_.reset();
 
 			if(layout_) {
-				ResizeSubForm(layout_, size());
+				ResizeSubView(layout_, size());
 			}
 
 			RequestRedraw();

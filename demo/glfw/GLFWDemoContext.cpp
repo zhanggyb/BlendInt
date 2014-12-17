@@ -87,14 +87,14 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	splitter1->Resize(1200, 760);
 
-	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	Dialog* dlg = Manage(new Dialog);
-    dlg->Resize(500, 400);
-    dlg->MoveTo(450, 250);
+    dlg->Resize(800, 600);
+    dlg->MoveTo(200, 150);
 	AddFrame(dlg);
 
-	ColorSelector* cs = Manage(new ColorSelector);
+	PopupFrame* cs = Manage(new PopupFrame);
 	cs->Resize(220, 320);
 	cs->MoveTo(500, 300);
 	AddFrame(cs);

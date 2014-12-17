@@ -176,8 +176,8 @@ namespace BlendInt {
 		ExpandButton* title_button = Manage(new ExpandButton);
 		VLayout* frame = Manage(new VLayout);
 
-		PushBackSubForm(title_button);	// 0
-		PushBackSubForm(frame);	// 1
+		PushBackSubView(title_button);	// 0
+		PushBackSubView(frame);	// 1
 
 		int width = 0;
 		int height = 0;
@@ -204,8 +204,8 @@ namespace BlendInt {
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		VLayout* frame = Manage(new VLayout);
 
-		PushBackSubForm(title_button);	// 0
-		PushBackSubForm(frame);	// 1
+		PushBackSubView(title_button);	// 0
+		PushBackSubView(frame);	// 1
 
 		int width = 0;
 		int height = 0;
@@ -242,7 +242,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			tmp = p->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -256,7 +256,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -271,7 +271,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -324,26 +324,26 @@ namespace BlendInt {
 			if(button_preferred_height < height) {
 
 				y = y + height;
-				ResizeSubForm(button, width, button_preferred_height);
+				ResizeSubView(button, width, button_preferred_height);
 				y -= button_preferred_height;
-				MoveSubFormTo(button, x, y);
+				MoveSubViewTo(button, x, y);
 
-				ResizeSubForm(frame, width, height - button_preferred_height);
+				ResizeSubView(frame, width, height - button_preferred_height);
 				y -= frame->size().height();
 
-				MoveSubFormTo(frame, x, y);
+				MoveSubViewTo(frame, x, y);
 
 			} else {
 
-				ResizeSubForm(button, width, height);
-				MoveSubFormTo(button, x, y);
-				ResizeSubForm(frame, width, 0);
-				MoveSubFormTo(frame, x, y);
+				ResizeSubView(button, width, height);
+				MoveSubViewTo(button, x, y);
+				ResizeSubView(frame, width, 0);
+				MoveSubViewTo(frame, x, y);
 			}
 
 		} else {
-			ResizeSubForm(button, width, height);
-			MoveSubFormTo(button, x, y);
+			ResizeSubView(button, width, height);
+			MoveSubViewTo(button, x, y);
 		}
 	}
 	

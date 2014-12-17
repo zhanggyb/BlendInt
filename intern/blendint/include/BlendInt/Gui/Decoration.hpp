@@ -44,9 +44,9 @@ namespace BlendInt {
 
 		virtual ~Decoration ();
 
-		void Prepend (AbstractInteractiveForm* widget);
+		void Prepend (AbstractView* widget);
 
-		void Append (AbstractInteractiveForm* widget);
+		void Append (AbstractView* widget);
 
 		virtual bool IsExpandX () const;
 

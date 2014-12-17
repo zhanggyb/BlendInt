@@ -75,7 +75,7 @@ namespace BlendInt {
 			m_highlight = highlight;
 		}
 
-		void SetParentMenu (MenuItemBin* parent);
+		void SetParentMenu (MenuItemBin* superview);
 
 		void SetSubMenu (MenuItemBin* sub);
 

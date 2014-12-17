@@ -82,8 +82,8 @@ namespace BlendInt
 		Point last_;
 		Point cursor_;
 
-		int prev_size_;	// width or height of the previous widget
-		int next_size_;	// width or height of the next widget
+		int prev_size_;	// width or height of the previous_view widget
+		int next_size_;	// width or height of the next_view widget
 		int nearby_pos_;	// nearby widget position
 	};
 

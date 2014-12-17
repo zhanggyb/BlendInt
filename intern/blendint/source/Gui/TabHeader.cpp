@@ -86,15 +86,15 @@ namespace BlendInt {
 		int y = 0;
 		int h = size().height();
 
-		if (PushBackSubForm(button)) {
+		if (PushBackSubView(button)) {
 
-			MoveSubFormTo(button, x, y);
+			MoveSubViewTo(button, x, y);
 			if (button->IsExpandY()) {
-				ResizeSubForm(button, button->size().width(), h);
+				ResizeSubView(button, button->size().width(), h);
 			} else {
 
 				if (button->size().height() > h) {
-					ResizeSubForm(button, button->size().width(), h);
+					ResizeSubView(button, button->size().width(), h);
 				}
 
 			}
@@ -116,14 +116,14 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		if(first_child() == 0) {
+		if(first_subview() == 0) {
 			Font font;
 			int max_font_height = font.GetHeight();
 			prefer.set_height(max_font_height);
 		} else {
 			Size tmp_size;
 
-			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
@@ -183,9 +183,9 @@ namespace BlendInt {
 	{
 		int x = 0;
 
-		if(first_child()) {
-			x = last_child()->position().x();
-			x += last_child()->size().width();
+		if(first_subview()) {
+			x = last_subview()->position().x();
+			x += last_subview()->size().width();
 		}
 
 		return x;

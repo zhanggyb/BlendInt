@@ -24,11 +24,11 @@ void UnitTestContext::SynchronizeWindow()
 void UnitTestContext::LinkResizeEvent(BI::AbstractFrame* frame)
 {
 	if(frame)
-		events()->connect(resized(), frame, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::AbstractFrame::Resize));
+		events()->connect(resized(), frame, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::AbstractFrame::Resize));
 }
 
 void UnitTestContext::UnlinkResizeEvent(BI::AbstractFrame* frame)
 {
 	if(frame)
-		resized().disconnectOne(frame, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::AbstractFrame::Resize));
+		resized().disconnectOne(frame, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::AbstractFrame::Resize));
 }

@@ -36,7 +36,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
@@ -46,27 +46,27 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	bool IsContained (AbstractInteractiveForm* container, AbstractInteractiveForm* widget)
+	bool IsContained (AbstractView* container, AbstractView* widget)
 	{
 		bool retval = false;
 
-		AbstractInteractiveForm* p = widget->parent();
+		AbstractView* p = widget->superview();
 		while(p) {
 			if(p == container) {
 				retval = true;
 				break;
 			}
-			p = p->parent();
+			p = p->superview();
 		}
 
 		return retval;
 	}
 
-	pthread_mutex_t AbstractInteractiveForm::refresh_mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t AbstractView::refresh_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-	float AbstractInteractiveForm::border_width = 1.f;
+	float AbstractView::kBorderWidth = 1.f;
 
-	const float AbstractInteractiveForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
+	const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = {
         { 0.0, 0.0 },
         { 0.195, 0.02 },
         { 0.383, 0.067 },
@@ -78,82 +78,82 @@ namespace BlendInt {
         { 1.0, 1.0 }
     };
 
-	AbstractInteractiveForm::AbstractInteractiveForm ()
+	AbstractView::AbstractView ()
 	: Object(),
 	  flags_(0),
 	  subs_count_(0),
-	  parent_(0),
-	  previous_(0),
-	  next_(0),
-	  first_child_(0),
-	  last_child_(0)
+	  superview_(0),
+	  previous_view_(0),
+	  next_view_(0),
+	  first_subview_(0),
+	  last_subview_(0)
 	{
 		set_visible(true);
 		//set_refresh(true);
 	}
 
-	AbstractInteractiveForm::~AbstractInteractiveForm ()
+	AbstractView::~AbstractView ()
 	{
-		ClearSubForms();
+		ClearSubViews();
 
-		if(parent_) {
+		if(superview_) {
 
-			if(previous_) {
-				previous_->next_ = next_;
+			if(previous_view_) {
+				previous_view_->next_view_ = next_view_;
 			} else {
-				assert(parent_->first_child_ == this);
-				parent_->first_child_ = next_;
+				assert(superview_->first_subview_ == this);
+				superview_->first_subview_ = next_view_;
 			}
 
-			if(next_) {
-				next_->previous_ = previous_;
+			if(next_view_) {
+				next_view_->previous_view_ = previous_view_;
 			} else {
-				assert(parent_->last_child_ == this);
-				parent_->last_child_ = previous_;
+				assert(superview_->last_subview_ == this);
+				superview_->last_subview_ = previous_view_;
 			}
 
-			parent_->subs_count_--;
-			assert(parent_->subs_count_ >= 0);
+			superview_->subs_count_--;
+			assert(superview_->subs_count_ >= 0);
 
-			previous_ = 0;
-			next_ = 0;
-			parent_ = 0;
+			previous_view_ = 0;
+			next_view_ = 0;
+			superview_ = 0;
 
 		} else {
-			assert(previous_ == 0);
-			assert(next_ == 0);
+			assert(previous_view_ == 0);
+			assert(next_view_ == 0);
 		}
 	}
 
-	Point AbstractInteractiveForm::GetGlobalPosition () const
+	Point AbstractView::GetGlobalPosition () const
 	{
 		Point retval = position_;;
 
-		AbstractInteractiveForm* p = parent_;
+		AbstractView* p = superview_;
 		while(p) {
 			retval.reset(
 					retval.x() + p->position().x() + p->offset().x(),
 					retval.y() + p->position().y() + p->offset().y());
-			p = p->parent_;
+			p = p->superview_;
 		}
 
 		return retval;
 	}
 
-	Size AbstractInteractiveForm::GetPreferredSize() const
+	Size AbstractView::GetPreferredSize() const
 	{
 		return Size(200, 200);
 	}
 
-	void AbstractInteractiveForm::Resize (int width, int height)
+	void AbstractView::Resize (int width, int height)
 	{
 		if(size().width() == width && size().height() == height) return;
 
 		Size new_size (width, height);
 		SizeUpdateRequest request(this, this, &new_size);
 
-		if(parent_) {
-			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(superview_) {
+			if(superview_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(width, height);
 			}
@@ -165,14 +165,14 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::Resize (const Size& size)
+	void AbstractView::Resize (const Size& size)
 	{
-		if(AbstractInteractiveForm::size() == size) return;
+		if(AbstractView::size() == size) return;
 
 		SizeUpdateRequest request(this, this, &size);
 
-		if(parent_) {
-			if(parent_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
+		if(superview_) {
+			if(superview_->SizeUpdateTest(request) && SizeUpdateTest(request)) {
 				PerformSizeUpdate(request);
 				set_size(size);
 			}
@@ -184,15 +184,15 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveTo (int x, int y)
+	void AbstractView::MoveTo (int x, int y)
 	{
 		if(position().x() == x && position().y() == y) return;
 
 		Point new_pos (x, y);
 		PositionUpdateRequest request(this, this, &new_pos);
 
-		if(parent_) {
-			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(superview_) {
+			if(superview_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(x, y);
 			}
@@ -204,14 +204,14 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveTo (const Point& pos)
+	void AbstractView::MoveTo (const Point& pos)
 	{
 		if(position() == pos) return;
 
 		PositionUpdateRequest request(this, this, &pos);
 
-		if(parent_) {
-			if(parent_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
+		if(superview_) {
+			if(superview_->PositionUpdateTest(request) && PositionUpdateTest(request)) {
 				PerformPositionUpdate(request);
 				set_position(pos);
 			}
@@ -223,22 +223,22 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::SetRoundType(int type)
+	void AbstractView::SetRoundType(int type)
 	{
 		if(round_type() == type) return;
 
 		PerformRoundTypeUpdate(type);
 	}
 
-	void AbstractInteractiveForm::SetVisible (bool visible)
+	void AbstractView::SetVisible (bool visible)
 	{
 		if(this->visiable() == visible)
 			return;
 
 		VisibilityUpdateRequest request(this, this, &visible);
 
-		if(parent_) {
-			if(parent_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
+		if(superview_) {
+			if(superview_->VisibilityUpdateTest(request) && VisibilityUpdateTest(request)) {
 				PerformVisibilityUpdate(request);
 				set_visible(visible);
 			}
@@ -250,7 +250,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractInteractiveForm::Contain(const Point& point) const
+	bool AbstractView::Contain(const Point& point) const
 	{
 		if(point.x() < position_.x() ||
 				point.y() < position_.y() ||
@@ -263,28 +263,28 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractInteractiveForm::RequestRedraw()
+	void AbstractView::RequestRedraw()
 	{
 		if(!refresh()) {
 
-			AbstractInteractiveForm* root = this;
-			AbstractInteractiveForm* p = parent();
+			AbstractView* root = this;
+			AbstractView* p = superview();
 
 			/*
 			while(p) {
-				DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-				p = p->parent();
+				DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+				p = p->superview();
 			}
-			p = parent();
+			p = superview();
 			*/
 
 			while(p && (!p->refresh()) && (p->visiable())) {
 				root = p;
 				p->set_refresh(true);
-				p = p->parent();
+				p = p->superview();
 			}
 
-			if(root->parent() == 0) {
+			if(root->superview() == 0) {
 				Context* context = dynamic_cast<Context*>(root);
 				if(context) {
 					//DBG_PRINT_MSG("Call %s", "virtual Context::SynchronizeWindow()");
@@ -296,7 +296,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::RequestRedrawInThread()
+	void AbstractView::RequestRedrawInThread()
 	{
 		if(pthread_mutex_lock(&refresh_mutex) != 0) {
 			DBG_PRINT_MSG("%s", "Fail to lock mutex");
@@ -305,24 +305,24 @@ namespace BlendInt {
 
 		if(!refresh()) {
 
-			AbstractInteractiveForm* root = this;
-			AbstractInteractiveForm* p = parent();
+			AbstractView* root = this;
+			AbstractView* p = superview();
 
 			/*
 			while(p) {
-				DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-				p = p->parent();
+				DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+				p = p->superview();
 			}
-			p = parent();
+			p = superview();
 			*/
 
 			while(p && (!p->refresh()) && (p->visiable())) {
 				root = p;
 				p->set_refresh(true);
-				p = p->parent();
+				p = p->superview();
 			}
 
-			if(root->parent() == 0) {
+			if(root->superview() == 0) {
 				Context* context = dynamic_cast<Context*>(root);
 				if(context) {
 					context->SynchronizeWindow();
@@ -337,30 +337,30 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractInteractiveForm::TryRequestRedrawInThread()
+	bool AbstractView::TryRequestRedrawInThread()
 	{
 		if(pthread_mutex_trylock(&refresh_mutex) == 0) {
 
 			if(!refresh()) {
 
-				AbstractInteractiveForm* root = this;
-				AbstractInteractiveForm* p = parent();
+				AbstractView* root = this;
+				AbstractView* p = superview();
 
 				/*
 				while(p) {
-					DBG_PRINT_MSG("parent name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-					p = p->parent();
+					DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+					p = p->superview();
 				}
-				p = parent();
+				p = superview();
 				*/
 
 				while(p && (!p->refresh()) && (p->visiable())) {
 					root = p;
 					p->set_refresh(true);
-					p = p->parent();
+					p = p->superview();
 				}
 
-				if(root->parent() == 0) {
+				if(root->superview() == 0) {
 					Context* context = dynamic_cast<Context*>(root);
 					if(context) {
 						context->SynchronizeWindow();
@@ -382,150 +382,150 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveBackward()
+	void AbstractView::MoveBackward()
 	{
-		if(parent_) {
+		if(superview_) {
 
-			if(previous_) {
+			if(previous_view_) {
 
-				AbstractInteractiveForm* tmp = previous_;
+				AbstractView* tmp = previous_view_;
 
-				tmp->next_ = next_;
-				if(next_) {
-					next_->previous_ = tmp;
+				tmp->next_view_ = next_view_;
+				if(next_view_) {
+					next_view_->previous_view_ = tmp;
 				} else {
-					assert(parent_->last_child_ == this);
-					parent_->last_child_ = tmp;
+					assert(superview_->last_subview_ == this);
+					superview_->last_subview_ = tmp;
 				}
 
-				next_ = tmp;
-				previous_ = tmp->previous_;
-				if(tmp->previous_) {
-					tmp->previous_->next_ = this;
+				next_view_ = tmp;
+				previous_view_ = tmp->previous_view_;
+				if(tmp->previous_view_) {
+					tmp->previous_view_->next_view_ = this;
 				}
-				tmp->previous_ = this;
+				tmp->previous_view_ = this;
 
-				if(previous_ == 0) {
-					assert(parent_->first_child_ == tmp);
-					parent_->first_child_ = this;
+				if(previous_view_ == 0) {
+					assert(superview_->first_subview_ == tmp);
+					superview_->first_subview_ = this;
 				}
 
 				DBG_PRINT_MSG("this: %s", name_.c_str());
-				if(previous_) {
-					DBG_PRINT_MSG("previous: %s", previous_->name_.c_str());
-					assert(previous_->next_ == this);
+				if(previous_view_) {
+					DBG_PRINT_MSG("previous_view: %s", previous_view_->name_.c_str());
+					assert(previous_view_->next_view_ == this);
 				}
-				if(next_) {
-					DBG_PRINT_MSG("next: %s", next_->name_.c_str());
-					assert(next_->previous_ == this);
+				if(next_view_) {
+					DBG_PRINT_MSG("next_view: %s", next_view_->name_.c_str());
+					assert(next_view_->previous_view_ == this);
 				}
 
 			} else {
-				assert(parent_->first_child_ == this);
+				assert(superview_->first_subview_ == this);
 			}
 
 		}
 	}
 
-	void AbstractInteractiveForm::MoveForward()
+	void AbstractView::MoveForward()
 	{
-		if(parent_) {
+		if(superview_) {
 
-			if(next_) {
+			if(next_view_) {
 
-				AbstractInteractiveForm* tmp = next_;
+				AbstractView* tmp = next_view_;
 
-				tmp->previous_ = previous_;
-				if(previous_) {
-					previous_->next_ = tmp;
+				tmp->previous_view_ = previous_view_;
+				if(previous_view_) {
+					previous_view_->next_view_ = tmp;
 				} else {
-					assert(parent_->first_child_ == this);
-					parent_->first_child_ = tmp;
+					assert(superview_->first_subview_ == this);
+					superview_->first_subview_ = tmp;
 				}
 
-				previous_ = tmp;
-				next_ = tmp->next_;
-				if(tmp->next_) {
-					tmp->next_->previous_ = this;
+				previous_view_ = tmp;
+				next_view_ = tmp->next_view_;
+				if(tmp->next_view_) {
+					tmp->next_view_->previous_view_ = this;
 				}
-				tmp->next_ = this;
+				tmp->next_view_ = this;
 
-				if(next_ == 0) {
-					assert(parent_->last_child_ == tmp);
-					parent_->last_child_ = this;
+				if(next_view_ == 0) {
+					assert(superview_->last_subview_ == tmp);
+					superview_->last_subview_ = this;
 				}
 
-				if(previous_) {
-					assert(previous_->next_ == this);
+				if(previous_view_) {
+					assert(previous_view_->next_view_ == this);
 				}
-				if(next_) {
-					assert(next_->previous_ == this);
+				if(next_view_) {
+					assert(next_view_->previous_view_ == this);
 				}
 
 			} else {
-				assert(parent_->last_child_ == this);
+				assert(superview_->last_subview_ == this);
 			}
 
 		}
 	}
 
-	void AbstractInteractiveForm::MoveToFirst()
+	void AbstractView::MoveToFirst()
 	{
-		if(parent_) {
+		if(superview_) {
 
-			if(parent_->first_child_ == this) {
-				assert(previous_ == 0);
+			if(superview_->first_subview_ == this) {
+				assert(previous_view_ == 0);
 				return;	// already at first
 			}
 
-			previous_->next_ = next_;
-			if(next_) {
-				next_->previous_ = previous_;
+			previous_view_->next_view_ = next_view_;
+			if(next_view_) {
+				next_view_->previous_view_ = previous_view_;
 			} else {
-				assert(parent_->last_child_ == this);
-				parent_->last_child_ = previous_;
+				assert(superview_->last_subview_ == this);
+				superview_->last_subview_ = previous_view_;
 			}
 
-			previous_ = 0;
-			next_ = parent_->first_child_;
-			parent_->first_child_->previous_ = this;
-			parent_->first_child_ = this;
+			previous_view_ = 0;
+			next_view_ = superview_->first_subview_;
+			superview_->first_subview_->previous_view_ = this;
+			superview_->first_subview_ = this;
 
 		}
 	}
 
-	void AbstractInteractiveForm::MoveToLast()
+	void AbstractView::MoveToLast()
 	{
-		if(parent_) {
+		if(superview_) {
 
-			if(parent_->last_child_ == this) {
-				assert(next_ == 0);
+			if(superview_->last_subview_ == this) {
+				assert(next_view_ == 0);
 				return;	// already at last
 			}
 
-			next_->previous_ = previous_;
+			next_view_->previous_view_ = previous_view_;
 
-			if(previous_) {
-				previous_->next_ = next_;
+			if(previous_view_) {
+				previous_view_->next_view_ = next_view_;
 			} else {
-				assert(parent_->first_child_ == this);
-				parent_->first_child_ = next_;
+				assert(superview_->first_subview_ == this);
+				superview_->first_subview_ = next_view_;
 			}
 
-			next_ = 0;
-			previous_ = parent_->last_child_;
-			parent_->last_child_->next_ = this;
-			parent_->last_child_ = this;
+			next_view_ = 0;
+			previous_view_ = superview_->last_subview_;
+			superview_->last_subview_->next_view_ = this;
+			superview_->last_subview_ = this;
 
 		}
 	}
 
-	void AbstractInteractiveForm::SetDefaultBorderWidth(float border)
+	void AbstractView::SetDefaultBorderWidth(float border)
 	{
-		border_width = border;
+		kBorderWidth = border;
 	}
 
-	void AbstractInteractiveForm::SetEmboss(bool emboss)
+	void AbstractView::SetEmboss(bool emboss)
 	{
 		if(this->emboss() == emboss)
 			return;
@@ -534,9 +534,9 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	bool AbstractInteractiveForm::IsHoverThrough(const AbstractInteractiveForm* widget, const Point& cursor)
+	bool AbstractView::IsHoverThrough(const AbstractView* widget, const Point& cursor)
 	{
-		AbstractInteractiveForm* container = widget->parent_;
+		AbstractView* container = widget->superview_;
 		if(container == 0) return false;	// if a widget hovered was removed from any container.
 
 		if(widget->visiable() && widget->Contain(cursor)) {
@@ -545,7 +545,7 @@ namespace BlendInt {
 				if((!container->visiable()) || (!container->Contain(cursor)))
 					return false;
 
-				container = container->parent();
+				container = container->superview();
 			}
 
 			return true;
@@ -555,7 +555,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool AbstractInteractiveForm::IsHoverThroughExt (const AbstractInteractiveForm* widget, const Point& global_cursor_position)
+	bool AbstractView::IsHoverThroughExt (const AbstractView* widget, const Point& global_cursor_position)
 	{
 		Point global_position = widget->GetGlobalPosition();
 
@@ -570,7 +570,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	int AbstractInteractiveForm::GetOutlineVertices (int round_type)
+	int AbstractView::GetOutlineVertices (int round_type)
 	{
 		round_type = round_type & RoundAll;
 		int count = 0;
@@ -583,20 +583,20 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractInteractiveForm::DrawSubFormsOnce(Profile& profile)
+	void AbstractView::DrawSubFormsOnce(Profile& profile)
 	{
 		bool refresh_record = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			set_refresh(false);	// allow pass to parent in RequestRedraw()
+			set_refresh(false);	// allow pass to superview in RequestRedraw()
 			if (p->PreDraw(profile)) {
 
 				ResponseType response = p->Draw(profile);
 				p->set_refresh(refresh());
 
 				if(response == Ignore) {
-					for(AbstractInteractiveForm* sub = p->first_child(); sub; sub = sub->next())
+					for(AbstractView* sub = p->first_subview(); sub; sub = sub->next_view())
 					{
 						DispatchDrawEvent(sub, profile);
 					}
@@ -611,7 +611,7 @@ namespace BlendInt {
 		set_refresh(refresh_record);
 	}
 
-	void AbstractInteractiveForm::DispatchDrawEvent (AbstractInteractiveForm* widget,
+	void AbstractView::DispatchDrawEvent (AbstractView* widget,
 	        Profile& profile)
 	{
 #ifdef DEBUG
@@ -621,10 +621,10 @@ namespace BlendInt {
 		if (widget->PreDraw(profile)) {
 
 			ResponseType response = widget->Draw(profile);
-			widget->set_refresh(widget->parent_->refresh());
+			widget->set_refresh(widget->superview_->refresh());
 
 			if(response == Ignore) {
-				for(AbstractInteractiveForm* sub = widget->first_child(); sub; sub = sub->next())
+				for(AbstractView* sub = widget->first_subview(); sub; sub = sub->next_view())
 				{
 					DispatchDrawEvent(sub, profile);
 				}
@@ -634,23 +634,23 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractInteractiveForm::SizeUpdateTest(const SizeUpdateRequest& request)
+	bool AbstractView::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
-		if(request.source()->parent() == this) {
+		if(request.source()->superview() == this) {
 			return false;
 		} else {
 			return true;
 		}	}
 
-	bool AbstractInteractiveForm::PositionUpdateTest(const PositionUpdateRequest& request)
+	bool AbstractView::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
-		if(request.source()->parent() == this) {
+		if(request.source()->superview() == this) {
 			return false;
 		} else {
 			return true;
 		}	}
 
-	void AbstractInteractiveForm::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void AbstractView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -661,7 +661,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::PerformPositionUpdate(const PositionUpdateRequest& request)
+	void AbstractView::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_position(*request.position());
@@ -672,17 +672,17 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractInteractiveForm::VisibilityUpdateTest(const VisibilityUpdateRequest& request)
+	bool AbstractView::VisibilityUpdateTest(const VisibilityUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void AbstractInteractiveForm::PerformRoundTypeUpdate(int round_type)
+	void AbstractView::PerformRoundTypeUpdate(int round_type)
 	{
 		set_round_type(round_type);
 	}
 
-	void AbstractInteractiveForm::PerformVisibilityUpdate(const VisibilityUpdateRequest& request)
+	void AbstractView::PerformVisibilityUpdate(const VisibilityUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_visible(*request.visibility());
@@ -693,29 +693,29 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::ReportSizeUpdate(const SizeUpdateRequest& request)
+	void AbstractView::ReportSizeUpdate(const SizeUpdateRequest& request)
 	{
-		if(parent_) {
-			parent_->PerformSizeUpdate(request);
+		if(superview_) {
+			superview_->PerformSizeUpdate(request);
 		}
 	}
 
-	void AbstractInteractiveForm::ReportPositionUpdate(const PositionUpdateRequest& request)
+	void AbstractView::ReportPositionUpdate(const PositionUpdateRequest& request)
 	{
-		if(parent_) {
-			parent_->PerformPositionUpdate(request);
+		if(superview_) {
+			superview_->PerformPositionUpdate(request);
 		}
 	}
 
-	void AbstractInteractiveForm::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
+	void AbstractView::ReportVisibilityRequest(const VisibilityUpdateRequest& request)
 	{
 
-		if(parent_) {
-			parent_->PerformVisibilityUpdate(request);
+		if(superview_) {
+			superview_->PerformVisibilityUpdate(request);
 		}
 	}
 
-	int AbstractInteractiveForm::GetHalfOutlineVertices(int round_type) const
+	int AbstractView::GetHalfOutlineVertices(int round_type) const
 	{
 		round_type = round_type & (RoundBottomLeft | RoundBottomRight);
 		int count = 0;
@@ -729,7 +729,7 @@ namespace BlendInt {
 
 	/*
 
-	void AbstractInteractiveForm::GenerateVertices(std::vector<GLfloat>* inner,
+	void AbstractView::GenerateVertices(std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
 		if(inner == 0 && outer == 0) return;
@@ -943,7 +943,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::GenerateVertices(Orientation shadedir, short shadetop,
+	void AbstractView::GenerateVertices(Orientation shadedir, short shadetop,
 			short shadedown, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
@@ -1237,7 +1237,7 @@ namespace BlendInt {
 
 	*/
 
-	void AbstractInteractiveForm::GenerateTriangleStripVertices(
+	void AbstractView::GenerateTriangleStripVertices(
 			const std::vector<GLfloat>* inner,
 			const std::vector<GLfloat>* edge,
 			unsigned int num,
@@ -1272,7 +1272,7 @@ namespace BlendInt {
 		(*strip)[count * 2 + 3] = (*edge)[1];
 	}
 
-	void AbstractInteractiveForm::GenerateVertices(const Size& size, float border,
+	void AbstractView::GenerateVertices(const Size& size, float border,
 			int round_type, float radius, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
@@ -1487,7 +1487,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::GenerateVertices(const Size& size, float border,
+	void AbstractView::GenerateVertices(const Size& size, float border,
 			int round_type, float radius, Orientation shadedir, short shadetop,
 			short shadedown, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
@@ -1780,26 +1780,26 @@ namespace BlendInt {
 
 	}
 
-	AbstractInteractiveForm* AbstractInteractiveForm::operator [](int i) const
+	AbstractView* AbstractView::operator [](int i) const
 	{
 		if((i < 0) || (i >= subs_count_)) return 0;
 
-		AbstractInteractiveForm* widget = 0;
+		AbstractView* widget = 0;
 
 		if(i < ((subs_count_ + 1)/ 2)) {
 
-			widget = first_child_;
+			widget = first_subview_;
 			while(i > 0) {
-				widget = widget->next_;
+				widget = widget->next_view_;
 				i--;
 			}
 
 		} else {
 
-			widget = last_child_;
+			widget = last_subview_;
 			int max = subs_count_ - 1;
 			while(i < max) {
-				widget = widget->previous_;
+				widget = widget->previous_view_;
 				i++;
 			}
 
@@ -1810,26 +1810,26 @@ namespace BlendInt {
 		return widget;
 	}
 
-	AbstractInteractiveForm* AbstractInteractiveForm::GetWidgetAt(int i) const
+	AbstractView* AbstractView::GetWidgetAt(int i) const
 	{
 		if((i < 0) || (i >= subs_count_)) return 0;
 
-		AbstractInteractiveForm* widget = 0;
+		AbstractView* widget = 0;
 
 		if(i < ((subs_count_ + 1)/ 2)) {
 
-			widget = first_child_;
+			widget = first_subview_;
 			while(i > 0) {
-				widget = widget->next_;
+				widget = widget->next_view_;
 				i--;
 			}
 
 		} else {
 
-			widget = last_child_;
+			widget = last_subview_;
 			int max = subs_count_ - 1;
 			while(i < max) {
-				widget = widget->previous_;
+				widget = widget->previous_view_;
 				i++;
 			}
 
@@ -1840,41 +1840,41 @@ namespace BlendInt {
 		return widget;
 	}
 
-	bool AbstractInteractiveForm::PushFrontSubForm(AbstractInteractiveForm* widget)
+	bool AbstractView::PushFrontSubView(AbstractView* view)
 	{
-		if (!widget)
+		if (!view)
 			return false;
 
-		if (widget->parent_) {
+		if (view->superview_) {
 
-			if (widget->parent_ == this) {
+			if (view->superview_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
-								widget->name_.c_str(),
-								widget->parent_->name().c_str());
+								view->name_.c_str(),
+								view->superview_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubForm(widget);
+				view->superview_->RemoveSubView(view);
 			}
 
 		}
 
-		assert(widget->previous_ == 0);
-		assert(widget->next_ == 0);
-		assert(widget->parent_ == 0);
+		assert(view->previous_view_ == 0);
+		assert(view->next_view_ == 0);
+		assert(view->superview_ == 0);
 
-		if(first_child_) {
-			first_child_->previous_ = widget;
-			widget->next_ = first_child_;
+		if(first_subview_) {
+			first_subview_->previous_view_ = view;
+			view->next_view_ = first_subview_;
 		} else {
-			assert(last_child_ == 0);
-			widget->next_ = 0;
-			last_child_ = widget;
+			assert(last_subview_ == 0);
+			view->next_view_ = 0;
+			last_subview_ = view;
 		}
-		first_child_ = widget;
+		first_subview_ = view;
 
-		widget->previous_ = 0;
-		widget->parent_ = this;
+		view->previous_view_ = 0;
+		view->superview_ = this;
 		subs_count_++;
 
 		//events()->connect(widget->destroyed(), this,
@@ -1883,80 +1883,80 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::InsertSubForm(int index, AbstractInteractiveForm* widget)
+	bool AbstractView::InsertSubView(int index, AbstractView* view)
 	{
-		if (!widget)
+		if (!view)
 			return false;
 
-		if (widget->parent_) {
+		if (view->superview_) {
 
-			if (widget->parent_ == this) {
+			if (view->superview_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
-								widget->name_.c_str(),
-								widget->parent_->name().c_str());
+								view->name_.c_str(),
+								view->superview_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubForm(widget);
+				view->superview_->RemoveSubView(view);
 			}
 
 		}
 
-		assert(widget->previous_ == 0);
-		assert(widget->next_ == 0);
-		assert(widget->parent_ == 0);
+		assert(view->previous_view_ == 0);
+		assert(view->next_view_ == 0);
+		assert(view->superview_ == 0);
 
-		if(first_child_ == 0) {
-			assert(last_child_ == 0);
+		if(first_subview_ == 0) {
+			assert(last_subview_ == 0);
 
-			widget->next_ = 0;
-			last_child_ = widget;
-			first_child_ = widget;
-			widget->previous_ = 0;
+			view->next_view_ = 0;
+			last_subview_ = view;
+			first_subview_ = view;
+			view->previous_view_ = 0;
 
 		} else {
 
-			AbstractInteractiveForm* p = first_child_;
+			AbstractView* p = first_subview_;
 
 			if(index > 0) {
 
 				while(p && (index > 0)) {
-					if(p->next_ == 0)
+					if(p->next_view_ == 0)
 						break;
 
-					p = p->next_;
+					p = p->next_view_;
 					index--;
 				}
 
 				if(index == 0) {	// insert
 
-					widget->previous_ = p->previous_;
-					widget->next_ = p;
-					p->previous_->next_ = widget;
-					p->previous_ = widget;
+					view->previous_view_ = p->previous_view_;
+					view->next_view_ = p;
+					p->previous_view_->next_view_ = view;
+					p->previous_view_ = view;
 
 				} else {	// same as push back
 
-					assert(p == last_child_);
-					last_child_->next_ = widget;
-					widget->previous_ = last_child_;
-					last_child_ = widget;
-					widget->next_ = 0;
+					assert(p == last_subview_);
+					last_subview_->next_view_ = view;
+					view->previous_view_ = last_subview_;
+					last_subview_ = view;
+					view->next_view_ = 0;
 
 				}
 
 			} else {	// same as push front
 
-				first_child_->previous_ = widget;
-				widget->next_ = first_child_;
-				first_child_ = widget;
-				widget->previous_ = 0;
+				first_subview_->previous_view_ = view;
+				view->next_view_ = first_subview_;
+				first_subview_ = view;
+				view->previous_view_ = 0;
 
 			}
 
 		}
 
-		widget->parent_ = this;
+		view->superview_ = this;
 		subs_count_++;
 		//events()->connect(widget->destroyed(), this,
 		//				&AbstractContainer::OnSubWidgetDestroyed);
@@ -1964,41 +1964,41 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::PushBackSubForm(AbstractInteractiveForm* widget)
+	bool AbstractView::PushBackSubView(AbstractView* view)
 	{
-		if (!widget)
+		if (!view)
 			return false;
 
-		if (widget->parent_) {
+		if (view->superview_) {
 
-			if (widget->parent_ == this) {
+			if (view->superview_ == this) {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
-								widget->name_.c_str(),
-								widget->parent_->name().c_str());
+								view->name_.c_str(),
+								view->superview_->name().c_str());
 				return false;
 			} else {
 				// Set widget's container to 0
-				widget->parent_->RemoveSubForm(widget);
+				view->superview_->RemoveSubView(view);
 			}
 
 		}
 
-		assert(widget->previous_ == 0);
-		assert(widget->next_ == 0);
-		assert(widget->parent_ == 0);
+		assert(view->previous_view_ == 0);
+		assert(view->next_view_ == 0);
+		assert(view->superview_ == 0);
 
-		if(last_child_) {
-			last_child_->next_ = widget;
-			widget->previous_ = last_child_;
+		if(last_subview_) {
+			last_subview_->next_view_ = view;
+			view->previous_view_ = last_subview_;
 		} else {
-			assert(first_child_ == 0);
-			widget->previous_ = 0;
-			first_child_ = widget;
+			assert(first_subview_ == 0);
+			view->previous_view_ = 0;
+			first_subview_ = view;
 		}
-		last_child_ = widget;
+		last_subview_ = view;
 
-		widget->next_ = 0;
-		widget->parent_ = this;
+		view->next_view_ = 0;
+		view->superview_ = this;
 		subs_count_++;
 
 		//events()->connect(widget->destroyed(), this,
@@ -2007,54 +2007,54 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractInteractiveForm::RemoveSubForm(AbstractInteractiveForm* widget)
+	bool AbstractView::RemoveSubView(AbstractView* view)
 	{
-		if (!widget)
+		if (!view)
 			return false;
 
-		assert(widget->parent_ == this);
+		assert(view->superview_ == this);
 
 		//widget->destroyed().disconnectOne(this,
 		//        &AbstractContainer::OnSubWidgetDestroyed);
 
-		if (widget->previous_) {
-			widget->previous_->next_ = widget->next_;
+		if (view->previous_view_) {
+			view->previous_view_->next_view_ = view->next_view_;
 		} else {
-			assert(first_child_ == widget);
-			first_child_ = widget->next_;
+			assert(first_subview_ == view);
+			first_subview_ = view->next_view_;
 		}
 
-		if (widget->next_) {
-			widget->next_->previous_ = widget->previous_;
+		if (view->next_view_) {
+			view->next_view_->previous_view_ = view->previous_view_;
 		} else {
-			assert(last_child_ == widget);
-			last_child_ = widget->previous_;
+			assert(last_subview_ == view);
+			last_subview_ = view->previous_view_;
 		}
 
-		widget->previous_ = 0;
-		widget->next_ = 0;
-		widget->parent_ = 0;
+		view->previous_view_ = 0;
+		view->next_view_ = 0;
+		view->superview_ = 0;
 		subs_count_--;
 
-		if(widget->hover()) {
-			widget->set_hover(false);
+		if(view->hover()) {
+			view->set_hover(false);
 		}
 
 		return true;
 	}
 
-	void AbstractInteractiveForm::ClearSubForms()
+	void AbstractView::ClearSubViews()
 	{
-		AbstractInteractiveForm* widget = first_child_;
-		AbstractInteractiveForm* next = 0;
+		AbstractView* widget = first_subview_;
+		AbstractView* next_view = 0;
 
 		while(widget) {
 
-			next = widget->next_;
+			next_view = widget->next_view_;
 
-			widget->previous_ = 0;
-			widget->next_ = 0;
-			widget->parent_ = 0;
+			widget->previous_view_ = 0;
+			widget->next_view_ = 0;
+			widget->superview_ = 0;
 
 			if(widget->managed() && widget->reference_count() == 0) {
 				delete widget;
@@ -2062,18 +2062,18 @@ namespace BlendInt {
 				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
 			}
 
-			widget = next;
+			widget = next_view;
 		}
 
 		subs_count_ = 0;
-		first_child_ = 0;
-		last_child_ = 0;
+		first_subview_ = 0;
+		last_subview_ = 0;
 	}
 
-	void AbstractInteractiveForm::ResizeSubForm(AbstractInteractiveForm* sub, int width,
+	void AbstractView::ResizeSubView(AbstractView* sub, int width,
 			int height)
 	{
-		if(!sub || sub->parent() != this) return;
+		if(!sub || sub->superview() != this) return;
 
 		if(sub->size().width() == width &&
 				sub->size().height() == height)
@@ -2088,9 +2088,9 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::ResizeSubForm(AbstractInteractiveForm* sub, const Size& size)
+	void AbstractView::ResizeSubView(AbstractView* sub, const Size& size)
 	{
-		if (!sub || sub->parent() != this)
+		if (!sub || sub->superview() != this)
 			return;
 
 		if (sub->size() == size)
@@ -2104,9 +2104,9 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveSubFormTo(AbstractInteractiveForm* sub, int x, int y)
+	void AbstractView::MoveSubViewTo(AbstractView* sub, int x, int y)
 	{
-		if (!sub || sub->parent() != this)
+		if (!sub || sub->superview() != this)
 			return;
 
 		if (sub->position().x() == x && sub->position().y() == y)
@@ -2122,10 +2122,10 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveSubFormTo(AbstractInteractiveForm* sub,
+	void AbstractView::MoveSubViewTo(AbstractView* sub,
 			const Point& pos)
 	{
-		if(!sub || sub->parent() != this) return;
+		if(!sub || sub->superview() != this) return;
 
 		if(sub->position() == pos) return;
 
@@ -2137,10 +2137,10 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::SetSubFormVisibility(AbstractInteractiveForm* sub,
+	void AbstractView::SetSubViewVisibility(AbstractView* sub,
 			bool visible)
 	{
-		if(!sub || sub->parent() != this) return;
+		if(!sub || sub->superview() != this) return;
 
 		if(sub->visiable() == visible) return;
 
@@ -2152,29 +2152,29 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::MoveSubWidgets(int move_x, int move_y)
+	void AbstractView::MoveSubWidgets(int move_x, int move_y)
 	{
-		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			MoveSubFormTo(p, p->position().x() + move_x,
+		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
+			MoveSubViewTo(p, p->position().x() + move_x,
 			        p->position().y() + move_y);
 		}
 	}
 
-	void AbstractInteractiveForm::ResizeSubWidgets(const Size& size)
+	void AbstractView::ResizeSubWidgets(const Size& size)
 	{
-		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			ResizeSubForm(p, size);
+		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
+			ResizeSubView(p, size);
 		}
 	}
 
-	void AbstractInteractiveForm::ResizeSubWidgets(int w, int h)
+	void AbstractView::ResizeSubWidgets(int w, int h)
 	{
-		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-			ResizeSubForm(p, w, h);
+		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
+			ResizeSubView(p, w, h);
 		}
 	}
 
-	void AbstractInteractiveForm::FillSingleWidget(int index, const Size& size,
+	void AbstractView::FillSingleWidget(int index, const Size& size,
 			const Margin& margin)
 	{
 		int x = margin.left();
@@ -2186,38 +2186,38 @@ namespace BlendInt {
 		FillSingleWidget(index, x, y, w, h);
 	}
 
-	void AbstractInteractiveForm::FillSingleWidget(int index, const Point& pos,
+	void AbstractView::FillSingleWidget(int index, const Point& pos,
 			const Size& size)
 	{
 		FillSingleWidget(index, pos.x(), pos.y(), size.width(), size.height());
 	}
 
-	void AbstractInteractiveForm::FillSingleWidget(int index, int left, int bottom,
+	void AbstractView::FillSingleWidget(int index, int left, int bottom,
 			int width, int height)
 	{
-		AbstractInteractiveForm* widget = GetWidgetAt(index);
+		AbstractView* widget = GetWidgetAt(index);
 
 		if (widget) {
-			ResizeSubForm(widget, width, height);
-			MoveSubFormTo(widget, left, bottom);
+			ResizeSubView(widget, width, height);
+			MoveSubViewTo(widget, left, bottom);
 
 			if (widget->size().width() < width) {
-				MoveSubFormTo(widget,
+				MoveSubViewTo(widget,
 				        left + (width - widget->size().width()) / 2, bottom);
 			}
 
 			if (widget->size().height() < height) {
-				MoveSubFormTo(widget, left,
+				MoveSubViewTo(widget, left,
 				        bottom + (height - widget->size().height() / 2));
 			}
 		}
 	}
 
-	void AbstractInteractiveForm::FillSubWidgetsAveragely(const Point& out_pos,
+	void AbstractView::FillSubWidgetsAveragely(const Point& out_pos,
 			const Size& out_size, const Margin& margin, Orientation orientation,
 			int alignment, int space)
 	{
-		if(first_child_ == 0) return;
+		if(first_subview_ == 0) return;
 
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
@@ -2233,10 +2233,10 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::FillSubWidgetsAveragely(const Point& pos,
+	void AbstractView::FillSubWidgetsAveragely(const Point& pos,
 			const Size& size, Orientation orientation, int alignment, int space)
 	{
-		if(first_child_ == 0) return;
+		if(first_subview_ == 0) return;
 
 		if(orientation == Horizontal) {
 			DistributeHorizontally(pos.x(), size.width(), space);
@@ -2247,10 +2247,10 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::FillSubWidgetsAveragely(int x, int y, int width,
+	void AbstractView::FillSubWidgetsAveragely(int x, int y, int width,
 			int height, Orientation orientation, int alignment, int space)
 	{
-		if(first_child_ == 0) return;
+		if(first_subview_ == 0) return;
 
 		if(orientation == Horizontal) {
 			DistributeHorizontally(x, width, space);
@@ -2261,7 +2261,7 @@ namespace BlendInt {
 		}
 	}
 
-	float AbstractInteractiveForm::make_shaded_offset (short shadetop, short shadedown, float fact)
+	float AbstractView::make_shaded_offset (short shadetop, short shadedown, float fact)
 	{
 		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
 		float facm = 1.f - fact;
@@ -2269,7 +2269,7 @@ namespace BlendInt {
 		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
 	}
 
-	void AbstractInteractiveForm::DistributeHorizontally(int x, int width, int space)
+	void AbstractView::DistributeHorizontally(int x, int width, int space)
 	{
 		int sum = subs_count();
 
@@ -2278,9 +2278,9 @@ namespace BlendInt {
 
 			if (average_width > 0) {
 
-				for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-					ResizeSubForm(p, average_width, p->size().height());
-					MoveSubFormTo(p, x, p->position().y());
+				for (AbstractView* p = first_subview_; p; p = p->next_view_) {
+					ResizeSubView(p, average_width, p->size().height());
+					MoveSubViewTo(p, x, p->position().y());
 					x += average_width + space;
 				}
 
@@ -2292,7 +2292,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::DistributeVertically(int y, int height, int space)
+	void AbstractView::DistributeVertically(int y, int height, int space)
 	{
 		int sum = subs_count();
 
@@ -2302,10 +2302,10 @@ namespace BlendInt {
 
 			if (average_height > 0) {
 
-				for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
-					ResizeSubForm(p, p->size().width(), average_height);
+				for (AbstractView* p = first_subview_; p; p = p->next_view_) {
+					ResizeSubView(p, p->size().width(), average_height);
 					y -= average_height;
-					MoveSubFormTo(p, p->position().x(), y);
+					MoveSubViewTo(p, p->position().x(), y);
 					y -= space;
 				}
 
@@ -2317,21 +2317,21 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::AlignHorizontally(int y, int height, int alignment)
+	void AbstractView::AlignHorizontally(int y, int height, int alignment)
 	{
-		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
+		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
 			if(p->IsExpandY()) {
-				ResizeSubForm(p, p->size().width(), height);
-				MoveSubFormTo(p, p->position().x(), y);
+				ResizeSubView(p, p->size().width(), height);
+				MoveSubViewTo(p, p->position().x(), y);
 			} else {
 
 				if (alignment & AlignTop) {
-					MoveSubFormTo(p, p->position().x(),
+					MoveSubViewTo(p, p->position().x(),
 					        y + (height - p->size().height()));
 				} else if (alignment & AlignBottom) {
-					MoveSubFormTo(p, p->position().x(), y);
+					MoveSubViewTo(p, p->position().x(), y);
 				} else if (alignment & AlignHorizontalCenter) {
-					MoveSubFormTo(p, p->position().x(),
+					MoveSubViewTo(p, p->position().x(),
 					        y + (height - p->size().height()) / 2);
 				}
 
@@ -2339,20 +2339,20 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractInteractiveForm::AlignVertically(int x, int width, int alignment)
+	void AbstractView::AlignVertically(int x, int width, int alignment)
 	{
-		for (AbstractInteractiveForm* p = first_child_; p; p = p->next_) {
+		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
 			if (p->IsExpandX()) {
-				ResizeSubForm(p, width, p->size().height());
-				MoveSubFormTo(p, x, p->position().y());
+				ResizeSubView(p, width, p->size().height());
+				MoveSubViewTo(p, x, p->position().y());
 			} else {
 
 				if (alignment & AlignLeft) {
-					MoveSubFormTo(p, x, p->position().y());
+					MoveSubViewTo(p, x, p->position().y());
 				} else if (alignment & AlignRight) {
-					MoveSubFormTo(p, x + (width - p->size().width()), p->position().y());
+					MoveSubViewTo(p, x + (width - p->size().width()), p->position().y());
 				} else if (alignment & AlignVerticalCenter) {
-					MoveSubFormTo(p, x + (width - p->size().width()) / 2, p->position().y());
+					MoveSubViewTo(p, x + (width - p->size().width()) / 2, p->position().y());
 				}
 
 			}

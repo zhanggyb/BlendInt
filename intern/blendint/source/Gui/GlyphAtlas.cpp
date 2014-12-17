@@ -140,7 +140,7 @@ namespace BlendInt {
 		int rows = (tex_height - offset_y()) / (cell_height() + space_y());
 
 		if(m_index > (rows * columns - 1)) {
-			DBG_PRINT_MSG("%s", "Cannot go to next index, texture is full.");
+			DBG_PRINT_MSG("%s", "Cannot go to next_view index, texture is full.");
 			return false;
 		}
 

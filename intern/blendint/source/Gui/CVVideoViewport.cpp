@@ -61,15 +61,21 @@ namespace BlendInt {
 		InitializeCVVideoView();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 24);	// default 30 fps
+		timer_->SetInterval(1000 / 24);	// default 24 fps
 
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 
+		// initialize thread mutex with default attribute.
+		ThreadMutexAttrib attrib;
+		attrib.initialize();
+
+		mutex_.initialize(attrib);
 	}
 
 	CVVideoViewport::~CVVideoViewport()
 	{
 		glDeleteVertexArrays(1, &vao_);
+		mutex_.destroy();
 	}
 
 	bool CVVideoViewport::IsExpandX() const
@@ -135,7 +141,7 @@ namespace BlendInt {
 	{
 		if(video_stream_.isOpened()) {
 			status_ = VideoPlay;
-			RequestRedraw();
+			//RequestRedraw();
 			timer_->Start();
 		} else {
 			DBG_PRINT_MSG("%s", "video stream is not opened");
@@ -147,7 +153,7 @@ namespace BlendInt {
 		if(timer_->enabled()) {
 			status_ = VideoPause;
 			timer_->Stop();
-			RequestRedraw();
+			//RequestRedraw();
 		}
 	}
 
@@ -155,7 +161,7 @@ namespace BlendInt {
 	{
 		status_ = VideoStop;
 		timer_->Stop();
-		upload_ = false;
+		//upload_ = false;
 
 		if(video_stream_.isOpened()) {
 			video_stream_.release();
@@ -251,40 +257,47 @@ namespace BlendInt {
 			return Accept;
 		}
 
-		if(status_ == VideoPlay) {
-			if(video_stream_.isOpened()) {
-				video_stream_ >> frame_;
+		glActiveTexture(GL_TEXTURE0);
+		texture_.bind();
+
+		if (mutex_.trylock()) {
+
+			if(upload_) {
+
+				if(frame_.data) {
+
+					switch (frame_.channels()) {
+
+						case 3: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+							texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+							break;
+						}
+
+						case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+						{
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+							texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+							break;
+						}
+
+						default: {
+							texture_.reset();
+							return Accept;
+							break;
+						}
+					}
+				}
+
+				upload_ = false;
+
 			}
-		}
 
-		if(frame_.data) {
-
-			glActiveTexture(GL_TEXTURE0);
-			texture_.bind();
-
-			switch (frame_.channels()) {
-
-				case 3: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-							0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-					break;
-				}
-
-				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-				{
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-							0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-					break;
-				}
-
-				default: {
-					texture_.reset();
-					return Accept;
-					break;
-				}
-			}
+			mutex_.unlock();
+		} else {
+			DBG_PRINT_MSG("%s", "fail to lock: capturing video into frame");
 		}
 
 		Shaders::instance->widget_image_program()->use();
@@ -349,7 +362,22 @@ namespace BlendInt {
 
 	void CVVideoViewport::OnUpdateFrame(Timer* t)
 	{
-		RequestRedraw();
+		if(video_stream_.isOpened()) {
+
+			if(mutex_.trylock()) {
+
+				video_stream_ >> frame_;
+				upload_ = true;
+
+				mutex_.unlock();
+
+				RequestRedraw();
+			} else {
+				DBG_PRINT_MSG("%s", "Fail to lock, the frame is being read");
+			}
+
+		}
+
 		/*
 		if(!refresh()) {
 			RequestRedrawInThread();

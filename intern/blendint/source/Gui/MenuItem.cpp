@@ -77,15 +77,15 @@ namespace BlendInt {
 		m_icon.reset(icon);
 	}
 
-	void MenuItem::SetParentMenu(MenuItemBin* parent)
+	void MenuItem::SetParentMenu(MenuItemBin* superview)
 	{
-		if(m_parent == parent) return;
+		if(m_parent == superview) return;
 
-		if(parent) {
-			parent->m_list.push_back(this);
+		if(superview) {
+			superview->m_list.push_back(this);
 		}
 
-		m_parent = parent;
+		m_parent = superview;
 	}
 
 	void MenuItem::SetSubMenu (MenuItemBin* sub)
