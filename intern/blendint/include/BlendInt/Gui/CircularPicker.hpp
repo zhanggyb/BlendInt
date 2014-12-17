@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_CIRCULARPICKER_HPP_
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -39,7 +39,7 @@ namespace BlendInt {
 		/**
 		 * @brief Default constructor
 		 */
-		CircularPicker ();
+		explicit CircularPicker (unsigned int radius = 5);
 
 		/**
 		 * @brief Constructor
@@ -63,10 +63,9 @@ namespace BlendInt {
 
 	private:
 
-		GLuint vao_;
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 	};
 
 }

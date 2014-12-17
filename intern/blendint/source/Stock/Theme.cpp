@@ -31,8 +31,6 @@
 
 #include <BlendInt/Core/Image.hpp>
 
-#include "intern/ShadowImage.hpp"
-
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -74,7 +72,6 @@ namespace BlendInt {
 	  m_shadow_fac(0.5),
 	  shadow_width_(12)
 	{
-		shadow_texture_.reset(new GLTexture2D);
 	}
 
 	bool Theme::Load (const std::string& filepath)
@@ -449,8 +446,6 @@ namespace BlendInt {
 		xaxis_ = 0xFF0000FF;
 		yaxis_ = 0x00FF00FF;
 		zaxis_ = 0x0000FFFF;
-
-		GenerateShadowTexture();
 	}
 
 	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
@@ -715,41 +710,6 @@ namespace BlendInt {
 		widget_color_node->append_node(colors_node);
 
 		return widget_color_node;
-	}
-
-	void Theme::GenerateShadowTexture ()
-	{
-		if(shadow_texture_->id() == 0) {
-			shadow_texture_->generate();
-		}
-
-		/*
-		std::vector<unsigned char> pixels(32 * 32 * 4, 0);
-
-		unsigned char alpha = 255;
-		for (int i = 0; i < 32; i++) {
-			alpha = 128;
-			for(int j = 0; j < 32; j++) {
-				pixels[i * 32 * 4 + j * 4 + 0] = 0;
-				pixels[i * 32 * 4 + j * 4 + 1] = 0;
-				pixels[i * 32 * 4 + j * 4 + 2] = 0;
-				pixels[i * 32 * 4 + j * 4 + 3] = alpha;
-
-				alpha -= 4;
-			}
-		}
-		*/
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-		shadow_texture_->bind();
-		shadow_texture_->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		shadow_texture_->SetMinFilter(GL_NEAREST);
-		shadow_texture_->SetMagFilter(GL_NEAREST);
-		//shadow_texture_->SetImage(0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-		shadow_texture_->SetImage(0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, GIMP_IMAGE_pixel_data);
-		//shadow_texture_->WriteToFile("test.png");
-		shadow_texture_->reset();
 	}
 
 } /* namespace BlendInt */

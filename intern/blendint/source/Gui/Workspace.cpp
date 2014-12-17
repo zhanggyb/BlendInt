@@ -258,29 +258,6 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	ViewportLayer::ViewportLayer()
-	{
-	}
-
-	ViewportLayer::~ViewportLayer()
-	{
-	}
-
-	bool ViewportLayer::Contain(const Point& point) const
-	{
-		if(next_view()) {
-			if(next_view()->Contain(point)) {
-				return false;
-			} else {
-				return VLayout::Contain(point);
-			}
-		}
-
-		return VLayout::Contain(point);
-	}
-
-	// -------------------------------
-
 	Workspace::Workspace()
 	: Frame(),
 	  left_sidebar_(0),

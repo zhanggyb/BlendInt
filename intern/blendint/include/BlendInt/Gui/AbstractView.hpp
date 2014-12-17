@@ -59,18 +59,18 @@ namespace BlendInt {
 	 */
 	extern bool IsContained (AbstractView* container, AbstractView* view);
 
-	class InteractiveFormUpdateRequest
+	class GeometryUpdateRequest
 	{
 	public:
 
-		InteractiveFormUpdateRequest (AbstractView* source, AbstractView* target)
+		GeometryUpdateRequest (AbstractView* source, AbstractView* target)
 		: m_source(source),
 		  m_target(target)
 		{
 
 		}
 
-		~InteractiveFormUpdateRequest ()
+		~GeometryUpdateRequest ()
 		{
 
 		}
@@ -90,23 +90,23 @@ namespace BlendInt {
 		/**
 		 * Disabled
 		 */
-		InteractiveFormUpdateRequest();
+		GeometryUpdateRequest();
 
 		AbstractView* m_source;
 		AbstractView* m_target;
 	};
 
-	class SizeUpdateRequest: public InteractiveFormUpdateRequest
+	class SizeUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
 		SizeUpdateRequest (AbstractView* source, AbstractView* target)
-		: InteractiveFormUpdateRequest(source, target), m_size(0)
+		: GeometryUpdateRequest(source, target), m_size(0)
 		{
 		}
 
 		SizeUpdateRequest (AbstractView* source, AbstractView* target, const Size* size)
-		: InteractiveFormUpdateRequest(source, target), m_size(size)
+		: GeometryUpdateRequest(source, target), m_size(size)
 		{
 
 		}
@@ -126,17 +126,17 @@ namespace BlendInt {
 		const Size* m_size;
 	};
 
-	class PositionUpdateRequest: public InteractiveFormUpdateRequest
+	class PositionUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
 		PositionUpdateRequest (AbstractView* source, AbstractView* target)
-		: InteractiveFormUpdateRequest(source, target), m_position(0)
+		: GeometryUpdateRequest(source, target), m_position(0)
 		{
 		}
 
 		PositionUpdateRequest (AbstractView* source, AbstractView* target, const Point* pos)
-		: InteractiveFormUpdateRequest(source, target), m_position(pos)
+		: GeometryUpdateRequest(source, target), m_position(pos)
 		{
 
 		}
@@ -156,18 +156,18 @@ namespace BlendInt {
 		const Point* m_position;
 	};
 
-	class VisibilityUpdateRequest: public InteractiveFormUpdateRequest
+	class VisibilityUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
 		VisibilityUpdateRequest (AbstractView* source, AbstractView* target)
-		: InteractiveFormUpdateRequest(source, target), m_visibility(0)
+		: GeometryUpdateRequest(source, target), m_visibility(0)
 		{
 
 		}
 
 		VisibilityUpdateRequest (AbstractView* source, AbstractView* target, const bool* visibility)
-		: InteractiveFormUpdateRequest(source, target), m_visibility (visibility)
+		: GeometryUpdateRequest(source, target), m_visibility (visibility)
 		{
 
 		}
@@ -190,7 +190,18 @@ namespace BlendInt {
 	// ----------------------------------------------------
 
 	/**
-	 * @brief The base abstract class for widgets
+	 * @brief Abstract class for all views
+	 *
+	 * A view is a unit of the user interface in BlendInt that knows how to draw itself.
+	 * A view also knows how to process the event from window system, e.g. a mouse click.
+	 *
+	 * AbstractView is the basic class for all views, and there're 2 different groups of sub classes:
+	 * 	- frames
+	 * 	- widgets
+	 *
+	 * Frame works like a window in the desktop, it usually has a background, shadow, and contains widgets.
+	 *
+	 * The other group of view are called widgets, for example, buttons, sliders.
 	 *
 	 * @ingroup gui
 	 */

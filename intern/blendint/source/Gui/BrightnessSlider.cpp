@@ -51,7 +51,7 @@ namespace BlendInt {
 
 	BrightnessSlider::~BrightnessSlider()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	bool BrightnessSlider::IsExpandX() const
@@ -90,14 +90,14 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
 		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->number_slider().outline.data());
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
@@ -109,7 +109,7 @@ namespace BlendInt {
 //				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
 //						12, 0.0));
 
-		m_dot.Draw (0.f + size ().width () / 2 - m_dot.size ().width () / 2,
+		picker_->Draw (0.f + size ().width () / 2 - picker_->size ().width () / 2,
 				0.f + 12.f);
 
 		return Accept;
@@ -168,9 +168,9 @@ namespace BlendInt {
 		set_round_radius(6);
 		set_size(90, 14);
 
-		m_dot.Resize(3);
+		picker_.reset(new CircularPicker(3));
 
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vao_);
 
 		Color black(0x000000FF);
 
@@ -178,7 +178,7 @@ namespace BlendInt {
 		tool.GenerateVertices(size(), default_border_width(), round_type(),
 						round_radius(), black, orientation(), 255, 0);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
@@ -190,7 +190,7 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
