@@ -56,14 +56,14 @@ namespace BlendInt {
 			return display_mode_;
 		}
 
-		Point GetAbsolutePosition (const AbstractWidget* widget);
+		Point GetAbsolutePosition (const AbstractWidget* view);
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
 		{
 			return *destroyed_;
 		}
 
-		static AbstractFrame* GetFrame (AbstractView* widget);
+		static AbstractFrame* GetFrame (AbstractView* view);
 
 	protected:
 
@@ -73,41 +73,43 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event) = 0;
 
-		AbstractView* DispatchMousePressEvent (AbstractView* widget, const MouseEvent& event);
+		ResponseType DispatchKeyEvent (AbstractView* view, const KeyEvent& event);
 
-		ResponseType DispatchMouseMoveEvent (AbstractView* widget, const MouseEvent& event);
+		AbstractView* DispatchMousePressEvent (AbstractView* view, const MouseEvent& event);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractView* widget, const MouseEvent& event);
+		ResponseType DispatchMouseMoveEvent (AbstractView* view, const MouseEvent& event);
 
-		ResponseType call_key_press_event (AbstractView* widget, const KeyEvent& event)
+		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const MouseEvent& event);
+
+		ResponseType call_key_press_event (AbstractView* view, const KeyEvent& event)
 		{
-			return widget->KeyPressEvent(event);
+			return view->KeyPressEvent(event);
 		}
 
-		ResponseType call_mouse_press_event (AbstractView* widget, const MouseEvent& event)
+		ResponseType call_mouse_press_event (AbstractView* view, const MouseEvent& event)
 		{
-			return widget->MousePressEvent(event);
+			return view->MousePressEvent(event);
 		}
 
-		ResponseType call_mouse_release_event(AbstractView* widget, const MouseEvent& event)
+		ResponseType call_mouse_release_event(AbstractView* view, const MouseEvent& event)
 		{
-			return widget->MouseReleaseEvent(event);
+			return view->MouseReleaseEvent(event);
 		}
 
-		ResponseType call_mouse_move_event(AbstractView* widget, const MouseEvent& event)
+		ResponseType call_mouse_move_event(AbstractView* view, const MouseEvent& event)
 		{
-			return widget->MouseMoveEvent(event);
+			return view->MouseMoveEvent(event);
 		}
 
-		inline void set_widget_focus_status (AbstractView* widget, bool focus)
+		inline void set_widget_focus_status (AbstractView* view, bool focus)
 		{
-			widget->set_focus(focus);
+			view->set_focus(focus);
 		}
 
-		void set_widget_focus_event (AbstractView* widget, bool focus)
+		void set_widget_focus_event (AbstractView* view, bool focus)
 		{
-			widget->set_focus(focus);
-			widget->FocusEvent(focus);
+			view->set_focus(focus);
+			view->FocusEvent(focus);
 		}
 
 		void assign_profile_frame (Profile& profile)
@@ -123,16 +125,16 @@ namespace BlendInt {
 
 		void ClearHoverWidgets (AbstractView* hovered_widget, const MouseEvent& event);
 
-		inline void set_widget_mouse_hover_in_event (AbstractView* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_in_event (AbstractView* view, const MouseEvent& event)
 		{
-			widget->set_hover(true);
-			widget->MouseHoverInEvent(event);
+			view->set_hover(true);
+			view->MouseHoverInEvent(event);
 		}
 
-		inline void set_widget_mouse_hover_out_event (AbstractView* widget, const MouseEvent& event)
+		inline void set_widget_mouse_hover_out_event (AbstractView* view, const MouseEvent& event)
 		{
-			widget->set_hover(false);
-			widget->MouseHoverOutEvent(event);
+			view->set_hover(false);
+			view->MouseHoverOutEvent(event);
 		}
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
@@ -151,11 +153,11 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
-		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* widget, const MouseEvent& event, Point& local_position);
+		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, const MouseEvent& event, Point& local_position);
 
-		inline void set_widget_hover_status (AbstractView* widget, bool hover)
+		inline void set_widget_hover_status (AbstractView* view, bool hover)
 		{
-			widget->set_hover(hover);
+			view->set_hover(hover);
 		}
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;

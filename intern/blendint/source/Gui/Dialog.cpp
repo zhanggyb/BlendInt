@@ -284,13 +284,20 @@ namespace BlendInt {
 
 	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
 	{
+		ResponseType response = Ignore;
+
 		if(event.key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Accept;
 		}
 
-		return Ignore;
+		if(focused_widget_) {
+			set_event_frame(event, this);
+			response = DispatchKeyEvent(focused_widget_, event);
+		}
+
+		return response;
 	}
 
 	ResponseType Dialog::ContextMenuPressEvent(

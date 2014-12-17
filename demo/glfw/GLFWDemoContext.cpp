@@ -99,56 +99,8 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	cs->MoveTo(500, 300);
 	AddFrame(cs);
 
-//    StaticPanel* panel = Manage(new StaticPanel);
-//    panel->Resize(300, 250);
-//	dlg->AddWidget(panel);
+	TextEntry* text = Manage(new TextEntry);
+	text->MoveTo(20, 20);
+	cs->AddWidget(text);
 
-	/*
-	VFrame* frame = Manage(new VFrame);
-	frame->SetPosition(200, 200);
-	//frame->Resize(400, 32);
-
-	Button* btn1 = Manage(new Button("Hello"));
-	Button* btn2 = Manage(new Button("Hello"));
-	Button* btn3 = Manage(new Button("Hello"));
-
-	frame->AddWidget(btn1);
-	frame->AddWidget(btn2);
-	frame->AddWidget(btn3);
-
-	AddFrame(frame);
-	*/
-
-	/*
-	FloatingFrame* ff = Manage(new FloatingFrame);
-
-	ff->SetPosition(400, 200);
-	ff->Resize(600, 400);
-
-	AddFrame(ff);
-
-	FloatingFrame* ff2 = Manage(new FloatingFrame);
-
-	Button* btn = Manage(new Button("Test Floating Frame"));
-
-	ff2->Setup(btn);
-
-	ff2->SetPosition(500, 200);
-	ff2->Resize(500, 300);
-
-	AddFrame(ff2);
-	*/
-
-	/*
-	FloatingFrame* ff2 = Manage(new FloatingFrame);
-
-	Button* btn = Manage(new Button("Test Floating Frame"));
-
-	ff2->Setup(btn);
-
-	ff2->SetPosition(500, 200);
-	ff2->Resize(500, 300);
-
-	AddFrame(ff2);
-	*/
 }

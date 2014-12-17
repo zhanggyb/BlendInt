@@ -4,18 +4,15 @@
 
 #include "StudioContext.hpp"
 
-#include <BlendInt/Gui/StaticPanel.hpp>
-
 #include <BlendInt/Gui/Frame.hpp>
 
 using namespace BI;
 
 StudioContext::StudioContext()
 : BI::Context(),
-  frame_(0),
   button_(0)
 {
-	Initialize ();
+	InitializeStudioContext();
 }
 
 StudioContext::~StudioContext ()
@@ -23,59 +20,66 @@ StudioContext::~StudioContext ()
 
 }
 
-void StudioContext::Initialize ()
+void StudioContext::InitializeStudioContext()
 {
-	frame_ = Manage(new StudioFrame);
-	frame_->SetPosition(100, 100);
-	frame_->Resize(800, 600);
+	VLayout* vlayout = Manage(new VLayout);
 
-	// Setup a widget
-	FileSelector* fs = Manage(new FileSelector);
-	DBG_SET_NAME(fs, "FileSelector");
-	fs->SetRoundType(RoundAll);
+
+	Block * group1 = Manage(new Block(Horizontal));
+
+	Button* btn1 = Manage(new Button("Button"));
+	Button* btn2 = Manage(new Button("ToggleButton"));
+	Button* btn3 = Manage(new Button("RadioButton"));
+
+	group1->AddWidget(btn1);
+	group1->AddWidget(btn2);
+	group1->AddWidget(btn3);
+
+	vlayout->AddWidget(group1);
+
+	Block * group2 = Manage(new Block(Horizontal));
 	
-	frame_->Setup(fs);
+	Button* btn4 = Manage(new Button("TextEntry"));
+	Button* btn5 = Manage(new Button("NumericalSlider"));
 
-	Frame* screen1 = Manage(new Frame);
-	screen1->Resize(frame_->size());
-	screen1->SetPosition(100, 100);
-	screen1->AddWidget(frame_);
-	AddFrame(screen1);
+	group2->AddWidget(btn4);
+	group2->AddWidget(btn5);
 
-	StaticPanel* panel = Manage(new StaticPanel);
-	button_ = Manage(new Button("Save Texture"));
-	panel->Setup(button_);
-	panel->SetPosition(1100, 600);
-	panel->Resize(panel->GetPreferredSize());
+	vlayout->AddWidget(group2);
 
-	Frame* screen2 = Manage(new Frame);
-	screen2->Resize(panel->size());
-	screen2->SetPosition(1100, 600);
-	screen2->AddWidget(panel);
-	AddFrame(screen2);
+	Block * group3 = Manage(new Block(Horizontal));
 
-	events()->connect(button_->clicked(), this, &StudioContext::OnSaveTextureToFile);
+	Button* btn6 = Manage(new Button("TextureView"));
+	events()->connect(btn6->clicked(), this, &StudioContext::OnOpenDialogForTextureView);
 
-	Button* btn = Manage(new Button);
-	btn->SetPosition(20, 750);
-	btn->Resize(100, 40);
+	group3->AddWidget(btn6);
 
-	Frame* screen3 = Manage(new Frame);
-	screen3->Resize(btn->size());
-	screen3->SetPosition(20, 750);
-	screen3->AddWidget(btn);
-	AddFrame(screen3);
+	vlayout->AddWidget(group3);
+
+	PopupFrame* pop = Manage(new PopupFrame);
+	pop->MoveTo(1020, 400);
+	pop->Resize(pop->GetPreferredSize());
+	pop->SetLayout(vlayout);
+
+	AddFrame(pop);
 }
 
 void StudioContext::OnSaveTextureToFile()
 {
-	std::string filename;
-	
-	if(frame_->first_subview()->name().empty()) {
-		filename = "Widget.png";
-	} else {
-		filename = frame_->first_subview()->name() + ".png";
-	}
-		
-	frame_->RenderToFile(filename);
+}
+
+void StudioContext::OnOpenDialogForTextureView()
+{
+	Dialog* dialog = Manage(new Dialog);
+	TextureView* textureview = Manage(new TextureView);
+	textureview->MoveTo(50, 50);
+	dialog->Resize(textureview->size().width() + 100, textureview->size().height() + 100);
+
+	dialog->AddWidget(textureview);
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenDialogForButton()
+{
+
 }

@@ -45,8 +45,9 @@ first.
 For example, create a button with BlendInt:
 
 ```cpp
-#include <BlendInt/Interface.hpp>    // The main header to start
-#include <BlendInt/Gui/Button.hpp>	// Button is in Gui module
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 int main (int argc, char* argv[])
 {

@@ -102,75 +102,97 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Accept;
 	}
 
-	AbstractView* AbstractFrame::DispatchMousePressEvent(
-			AbstractView* widget, const MouseEvent& event)
+	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const KeyEvent& event)
 	{
-		if(widget == this) {
+		if(subview == this) {
+			return Ignore;
+		} else {
+
+			ResponseType response = Ignore;
+
+			if(subview->superview ()) {
+				response = DispatchKeyEvent(subview->superview(), event);
+				if(response == Accept) {
+					return response;
+				} else {
+					return subview->KeyPressEvent(event);
+				}
+			} else {
+				return subview->KeyPressEvent(event);
+			}
+
+		}
+	}
+
+	AbstractView* AbstractFrame::DispatchMousePressEvent(
+			AbstractView* subview, const MouseEvent& event)
+	{
+		if(subview == this) {
 			return 0;
 		} else {
 
 			ResponseType response = Ignore;
 			AbstractView* ret_val = 0;
 
-			if(widget->superview ()) {
+			if(subview->superview ()) {
 
-				ret_val = DispatchMousePressEvent(widget->superview(), event);
+				ret_val = DispatchMousePressEvent(subview->superview(), event);
 
 				if(ret_val == 0) {
 
-					response = widget->MousePressEvent(event);
+					response = subview->MousePressEvent(event);
 
-					return response == Accept ? widget : 0;
+					return response == Accept ? subview : 0;
 
 				} else {
 					return ret_val;
 				}
 
 			} else {
-				response = widget->MousePressEvent(event);
-				return response == Accept ? widget : 0;
+				response = subview->MousePressEvent(event);
+				return response == Accept ? subview : 0;
 			}
 
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* widget, const MouseEvent& event)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const MouseEvent& event)
 	{
-		if(widget == this) {
+		if(subview == this) {
 			return Ignore;
 		} else {
 
-			if(widget->superview ()) {
-				if(DispatchMouseMoveEvent(widget->superview (), event) == Ignore) {
-					return widget->MouseMoveEvent(event);
+			if(subview->superview ()) {
+				if(DispatchMouseMoveEvent(subview->superview (), event) == Ignore) {
+					return subview->MouseMoveEvent(event);
 				} else {
 					return Accept;
 				}
 
 			} else {
-				return widget->MouseMoveEvent(event);
+				return subview->MouseMoveEvent(event);
 			}
 
 		}
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractView* widget, const MouseEvent& event)
+			AbstractView* subview, const MouseEvent& event)
 	{
-		if(widget == this) {
+		if(subview == this) {
 			return Ignore;
 		} else {
 
-			if(widget->superview ()) {
-				if(DispatchMouseReleaseEvent(widget->superview (), event) == Ignore) {
-					return widget->MouseReleaseEvent(event);
+			if(subview->superview ()) {
+				if(DispatchMouseReleaseEvent(subview->superview (), event) == Ignore) {
+					return subview->MouseReleaseEvent(event);
 				} else {
 					return Accept;
 				}
 
 			} else {
-				DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
-				return widget->MouseReleaseEvent(event);
+				DBG_PRINT_MSG("mouse press in %s", subview->name().c_str());
+				return subview->MouseReleaseEvent(event);
 			}
 
 		}

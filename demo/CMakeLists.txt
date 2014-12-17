@@ -3,7 +3,7 @@
 
 if(WITH_GLFW3_DEMO)
     add_subdirectory(glfw)
-    #add_subdirectory(studio)
+    add_subdirectory(studio)
     #add_subdirectory(scene)
     #add_subdirectory(texteditor)
     #add_subdirectory(texbuf)

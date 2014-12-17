@@ -7,8 +7,9 @@
 #include "StudioContext.hpp"
 #include "StudioWindow.hpp"
 
-#include <BlendInt/Gui/Splitter.hpp>
-#include <BlendInt/Gui/FileButton.hpp>
+#include "StudioCursor.hpp"
+
+#include <BlendInt/Stock/Cursor.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -19,6 +20,8 @@ int main(int argc, char* argv[])
 	Init();
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
+
+	Cursor::instance->RegisterCursorType (new StudioCursor(win));
 
 	StudioContext* context = Manage (new StudioContext);
 	DBG_SET_NAME(context, "Context");
