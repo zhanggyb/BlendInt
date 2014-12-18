@@ -36,6 +36,11 @@ namespace BlendInt {
 	{
 	}
 
+	AbstractView* AbstractFloatingFrame::GetFocusedView () const
+	{
+		return nullptr;
+	}
+
 	void AbstractFloatingFrame::SetRoundRadius(float radius)
 	{
 		if(round_radius_ == radius) return;

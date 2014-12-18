@@ -48,6 +48,8 @@ namespace BlendInt {
 
 		void InsertWidget (int index, AbstractWidget* widget);
 
+		virtual AbstractView* GetFocusedView () const;
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

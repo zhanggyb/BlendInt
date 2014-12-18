@@ -52,6 +52,11 @@ namespace BlendInt {
 	{
 	}
 
+	AbstractView* Frame::GetFocusedView () const
+	{
+		return nullptr;
+	}
+
 	bool Frame::PreDraw(Profile& profile)
 	{
 		return visiable();

@@ -469,11 +469,11 @@ namespace BlendInt
 
 		if(hovered_frame_ && hovered_frame_->Contain(event.position())) {
 			response = hovered_frame_->MousePressEvent(event);
+
+			if(response == Accept) {
+				SetFocusedFrame(hovered_frame_);
+			}
 		}
-
-		SetFocusedFrame(event.frame());
-
-		if(focused_frame_) focused_frame_->set_pressed(true);
 
 		return response;
 	}
@@ -481,10 +481,9 @@ namespace BlendInt
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
-
 		set_pressed(false);
+
 		if(focused_frame_) {
-			focused_frame_->set_pressed(false);
 			response = focused_frame_->MouseReleaseEvent(event);
 		}
 
@@ -587,20 +586,21 @@ namespace BlendInt
 
 		ResponseType response = Ignore;
 		hovered_frame_ = 0;
-		AbstractFrame* temp = 0;
+
+		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
-			temp = dynamic_cast<AbstractFrame*>(p);
-			response = temp->DispatchHoverEvent(event);
+			frame = dynamic_cast<AbstractFrame*>(p);
+
+			response = frame->DispatchHoverEvent(event);
 
 			if(response == Accept) {
+				hovered_frame_ = frame;
 				break;
 			}
 
 		}
-
-		hovered_frame_ = event.frame();
 
 		if(original_hover != hovered_frame_) {
 

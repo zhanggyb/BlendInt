@@ -437,7 +437,7 @@ namespace BlendInt {
 	void Workspace::MouseHoverOutEvent(const MouseEvent& event)
 	{
 		if(hover_) {
-			set_widget_mouse_hover_out_event(hover_, event);
+			delegate_mouse_hover_out_event(hover_, event);
 			hover_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
 			hover_ = 0;
 		}
@@ -457,7 +457,7 @@ namespace BlendInt {
 
 			if(p->Contain(event.position())) {
 
-				response = call_mouse_press_event(p, event);
+				response = delegate_mouse_press_event(p, event);
 				if(response == Accept) break;
 			}
 
@@ -499,13 +499,13 @@ namespace BlendInt {
 			if(new_hovered != hover_) {
 
 				if(hover_) {
-					set_widget_mouse_hover_out_event(hover_, event);
+					delegate_mouse_hover_out_event(hover_, event);
 					hover_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
 				}
 
 				hover_ = new_hovered;
 				if(hover_) {
-					set_widget_mouse_hover_in_event(hover_, event);
+					delegate_mouse_hover_in_event(hover_, event);
 					events()->connect(hover_->destroyed(), this, &Workspace::OnHoverFrameDestroyed);
 				}
 
@@ -516,12 +516,12 @@ namespace BlendInt {
 			}
 
 			// make sure to set event frame in this function, to tell superview frame or context to set this hover flag
-			set_event_frame(event, this);
+			assign_event_frame(event, this);
 
 			return Accept;
 
 		} else {
-			set_event_frame(event, 0);
+			assign_event_frame(event, 0);
 			return Ignore;
 		}
 	}

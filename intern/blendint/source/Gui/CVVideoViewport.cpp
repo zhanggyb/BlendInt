@@ -238,7 +238,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile);
+		assign_profile_frame(profile, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

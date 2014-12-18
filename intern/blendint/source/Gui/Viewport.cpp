@@ -78,10 +78,10 @@ namespace BlendInt {
 	ResponseType Viewport::DispatchHoverEvent(const MouseEvent& event)
 	{
 		if(Contain(event.position())) {
-			set_event_frame(event, this);
+			assign_event_frame(event, this);
 			return Accept;
 		} else {
-			set_event_frame(event, 0);
+			assign_event_frame(event, 0);
 			return Ignore;
 		}
 	}
@@ -161,7 +161,7 @@ namespace BlendInt {
 
 	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
 	{
-		set_event_frame(event, this);
+		assign_event_frame(event, this);
 
 		return subs_count() ? Ignore : Accept;
 	}
@@ -180,7 +180,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile);
+		assign_profile_frame(profile, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
