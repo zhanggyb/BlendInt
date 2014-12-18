@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -46,6 +45,10 @@ namespace BlendInt {
 	BrightnessSlider::BrightnessSlider(Orientation orientation)
 	: AbstractSlider<int>(orientation)
 	{
+		set_round_type(RoundAll);
+		set_round_radius(6);
+		set_size(90, 14);
+
 		InitializeBrightnessSlider();
 	}
 
@@ -84,19 +87,20 @@ namespace BlendInt {
 
 	ResponseType BrightnessSlider::Draw (Profile& profile)
 	{
-		Shaders::instance->widget_triangle_program()->use();
+		Shaders::instance->widget_inner_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->number_slider().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		Shaders::instance->widget_outer_program()->use();
 
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
+		        Theme::instance->regular().outline.data());
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
@@ -118,15 +122,20 @@ namespace BlendInt {
 	void BrightnessSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), default_border_width(), round_type(),
-			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
-			inner_->bind();
-			inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
+
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->bind();
+			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			outer_->reset();
+
 			RequestRedraw();
 		}
 
@@ -135,69 +144,71 @@ namespace BlendInt {
 
 	void BrightnessSlider::PerformRoundTypeUpdate (int round_type)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type,
-				round_radius(), Color(0x000000FF), orientation(), 255, 0);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-
 		set_round_type(round_type);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
+
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_->reset();
+
 		RequestRedraw();
 	}
 
 	void BrightnessSlider::PerformRoundRadiusUpdate (float radius)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type(),
-				radius, Color(0x000000FF), orientation(),
-				255, 0);
-		inner_->bind();
-		inner_->set_sub_data(0, tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_sub_data(0, tool.outer_size(), tool.outer_data());
-
 		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
+
+		inner_->bind();
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		outer_->bind();
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_->reset();
+
 		RequestRedraw();
 	}
 
 	void BrightnessSlider::InitializeBrightnessSlider()
 	{
-		set_round_type(RoundAll);
-		set_round_radius(6);
-		set_size(90, 14);
-
 		picker_.reset(new CircularPicker(3));
 
 		glGenVertexArrays(2, vao_);
 
 		Color black(0x000000FF);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type(),
-						round_radius(), black, orientation(), 255, 0);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
 
 		glBindVertexArray(vao_[0]);
 
 		inner_.reset(new GLArrayBuffer);
 		inner_->generate();
 		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
 		outer_->generate();
 		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
+		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
 		glBindVertexArray(0);
