@@ -324,7 +324,7 @@ namespace BlendInt {
 	FrameSplitter::FrameSplitter(Orientation orientation)
 	: Frame(),
 	  orientation_(orientation),
-	  hover_(0),
+	  hover_frame_(0),
 	  focused_frame_(0)
 	{
 		set_size(500, 500);
@@ -616,10 +616,10 @@ namespace BlendInt {
 
 	void FrameSplitter::MouseHoverOutEvent(const MouseEvent& event)
 	{
-		if(hover_) {
-			delegate_mouse_hover_out_event(hover_, event);
-			hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
-			hover_ = 0;
+		if(hover_frame_) {
+			delegate_mouse_hover_out_event(hover_frame_, event);
+			hover_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+			hover_frame_ = 0;
 		}
 	}
 
@@ -633,11 +633,11 @@ namespace BlendInt {
 		ResponseType response = Ignore;
 		set_pressed(true);
 
-		if(hover_ != nullptr) {
-			response = delegate_mouse_press_event(hover_, event);
+		if(hover_frame_ != nullptr) {
+			response = delegate_mouse_press_event(hover_frame_, event);
 
 			if(response == Accept) {
-				SetFocusedFrame(hover_);
+				SetFocusedFrame(hover_frame_);
 			}
 		} else {
 			SetFocusedFrame(0);
@@ -673,25 +673,25 @@ namespace BlendInt {
 	{
 		if(Contain(event.position())) {
 
-			AbstractFrame* new_hovered = CheckHoveredFrame(hover_, event);
+			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, event);
 
-			if(new_hovered != hover_) {
+			if(new_hovered != hover_frame_) {
 
-				if(hover_) {
-					delegate_mouse_hover_out_event(hover_, event);
-					hover_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+				if(hover_frame_) {
+					delegate_mouse_hover_out_event(hover_frame_, event);
+					hover_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
-				hover_ = new_hovered;
-				if(hover_) {
-					delegate_mouse_hover_in_event(hover_, event);
-					events()->connect(hover_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
+				hover_frame_ = new_hovered;
+				if(hover_frame_) {
+					delegate_mouse_hover_in_event(hover_frame_, event);
+					events()->connect(hover_frame_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
 				}
 
 			}
 
-			if(hover_) {
-				delegate_dispatch_hover_event(hover_, event);
+			if(hover_frame_) {
+				delegate_dispatch_hover_event(hover_frame_, event);
 			}
 
 			return Accept;
@@ -1440,12 +1440,12 @@ namespace BlendInt {
 	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
 	{
 		assert(frame->hover());
-		assert(hover_ == frame);
+		assert(hover_frame_ == frame);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
 		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
 
-		hover_ = 0;
+		hover_frame_ = 0;
 	}
 
 	void FrameSplitter::OnFocusedFrameDestroyed(AbstractFrame* frame)

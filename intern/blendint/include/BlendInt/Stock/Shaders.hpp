@@ -405,6 +405,8 @@ namespace BlendInt {
 
 			static const char* frame_shadow_vertex_shader;
 
+			static const char* frame_shadow_geometry_shader;
+
 			static const char* frame_shadow_fragment_shader;
 
 			static const char* context_vertex_shader;

@@ -223,7 +223,7 @@ namespace BlendInt {
 
 		Orientation orientation_;
 
-		AbstractFrame* hover_;
+		AbstractFrame* hover_frame_;
 
 		AbstractFrame* focused_frame_;
 	};
