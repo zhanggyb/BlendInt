@@ -33,6 +33,7 @@
 
 #include <cwchar>
 #include <iostream>
+#include <algorithm>
 
 #include <BlendInt/Gui/GlyphTexture.hpp>
 
@@ -145,19 +146,6 @@ namespace BlendInt {
 
 	void GlyphTexture::show_image (FT_Bitmap* bitmap)
 	{
-	    int  i, j;
-
-	    int w = std::min (bitmap->width, WIDTH);
-	    int h = std::min(bitmap->rows, HEIGHT);
-
-	    for ( i = 0; i < h; i++ )
-	    {
-	        for ( j = 0; j < w; j++ )
-	            putchar( image[i][j] == 0 ? ' '
-	                     : image[i][j] < 128 ? '+'
-	                     : '*' );
-	        putchar( '\n' );
-	    }
 	}
 #endif
 

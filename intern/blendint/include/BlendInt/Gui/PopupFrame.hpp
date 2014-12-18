@@ -31,7 +31,7 @@
 
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
-#include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
 
 namespace BlendInt {
 
@@ -119,7 +119,7 @@ namespace BlendInt {
 
 		AbstractLayout* layout_;
 
-		RefPtr<ShadowMap> shadow_;
+		RefPtr<FrameShadow> shadow_;
 
 	};
 

@@ -43,9 +43,9 @@
 
 namespace BlendInt {
 
-	class AbstractInteractiveForm;
+	class AbstractView;
 
-	typedef RefPtr<AbstractInteractiveForm> AbstractInteractiveFormPtr;
+	typedef RefPtr<AbstractView> AbstractInteractiveFormPtr;
 
 	template<typename T>
 	T* Manage (T* obj, bool val = true)
@@ -55,32 +55,32 @@ namespace BlendInt {
 	}
 
 	/**
-	 * @brief Check if a widget is contained in a container
+	 * @brief Check if a view is contained in a container
 	 */
-	extern bool IsContained (AbstractInteractiveForm* container, AbstractInteractiveForm* widget);
+	extern bool IsContained (AbstractView* container, AbstractView* view);
 
-	class InteractiveFormUpdateRequest
+	class GeometryUpdateRequest
 	{
 	public:
 
-		InteractiveFormUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
+		GeometryUpdateRequest (AbstractView* source, AbstractView* target)
 		: m_source(source),
 		  m_target(target)
 		{
 
 		}
 
-		~InteractiveFormUpdateRequest ()
+		~GeometryUpdateRequest ()
 		{
 
 		}
 
-		AbstractInteractiveForm* source () const
+		AbstractView* source () const
 		{
 			return m_source;
 		}
 
-		AbstractInteractiveForm* target () const
+		AbstractView* target () const
 		{
 			return m_target;
 		}
@@ -90,23 +90,23 @@ namespace BlendInt {
 		/**
 		 * Disabled
 		 */
-		InteractiveFormUpdateRequest();
+		GeometryUpdateRequest();
 
-		AbstractInteractiveForm* m_source;
-		AbstractInteractiveForm* m_target;
+		AbstractView* m_source;
+		AbstractView* m_target;
 	};
 
-	class SizeUpdateRequest: public InteractiveFormUpdateRequest
+	class SizeUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
-		SizeUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
-		: InteractiveFormUpdateRequest(source, target), m_size(0)
+		SizeUpdateRequest (AbstractView* source, AbstractView* target)
+		: GeometryUpdateRequest(source, target), m_size(0)
 		{
 		}
 
-		SizeUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target, const Size* size)
-		: InteractiveFormUpdateRequest(source, target), m_size(size)
+		SizeUpdateRequest (AbstractView* source, AbstractView* target, const Size* size)
+		: GeometryUpdateRequest(source, target), m_size(size)
 		{
 
 		}
@@ -126,17 +126,17 @@ namespace BlendInt {
 		const Size* m_size;
 	};
 
-	class PositionUpdateRequest: public InteractiveFormUpdateRequest
+	class PositionUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
-		PositionUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
-		: InteractiveFormUpdateRequest(source, target), m_position(0)
+		PositionUpdateRequest (AbstractView* source, AbstractView* target)
+		: GeometryUpdateRequest(source, target), m_position(0)
 		{
 		}
 
-		PositionUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target, const Point* pos)
-		: InteractiveFormUpdateRequest(source, target), m_position(pos)
+		PositionUpdateRequest (AbstractView* source, AbstractView* target, const Point* pos)
+		: GeometryUpdateRequest(source, target), m_position(pos)
 		{
 
 		}
@@ -156,78 +156,18 @@ namespace BlendInt {
 		const Point* m_position;
 	};
 
-	class RoundTypeUpdateRequest: public InteractiveFormUpdateRequest
+	class VisibilityUpdateRequest: public GeometryUpdateRequest
 	{
 	public:
 
-		RoundTypeUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
-		: InteractiveFormUpdateRequest(source, target), m_round_type(0)
-		{
-		}
-
-		RoundTypeUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target, const int* pos)
-		: InteractiveFormUpdateRequest(source, target), m_round_type(pos)
+		VisibilityUpdateRequest (AbstractView* source, AbstractView* target)
+		: GeometryUpdateRequest(source, target), m_visibility(0)
 		{
 
 		}
 
-		const int* round_type() const
-		{
-			return m_round_type;
-		}
-
-		void set_round_type (const int* type)
-		{
-			m_round_type = type;
-		}
-
-	private:
-
-		const int* m_round_type;
-	};
-
-	class RoundRadiusUpdateRequest: public InteractiveFormUpdateRequest
-	{
-	public:
-
-		RoundRadiusUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
-		: InteractiveFormUpdateRequest(source, target), m_round_radius(0)
-		{
-		}
-
-		RoundRadiusUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target, const float* radius)
-		: InteractiveFormUpdateRequest(source, target), m_round_radius(radius)
-		{
-
-		}
-
-		const float* round_radius() const
-		{
-			return m_round_radius;
-		}
-
-		void set_round_radius (const float* radius)
-		{
-			m_round_radius = radius;
-		}
-
-	private:
-
-		const float* m_round_radius;
-	};
-
-	class VisibilityUpdateRequest: public InteractiveFormUpdateRequest
-	{
-	public:
-
-		VisibilityUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target)
-		: InteractiveFormUpdateRequest(source, target), m_visibility(0)
-		{
-
-		}
-
-		VisibilityUpdateRequest (AbstractInteractiveForm* source, AbstractInteractiveForm* target, const bool* visibility)
-		: InteractiveFormUpdateRequest(source, target), m_visibility (visibility)
+		VisibilityUpdateRequest (AbstractView* source, AbstractView* target, const bool* visibility)
+		: GeometryUpdateRequest(source, target), m_visibility (visibility)
 		{
 
 		}
@@ -250,13 +190,24 @@ namespace BlendInt {
 	// ----------------------------------------------------
 
 	/**
-	 * @brief The base abstract class for widgets
+	 * @brief Abstract class for all views
+	 *
+	 * A view is a unit of the user interface in BlendInt that knows how to draw itself.
+	 * A view also knows how to process the event from window system, e.g. a mouse click.
+	 *
+	 * AbstractView is the basic class for all views, and there're 2 different groups of sub classes:
+	 * 	- frames
+	 * 	- widgets
+	 *
+	 * Frame works like a window in the desktop, it usually has a background, shadow, and contains widgets.
+	 *
+	 * The other group of view are called widgets, for example, buttons, sliders.
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractInteractiveForm: public Object
+	class AbstractView: public Object
 	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractInteractiveForm);
+		DISALLOW_COPY_AND_ASSIGN(AbstractView);
 
 	public:
 
@@ -268,33 +219,33 @@ namespace BlendInt {
 		/**
 		 * @brief The default constructor
 		 */
-		AbstractInteractiveForm ();
+		AbstractView ();
 
 		/**
 		 * @brief Destructor
 		 */
-		virtual ~AbstractInteractiveForm ();
+		virtual ~AbstractView ();
 
 		Point GetGlobalPosition () const;
 
 		virtual Size GetPreferredSize () const;
 
 		/**
-		 * @brief Resize the widget
-		 * @param[in] width The new width of the widget
-		 * @param[in] height The new height of the widget
+		 * @brief Resize the view
+		 * @param[in] width The new width of the view
+		 * @param[in] height The new height of the view
 		 *
 		 * Call Update() to check the parameters, if valid, resize the
-		 * widget.
+		 * view.
 		 */
 		void Resize (int width, int height);
 
 		/**
-		 * @brief Resize the widget
-		 * @param[in] size The new size of the widget
+		 * @brief Resize the view
+		 * @param[in] size The new size of the view
 		 *
 		 * Call Update() to check the parameters, if valid, resize the
-		 * widget.
+		 * view.
 		 */
 		void Resize (const Size& size);
 
@@ -326,9 +277,9 @@ namespace BlendInt {
 
 		bool TryRequestRedrawInThread ();
 
-		AbstractInteractiveForm* operator [] (int i) const;
+		AbstractView* operator [] (int i) const;
 
-		AbstractInteractiveForm* GetWidgetAt (int i) const;
+		AbstractView* GetWidgetAt (int i) const;
 
 		void MoveBackward ();
 
@@ -398,45 +349,45 @@ namespace BlendInt {
 			return subs_count_;
 		}
 
-		inline AbstractInteractiveForm* parent() const
+		inline AbstractView* superview() const
 		{
-			return parent_;
+			return superview_;
 		}
 
-		inline AbstractInteractiveForm* previous () const
+		inline AbstractView* previous_view () const
 		{
-			return previous_;
+			return previous_view_;
 		}
 
-		inline AbstractInteractiveForm* next () const
+		inline AbstractView* next_view () const
 		{
-			return next_;
+			return next_view_;
 		}
 
-		inline AbstractInteractiveForm* first_child () const
+		inline AbstractView* first_subview () const
 		{
-			return first_child_;
+			return first_subview_;
 		}
 
-		inline AbstractInteractiveForm* last_child() const
+		inline AbstractView* last_subview () const
 		{
-			return last_child_;
+			return last_subview_;
 		}
 
 		/**
-		 * @brief Check if the widget and its all container are under cursor position
+		 * @brief Check if the view and its all container are under cursor position
 		 *
 		 * @note There's no meaning to use this function to test Context or Frame.
 		 */
-		static bool IsHoverThrough (const AbstractInteractiveForm* widget, const Point& cursor);
+		static bool IsHoverThrough (const AbstractView* view, const Point& cursor);
 
-		static bool IsHoverThroughExt (const AbstractInteractiveForm* widget, const Point& global_cursor_position);
+		static bool IsHoverThroughExt (const AbstractView* view, const Point& global_cursor_position);
 
 		static void SetDefaultBorderWidth (float border);
 
 		static inline float default_border_width ()
 		{
-			return border_width;
+			return kBorderWidth;
 		}
 
 #ifdef DEBUG
@@ -458,7 +409,7 @@ namespace BlendInt {
 	protected:
 
 		/**
-		 * @brief preset the position of this widget
+		 * @brief preset the position of this view
 		 * @param x
 		 * @param y
 		 *
@@ -471,7 +422,7 @@ namespace BlendInt {
 		}
 
 		/**
-		 * @brief preset the position of this widget
+		 * @brief preset the position of this view
 		 * @param pos
 		 *
 		 * @note this function should be called only in the constructor of subclass
@@ -620,25 +571,25 @@ namespace BlendInt {
 
 		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
 
-		bool PushFrontSubForm (AbstractInteractiveForm* widget);
+		bool PushFrontSubView (AbstractView* view);
 
-		bool InsertSubForm (int index, AbstractInteractiveForm* widget);
+		bool InsertSubView (int index, AbstractView* view);
 
-		bool PushBackSubForm (AbstractInteractiveForm* widget);
+		bool PushBackSubView (AbstractView* view);
 
-		bool RemoveSubForm (AbstractInteractiveForm* widget);		// TODO: use virtual
+		virtual bool RemoveSubView (AbstractView* view);
 
-		void ClearSubForms ();
+		void ClearSubViews ();
 
-		void ResizeSubForm (AbstractInteractiveForm* sub, int width, int height);
+		void ResizeSubView (AbstractView* sub, int width, int height);
 
-		void ResizeSubForm (AbstractInteractiveForm* sub, const Size& size);
+		void ResizeSubView (AbstractView* sub, const Size& size);
 
-		void MoveSubFormTo (AbstractInteractiveForm* sub, int x, int y);
+		void MoveSubViewTo (AbstractView* sub, int x, int y);
 
-		void MoveSubFormTo (AbstractInteractiveForm* sub, const Point& pos);
+		void MoveSubViewTo (AbstractView* sub, const Point& pos);
 
-		void SetSubFormVisibility (AbstractInteractiveForm* sub, bool visible);
+		void SetSubViewVisibility (AbstractView* sub, bool visible);
 
 		void MoveSubWidgets (int offset_x, int offset_y);
 
@@ -711,12 +662,12 @@ namespace BlendInt {
 
 			IFManaged = (1 << 4),
 
-			// set this flag when the widget or frame is pressed
+			// set this flag when the view or frame is pressed
 			IFPressed = (1 << 5),
 
 			IFFocused = (1 << 6),
 
-			/** If this widget is in cursor hover list in Context */
+			/** If this view is in cursor hover list in Context */
 			IFHover = (1 << 7),
 
 			IFVisibility = (1 << 8),
@@ -730,13 +681,13 @@ namespace BlendInt {
 
 		/**
 		 * @brief Dispatch draw
-		 * @param[in] widget
+		 * @param[in] view
 		 * @param[in] profile
 		 * @param[in] use_parent_status
-		 * 	- true: use parent refresh() status to set widget's refresh flag
-		 * 	- false: set widget's flag to false after Draw()
+		 * 	- true: use superview refresh() status to set view's refresh flag
+		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractInteractiveForm* widget, Profile& profile);
+		static void DispatchDrawEvent (AbstractView* view, Profile& profile);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,
@@ -773,18 +724,18 @@ namespace BlendInt {
 
 		int subs_count_;	// count of sub widgets
 
-		AbstractInteractiveForm* parent_;
+		AbstractView* superview_;
 
-		AbstractInteractiveForm* previous_;
+		AbstractView* previous_view_;
 
-		AbstractInteractiveForm* next_;
+		AbstractView* next_view_;
 
 		/**
-		 * @brief The first sub widget
+		 * @brief The first sub view
 		 */
-		AbstractInteractiveForm* first_child_;
+		AbstractView* first_subview_;
 
-		AbstractInteractiveForm* last_child_;
+		AbstractView* last_subview_;
 
 #ifdef DEBUG
 		std::string name_;
@@ -792,7 +743,7 @@ namespace BlendInt {
 
 		static pthread_mutex_t refresh_mutex;
 
-		static float border_width;
+		static float kBorderWidth;
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 

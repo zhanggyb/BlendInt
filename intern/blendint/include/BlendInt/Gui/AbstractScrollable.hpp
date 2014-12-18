@@ -48,8 +48,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (Profile& profile) = 0;
-
 		inline void fire_scrolled_event (int x, int y)
 		{
 			scrolled_->fire(x, y);

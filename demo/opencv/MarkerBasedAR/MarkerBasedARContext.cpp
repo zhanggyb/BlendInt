@@ -45,7 +45,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 
 	AddFrame(vsplitter);
 
-	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 }
 
 MarkerBasedARContext::~MarkerBasedARContext ()
@@ -132,7 +132,11 @@ ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 void MarkerBasedARContext::OnToggleCamera(AbstractButton* sender, bool toggled)
 {
 	if(toggled) {
-		viewport_->OpenCamera(0, Size(640, 480));
+#ifdef __APPLE__
+		viewport_->OpenCamera(0, Size(1080, 720));
+#else
+        viewport_->OpenCamera(0, Size(640, 480));
+#endif
 	} else {
 		viewport_->Release();
 	}

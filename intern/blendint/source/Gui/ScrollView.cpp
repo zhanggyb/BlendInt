@@ -74,23 +74,23 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollView::Setup (AbstractInteractiveForm* widget)
+	void ScrollView::Setup (AbstractView* widget)
 	{
 		if(widget == 0) return;
 
-		if(widget->parent() == this)
+		if(widget->superview() == this)
 			return;
 
-		if(first_child()) {
-			ClearSubForms();
+		if(first_subview()) {
+			ClearSubViews();
 		}
 
-		if (PushBackSubForm(widget)) {
+		if (PushBackSubView(widget)) {
 			int x = position().x();
 			int y = position().y() + size().height();
 
 			// move widget to align the top-left of the viewport
-			MoveSubFormTo(widget, x, y - widget->size().height());
+			MoveSubViewTo(widget, x, y - widget->size().height());
 
 			/*
 			ResizeSubWidget(widget,
@@ -104,9 +104,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(first_child() == 0) return;
+		if(first_subview() == 0) return;
 
-		AbstractInteractiveForm* p = first_child();
+		AbstractView* p = first_subview();
 
 		int w = size().width();
 		int h = size().height();
@@ -116,15 +116,15 @@ namespace BlendInt {
 		int y = position().y();
 		y += (h - static_cast<int>(p->size().height())) / 2;
 
-		MoveSubFormTo(p, x, y);
+		MoveSubViewTo(p, x, y);
 	}
 
 	int BlendInt::ScrollView::GetHPercentage () const
 	{
 		int percentage = 0;
 
-		if(first_child()) {
-			AbstractInteractiveForm* p = first_child();
+		if(first_subview()) {
+			AbstractView* p = first_subview();
 
 			int w = size().width();
 
@@ -143,8 +143,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first_child()) {
-			AbstractInteractiveForm* p = first_child();
+		if(first_subview()) {
+			AbstractView* p = first_subview();
 
 			int h = size().height();
 
@@ -161,11 +161,11 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(first_child()) {
+		if(first_subview()) {
 
 			if(x != 0 || y != 0) {
-				AbstractInteractiveForm* p = first_child();
-				MoveSubFormTo(p, p->position().x() + x, p->position().y() + y);
+				AbstractView* p = first_subview();
+				MoveSubViewTo(p, p->position().x() + x, p->position().y() + y);
 
 				RequestRedraw();
 			}
@@ -174,10 +174,10 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(first_child()) {
-			AbstractInteractiveForm* p = first_child();
+		if(first_subview()) {
+			AbstractView* p = first_subview();
 
-			MoveSubFormTo(p, position().x() + x, position().y() + y);
+			MoveSubViewTo(p, position().x() + x, position().y() + y);
 
 			RequestRedraw();
 		}
@@ -185,8 +185,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(first_child()) {
-			return first_child()->IsExpandX();
+		if(first_subview()) {
+			return first_subview()->IsExpandX();
 		} else {
 			return false;
 		}
@@ -194,8 +194,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(first_child()) {
-			return first_child()->IsExpandY();
+		if(first_subview()) {
+			return first_subview()->IsExpandY();
 		} else {
 			return false;
 		}
@@ -205,7 +205,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractInteractiveForm* widget = first_child();
+		AbstractView* widget = first_subview();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -223,7 +223,7 @@ namespace BlendInt {
 
 			set_position(*request.position());
 
-			if(first_child()) {
+			if(first_subview()) {
 				MoveSubWidgets(x, y);
 			}
 		}
@@ -240,12 +240,12 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			// align the subwidget
-			if (first_child()) {
+			if (first_subview()) {
 
 				int dy = request.size()->height() - size().height();
 
-				first_child()->MoveTo(first_child()->position().x(),
-				        first_child()->position().y() + dy);
+				first_subview()->MoveTo(first_subview()->position().x(),
+				        first_subview()->position().y() + dy);
 			}
 
 			set_size(*request.size());
@@ -265,7 +265,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		if(first_child()) {
+		if(first_subview()) {
 			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 		} else {
 			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
@@ -282,11 +282,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!first_child()) {
+		if (!first_subview()) {
 			return Ignore;
 		}
 
-		AbstractInteractiveForm* p = first_child();
+		AbstractView* p = first_subview();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -307,11 +307,11 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		if(!first_child()) {
+		if(!first_subview()) {
 			return Ignore;
 		}
 
-		//AbstractInteractiveForm* p = sub_widgets()->front();
+		//AbstractView* p = sub_widgets()->front();
 
 		//if(!m_viewport) return;
 		//dispatch_mouse_release_event(m_viewport, event);
@@ -321,13 +321,13 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(first_child()) {
+		if(first_subview()) {
 
 			if(m_move_status) {
 
-				AbstractInteractiveForm* p = first_child();
+				AbstractView* p = first_subview();
 
-				MoveSubFormTo(p,
+				MoveSubViewTo(p,
 				        m_origin_pos.x() + event.position().x()
 				                - m_move_start_pos.x(),
 				        m_origin_pos.y() + event.position().y()

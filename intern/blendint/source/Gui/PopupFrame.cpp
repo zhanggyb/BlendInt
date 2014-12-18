@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
-		set_round_radius(10.f);	// DEBUG
+		set_round_radius(5.f);
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
@@ -115,9 +115,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new ShadowMap);
-		shadow_->Resize(size());
-
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
 
 	PopupFrame::~PopupFrame()
@@ -149,15 +147,15 @@ namespace BlendInt {
 			layout_->destroyed().disconnectOne(this, &PopupFrame::OnLayoutDestroyed);
 		}
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 		}
 
-		if(PushBackSubForm(layout)) {
+		if(PushBackSubView(layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &PopupFrame::OnLayoutDestroyed);
-			MoveSubFormTo(layout_, 0, 0);
-			ResizeSubForm(layout_, size());
+			MoveSubViewTo(layout_, 0, 0);
+			ResizeSubView(layout_, size());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -170,7 +168,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->AddWidget(widget);
 		} else {
-			PushBackSubForm(widget);
+			PushBackSubView(widget);
 		}
 
 		RequestRedraw();
@@ -181,7 +179,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->InsertWidget(index, widget);
 		} else {
-			InsertSubForm(index, widget);
+			InsertSubView(index, widget);
 		}
 
 		RequestRedraw();
@@ -229,7 +227,7 @@ namespace BlendInt {
 			buffer_.reset();
 
 			if(layout_) {
-				ResizeSubForm(layout_, size());
+				ResizeSubView(layout_, size());
 			}
 
 			shadow_->Resize(size());
@@ -380,13 +378,20 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::KeyPressEvent(const KeyEvent& event)
 	{
+		ResponseType response = Ignore;
+
 		if(event.key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Accept;
 		}
 
-		return Ignore;
+		if(focused_widget_) {
+			set_event_frame(event, this);
+			response = DispatchKeyEvent(focused_widget_, event);
+		}
+
+		return response;
 	}
 
 	ResponseType PopupFrame::ContextMenuPressEvent(const ContextMenuEvent& event)
@@ -410,7 +415,7 @@ namespace BlendInt {
 
 		if(hovered_widget_) {
 
-			AbstractInteractiveForm* widget = 0;	// widget may be focused
+			AbstractView* widget = 0;	// widget may be focused
 
 			widget = DispatchMousePressEvent(hovered_widget_, event);
 
@@ -458,8 +463,8 @@ namespace BlendInt {
 
 				set_position(last_.x() + ox, last_.y() + oy);
 
-				if(parent()) {
-					parent()->RequestRedraw();
+				if(superview()) {
+					superview()->RequestRedraw();
 				}
 				retval = Accept;
 			}

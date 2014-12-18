@@ -28,7 +28,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -39,7 +39,7 @@ namespace BlendInt {
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
-	class Context: public AbstractInteractiveForm
+	class Context: public AbstractView
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
 
@@ -75,7 +75,7 @@ namespace BlendInt {
 			return resized_;
 		}
 
-		static Context* GetContext (AbstractInteractiveForm* widget);
+		static Context* GetContext (AbstractView* widget);
 
 		static glm::mat4 default_view_matrix;
 
@@ -85,17 +85,9 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual bool RoundTypeUpdateTest (const RoundTypeUpdateRequest& request);
-
-		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
-
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
-
-		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual bool PreDraw (Profile& profile);
 

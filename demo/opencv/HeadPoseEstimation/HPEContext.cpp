@@ -44,7 +44,7 @@ HPEContext::HPEContext()
 
 	AddFrame(vsplitter);
 
-	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractInteractiveForm::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
+	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
 	timer_.reset(new Timer);
 	timer_->SetInterval(1000 / 30);	// 30 fps

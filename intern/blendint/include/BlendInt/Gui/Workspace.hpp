@@ -100,22 +100,6 @@ namespace BlendInt {
 	// ------------------------
 
 	/**
-	 * @brief A VLayout overrides Contain()
-	 */
-	class ViewportLayer: public VLayout
-	{
-		DISALLOW_COPY_AND_ASSIGN(ViewportLayer);
-
-	public:
-
-		ViewportLayer ();
-
-		virtual ~ViewportLayer ();
-
-		virtual bool Contain (const Point& point) const;
-	};
-
-	/**
 	 * @brief A special container which works as a space in Blender
 	 *
 	 * A workspace may contain:

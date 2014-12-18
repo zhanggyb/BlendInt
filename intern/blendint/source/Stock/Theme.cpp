@@ -31,8 +31,6 @@
 
 #include <BlendInt/Core/Image.hpp>
 
-#include "intern/ShadowImage.hpp"
-
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -72,11 +70,8 @@ namespace BlendInt {
 	: dpi_(72),
 	  pixel_(1),
 	  m_shadow_fac(0.5),
-	  shadow_offset_x_(0),
-	  shadow_offset_y_(-4),
 	  shadow_width_(12)
 	{
-		shadow_texture_.reset(new GLTexture2D);
 	}
 
 	bool Theme::Load (const std::string& filepath)
@@ -177,16 +172,6 @@ namespace BlendInt {
 		snprintf(buf, 16, "%g", m_shadow_fac);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_fac", value);
-		ui_node->append_attribute(attr);
-
-		snprintf(buf, 16, "%hd", shadow_offset_x_);
-		value = doc.allocate_string(buf);
-		attr = doc.allocate_attribute("shadow_offset_x", value);
-		ui_node->append_attribute(attr);
-
-		snprintf(buf, 16, "%hd", shadow_offset_y_);
-		value = doc.allocate_string(buf);
-		attr = doc.allocate_attribute("shadow_offset_y", value);
 		ui_node->append_attribute(attr);
 
 		snprintf(buf, 16, "%hd", shadow_width_);
@@ -451,9 +436,7 @@ namespace BlendInt {
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 		m_shadow_fac = 0.5f;
-		shadow_offset_x_ = 0;
-		shadow_offset_y_ = -4;
-		shadow_width_ = 12;
+		shadow_width_ = 9;
 
 		dpi_ = 72;
 
@@ -463,8 +446,6 @@ namespace BlendInt {
 		xaxis_ = 0xFF0000FF;
 		yaxis_ = 0x00FF00FF;
 		zaxis_ = 0x0000FFFF;
-
-		GenerateShadowTexture();
 	}
 
 	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
@@ -493,22 +474,6 @@ namespace BlendInt {
 				float v = 0.f;
 				if(sscanf(attrib->value(), "%f", &v) == 1) {
 					m_shadow_fac = v;
-				}
-
-			} else if(strcmp("shadow_offset_x", attrib->name()) == 0) {
-
-				short w = 0;
-
-				if(sscanf(attrib->value(), "%hd", &w) == 1) {
-					shadow_offset_x_ = w;
-				}
-
-			} else if(strcmp("shadow_offset_y", attrib->name()) == 0) {
-
-				short w = 0;
-
-				if(sscanf(attrib->value(), "%hd", &w) == 1) {
-					shadow_offset_y_ = w;
 				}
 
 			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
@@ -745,41 +710,6 @@ namespace BlendInt {
 		widget_color_node->append_node(colors_node);
 
 		return widget_color_node;
-	}
-
-	void Theme::GenerateShadowTexture ()
-	{
-		if(shadow_texture_->id() == 0) {
-			shadow_texture_->generate();
-		}
-
-		/*
-		std::vector<unsigned char> pixels(32 * 32 * 4, 0);
-
-		unsigned char alpha = 255;
-		for (int i = 0; i < 32; i++) {
-			alpha = 128;
-			for(int j = 0; j < 32; j++) {
-				pixels[i * 32 * 4 + j * 4 + 0] = 0;
-				pixels[i * 32 * 4 + j * 4 + 1] = 0;
-				pixels[i * 32 * 4 + j * 4 + 2] = 0;
-				pixels[i * 32 * 4 + j * 4 + 3] = alpha;
-
-				alpha -= 4;
-			}
-		}
-		*/
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-		shadow_texture_->bind();
-		shadow_texture_->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		shadow_texture_->SetMinFilter(GL_NEAREST);
-		shadow_texture_->SetMagFilter(GL_NEAREST);
-		//shadow_texture_->SetImage(0, GL_RGBA, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-		shadow_texture_->SetImage(0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, GIMP_IMAGE_pixel_data);
-		//shadow_texture_->WriteToFile("test.png");
-		shadow_texture_->reset();
 	}
 
 } /* namespace BlendInt */

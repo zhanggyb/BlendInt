@@ -39,7 +39,7 @@ namespace BlendInt {
 	struct ModelNode
 	{
 		ModelNode ()
-		: parent(0),
+		: superview(0),
 		  child(0),
 		  up(0),
 		  down(0),
@@ -53,7 +53,7 @@ namespace BlendInt {
 			// DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
 		}
 
-		ModelNode* parent;
+		ModelNode* superview;
 		ModelNode* child;
 		ModelNode* up;
 		ModelNode* down;
@@ -122,34 +122,34 @@ namespace BlendInt {
 		/**
 		 * @brief Get the row number
 		 */
-		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const = 0;
+		virtual int GetRows (const ModelIndex& superview = ModelIndex()) const = 0;
 
 		/**
 		 * @brief Get the column number
 		 */
-		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const = 0;
+		virtual int GetColumns (const ModelIndex& superview = ModelIndex()) const = 0;
 
-		virtual bool HasChild (const ModelIndex& parent = ModelIndex()) const;
+		virtual bool HasChild (const ModelIndex& superview = ModelIndex()) const;
 
-		bool InsertColumn (int column, const ModelIndex& parent = ModelIndex ());
+		bool InsertColumn (int column, const ModelIndex& superview = ModelIndex ());
 
-		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex()) = 0;
+		virtual bool InsertColumns (int column, int count, const ModelIndex& superview = ModelIndex()) = 0;
 
-		bool RemoveColumn (int column, const ModelIndex& parent = ModelIndex());
+		bool RemoveColumn (int column, const ModelIndex& superview = ModelIndex());
 
-		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex()) = 0;
+		virtual bool RemoveColumns (int column, int count, const ModelIndex& superview = ModelIndex()) = 0;
 
-		bool RemoveRow (int row, const ModelIndex& parent = ModelIndex());
+		bool RemoveRow (int row, const ModelIndex& superview = ModelIndex());
 
-		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex()) = 0;
+		virtual bool RemoveRows (int row, int count, const ModelIndex& superview = ModelIndex()) = 0;
 
-		bool InsertRow (int row, const ModelIndex& parent = ModelIndex());
+		bool InsertRow (int row, const ModelIndex& superview = ModelIndex());
 
-		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex()) = 0;
+		virtual bool InsertRows (int row, int count, const ModelIndex& superview = ModelIndex()) = 0;
 
 		virtual ModelIndex GetRootIndex () const = 0;
 
-		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent = ModelIndex()) const = 0;
+		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& superview = ModelIndex()) const = 0;
 
 		virtual bool SetData (const ModelIndex& index, const String& data);	// temporarily use String
 

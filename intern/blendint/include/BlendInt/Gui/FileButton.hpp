@@ -78,8 +78,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		FileSelector* dialog_;
 

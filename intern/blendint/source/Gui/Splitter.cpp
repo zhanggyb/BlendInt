@@ -244,13 +244,13 @@ namespace BlendInt {
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
-			prev_size_ = previous()->size().height();
-			next_size_ = next()->size().height();
-			nearby_pos_ = previous()->position().y();
+			prev_size_ = previous_view()->size().height();
+			next_size_ = next_view()->size().height();
+			nearby_pos_ = previous_view()->position().y();
 		} else {
-			prev_size_ = previous()->size().width();
-			next_size_ = next()->size().width();
-			nearby_pos_ = next()->position().x();
+			prev_size_ = previous_view()->size().width();
+			next_size_ = next_view()->size().width();
+			nearby_pos_ = next_view()->position().x();
 		}
 
 		return Accept;
@@ -269,7 +269,7 @@ namespace BlendInt {
 	{
 		if(pressed_) {
 
-			Splitter* splitter = dynamic_cast<Splitter*>(parent());
+			Splitter* splitter = dynamic_cast<Splitter*>(superview());
 
 			if(orientation_ == Horizontal) {
 
@@ -281,11 +281,11 @@ namespace BlendInt {
 					return Accept;
 				}
 
-				splitter->MoveSubFormTo(this, last_.x(), last_.y() + offset);
+				splitter->MoveSubViewTo(this, last_.x(), last_.y() + offset);
 
-				splitter->ResizeSubForm(previous(), previous()->size().width(), oy1);
-				splitter->MoveSubFormTo(previous(), previous()->position().x(), nearby_pos_ + offset);
-				splitter->ResizeSubForm(next(), next()->size().width(), oy2);
+				splitter->ResizeSubView(previous_view(), previous_view()->size().width(), oy1);
+				splitter->MoveSubViewTo(previous_view(), previous_view()->position().x(), nearby_pos_ + offset);
+				splitter->ResizeSubView(next_view(), next_view()->size().width(), oy2);
 
 			} else {
 
@@ -297,11 +297,11 @@ namespace BlendInt {
 					return Accept;
 				}
 
-				splitter->MoveSubFormTo(this, last_.x() + offset, last_.y());
+				splitter->MoveSubViewTo(this, last_.x() + offset, last_.y());
 
-				splitter->ResizeSubForm(previous(), oy1, previous()->size().height());
-				splitter->ResizeSubForm(next(), oy2, next()->size().height());
-				splitter->MoveSubFormTo(next(), nearby_pos_ + offset, next()->position().y());
+				splitter->ResizeSubView(previous_view(), oy1, previous_view()->size().height());
+				splitter->ResizeSubView(next_view(), oy2, next_view()->size().height());
+				splitter->MoveSubViewTo(next_view(), nearby_pos_ + offset, next_view()->position().y());
 
 			}
 
@@ -325,10 +325,10 @@ namespace BlendInt {
 	
 	void Splitter::Prepend (AbstractWidget* widget)
 	{
-		if(widget && widget->parent() != this) {
+		if(widget && widget->superview() != this) {
 
-			if(first_child() == 0) {
-				PushFrontSubForm(widget);
+			if(first_subview() == 0) {
+				PushFrontSubView(widget);
 			} else {
 				SplitterHandle* handle = 0;
 				if(orientation_ == Horizontal) {
@@ -337,8 +337,8 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				PushFrontSubForm(handle);
-				PushFrontSubForm(widget);
+				PushFrontSubView(handle);
+				PushFrontSubView(widget);
 			}
 
 			AlignSubWidgets(orientation_, size());
@@ -349,10 +349,10 @@ namespace BlendInt {
 
 	void Splitter::Append (AbstractWidget* widget)
 	{
-		if(widget && widget->parent() != this) {
+		if(widget && widget->superview() != this) {
 
-			if(first_child() == 0) {
-				PushBackSubForm(widget);
+			if(first_subview() == 0) {
+				PushBackSubView(widget);
 			} else {
 				SplitterHandle* handle = 0;
 				if(orientation_ == Horizontal) {
@@ -361,8 +361,8 @@ namespace BlendInt {
 					handle = Manage(new SplitterHandle(Horizontal));
 				}
 
-				PushBackSubForm(handle);
-				PushBackSubForm(widget);
+				PushBackSubView(handle);
+				PushBackSubView(widget);
 			}
 
 			AlignSubWidgets(orientation_, size());
@@ -378,7 +378,7 @@ namespace BlendInt {
 
 	void Splitter::Remove (AbstractWidget* widget)
 	{
-		if(RemoveSubForm(widget)) {
+		if(RemoveSubView(widget)) {
 			if(orientation_ == Horizontal) {
 				FillSubWidgetsInSplitter(size(), orientation_);
 			} else {
@@ -391,14 +391,14 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		if(first_child() == 0) {
+		if(first_subview() == 0) {
 			preferred_size.set_width(400);
 			preferred_size.set_height(400);
 		} else {
 			Size tmp;
 
 			if (orientation_ == Horizontal) {
-				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+				for(AbstractView* p = first_subview(); p; p = p->next_view())
 				{
 					if (p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -409,7 +409,7 @@ namespace BlendInt {
 					}
 				}
 			} else {
-				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+				for(AbstractView* p = first_subview(); p; p = p->next_view())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -429,7 +429,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -445,7 +445,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -460,14 +460,14 @@ namespace BlendInt {
 	int Splitter::GetWidgetIndex (AbstractWidget* widget) const
 	{
 		int index = 0;
-		if(widget->parent() != this) return -1;
+		if(widget->superview() != this) return -1;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p == widget) break;
 
 			index++;
-			p = p->next()->next();
+			p = p->next_view()->next_view();
 		}
 
 		return index;
@@ -476,14 +476,14 @@ namespace BlendInt {
 	int Splitter::GetHandleIndex (SplitterHandle* handle) const
 	{
 		int index = 0;
-		if(handle->parent() != this) return -1;
+		if(handle->superview() != this) return -1;
 
-		for(AbstractInteractiveForm* p = first_child()->next(); p; p = p->next())
+		for(AbstractView* p = first_subview()->next_view(); p; p = p->next_view())
 		{
 			if(p == handle) break;
 
 			index++;
-			p = p->next()->next();
+			p = p->next_view()->next_view();
 		}
 
 		return index;
@@ -491,7 +491,7 @@ namespace BlendInt {
 
 	AbstractWidget* Splitter::GetWidget (int index) const
 	{
-		if(first_child() == 0) return 0;
+		if(first_subview() == 0) return 0;
 
 		int sum = subs_count();
 
@@ -553,16 +553,16 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_width = 0;
-			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(i % 2 == 0) {
-					ResizeSubForm(p, room, h);
-					MoveSubFormTo(p, x, y);
+					ResizeSubView(p, room, h);
+					MoveSubViewTo(p, x, y);
 					x = x + room;
 				} else {
 					handler_width = p->GetPreferredSize().width();
-					ResizeSubForm(p, handler_width, h);
-					MoveSubFormTo(p, x, y);
+					ResizeSubView(p, handler_width, h);
+					MoveSubViewTo(p, x, y);
 					x = x + handler_width;
 				}
 				i++;
@@ -575,17 +575,17 @@ namespace BlendInt {
 
 			int i = 0;
 			int handler_height = 0;
-			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(i % 2 == 0) {
 					y = y - room;
-					ResizeSubForm(p, w, room);
-					MoveSubFormTo(p, x, y);
+					ResizeSubView(p, w, room);
+					MoveSubViewTo(p, x, y);
 				} else {
 					handler_height = p->GetPreferredSize().height();
 					y = y - handler_height;
-					ResizeSubForm(p, w, handler_height);
-					MoveSubFormTo(p, x, y);
+					ResizeSubView(p, w, handler_height);
+					MoveSubViewTo(p, x, y);
 				}
 
 				i++;
@@ -632,7 +632,7 @@ namespace BlendInt {
 
 		int prefer_width;
 		int i = 0;
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -711,7 +711,7 @@ namespace BlendInt {
 
 		int prefer_height;
 		int i = 0;
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {	// widgets
 
@@ -780,19 +780,19 @@ namespace BlendInt {
 
 	void Splitter::AlignHorizontally (int y, int height)
 	{
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			ResizeSubForm(p, p->size().width(), height);
-			MoveSubFormTo(p, p->position().x(), y);
+			ResizeSubView(p, p->size().width(), height);
+			MoveSubViewTo(p, p->position().x(), y);
 		}
 	}
 
 	void Splitter::AlignVertically (int x, int width)
 	{
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			ResizeSubForm(p, width, p->size().height());
-			MoveSubFormTo(p, x, p->position().y());
+			ResizeSubView(p, width, p->size().height());
+			MoveSubViewTo(p, x, p->position().y());
 		}
 	}
 	
@@ -803,23 +803,23 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
-				ResizeSubForm(p,
+				ResizeSubView(p,
 								(width - prefer_width_sum) * (*width_it) / widget_width_sum,
 								p->size().height());
 				width_it++;
 
 			} else {
 
-				ResizeSubForm(p, *handler_width_it,
+				ResizeSubView(p, *handler_width_it,
 								p->size().height());
 				handler_width_it++;
 			}
 
-			MoveSubFormTo(p, x, p->position().y());
+			MoveSubViewTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -834,12 +834,12 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator exp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
 				if (p->IsExpandX()) {
-					ResizeSubForm(p,
+					ResizeSubView(p,
 									(width - prefer_width_sum
 													- unexpandable_width_sum)
 													* (*exp_width_it)
@@ -849,11 +849,11 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubForm(p, *handler_width_it, p->size().height());
+				ResizeSubView(p, *handler_width_it, p->size().height());
 				handler_width_it++;
 			}
 
-			MoveSubFormTo(p, x, p->position().y());
+			MoveSubViewTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -867,13 +867,13 @@ namespace BlendInt {
 		int i = 0;
 		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
 		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
 				if(!p->IsExpandX()) {
 
-					ResizeSubForm(p,
+					ResizeSubView(p,
 									(width - prefer_width_sum)
 													* (*unexp_width_it)
 													/ widget_width_sum,
@@ -883,11 +883,11 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubForm(p, *handler_width_it, p->size().height());
+				ResizeSubView(p, *handler_width_it, p->size().height());
 				handler_width_it++;
 			}
 
-			MoveSubFormTo(p, x, p->position().y());
+			MoveSubViewTo(p, x, p->position().y());
 			x += p->size().width();
 
 			i++;
@@ -904,7 +904,7 @@ namespace BlendInt {
 			room = out_size.height();
 		}
 
-		if(first_child() == 0) {
+		if(first_subview() == 0) {
 			return room;
 		}
 
@@ -912,7 +912,7 @@ namespace BlendInt {
 		int space = 0;
 		int sum = 0;
 
-		AbstractInteractiveForm* p = first_child()->next();
+		AbstractView* p = first_subview()->next_view();
 		sum += 1;
 
 		while (p) {
@@ -923,7 +923,7 @@ namespace BlendInt {
 				space = prefer.height();
 			}
 
-			p = p->next()->next();
+			p = p->next_view()->next_view();
 			sum += 2;
 		}
 
@@ -943,11 +943,11 @@ namespace BlendInt {
 
 		y = y + height;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
-				ResizeSubForm(p,
+				ResizeSubView(p,
 								p->size().width(),
 								(height - prefer_height_sum)
 												* (*height_it) / widget_height_sum);
@@ -955,13 +955,13 @@ namespace BlendInt {
 
 			} else {
 
-				ResizeSubForm(p, p->size().width(),
+				ResizeSubView(p, p->size().width(),
 								*handler_height_it);
 				handler_height_it++;
 			}
 
 			y = y - p->size().height();
-			MoveSubFormTo(p, p->position().x(), y);
+			MoveSubViewTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -977,12 +977,12 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
 				if (p->IsExpandY()) {
-					ResizeSubForm(p,
+					ResizeSubView(p,
 									p->size().width(),
 									(height - prefer_height_sum
 													- unexpandable_height_sum)
@@ -992,12 +992,12 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubForm(p, p->size().width(), *handler_height_it);
+				ResizeSubView(p, p->size().width(), *handler_height_it);
 				handler_height_it++;
 			}
 
 			y -= p->size().height();
-			MoveSubFormTo(p, p->position().x(), y);
+			MoveSubViewTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -1013,13 +1013,13 @@ namespace BlendInt {
 		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
 		y = y + height;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(i % 2 == 0) {
 
 				if (!p->IsExpandY()) {
 
-					ResizeSubForm(p, p->size().width(),
+					ResizeSubView(p, p->size().width(),
 									(height - prefer_height_sum)
 													* (*unexp_height_it)
 													/ widget_height_sum);
@@ -1028,12 +1028,12 @@ namespace BlendInt {
 				}
 
 			} else {
-				ResizeSubForm(p, p->size().width(), *handler_height_it);
+				ResizeSubView(p, p->size().width(), *handler_height_it);
 				handler_height_it++;
 			}
 
 			y -= p->size().width();
-			MoveSubFormTo(p, p->position().x(), y);
+			MoveSubViewTo(p, p->position().x(), y);
 
 			i++;
 		}
@@ -1049,14 +1049,14 @@ namespace BlendInt {
 			room = out_size.height();
 		}
 
-		if(first_child() == 0) {
+		if(first_subview() == 0) {
 			return room;
 		}
 
 		Size prefer;
 		int space = 0;
 
-		AbstractInteractiveForm* p = first_child()->next();
+		AbstractView* p = first_subview()->next_view();
 		while (p) {
 			prefer = p->GetPreferredSize();
 			if(orientation == Horizontal) {
@@ -1065,7 +1065,7 @@ namespace BlendInt {
 				space = prefer.height();
 			}
 
-			p = p->next()->next();
+			p = p->next_view()->next_view();
 		}
 
 		room = room - space;

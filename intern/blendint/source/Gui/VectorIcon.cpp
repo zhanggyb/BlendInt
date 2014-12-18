@@ -109,7 +109,6 @@ namespace BlendInt {
 	  vao_(0),
 	  elements_(0)
 	{
-		glGenVertexArrays(1, &vao_);
 	}
 
 	VectorIcon::~VectorIcon ()
@@ -120,18 +119,22 @@ namespace BlendInt {
 	void VectorIcon::Load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
+		if(!glIsVertexArray(vao_)) {
+			glGenVertexArrays(1, &vao_);
+		}
+
 		glBindVertexArray(vao_);
 
 		vertex_buffer_.generate();
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
 		element_buffer_.generate();
 		element_buffer_.bind();
 		element_buffer_.set_data(indeces_size * sizeof(vertex_indices[0]), vertex_indices[0]);
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 
@@ -155,8 +158,7 @@ namespace BlendInt {
 
 	void VectorIcon::Draw(const glm::vec2& pos, const Color& color, short gamma) const
 	{
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
-		program->use();
+		Shaders::instance->widget_triangle_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
@@ -166,25 +168,17 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_.bind();	// bind ARRAY BUFFER
-		element_buffer_.bind();	// bind ELEMENT ARRAY BUFFER
-
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		element_buffer_.reset();
-		vertex_buffer_.reset();
 
-		program->reset();
+		GLSLProgram::reset();
 	}
 
 	void VectorIcon::Draw(const glm::vec2& pos, float angle, float scale, const Color& color, short gamma) const
 	{
-		using Stock::Shaders;
-
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
-		program->use();
+		Shaders::instance->widget_triangle_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
@@ -196,21 +190,15 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		vertex_buffer_.bind();	// bind ARRAY BUFFER
-		element_buffer_.bind();	// bind ELEMENT ARRAY BUFFER
-
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 
-		element_buffer_.reset();
-		vertex_buffer_.reset();
-
 		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 
-		program->reset();
+		GLSLProgram::reset();
 	}
 
 	void VectorIcon::PerformSizeUpdate(const Size& size)

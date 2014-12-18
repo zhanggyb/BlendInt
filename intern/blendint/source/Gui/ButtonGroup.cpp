@@ -154,7 +154,7 @@ namespace BlendInt {
 		button_index_toggled_.fire(i, toggled);
 	}
 
-	void ButtonGroup::OnButtonDestroyed (AbstractInteractiveForm* button)
+	void ButtonGroup::OnButtonDestroyed (AbstractView* button)
 	{
 		AbstractButton* p = dynamic_cast<AbstractButton*>(button);
 		RemoveButton(p);

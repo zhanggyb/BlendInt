@@ -32,8 +32,6 @@
 
 #include <BlendInt/Gui/Font.hpp>
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
-
 namespace BlendInt {
 
 	class Context;
@@ -194,24 +192,9 @@ namespace BlendInt {
 			return m_shadow_fac;
 		}
 		
-		short shadow_offset_x () const
-		{
-			return shadow_offset_x_;
-		}
-
-		short shadow_offset_y () const
-		{
-			return shadow_offset_y_;
-		}
-
 		short shadow_width () const
 		{
 			return shadow_width_;
-		}
-
-		const RefPtr<GLTexture2D>& shadow_texture () const
-		{
-			return shadow_texture_;
 		}
 
 	private:
@@ -241,8 +224,6 @@ namespace BlendInt {
 
 		rapidxml::xml_node<>* AllocateWidgetThemeNode (rapidxml::xml_document<>& doc, const char* name, const WidgetTheme& wtheme);
 
-		void GenerateShadowTexture ();
-
 		/* Interface Elements (buttons, menus, icons) */
 		WidgetTheme regular_;
 		WidgetTheme tool_;
@@ -270,11 +251,8 @@ namespace BlendInt {
 		short pixel_;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
+		// NOT USED
 		float m_shadow_fac;
-
-		short shadow_offset_x_;
-
-		short shadow_offset_y_;
 
 		short shadow_width_;
 
@@ -285,8 +263,6 @@ namespace BlendInt {
 
 		/* Axis Colors */
 		Color xaxis_, yaxis_, zaxis_;
-
-		RefPtr<GLTexture2D> shadow_texture_;
 	};
 
 } /* namespace BlendInt */

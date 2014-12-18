@@ -59,12 +59,12 @@ namespace BlendInt {
 
 		void InitializeBrightnessSlider ();
 
-		GLuint m_vao[2];
+		GLuint vao_[2];
 
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		CircularPicker m_dot;
+		RefPtr<CircularPicker> picker_;
 
 	};
 

@@ -52,7 +52,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	AbstractWidget::AbstractWidget()
-	: AbstractInteractiveForm()
+	: AbstractView()
 	{
 		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);

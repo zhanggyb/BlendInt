@@ -42,9 +42,9 @@ namespace BlendInt {
 
 	void Block::AddWidget(Widget* widget)
 	{
-		AbstractInteractiveForm* orig_last = last_child();
+		AbstractView* orig_last = last_subview();
 
-		if(PushBackSubForm(widget)) {
+		if(PushBackSubView(widget)) {
 
 			widget->SetEmboss(true);
 
@@ -84,7 +84,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -99,7 +99,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -129,7 +129,7 @@ namespace BlendInt {
 			int max_height = 0;
 			int sum = 0;
 
-			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
 					sum++;
@@ -186,10 +186,10 @@ namespace BlendInt {
 		if(count == 0) return;
 		int average_width = w / count + 1;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			ResizeSubForm(p, average_width, h);
-			MoveSubFormTo(p, x, y);
+			ResizeSubView(p, average_width, h);
+			MoveSubViewTo(p, x, y);
 			x = x + average_width - 1;
 		}
 	}
@@ -211,11 +211,11 @@ namespace BlendInt {
 		int average_height = h / count + 1;
 
 		y = y + h;
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			ResizeSubForm(p, w, average_height);
+			ResizeSubView(p, w, average_height);
 			y = y - average_height + 1;
-			MoveSubFormTo(p, x, y);
+			MoveSubViewTo(p, x, y);
 		}
 	}
 

@@ -27,7 +27,7 @@
 #include <glm/glm.hpp>
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Gui/AbstractInteractiveForm.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 
 namespace BlendInt {
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class AbstractWidget: public AbstractInteractiveForm
+	class AbstractWidget: public AbstractView
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 

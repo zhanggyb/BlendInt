@@ -37,124 +37,143 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/CircularPicker.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	CircularPicker::CircularPicker ()
-	: AbstractRoundForm(), vao_(0)
+	using Stock::Shaders;
+
+	CircularPicker::CircularPicker (unsigned int radius)
+	: AbstractRoundForm()
 	{
+		if(radius == 0) radius = 1;
+
+		set_size(radius * 2, radius * 2);
 		set_round_type(RoundAll);
+		set_radius(radius);
 
-		glGenVertexArrays(1, &vao_);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		buffer_.generate();
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+
+		buffer_.reset();
+
 	}
 
 	CircularPicker::~CircularPicker ()
 	{
-		glDeleteVertexArrays(1, &vao_);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void CircularPicker::Resize(unsigned int radius)
 	{
-		Size dot_size (radius * 2, radius * 2);
-		set_round_type(RoundAll);
+		if(radius == 0) radius = 1;
+
+		if(radius == size().width() / 2) return;
+
 		set_radius(radius);
-		set_size(dot_size);
+		set_size(radius * 2, radius * 2);
 
-		VertexTool tool;
-		tool.GenerateVertices(dot_size, default_border_width(), RoundAll, radius);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 	}
 
 	void CircularPicker::PerformSizeUpdate(const Size& size)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size, default_border_width(), round_type(), radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
+		int radius = std::min(size.width(), size.height());
+		if(radius == 0) radius = 1;
 
-		set_size(size);
+		set_radius(radius);
+		set_size(radius * 2, radius * 2);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 	}
 
 	void CircularPicker::PerformRoundTypeUpdate(int type)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), type, radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
 
-		set_round_type(type);
 	}
 
 	void CircularPicker::PerformRoundRadiusUpdate(float radius)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type(), radius);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
+		unsigned int rad = static_cast<unsigned int>(radius + 0.5f);
+		if(rad == 0) rad = 1;
 
-		set_radius(radius);
+		set_radius(rad);
+		set_size(rad * 2, rad * 2);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 	}
 
 	void CircularPicker::Draw (float x, float y, short gamma) const
 	{
-		using Stock::Shaders;
+		Shaders::instance->widget_simple_triangle_program()->use();
 
-		glBindVertexArray(vao_);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
 
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->widget_triangle_program();
-		program->use();
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform3f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		Shaders::instance->widget_outer_program()->use();
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), x, y);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->scroll().outline.data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-
-		inner_->bind();
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						inner_->get_buffer_size()
-										/ (2 * sizeof(GLfloat)));
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->scroll().outline.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		outer_->bind();
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-						outer_->get_buffer_size()
-						/ (2 * sizeof(GLfloat)));
-		outer_->reset();
-
-		glDisableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		program->reset();
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
+		GLSLProgram::reset();
 	}
 
 }

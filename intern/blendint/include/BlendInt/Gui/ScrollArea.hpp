@@ -39,7 +39,7 @@ namespace BlendInt {
 
 		virtual ~ScrollArea ();
 
-		void SetViewport (AbstractInteractiveForm* widget);
+		void SetViewport (AbstractView* widget);
 
 		virtual bool IsExpandX () const;
 

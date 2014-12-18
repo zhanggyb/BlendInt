@@ -797,8 +797,7 @@ namespace BlendInt {
 		const char* Shaders::frame_shadow_vertex_shader =
 				"#version 330\n"
 				""
-				"layout(location=0) in vec2 aCoord;"
-				"layout(location=1) in vec2 aUV;"
+				"layout(location=0) in vec3 aCoord;"
 				""
 				"uniform FrameMatrix {"
 				"	mat4 projection;"
@@ -807,7 +806,7 @@ namespace BlendInt {
 				"};"
 				""
 				"uniform vec2 uPosition;"
-				"out vec2 fUV;"
+				"out float fAlpha;"
 				""
 		        "mat4 TranslateMatrix (const in vec2 t)"
 		        "{"
@@ -819,20 +818,28 @@ namespace BlendInt {
 				""
 				"void main(void) {"
 				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
-				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
-				"	fUV = aUV;"
+				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	fAlpha = aCoord.z;"
 				"}";
 
 		const char* Shaders::frame_shadow_fragment_shader =
 		        "#version 330\n"
 				""
-				"in vec2 fUV;"
-				"uniform sampler2D uTexture;"
-				"uniform float uFactor = 1.f;"
+				"in float fAlpha;"
 				"out vec4 FragmentColor;"
+				"uniform vec2 uPosition;"
+				"uniform vec2 uSize;"
 				""
 				"void main(void) {"
-				"	FragmentColor = texture(uTexture, fUV) * uFactor;"
+				"	float alpha = fAlpha;"
+				""
+				"	if(gl_FragCoord.y > (uPosition.y + uSize.y / 2.f)) {"
+				"		if((gl_FragCoord.x > uPosition.x) && (gl_FragCoord.x < (uPosition.x + uSize.x))) {"
+				"			alpha = 0.f;"
+				"		}"
+				"	}"
+				""
+				"	FragmentColor = vec4(vec3(0.05, 0.05, 0.05), 0.8 * alpha);"
 				"}";
 
 		Shaders* Shaders::instance = 0;
@@ -1561,9 +1568,8 @@ namespace BlendInt {
 			//locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
 
 			locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
-			locations_[FRAME_SHADOW_UV] = frame_shadow_program_->GetAttributeLocation("aUV");
 			locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
-			locations_[FRAME_SHADOW_FACTOR] = frame_shadow_program_->GetUniformLocation("uFactor");
+			locations_[FRAME_SHADOW_SIZE] = frame_shadow_program_->GetUniformLocation("uSize");
 
 			return true;
 		}

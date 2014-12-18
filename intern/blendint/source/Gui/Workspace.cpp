@@ -183,7 +183,7 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 
 			if(p->visiable()) {
 				retval = p->Contain(point);
@@ -227,9 +227,9 @@ namespace BlendInt {
 		EdgeButton* head = Manage(new EdgeButton(RoundTopLeft | RoundTopRight));
 		DBG_SET_NAME(head, "HeadButton");
 
-		PushBackSubForm(left);
-		PushBackSubForm(right);
-		PushBackSubForm(head);
+		PushBackSubView(left);
+		PushBackSubView(right);
+		PushBackSubView(head);
 
 		AlighButtons(position(), size());
 	}
@@ -247,36 +247,13 @@ namespace BlendInt {
 
 	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
 	{
-		AbstractInteractiveForm* p = first_child();
+		AbstractView* p = first_subview();
 
-		MoveSubFormTo(p, x, y + h * 9 / 10);
-		p = p->next();
-		MoveSubFormTo(p, x + w - last_child()->size().width(), y + h * 9 / 10);
-		p = p->next();
-		MoveSubFormTo(p, x + w * 9 / 10, y);
-	}
-
-	// -------------------------------
-
-	ViewportLayer::ViewportLayer()
-	{
-	}
-
-	ViewportLayer::~ViewportLayer()
-	{
-	}
-
-	bool ViewportLayer::Contain(const Point& point) const
-	{
-		if(next()) {
-			if(next()->Contain(point)) {
-				return false;
-			} else {
-				return VLayout::Contain(point);
-			}
-		}
-
-		return VLayout::Contain(point);
+		MoveSubViewTo(p, x, y + h * 9 / 10);
+		p = p->next_view();
+		MoveSubViewTo(p, x + w - last_subview()->size().width(), y + h * 9 / 10);
+		p = p->next_view();
+		MoveSubViewTo(p, x + w * 9 / 10, y);
 	}
 
 	// -------------------------------
@@ -351,13 +328,13 @@ namespace BlendInt {
 		// TODO: check null and resize
 		header_ = header;
 
-		if(PushBackSubForm(header_)) {
+		if(PushBackSubView(header_)) {
 			Size prefer = header_->GetPreferredSize();
-			MoveSubFormTo(header_, position());
-			ResizeSubForm(header_, size().width(), prefer.height());
+			MoveSubViewTo(header_, position());
+			ResizeSubView(header_, size().width(), prefer.height());
 
-			MoveSubFormTo(splitter_, position().x(), position().y() + prefer.height());
-			ResizeSubForm(splitter_, size().width(), size().height() - prefer.height());
+			MoveSubViewTo(splitter_, position().x(), position().y() + prefer.height());
+			ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
 		} else {
 			DBG_PRINT_MSG("Error: %s", "cannot add header frame");
 		}
@@ -383,7 +360,7 @@ namespace BlendInt {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -417,13 +394,13 @@ namespace BlendInt {
 
 			if(header_) {
 				Size prefer = header_->GetPreferredSize();
-				MoveSubFormTo(header_, position());
-				ResizeSubForm(header_, size().width(), prefer.height());
+				MoveSubViewTo(header_, position());
+				ResizeSubView(header_, size().width(), prefer.height());
 
-				MoveSubFormTo(splitter_, position().x(), position().y() + prefer.height());
-				ResizeSubForm(splitter_, size().width(), size().height() - prefer.height());
+				MoveSubViewTo(splitter_, position().x(), position().y() + prefer.height());
+				ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
 			} else {
-				ResizeSubForm(splitter_, size());
+				ResizeSubView(splitter_, size());
 			}
 
 			RequestRedraw();
@@ -475,8 +452,8 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		AbstractInteractiveForm* p = 0;
-		for(p = last_child(); p; p = p->previous()) {
+		AbstractView* p = 0;
+		for(p = last_subview(); p; p = p->previous_view()) {
 
 			if(p->Contain(event.position())) {
 
@@ -494,7 +471,7 @@ namespace BlendInt {
 		ResponseType response = Ignore;
 
 		/*
-		for(AbstractInteractiveForm* p = last_child(); p; p = p->previous()) {
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
 			if(p->Contain(event.position())) {
 
@@ -538,7 +515,7 @@ namespace BlendInt {
 				delegate_dispatch_hover_event(hover_, event);
 			}
 
-			// make sure to set event frame in this function, to tell parent frame or context to set this hover flag
+			// make sure to set event frame in this function, to tell superview frame or context to set this hover flag
 			set_event_frame(event, this);
 
 			return Accept;
@@ -554,9 +531,9 @@ namespace BlendInt {
 		splitter_ = Manage(new FrameSplitter);
 		DBG_SET_NAME(splitter_, "Splitter");
 
-		PushBackSubForm(splitter_);
-		ResizeSubForm(splitter_, size());
-		MoveSubFormTo(splitter_, position());
+		PushBackSubView(splitter_);
+		ResizeSubView(splitter_, size());
+		MoveSubViewTo(splitter_, position());
 	}
 
 	void Workspace::OnHoverFrameDestroyed(AbstractFrame* frame)

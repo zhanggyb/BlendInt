@@ -99,18 +99,18 @@ namespace BlendInt {
 			int y = margin_.bottom();
 			int h = size().height() - margin_.vsum();
 
-			if(PushBackSubForm(widget)) {
+			if(PushBackSubView(widget)) {
 
 				Size prefer = widget->GetPreferredSize();
-				MoveSubFormTo(widget, x, y);
+				MoveSubViewTo(widget, x, y);
 				if(widget->IsExpandY()) {
-					ResizeSubForm(widget, prefer.width(), h);
+					ResizeSubView(widget, prefer.width(), h);
 				} else {
 					if(widget->size().height() > h) {
-						ResizeSubForm(widget, prefer.width(), h);
+						ResizeSubView(widget, prefer.width(), h);
 					} else {
-						ResizeSubForm(widget, prefer.width(), widget->size().height());
-						MoveSubFormTo(widget, x,
+						ResizeSubView(widget, prefer.width(), widget->size().height());
+						MoveSubViewTo(widget, x,
 										y + (h - widget->size().height()) / 2);
 					}
 				}
@@ -124,17 +124,17 @@ namespace BlendInt {
 			int y = GetLastPosition();
 			int w = size().width() - margin_.hsum();
 
-			if(PushBackSubForm(widget)) {
+			if(PushBackSubView(widget)) {
 				Size prefer = widget->GetPreferredSize();
 				y = y - prefer.height();
-				MoveSubFormTo(widget, x, y);
+				MoveSubViewTo(widget, x, y);
 				if(widget->IsExpandX()) {
-					ResizeSubForm(widget, w, prefer.height());
+					ResizeSubView(widget, w, prefer.height());
 				} else {
 					if(widget->size().width() > w) {
-						ResizeSubForm(widget, w, prefer.height());
+						ResizeSubView(widget, w, prefer.height());
 					} else {
-						ResizeSubForm(widget, widget->size().width(), prefer.height());
+						ResizeSubView(widget, widget->size().width(), prefer.height());
 					}
 				}
 
@@ -174,7 +174,7 @@ namespace BlendInt {
 
 				preferred_size.set_width(-space_);
 
-				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+				for(AbstractView* p = first_subview(); p; p = p->next_view())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -191,7 +191,7 @@ namespace BlendInt {
 
 				preferred_size.set_height(-space_);
 
-				for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+				for(AbstractView* p = first_subview(); p; p = p->next_view())
 				{
 					if(p->visiable()) {
 						tmp = p->GetPreferredSize();
@@ -252,7 +252,7 @@ namespace BlendInt {
 
 			RequestRedraw();
 
-		} else if (request.target()->parent() == this) {
+		} else if (request.target()->superview() == this) {
 			FillSubWidgets();
 		}
 
@@ -362,7 +362,7 @@ namespace BlendInt {
 
 		if(hovered_widget_) {
 
-			AbstractInteractiveForm* widget = 0;	// widget may be focused
+			AbstractView* widget = 0;	// widget may be focused
 
 			widget = DispatchMousePressEvent(hovered_widget_, event);
 
@@ -503,10 +503,10 @@ namespace BlendInt {
 		//int width = size().width() - margin_.hsum();
 		int height = size().height() - margin_.vsum();
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			MoveSubFormTo(p, x, y);
-			ResizeSubForm(p, p->size().width(), height);
+			MoveSubViewTo(p, x, y);
+			ResizeSubView(p, p->size().width(), height);
 			/*
 			if (p->IsExpandY()) {
 				ResizeSubWidget(p, p->size().width(), height);
@@ -535,12 +535,12 @@ namespace BlendInt {
 
 		y = y + space_;
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next())
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			y = y - p->size().height() - space_;
 
-			MoveSubFormTo(p, x, y);
-			ResizeSubForm(p, width, p->size().height());
+			MoveSubViewTo(p, x, y);
+			ResizeSubView(p, width, p->size().height());
 			/*
 			if(p->IsExpandX()) {
 				ResizeSubWidget(p, width, p->size().height());
@@ -565,15 +565,15 @@ namespace BlendInt {
 		if(orientation_ == Horizontal) {
 
 			retval = margin_.left();
-			if (last_child()) {
-				retval = last_child()->position().x() + last_child()->size().width() + space_;
+			if (last_subview()) {
+				retval = last_subview()->position().x() + last_subview()->size().width() + space_;
 			}
 
 		} else {
 
 			retval = size().height() - margin_.top();
-			if(last_child()) {
-				retval = last_child()->position().y() - space_;
+			if(last_subview()) {
+				retval = last_subview()->position().y() - space_;
 			}
 
 		}

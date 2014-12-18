@@ -103,8 +103,8 @@ namespace BlendInt {
 		void Add (MenuItem* item);
 
 		/**
-		 * @brief Set the parent MenuItem of this menu
-		 * @param[in] item The parent MenuItem
+		 * @brief Set the superview MenuItem of this menu
+		 * @param[in] item The superview MenuItem
 		 */
 		void SetParent (MenuItem* item);
 

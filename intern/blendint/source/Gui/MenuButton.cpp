@@ -65,7 +65,7 @@ namespace BlendInt {
             set_size(*request.size());
 
             std::vector<GLfloat> inner_verts;
-            AbstractInteractiveForm::GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+            AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
 			inner_.bind();
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);

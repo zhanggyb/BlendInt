@@ -55,7 +55,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollArea::SetViewport (AbstractInteractiveForm* widget)
+	void ScrollArea::SetViewport (AbstractView* widget)
 	{
 		if (!widget)
 			return;
@@ -145,9 +145,9 @@ namespace BlendInt {
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 		ScrollView* view = Manage(new ScrollView);
 
-		PushBackSubForm(hbar);	// HScrollBarIndex
-		PushBackSubForm(vbar);	// VScrollBarIndex
-		PushBackSubForm(view);	// ScrollViewIndex
+		PushBackSubView(hbar);	// HScrollBarIndex
+		PushBackSubView(vbar);	// VScrollBarIndex
+		PushBackSubView(view);	// ScrollViewIndex
 
 		hbar->SetSliderPercentage(100);
 		vbar->SetSliderPercentage(100);
@@ -161,13 +161,13 @@ namespace BlendInt {
 		int bh = hbar->size().height();
 		int rw = vbar->size().width();
 
-		MoveSubFormTo(hbar, x, y);
-		MoveSubFormTo(vbar, x + w - rw, y + bh);
-		MoveSubFormTo(view, x, y + bh);
+		MoveSubViewTo(hbar, x, y);
+		MoveSubViewTo(vbar, x + w - rw, y + bh);
+		MoveSubViewTo(view, x, y + bh);
 
-		ResizeSubForm (hbar, w - rw, bh);
-		ResizeSubForm (vbar, rw, h - bh);
-		ResizeSubForm (view, w - rw, h - bh);
+		ResizeSubView (hbar, w - rw, bh);
+		ResizeSubView (vbar, rw, h - bh);
+		ResizeSubView (view, w - rw, h - bh);
 
 		events()->connect(hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
 		events()->connect(vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
@@ -205,7 +205,7 @@ namespace BlendInt {
 			inner_->set_data(tool.inner_size(), tool.inner_data());
 
 			ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
-			AbstractInteractiveForm* widget = view->viewport();
+			AbstractView* widget = view->viewport();
 
 			int width = request.size()->width();
 			int height = request.size()->height();
@@ -249,14 +249,14 @@ namespace BlendInt {
 			rw = vbar->size().width();
 		}
 
-		MoveSubFormTo(view, x, y + bh);
-		ResizeSubForm (view, width - rw, height - bh);
+		MoveSubViewTo(view, x, y + bh);
+		ResizeSubView (view, width - rw, height - bh);
 
-		AbstractInteractiveForm* widget = view->viewport();
+		AbstractView* widget = view->viewport();
 
 		if(hbar->visiable()) {
-			MoveSubFormTo(hbar, x, y);
-			ResizeSubForm (hbar, width - rw, bh);
+			MoveSubViewTo(hbar, x, y);
+			ResizeSubView (hbar, width - rw, bh);
 
 			if(widget) {
 				int percent = view->GetHPercentage();
@@ -267,8 +267,8 @@ namespace BlendInt {
 		}
 
 		if(vbar->visiable()) {
-			MoveSubFormTo(vbar, x + width - rw, y + bh);
-			ResizeSubForm (vbar, rw, height - bh);
+			MoveSubViewTo(vbar, x + width - rw, y + bh);
+			ResizeSubView (vbar, rw, height - bh);
 
 			if(widget) {
 				int percent = view->GetVPercentage();
@@ -283,7 +283,7 @@ namespace BlendInt {
 	{
 		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
-		AbstractInteractiveForm* p = view->viewport();
+		AbstractView* p = view->viewport();
 
 		if (p) {
 			view->SetReletivePosition(view->size().width() - value,
@@ -295,7 +295,7 @@ namespace BlendInt {
 	{
 		ScrollView* view = dynamic_cast<ScrollView*>(GetWidgetAt(ScrollViewIndex));
 
-		AbstractInteractiveForm* p = view->viewport();
+		AbstractView* p = view->viewport();
 		if (p) {
 			view->SetReletivePosition(
 			        p->position().x() - view->position().x(),

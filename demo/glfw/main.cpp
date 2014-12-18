@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	SetContext(context);
 	context->Resize(1280, 800);
 
-	DBG_PRINT_MSG("sizeof AbstractInteractiveForm: %ld", sizeof(AbstractInteractiveForm));
+	DBG_PRINT_MSG("sizeof AbstractView: %ld", sizeof(AbstractView));
 
 	RunLoop(win);
 	Terminate();

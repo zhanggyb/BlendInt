@@ -37,22 +37,22 @@ namespace BlendInt {
 		rows_ = 0;
 	}
 
-	int StringListModel::GetRows (const ModelIndex& parent) const
+	int StringListModel::GetRows (const ModelIndex& superview) const
 	{
 		return rows_;
 	}
 
-	int StringListModel::GetColumns (const ModelIndex& parent) const
+	int StringListModel::GetColumns (const ModelIndex& superview) const
 	{
 		return 1;
 	}
 
 	bool StringListModel::InsertRows (int row, int count,
-			const ModelIndex& parent)
+			const ModelIndex& superview)
 	{
 		bool retval = false;
 
-		retval = AbstractListModel::InsertRows(row, count, parent);
+		retval = AbstractListModel::InsertRows(row, count, superview);
 		if (retval) {
 			rows_ += count;
 		}
@@ -61,11 +61,11 @@ namespace BlendInt {
 	}
 
 	bool StringListModel::RemoveRows (int row, int count,
-	        const ModelIndex& parent)
+	        const ModelIndex& superview)
 	{
 		bool retval = false;
 
-		retval = AbstractListModel::RemoveRows(row, count, parent);
+		retval = AbstractListModel::RemoveRows(row, count, superview);
 		if(retval) {
 
 			if((row + count) > rows_) {	// if count too large

@@ -47,7 +47,6 @@ namespace BlendInt {
 
 	Dialog::Dialog()
 	: AbstractFloatingFrame(),
-	  shadow_(0),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  layout_(0)
@@ -98,8 +97,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new ShadowMap);
-		shadow_->Resize(size());
+		shadow_.reset(new FrameShadow(size()));
 	}
 
 	Dialog::~Dialog()
@@ -126,15 +124,15 @@ namespace BlendInt {
 			layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
 		}
 
-		for(AbstractInteractiveForm* p = first_child(); p; p = p->next()) {
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 		}
 
-		if(PushBackSubForm(layout)) {
+		if(PushBackSubView(layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
-			MoveSubFormTo(layout_, 0, 0);
-			ResizeSubForm(layout_, size());
+			MoveSubViewTo(layout_, 0, 0);
+			ResizeSubView(layout_, size());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -147,7 +145,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->AddWidget(widget);
 		} else {
-			PushBackSubForm(widget);
+			PushBackSubView(widget);
 		}
 
 		RequestRedraw();
@@ -158,7 +156,7 @@ namespace BlendInt {
 		if(layout_) {
 			layout_->InsertWidget(index, widget);
 		} else {
-			InsertSubForm(index, widget);
+			InsertSubView(index, widget);
 		}
 
 		RequestRedraw();
@@ -286,13 +284,20 @@ namespace BlendInt {
 
 	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
 	{
+		ResponseType response = Ignore;
+
 		if(event.key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Accept;
 		}
 
-		return Ignore;
+		if(focused_widget_) {
+			set_event_frame(event, this);
+			response = DispatchKeyEvent(focused_widget_, event);
+		}
+
+		return response;
 	}
 
 	ResponseType Dialog::ContextMenuPressEvent(
@@ -318,7 +323,7 @@ namespace BlendInt {
 
 		if(hovered_widget_) {
 
-			AbstractInteractiveForm* widget = 0;	// widget may be focused
+			AbstractView* widget = 0;	// widget may be focused
 
 			widget = DispatchMousePressEvent(hovered_widget_, event);
 
@@ -366,8 +371,8 @@ namespace BlendInt {
 
 				set_position(last_.x() + ox, last_.y() + oy);
 
-				if(parent()) {
-					parent()->RequestRedraw();
+				if(superview()) {
+					superview()->RequestRedraw();
 				}
 				retval = Accept;
 			}

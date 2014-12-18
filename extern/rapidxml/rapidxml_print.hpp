@@ -75,7 +75,7 @@ namespace rapidxml
                         *out++ = *begin;    // No expansion, copy character
                     }
                 }
-                ++begin;    // Step to next character
+                ++begin;    // Step to next_view character
             }
             return out;
         }

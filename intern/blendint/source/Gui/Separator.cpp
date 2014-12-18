@@ -59,20 +59,20 @@ namespace BlendInt {
 	void Separator::SetExpandX (bool expand)
 	{
 		expand_x_ = expand;
-		// TODO: call parent widget to update layout
+		// TODO: call superview widget to update layout
 	}
 
 	void Separator::SetExpandY (bool expand)
 	{
 		expand_y_ = expand;
-		// TODO: call parent widget to update layout
+		// TODO: call superview widget to update layout
 	}
 
 	void Separator::SetExpand (bool expand_x, bool expand_y)
 	{
 		expand_x_ = expand_x;
 		expand_y_ = expand_y;
-		// TODO: call parent widget to update layout
+		// TODO: call superview widget to update layout
 	}
 
 	bool Separator::IsExpandX() const

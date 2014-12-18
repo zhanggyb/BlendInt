@@ -30,7 +30,7 @@
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
-#include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -126,7 +126,7 @@ namespace BlendInt {
 		 */
 		unsigned int m_highlight;	// the highlight item index
 
-		ShadowMap* shadow_;
+		FrameShadow* shadow_;
 
 		String m_title;
 
