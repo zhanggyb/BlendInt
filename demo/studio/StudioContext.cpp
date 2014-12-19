@@ -97,7 +97,7 @@ void StudioContext::OnOpenDialogForTextureView()
 
 void StudioContext::OnResize(const BI::Size& size)
 {
-	pop_->MoveTo(size.width() - pop_->size().width(), 400);
+	pop_->MoveTo(size.width() - pop_->size().width(), pop_->position().y());
 }
 
 void StudioContext::OnOpenDialogForButton()

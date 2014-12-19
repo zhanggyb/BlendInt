@@ -59,7 +59,7 @@ namespace BlendInt {
 		}
 	}
 
-	WidgetTheme::WidgetTheme ()
+	ColorScheme::ColorScheme ()
 			: outline(0x191919FF), item(0x191919FF), inner(0x999999FF), inner_sel(
 			        0x646464FF), text(0x000000FF), text_sel(0xFFFFFFFF), shaded(
 			        false), shadetop(0), shadedown(0), alpha_check(0)
@@ -69,7 +69,7 @@ namespace BlendInt {
 	Theme::Theme ()
 	: dpi_(72),
 	  pixel_(1),
-	  m_shadow_fac(0.5),
+	  shadow_fac_(0.5),
 	  shadow_width_(12)
 	{
 	}
@@ -169,7 +169,7 @@ namespace BlendInt {
 		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%g", m_shadow_fac);
+		snprintf(buf, 16, "%g", shadow_fac_);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_fac", value);
 		ui_node->append_attribute(attr);
@@ -196,58 +196,61 @@ namespace BlendInt {
 
 		node->append_node(ui_node);
 
-		xml_node<>* widget_color_node = AllocateWidgetThemeNode(doc, "wcol_regular", regular_);
+		xml_node<>* widget_color_node = AllocateThemeNode(doc, "color_scheme_regular", regular_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tool", tool_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_tool", tool_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_text", text_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_text", text_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_radio_button", radio_button_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_radio_button", radio_button_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_option", option_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_option", option_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_toggle", toggle_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_toggle", toggle_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_field", number_field_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_number_field", number_field_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_slider", number_slider_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_number_slider", number_slider_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu", menu_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_menu", menu_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_pulldown", pulldown_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_pulldown", pulldown_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_back", menu_back_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_menu_back", menu_back_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_item", menu_item_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_menu_item", menu_item_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tab", tab_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_tab", tab_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tooltip", tooltip_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_tooltip", tooltip_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_box", box_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_box", box_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_scroll", scroll_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_scroll", scroll_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_progress", progress_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_progress", progress_);
 		ui_node->append_node(widget_color_node);
 
-		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_list_item", list_item_);
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_list_item", list_item_);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_dialog", dialog_);
 		ui_node->append_node(widget_color_node);
 
 		std::ofstream out(filepath.c_str());
@@ -268,7 +271,7 @@ namespace BlendInt {
 	void Theme::Reset()
 	{
 		// Regular
-		// _theme.wcol_regular	// use the default setting in struct constructor
+		// _theme.color_scheme_regular	// use the default setting in struct constructor
 
 		// Tool
 		tool_.outline = 0x191919FF;
@@ -433,9 +436,20 @@ namespace BlendInt {
 		list_item_.text = 0x000000FF;
 		list_item_.text_sel = 0x000000FF;
 
+		// Dialog
+		dialog_.outline = 0x000000FF;
+		dialog_.item = 0x646464FF;
+		dialog_.inner = 0x191919E6;
+		dialog_.inner_sel = 0x2D2D2DE6;
+		dialog_.text = 0xA0A0A0FF;
+		dialog_.text_sel = 0xFFFFFFFF;
+		dialog_.shaded = true;
+		dialog_.shadetop = 25;
+		dialog_.shadedown = -5;
+
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
-		m_shadow_fac = 0.5f;
+		shadow_fac_ = 0.5f;
 		shadow_width_ = 9;
 
 		dpi_ = 72;
@@ -473,7 +487,7 @@ namespace BlendInt {
 
 				float v = 0.f;
 				if(sscanf(attrib->value(), "%f", &v) == 1) {
-					m_shadow_fac = v;
+					shadow_fac_ = v;
 				}
 
 			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
@@ -508,50 +522,52 @@ namespace BlendInt {
 		for (rapidxml::xml_node<>* sub = node->first_node();
 				sub != 0; sub = sub->next_sibling())
 		{
-			ParseWidgetColorNode(sub);
+			ParseColorSchemeNode(sub);
 		}
 	}
 
-	void Theme::ParseWidgetColorNode (const rapidxml::xml_node<>* node)
+	void Theme::ParseColorSchemeNode (const rapidxml::xml_node<>* node)
 	{
-		WidgetTheme* p = 0;
+		ColorScheme* p = 0;
 
-		if (strcmp("wcol_regular", node->name()) == 0) {
+		if (strcmp("color_scheme_regular", node->name()) == 0) {
 			p = &regular_;
-		} else if (strcmp("wcol_tool", node->name()) == 0) {
+		} else if (strcmp("color_scheme_tool", node->name()) == 0) {
 			p = &tool_;
-		} else if (strcmp("wcol_text", node->name()) == 0) {
+		} else if (strcmp("color_scheme_text", node->name()) == 0) {
 			p = &text_;
-		} else if (strcmp("wcol_radio_button", node->name()) == 0) {
+		} else if (strcmp("color_scheme_radio_button", node->name()) == 0) {
 			p = &radio_button_;
-		} else if (strcmp("wcol_option", node->name()) == 0) {
+		} else if (strcmp("color_scheme_option", node->name()) == 0) {
 			p = &option_;
-		} else if (strcmp("wcol_toggle", node->name()) == 0) {
+		} else if (strcmp("color_scheme_toggle", node->name()) == 0) {
 			p = &toggle_;
-		} else if (strcmp("wcol_number_field", node->name()) == 0) {
+		} else if (strcmp("color_scheme_number_field", node->name()) == 0) {
 			p = &number_field_;
-		} else if (strcmp("wcol_number_slider", node->name()) == 0) {
+		} else if (strcmp("color_scheme_number_slider", node->name()) == 0) {
 			p = &number_slider_;
-		} else if (strcmp("wcol_menu", node->name()) == 0) {
+		} else if (strcmp("color_scheme_menu", node->name()) == 0) {
 			p = &menu_;
-		} else if (strcmp("wcol_pulldown", node->name()) == 0) {
+		} else if (strcmp("color_scheme_pulldown", node->name()) == 0) {
 			p = &pulldown_;
-		} else if (strcmp("wcol_menu_back", node->name()) == 0) {
+		} else if (strcmp("color_scheme_menu_back", node->name()) == 0) {
 			p = &menu_back_;
-		} else if (strcmp("wcol_menu_item", node->name()) == 0) {
+		} else if (strcmp("color_scheme_menu_item", node->name()) == 0) {
 			p = &menu_item_;
-		} else if (strcmp("wcol_tab", node->name()) == 0) {
+		} else if (strcmp("color_scheme_tab", node->name()) == 0) {
 			p = &tab_;
-		} else if (strcmp("wcol_tooltip", node->name()) == 0) {
+		} else if (strcmp("color_scheme_tooltip", node->name()) == 0) {
 			p = &tooltip_;
-		} else if (strcmp("wcol_box", node->name()) == 0) {
+		} else if (strcmp("color_scheme_box", node->name()) == 0) {
 			p = &box_;
-		} else if (strcmp("wcol_scroll", node->name()) == 0) {
+		} else if (strcmp("color_scheme_scroll", node->name()) == 0) {
 			p = &scroll_;
-		} else if (strcmp("wcol_progress", node->name()) == 0) {
+		} else if (strcmp("color_scheme_progress", node->name()) == 0) {
 			p = &progress_;
-		} else if (strcmp("wcol_list_item", node->name()) == 0) {
+		} else if (strcmp("color_scheme_list_item", node->name()) == 0) {
 			p = &list_item_;
+		} else if (strcmp("color_scheme_dialog", node->name()) == 0) {
+			p = &dialog_;
 		}
 
 		if (p == 0)
@@ -636,9 +652,9 @@ namespace BlendInt {
 		}
 	}
 
-	rapidxml::xml_node<>* Theme::AllocateWidgetThemeNode (rapidxml::xml_document<>& doc,
+	rapidxml::xml_node<>* Theme::AllocateThemeNode (rapidxml::xml_document<>& doc,
 					const char* name,
-					const WidgetTheme& wtheme)
+					const ColorScheme& scheme)
 	{
 		using namespace rapidxml;
 		char buf[16];
@@ -648,62 +664,62 @@ namespace BlendInt {
 		xml_node<>* colors_node = doc.allocate_node(node_element, "ThemeWidgetColors");
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.outline.uchar_red(),
-						wtheme.outline.uchar_green(),
-						wtheme.outline.uchar_blue(),
-						wtheme.outline.uchar_alpha());
+						scheme.outline.uchar_red(),
+						scheme.outline.uchar_green(),
+						scheme.outline.uchar_blue(),
+						scheme.outline.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("outline", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.inner.uchar_red(),
-						wtheme.inner.uchar_green(),
-						wtheme.inner.uchar_blue(),
-						wtheme.inner.uchar_alpha());
+						scheme.inner.uchar_red(),
+						scheme.inner.uchar_green(),
+						scheme.inner.uchar_blue(),
+						scheme.inner.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("inner", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.inner_sel.uchar_red(),
-						wtheme.inner_sel.uchar_green(),
-						wtheme.inner_sel.uchar_blue(),
-						wtheme.inner_sel.uchar_alpha());
+						scheme.inner_sel.uchar_red(),
+						scheme.inner_sel.uchar_green(),
+						scheme.inner_sel.uchar_blue(),
+						scheme.inner_sel.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("inner_sel", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.item.uchar_red(),
-						wtheme.item.uchar_green(),
-						wtheme.item.uchar_blue(),
-						wtheme.item.uchar_alpha());
+						scheme.item.uchar_red(),
+						scheme.item.uchar_green(),
+						scheme.item.uchar_blue(),
+						scheme.item.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("item", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.text.uchar_red(),
-						wtheme.text.uchar_green(),
-						wtheme.text.uchar_blue(),
-						wtheme.text.uchar_alpha());
+						scheme.text.uchar_red(),
+						scheme.text.uchar_green(),
+						scheme.text.uchar_blue(),
+						scheme.text.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("text", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.text_sel.uchar_red(),
-						wtheme.text_sel.uchar_green(),
-						wtheme.text_sel.uchar_blue(),
-						wtheme.text_sel.uchar_alpha());
+						scheme.text_sel.uchar_red(),
+						scheme.text_sel.uchar_green(),
+						scheme.text_sel.uchar_blue(),
+						scheme.text_sel.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("text_sel", value));
 
-		snprintf(buf, 16, "%s", wtheme.shaded ? "TRUE" : "FALSE");
+		snprintf(buf, 16, "%s", scheme.shaded ? "TRUE" : "FALSE");
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("show_shaded", value));
 
-		snprintf(buf, 16, "%hd", wtheme.shadetop);
+		snprintf(buf, 16, "%hd", scheme.shadetop);
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("shadetop", value));
 
-		snprintf(buf, 16, "%hd", wtheme.shadedown);
+		snprintf(buf, 16, "%hd", scheme.shadedown);
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("shadedown", value));
 

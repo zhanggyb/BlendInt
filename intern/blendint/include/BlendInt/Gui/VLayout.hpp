@@ -39,12 +39,12 @@ namespace BlendInt {
 
 		virtual ~VLayout ();
 
-		virtual void AddWidget (AbstractWidget* widget);
+		virtual bool AddWidget (AbstractWidget* widget);
 
-		virtual void InsertWidget (int index, AbstractWidget* widget);
+		virtual bool InsertWidget (int index, AbstractWidget* widget);
 
 		// column must be 0
-		virtual void InsertWidget (int row, int column, AbstractWidget* widget);
+		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
 		bool Remove (AbstractWidget* widget);
 

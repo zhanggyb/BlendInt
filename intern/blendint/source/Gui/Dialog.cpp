@@ -42,6 +42,8 @@
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
+#include <BlendInt/Gui/FreeLayout.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -50,6 +52,7 @@ namespace BlendInt {
 	: AbstractFloatingFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
+	  close_button_(0),
 	  layout_(0)
 	{
 		set_size(400, 300);
@@ -61,6 +64,18 @@ namespace BlendInt {
 		model_matrix_ = glm::mat4(1.f);
 
 		InitializeDialogOnce();
+
+		// create close button
+		close_button_ = Manage(new CloseButton);
+		close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
+		PushBackSubView(close_button_);
+		events()->connect(close_button_->clicked(), this, &Dialog::OnCloseButtonClicked);
+
+		// create default layout
+		layout_ = Manage(new FreeLayout);
+		PushBackSubView(layout_);
+		layout_->Resize(size().width(), size().height() - (2 * 5 + close_button_->size().height()));
+		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
@@ -87,17 +102,25 @@ namespace BlendInt {
 
 		if(layout_) {
 			layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
+
+			for(AbstractView* p = layout_->first_subview(); p; p = p->next_view()) {
+				layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
+			}
+
+			if(layout_->managed()) {
+				delete layout_;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "Layout is not set managed, remove this will not delete it");
+				RemoveSubView(layout_);
+			}
 		}
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
-			layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
-		}
-
-		if(PushBackSubView(layout)) {
+		// index 1 is for layout
+		if(InsertSubView(1, layout)) {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 			MoveSubViewTo(layout_, 0, 0);
-			ResizeSubView(layout_, size());
+			ResizeSubView(layout_, size().width(), size().height() - (2 * 5 - close_button_->size().height()));
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -107,24 +130,20 @@ namespace BlendInt {
 
 	void Dialog::AddWidget(AbstractWidget* widget)
 	{
-		if(layout_) {
-			layout_->AddWidget(widget);
-		} else {
-			PushBackSubView(widget);
-		}
+		assert(layout_ != nullptr);
 
-		RequestRedraw();
+		if(layout_->AddWidget(widget)) {
+			RequestRedraw();
+		}
 	}
 
 	void Dialog::InsertWidget(int index, AbstractWidget* widget)
 	{
-		if(layout_) {
-			layout_->InsertWidget(index, widget);
-		} else {
-			InsertSubView(index, widget);
-		}
+		assert(layout_ != nullptr);
 
-		RequestRedraw();
+		if(layout_->InsertWidget(index, widget)) {
+			RequestRedraw();
+		}
 	}
 
 	AbstractView* Dialog::GetFocusedView () const
@@ -158,10 +177,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->menu_back().shaded) {
+			if (Theme::instance->dialog().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->menu_back().shadetop,
-						Theme::instance->menu_back().shadedown,
+						Theme::instance->dialog().shadetop,
+						Theme::instance->dialog().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -183,11 +202,11 @@ namespace BlendInt {
 
 			buffer_.reset();
 
-			shadow_->Resize(size());
+			close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
+			layout_->MoveTo(0, 0);
+			layout_->Resize(size().width(), size().height() - (2 * 5 + close_button_->size().height()));
 
-			if(layout_) {
-				layout_->Resize(size());
-			}
+			shadow_->Resize(size());
 
 			RequestRedraw();
 		}
@@ -218,7 +237,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->dialog().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -227,7 +246,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
 		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
-		//        Theme::instance->menu_back().outline.data());
+		//        Theme::instance->dialog().outline.data());
 		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(vao_[1]);
@@ -457,10 +476,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu_back().shaded) {
+		if (Theme::instance->dialog().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu_back().shadetop,
-					Theme::instance->menu_back().shadedown,
+					Theme::instance->dialog().shadetop,
+					Theme::instance->dialog().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -511,6 +530,13 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		buffer_.reset();
+	}
+
+	void Dialog::OnCloseButtonClicked(AbstractButton* button)
+	{
+		assert(button == close_button_);
+
+		delete this;
 	}
 
 	void Dialog::RenderToBuffer(Profile& profile)

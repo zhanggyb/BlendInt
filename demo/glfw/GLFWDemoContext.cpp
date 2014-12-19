@@ -95,10 +95,6 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
     dlg->MoveTo(200, 150);
 	AddFrame(dlg);
 
-	CloseButton* close = Manage(new CloseButton);
-	dlg->AddWidget(close);
-	close->MoveTo(5, dlg->size().height() - close->size().height() - 5);
-
 	Button* ok = Manage(new Button("OK"));
 	Button* cancel = Manage(new Button("Cancel"));
 	dlg->AddWidget(cancel);

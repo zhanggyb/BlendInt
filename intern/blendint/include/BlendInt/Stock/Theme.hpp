@@ -38,9 +38,9 @@ namespace BlendInt {
 
 	class Theme;
 
-	struct WidgetTheme
+	struct ColorScheme
 	{
-		WidgetTheme ();
+		ColorScheme ();
 
 		Color outline;		// Outline
 		Color item;				// Item
@@ -77,7 +77,7 @@ namespace BlendInt {
 		 */
 		void Reset ();
 
-		const WidgetTheme& box () const
+		const ColorScheme& box () const
 		{
 			return box_;
 		}
@@ -92,94 +92,99 @@ namespace BlendInt {
 			return pixel_;
 		}
 
-		const WidgetTheme& list_item () const
+		const ColorScheme& list_item () const
 		{
 			return list_item_;
 		}
 		
-		const WidgetTheme& menu () const
+		const ColorScheme& menu () const
 		{
 			return menu_;
 		}
 		
-		const WidgetTheme& menu_back () const
+		const ColorScheme& menu_back () const
 		{
 			return menu_back_;
 		}
 		
-		const WidgetTheme& menu_item () const
+		const ColorScheme& menu_item () const
 		{
 			return menu_item_;
 		}
 		
-		const WidgetTheme& number_field () const
+		const ColorScheme& number_field () const
 		{
 			return number_field_;
 		}
 		
-		const WidgetTheme& number_slider () const
+		const ColorScheme& number_slider () const
 		{
 			return number_slider_;
 		}
 		
-		const WidgetTheme& option () const
+		const ColorScheme& option () const
 		{
 			return option_;
 		}
 
-		const WidgetTheme& progress () const
+		const ColorScheme& progress () const
 		{
 			return progress_;
 		}
 		
-		const WidgetTheme& pulldown () const
+		const ColorScheme& pulldown () const
 		{
 			return pulldown_;
 		}
 		
-		const WidgetTheme& radio_button () const
+		const ColorScheme& radio_button () const
 		{
 			return radio_button_;
 		}
 		
-		const WidgetTheme& regular () const
+		const ColorScheme& regular () const
 		{
 			return regular_;
 		}
 		
-		const WidgetTheme& scroll () const
+		const ColorScheme& scroll () const
 		{
 			return scroll_;
 		}
 		
-		const WidgetTheme& tab () const
+		const ColorScheme& tab () const
 		{
 			return tab_;
 		}
 		
-		const WidgetTheme& text () const
+		const ColorScheme& text () const
 		{
 			return text_;
 		}
 		
-		const WidgetTheme& toggle () const
+		const ColorScheme& toggle () const
 		{
 			return toggle_;
 		}
 		
-		const WidgetTheme& tool () const
+		const ColorScheme& tool () const
 		{
 			return tool_;
 		}
 		
-		const WidgetTheme& tooltip () const
+		const ColorScheme& tooltip () const
 		{
 			return tooltip_;
 		}
 		
+		const ColorScheme& dialog () const
+		{
+			return dialog_;
+		}
+
 		float menu_shadow_fac1 () const
 		{
-			return m_shadow_fac;
+			return shadow_fac_;
 		}
 		
 		short menu_shadow_width1 () const
@@ -189,7 +194,7 @@ namespace BlendInt {
 		
 		float shadow_fac () const
 		{
-			return m_shadow_fac;
+			return shadow_fac_;
 		}
 		
 		short shadow_width () const
@@ -220,29 +225,30 @@ namespace BlendInt {
 
 		void ParseUINode (const rapidxml::xml_node<>* node);
 
-		void ParseWidgetColorNode (const rapidxml::xml_node<>* node);
+		void ParseColorSchemeNode (const rapidxml::xml_node<>* node);
 
-		rapidxml::xml_node<>* AllocateWidgetThemeNode (rapidxml::xml_document<>& doc, const char* name, const WidgetTheme& wtheme);
+		rapidxml::xml_node<>* AllocateThemeNode (rapidxml::xml_document<>& doc, const char* name, const ColorScheme& wtheme);
 
 		/* Interface Elements (buttons, menus, icons) */
-		WidgetTheme regular_;
-		WidgetTheme tool_;
-		WidgetTheme text_;
-		WidgetTheme radio_button_;
-		WidgetTheme option_;
-		WidgetTheme toggle_;
-		WidgetTheme number_field_;
-		WidgetTheme number_slider_;
-		WidgetTheme menu_;
-		WidgetTheme pulldown_;
-		WidgetTheme menu_back_;
-		WidgetTheme menu_item_;
-		WidgetTheme tab_;
-		WidgetTheme tooltip_;
-		WidgetTheme box_;
-		WidgetTheme scroll_;
-		WidgetTheme progress_;
-		WidgetTheme list_item_;
+		ColorScheme regular_;
+		ColorScheme tool_;
+		ColorScheme text_;
+		ColorScheme radio_button_;
+		ColorScheme option_;
+		ColorScheme toggle_;
+		ColorScheme number_field_;
+		ColorScheme number_slider_;
+		ColorScheme menu_;
+		ColorScheme pulldown_;
+		ColorScheme menu_back_;
+		ColorScheme menu_item_;
+		ColorScheme tab_;
+		ColorScheme tooltip_;
+		ColorScheme box_;
+		ColorScheme scroll_;
+		ColorScheme progress_;
+		ColorScheme list_item_;
+		ColorScheme dialog_;
 
 		/** Font DPI */
 		unsigned int dpi_;
@@ -252,7 +258,7 @@ namespace BlendInt {
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		// NOT USED
-		float m_shadow_fac;
+		float shadow_fac_;
 
 		short shadow_width_;
 

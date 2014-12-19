@@ -46,23 +46,31 @@ namespace BlendInt {
 	{
 	}
 
-	void VLayout::AddWidget(AbstractWidget* widget)
+	bool VLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+
+			return true;
 		}
+
+		return false;
 	}
 
-	void VLayout::InsertWidget(int index, AbstractWidget* widget)
+	bool VLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+
+			return true;
 		}
+
+		return false;
 	}
 
-	void VLayout::InsertWidget(int row, int column,
+	bool VLayout::InsertWidget(int row, int column,
 			AbstractWidget* widget)
 	{
 		if(column != 0) {
@@ -72,7 +80,11 @@ namespace BlendInt {
 		if(InsertSubView(row, widget)) {
 			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+
+			return true;
 		}
+
+		return false;
 	}
 
 	bool VLayout::Remove (AbstractWidget* widget)

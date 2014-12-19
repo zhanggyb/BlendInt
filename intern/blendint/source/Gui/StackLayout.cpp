@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	}
 
-	void StackLayout::AddWidget (AbstractWidget* widget)
+	bool StackLayout::AddWidget (AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
 			int w = size().width() - margin().hsum();
@@ -51,10 +51,14 @@ namespace BlendInt {
 			} else {
 				widget->SetVisible(false);
 			}
+
+			return true;
 		}
+
+		return false;
 	}
 
-	void StackLayout::InsertWidget (int index, AbstractWidget* widget)
+	bool StackLayout::InsertWidget (int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
 			int w = size().width() - margin().hsum();
@@ -64,10 +68,14 @@ namespace BlendInt {
 			MoveSubViewTo(widget, margin().left(), margin().bottom());
 
 			widget->SetVisible(false);
+
+			return true;
 		}
+
+		return false;
 	}
 
-	void StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
+	bool StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
 	{
 		if(PushFrontSubView(widget)) {
 			int w = size().width() - margin().hsum();
@@ -82,7 +90,11 @@ namespace BlendInt {
 			} else {
 				widget->SetVisible(false);
 			}
+
+			return true;
 		}
+
+		return false;
 	}
 
 	void StackLayout::Remove (AbstractWidget* widget)

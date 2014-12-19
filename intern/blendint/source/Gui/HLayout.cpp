@@ -47,23 +47,29 @@ namespace BlendInt {
 	{
 	}
 
-	void HLayout::AddWidget(AbstractWidget* widget)
+	bool HLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+			return true;
 		}
+
+		return false;
 	}
 
-	void HLayout::InsertWidget(int index, AbstractWidget* widget)
+	bool HLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+			return true;
 		}
+
+		return false;
 	}
 
-	void HLayout::InsertWidget(int row, int column,
+	bool HLayout::InsertWidget(int row, int column,
 			AbstractWidget* widget)
 	{
 		if(row != 0) {
@@ -73,7 +79,11 @@ namespace BlendInt {
 		if(InsertSubView(column, widget)) {
 			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
 			RequestRedraw();
+
+			return true;
 		}
+
+		return false;
 	}
 
 	bool HLayout::Remove (AbstractWidget* widget)

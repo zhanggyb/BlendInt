@@ -21,48 +21,58 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
-#define _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_
-
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/FreeLayout.hpp>
 
 namespace BlendInt {
 
-	class AbstractLayout: public AbstractWidget
+	FreeLayout::FreeLayout()
+	: AbstractLayout()
 	{
-	public:
 
-		AbstractLayout ();
+	}
 
-		virtual ~AbstractLayout ();
+	FreeLayout::~FreeLayout()
+	{
+	}
 
-		virtual bool AddWidget (AbstractWidget* widget) = 0;
-
-		virtual bool InsertWidget (int index, AbstractWidget* widget) = 0;
-
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget) = 0;
-
-		const Margin& margin () const {return margin_;}
-
-		void SetMargin (const Margin& margin);
-
-	protected:
-
-		virtual ResponseType Draw (Profile& profile);
-
-		virtual void PerformMarginUpdate (const Margin& margin);
-
-		inline void set_margin (const Margin& margin)
-		{
-			margin_ = margin;
+	bool FreeLayout::AddWidget(AbstractWidget* widget)
+	{
+		if(PushBackSubView(widget)) {
+			RequestRedraw();
+			return true;
 		}
 
-	private:
+		return false;
+	}
 
-		Margin margin_;
+	bool FreeLayout::InsertWidget(int index, AbstractWidget* widget)
+	{
+		if(InsertSubView(index, widget)) {
+			RequestRedraw();
+			return true;
+		}
 
-	};
+		return false;
+	}
+
+	bool FreeLayout::InsertWidget(int row, int column, AbstractWidget* widget)
+	{
+		if(InsertSubView(column, widget)) {
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FreeLayout::SizeUpdateTest(const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool FreeLayout::PositionUpdateTest(const PositionUpdateRequest& request)
+	{
+		return true;
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTLAYOUT_HPP_ */

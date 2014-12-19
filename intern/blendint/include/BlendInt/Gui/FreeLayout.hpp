@@ -21,60 +21,36 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
-#define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
+#ifndef _BLENDINT_GUI_FREELAYOUT_HPP_
+#define _BLENDINT_GUI_FREELAYOUT_HPP_
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	class StackLayout: public AbstractLayout
+	class FreeLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(StackLayout);
-
 	public:
 
-		StackLayout ();
+		FreeLayout ();
 
-		virtual ~StackLayout ();
+		virtual ~FreeLayout ();
 
-		bool AddWidget (AbstractWidget* widget);
+		virtual bool AddWidget (AbstractWidget* widget);
 
-		bool InsertWidget (int index, AbstractWidget* widget);
+		virtual bool InsertWidget (int index, AbstractWidget* widget);
 
-		bool InsertWidget (int row, int column, AbstractWidget* widget);
-
-		void Remove (AbstractWidget* widget);
-
-		int GetIndex () const;
-
-		void SetIndex (int index);
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-		inline AbstractWidget* active_widget () const
-		{
-			return active_widget_;
-		}
+		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		void HideSubWidget (int index);
-
-	private:
-
-		AbstractWidget* active_widget_;
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_ */
+
+#endif /* _BLENDINT_GUI_FREELAYOUT_HPP_ */

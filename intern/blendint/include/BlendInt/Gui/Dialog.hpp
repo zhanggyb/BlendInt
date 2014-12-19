@@ -30,6 +30,7 @@
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 #include <BlendInt/Gui/FrameShadow.hpp>
+#include <BlendInt/Gui/CloseButton.hpp>
 
 namespace BlendInt {
 
@@ -49,6 +50,11 @@ namespace BlendInt {
 		void InsertWidget (int index, AbstractWidget* widget);
 
 		virtual AbstractView* GetFocusedView () const;
+
+		AbstractLayout* layout () const
+		{
+			return layout_;
+		}
 
 	protected:
 
@@ -96,6 +102,8 @@ namespace BlendInt {
 
 		void OnLayoutDestroyed (AbstractWidget* layout);
 
+		void OnCloseButtonClicked (AbstractButton* button);
+
 		void RenderToBuffer (Profile& profile);
 
 		glm::mat4 projection_matrix_;
@@ -110,6 +118,8 @@ namespace BlendInt {
 		AbstractWidget* focused_widget_;
 
 		AbstractWidget* hovered_widget_;
+
+		CloseButton* close_button_;
 
 		AbstractLayout* layout_;
 
