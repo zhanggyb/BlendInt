@@ -57,11 +57,6 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		bool pressed () const
-		{
-			return pressed_;
-		}
-
 	protected:
 
 		virtual void PerformOrientationUpdate (Orientation orientation);
@@ -125,10 +120,6 @@ namespace BlendInt {
 
 		int m_last_value;
 
-		/**
-		 * @brief If the slide switch is pressed
-		 */
-		bool pressed_;
 	};
 
 }

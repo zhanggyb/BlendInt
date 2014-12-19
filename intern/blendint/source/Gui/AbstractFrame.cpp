@@ -44,8 +44,7 @@ namespace BlendInt {
 		glm::vec3(0.f, 1.f, 0.f));
 
 	AbstractFrame::AbstractFrame()
-	: AbstractView(),
-	  display_mode_(Normal)
+	: AbstractView()
 	{
 		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
@@ -203,7 +202,7 @@ namespace BlendInt {
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		set_event_frame(event, this);
+		assign_event_frame(event, this);
 		Point local_position;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
@@ -247,7 +246,7 @@ namespace BlendInt {
 
 //					hovered_widget->destroyed ().disconnectOne (this,
 //								&SingleFrame::OnHoverWidgetDestroyed);
-					set_widget_mouse_hover_out_event(hovered_widget, event);
+					delegate_mouse_hover_out_event(hovered_widget, event);
 //					hovered_widget->set_hover(false);
 //					hovered_widget->MouseHoverOutEvent(event);
 
@@ -283,7 +282,7 @@ namespace BlendInt {
 
 //				hovered_widget->destroyed().disconnectOne(this,
 //					        &SingleFrame::OnHoverWidgetDestroyed);
-				set_widget_mouse_hover_out_event(hovered_widget, event);
+				delegate_mouse_hover_out_event(hovered_widget, event);
 
 //				hovered_widget->set_hover(false);
 //				hovered_widget->MouseHoverOutEvent(event);
@@ -326,7 +325,7 @@ namespace BlendInt {
 				if (p->visiable() && p->Contain(local_position)) {
 
 					hovered_widget = dynamic_cast<AbstractWidget*>(p);
-					set_widget_mouse_hover_in_event(hovered_widget, event);
+					delegate_mouse_hover_in_event(hovered_widget, event);
 //					hovered_widget->set_hover(true);
 //					hovered_widget->MouseHoverInEvent(event);
 
@@ -423,7 +422,7 @@ namespace BlendInt {
 
 			if (p->visiable () && p->Contain (local_position)) {
 				retval = dynamic_cast<AbstractWidget*>(p);
-				set_widget_mouse_hover_in_event (retval, event);
+				delegate_mouse_hover_in_event (retval, event);
 
 				retval = DispatchHoverEventDeeper(retval, event, local_position);
 				break;

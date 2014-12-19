@@ -81,7 +81,16 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		int count = GetOutlineVertexCount(round_type());
-		for(int i = 0; i < Theme::instance->shadow_width(); i++) {
+
+		int i = 0;
+		if( i < Theme::instance->shadow_width()) {
+			glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
+			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
+		}
+
+		glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 0);
+		i++;
+		for(; i < Theme::instance->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 

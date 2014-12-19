@@ -118,6 +118,7 @@ namespace BlendInt {
 			FRAME_SHADOW_COORD,
 			//FRAME_SHADOW_COLOR,
 			FRAME_SHADOW_POSITION,
+			FRAME_SHADOW_ANTI_ALIAS,
 			FRAME_SHADOW_SIZE,
 
 			LocationLast
@@ -404,6 +405,8 @@ namespace BlendInt {
 			static const char* frame_image_fragment_shader;
 
 			static const char* frame_shadow_vertex_shader;
+
+			static const char* frame_shadow_geometry_shader;
 
 			static const char* frame_shadow_fragment_shader;
 

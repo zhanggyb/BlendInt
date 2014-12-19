@@ -36,6 +36,8 @@ namespace BlendInt {
 
 		virtual ~AbstractFloatingFrame ();
 
+		virtual AbstractView* GetFocusedView () const;
+
 		void SetRoundRadius (float radius);
 
 		inline float round_radius () const

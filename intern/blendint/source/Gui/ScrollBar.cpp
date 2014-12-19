@@ -46,8 +46,7 @@ namespace BlendInt {
 
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
-	  m_last_value(0),
-	  pressed_(false)
+	  m_last_value(0)
 	{
 		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
@@ -294,7 +293,7 @@ namespace BlendInt {
 
 			m_cursor_origin = event.position();
 			m_last_value = value();
-			pressed_ = true;
+			set_pressed(true);
 			fire_slider_pressed();
 
 			return Accept;
@@ -305,7 +304,7 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
 	{
-		if (pressed_) {
+		if (pressed_ext()) {
 
 			int new_value = value();
 
@@ -337,9 +336,9 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
 	{
-		if (pressed_) {
+		if (pressed_ext()) {
 
-			pressed_ = false;
+			set_pressed(false);
 
 			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
 

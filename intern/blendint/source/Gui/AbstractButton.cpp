@@ -187,6 +187,8 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
 	{
+		set_pressed(true);
+
 		if (event.button() == MouseButtonLeft) {
 			m_status.set(ButtonPressed);
 			m_status.set(ButtonDown);
@@ -257,8 +259,12 @@ namespace BlendInt {
 
 			released_.fire(this);
 
+			set_pressed(false);
+
 			return Accept;
 		}
+
+		set_pressed(false);
 
 		return Ignore;
 	}

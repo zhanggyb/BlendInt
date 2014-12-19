@@ -798,6 +798,20 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
+				"out float gAlpha;"
+				""
+				"void main(void) {"
+				"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
+				"	gAlpha = aCoord.z;"
+				"}";
+
+		const char* Shaders::frame_shadow_geometry_shader =
+		        "#version 330\n"
+				""
+				"layout (triangles) in;"
+				"layout (triangle_strip, max_vertices = 24) out;"
+				"in float gAlpha[];"
+				"out float fAlpha;"
 				""
 				"uniform FrameMatrix {"
 				"	mat4 projection;"
@@ -806,20 +820,55 @@ namespace BlendInt {
 				"};"
 				""
 				"uniform vec2 uPosition;"
-				"out float fAlpha;"
+				"uniform bool uAA = false;"// position
 				""
-		        "mat4 TranslateMatrix (const in vec2 t)"
-		        "{"
-		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-		        "				0.0, 1.0, 0.0, 0.0,"
-		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, 0.0, 1.0);"
-		        "}"
+				"const vec2 AA_JITTER[8] = vec2[8]("
+				"	vec2(0.468813, -0.481430),"
+				"	vec2(-0.155755, -0.352820),"
+				"	vec2(0.219306, -0.238501),"
+				"	vec2(-0.393286,-0.110949),"
+				"	vec2(-0.024699, 0.013908),"
+				"	vec2(0.343805, 0.147431),"
+				"	vec2(-0.272855, 0.269918),"
+				"	vec2(0.095909, 0.388710));"
 				""
-				"void main(void) {"
-				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-				"	fAlpha = aCoord.z;"
+				"mat4 TranslateMatrix (const in vec2 t)"
+				"{"
+				"	return mat4(1.0, 0.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0, 0.0,"
+				"				0.0, 0.0, 1.0, 0.0,"
+				"				t.x, t.y, 0.0, 1.0);"
+				"}"
+				""
+				"void main()"
+				"{"
+				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
+				"	vec4 vertex;"
+				""
+				"	if(uAA) {"
+				"		mat4 aa_matrix = mat4(1.0);"
+				"		for(int jit = 0; jit < 8; jit++) {"
+				"			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"			for(int n = 0; n < gl_in.length(); n++)"
+				"			{"
+				"				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
+				"				fAlpha = gAlpha[n] / 8.f;"
+				"				gl_Position = vertex;"
+				"				EmitVertex();"
+				"			}"
+				"			EndPrimitive();"
+				"		}"
+				"		return;"
+				"	} else {"
+				"		for(int n = 0; n < gl_in.length(); n++) {"
+				"			vertex = mvp * gl_in[n].gl_Position;"
+				"			fAlpha = gAlpha[n];"
+				"			gl_Position = vertex;"
+				"			EmitVertex();"
+				"		}"
+				"		EndPrimitive();"
+				"		return;"
+				"	}"
 				"}";
 
 		const char* Shaders::frame_shadow_fragment_shader =
@@ -1556,6 +1605,7 @@ namespace BlendInt {
 			}
 
 			frame_shadow_program_->AttachShader(frame_shadow_vertex_shader, GL_VERTEX_SHADER);
+			frame_shadow_program_->AttachShader(frame_shadow_geometry_shader, GL_GEOMETRY_SHADER);
 			frame_shadow_program_->AttachShader(frame_shadow_fragment_shader, GL_FRAGMENT_SHADER);
 
 			if(!frame_shadow_program_->Link()) {
@@ -1569,6 +1619,7 @@ namespace BlendInt {
 
 			locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
 			locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
+			locations_[FRAME_SHADOW_ANTI_ALIAS] = frame_shadow_program_->GetUniformLocation("uAA");
 			locations_[FRAME_SHADOW_SIZE] = frame_shadow_program_->GetUniformLocation("uSize");
 
 			return true;

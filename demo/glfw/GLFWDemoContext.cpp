@@ -95,12 +95,20 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 	AddFrame(dlg);
 
 	PopupFrame* cs = Manage(new PopupFrame);
-	cs->Resize(220, 320);
+	cs->Resize(240, 320);
 	cs->MoveTo(500, 300);
 	AddFrame(cs);
 
 	TextEntry* text = Manage(new TextEntry);
 	text->MoveTo(20, 20);
 	cs->AddWidget(text);
+
+	ScrollBar* scroll = Manage(new ScrollBar(Horizontal));
+	scroll->MoveTo(20, 100);
+	cs->AddWidget(scroll);
+
+	Button* b = Manage(new Button("Test"));
+	b->MoveTo(20, 150);
+	cs->AddWidget(b);
 
 }

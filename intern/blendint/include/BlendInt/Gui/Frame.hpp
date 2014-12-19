@@ -39,6 +39,8 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
+		virtual AbstractView* GetFocusedView () const;
+
 	protected:
 
 		virtual bool PreDraw (Profile& profile);

@@ -37,6 +37,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -52,19 +53,31 @@ namespace BlendInt {
 	  layout_(0)
 	{
 		set_size(400, 300);
+		set_round_type(RoundAll);
+		set_round_radius(5.f);
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+		std::vector<GLfloat> outer_verts;
 
-		glGenVertexArrays(2, vao_);
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		glGenVertexArrays(3, vao_);
 		glBindVertexArray(vao_[0]);
 
 		buffer_.generate();
-		buffer_.bind();
+		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
@@ -72,6 +85,14 @@ namespace BlendInt {
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
+
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[2]);
 
 		GLfloat vertices[] = {
 				// coord											uv
@@ -81,7 +102,7 @@ namespace BlendInt {
 				(float)size().width(), (float)size().height(),		1.f, 1.f
 		};
 
-		buffer_.bind(1);
+		buffer_.bind(2);
 		buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
@@ -97,15 +118,15 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		shadow_.reset(new FrameShadow(size()));
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
 
 	Dialog::~Dialog()
 	{
-		glDeleteVertexArrays(2, vao_);
+		glDeleteVertexArrays(3, vao_);
 
 		if(focused_widget_) {
-			set_widget_focus_status(focused_widget_, false);
+			delegate_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
@@ -162,6 +183,11 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
+	AbstractView* Dialog::GetFocusedView () const
+	{
+		return focused_widget_;
+	}
+
 	bool Dialog::SizeUpdateTest(const SizeUpdateRequest& request)
 	{
 		return true;
@@ -186,12 +212,24 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+			std::vector<GLfloat> outer_verts;
 
-			buffer_.bind();
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			if (Theme::instance->menu_back().shaded) {
+				GenerateRoundedVertices(Vertical,
+						Theme::instance->menu_back().shadetop,
+						Theme::instance->menu_back().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
+			}
 
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+			buffer_.bind(2);
 			float* ptr = (float*)buffer_.map();
 			*(ptr + 4) = (float)size().width();
 			*(ptr + 9) = (float)size().height();
@@ -219,7 +257,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile);
+		assign_profile_frame(profile, this);
 
 		if(refresh()) {
 			RenderToBuffer(profile);
@@ -236,10 +274,20 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		Shaders::instance->frame_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
+		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
+		//        Theme::instance->menu_back().outline.data());
+		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -250,7 +298,7 @@ namespace BlendInt {
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
         glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
 
-        glBindVertexArray(vao_[1]);
+        glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
 
@@ -293,7 +341,7 @@ namespace BlendInt {
 		}
 
 		if(focused_widget_) {
-			set_event_frame(event, this);
+			assign_event_frame(event, this);
 			response = DispatchKeyEvent(focused_widget_, event);
 		}
 
@@ -314,12 +362,10 @@ namespace BlendInt {
 
 	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
 	{
-		set_event_frame(event, this);
+		assign_event_frame(event, this);
 
 		last_ = position();
 		cursor_ = event.position();
-
-		ResponseType retval = Ignore;
 
 		if(hovered_widget_) {
 
@@ -329,15 +375,16 @@ namespace BlendInt {
 
 			if(widget == 0) {
 				DBG_PRINT_MSG("%s", "widget 0");
+			} else {
+				// TODO: set pressed flag
+				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 			}
 
-			// TODO: set pressed flag
-			SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 		} else {
-			SetFocusedWidget(0);
+			set_pressed(true);
 		}
 
-		return retval;
+		return Accept;
 	}
 
 	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
@@ -345,11 +392,12 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			set_event_frame(event, this);
-			retval = call_mouse_release_event(focused_widget_, event);
+			assign_event_frame(event, this);
+			retval = delegate_mouse_release_event(focused_widget_, event);
 			// TODO: reset pressed flag
 		}
 
+		set_pressed(false);
 		return retval;
 	}
 
@@ -359,24 +407,24 @@ namespace BlendInt {
 
 		if(pressed_ext()) {
 
+			int ox = event.position().x() - cursor_.x();
+			int oy = event.position().y() - cursor_.y();
+
+			set_position(last_.x() + ox, last_.y() + oy);
+
+			if(superview()) {
+				superview()->RequestRedraw();
+			}
+			retval = Accept;
+
+		} else {
+
 			if(focused_widget_) {
 
-				set_event_frame(event, this);
-				retval = call_mouse_move_event(focused_widget_, event);
+				assign_event_frame(event, this);
+				retval = delegate_mouse_move_event(focused_widget_, event);
 
-			} else {
-
-				int ox = event.position().x() - cursor_.x();
-				int oy = event.position().y() - cursor_.y();
-
-				set_position(last_.x() + ox, last_.y() + oy);
-
-				if(superview()) {
-					superview()->RequestRedraw();
-				}
-				retval = Accept;
 			}
-
 		}
 
 		return retval;
@@ -403,9 +451,9 @@ namespace BlendInt {
 
 			}
 
-			set_event_frame(event, this);
+			assign_event_frame(event, this);
 		} else {
-			set_event_frame(event, 0);
+			assign_event_frame(event, 0);
 		}
 
 		return Accept;
@@ -417,13 +465,13 @@ namespace BlendInt {
 			return;
 
 		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, false);
+			delegate_focus_event(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, true);
+			delegate_focus_event(focused_widget_, true);
 			events()->connect(focused_widget_->destroyed(), this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 	}

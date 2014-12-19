@@ -50,15 +50,7 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		AbstractWidget* focused_widget () const
-		{
-			return focused_widget_;
-		}
-
-		AbstractWidget* hovered_widget () const
-		{
-			return hovered_widget_;
-		}
+		virtual AbstractView* GetFocusedView () const;
 
 	protected:
 

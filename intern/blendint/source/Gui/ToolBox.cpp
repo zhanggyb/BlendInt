@@ -80,7 +80,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(3, vao_);
 
 		if(focused_widget_) {
-			set_widget_focus_status(focused_widget_, false);
+			delegate_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
@@ -211,6 +211,11 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	AbstractView* ToolBox::GetFocusedView() const
+	{
+		return focused_widget_;
+	}
+
 	bool ToolBox::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		return true;
@@ -265,7 +270,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile);
+		assign_profile_frame(profile, this);
 
 		if(refresh()) {
 			RenderToBuffer(profile);
@@ -343,12 +348,12 @@ namespace BlendInt {
 
 	ResponseType ToolBox::KeyPressEvent (const KeyEvent& event)
 	{
-		set_event_frame(event, this);
+		assign_event_frame(event, this);
 
 		ResponseType response = Ignore;
 
 		if(focused_widget_) {
-			call_key_press_event(focused_widget_, event);
+			delegate_key_press_event(focused_widget_, event);
 		}
 
 		return response;
@@ -356,9 +361,7 @@ namespace BlendInt {
 
 	ResponseType ToolBox::MousePressEvent (const MouseEvent& event)
 	{
-		ResponseType retval = Ignore;
-
-		set_event_frame(event, this);
+		assign_event_frame(event, this);
 
 		if(hovered_widget_) {
 
@@ -368,15 +371,16 @@ namespace BlendInt {
 
 			if(widget == 0) {
 				DBG_PRINT_MSG("%s", "widget 0");
+			} else {
+				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 			}
 
-			// TODO: set pressed flag
-			SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 		} else {
-			SetFocusedWidget(0);
+			set_pressed(true);
+			// SetFocusedWidget(0);
 		}
 
-		return retval;
+		return Accept;
 	}
 
 	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
@@ -384,11 +388,11 @@ namespace BlendInt {
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			set_event_frame(event, this);
-			retval = call_mouse_release_event(focused_widget_, event);
-			// TODO: reset pressed flag
+			assign_event_frame(event, this);
+			retval = delegate_mouse_release_event(focused_widget_, event);
 		}
 
+		set_pressed(false);
 		return retval;
 	}
 
@@ -396,9 +400,9 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		if(pressed_ext() && focused_widget_) {
-			set_event_frame(event, this);
-			retval = call_mouse_move_event(focused_widget_, event);
+		if(focused_widget_) {
+			assign_event_frame(event, this);
+			retval = delegate_mouse_move_event(focused_widget_, event);
 		}
 
 		return retval;
@@ -425,10 +429,10 @@ namespace BlendInt {
 
 			}
 
-			set_event_frame(event, this);
+			assign_event_frame(event, this);
 			return Accept;
 		} else {
-			set_event_frame(event, 0);
+			assign_event_frame(event, 0);
 			return Ignore;
 		}
 	}
@@ -587,13 +591,13 @@ namespace BlendInt {
 			return;
 
 		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, false);
+			delegate_focus_event(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			set_widget_focus_event(focused_widget_, true);
+			delegate_focus_event(focused_widget_, true);
 			events()->connect(focused_widget_->destroyed(), this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 	}

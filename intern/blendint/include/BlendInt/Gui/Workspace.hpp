@@ -134,6 +134,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual AbstractView* GetFocusedView () const;
+
 	protected:
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
@@ -166,7 +168,11 @@ namespace BlendInt {
 
 		void InitializeWorkspace ();
 
+		void SetFocusedFrame (AbstractFrame* frame);
+
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
+
+		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
 		ToolBox* left_sidebar_;
 
@@ -178,7 +184,9 @@ namespace BlendInt {
 
 		FrameSplitter* splitter_;
 
-		AbstractFrame* hover_;
+		AbstractFrame* hover_frame_;
+
+		AbstractFrame* focused_frame_;
 
 	};
 

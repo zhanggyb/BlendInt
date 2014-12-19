@@ -127,6 +127,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual AbstractView* GetFocusedView () const;
+
 	protected:
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
@@ -213,11 +215,17 @@ namespace BlendInt {
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
+		void SetFocusedFrame (AbstractFrame* frame);
+
 		void OnHoverFrameDestroyed (AbstractFrame* frame);
+
+		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
 		Orientation orientation_;
 
-		AbstractFrame* hover_;
+		AbstractFrame* hover_frame_;
+
+		AbstractFrame* focused_frame_;
 	};
 }
 
