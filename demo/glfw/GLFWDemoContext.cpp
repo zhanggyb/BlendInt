@@ -22,6 +22,7 @@
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Block.hpp>
+#include <BlendInt/Gui/CloseButton.hpp>
 
 using BI::Stock::Shaders;
 
@@ -93,6 +94,18 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
     dlg->Resize(800, 600);
     dlg->MoveTo(200, 150);
 	AddFrame(dlg);
+
+	CloseButton* close = Manage(new CloseButton);
+	dlg->AddWidget(close);
+	close->MoveTo(5, dlg->size().height() - close->size().height() - 5);
+
+	Button* ok = Manage(new Button("OK"));
+	Button* cancel = Manage(new Button("Cancel"));
+	dlg->AddWidget(cancel);
+	dlg->AddWidget(ok);
+
+	ok->MoveTo(dlg->size().width() - ok->size().width() - 10, 10);
+	cancel->MoveTo(ok->position().x() - 5 - cancel->size().width(), 10);
 
 	PopupFrame* cs = Manage(new PopupFrame);
 	cs->Resize(240, 320);

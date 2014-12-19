@@ -1074,6 +1074,11 @@ namespace BlendInt {
 				return num_;
 			}
 
+			const RefPtr<VectorIcon>& cross () const
+			{
+				return cross_;
+			}
+
 			const RefPtr<PixelIcon>& icon_16x16 (int index) const
 			{
 				return icons_16x16_[index];
@@ -1109,7 +1114,7 @@ namespace BlendInt {
 			 */
 			void CreateIcons ();
 
-			void CreateVertexIcons ();
+			void CreateVectorIcons ();
 
 			void CreatePixelIcons16x16 ();
 
@@ -1119,6 +1124,7 @@ namespace BlendInt {
 			RefPtr<VectorIcon> circle_;
 			RefPtr<VectorIcon> check_;
 			RefPtr<VectorIcon> num_;
+			RefPtr<VectorIcon> cross_;
 
 			std::vector<RefPtr<PixelIcon> > icons_16x16_;
 

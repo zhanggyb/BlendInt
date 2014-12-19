@@ -10,9 +10,12 @@ using namespace BI;
 
 StudioContext::StudioContext()
 : BI::Context(),
-  button_(0)
+  button_(0),
+  pop_(0)
 {
 	InitializeStudioContext();
+
+	events()->connect(resized(), this, &StudioContext::OnResize);
 }
 
 StudioContext::~StudioContext ()
@@ -22,8 +25,24 @@ StudioContext::~StudioContext ()
 
 void StudioContext::InitializeStudioContext()
 {
-	VLayout* vlayout = Manage(new VLayout);
+	Panel* panel1 = CreateButtonsForWidgets();
+	panel1->Resize(240, 320);
+	panel1->MoveTo(20, 20);
 
+	pop_ = Manage(new PopupFrame);
+	pop_->Resize(280, 360);
+	pop_->MoveTo(size().width() - pop_->size().width(), 400);
+
+	pop_->AddWidget(panel1);
+
+	AddFrame(pop_);
+}
+
+Panel* StudioContext::CreateButtonsForWidgets()
+{
+	Panel* panel = Manage(new Panel);
+
+	VLayout* vlayout = Manage(new VLayout);
 
 	Block * group1 = Manage(new Block(Horizontal));
 
@@ -56,12 +75,9 @@ void StudioContext::InitializeStudioContext()
 
 	vlayout->AddWidget(group3);
 
-	PopupFrame* pop = Manage(new PopupFrame);
-	pop->MoveTo(1020, 400);
-	pop->Resize(pop->GetPreferredSize());
-	pop->SetLayout(vlayout);
+	panel->SetLayout(vlayout);
 
-	AddFrame(pop);
+	return panel;
 }
 
 void StudioContext::OnSaveTextureToFile()
@@ -77,6 +93,11 @@ void StudioContext::OnOpenDialogForTextureView()
 
 	dialog->AddWidget(textureview);
 	AddFrame(dialog);
+}
+
+void StudioContext::OnResize(const BI::Size& size)
+{
+	pop_->MoveTo(size.width() - pop_->size().width(), 400);
 }
 
 void StudioContext::OnOpenDialogForButton()

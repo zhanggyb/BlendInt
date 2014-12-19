@@ -86,6 +86,8 @@ namespace BlendInt {
 
 	private:
 
+		void InitializeDialogOnce ();
+
 		void SetFocusedWidget (AbstractWidget* widget);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);

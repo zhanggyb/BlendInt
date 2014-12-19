@@ -63,6 +63,10 @@ private:
 
 	void InitializeStudioContext ();
 
+	void OnResize(const BI::Size& size);
+
+	BI::Panel* CreateButtonsForWidgets ();
+
 	void OnSaveTextureToFile ();
 
 	void OnOpenDialogForTextureView ();
@@ -70,6 +74,8 @@ private:
 	void OnOpenDialogForButton ();
 
 	BI::Button* button_;
+
+	BI::PopupFrame* pop_;
 
 };
 

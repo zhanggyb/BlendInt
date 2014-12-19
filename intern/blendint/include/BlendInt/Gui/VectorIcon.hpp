@@ -54,6 +54,10 @@ namespace BlendInt {
 
 		static const unsigned int check_tria_face[4][3];
 
+		static const float cross_tria_vert[12][2];
+
+		static const unsigned int cross_tria_face[10][3];
+
 		VectorIcon (int width, int height);
 
 		virtual ~VectorIcon ();

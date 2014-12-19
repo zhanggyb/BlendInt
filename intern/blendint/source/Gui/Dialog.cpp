@@ -60,63 +60,7 @@ namespace BlendInt {
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
-
-		if (Theme::instance->menu_back().shaded) {
-			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu_back().shadetop,
-					Theme::instance->menu_back().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
-
-		glGenVertexArrays(3, vao_);
-		glBindVertexArray(vao_[0]);
-
-		buffer_.generate();
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[1]);
-
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD),
-				2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[2]);
-
-		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
-
-		buffer_.bind(2);
-		buffer_.set_data(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-		buffer_.reset();
+		InitializeDialogOnce();
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
@@ -506,6 +450,67 @@ namespace BlendInt {
 		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
 		layout->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
 		layout_ = 0;
+	}
+
+	void Dialog::InitializeDialogOnce()
+	{
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Theme::instance->menu_back().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->menu_back().shadetop,
+					Theme::instance->menu_back().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		glGenVertexArrays(3, vao_);
+		glBindVertexArray(vao_[0]);
+
+		buffer_.generate();
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[2]);
+
+		GLfloat vertices[] = {
+				// coord											uv
+				0.f, 0.f,											0.f, 0.f,
+				(float)size().width(), 0.f,							1.f, 0.f,
+				0.f, (float)size().height(),						0.f, 1.f,
+				(float)size().width(), (float)size().height(),		1.f, 1.f
+		};
+
+		buffer_.bind(2);
+		buffer_.set_data(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
+		glEnableVertexAttribArray (
+				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
+				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
+				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		buffer_.reset();
 	}
 
 	void Dialog::RenderToBuffer(Profile& profile)

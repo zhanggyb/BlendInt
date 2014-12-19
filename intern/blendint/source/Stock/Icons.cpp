@@ -81,50 +81,50 @@ namespace BlendInt {
 
 		void Icons::CreateIcons ()
 		{
-			CreateVertexIcons();
+			CreateVectorIcons();
 			CreatePixelIcons16x16();
 			CreatePixelIcons32x32();
 		}
 
-		void Icons::CreateVertexIcons()
+		void Icons::CreateVectorIcons()
 		{
 			float vec[16][2];
 
 			menu_.reset(new VectorIcon(16, 16));
-
-			for (size_t i = 0; i < 6; i++) {
+			for (int i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][0];
 				vec[i][1] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][1];
 			}
-
 			menu_->Load(vec, 6, VectorIcon::menu_tria_face, 2);
 
 			circle_.reset(new VectorIcon(10, 10));
-
-			for (size_t i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {
 				vec[i][0] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][0];
 				vec[i][1] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][1];
 			}
-
 			circle_->Load(vec, 16, VectorIcon::scroll_circle_face, 14);
 
 			check_.reset(new VectorIcon(14, 14));
-
-			for (size_t i = 0; i < 6; i++) {
+			for (int i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 14 * VectorIcon::check_tria_vert[i][0];
 				vec[i][1] = 0.5 * 14 * VectorIcon::check_tria_vert[i][1];
 			}
-
 			check_->Load(vec, 6, VectorIcon::check_tria_face, 4);
 
 			num_.reset(new VectorIcon(10, 10));
-
-			for (size_t i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++) {
 				vec[i][0] = 0.5 * 10 * VectorIcon::num_tria_vert[i][0];
 				vec[i][1] = 0.5 * 10 * VectorIcon::num_tria_vert[i][1];
 			}
-
 			num_->Load(vec, 3, VectorIcon::num_tria_face, 1);
+
+			cross_.reset(new VectorIcon(14, 14));
+			for(int i = 0; i < 12; i++) {
+				vec[i][0] = 0.5 * 14 * VectorIcon::cross_tria_vert[i][0];
+				vec[i][1] = 0.5 * 14 * VectorIcon::cross_tria_vert[i][1];
+			}
+			cross_->Load(vec, 12, VectorIcon::cross_tria_face, 10);
+
 		}
 
 		void Icons::CreatePixelIcons16x16 ()
