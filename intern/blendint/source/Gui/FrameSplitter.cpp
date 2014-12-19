@@ -625,6 +625,10 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::KeyPressEvent(const KeyEvent& event)
 	{
+		if(focused_frame_) {
+			return delegate_key_press_event(focused_frame_, event);
+		}
+
 		return Ignore;
 	}
 

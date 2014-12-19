@@ -111,9 +111,9 @@ namespace BlendInt {
 
 		AbstractLayout* layout_;
 
-		GLuint vao_[2];
+		GLuint vao_[3];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 3> buffer_;
 
         GLTexture2D texture_buffer_;
 

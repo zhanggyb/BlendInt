@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
-		set_round_radius(7.f);
+		set_round_radius(5.f);
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
