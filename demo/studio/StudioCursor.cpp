@@ -42,6 +42,16 @@ void StudioCursor::SetCursor (int cursor_type)
 			break;
 		}
 
+		case SizeFDiagCursor: {
+			glfwSetCursor(window_, top_left_corner_);
+			break;
+		}
+
+		case SizeBDiagCursor: {
+			glfwSetCursor(window_, top_right_corner_);
+			break;
+		}
+
 		default: {
 			glfwSetCursor(window_, arrow_);
 			break;
@@ -116,6 +126,30 @@ void StudioCursor::Initialize ()
 		DBG_PRINT_MSG("%s", "Fail to load cursor");
 	}
 
+	filepath = cursors_path.string() + "/" + "top_left_corner.png";
+	if(img.Read(filepath)) {
+		cursor.width = img.width();
+		cursor.height = img.height();
+		cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+		top_left_corner_ = glfwCreateCursor(&cursor, 11, 11);
+		assert(top_left_corner_ != nullptr);
+	} else {
+		DBG_PRINT_MSG("%s", "Fail to load cursor");
+	}
+
+	filepath = cursors_path.string() + "/" + "top_right_corner.png";
+	if(img.Read(filepath)) {
+		cursor.width = img.width();
+		cursor.height = img.height();
+		cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+		top_right_corner_ = glfwCreateCursor(&cursor, 12, 11);
+		assert(top_right_corner_ != nullptr);
+	} else {
+		DBG_PRINT_MSG("%s", "Fail to load cursor");
+	}
+
 }
 
 void StudioCursor::Release ()
@@ -124,4 +158,6 @@ void StudioCursor::Release ()
 	glfwDestroyCursor(cross_);
 	glfwDestroyCursor(split_v_);
 	glfwDestroyCursor(split_h_);
+	glfwDestroyCursor(top_left_corner_);
+	glfwDestroyCursor(top_right_corner_);
 }

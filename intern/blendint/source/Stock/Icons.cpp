@@ -118,10 +118,10 @@ namespace BlendInt {
 			}
 			num_->Load(vec, 3, VectorIcon::num_tria_face, 1);
 
-			cross_.reset(new VectorIcon(14, 14));
+			cross_.reset(new VectorIcon(12, 12));
 			for(int i = 0; i < 12; i++) {
-				vec[i][0] = 0.5 * 14 * VectorIcon::cross_tria_vert[i][0];
-				vec[i][1] = 0.5 * 14 * VectorIcon::cross_tria_vert[i][1];
+				vec[i][0] = 0.5 * 12 * VectorIcon::cross_tria_vert[i][0];
+				vec[i][1] = 0.5 * 12 * VectorIcon::cross_tria_vert[i][1];
 			}
 			cross_->Load(vec, 12, VectorIcon::cross_tria_face, 10);
 

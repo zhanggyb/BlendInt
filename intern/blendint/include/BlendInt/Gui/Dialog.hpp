@@ -92,6 +92,19 @@ namespace BlendInt {
 
 	private:
 
+		enum CursorPosition {
+			InsideDialog = 0x0,
+			LeftBorder = 0x1 << 0,
+			RightBorder = 0x1 << 1,
+			TopBorder = 0x1 << 2,
+			BottomBorder = 0x1 << 3,
+			TopLeftBorder = LeftBorder | TopBorder,
+			TopRightBorder = RightBorder | TopBorder,
+			BottomLeftBorder = LeftBorder | BottomBorder,
+			BottomRightBorder = RightBorder | BottomBorder,
+			OutsideDialog = 0xF
+		};
+
 		void InitializeDialogOnce ();
 
 		void SetFocusedWidget (AbstractWidget* widget);
@@ -110,8 +123,11 @@ namespace BlendInt {
 
 		glm::mat4 model_matrix_;
 
-		Point last_;
-		Point cursor_;
+		Point last_position_;
+
+		Size last_size_;
+
+		Point cursor_point_;
 
 		RefPtr<FrameShadow> shadow_;
 
@@ -123,11 +139,19 @@ namespace BlendInt {
 
 		AbstractLayout* layout_;
 
+		//
+		// 0: inner
+		// 1: outer
+		// 2: texture buffer
 		GLuint vao_[3];
 
 		GLBuffer<ARRAY_BUFFER, 3> buffer_;
 
         GLTexture2D texture_buffer_;
+
+        int cursor_position_;
+
+        bool in_border_;
 
 	};
 

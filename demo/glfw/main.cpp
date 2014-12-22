@@ -78,6 +78,9 @@ int main(int argc, char* argv[])
 	SetContext(context);
 	context->Resize(1280, 800);
 
+	DBG_PRINT_MSG("sizeof short: %ld", sizeof(unsigned short));
+	DBG_PRINT_MSG("view size: %ld", sizeof(AbstractView));
+
 	RunLoop(win);
 	Terminate();
 

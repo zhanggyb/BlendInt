@@ -273,10 +273,6 @@ namespace BlendInt {
 
 		void RequestRedraw ();
 
-		void RequestRedrawInThread ();
-
-		bool TryRequestRedrawInThread ();
-
 		AbstractView* operator [] (int i) const;
 
 		AbstractView* GetWidgetAt (int i) const;
@@ -306,27 +302,27 @@ namespace BlendInt {
 
 		inline bool focus () const
 		{
-			return flags_ & IFFocused;
+			return flags_ & ViewFocused;
 		}
 
 		inline bool hover () const
 		{
-			return flags_ & IFHover;
+			return flags_ & ViewHover;
 		}
 
 		inline bool visiable () const
 		{
-			return flags_ & IFVisibility;
+			return flags_ & ViewVisibility;
 		}
 
 		inline bool managed () const
 		{
-			return flags_ & IFManaged;
+			return flags_ & ViewManaged;
 		}
 
 		inline bool emboss () const
 		{
-			return flags_ & IFEmboss;
+			return flags_ & ViewEmboss;
 		}
 
 		inline int round_type () const
@@ -336,12 +332,12 @@ namespace BlendInt {
 
 		inline bool refresh () const
 		{
-			return flags_ & IFRefresh;
+			return flags_ & ViewRefresh;
 		}
 
 		inline bool pressed_ext () const
 		{
-			return flags_ & IFPressed;
+			return flags_ & ViewPressed;
 		}
 
 		inline int subs_count () const
@@ -476,54 +472,54 @@ namespace BlendInt {
 		inline void set_focus (bool focus)
 		{
 			if(focus) {
-				SETBIT(flags_, IFFocused);
+				SETBIT(flags_, ViewFocused);
 			} else {
-				CLRBIT(flags_, IFFocused);
+				CLRBIT(flags_, ViewFocused);
 			}
 		}
 
 		inline void set_hover (bool hover)
 		{
 			if(hover) {
-				SETBIT(flags_, IFHover);
+				SETBIT(flags_, ViewHover);
 			} else {
-				CLRBIT(flags_, IFHover);
+				CLRBIT(flags_, ViewHover);
 			}
 		}
 
 		inline void set_visible (bool visiable)
 		{
 			if(visiable) {
-				SETBIT(flags_, IFVisibility);
+				SETBIT(flags_, ViewVisibility);
 			} else {
-				CLRBIT(flags_, IFVisibility);
+				CLRBIT(flags_, ViewVisibility);
 			}
 		}
 
 		inline void set_emboss (bool emboss)
 		{
 			if (emboss) {
-				SETBIT(flags_, IFEmboss);
+				SETBIT(flags_, ViewEmboss);
 			} else {
-				CLRBIT(flags_, IFEmboss);
+				CLRBIT(flags_, ViewEmboss);
 			}
 		}
 
 		inline void set_pressed (bool pressed)
 		{
 			if(pressed) {
-				SETBIT(flags_, IFPressed);
+				SETBIT(flags_, ViewPressed);
 			} else {
-				CLRBIT(flags_, IFPressed);
+				CLRBIT(flags_, ViewPressed);
 			}
 		}
 
 		inline void set_refresh (bool refresh)
 		{
 			if(refresh) {
-				SETBIT(flags_, IFRefresh);
+				SETBIT(flags_, ViewRefresh);
 			} else {
-				CLRBIT(flags_, IFRefresh);
+				CLRBIT(flags_, ViewRefresh);
 			}
 		}
 
@@ -650,32 +646,32 @@ namespace BlendInt {
 
 	private:
 
-		enum InteractiveFormFlagIndex {
+		enum ViewFlagIndex {
 
-			IFRoundTopLeft = (1 << 0),
+			ViewRoundTopLeft = (1 << 0),
 
-			IFRoundTopRight = (1 << 1),
+			ViewRoundTopRight = (1 << 1),
 
-			IFRoundBottomRight = (1 << 2),
+			ViewRoundBottomRight = (1 << 2),
 
-			IFRoundBottomLeft = (1 << 3),
+			ViewRoundBottomLeft = (1 << 3),
 
-			IFManaged = (1 << 4),
+			ViewManaged = (1 << 4),
 
 			// set this flag when the view or frame is pressed
-			IFPressed = (1 << 5),
+			ViewPressed = (1 << 5),
 
-			IFFocused = (1 << 6),
+			ViewFocused = (1 << 6),
 
 			/** If this view is in cursor hover list in Context */
-			IFHover = (1 << 7),
+			ViewHover = (1 << 7),
 
-			IFVisibility = (1 << 8),
+			ViewVisibility = (1 << 8),
 
-			IFEmboss = (1 << 9),
+			ViewEmboss = (1 << 9),
 
 			// only valid when use off-screen render in container
-			IFRefresh = (1 << 10),
+			ViewRefresh = (1 << 10),
 
 		};
 
@@ -708,9 +704,9 @@ namespace BlendInt {
 		void set_manage (bool val)
 		{
 			if(val) {
-				SETBIT(flags_, IFManaged);
+				SETBIT(flags_, ViewManaged);
 			} else {
-				CLRBIT(flags_, IFManaged);
+				CLRBIT(flags_, ViewManaged);
 			}
 		}
 
@@ -740,8 +736,6 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::string name_;
 #endif
-
-		static pthread_mutex_t refresh_mutex;
 
 		static float kBorderWidth;
 

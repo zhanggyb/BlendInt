@@ -21,7 +21,9 @@ public:
 	arrow_(nullptr),
 	cross_(nullptr),
 	split_v_(nullptr),
-	split_h_(nullptr)
+	split_h_(nullptr),
+	top_left_corner_(nullptr),
+	top_right_corner_(nullptr)
 	{
 		Initialize();
 	}
@@ -48,6 +50,11 @@ private:
 	GLFWcursor* split_v_;
 
 	GLFWcursor* split_h_;
+
+	GLFWcursor* top_left_corner_;
+
+	GLFWcursor* top_right_corner_;
+
 };
 
 #endif	// _GLFW_CURSOR_HPP_

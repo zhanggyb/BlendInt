@@ -36,53 +36,53 @@ namespace BlendInt {
 	{
 	public:
 		Rect ()
-		: m_x(0), m_y(0), m_width(0), m_height(0)
+		: x_(0), y_(0), width_(0), height_(0)
 		{}
 		
 		Rect (int x, int y, int width, int height)
 		{
-			m_x = std::min(x, x + width);
-			m_y = std::min(y, y + height);
-			m_width = std::abs(width);
-			m_height = std::abs(height);
+			x_ = std::min(x, x + width);
+			y_ = std::min(y, y + height);
+			width_ = std::abs(width);
+			height_ = std::abs(height);
 		}
 
 		Rect (const Point& p1, const Point& p2)
 		{
-			m_x = std::min(p1.x(), p2.x());
-			m_y = std::min(p1.y(), p2.y());
-			m_width = std::abs(p2.x() - p1.x());
-			m_height = std::abs(p2.y() - p1.y());
+			x_ = std::min(p1.x(), p2.x());
+			y_ = std::min(p1.y(), p2.y());
+			width_ = std::abs(p2.x() - p1.x());
+			height_ = std::abs(p2.y() - p1.y());
 		}
 
 		Rect (const Point& pos, const Size& size)
 		{
-			m_x = std::min(pos.x(), pos.x() + size.width());
-			m_y = std::min(pos.y(), pos.y() + size.height());
-			m_width = std::abs(size.width());
-			m_height = std::abs(size.height());
+			x_ = std::min(pos.x(), pos.x() + size.width());
+			y_ = std::min(pos.y(), pos.y() + size.height());
+			width_ = std::abs(size.width());
+			height_ = std::abs(size.height());
 		}
 
 		Rect (const Rect& orig)
-		: m_x(orig.m_x), m_y(orig.m_y), m_width(orig.m_width), m_height(orig.m_height)
+		: x_(orig.x_), y_(orig.y_), width_(orig.width_), height_(orig.height_)
 		{
 		}
 
 		Rect& operator = (const Rect& orig)
 		{
-			m_x = orig.m_x;
-			m_y = orig.m_y;
-			m_width = orig.m_width;
-			m_height = orig.m_height;
+			x_ = orig.x_;
+			y_ = orig.y_;
+			width_ = orig.width_;
+			height_ = orig.height_;
 
 			return *this;
 		}
 
 		bool contains (const Point& point)
 		{
-			if (point.x() < m_x || point.y() < m_y
-							|| point.x() > (m_x + m_width)
-							|| point.y() > (m_y + m_height))
+			if (point.x() < x_ || point.y() < y_
+							|| point.x() > (x_ + width_)
+							|| point.y() > (y_ + height_))
 				return false;
 
 			return true;
@@ -90,69 +90,69 @@ namespace BlendInt {
 
 		bool contains (int x, int y)
 		{
-			if (x < m_x || y < m_y || x > (m_x + m_width)
-							|| y > (m_y + m_height)) {
+			if (x < x_ || y < y_ || x > (x_ + width_)
+							|| y > (y_ + height_)) {
 				return false;
 			}
 
 			return true;
 		}
 
-		int x (void) const {return m_x;}
+		int x (void) const {return x_;}
 
-		void set_x (int x) {m_x = x;}
+		void set_x (int x) {x_ = x;}
 
-		int y (void) const {return m_y;}
+		int y (void) const {return y_;}
 
-		void set_y (int y) {m_y = y;}
+		void set_y (int y) {y_ = y;}
 
-		int width (void) const {return m_width;}
+		int width (void) const {return width_;}
 
 		void set_width (int width)
 		{
-			m_x = width < 0 ? (m_x + width) : m_x;
-			m_width = std::abs(width);
+			x_ = width < 0 ? (x_ + width) : x_;
+			width_ = std::abs(width);
 		}
 
-		int height (void) const {return m_height;}
+		int height (void) const {return height_;}
 
 		void set_height (int height)
 		{
-			m_y = height < 0 ? (m_y + height) : m_y;
-			m_height = std::abs(height);
+			y_ = height < 0 ? (y_ + height) : y_;
+			height_ = std::abs(height);
 		}
 
 		int left () const
 		{
-			return m_x;
+			return x_;
 		}
 
 		int right () const
 		{
-			return m_x + m_width;
+			return x_ + width_;
 		}
 
 		int top () const
 		{
-			return m_y + m_height;
+			return y_ + height_;
 		}
 
 		int bottom () const
 		{
-			return m_y;
+			return y_;
 		}
 
 		bool is_zero (void) const
 		{
-			return m_width == 0 || m_height == 0;
+			return width_ == 0 || height_ == 0;
 		}
 
 	private:
 
-		int m_x;
-		int m_y;
-		int m_width;
-		int m_height;
+		int x_;
+		int y_;
+		int width_;
+		int height_;
 	};
 
 }

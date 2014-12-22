@@ -49,11 +49,8 @@ namespace BlendInt {
 	: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		int h = font().GetHeight();
-		set_size(h + kDefaultPadding.hsum(),
-		        h + kDefaultPadding.vsum());
-
-		h = std::min(size().width(), size().height());
+		int h = 16 * Theme::instance->pixel();
+		set_size(h, h);
 		set_round_radius(h / 2.f);
 
 		InitializeCloseButtonOnce();
@@ -66,9 +63,8 @@ namespace BlendInt {
 
 	Size CloseButton::GetPreferredSize() const
 	{
-		int h = font().GetHeight();
-		return Size(h + kDefaultPadding.hsum(),
-				h + kDefaultPadding.vsum());
+		int h = 16 * Theme::instance->pixel();
+		return Size(h, h);
 	}
 
 	void CloseButton::PerformSizeUpdate(const SizeUpdateRequest& request)

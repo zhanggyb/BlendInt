@@ -34,10 +34,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Core/Rect.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -53,7 +56,9 @@ namespace BlendInt {
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  close_button_(0),
-	  layout_(0)
+	  layout_(0),
+	  cursor_position_(InsideDialog),
+	  in_border_(false)
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
@@ -327,24 +332,36 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		last_ = position();
-		cursor_ = event.position();
+		if(cursor_position_ == InsideDialog) {
 
-		if(hovered_widget_) {
+			if(hovered_widget_) {
 
-			AbstractView* widget = 0;	// widget may be focused
+				AbstractView* widget = 0;	// widget may be focused
 
-			widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, event);
 
-			if(widget == 0) {
-				DBG_PRINT_MSG("%s", "widget 0");
+				if(widget == 0) {
+					DBG_PRINT_MSG("%s", "widget 0");
+				} else {
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				}
+
 			} else {
-				// TODO: set pressed flag
-				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				set_pressed(true);
+
+				last_position_ = position();
+				cursor_point_ = event.position();
+
 			}
 
-		} else {
+		} else if (cursor_position_ != OutsideDialog) {
+
 			set_pressed(true);
+
+			last_position_ = position();
+			last_size_ = size();
+			cursor_point_ = event.position();
+
 		}
 
 		return Accept;
@@ -352,16 +369,15 @@ namespace BlendInt {
 
 	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
 	{
-		ResponseType retval = Ignore;
+		cursor_position_ = InsideDialog;
+		set_pressed(false);
 
 		if(focused_widget_) {
 			assign_event_frame(event, this);
-			retval = delegate_mouse_release_event(focused_widget_, event);
-			// TODO: reset pressed flag
+			return delegate_mouse_release_event(focused_widget_, event);
 		}
 
-		set_pressed(false);
-		return retval;
+		return Ignore;
 	}
 
 	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
@@ -370,10 +386,67 @@ namespace BlendInt {
 
 		if(pressed_ext()) {
 
-			int ox = event.position().x() - cursor_.x();
-			int oy = event.position().y() - cursor_.y();
+			int ox = event.position().x() - cursor_point_.x();
+			int oy = event.position().y() - cursor_point_.y();
 
-			set_position(last_.x() + ox, last_.y() + oy);
+			switch(cursor_position_) {
+
+				case InsideDialog: {
+					set_position(last_position_.x() + ox, last_position_.y() + oy);
+					break;
+				}
+
+				case LeftBorder: {
+					set_position(last_position_.x() + ox, last_position_.y());
+					Resize(last_size_.width() - ox, last_size_.height());
+					break;
+				}
+
+				case RightBorder: {
+					Resize(last_size_.width() + ox, last_size_.height());
+					break;
+				}
+
+				case TopBorder: {
+					Resize(last_size_.width(), last_size_.height() + oy);
+					break;
+				}
+
+				case BottomBorder: {
+					set_position(last_position_.x(), last_position_.y() + oy);
+					Resize(last_size_.width(), last_size_.height() - oy);
+					break;
+				}
+
+				case TopLeftBorder: {
+					set_position(last_position_.x() + ox, last_position_.y());
+					Resize(last_size_.width() - ox, last_size_.height() + oy);
+					break;
+				}
+
+				case TopRightBorder: {
+					Resize(last_size_.width() + ox, last_size_.height() + oy);
+					break;
+				}
+
+				case BottomLeftBorder: {
+					set_position(last_position_.x() + ox, last_position_.y() + oy);
+					Resize(last_size_.width() - ox, last_size_.height() - oy);
+					break;
+				}
+
+				case BottomRightBorder: {
+					set_position(last_position_.x(), last_position_.y() + oy);
+					Resize(last_size_.width() + ox, last_size_.height() - oy);
+					break;
+				}
+
+				default: {
+					return Accept;
+					break;
+				}
+
+			}
 
 			if(superview()) {
 				superview()->RequestRedraw();
@@ -395,30 +468,108 @@ namespace BlendInt {
 
 	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(pressed_ext()) return Accept;
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+		int border = 4;
 
-			if(new_hovered_widget != hovered_widget_) {
+		Rect valid_rect(position().x() - border, position().y() - border,
+			size().width() + 2 * border, size().height() + 2 * border);
 
-				if(hovered_widget_) {
-					hovered_widget_->destroyed().disconnectOne(this,
-							&Dialog::OnHoverWidgetDestroyed);
+		if(valid_rect.contains(event.position())) {
+
+			if(Contain(event.position())) {
+
+				cursor_position_ = InsideDialog;
+
+				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+
+				if(new_hovered_widget != hovered_widget_) {
+
+					if(hovered_widget_) {
+						hovered_widget_->destroyed().disconnectOne(this,
+								&Dialog::OnHoverWidgetDestroyed);
+					}
+
+					hovered_widget_ = new_hovered_widget;
+					if(hovered_widget_) {
+						events()->connect(hovered_widget_->destroyed(), this,
+								&Dialog::OnHoverWidgetDestroyed);
+					}
+
 				}
 
-				hovered_widget_ = new_hovered_widget;
-				if(hovered_widget_) {
-					events()->connect(hovered_widget_->destroyed(), this,
-							&Dialog::OnHoverWidgetDestroyed);
+				// set cursor shape
+				if(in_border_) {
+					in_border_ = false;
+					Cursor::instance->PopCursor();
+				}
+
+			} else {
+
+				in_border_ = true;
+				cursor_position_ = InsideDialog;
+
+				if(event.position().x() <= position().x()) {
+					cursor_position_ |= LeftBorder;
+				} else if (event.position().x() >= (position().x() + size().width())) {
+					cursor_position_ |= RightBorder;
+				}
+
+				if (event.position().y() >= (position().y() + size().height())) {
+					cursor_position_ |= TopBorder;
+				} else if (event.position().y () <= position().y()) {
+					cursor_position_ |= BottomBorder;
+				}
+
+				// set cursor shape
+				switch(cursor_position_) {
+
+					case LeftBorder:
+					case RightBorder: {
+						Cursor::instance->PushCursor();
+						Cursor::instance->SetCursor(SplitHCursor);
+
+						break;
+					}
+
+					case TopBorder:
+					case BottomBorder: {
+						Cursor::instance->PushCursor();
+						Cursor::instance->SetCursor(SplitVCursor);
+						break;
+					}
+
+					case TopLeftBorder:
+					case BottomRightBorder: {
+						Cursor::instance->PushCursor();
+						Cursor::instance->SetCursor(SizeFDiagCursor);
+						break;
+					}
+
+					case TopRightBorder:
+					case BottomLeftBorder: {
+						Cursor::instance->PushCursor();
+						Cursor::instance->SetCursor(SizeBDiagCursor);
+						break;
+					}
+
+					default:
+						break;
 				}
 
 			}
 
-			assign_event_frame(event, this);
 		} else {
-			assign_event_frame(event, 0);
+			cursor_position_ = OutsideDialog;
+
+			// set cursor shape
+			if(in_border_) {
+				in_border_ = false;
+				Cursor::instance->PopCursor();
+			}
 		}
 
+		// always return Accept to inform Context stopping check frames below this dialog.
 		return Accept;
 	}
 
