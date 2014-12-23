@@ -183,7 +183,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
-		if (emboss()) {
+		if (is_down()) {
 			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
 			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),

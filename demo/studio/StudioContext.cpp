@@ -5,6 +5,7 @@
 #include "StudioContext.hpp"
 
 #include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Decoration.hpp>
 
 using namespace BI;
 
@@ -80,10 +81,13 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	Block * group4 = Manage(new Block(Horizontal));
 
-	Button* btn8 = Manage(new Button("Modal Dialog"));
-	events()->connect(btn8->clicked(), this, &StudioContext::OnOpenModalDialog);
+	Button* btn8 = Manage(new Button("Decoration"));
+	events()->connect(btn8->clicked(), this, &StudioContext::OnOpenDialogForDecoration);
+	Button* btn9 = Manage(new Button("Modal Dialog"));
+	events()->connect(btn9->clicked(), this, &StudioContext::OnOpenModalDialog);
 
 	group4->AddWidget(btn8);
+	group4->AddWidget(btn9);
 
 	vlayout->AddWidget(group4);
 
@@ -109,7 +113,7 @@ void StudioContext::OnOpenDialogForTextureView()
 
 void StudioContext::OnOpenModalDialog()
 {
-	Dialog * dialog = Manage(new Dialog(true));
+	Dialog * dialog = Manage(new Dialog("Hello", true));
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 	AddFrame(dialog);
 }
@@ -126,6 +130,19 @@ void StudioContext::OnOpenFileSelector()
 void StudioContext::OnResize(const BI::Size& size)
 {
 	pop_->MoveTo(size.width() - pop_->size().width(), pop_->position().y());
+}
+
+void StudioContext::OnOpenDialogForDecoration()
+{
+	Dialog * dialog = Manage(new Dialog("Hello World", true));
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Decoration* dec = Manage(new Decoration("Test Decoration"));
+	dec->MoveTo(50, 50);
+	dec->Resize(500, 24);
+	dialog->AddWidget(dec);
+
+	AddFrame(dialog);
 }
 
 void StudioContext::OnOpenDialogForButton()

@@ -51,11 +51,11 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Dialog::Dialog(bool modal)
+	Dialog::Dialog(const String& title, bool modal)
 	: AbstractFloatingFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
-	  close_button_(0),
+	  decoration_(0),
 	  layout_(0),
 	  cursor_position_(InsideRectangle),
 	  dialog_flags_(0)
@@ -74,16 +74,16 @@ namespace BlendInt {
 
 		InitializeDialogOnce();
 
-		// create close button
-		close_button_ = Manage(new CloseButton);
-		close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
-		PushBackSubView(close_button_);
-		events()->connect(close_button_->clicked(), this, &Dialog::OnCloseButtonClicked);
+		decoration_ = Manage(new Decoration(title));
+		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
+		decoration_->MoveTo(0, size().height() - decoration_->size().height());
+		PushBackSubView(decoration_);
+		events()->connect(decoration_->close_button_clicked(), this, &Dialog::OnCloseButtonClicked);
 
 		// create default layout
 		layout_ = Manage(new FreeLayout);
 		PushBackSubView(layout_);
-		layout_->Resize(size().width(), size().height() - (2 * 5 + close_button_->size().height()));
+		layout_->Resize(size().width(), size().height() - decoration_->size().height());
 		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
@@ -129,7 +129,7 @@ namespace BlendInt {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 			MoveSubViewTo(layout_, 0, 0);
-			ResizeSubView(layout_, size().width(), size().height() - (2 * 5 - close_button_->size().height()));
+			ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -216,11 +216,9 @@ namespace BlendInt {
 
 			buffer_.reset();
 
-			close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
-			layout_->MoveTo(0, 0);
-			layout_->Resize(size().width(), size().height() - (2 * 5 + close_button_->size().height()));
-
 			shadow_->Resize(size());
+
+			UpdateLayout();
 
 			RequestRedraw();
 		}
@@ -256,16 +254,6 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->frame_outer_program()->use();
-
-		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
-		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
-		//        Theme::instance->dialog().outline.data());
-		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
-
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         Shaders::instance->frame_image_program()->use();
@@ -280,9 +268,20 @@ namespace BlendInt {
         glBindVertexArray(0);
 
         texture_buffer_.reset();
-		GLSLProgram::reset();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		Shaders::instance->frame_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
+		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
+		//        Theme::instance->dialog().outline.data());
+		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+
+		GLSLProgram::reset();
 
 		return Accept;
 	}
@@ -354,16 +353,16 @@ namespace BlendInt {
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
-					set_pressed(true);
+					set_mouse_button_pressed(true);
 				} else if (widget == layout_) {
 					DBG_PRINT_MSG("%s", "hovered is layout");
-					set_pressed(true);
+					set_mouse_button_pressed(true);
 				} else {
 					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 				}
 
 			} else {
-				set_pressed(true);
+				set_mouse_button_pressed(true);
 			}
 
 			if(!modal()) {
@@ -374,7 +373,7 @@ namespace BlendInt {
 
 		} else if (cursor_position_ != OutsideRectangle) {
 
-			set_pressed(true);
+			set_mouse_button_pressed(true);
 
 			last_position_ = position();
 			last_size_ = size();
@@ -389,7 +388,7 @@ namespace BlendInt {
 	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
 	{
 		cursor_position_ = InsideRectangle;
-		set_pressed(false);
+		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
 			assign_event_frame(event, this);
@@ -403,7 +402,7 @@ namespace BlendInt {
 	{
 		ResponseType retval = Ignore;
 
-		if(pressed_ext()) {
+		if(mouse_button_pressed()) {
 
 			int ox = event.position().x() - cursor_point_.x();
 			int oy = event.position().y() - cursor_point_.y();
@@ -487,7 +486,7 @@ namespace BlendInt {
 
 	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(pressed_ext()) return Accept;
+		if(mouse_button_pressed()) return Accept;
 
 		ResponseType retval = Accept;
 		int border = 4;
@@ -597,6 +596,15 @@ namespace BlendInt {
 		} else {
 			return retval;
 		}
+	}
+
+	void Dialog::UpdateLayout()
+	{
+		decoration_->Resize(size().width(), decoration_->size().height());
+		decoration_->MoveTo(0, size().height() - decoration_->size().height());
+
+		layout_->MoveTo(0, 0);
+		layout_->Resize(size().width(), size().height() - decoration_->size().height());
 	}
 
 	void Dialog::SetFocusedWidget(AbstractWidget* widget)
@@ -711,7 +719,7 @@ namespace BlendInt {
 
 	void Dialog::OnCloseButtonClicked(AbstractButton* button)
 	{
-		assert(button == close_button_);
+		assert(button == decoration_->close_button());
 
 		delete this;
 	}

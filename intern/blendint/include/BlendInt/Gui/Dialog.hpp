@@ -30,7 +30,7 @@
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 #include <BlendInt/Gui/FrameShadow.hpp>
-#include <BlendInt/Gui/CloseButton.hpp>
+#include <BlendInt/Gui/Decoration.hpp>
 
 namespace BlendInt {
 
@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (bool modal = false);
+		Dialog (const String& title = String(""), bool modal = false);
 
 		virtual ~Dialog();
 
@@ -74,8 +74,6 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
 		virtual bool PreDraw (Profile& profile);
 
 		virtual ResponseType Draw (Profile& profile);
@@ -102,6 +100,8 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
+		virtual void UpdateLayout ();
+
 	private:
 
 		enum DialogFlagIndex {
@@ -117,8 +117,15 @@ namespace BlendInt {
 			/**
 			 * @brief If the cursor is on border
 			 */
-			DialogCursorOnBorder = 0x1 << 1
+			DialogCursorOnBorder = 0x1 << 1,
+
+			/**
+			 * @brief If mouse button pressed
+			 */
+			DialogMouseButtonPressed = 0x1 << 2
 		};
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		void InitializeDialogOnce ();
 
@@ -144,6 +151,11 @@ namespace BlendInt {
 			return dialog_flags_ & DialogCursorOnBorder;
 		}
 
+		inline bool mouse_button_pressed () const
+		{
+			return dialog_flags_ & DialogMouseButtonPressed;
+		}
+
 		inline void set_modal (bool modal)
 		{
 			if(modal) {
@@ -159,6 +171,15 @@ namespace BlendInt {
 				SETBIT(dialog_flags_, DialogCursorOnBorder);
 			} else {
 				CLRBIT(dialog_flags_, DialogCursorOnBorder);
+			}
+		}
+
+		inline void set_mouse_button_pressed (bool pressed)
+		{
+			if(pressed) {
+				SETBIT(dialog_flags_, DialogMouseButtonPressed);
+			} else {
+				CLRBIT(dialog_flags_, DialogMouseButtonPressed);
 			}
 		}
 
@@ -178,7 +199,7 @@ namespace BlendInt {
 
 		AbstractWidget* hovered_widget_;
 
-		CloseButton* close_button_;
+		Decoration* decoration_;
 
 		AbstractLayout* layout_;
 

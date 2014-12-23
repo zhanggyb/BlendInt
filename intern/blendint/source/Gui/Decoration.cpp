@@ -45,15 +45,28 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Decoration::Decoration()
+	Decoration::Decoration(const String& title)
 	: Widget(),
-	  space_(4)
+	  space_(4),
+	  close_button_(nullptr)
 	{
-		set_size(200, 20);
-		//set_round_type(RoundNone);
+		// create close button
+		close_button_ = Manage(new CloseButton);
+		title_label_ = Manage(new Label(title));
+
+		int h = std::max(close_button_->size().height(), title_label_->size().height());
+
+		set_size(200, 5 + 5 + h);
+		close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
+		title_label_->MoveTo(close_button_->position().x() + close_button_->size().width(), 5);
+
+		PushBackSubView(close_button_);
+		PushBackSubView(title_label_);
+
+		set_round_type(RoundTopLeft | RoundTopRight);
 		//set_round_radius(5.f);
 
-		InitializeDecoration();
+		InitializeDecorationOnce();
 	}
 
 	Decoration::~Decoration ()
@@ -61,12 +74,29 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, vao_);
 	}
 
-	void Decoration::Prepend (AbstractView* widget)
+	bool Decoration::AddWidget(AbstractWidget* widget)
 	{
+		if(PushBackSubView(widget)) {
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
 	}
 
-	void Decoration::Append (AbstractView* widget)
+	bool Decoration::InsertWidget(int index, AbstractWidget* widget)
 	{
+		if(InsertSubView(index, widget)) {
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	void Decoration::SetTitle(const String& title)
+	{
+
 	}
 
 	bool Decoration::IsExpandX () const
@@ -81,29 +111,16 @@ namespace BlendInt {
 
 	Size Decoration::GetPreferredSize () const
 	{
-		return Size(200, 20);
-	}
+		int h = std::max(close_button_->size().height(), title_label_->size().height());
 
-	void Decoration::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
+		return Size(200, h + 5 + 5);
 	}
 
 	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
+			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
 			GenerateRoundedVertices(&inner_verts, 0);
@@ -112,23 +129,9 @@ namespace BlendInt {
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			inner_.reset();
 
-			int x = position().x();
-			if (first_subview()) {
-				x = first_subview()->position().x();
-			}
+			UpdateLayout();
 
-			int y = position().y();
-			int w = request.size()->width();
-			int h = request.size()->height();
-
-			FillSubWidgets(x, y, w, h, space_);
-
-			set_size(*request.size());
-
-		} else if (request.target()->superview() == this) {
-
-			FillSubWidgets(position(), size(), space_);
-
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -138,23 +141,27 @@ namespace BlendInt {
 
 	void Decoration::PerformRoundTypeUpdate (int round_type)
 	{
+		set_round_type(round_type);
+
 		std::vector<GLfloat> inner_verts;
 		GenerateRoundedVertices(&inner_verts, 0);
 
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		GLArrayBuffer::reset();
+		inner_.reset();
 
 		RequestRedraw();
 	}
 
 	void Decoration::PerformRoundRadiusUpdate (float radius)
 	{
+		set_round_radius(radius);
+
 		std::vector<GLfloat> inner_verts;
 		GenerateRoundedVertices(&inner_verts, 0);
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		GLArrayBuffer::reset();
+		inner_.reset();
 
 		RequestRedraw();
 	}
@@ -164,7 +171,7 @@ namespace BlendInt {
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Color(Color::DarkGray).data());
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -172,10 +179,22 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		GLSLProgram::reset();
-		return Accept;
+		return Ignore;
 	}
 
-	void Decoration::InitializeDecoration()
+	void Decoration::UpdateLayout()
+	{
+		int x = 5;
+		int y = 0;
+		for(AbstractView* p = first_subview(); p != nullptr; p = p->next_view())
+		{
+			y = (size().height() - p->size().height()) / 2;
+			p->MoveTo(x, y);
+			x += (p->size().width() + space_);
+		}
+	}
+
+	void Decoration::InitializeDecorationOnce()
 	{
 		std::vector<GLfloat> inner_verts;
 		GenerateRoundedVertices(&inner_verts, 0);
@@ -193,25 +212,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		inner_.reset();
-	}
-
-	void Decoration::FillSubWidgets (const Point& out_pos, const Size& out_size, int space)
-	{
-	}
-
-	void Decoration::FillSubWidgets (int x, int y, int width, int height,
-	        int space)
-	{
-	}
-
-	void Decoration::RealignSubWidgets (const Size& size, const Margin& margin,
-	        int space)
-	{
-	}
-
-	int Decoration::GetLastPosition () const
-	{
-		return 0;
 	}
 
 }

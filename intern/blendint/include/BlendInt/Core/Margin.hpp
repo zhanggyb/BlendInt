@@ -36,73 +36,73 @@ namespace BlendInt {
 	public:
 
 		Margin ()
-		: m_left(5), m_right(5), m_top(5), m_bottom(5)
+		: left_(5), right_(5), top_(5), bottom_(5)
 		{}
 
 		Margin (int all)
-		: m_left(all), m_right(all), m_top(all), m_bottom(all)
+		: left_(all), right_(all), top_(all), bottom_(all)
 		{}
 
 		Margin (int left, int right, int top, int bottom)
-		: m_left(left), m_right(right), m_top(top), m_bottom(bottom)
+		: left_(left), right_(right), top_(top), bottom_(bottom)
 		{}
 
 		void set_value (int left, int right, int top, int bottom)
 		{
-			m_left = left;
-			m_right = right;
-			m_top = top;
-			m_bottom = bottom;
+			left_ = left;
+			right_ = right;
+			top_ = top;
+			bottom_ = bottom;
 		}
 
-		int left () const {return m_left;}
+		int left () const {return left_;}
 
-		void set_left (int left) {m_left = left;}
+		void set_left (int left) {left_ = left;}
 
-		int right () const {return m_right;}
+		int right () const {return right_;}
 
-		void set_right (int right) {m_right = right;}
+		void set_right (int right) {right_ = right;}
 
-		int top () const {return m_top;}
+		int top () const {return top_;}
 
-		void set_top (int top) {m_top = top;}
+		void set_top (int top) {top_ = top;}
 
-		int bottom () const {return m_bottom;}
+		int bottom () const {return bottom_;}
 
-		void set_bottom (int bottom) {m_bottom = bottom;}
+		void set_bottom (int bottom) {bottom_ = bottom;}
 
 		int hsum () const
 		{
-			return m_left + m_right;
+			return left_ + right_;
 		}
 
 		int vsum () const
 		{
-			return m_top + m_bottom;
+			return top_ + bottom_;
 		}
 
 		bool equal (int left, int right, int top, int bottom)
 		{
-			return (m_left == left &&
-					m_right == right &&
-					m_top == top &&
-					m_bottom == bottom);
+			return (left_ == left &&
+					right_ == right &&
+					top_ == top &&
+					bottom_ == bottom);
 		}
 
 		bool equal (const Margin& margin)
 		{
-			return (m_left == margin.left() &&
-					m_right == margin.right() &&
-					m_top == margin.top() &&
-					m_bottom == margin.bottom());
+			return (left_ == margin.left() &&
+					right_ == margin.right() &&
+					top_ == margin.top() &&
+					bottom_ == margin.bottom());
 		}
 
 	private:
 
-		int m_left;
-		int m_right;
-		int m_top;
-		int m_bottom;
+		int left_;
+		int right_;
+		int top_;
+		int bottom_;
 	};
 }
 

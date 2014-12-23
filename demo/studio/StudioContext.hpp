@@ -71,6 +71,8 @@ private:
 
 	void OnOpenDialogForTextureView ();
 
+	void OnOpenDialogForDecoration ();
+
 	void OnOpenModalDialog ();
 
 	void OnOpenFileSelector ();

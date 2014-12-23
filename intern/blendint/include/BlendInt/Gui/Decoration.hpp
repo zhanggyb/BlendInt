@@ -28,11 +28,13 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/CloseButton.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A special widget used in virtual window only as the decoration
+	 * @brief A special widget used as a title/decoration of a dialog
 	 */
 	class Decoration:  public Widget
 	{
@@ -40,13 +42,15 @@ namespace BlendInt {
 
 	public:
 
-		Decoration ();
+		Decoration (const String& title = String(""));
 
 		virtual ~Decoration ();
 
-		void Prepend (AbstractView* widget);
+		void SetTitle (const String& title);
 
-		void Append (AbstractView* widget);
+		bool AddWidget (AbstractWidget* widget);
+
+		bool InsertWidget (int index, AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -54,9 +58,23 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		CloseButton* close_button () const
+		{
+			return close_button_;
+		}
+
+		Cpp::EventRef<AbstractButton*> close_button_clicked ()
+		{
+			return close_button_->clicked();
+		}
+
 	protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+		virtual ResponseType Draw (Profile& profile);
+
+		virtual void UpdateLayout ();
+
+	private:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -64,20 +82,9 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		void InitializeDecorationOnce ();
 
-	private:
-
-		void InitializeDecoration ();
-
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, int space);
-
-		void FillSubWidgets (int x, int y, int width, int height, int space);
-
-		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
-
-		int GetLastPosition () const;
-
+		// background for debug, remove later
 		GLuint vao_[1];
 
 		/**
@@ -86,6 +93,11 @@ namespace BlendInt {
 		int space_;
 
 		GLBuffer<> inner_;
+
+		CloseButton* close_button_;
+
+		Label* title_label_;
+
 	};
 
 }
