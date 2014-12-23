@@ -332,6 +332,8 @@ namespace BlendInt {
 					assert(next_view_->previous_view_ == this);
 				}
 
+				superview_->RequestRedraw();
+
 			} else {
 				assert(superview_->first_subview_ == this);
 			}
@@ -374,6 +376,8 @@ namespace BlendInt {
 					assert(next_view_->previous_view_ == this);
 				}
 
+				superview_->RequestRedraw();
+
 			} else {
 				assert(superview_->last_subview_ == this);
 			}
@@ -403,6 +407,7 @@ namespace BlendInt {
 			superview_->first_subview_->previous_view_ = this;
 			superview_->first_subview_ = this;
 
+			superview_->RequestRedraw();
 		}
 	}
 
@@ -429,6 +434,7 @@ namespace BlendInt {
 			superview_->last_subview_->next_view_ = this;
 			superview_->last_subview_ = this;
 
+			superview_->RequestRedraw();
 		}
 	}
 

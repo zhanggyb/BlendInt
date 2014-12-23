@@ -71,6 +71,10 @@ private:
 
 	void OnOpenDialogForTextureView ();
 
+	void OnOpenModalDialog ();
+
+	void OnOpenFileSelector ();
+
 	void OnOpenDialogForButton ();
 
 	BI::Button* button_;

@@ -413,24 +413,33 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		last_ = position();
-		cursor_ = event.position();
+		if(cursor_position_ == InsideRectangle) {
 
-		if(hovered_widget_) {
+			last_position_ = position();
+			cursor_point_ = event.position();
 
-			AbstractView* widget = 0;	// widget may be focused
+			if(hovered_widget_) {
 
-			widget = DispatchMousePressEvent(hovered_widget_, event);
+				AbstractView* widget = 0;	// widget may be focused
 
-			if(widget == 0) {
-				DBG_PRINT_MSG("%s", "widget 0");
+				widget = DispatchMousePressEvent(hovered_widget_, event);
+
+				if(widget == 0) {
+					DBG_PRINT_MSG("%s", "widget 0");
+					set_pressed(true);
+				} else if (widget == layout_) {
+					DBG_PRINT_MSG("%s", "hovered is layout");
+					set_pressed(true);
+				} else {
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				}
+
 			} else {
-				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				set_pressed(true);
 			}
 
-		} else {
-			set_pressed(true);
-			// SetFocusedWidget(0);
+		} else if (cursor_position_ == OutsideRectangle) {
+			set_pressed(false);
 		}
 
 		return Accept;
@@ -438,15 +447,15 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::MouseReleaseEvent(const MouseEvent& event)
 	{
-		ResponseType retval = Ignore;
+		cursor_position_ = InsideRectangle;
+		set_pressed(false);
 
 		if(focused_widget_) {
 			assign_event_frame(event, this);
-			retval = delegate_mouse_release_event(focused_widget_, event);
+			return delegate_mouse_release_event(focused_widget_, event);
 		}
 
-		set_pressed(false);
-		return retval;
+		return Ignore;
 	}
 
 	ResponseType PopupFrame::MouseMoveEvent(const MouseEvent& event)
@@ -455,10 +464,10 @@ namespace BlendInt {
 
 		if(pressed_ext()) {
 
-			int ox = event.position().x() - cursor_.x();
-			int oy = event.position().y() - cursor_.y();
+			int ox = event.position().x() - cursor_point_.x();
+			int oy = event.position().y() - cursor_point_.y();
 
-			set_position(last_.x() + ox, last_.y() + oy);
+			set_position(last_position_.x() + ox, last_position_.y() + oy);
 
 			if(superview()) {
 				superview()->RequestRedraw();
@@ -481,7 +490,11 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::DispatchHoverEvent(const MouseEvent& event)
 	{
+		if(pressed_ext()) return Accept;
+
 		if(Contain(event.position())) {
+
+			cursor_position_ = InsideRectangle;
 
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
@@ -500,9 +513,9 @@ namespace BlendInt {
 
 			}
 
-			assign_event_frame(event, this);
 		} else {
-			assign_event_frame(event, 0);
+
+			cursor_position_ = OutsideRectangle;
 		}
 
 		return Accept;

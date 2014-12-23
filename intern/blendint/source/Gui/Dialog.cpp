@@ -51,22 +51,26 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Dialog::Dialog()
+	Dialog::Dialog(bool modal)
 	: AbstractFloatingFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  close_button_(0),
 	  layout_(0),
-	  cursor_position_(InsideDialog),
-	  in_border_(false)
+	  cursor_position_(InsideRectangle),
+	  dialog_flags_(0)
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
 		set_round_radius(5.f);
 		set_refresh(true);
+		set_modal(modal);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		model_matrix_ = glm::mat4(1.f);
+
+		applied_.reset(new Cpp::Event<Dialog*>);
+		canceled_.reset(new Cpp::Event<Dialog*>);
 
 		InitializeDialogOnce();
 
@@ -149,6 +153,11 @@ namespace BlendInt {
 		if(layout_->InsertWidget(index, widget)) {
 			RequestRedraw();
 		}
+	}
+
+	void Dialog::SetModal(bool modal)
+	{
+		set_modal(modal);
 	}
 
 	AbstractView* Dialog::GetFocusedView () const
@@ -332,7 +341,10 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		if(cursor_position_ == InsideDialog) {
+		if(cursor_position_ == InsideRectangle) {
+
+			last_position_ = position();
+			cursor_point_ = event.position();
 
 			if(hovered_widget_) {
 
@@ -342,19 +354,25 @@ namespace BlendInt {
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
+					set_pressed(true);
+				} else if (widget == layout_) {
+					DBG_PRINT_MSG("%s", "hovered is layout");
+					set_pressed(true);
 				} else {
 					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
 				}
 
 			} else {
 				set_pressed(true);
-
-				last_position_ = position();
-				cursor_point_ = event.position();
-
 			}
 
-		} else if (cursor_position_ != OutsideDialog) {
+			if(!modal()) {
+				MoveToLast();
+			}
+
+			return Accept;
+
+		} else if (cursor_position_ != OutsideRectangle) {
 
 			set_pressed(true);
 
@@ -362,14 +380,15 @@ namespace BlendInt {
 			last_size_ = size();
 			cursor_point_ = event.position();
 
+			return Accept;
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
 	{
-		cursor_position_ = InsideDialog;
+		cursor_position_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
@@ -391,51 +410,51 @@ namespace BlendInt {
 
 			switch(cursor_position_) {
 
-				case InsideDialog: {
+				case InsideRectangle: {
 					set_position(last_position_.x() + ox, last_position_.y() + oy);
 					break;
 				}
 
-				case LeftBorder: {
+				case OnLeftBorder: {
 					set_position(last_position_.x() + ox, last_position_.y());
 					Resize(last_size_.width() - ox, last_size_.height());
 					break;
 				}
 
-				case RightBorder: {
+				case OnRightBorder: {
 					Resize(last_size_.width() + ox, last_size_.height());
 					break;
 				}
 
-				case TopBorder: {
+				case OnTopBorder: {
 					Resize(last_size_.width(), last_size_.height() + oy);
 					break;
 				}
 
-				case BottomBorder: {
+				case OnBottomBorder: {
 					set_position(last_position_.x(), last_position_.y() + oy);
 					Resize(last_size_.width(), last_size_.height() - oy);
 					break;
 				}
 
-				case TopLeftBorder: {
+				case OnTopLeftCorner: {
 					set_position(last_position_.x() + ox, last_position_.y());
 					Resize(last_size_.width() - ox, last_size_.height() + oy);
 					break;
 				}
 
-				case TopRightBorder: {
+				case OnTopRightCorner: {
 					Resize(last_size_.width() + ox, last_size_.height() + oy);
 					break;
 				}
 
-				case BottomLeftBorder: {
+				case OnBottomLeftCorner: {
 					set_position(last_position_.x() + ox, last_position_.y() + oy);
 					Resize(last_size_.width() - ox, last_size_.height() - oy);
 					break;
 				}
 
-				case BottomRightBorder: {
+				case OnBottomRightCorner: {
 					set_position(last_position_.x(), last_position_.y() + oy);
 					Resize(last_size_.width() + ox, last_size_.height() - oy);
 					break;
@@ -470,6 +489,7 @@ namespace BlendInt {
 	{
 		if(pressed_ext()) return Accept;
 
+		ResponseType retval = Accept;
 		int border = 4;
 
 		Rect valid_rect(position().x() - border, position().y() - border,
@@ -479,7 +499,7 @@ namespace BlendInt {
 
 			if(Contain(event.position())) {
 
-				cursor_position_ = InsideDialog;
+				cursor_position_ = InsideRectangle;
 
 				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
@@ -499,55 +519,55 @@ namespace BlendInt {
 				}
 
 				// set cursor shape
-				if(in_border_) {
-					in_border_ = false;
+				if(cursor_on_border()) {
+					set_cursor_on_border(false);
 					Cursor::instance->PopCursor();
 				}
 
 			} else {
 
-				in_border_ = true;
-				cursor_position_ = InsideDialog;
+				set_cursor_on_border(true);
+				cursor_position_ = InsideRectangle;
 
 				if(event.position().x() <= position().x()) {
-					cursor_position_ |= LeftBorder;
+					cursor_position_ |= OnLeftBorder;
 				} else if (event.position().x() >= (position().x() + size().width())) {
-					cursor_position_ |= RightBorder;
+					cursor_position_ |= OnRightBorder;
 				}
 
 				if (event.position().y() >= (position().y() + size().height())) {
-					cursor_position_ |= TopBorder;
+					cursor_position_ |= OnTopBorder;
 				} else if (event.position().y () <= position().y()) {
-					cursor_position_ |= BottomBorder;
+					cursor_position_ |= OnBottomBorder;
 				}
 
 				// set cursor shape
 				switch(cursor_position_) {
 
-					case LeftBorder:
-					case RightBorder: {
+					case OnLeftBorder:
+					case OnRightBorder: {
 						Cursor::instance->PushCursor();
 						Cursor::instance->SetCursor(SplitHCursor);
 
 						break;
 					}
 
-					case TopBorder:
-					case BottomBorder: {
+					case OnTopBorder:
+					case OnBottomBorder: {
 						Cursor::instance->PushCursor();
 						Cursor::instance->SetCursor(SplitVCursor);
 						break;
 					}
 
-					case TopLeftBorder:
-					case BottomRightBorder: {
+					case OnTopLeftCorner:
+					case OnBottomRightCorner: {
 						Cursor::instance->PushCursor();
 						Cursor::instance->SetCursor(SizeFDiagCursor);
 						break;
 					}
 
-					case TopRightBorder:
-					case BottomLeftBorder: {
+					case OnTopRightCorner:
+					case OnBottomLeftCorner: {
 						Cursor::instance->PushCursor();
 						Cursor::instance->SetCursor(SizeBDiagCursor);
 						break;
@@ -560,17 +580,23 @@ namespace BlendInt {
 			}
 
 		} else {
-			cursor_position_ = OutsideDialog;
+			cursor_position_ = OutsideRectangle;
 
 			// set cursor shape
-			if(in_border_) {
-				in_border_ = false;
+			if(cursor_on_border()) {
+				set_cursor_on_border(false);
 				Cursor::instance->PopCursor();
 			}
+
+			retval = Ignore;
 		}
 
-		// always return Accept to inform Context stopping check frames below this dialog.
-		return Accept;
+		// a modal dialog always return Accept
+		if(modal()) {
+			return Accept;
+		} else {
+			return retval;
+		}
 	}
 
 	void Dialog::SetFocusedWidget(AbstractWidget* widget)

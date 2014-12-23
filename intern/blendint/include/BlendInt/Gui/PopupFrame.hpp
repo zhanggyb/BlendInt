@@ -101,8 +101,8 @@ namespace BlendInt {
 
 		glm::mat4 model_matrix_;
 
-		Point last_;
-		Point cursor_;
+		Point last_position_;
+		Point cursor_point_;
 
 		/**
 		 * - 0: inner
@@ -120,6 +120,8 @@ namespace BlendInt {
 		AbstractWidget* hovered_widget_;
 
 		AbstractLayout* layout_;
+
+		int cursor_position_;
 
 		RefPtr<FrameShadow> shadow_;
 

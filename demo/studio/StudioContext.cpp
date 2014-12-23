@@ -70,10 +70,22 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	Button* btn6 = Manage(new Button("TextureView"));
 	events()->connect(btn6->clicked(), this, &StudioContext::OnOpenDialogForTextureView);
+	Button* btn7 = Manage(new Button("FileSelector"));
+	events()->connect(btn7->clicked(), this, &StudioContext::OnOpenFileSelector);
 
 	group3->AddWidget(btn6);
+	group3->AddWidget(btn7);
 
 	vlayout->AddWidget(group3);
+
+	Block * group4 = Manage(new Block(Horizontal));
+
+	Button* btn8 = Manage(new Button("Modal Dialog"));
+	events()->connect(btn8->clicked(), this, &StudioContext::OnOpenModalDialog);
+
+	group4->AddWidget(btn8);
+
+	vlayout->AddWidget(group4);
 
 	panel->SetLayout(vlayout);
 
@@ -90,9 +102,25 @@ void StudioContext::OnOpenDialogForTextureView()
 	TextureView* textureview = Manage(new TextureView);
 	textureview->MoveTo(50, 50);
 	dialog->Resize(textureview->size().width() + 100, textureview->size().height() + 100);
-
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 	dialog->AddWidget(textureview);
 	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenModalDialog()
+{
+	Dialog * dialog = Manage(new Dialog(true));
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenFileSelector()
+{
+	FileSelector * fs = Manage(new FileSelector);
+	fs->Resize(800, 600);
+	fs->MoveTo((size().width() - fs->size().width()) / 2, (size().height() - fs->size().height()) / 2);
+
+	AddFrame(fs);
 }
 
 void StudioContext::OnResize(const BI::Size& size)

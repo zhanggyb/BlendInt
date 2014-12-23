@@ -106,6 +106,19 @@ namespace BlendInt {
 		ExpandY = (1 << 5)
 	};
 
+	enum RectangularRange  {
+		InsideRectangle = 0x0,
+		OnLeftBorder = 0x1 << 0,
+		OnRightBorder = 0x1 << 1,
+		OnTopBorder = 0x1 << 2,
+		OnBottomBorder = 0x1 << 3,
+		OnTopLeftCorner = OnLeftBorder | OnTopBorder,
+		OnTopRightCorner = OnRightBorder | OnTopBorder,
+		OnBottomLeftCorner = OnLeftBorder | OnBottomBorder,
+		OnBottomRightCorner = OnRightBorder | OnBottomBorder,
+		OutsideRectangle = 0xF
+	};
+
 	/**
 	 * flags to set which corners will become rounded:
 	 *

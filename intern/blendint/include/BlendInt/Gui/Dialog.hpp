@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	public:
 
-		Dialog ();
+		Dialog (bool modal = false);
 
 		virtual ~Dialog();
 
@@ -49,11 +49,23 @@ namespace BlendInt {
 
 		void InsertWidget (int index, AbstractWidget* widget);
 
+		void SetModal (bool modal);
+
 		virtual AbstractView* GetFocusedView () const;
 
 		AbstractLayout* layout () const
 		{
 			return layout_;
+		}
+
+		Cpp::EventRef<Dialog*> applied ()
+		{
+			return *applied_;
+		}
+
+		Cpp::EventRef<Dialog*> canceled ()
+		{
+			return *canceled_;
 		}
 
 	protected:
@@ -92,17 +104,20 @@ namespace BlendInt {
 
 	private:
 
-		enum CursorPosition {
-			InsideDialog = 0x0,
-			LeftBorder = 0x1 << 0,
-			RightBorder = 0x1 << 1,
-			TopBorder = 0x1 << 2,
-			BottomBorder = 0x1 << 3,
-			TopLeftBorder = LeftBorder | TopBorder,
-			TopRightBorder = RightBorder | TopBorder,
-			BottomLeftBorder = LeftBorder | BottomBorder,
-			BottomRightBorder = RightBorder | BottomBorder,
-			OutsideDialog = 0xF
+		enum DialogFlagIndex {
+
+			/**
+			 * @brief If this dialog is a modal dialog
+			 *
+			 * 0 - modaless dialog
+			 * 1 - modal dialog
+			 */
+			DialogModal = 0x1 << 0,
+
+			/**
+			 * @brief If the cursor is on border
+			 */
+			DialogCursorOnBorder = 0x1 << 1
 		};
 
 		void InitializeDialogOnce ();
@@ -118,6 +133,34 @@ namespace BlendInt {
 		void OnCloseButtonClicked (AbstractButton* button);
 
 		void RenderToBuffer (Profile& profile);
+
+		inline bool modal () const
+		{
+			return dialog_flags_ & DialogModal;
+		}
+
+		inline bool cursor_on_border () const
+		{
+			return dialog_flags_ & DialogCursorOnBorder;
+		}
+
+		inline void set_modal (bool modal)
+		{
+			if(modal) {
+				SETBIT(dialog_flags_, DialogModal);
+			} else {
+				CLRBIT(dialog_flags_, DialogModal);
+			}
+		}
+
+		inline void set_cursor_on_border (bool cursor_on_border)
+		{
+			if(cursor_on_border) {
+				SETBIT(dialog_flags_, DialogCursorOnBorder);
+			} else {
+				CLRBIT(dialog_flags_, DialogCursorOnBorder);
+			}
+		}
 
 		glm::mat4 projection_matrix_;
 
@@ -151,7 +194,11 @@ namespace BlendInt {
 
         int cursor_position_;
 
-        bool in_border_;
+        unsigned int dialog_flags_;
+
+        boost::scoped_ptr<Cpp::Event<Dialog*> > applied_;
+
+        boost::scoped_ptr<Cpp::Event<Dialog*> > canceled_;
 
 	};
 
