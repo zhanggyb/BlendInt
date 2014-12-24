@@ -6,13 +6,15 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
+#include <BlendInt/Gui/MenuButton.hpp>
 
 using namespace BI;
 
 StudioContext::StudioContext()
 : BI::Context(),
   button_(0),
-  pop_(0)
+  pop_(0),
+  menubar_(nullptr)
 {
 	InitializeStudioContext();
 
@@ -26,17 +28,9 @@ StudioContext::~StudioContext ()
 
 void StudioContext::InitializeStudioContext()
 {
-	Panel* panel1 = CreateButtonsForWidgets();
-	panel1->Resize(240, 320);
-	panel1->MoveTo(20, 20);
+	menubar_ = CreateMenuBar();
 
-	pop_ = Manage(new PopupFrame);
-	pop_->Resize(280, 360);
-	pop_->MoveTo(size().width() - pop_->size().width(), 400);
-
-	pop_->AddWidget(panel1);
-
-	AddFrame(pop_);
+	AddFrame(menubar_);
 }
 
 Panel* StudioContext::CreateButtonsForWidgets()
@@ -91,6 +85,15 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	vlayout->AddWidget(group4);
 
+	Block * group5 = Manage(new Block(Horizontal));
+
+	Button* btn10 = Manage(new Button("ScrollView"));
+	events()->connect(btn10->clicked(), this, &StudioContext::OnOpenDialogForScrollView);
+
+	group5->AddWidget(btn10);
+
+	vlayout->AddWidget(group5);
+
 	panel->SetLayout(vlayout);
 
 	return panel;
@@ -129,7 +132,8 @@ void StudioContext::OnOpenFileSelector()
 
 void StudioContext::OnResize(const BI::Size& size)
 {
-	pop_->MoveTo(size.width() - pop_->size().width(), pop_->position().y());
+	menubar_->MoveTo(0, size.height() - menubar_->size().height());
+	menubar_->Resize(size.width(), menubar_->size().height());
 }
 
 void StudioContext::OnOpenDialogForDecoration()
@@ -145,7 +149,54 @@ void StudioContext::OnOpenDialogForDecoration()
 	AddFrame(dialog);
 }
 
+void StudioContext::OnOpenDialogForScrollView()
+{
+	Dialog * dialog = Manage(new Dialog("ScrollView", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	ScrollView* scroll = Manage(new ScrollView);
+	Button* test_btn = Manage(new Button("Test test"));
+	scroll->Setup(test_btn);
+
+	scroll->MoveTo(50, 25);
+	//scroll->Resize(500, 24);
+
+	dialog->AddWidget(scroll);
+
+	AddFrame(dialog);
+}
+
 void StudioContext::OnOpenDialogForButton()
 {
 
+}
+
+void StudioContext::OnStart (AbstractButton* btn)
+{
+	Panel* panel1 = CreateButtonsForWidgets();
+	panel1->Resize(240, 320);
+	panel1->MoveTo(20, 20);
+
+	pop_ = Manage(new PopupFrame);
+	pop_->Resize(280, 360);
+	pop_->MoveTo(size().width() - pop_->size().width(), 400);
+
+	pop_->AddWidget(panel1);
+
+	AddFrame(pop_);
+}
+
+BI::ToolBox* StudioContext::CreateMenuBar()
+{
+	MenuButton* menubtn1 = Manage(new MenuButton("Start"));
+
+	ToolBox* menubar = Manage(new ToolBox(size().width(), 24, Horizontal));
+	menubar->MoveTo(0, size().height() - menubar->size().height());
+
+	menubar->AddWidget(menubtn1);
+
+	events()->connect(menubtn1->clicked(), this, &StudioContext::OnStart);
+
+	return menubar;
 }

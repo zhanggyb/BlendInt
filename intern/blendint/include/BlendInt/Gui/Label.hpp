@@ -46,7 +46,7 @@ namespace BlendInt {
 
 	public:
 
-		Label (const String& label);
+		Label (const String& label, Alignment alignment = AlignLeft);
 
 		virtual ~Label ();
 
@@ -102,6 +102,8 @@ namespace BlendInt {
         * @brief the text string length to be printed
         */
         size_t text_length_;
+
+        Alignment alignment_;
     };
 
 } /* namespace BlendInt */

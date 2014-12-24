@@ -55,7 +55,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollArea::SetViewport (AbstractView* widget)
+	void ScrollArea::SetViewport (AbstractWidget* widget)
 	{
 		if (!widget)
 			return;

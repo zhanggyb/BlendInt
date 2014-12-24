@@ -74,6 +74,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, vao_);
 	}
 
+	/*
 	bool Decoration::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
@@ -93,6 +94,7 @@ namespace BlendInt {
 
 		return false;
 	}
+	*/
 
 	void Decoration::SetTitle(const String& title)
 	{
@@ -184,6 +186,7 @@ namespace BlendInt {
 
 	void Decoration::UpdateLayout()
 	{
+		/*
 		int x = 5;
 		int y = 0;
 		for(AbstractView* p = first_subview(); p != nullptr; p = p->next_view())
@@ -192,6 +195,17 @@ namespace BlendInt {
 			p->MoveTo(x, y);
 			x += (p->size().width() + space_);
 		}
+		*/
+
+		int x = 5;
+		int y = (size().height() - close_button_->size().height()) / 2;
+		close_button_->MoveTo(x, y);
+		x += (close_button_->size().width() + space_);
+
+		y = (size().height() - title_label_->size().height()) / 2;
+		title_label_->MoveTo(x, y);
+		title_label_->Resize(size().width() - 5 - close_button_->size().width() - space_, title_label_->size().height());
+
 	}
 
 	void Decoration::InitializeDecorationOnce()

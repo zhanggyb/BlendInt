@@ -41,10 +41,11 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Label::Label (const String& text)
+	Label::Label (const String& text, Alignment alignment)
     : Widget(),
 	  text_(text),
-	  text_length_(0)
+	  text_length_(0),
+	  alignment_(alignment)
 	{
 		InitializeLabel(text);
 	}

@@ -48,9 +48,9 @@ namespace BlendInt {
 
 		void SetTitle (const String& title);
 
-		bool AddWidget (AbstractWidget* widget);
+		//bool AddWidget (AbstractWidget* widget);
 
-		bool InsertWidget (int index, AbstractWidget* widget);
+		//bool InsertWidget (int index, AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 

@@ -24,7 +24,9 @@
 #ifndef _BLENDINT_GUI_SCROLLVIEW_HPP_
 #define _BLENDINT_GUI_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
+#include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
 
@@ -32,7 +34,7 @@ namespace BlendInt {
 	 * @brief A widget container in which a sub widget can be scrolled
 	 *
 	 */
-	class ScrollView: public Widget
+	class ScrollView: public AbstractScrollable
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 
@@ -42,7 +44,7 @@ namespace BlendInt {
 
 		virtual ~ScrollView ();
 
-		void Setup (AbstractView* widget);
+		void Setup (AbstractWidget* widget);
 
 		/**
 		 * @brief set the scrollable orientation
@@ -83,7 +85,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual bool PreDraw (Profile& profile);
+
 		virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (Profile& profile);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -93,26 +99,26 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao;
+		GLuint vao_;
 
 		int m_orientation;
 
 		/**
 		 * @brief if move the viewport
 		 */
-		bool m_move_status;
+		bool moving_;
 
 		/**
 		 * @brief the origin viewport position where start to move the viewport
 		 */
-		Point m_origin_pos;
+		Point last_offset_;
 
 		/**
 		 * @brief the cursor position where start to move the viewport
 		 */
-		Point m_move_start_pos;
+		Point cursor_point_;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> inner_;
 	};
 
 }

@@ -46,6 +46,7 @@
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
@@ -79,9 +80,17 @@ private:
 
 	void OnOpenDialogForButton ();
 
+	void OnOpenDialogForScrollView ();
+
+	void OnStart (BI::AbstractButton* btn);
+
+	BI::ToolBox* CreateMenuBar ();
+
 	BI::Button* button_;
 
 	BI::PopupFrame* pop_;
+
+	BI::ToolBox* menubar_;
 
 };
 

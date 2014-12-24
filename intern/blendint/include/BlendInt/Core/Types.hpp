@@ -75,24 +75,20 @@
 
 namespace BlendInt {
 
-	enum HorizontalAlignment
-	{
-		AlignTop = 0x0001,
-		AlignBottom = 0x0002,
-		AlignHorizontalCenter = 0x0004
-	};
-
-	enum VerticalAlignment
-	{
-		AlignLeft = 0x0010,
-		AlignRight = 0x0020,
-		AlignVerticalCenter = 0x0040
-	};
-
 	enum Alignment
 	{
-		AlignNone = 0x0000, AlignCenter = AlignHorizontalCenter
-		        | AlignVerticalCenter
+		AlignNone = 0x0,
+		AlignTop = 0x1,
+		AlignBottom = 0x2,
+		AlignHorizontalCenter = 0x4,
+		AlignLeft = 0x10,
+		AlignRight = 0x20,
+		AlignVerticalCenter = 0x40,
+		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter,
+		AlignTopLeft = AlignTop | AlignLeft,
+		AlignTopRight = AlignTop | AlignRight,
+		AlignBottomLeft = AlignBottom | AlignLeft,
+		AlignBottomRight = AlignBottom | AlignRight
 	};
 
 	enum SizePolicy
@@ -152,11 +148,12 @@ namespace BlendInt {
 
 	enum Orientation
 	{
-		Horizontal = 0x1, Vertical = 0x2
+		Horizontal = (0x1 << 0),
+		Vertical = (0x1 << 1)
 	};
 
 	/**
-	 *
+	 * TODO: use bool
 	 */
 	enum ResponseType {
 		Ignore = 0,

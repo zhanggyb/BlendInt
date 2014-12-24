@@ -35,7 +35,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -44,61 +43,39 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	ScrollView::ScrollView()
-	: Widget(),
-	  m_vao(0),
+	: AbstractScrollable(),
+	  vao_(0),
 	  m_orientation(Horizontal | Vertical),
-	  m_move_status(false)
+	  moving_(false)
 	{
 		set_size(400, 300);
 
-		glGenVertexArrays(1, &m_vao);
+		std::vector<GLfloat> inner_verts;
+		GenerateRoundedVertices(&inner_verts, 0);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
 
-		glBindVertexArray(m_vao);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_.generate();
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_.reset();
 	}
 
 	ScrollView::~ScrollView ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ScrollView::Setup (AbstractView* widget)
+	void ScrollView::Setup (AbstractWidget* widget)
 	{
-		if(widget == 0) return;
-
-		if(widget->superview() == this)
-			return;
-
-		if(first_subview()) {
-			ClearSubViews();
-		}
-
-		if (PushBackSubView(widget)) {
-			int x = position().x();
-			int y = position().y() + size().height();
-
-			// move widget to align the top-left of the viewport
-			MoveSubViewTo(widget, x, y - widget->size().height());
-
-			/*
-			ResizeSubWidget(widget,
-							size().width() - horizontal_margins(),
-							size().height() - vertical_margins());
-			*/
-
-
+		if(PushBackSubView(widget)) {
+			RequestRedraw();
 		}
 	}
 
@@ -234,10 +211,13 @@ namespace BlendInt {
 	void ScrollView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateRoundedVertices(&inner_verts, 0);
+
+			inner_.bind();
+			inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_.reset();
 
 			// align the subwidget
 			if (first_subview()) {
@@ -254,142 +234,115 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType ScrollView::Draw (Profile& profile)
+	bool ScrollView::PreDraw(Profile& profile)
 	{
-		using Stock::Shaders;
+		if(!visiable()) return false;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
-		program->use();
+		glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+				glm::vec3(position().x(), position().y(), 0.f));
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), (float) position().x(), (float) position().y());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		Shaders::instance->PushWidgetModelMatrix();
+		Shaders::instance->SetWidgetModelMatrix(matrix);
 
-		if(first_subview()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		Shaders::instance->widget_inner_program()->use();
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+
+		if(subs_count()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
-			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
 		}
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+		profile.BeginPushStencil();	// inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		profile.EndPushStencil();
+
 		glBindVertexArray(0);
 
-		program->reset();
+		GLSLProgram::reset();
 
-		return Ignore;
+		return true;
+	}
+
+	ResponseType ScrollView::Draw (Profile& profile)
+	{
+		if(subs_count()) {
+			glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+					glm::vec3(offset().x(), offset().y(), 0.f));
+
+			Shaders::instance->PushWidgetModelMatrix();
+			Shaders::instance->SetWidgetModelMatrix(matrix);
+
+			return Ignore;
+
+		} else {
+			return Accept;
+		}
+	}
+
+	void ScrollView::PostDraw(Profile& profile)
+	{
+		Shaders::instance->PopWidgetModelMatrix();
+
+		// draw mask
+		Shaders::instance->widget_inner_program()->use();
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+
+		if(subs_count()) {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+		} else {
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+		}
+
+		glBindVertexArray(vao_);
+		profile.BeginPopStencil();	// pop inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		profile.EndPopStencil();
+		glBindVertexArray(0);
+		GLSLProgram::reset();
+
+		Shaders::instance->PopWidgetModelMatrix();
 	}
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!first_subview()) {
-			return Ignore;
-		}
-
-		AbstractView* p = first_subview();
-
 		if (event.button() == MouseButtonMiddle) {
-			m_move_status = true;
-			m_move_start_pos.set_x(event.position().x());
-			m_move_start_pos.set_y(event.position().y());
-			m_origin_pos = p->position();
-		} else {
-			//dispatch_mouse_press_event(m_viewport, event);
+			moving_ = true;
+			cursor_point_ = event.position();
+			last_offset_ = offset();
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
 	{
-		if(m_move_status) {
-			m_move_status = false;
+		if(moving_) {
+			moving_ = false;
 			RequestRedraw();
 		}
 
-		if(!first_subview()) {
-			return Ignore;
-		}
-
-		//AbstractView* p = sub_widgets()->front();
-
-		//if(!m_viewport) return;
-		//dispatch_mouse_release_event(m_viewport, event);
-
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(first_subview()) {
+		if(moving_) {
 
-			if(m_move_status) {
+			int ox = event.position().x() - cursor_point_.x();
+			int oy = event.position().y() - cursor_point_.y();
 
-				AbstractView* p = first_subview();
+			set_offset(last_offset_.x() + ox, last_offset_.y() + oy);
 
-				MoveSubViewTo(p,
-				        m_origin_pos.x() + event.position().x()
-				                - m_move_start_pos.x(),
-				        m_origin_pos.y() + event.position().y()
-				                - m_move_start_pos.y());
-				/*
-				int w = size().width() - margin().left() - margin().right();
-				int h = size().height() - margin().top() - margin().bottom();
-
-				if (m_orientation & Horizontal) {
-
-					if (w < static_cast<int>(p->size().width())) {
-						int x_min = position().x() - (p->size().width() - w);
-						int x_max = position().x();
-						if (x_min > x_max)
-							x_min = x_max;
-
-						SetPosition(p, m_origin_pos.x() + event.position().x() - m_move_start_pos.x(),
-								p->position().y());
-
-						if (p->position().x() < x_min) {
-							SetPosition(p, x_min, p->position().y());
-						}
-
-						if (p->position().x() > x_max) {
-							SetPosition(p, x_max, p->position().y());
-						}
-
-					}
-				}
-
-				if (m_orientation & Vertical) {
-
-					if (h < static_cast<int>(p->size().height())) {
-						int y_min = position().y() - (p->size().height() - h);
-						int y_max = position().y();
-
-						if (y_min > y_max)
-							y_min = y_max;
-
-						SetPosition(p, p->position().x(), m_origin_pos.y() + event.position().y() - m_move_start_pos.y());
-
-						if (p->position().y() < y_min) {
-
-							SetPosition(p, p->position().x(),
-							        y_min);
-						}
-
-						if (p->position().y() > y_max) {
-							SetPosition(p, p->position().x(),
-							        y_max);
-						}
-					}
-				}
-				*/
-
+			if((ox != 0) || (oy != 0)) {
 				RequestRedraw();
-				return Ignore;
 			}
 
-
-		} else {
-			return Ignore;
+			return Accept;
 		}
 
 		return Ignore;
