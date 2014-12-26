@@ -91,7 +91,7 @@ namespace BlendInt {
 	{
 		if(radius == 0) radius = 1;
 
-		if(radius == size().width() / 2) return;
+		if(radius == (unsigned int)size().width() / 2) return;
 
 		set_radius(radius);
 		set_size(radius * 2, radius * 2);

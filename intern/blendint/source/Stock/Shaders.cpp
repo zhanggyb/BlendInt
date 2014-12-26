@@ -636,26 +636,25 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
-				"uniform FrameMatrices {"
+				"layout (std140) uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
-				"	mat4 model;"
+				"	mat3 model;"
 				"};"
 				""
 				"uniform vec2 uPosition;"
 				"out float VertexShade;"
 				""
-		        "mat4 TranslateMatrix (const in vec2 t)"
-		        "{"
-		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-		        "				0.0, 1.0, 0.0, 0.0,"
-		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, 0.0, 1.0);"
-		        "}"
+				"mat3 translate (const in vec2 t)"
+				"{"
+				"	return mat3(1.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0,"
+				"				t.x, t.y, 1.0);"
+				"}"
 		        ""
 				"void main(void) {"
-				"	vec4 point = model * TranslateMatrix(uPosition) * vec4(aCoord.xy, 0.f, 1.f);"
-				"	gl_Position = projection * view * point;"
+				"	vec3 point = model * translate(uPosition) * vec3(aCoord.xy, 1.f);"
+				"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
 				"	VertexShade = aCoord.z;"
 				"}";
 
@@ -668,7 +667,7 @@ namespace BlendInt {
 				"out vec4 FragmentColor;"
 				""
 				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
 				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
 				"}";
 
@@ -689,10 +688,10 @@ namespace BlendInt {
 				"layout (triangles) in;"
 				"layout (triangle_strip, max_vertices = 24) out;"
 				""
-				"uniform FrameMatrices {"
+				"layout (std140) uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
-				"	mat4 model;"
+				"	mat3 model;"
 				"};"
 				""
 				"uniform vec2 uPosition;"// position
@@ -707,26 +706,25 @@ namespace BlendInt {
 				"	vec2(-0.272855, 0.269918),"
 				"	vec2(0.095909, 0.388710));"
 				""
-				"mat4 TranslateMatrix (const in vec2 t)"
+				"mat3 translate (const in vec2 t)"
 				"{"
-				"	return mat4(1.0, 0.0, 0.0, 0.0,"
-				"				0.0, 1.0, 0.0, 0.0,"
-				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, 0.0, 1.0);"
+				"	return mat3(1.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0,"
+				"				t.x, t.y, 1.0);"
 				"}"
 				""
 				"void main()"
 				"{"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
-				"	vec4 vertex;"
+				"	mat3 model_matrix_2d = model * translate(uPosition);"
+				"	mat3 aa_matrix = mat3(1.0);"
+				"	vec3 point;"
 				""
-				"	mat4 aa_matrix = mat4(1.0);"
 				"	for(int jit = 0; jit < 8; jit++) {"
-				"		aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"		aa_matrix[2] = vec3(AA_JITTER[jit], 1.f);"
 				"		for(int n = 0; n < gl_in.length(); n++)"
 				"		{"
-				"			vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				"			gl_Position = vertex;"
+				"			point = model_matrix_2d * aa_matrix * vec3(gl_in[n].gl_Position.xy, 1.f);"
+				"			gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
 				"			EmitVertex();"
 				"		}"
 				"		EndPrimitive();"
@@ -756,25 +754,24 @@ namespace BlendInt {
 				"layout(location = 1) in vec2 aUV;"
 				"out vec2 fTexcoord;"
 				""
-				"uniform FrameMatrices {"
+				"layout (std140) uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
-				"	mat4 model;"
+				"	mat3 model;"
 				"};"
 				""
 				"uniform vec2 uPosition;"// position
 				""
-		        "mat4 TranslateMatrix (const in vec2 t)"
-		        "{"
-		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-		        "				0.0, 1.0, 0.0, 0.0,"
-		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, 0.0, 1.0);"
-		        "}"
+				"mat3 translate (const in vec2 t)"
+				"{"
+				"	return mat3(1.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0,"
+				"				t.x, t.y, 1.0);"
+				"}"
 		        ""
 				"void main(void) {"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
-				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
+				"	vec3 point = model * translate(uPosition) * vec3(aCoord.xy, 1.f);"
+				"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
 				"	fTexcoord = aUV;"
 				"}";
 
@@ -813,10 +810,10 @@ namespace BlendInt {
 				"in float gAlpha[];"
 				"out float fAlpha;"
 				""
-				"uniform FrameMatrices {"
+				"layout (std140) uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
-				"	mat4 model;"
+				"	mat3 model;"
 				"};"
 				""
 				"uniform vec2 uPosition;"
@@ -832,28 +829,27 @@ namespace BlendInt {
 				"	vec2(-0.272855, 0.269918),"
 				"	vec2(0.095909, 0.388710));"
 				""
-				"mat4 TranslateMatrix (const in vec2 t)"
+				"mat3 translate (const in vec2 t)"
 				"{"
-				"	return mat4(1.0, 0.0, 0.0, 0.0,"
-				"				0.0, 1.0, 0.0, 0.0,"
-				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, 0.0, 1.0);"
+				"	return mat3(1.0, 0.0, 0.0,"
+				"				0.0, 1.0, 0.0,"
+				"				t.x, t.y, 1.0);"
 				"}"
 				""
 				"void main()"
 				"{"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
-				"	vec4 vertex;"
+				"	mat3 model_matrix_2d = model * translate(uPosition);"
+				"	vec3 point;"
 				""
 				"	if(uAA) {"
-				"		mat4 aa_matrix = mat4(1.0);"
+				"		mat3 aa_matrix = mat3(1.0);"
 				"		for(int jit = 0; jit < 8; jit++) {"
-				"			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+				"			aa_matrix[2] = vec3(AA_JITTER[jit], 1.f);"
 				"			for(int n = 0; n < gl_in.length(); n++)"
 				"			{"
-				"				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
+				"				point = model_matrix_2d * aa_matrix * vec3(gl_in[n].gl_Position.xy, 1.f);"
 				"				fAlpha = gAlpha[n] / 8.f;"
-				"				gl_Position = vertex;"
+				"				gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
 				"				EmitVertex();"
 				"			}"
 				"			EndPrimitive();"
@@ -861,9 +857,9 @@ namespace BlendInt {
 				"		return;"
 				"	} else {"
 				"		for(int n = 0; n < gl_in.length(); n++) {"
-				"			vertex = mvp * gl_in[n].gl_Position;"
+				"			point = model_matrix_2d  * vec3(gl_in[n].gl_Position.xy, 1.f);"
 				"			fAlpha = gAlpha[n];"
-				"			gl_Position = vertex;"
+				"			gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
 				"			EmitVertex();"
 				"		}"
 				"		EndPrimitive();"
@@ -1131,7 +1127,7 @@ namespace BlendInt {
 					glm::vec3(0.f, 0.f, 1.f),
 					glm::vec3(0.f, 0.f, 0.f),
 					glm::vec3(0.f, 1.f, 0.f));
-			glm::mat4 model(1.f);
+			glm::mat4 widget_model(1.f);
 
 			block_index = glGetUniformBlockIndex(widget_inner_program_->id(), "WidgetMatrices");
 			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrices_ubo_binding_point_);
@@ -1158,7 +1154,7 @@ namespace BlendInt {
 					widget_matrices_ubo_size_[ViewIndex] *
 					TypeSize(widget_matrices_ubo_type_[ViewIndex]));
 			memcpy(buf_p + widget_matrices_ubo_offset_[ModelIndex],
-					glm::value_ptr(model),
+					glm::value_ptr(widget_model),
 					widget_matrices_ubo_size_[ModelIndex] *
 					TypeSize(widget_matrices_ubo_type_[ModelIndex]));
 
@@ -1227,6 +1223,11 @@ namespace BlendInt {
 			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_SIZE, frame_matrices_ubo_size_);
 			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_TYPE, frame_matrices_ubo_type_);
 
+			DBG_PRINT_MSG("frame ubo total size: %d", frame_matrices_ubo_total_size_);
+			DBG_PRINT_MSG("frame ubo offsets: %d %d %d", frame_matrices_ubo_offset_[0], frame_matrices_ubo_offset_[1], frame_matrices_ubo_offset_[2]);
+			DBG_PRINT_MSG("frame ubo size: %d %d %d", frame_matrices_ubo_size_[0], frame_matrices_ubo_size_[1], frame_matrices_ubo_size_[2]);
+			DBG_PRINT_MSG("frame ubo type: 0x%x 0x%x 0x%x", frame_matrices_ubo_type_[0], frame_matrices_ubo_type_[1], frame_matrices_ubo_type_[2]);
+
 			memcpy(buf_p + frame_matrices_ubo_offset_[ProjectionIndex],
 					glm::value_ptr(projection),
 					frame_matrices_ubo_size_[ProjectionIndex] *
@@ -1235,10 +1236,16 @@ namespace BlendInt {
 					glm::value_ptr(view),
 					frame_matrices_ubo_size_[ViewIndex] *
 					TypeSize(frame_matrices_ubo_type_[ViewIndex]));
-			memcpy(buf_p + frame_matrices_ubo_offset_[ModelIndex],
-					glm::value_ptr(model),
-					frame_matrices_ubo_size_[ModelIndex] *
-					TypeSize(frame_matrices_ubo_type_[ModelIndex]));
+
+			// A mat3 should be padded to 3(row) x 4(columns) in uniform block:
+			glm::mat3 frame_model(1.f);
+			glm::vec4 line;
+			for(int i = 0; i < 3; i++) {
+				line = glm::vec4(frame_model[i], 0.f);
+				memcpy(buf_p + frame_matrices_ubo_offset_[ModelIndex] + i * sizeof(glm::vec4),
+						glm::value_ptr(line),
+						sizeof(glm::vec4));
+			}
 
 			frame_matrices_ubo_.reset(new GLBuffer<UNIFORM_BUFFER>);
 			frame_matrices_ubo_->generate();
@@ -1533,14 +1540,19 @@ namespace BlendInt {
 			frame_matrices_ubo_->reset();
 		}
 
-		void Shaders::SetFrameModelMatrix(const glm::mat4& matrix)
+		void Shaders::SetFrameModelMatrix(const glm::mat3& matrix)
 		{
 			frame_matrices_ubo_->bind();
-			frame_matrices_ubo_->set_sub_data(
-					frame_matrices_ubo_offset_[ModelIndex],
-					frame_matrices_ubo_size_[ModelIndex] *
-					TypeSize(frame_matrices_ubo_type_[ModelIndex]),
-					glm::value_ptr(matrix));
+
+			int stride = 4 * sizeof(GLfloat);
+			int size = sizeof(glm::vec3);
+			for(int i = 0; i < 3; i++) {
+				frame_matrices_ubo_->set_sub_data(
+						frame_matrices_ubo_offset_[ModelIndex] + i * stride,
+						size,
+						glm::value_ptr(matrix[i]));
+			}
+
 			frame_matrices_ubo_->reset();
 		}
 

@@ -246,7 +246,7 @@ namespace BlendInt {
 
 			void SetFrameViewMatrix (const glm::mat4& matrix);
 
-			void SetFrameModelMatrix (const glm::mat4& matrix);
+			void SetFrameModelMatrix (const glm::mat3& matrix);
 
 			inline GLint location (LocationType index) const
 			{

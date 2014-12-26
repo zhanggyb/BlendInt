@@ -531,15 +531,13 @@ namespace BlendInt
 
 	void Context::InitializeContext ()
 	{
-		glm::mat4 identity = glm::mat4(1.f);
-
 		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 		Shaders::instance->SetFrameProjectionMatrix(projection);
 		Shaders::instance->SetFrameViewMatrix(default_view_matrix);
-		Shaders::instance->SetFrameModelMatrix(identity);
+		Shaders::instance->SetFrameModelMatrix(glm::mat3(1.f));
 
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
-		Shaders::instance->SetWidgetModelMatrix(identity);
+		Shaders::instance->SetWidgetModelMatrix(glm::mat4(1.f));
 
 		/*
 		glGenVertexArrays(1, &vao_);
