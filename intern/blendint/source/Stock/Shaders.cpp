@@ -53,7 +53,7 @@ namespace BlendInt {
 			""
 			//"uniform mat4 u_projection;"	// projection matrix
 			//"uniform mat4 u_view;"// view matrix
-			"uniform UIMatrix {"
+			"uniform WidgetMatrices {"
 			"	mat4 projection;"
 			"	mat4 view;"
 			"	mat4 model;"
@@ -158,7 +158,7 @@ namespace BlendInt {
 				//"uniform mat4 u_projection;"	// projection matrix
 				//"uniform mat4 u_view;"// view matrix
 				""
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -277,7 +277,7 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -320,7 +320,7 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -352,7 +352,7 @@ namespace BlendInt {
 				""
 				"layout(location=0) in vec3 aCoord;"
 				""
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -406,7 +406,7 @@ namespace BlendInt {
 				//"uniform mat4 u_projection;"	// projection matrix
 				//"uniform mat4 u_view;"			// view matrix
 				//""
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -537,7 +537,7 @@ namespace BlendInt {
 				//"uniform mat4 u_projection;"	// projection matrix
         		//"uniform mat4 u_view;"// view matrix
 				""
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -603,7 +603,7 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
-				"uniform UIMatrix {"
+				"uniform WidgetMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -636,7 +636,7 @@ namespace BlendInt {
 				"#version 330\n"
 				""
 				"layout(location=0) in vec3 aCoord;"
-				"uniform FrameMatrix {"
+				"uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -654,8 +654,8 @@ namespace BlendInt {
 		        "}"
 		        ""
 				"void main(void) {"
-				"	mat4 mvp = projection * view * model * TranslateMatrix (uPosition);"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
+				"	vec4 point = model * TranslateMatrix(uPosition) * vec4(aCoord.xy, 0.f, 1.f);"
+				"	gl_Position = projection * view * point;"
 				"	VertexShade = aCoord.z;"
 				"}";
 
@@ -689,7 +689,7 @@ namespace BlendInt {
 				"layout (triangles) in;"
 				"layout (triangle_strip, max_vertices = 24) out;"
 				""
-				"uniform FrameMatrix {"
+				"uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -756,7 +756,7 @@ namespace BlendInt {
 				"layout(location = 1) in vec2 aUV;"
 				"out vec2 fTexcoord;"
 				""
-				"uniform FrameMatrix {"
+				"uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -813,7 +813,7 @@ namespace BlendInt {
 				"in float gAlpha[];"
 				"out float fAlpha;"
 				""
-				"uniform FrameMatrix {"
+				"uniform FrameMatrices {"
 				"	mat4 projection;"
 				"	mat4 view;"
 				"	mat4 model;"
@@ -919,10 +919,10 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
-		: widget_matrix_block_size_(0),
-		  widget_matrix_binding_point_(1),
-		  frame_matrix_block_size_(0),
-		  frame_matrix_binding_point_(2)
+		: widget_matrices_ubo_total_size_(0),
+		  widget_matrices_ubo_binding_point_(0),
+		  frame_matrices_ubo_total_size_(0),
+		  frame_matrices_ubo_binding_point_(1)
 		{
 			widget_text_program_.reset(new GLSLProgram);
 			primitive_program_.reset(new GLSLProgram);
@@ -960,9 +960,13 @@ namespace BlendInt {
 
 		void Shaders::SetWidgetProjectionMatrix(const glm::mat4& matrix)
 		{
-			widget_matrix_->bind();
-			widget_matrix_->set_sub_data(widget_matrix_offset_[0], widget_matrix_offset_[1] - widget_matrix_offset_[0], glm::value_ptr(matrix));
-			widget_matrix_->reset();
+			widget_matrices_ubo_->bind();
+			widget_matrices_ubo_->set_sub_data(
+					widget_matrices_ubo_offset_[ProjectionIndex],
+					widget_matrices_ubo_size_[ProjectionIndex] *
+					TypeSize(widget_matrices_ubo_type_[ProjectionIndex]),
+					glm::value_ptr(matrix));
+			widget_matrices_ubo_->reset();
 
 			widget_projection_matrix_ = matrix;
 		}
@@ -1000,9 +1004,13 @@ namespace BlendInt {
 
 		void Shaders::SetWidgetViewMatrix(const glm::mat4& matrix)
 		{
-			widget_matrix_->bind();
-			widget_matrix_->set_sub_data(widget_matrix_offset_[1], widget_matrix_offset_[2]- widget_matrix_offset_[1], glm::value_ptr(matrix));
-			widget_matrix_->reset();
+			widget_matrices_ubo_->bind();
+			widget_matrices_ubo_->set_sub_data(
+					widget_matrices_ubo_offset_[ViewIndex],
+					widget_matrices_ubo_size_[ViewIndex] *
+					TypeSize(widget_matrices_ubo_type_[ViewIndex]),
+					glm::value_ptr(matrix));
+			widget_matrices_ubo_->reset();
 
 			widget_view_matrix_ = matrix;
 		}
@@ -1038,9 +1046,12 @@ namespace BlendInt {
 
 		void Shaders::SetWidgetModelMatrix (const glm::mat4& matrix)
 		{
-			widget_matrix_->bind();
-			widget_matrix_->set_sub_data(widget_matrix_offset_[2], widget_matrix_block_size_- widget_matrix_offset_[2], glm::value_ptr(matrix));
-			widget_matrix_->reset();
+			widget_matrices_ubo_->bind();
+			widget_matrices_ubo_->set_sub_data(widget_matrices_ubo_offset_[ModelIndex],
+					widget_matrices_ubo_size_[ModelIndex] *
+					TypeSize(widget_matrices_ubo_type_[ModelIndex]),
+					glm::value_ptr(matrix));
+			widget_matrices_ubo_->reset();
 			widget_model_matrix_ = matrix;
 		}
 
@@ -1107,38 +1118,57 @@ namespace BlendInt {
 				"view",
 				"model"
 			};
-
-			GLuint block_index = glGetUniformBlockIndex(widget_inner_program_->id(), "UIMatrix");
-
-			glGetActiveUniformBlockiv(widget_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &widget_matrix_block_size_);
-
-			GLubyte* buf_p = (GLubyte*)malloc(widget_matrix_block_size_);
-
+			GLuint block_index = 0;
 			GLuint indices[3];
-			glGetUniformIndices(widget_inner_program_->id(), 3, names, indices);
-			glGetActiveUniformsiv(widget_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, widget_matrix_offset_);
+			GLubyte* buf_p = NULL;
 
 			// set default matrix
-			glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+			glm::mat4 projection = glm::ortho(
+					0.f, 800.f,
+					0.f, 600.f,
+					100.f, -100.f);
+			glm::mat4 view = glm::lookAt(
+					glm::vec3(0.f, 0.f, 1.f),
 					glm::vec3(0.f, 0.f, 0.f),
 					glm::vec3(0.f, 1.f, 0.f));
 			glm::mat4 model(1.f);
 
-			if(widget_matrix_block_size_ > 0) {
-				memcpy(buf_p + widget_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
-				memcpy(buf_p + widget_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
-				memcpy(buf_p + widget_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
+			block_index = glGetUniformBlockIndex(widget_inner_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrices_ubo_binding_point_);
+
+			glGetActiveUniformBlockiv(widget_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &widget_matrices_ubo_total_size_);
+			if(widget_matrices_ubo_total_size_ <= 0) {
+				DBG_PRINT_MSG("Error: %s", "matrix block size < 0");
+				exit(EXIT_FAILURE);
 			}
 
-			widget_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
-			widget_matrix_->generate();
-			widget_matrix_->bind();
-			widget_matrix_->set_data(widget_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
-			widget_matrix_->reset();
+			buf_p = (GLubyte*)malloc(widget_matrices_ubo_total_size_);
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrix_binding_point_);
+			glGetUniformIndices(widget_inner_program_->id(), 3, names, indices);
+			glGetActiveUniformsiv(widget_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, widget_matrices_ubo_offset_);
+			glGetActiveUniformsiv(widget_inner_program_->id(), 3, indices, GL_UNIFORM_SIZE, widget_matrices_ubo_size_);
+			glGetActiveUniformsiv(widget_inner_program_->id(), 3, indices, GL_UNIFORM_TYPE, widget_matrices_ubo_type_);
+
+			memcpy(buf_p + widget_matrices_ubo_offset_[ProjectionIndex],
+					glm::value_ptr(projection),
+					widget_matrices_ubo_size_[ProjectionIndex] *
+					TypeSize(widget_matrices_ubo_type_[ProjectionIndex]));
+			memcpy(buf_p + widget_matrices_ubo_offset_[ViewIndex],
+					glm::value_ptr(view),
+					widget_matrices_ubo_size_[ViewIndex] *
+					TypeSize(widget_matrices_ubo_type_[ViewIndex]));
+			memcpy(buf_p + widget_matrices_ubo_offset_[ModelIndex],
+					glm::value_ptr(model),
+					widget_matrices_ubo_size_[ModelIndex] *
+					TypeSize(widget_matrices_ubo_type_[ModelIndex]));
+
+			widget_matrices_ubo_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			widget_matrices_ubo_->generate();
+			widget_matrices_ubo_->bind();
+			widget_matrices_ubo_->set_data(widget_matrices_ubo_total_size_, buf_p, GL_DYNAMIC_DRAW);
+			widget_matrices_ubo_->reset();
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrices_ubo_binding_point_, widget_matrices_ubo_->id());
 
 			free(buf_p);
 			buf_p = 0;
@@ -1148,120 +1178,93 @@ namespace BlendInt {
 			//GLint block_size = 0;
 			//GLint offset[2];
 
-			block_index = glGetUniformBlockIndex(widget_split_inner_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(text_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_split_inner_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_split_inner_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
-			block_index = glGetUniformBlockIndex(widget_outer_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(text_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_outer_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_outer_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_outer_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// set uniform block in text program
 
-			block_index = glGetUniformBlockIndex(widget_text_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(text_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(text_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(text_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_text_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_text_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_text_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// set uniform block in triangle program
 
-			block_index = glGetUniformBlockIndex(widget_triangle_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_triangle_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_triangle_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_triangle_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// set uniform block for simple triangle program
 
-			block_index = glGetUniformBlockIndex(widget_simple_triangle_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(triangle_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(triangle_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(triangle_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_simple_triangle_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_simple_triangle_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_simple_triangle_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// set uniform block in image program
 
-			block_index = glGetUniformBlockIndex(widget_image_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(image_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_image_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_image_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// set uniform block in line program
 
-			block_index = glGetUniformBlockIndex(widget_line_program_->id(), "UIMatrix");
-			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(image_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrix_binding_point_, widget_matrix_->id());
-			glUniformBlockBinding(widget_line_program_->id(), block_index, widget_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(widget_line_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_line_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// ------------------------------ Frame matrix uniform block
 
-			block_index = glGetUniformBlockIndex(frame_inner_program_->id(), "FrameMatrix");
+			block_index = glGetUniformBlockIndex(frame_inner_program_->id(), "FrameMatrices");
+			glUniformBlockBinding(frame_inner_program_->id(), block_index, frame_matrices_ubo_binding_point_);
 
-			glGetActiveUniformBlockiv(frame_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &frame_matrix_block_size_);
-
-			buf_p = (GLubyte*)malloc(frame_matrix_block_size_);
-
-			glGetUniformIndices(frame_inner_program_->id(), 3, names, indices);
-			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, frame_matrix_offset_);
-
-			if(frame_matrix_block_size_ > 0) {
-				memcpy(buf_p + frame_matrix_offset_[0], glm::value_ptr(projection), sizeof(glm::mat4));
-				memcpy(buf_p + frame_matrix_offset_[1], glm::value_ptr(view), sizeof(glm::mat4));
-				memcpy(buf_p + frame_matrix_offset_[2], glm::value_ptr(model), sizeof(glm::mat4));
+			glGetActiveUniformBlockiv(frame_inner_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &frame_matrices_ubo_total_size_);
+			if(frame_matrices_ubo_total_size_ <= 0) {
+				DBG_PRINT_MSG("Error: %s", "matrix block size < 0");
+				exit(EXIT_FAILURE);
 			}
 
-			frame_matrix_.reset(new GLBuffer<UNIFORM_BUFFER>);
-			frame_matrix_->generate();
-			frame_matrix_->bind();
-			frame_matrix_->set_data(frame_matrix_block_size_, glm::value_ptr(projection), GL_DYNAMIC_DRAW);
-			frame_matrix_->reset();
+			buf_p = (GLubyte*)malloc(frame_matrices_ubo_total_size_);
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
-			glUniformBlockBinding(frame_inner_program_->id(), block_index, frame_matrix_binding_point_);
+			glGetUniformIndices(frame_inner_program_->id(), 3, names, indices);
+			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_OFFSET, frame_matrices_ubo_offset_);
+			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_SIZE, frame_matrices_ubo_size_);
+			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_TYPE, frame_matrices_ubo_type_);
+
+			memcpy(buf_p + frame_matrices_ubo_offset_[ProjectionIndex],
+					glm::value_ptr(projection),
+					frame_matrices_ubo_size_[ProjectionIndex] *
+					TypeSize(frame_matrices_ubo_type_[ProjectionIndex]));
+			memcpy(buf_p + frame_matrices_ubo_offset_[ViewIndex],
+					glm::value_ptr(view),
+					frame_matrices_ubo_size_[ViewIndex] *
+					TypeSize(frame_matrices_ubo_type_[ViewIndex]));
+			memcpy(buf_p + frame_matrices_ubo_offset_[ModelIndex],
+					glm::value_ptr(model),
+					frame_matrices_ubo_size_[ModelIndex] *
+					TypeSize(frame_matrices_ubo_type_[ModelIndex]));
+
+			frame_matrices_ubo_.reset(new GLBuffer<UNIFORM_BUFFER>);
+			frame_matrices_ubo_->generate();
+			frame_matrices_ubo_->bind();
+			frame_matrices_ubo_->set_data(frame_matrices_ubo_total_size_, buf_p, GL_DYNAMIC_DRAW);
+			frame_matrices_ubo_->reset();
+
+			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrices_ubo_binding_point_, frame_matrices_ubo_->id());
 
 			free(buf_p);
 			buf_p = 0;
 
 			// set uniform block in frame outer program
 
-			block_index = glGetUniformBlockIndex(frame_outer_program_->id(), "FrameMatrix");
-			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(image_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
-			glUniformBlockBinding(frame_outer_program_->id(), block_index, frame_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(frame_outer_program_->id(), "FrameMatrices");
+			glUniformBlockBinding(frame_outer_program_->id(), block_index, frame_matrices_ubo_binding_point_);
 
 			// set uniform block in frame image program
 
-			block_index = glGetUniformBlockIndex(frame_image_program_->id(), "FrameMatrix");
-			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(image_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
-			glUniformBlockBinding(frame_image_program_->id(), block_index, frame_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(frame_image_program_->id(), "FrameMatrices");
+			glUniformBlockBinding(frame_image_program_->id(), block_index, frame_matrices_ubo_binding_point_);
 
 			// set uniform block in frame shadow program
 
-			block_index = glGetUniformBlockIndex(frame_shadow_program_->id(), "FrameMatrix");
-			//glGetActiveUniformBlockiv(image_program_->id(), block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
-			//glGetUniformIndices(image_program_->id(), 2, names, indices);
-			//glGetActiveUniformsiv(image_program_->id(), 2, indices, GL_UNIFORM_OFFSET, offset);
-			glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrix_binding_point_, frame_matrix_->id());
-			glUniformBlockBinding(frame_shadow_program_->id(), block_index, frame_matrix_binding_point_);
+			block_index = glGetUniformBlockIndex(frame_shadow_program_->id(), "FrameMatrices");
+			glUniformBlockBinding(frame_shadow_program_->id(), block_index, frame_matrices_ubo_binding_point_);
 
 			return true;
 		}
@@ -1510,23 +1513,35 @@ namespace BlendInt {
 
 		void Shaders::SetFrameProjectionMatrix(const glm::mat4& matrix)
 		{
-			frame_matrix_->bind();
-			frame_matrix_->set_sub_data(frame_matrix_offset_[0], frame_matrix_offset_[1] - frame_matrix_offset_[0], glm::value_ptr(matrix));
-			frame_matrix_->reset();
+			frame_matrices_ubo_->bind();
+			frame_matrices_ubo_->set_sub_data(
+					frame_matrices_ubo_offset_[ProjectionIndex],
+					frame_matrices_ubo_size_[ProjectionIndex] *
+					TypeSize(frame_matrices_ubo_type_[ProjectionIndex]),
+					glm::value_ptr(matrix));
+			frame_matrices_ubo_->reset();
 		}
 
 		void Shaders::SetFrameViewMatrix(const glm::mat4& matrix)
 		{
-			frame_matrix_->bind();
-			frame_matrix_->set_sub_data(frame_matrix_offset_[1], frame_matrix_offset_[2]- frame_matrix_offset_[1], glm::value_ptr(matrix));
-			frame_matrix_->reset();
+			frame_matrices_ubo_->bind();
+			frame_matrices_ubo_->set_sub_data(
+					frame_matrices_ubo_offset_[ViewIndex],
+					frame_matrices_ubo_size_[ViewIndex] *
+					TypeSize(frame_matrices_ubo_type_[ViewIndex]),
+					glm::value_ptr(matrix));
+			frame_matrices_ubo_->reset();
 		}
 
 		void Shaders::SetFrameModelMatrix(const glm::mat4& matrix)
 		{
-			frame_matrix_->bind();
-			frame_matrix_->set_sub_data(frame_matrix_offset_[2], frame_matrix_block_size_- frame_matrix_offset_[2], glm::value_ptr(matrix));
-			frame_matrix_->reset();
+			frame_matrices_ubo_->bind();
+			frame_matrices_ubo_->set_sub_data(
+					frame_matrices_ubo_offset_[ModelIndex],
+					frame_matrices_ubo_size_[ModelIndex] *
+					TypeSize(frame_matrices_ubo_type_[ModelIndex]),
+					glm::value_ptr(matrix));
+			frame_matrices_ubo_->reset();
 		}
 
 		bool Shaders::SetupFrameInnerProgram()
@@ -1623,6 +1638,52 @@ namespace BlendInt {
 			locations_[FRAME_SHADOW_SIZE] = frame_shadow_program_->GetUniformLocation("uSize");
 
 			return true;
+		}
+
+		/* Helper function to convert GLSL types to storage sizes */
+		size_t Shaders::TypeSize(GLenum type)
+		{
+			size_t size;
+
+#define CASE(Enum, Count, Type) \
+		case Enum: size = Count * sizeof(Type); break
+
+			switch (type) {
+			CASE(GL_FLOAT, 				 1, 	GLfloat);
+			CASE(GL_FLOAT_VEC2, 		 2, 	GLfloat);
+			CASE(GL_FLOAT_VEC3,			 3, 	GLfloat);
+			CASE(GL_FLOAT_VEC4,			 4, 	GLfloat);
+			CASE(GL_INT,				 1, 	GLint);
+			CASE(GL_INT_VEC2,			 2, 	GLint);
+			CASE(GL_INT_VEC3,			 3, 	GLint);
+			CASE(GL_INT_VEC4,			 4, 	GLint);
+			CASE(GL_UNSIGNED_INT,		 1, 	GLuint);
+			CASE(GL_UNSIGNED_INT_VEC2,	 2, 	GLuint);
+			CASE(GL_UNSIGNED_INT_VEC3,	 3, 	GLuint);
+			CASE(GL_UNSIGNED_INT_VEC4,	 4, 	GLuint);
+			CASE(GL_BOOL,				 1, 	GLboolean);
+			CASE(GL_BOOL_VEC2,			 2, 	GLboolean);
+			CASE(GL_BOOL_VEC3,			 3, 	GLboolean);
+			CASE(GL_BOOL_VEC4,			 4, 	GLboolean);
+			CASE(GL_FLOAT_MAT2,			 4, 	GLfloat);
+			CASE(GL_FLOAT_MAT2x3,		 6, 	GLfloat);
+			CASE(GL_FLOAT_MAT2x4,		 8, 	GLfloat);
+			CASE(GL_FLOAT_MAT3,			 9, 	GLfloat);
+			CASE(GL_FLOAT_MAT3x2,		 6, 	GLfloat);
+			CASE(GL_FLOAT_MAT3x4,		12,		GLfloat);
+			CASE(GL_FLOAT_MAT4,			16, 	GLfloat);
+			CASE(GL_FLOAT_MAT4x2,		 8, 	GLfloat);
+			CASE(GL_FLOAT_MAT4x3,		12, 	GLfloat);
+#undef CASE
+
+			default:
+				fprintf(stderr, "Unknown type:0x%x\n", type);
+				exit(EXIT_FAILURE);
+				break;
+
+			}
+
+			return size;
 		}
 
 	}

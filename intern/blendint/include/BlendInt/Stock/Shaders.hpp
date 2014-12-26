@@ -255,11 +255,19 @@ namespace BlendInt {
 
 		private:
 
+			enum {
+				ProjectionIndex,
+				ViewIndex,
+				ModelIndex
+			};
+
 			friend class BlendInt::Context;
 
 			static bool Initialize ();
 
 			static void Release ();
+
+			static size_t TypeSize(GLenum type);
 
 			Shaders ();
 
@@ -321,22 +329,30 @@ namespace BlendInt {
 
 			GLint locations_[LocationLast];
 
-			RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrix_;
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrices_ubo_;
 
-			RefPtr<GLBuffer<UNIFORM_BUFFER> > frame_matrix_;
+			RefPtr<GLBuffer<UNIFORM_BUFFER> > frame_matrices_ubo_;
 
 			// the offset of uniform block in shaders
-			GLint widget_matrix_offset_[3];
+			GLint widget_matrices_ubo_offset_[3];
 
-			GLint widget_matrix_block_size_;
+			GLint widget_matrices_ubo_size_[3];
+
+			GLint widget_matrices_ubo_type_[3];
+
+			GLint widget_matrices_ubo_total_size_;
 			
-			GLuint widget_matrix_binding_point_;
+			GLuint widget_matrices_ubo_binding_point_;
 
-			GLint frame_matrix_offset_[3];
+			GLint frame_matrices_ubo_offset_[3];
 
-			GLint frame_matrix_block_size_;
+			GLint frame_matrices_ubo_size_[3];
 
-			GLuint frame_matrix_binding_point_;
+			GLint frame_matrices_ubo_type_[3];
+
+			GLint frame_matrices_ubo_total_size_;
+
+			GLuint frame_matrices_ubo_binding_point_;
 
 			glm::mat4 widget_projection_matrix_;
 

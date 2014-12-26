@@ -24,11 +24,14 @@
 #include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/CloseButton.hpp>
 
+using namespace BI;
 using BI::Stock::Shaders;
 
 GLFWDemoContext::GLFWDemoContext()
 : BI::Context()
 {
+//	TryToolBox();
+
 	InitializeGLFWDemoContext ();
 }
 
@@ -36,10 +39,17 @@ GLFWDemoContext::~GLFWDemoContext ()
 {
 }
 
+void GLFWDemoContext::TryToolBox()
+{
+	ToolBox* tool = Manage(new ToolBox);
+
+	tool->MoveTo(200, 200);
+
+	AddFrame(tool);
+}
+
 void GLFWDemoContext::InitializeGLFWDemoContext ()
 {
-	using namespace BI;
-
 	ToolBox* vp1 = Manage(new ToolBox(Vertical));
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
