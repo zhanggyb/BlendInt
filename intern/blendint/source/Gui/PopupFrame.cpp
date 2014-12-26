@@ -50,7 +50,8 @@ namespace BlendInt {
 	: AbstractFloatingFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
-	  layout_(0)
+	  layout_(0),
+	  cursor_position_(0)
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
@@ -58,7 +59,7 @@ namespace BlendInt {
 		set_refresh(true);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
+		model_matrix_ = glm::mat3(1.f);
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;

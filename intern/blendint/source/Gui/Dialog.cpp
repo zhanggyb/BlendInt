@@ -67,7 +67,7 @@ namespace BlendInt {
 		set_modal(modal);
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
+		model_matrix_ = glm::mat3(1.f);
 
 		applied_.reset(new Cpp::Event<Dialog*>);
 		canceled_.reset(new Cpp::Event<Dialog*>);

@@ -145,7 +145,7 @@ namespace BlendInt {
 
 		glm::mat4 projection_matrix_;
 
-		glm::mat4 model_matrix_;
+		glm::mat3 model_matrix_;
 
 		//Cpp::Event<ActionItem*> m_triggered;
 		static int DefaultMenuItemHeight;

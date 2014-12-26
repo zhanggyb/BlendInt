@@ -34,6 +34,7 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -238,8 +239,8 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
-				glm::vec3(position().x(), position().y(), 0.f));
+		glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+				glm::vec2(position().x(), position().y()));
 
 		Shaders::instance->PushWidgetModelMatrix();
 		Shaders::instance->SetWidgetModelMatrix(matrix);
@@ -271,8 +272,8 @@ namespace BlendInt {
 	ResponseType ScrollView::Draw (Profile& profile)
 	{
 		if(subs_count()) {
-			glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
-					glm::vec3(offset().x(), offset().y(), 0.f));
+			glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+					glm::vec2(offset().x(), offset().y()));
 
 			Shaders::instance->PushWidgetModelMatrix();
 			Shaders::instance->SetWidgetModelMatrix(matrix);

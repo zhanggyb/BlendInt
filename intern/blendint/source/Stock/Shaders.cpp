@@ -46,589 +46,544 @@ namespace BlendInt {
 
 	namespace Stock {
 
-		const char* Shaders::widget_text_vertex_shader =
+	const char* Shaders::widget_text_vertex_shader =
+		"#version 330\n"
+		"layout(location = 0) in vec4 aCoord;"
+		"out vec2 uv;"
+		""
+		"layout (std140) uniform WidgetMatrices {"
+		"	mat4 projection;"
+		"	mat4 view;"
+		"	mat3 model;"
+		"};"
+		""
+		"uniform vec2 uPosition;"// position
+  		"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+		""
+		"mat3 translate (const in vec2 t)"
+		"{"
+		"	return mat3(1.0, 0.0, 0.0,"
+		"				0.0, 1.0, 0.0,"
+		"				t.x, t.y, 1.0);"
+		"}"
+		""
+		"mat3 rotate (const in float angle)"
+		"{"
+		"	float a = radians(angle);"
+		"	float c = cos(a);"
+		"	float s = sin(a);"
+		""
+		"	return mat3("
+		"		  c,  s,  0.f,"
+		"		 -s,  c,  0.f,"
+		"		0.f, 0.f, 1.f);"
+		"}"
+		""
+		"void main(void) {"
+		"	vec3 point = model * translate(uPosition) * rotate(uRotation) * vec3(aCoord.xy, 1.f);"
+		"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+		"	uv = aCoord.zw;"
+		"}";
+
+	const char* Shaders::widget_text_fragment_shader =
+		"#version 330\n"
+		"in vec2 uv;"
+		"uniform sampler2D u_tex;"
+		"uniform vec4 uColor;"
+		"out vec4 FragmentColor;"
+		""
+		"void main(void) {"
+		"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+		"	FragmentColor = vec4(uColor.rgb, uColor.a * alpha);"
+		"}";
+
+	const char* Shaders::primitive_vertex_shader = "#version 330\n"
+		""
+		"layout(location = 0) in vec3 coord;"
+		"layout(location = 1) in vec4 color;"
+		"uniform mat4 P;"
+		"uniform mat4 V;"
+		"uniform mat4 M;"
+		""
+		"out vec4 vColor;"
+		""
+		"void main(void) {"
+		"	gl_Position = P * V * M * vec4(coord, 1.0);"
+		"	vColor = color;"
+		"}";
+
+	const char* Shaders::primitive_fragment_shader =
+		"#version 330\n"
+		""
+		"in vec4 vColor;"
+		"out vec4 vFragColor;"
+		""
+		"void main(void) {"
+		"	vFragColor = vColor;"
+		"}";
+
+	const char* Shaders::widget_triangle_vertex_shader =
+		"#version 330\n"
+		""
+		"layout(location=0) in vec2 aCoord;"
+		"layout(location=1) in vec4 aColor;"
+		"out vec4 VertexColor;"
+		""
+		"void main(void) {"
+		"	gl_Position = vec4(aCoord, 0.0, 1.0);"
+		"	VertexColor = aColor;"
+		"}";
+
+	const char* Shaders::widget_triangle_geometry_shader =
 			"#version 330\n"
-			"layout(location = 0) in vec4 aCoord;"
-			"out vec2 uv;"
 			""
-			//"uniform mat4 u_projection;"	// projection matrix
-			//"uniform mat4 u_view;"// view matrix
-			"uniform WidgetMatrices {"
+			"layout (triangles) in;"
+			"layout (triangle_strip, max_vertices = 24) out;"
+			"in vec4 VertexColor[];"
+			"out vec4 PreFragColor;"
+			""
+			"layout (std140) uniform WidgetMatrices {"
 			"	mat4 projection;"
 			"	mat4 view;"
-			"	mat4 model;"
+			"	mat3 model;"
 			"};"
 			""
 			"uniform vec2 uPosition;"// position
-      			"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+			"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+			"uniform vec2 uScale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
+			"uniform bool uAA = false;"
 			""
-			"mat4 TranslateMatrix (const in vec2 t)"
+			"const vec2 AA_JITTER[8] = vec2[8]("
+			"	vec2(0.468813, -0.481430),"
+			"	vec2(-0.155755, -0.352820),"
+			"	vec2(0.219306, -0.238501),"
+			"	vec2(-0.393286,-0.110949),"
+			"	vec2(-0.024699, 0.013908),"
+			"	vec2(0.343805, 0.147431),"
+			"	vec2(-0.272855, 0.269918),"
+			"	vec2(0.095909, 0.388710));"
+			""
+			"mat3 translate (const in vec2 t)"
 			"{"
-			"	return mat4(1.0, 0.0, 0.0, 0.0,"
-			"				0.0, 1.0, 0.0, 0.0,"
-			"				0.0, 0.0, 1.0, 0.0,"
-			"				t.x, t.y, 0.0, 1.0);"
+			"	return mat3(1.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0,"
+			"				t.x, t.y, 1.0);"
 			"}"
 			""
-			"mat4 RotateMatrix( const in float angle,"
-			"					const in vec3 axis )"
+			"mat3 rotate (const in float angle)"
 			"{"
-			"	vec3 n = normalize( axis );"
-			"	float theta = radians( angle );"
-			"	float c = cos( theta );"
-			"	float s = sin( theta );"
-			"	mat3 R;"
-			"	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-			"	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-			"	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-			"	return mat4( R[0],	0.0,"
-			"				 R[1],	0.0,"
-			"				 R[2],	0.0,"
-			"				 0.0, 0.0, 0.0, 1.0 );"
+			"	float a = radians(angle);"
+			"	float c = cos(a);"
+			"	float s = sin(a);"
+			""
+			"	return mat3("
+			"		  c,  s,  0.f,"
+			"		 -s,  c,  0.f,"
+			"		0.f, 0.f, 1.f);"
 			"}"
 			""
-			"mat4 RotateMatrixAlongZ (const in float angle)"
+			"mat3 scale (const in vec2 s)"
 			"{"
-			"	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
+			"	return mat3("
+			"		s.x, 0.f, 0.f,"
+			"		0.f, s.y, 0.f,"
+			"		0.f, 0.f, 1.f);"
+			"}"
+			""
+			"void main()"
+			"{"
+			"	mat3 model_matrix_2d = model * translate(uPosition) * rotate(uRotation) * scale(uScale);"
+			"	vec3 point;"
+			""
+			"	if(uAA) {"
+			"		mat3 aa_matrix = mat3(1.0);"
+			"		vec4 col_calib;"
+			"		for(int jit = 0; jit < 8; jit++) {"
+			"			aa_matrix[2] = vec3(AA_JITTER[jit], 1.f);"
+			"			for(int n = 0; n < gl_in.length(); n++)"
+			"			{"
+			"				point = model_matrix_2d * aa_matrix * vec3(gl_in[n].gl_Position.xy, 1.f);"
+			"				col_calib = VertexColor[n];"
+			"				col_calib.a = col_calib.a/8;"
+			"				PreFragColor = col_calib;"
+			"				gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"				EmitVertex();"
+			"			}"
+			"			EndPrimitive();"
+			"		}"
+			"		return;"
+			"	} else {"
+			"		for(int n = 0; n < gl_in.length(); n++) {"
+			"			point = model_matrix_2d  * vec3(gl_in[n].gl_Position.xy, 1.f);"
+			"			PreFragColor = VertexColor[n];"
+			"			gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"			EmitVertex();"
+			"		}"
+			"		EndPrimitive();"
+			"		return;"
+			"	}"
+			""
+			"}";
+
+	const char* Shaders::widget_triangle_fragment_shader =
+			"#version 330\n"
+			""
+			"in vec4 PreFragColor;"
+			"uniform bool uAA = false;"
+			"uniform int uGamma = 0;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	vec4 color_calib = vec4(0.0);"
+			"	if(uAA) {"
+			"		color_calib = vec4(vec3(clamp(uGamma/255.0/8.0, -1.0, 1.0)), 0.0);"
+			"	} else {"
+			"		color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+			"	}"
+			"	FragmentColor = PreFragColor + color_calib;"
+			"}";
+
+	// ---------------------------------------------------------------
+
+	const char* Shaders::widget_simple_triangle_vertex_shader =
+			"#version 330\n"
+			""
+			"layout(location=0) in vec3 aCoord;"
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"uniform vec2 uPosition;"// position
+			""
+			"out float VertexShade;"
+			""
+			"mat3 translate (const in vec2 t)"
+			"{"
+			"	return mat3(1.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0,"
+			"				t.x, t.y, 1.0);"
 			"}"
 			""
 			"void main(void) {"
-			//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
-			"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
-			"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-			"	uv = aCoord.zw;"
+			"	vec3 point = model * translate(uPosition) * vec3(aCoord.xy, 1.f);"
+			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"	VertexShade = aCoord.z;"
 			"}";
 
-		const char* Shaders::widget_text_fragment_shader =
+	const char* Shaders::widget_simple_triangle_fragment_shader =
+	        "#version 330\n"
+			""
+			"in float VertexShade;"
+			"uniform vec4 uColor;"
+			"uniform int uGamma = 0;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+			"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+			"}";
+
+	// ---------------------------------------------------------------
+
+	const char* Shaders::widget_inner_vertex_shader =
 			"#version 330\n"
-			"in vec2 uv;"
-			"uniform sampler2D u_tex;"
+			""
+			"layout(location=0) in vec3 aCoord;"
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"out float VertexShade;"
+			""
+			"void main(void) {"
+			"	vec3 point = model * vec3(aCoord.xy, 1.f);"
+			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"	VertexShade = aCoord.z;"
+			"}";
+
+	const char* Shaders::widget_inner_fragment_shader =
+	        "#version 330\n"
+			""
+			"in float VertexShade;"
+			"uniform vec4 uColor;"
+			"uniform int uGamma = 0;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+			"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+			"}";
+
+	const char* Shaders::widget_split_inner_vertex_shader =
+			"#version 330\n"
+			""
+			"layout(location=0) in vec3 aCoord;"
+			""
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"out float VertexShade;"
+			""
+			"void main(void) {"
+			"	vec3 point = model * vec3(aCoord.xy, 1.f);"
+			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"	VertexShade = aCoord.z;"
+			"}";
+
+	const char* Shaders::widget_split_inner_fragment_shader =
+	        "#version 330\n"
+			""
+			"in float VertexShade;"
+			"uniform vec4 u_color0;"
+			"uniform vec4 u_color1;"
+			"uniform int uGamma = 0;"
+			"uniform float u_parting = 10.f;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+			""
+			"	if(gl_FragCoord.x <= u_parting) {"
+			"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
+			"	} else {"
+			"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color1;"
+			"	}"
+			"}";
+
+	// ---------------------------------------------------------------
+
+	const char* Shaders::widget_outer_vertex_shader =
+			"#version 330\n"
+			""
+			"layout(location=0) in vec2 aCoord;"
+			""
+			"void main(void) {"
+			"	gl_Position = vec4(aCoord.xy, 0.f, 1.f);"
+			"}";
+
+	const char* Shaders::widget_outer_geometry_shader =
+	        "#version 330\n"
+			""
+			"layout (triangles) in;"
+			"layout (triangle_strip, max_vertices = 24) out;"
+			""
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"uniform vec2 uPosition;"// position
+			""
+			"const vec2 AA_JITTER[8] = vec2[8]("
+			"	vec2(0.468813, -0.481430),"
+			"	vec2(-0.155755, -0.352820),"
+			"	vec2(0.219306, -0.238501),"
+			"	vec2(-0.393286,-0.110949),"
+			"	vec2(-0.024699, 0.013908),"
+			"	vec2(0.343805, 0.147431),"
+			"	vec2(-0.272855, 0.269918),"
+			"	vec2(0.095909, 0.388710));"
+			""
+			"mat3 translate (const in vec2 t)"
+			"{"
+			"	return mat3(1.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0,"
+			"				t.x, t.y, 1.0);"
+			"}"
+			""
+			"void main()"
+			"{"
+			"	mat3 model_matrix_2d = model * translate(uPosition);"
+			"	mat3 aa_matrix = mat3(1.0);"
+			"	vec3 point;"
+			""
+			"	for(int jit = 0; jit < 8; jit++) {"
+			"		aa_matrix[2] = vec3(AA_JITTER[jit], 1.f);"
+			"		for(int n = 0; n < gl_in.length(); n++)"
+			"		{"
+			"			point = model_matrix_2d * aa_matrix * vec3(gl_in[n].gl_Position.xy, 1.f);"
+			"			gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"			EmitVertex();"
+			"		}"
+			"		EndPrimitive();"
+			"	}"
+			"	return;"
+			""
+			"}";
+
+	const char* Shaders::widget_outer_fragment_shader =
+	        "#version 330\n"
+			""
 			"uniform vec4 uColor;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
-			"	FragmentColor = vec4(uColor.rgb, uColor.a * alpha);"
+			"	vec4 color = uColor;"
+			"	color.a = color.a / 8.f;"
+			""
+			"	FragmentColor = color;"
 			"}";
 
-		const char* Shaders::primitive_vertex_shader = "#version 330\n"
-			""
-			"layout(location = 0) in vec3 coord;"
-			"layout(location = 1) in vec4 color;"
-			"uniform mat4 P;"
-			"uniform mat4 V;"
-			"uniform mat4 M;"
-			""
-			"out vec4 vColor;"
+	// ---------------------------------------------------------------
+
+	const char* Shaders::context_vertex_shader = "#version 330\n"
+			"layout(location = 0) in vec2 aCoord;"
+			"layout(location = 1) in vec2 UVCoord;"
+			"uniform mat4 MVP;"
+			"out vec2 f_texcoord;"
 			""
 			"void main(void) {"
-			"	gl_Position = P * V * M * vec4(coord, 1.0);"
-			"	vColor = color;"
+			"	gl_Position = MVP * vec4(aCoord, 0.f, 1.f);"
+			"	f_texcoord = UVCoord;"
 			"}";
 
-		const char* Shaders::primitive_fragment_shader =
+	const char* Shaders::context_fragment_shader = "#version 330\n"
+			"in vec2 f_texcoord;"
+			"uniform sampler2D uTexture;"
+			//"uniform bool Blur = false;"
+			"out vec4 FragmentColor;"
+			//"const float gaussian_kernel[9] = float[9]("
+			//"	1., 2., 1.,"
+			//"	2., 4., 2.,"
+			//"	1., 2., 1."
+			//");"
+			//"const float radius = 1.0;"
+			""
+			"void main(void) {"
+			""
+			/*
+			 "	if(Blur) {"
+			 ""
+			 "		vec4 color;"
+			 "		float grey;"
+			 "		color = vec4(grey, grey, grey, 0.25f);"
+			 ""
+			 "		ivec2 tex_size = textureSize(uTexture, 0);"
+			 "		float s = float(tex_size.s);"
+			 "		float t = float(tex_size.t);"
+			 "		vec4 sum = vec4(0.0);"
+			 "    	vec2 offset[9] = vec2[9]("
+			 "			vec2(-1. / s, 1. / t),	vec2(0., 1. / t),	vec2 (1. / s, 1. / t),"
+			 "			vec2(-1. / s, 0.), 		vec2(0., 0.), 		vec2 (1. / s, 0.),"
+			 "			vec2(-1. / s, -1. / t), vec2(0., -1. / t),	vec2 (1. / s, -1. / t)"
+			 "		);"
+			 "		vec4 sample[9];"
+			 ""
+			 "		for(int i = 0; i < 9; i++)"
+			 "		{"
+			 "			color = texture(uTexture, f_texcoord + offset[i]);"
+			 "			grey = dot(color.rgb, vec3(0.25, 0.25, 0.25));"
+			 "			sample[i] = vec4(grey, grey, grey, color.a * 0.25);"
+			 "			sum += sample[i] * gaussian_kernel[i];"
+			 "		}"
+			 ""
+			 "		sum /= 16.0;"
+			 "		FragmentColor = sum;"
+			 //"FragmentColor = color;"
+			 ""
+			 "	} else {"
+			 */
+			"		FragmentColor = texture(uTexture, f_texcoord);"
+			//"	}"
+			"}";
+
+	const char* Shaders::widget_image_vertex_shader =
+			"#version 330\n"
+			"layout(location = 0) in vec2 aCoord;"
+			"layout(location = 1) in vec2 a_uv;"
+			"out vec2 f_texcoord;"
+			""
+			//"uniform mat4 u_projection;"	// projection matrix
+    		//"uniform mat4 u_view;"// view matrix
+			""
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"uniform vec2 uPosition;"// position
+    		"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
+			""
+			"mat3 translate (const in vec2 t)"
+			"{"
+			"	return mat3(1.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0,"
+			"				t.x, t.y, 1.0);"
+			"}"
+			""
+			"mat3 rotate (const in float angle)"
+			"{"
+			"	float a = radians(angle);"
+			"	float c = cos(a);"
+			"	float s = sin(a);"
+			""
+			"	return mat3("
+			"		  c,  s,  0.f,"
+			"		 -s,  c,  0.f,"
+			"		0.f, 0.f, 1.f);"
+			"}"
+	        ""
+			"void main(void) {"
+			"	vec3 point = model * translate(uPosition) * rotate(uRotation) * vec3(aCoord.xy, 1.f);"
+			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"	f_texcoord = a_uv;"
+			"}";
+
+	const char* Shaders::widget_image_fragment_shader =
+	        "#version 330\n"
+			"in vec2 f_texcoord;"
+			"uniform sampler2D uTexture;"
+			"uniform int uGamma = 0;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	vec4 color_calib = vec4(0.f);"
+			"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
+			"	vec4 color = texture(uTexture, f_texcoord);"
+			"	FragmentColor = color + color_calib;"
+			"}";
+
+	// -------------------------------------------
+
+	const char* Shaders::widget_line_vertex_shader =
 			"#version 330\n"
 			""
-			"in vec4 vColor;"
-			"out vec4 vFragColor;"
+			"layout (location=0) in vec3 aCoord;"
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"out float VertexShade;"
 			""
 			"void main(void) {"
-			"	vFragColor = vColor;"
+			"	vec3 point = model * vec3(aCoord.xy, 1.f);"
+			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"	VertexShade = aCoord.z;"
 			"}";
 
-		const char* Shaders::widget_triangle_vertex_shader =
-			"#version 330\n"
+	const char* Shaders::widget_line_fragment_shader =
+	        "#version 330\n"
 			""
-			"layout(location=0) in vec2 aCoord;"
-			"layout(location=1) in vec4 aColor;"
-			"out vec4 VertexColor;"
+			"in float VertexShade;"
+			"uniform vec4 uColor;"
+			"uniform int uGamma = 0;"
+			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	gl_Position = vec4(aCoord, 0.0, 1.0);"
-			"	VertexColor = aColor;"
+			"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+			"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
 			"}";
-
-		const char* Shaders::widget_triangle_geometry_shader =
-				"#version 330\n"
-				""
-				"layout (triangles) in;"
-				"layout (triangle_strip, max_vertices = 24) out;"
-				"in vec4 VertexColor[];"
-				"out vec4 PreFragColor;"
-				//"uniform mat4 u_projection;"	// projection matrix
-				//"uniform mat4 u_view;"// view matrix
-				""
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"uniform vec2 uPosition;"// position
-				"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-				"uniform vec2 uScale = vec2(1.f, 1.f);"// the scale factor, only support xy plane
-				"uniform bool uAA = false;"
-				""
-				"const vec2 AA_JITTER[8] = vec2[8]("
-				"	vec2(0.468813, -0.481430),"
-				"	vec2(-0.155755, -0.352820),"
-				"	vec2(0.219306, -0.238501),"
-				"	vec2(-0.393286,-0.110949),"
-				"	vec2(-0.024699, 0.013908),"
-				"	vec2(0.343805, 0.147431),"
-				"	vec2(-0.272855, 0.269918),"
-				"	vec2(0.095909, 0.388710));"
-				""
-				"mat4 ScaleMatrix (const in vec2 s)"
-				"{"
-				"	return mat4(s.x, 0.0, 0.0, 0.0,"
-				"				0.0, s.y, 0.0, 0.0,"
-				"				0.0, 0.0, 0.0, 0.0,"
-				"				0.0, 0.0, 0.0, 1.0);"
-				"}"
-				""
-				"mat4 TranslateMatrix (const in vec2 t)"
-				"{"
-				"	return mat4(1.0, 0.0, 0.0, 0.0,"
-				"				0.0, 1.0, 0.0, 0.0,"
-				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, 0.0, 1.0);"
-				"}"
-				""
-				"mat4 RotateMatrix( const in float angle,"
-				"					const in vec3 axis )"
-				"{"
-				"	vec3 n = normalize( axis );"
-				"	float theta = radians( angle );"
-				"	float c = cos( theta );"
-				"	float s = sin( theta );"
-				"	mat3 R;"
-				"	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-				"	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-				"	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-				"	return mat4( R[0],	0.0,"
-				"				 R[1],	0.0,"
-				"				 R[2],	0.0,"
-				"				 0.0, 0.0, 0.0, 1.0 );"
-				"}"
-				""
-				"mat4 RotateMatrixAlongZ (const in float angle)"
-				"{"
-				"	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-				"}"
-				""
-				"void main()"
-				"{"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(vec3(uScale.xy, 1.f));"
-				"	mat4 mvp = projection * view *  model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation) * ScaleMatrix(uScale);"
-				"	vec4 vertex;"
-				""
-				"	if(uAA) {"
-				"		mat4 aa_matrix = mat4(1.0);"
-				"		vec4 col_calib;"
-				"		for(int jit = 0; jit < 8; jit++) {"
-				"			aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-				"			for(int n = 0; n < gl_in.length(); n++)"
-				"			{"
-				"				vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				"				col_calib = VertexColor[n];"
-				"				col_calib.a = col_calib.a/8;"
-				"				PreFragColor = col_calib;"
-				"				gl_Position = vertex;"
-				"				EmitVertex();"
-				"			}"
-				"			EndPrimitive();"
-				"		}"
-				"		return;"
-				"	} else {"
-				"		for(int n = 0; n < gl_in.length(); n++) {"
-				"			vertex = mvp * gl_in[n].gl_Position;"
-				"			PreFragColor = VertexColor[n];"
-				"			gl_Position = vertex;"
-				"			EmitVertex();"
-				"		}"
-				"		EndPrimitive();"
-				"		return;"
-				"	}"
-				""
-				"}";
-
-		const char* Shaders::widget_triangle_fragment_shader =
-				"#version 330\n"
-				""
-				"in vec4 PreFragColor;"
-				"uniform bool uAA = false;"
-				"uniform int uGamma = 0;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(0.0);"
-				"	if(uAA) {"
-				"		color_calib = vec4(vec3(clamp(uGamma/255.0/8.0, -1.0, 1.0)), 0.0);"
-				"	} else {"
-				"		color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-				"	}"
-				"	FragmentColor = PreFragColor + color_calib;"
-				"}";
-
-		// ---------------------------------------------------------------
-
-		const char* Shaders::widget_simple_triangle_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec3 aCoord;"
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"uniform vec2 uPosition;"// position
-				""
-				"out float VertexShade;"
-				""
-				"mat4 TranslateMatrix (const in vec2 t)"
-				"{"
-				"	return mat4(1.0, 0.0, 0.0, 0.0,"
-				"				0.0, 1.0, 0.0, 0.0,"
-				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, 0.0, 1.0);"
-				"}"
-				""
-				"void main(void) {"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-				"	VertexShade = aCoord.z;"
-				"}";
-
-		const char* Shaders::widget_simple_triangle_fragment_shader =
-		        "#version 330\n"
-				""
-				"in float VertexShade;"
-				"uniform vec4 uColor;"
-				"uniform int uGamma = 0;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
-				"}";
-
-		// ---------------------------------------------------------------
-
-		const char* Shaders::widget_inner_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec3 aCoord;"
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"out float VertexShade;"
-				""
-				"void main(void) {"
-				"	mat4 mvp = projection * view * model;"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-				"	VertexShade = aCoord.z;"
-				"}";
-
-		const char* Shaders::widget_inner_fragment_shader =
-		        "#version 330\n"
-				""
-				"in float VertexShade;"
-				"uniform vec4 uColor;"
-				"uniform int uGamma = 0;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
-				"}";
-
-		const char* Shaders::widget_split_inner_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec3 aCoord;"
-				""
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"out float VertexShade;"
-				""
-				"void main(void) {"
-				"	mat4 mvp = projection * view * model;"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-				"	VertexShade = aCoord.z;"
-				"}";
-
-		const char* Shaders::widget_split_inner_fragment_shader =
-		        "#version 330\n"
-				""
-				"in float VertexShade;"
-				"uniform vec4 u_color0;"
-				"uniform vec4 u_color1;"
-				"uniform int uGamma = 0;"
-				"uniform float u_parting = 10.f;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-				""
-				"	if(gl_FragCoord.x <= u_parting) {"
-				"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
-				"	} else {"
-				"		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color1;"
-				"	}"
-				"}";
-
-		// ---------------------------------------------------------------
-
-		const char* Shaders::widget_outer_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec2 aCoord;"
-				""
-				"void main(void) {"
-				"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
-				"}";
-
-		const char* Shaders::widget_outer_geometry_shader =
-		        "#version 330\n"
-				""
-				"layout (triangles) in;"
-				"layout (triangle_strip, max_vertices = 24) out;"
-				""
-				//"uniform mat4 u_projection;"	// projection matrix
-				//"uniform mat4 u_view;"			// view matrix
-				//""
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"uniform vec2 uPosition;"// position
-				""
-				"const vec2 AA_JITTER[8] = vec2[8]("
-				"	vec2(0.468813, -0.481430),"
-				"	vec2(-0.155755, -0.352820),"
-				"	vec2(0.219306, -0.238501),"
-				"	vec2(-0.393286,-0.110949),"
-				"	vec2(-0.024699, 0.013908),"
-				"	vec2(0.343805, 0.147431),"
-				"	vec2(-0.272855, 0.269918),"
-				"	vec2(0.095909, 0.388710));"
-				""
-				"mat4 TranslateMatrix (const in vec2 t)"
-				"{"
-				"	return mat4(1.0, 0.0, 0.0, 0.0,"
-				"				0.0, 1.0, 0.0, 0.0,"
-				"				0.0, 0.0, 1.0, 0.0,"
-				"				t.x, t.y, 0.0, 1.0);"
-				"}"
-				""
-				"void main()"
-				"{"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition);"
-				"	vec4 vertex;"
-				""
-				"	mat4 aa_matrix = mat4(1.0);"
-				"	for(int jit = 0; jit < 8; jit++) {"
-				"		aa_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-				"		for(int n = 0; n < gl_in.length(); n++)"
-				"		{"
-				"			vertex = mvp * aa_matrix * gl_in[n].gl_Position;"
-				"			gl_Position = vertex;"
-				"			EmitVertex();"
-				"		}"
-				"		EndPrimitive();"
-				"	}"
-				"	return;"
-				""
-				"}";
-
-		const char* Shaders::widget_outer_fragment_shader =
-		        "#version 330\n"
-				""
-				"uniform vec4 uColor;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color = uColor;"
-				"	color.a = color.a / 8.f;"
-				""
-				"	FragmentColor = color;"
-				"}";
-
-		// ---------------------------------------------------------------
-
-		const char* Shaders::context_vertex_shader = "#version 330\n"
-				"layout(location = 0) in vec2 aCoord;"
-				"layout(location = 1) in vec2 UVCoord;"
-				"uniform mat4 MVP;"
-				"out vec2 f_texcoord;"
-				""
-				"void main(void) {"
-				"	gl_Position = MVP * vec4(aCoord, 0.0, 1.0);"
-				"	f_texcoord = UVCoord;"
-				"}";
-
-		const char* Shaders::context_fragment_shader = "#version 330\n"
-				"in vec2 f_texcoord;"
-				"uniform sampler2D uTexture;"
-				//"uniform bool Blur = false;"
-				"out vec4 FragmentColor;"
-				//"const float gaussian_kernel[9] = float[9]("
-				//"	1., 2., 1.,"
-				//"	2., 4., 2.,"
-				//"	1., 2., 1."
-				//");"
-				//"const float radius = 1.0;"
-				""
-				"void main(void) {"
-				""
-				/*
-				 "	if(Blur) {"
-				 ""
-				 "		vec4 color;"
-				 "		float grey;"
-				 "		color = vec4(grey, grey, grey, 0.25f);"
-				 ""
-				 "		ivec2 tex_size = textureSize(uTexture, 0);"
-				 "		float s = float(tex_size.s);"
-				 "		float t = float(tex_size.t);"
-				 "		vec4 sum = vec4(0.0);"
-				 "    	vec2 offset[9] = vec2[9]("
-				 "			vec2(-1. / s, 1. / t),	vec2(0., 1. / t),	vec2 (1. / s, 1. / t),"
-				 "			vec2(-1. / s, 0.), 		vec2(0., 0.), 		vec2 (1. / s, 0.),"
-				 "			vec2(-1. / s, -1. / t), vec2(0., -1. / t),	vec2 (1. / s, -1. / t)"
-				 "		);"
-				 "		vec4 sample[9];"
-				 ""
-				 "		for(int i = 0; i < 9; i++)"
-				 "		{"
-				 "			color = texture(uTexture, f_texcoord + offset[i]);"
-				 "			grey = dot(color.rgb, vec3(0.25, 0.25, 0.25));"
-				 "			sample[i] = vec4(grey, grey, grey, color.a * 0.25);"
-				 "			sum += sample[i] * gaussian_kernel[i];"
-				 "		}"
-				 ""
-				 "		sum /= 16.0;"
-				 "		FragmentColor = sum;"
-				 //"FragmentColor = color;"
-				 ""
-				 "	} else {"
-				 */
-				"		FragmentColor = texture(uTexture, f_texcoord);"
-				//"	}"
-				"}";
-
-		const char* Shaders::widget_image_vertex_shader =
-				"#version 330\n"
-				"layout(location = 0) in vec2 aCoord;"
-				"layout(location = 1) in vec2 a_uv;"
-				"out vec2 f_texcoord;"
-				""
-				//"uniform mat4 u_projection;"	// projection matrix
-        		//"uniform mat4 u_view;"// view matrix
-				""
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"uniform vec2 uPosition;"// position
-        		"uniform float uRotation = 0.f;"// the rotation in degree, only support rotation along Z axis
-				""
-		        "mat4 TranslateMatrix (const in vec2 t)"
-		        "{"
-		        "	return mat4(1.0, 0.0, 0.0, 0.0,"
-		        "				0.0, 1.0, 0.0, 0.0,"
-		        "				0.0, 0.0, 1.0, 0.0,"
-		        "				t.x, t.y, 0.0, 1.0);"
-		        "}"
-		        ""
-		        "mat4 RotateMatrix( const in float angle,"
-		        "					const in vec3 axis )"
-		        "{"
-		        "	vec3 n = normalize( axis );"
-		        "	float theta = radians( angle );"
-		        "	float c = cos( theta );"
-		        "	float s = sin( theta );"
-		        "	mat3 R;"
-		        "	R[0] = n.xyz*n.x*(1.0-c) + vec3(      c,  n.z*s, -n.y*s );"
-		        "	R[1] = n.xyz*n.y*(1.0-c) + vec3( -n.z*s,      c,  n.x*s );"
-		        "	R[2] = n.xyz*n.z*(1.0-c) + vec3(  n.y*s, -n.x*s,      c );"
-		        "	return mat4( R[0],	0.0,"
-		        "				 R[1],	0.0,"
-		        "				 R[2],	0.0,"
-		        "				 0.0, 0.0, 0.0, 1.0 );"
-		        "}"
-		        ""
-		        "mat4 RotateMatrixAlongZ (const in float angle)"
-		        "{"
-		        "	return RotateMatrix(angle, vec3(0.0, 0.0, 1.0));"
-		        "}"
-		        ""
-				"void main(void) {"
-				//"	mat4 mvp = u_projection * u_view * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
-				"	mat4 mvp = projection * view * model * TranslateMatrix(uPosition) * RotateMatrixAlongZ(uRotation);"
-				"	gl_Position = mvp * vec4(aCoord, 0.0, 1.0);"
-				"	f_texcoord = a_uv;"
-				"}";
-
-		const char* Shaders::widget_image_fragment_shader =
-		        "#version 330\n"
-				"in vec2 f_texcoord;"
-				"uniform sampler2D uTexture;"
-				"uniform int uGamma = 0;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(0.f);"
-				"	color_calib = vec4(vec3(clamp(uGamma/255.f, -1.f, 1.f)), 0.f);"
-				"	vec4 color = texture(uTexture, f_texcoord);"
-				"	FragmentColor = color + color_calib;"
-				"}";
-
-		// -------------------------------------------
-
-		const char* Shaders::widget_line_vertex_shader =
-				"#version 330\n"
-				""
-				"layout(location=0) in vec3 aCoord;"
-				"uniform WidgetMatrices {"
-				"	mat4 projection;"
-				"	mat4 view;"
-				"	mat4 model;"
-				"};"
-				""
-				"out float VertexShade;"
-				""
-				"void main(void) {"
-				"	mat4 mvp = projection * view * model;"
-				"	gl_Position = mvp * vec4(aCoord.xy, 0.0, 1.0);"
-				"	VertexShade = aCoord.z;"
-				"}";
-
-		const char* Shaders::widget_line_fragment_shader =
-		        "#version 330\n"
-				""
-				"in float VertexShade;"
-				"uniform vec4 uColor;"
-				"uniform int uGamma = 0;"
-				"out vec4 FragmentColor;"
-				""
-				"void main(void) {"
-				"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-				"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
-				"}";
 
 		// ---------------------------------------------------------------
 
@@ -1026,7 +981,7 @@ namespace BlendInt {
 			}
 		}
 
-		void Shaders::GetWidgetModelMatrix(glm::mat4& matrix)
+		void Shaders::GetWidgetModelMatrix(glm::mat3& matrix)
 		{
 			/*
 			ui_matrix_->bind();
@@ -1040,20 +995,26 @@ namespace BlendInt {
 			matrix = widget_model_matrix_;
 		}
 
-		void Shaders::SetWidgetModelMatrix (const glm::mat4& matrix)
+		void Shaders::SetWidgetModelMatrix (const glm::mat3& matrix)
 		{
 			widget_matrices_ubo_->bind();
-			widget_matrices_ubo_->set_sub_data(widget_matrices_ubo_offset_[ModelIndex],
-					widget_matrices_ubo_size_[ModelIndex] *
-					TypeSize(widget_matrices_ubo_type_[ModelIndex]),
-					glm::value_ptr(matrix));
+
+			int stride = 4 * sizeof(GLfloat);
+			int size = sizeof(glm::vec3);
+			for(int i = 0; i < 3; i++) {
+				widget_matrices_ubo_->set_sub_data(
+						widget_matrices_ubo_offset_[ModelIndex] + i * stride,
+						size,
+						glm::value_ptr(matrix[i]));
+			}
+
 			widget_matrices_ubo_->reset();
 			widget_model_matrix_ = matrix;
 		}
 
 		void Shaders::PushWidgetModelMatrix()
 		{
-			glm::mat4 matrix;
+			glm::mat3 matrix;
 			GetWidgetModelMatrix(matrix);
 			widget_model_matrix_stack.push(matrix);
 		}
@@ -1127,7 +1088,7 @@ namespace BlendInt {
 					glm::vec3(0.f, 0.f, 1.f),
 					glm::vec3(0.f, 0.f, 0.f),
 					glm::vec3(0.f, 1.f, 0.f));
-			glm::mat4 widget_model(1.f);
+			glm::mat3 model(1.f);
 
 			block_index = glGetUniformBlockIndex(widget_inner_program_->id(), "WidgetMatrices");
 			glUniformBlockBinding(widget_inner_program_->id(), block_index, widget_matrices_ubo_binding_point_);
@@ -1153,10 +1114,15 @@ namespace BlendInt {
 					glm::value_ptr(view),
 					widget_matrices_ubo_size_[ViewIndex] *
 					TypeSize(widget_matrices_ubo_type_[ViewIndex]));
-			memcpy(buf_p + widget_matrices_ubo_offset_[ModelIndex],
-					glm::value_ptr(widget_model),
-					widget_matrices_ubo_size_[ModelIndex] *
-					TypeSize(widget_matrices_ubo_type_[ModelIndex]));
+
+			// A mat3 should be padded to 3(row) x 4(columns) in uniform block:
+			glm::vec4 line;
+			for(int i = 0; i < 3; i++) {
+				line = glm::vec4(model[i], 0.f);
+				memcpy(buf_p + widget_matrices_ubo_offset_[ModelIndex] + i * sizeof(glm::vec4),
+						glm::value_ptr(line),
+						sizeof(glm::vec4));
+			}
 
 			widget_matrices_ubo_.reset(new GLBuffer<UNIFORM_BUFFER>);
 			widget_matrices_ubo_->generate();
@@ -1223,11 +1189,6 @@ namespace BlendInt {
 			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_SIZE, frame_matrices_ubo_size_);
 			glGetActiveUniformsiv(frame_inner_program_->id(), 3, indices, GL_UNIFORM_TYPE, frame_matrices_ubo_type_);
 
-			DBG_PRINT_MSG("frame ubo total size: %d", frame_matrices_ubo_total_size_);
-			DBG_PRINT_MSG("frame ubo offsets: %d %d %d", frame_matrices_ubo_offset_[0], frame_matrices_ubo_offset_[1], frame_matrices_ubo_offset_[2]);
-			DBG_PRINT_MSG("frame ubo size: %d %d %d", frame_matrices_ubo_size_[0], frame_matrices_ubo_size_[1], frame_matrices_ubo_size_[2]);
-			DBG_PRINT_MSG("frame ubo type: 0x%x 0x%x 0x%x", frame_matrices_ubo_type_[0], frame_matrices_ubo_type_[1], frame_matrices_ubo_type_[2]);
-
 			memcpy(buf_p + frame_matrices_ubo_offset_[ProjectionIndex],
 					glm::value_ptr(projection),
 					frame_matrices_ubo_size_[ProjectionIndex] *
@@ -1238,10 +1199,8 @@ namespace BlendInt {
 					TypeSize(frame_matrices_ubo_type_[ViewIndex]));
 
 			// A mat3 should be padded to 3(row) x 4(columns) in uniform block:
-			glm::mat3 frame_model(1.f);
-			glm::vec4 line;
 			for(int i = 0; i < 3; i++) {
-				line = glm::vec4(frame_model[i], 0.f);
+				line = glm::vec4(model[i], 0.f);
 				memcpy(buf_p + frame_matrices_ubo_offset_[ModelIndex] + i * sizeof(glm::vec4),
 						glm::value_ptr(line),
 						sizeof(glm::vec4));

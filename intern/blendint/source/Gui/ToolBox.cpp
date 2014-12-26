@@ -33,6 +33,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
@@ -440,7 +441,7 @@ namespace BlendInt {
 	void ToolBox::InitializeToolBoxOnce()
 	{
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
+		model_matrix_ = glm::mat3(1.f);
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;

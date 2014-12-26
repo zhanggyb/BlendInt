@@ -33,6 +33,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Menu.hpp>
@@ -60,7 +61,7 @@ namespace BlendInt {
 		InitializeMenu();
 
 		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat4(1.f);
+		model_matrix_ = glm::mat3(1.f);
 
 		shadow_ = new FrameShadow;
 		shadow_->Resize(size());
@@ -192,7 +193,7 @@ namespace BlendInt {
 				y + (float)size().height(),
 				100.f, -100.f);
 
-			model_matrix_ = glm::translate(glm::mat4(1.f), glm::vec3(x, y, 0.f));
+			model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
 
 			set_position(*request.position());
 		}

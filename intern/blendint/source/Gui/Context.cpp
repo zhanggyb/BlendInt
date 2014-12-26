@@ -537,7 +537,7 @@ namespace BlendInt
 		Shaders::instance->SetFrameModelMatrix(glm::mat3(1.f));
 
 		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
-		Shaders::instance->SetWidgetModelMatrix(glm::mat4(1.f));
+		Shaders::instance->SetWidgetModelMatrix(glm::mat3(1.f));
 
 		/*
 		glGenVertexArrays(1, &vao_);

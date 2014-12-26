@@ -38,6 +38,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
@@ -72,8 +73,8 @@ namespace BlendInt {
 
 //		Point pos = GetGlobalPosition();
 
-		glm::mat4 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
-				glm::vec3(position().x() + offset().x(), position().y() + offset().y(), 0.f));
+		glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+				glm::vec2(position().x() + offset().x(), position().y() + offset().y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
 		Shaders::instance->PushWidgetModelMatrix();

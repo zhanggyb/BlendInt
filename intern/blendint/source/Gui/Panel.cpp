@@ -408,7 +408,7 @@ namespace BlendInt {
 			Shaders::instance->PushWidgetModelMatrix();
 			Shaders::instance->PushWidgetProjectionMatrix();
 
-			glm::mat4 identity(1.f);
+			glm::mat3 identity(1.f);
 			Shaders::instance->SetWidgetModelMatrix(identity);
 
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f,

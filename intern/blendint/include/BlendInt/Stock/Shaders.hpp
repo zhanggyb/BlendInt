@@ -213,7 +213,7 @@ namespace BlendInt {
 				return widget_view_matrix_;
 			}
 
-			const glm::mat4& widget_model_matrix () const
+			const glm::mat3& widget_model_matrix () const
 			{
 				return widget_model_matrix_;
 			}
@@ -234,9 +234,9 @@ namespace BlendInt {
 
 			void PopWidgetViewMatrix ();
 
-			void SetWidgetModelMatrix (const glm::mat4& matrix);
+			void SetWidgetModelMatrix (const glm::mat3& matrix);
 
-			void GetWidgetModelMatrix (glm::mat4& matrix);
+			void GetWidgetModelMatrix (glm::mat3& matrix);
 
 			void PushWidgetModelMatrix ();
 
@@ -358,13 +358,13 @@ namespace BlendInt {
 
 			glm::mat4 widget_view_matrix_;
 
-			glm::mat4 widget_model_matrix_;
+			glm::mat3 widget_model_matrix_;
 
 			std::stack<glm::mat4> widget_projection_matrix_stack;
 
 			std::stack<glm::mat4> widget_view_matrix_stack;
 
-			std::stack<glm::mat4> widget_model_matrix_stack;
+			std::stack<glm::mat3> widget_model_matrix_stack;
 
 			static const char* widget_text_vertex_shader;
 
