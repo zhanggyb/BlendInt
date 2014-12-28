@@ -304,7 +304,7 @@ namespace BlendInt {
 			font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void Button::CalculateIconTextPosition(const Size& size, int round_type, float radius)

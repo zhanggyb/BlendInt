@@ -231,5 +231,5 @@ BI::ResponseType FontView::Draw (const BI::Profile& event)
 	glBindVertexArray(0);
 	*/
 
-	return BI::Accept;
+	return BI::Finish;
 }

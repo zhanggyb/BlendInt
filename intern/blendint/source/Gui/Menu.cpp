@@ -47,9 +47,9 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	int Menu::DefaultMenuItemHeight = 16;
-	int Menu::DefaultIconSpace = 4;
-	int Menu::DefaultShortcutSpace = 20;
+	int Menu::kDefaultMenuItemHeight = 16;
+	int Menu::kDefaultIconSpace = 4;
+	int Menu::kDefaultShortcutSpace = 20;
 
 	Menu::Menu ()
 	: AbstractFloatingFrame(),
@@ -57,14 +57,17 @@ namespace BlendInt {
 	  shadow_(0)
 	{
 		set_size (20, 20);
+		set_round_type(RoundAll);
 
 		InitializeMenu();
 
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		projection_matrix_  = glm::ortho(
+				0.f, (float)size().width(),
+				0.f, (float)size().height(),
+				100.f, -100.f);
 		model_matrix_ = glm::mat3(1.f);
 
-		shadow_ = new FrameShadow;
-		shadow_->Resize(size());
+		shadow_ = new FrameShadow(size(), round_type());
 	}
 
 	Menu::~Menu ()
@@ -111,16 +114,16 @@ namespace BlendInt {
 
 		width = item->GetTextLength(m_font);
 
-		width += 16 + DefaultIconSpace + DefaultShortcutSpace;
+		width += 16 + kDefaultIconSpace + kDefaultShortcutSpace;
 
 		Size s;
 
 		if(m_list.size()) {
 			s.set_width(std::max(size().width(), (int)round_radius() * 2 + width));
-			s.set_height(size().height() + DefaultMenuItemHeight);
+			s.set_height(size().height() + kDefaultMenuItemHeight);
 		} else {
 			s.set_width(round_radius() * 2 + width);
-			s.set_height(round_radius() * 2 + DefaultMenuItemHeight);
+			s.set_height(round_radius() * 2 + kDefaultMenuItemHeight);
 		}
 
 		Resize(s);
@@ -138,7 +141,7 @@ namespace BlendInt {
 			if(orig != m_highlight) {
 				RequestRedraw();
 			}
-			return Accept;
+			return Finish;
 		}
 
 		if(!m_list.size()) {
@@ -146,7 +149,7 @@ namespace BlendInt {
 			if(orig != m_highlight) {
 				RequestRedraw();
 			}
-			return Accept;
+			return Finish;
 		}
 
 		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
@@ -154,14 +157,14 @@ namespace BlendInt {
 		if(orig != m_highlight) {
 			RequestRedraw();
 		}
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Menu::MousePressEvent (const MouseEvent& event)
 	{
 		/*
 		if(!m_menubin->size()) {
-			return Accept;
+			return Finish;
 		}
 
 		m_triggered.fire(m_menubin->GetMenuItem(m_highlight - 1));
@@ -172,35 +175,12 @@ namespace BlendInt {
 			m_triggered.fire(item);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Menu::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Accept;
-	}
-
-	void Menu::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
-
-			projection_matrix_  = glm::ortho(
-				x,
-				x + (float)size().width(),
-				y,
-				y + (float)size().height(),
-				100.f, -100.f);
-
-			model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
-
-			set_position(*request.position());
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate (request);
-		}
+		return Finish;
 	}
 
 	void Menu::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -232,11 +212,11 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			outer_->reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			//ResetHighlightBuffer(request.size()->width());
 
@@ -264,11 +244,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		outer_->reset();
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 	}
 
 	void Menu::PerformRoundRadiusUpdate (float radius)
@@ -287,16 +267,16 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		outer_->reset();
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 	}
 
 	void Menu::ResetHighlightBuffer (int width)
 	{
-		Size size(width, DefaultMenuItemHeight);
+		Size size(width, kDefaultMenuItemHeight);
 
 		VertexTool tool;
 		tool.GenerateVertices(size,
@@ -399,21 +379,21 @@ namespace BlendInt {
 		int descender = m_font.GetDescender();
 		for(deque<RefPtr<Action> >::iterator it = m_list.begin(); it != m_list.end(); it++)
 		{
-			h = h - DefaultMenuItemHeight;
+			h = h - kDefaultMenuItemHeight;
 
 			if((*it)->icon()) {
 				//(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
 			}
-			advance = m_font.Print(0.f + 16 + DefaultIconSpace,
+			advance = m_font.Print(0.f + 16 + kDefaultIconSpace,
 			        0.f + h - descender, (*it)->text());
 			m_font.Print(
-			        0.f + 16 + DefaultIconSpace + advance
-			                + DefaultShortcutSpace,
+			        0.f + 16 + kDefaultIconSpace + advance
+			                + kDefaultShortcutSpace,
 			        0.f + h - descender,
 			        (*it)->shortcut());
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void Menu::PostDraw(Profile& profile)
@@ -432,6 +412,12 @@ namespace BlendInt {
 
 	ResponseType Menu::KeyPressEvent(const KeyEvent& event)
 	{
+		if(event.key() == Key_Escape) {
+			RequestRedraw();
+			delete this;
+			return Finish;
+		}
+
 		return Ignore;
 	}
 
@@ -447,7 +433,13 @@ namespace BlendInt {
 
 	ResponseType Menu::DispatchHoverEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		if(Contain(event.position())) {
+
+		} else {
+
+		}
+
+		return Finish;
 	}
 
 	unsigned int Menu::GetHighlightNo(int y)
@@ -478,20 +470,18 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
+		buffer_.generate();
+
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 

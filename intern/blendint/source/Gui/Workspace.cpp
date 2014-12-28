@@ -163,7 +163,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	// -------------------------------
@@ -420,7 +420,7 @@ namespace BlendInt {
 	{
 		DrawSubFormsOnce(profile);
 
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Workspace::PostDraw(Profile& profile)
@@ -460,14 +460,14 @@ namespace BlendInt {
 		if(hover_frame_ != nullptr) {
 			response = delegate_mouse_press_event(hover_frame_, event);
 
-			if(response == Accept) {
+			if(response == Finish) {
 				SetFocusedFrame(hover_frame_);
 			}
 		} else {
 			SetFocusedFrame(0);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Workspace::MouseReleaseEvent(const MouseEvent& event)
@@ -518,7 +518,7 @@ namespace BlendInt {
 				delegate_dispatch_hover_event(hover_frame_, event);
 			}
 
-			return Accept;
+			return Finish;
 
 		} else {
 			return Ignore;

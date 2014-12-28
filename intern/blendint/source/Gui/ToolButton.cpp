@@ -218,7 +218,7 @@ namespace BlendInt {
 				icon_->Draw(x, y, 0);
 			}
 		}
-		return Accept;
+		return Finish;
 	}
 
 	void ToolButton::SetAction (const String& text)

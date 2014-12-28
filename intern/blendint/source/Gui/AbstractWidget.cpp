@@ -104,32 +104,32 @@ namespace BlendInt {
 
 	ResponseType AbstractWidget::KeyPressEvent (const KeyEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWidget::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWidget::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWidget::MousePressEvent (const MouseEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWidget::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWidget::MouseMoveEvent (const MouseEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 }

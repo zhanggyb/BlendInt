@@ -86,7 +86,7 @@ namespace BlendInt {
 	{
 		curve_->Draw();
 
-		return Accept;
+		return Finish;
 	}
 
 }

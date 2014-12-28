@@ -132,7 +132,7 @@ namespace BlendInt {
 
 		Icons::instance->num()->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
 
-		return Accept;
+		return Finish;
 	}
 
 	void ExpandButton::InitializeExpandButton ()
@@ -296,7 +296,7 @@ namespace BlendInt {
 
 	ResponseType Expander::Draw (Profile& profile)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Expander::FillInExpander (const Size& out_size)

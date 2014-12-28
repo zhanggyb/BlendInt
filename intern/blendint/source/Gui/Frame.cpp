@@ -66,7 +66,7 @@ namespace BlendInt {
 	{
 		DrawSubFormsOnce(profile);
 
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Frame::PostDraw(Profile& profile)

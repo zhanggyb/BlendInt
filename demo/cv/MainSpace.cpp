@@ -111,7 +111,7 @@ ResponseType MainSpace::Draw(Profile& profile)
 	buffer_.Draw(position().x(), position().y());
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	return Accept;
+	return Finish;
 }
 
 void MainSpace::RenderToBuffer(BI::Profile& profile)

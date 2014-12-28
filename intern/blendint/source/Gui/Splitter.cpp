@@ -219,7 +219,7 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void SplitterHandle::MouseHoverInEvent(const MouseEvent& event)
@@ -253,7 +253,7 @@ namespace BlendInt {
 			nearby_pos_ = next_view()->position().x();
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
@@ -262,7 +262,7 @@ namespace BlendInt {
 			pressed_ = false;
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)
@@ -278,7 +278,7 @@ namespace BlendInt {
 				int oy2 = next_size_ + offset;
 
 				if((oy1 <= 0) || (oy2 <= 0)) {
-					return Accept;
+					return Finish;
 				}
 
 				splitter->MoveSubViewTo(this, last_.x(), last_.y() + offset);
@@ -294,7 +294,7 @@ namespace BlendInt {
 				int oy2 = next_size_ - offset;
 
 				if((oy1 <= 0) || (oy2 <= 0)) {
-					return Accept;
+					return Finish;
 				}
 
 				splitter->MoveSubViewTo(this, last_.x() + offset, last_.y());
@@ -306,9 +306,9 @@ namespace BlendInt {
 			}
 
 			RequestRedraw();
-			return Accept;
+			return Finish;
 		}
-		return Accept;
+		return Finish;
 	}
 
 	Splitter::Splitter(Orientation orientation)

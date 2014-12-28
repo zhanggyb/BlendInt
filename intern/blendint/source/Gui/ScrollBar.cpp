@@ -272,7 +272,7 @@ namespace BlendInt {
 		}
 
 		m_slide.Draw(x, y);
-		return Accept;
+		return Finish;
 	}
 
 	void ScrollBar::MouseHoverOutEvent(const MouseEvent& event)
@@ -296,7 +296,7 @@ namespace BlendInt {
 			set_pressed(true);
 			fire_slider_pressed();
 
-			return Accept;
+			return Finish;
 		} else {
 			return Ignore;
 		}
@@ -331,7 +331,7 @@ namespace BlendInt {
 
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
@@ -350,7 +350,7 @@ namespace BlendInt {
 
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void ScrollBar::InitScrollBarOnce ()

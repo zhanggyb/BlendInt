@@ -74,8 +74,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformRoundTypeUpdate (int round_type);
@@ -132,8 +130,7 @@ namespace BlendInt {
 
 		Font m_font;
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
@@ -148,11 +145,11 @@ namespace BlendInt {
 		glm::mat3 model_matrix_;
 
 		//Cpp::Event<ActionItem*> m_triggered;
-		static int DefaultMenuItemHeight;
+		static int kDefaultMenuItemHeight;
 
-		static int DefaultIconSpace;
+		static int kDefaultIconSpace;
 
-		static int DefaultShortcutSpace;
+		static int kDefaultShortcutSpace;
 
 	};
 

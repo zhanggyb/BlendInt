@@ -343,7 +343,7 @@ namespace BlendInt {
 
 		}
 
-		return Accept;
+		return Finish;
 	}
 	
 	void ImageViewport::PostDraw(Profile& profile)

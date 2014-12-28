@@ -201,7 +201,7 @@ namespace BlendInt {
 
 		Icons::instance->cross()->Draw(pos, Color(0x0F0F0FFF));
 
-		return Accept;
+		return Finish;
 	}
 
 	void CloseButton::InitializeCloseButtonOnce()

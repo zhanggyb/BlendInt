@@ -173,7 +173,7 @@ namespace BlendInt {
 
 		program->reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
@@ -213,7 +213,7 @@ namespace BlendInt {
 			highlight_index_ = -1;
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ModelIndex ListView::GetIndexAt (const Point& point) const

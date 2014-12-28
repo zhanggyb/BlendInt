@@ -101,7 +101,7 @@ namespace BlendInt {
 		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void Clock::OnUpdateClockHands(Timer* t)

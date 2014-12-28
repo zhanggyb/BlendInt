@@ -68,6 +68,8 @@ private:
 
 	BI::Panel* CreateButtonsForWidgets ();
 
+	BI::Panel* CreateButtonsForMenuTest ();
+
 	void OnSaveTextureToFile ();
 
 	void OnOpenDialogForTextureView ();
@@ -82,7 +84,13 @@ private:
 
 	void OnOpenDialogForScrollView ();
 
-	void OnStart (BI::AbstractButton* btn);
+	void OnOpenDialogForBlocks ();
+
+	void OnOpenMenu ();
+
+	void OnOpenPanel1 (BI::AbstractButton* btn);
+
+	void OnOpenPanel2 (BI::AbstractButton* btn);
 
 	BI::ToolBox* CreateMenuBar ();
 

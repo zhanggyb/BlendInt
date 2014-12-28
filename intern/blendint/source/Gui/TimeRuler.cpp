@@ -187,7 +187,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 }

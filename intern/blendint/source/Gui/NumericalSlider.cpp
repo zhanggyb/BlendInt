@@ -259,7 +259,7 @@ namespace BlendInt {
 			m_font.Print(0.f, 0.f, m_title);
 		}
 
-		return Accept;
+		return Finish;
 	}
 	
 	void NumericalSlider::MouseHoverInEvent(const MouseEvent& event)

@@ -255,7 +255,7 @@ namespace BlendInt {
 	ResponseType CVVideoViewport::Draw(Profile& profile)
 	{
 		if(status_ == VideoStop) {
-			return Accept;
+			return Finish;
 		}
 
 		glActiveTexture(GL_TEXTURE0);
@@ -286,7 +286,7 @@ namespace BlendInt {
 
 						default: {
 							texture_.reset();
-							return Accept;
+							return Finish;
 							break;
 						}
 					}
@@ -316,7 +316,7 @@ namespace BlendInt {
 		texture_.reset();
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void CVVideoViewport::PostDraw(Profile& profile)

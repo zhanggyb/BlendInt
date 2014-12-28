@@ -107,7 +107,7 @@ ResponseType MainLayout::Draw(Profile& profile)
 	buffer_.Draw(0.f, 0.f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	return Accept;
+	return Finish;
 }
 
 void MainLayout::RenderToBuffer(BI::Profile& profile)

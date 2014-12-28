@@ -289,5 +289,5 @@ BI::ResponseType TexAtlasViewer::Draw (const BI::Profile& profile)
 
 	glBindVertexArray(0);
 	
-	return BI::Accept;
+	return BI::Finish;
 }

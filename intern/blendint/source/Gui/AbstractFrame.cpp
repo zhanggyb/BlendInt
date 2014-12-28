@@ -93,12 +93,12 @@ namespace BlendInt {
 
 	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractFrame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const KeyEvent& event)
@@ -111,7 +111,7 @@ namespace BlendInt {
 
 			if(subview->superview ()) {
 				response = DispatchKeyEvent(subview->superview(), event);
-				if(response == Accept) {
+				if(response == Finish) {
 					return response;
 				} else {
 					return subview->KeyPressEvent(event);
@@ -141,7 +141,7 @@ namespace BlendInt {
 
 					response = subview->MousePressEvent(event);
 
-					return response == Accept ? subview : 0;
+					return response == Finish ? subview : 0;
 
 				} else {
 					return ret_val;
@@ -149,7 +149,7 @@ namespace BlendInt {
 
 			} else {
 				response = subview->MousePressEvent(event);
-				return response == Accept ? subview : 0;
+				return response == Finish ? subview : 0;
 			}
 
 		}
@@ -165,7 +165,7 @@ namespace BlendInt {
 				if(DispatchMouseMoveEvent(subview->superview (), event) == Ignore) {
 					return subview->MouseMoveEvent(event);
 				} else {
-					return Accept;
+					return Finish;
 				}
 
 			} else {
@@ -186,7 +186,7 @@ namespace BlendInt {
 				if(DispatchMouseReleaseEvent(subview->superview (), event) == Ignore) {
 					return subview->MouseReleaseEvent(event);
 				} else {
-					return Accept;
+					return Finish;
 				}
 
 			} else {

@@ -324,7 +324,7 @@ namespace BlendInt {
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		return Accept;
+		return Finish;
 	}
 
 	void ToolBox::PostDraw (Profile& profile)
@@ -381,7 +381,7 @@ namespace BlendInt {
 			// SetFocusedWidget(0);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
@@ -431,7 +431,7 @@ namespace BlendInt {
 			}
 
 			assign_event_frame(event, this);
-			return Accept;
+			return Finish;
 		} else {
 			assign_event_frame(event, 0);
 			return Ignore;

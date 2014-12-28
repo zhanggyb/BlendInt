@@ -407,7 +407,7 @@ namespace BlendInt
 			p->PostDraw(profile);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void Context::PostDraw(Profile& profile)
@@ -420,7 +420,7 @@ namespace BlendInt
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			response = p->KeyPressEvent(event);
-			if(response == Accept) break;
+			if(response == Finish) break;
 		}
 
 		return response;
@@ -463,7 +463,7 @@ namespace BlendInt
 		if(hovered_frame_) {
 			response = hovered_frame_->MousePressEvent(event);
 
-			if(response == Accept) {
+			if(response == Finish) {
 				SetFocusedFrame(hovered_frame_);
 			}
 		}
@@ -586,7 +586,7 @@ namespace BlendInt
 
 			response = frame->DispatchHoverEvent(event);
 
-			if(response == Accept) {
+			if(response == Finish) {
 				hovered_frame_ = frame;
 				break;
 			}

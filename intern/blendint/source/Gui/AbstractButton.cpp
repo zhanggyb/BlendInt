@@ -203,7 +203,7 @@ namespace BlendInt {
 			pressed_.fire(this);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
@@ -261,7 +261,7 @@ namespace BlendInt {
 
 			set_pressed(false);
 
-			return Accept;
+			return Finish;
 		}
 
 		set_pressed(false);
@@ -277,7 +277,7 @@ namespace BlendInt {
 			return;
 		}
 		*/
-		return Accept;
+		return Finish;
 	}
 	
 	void AbstractButton::SetDown (bool down)

@@ -188,7 +188,7 @@ namespace BlendInt {
 
 		m_slide_icon.Draw(x, y);
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)
@@ -204,7 +204,7 @@ namespace BlendInt {
 				RequestRedraw();
 			}
 
-			return Accept;
+			return Finish;
 
 		} else {
 			if(CursorOnSlideIcon(event.position())) {
@@ -213,7 +213,7 @@ namespace BlendInt {
 
 				RequestRedraw();
 
-				return Accept;
+				return Finish;
 			} else {
 
 				//m_slide_icon.set_highlight(false);
@@ -231,7 +231,7 @@ namespace BlendInt {
 			m_last_cursor = event.position();
 			fire_slider_pressed();
 
-			return Accept;
+			return Finish;
 		} else {
 			return Ignore;
 		}
@@ -249,7 +249,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void Slider::InitOnce ()

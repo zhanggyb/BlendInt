@@ -56,7 +56,7 @@ namespace BlendInt {
 
 	ResponseType BlendInt::AbstractLayout::Draw(Profile& profile)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void AbstractLayout::PerformMarginUpdate(const Margin& margin)

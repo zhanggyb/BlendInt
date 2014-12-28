@@ -157,7 +157,7 @@ namespace BlendInt {
 	 */
 	enum ResponseType {
 		Ignore = 0,
-		Accept = (1 << 0)
+		Finish = (1 << 0)
 	};
 
 	/**

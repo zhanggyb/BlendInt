@@ -90,7 +90,7 @@ namespace BlendInt {
 			font_.Print(0.f, 0.f, text_, text_length_, 0);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	size_t Label::UpdateTextPosition(const Size& size, const String& text, Font& font)

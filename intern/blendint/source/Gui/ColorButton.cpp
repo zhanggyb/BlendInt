@@ -196,7 +196,7 @@ namespace BlendInt {
 			font().Print(position(), text(), text_length(), 0);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void ColorButton::InitializeColorButton ()

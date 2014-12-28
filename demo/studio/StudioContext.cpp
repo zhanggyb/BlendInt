@@ -89,10 +89,38 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	Button* btn10 = Manage(new Button("ScrollView"));
 	events()->connect(btn10->clicked(), this, &StudioContext::OnOpenDialogForScrollView);
+	Button* btn11 = Manage(new Button("Blocks"));
+	events()->connect(btn11->clicked(), this, &StudioContext::OnOpenDialogForBlocks);
 
 	group5->AddWidget(btn10);
+	group5->AddWidget(btn11);
 
 	vlayout->AddWidget(group5);
+
+	panel->SetLayout(vlayout);
+
+	return panel;
+}
+
+Panel* StudioContext::CreateButtonsForMenuTest()
+{
+	Panel* panel = Manage(new Panel);
+
+	VLayout* vlayout = Manage(new VLayout);
+
+	Block * group1 = Manage(new Block(Horizontal));
+
+	Button* btn1 = Manage(new Button("Menu1"));
+	Button* btn2 = Manage(new Button("Menu2"));
+	Button* btn3 = Manage(new Button("Menu3"));
+
+	events()->connect(btn1->clicked(), this, &StudioContext::OnOpenMenu);
+
+	group1->AddWidget(btn1);
+	group1->AddWidget(btn2);
+	group1->AddWidget(btn3);
+
+	vlayout->AddWidget(group1);
 
 	panel->SetLayout(vlayout);
 
@@ -132,8 +160,8 @@ void StudioContext::OnOpenFileSelector()
 
 void StudioContext::OnResize(const BI::Size& size)
 {
-	menubar_->MoveTo(0, size.height() - menubar_->size().height());
-	menubar_->Resize(size.width(), menubar_->size().height());
+	menubar_->MoveTo(0, size.height() - 32);
+	menubar_->Resize(size.width(), 32);
 }
 
 void StudioContext::OnOpenDialogForDecoration()
@@ -169,10 +197,9 @@ void StudioContext::OnOpenDialogForScrollView()
 
 void StudioContext::OnOpenDialogForButton()
 {
-
 }
 
-void StudioContext::OnStart (AbstractButton* btn)
+void StudioContext::OnOpenPanel1 (AbstractButton* btn)
 {
 	Panel* panel1 = CreateButtonsForWidgets();
 	panel1->Resize(240, 320);
@@ -187,16 +214,79 @@ void StudioContext::OnStart (AbstractButton* btn)
 	AddFrame(pop_);
 }
 
+void StudioContext::OnOpenDialogForBlocks()
+{
+	Dialog * dialog = Manage(new Dialog("ScrollView", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Block* main_block = Manage(new Block(Vertical));
+
+	Block* block1 = Manage(new Block(Horizontal));
+	Button* btn1 = Manage(new Button("Button1"));
+	Button* btn2 = Manage(new Button("Button2"));
+	Button* btn3 = Manage(new Button("Button3"));
+	block1->AddWidget(btn1);
+	block1->AddWidget(btn2);
+	block1->AddWidget(btn3);
+
+	Block* block2 = Manage(new Block(Horizontal));
+	Button* btn4 = Manage(new Button("Button4"));
+	Button* btn5 = Manage(new Button("Button5"));
+	Button* btn6 = Manage(new Button("Button6"));
+	block2->AddWidget(btn4);
+	block2->AddWidget(btn5);
+	block2->AddWidget(btn6);
+
+	main_block->AddWidget(block1);
+	main_block->AddWidget(block2);
+	main_block->Resize(main_block->GetPreferredSize());
+	main_block->MoveTo(100, 100);
+
+	dialog->AddWidget(main_block);
+
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenMenu()
+{
+	Menu* menu1 = Manage(new Menu);
+	menu1->Resize(menu1->GetPreferredSize());
+	menu1->MoveTo((size().width() - menu1->size().width()) / 2, (size().height() - menu1->size().height()) / 2);
+
+	AddFrame(menu1);
+}
+
+void StudioContext::OnOpenPanel2(BI::AbstractButton* btn)
+{
+	Panel* panel = CreateButtonsForMenuTest();
+	panel->Resize(240, 320);
+	panel->MoveTo(20, 20);
+
+	pop_ = Manage(new PopupFrame);
+	pop_->Resize(280, 360);
+	pop_->MoveTo(size().width() - pop_->size().width(), 400);
+
+	pop_->AddWidget(panel);
+
+	AddFrame(pop_);
+}
+
 BI::ToolBox* StudioContext::CreateMenuBar()
 {
-	MenuButton* menubtn1 = Manage(new MenuButton("Start"));
+	MenuButton* menubtn1 = Manage(new MenuButton("Widgets"));
 
 	ToolBox* menubar = Manage(new ToolBox(size().width(), 24, Horizontal));
 	menubar->MoveTo(0, size().height() - menubar->size().height());
 
 	menubar->AddWidget(menubtn1);
 
-	events()->connect(menubtn1->clicked(), this, &StudioContext::OnStart);
+	events()->connect(menubtn1->clicked(), this, &StudioContext::OnOpenPanel1);
+
+	MenuButton* menubtn2 = Manage(new MenuButton("Menus"));
+	menubar->AddWidget(menubtn2);
+
+	events()->connect(menubtn2->clicked(), this, &StudioContext::OnOpenPanel2);
 
 	return menubar;
 }

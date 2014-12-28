@@ -178,7 +178,7 @@ namespace BlendInt {
 			}
 
 			RequestRedraw();
-			return Accept;
+			return Finish;
 
 		} else {
 
@@ -216,7 +216,7 @@ namespace BlendInt {
 					break;
 			}
 
-			return Accept;
+			return Finish;
 		}
 	}
 
@@ -230,7 +230,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -382,7 +382,7 @@ namespace BlendInt {
 
 		font_.Print(0.f, 0.f, text_, length_, start_);
 
-		return Accept;
+		return Finish;
 	}
 
 	void TextEntry::FocusEvent (bool focus)

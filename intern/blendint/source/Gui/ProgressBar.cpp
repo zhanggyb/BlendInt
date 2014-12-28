@@ -160,7 +160,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void ProgressBar::InitializeProgressBar ()

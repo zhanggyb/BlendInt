@@ -195,7 +195,7 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -298,7 +298,7 @@ namespace BlendInt {
 		}
 
 		clicked_.fire();
-		return Accept;
+		return Finish;
 	}
 
 	void FileBrowser::InitializeFileBrowserOnce ()

@@ -116,7 +116,7 @@ namespace BlendInt {
 		picker_->Draw (0.f + size ().width () / 2 - picker_->size ().width () / 2,
 				0.f + 12.f);
 
-		return Accept;
+		return Finish;
 	}
 
 	void BrightnessSlider::PerformSizeUpdate (const SizeUpdateRequest& request)

@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		if(Contain(event.position())) {
 			assign_event_frame(event, this);
-			return Accept;
+			return Finish;
 		} else {
 			assign_event_frame(event, 0);
 			return Ignore;
@@ -164,17 +164,17 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType Viewport::MouseReleaseEvent(const MouseEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType Viewport::MouseMoveEvent(const MouseEvent& event)
 	{
-		return subs_count() ? Ignore : Accept;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	bool Viewport::PreDraw(Profile& profile)

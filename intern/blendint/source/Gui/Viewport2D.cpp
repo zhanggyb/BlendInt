@@ -166,7 +166,7 @@ namespace BlendInt {
 		profile.EndPopStencil();
 		program->reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void Viewport2D::InitializeViewport2D()

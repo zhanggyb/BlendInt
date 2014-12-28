@@ -58,7 +58,10 @@ namespace BlendInt {
 		set_round_radius(5.f);
 		set_refresh(true);
 
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		projection_matrix_ = glm::ortho(
+				0.f, (float)size().width(),
+				0.f, (float)size().height(),
+				100.f, -100.f);
 		model_matrix_ = glm::mat3(1.f);
 
 		std::vector<GLfloat> inner_verts;
@@ -352,7 +355,7 @@ namespace BlendInt {
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		return Accept;
+		return Finish;
 	}
 
 	void PopupFrame::PostDraw(Profile& profile)
@@ -389,7 +392,7 @@ namespace BlendInt {
 		if(event.key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
-			return Accept;
+			return Finish;
 		}
 
 		if(focused_widget_) {
@@ -443,7 +446,7 @@ namespace BlendInt {
 			set_pressed(false);
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType PopupFrame::MouseReleaseEvent(const MouseEvent& event)
@@ -473,7 +476,7 @@ namespace BlendInt {
 			if(superview()) {
 				superview()->RequestRedraw();
 			}
-			retval = Accept;
+			retval = Finish;
 
 		} else {
 
@@ -491,7 +494,7 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(pressed_ext()) return Accept;
+		if(pressed_ext()) return Finish;
 
 		if(Contain(event.position())) {
 
@@ -515,11 +518,10 @@ namespace BlendInt {
 			}
 
 		} else {
-
 			cursor_position_ = OutsideRectangle;
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void PopupFrame::SetFocusedWidget(AbstractWidget* widget)

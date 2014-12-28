@@ -117,7 +117,7 @@ namespace BlendInt {
 
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Viewport3D::MousePressEvent (const MouseEvent& event)
@@ -163,14 +163,14 @@ namespace BlendInt {
 
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Viewport3D::MouseReleaseEvent (const MouseEvent& event)
 	{
 		m_button_down = MouseButtonNone;
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType Viewport3D::MouseMoveEvent (const MouseEvent& event)
@@ -215,7 +215,7 @@ namespace BlendInt {
 				break;
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	void Viewport3D::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -325,7 +325,7 @@ namespace BlendInt {
 		profile.EndPopStencil();
 		program->reset();
 
-		return Accept;
+		return Finish;
 	}
 	
 	Size Viewport3D::GetPreferredSize () const

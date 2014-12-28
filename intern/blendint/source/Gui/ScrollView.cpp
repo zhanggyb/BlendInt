@@ -281,7 +281,7 @@ namespace BlendInt {
 			return Ignore;
 
 		} else {
-			return Accept;
+			return Finish;
 		}
 	}
 
@@ -317,7 +317,7 @@ namespace BlendInt {
 			last_offset_ = offset();
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
@@ -327,7 +327,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		return Accept;
+		return Finish;
 	}
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
@@ -343,7 +343,7 @@ namespace BlendInt {
 				RequestRedraw();
 			}
 
-			return Accept;
+			return Finish;
 		}
 
 		return Ignore;

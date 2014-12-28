@@ -101,7 +101,7 @@ namespace BlendInt {
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
 		picker_.Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);
 
-		return Accept;
+		return Finish;
 	}
 	
 	void ColorWheel::PerformSizeUpdate (const SizeUpdateRequest& request)

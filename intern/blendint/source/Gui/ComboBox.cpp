@@ -262,7 +262,7 @@ namespace BlendInt {
 
 		Icons::instance->menu()->Draw(x, y, Color(0xEFEFEFFF));
 
-		return Accept;
+		return Finish;
 	}
 	
 	ResponseType ComboBox::MousePressEvent (const MouseEvent& event)
@@ -323,7 +323,7 @@ namespace BlendInt {
 
 		RequestRedraw();
 
-		return Accept;
+		return Finish;
 	}
 	
 	ResponseType ComboBox::MouseReleaseEvent (const MouseEvent& event)
@@ -331,7 +331,7 @@ namespace BlendInt {
 		status_down_ = false;
 
 		RequestRedraw();
-		return Accept;
+		return Finish;
 	}
 	
 	void ComboBox::MouseHoverInEvent(const MouseEvent& event)

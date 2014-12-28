@@ -283,7 +283,7 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Accept;
+		return Finish;
 	}
 
 	void Dialog::PostDraw(Profile& profile)
@@ -313,7 +313,7 @@ namespace BlendInt {
 		if(event.key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
-			return Accept;
+			return Finish;
 		}
 
 		if(focused_widget_) {
@@ -369,7 +369,7 @@ namespace BlendInt {
 				MoveToLast();
 			}
 
-			return Accept;
+			return Finish;
 
 		} else if (cursor_position_ != OutsideRectangle) {
 
@@ -379,7 +379,7 @@ namespace BlendInt {
 			last_size_ = size();
 			cursor_point_ = event.position();
 
-			return Accept;
+			return Finish;
 		}
 
 		return Ignore;
@@ -460,7 +460,7 @@ namespace BlendInt {
 				}
 
 				default: {
-					return Accept;
+					return Finish;
 					break;
 				}
 
@@ -469,7 +469,7 @@ namespace BlendInt {
 			if(superview()) {
 				superview()->RequestRedraw();
 			}
-			retval = Accept;
+			retval = Finish;
 
 		} else {
 
@@ -486,9 +486,9 @@ namespace BlendInt {
 
 	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(mouse_button_pressed()) return Accept;
+		if(mouse_button_pressed()) return Finish;
 
-		ResponseType retval = Accept;
+		ResponseType retval = Finish;
 		int border = 4;
 
 		Rect valid_rect(position().x() - border, position().y() - border,
@@ -590,9 +590,9 @@ namespace BlendInt {
 			retval = Ignore;
 		}
 
-		// a modal dialog always return Accept
+		// a modal dialog always return Finish
 		if(modal()) {
-			return Accept;
+			return Finish;
 		} else {
 			return retval;
 		}
