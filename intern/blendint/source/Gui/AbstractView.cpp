@@ -501,7 +501,7 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractView::DrawSubFormsOnce(Profile& profile)
+	void AbstractView::DrawSubViewsOnce(Profile& profile)
 	{
 		bool refresh_record = false;
 
@@ -1194,11 +1194,11 @@ namespace BlendInt {
 			int round_type, float radius, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
-		if(inner == 0 && outer == 0) return;
+		if(inner == nullptr && outer == nullptr) return;
 
-		std::vector<GLfloat>* inner_ptr = 0;
+		std::vector<GLfloat>* inner_ptr = nullptr;
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			inner_ptr = new std::vector<GLfloat>;
 		} else {
 			inner_ptr = inner;
@@ -1332,7 +1332,7 @@ namespace BlendInt {
 			(*inner_ptr)[count * 3 + 2] = 0.f;
 		}
 
-		if(outer) {
+		if(outer != nullptr) {
 
 			if(border > 0.f) {
 
@@ -1400,7 +1400,7 @@ namespace BlendInt {
 
 		}
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			delete inner_ptr;
 		}
 	}
@@ -1410,11 +1410,11 @@ namespace BlendInt {
 			short shadedown, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
-		if(inner == 0 && outer == 0) return;
+		if(inner == nullptr && outer == nullptr) return;
 
-		std::vector<GLfloat>* inner_ptr = 0;
+		std::vector<GLfloat>* inner_ptr = nullptr;
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			inner_ptr = new std::vector<GLfloat>;
 		} else {
 			inner_ptr = inner;
@@ -1624,7 +1624,7 @@ namespace BlendInt {
 
 		}
 
-		if(outer) {
+		if(outer != nullptr) {
 
 			if (border > 0.f) {
 
@@ -1692,7 +1692,7 @@ namespace BlendInt {
 
 		}
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			delete inner_ptr;
 		}
 

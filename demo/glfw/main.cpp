@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
 	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
 
-	GLFWDemoContext* context = Manage (new GLFWDemoContext);
+	GLFWDemoContext* context = Manage (new GLFWDemoContext(win));
 	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);

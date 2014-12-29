@@ -5,6 +5,8 @@
 #ifndef STUDIOCONTEXT_HPP_
 #define STUDIOCONTEXT_HPP_
 
+#include <GLFW/glfw3.h>
+
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
@@ -17,7 +19,6 @@
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
@@ -56,9 +57,11 @@ class StudioContext: public BI::Context
 {
 public:
 
-	StudioContext ();
+	StudioContext (GLFWwindow* window);
 
 	virtual ~StudioContext ();
+
+	virtual void SynchronizeWindow ();
 
 private:
 
@@ -86,7 +89,9 @@ private:
 
 	void OnOpenDialogForBlocks ();
 
-	void OnOpenMenu ();
+	void OnOpenDialogForClock ();
+
+	void OnOpenMenu1 ();
 
 	void OnOpenPanel1 (BI::AbstractButton* btn);
 
@@ -99,6 +104,8 @@ private:
 	BI::PopupFrame* pop_;
 
 	BI::ToolBox* menubar_;
+
+	GLFWwindow* window_;
 
 };
 

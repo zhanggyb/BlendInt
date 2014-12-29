@@ -400,9 +400,6 @@ namespace BlendInt {
 			hovered_widget->MouseHoverOutEvent(event);
 			hovered_widget = hovered_widget->superview();
 		}
-
-		if(hovered_widget == this)
-			hovered_widget = 0;
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const MouseEvent& event,

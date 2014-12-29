@@ -127,8 +127,6 @@ namespace BlendInt {
 
 		void DispatchHoverEvent (const MouseEvent& event);
 
-		void OnHoverFrameDestroyed (AbstractFrame* frame);
-
 		void OnFocusedFrameDestroyed (AbstractFrame* frame);
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
@@ -138,8 +136,6 @@ namespace BlendInt {
         //GLuint vao_;
         
 		Profile profile_;
-
-		AbstractFrame* hovered_frame_;
 
 		AbstractFrame* focused_frame_;
         

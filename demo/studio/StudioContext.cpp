@@ -7,14 +7,16 @@
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 using namespace BI;
 
-StudioContext::StudioContext()
+StudioContext::StudioContext(GLFWwindow* window)
 : BI::Context(),
   button_(0),
   pop_(0),
-  menubar_(nullptr)
+  menubar_(nullptr),
+  window_(window)
 {
 	InitializeStudioContext();
 
@@ -24,6 +26,11 @@ StudioContext::StudioContext()
 StudioContext::~StudioContext ()
 {
 
+}
+
+void StudioContext::SynchronizeWindow()
+{
+	glfwPostEmptyEvent();
 }
 
 void StudioContext::InitializeStudioContext()
@@ -111,10 +118,11 @@ Panel* StudioContext::CreateButtonsForMenuTest()
 	Block * group1 = Manage(new Block(Horizontal));
 
 	Button* btn1 = Manage(new Button("Menu1"));
-	Button* btn2 = Manage(new Button("Menu2"));
+	Button* btn2 = Manage(new Button("Clock"));
 	Button* btn3 = Manage(new Button("Menu3"));
 
-	events()->connect(btn1->clicked(), this, &StudioContext::OnOpenMenu);
+	events()->connect(btn1->clicked(), this, &StudioContext::OnOpenMenu1);
+	events()->connect(btn2->clicked(), this, &StudioContext::OnOpenDialogForClock);
 
 	group1->AddWidget(btn1);
 	group1->AddWidget(btn2);
@@ -248,11 +256,29 @@ void StudioContext::OnOpenDialogForBlocks()
 	AddFrame(dialog);
 }
 
-void StudioContext::OnOpenMenu()
+void StudioContext::OnOpenDialogForClock()
+{
+	Dialog * dialog = Manage(new Dialog("Clock"));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Clock* clock = Manage(new Clock);
+	clock->Start();
+
+	dialog->AddWidget(clock);
+	clock->MoveTo((dialog->size().width() - clock->size().width()) / 2, (dialog->size().height() - clock->size().height()) / 2);
+
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenMenu1()
 {
 	Menu* menu1 = Manage(new Menu);
 	menu1->Resize(menu1->GetPreferredSize());
 	menu1->MoveTo((size().width() - menu1->size().width()) / 2, (size().height() - menu1->size().height()) / 2);
+
+	menu1->AddAction("MenuItem1");
+	menu1->AddButton(Manage(new Button("Test")));
 
 	AddFrame(menu1);
 }

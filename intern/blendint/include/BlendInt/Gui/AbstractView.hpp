@@ -621,7 +621,7 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
-		void DrawSubFormsOnce (Profile& profile);
+		void DrawSubViewsOnce (Profile& profile);
 
 		static void GenerateVertices (
 				const Size& size,

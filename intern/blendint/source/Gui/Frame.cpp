@@ -64,7 +64,7 @@ namespace BlendInt {
 
 	ResponseType Frame::Draw (Profile& profile)
 	{
-		DrawSubFormsOnce(profile);
+		DrawSubViewsOnce(profile);
 
 		return subs_count() ? Ignore : Finish;
 	}

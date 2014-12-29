@@ -303,6 +303,7 @@ namespace BlendInt {
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_, event);
+			hovered_widget_ = 0;
 		}
 	}
 
@@ -379,6 +380,10 @@ namespace BlendInt {
 			last_size_ = size();
 			cursor_point_ = event.position();
 
+			return Finish;
+		}
+
+		if(modal()) {
 			return Finish;
 		}
 
@@ -779,7 +784,7 @@ namespace BlendInt {
             glViewport(0, 0, size().width(), size().height());
 
             // Draw context:
-            DrawSubFormsOnce(profile);
+            DrawSubViewsOnce(profile);
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

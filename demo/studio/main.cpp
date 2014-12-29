@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
 	Cursor::instance->RegisterCursorType (new StudioCursor(win));
 
-	StudioContext* context = Manage (new StudioContext);
+	StudioContext* context = Manage (new StudioContext(win));
 	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);

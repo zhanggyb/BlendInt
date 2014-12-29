@@ -198,14 +198,14 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
+			set_size(*request.size());
+
 			projection_matrix_  = glm::ortho(
 				0.f,
-				0.f + (float)request.size()->width(),
+				0.f + size().width(),
 				0.f,
-				0.f + (float)request.size()->height(),
+				0.f + size().height(),
 				100.f, -100.f);
-
-			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
@@ -272,7 +272,7 @@ namespace BlendInt {
 		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		// TODO: change shadow
+		shadow_->SetRoundType(round_type);
 	}
 
 	void PopupFrame::PerformRoundRadiusUpdate(float radius)
@@ -298,8 +298,8 @@ namespace BlendInt {
 		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		// TODO: change shadow
-}
+		shadow_->SetRadius(radius);
+	}
 
 	bool PopupFrame::PreDraw(Profile& profile)
 	{
@@ -380,6 +380,7 @@ namespace BlendInt {
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_, event);
+			hovered_widget_ = 0;
 		}
 
 		//DBG_PRINT_MSG("%s", "hover out");
@@ -500,6 +501,11 @@ namespace BlendInt {
 
 			cursor_position_ = InsideRectangle;
 
+			if(!hover()) {
+				set_hover(true);
+				MouseHoverInEvent(event);
+			}
+
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
 			if(new_hovered_widget != hovered_widget_) {
@@ -519,6 +525,10 @@ namespace BlendInt {
 
 		} else {
 			cursor_position_ = OutsideRectangle;
+			if(hover()) {
+				set_hover(false);
+				MouseHoverOutEvent(event);
+			}
 		}
 
 		return Finish;
@@ -550,7 +560,7 @@ namespace BlendInt {
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
 		widget->destroyed().disconnectOne(this, &PopupFrame::OnFocusedWidgetDestroyed);
 
-		focused_widget_ = 0;
+		focused_widget_ = nullptr;
 	}
 
 	void PopupFrame::OnHoverWidgetDestroyed(AbstractWidget* widget)
@@ -561,7 +571,7 @@ namespace BlendInt {
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
 		widget->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
 
-		hovered_widget_ = 0;
+		hovered_widget_ = nullptr;
 	}
 
 	void PopupFrame::OnLayoutDestroyed(AbstractWidget* layout)
@@ -628,7 +638,7 @@ namespace BlendInt {
             glViewport(0, 0, size().width(), size().height());
 
             // Draw context:
-            DrawSubFormsOnce(profile);
+            DrawSubViewsOnce(profile);
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

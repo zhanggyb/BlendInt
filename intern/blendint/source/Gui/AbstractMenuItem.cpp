@@ -22,49 +22,15 @@
  */
 
 #include <BlendInt/Gui/AbstractMenuItem.hpp>
-#include <BlendInt/Gui/Action.hpp>
-
-#ifndef _BLENDINT_GUI_MENUITEM_HPP_
-#define _BLENDINT_GUI_MENUITEM_HPP_
 
 namespace BlendInt {
 
-	class MenuItem: public AbstractMenuItem
+	AbstractMenuItem::AbstractMenuItem()
 	{
-	public:
+	}
 
-		MenuItem (const String& text);
-
-		MenuItem (const RefPtr<Action>& action);
-
-		MenuItem (const String& text, const String& shortcut);
-
-		MenuItem (const RefPtr<AbstractIcon>& icon, const String& text);
-
-		MenuItem (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
-
-		bool AddSubMenuItem (MenuItem* menuitem);
-
-		bool InsertSubMenuItem (int index, MenuItem* menuitem);
-
-		virtual ~MenuItem();
-
-	protected:
-
-		virtual void MouseHoverInEvent (const MouseEvent& event);
-
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
-
-		virtual ResponseType Draw (Profile& profile);
-
-	private:
-
-		void InitializeMenuItem ();
-
-		RefPtr<Action> action_;
-
-	};
+	AbstractMenuItem::~AbstractMenuItem()
+	{
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_MENUITEM_HPP_ */

@@ -542,7 +542,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::Draw(Profile& profile)
 	{
-		DrawSubFormsOnce(profile);
+		DrawSubViewsOnce(profile);
 
 		return subs_count() ? Ignore : Finish;
 	}

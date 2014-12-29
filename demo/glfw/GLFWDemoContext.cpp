@@ -27,8 +27,9 @@
 using namespace BI;
 using BI::Stock::Shaders;
 
-GLFWDemoContext::GLFWDemoContext()
-: BI::Context()
+GLFWDemoContext::GLFWDemoContext(GLFWwindow* win)
+: BI::Context(),
+  window_(win)
 {
 //	TryToolBox();
 
@@ -37,6 +38,11 @@ GLFWDemoContext::GLFWDemoContext()
 
 GLFWDemoContext::~GLFWDemoContext ()
 {
+}
+
+void GLFWDemoContext::SynchronizeWindow()
+{
+	glfwPostEmptyEvent();
 }
 
 void GLFWDemoContext::TryToolBox()
