@@ -158,7 +158,7 @@ namespace BlendInt {
 		return text_length;
 	}
 
-	void AbstractButton::MouseHoverInEvent(const MouseEvent& event)
+	void AbstractButton::MouseHoverInEvent(const Context* context)
 	{
 		if(m_status[ButtonPressed]) {
 			m_status[ButtonDown] = 1;
@@ -171,7 +171,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void AbstractButton::MouseHoverOutEvent(const MouseEvent& event)
+	void AbstractButton::MouseHoverOutEvent(const Context* context)
 	{
 		if(m_status[ButtonPressed]) {
 			m_status[ButtonDown] = 0;
@@ -185,11 +185,11 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
+	ResponseType AbstractButton::MousePressEvent (const Context* context)
 	{
 		set_pressed(true);
 
-		if (event.button() == MouseButtonLeft) {
+		if (context->mouse_button() == MouseButtonLeft) {
 			m_status.set(ButtonPressed);
 			m_status.set(ButtonDown);
 
@@ -206,9 +206,9 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType AbstractButton::MouseReleaseEvent(const Context* context)
 	{
-		if (event.button() == MouseButtonLeft) {
+		if (context->mouse_button() == MouseButtonLeft) {
 			int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
 
 			if (m_status[ButtonCheckable]) {
@@ -269,7 +269,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType AbstractButton::MouseMoveEvent (const MouseEvent& event)
+	ResponseType AbstractButton::MouseMoveEvent (const Context* context)
 	{
 		/*
 		if (m_status[ButtonDown]) {

@@ -7,8 +7,8 @@
 
 namespace BlendInt {
 
-	static KeyEvent global_key_event;
-	static MouseEvent global_mouse_event;
+	static KeyEvent key_event;
+	static MouseEvent mouse_event;
 	static Context* main_context = 0;
 	static int cursor_pos_x = 0;
 	static int cursor_pos_y = 0;
@@ -30,25 +30,25 @@ namespace BlendInt {
 	{
 		switch (action) {
 			case GLFW_PRESS:
-                global_key_event.set_action(KeyPress);
+                key_event.set_action(KeyPress);
 				break;
 			case GLFW_RELEASE:
-                global_key_event.set_action(KeyRelease);
+                key_event.set_action(KeyRelease);
 				break;
 			case GLFW_REPEAT:
-                global_key_event.set_action(KeyRepeat);
+                key_event.set_action(KeyRepeat);
 				break;
 			default:
-                global_key_event.set_action(KeyNone);
+                key_event.set_action(KeyNone);
 				break;
 		}
 
-		global_key_event.set_key(key);
-		global_key_event.set_scancode(scancode);
-		global_key_event.set_modifiers(mods);
-        global_key_event.clear_text();
+		key_event.set_key(key);
+		key_event.set_scancode(scancode);
+		key_event.set_modifiers(mods);
+        key_event.clear_text();
 
-        main_context->DispatchKeyEvent(global_key_event);
+		main_context->DispatchKeyEvent(key_event.action(), key_event.key(), key_event.modifiers(), key_event.scancode(), key_event.text());
 	}
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
@@ -62,9 +62,9 @@ namespace BlendInt {
 			}
 #endif
 
-		global_key_event.set_text(character);
+		key_event.set_text(character);
 
-		main_context->DispatchKeyEvent(global_key_event);
+		main_context->DispatchKeyEvent(key_event.action(), key_event.key(), key_event.modifiers(), key_event.scancode(), key_event.text());
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
@@ -102,11 +102,11 @@ namespace BlendInt {
 				break;
 		}
 
-		global_mouse_event.set_button(mouse_button);
-		global_mouse_event.set_action(mouse_action);
-		global_mouse_event.set_modifiers(mods);
+		mouse_event.set_button(mouse_button);
+		mouse_event.set_action(mouse_action);
+		mouse_event.set_modifiers(mods);
 
-		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, global_mouse_event);
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, mouse_event.action(), mouse_event.button(), mouse_event.modifiers());
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
@@ -114,10 +114,10 @@ namespace BlendInt {
 		cursor_pos_x = (int)xpos;
 		cursor_pos_y = (int)ypos;
 
-        global_mouse_event.set_action(MouseMove);
-        global_mouse_event.set_button(MouseButtonNone);
+        mouse_event.set_action(MouseMove);
+        mouse_event.set_button(MouseButtonNone);
 
-		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, global_mouse_event);
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, mouse_event.action(), mouse_event.button(), mouse_event.modifiers());
 	}
 
 	void Init ()

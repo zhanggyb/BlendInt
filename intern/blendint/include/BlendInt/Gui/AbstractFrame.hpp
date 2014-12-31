@@ -29,7 +29,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Gui/AbstractView.hpp>
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
@@ -58,48 +58,48 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (const Context* context);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event) = 0;
+		virtual ResponseType DispatchHoverEvent (const Context* context) = 0;
 
-		ResponseType DispatchKeyEvent (AbstractView* view, const KeyEvent& event);
+		ResponseType DispatchKeyEvent (AbstractView* view, const Context* context);
 
-		AbstractView* DispatchMousePressEvent (AbstractView* view, const MouseEvent& event);
+		AbstractView* DispatchMousePressEvent (AbstractView* view, const Context* context);
 
-		ResponseType DispatchMouseMoveEvent (AbstractView* view, const MouseEvent& event);
+		ResponseType DispatchMouseMoveEvent (AbstractView* view, const Context* context);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const MouseEvent& event);
+		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const Context* context);
 
-		AbstractWidget* DispatchHoverEventsInSubWidgets (AbstractWidget* orig, const MouseEvent& event);
+		AbstractWidget* DispatchHoverEventsInSubWidgets (AbstractWidget* orig, const Context* context);
 
-		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const MouseEvent& event);
+		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const Context* context);
 
 		void ClearHoverWidgets (AbstractView* hovered_widget);
 
-		void ClearHoverWidgets (AbstractView* hovered_widget, const MouseEvent& event);
+		void ClearHoverWidgets (AbstractView* hovered_widget, const Context* context);
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
-		static inline ResponseType delegate_key_press_event (AbstractView* view, const KeyEvent& event)
+		static inline ResponseType delegate_key_press_event (AbstractView* view, const Context* context)
 		{
-			return view->KeyPressEvent(event);
+			return view->KeyPressEvent(context);
 		}
 
-		static inline ResponseType delegate_mouse_press_event (AbstractView* view, const MouseEvent& event)
+		static inline ResponseType delegate_mouse_press_event (AbstractView* view, const Context* context)
 		{
-			return view->MousePressEvent(event);
+			return view->MousePressEvent(context);
 		}
 
-		static inline ResponseType delegate_mouse_release_event(AbstractView* view, const MouseEvent& event)
+		static inline ResponseType delegate_mouse_release_event(AbstractView* view, const Context* context)
 		{
-			return view->MouseReleaseEvent(event);
+			return view->MouseReleaseEvent(context);
 		}
 
-		static inline ResponseType delegate_mouse_move_event(AbstractView* view, const MouseEvent& event)
+		static inline ResponseType delegate_mouse_move_event(AbstractView* view, const Context* context)
 		{
-			return view->MouseMoveEvent(event);
+			return view->MouseMoveEvent(context);
 		}
 
 		static inline void delegate_focus_status (AbstractView* view, bool focus)
@@ -113,21 +113,21 @@ namespace BlendInt {
 			view->FocusEvent(focus);
 		}
 
-		static inline void delegate_mouse_hover_in_event (AbstractView* view, const MouseEvent& event)
+		static inline void delegate_mouse_hover_in_event (AbstractView* view, const Context* context)
 		{
 			view->set_hover(true);
-			view->MouseHoverInEvent(event);
+			view->MouseHoverInEvent(context);
 		}
 
-		static inline void delegate_mouse_hover_out_event (AbstractView* view, const MouseEvent& event)
+		static inline void delegate_mouse_hover_out_event (AbstractView* view, const Context* context)
 		{
 			view->set_hover(false);
-			view->MouseHoverOutEvent(event);
+			view->MouseHoverOutEvent(context);
 		}
 
-		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const MouseEvent& event)
+		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const Context* context)
 		{
-			frame->DispatchHoverEvent(event);
+			frame->DispatchHoverEvent(context);
 		}
 
 		static inline void assign_profile_frame (Profile& profile, AbstractFrame* frame)
@@ -135,16 +135,13 @@ namespace BlendInt {
 			profile.frame_ = frame;
 		}
 
-		static inline void assign_event_frame (const HIDEvent& event, AbstractFrame* frame)
-		{
-			const_cast<HIDEvent&>(event).frame_ = frame;
-		}
+		static void SetLeafFrame (const Context* context, AbstractFrame* frame);
 
 	private:
 
 		friend class FrameSplitter;
 
-		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, const MouseEvent& event, Point& local_position);
+		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, const Context* context, Point& local_position);
 
 		inline void set_widget_hover_status (AbstractView* view, bool hover)
 		{

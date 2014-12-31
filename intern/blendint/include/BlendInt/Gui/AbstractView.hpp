@@ -35,10 +35,6 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/HID/MouseEvent.hpp>
-#include <BlendInt/HID/KeyEvent.hpp>
-#include <BlendInt/HID/ContextMenuEvent.hpp>
-
 #include <BlendInt/Gui/Profile.hpp>
 
 namespace BlendInt {
@@ -540,21 +536,21 @@ namespace BlendInt {
 
 		virtual void FocusEvent (bool focus) = 0;
 
-		virtual void MouseHoverInEvent (const MouseEvent& event) = 0;
+		virtual void MouseHoverInEvent (const Context* context) = 0;
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event) = 0;
+		virtual void MouseHoverOutEvent (const Context* context) = 0;
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
+		virtual ResponseType KeyPressEvent (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType ContextMenuPressEvent (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType ContextMenuReleaseEvent (const Context* context) = 0;
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MousePressEvent (const Context* context) = 0;
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MouseReleaseEvent (const Context* context) = 0;
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MouseMoveEvent (const Context* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 

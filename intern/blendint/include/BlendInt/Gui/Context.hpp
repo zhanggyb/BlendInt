@@ -28,6 +28,10 @@
 
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/HID/Input.hpp>
+
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
@@ -61,9 +65,19 @@ namespace BlendInt {
 
 		void Draw ();
 
-		void DispatchKeyEvent (const KeyEvent& event);
+		void DispatchKeyEvent(
+				KeyAction action,
+				int key,
+				int modifier,
+				int scancode,
+				String text);
 
-		void DispatchMouseEvent (int x, int y, const MouseEvent& event);
+		void DispatchMouseEvent (
+				int x,
+				int y,
+				MouseAction action,
+				MouseButton button,
+				int modifier);
 
 		/**
 		 * @brief Always return true
@@ -74,10 +88,33 @@ namespace BlendInt {
 
 		virtual void MakeGLContextCurrent ();
 
+		AbstractFrame* leaf_frame () const
+		{
+#ifdef DEBUG
+			assert(leaf_frame_ != nullptr);
+#endif
+
+			return leaf_frame_;
+		}
+
 		const Point& cursor_position () const
 		{
 			return cursor_position_;
 		}
+
+		int key() const {return key_;}
+
+		int scancode () const {return scancode_;}
+
+		MouseAction mouse_action() const {return mouse_action_;}
+
+		KeyAction key_action () const {return key_action_;}
+
+		int modifiers () const {return modifiers_;}
+
+		MouseButton mouse_button() const {return mouse_button_;}
+
+		const String& text () const {return text_;}
 
 		Cpp::EventRef<const Size&> resized ()
 		{
@@ -106,21 +143,21 @@ namespace BlendInt {
 
 		virtual void FocusEvent (bool focus);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void MouseHoverInEvent (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void MouseHoverOutEvent (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual ResponseType KeyPressEvent (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType MousePressEvent (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType MouseReleaseEvent (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType MouseMoveEvent (const Context* context);
 
 		virtual bool RemoveSubView (AbstractView* view);
 
@@ -128,13 +165,15 @@ namespace BlendInt {
 
 	private:
 
+		friend class AbstractFrame;
+
 		static void GetGLVersion (int *major, int *minor);
 
 		static void GetGLSLVersion (int *major, int *minor);
 
 		void InitializeContext ();
 
-		void DispatchHoverEvent (const MouseEvent& event);
+		void DispatchHoverEvent ();
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
@@ -149,6 +188,26 @@ namespace BlendInt {
 		//GLBuffer<> vertex_buffer_;
 
 		Point cursor_position_;
+
+		AbstractFrame* leaf_frame_;
+
+		// ------- input
+
+		int modifiers_;
+
+		KeyAction key_action_;
+
+		int key_;
+
+		int scancode_;
+
+		MouseAction mouse_action_;
+
+		MouseButton mouse_button_;
+
+		String text_;
+
+		// ------
 
 		Cpp::Event<const Size&> resized_;
 

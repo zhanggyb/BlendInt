@@ -432,34 +432,34 @@ namespace BlendInt {
 	{
 	}
 
-	void Workspace::MouseHoverInEvent(const MouseEvent& event)
+	void Workspace::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Workspace::MouseHoverOutEvent(const MouseEvent& event)
+	void Workspace::MouseHoverOutEvent(const Context* context)
 	{
 		if(hover_frame_) {
-			delegate_mouse_hover_out_event(hover_frame_, event);
+			delegate_mouse_hover_out_event(hover_frame_, context);
 			hover_frame_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
 			hover_frame_ = 0;
 		}
 	}
 
-	ResponseType Workspace::KeyPressEvent(const KeyEvent& event)
+	ResponseType Workspace::KeyPressEvent(const Context* context)
 	{
 		if(focused_frame_) {
-			return delegate_key_press_event(focused_frame_, event);
+			return delegate_key_press_event(focused_frame_, context);
 		}
 		return Ignore;
 	}
 
-	ResponseType Workspace::MousePressEvent(const MouseEvent& event)
+	ResponseType Workspace::MousePressEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
 
 		if(hover_frame_ != nullptr) {
-			response = delegate_mouse_press_event(hover_frame_, event);
+			response = delegate_mouse_press_event(hover_frame_, context);
 
 			if(response == Finish) {
 				SetFocusedFrame(hover_frame_);
@@ -471,52 +471,52 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Workspace::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Workspace::MouseReleaseEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
 		if(focused_frame_ != nullptr) {
-			response = delegate_mouse_release_event(focused_frame_, event);
+			response = delegate_mouse_release_event(focused_frame_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType Workspace::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Workspace::MouseMoveEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		if(pressed_ext() && focused_frame_) {
-			response = delegate_mouse_move_event(focused_frame_, event);
+			response = delegate_mouse_move_event(focused_frame_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType Workspace::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Workspace::DispatchHoverEvent(const Context* context)
 	{
-		if(Contain(event.context()->cursor_position())) {
+		if(Contain(context->cursor_position())) {
 
-			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, event);
+			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, context);
 
 			if(new_hovered != hover_frame_) {
 
 				if(hover_frame_) {
-					delegate_mouse_hover_out_event(hover_frame_, event);
+					delegate_mouse_hover_out_event(hover_frame_, context);
 					hover_frame_->destroyed().disconnectOne(this, &Workspace::OnHoverFrameDestroyed);
 				}
 
 				hover_frame_ = new_hovered;
 				if(hover_frame_) {
-					delegate_mouse_hover_in_event(hover_frame_, event);
+					delegate_mouse_hover_in_event(hover_frame_, context);
 					events()->connect(hover_frame_->destroyed(), this, &Workspace::OnHoverFrameDestroyed);
 				}
 
 			}
 
 			if(hover_frame_) {
-				delegate_dispatch_hover_event(hover_frame_, event);
+				delegate_dispatch_hover_event(hover_frame_, context);
 			}
 
 			return Finish;

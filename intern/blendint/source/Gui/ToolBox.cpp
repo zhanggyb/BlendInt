@@ -349,35 +349,35 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::MouseHoverInEvent (const MouseEvent& event)
+	void ToolBox::MouseHoverInEvent (const Context* context)
 	{
 	}
 
-	void ToolBox::MouseHoverOutEvent (const MouseEvent& event)
+	void ToolBox::MouseHoverOutEvent (const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
 			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType ToolBox::KeyPressEvent (const KeyEvent& event)
+	ResponseType ToolBox::KeyPressEvent (const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetLeafFrame(context, this);
 
 		ResponseType response = Ignore;
 
 		if(focused_widget_) {
-			delegate_key_press_event(focused_widget_, event);
+			delegate_key_press_event(focused_widget_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType ToolBox::MousePressEvent (const MouseEvent& event)
+	ResponseType ToolBox::MousePressEvent (const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetLeafFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
@@ -385,7 +385,7 @@ namespace BlendInt {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -406,45 +406,45 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType ToolBox::MouseReleaseEvent (const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetLeafFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType ToolBox::MouseMoveEvent (const MouseEvent& event)
+	ResponseType ToolBox::MouseMoveEvent (const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			retval = delegate_mouse_move_event(focused_widget_, event);
+			SetLeafFrame(context, this);
+			retval = delegate_mouse_move_event(focused_widget_, context);
 		}
 
 		return retval;
 	}
 
-	ResponseType ToolBox::DispatchHoverEvent (const MouseEvent& event)
+	ResponseType ToolBox::DispatchHoverEvent (const Context* context)
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(event.context()->cursor_position())) {
+		if(Contain(context->cursor_position())) {
 
 			cursor_position_ = InsideRectangle;
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(event);
+				MouseHoverInEvent(context);
 			}
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -469,7 +469,7 @@ namespace BlendInt {
 
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(event);
+				MouseHoverOutEvent(context);
 			}
 
 			return Ignore;

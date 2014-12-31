@@ -294,63 +294,63 @@ namespace BlendInt {
 	{
 	}
 
-	void Dialog::MouseHoverInEvent(const MouseEvent& event)
+	void Dialog::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
+	void Dialog::MouseHoverOutEvent(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
 			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
+	ResponseType Dialog::KeyPressEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 
-		if(event.key() == Key_Escape) {
+		if(context->key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			response = DispatchKeyEvent(focused_widget_, event);
+			SetLeafFrame(context, this);
+			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
 		return response;
 	}
 
 	ResponseType Dialog::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
+			const Context* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType Dialog::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
+			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
+	ResponseType Dialog::MousePressEvent(const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetLeafFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 
 			if(hovered_widget_) {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -367,7 +367,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				event.context()->MoveFrameToTop(this);
+				const_cast<Context*>(context)->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -378,7 +378,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 
 			return Finish;
 		}
@@ -390,27 +390,27 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Dialog::MouseReleaseEvent(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetLeafFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Dialog::MouseMoveEvent(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(mouse_button_pressed()) {
 
-			int ox = event.context()->cursor_position().x() - cursor_point_.x();
-			int oy = event.context()->cursor_position().y() - cursor_point_.y();
+			int ox = context->cursor_position().x() - cursor_point_.x();
+			int oy = context->cursor_position().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -480,8 +480,8 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				assign_event_frame(event, this);
-				retval = delegate_mouse_move_event(focused_widget_, event);
+				SetLeafFrame(context, this);
+				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
 		}
@@ -489,7 +489,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Dialog::DispatchHoverEvent(const Context* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
@@ -499,13 +499,13 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(event.context()->cursor_position())) {
+		if(valid_rect.contains(context->cursor_position())) {
 
-			if(Contain(event.context()->cursor_position())) {
+			if(Contain(context->cursor_position())) {
 
 				cursor_position_ = InsideRectangle;
 
-				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 				if(new_hovered_widget != hovered_widget_) {
 
@@ -533,15 +533,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(event.context()->cursor_position().x() <= position().x()) {
+				if(context->cursor_position().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (event.context()->cursor_position().x() >= (position().x() + size().width())) {
+				} else if (context->cursor_position().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (event.context()->cursor_position().y() >= (position().y() + size().height())) {
+				if (context->cursor_position().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (event.context()->cursor_position().y () <= position().y()) {
+				} else if (context->cursor_position().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 

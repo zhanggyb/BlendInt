@@ -92,17 +92,17 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType AbstractFrame::ContextMenuPressEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType AbstractFrame::ContextMenuReleaseEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const KeyEvent& event)
+	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -111,21 +111,21 @@ namespace BlendInt {
 			ResponseType response = Ignore;
 
 			if(subview->superview ()) {
-				response = DispatchKeyEvent(subview->superview(), event);
+				response = DispatchKeyEvent(subview->superview(), context);
 				if(response == Finish) {
 					return response;
 				} else {
-					return subview->KeyPressEvent(event);
+					return subview->KeyPressEvent(context);
 				}
 			} else {
-				return subview->KeyPressEvent(event);
+				return subview->KeyPressEvent(context);
 			}
 
 		}
 	}
 
 	AbstractView* AbstractFrame::DispatchMousePressEvent(
-			AbstractView* subview, const MouseEvent& event)
+			AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return 0;
@@ -136,11 +136,11 @@ namespace BlendInt {
 
 			if(subview->superview ()) {
 
-				ret_val = DispatchMousePressEvent(subview->superview(), event);
+				ret_val = DispatchMousePressEvent(subview->superview(), context);
 
 				if(ret_val == 0) {
 
-					response = subview->MousePressEvent(event);
+					response = subview->MousePressEvent(context);
 
 					return response == Finish ? subview : 0;
 
@@ -149,61 +149,61 @@ namespace BlendInt {
 				}
 
 			} else {
-				response = subview->MousePressEvent(event);
+				response = subview->MousePressEvent(context);
 				return response == Finish ? subview : 0;
 			}
 
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const MouseEvent& event)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
 		} else {
 
 			if(subview->superview ()) {
-				if(DispatchMouseMoveEvent(subview->superview (), event) == Ignore) {
-					return subview->MouseMoveEvent(event);
+				if(DispatchMouseMoveEvent(subview->superview (), context) == Ignore) {
+					return subview->MouseMoveEvent(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
-				return subview->MouseMoveEvent(event);
+				return subview->MouseMoveEvent(context);
 			}
 
 		}
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractView* subview, const MouseEvent& event)
+			AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
 		} else {
 
 			if(subview->superview ()) {
-				if(DispatchMouseReleaseEvent(subview->superview (), event) == Ignore) {
-					return subview->MouseReleaseEvent(event);
+				if(DispatchMouseReleaseEvent(subview->superview (), context) == Ignore) {
+					return subview->MouseReleaseEvent(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
 				DBG_PRINT_MSG("mouse press in %s", subview->name().c_str());
-				return subview->MouseReleaseEvent(event);
+				return subview->MouseReleaseEvent(context);
 			}
 
 		}
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventsInSubWidgets(AbstractWidget* orig,
-			const MouseEvent& event)
+			const Context* context)
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		assign_event_frame(event, this);
+		SetLeafFrame(context, this);
 		Point local_position;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
@@ -220,13 +220,13 @@ namespace BlendInt {
 				parent_position = position();
 			}
 
-			bool not_hover_through = event.context()->cursor_position().x() < parent_position.x() ||
-					event.context()->cursor_position().y() < parent_position.y() ||
-					event.context()->cursor_position().x() > (parent_position.x() + superview->size().width()) ||
-					event.context()->cursor_position().y() > (parent_position.y() + superview->size().height());
+			bool not_hover_through = context->cursor_position().x() < parent_position.x() ||
+					context->cursor_position().y() < parent_position.y() ||
+					context->cursor_position().x() > (parent_position.x() + superview->size().width()) ||
+					context->cursor_position().y() > (parent_position.y() + superview->size().height());
 
-			local_position.reset(event.context()->cursor_position().x() - parent_position.x() - superview->offset().x(),
-					event.context()->cursor_position().y() - parent_position.y() - superview->offset().y());
+			local_position.reset(context->cursor_position().x() - parent_position.x() - superview->offset().x(),
+					context->cursor_position().y() - parent_position.y() - superview->offset().y());
 
 			if(!not_hover_through) {
 
@@ -234,7 +234,7 @@ namespace BlendInt {
 
 					AbstractWidget* orig = hovered_widget;
 
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
 
 					if(orig != hovered_widget) {
 //						orig->destroyed().disconnectOne(this,
@@ -247,7 +247,7 @@ namespace BlendInt {
 
 //					hovered_widget->destroyed ().disconnectOne (this,
 //								&SingleFrame::OnHoverWidgetDestroyed);
-					delegate_mouse_hover_out_event(hovered_widget, event);
+					delegate_mouse_hover_out_event(hovered_widget, context);
 //					hovered_widget->set_hover(false);
 //					hovered_widget->MouseHoverOutEvent(event);
 
@@ -272,7 +272,7 @@ namespace BlendInt {
 					hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 
 					if(hovered_widget) {
-						hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
+						hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
 //						events()->connect(hovered_widget->destroyed(), this,
 //						        &SingleFrame::OnHoverWidgetDestroyed);
 					}
@@ -283,7 +283,7 @@ namespace BlendInt {
 
 //				hovered_widget->destroyed().disconnectOne(this,
 //					        &SingleFrame::OnHoverWidgetDestroyed);
-				delegate_mouse_hover_out_event(hovered_widget, event);
+				delegate_mouse_hover_out_event(hovered_widget, context);
 
 //				hovered_widget->set_hover(false);
 //				hovered_widget->MouseHoverOutEvent(event);
@@ -302,13 +302,13 @@ namespace BlendInt {
 							local_position.x() + superview->position().x() + superview->offset().x(),
 							local_position.y() + superview->position().y() + superview->offset().y());
 
-					if(IsHoverThroughExt(superview, event.context()->cursor_position())) break;
+					if(IsHoverThroughExt(superview, context->cursor_position())) break;
 					superview = superview->superview();
 				}
 
 				hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 				if(hovered_widget) {
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
 //					events()->connect(hovered_widget->destroyed(), this,
 //					        &SingleFrame::OnHoverWidgetDestroyed);
 				}
@@ -318,15 +318,15 @@ namespace BlendInt {
 		} else {
 
 			local_position.reset(
-					event.context()->cursor_position().x() - position().x() - offset().x(),
-					event.context()->cursor_position().y() - position().y() - offset().y());
+					context->cursor_position().x() - position().x() - offset().x(),
+					context->cursor_position().y() - position().y() - offset().y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
 				if (p->visiable() && p->Contain(local_position)) {
 
 					hovered_widget = dynamic_cast<AbstractWidget*>(p);
-					delegate_mouse_hover_in_event(hovered_widget, event);
+					delegate_mouse_hover_in_event(hovered_widget, context);
 //					hovered_widget->set_hover(true);
 //					hovered_widget->MouseHoverInEvent(event);
 
@@ -335,7 +335,7 @@ namespace BlendInt {
 			}
 
 			if(hovered_widget) {
-				hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
+				hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
 //				events()->connect(hovered_widget->destroyed(), this,
 //				        &SingleFrame::OnHoverWidgetDestroyed);
 			}
@@ -345,16 +345,16 @@ namespace BlendInt {
 		return hovered_widget;
 	}
 
-	AbstractFrame* AbstractFrame::CheckHoveredFrame(AbstractFrame* old, const MouseEvent& event)
+	AbstractFrame* AbstractFrame::CheckHoveredFrame(AbstractFrame* old, const Context* context)
 	{
 		AbstractFrame* frame_hovered = old;
 
 		if(frame_hovered) {
-			if(!frame_hovered->Contain(event.context()->cursor_position())) {
+			if(!frame_hovered->Contain(context->cursor_position())) {
 
 				frame_hovered = 0;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(event.context()->cursor_position())) {
+					if(p->Contain(context->cursor_position())) {
 						frame_hovered = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -364,7 +364,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(event.context()->cursor_position())) {
+				if(p->Contain(context->cursor_position())) {
 					frame_hovered = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}
@@ -387,7 +387,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const MouseEvent& event)
+	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const Context* context)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -395,12 +395,17 @@ namespace BlendInt {
 
 		while (hovered_widget && (hovered_widget != this)) {
 			hovered_widget->set_hover(false);
-			hovered_widget->MouseHoverOutEvent(event);
+			hovered_widget->MouseHoverOutEvent(context);
 			hovered_widget = hovered_widget->superview();
 		}
 	}
 
-	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const MouseEvent& event,
+	void AbstractFrame::SetLeafFrame(const Context* context, AbstractFrame* frame)
+	{
+		const_cast<Context*>(context)->leaf_frame_ = frame;
+	}
+
+	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const Context* context,
 			Point& local_position)
 	{
 		AbstractWidget* retval = widget;
@@ -417,9 +422,9 @@ namespace BlendInt {
 
 			if (p->visiable () && p->Contain (local_position)) {
 				retval = dynamic_cast<AbstractWidget*>(p);
-				delegate_mouse_hover_in_event (retval, event);
+				delegate_mouse_hover_in_event (retval, context);
 
-				retval = DispatchHoverEventDeeper(retval, event, local_position);
+				retval = DispatchHoverEventDeeper(retval, context, local_position);
 				break;
 			}
 	

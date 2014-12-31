@@ -174,7 +174,8 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractView()
+	: AbstractView(),
+	  leaf_frame_(nullptr)
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -314,61 +315,72 @@ namespace BlendInt
 
 	}
 
-	void Context::DispatchKeyEvent(const KeyEvent& event)
+	void Context::DispatchKeyEvent(KeyAction action, int key, int modifiers,
+			int scancode, String text)
 	{
-		const_cast<KeyEvent&>(event).context_ = this;
-		const_cast<KeyEvent&>(event).frame_ = 0;
+		key_action_ = action;
+		key_ = key;
+		modifiers_ = modifiers;
+		scancode_ = scancode;
+		text_ = text;
 
-		switch (event.action()) {
+		leaf_frame_ = nullptr;
+
+		switch (key_action_) {
 
 			case KeyPress: {
-				KeyPressEvent(event);
+				KeyPressEvent(this);
 				break;
 			}
 
 			case KeyRelease: {
-				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-				//cm->m_focus->KeyReleaseEvent(event);
 				break;
 			}
 
 			case KeyRepeat: {
-				// item->KeyRepeatEvent(&event);
 				break;
 			}
 
 			default:
-			break;
+				break;
 		}
+
 	}
 
-	void Context::DispatchMouseEvent(int x, int y, const MouseEvent& event)
+	void Context::DispatchMouseEvent(int x, int y, MouseAction action,
+			MouseButton button, int modifiers)
 	{
 		cursor_position_.reset(x, size().height() - y);
-		const_cast<MouseEvent&>(event).context_ = this;
-		const_cast<MouseEvent&>(event).frame_ = 0;
 
-		switch (event.action()) {
+		mouse_action_ = action;
+		mouse_button_ = button;
+		modifiers_ = modifiers;
+
+		leaf_frame_ = nullptr;
+
+		DispatchHoverEvent();
+
+		switch (mouse_action_) {
 
 			case MouseMove: {
-				DispatchHoverEvent(event);
-				MouseMoveEvent(event);
-				return;
+				MouseMoveEvent(this);
+				break;
 			}
 
 			case MousePress: {
-				MousePressEvent(event);
-				return;
+				MousePressEvent(this);
+				break;
 			}
 
 			case MouseRelease: {
-				MouseReleaseEvent(event);
-				return;
+				MouseReleaseEvent(this);
+				break;
 			}
 
 			default:
 				break;
 		}
+
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -467,42 +479,40 @@ namespace BlendInt
 	{
 	}
 
-	ResponseType Context::KeyPressEvent (const KeyEvent& event)
+	ResponseType Context::KeyPressEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->KeyPressEvent(event);
+			response = p->KeyPressEvent(context);
 			if(response == Finish) break;
 		}
 
 		return response;
 	}
 
-	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType Context::ContextMenuPressEvent (const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
 	ResponseType Context::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
+	        const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
-	ResponseType Context::MousePressEvent (const MouseEvent& event)
+	ResponseType Context::MousePressEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
-		assert(event.frame() == 0);
+		//assert(context->leaf_frame() == 0);
 
 		set_pressed(true);
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->MousePressEvent(event);
+			response = p->MousePressEvent(context);
 			if(response == Finish) {
 				break;
 			}
@@ -511,14 +521,14 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Context::MouseReleaseEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
 		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 		{
-			response = p->MouseReleaseEvent(event);
+			response = p->MouseReleaseEvent(context);
 			if(response == Finish) {
 				break;
 			}
@@ -527,7 +537,7 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Context::MouseMoveEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -535,7 +545,7 @@ namespace BlendInt
 
 			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 			{
-				response = p->MouseMoveEvent(event);
+				response = p->MouseMoveEvent(context);
 				if(response == Finish) {
 					break;
 				}
@@ -647,14 +657,14 @@ namespace BlendInt
 		*/
 	}
 
-	void Context::DispatchHoverEvent(const MouseEvent& event)
+	void Context::DispatchHoverEvent()
 	{
 		ResponseType response = Ignore;
 		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			frame = dynamic_cast<AbstractFrame*>(p);
-			response = frame->DispatchHoverEvent(event);
+			response = frame->DispatchHoverEvent(this);
 			if(response == Finish) break;
 		}
 	}
@@ -663,11 +673,11 @@ namespace BlendInt
 	{
 	}
 
-	void Context::MouseHoverInEvent(const MouseEvent& event)
+	void Context::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverOutEvent(const MouseEvent& event)
+	void Context::MouseHoverOutEvent(const Context* context)
 	{
 	}
 
@@ -744,4 +754,5 @@ namespace BlendInt
     }
     */
     
+
 }

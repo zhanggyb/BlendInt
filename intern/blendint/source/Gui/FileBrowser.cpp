@@ -255,7 +255,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
+	ResponseType FileBrowser::MousePressEvent (const Context* context)
 	{
 		ModelIndex index;
 
@@ -265,7 +265,7 @@ namespace BlendInt {
 			int h = font_.GetHeight();	// the row height
 
 			int i = 0;
-			Point local_position = event.context()->cursor_position() - event.frame()->GetAbsolutePosition(this);
+			Point local_position = context->cursor_position() - context->leaf_frame()->GetAbsolutePosition(this);
 			// TODO: count offset
 
 			i = size().height() - local_position.y();

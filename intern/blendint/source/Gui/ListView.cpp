@@ -177,7 +177,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ListView::MousePressEvent (const MouseEvent& event)
+	ResponseType ListView::MousePressEvent (const Context* context)
 	{
 		if(model_) {
 
@@ -191,9 +191,9 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() - event.context()->cursor_position().y();
+					i = position().y() - context->cursor_position().y();
 				} else {	// no vbar
-					i = position().y() + size().height() - event.context()->cursor_position().y();
+					i = position().y() + size().height() - context->cursor_position().y();
 				}
 
 				i = i / h;

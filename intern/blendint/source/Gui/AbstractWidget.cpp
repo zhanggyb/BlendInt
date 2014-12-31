@@ -92,42 +92,42 @@ namespace BlendInt {
 	{
 	}
 
-	void AbstractWidget::MouseHoverInEvent(const MouseEvent& event)
+	void AbstractWidget::MouseHoverInEvent(const Context* context)
 	{
 
 	}
 
-	void AbstractWidget::MouseHoverOutEvent(const MouseEvent& event)
+	void AbstractWidget::MouseHoverOutEvent(const Context* context)
 	{
 
 	}
 
-	ResponseType AbstractWidget::KeyPressEvent (const KeyEvent& event)
-	{
-		return subs_count() ? Ignore : Finish;
-	}
-
-	ResponseType AbstractWidget::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType AbstractWidget::KeyPressEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType AbstractWidget::ContextMenuPressEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MousePressEvent (const MouseEvent& event)
+	ResponseType AbstractWidget::ContextMenuReleaseEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType AbstractWidget::MousePressEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MouseMoveEvent (const MouseEvent& event)
+	ResponseType AbstractWidget::MouseReleaseEvent (const Context* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	ResponseType AbstractWidget::MouseMoveEvent (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

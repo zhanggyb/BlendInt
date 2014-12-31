@@ -154,12 +154,12 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void ToolButton::MouseHoverInEvent(const MouseEvent& event)
+	void ToolButton::MouseHoverInEvent(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void ToolButton::MouseHoverOutEvent(const MouseEvent& event)
+	void ToolButton::MouseHoverOutEvent(const Context* context)
 	{
 		RequestRedraw();
 	}
