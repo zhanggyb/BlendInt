@@ -402,8 +402,8 @@ namespace BlendInt {
 			GLboolean scissor_test;
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
-            glm::vec2 pos = get_relative_position(Shaders::instance->widget_model_matrix());
-			Profile off_screen_profile(profile, pos.x, pos.y);
+            glm::vec3 pos = Shaders::instance->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
+			Profile off_screen_profile(profile, profile.origin().x() + pos.x, profile.origin().y() + pos.y);
 
 			Shaders::instance->PushWidgetModelMatrix();
 			Shaders::instance->PushWidgetProjectionMatrix();

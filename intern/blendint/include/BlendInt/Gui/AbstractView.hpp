@@ -277,14 +277,6 @@ namespace BlendInt {
 
 		AbstractView* GetWidgetAt (int i) const;
 
-		void MoveBackward ();
-
-		void MoveForward ();
-
-		void MoveToFirst ();
-
-		void MoveToLast ();
-
 		const Point& position () const
 		{
 			return position_;
@@ -312,7 +304,7 @@ namespace BlendInt {
 
 		inline bool visiable () const
 		{
-			return flags_ & ViewVisibility;
+			return flags_ & ViewVisible;
 		}
 
 		inline bool managed () const
@@ -369,6 +361,14 @@ namespace BlendInt {
 		{
 			return last_subview_;
 		}
+
+		static void MoveToFirst (AbstractView* view);
+
+		static void MoveToLast (AbstractView* view);
+
+		static void MoveForward (AbstractView* view);
+
+		static void MoveBackward (AbstractView* view);
 
 		/**
 		 * @brief Check if the view and its all container are under cursor position
@@ -469,6 +469,15 @@ namespace BlendInt {
 			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
 		}
 
+		inline void set_focusable (bool focusable)
+		{
+			if(focusable) {
+				SETBIT(flags_, ViewFocusable);
+			} else {
+				CLRBIT(flags_, ViewFocusable);
+			}
+		}
+
 		inline void set_focus (bool focus)
 		{
 			if(focus) {
@@ -490,9 +499,9 @@ namespace BlendInt {
 		inline void set_visible (bool visiable)
 		{
 			if(visiable) {
-				SETBIT(flags_, ViewVisibility);
+				SETBIT(flags_, ViewVisible);
 			} else {
-				CLRBIT(flags_, ViewVisibility);
+				CLRBIT(flags_, ViewVisible);
 			}
 		}
 
@@ -661,17 +670,19 @@ namespace BlendInt {
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocused = (1 << 6),
+			ViewFocusable = (1 << 6),
+
+			ViewFocused = (1 << 7),
 
 			/** If this view is in cursor hover list in Context */
-			ViewHover = (1 << 7),
+			ViewHover = (1 << 8),
 
-			ViewVisibility = (1 << 8),
+			ViewVisible = (1 << 9),
 
-			ViewEmboss = (1 << 9),
+			ViewEmboss = (1 << 10),
 
 			// only valid when use off-screen render in container
-			ViewRefresh = (1 << 10),
+			ViewRefresh = (1 << 11),
 
 		};
 

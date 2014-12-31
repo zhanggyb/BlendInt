@@ -10,6 +10,8 @@ namespace BlendInt {
 	static KeyEvent global_key_event;
 	static MouseEvent global_mouse_event;
 	static Context* main_context = 0;
+	static int cursor_pos_x = 0;
+	static int cursor_pos_y = 0;
 
 	static void CbError (int error, const char* description)
 	{
@@ -104,16 +106,18 @@ namespace BlendInt {
 		global_mouse_event.set_action(mouse_action);
 		global_mouse_event.set_modifiers(mods);
 
-		main_context->DispatchMouseEvent(global_mouse_event);
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, global_mouse_event);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
+		cursor_pos_x = (int)xpos;
+		cursor_pos_y = (int)ypos;
+
         global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), main_context->size().height() - static_cast<int>(ypos));
 
-		main_context->DispatchMouseEvent(global_mouse_event);
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, global_mouse_event);
 	}
 
 	void Init ()

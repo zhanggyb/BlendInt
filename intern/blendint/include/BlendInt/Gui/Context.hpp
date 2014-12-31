@@ -53,13 +53,17 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		void AddFrame (AbstractFrame* vp);
+		bool AddFrame (AbstractFrame* frame);
+
+		bool InsertFrame (int index, AbstractFrame* frame);
+
+		void MoveFrameToTop (AbstractFrame* frame);
 
 		void Draw ();
 
 		void DispatchKeyEvent (const KeyEvent& event);
 
-		void DispatchMouseEvent (const MouseEvent& event);
+		void DispatchMouseEvent (int x, int y, const MouseEvent& event);
 
 		/**
 		 * @brief Always return true
@@ -69,6 +73,11 @@ namespace BlendInt {
 		virtual void SynchronizeWindow ();
 
 		virtual void MakeGLContextCurrent ();
+
+		const Point& cursor_position () const
+		{
+			return cursor_position_;
+		}
 
 		Cpp::EventRef<const Size&> resized ()
 		{
@@ -113,7 +122,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void SetFocusedFrame (AbstractFrame* frame);
+		virtual bool RemoveSubView (AbstractView* view);
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
@@ -127,8 +136,6 @@ namespace BlendInt {
 
 		void DispatchHoverEvent (const MouseEvent& event);
 
-		void OnFocusedFrameDestroyed (AbstractFrame* frame);
-
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
 		//void RenderToBuffer (Profile& profile);
@@ -137,11 +144,11 @@ namespace BlendInt {
         
 		Profile profile_;
 
-		AbstractFrame* focused_frame_;
-        
         //GLTexture2D texture_buffer_;
 
 		//GLBuffer<> vertex_buffer_;
+
+		Point cursor_position_;
 
 		Cpp::Event<const Size&> resized_;
 

@@ -116,15 +116,28 @@ Panel* HPEContext::CreateButtons()
 	Panel* panel = Manage(new Panel);
 	panel->SetRoundType(RoundAll);
 
+	Block* hblock1 = Manage(new Block(Horizontal));
+
+	NumericalSlider* camera_no = Manage(new NumericalSlider);
+	Button* btn1 = Manage(new Button("Open Camera"));
+
+	hblock1->AddWidget(camera_no);
+	hblock1->AddWidget(btn1);
+
 	VLayout* layout = Manage(new VLayout);
+
+	Block* hblock2 = Manage(new Block(Horizontal));
 
 	Button* play = Manage(new Button("Play"));
 	Button* pause = Manage(new Button("Pause"));
 	Button* stop = Manage(new Button("Stop"));
 
-	layout->AddWidget(play);
-	layout->AddWidget(pause);
-	layout->AddWidget(stop);
+	hblock2->AddWidget(play);
+	hblock2->AddWidget(pause);
+	hblock2->AddWidget(stop);
+
+	layout->AddWidget(hblock1);
+	layout->AddWidget(hblock2);
 
 	panel->SetLayout(layout);
 	panel->Resize(layout->GetPreferredSize());

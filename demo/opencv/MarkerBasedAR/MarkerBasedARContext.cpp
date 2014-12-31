@@ -33,7 +33,7 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_ = Manage(new CVVideoViewport);
+	viewport_ = Manage(new MBARViewport);
 
 	splitter->AddFrame(viewport_);
 	splitter->AddFrame(tools, PreferredWidth);

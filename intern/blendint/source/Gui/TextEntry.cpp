@@ -41,6 +41,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -615,7 +616,7 @@ namespace BlendInt {
 	{
 		Point global_pos = event.frame()->GetAbsolutePosition(this);
 
-		int click_position = event.position().x() - global_pos.x()
+		int click_position = event.context()->cursor_position().x() - global_pos.x()
 						- round_radius();
 
 		if((click_position < 0) ||

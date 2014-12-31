@@ -43,6 +43,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Stock/Cursor.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -124,8 +125,8 @@ namespace BlendInt {
 	{
 		m_button_down = event.button();
 
-		m_last_x = event.position().x();
-		m_last_y = event.position().y();
+		m_last_x = event.context()->cursor_position().x();
+		m_last_y = event.context()->cursor_position().y();
 
 		if (m_button_down == MouseButtonMiddle) {
 
@@ -185,20 +186,20 @@ namespace BlendInt {
 				if (event.modifiers() == ModifierShift) {
 
 					float dx = static_cast<float>(m_last_x
-					        - event.position().x());
+					        - event.context()->cursor_position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.position().y());
+					        - event.context()->cursor_position().y());
 					default_camera_->Pan(dx, dy);
 
 				} else if (event.modifiers() == ModifierControl) {
 
-					default_camera_->Zoom(m_last_y - event.position().y());
+					default_camera_->Zoom(m_last_y - event.context()->cursor_position().y());
 
 				} else if (event.modifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
-					        - event.position().x());
+					        - event.context()->cursor_position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.position().y());
+					        - event.context()->cursor_position().y());
 					default_camera_->Orbit(dx, dy);
 				}
 

@@ -96,6 +96,9 @@ namespace BlendInt {
 
 		if(superview_) {
 
+			superview_->RemoveSubView(this);
+
+			/*
 			if(previous_view_) {
 				previous_view_->next_view_ = next_view_;
 			} else {
@@ -116,6 +119,7 @@ namespace BlendInt {
 			previous_view_ = 0;
 			next_view_ = 0;
 			superview_ = 0;
+			*/
 
 		} else {
 			assert(previous_view_ == 0);
@@ -294,150 +298,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractView::MoveBackward()
-	{
-		if(superview_) {
-
-			if(previous_view_) {
-
-				AbstractView* tmp = previous_view_;
-
-				tmp->next_view_ = next_view_;
-				if(next_view_) {
-					next_view_->previous_view_ = tmp;
-				} else {
-					assert(superview_->last_subview_ == this);
-					superview_->last_subview_ = tmp;
-				}
-
-				next_view_ = tmp;
-				previous_view_ = tmp->previous_view_;
-				if(tmp->previous_view_) {
-					tmp->previous_view_->next_view_ = this;
-				}
-				tmp->previous_view_ = this;
-
-				if(previous_view_ == 0) {
-					assert(superview_->first_subview_ == tmp);
-					superview_->first_subview_ = this;
-				}
-
-				DBG_PRINT_MSG("this: %s", name_.c_str());
-				if(previous_view_) {
-					DBG_PRINT_MSG("previous_view: %s", previous_view_->name_.c_str());
-					assert(previous_view_->next_view_ == this);
-				}
-				if(next_view_) {
-					DBG_PRINT_MSG("next_view: %s", next_view_->name_.c_str());
-					assert(next_view_->previous_view_ == this);
-				}
-
-				superview_->RequestRedraw();
-
-			} else {
-				assert(superview_->first_subview_ == this);
-			}
-
-		}
-	}
-
-	void AbstractView::MoveForward()
-	{
-		if(superview_) {
-
-			if(next_view_) {
-
-				AbstractView* tmp = next_view_;
-
-				tmp->previous_view_ = previous_view_;
-				if(previous_view_) {
-					previous_view_->next_view_ = tmp;
-				} else {
-					assert(superview_->first_subview_ == this);
-					superview_->first_subview_ = tmp;
-				}
-
-				previous_view_ = tmp;
-				next_view_ = tmp->next_view_;
-				if(tmp->next_view_) {
-					tmp->next_view_->previous_view_ = this;
-				}
-				tmp->next_view_ = this;
-
-				if(next_view_ == 0) {
-					assert(superview_->last_subview_ == tmp);
-					superview_->last_subview_ = this;
-				}
-
-				if(previous_view_) {
-					assert(previous_view_->next_view_ == this);
-				}
-				if(next_view_) {
-					assert(next_view_->previous_view_ == this);
-				}
-
-				superview_->RequestRedraw();
-
-			} else {
-				assert(superview_->last_subview_ == this);
-			}
-
-		}
-	}
-
-	void AbstractView::MoveToFirst()
-	{
-		if(superview_) {
-
-			if(superview_->first_subview_ == this) {
-				assert(previous_view_ == 0);
-				return;	// already at first
-			}
-
-			previous_view_->next_view_ = next_view_;
-			if(next_view_) {
-				next_view_->previous_view_ = previous_view_;
-			} else {
-				assert(superview_->last_subview_ == this);
-				superview_->last_subview_ = previous_view_;
-			}
-
-			previous_view_ = 0;
-			next_view_ = superview_->first_subview_;
-			superview_->first_subview_->previous_view_ = this;
-			superview_->first_subview_ = this;
-
-			superview_->RequestRedraw();
-		}
-	}
-
-	void AbstractView::MoveToLast()
-	{
-		if(superview_) {
-
-			if(superview_->last_subview_ == this) {
-				assert(next_view_ == 0);
-				return;	// already at last
-			}
-
-			next_view_->previous_view_ = previous_view_;
-
-			if(previous_view_) {
-				previous_view_->next_view_ = next_view_;
-			} else {
-				assert(superview_->first_subview_ == this);
-				superview_->first_subview_ = next_view_;
-			}
-
-			next_view_ = 0;
-			previous_view_ = superview_->last_subview_;
-			superview_->last_subview_->next_view_ = this;
-			superview_->last_subview_ = this;
-
-			superview_->RequestRedraw();
-		}
-	}
-
 	void AbstractView::SetDefaultBorderWidth(float border)
 	{
 		kBorderWidth = border;
@@ -450,6 +310,150 @@ namespace BlendInt {
 
 		set_emboss(emboss);
 		RequestRedraw();
+	}
+
+	void AbstractView::MoveToFirst(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->superview_->first_subview_ == view) {
+				assert(view->previous_view_ == 0);
+				return;	// already at first
+			}
+
+			view->previous_view_->next_view_ = view->next_view_;
+			if(view->next_view_) {
+				view->next_view_->previous_view_ = view->previous_view_;
+			} else {
+				assert(view->superview_->last_subview_ == view);
+				view->superview_->last_subview_ = view->previous_view_;
+			}
+
+			view->previous_view_ = 0;
+			view->next_view_ = view->superview_->first_subview_;
+			view->superview_->first_subview_->previous_view_ = view;
+			view->superview_->first_subview_ = view;
+
+			view->superview_->RequestRedraw();
+		}
+	}
+
+	void AbstractView::MoveToLast(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->superview_->last_subview_ == view) {
+				assert(view->next_view_ == 0);
+				return;	// already at last
+			}
+
+			view->next_view_->previous_view_ = view->previous_view_;
+
+			if(view->previous_view_) {
+				view->previous_view_->next_view_ = view->next_view_;
+			} else {
+				assert(view->superview_->first_subview_ == view);
+				view->superview_->first_subview_ = view->next_view_;
+			}
+
+			view->next_view_ = 0;
+			view->previous_view_ = view->superview_->last_subview_;
+			view->superview_->last_subview_->next_view_ = view;
+			view->superview_->last_subview_ = view;
+
+			view->superview_->RequestRedraw();
+		}
+	}
+
+	void AbstractView::MoveForward(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->next_view_) {
+
+				AbstractView* tmp = view->next_view_;
+
+				tmp->previous_view_ = view->previous_view_;
+				if(view->previous_view_) {
+					view->previous_view_->next_view_ = tmp;
+				} else {
+					assert(view->superview_->first_subview_ == view);
+					view->superview_->first_subview_ = tmp;
+				}
+
+				view->previous_view_ = tmp;
+				view->next_view_ = tmp->next_view_;
+				if(tmp->next_view_) {
+					tmp->next_view_->previous_view_ = view;
+				}
+				tmp->next_view_ = view;
+
+				if(view->next_view_ == 0) {
+					assert(view->superview_->last_subview_ == tmp);
+					view->superview_->last_subview_ = view;
+				}
+
+				if(view->previous_view_) {
+					assert(view->previous_view_->next_view_ == view);
+				}
+				if(view->next_view_) {
+					assert(view->next_view_->previous_view_ == view);
+				}
+
+				view->superview_->RequestRedraw();
+
+			} else {
+				assert(view->superview_->last_subview_ == view);
+			}
+
+		}
+	}
+
+	void AbstractView::MoveBackward(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->previous_view_) {
+
+				AbstractView* tmp = view->previous_view_;
+
+				tmp->next_view_ = view->next_view_;
+				if(view->next_view_) {
+					view->next_view_->previous_view_ = tmp;
+				} else {
+					assert(view->superview_->last_subview_ == view);
+					view->superview_->last_subview_ = tmp;
+				}
+
+				view->next_view_ = tmp;
+				view->previous_view_ = tmp->previous_view_;
+				if(tmp->previous_view_) {
+					tmp->previous_view_->next_view_ = view;
+				}
+				tmp->previous_view_ = view;
+
+				if(view->previous_view_ == 0) {
+					assert(view->superview_->first_subview_ == tmp);
+					view->superview_->first_subview_ = view;
+				}
+
+				DBG_PRINT_MSG("this: %s", view->name_.c_str());
+				if(view->previous_view_) {
+					DBG_PRINT_MSG("previous_view: %s", view->previous_view_->name_.c_str());
+					assert(view->previous_view_->next_view_ == view);
+				}
+				if(view->next_view_) {
+					DBG_PRINT_MSG("next_view: %s", view->next_view_->name_.c_str());
+					assert(view->next_view_->previous_view_ == view);
+				}
+
+				view->superview_->RequestRedraw();
+
+			} else {
+				assert(view->superview_->first_subview_ == view);
+			}
+
+		}
 	}
 
 	bool AbstractView::IsHoverThrough(const AbstractView* widget, const Point& cursor)
@@ -1795,9 +1799,6 @@ namespace BlendInt {
 		view->superview_ = this;
 		subs_count_++;
 
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
-
 		return true;
 	}
 
@@ -1876,8 +1877,6 @@ namespace BlendInt {
 
 		view->superview_ = this;
 		subs_count_++;
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
 
 		return true;
 	}
@@ -1919,9 +1918,6 @@ namespace BlendInt {
 		view->superview_ = this;
 		subs_count_++;
 
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
-
 		return true;
 	}
 
@@ -1931,9 +1927,6 @@ namespace BlendInt {
 			return false;
 
 		assert(view->superview_ == this);
-
-		//widget->destroyed().disconnectOne(this,
-		//        &AbstractContainer::OnSubWidgetDestroyed);
 
 		if (view->previous_view_) {
 			view->previous_view_->next_view_ = view->next_view_;
@@ -1949,14 +1942,12 @@ namespace BlendInt {
 			last_subview_ = view->previous_view_;
 		}
 
+		subs_count_--;
+		assert(subs_count_ >= 0);
+
 		view->previous_view_ = 0;
 		view->next_view_ = 0;
 		view->superview_ = 0;
-		subs_count_--;
-
-		if(view->hover()) {
-			view->set_hover(false);
-		}
 
 		return true;
 	}

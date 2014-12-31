@@ -31,6 +31,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -264,7 +265,7 @@ namespace BlendInt {
 			int h = font_.GetHeight();	// the row height
 
 			int i = 0;
-			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+			Point local_position = event.context()->cursor_position() - event.frame()->GetAbsolutePosition(this);
 			// TODO: count offset
 
 			i = size().height() - local_position.y();

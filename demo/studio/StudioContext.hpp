@@ -85,6 +85,8 @@ private:
 
 	void OnOpenDialogForButton ();
 
+	void OnOpenDialogForNumericalSlider ();
+
 	void OnOpenDialogForScrollView ();
 
 	void OnOpenDialogForBlocks ();

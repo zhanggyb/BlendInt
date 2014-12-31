@@ -174,8 +174,7 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractView(),
-	  focused_frame_(0)
+	: AbstractView()
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -197,12 +196,70 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	void Context::AddFrame (AbstractFrame* vp)
+	bool Context::AddFrame (AbstractFrame* frame)
 	{
-		if(PushBackSubView(vp)) {
-			// TODO:
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(PushBackSubView(frame)) {
+
+			if(original_last) {
+				original_last->set_focus(false);
+				original_last->FocusEvent(false);
+			}
+
+			frame->set_focus(true);
+			frame->FocusEvent(true);
+
 			RequestRedraw();
+			return true;
 		}
+
+		return false;
+	}
+
+	bool Context::InsertFrame(int index, AbstractFrame* frame)
+	{
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(InsertSubView(index, frame)) {
+
+			if(original_last != last_subview()) {
+				assert(last_subview() == frame);
+
+				if(original_last) {
+					original_last->set_focus(false);
+					original_last->FocusEvent(false);
+				}
+
+				frame->set_focus(true);
+				frame->FocusEvent(true);
+
+			}
+
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	void Context::MoveFrameToTop(AbstractFrame* frame)
+	{
+		if(frame == nullptr) return;
+
+		if(frame == last_subview()) return;
+
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		MoveToLast(frame);
+
+		if(original_last) {
+			original_last->set_focus(false);
+			original_last->FocusEvent(false);
+		}
+
+		frame->set_focus(true);
+		frame->FocusEvent(true);
 	}
 
 	void Context::Draw()
@@ -285,8 +342,9 @@ namespace BlendInt
 		}
 	}
 
-	void Context::DispatchMouseEvent(const MouseEvent& event)
+	void Context::DispatchMouseEvent(int x, int y, const MouseEvent& event)
 	{
+		cursor_position_.reset(x, size().height() - y);
 		const_cast<MouseEvent&>(event).context_ = this;
 		const_cast<MouseEvent&>(event).frame_ = 0;
 
@@ -443,17 +501,12 @@ namespace BlendInt
 
 		set_pressed(true);
 
-		AbstractFrame* focused_frame = 0;
-
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			response = p->MousePressEvent(event);
 			if(response == Finish) {
-				focused_frame = dynamic_cast<AbstractFrame*>(p);
 				break;
 			}
 		}
-
-		SetFocusedFrame(focused_frame);
 
 		return response;
 	}
@@ -463,8 +516,12 @@ namespace BlendInt
 		ResponseType response = Ignore;
 		set_pressed(false);
 
-		if(focused_frame_) {
-			response = focused_frame_->MouseReleaseEvent(event);
+		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+		{
+			response = p->MouseReleaseEvent(event);
+			if(response == Finish) {
+				break;
+			}
 		}
 
 		return response;
@@ -474,11 +531,43 @@ namespace BlendInt
 	{
 		ResponseType response = Ignore;
 
-		if(pressed_ext() && focused_frame_) {
-			response = focused_frame_->MouseMoveEvent(event);
+		if(pressed_ext()) {
+
+			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+			{
+				response = p->MouseMoveEvent(event);
+				if(response == Finish) {
+					break;
+				}
+			}
+
 		}
 
 		return response;
+	}
+
+	bool Context::RemoveSubView(AbstractView* view)
+	{
+		AbstractFrame* new_last = nullptr;
+		AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
+
+		if(view->next_view() == nullptr) {
+			new_last = dynamic_cast<AbstractFrame*>(view->previous_view());
+
+			if(frame != nullptr) {
+				frame->set_focus(false);
+			}
+		}
+
+		bool retval = AbstractView::RemoveSubView(view);
+
+		if(new_last != nullptr) {
+			DBG_PRINT_MSG("%s", "call focus event");
+			new_last->set_focus(true);
+			new_last->FocusEvent(true);
+		}
+
+		return retval;
 	}
 
 	void Context::GetGLVersion (int *major, int *minor)
@@ -580,35 +669,6 @@ namespace BlendInt
 
 	void Context::MouseHoverOutEvent(const MouseEvent& event)
 	{
-	}
-
-	void Context::SetFocusedFrame(AbstractFrame* frame)
-	{
-		if(focused_frame_ == frame) return;
-
-		if(focused_frame_) {
-			focused_frame_->set_focus(false);
-			focused_frame_->FocusEvent(false);
-			focused_frame_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
-		}
-
-		focused_frame_ = frame;
-		if(focused_frame_) {
-			focused_frame_->set_focus(true);
-			focused_frame_->FocusEvent(true);
-			events_->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
-		}
-	}
-
-	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
-	{
-		assert(focused_frame_ == frame);
-		DBG_PRINT_MSG("focused frame %s destroyed", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
-
-		focused_frame_ = 0;
-
-		RequestRedraw();
 	}
 
 	/*

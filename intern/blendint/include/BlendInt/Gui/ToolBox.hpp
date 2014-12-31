@@ -78,9 +78,9 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
-
 	private:
+
+		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
 
 		void InitializeToolBoxOnce ();
 
@@ -126,6 +126,7 @@ namespace BlendInt {
 
         GLTexture2D texture_buffer_;
 
+        int cursor_position_;
 	};
 
 }

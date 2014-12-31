@@ -39,6 +39,8 @@
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
@@ -313,7 +315,7 @@ namespace BlendInt {
 	{
 		if (event.button() == MouseButtonMiddle) {
 			moving_ = true;
-			cursor_point_ = event.position();
+			cursor_point_ = event.context()->cursor_position();
 			last_offset_ = offset();
 		}
 
@@ -334,8 +336,8 @@ namespace BlendInt {
 	{
 		if(moving_) {
 
-			int ox = event.position().x() - cursor_point_.x();
-			int oy = event.position().y() - cursor_point_.y();
+			int ox = event.context()->cursor_position().x() - cursor_point_.x();
+			int oy = event.context()->cursor_position().y() - cursor_point_.y();
 
 			set_offset(last_offset_.x() + ox, last_offset_.y() + oy);
 

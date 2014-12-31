@@ -253,6 +253,9 @@ namespace BlendInt {
 		widget_color_node = AllocateThemeNode(doc, "color_scheme_dialog", dialog_);
 		ui_node->append_node(widget_color_node);
 
+		widget_color_node = AllocateThemeNode(doc, "color_scheme_decoration", decoration_);
+		ui_node->append_node(widget_color_node);
+
 		std::ofstream out(filepath.c_str());
 		try {
 			out << doc;
@@ -439,13 +442,21 @@ namespace BlendInt {
 		// Dialog
 		dialog_.outline = 0x000000FF;
 		dialog_.item = 0x646464FF;
-		dialog_.inner = 0x191919E6;
+		dialog_.inner = 0x727272FF;
 		dialog_.inner_sel = 0x2D2D2DE6;
 		dialog_.text = 0xA0A0A0FF;
 		dialog_.text_sel = 0xFFFFFFFF;
-		dialog_.shaded = true;
-		dialog_.shadetop = 25;
-		dialog_.shadedown = -5;
+
+		// Decoration
+		decoration_.outline = 0x000000FF;
+		decoration_.item = 0x646464FF;
+		decoration_.inner = 0x191919E6;
+		decoration_.inner_sel = 0x2D2D2DE6;
+		decoration_.text = 0xA0A0A0FF;
+		decoration_.text_sel = 0xFFFFFFFF;
+		decoration_.shaded = true;
+		decoration_.shadetop = 15;
+		decoration_.shadedown = 0;
 
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
@@ -568,6 +579,8 @@ namespace BlendInt {
 			p = &list_item_;
 		} else if (strcmp("color_scheme_dialog", node->name()) == 0) {
 			p = &dialog_;
+		} else if (strcmp("color_scheme_decoration", node->name()) == 0) {
+			p = &decoration_;
 		}
 
 		if (p == 0)

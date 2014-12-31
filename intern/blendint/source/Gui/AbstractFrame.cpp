@@ -35,6 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -219,13 +220,13 @@ namespace BlendInt {
 				parent_position = position();
 			}
 
-			bool not_hover_through = event.position().x() < parent_position.x() ||
-					event.position().y() < parent_position.y() ||
-					event.position().x() > (parent_position.x() + superview->size().width()) ||
-					event.position().y() > (parent_position.y() + superview->size().height());
+			bool not_hover_through = event.context()->cursor_position().x() < parent_position.x() ||
+					event.context()->cursor_position().y() < parent_position.y() ||
+					event.context()->cursor_position().x() > (parent_position.x() + superview->size().width()) ||
+					event.context()->cursor_position().y() > (parent_position.y() + superview->size().height());
 
-			local_position.reset(event.position().x() - parent_position.x() - superview->offset().x(),
-					event.position().y() - parent_position.y() - superview->offset().y());
+			local_position.reset(event.context()->cursor_position().x() - parent_position.x() - superview->offset().x(),
+					event.context()->cursor_position().y() - parent_position.y() - superview->offset().y());
 
 			if(!not_hover_through) {
 
@@ -301,7 +302,7 @@ namespace BlendInt {
 							local_position.x() + superview->position().x() + superview->offset().x(),
 							local_position.y() + superview->position().y() + superview->offset().y());
 
-					if(IsHoverThroughExt(superview, event.position())) break;
+					if(IsHoverThroughExt(superview, event.context()->cursor_position())) break;
 					superview = superview->superview();
 				}
 
@@ -317,8 +318,8 @@ namespace BlendInt {
 		} else {
 
 			local_position.reset(
-					event.position().x() - position().x() - offset().x(),
-					event.position().y() - position().y() - offset().y());
+					event.context()->cursor_position().x() - position().x() - offset().x(),
+					event.context()->cursor_position().y() - position().y() - offset().y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
@@ -349,11 +350,11 @@ namespace BlendInt {
 		AbstractFrame* frame_hovered = old;
 
 		if(frame_hovered) {
-			if(!frame_hovered->Contain(event.position())) {
+			if(!frame_hovered->Contain(event.context()->cursor_position())) {
 
 				frame_hovered = 0;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(event.position())) {
+					if(p->Contain(event.context()->cursor_position())) {
 						frame_hovered = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -363,7 +364,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(event.position())) {
+				if(p->Contain(event.context()->cursor_position())) {
 					frame_hovered = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}
@@ -381,12 +382,9 @@ namespace BlendInt {
 #endif
 
 		while (hovered_widget && (hovered_widget != this)) {
-			set_widget_hover_status(hovered_widget, false);
+			hovered_widget->set_hover(false);
 			hovered_widget = hovered_widget->superview();
 		}
-
-		if(hovered_widget == this)
-			hovered_widget = 0;
 	}
 
 	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const MouseEvent& event)

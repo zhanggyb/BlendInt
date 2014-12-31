@@ -52,9 +52,9 @@ namespace BlendInt {
 		 */
 		KeyEvent ()
 		: HIDEvent(),
-		  m_action(KeyNone),
-		  m_key(Key_Unknown),
-		  m_scancode(0)
+		  action_(KeyNone),
+		  key_(Key_Unknown),
+		  scancode_(0)
 		{
 		}
 
@@ -70,10 +70,10 @@ namespace BlendInt {
 		 */
 		KeyEvent (KeyAction action, int key, int scancode, int mods, const String& text = String())
 		: HIDEvent(mods),
-		  m_action(action),
-		  m_key(key),
-		  m_scancode(scancode),
-		  m_text (text)
+		  action_(action),
+		  key_(key),
+		  scancode_(scancode),
+		  text_ (text)
 		{
 		}
 
@@ -81,36 +81,38 @@ namespace BlendInt {
 		{
 		}
 
-		int key () const {return m_key;}
+		int key () const {return key_;}
 
-		void set_key (int key) {m_key = key;}
+		void set_key (int key) {key_ = key;}
 
-		int scancode () const {return m_scancode;}
+		int scancode () const {return scancode_;}
 
-		void set_scancode (int scancode) {m_scancode = scancode;}
+		void set_scancode (int scancode) {scancode_ = scancode;}
 
-		KeyAction action () const {return m_action;}
+		KeyAction action () const {return action_;}
 
-		void set_action (KeyAction action) {m_action = action;}
+		void set_action (KeyAction action) {action_ = action;}
 
-		const String& text () const {return m_text;}
+		const String& text () const {return text_;}
 
-		void set_text (const String& text) {m_text = text;}
+		void set_text (const String& text) {text_ = text;}
 
 		void set_text (unsigned int character) {
-			m_text.clear();
-			m_text.push_back(character);
+			text_.clear();
+			text_.push_back(character);
 		}
 
-		void clear_text () {m_text.clear();}
+		void clear_text () {text_.clear();}
 
 	private:
 
-		KeyAction m_action;
-		int m_key;
-		int m_scancode;
+		KeyAction action_;
 
-		String m_text;
+		int key_;
+
+		int scancode_;
+
+		String text_;
 	};
 
 }

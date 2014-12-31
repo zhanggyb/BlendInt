@@ -53,7 +53,8 @@ namespace BlendInt {
 	  hovered_widget_(0),
 	  space_(1),
 	  margin_(2, 2, 2, 2),
-	  orientation_(orientation)
+	  orientation_(orientation),
+	  cursor_position_(0)
 	{
 		if(orientation_ == Horizontal) {
 			set_size(400, 240);
@@ -69,7 +70,8 @@ namespace BlendInt {
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
-	  orientation_(orientation)
+	  orientation_(orientation),
+	  cursor_position_(0)
 	{
 		set_size(width, height);
 
@@ -333,6 +335,18 @@ namespace BlendInt {
 
 	void ToolBox::FocusEvent (bool focus)
 	{
+		if(focus) {
+			DBG_PRINT_MSG("%s", "focus in");
+		} else {
+			DBG_PRINT_MSG("%s", "focus out");
+
+			if(hovered_widget_) {
+				hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
+				ClearHoverWidgets(hovered_widget_);
+				hovered_widget_ = 0;
+			}
+
+		}
 	}
 
 	void ToolBox::MouseHoverInEvent (const MouseEvent& event)
@@ -365,21 +379,28 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		if(hovered_widget_) {
+		if(cursor_position_ == InsideRectangle) {
 
-			AbstractView* widget = 0;	// widget may be focused
+			if(hovered_widget_) {
 
-			widget = DispatchMousePressEvent(hovered_widget_, event);
+				AbstractView* widget = 0;	// widget may be focused
 
-			if(widget == 0) {
-				DBG_PRINT_MSG("%s", "widget 0");
+				widget = DispatchMousePressEvent(hovered_widget_, event);
+
+				if(widget == 0) {
+					DBG_PRINT_MSG("%s", "widget 0");
+					set_pressed(true);
+				} else {
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				}
+
 			} else {
-				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				set_pressed(true);
+				// SetFocusedWidget(0);
 			}
 
 		} else {
-			set_pressed(true);
-			// SetFocusedWidget(0);
+			set_pressed(false);
 		}
 
 		return Finish;
@@ -387,15 +408,15 @@ namespace BlendInt {
 
 	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
 	{
-		ResponseType retval = Ignore;
+		cursor_position_ = InsideRectangle;
+		set_pressed(false);
 
 		if(focused_widget_) {
 			assign_event_frame(event, this);
-			retval = delegate_mouse_release_event(focused_widget_, event);
+			return delegate_mouse_release_event(focused_widget_, event);
 		}
 
-		set_pressed(false);
-		return retval;
+		return Ignore;
 	}
 
 	ResponseType ToolBox::MouseMoveEvent (const MouseEvent& event)
@@ -412,7 +433,16 @@ namespace BlendInt {
 
 	ResponseType ToolBox::DispatchHoverEvent (const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(pressed_ext()) return Finish;
+
+		if(Contain(event.context()->cursor_position())) {
+
+			cursor_position_ = InsideRectangle;
+
+			if(!hover()) {
+				set_hover(true);
+				MouseHoverInEvent(event);
+			}
 
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
 
@@ -431,10 +461,17 @@ namespace BlendInt {
 
 			}
 
-			assign_event_frame(event, this);
 			return Finish;
+
 		} else {
-			assign_event_frame(event, 0);
+
+			cursor_position_ = OutsideRectangle;
+
+			if(hover()) {
+				set_hover(false);
+				MouseHoverOutEvent(event);
+			}
+
 			return Ignore;
 		}
 	}

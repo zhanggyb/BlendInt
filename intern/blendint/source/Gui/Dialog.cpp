@@ -249,7 +249,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->dialog().inner.data());
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -344,7 +344,7 @@ namespace BlendInt {
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.position();
+			cursor_point_ = event.context()->cursor_position();
 
 			if(hovered_widget_) {
 
@@ -367,7 +367,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				MoveToLast();
+				event.context()->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -378,7 +378,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = event.position();
+			cursor_point_ = event.context()->cursor_position();
 
 			return Finish;
 		}
@@ -409,8 +409,8 @@ namespace BlendInt {
 
 		if(mouse_button_pressed()) {
 
-			int ox = event.position().x() - cursor_point_.x();
-			int oy = event.position().y() - cursor_point_.y();
+			int ox = event.context()->cursor_position().x() - cursor_point_.x();
+			int oy = event.context()->cursor_position().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -499,9 +499,9 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(event.position())) {
+		if(valid_rect.contains(event.context()->cursor_position())) {
 
-			if(Contain(event.position())) {
+			if(Contain(event.context()->cursor_position())) {
 
 				cursor_position_ = InsideRectangle;
 
@@ -533,15 +533,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(event.position().x() <= position().x()) {
+				if(event.context()->cursor_position().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (event.position().x() >= (position().x() + size().width())) {
+				} else if (event.context()->cursor_position().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (event.position().y() >= (position().y() + size().height())) {
+				if (event.context()->cursor_position().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (event.position().y () <= position().y()) {
+				} else if (event.context()->cursor_position().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 

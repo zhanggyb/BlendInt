@@ -38,7 +38,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <iostream>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -198,7 +198,7 @@ namespace BlendInt {
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if(GetNewValue(event.position(), &new_value)) {
+			if(GetNewValue(event.context()->cursor_position(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				RequestRedraw();
@@ -207,7 +207,7 @@ namespace BlendInt {
 			return Finish;
 
 		} else {
-			if(CursorOnSlideIcon(event.position())) {
+			if(CursorOnSlideIcon(event.context()->cursor_position())) {
 
 				//m_slide_icon.set_highlight(true);
 
@@ -225,10 +225,10 @@ namespace BlendInt {
 
 	ResponseType Slider::MousePressEvent (const MouseEvent& event)
 	{
-		if(CursorOnSlideIcon(event.position())) {
+		if(CursorOnSlideIcon(event.context()->cursor_position())) {
 			m_pressed = true;
 			m_last_value = value();
-			m_last_cursor = event.position();
+			m_last_cursor = event.context()->cursor_position();
 			fire_slider_pressed();
 
 			return Finish;
@@ -242,7 +242,7 @@ namespace BlendInt {
 		if(m_pressed) {
 			m_pressed = false;
 
-			if(CursorOnSlideIcon(event.position())) {
+			if(CursorOnSlideIcon(event.context()->cursor_position())) {
 				fire_slider_released();
 			}
 

@@ -151,10 +151,7 @@ namespace BlendInt {
 
         GLTexture2D texture_buffer_;
 
-		int cursor_position_;
-
-		//Cpp::Event<ActionItem*> m_triggered;
-		static int kDefaultMenuItemHeight;
+		int cursor_range_;
 
 		static int kDefaultIconSpace;
 

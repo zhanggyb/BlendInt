@@ -50,7 +50,7 @@ namespace BlendInt {
 	: AbstractSlider<double>(orientation)
 	{
 		set_round_type(RoundAll);
-		int h = m_font.GetHeight();
+		int h = font_.GetHeight();
 		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
@@ -65,11 +65,11 @@ namespace BlendInt {
 
 	void NumericalSlider::SetTitle (const String& title)
 	{
-		m_title = title;
+		title_ = title;
 		//Rect text_outline = m_font.GetTextOutline(m_title);
 
-		m_font.set_pen(round_radius(),
-				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
+		font_.set_pen(round_radius(),
+				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
 	}
 
 	bool NumericalSlider::IsExpandX() const
@@ -95,7 +95,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = m_font.GetHeight();
+		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(
 		        max_font_height + default_numberslider_padding.vsum());	// top padding: 2, bottom padding: 2
@@ -212,7 +212,9 @@ namespace BlendInt {
 	
 	ResponseType NumericalSlider::Draw (Profile& profile)
 	{
-		float x = get_relative_position(Shaders::instance->widget_model_matrix()).x;
+		float x = profile.origin().x();
+		x = (Shaders::instance->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f)).x - x;
+
 		int outline_vertices = GetOutlineVertices(round_type());
 		float len = GetSlidePosition(default_border_width(), value());
 
@@ -255,8 +257,8 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		if(m_title.size()) {
-			m_font.Print(0.f, 0.f, m_title);
+		if(title_.size()) {
+			font_.Print(0.f, 0.f, title_);
 		}
 
 		return Finish;

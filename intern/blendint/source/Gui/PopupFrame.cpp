@@ -365,9 +365,16 @@ namespace BlendInt {
 	void PopupFrame::FocusEvent(bool focus)
 	{
 		if(focus) {
-			DBG_PRINT_MSG("%s", "focus");
+			DBG_PRINT_MSG("%s", "focus in");
 		} else {
-			DBG_PRINT_MSG("%s", "not focus");
+			DBG_PRINT_MSG("%s", "focus out");
+
+			if(hovered_widget_) {
+				hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
+				ClearHoverWidgets(hovered_widget_);
+				hovered_widget_ = 0;
+			}
+
 		}
 	}
 
@@ -421,7 +428,7 @@ namespace BlendInt {
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.position();
+			cursor_point_ = event.context()->cursor_position();
 
 			if(hovered_widget_) {
 
@@ -469,8 +476,8 @@ namespace BlendInt {
 
 		if(pressed_ext()) {
 
-			int ox = event.position().x() - cursor_point_.x();
-			int oy = event.position().y() - cursor_point_.y();
+			int ox = event.context()->cursor_position().x() - cursor_point_.x();
+			int oy = event.context()->cursor_position().y() - cursor_point_.y();
 
 			set_position(last_position_.x() + ox, last_position_.y() + oy);
 
@@ -497,7 +504,7 @@ namespace BlendInt {
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 
 			cursor_position_ = InsideRectangle;
 

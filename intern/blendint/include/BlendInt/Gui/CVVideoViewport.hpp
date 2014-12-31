@@ -79,6 +79,8 @@ namespace BlendInt {
 
 		virtual void PostDraw (Profile& profile);
 
+		virtual void ProcessImage (cv::Mat& image);
+
 	private:
 
 		enum Status {

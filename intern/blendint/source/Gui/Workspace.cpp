@@ -42,6 +42,7 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -495,7 +496,7 @@ namespace BlendInt {
 
 	ResponseType Workspace::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 
 			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, event);
 

@@ -78,7 +78,7 @@ namespace BlendInt {
 
 	ResponseType Viewport::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 			assign_event_frame(event, this);
 			return Finish;
 		} else {

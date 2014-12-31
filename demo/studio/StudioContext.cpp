@@ -62,6 +62,7 @@ Panel* StudioContext::CreateButtonsForWidgets()
 	
 	Button* btn4 = Manage(new Button("TextEntry"));
 	Button* btn5 = Manage(new Button("NumericalSlider"));
+	events()->connect(btn5->clicked(), this, &StudioContext::OnOpenDialogForNumericalSlider);
 
 	group2->AddWidget(btn4);
 	group2->AddWidget(btn5);
@@ -205,6 +206,32 @@ void StudioContext::OnOpenDialogForScrollView()
 
 void StudioContext::OnOpenDialogForButton()
 {
+}
+
+void StudioContext::OnOpenDialogForNumericalSlider()
+{
+	Dialog * dialog = Manage(new Dialog("NumericalSlider", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Panel* panel1 = Manage(new Panel);
+	panel1->MoveTo(20, 20);
+
+	Panel* panel2 = Manage(new Panel);
+	panel2->MoveTo(20, 20);
+	panel2->Resize(250, 250);
+
+	NumericalSlider* ns = Manage(new NumericalSlider);
+	ns->Resize(150, ns->size().height());
+	ns->MoveTo(50, 50);
+	ns->SetValue(50.0);
+
+	panel2->AddWidget(ns);
+	panel1->AddWidget(panel2);
+
+	dialog->AddWidget(panel1);
+
+	AddFrame(dialog);
 }
 
 void StudioContext::OnOpenPanel1 (AbstractButton* btn)

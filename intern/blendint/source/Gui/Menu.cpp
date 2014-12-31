@@ -47,7 +47,6 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	int Menu::kDefaultMenuItemHeight = 16;
 	int Menu::kDefaultIconSpace = 4;
 	int Menu::kDefaultShortcutSpace = 20;
 
@@ -55,7 +54,7 @@ namespace BlendInt {
 	: AbstractFloatingFrame(),
 	  focused_widget_(nullptr),
 	  hovered_widget_(nullptr),
-	  cursor_position_(0)
+	  cursor_range_(0)
 	{
 		set_size (240, 360);
 		set_round_type(RoundAll);
@@ -191,7 +190,7 @@ namespace BlendInt {
 	{
 		assign_event_frame(event, this);
 
-		if(cursor_position_ == InsideRectangle) {
+		if(cursor_range_ == InsideRectangle) {
 
 			if(hovered_widget_) {
 
@@ -210,8 +209,10 @@ namespace BlendInt {
 				set_pressed(true);
 			}
 
-		} else if (cursor_position_ == OutsideRectangle) {
+		} else if (cursor_range_ == OutsideRectangle) {
 			set_pressed(false);
+			delete this;
+			return Finish;
 		}
 
 		return Finish;
@@ -219,7 +220,7 @@ namespace BlendInt {
 
 	ResponseType Menu::MouseReleaseEvent (const MouseEvent& event)
 	{
-		cursor_position_ = InsideRectangle;
+		cursor_range_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
@@ -333,7 +334,7 @@ namespace BlendInt {
 
 	void Menu::ResetHighlightBuffer (int width)
 	{
-		Size size(width, kDefaultMenuItemHeight);
+		Size size(width, 24);
 
 		std::vector<GLfloat> inner_verts;
 
@@ -466,9 +467,9 @@ namespace BlendInt {
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 
-			cursor_position_ = InsideRectangle;
+			cursor_range_ = InsideRectangle;
 
 			if(!hover()) {
 				set_hover(true);
@@ -493,7 +494,7 @@ namespace BlendInt {
 			}
 
 		} else {
-			cursor_position_ = OutsideRectangle;
+			cursor_range_ = OutsideRectangle;
 			if(hover()) {
 				set_hover(false);
 				MouseHoverOutEvent(event);

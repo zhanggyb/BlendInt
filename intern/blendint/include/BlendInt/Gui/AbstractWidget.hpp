@@ -51,12 +51,6 @@ namespace BlendInt {
 			return *destroyed_;
 		}
 
-		inline glm::vec2 get_relative_position (const glm::mat3& model_matrix)
-		{
-			glm::vec3 point = model_matrix * glm::vec3(position().x(), position().y(), 1.f);
-			return glm::vec2(point.x, point.y);
-		}
-
 	protected:
 
 		virtual bool PreDraw (Profile& profile);

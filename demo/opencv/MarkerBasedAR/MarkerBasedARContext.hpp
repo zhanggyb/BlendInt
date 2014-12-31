@@ -16,6 +16,8 @@
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 
+#include "MBARViewport.hpp"
+
 namespace BI=BlendInt;
 
 class MarkerBasedARContext: public BI::Context
@@ -46,7 +48,7 @@ private:
 
 	void OnStop(BI::AbstractButton* sender);
 
-	BI::CVVideoViewport* viewport_;
+	MBARViewport* viewport_;
 
 	GLFWwindow* window_;
 

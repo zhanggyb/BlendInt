@@ -182,6 +182,11 @@ namespace BlendInt {
 			return dialog_;
 		}
 
+		const ColorScheme& decoration () const
+		{
+			return decoration_;
+		}
+
 		float menu_shadow_fac1 () const
 		{
 			return shadow_fac_;
@@ -249,6 +254,7 @@ namespace BlendInt {
 		ColorScheme progress_;
 		ColorScheme list_item_;
 		ColorScheme dialog_;
+		ColorScheme decoration_;
 
 		/** Font DPI */
 		unsigned int dpi_;

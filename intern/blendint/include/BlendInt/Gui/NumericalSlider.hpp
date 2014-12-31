@@ -87,9 +87,9 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
-		Font m_font;
+		Font font_;
 
-		String m_title;
+		String title_;
 
 		static Margin default_numberslider_padding;
 	};

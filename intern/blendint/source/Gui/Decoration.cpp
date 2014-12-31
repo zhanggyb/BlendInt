@@ -125,7 +125,16 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
-			GenerateRoundedVertices(&inner_verts, 0);
+
+			if (Theme::instance->decoration().shaded) {
+				GenerateRoundedVertices(Vertical,
+						Theme::instance->decoration().shadetop,
+						Theme::instance->decoration().shadedown,
+						&inner_verts,
+						nullptr);
+			} else {
+				GenerateRoundedVertices(&inner_verts, nullptr);
+			}
 
 			inner_.bind();
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -146,7 +155,16 @@ namespace BlendInt {
 		set_round_type(round_type);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
 
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -160,7 +178,17 @@ namespace BlendInt {
 		set_round_radius(radius);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
+
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		inner_.reset();
@@ -173,7 +201,7 @@ namespace BlendInt {
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Theme::instance->decoration().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -211,7 +239,16 @@ namespace BlendInt {
 	void Decoration::InitializeDecorationOnce()
 	{
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
 
 		glGenVertexArrays(1, vao_);
 

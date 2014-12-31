@@ -215,7 +215,7 @@ namespace BlendInt {
 			const MouseEvent& event)
 	{
 		last_ = position();
-		cursor_ = event.position();
+		cursor_ = event.context()->cursor_position();
 
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous_view()->size().height();
@@ -265,7 +265,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 			return Finish;
 		} else {
 			return Ignore;
@@ -281,7 +281,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = event.position().y() - cursor_.y();
+				int offset = event.context()->cursor_position().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -297,7 +297,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = event.position().x() - cursor_.x();
+				int offset = event.context()->cursor_position().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
@@ -675,7 +675,7 @@ namespace BlendInt {
 
 	ResponseType FrameSplitter::DispatchHoverEvent(const MouseEvent& event)
 	{
-		if(Contain(event.position())) {
+		if(Contain(event.context()->cursor_position())) {
 
 			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, event);
 

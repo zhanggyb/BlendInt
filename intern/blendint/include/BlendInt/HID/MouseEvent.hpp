@@ -48,67 +48,41 @@ namespace BlendInt {
 		 * @brief Default constructor
 		 */
 		MouseEvent ()
-			: HIDEvent(),
-				m_action(MouseNone),
-			  m_button(MouseButtonNone)
-			{}
+		: HIDEvent(),
+		  action_(MouseNone),
+		  button_(MouseButtonNone)
+		{}
 
 		/**
 		 * @brief Constructor
 		 * @param[in] type one of Event::Type
 		 */
 		MouseEvent (MouseAction action, MouseButton button)
-			: HIDEvent(), m_action(action), m_button(button)
-			{}
-		
-		MouseEvent (MouseAction action, MouseButton button,
-					const Point& position)
-			: HIDEvent(), m_action(action), m_button(button),
-			position_(position)
+		: HIDEvent(), action_(action), button_(button)
 		{}
-
+		
 		virtual ~MouseEvent ()
 		{}
 
 		MouseAction action () const
 		{
-			return m_action;
+			return action_;
 		}
 
-		void set_action (MouseAction action) {m_action = action;}
+		void set_action (MouseAction action) {action_ = action;}
 
 		MouseButton button () const
 		{
-			return m_button;
+			return button_;
 		}
 
-		void set_button (MouseButton button) {m_button = button;}
-
-		const Point& position () const
-		{
-			return position_;
-		}
-
-		void set_position (const Point& pos)
-		{
-			position_ = pos;
-		}
-
-		void set_position (int x, int y)
-		{
-			position_.set_x (x);
-			position_.set_y (y);
-		}
+		void set_button (MouseButton button) {button_ = button;}
 
 	private:
 
-		friend class Frame;
+		MouseAction action_;
 
-		MouseAction m_action;
-
-		MouseButton m_button;
-
-		Point position_;
+		MouseButton button_;
 	};
 
 }

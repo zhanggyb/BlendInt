@@ -325,6 +325,11 @@ namespace BlendInt {
 		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
 	}
 
+	void CVVideoViewport::ProcessImage(cv::Mat& iamge)
+	{
+		// TODO: override this
+	}
+
 	void CVVideoViewport::InitializeCVVideoView()
 	{
 		glGenVertexArrays(1, &vao_);
@@ -368,6 +373,9 @@ namespace BlendInt {
 			if(mutex_.trylock()) {
 
 				video_stream_ >> frame_;
+
+				ProcessImage(frame_);
+
 				upload_ = true;
 
 				mutex_.unlock();
