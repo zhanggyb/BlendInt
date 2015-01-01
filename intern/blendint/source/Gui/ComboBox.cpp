@@ -288,7 +288,7 @@ namespace BlendInt {
 
 			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
 
-			Point pos = context->leaf_frame()->GetAbsolutePosition(this);
+			Point pos = context->active_frame()->GetAbsolutePosition(this);
 
 			int top = pos.y() + size().height() + popup_->size().height();
 			int bottom = pos.y() - popup_->size().height();

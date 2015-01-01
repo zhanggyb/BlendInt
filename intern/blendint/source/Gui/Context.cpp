@@ -175,7 +175,8 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractView(),
-	  leaf_frame_(nullptr)
+	  active_frame_(nullptr),
+	  stencil_count_(0)
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -324,7 +325,7 @@ namespace BlendInt
 		scancode_ = scancode;
 		text_ = text;
 
-		leaf_frame_ = nullptr;
+		active_frame_ = nullptr;
 
 		switch (key_action_) {
 
@@ -356,24 +357,25 @@ namespace BlendInt
 		mouse_button_ = button;
 		modifiers_ = modifiers;
 
-		leaf_frame_ = nullptr;
-
-		DispatchHoverEvent();
+		active_frame_ = nullptr;
 
 		switch (mouse_action_) {
 
 			case MouseMove: {
+				DispatchHoverEvent();
 				MouseMoveEvent(this);
 				break;
 			}
 
 			case MousePress: {
+				DispatchHoverEvent();
 				MousePressEvent(this);
 				break;
 			}
 
 			case MouseRelease: {
 				MouseReleaseEvent(this);
+				DispatchHoverEvent();
 				break;
 			}
 
@@ -396,6 +398,52 @@ namespace BlendInt
 	void Context::MakeGLContextCurrent()
 	{
 		// TODO: override this to support GL Context manipulation in thread
+	}
+
+	void Context::BeginPushStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+		if(stencil_count_ == 0) {
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
+			glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+		} else {
+			glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+			glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // increase 1s on test fail (always)
+		}
+
+		stencil_count_++;
+	}
+
+	void Context::EndPushStencil()
+	{
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	}
+
+	void Context::BeginPopStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+		glStencilOp(GL_DECR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+	}
+
+	void Context::EndPopStencil()
+	{
+		if(stencil_count_ > 0) {
+			stencil_count_--;
+
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+			if(stencil_count_ == 0) {
+				glDisable(GL_STENCIL_TEST);
+			}
+
+		}
 	}
 
 	Context* Context::GetContext (AbstractView* widget)

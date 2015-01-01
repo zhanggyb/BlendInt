@@ -288,7 +288,7 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::MousePressEvent (const Context* context)
 	{
-		Point local_position = context->cursor_position() - context->leaf_frame()->GetAbsolutePosition(this);
+		Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 
 		if (CursorOnSlideIcon(local_position)) {
 
@@ -341,7 +341,7 @@ namespace BlendInt {
 
 			set_pressed(false);
 
-			Point local_position = context->cursor_position() - context->leaf_frame()->GetAbsolutePosition(this);
+			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 
 			RequestRedraw();
 

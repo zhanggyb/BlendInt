@@ -135,7 +135,7 @@ namespace BlendInt {
 			profile.frame_ = frame;
 		}
 
-		static void SetLeafFrame (const Context* context, AbstractFrame* frame);
+		static void SetActiveFrame (const Context* context, AbstractFrame* frame);
 
 	private:
 

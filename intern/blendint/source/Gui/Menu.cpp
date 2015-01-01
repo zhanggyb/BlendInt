@@ -188,7 +188,7 @@ namespace BlendInt {
 
 	ResponseType Menu::MousePressEvent (const Context* context)
 	{
-		SetLeafFrame(context, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_range_ == InsideRectangle) {
 
@@ -224,7 +224,7 @@ namespace BlendInt {
 		set_pressed(false);
 
 		if(focused_widget_) {
-			SetLeafFrame(context, this);
+			SetActiveFrame(context, this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 

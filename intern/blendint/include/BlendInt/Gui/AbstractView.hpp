@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
-#define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTVIEW_HPP_
+#define _BLENDINT_GUI_ABSTRACTVIEW_HPP_
 
 #include <vector>
 #include <pthread.h>
@@ -40,8 +40,6 @@
 namespace BlendInt {
 
 	class AbstractView;
-
-	typedef RefPtr<AbstractView> AbstractInteractiveFormPtr;
 
 	template<typename T>
 	T* Manage (T* obj, bool val = true)
@@ -752,4 +750,4 @@ namespace BlendInt {
 
 } /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTVIEW_HPP_ */

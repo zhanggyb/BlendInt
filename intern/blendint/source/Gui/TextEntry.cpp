@@ -614,7 +614,7 @@ namespace BlendInt {
 	
 	int TextEntry::GetCursorPosition (const Context* context)
 	{
-		Point global_pos = context->leaf_frame()->GetAbsolutePosition(this);
+		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
 
 		int click_position = context->cursor_position().x() - global_pos.x()
 						- round_radius();

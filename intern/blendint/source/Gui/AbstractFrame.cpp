@@ -203,7 +203,7 @@ namespace BlendInt {
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		SetLeafFrame(context, this);
+		SetActiveFrame(context, this);
 		Point local_position;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
@@ -400,9 +400,9 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractFrame::SetLeafFrame(const Context* context, AbstractFrame* frame)
+	void AbstractFrame::SetActiveFrame(const Context* context, AbstractFrame* frame)
 	{
-		const_cast<Context*>(context)->leaf_frame_ = frame;
+		const_cast<Context*>(context)->active_frame_ = frame;
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const Context* context,

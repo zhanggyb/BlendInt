@@ -404,7 +404,7 @@ namespace BlendInt {
 		}
 
 		if(focused_widget_) {
-			SetLeafFrame(context, this);
+			SetActiveFrame(context, this);
 			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
@@ -423,7 +423,7 @@ namespace BlendInt {
 
 	ResponseType PopupFrame::MousePressEvent(const Context* context)
 	{
-		SetLeafFrame(context, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
@@ -463,7 +463,7 @@ namespace BlendInt {
 		set_pressed(false);
 
 		if(focused_widget_) {
-			SetLeafFrame(context, this);
+			SetActiveFrame(context, this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
@@ -490,7 +490,7 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				SetLeafFrame(context, this);
+				SetActiveFrame(context, this);
 				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}

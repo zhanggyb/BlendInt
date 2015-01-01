@@ -26,7 +26,7 @@
 
 #include <deque>
 
-#include <BlendInt/HID/Input.hpp>
+#include <BlendInt/Core/Input.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/GridFloor.hpp>

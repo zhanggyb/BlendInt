@@ -29,7 +29,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/HID/Input.hpp>
+#include <BlendInt/Core/Input.hpp>
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
@@ -88,19 +88,42 @@ namespace BlendInt {
 
 		virtual void MakeGLContextCurrent ();
 
-		AbstractFrame* leaf_frame () const
+		AbstractFrame* active_frame () const
 		{
 #ifdef DEBUG
-			assert(leaf_frame_ != nullptr);
+			assert(active_frame_ != nullptr);
 #endif
 
-			return leaf_frame_;
+			return active_frame_;
 		}
 
 		const Point& cursor_position () const
 		{
 			return cursor_position_;
 		}
+
+		void set_viewport_origin (int x, int y)
+		{
+			viewport_origin_.reset(x, y);
+		}
+
+		void set_viewport_origin (const Point& pos)
+		{
+			viewport_origin_ = pos;
+		}
+
+		const Point& viewport_origin () const
+		{
+			return viewport_origin_;
+		}
+
+		void BeginPushStencil ();
+
+		void EndPushStencil ();
+
+		void BeginPopStencil ();
+
+		void EndPopStencil ();
 
 		int key() const {return key_;}
 
@@ -189,7 +212,7 @@ namespace BlendInt {
 
 		Point cursor_position_;
 
-		AbstractFrame* leaf_frame_;
+		AbstractFrame* active_frame_;
 
 		// ------- input
 
@@ -206,6 +229,13 @@ namespace BlendInt {
 		MouseButton mouse_button_;
 
 		String text_;
+
+		// the following 2 variables are used when rendering
+
+		// the viewport offset
+		Point viewport_origin_;
+
+		GLuint stencil_count_;
 
 		// ------
 
