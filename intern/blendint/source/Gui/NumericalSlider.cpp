@@ -38,6 +38,8 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -210,9 +212,9 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 	
-	ResponseType NumericalSlider::Draw (Profile& profile)
+	ResponseType NumericalSlider::Draw (const Context* context)
 	{
-		float x = profile.origin().x();
+		float x = context->viewport_origin().x();
 		x = (Shaders::instance->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f)).x - x;
 
 		int outline_vertices = GetOutlineVertices(round_type());

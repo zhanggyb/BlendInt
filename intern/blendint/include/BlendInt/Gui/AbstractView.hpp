@@ -24,6 +24,16 @@
 #ifndef _BLENDINT_GUI_ABSTRACTVIEW_HPP_
 #define _BLENDINT_GUI_ABSTRACTVIEW_HPP_
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+ 
 #include <vector>
 #include <pthread.h>
 
@@ -35,10 +45,9 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/Gui/Profile.hpp>
-
 namespace BlendInt {
 
+	class Context;
 	class AbstractView;
 
 	template<typename T>
@@ -204,11 +213,6 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractView);
 
 	public:
-
-		friend class Context;
-		friend class AbstractFrame;
-
-		template <typename T> friend T* Manage (T* obj, bool val);
 
 		/**
 		 * @brief The default constructor
@@ -526,11 +530,11 @@ namespace BlendInt {
 			}
 		}
 
-		virtual bool PreDraw (Profile& profile) = 0;
+		virtual bool PreDraw (const Context* context) = 0;
 
-		virtual ResponseType Draw (Profile& profile) = 0;
+		virtual ResponseType Draw (const Context* context) = 0;
 
-		virtual void PostDraw (Profile& profile) = 0;
+		virtual void PostDraw (const Context* context) = 0;
 
 		virtual void FocusEvent (bool focus) = 0;
 
@@ -624,7 +628,7 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
-		void DrawSubViewsOnce (Profile& profile);
+		void DrawSubViewsOnce (const Context* context);
 
 		static void GenerateVertices (
 				const Size& size,
@@ -648,6 +652,12 @@ namespace BlendInt {
 		static int GetOutlineVertices (int round_type);
 
 	private:
+
+		friend class Context;
+		friend class AbstractFrame;
+		friend class AbstractWidget;
+
+		template <typename T> friend T* Manage (T* obj, bool val);
 
 		enum ViewFlagIndex {
 
@@ -688,7 +698,7 @@ namespace BlendInt {
 		 * 	- true: use superview refresh() status to set view's refresh flag
 		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractView* view, Profile& profile);
+		static void DispatchDrawEvent (AbstractView* view, const Context* context);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,

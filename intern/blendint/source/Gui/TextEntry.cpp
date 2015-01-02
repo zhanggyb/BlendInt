@@ -328,7 +328,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType TextEntry::Draw (Profile& profile)
+	ResponseType TextEntry::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

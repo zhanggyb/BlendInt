@@ -85,17 +85,17 @@ namespace BlendInt {
 		return expand_y_;
 	}
 
-	bool Separator::PreDraw(Profile& profile)
+	bool Separator::PreDraw(const Context* context)
 	{
 		return true;
 	}
 
-	ResponseType Separator::Draw(Profile& profile)
+	ResponseType Separator::Draw(const Context* context)
 	{
 		return Ignore;
 	}
 
-	void Separator::PostDraw(Profile& profile)
+	void Separator::PostDraw(const Context* context)
 	{
 		return;
 	}

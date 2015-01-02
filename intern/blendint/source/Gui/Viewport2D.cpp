@@ -108,8 +108,9 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport2D::Draw(Profile& profile)
+	ResponseType Viewport2D::Draw(const Context* context)
 	{
+		Context* c = const_cast<Context*>(context);
         GLint vp[4];	// Original viewport
         int n = GetOutlineVertices(round_type()) + 2;
 
@@ -128,9 +129,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
-		profile.BeginPushStencil();	// inner stencil
+		c->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		profile.EndPushStencil();
+		c->EndPushStencil();
 
 		glBindVertexArray(0);
 		program->reset();
@@ -139,8 +140,8 @@ namespace BlendInt {
 
         Point pos = GetGlobalPosition();
 
-		glViewport(pos.x() - profile.origin().x(),
-		        pos.y() - profile.origin().y(),
+		glViewport(pos.x() - context->viewport_origin().x(),
+		        pos.y() - context->viewport_origin().y(),
 		        size().width(),
 		        size().height());
 
@@ -159,11 +160,11 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		profile.BeginPopStencil();	// pop inner stencil
+		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		glBindVertexArray(0);
-		profile.EndPopStencil();
+		c->EndPopStencil();
 		program->reset();
 
 		return Finish;

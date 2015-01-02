@@ -74,7 +74,7 @@ namespace BlendInt {
 				outer);
 	}
 
-	ResponseType Widget::Draw(Profile& profile)
+	ResponseType Widget::Draw(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

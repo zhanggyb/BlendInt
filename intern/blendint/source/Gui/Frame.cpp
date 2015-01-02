@@ -57,19 +57,19 @@ namespace BlendInt {
 		return nullptr;
 	}
 
-	bool Frame::PreDraw(Profile& profile)
+	bool Frame::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType Frame::Draw (Profile& profile)
+	ResponseType Frame::Draw (const Context* context)
 	{
-		DrawSubViewsOnce(profile);
+		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Frame::PostDraw(Profile& profile)
+	void Frame::PostDraw(const Context* context)
 	{
 
 	}

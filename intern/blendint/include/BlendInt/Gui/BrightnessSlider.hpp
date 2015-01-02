@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
 #define _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
 
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+ 
 #include <BlendInt/Gui/AbstractSlider.hpp>
 #include <BlendInt/Gui/CircularPicker.hpp>
 
@@ -53,7 +55,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 

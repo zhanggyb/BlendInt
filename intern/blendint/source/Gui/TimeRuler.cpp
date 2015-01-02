@@ -153,7 +153,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TimeRuler::Draw(Profile& profile)
+	ResponseType TimeRuler::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

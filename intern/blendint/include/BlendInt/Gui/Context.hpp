@@ -33,6 +33,7 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -102,16 +103,6 @@ namespace BlendInt {
 			return cursor_position_;
 		}
 
-		void set_viewport_origin (int x, int y)
-		{
-			viewport_origin_.reset(x, y);
-		}
-
-		void set_viewport_origin (const Point& pos)
-		{
-			viewport_origin_ = pos;
-		}
-
 		const Point& viewport_origin () const
 		{
 			return viewport_origin_;
@@ -158,11 +149,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
 		virtual void FocusEvent (bool focus);
 
@@ -189,6 +180,7 @@ namespace BlendInt {
 	private:
 
 		friend class AbstractFrame;
+		friend class AbstractWidget;
 
 		static void GetGLVersion (int *major, int *minor);
 
@@ -204,8 +196,6 @@ namespace BlendInt {
 
         //GLuint vao_;
         
-		Profile profile_;
-
         //GLTexture2D texture_buffer_;
 
 		//GLBuffer<> vertex_buffer_;

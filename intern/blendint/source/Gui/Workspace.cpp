@@ -112,7 +112,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButton::Draw(Profile& profile)
+	ResponseType EdgeButton::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -412,19 +412,19 @@ namespace BlendInt {
 		}
 	}
 
-	bool Workspace::PreDraw(Profile& profile)
+	bool Workspace::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType Workspace::Draw (Profile& profile)
+	ResponseType Workspace::Draw (const Context* context)
 	{
-		DrawSubViewsOnce(profile);
+		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Workspace::PostDraw(Profile& profile)
+	void Workspace::PostDraw(const Context* context)
 	{
 	}
 

@@ -69,7 +69,7 @@ namespace BlendInt {
 		timer_->Stop();
 	}
 
-	ResponseType Clock::Draw(Profile& profile)
+	ResponseType Clock::Draw(const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 
@@ -252,7 +252,7 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		buffer_.reset();
 
 		timer_.reset(new Timer);
 		timer_->SetInterval(1000);

@@ -83,7 +83,7 @@ namespace BlendInt {
 
 	private:
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		void InitializeViewport3DOnce ();
 

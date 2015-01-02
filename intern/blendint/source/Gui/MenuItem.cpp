@@ -106,7 +106,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType MenuItem::Draw(Profile& profile)
+	ResponseType MenuItem::Draw(const Context* context)
 	{
 		// Menu Icon only show itself
 		if(action_->icon()) {

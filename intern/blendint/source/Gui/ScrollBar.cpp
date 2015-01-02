@@ -229,7 +229,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType ScrollBar::Draw (Profile& profile)
+	ResponseType ScrollBar::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

@@ -154,7 +154,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TabHeader::Draw (Profile& profile)
+	ResponseType TabHeader::Draw (const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 

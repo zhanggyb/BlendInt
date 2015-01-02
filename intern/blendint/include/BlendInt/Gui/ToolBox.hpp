@@ -58,11 +58,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
 		virtual void FocusEvent (bool focus);
 
@@ -97,8 +97,6 @@ namespace BlendInt {
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void RenderToBuffer (Profile& profile);
 
 		glm::mat4 projection_matrix_;
 

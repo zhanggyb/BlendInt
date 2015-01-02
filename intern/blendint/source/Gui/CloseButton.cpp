@@ -152,7 +152,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType CloseButton::Draw(Profile& profile)
+	ResponseType CloseButton::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

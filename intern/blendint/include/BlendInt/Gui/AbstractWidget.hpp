@@ -27,6 +27,7 @@
 #include <glm/glm.hpp>
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
 
 namespace BlendInt {
@@ -53,11 +54,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
 		// virtual ResponseType Draw (Profile& profile);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
 		virtual void FocusEvent (bool focus);
 
@@ -78,6 +79,11 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const Context* context);
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
+
+		static bool RenderSubWidgetsToTexture (
+			AbstractWidget* widget,
+			const Context* context,
+			GLTexture2D* texture);
 
 	private:
 

@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType BlendInt::AbstractLayout::Draw(Profile& profile)
+	ResponseType BlendInt::AbstractLayout::Draw(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

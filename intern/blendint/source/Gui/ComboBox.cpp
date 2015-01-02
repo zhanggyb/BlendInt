@@ -205,7 +205,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ComboBox::Draw(Profile& profile)
+	ResponseType ComboBox::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

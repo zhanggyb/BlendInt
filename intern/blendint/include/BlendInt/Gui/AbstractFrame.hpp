@@ -28,6 +28,8 @@
 
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
 #include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
@@ -130,12 +132,20 @@ namespace BlendInt {
 			frame->DispatchHoverEvent(context);
 		}
 
-		static inline void assign_profile_frame (Profile& profile, AbstractFrame* frame)
-		{
-			profile.frame_ = frame;
-		}
-
 		static void SetActiveFrame (const Context* context, AbstractFrame* frame);
+
+		/**
+		 * @brief Render to texture
+		 * @param[in] frame
+		 * @param[in] context
+		 * @param[out] texture
+		 */
+		static bool RenderSubFramesToTexture (
+			AbstractFrame* frame,
+			const Context* context,
+			const glm::mat4& projection,
+			const glm::mat3& model,
+			GLTexture2D* texture);
 
 	private:
 

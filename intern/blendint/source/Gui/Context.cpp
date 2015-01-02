@@ -181,8 +181,6 @@ namespace BlendInt
 		set_size(640, 480);
 		set_refresh(true);
 
-		profile_.context_ = this;
-
 		events_.reset(new Cpp::ConnectionScope);
 
 		InitializeContext();
@@ -280,6 +278,12 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
+		viewport_origin_.reset(0, 0);
+		if(stencil_count_ != 0) {
+			DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count_);
+		}
+		stencil_count_ = 0;
+
 		glViewport(0, 0, size().width(), size().height());
 
 		/*
@@ -309,9 +313,9 @@ namespace BlendInt
 		*/
 
 		set_refresh(false);
-		if(PreDraw(profile_)) {
-			Draw(profile_);
-			PostDraw(profile_);
+		if(PreDraw(this)) {
+			Draw(this);
+			PostDraw(this);
 		}
 
 	}
@@ -505,25 +509,25 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::PreDraw(Profile& profile)
+	bool Context::PreDraw(const Context* context)
 	{
 		return true;
 	}
 
-	ResponseType Context::Draw (Profile& profile)
+	ResponseType Context::Draw (const Context* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			p->PreDraw(profile);
-			p->Draw(profile);
+			p->PreDraw(context);
+			p->Draw(context);
 			p->set_refresh(this->refresh());
-			p->PostDraw(profile);
+			p->PostDraw(context);
 		}
 
 		return Finish;
 	}
 
-	void Context::PostDraw(Profile& profile)
+	void Context::PostDraw(const Context* context)
 	{
 	}
 

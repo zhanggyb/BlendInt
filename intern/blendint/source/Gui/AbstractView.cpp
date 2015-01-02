@@ -505,26 +505,26 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractView::DrawSubViewsOnce(Profile& profile)
+	void AbstractView::DrawSubViewsOnce(const Context* context)
 	{
 		bool refresh_record = false;
 
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			set_refresh(false);	// allow pass to superview in RequestRedraw()
-			if (p->PreDraw(profile)) {
+			if (p->PreDraw(context)) {
 
-				ResponseType response = p->Draw(profile);
+				ResponseType response = p->Draw(context);
 				p->set_refresh(refresh());
 
 				if(response == Ignore) {
 					for(AbstractView* sub = p->first_subview(); sub; sub = sub->next_view())
 					{
-						DispatchDrawEvent(sub, profile);
+						DispatchDrawEvent(sub, context);
 					}
 				}
 
-				p->PostDraw(profile);
+				p->PostDraw(context);
 			}
 
 			if(refresh()) refresh_record = true;
@@ -534,25 +534,25 @@ namespace BlendInt {
 	}
 
 	void AbstractView::DispatchDrawEvent (AbstractView* widget,
-	        Profile& profile)
+	        const Context* context)
 	{
 #ifdef DEBUG
 		assert(widget != 0);
 #endif
 
-		if (widget->PreDraw(profile)) {
+		if (widget->PreDraw(context)) {
 
-			ResponseType response = widget->Draw(profile);
+			ResponseType response = widget->Draw(context);
 			widget->set_refresh(widget->superview_->refresh());
 
 			if(response == Ignore) {
 				for(AbstractView* sub = widget->first_subview(); sub; sub = sub->next_view())
 				{
-					DispatchDrawEvent(sub, profile);
+					DispatchDrawEvent(sub, context);
 				}
 			}
 
-			widget->PostDraw(profile);
+			widget->PostDraw(context);
 		}
 	}
 

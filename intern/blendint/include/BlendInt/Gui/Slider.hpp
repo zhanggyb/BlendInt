@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		virtual void PerformStepUpdate (int step);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		virtual ResponseType MouseMoveEvent (const Context* context);
 

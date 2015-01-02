@@ -87,11 +87,11 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
 		virtual void FocusEvent (bool focus);
 
@@ -122,8 +122,6 @@ namespace BlendInt {
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void RenderToBuffer (Profile& profile);
 
 		void SetFocusedWidget (AbstractWidget* widget);
 

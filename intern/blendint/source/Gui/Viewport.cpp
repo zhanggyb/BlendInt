@@ -173,11 +173,11 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	bool Viewport::PreDraw(Profile& profile)
+	bool Viewport::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -190,7 +190,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Viewport::Draw(Profile& profile)
+	ResponseType Viewport::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -216,10 +216,10 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Viewport::PostDraw(Profile& profile)
+	void Viewport::PostDraw(const Context* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		glViewport(0, 0, context->size().width(), context->size().height());
 	}
 
 	void Viewport::InitializeViewport()

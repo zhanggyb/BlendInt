@@ -84,7 +84,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (Profile& profile) = 0;
+		virtual ResponseType Draw (const Context* context) = 0;
 
 		virtual void MouseHoverInEvent (const Context* context);
 

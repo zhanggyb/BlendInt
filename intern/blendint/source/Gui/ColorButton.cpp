@@ -38,6 +38,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -149,9 +150,9 @@ namespace BlendInt {
 			RequestRedraw();
 	}
 
-	ResponseType ColorButton::Draw (Profile& profile)
+	ResponseType ColorButton::Draw (const Context* context)
 	{
-		Point pos = profile.frame()->GetAbsolutePosition(this);
+		Point pos = context->active_frame()->GetAbsolutePosition(this);
 
 		int outline_vertices = GetOutlineVertices(round_type());
 

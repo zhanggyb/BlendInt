@@ -85,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType BrightnessSlider::Draw (Profile& profile)
+	ResponseType BrightnessSlider::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

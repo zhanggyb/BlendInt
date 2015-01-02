@@ -79,7 +79,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		size_t UpdateTextPosition (const Size& size, const String& text, Font& font);
 

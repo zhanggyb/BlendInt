@@ -196,7 +196,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SplitterHandle::Draw (Profile& profile)
+	ResponseType SplitterHandle::Draw (const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 

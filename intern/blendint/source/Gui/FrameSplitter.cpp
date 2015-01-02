@@ -156,12 +156,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitterHandle::PreDraw(Profile& profile)
+	bool FrameSplitterHandle::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitterHandle::Draw(Profile& profile)
+	ResponseType FrameSplitterHandle::Draw(const Context* context)
 	{
 		Shaders::instance->frame_inner_program()->use();
 
@@ -186,7 +186,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitterHandle::PostDraw(Profile& profile)
+	void FrameSplitterHandle::PostDraw(const Context* context)
 	{
 	}
 
@@ -535,19 +535,19 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitter::PreDraw(Profile& profile)
+	bool FrameSplitter::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitter::Draw(Profile& profile)
+	ResponseType FrameSplitter::Draw(const Context* context)
 	{
-		DrawSubViewsOnce(profile);
+		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitter::PostDraw(Profile& profile)
+	void FrameSplitter::PostDraw(const Context* context)
 	{
 	}
 
