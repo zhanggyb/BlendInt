@@ -64,7 +64,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	ResponseType CheckButton::Draw (Profile& profile)
+	ResponseType CheckButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

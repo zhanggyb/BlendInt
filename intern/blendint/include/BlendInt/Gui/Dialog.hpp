@@ -74,31 +74,31 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
 		virtual void FocusEvent (bool focus);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void MouseHoverInEvent (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void MouseHoverOutEvent (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual ResponseType KeyPressEvent (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType MousePressEvent (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType MouseReleaseEvent (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType MouseMoveEvent (const Context* context);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+		virtual ResponseType DispatchHoverEvent (const Context* context);
 
 		virtual void UpdateLayout ();
 
@@ -138,8 +138,6 @@ namespace BlendInt {
 		void OnLayoutDestroyed (AbstractWidget* layout);
 
 		void OnCloseButtonClicked (AbstractButton* button);
-
-		void RenderToBuffer (Profile& profile);
 
 		inline bool modal () const
 		{

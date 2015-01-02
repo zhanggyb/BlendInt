@@ -299,11 +299,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool ImageViewport::PreDraw(Profile& profile)
+	bool ImageViewport::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -316,7 +316,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ImageViewport::Draw (Profile& profile)
+	ResponseType ImageViewport::Draw (const Context* context)
 	{
 		if(texture_ && glIsTexture(texture_->id())) {
 
@@ -346,10 +346,10 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ImageViewport::PostDraw(Profile& profile)
+	void ImageViewport::PostDraw(const Context* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		glViewport(0, 0, context->size().width(), context->size().height());
 	}
 
 	void ImageViewport::InitializeImageViewport ()

@@ -25,6 +25,8 @@
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
 #include <deque>
+
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt
@@ -56,17 +58,17 @@ namespace BlendInt
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void MouseHoverInEvent (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void MouseHoverOutEvent (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType MousePressEvent (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType MouseReleaseEvent (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType MouseMoveEvent (const Context* context);
 
 	private:
 

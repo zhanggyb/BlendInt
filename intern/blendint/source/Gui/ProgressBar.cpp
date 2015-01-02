@@ -136,7 +136,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ProgressBar::Draw(Profile& profile)
+	ResponseType ProgressBar::Draw(const Context* context)
 	{
 		using Stock::Shaders;
 

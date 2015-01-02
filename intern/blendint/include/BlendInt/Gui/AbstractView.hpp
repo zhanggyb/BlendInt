@@ -21,9 +21,19 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
-#define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTVIEW_HPP_
+#define _BLENDINT_GUI_ABSTRACTVIEW_HPP_
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+ 
 #include <vector>
 #include <pthread.h>
 
@@ -35,17 +45,10 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/HID/MouseEvent.hpp>
-#include <BlendInt/HID/KeyEvent.hpp>
-#include <BlendInt/HID/ContextMenuEvent.hpp>
-
-#include <BlendInt/Gui/Profile.hpp>
-
 namespace BlendInt {
 
+	class Context;
 	class AbstractView;
-
-	typedef RefPtr<AbstractView> AbstractInteractiveFormPtr;
 
 	template<typename T>
 	T* Manage (T* obj, bool val = true)
@@ -210,11 +213,6 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractView);
 
 	public:
-
-		friend class Context;
-		friend class AbstractFrame;
-
-		template <typename T> friend T* Manage (T* obj, bool val);
 
 		/**
 		 * @brief The default constructor
@@ -532,29 +530,29 @@ namespace BlendInt {
 			}
 		}
 
-		virtual bool PreDraw (Profile& profile) = 0;
+		virtual bool PreDraw (const Context* context) = 0;
 
-		virtual ResponseType Draw (Profile& profile) = 0;
+		virtual ResponseType Draw (const Context* context) = 0;
 
-		virtual void PostDraw (Profile& profile) = 0;
+		virtual void PostDraw (const Context* context) = 0;
 
 		virtual void FocusEvent (bool focus) = 0;
 
-		virtual void MouseHoverInEvent (const MouseEvent& event) = 0;
+		virtual void MouseHoverInEvent (const Context* context) = 0;
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event) = 0;
+		virtual void MouseHoverOutEvent (const Context* context) = 0;
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
+		virtual ResponseType KeyPressEvent (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType ContextMenuPressEvent (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType ContextMenuReleaseEvent (const Context* context) = 0;
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MousePressEvent (const Context* context) = 0;
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MouseReleaseEvent (const Context* context) = 0;
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
+		virtual ResponseType MouseMoveEvent (const Context* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
@@ -630,7 +628,7 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
-		void DrawSubViewsOnce (Profile& profile);
+		void DrawSubViewsOnce (const Context* context);
 
 		static void GenerateVertices (
 				const Size& size,
@@ -654,6 +652,12 @@ namespace BlendInt {
 		static int GetOutlineVertices (int round_type);
 
 	private:
+
+		friend class Context;
+		friend class AbstractFrame;
+		friend class AbstractWidget;
+
+		template <typename T> friend T* Manage (T* obj, bool val);
 
 		enum ViewFlagIndex {
 
@@ -694,7 +698,7 @@ namespace BlendInt {
 		 * 	- true: use superview refresh() status to set view's refresh flag
 		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractView* view, Profile& profile);
+		static void DispatchDrawEvent (AbstractView* view, const Context* context);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,
@@ -756,4 +760,4 @@ namespace BlendInt {
 
 } /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTVIEW_HPP_ */

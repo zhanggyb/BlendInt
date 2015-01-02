@@ -66,11 +66,11 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void MouseHoverInEvent (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void MouseHoverOutEvent (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 

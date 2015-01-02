@@ -181,14 +181,14 @@ namespace BlendInt {
 		return false;
 	}
 
-	ResponseType Menu::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Menu::MouseMoveEvent(const Context* context)
 	{
 		return Finish;
 	}
 
-	ResponseType Menu::MousePressEvent (const MouseEvent& event)
+	ResponseType Menu::MousePressEvent (const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_range_ == InsideRectangle) {
 
@@ -196,7 +196,7 @@ namespace BlendInt {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
 					set_pressed(true);
@@ -218,14 +218,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Menu::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Menu::MouseReleaseEvent (const Context* context)
 	{
 		cursor_range_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetActiveFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
@@ -367,20 +367,20 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	bool Menu::PreDraw(Profile& profile)
+	bool Menu::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		if(refresh()) {
-			RenderToBuffer(profile);
+			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
 		}
 
 		return true;
 	}
 
-	ResponseType Menu::Draw (Profile& profile)
+	ResponseType Menu::Draw (const Context* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -425,26 +425,26 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Menu::PostDraw(Profile& profile)
+	void Menu::PostDraw(const Context* context)
 	{
 	}
 
-	void Menu::MouseHoverInEvent(const MouseEvent& event)
+	void Menu::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Menu::MouseHoverOutEvent(const MouseEvent& event)
+	void Menu::MouseHoverOutEvent(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Menu::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
 			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType Menu::KeyPressEvent(const KeyEvent& event)
+	ResponseType Menu::KeyPressEvent(const Context* context)
 	{
-		if(event.key() == Key_Escape) {
+		if(context->key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
@@ -453,30 +453,30 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuPressEvent(const ContextMenuEvent& event)
+	ResponseType Menu::ContextMenuPressEvent(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+	ResponseType Menu::ContextMenuReleaseEvent(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Menu::DispatchHoverEvent(const Context* context)
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(event.context()->cursor_position())) {
+		if(Contain(context->cursor_position())) {
 
 			cursor_range_ = InsideRectangle;
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(event);
+				MouseHoverInEvent(context);
 			}
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -497,7 +497,7 @@ namespace BlendInt {
 			cursor_range_ = OutsideRectangle;
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(event);
+				MouseHoverOutEvent(context);
 			}
 		}
 
@@ -609,81 +609,6 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &Menu::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = nullptr;
-	}
-
-	void Menu::RenderToBuffer(Profile& profile)
-	{
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-
-        if(GLFramebuffer::CheckStatus()) {
-
-            fb->bind();
-
-            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            glViewport(0, 0, size().width(), size().height());
-
-            // Draw context:
-            DrawSubViewsOnce(profile);
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
-        }
-
-        fb->reset();
-        tex->reset();
-
-        //delete tex; tex = 0;
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-
-        fb->reset();
-        delete fb; fb = 0;
 	}
 
 	void Menu::SetFocusedWidget(AbstractWidget* widget)

@@ -251,7 +251,7 @@ namespace BlendInt {
 			RequestRedraw();
 	}
 
-	ResponseType ToggleButton::Draw (Profile& profile)
+	ResponseType ToggleButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

@@ -69,21 +69,21 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	void Viewport3D::MouseHoverInEvent(const MouseEvent& event)
+	void Viewport3D::MouseHoverInEvent(const Context* context)
 	{
 		Cursor::instance->PushCursor();
 		Cursor::instance->SetCursor(CrossCursor);
 	}
 
-	void Viewport3D::MouseHoverOutEvent(const MouseEvent& event)
+	void Viewport3D::MouseHoverOutEvent(const Context* context)
 	{
 		Cursor::instance->PopCursor();
 	}
 
-	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)
+	ResponseType Viewport3D::KeyPressEvent (const Context* context)
 	{
-		if (event.action() == KeyPress) {
-			switch (event.key()) {
+		if (context->key_action() == KeyPress) {
+			switch (context->key()) {
 				case Key_KP_Decimal: {
 					// setup camera
 					glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
@@ -99,11 +99,11 @@ namespace BlendInt {
 				default:
 					break;
 			}
-		} else if (event.action() == KeyRelease
+		} else if (context->key_action() == KeyRelease
 		        && m_button_down == MouseButtonMiddle) {
 
 			// currently does nothing
-			switch (event.key()) {
+			switch (context->key()) {
 				case Key_LeftShift:
 				case Key_RightShift:
 					break;
@@ -121,26 +121,26 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MousePressEvent (const MouseEvent& event)
+	ResponseType Viewport3D::MousePressEvent (const Context* context)
 	{
-		m_button_down = event.button();
+		m_button_down = context->mouse_button();
 
-		m_last_x = event.context()->cursor_position().x();
-		m_last_y = event.context()->cursor_position().y();
+		m_last_x = context->cursor_position().x();
+		m_last_y = context->cursor_position().y();
 
 		if (m_button_down == MouseButtonMiddle) {
 
-			if (event.modifiers() == ModifierNone) {
+			if (context->modifiers() == ModifierNone) {
 
 				default_camera_->SaveCurrentPosition();
 				default_camera_->SaveCurrentCenter();
 
-			} else if (event.modifiers() == ModifierShift) {
+			} else if (context->modifiers() == ModifierShift) {
 
 				default_camera_->SaveCurrentPosition();
 				default_camera_->SaveCurrentCenter();
 
-			} else if (event.modifiers() == ModifierControl) {
+			} else if (context->modifiers() == ModifierControl) {
 
 				default_camera_->SaveCurrentPosition();
 
@@ -167,14 +167,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Viewport3D::MouseReleaseEvent (const Context* context)
 	{
 		m_button_down = MouseButtonNone;
 
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Viewport3D::MouseMoveEvent (const Context* context)
 	{
 		switch (m_button_down) {
 			case MouseButtonLeft: {
@@ -183,23 +183,23 @@ namespace BlendInt {
 
 			case MouseButtonMiddle: {
 
-				if (event.modifiers() == ModifierShift) {
+				if (context->modifiers() == ModifierShift) {
 
 					float dx = static_cast<float>(m_last_x
-					        - event.context()->cursor_position().x());
+					        - context->cursor_position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.context()->cursor_position().y());
+					        - context->cursor_position().y());
 					default_camera_->Pan(dx, dy);
 
-				} else if (event.modifiers() == ModifierControl) {
+				} else if (context->modifiers() == ModifierControl) {
 
-					default_camera_->Zoom(m_last_y - event.context()->cursor_position().y());
+					default_camera_->Zoom(m_last_y - context->cursor_position().y());
 
-				} else if (event.modifiers() == ModifierNone) {
+				} else if (context->modifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
-					        - event.context()->cursor_position().x());
+					        - context->cursor_position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event.context()->cursor_position().y());
+					        - context->cursor_position().y());
 					default_camera_->Orbit(dx, dy);
 				}
 
@@ -254,8 +254,9 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport3D::Draw (Profile& profile)
+	ResponseType Viewport3D::Draw (const Context* context)
 	{
+		Context* c = const_cast<Context*>(context);
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;
@@ -281,9 +282,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
-		profile.BeginPushStencil();	// inner stencil
+		c->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		profile.EndPushStencil();
+		c->EndPushStencil();
 
 		glBindVertexArray(0);
 		program->reset();
@@ -295,8 +296,8 @@ namespace BlendInt {
 
         Point pos = GetGlobalPosition();
 
-        glViewport(pos.x() - profile.origin().x(),
-        		pos.y() - profile.origin().y(),
+        glViewport(pos.x() - context->viewport_origin().x(),
+        		pos.y() - context->viewport_origin().y(),
 		        size().width(),
 		        size().height());
 
@@ -319,11 +320,11 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		profile.BeginPopStencil();	// pop inner stencil
+		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 		glBindVertexArray(0);
-		profile.EndPopStencil();
+		c->EndPopStencil();
 		program->reset();
 
 		return Finish;

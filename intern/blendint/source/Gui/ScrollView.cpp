@@ -237,9 +237,10 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	bool ScrollView::PreDraw(Profile& profile)
+	bool ScrollView::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
+		Context* c = const_cast<Context*>(context);
 
 		glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
 				glm::vec2(position().x(), position().y()));
@@ -260,9 +261,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		profile.BeginPushStencil();	// inner stencil
+		c->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		profile.EndPushStencil();
+		c->EndPushStencil();
 
 		glBindVertexArray(0);
 
@@ -271,7 +272,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollView::Draw (Profile& profile)
+	ResponseType ScrollView::Draw (const Context* context)
 	{
 		if(subs_count()) {
 			glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
@@ -287,7 +288,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::PostDraw(Profile& profile)
+	void ScrollView::PostDraw(const Context* context)
 	{
 		Shaders::instance->PopWidgetModelMatrix();
 
@@ -302,27 +303,27 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(vao_);
-		profile.BeginPopStencil();	// pop inner stencil
+		const_cast<Context*>(context)->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		profile.EndPopStencil();
+		const_cast<Context*>(context)->EndPopStencil();
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
 		Shaders::instance->PopWidgetModelMatrix();
 	}
 
-	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
+	ResponseType ScrollView::MousePressEvent (const Context* context)
 	{
-		if (event.button() == MouseButtonMiddle) {
+		if (context->mouse_button() == MouseButtonMiddle) {
 			moving_ = true;
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 			last_offset_ = offset();
 		}
 
 		return Finish;
 	}
 
-	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType ScrollView::MouseReleaseEvent(const Context* context)
 	{
 		if(moving_) {
 			moving_ = false;
@@ -332,12 +333,12 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
+	ResponseType ScrollView::MouseMoveEvent(const Context* context)
 	{
 		if(moving_) {
 
-			int ox = event.context()->cursor_position().x() - cursor_point_.x();
-			int oy = event.context()->cursor_position().y() - cursor_point_.y();
+			int ox = context->cursor_position().x() - cursor_point_.x();
+			int oy = context->cursor_position().y() - cursor_point_.y();
 
 			set_offset(last_offset_.x() + ox, last_offset_.y() + oy);
 

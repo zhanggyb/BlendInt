@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_LISTVIEW_HPP_
 #define _BLENDINT_GUI_LISTVIEW_HPP_
 
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractScrollable.hpp>
 #include <BlendInt/Gui/AbstractItemView.hpp>
 
@@ -67,9 +68,9 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType MousePressEvent (const Context* context);
 
 	private:
 

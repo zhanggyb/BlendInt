@@ -174,12 +174,12 @@ namespace BlendInt
 	}
 
 	Context::Context ()
-	: AbstractView()
+	: AbstractView(),
+	  active_frame_(nullptr),
+	  stencil_count_(0)
 	{
 		set_size(640, 480);
 		set_refresh(true);
-
-		profile_.context_ = this;
 
 		events_.reset(new Cpp::ConnectionScope);
 
@@ -278,6 +278,12 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
+		viewport_origin_.reset(0, 0);
+		if(stencil_count_ != 0) {
+			DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count_);
+		}
+		stencil_count_ = 0;
+
 		glViewport(0, 0, size().width(), size().height());
 
 		/*
@@ -307,68 +313,80 @@ namespace BlendInt
 		*/
 
 		set_refresh(false);
-		if(PreDraw(profile_)) {
-			Draw(profile_);
-			PostDraw(profile_);
+		if(PreDraw(this)) {
+			Draw(this);
+			PostDraw(this);
 		}
 
 	}
 
-	void Context::DispatchKeyEvent(const KeyEvent& event)
+	void Context::DispatchKeyEvent(KeyAction action, int key, int modifiers,
+			int scancode, String text)
 	{
-		const_cast<KeyEvent&>(event).context_ = this;
-		const_cast<KeyEvent&>(event).frame_ = 0;
+		key_action_ = action;
+		key_ = key;
+		modifiers_ = modifiers;
+		scancode_ = scancode;
+		text_ = text;
 
-		switch (event.action()) {
+		active_frame_ = nullptr;
+
+		switch (key_action_) {
 
 			case KeyPress: {
-				KeyPressEvent(event);
+				KeyPressEvent(this);
 				break;
 			}
 
 			case KeyRelease: {
-				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-				//cm->m_focus->KeyReleaseEvent(event);
 				break;
 			}
 
 			case KeyRepeat: {
-				// item->KeyRepeatEvent(&event);
 				break;
 			}
 
 			default:
-			break;
+				break;
 		}
+
 	}
 
-	void Context::DispatchMouseEvent(int x, int y, const MouseEvent& event)
+	void Context::DispatchMouseEvent(int x, int y, MouseAction action,
+			MouseButton button, int modifiers)
 	{
 		cursor_position_.reset(x, size().height() - y);
-		const_cast<MouseEvent&>(event).context_ = this;
-		const_cast<MouseEvent&>(event).frame_ = 0;
 
-		switch (event.action()) {
+		mouse_action_ = action;
+		mouse_button_ = button;
+		modifiers_ = modifiers;
+
+		active_frame_ = nullptr;
+
+		switch (mouse_action_) {
 
 			case MouseMove: {
-				DispatchHoverEvent(event);
-				MouseMoveEvent(event);
-				return;
+				DispatchHoverEvent();
+				MouseMoveEvent(this);
+				break;
 			}
 
 			case MousePress: {
-				MousePressEvent(event);
-				return;
+				DispatchHoverEvent();
+				MousePressEvent(this);
+				break;
 			}
 
 			case MouseRelease: {
-				MouseReleaseEvent(event);
-				return;
+				MouseReleaseEvent(this);
+				DispatchHoverEvent();
+				break;
 			}
 
 			default:
 				break;
 		}
+
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -384,6 +402,52 @@ namespace BlendInt
 	void Context::MakeGLContextCurrent()
 	{
 		// TODO: override this to support GL Context manipulation in thread
+	}
+
+	void Context::BeginPushStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+		if(stencil_count_ == 0) {
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
+			glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+		} else {
+			glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+			glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // increase 1s on test fail (always)
+		}
+
+		stencil_count_++;
+	}
+
+	void Context::EndPushStencil()
+	{
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	}
+
+	void Context::BeginPopStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+		glStencilOp(GL_DECR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+	}
+
+	void Context::EndPopStencil()
+	{
+		if(stencil_count_ > 0) {
+			stencil_count_--;
+
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+			if(stencil_count_ == 0) {
+				glDisable(GL_STENCIL_TEST);
+			}
+
+		}
 	}
 
 	Context* Context::GetContext (AbstractView* widget)
@@ -445,64 +509,62 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::PreDraw(Profile& profile)
+	bool Context::PreDraw(const Context* context)
 	{
 		return true;
 	}
 
-	ResponseType Context::Draw (Profile& profile)
+	ResponseType Context::Draw (const Context* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			p->PreDraw(profile);
-			p->Draw(profile);
+			p->PreDraw(context);
+			p->Draw(context);
 			p->set_refresh(this->refresh());
-			p->PostDraw(profile);
+			p->PostDraw(context);
 		}
 
 		return Finish;
 	}
 
-	void Context::PostDraw(Profile& profile)
+	void Context::PostDraw(const Context* context)
 	{
 	}
 
-	ResponseType Context::KeyPressEvent (const KeyEvent& event)
+	ResponseType Context::KeyPressEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->KeyPressEvent(event);
+			response = p->KeyPressEvent(context);
 			if(response == Finish) break;
 		}
 
 		return response;
 	}
 
-	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType Context::ContextMenuPressEvent (const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
 	ResponseType Context::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
+	        const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
-	ResponseType Context::MousePressEvent (const MouseEvent& event)
+	ResponseType Context::MousePressEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
-		assert(event.frame() == 0);
+		//assert(context->leaf_frame() == 0);
 
 		set_pressed(true);
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->MousePressEvent(event);
+			response = p->MousePressEvent(context);
 			if(response == Finish) {
 				break;
 			}
@@ -511,14 +573,14 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Context::MouseReleaseEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
 		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 		{
-			response = p->MouseReleaseEvent(event);
+			response = p->MouseReleaseEvent(context);
 			if(response == Finish) {
 				break;
 			}
@@ -527,7 +589,7 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Context::MouseMoveEvent (const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -535,7 +597,7 @@ namespace BlendInt
 
 			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 			{
-				response = p->MouseMoveEvent(event);
+				response = p->MouseMoveEvent(context);
 				if(response == Finish) {
 					break;
 				}
@@ -647,14 +709,14 @@ namespace BlendInt
 		*/
 	}
 
-	void Context::DispatchHoverEvent(const MouseEvent& event)
+	void Context::DispatchHoverEvent()
 	{
 		ResponseType response = Ignore;
 		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			frame = dynamic_cast<AbstractFrame*>(p);
-			response = frame->DispatchHoverEvent(event);
+			response = frame->DispatchHoverEvent(this);
 			if(response == Finish) break;
 		}
 	}
@@ -663,11 +725,11 @@ namespace BlendInt
 	{
 	}
 
-	void Context::MouseHoverInEvent(const MouseEvent& event)
+	void Context::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverOutEvent(const MouseEvent& event)
+	void Context::MouseHoverOutEvent(const Context* context)
 	{
 	}
 
@@ -744,4 +806,5 @@ namespace BlendInt
     }
     */
     
+
 }

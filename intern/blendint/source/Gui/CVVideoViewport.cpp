@@ -235,11 +235,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool CVVideoViewport::PreDraw(Profile& profile)
+	bool CVVideoViewport::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -252,7 +252,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType CVVideoViewport::Draw(Profile& profile)
+	ResponseType CVVideoViewport::Draw(const Context* context)
 	{
 		if(status_ == VideoStop) {
 			return Finish;
@@ -319,10 +319,10 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void CVVideoViewport::PostDraw(Profile& profile)
+	void CVVideoViewport::PostDraw(const Context* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		glViewport(0, 0, context->size().width(), context->size().height());
 	}
 
 	void CVVideoViewport::ProcessImage(cv::Mat& iamge)

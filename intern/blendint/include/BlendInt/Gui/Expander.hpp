@@ -54,7 +54,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 
@@ -97,7 +97,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	protected:
 

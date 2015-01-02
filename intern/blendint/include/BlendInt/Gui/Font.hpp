@@ -47,7 +47,7 @@ namespace BlendInt {
 #endif
 
 #ifdef __APPLE__
-		Font (const std::string& family = std::string("Droid Sans"),
+		Font (const std::string& family = std::string("Helvetical Neue"),
 						unsigned int size = 12,
 						int flag = 0);
 #endif

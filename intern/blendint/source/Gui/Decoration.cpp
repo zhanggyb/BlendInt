@@ -196,7 +196,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Decoration::Draw (Profile& profile)
+	ResponseType Decoration::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

@@ -301,21 +301,21 @@ namespace BlendInt {
 		shadow_->SetRadius(radius);
 	}
 
-	bool PopupFrame::PreDraw(Profile& profile)
+	bool PopupFrame::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		if(refresh()) {
 			//DBG_PRINT_MSG("%s", "refresh once");
-			RenderToBuffer(profile);
+			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
 		}
 
 		return true;
 	}
 
-	ResponseType PopupFrame::Draw(Profile& profile)
+	ResponseType PopupFrame::Draw(const Context* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -358,7 +358,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void PopupFrame::PostDraw(Profile& profile)
+	void PopupFrame::PostDraw(const Context* context)
 	{
 	}
 
@@ -378,63 +378,63 @@ namespace BlendInt {
 		}
 	}
 
-	void PopupFrame::MouseHoverInEvent(const MouseEvent& event)
+	void PopupFrame::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void PopupFrame::MouseHoverOutEvent(const MouseEvent& event)
+	void PopupFrame::MouseHoverOutEvent(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
 			hovered_widget_ = 0;
 		}
 
 		//DBG_PRINT_MSG("%s", "hover out");
 	}
 
-	ResponseType PopupFrame::KeyPressEvent(const KeyEvent& event)
+	ResponseType PopupFrame::KeyPressEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 
-		if(event.key() == Key_Escape) {
+		if(context->key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			response = DispatchKeyEvent(focused_widget_, event);
+			SetActiveFrame(context, this);
+			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType PopupFrame::ContextMenuPressEvent(const ContextMenuEvent& event)
+	ResponseType PopupFrame::ContextMenuPressEvent(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+	ResponseType PopupFrame::ContextMenuReleaseEvent(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::MousePressEvent(const MouseEvent& event)
+	ResponseType PopupFrame::MousePressEvent(const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 
 			if(hovered_widget_) {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -457,27 +457,27 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType PopupFrame::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType PopupFrame::MouseReleaseEvent(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetActiveFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::MouseMoveEvent(const MouseEvent& event)
+	ResponseType PopupFrame::MouseMoveEvent(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(pressed_ext()) {
 
-			int ox = event.context()->cursor_position().x() - cursor_point_.x();
-			int oy = event.context()->cursor_position().y() - cursor_point_.y();
+			int ox = context->cursor_position().x() - cursor_point_.x();
+			int oy = context->cursor_position().y() - cursor_point_.y();
 
 			set_position(last_position_.x() + ox, last_position_.y() + oy);
 
@@ -490,8 +490,8 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				assign_event_frame(event, this);
-				retval = delegate_mouse_move_event(focused_widget_, event);
+				SetActiveFrame(context, this);
+				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
 
@@ -500,20 +500,20 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType PopupFrame::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType PopupFrame::DispatchHoverEvent(const Context* context)
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(event.context()->cursor_position())) {
+		if(Contain(context->cursor_position())) {
 
 			cursor_position_ = InsideRectangle;
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(event);
+				MouseHoverInEvent(context);
 			}
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -534,7 +534,7 @@ namespace BlendInt {
 			cursor_position_ = OutsideRectangle;
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(event);
+				MouseHoverOutEvent(context);
 			}
 		}
 
@@ -588,81 +588,6 @@ namespace BlendInt {
 		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
 		layout->destroyed().disconnectOne(this, &PopupFrame::OnLayoutDestroyed);
 		layout_ = 0;
-	}
-
-	void PopupFrame::RenderToBuffer(Profile& profile)
-	{
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-
-        if(GLFramebuffer::CheckStatus()) {
-
-            fb->bind();
-
-            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            glViewport(0, 0, size().width(), size().height());
-
-            // Draw context:
-            DrawSubViewsOnce(profile);
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
-        }
-
-        fb->reset();
-        tex->reset();
-
-        //delete tex; tex = 0;
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-
-        fb->reset();
-        delete fb; fb = 0;
 	}
 
 }

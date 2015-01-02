@@ -228,20 +228,20 @@ namespace BlendInt {
 		}
 	}
 
-	bool Dialog::PreDraw(Profile& profile)
+	bool Dialog::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		if(refresh()) {
-			RenderToBuffer(profile);
+			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
 		}
 
 		return true;
 	}
 
-	ResponseType Dialog::Draw(Profile& profile)
+	ResponseType Dialog::Draw(const Context* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -286,7 +286,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Dialog::PostDraw(Profile& profile)
+	void Dialog::PostDraw(const Context* context)
 	{
 	}
 
@@ -294,63 +294,63 @@ namespace BlendInt {
 	{
 	}
 
-	void Dialog::MouseHoverInEvent(const MouseEvent& event)
+	void Dialog::MouseHoverInEvent(const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
+	void Dialog::MouseHoverOutEvent(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
 			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
+	ResponseType Dialog::KeyPressEvent(const Context* context)
 	{
 		ResponseType response = Ignore;
 
-		if(event.key() == Key_Escape) {
+		if(context->key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			response = DispatchKeyEvent(focused_widget_, event);
+			SetActiveFrame(context, this);
+			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
 		return response;
 	}
 
 	ResponseType Dialog::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
+			const Context* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType Dialog::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
+			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
+	ResponseType Dialog::MousePressEvent(const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 
 			if(hovered_widget_) {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -367,7 +367,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				event.context()->MoveFrameToTop(this);
+				const_cast<Context*>(context)->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -378,7 +378,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = event.context()->cursor_position();
+			cursor_point_ = context->cursor_position();
 
 			return Finish;
 		}
@@ -390,27 +390,27 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Dialog::MouseReleaseEvent(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetActiveFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Dialog::MouseMoveEvent(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(mouse_button_pressed()) {
 
-			int ox = event.context()->cursor_position().x() - cursor_point_.x();
-			int oy = event.context()->cursor_position().y() - cursor_point_.y();
+			int ox = context->cursor_position().x() - cursor_point_.x();
+			int oy = context->cursor_position().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -480,8 +480,8 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				assign_event_frame(event, this);
-				retval = delegate_mouse_move_event(focused_widget_, event);
+				SetActiveFrame(context, this);
+				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
 		}
@@ -489,7 +489,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Dialog::DispatchHoverEvent(const Context* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
@@ -499,13 +499,13 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(event.context()->cursor_position())) {
+		if(valid_rect.contains(context->cursor_position())) {
 
-			if(Contain(event.context()->cursor_position())) {
+			if(Contain(context->cursor_position())) {
 
 				cursor_position_ = InsideRectangle;
 
-				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 				if(new_hovered_widget != hovered_widget_) {
 
@@ -533,15 +533,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(event.context()->cursor_position().x() <= position().x()) {
+				if(context->cursor_position().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (event.context()->cursor_position().x() >= (position().x() + size().width())) {
+				} else if (context->cursor_position().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (event.context()->cursor_position().y() >= (position().y() + size().height())) {
+				if (context->cursor_position().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (event.context()->cursor_position().y () <= position().y()) {
+				} else if (context->cursor_position().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 
@@ -727,81 +727,6 @@ namespace BlendInt {
 		assert(button == decoration_->close_button());
 
 		delete this;
-	}
-
-	void Dialog::RenderToBuffer(Profile& profile)
-	{
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-
-        if(GLFramebuffer::CheckStatus()) {
-
-            fb->bind();
-
-            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            glViewport(0, 0, size().width(), size().height());
-
-            // Draw context:
-            DrawSubViewsOnce(profile);
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
-        }
-
-        fb->reset();
-        tex->reset();
-
-        //delete tex; tex = 0;
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-
-        fb->reset();
-        delete fb; fb = 0;
 	}
 
 }

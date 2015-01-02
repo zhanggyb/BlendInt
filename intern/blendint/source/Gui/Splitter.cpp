@@ -196,7 +196,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SplitterHandle::Draw (Profile& profile)
+	ResponseType SplitterHandle::Draw (const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 
@@ -222,7 +222,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void SplitterHandle::MouseHoverInEvent(const MouseEvent& event)
+	void SplitterHandle::MouseHoverInEvent(const Context* context)
 	{
 		highlight_ = true;
 		Cursor::instance->PushCursor();
@@ -230,17 +230,17 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void SplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	void SplitterHandle::MouseHoverOutEvent(const Context* context)
 	{
 		highlight_ = false;
 		Cursor::instance->PopCursor();
 		RequestRedraw();
 	}
 
-	ResponseType SplitterHandle::MousePressEvent (const MouseEvent& event)
+	ResponseType SplitterHandle::MousePressEvent (const Context* context)
 	{
 		last_ = position();
-		cursor_ = event.context()->cursor_position();
+		cursor_ = context->cursor_position();
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
@@ -256,7 +256,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType SplitterHandle::MouseReleaseEvent (const Context* context)
 	{
 		if (pressed_) {
 			pressed_ = false;
@@ -265,7 +265,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)
+	ResponseType SplitterHandle::MouseMoveEvent (const Context* context)
 	{
 		if(pressed_) {
 
@@ -273,7 +273,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = event.context()->cursor_position().y() - cursor_.y();
+				int offset = context->cursor_position().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -289,7 +289,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = event.context()->cursor_position().x() - cursor_.x();
+				int offset = context->cursor_position().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 

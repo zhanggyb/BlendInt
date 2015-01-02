@@ -70,7 +70,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		virtual void UpdateLayout ();
 

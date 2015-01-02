@@ -76,13 +76,11 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	ResponseType Viewport::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Viewport::DispatchHoverEvent(const Context* context)
 	{
-		if(Contain(event.context()->cursor_position())) {
-			assign_event_frame(event, this);
+		if(Contain(context->cursor_position())) {
 			return Finish;
 		} else {
-			assign_event_frame(event, 0);
 			return Ignore;
 		}
 	}
@@ -145,43 +143,41 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::KeyPressEvent(const KeyEvent& event)
+	ResponseType Viewport::KeyPressEvent(const Context* context)
 	{
 		return Ignore;
 	}
 
-	void Viewport::MouseHoverInEvent(const MouseEvent& event)
+	void Viewport::MouseHoverInEvent(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void Viewport::MouseHoverOutEvent(const MouseEvent& event)
+	void Viewport::MouseHoverOutEvent(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType Viewport::MousePressEvent(const MouseEvent& event)
-	{
-		assign_event_frame(event, this);
-
-		return subs_count() ? Ignore : Finish;
-	}
-
-	ResponseType Viewport::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Viewport::MousePressEvent(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Viewport::MouseReleaseEvent(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	bool Viewport::PreDraw(Profile& profile)
+	ResponseType Viewport::MouseMoveEvent(const Context* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	bool Viewport::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -194,7 +190,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Viewport::Draw(Profile& profile)
+	ResponseType Viewport::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -220,10 +216,10 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Viewport::PostDraw(Profile& profile)
+	void Viewport::PostDraw(const Context* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		glViewport(0, 0, context->size().width(), context->size().height());
 	}
 
 	void Viewport::InitializeViewport()
