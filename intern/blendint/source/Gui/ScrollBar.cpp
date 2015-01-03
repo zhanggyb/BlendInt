@@ -276,7 +276,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ScrollBar::MouseHoverOutEvent(const Context* context)
+	void ScrollBar::PerformHoverOut(const Context* context)
 	{
 		/*
 		if(m_slide.highlight()) {
@@ -286,7 +286,7 @@ namespace BlendInt {
 		*/
 	}
 
-	ResponseType ScrollBar::MousePressEvent (const Context* context)
+	ResponseType ScrollBar::PerformMousePress (const Context* context)
 	{
 		Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 
@@ -303,7 +303,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ScrollBar::MouseMoveEvent (const Context* context)
+	ResponseType ScrollBar::PerformMouseMove (const Context* context)
 	{
 		if (pressed_ext()) {
 
@@ -335,7 +335,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollBar::MouseReleaseEvent (const Context* context)
+	ResponseType ScrollBar::PerformMouseRelease (const Context* context)
 	{
 		if (pressed_ext()) {
 

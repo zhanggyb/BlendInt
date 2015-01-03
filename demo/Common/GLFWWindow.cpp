@@ -1,5 +1,4 @@
-#include "Window.hpp"
-
+#include "../Common/GLFWWindow.hpp"
 #include <iostream>
 
 namespace BlendInt {

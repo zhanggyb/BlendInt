@@ -60,11 +60,11 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const Context* context);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const Context* context);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
 		/**
 		 * @brief calculate the space width in which slider can move

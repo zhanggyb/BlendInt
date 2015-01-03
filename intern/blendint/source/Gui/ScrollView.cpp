@@ -312,7 +312,7 @@ namespace BlendInt {
 		Shaders::instance->PopWidgetModelMatrix();
 	}
 
-	ResponseType ScrollView::MousePressEvent (const Context* context)
+	ResponseType ScrollView::PerformMousePress (const Context* context)
 	{
 		if (context->mouse_button() == MouseButtonMiddle) {
 			moving_ = true;
@@ -323,7 +323,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollView::MouseReleaseEvent(const Context* context)
+	ResponseType ScrollView::PerformMouseRelease(const Context* context)
 	{
 		if(moving_) {
 			moving_ = false;
@@ -333,7 +333,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollView::MouseMoveEvent(const Context* context)
+	ResponseType ScrollView::PerformMouseMove(const Context* context)
 	{
 		if(moving_) {
 

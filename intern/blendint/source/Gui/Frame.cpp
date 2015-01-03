@@ -74,34 +74,39 @@ namespace BlendInt {
 
 	}
 
-	void Frame::FocusEvent(bool focus)
+	void Frame::PerformFocusOn(const Context* context)
 	{
 	}
 
-	void Frame::MouseHoverInEvent(const Context* context)
+	void Frame::PerformFocusOff (const Context* context)
+	{
+
+	}
+
+	void Frame::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void Frame::MouseHoverOutEvent(const Context* context)
+	void Frame::PerformHoverOut(const Context* context)
 	{
 	}
 
-	ResponseType Frame::KeyPressEvent(const Context* context)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MousePressEvent(const Context* context)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::MouseReleaseEvent(const Context* context)
+	ResponseType Frame::PerformKeyPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::MouseMoveEvent(const Context* context)
+	ResponseType Frame::PerformMousePress(const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType Frame::PerformMouseRelease(const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType Frame::PerformMouseMove(const Context* context)
 	{
 		return Ignore;
 	}

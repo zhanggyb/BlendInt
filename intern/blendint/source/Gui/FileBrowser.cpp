@@ -257,7 +257,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::MousePressEvent (const Context* context)
+	ResponseType FileBrowser::PerformMousePress (const Context* context)
 	{
 		ModelIndex index;
 

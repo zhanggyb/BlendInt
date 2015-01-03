@@ -2,12 +2,12 @@
  * BlendInt demo
  */
 
+#include "../Common/GLFWWindow.hpp"
+#include "../Common/GLFWCursor.hpp"
+
 #include <BlendInt/Core/Types.hpp>
 
 #include "StudioContext.hpp"
-#include "StudioWindow.hpp"
-
-#include "StudioCursor.hpp"
 
 #include <BlendInt/Stock/Cursor.hpp>
 
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
-	Cursor::instance->RegisterCursorType (new StudioCursor(win));
+	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
 
 	StudioContext* context = Manage (new StudioContext(win));
 	DBG_SET_NAME(context, "Context");

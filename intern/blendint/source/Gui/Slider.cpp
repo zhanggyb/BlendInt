@@ -191,7 +191,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Slider::MouseMoveEvent (const Context* context)
+	ResponseType Slider::PerformMouseMove (const Context* context)
 	{
 		if(m_pressed) {
 
@@ -223,7 +223,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::MousePressEvent (const Context* context)
+	ResponseType Slider::PerformMousePress (const Context* context)
 	{
 		if(CursorOnSlideIcon(context->cursor_position())) {
 			m_pressed = true;
@@ -237,7 +237,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::MouseReleaseEvent (const Context* context)
+	ResponseType Slider::PerformMouseRelease (const Context* context)
 	{
 		if(m_pressed) {
 			m_pressed = false;

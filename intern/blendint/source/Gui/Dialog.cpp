@@ -286,19 +286,24 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Dialog::PostDraw(const Context* context)
+	void Dialog::PostDraw (const Context* context)
 	{
 	}
 
-	void Dialog::FocusEvent(bool focus)
+	void Dialog::PerformFocusOn (const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverInEvent(const Context* context)
+	void Dialog::PerformFocusOff (const Context* context)
+	{
+
+	}
+
+	void Dialog::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverOutEvent(const Context* context)
+	void Dialog::PerformHoverOut(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
@@ -307,7 +312,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Dialog::KeyPressEvent(const Context* context)
+	ResponseType Dialog::PerformKeyPress(const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -325,19 +330,19 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Dialog::ContextMenuPressEvent(
+	ResponseType Dialog::PerformContextMenuPress(
 			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::ContextMenuReleaseEvent(
+	ResponseType Dialog::PerformContextMenuRelease(
 			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::MousePressEvent(const Context* context)
+	ResponseType Dialog::PerformMousePress(const Context* context)
 	{
 		SetActiveFrame(context, this);
 
@@ -359,7 +364,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "hovered is layout");
 					set_mouse_button_pressed(true);
 				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 			} else {
@@ -390,7 +395,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseReleaseEvent(const Context* context)
+	ResponseType Dialog::PerformMouseRelease(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
@@ -403,7 +408,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseMoveEvent(const Context* context)
+	ResponseType Dialog::PerformMouseMove(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -612,19 +617,19 @@ namespace BlendInt {
 		layout_->Resize(size().width(), size().height() - decoration_->size().height());
 	}
 
-	void Dialog::SetFocusedWidget(AbstractWidget* widget)
+	void Dialog::SetFocusedWidget(AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 	}

@@ -5,6 +5,8 @@
 #ifndef _HPECONTEXT_HPP_
 #define _HPECONTEXT_HPP_
 
+#include <GLFW/glfw3.h>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 

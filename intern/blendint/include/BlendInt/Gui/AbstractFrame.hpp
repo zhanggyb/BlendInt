@@ -60,9 +60,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType ContextMenuPressEvent (const Context* context);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
 		virtual ResponseType DispatchHoverEvent (const Context* context) = 0;
 
@@ -86,22 +86,22 @@ namespace BlendInt {
 
 		static inline ResponseType delegate_key_press_event (AbstractView* view, const Context* context)
 		{
-			return view->KeyPressEvent(context);
+			return view->PerformKeyPress(context);
 		}
 
 		static inline ResponseType delegate_mouse_press_event (AbstractView* view, const Context* context)
 		{
-			return view->MousePressEvent(context);
+			return view->PerformMousePress(context);
 		}
 
 		static inline ResponseType delegate_mouse_release_event(AbstractView* view, const Context* context)
 		{
-			return view->MouseReleaseEvent(context);
+			return view->PerformMouseRelease(context);
 		}
 
 		static inline ResponseType delegate_mouse_move_event(AbstractView* view, const Context* context)
 		{
-			return view->MouseMoveEvent(context);
+			return view->PerformMouseMove(context);
 		}
 
 		static inline void delegate_focus_status (AbstractView* view, bool focus)
@@ -109,22 +109,28 @@ namespace BlendInt {
 			view->set_focus(focus);
 		}
 
-		static void delegate_focus_event (AbstractView* view, bool focus)
+		static void delegate_focus_on (AbstractView* view, const Context* context)
 		{
-			view->set_focus(focus);
-			view->FocusEvent(focus);
+			view->set_focus(true);
+			view->PerformFocusOn(context);
+		}
+
+		static void delegate_focus_off (AbstractView* view, const Context* context)
+		{
+			view->set_focus(false);
+			view->PerformFocusOff(context);
 		}
 
 		static inline void delegate_mouse_hover_in_event (AbstractView* view, const Context* context)
 		{
 			view->set_hover(true);
-			view->MouseHoverInEvent(context);
+			view->PerformHoverIn(context);
 		}
 
 		static inline void delegate_mouse_hover_out_event (AbstractView* view, const Context* context)
 		{
 			view->set_hover(false);
-			view->MouseHoverOutEvent(context);
+			view->PerformHoverOut(context);
 		}
 
 		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const Context* context)

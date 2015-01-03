@@ -80,11 +80,13 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const Context* context);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformKeyPress (const Context* context);
+
+		virtual ResponseType PerformMousePress (const Context* context);
 
 	private:
 

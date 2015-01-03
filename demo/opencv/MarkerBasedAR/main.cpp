@@ -6,10 +6,9 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
-#include <CVWindow/Window.hpp>
-#include <CVWindow/CVCursor.hpp>
-
 #include "MarkerBasedARContext.hpp"
+#include "../../Common/GLFWCursor.hpp"
+#include "../../Common/GLFWWindow.hpp"
 
 using namespace BlendInt;
 using namespace std;
@@ -22,7 +21,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("OpenCV Demo", 1280, 800);
 
-	Cursor::instance->RegisterCursorType (new CVCursor(win));
+	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
 
 	MarkerBasedARContext* context = Manage(new MarkerBasedARContext(win));
 	DBG_SET_NAME(context, "Context");

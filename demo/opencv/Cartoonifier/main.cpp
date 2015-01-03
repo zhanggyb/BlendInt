@@ -2,10 +2,12 @@
  * BlendInt demo
  */
 
+#include "../../Common/GLFWWindow.hpp"
+#include "../../Common/GLFWCursor.hpp"
+
 #include <Cpp/Events.hpp>
 #include <BlendInt/Core/Types.hpp>
 
-#include <CVWindow/Window.hpp>
 #include "CartoonifierContext.hpp"
 
 using namespace BlendInt;

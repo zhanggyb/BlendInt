@@ -91,46 +91,52 @@ namespace BlendInt {
 		Shaders::instance->PopWidgetModelMatrix();
 	}
 
-	void AbstractWidget::FocusEvent (bool focus)
-	{
-	}
-
-	void AbstractWidget::MouseHoverInEvent(const Context* context)
+	void AbstractWidget::PerformFocusOn (const Context* context)
 	{
 
 	}
 
-	void AbstractWidget::MouseHoverOutEvent(const Context* context)
+	void AbstractWidget::PerformFocusOff (const Context* context)
 	{
 
 	}
 
-	ResponseType AbstractWidget::KeyPressEvent (const Context* context)
+	void AbstractWidget::PerformHoverIn(const Context* context)
 	{
-		return subs_count() ? Ignore : Finish;
+
 	}
 
-	ResponseType AbstractWidget::ContextMenuPressEvent (const Context* context)
+	void AbstractWidget::PerformHoverOut(const Context* context)
 	{
-		return subs_count() ? Ignore : Finish;
+
 	}
 
-	ResponseType AbstractWidget::ContextMenuReleaseEvent (const Context* context)
+	ResponseType AbstractWidget::PerformKeyPress (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MousePressEvent (const Context* context)
+	ResponseType AbstractWidget::PerformContextMenuPress (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MouseReleaseEvent (const Context* context)
+	ResponseType AbstractWidget::PerformContextMenuRelease (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::MouseMoveEvent (const Context* context)
+	ResponseType AbstractWidget::PerformMousePress (const Context* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	ResponseType AbstractWidget::PerformMouseRelease (const Context* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	ResponseType AbstractWidget::PerformMouseMove (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

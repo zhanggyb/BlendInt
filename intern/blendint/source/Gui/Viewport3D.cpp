@@ -69,18 +69,18 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	void Viewport3D::MouseHoverInEvent(const Context* context)
+	void Viewport3D::PerformHoverIn(const Context* context)
 	{
 		Cursor::instance->PushCursor();
 		Cursor::instance->SetCursor(CrossCursor);
 	}
 
-	void Viewport3D::MouseHoverOutEvent(const Context* context)
+	void Viewport3D::PerformHoverOut(const Context* context)
 	{
 		Cursor::instance->PopCursor();
 	}
 
-	ResponseType Viewport3D::KeyPressEvent (const Context* context)
+	ResponseType Viewport3D::PerformKeyPress (const Context* context)
 	{
 		if (context->key_action() == KeyPress) {
 			switch (context->key()) {
@@ -121,7 +121,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MousePressEvent (const Context* context)
+	ResponseType Viewport3D::PerformMousePress (const Context* context)
 	{
 		m_button_down = context->mouse_button();
 
@@ -167,14 +167,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MouseReleaseEvent (const Context* context)
+	ResponseType Viewport3D::PerformMouseRelease (const Context* context)
 	{
 		m_button_down = MouseButtonNone;
 
 		return Finish;
 	}
 
-	ResponseType Viewport3D::MouseMoveEvent (const Context* context)
+	ResponseType Viewport3D::PerformMouseMove (const Context* context)
 	{
 		switch (m_button_down) {
 			case MouseButtonLeft: {

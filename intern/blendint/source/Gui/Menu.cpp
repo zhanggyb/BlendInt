@@ -181,12 +181,12 @@ namespace BlendInt {
 		return false;
 	}
 
-	ResponseType Menu::MouseMoveEvent(const Context* context)
+	ResponseType Menu::PerformMouseMove(const Context* context)
 	{
 		return Finish;
 	}
 
-	ResponseType Menu::MousePressEvent (const Context* context)
+	ResponseType Menu::PerformMousePress (const Context* context)
 	{
 		SetActiveFrame(context, this);
 
@@ -201,7 +201,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "widget 0");
 					set_pressed(true);
 				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 
@@ -218,7 +218,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Menu::MouseReleaseEvent (const Context* context)
+	ResponseType Menu::PerformMouseRelease (const Context* context)
 	{
 		cursor_range_ = InsideRectangle;
 		set_pressed(false);
@@ -354,17 +354,12 @@ namespace BlendInt {
 //		highlight_buffer_->reset();
 	}
 	
-	void Menu::FocusEvent (bool focus)
+	void Menu::PerformFocusOn (const Context* context)
 	{
-		DBG_PRINT_MSG("focus %s", focus ? "on" : "off");
+	}
 
-		if(focus) {
-			SetVisible(true);
-		} else {
-			SetVisible(false);
-		}
-
-		RequestRedraw();
+	void Menu::PerformFocusOff (const Context* context)
+	{
 	}
 
 	bool Menu::PreDraw(const Context* context)
@@ -429,11 +424,11 @@ namespace BlendInt {
 	{
 	}
 
-	void Menu::MouseHoverInEvent(const Context* context)
+	void Menu::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void Menu::MouseHoverOutEvent(const Context* context)
+	void Menu::PerformHoverOut(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Menu::OnHoverWidgetDestroyed);
@@ -442,7 +437,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Menu::KeyPressEvent(const Context* context)
+	ResponseType Menu::PerformKeyPress(const Context* context)
 	{
 		if(context->key() == Key_Escape) {
 			RequestRedraw();
@@ -453,12 +448,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuPressEvent(const Context* context)
+	ResponseType Menu::PerformContextMenuPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::ContextMenuReleaseEvent(const Context* context)
+	ResponseType Menu::PerformContextMenuRelease(const Context* context)
 	{
 		return Ignore;
 	}
@@ -473,7 +468,7 @@ namespace BlendInt {
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(context);
+				PerformHoverIn(context);
 			}
 
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
@@ -497,7 +492,7 @@ namespace BlendInt {
 			cursor_range_ = OutsideRectangle;
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(context);
+				PerformHoverOut(context);
 			}
 		}
 
@@ -611,19 +606,19 @@ namespace BlendInt {
 		hovered_widget_ = nullptr;
 	}
 
-	void Menu::SetFocusedWidget(AbstractWidget* widget)
+	void Menu::SetFocusedWidget(AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &Menu::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &Menu::OnFocusedWidgetDestroyed);
 		}
 	}

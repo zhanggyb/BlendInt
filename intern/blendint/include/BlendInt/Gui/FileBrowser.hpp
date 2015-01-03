@@ -85,7 +85,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
 	private:
 

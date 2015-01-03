@@ -536,23 +536,25 @@ namespace BlendInt {
 
 		virtual void PostDraw (const Context* context) = 0;
 
-		virtual void FocusEvent (bool focus) = 0;
+		virtual void PerformFocusOn (const Context* context) = 0;
 
-		virtual void MouseHoverInEvent (const Context* context) = 0;
+		virtual void PerformFocusOff (const Context* context) = 0;
 
-		virtual void MouseHoverOutEvent (const Context* context) = 0;
+		virtual void PerformHoverIn (const Context* context) = 0;
 
-		virtual ResponseType KeyPressEvent (const Context* context) = 0;
+		virtual void PerformHoverOut (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuPressEvent (const Context* context) = 0;
+		virtual ResponseType PerformKeyPress (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuReleaseEvent (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuPress (const Context* context) = 0;
 
-		virtual ResponseType MousePressEvent (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuRelease (const Context* context) = 0;
 
-		virtual ResponseType MouseReleaseEvent (const Context* context) = 0;
+		virtual ResponseType PerformMousePress (const Context* context) = 0;
 
-		virtual ResponseType MouseMoveEvent (const Context* context) = 0;
+		virtual ResponseType PerformMouseRelease (const Context* context) = 0;
+
+		virtual ResponseType PerformMouseMove (const Context* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 

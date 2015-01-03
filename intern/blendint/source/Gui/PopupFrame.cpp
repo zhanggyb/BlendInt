@@ -362,27 +362,27 @@ namespace BlendInt {
 	{
 	}
 
-	void PopupFrame::FocusEvent(bool focus)
+	void PopupFrame::PerformFocusOn (const Context* context)
 	{
-		if(focus) {
-			DBG_PRINT_MSG("%s", "focus in");
-		} else {
-			DBG_PRINT_MSG("%s", "focus out");
+		DBG_PRINT_MSG("%s", "focus on");
+	}
 
-			if(hovered_widget_) {
-				hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
-				ClearHoverWidgets(hovered_widget_);
-				hovered_widget_ = 0;
-			}
+	void PopupFrame::PerformFocusOff (const Context* context)
+	{
+		DBG_PRINT_MSG("%s", "focus out");
 
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+			hovered_widget_ = 0;
 		}
 	}
 
-	void PopupFrame::MouseHoverInEvent(const Context* context)
+	void PopupFrame::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void PopupFrame::MouseHoverOutEvent(const Context* context)
+	void PopupFrame::PerformHoverOut(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
@@ -393,7 +393,7 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("%s", "hover out");
 	}
 
-	ResponseType PopupFrame::KeyPressEvent(const Context* context)
+	ResponseType PopupFrame::PerformKeyPress(const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -411,17 +411,17 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType PopupFrame::ContextMenuPressEvent(const Context* context)
+	ResponseType PopupFrame::PerformContextMenuPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::ContextMenuReleaseEvent(const Context* context)
+	ResponseType PopupFrame::PerformContextMenuRelease(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::MousePressEvent(const Context* context)
+	ResponseType PopupFrame::PerformMousePress(const Context* context)
 	{
 		SetActiveFrame(context, this);
 
@@ -443,7 +443,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "hovered is layout");
 					set_pressed(true);
 				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 			} else {
@@ -457,7 +457,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType PopupFrame::MouseReleaseEvent(const Context* context)
+	ResponseType PopupFrame::PerformMouseRelease(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
@@ -470,7 +470,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::MouseMoveEvent(const Context* context)
+	ResponseType PopupFrame::PerformMouseMove(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -510,7 +510,7 @@ namespace BlendInt {
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(context);
+				PerformHoverIn(context);
 			}
 
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
@@ -534,26 +534,26 @@ namespace BlendInt {
 			cursor_position_ = OutsideRectangle;
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(context);
+				PerformHoverOut(context);
 			}
 		}
 
 		return Finish;
 	}
 
-	void PopupFrame::SetFocusedWidget(AbstractWidget* widget)
+	void PopupFrame::SetFocusedWidget(AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &PopupFrame::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &PopupFrame::OnFocusedWidgetDestroyed);
 		}
 	}

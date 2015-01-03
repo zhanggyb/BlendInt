@@ -96,12 +96,12 @@ namespace BlendInt {
 		return false;
 	}
 
-	void MenuItem::MouseHoverInEvent(const Context* context)
+	void MenuItem::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void MenuItem::MouseHoverOutEvent(const Context* context)
+	void MenuItem::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}

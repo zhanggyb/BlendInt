@@ -266,12 +266,12 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void NumericalSlider::MouseHoverInEvent(const Context* context)
+	void NumericalSlider::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void NumericalSlider::MouseHoverOutEvent(const Context* context)
+	void NumericalSlider::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}

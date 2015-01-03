@@ -2,17 +2,16 @@
  * BlendInt demo
  */
 
-#include <BlendInt/Core/Types.hpp>
-
 #include "GLFWDemoContext.hpp"
-#include "Window.hpp"
+
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Stock/Cursor.hpp>
 
-#include "GLFWCursor.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include "../Common/GLFWCursor.hpp"
+#include "../Common/GLFWWindow.hpp"
 
 void GenerateCrossIconVertices (float min = 0.12f, float max = 0.9f)
 {

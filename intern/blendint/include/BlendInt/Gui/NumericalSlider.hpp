@@ -67,9 +67,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		virtual void MouseHoverInEvent (const Context* context);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual void MouseHoverOutEvent (const Context* context);
+		virtual void PerformHoverOut (const Context* context);
 
 	private:
 

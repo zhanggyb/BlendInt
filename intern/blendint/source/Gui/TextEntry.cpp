@@ -154,7 +154,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextEntry::KeyPressEvent (const Context* context)
+	ResponseType TextEntry::PerformKeyPress (const Context* context)
 	{
 		if(!context->text().empty()) {
 
@@ -221,7 +221,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextEntry::MousePressEvent(const Context* context)
+	ResponseType TextEntry::PerformMousePress(const Context* context)
 	{
 		if(text_.size()) {
 			index_ = GetCursorPosition(context);
@@ -386,7 +386,12 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextEntry::FocusEvent (bool focus)
+	void TextEntry::PerformFocusOn (const Context* context)
+	{
+		RequestRedraw();
+	}
+
+	void TextEntry::PerformFocusOff (const Context* context)
 	{
 		RequestRedraw();
 	}

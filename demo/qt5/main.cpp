@@ -119,7 +119,7 @@ void DemoWindow::resizeEvent(QResizeEvent* ev)
 
 void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 {
-	kMouseEvent.set_action(BI::MouseMove);
+	kMouseEvent.set_action(BI::PerformMouseMove);
 	kMouseEvent.set_button(BI::MouseButtonNone);
 	kMouseEvent.set_position(ev->pos().x(), m_context->size().height() - ev->pos().y());
 
@@ -129,7 +129,7 @@ void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 
 void DemoWindow::mousePressEvent(QMouseEvent* ev)
 {
-	BI::MouseAction mouse_action = BI::MousePress;
+	BI::MouseAction mouse_action = BI::PerformMousePress;
 
 	BI::MouseButton mouse_button = BI::MouseButtonNone;
 
@@ -162,7 +162,7 @@ void DemoWindow::mousePressEvent(QMouseEvent* ev)
 
 void DemoWindow::mouseReleaseEvent(QMouseEvent* ev)
 {
-	BI::MouseAction mouse_action = BI::MouseRelease;
+	BI::MouseAction mouse_action = BI::PerformMouseRelease;
 
 	BI::MouseButton mouse_button = BI::MouseButtonNone;
 

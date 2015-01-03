@@ -97,12 +97,12 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::ContextMenuPressEvent (const Context* context)
+	ResponseType AbstractFrame::PerformContextMenuPress (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::ContextMenuReleaseEvent (const Context* context)
+	ResponseType AbstractFrame::PerformContextMenuRelease (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
@@ -120,10 +120,10 @@ namespace BlendInt {
 				if(response == Finish) {
 					return response;
 				} else {
-					return subview->KeyPressEvent(context);
+					return subview->PerformKeyPress(context);
 				}
 			} else {
-				return subview->KeyPressEvent(context);
+				return subview->PerformKeyPress(context);
 			}
 
 		}
@@ -145,7 +145,7 @@ namespace BlendInt {
 
 				if(ret_val == 0) {
 
-					response = subview->MousePressEvent(context);
+					response = subview->PerformMousePress(context);
 
 					return response == Finish ? subview : 0;
 
@@ -154,7 +154,7 @@ namespace BlendInt {
 				}
 
 			} else {
-				response = subview->MousePressEvent(context);
+				response = subview->PerformMousePress(context);
 				return response == Finish ? subview : 0;
 			}
 
@@ -169,13 +169,13 @@ namespace BlendInt {
 
 			if(subview->superview ()) {
 				if(DispatchMouseMoveEvent(subview->superview (), context) == Ignore) {
-					return subview->MouseMoveEvent(context);
+					return subview->PerformMouseMove(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
-				return subview->MouseMoveEvent(context);
+				return subview->PerformMouseMove(context);
 			}
 
 		}
@@ -190,14 +190,14 @@ namespace BlendInt {
 
 			if(subview->superview ()) {
 				if(DispatchMouseReleaseEvent(subview->superview (), context) == Ignore) {
-					return subview->MouseReleaseEvent(context);
+					return subview->PerformMouseRelease(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
 				DBG_PRINT_MSG("mouse press in %s", subview->name().c_str());
-				return subview->MouseReleaseEvent(context);
+				return subview->PerformMouseRelease(context);
 			}
 
 		}
@@ -254,7 +254,7 @@ namespace BlendInt {
 //								&SingleFrame::OnHoverWidgetDestroyed);
 					delegate_mouse_hover_out_event(hovered_widget, context);
 //					hovered_widget->set_hover(false);
-//					hovered_widget->MouseHoverOutEvent(event);
+//					hovered_widget->PerformHoverOut(event);
 
 
 					// find which contianer contains cursor position
@@ -291,7 +291,7 @@ namespace BlendInt {
 				delegate_mouse_hover_out_event(hovered_widget, context);
 
 //				hovered_widget->set_hover(false);
-//				hovered_widget->MouseHoverOutEvent(event);
+//				hovered_widget->PerformHoverOut(event);
 
 
 				// find which contianer contains cursor position
@@ -333,7 +333,7 @@ namespace BlendInt {
 					hovered_widget = dynamic_cast<AbstractWidget*>(p);
 					delegate_mouse_hover_in_event(hovered_widget, context);
 //					hovered_widget->set_hover(true);
-//					hovered_widget->MouseHoverInEvent(event);
+//					hovered_widget->PerformHoverIn(event);
 
 					break;
 				}
@@ -400,7 +400,7 @@ namespace BlendInt {
 
 		while (hovered_widget && (hovered_widget != this)) {
 			hovered_widget->set_hover(false);
-			hovered_widget->MouseHoverOutEvent(context);
+			hovered_widget->PerformHoverOut(context);
 			hovered_widget = hovered_widget->superview();
 		}
 	}

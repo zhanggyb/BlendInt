@@ -178,7 +178,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ListView::MousePressEvent (const Context* context)
+	ResponseType ListView::PerformMousePress (const Context* context)
 	{
 		if(model_) {
 

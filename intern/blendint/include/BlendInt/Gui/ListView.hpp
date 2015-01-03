@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
 	private:
 

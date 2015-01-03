@@ -143,32 +143,32 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::KeyPressEvent(const Context* context)
+	ResponseType Viewport::PerformKeyPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	void Viewport::MouseHoverInEvent(const Context* context)
+	void Viewport::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void Viewport::MouseHoverOutEvent(const Context* context)
+	void Viewport::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType Viewport::MousePressEvent(const Context* context)
+	ResponseType Viewport::PerformMousePress(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::MouseReleaseEvent(const Context* context)
+	ResponseType Viewport::PerformMouseRelease(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::MouseMoveEvent(const Context* context)
+	ResponseType Viewport::PerformMouseMove(const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

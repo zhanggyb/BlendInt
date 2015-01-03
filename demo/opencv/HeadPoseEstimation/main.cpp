@@ -2,12 +2,13 @@
  * BlendInt demo
  */
 
+#include "../../Common/GLFWWindow.hpp"
+#include "../../Common/GLFWCursor.hpp"
+
 #include <Cpp/Events.hpp>
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
-#include <CVWindow/Window.hpp>
-#include <CVWindow/CVCursor.hpp>
 #include "HPEContext.hpp"
 
 using namespace BlendInt;
@@ -20,7 +21,7 @@ int main(int argc, char* argv[])
 	Init();
 
 	GLFWwindow* win = CreateWindow("OpenCV Demo", 1280, 800);
-	Cursor::instance->RegisterCursorType (new CVCursor(win));
+	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
 
 	HPEContext* context = Manage(new HPEContext);
 	DBG_SET_NAME(context, "Context");

@@ -428,15 +428,19 @@ namespace BlendInt {
 	{
 	}
 
-	void Workspace::FocusEvent(bool focus)
+	void Workspace::PerformFocusOn (const Context* context)
 	{
 	}
 
-	void Workspace::MouseHoverInEvent(const Context* context)
+	void Workspace::PerformFocusOff (const Context* context)
 	{
 	}
 
-	void Workspace::MouseHoverOutEvent(const Context* context)
+	void Workspace::PerformHoverIn(const Context* context)
+	{
+	}
+
+	void Workspace::PerformHoverOut(const Context* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -445,7 +449,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Workspace::KeyPressEvent(const Context* context)
+	ResponseType Workspace::PerformKeyPress(const Context* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -453,7 +457,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Workspace::MousePressEvent(const Context* context)
+	ResponseType Workspace::PerformMousePress(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -462,16 +466,16 @@ namespace BlendInt {
 			response = delegate_mouse_press_event(hover_frame_, context);
 
 			if(response == Finish) {
-				SetFocusedFrame(hover_frame_);
+				SetFocusedFrame(hover_frame_, context);
 			}
 		} else {
-			SetFocusedFrame(0);
+			SetFocusedFrame(0, context);
 		}
 
 		return Finish;
 	}
 
-	ResponseType Workspace::MouseReleaseEvent(const Context* context)
+	ResponseType Workspace::PerformMouseRelease(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -483,7 +487,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::MouseMoveEvent(const Context* context)
+	ResponseType Workspace::PerformMouseMove(const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -552,18 +556,18 @@ namespace BlendInt {
 		hover_frame_ = 0;
 	}
 
-	void Workspace::SetFocusedFrame(AbstractFrame* frame)
+	void Workspace::SetFocusedFrame(AbstractFrame* frame, const Context* context)
 	{
     	if(focused_frame_ == frame) return;
 
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, false);
+    		delegate_focus_off(focused_frame_, context);
     		focused_frame_->destroyed().disconnectOne(this, &Workspace::OnFocusedFrameDestroyed);
     	}
 
     	focused_frame_ = frame;
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, true);
+    		delegate_focus_on(focused_frame_, context);
     		events()->connect(focused_frame_->destroyed(), this, &Workspace::OnFocusedFrameDestroyed);
     	}
 	}

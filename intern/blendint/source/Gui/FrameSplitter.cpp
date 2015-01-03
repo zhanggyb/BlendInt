@@ -190,28 +190,34 @@ namespace BlendInt {
 	{
 	}
 
-	void FrameSplitterHandle::FocusEvent(bool focus)
+	void FrameSplitterHandle::PerformFocusOn(const Context* context)
 	{
+
 	}
 
-	ResponseType FrameSplitterHandle::KeyPressEvent(const Context* context)
+	void FrameSplitterHandle::PerformFocusOff (const Context* context)
+	{
+
+	}
+
+	ResponseType FrameSplitterHandle::PerformKeyPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::ContextMenuPressEvent(
+	ResponseType FrameSplitterHandle::PerformContextMenuPress(
 			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::ContextMenuReleaseEvent(
+	ResponseType FrameSplitterHandle::PerformContextMenuRelease(
 			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::MousePressEvent(
+	ResponseType FrameSplitterHandle::PerformMousePress(
 			const Context* context)
 	{
 		last_ = position();
@@ -232,7 +238,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitterHandle::MouseReleaseEvent(
+	ResponseType FrameSplitterHandle::PerformMouseRelease(
 			const Context* context)
 	{
 		if(!hover()) {
@@ -243,7 +249,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void FrameSplitterHandle::MouseHoverInEvent(const Context* context)
+	void FrameSplitterHandle::PerformHoverIn(const Context* context)
 	{
 		Cursor::instance->PushCursor();
 		if(orientation_ == Horizontal) {
@@ -255,7 +261,7 @@ namespace BlendInt {
 		//RequestRedraw();
 	}
 
-	void FrameSplitterHandle::MouseHoverOutEvent(const Context* context)
+	void FrameSplitterHandle::PerformHoverOut(const Context* context)
 	{
 		if(!pressed_ext())
 			Cursor::instance->PopCursor();
@@ -272,7 +278,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitterHandle::MouseMoveEvent(const Context* context)
+	ResponseType FrameSplitterHandle::PerformMouseMove(const Context* context)
 	{
 		if(pressed_ext()) {
 
@@ -606,15 +612,19 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::FocusEvent(bool focus)
+	void FrameSplitter::PerformFocusOn (const Context* context)
 	{
 	}
 
-	void FrameSplitter::MouseHoverInEvent(const Context* context)
+	void FrameSplitter::PerformFocusOff (const Context* context)
 	{
 	}
 
-	void FrameSplitter::MouseHoverOutEvent(const Context* context)
+	void FrameSplitter::PerformHoverIn(const Context* context)
+	{
+	}
+
+	void FrameSplitter::PerformHoverOut(const Context* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -623,7 +633,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitter::KeyPressEvent(const Context* context)
+	ResponseType FrameSplitter::PerformKeyPress(const Context* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -632,7 +642,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType FrameSplitter::MousePressEvent(const Context* context)
+	ResponseType FrameSplitter::PerformMousePress(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -641,16 +651,16 @@ namespace BlendInt {
 			response = delegate_mouse_press_event(hover_frame_, context);
 
 			if(response == Finish) {
-				SetFocusedFrame(hover_frame_);
+				SetFocusedFrame(hover_frame_, context);
 			}
 		} else {
-			SetFocusedFrame(0);
+			SetFocusedFrame(0, context);
 		}
 
 		return Finish;
 	}
 
-	ResponseType FrameSplitter::MouseReleaseEvent(const Context* context)
+	ResponseType FrameSplitter::PerformMouseRelease(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -662,7 +672,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::MouseMoveEvent(const Context* context)
+	ResponseType FrameSplitter::PerformMouseMove(const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -1425,18 +1435,18 @@ namespace BlendInt {
         }
     }
 
-    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame)
+    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, const Context* context)
     {
     	if(focused_frame_ == frame) return;
 
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, false);
+    		delegate_focus_off(focused_frame_, context);
     		focused_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnFocusedFrameDestroyed);
     	}
 
     	focused_frame_ = frame;
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, true);
+    		delegate_focus_on(focused_frame_, context);
     		events()->connect(focused_frame_->destroyed(), this, &FrameSplitter::OnFocusedFrameDestroyed);
     	}
     }

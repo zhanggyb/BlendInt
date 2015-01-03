@@ -204,11 +204,11 @@ namespace BlendInt
 
 			if(original_last) {
 				original_last->set_focus(false);
-				original_last->FocusEvent(false);
+				original_last->PerformFocusOff(this);
 			}
 
 			frame->set_focus(true);
-			frame->FocusEvent(true);
+			frame->PerformFocusOn(this);
 
 			RequestRedraw();
 			return true;
@@ -228,11 +228,11 @@ namespace BlendInt
 
 				if(original_last) {
 					original_last->set_focus(false);
-					original_last->FocusEvent(false);
+					original_last->PerformFocusOff(this);
 				}
 
 				frame->set_focus(true);
-				frame->FocusEvent(true);
+				frame->PerformFocusOn(this);
 
 			}
 
@@ -255,11 +255,11 @@ namespace BlendInt
 
 		if(original_last) {
 			original_last->set_focus(false);
-			original_last->FocusEvent(false);
+			original_last->PerformFocusOff(this);
 		}
 
 		frame->set_focus(true);
-		frame->FocusEvent(true);
+		frame->PerformFocusOn(this);
 	}
 
 	void Context::Draw()
@@ -334,7 +334,7 @@ namespace BlendInt
 		switch (key_action_) {
 
 			case KeyPress: {
-				KeyPressEvent(this);
+				PerformKeyPress(this);
 				break;
 			}
 
@@ -367,18 +367,18 @@ namespace BlendInt
 
 			case MouseMove: {
 				DispatchHoverEvent();
-				MouseMoveEvent(this);
+				PerformMouseMove(this);
 				break;
 			}
 
 			case MousePress: {
 				DispatchHoverEvent();
-				MousePressEvent(this);
+				PerformMousePress(this);
 				break;
 			}
 
 			case MouseRelease: {
-				MouseReleaseEvent(this);
+				PerformMouseRelease(this);
 				DispatchHoverEvent();
 				break;
 			}
@@ -531,32 +531,32 @@ namespace BlendInt
 	{
 	}
 
-	ResponseType Context::KeyPressEvent (const Context* context)
+	ResponseType Context::PerformKeyPress (const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->KeyPressEvent(context);
+			response = p->PerformKeyPress(context);
 			if(response == Finish) break;
 		}
 
 		return response;
 	}
 
-	ResponseType Context::ContextMenuPressEvent (const Context* context)
+	ResponseType Context::PerformContextMenuPress (const Context* context)
 	{
 
 		return Ignore;
 	}
 
-	ResponseType Context::ContextMenuReleaseEvent (
+	ResponseType Context::PerformContextMenuRelease (
 	        const Context* context)
 	{
 
 		return Ignore;
 	}
 
-	ResponseType Context::MousePressEvent (const Context* context)
+	ResponseType Context::PerformMousePress (const Context* context)
 	{
 		ResponseType response = Ignore;
 		//assert(context->leaf_frame() == 0);
@@ -564,7 +564,7 @@ namespace BlendInt
 		set_pressed(true);
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->MousePressEvent(context);
+			response = p->PerformMousePress(context);
 			if(response == Finish) {
 				break;
 			}
@@ -573,14 +573,14 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseReleaseEvent (const Context* context)
+	ResponseType Context::PerformMouseRelease (const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
 		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 		{
-			response = p->MouseReleaseEvent(context);
+			response = p->PerformMouseRelease(context);
 			if(response == Finish) {
 				break;
 			}
@@ -589,7 +589,7 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::MouseMoveEvent (const Context* context)
+	ResponseType Context::PerformMouseMove (const Context* context)
 	{
 		ResponseType response = Ignore;
 
@@ -597,7 +597,7 @@ namespace BlendInt
 
 			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 			{
-				response = p->MouseMoveEvent(context);
+				response = p->PerformMouseMove(context);
 				if(response == Finish) {
 					break;
 				}
@@ -626,7 +626,7 @@ namespace BlendInt
 		if(new_last != nullptr) {
 			DBG_PRINT_MSG("%s", "call focus event");
 			new_last->set_focus(true);
-			new_last->FocusEvent(true);
+			new_last->PerformFocusOn(this);
 		}
 
 		return retval;
@@ -721,15 +721,19 @@ namespace BlendInt
 		}
 	}
 
-	void Context::FocusEvent(bool focus)
+	void Context::PerformFocusOn(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverInEvent(const Context* context)
+	void Context::PerformFocusOff(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverOutEvent(const Context* context)
+	void Context::PerformHoverIn(const Context* context)
+	{
+	}
+
+	void Context::PerformHoverOut(const Context* context)
 	{
 	}
 

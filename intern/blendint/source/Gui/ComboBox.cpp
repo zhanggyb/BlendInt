@@ -265,7 +265,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::MousePressEvent (const Context* context)
+	ResponseType ComboBox::PerformMousePress (const Context* context)
 	{
 		status_down_ = true;
 
@@ -324,7 +324,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::MouseReleaseEvent (const Context* context)
+	ResponseType ComboBox::PerformMouseRelease (const Context* context)
 	{
 		status_down_ = false;
 
@@ -332,12 +332,12 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ComboBox::MouseHoverInEvent(const Context* context)
+	void ComboBox::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void ComboBox::MouseHoverOutEvent(const Context* context)
+	void ComboBox::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}

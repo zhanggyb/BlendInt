@@ -54,17 +54,17 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType KeyPressEvent (const Context* context);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual void MouseHoverInEvent (const Context* context);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual void MouseHoverOutEvent (const Context* context);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const Context* context);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const Context* context);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 		virtual ResponseType DispatchHoverEvent (const Context* context);
 

@@ -222,7 +222,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void SplitterHandle::MouseHoverInEvent(const Context* context)
+	void SplitterHandle::PerformHoverIn(const Context* context)
 	{
 		highlight_ = true;
 		Cursor::instance->PushCursor();
@@ -230,14 +230,14 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void SplitterHandle::MouseHoverOutEvent(const Context* context)
+	void SplitterHandle::PerformHoverOut(const Context* context)
 	{
 		highlight_ = false;
 		Cursor::instance->PopCursor();
 		RequestRedraw();
 	}
 
-	ResponseType SplitterHandle::MousePressEvent (const Context* context)
+	ResponseType SplitterHandle::PerformMousePress (const Context* context)
 	{
 		last_ = position();
 		cursor_ = context->cursor_position();
@@ -256,7 +256,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::MouseReleaseEvent (const Context* context)
+	ResponseType SplitterHandle::PerformMouseRelease (const Context* context)
 	{
 		if (pressed_) {
 			pressed_ = false;
@@ -265,7 +265,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::MouseMoveEvent (const Context* context)
+	ResponseType SplitterHandle::PerformMouseMove (const Context* context)
 	{
 		if(pressed_) {
 

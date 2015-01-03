@@ -80,23 +80,25 @@ namespace BlendInt {
 
 		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const Context* context);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const Context* context);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const Context* context);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const Context* context);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const Context* context);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const Context* context);
+		virtual ResponseType PerformMouseRelease (const Context* context);
+
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 		virtual ResponseType DispatchHoverEvent (const Context* context);
 
@@ -129,7 +131,7 @@ namespace BlendInt {
 
 		void InitializeDialogOnce ();
 
-		void SetFocusedWidget (AbstractWidget* widget);
+		void SetFocusedWidget (AbstractWidget* widget, const Context* context);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 

@@ -333,27 +333,27 @@ namespace BlendInt {
 	{
 	}
 
-	void ToolBox::FocusEvent (bool focus)
+	void ToolBox::PerformFocusOn (const Context* context)
 	{
-		if(focus) {
-			DBG_PRINT_MSG("%s", "focus in");
-		} else {
-			DBG_PRINT_MSG("%s", "focus out");
+		DBG_PRINT_MSG("%s", "focus in");
+	}
 
-			if(hovered_widget_) {
-				hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
-				ClearHoverWidgets(hovered_widget_);
-				hovered_widget_ = 0;
-			}
+	void ToolBox::PerformFocusOff (const Context* context)
+	{
+		DBG_PRINT_MSG("%s", "focus out");
 
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_);
+			hovered_widget_ = 0;
 		}
 	}
 
-	void ToolBox::MouseHoverInEvent (const Context* context)
+	void ToolBox::PerformHoverIn (const Context* context)
 	{
 	}
 
-	void ToolBox::MouseHoverOutEvent (const Context* context)
+	void ToolBox::PerformHoverOut (const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
@@ -362,7 +362,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ToolBox::KeyPressEvent (const Context* context)
+	ResponseType ToolBox::PerformKeyPress (const Context* context)
 	{
 		SetActiveFrame(context, this);
 
@@ -375,7 +375,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ToolBox::MousePressEvent (const Context* context)
+	ResponseType ToolBox::PerformMousePress (const Context* context)
 	{
 		SetActiveFrame(context, this);
 
@@ -391,7 +391,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "widget 0");
 					set_pressed(true);
 				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 			} else {
@@ -406,7 +406,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ToolBox::MouseReleaseEvent (const Context* context)
+	ResponseType ToolBox::PerformMouseRelease (const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
@@ -419,7 +419,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ToolBox::MouseMoveEvent (const Context* context)
+	ResponseType ToolBox::PerformMouseMove (const Context* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -441,7 +441,7 @@ namespace BlendInt {
 
 			if(!hover()) {
 				set_hover(true);
-				MouseHoverInEvent(context);
+				PerformHoverIn(context);
 			}
 
 			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
@@ -469,7 +469,7 @@ namespace BlendInt {
 
 			if(hover()) {
 				set_hover(false);
-				MouseHoverOutEvent(context);
+				PerformHoverOut(context);
 			}
 
 			return Ignore;
@@ -624,19 +624,19 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void ToolBox::SetFocusedWidget (AbstractWidget* widget)
+	void ToolBox::SetFocusedWidget (AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 	}

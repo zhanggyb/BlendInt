@@ -91,11 +91,11 @@ namespace BlendInt {
 
 		virtual void PostDraw (const Context* context);
 
-		virtual ResponseType MousePressEvent (const Context* context);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const Context* context);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const Context* context);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 	private:
 
