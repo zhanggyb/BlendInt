@@ -53,10 +53,10 @@ namespace BlendInt {
 
 	Dialog::Dialog (bool modal)
 	: AbstractFloatingFrame(),
-	  focused_widget_(0),
-	  hovered_widget_(0),
-	  decoration_(0),
-	  layout_(0),
+	  focused_widget_(nullptr),
+	  hovered_widget_(nullptr),
+	  decoration_(nullptr),
+	  layout_(nullptr),
 	  cursor_position_(InsideRectangle),
 	  dialog_flags_(0)
 	{
@@ -74,16 +74,10 @@ namespace BlendInt {
 
 		InitializeDialogOnce();
 
-		decoration_ = Manage(new Decoration("Default"));
-		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
-		decoration_->MoveTo(0, size().height() - decoration_->size().height());
-		PushBackSubView(decoration_);
-		events()->connect(decoration_->close_button_clicked(), this, &Dialog::OnCloseButtonClicked);
-
 		// create default layout
 		layout_ = Manage(new FreeLayout);
 		PushBackSubView(layout_);
-		layout_->Resize(size().width(), size().height() - decoration_->size().height());
+		layout_->Resize(size());
 		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
@@ -91,10 +85,10 @@ namespace BlendInt {
 
 	Dialog::Dialog(const String& title, bool modal)
 	: AbstractFloatingFrame(),
-	  focused_widget_(0),
-	  hovered_widget_(0),
-	  decoration_(0),
-	  layout_(0),
+	  focused_widget_(nullptr),
+	  hovered_widget_(nullptr),
+	  decoration_(nullptr),
+	  layout_(nullptr),
 	  cursor_position_(InsideRectangle),
 	  dialog_flags_(0)
 	{
@@ -112,11 +106,12 @@ namespace BlendInt {
 
 		InitializeDialogOnce();
 
+		DBG_PRINT_MSG("%s", "create decoration");
 		decoration_ = Manage(new Decoration(title));
 		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
 		decoration_->MoveTo(0, size().height() - decoration_->size().height());
 		PushBackSubView(decoration_);
-		events()->connect(decoration_->close_button_clicked(), this, &Dialog::OnCloseButtonClicked);
+		events()->connect(decoration_->close_triggered(), this, &Dialog::OnCloseButtonClicked);
 
 		// create default layout
 		layout_ = Manage(new FreeLayout);
@@ -167,7 +162,12 @@ namespace BlendInt {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 			MoveSubViewTo(layout_, 0, 0);
-			ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
+
+			if(decoration_ != nullptr) {
+				ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
+			} else {
+				ResizeSubView(layout_, size());
+			}
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -648,11 +648,15 @@ namespace BlendInt {
 
 	void Dialog::UpdateLayout()
 	{
-		decoration_->Resize(size().width(), decoration_->size().height());
-		decoration_->MoveTo(0, size().height() - decoration_->size().height());
+		int h = 0;
+		if(decoration_ != nullptr) {
+			decoration_->Resize(size().width(), decoration_->size().height());
+			decoration_->MoveTo(0, size().height() - decoration_->size().height());
+			h = decoration_->size().height();
+		}
 
 		layout_->MoveTo(0, 0);
-		layout_->Resize(size().width(), size().height() - decoration_->size().height());
+		layout_->Resize(size().width(), size().height() - h);
 	}
 
 	void Dialog::SetFocusedWidget(AbstractWidget* widget, const Context* context)
@@ -765,10 +769,9 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
-	void Dialog::OnCloseButtonClicked(AbstractButton* button)
+	void Dialog::OnCloseButtonClicked()
 	{
-		assert(button == decoration_->close_button());
-
+		//assert(button == decoration_->close_button());
 		delete this;
 	}
 

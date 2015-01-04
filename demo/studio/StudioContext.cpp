@@ -278,6 +278,8 @@ void StudioContext::OnOpenDialogForBlocks()
 	main_block->Resize(main_block->GetPreferredSize());
 	main_block->MoveTo(100, 100);
 
+	DBG_PRINT_MSG("main block size: (%d, %d)", main_block->size().width(), main_block->size().height());
+	
 	dialog->AddWidget(main_block);
 
 	AddFrame(dialog);

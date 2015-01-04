@@ -21,55 +21,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SEPARATOR_HPP_
-#define _BLENDINT_GUI_SEPARATOR_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
+#define _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <Cpp/Events.hpp>
+
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class Separator: public AbstractWidget
+	/**
+	 * @brief The base class of the decorations for dialog
+	 */
+	class AbstractDecoration: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(Separator);
-
 	public:
 
-		Separator (bool expand_x = false, bool expand_y = false);
+		AbstractDecoration ();
 
-		virtual ~Separator ();
+		virtual ~AbstractDecoration ();
 
-		void SetExpandX (bool expand);
-
-		void SetExpandY (bool expand);
-
-		void SetExpand (bool expand_x, bool expand_y);
-
-		virtual Size GetPreferredSize () const;
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
+		Cpp::EventRef<> close_triggered ()
+		{
+			return *close_triggered_;
+		}
 
 	protected:
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual void UpdateLayout () = 0;
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
-
-		virtual bool PreDraw (const Context* context);
-
-		virtual ResponseType Draw (const Context* context);
-
-		virtual void PostDraw (const Context* context);
+		void fire_close_triggered ()
+		{
+			close_triggered_->fire();
+		}
 
 	private:
 
-		bool expand_x_;
-		bool expand_y_;
+		boost::scoped_ptr<Cpp::Event<> > close_triggered_;
 
-		Size preferred_size_;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_SEPARATOR_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTDECORATION_HPP_ */

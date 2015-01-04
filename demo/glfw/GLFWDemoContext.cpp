@@ -106,7 +106,7 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
-	Dialog* dlg = Manage(new Dialog);
+	Dialog* dlg = Manage(new Dialog(String("Hello")));
     dlg->Resize(800, 600);
     dlg->MoveTo(200, 150);
 	AddFrame(dlg);

@@ -38,10 +38,15 @@
 namespace BlendInt {
 
 	/**
-	 * @brief Layout to hold and manage all widgets in a OpenGL window
+	 * @brief The root view to interact with window system and manage
+	 * the interface
 	 *
-	 * Context is a special container which holds and manage all widgets in a OpenGL window.
-	 * There should be at least one Context object to work with Interface to show and dispatch events.
+	 * Context is a special view in BlendInt, it provide public
+	 * entries for the windows system to control the display and input
+	 * events.
+	 *
+	 * There should be at least one Context object to work with
+	 * Interface to show and dispatch events.
 	 */
 	class Context: public AbstractView
 	{
@@ -65,19 +70,17 @@ namespace BlendInt {
 
 		void Draw ();
 
-		void DispatchKeyEvent(
-				KeyAction action,
-				int key,
-				int modifier,
-				int scancode,
-				String text);
+		void DispatchKeyEvent (KeyAction action,
+							   int key,
+							   int modifier,
+							   int scancode,
+							   String text);
 
-		void DispatchMouseEvent (
-				int x,
-				int y,
-				MouseAction action,
-				MouseButton button,
-				int modifier);
+		void DispatchMouseEvent (int x,
+								 int y,
+								 MouseAction action,
+								 MouseButton button,
+								 int modifier);
 
 		/**
 		 * @brief Always return true
@@ -93,7 +96,6 @@ namespace BlendInt {
 #ifdef DEBUG
 			assert(active_frame_ != nullptr);
 #endif
-
 			return active_frame_;
 		}
 
@@ -135,8 +137,6 @@ namespace BlendInt {
 		}
 
 		static Context* GetContext (AbstractView* widget);
-
-		static glm::mat4 default_view_matrix;
 
 	protected:
 
@@ -234,6 +234,7 @@ namespace BlendInt {
 
 		static std::set<Context*> context_set;
 
+		static glm::mat4 default_view_matrix;
 	};
 
 }

@@ -55,7 +55,7 @@ namespace BlendInt {
 	using Stock::Icons;
 
 	FileSelector::FileSelector ()
-	: Dialog(true),
+	: Dialog(),
 	  path_entry_(0),
 	  file_entry_(0)
 	{

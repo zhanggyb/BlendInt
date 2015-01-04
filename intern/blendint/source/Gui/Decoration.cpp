@@ -46,7 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration(const String& title)
-	: Widget(),
+	: AbstractDecoration(),
 	  space_(4),
 	  close_button_(nullptr)
 	{
@@ -67,6 +67,8 @@ namespace BlendInt {
 		//set_round_radius(5.f);
 
 		InitializeDecorationOnce();
+
+		events()->connect(close_button_->clicked(), this, &Decoration::OnCloseButtonClicked);
 	}
 
 	Decoration::~Decoration ()
@@ -263,6 +265,11 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		inner_.reset();
+	}
+
+	void Decoration::OnCloseButtonClicked(AbstractButton* button)
+	{
+		fire_close_triggered();
 	}
 
 }

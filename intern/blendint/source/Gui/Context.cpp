@@ -53,9 +53,10 @@ namespace BlendInt
 {
 	using Stock::Shaders;
 
-	glm::mat4 Context::default_view_matrix = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-			glm::vec3(0.f, 0.f, 0.f),
-            glm::vec3(0.f, 1.f, 0.f));
+	glm::mat4 Context::default_view_matrix =
+		glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+					glm::vec3(0.f, 0.f, 0.f),
+					glm::vec3(0.f, 1.f, 0.f));
 
 	std::set<Context*> Context::context_set;
 
@@ -103,7 +104,8 @@ namespace BlendInt
 		if (success && Shaders::Initialize()) {
 			// do nothing
 		} else {
-			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
+			DBG_PRINT_MSG("%s",
+						  "The Shader Manager is not initialized successfully!");
 			success = false;
 		}
 
@@ -191,7 +193,8 @@ namespace BlendInt
 	Context::~Context ()
 	{
 		if(superview() != 0) {
-			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other superview");
+			DBG_PRINT_MSG("Error: %s",
+						  "Context MUST NOT be in any other superview");
 		}
 		context_set.erase(this);
 	}
@@ -330,8 +333,11 @@ namespace BlendInt
 
 	}
 
-	void Context::DispatchKeyEvent(KeyAction action, int key, int modifiers,
-			int scancode, String text)
+	void Context::DispatchKeyEvent(KeyAction action,
+								   int key,
+								   int modifiers,
+								   int scancode,
+								   String text)
 	{
 		key_action_ = action;
 		key_ = key;
@@ -362,8 +368,11 @@ namespace BlendInt
 
 	}
 
-	void Context::DispatchMouseEvent(int x, int y, MouseAction action,
-			MouseButton button, int modifiers)
+	void Context::DispatchMouseEvent(int x,
+									 int y,
+									 MouseAction action,
+									 MouseButton button,
+									 int modifiers)
 	{
 		cursor_position_.reset(x, size().height() - y);
 

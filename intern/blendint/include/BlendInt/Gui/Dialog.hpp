@@ -28,7 +28,9 @@
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
+#include <BlendInt/Gui/AbstractDecoration.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
+
 #include <BlendInt/Gui/FrameShadow.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
@@ -39,7 +41,7 @@ namespace BlendInt {
 
 	public:
 
-		explicit Dialog (bool modal = false);
+		Dialog (bool modal = false);
 
 		Dialog (const String& title, bool modal = false);
 
@@ -141,7 +143,7 @@ namespace BlendInt {
 
 		void OnLayoutDestroyed (AbstractWidget* layout);
 
-		void OnCloseButtonClicked (AbstractButton* button);
+		void OnCloseButtonClicked ();
 
 		inline bool modal () const
 		{
@@ -201,7 +203,7 @@ namespace BlendInt {
 
 		AbstractWidget* hovered_widget_;
 
-		Decoration* decoration_;
+		AbstractDecoration* decoration_;
 
 		AbstractLayout* layout_;
 

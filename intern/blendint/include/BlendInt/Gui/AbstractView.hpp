@@ -50,6 +50,11 @@ namespace BlendInt {
 	class Context;
 	class AbstractView;
 
+	/**
+	 * @brief Set/reset the managed flag of a View
+	 *
+	 * A managed View will be deleted when the superview is destroyed.
+	 */
 	template<typename T>
 	T* Manage (T* obj, bool val = true)
 	{
@@ -195,16 +200,29 @@ namespace BlendInt {
 	/**
 	 * @brief Abstract class for all views
 	 *
-	 * A view is a unit of the user interface in BlendInt that knows how to draw itself.
-	 * A view also knows how to process the event from window system, e.g. a mouse click.
+	 * AbstractView is the base class of all user interface objects in
+	 * BlendInt, it receives mouse, keyboard and other events from the
+	 * window system, and draw a representation of itself with OpenGL
+	 * APIs in the OpenGL Context.
 	 *
-	 * AbstractView is the basic class for all views, and there're 2 different groups of sub classes:
-	 * 	- frames
-	 * 	- widgets
+	 * There're 2 main different groups of the sub classes of
+	 * AbstractView:
 	 *
-	 * Frame works like a window in the desktop, it usually has a background, shadow, and contains widgets.
+	 *	- frames
+	 *	- widgets
 	 *
-	 * The other group of view are called widgets, for example, buttons, sliders.
+	 * A Frame inherit from AbstractFrame and works like a window in
+	 * the desktop, it's used to contains other widgets or other
+	 * frames, dispatch render or input events, and usually manages
+	 * its own projection/view/model matrix to display its sub views.
+	 *
+	 * The other group is called widget. All widgets inherit from
+	 * AbstractWidget. A widget must be contained in a frame for
+	 * display and interact with the user.
+	 *
+	 * @see AbstractFrame
+	 * @see AbstractWidget
+	 * @see Context
 	 *
 	 * @ingroup gui
 	 */

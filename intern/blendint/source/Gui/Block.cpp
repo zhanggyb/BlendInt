@@ -97,11 +97,12 @@ namespace BlendInt {
 			if(orientation_ == Horizontal) {
 
 				if(orig_last) {
-						orig_last->SetRoundType(orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
-						widget->SetRoundType(RoundTopRight | RoundBottomRight);
-					} else {
-						widget->SetRoundType(RoundAll);
-					}
+					orig_last->SetRoundType(orig_last->round_type() &
+											~(RoundTopRight | RoundBottomRight));
+					widget->SetRoundType(RoundTopRight | RoundBottomRight);
+				} else {
+					widget->SetRoundType(RoundAll);
+				}
 
 				FillInHBlock(size());
 
@@ -109,7 +110,8 @@ namespace BlendInt {
 
 				if(orig_last) {
 					orig_last->SetEmboss(false);
-					orig_last->SetRoundType(orig_last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+					orig_last->SetRoundType(orig_last->round_type() &
+											~(RoundBottomLeft | RoundBottomRight));
 					widget->SetRoundType(RoundBottomLeft | RoundBottomRight);
 				} else {
 					widget->SetRoundType(RoundAll);
