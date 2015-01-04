@@ -37,7 +37,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ComboBox.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Icons.hpp>

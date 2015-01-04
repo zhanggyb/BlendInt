@@ -32,7 +32,6 @@
 
 namespace BlendInt {
 
-	class Widget;
 	class FrameSplitter;
 
 	class FrameSplitterHandle: public Frame
@@ -161,6 +160,8 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const Context* context);
 
+		virtual bool RemoveSubView (AbstractView* view);
+
 		void FillSubFrames ();
 
 	private:
@@ -221,9 +222,7 @@ namespace BlendInt {
 
 		void SetFocusedFrame (AbstractFrame* frame, const Context* context);
 
-		void OnHoverFrameDestroyed (AbstractFrame* frame);
-
-		void OnFocusedFrameDestroyed (AbstractFrame* frame);
+		void SetHoveredFrame (const Context* context);
 
 		Orientation orientation_;
 

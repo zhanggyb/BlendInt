@@ -42,7 +42,6 @@
 
 #include <BlendInt/Core/Image.hpp>
 #include <BlendInt/Gui/ImageViewport.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 

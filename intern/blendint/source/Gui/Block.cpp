@@ -21,9 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
 #include <BlendInt/Gui/Block.hpp>
 
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	Block::Block(Orientation orienatiaon)
 	: Widget (),
@@ -34,6 +49,37 @@ namespace BlendInt {
 		} else {
 			set_size(80, 60);
 		}
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		buffer_.generate();
+
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
+
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(
+				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
+				3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+		glEnableVertexAttribArray(
+				Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		buffer_.reset();
+
 	}
 
 	Block::~Block()
@@ -163,6 +209,19 @@ namespace BlendInt {
 			} else {
 				FillInVBlock(*request.size());
 			}
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
+
+			RequestRedraw();
+
 		}
 
 		if(request.source() == this) {
@@ -202,6 +261,31 @@ namespace BlendInt {
 		int h = out_size.height();
 
 		FillInVBlock(x, y, w, h);
+	}
+
+	ResponseType Block::Draw (const Context* context)
+	{
+		Shaders::instance->widget_inner_program()->use();
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.5f);
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		Shaders::instance->widget_outer_program()->use();
+
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.f, 0.f, 0.f, 0.8f);
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
+
+		glBindVertexArray(0);
+		buffer_.reset();
+
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Block::FillInVBlock(int x, int y, int w, int h)

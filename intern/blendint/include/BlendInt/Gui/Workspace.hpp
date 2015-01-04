@@ -172,9 +172,7 @@ namespace BlendInt {
 
 		void SetFocusedFrame (AbstractFrame* frame, const Context* context);
 
-		void OnHoverFrameDestroyed (AbstractFrame* frame);
-
-		void OnFocusedFrameDestroyed (AbstractFrame* frame);
+		void SetHoveredFrame (const Context* context);
 
 		ToolBox* left_sidebar_;
 

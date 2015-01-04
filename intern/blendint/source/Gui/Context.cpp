@@ -196,35 +196,13 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	bool Context::AddFrame (AbstractFrame* frame)
+	bool Context::AddFrame (AbstractFrame* frame, bool focus)
 	{
 		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
 
 		if(PushBackSubView(frame)) {
 
-			if(original_last) {
-				original_last->set_focus(false);
-				original_last->PerformFocusOff(this);
-			}
-
-			frame->set_focus(true);
-			frame->PerformFocusOn(this);
-
-			RequestRedraw();
-			return true;
-		}
-
-		return false;
-	}
-
-	bool Context::InsertFrame(int index, AbstractFrame* frame)
-	{
-		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
-
-		if(InsertSubView(index, frame)) {
-
-			if(original_last != last_subview()) {
-				assert(last_subview() == frame);
+			if(focus) {
 
 				if(original_last) {
 					original_last->set_focus(false);
@@ -243,7 +221,37 @@ namespace BlendInt
 		return false;
 	}
 
-	void Context::MoveFrameToTop(AbstractFrame* frame)
+	bool Context::InsertFrame(int index, AbstractFrame* frame, bool focus)
+	{
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(InsertSubView(index, frame)) {
+
+			if(focus) {
+
+				if(original_last != last_subview()) {
+					assert(last_subview() == frame);
+
+					if(original_last) {
+						original_last->set_focus(false);
+						original_last->PerformFocusOff(this);
+					}
+
+					frame->set_focus(true);
+					frame->PerformFocusOn(this);
+
+				}
+
+			}
+
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	void Context::MoveFrameToTop(AbstractFrame* frame, bool focus)
 	{
 		if(frame == nullptr) return;
 
@@ -253,13 +261,15 @@ namespace BlendInt
 
 		MoveToLast(frame);
 
-		if(original_last) {
-			original_last->set_focus(false);
-			original_last->PerformFocusOff(this);
-		}
+		if(focus) {
+			if(original_last) {
+				original_last->set_focus(false);
+				original_last->PerformFocusOff(this);
+			}
 
-		frame->set_focus(true);
-		frame->PerformFocusOn(this);
+			frame->set_focus(true);
+			frame->PerformFocusOn(this);
+		}
 	}
 
 	void Context::Draw()

@@ -100,16 +100,18 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			RequestRedraw();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	void ColorButton::PerformRoundTypeUpdate (int round_type)
@@ -122,11 +124,11 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			RequestRedraw();
 	}
@@ -141,11 +143,11 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			buffer_.bind(0);
+			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			buffer_.bind(1);
+			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			buffer_.reset();
 
 			RequestRedraw();
 	}
@@ -207,13 +209,13 @@ namespace BlendInt {
 
 		GenerateRoundedVertices(&inner_verts, &outer_verts);
 
+		buffer_.generate();
+
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
 				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
@@ -221,10 +223,8 @@ namespace BlendInt {
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
 				Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
@@ -232,7 +232,7 @@ namespace BlendInt {
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		buffer_.reset();
 	}
 
 }

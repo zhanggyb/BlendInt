@@ -33,7 +33,6 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
@@ -58,11 +57,11 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		bool AddFrame (AbstractFrame* frame);
+		bool AddFrame (AbstractFrame* frame, bool focus = true);
 
-		bool InsertFrame (int index, AbstractFrame* frame);
+		bool InsertFrame (int index, AbstractFrame* frame, bool focus = true);
 
-		void MoveFrameToTop (AbstractFrame* frame);
+		void MoveFrameToTop (AbstractFrame* frame, bool focus = true);
 
 		void Draw ();
 

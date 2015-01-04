@@ -76,8 +76,6 @@ namespace BlendInt {
 
 		AbstractWidget* DispatchHoverEventsInSubWidgets (AbstractWidget* orig, const Context* context);
 
-		AbstractFrame* CheckHoveredFrame (AbstractFrame* old, const Context* context);
-
 		void ClearHoverWidgets (AbstractView* hovered_widget);
 
 		void ClearHoverWidgets (AbstractView* hovered_widget, const Context* context);
@@ -133,9 +131,9 @@ namespace BlendInt {
 			view->PerformHoverOut(context);
 		}
 
-		static inline void delegate_dispatch_hover_event(AbstractFrame* frame, const Context* context)
+		static inline ResponseType delegate_dispatch_hover_event(AbstractFrame* frame, const Context* context)
 		{
-			frame->DispatchHoverEvent(context);
+			return frame->DispatchHoverEvent(context);
 		}
 
 		static void SetActiveFrame (const Context* context, AbstractFrame* frame);

@@ -39,7 +39,9 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (const String& title = String(""), bool modal = false);
+		explicit Dialog (bool modal = false);
+
+		Dialog (const String& title, bool modal = false);
 
 		virtual ~Dialog();
 

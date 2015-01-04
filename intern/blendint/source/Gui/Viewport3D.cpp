@@ -38,7 +38,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Gui/Viewport3D.hpp>
-
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 

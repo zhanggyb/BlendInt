@@ -350,36 +350,6 @@ namespace BlendInt {
 		return hovered_widget;
 	}
 
-	AbstractFrame* AbstractFrame::CheckHoveredFrame(AbstractFrame* old, const Context* context)
-	{
-		AbstractFrame* frame_hovered = old;
-
-		if(frame_hovered) {
-			if(!frame_hovered->Contain(context->cursor_position())) {
-
-				frame_hovered = 0;
-				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(context->cursor_position())) {
-						frame_hovered = dynamic_cast<AbstractFrame*>(p);
-						break;
-					}
-				}
-
-			}
-		} else {
-
-			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(context->cursor_position())) {
-					frame_hovered = dynamic_cast<AbstractFrame*>(p);
-					break;
-				}
-			}
-
-		}
-
-		return frame_hovered;
-	}
-
 	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget)
 	{
 #ifdef DEBUG
