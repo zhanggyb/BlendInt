@@ -256,8 +256,10 @@ void StudioContext::OnOpenDialogForBlocks()
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
 	Block* main_block = Manage(new Block(Vertical));
+	DBG_SET_NAME(main_block, "MainBlock");
 
 	Block* block1 = Manage(new Block(Horizontal));
+	DBG_SET_NAME(block1, "Block1");
 	Button* btn1 = Manage(new Button("Button1"));
 	Button* btn2 = Manage(new Button("Button2"));
 	Button* btn3 = Manage(new Button("Button3"));
@@ -266,6 +268,7 @@ void StudioContext::OnOpenDialogForBlocks()
 	block1->AddWidget(btn3);
 
 	Block* block2 = Manage(new Block(Horizontal));
+	DBG_SET_NAME(block2, "Block2");
 	Button* btn4 = Manage(new Button("Button4"));
 	Button* btn5 = Manage(new Button("Button5"));
 	Button* btn6 = Manage(new Button("Button6"));

@@ -318,9 +318,11 @@ namespace BlendInt {
 			moving_ = true;
 			cursor_point_ = context->cursor_position();
 			last_offset_ = offset();
+
+			return Finish;
 		}
 
-		return Finish;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType ScrollView::PerformMouseRelease(const Context* context)
@@ -330,7 +332,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		return Finish;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType ScrollView::PerformMouseMove(const Context* context)

@@ -19,6 +19,8 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 
+#include <BlendInt/Gui/Workspace.hpp>
+
 using namespace BlendInt;
 
 HPEContext::HPEContext()

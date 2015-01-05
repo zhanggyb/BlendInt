@@ -548,6 +548,8 @@ namespace BlendInt {
 
 				cursor_position_ = InsideRectangle;
 
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->cursor_position().x(), context->cursor_position().y());
+
 				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 				if(new_hovered_widget != hovered_widget_) {
@@ -563,6 +565,10 @@ namespace BlendInt {
 								&Dialog::OnHoverWidgetDestroyed);
 					}
 
+				}
+
+				if(hovered_widget_) {
+					// DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
 				}
 
 				// set cursor shape

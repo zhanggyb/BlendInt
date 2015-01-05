@@ -65,7 +65,7 @@ public:
 
 private:
 
-	void TryToolBox ();
+	void Debug ();
 
 	void InitializeGLFWDemoContext ();
 

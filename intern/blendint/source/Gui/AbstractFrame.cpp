@@ -34,6 +34,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Core/Rect.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
@@ -209,53 +211,38 @@ namespace BlendInt {
 		AbstractWidget* hovered_widget = orig;
 
 		SetActiveFrame(context, this);
-		Point local_position;	// the relative local position of the cursor in a widget
+		Point local;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
-		if (hovered_widget) {
+		if (hovered_widget != nullptr) {
 
 			AbstractView* superview = hovered_widget->superview();
-			Point parent_position;
+			Rect rect;
 
-			AbstractWidget* parent_widget = dynamic_cast<AbstractWidget*>(superview);
-			if(parent_widget) {
-				parent_position = this->GetAbsolutePosition(parent_widget);
+			AbstractWidget* widget = dynamic_cast<AbstractWidget*>(superview);
+			if(widget) {
+				rect.set_position(GetAbsolutePosition(widget));
+				rect.set_size(widget->size());
 			} else {
 				assert(superview == this);
-				parent_position = position();
+				rect.set_position(position());
+				rect.set_size(size());
 			}
 
-			bool not_hover_through = context->cursor_position().x() < parent_position.x() ||
-					context->cursor_position().y() < parent_position.y() ||
-					context->cursor_position().x() > (parent_position.x() + superview->size().width()) ||
-					context->cursor_position().y() > (parent_position.y() + superview->size().height());
+			bool hovered = rect.contains(context->cursor_position());
 
-			local_position.reset(context->cursor_position().x() - parent_position.x() - superview->offset().x(),
-					context->cursor_position().y() - parent_position.y() - superview->offset().y());
+			if(hovered) {
 
-			if(!not_hover_through) {
+				local.reset(
+						context->cursor_position().x() - rect.x() - superview->offset().x(),
+						context->cursor_position().y() - rect.y() - superview->offset().y());
 
-				if(hovered_widget->Contain(local_position)) {
-
-					AbstractWidget* orig = hovered_widget;
-
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
-
-					if(orig != hovered_widget) {
-//						orig->destroyed().disconnectOne(this,
-//								&SingleFrame::OnHoverWidgetDestroyed);
-//						events()->connect(hovered_widget->destroyed(), this,
-//						        &SingleFrame::OnHoverWidgetDestroyed);
-					}
-
+				if(hovered_widget->Contain(local)) {
+					hovered_widget = DispatchHoverEventDeeper(
+							hovered_widget, context, local);
 				} else {
 
-//					hovered_widget->destroyed ().disconnectOne (this,
-//								&SingleFrame::OnHoverWidgetDestroyed);
 					delegate_mouse_hover_out_event(hovered_widget, context);
-//					hovered_widget->set_hover(false);
-//					hovered_widget->PerformHoverOut(event);
-
 
 					// find which contianer contains cursor position
 					while (superview) {
@@ -265,11 +252,11 @@ namespace BlendInt {
 							break;
 						}
 
-						local_position.reset(
-								local_position.x() + superview->position().x() + superview->offset().x(),
-								local_position.y() + superview->position().y() + superview->offset().y());
+						local.reset(
+								local.x() + superview->position().x() + superview->offset().x(),
+								local.y() + superview->position().y() + superview->offset().y());
 
-						if (superview->Contain(local_position)) break;
+						if (superview->Contain(local)) break;
 
 						superview = superview->superview();
 					}
@@ -277,72 +264,70 @@ namespace BlendInt {
 					hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 
 					if(hovered_widget) {
-						hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
-//						events()->connect(hovered_widget->destroyed(), this,
-//						        &SingleFrame::OnHoverWidgetDestroyed);
+						hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
 					}
 
 				}
 
 			} else {
 
-//				hovered_widget->destroyed().disconnectOne(this,
-//					        &SingleFrame::OnHoverWidgetDestroyed);
 				delegate_mouse_hover_out_event(hovered_widget, context);
-
-//				hovered_widget->set_hover(false);
-//				hovered_widget->PerformHoverOut(event);
-
 
 				// find which contianer contains cursor position
 				superview = superview->superview();
-				while (superview) {
+				while (superview != nullptr) {
 
 					if (superview == this) {	// FIXME: the widget may be mvoed to another context
-						superview = 0;
+						superview = nullptr;
 						break;
 					}
 
-					local_position.reset(
-							local_position.x() + superview->position().x() + superview->offset().x(),
-							local_position.y() + superview->position().y() + superview->offset().y());
+					widget = dynamic_cast<AbstractWidget*>(superview);
+					if(widget) {
+						rect.set_position(GetAbsolutePosition(widget));
+						rect.set_size(widget->size());
+					} else {
+						assert(superview == this);
+						rect.set_position(position());
+						rect.set_size(size());
+					}
 
-					if(IsHoverThroughExt(superview, context->cursor_position())) break;
+					local.reset(
+							context->cursor_position().x() - rect.x() - superview->offset().x(),
+							context->cursor_position().y() - rect.y() - superview->offset().y());
+
+					if(rect.contains(context->cursor_position())) break;
+
 					superview = superview->superview();
 				}
 
 				hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 				if(hovered_widget) {
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
-//					events()->connect(hovered_widget->destroyed(), this,
-//					        &SingleFrame::OnHoverWidgetDestroyed);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
 				}
 
 			}
 
 		} else {
 
-			local_position.reset(
+			local.reset(
 					context->cursor_position().x() - position().x() - offset().x(),
 					context->cursor_position().y() - position().y() - offset().y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
-				if (p->visiable() && p->Contain(local_position)) {
+				if (p->visiable() && p->Contain(local)) {
 
 					hovered_widget = dynamic_cast<AbstractWidget*>(p);
 					delegate_mouse_hover_in_event(hovered_widget, context);
-//					hovered_widget->set_hover(true);
-//					hovered_widget->PerformHoverIn(event);
 
 					break;
 				}
 			}
 
 			if(hovered_widget) {
-				hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local_position);
-//				events()->connect(hovered_widget->destroyed(), this,
-//				        &SingleFrame::OnHoverWidgetDestroyed);
+				hovered_widget = DispatchHoverEventDeeper(
+						hovered_widget, context, local);
 			}
 
 		}
@@ -474,25 +459,22 @@ namespace BlendInt {
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const Context* context,
-			Point& local_position)
+			Point& local)
 	{
 		AbstractWidget* retval = widget;
 
-		local_position.reset(
-				local_position.x () - widget->position ().x ()
-				- widget->offset ().x (),
-				local_position.y () - widget->position ().y ()
-				- widget->offset ().y ()
-		);
+		local.reset(
+				local.x() - widget->position().x() - widget->offset().x(),
+		        local.y() - widget->position().y() - widget->offset().y());
 
 		for (AbstractView* p = widget->last_subview (); p;
 				p = p->previous_view ()) {
 
-			if (p->visiable () && p->Contain (local_position)) {
+			if (p->visiable () && p->Contain (local)) {
 				retval = dynamic_cast<AbstractWidget*>(p);
 				delegate_mouse_hover_in_event (retval, context);
 
-				retval = DispatchHoverEventDeeper(retval, context, local_position);
+				retval = DispatchHoverEventDeeper(retval, context, local);
 				break;
 			}
 	

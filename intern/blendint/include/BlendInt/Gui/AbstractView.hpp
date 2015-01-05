@@ -386,15 +386,6 @@ namespace BlendInt {
 
 		static void MoveBackward (AbstractView* view);
 
-		/**
-		 * @brief Check if the view and its all container are under cursor position
-		 *
-		 * @note There's no meaning to use this function to test Context or Frame.
-		 */
-		static bool IsHoverThrough (const AbstractView* view, const Point& cursor);
-
-		static bool IsHoverThroughExt (const AbstractView* view, const Point& global_cursor_position);
-
 		static void SetDefaultBorderWidth (float border);
 
 		static inline float default_border_width ()

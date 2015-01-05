@@ -456,42 +456,6 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractView::IsHoverThrough(const AbstractView* widget, const Point& cursor)
-	{
-		AbstractView* container = widget->superview_;
-		if(container == 0) return false;	// if a widget hovered was removed from any container.
-
-		if(widget->visiable() && widget->Contain(cursor)) {
-
-			while(container) {
-				if((!container->visiable()) || (!container->Contain(cursor)))
-					return false;
-
-				container = container->superview();
-			}
-
-			return true;
-
-		}
-
-		return false;
-	}
-
-	bool AbstractView::IsHoverThroughExt (const AbstractView* widget, const Point& global_cursor_position)
-	{
-		Point global_position = widget->GetGlobalPosition();
-
-		if(global_cursor_position.x() < global_position.x() ||
-				global_cursor_position.y() < global_position.y() ||
-				global_cursor_position.x() > (global_position.x() + widget->size().width()) ||
-				global_cursor_position.y() > (global_position.y() + widget->size().height()))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	int AbstractView::GetOutlineVertices (int round_type)
 	{
 		round_type = round_type & RoundAll;

@@ -112,7 +112,7 @@ namespace BlendInt {
 	{
 		VLayout* vbox = Manage(new VLayout);
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
-		vbox->SetMargin(Margin(2, 2, 2, 2));
+		vbox->SetMargin(Margin(1, 1, 1, 1));
 		vbox->SetSpace(2);
 
 		path_entry_ = Manage(new TextEntry);

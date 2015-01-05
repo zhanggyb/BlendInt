@@ -60,7 +60,7 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void reset (int x, int y)
+		void reset (int x = 0, int y = 0)
 		{
 			x_ = x;
 			y_ = y;
