@@ -120,6 +120,16 @@ namespace BlendInt {
 		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, kMouseAction, kMouseButton, kModifiers);
 	}
 
+#ifdef __APPLE__
+
+	// MUST set this callback to render the context when resizing in OSX
+	static void CbWindowRefresh (GLFWwindow* window)
+	{
+		main_context->Draw();
+		glfwSwapBuffers(window);
+	}
+#endif
+	
 	void Init ()
 	{
 		/* Initialize the library */
@@ -148,6 +158,9 @@ namespace BlendInt {
 		glfwSetCharCallback(window, &CbChar);
 		glfwSetMouseButtonCallback(window, &CbMouseButton);
 		glfwSetCursorPosCallback(window, &CbCursorPos);
+#ifdef __APPLE__
+		glfwSetWindowRefreshCall(window, &CbWindowRefresh);
+#endif
 
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window);

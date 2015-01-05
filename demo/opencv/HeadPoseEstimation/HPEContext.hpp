@@ -20,6 +20,7 @@
 #include <BlendInt/Gui/FrameSplitter.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Workspace.hpp>
 
 namespace BI=BlendInt;
 
@@ -49,7 +50,7 @@ private:
 
 	BI::Panel* CreateButtons ();
 
-	BI::FrameSplitter* CreateWorkspaceOnce ();
+	BI::Workspace* CreateWorkspaceOnce ();
 
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 

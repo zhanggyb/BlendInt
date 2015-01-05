@@ -24,8 +24,6 @@
 #ifndef _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
 #define _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
 
-#include <BlendInt/OpenGL/GLBuffer.hpp>
-
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -67,9 +65,6 @@ namespace BlendInt {
 	private:
 
 		Orientation orientation_;
-
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 	};
 
