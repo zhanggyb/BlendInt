@@ -138,21 +138,107 @@ namespace BlendInt {
 		m_shadow_offset_y = offset_y;
 	}
 
-	int Font::Print (const Point& pos, const std::string& string,
-	        size_t start) const
+	int Font::Print (float x, float y, const char* string, size_t start) const
 	{
-		return Print(pos.x(), pos.y(), string, string.length(), start);
+		return Print(x, y, string, strlen(string), start);
 	}
 
-	int Font::Print (const Point& pos, const std::string& string, size_t length,
-	        size_t start) const
+	int Font::Print (float x, float y, const char* string, size_t length, size_t start) const
 	{
-		return Print(pos.x(), pos.y(), string, length, start);
-	}
+		if(length == 0)	return 0;
 
-	int Font::Print (const glm::vec2& pos, const std::string& string, size_t length, size_t start) const
-	{
-		return Print(pos.x, pos.y, string, length, start);
+		size_t str_len = strlen(string);
+
+		if(start >= str_len) return 0;
+
+		int advance = 0;	// the return value
+
+		RefPtr<GLSLProgram> program = Shaders::instance->widget_text_program();
+		program->use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		glUniform1i(Shaders::instance->location(Stock::WIDGET_TEXT_TEXTURE), 0);
+
+		size_t valid_str_len = std::min(str_len, length);
+
+		// TODO: support left->right, and right->left text
+		char const* p = 0;
+		const GlyphExt* glyph_p = 0;
+
+		glBindVertexArray(m_cache->m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
+
+		float tx = x + m_pen.x() + m_shadow_offset_x;
+		float ty = y + m_pen.y() + m_shadow_offset_y;
+
+		if(m_shadow) {
+
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+			glUniform4f(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR),
+					m_color.r() / 4,
+					m_color.g() / 4,
+					m_color.b() / 4,
+					m_color.a() / 4);
+
+			p = string;
+			for (size_t i = 0; i < start; i++) {
+				p++;
+			}
+
+			for (size_t i = 0; i < valid_str_len; i++) {
+				glyph_p = m_cache->Query(m_data, *p);
+				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
+
+				advance += glyph_p->advance_x;
+				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+								&(glyph_p->vertices[0]),
+								GL_DYNAMIC_DRAW);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				tx += glyph_p->advance_x;
+				glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+
+				p++;
+			}
+
+		}
+
+		tx = x + m_pen.x();
+		ty = y + m_pen.y();
+
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_TEXT_COLOR), 1, m_color.data());
+
+		p = string;
+		for (size_t i = 0; i < start; i++) {
+			p++;
+		}
+
+		for (size_t i = 0; i < valid_str_len; i++) {
+
+			glyph_p = m_cache->Query(m_data, *p);
+			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
+
+			advance += glyph_p->advance_x;
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+							&(glyph_p->vertices[0]),
+							GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			tx += glyph_p->advance_x;
+			glUniform2f(Shaders::instance->location(Stock::WIDGET_TEXT_POSITION), tx, ty);
+
+			p++;
+		}
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		program->reset();
+
+		return advance;
 	}
 
 	int Font::Print (float x, float y, const std::string& string, size_t start) const
@@ -244,23 +330,6 @@ namespace BlendInt {
 		program->reset();
 
 		return advance;
-	}
-
-	int Font::Print (const Point& pos, const String& string, size_t length,
-	        size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, length, start);
-	}
-
-	int Font::Print (const Point& pos, const String& string, size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, string.length(), start);
-	}
-
-	int Font::Print (const glm::vec2& pos, const String& string, size_t length,
-	        size_t start) const
-	{
-		return Print(pos.x, pos.y, string, length, start);
 	}
 
 	int Font::Print (float x, float y, const String& string, size_t start) const

@@ -126,11 +126,10 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		glm::vec2 pos(0.f, 0.f);
-		pos.x += Icons::instance->num()->size().width()/2.f;
-		pos.y += size().height()/2.f;
+		float x = Icons::instance->num()->size().width()/2.f;
+		float y = size().height()/2.f;
 
-		Icons::instance->num()->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
+		Icons::instance->num()->Draw(x, y, rotate, 1.5f, Color(0x0F0F0FFF));
 
 		return Finish;
 	}

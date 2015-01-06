@@ -195,11 +195,10 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		glm::vec2 pos(0.f, 0.f);
-		pos.x += size().width() / 2.f;
-		pos.y += size().height() / 2.f;
+		float x = size().width() / 2.f;
+		float y = size().height() / 2.f;
 
-		Icons::instance->cross()->Draw(pos, Color(0x0F0F0FFF));
+		Icons::instance->cross()->Draw(x, y, Color(0x0F0F0FFF));
 
 		return Finish;
 	}

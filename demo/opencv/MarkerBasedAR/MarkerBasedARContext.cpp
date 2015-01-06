@@ -71,8 +71,10 @@ ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 
 	Expander* expander = Manage(new Expander("Resolution"));
 
-	NumericalSlider* ns1 = Manage(new NumericalSlider);
-	NumericalSlider* ns2 = Manage(new NumericalSlider);
+	NumericalSlider* ns1 = Manage(new NumericalSlider("Width:"));
+	ns1->SetValue(50.f);
+	NumericalSlider* ns2 = Manage(new NumericalSlider("Height:"));
+	ns2->SetValue(50.f);
 
 	ToggleButton* open = Manage(new ToggleButton("Open Camera 0"));
 	Separator* separator1 = Manage(new Separator);

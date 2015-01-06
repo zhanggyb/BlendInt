@@ -36,15 +36,18 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
+#include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+
 namespace BlendInt {
 
 	using Stock::Shaders;
+	using Stock::Icons;
 
 	Margin NumericalSlider::default_numberslider_padding(2, 2, 2, 2);
 
@@ -57,21 +60,41 @@ namespace BlendInt {
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
 
+		font_.set_pen(Icons::instance->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
+				+ std::abs(font_.GetDescender()));
+
+		InitializeNumericalSlider ();
+	}
+
+	NumericalSlider::NumericalSlider (const String& title, Orientation orientation)
+	: AbstractSlider<double>(orientation),
+	  title_(title)
+	{
+		set_round_type(RoundAll);
+		int h = font_.GetHeight();
+		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
+						h + default_numberslider_padding.vsum());
+		set_round_radius(size().height() / 2);
+
+		font_.set_pen(Icons::instance->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
+				+ std::abs(font_.GetDescender()));
+
 		InitializeNumericalSlider ();
 	}
 
 	NumericalSlider::~NumericalSlider ()
 	{
-		glDeleteVertexArrays(2, vao_);
+		vao_.clear();	// no need to call
 	}
 
 	void NumericalSlider::SetTitle (const String& title)
 	{
+		if(title_ == title) return;
+
 		title_ = title;
 		//Rect text_outline = m_font.GetTextOutline(m_title);
 
-		font_.set_pen(round_radius(),
-				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
+		RequestRedraw();
 	}
 
 	bool NumericalSlider::IsExpandX() const
@@ -214,8 +237,8 @@ namespace BlendInt {
 	
 	ResponseType NumericalSlider::Draw (const Context* context)
 	{
-		float x = context->viewport_origin().x();
-		x = (Shaders::instance->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f)).x - x;
+		float x = context->active_frame()->GetRelativePosition(this).x()
+				- context->viewport_origin().x();
 
 		int outline_vertices = GetOutlineVertices(round_type());
 		float len = GetSlidePosition(default_border_width(), value());
@@ -232,8 +255,7 @@ namespace BlendInt {
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Theme::instance->number_slider().inner_sel.data());
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Theme::instance->number_slider().inner.data());
 
-		glBindVertexArray(vao_[0]);
-
+		vao_.bind(0);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
 		Shaders::instance->widget_outer_program()->use();
@@ -242,7 +264,7 @@ namespace BlendInt {
 				0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->number_slider().outline.data());
 
-		glBindVertexArray(vao_[1]);
+		vao_.bind(1);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
@@ -259,9 +281,23 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
+		float icon_x = Icons::instance->num()->size().width();
+
+		float icon_y = size().height() / 2.f;
+		Icons::instance->num()->Draw(icon_x, icon_y, 180.f, 1.f, Color(0x0F0F0FFF));
+
+		icon_x = size().width() - Icons::instance->num()->size().width();
+		Icons::instance->num()->Draw(icon_x, icon_y, 0.f, 1.f, Color(0x0F0F0FFF));
+
+		int last_text = 0;
 		if(title_.size()) {
-			font_.Print(0.f, 0.f, title_);
+			last_text = font_.Print(0.f, 0.f, title_);
 		}
+
+		char buf[32];
+		snprintf(buf, 32, "%.1f", value());
+
+		font_.Print(last_text + 1, 0.f, buf);
 
 		return Finish;
 	}
@@ -291,11 +327,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		glGenVertexArrays(2, vao_);
+		vao_.generate();
 		buffer_.generate();
 
 		// generate buffer for inner
-		glBindVertexArray(vao_[0]);
+		vao_.bind(0);
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -304,15 +340,14 @@ namespace BlendInt {
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
-		glBindVertexArray(vao_[1]);
-
+		vao_.bind(1);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(0);
+		vao_.reset();
 		buffer_.reset();
 	}
 	

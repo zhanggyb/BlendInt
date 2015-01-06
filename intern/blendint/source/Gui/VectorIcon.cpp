@@ -176,19 +176,14 @@ namespace BlendInt {
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
-		Draw(glm::vec2(x, y), color, gamma);
+		Draw(x, y, color, gamma);
 	}
 
-	void VectorIcon::Draw (float x, float y, const Color& color, short gamma) const
-	{
-		Draw(glm::vec2(x, y), color, gamma);
-	}
-
-	void VectorIcon::Draw(const glm::vec2& pos, const Color& color, short gamma) const
+	void VectorIcon::Draw(float x, float y, const Color& color, short gamma) const
 	{
 		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
@@ -204,11 +199,11 @@ namespace BlendInt {
 		GLSLProgram::reset();
 	}
 
-	void VectorIcon::Draw(const glm::vec2& pos, float angle, float scale, const Color& color, short gamma) const
+	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const
 	{
 		Shaders::instance->widget_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
+		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 

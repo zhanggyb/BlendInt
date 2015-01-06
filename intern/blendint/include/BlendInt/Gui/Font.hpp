@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_GUI_FONT_HPP_
 #define _BLENDINT_GUI_FONT_HPP_
 
-#include <glm/mat4x4.hpp>
-
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Core/Color.hpp>
@@ -90,21 +88,13 @@ namespace BlendInt {
 
 		void SetShadow (bool shadow, float offset_x = 1.5f, float offset_y = -1.5f);
 
-		int Print (const Point& pos, const std::string& string, size_t start = 0) const;
+		int Print (float x, float y, const char* string, size_t start = 0) const;
 
-		int Print (const Point& pos, const std::string& string, size_t length, size_t start) const;
-
-		int Print (const glm::vec2& pos, const std::string& string, size_t length, size_t start) const;
+		int Print (float x, float y, const char* string, size_t length, size_t start) const;
 
 		int Print (float x, float y, const std::string& string, size_t start = 0) const;
 
 		int Print (float x, float y, const std::string& string, size_t length, size_t start) const;
-
-		int Print (const Point& pos, const String& string, size_t start = 0) const;
-
-		int Print (const Point& pos, const String& string, size_t length, size_t start = 0) const;
-
-		int Print (const glm::vec2& pos, const String& string, size_t length, size_t start) const;
 
 		int Print (float x, float y, const String& string, size_t start = 0) const;
 

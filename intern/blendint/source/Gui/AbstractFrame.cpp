@@ -81,6 +81,23 @@ namespace BlendInt {
 		return pos;
 	}
 
+	Point AbstractFrame::GetRelativePosition(const AbstractWidget* widget)
+	{
+#ifdef DEBUG
+		assert(widget);
+#endif
+
+		Point pos = widget->position();
+
+		AbstractView* p = widget->superview();
+		while(p && (p != this)) {
+			pos = pos + p->position() + p->offset();
+			p = p->superview();
+		}
+
+		return pos;
+	}
+
 	AbstractFrame* AbstractFrame::GetFrame(AbstractView* widget)
 	{
 		AbstractView* container = widget->superview ();

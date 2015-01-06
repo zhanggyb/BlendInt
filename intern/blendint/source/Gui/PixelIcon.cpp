@@ -322,8 +322,7 @@ namespace BlendInt {
 	void PixelIcon::Draw (float x, float y, short gamma) const
 	{
 		if(texture_) {
-			RefPtr<GLSLProgram> program = Shaders::instance->widget_image_program();
-			program->use();
+			Shaders::instance->widget_image_program()->use();
 
 			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), x, y);
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), gamma);
@@ -337,8 +336,7 @@ namespace BlendInt {
 			glBindVertexArray(0);
 			texture_->reset();
 
-			program->reset();
-
+			GLSLProgram::reset();
 		}
 	}
 
