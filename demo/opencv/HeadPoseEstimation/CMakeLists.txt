@@ -21,5 +21,5 @@ if(NOT WITH_BUILTIN_GLFW3)
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(HPE BlendInt CVWindow ${LIBS})
+target_link_libraries(HPE BlendInt DemoCommon ${LIBS})
 

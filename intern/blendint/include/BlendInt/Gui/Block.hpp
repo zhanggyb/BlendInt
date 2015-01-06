@@ -50,6 +50,8 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual ResponseType Draw (const Context* context);
+
 	private:
 
 		void FillInHBlock (const Size& out_size);

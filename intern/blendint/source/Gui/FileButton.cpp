@@ -157,7 +157,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType FileButton::Draw (Profile& profile)
+	ResponseType FileButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

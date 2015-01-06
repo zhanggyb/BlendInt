@@ -24,13 +24,13 @@
 #ifndef _BLENDINT_GUI_MENU_HPP_
 #define _BLENDINT_GUI_MENU_HPP_
 
-#include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
 #include <BlendInt/Gui/FrameShadow.hpp>
+
+#include <BlendInt/Gui/MenuItem.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -61,16 +61,23 @@ namespace BlendInt {
 
 		void AddAction (const RefPtr<Action>& item);
 
-		void RemoveAction (size_t index);
+		bool AddMenuItem (MenuItem* item);
 
-		void RemoveAction (const RefPtr<Action>& item);
+		bool InsertMenuItem (int index, MenuItem* item);
+
+		bool AddButton (Button* btn);
 
 		const String& title () const
 		{
-			return m_title;
+			return title_;
 		}
 
 		Cpp::EventRef<Action*> triggered() {return m_triggered;}
+
+		const Font& font () const
+		{
+			return font_;
+		}
 
 	protected:
 
@@ -80,61 +87,53 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 	private:
+
+		virtual ResponseType DispatchHoverEvent (const Context* context);
 
 		void InitializeMenu ();
 
 		void ResetHighlightBuffer (int width);
 
-		unsigned int GetHighlightNo (int y);
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget, const Context* context);
+
+		String title_;
+
+		Font font_;
 
 		GLuint vao_[3];
 
-		/**
-		 * @brief The highlight item in Menu
-		 *
-		 * 	- 0: no highlight
-		 * 	- n: the n'th item in the Menu
-		 */
-		unsigned int m_highlight;	// the highlight item index
-
-		FrameShadow* shadow_;
-
-		String m_title;
-
-		Font m_font;
-
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
-
-		RefPtr<GLArrayBuffer> m_highlight_buffer;
-
-		std::deque<RefPtr<Action> > m_list;
+		GLBuffer<ARRAY_BUFFER, 3> buffer_;
 
 		Cpp::Event<Action*> m_hovered;
 
@@ -144,8 +143,15 @@ namespace BlendInt {
 
 		glm::mat3 model_matrix_;
 
-		//Cpp::Event<ActionItem*> m_triggered;
-		static int kDefaultMenuItemHeight;
+		AbstractWidget* focused_widget_;
+
+		AbstractWidget* hovered_widget_;
+
+		RefPtr<FrameShadow> shadow_;
+
+        GLTexture2D texture_buffer_;
+
+		int cursor_range_;
 
 		static int kDefaultIconSpace;
 

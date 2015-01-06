@@ -39,6 +39,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -228,7 +229,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType ScrollBar::Draw (Profile& profile)
+	ResponseType ScrollBar::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -275,7 +276,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ScrollBar::MouseHoverOutEvent(const MouseEvent& event)
+	void ScrollBar::PerformHoverOut(const Context* context)
 	{
 		/*
 		if(m_slide.highlight()) {
@@ -285,13 +286,13 @@ namespace BlendInt {
 		*/
 	}
 
-	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
+	ResponseType ScrollBar::PerformMousePress (const Context* context)
 	{
-		Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+		Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 
 		if (CursorOnSlideIcon(local_position)) {
 
-			m_cursor_origin = event.position();
+			m_cursor_origin = context->cursor_position();
 			m_last_value = value();
 			set_pressed(true);
 			fire_slider_pressed();
@@ -302,14 +303,14 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ScrollBar::MouseMoveEvent (const MouseEvent& event)
+	ResponseType ScrollBar::PerformMouseMove (const Context* context)
 	{
 		if (pressed_ext()) {
 
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if (GetNewValue(event.position(), &new_value)) {
+			if (GetNewValue(context->cursor_position(), &new_value)) {
 				set_value(new_value);
 				RequestRedraw();
 				fire_slider_moved_event(value());
@@ -317,7 +318,7 @@ namespace BlendInt {
 
 		} else {
 
-			//Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+			//Point local_position = context->cursor_position() - event.frame()->GetAbsolutePosition(this);
 
 			/*
 			if (CursorOnSlideIcon(local_position)) {
@@ -334,13 +335,13 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollBar::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType ScrollBar::PerformMouseRelease (const Context* context)
 	{
 		if (pressed_ext()) {
 
 			set_pressed(false);
 
-			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 
 			RequestRedraw();
 

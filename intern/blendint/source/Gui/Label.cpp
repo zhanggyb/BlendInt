@@ -84,7 +84,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Label::Draw (Profile& profile)
+	ResponseType Label::Draw (const Context* context)
 	{
 		if(text_.length()) {
 			font_.Print(0.f, 0.f, text_, text_length_, 0);

@@ -155,11 +155,6 @@ namespace BlendInt {
 		return Print(pos.x, pos.y, string, length, start);
 	}
 
-	int Font::Print (const glm::vec3& pos, const std::string& string, size_t length, size_t start) const
-	{
-		return Print(pos.x, pos.y, string, length, start);
-	}
-
 	int Font::Print (float x, float y, const std::string& string, size_t start) const
 	{
 		return Print(x, y, string, string.length(), start);
@@ -263,12 +258,6 @@ namespace BlendInt {
 	}
 
 	int Font::Print (const glm::vec2& pos, const String& string, size_t length,
-	        size_t start) const
-	{
-		return Print(pos.x, pos.y, string, length, start);
-	}
-
-	int Font::Print (const glm::vec3& pos, const String& string, size_t length,
 	        size_t start) const
 	{
 		return Print(pos.x, pos.y, string, length, start);

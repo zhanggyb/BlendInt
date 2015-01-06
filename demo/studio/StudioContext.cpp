@@ -7,14 +7,16 @@
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 using namespace BI;
 
-StudioContext::StudioContext()
+StudioContext::StudioContext(GLFWwindow* window)
 : BI::Context(),
   button_(0),
   pop_(0),
-  menubar_(nullptr)
+  menubar_(nullptr),
+  window_(window)
 {
 	InitializeStudioContext();
 
@@ -24,6 +26,11 @@ StudioContext::StudioContext()
 StudioContext::~StudioContext ()
 {
 
+}
+
+void StudioContext::SynchronizeWindow()
+{
+	glfwPostEmptyEvent();
 }
 
 void StudioContext::InitializeStudioContext()
@@ -55,6 +62,7 @@ Panel* StudioContext::CreateButtonsForWidgets()
 	
 	Button* btn4 = Manage(new Button("TextEntry"));
 	Button* btn5 = Manage(new Button("NumericalSlider"));
+	events()->connect(btn5->clicked(), this, &StudioContext::OnOpenDialogForNumericalSlider);
 
 	group2->AddWidget(btn4);
 	group2->AddWidget(btn5);
@@ -111,10 +119,11 @@ Panel* StudioContext::CreateButtonsForMenuTest()
 	Block * group1 = Manage(new Block(Horizontal));
 
 	Button* btn1 = Manage(new Button("Menu1"));
-	Button* btn2 = Manage(new Button("Menu2"));
+	Button* btn2 = Manage(new Button("Clock"));
 	Button* btn3 = Manage(new Button("Menu3"));
 
-	events()->connect(btn1->clicked(), this, &StudioContext::OnOpenMenu);
+	events()->connect(btn1->clicked(), this, &StudioContext::OnOpenMenu1);
+	events()->connect(btn2->clicked(), this, &StudioContext::OnOpenDialogForClock);
 
 	group1->AddWidget(btn1);
 	group1->AddWidget(btn2);
@@ -199,6 +208,32 @@ void StudioContext::OnOpenDialogForButton()
 {
 }
 
+void StudioContext::OnOpenDialogForNumericalSlider()
+{
+	Dialog * dialog = Manage(new Dialog("NumericalSlider", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Panel* panel1 = Manage(new Panel);
+	panel1->MoveTo(20, 20);
+
+	Panel* panel2 = Manage(new Panel);
+	panel2->MoveTo(20, 20);
+	panel2->Resize(250, 250);
+
+	NumericalSlider* ns = Manage(new NumericalSlider);
+	ns->Resize(150, ns->size().height());
+	ns->MoveTo(50, 50);
+	ns->SetValue(50.0);
+
+	panel2->AddWidget(ns);
+	panel1->AddWidget(panel2);
+
+	dialog->AddWidget(panel1);
+
+	AddFrame(dialog);
+}
+
 void StudioContext::OnOpenPanel1 (AbstractButton* btn)
 {
 	Panel* panel1 = CreateButtonsForWidgets();
@@ -221,8 +256,10 @@ void StudioContext::OnOpenDialogForBlocks()
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
 	Block* main_block = Manage(new Block(Vertical));
+	DBG_SET_NAME(main_block, "MainBlock");
 
 	Block* block1 = Manage(new Block(Horizontal));
+	DBG_SET_NAME(block1, "Block1");
 	Button* btn1 = Manage(new Button("Button1"));
 	Button* btn2 = Manage(new Button("Button2"));
 	Button* btn3 = Manage(new Button("Button3"));
@@ -231,6 +268,7 @@ void StudioContext::OnOpenDialogForBlocks()
 	block1->AddWidget(btn3);
 
 	Block* block2 = Manage(new Block(Horizontal));
+	DBG_SET_NAME(block2, "Block2");
 	Button* btn4 = Manage(new Button("Button4"));
 	Button* btn5 = Manage(new Button("Button5"));
 	Button* btn6 = Manage(new Button("Button6"));
@@ -243,16 +281,36 @@ void StudioContext::OnOpenDialogForBlocks()
 	main_block->Resize(main_block->GetPreferredSize());
 	main_block->MoveTo(100, 100);
 
+	DBG_PRINT_MSG("main block size: (%d, %d)", main_block->size().width(), main_block->size().height());
+	
 	dialog->AddWidget(main_block);
 
 	AddFrame(dialog);
 }
 
-void StudioContext::OnOpenMenu()
+void StudioContext::OnOpenDialogForClock()
+{
+	Dialog * dialog = Manage(new Dialog("Clock"));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	Clock* clock = Manage(new Clock);
+	clock->Start();
+
+	dialog->AddWidget(clock);
+	clock->MoveTo((dialog->size().width() - clock->size().width()) / 2, (dialog->size().height() - clock->size().height()) / 2);
+
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenMenu1()
 {
 	Menu* menu1 = Manage(new Menu);
 	menu1->Resize(menu1->GetPreferredSize());
 	menu1->MoveTo((size().width() - menu1->size().width()) / 2, (size().height() - menu1->size().height()) / 2);
+
+	menu1->AddAction("MenuItem1");
+	menu1->AddButton(Manage(new Button("Test")));
 
 	AddFrame(menu1);
 }

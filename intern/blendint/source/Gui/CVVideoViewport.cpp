@@ -235,11 +235,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool CVVideoViewport::PreDraw(Profile& profile)
+	bool CVVideoViewport::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -252,7 +252,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType CVVideoViewport::Draw(Profile& profile)
+	ResponseType CVVideoViewport::Draw(const Context* context)
 	{
 		if(status_ == VideoStop) {
 			return Finish;
@@ -268,6 +268,20 @@ namespace BlendInt {
 				if(frame_.data) {
 
 					switch (frame_.channels()) {
+
+						case 1: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+							texture_.SetImage(0, GL_RED, frame_.cols, frame_.rows,
+									0, GL_RED, GL_UNSIGNED_BYTE, frame_.data);
+							break;
+						}
+
+						case 2: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+							texture_.SetImage(0, GL_RG, frame_.cols, frame_.rows,
+									0, GL_RG, GL_UNSIGNED_BYTE, frame_.data);
+							break;
+						}
 
 						case 3: {
 							glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
@@ -319,10 +333,15 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void CVVideoViewport::PostDraw(Profile& profile)
+	void CVVideoViewport::PostDraw(const Context* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
+		glViewport(0, 0, context->size().width(), context->size().height());
+	}
+
+	void CVVideoViewport::ProcessImage(cv::Mat& iamge)
+	{
+		// TODO: override this
 	}
 
 	void CVVideoViewport::InitializeCVVideoView()
@@ -368,6 +387,9 @@ namespace BlendInt {
 			if(mutex_.trylock()) {
 
 				video_stream_ >> frame_;
+
+				ProcessImage(frame_);
+
 				upload_ = true;
 
 				mutex_.unlock();

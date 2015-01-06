@@ -2,14 +2,20 @@
 
 #include <iostream>
 
-#include <BlendInt/HID/KeyEvent.hpp>
-#include <BlendInt/HID/MouseEvent.hpp>
-
 namespace BlendInt {
 
-	static KeyEvent global_key_event;
-	static MouseEvent global_mouse_event;
+	static KeyAction kKeyAction = KeyNone;
+	static int kKey = 0;
+	static int kModifiers = 0;
+	static int kScancode = 0;
+	static String kString;
+
+	static MouseAction kMouseAction = MouseNone;
+	static MouseButton kMouseButton = MouseButtonLeft;
+
 	static Context* main_context = 0;
+	static int cursor_pos_x = 0;
+	static int cursor_pos_y = 0;
 
 	static void CbError (int error, const char* description)
 	{
@@ -28,90 +34,91 @@ namespace BlendInt {
 	{
 		switch (action) {
 			case GLFW_PRESS:
-                global_key_event.set_action(KeyPress);
+				kKeyAction = KeyPress;
 				break;
 			case GLFW_RELEASE:
-                global_key_event.set_action(KeyRelease);
+				kKeyAction = KeyRelease;
 				break;
 			case GLFW_REPEAT:
-                global_key_event.set_action(KeyRepeat);
+				kKeyAction = KeyRepeat;
 				break;
 			default:
-                global_key_event.set_action(KeyNone);
+				kKeyAction = KeyNone;
 				break;
 		}
 
-		global_key_event.set_key(key);
-		global_key_event.set_scancode(scancode);
-		global_key_event.set_modifiers(mods);
-        global_key_event.clear_text();
+		kKey = key;
+		kModifiers = mods;
+		kScancode = scancode;
+		kString.clear();
 
-        main_context->DispatchKeyEvent(global_key_event);
+		main_context->DispatchKeyEvent(kKeyAction, kKey, kModifiers, kScancode, kString);
 	}
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
 	{
+
 #ifdef __APPLE__
 		// glfw3 in Mac OS will call this function if press some unprintalbe keys such as Left, Right, Up, Down
-			if(character > 255) {
-				DBG_PRINT_MSG("unprintable character in Mac: %u", character);
-				return;
-			}
+		if(character > 255) {
+			DBG_PRINT_MSG("unprintable character in Mac: %u", character);
+			return;
+		}
 #endif
-		global_key_event.set_text(character);
 
-		main_context->DispatchKeyEvent(global_key_event);
+		kString.clear();
+		kString.push_back(character);
+
+		main_context->DispatchKeyEvent(kKeyAction, kKey, kModifiers, kScancode, kString);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
 							  int mods)
 	{
-		MouseAction mouse_action = MouseNone;
-
 		switch (action) {
 			case GLFW_RELEASE:
-				mouse_action = MouseRelease;
+				kMouseAction = MouseRelease;
 				break;
 			case GLFW_PRESS:
-				mouse_action = MousePress;
+				kMouseAction = MousePress;
 				break;
 			case GLFW_REPEAT:
-				mouse_action = MouseNone;
+				kMouseAction = MouseNone;
 				break;
 			default:
 				break;
 		}
 
-		MouseButton mouse_button = MouseButtonNone;
+		kMouseButton = MouseButtonNone;
 
 		switch(button) {
 			case GLFW_MOUSE_BUTTON_1:
-				mouse_button = MouseButtonLeft;
+				kMouseButton = MouseButtonLeft;
 				break;
 			case GLFW_MOUSE_BUTTON_2:
-				mouse_button = MouseButtonRight;
+				kMouseButton = MouseButtonRight;
 				break;
 			case GLFW_MOUSE_BUTTON_3:
-				mouse_button = MouseButtonMiddle;
+				kMouseButton = MouseButtonMiddle;
 				break;
 			default:
 				break;
 		}
 
-		global_mouse_event.set_button(mouse_button);
-		global_mouse_event.set_action(mouse_action);
-		global_mouse_event.set_modifiers(mods);
+		kModifiers = mods;
 
-		main_context->DispatchMouseEvent(global_mouse_event);
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, kMouseAction, kMouseButton, kModifiers);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
-        global_mouse_event.set_action(MouseMove);
-        global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), main_context->size().height() - static_cast<int>(ypos));
+		cursor_pos_x = (int)xpos;
+		cursor_pos_y = (int)ypos;
 
-		main_context->DispatchMouseEvent(global_mouse_event);
+		kMouseAction = MouseMove;
+		kMouseButton = MouseButtonNone;
+
+		main_context->DispatchMouseEvent(cursor_pos_x, cursor_pos_y, kMouseAction, kMouseButton, kModifiers);
 	}
 
 	void Init ()

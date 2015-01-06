@@ -21,9 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
 #include <BlendInt/Gui/Block.hpp>
 
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	Block::Block(Orientation orienatiaon)
 	: Widget (),
@@ -51,11 +66,12 @@ namespace BlendInt {
 			if(orientation_ == Horizontal) {
 
 				if(orig_last) {
-						orig_last->SetRoundType(orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
-						widget->SetRoundType(RoundTopRight | RoundBottomRight);
-					} else {
-						widget->SetRoundType(RoundAll);
-					}
+					orig_last->SetRoundType(orig_last->round_type() &
+											~(RoundTopRight | RoundBottomRight));
+					widget->SetRoundType(RoundTopRight | RoundBottomRight);
+				} else {
+					widget->SetRoundType(RoundAll);
+				}
 
 				FillInHBlock(size());
 
@@ -63,7 +79,8 @@ namespace BlendInt {
 
 				if(orig_last) {
 					orig_last->SetEmboss(false);
-					orig_last->SetRoundType(orig_last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+					orig_last->SetRoundType(orig_last->round_type() &
+											~(RoundBottomLeft | RoundBottomRight));
 					widget->SetRoundType(RoundBottomLeft | RoundBottomRight);
 				} else {
 					widget->SetRoundType(RoundAll);
@@ -156,6 +173,7 @@ namespace BlendInt {
 	void Block::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+
 			set_size(*request.size());
 
 			if(orientation_ == Horizontal) {
@@ -163,6 +181,8 @@ namespace BlendInt {
 			} else {
 				FillInVBlock(*request.size());
 			}
+
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -202,6 +222,11 @@ namespace BlendInt {
 		int h = out_size.height();
 
 		FillInVBlock(x, y, w, h);
+	}
+
+	ResponseType Block::Draw (const Context* context)
+	{
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Block::FillInVBlock(int x, int y, int w, int h)

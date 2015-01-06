@@ -47,7 +47,7 @@ namespace BlendInt {
 #endif
 
 #ifdef __APPLE__
-		Font (const std::string& family = std::string("Droid Sans"),
+		Font (const std::string& family = std::string("Helvetical Neue"),
 						unsigned int size = 12,
 						int flag = 0);
 #endif
@@ -96,8 +96,6 @@ namespace BlendInt {
 
 		int Print (const glm::vec2& pos, const std::string& string, size_t length, size_t start) const;
 
-		int Print (const glm::vec3& pos, const std::string& string, size_t length, size_t start) const;
-
 		int Print (float x, float y, const std::string& string, size_t start = 0) const;
 
 		int Print (float x, float y, const std::string& string, size_t length, size_t start) const;
@@ -107,8 +105,6 @@ namespace BlendInt {
 		int Print (const Point& pos, const String& string, size_t length, size_t start = 0) const;
 
 		int Print (const glm::vec2& pos, const String& string, size_t length, size_t start) const;
-
-		int Print (const glm::vec3& pos, const String& string, size_t length, size_t start) const;
 
 		int Print (float x, float y, const String& string, size_t start = 0) const;
 

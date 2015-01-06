@@ -41,6 +41,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -153,13 +154,13 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
+	ResponseType TextEntry::PerformKeyPress (const Context* context)
 	{
-		if(!event.text().empty()) {
+		if(!context->text().empty()) {
 
-			text_.insert(index_, event.text());
-			index_ += event.text().length();
-			length_ += event.text().length();
+			text_.insert(index_, context->text());
+			index_ += context->text().length();
+			length_ += context->text().length();
 
 			int text_width = font_.GetTextWidth(text_, length_,
 							start_);
@@ -182,7 +183,7 @@ namespace BlendInt {
 
 		} else {
 
-			switch (event.key()) {
+			switch (context->key()) {
 
 				case Key_Backspace: {
 					DisposeBackspacePress();
@@ -220,10 +221,10 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextEntry::MousePressEvent(const MouseEvent& event)
+	ResponseType TextEntry::PerformMousePress(const Context* context)
 	{
 		if(text_.size()) {
-			index_ = GetCursorPosition(event);
+			index_ = GetCursorPosition(context);
 
 			DBG_PRINT_MSG("index: %d", index_);
 
@@ -327,7 +328,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType TextEntry::Draw (Profile& profile)
+	ResponseType TextEntry::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -385,7 +386,12 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextEntry::FocusEvent (bool focus)
+	void TextEntry::PerformFocusOn (const Context* context)
+	{
+		RequestRedraw();
+	}
+
+	void TextEntry::PerformFocusOff (const Context* context)
 	{
 		RequestRedraw();
 	}
@@ -611,11 +617,11 @@ namespace BlendInt {
 		}
 	}
 	
-	int TextEntry::GetCursorPosition (const MouseEvent& event)
+	int TextEntry::GetCursorPosition (const Context* context)
 	{
-		Point global_pos = event.frame()->GetAbsolutePosition(this);
+		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
 
-		int click_position = event.position().x() - global_pos.x()
+		int click_position = context->cursor_position().x() - global_pos.x()
 						- round_radius();
 
 		if((click_position < 0) ||

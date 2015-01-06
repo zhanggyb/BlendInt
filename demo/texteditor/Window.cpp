@@ -28,7 +28,7 @@ namespace BlendInt {
 	{
 		switch (action) {
 			case GLFW_PRESS:
-                global_key_event.set_action(KeyPress);
+                global_key_event.set_action(PerformKeyPress);
 				break;
 			case GLFW_RELEASE:
                 global_key_event.set_action(KeyRelease);
@@ -63,10 +63,10 @@ namespace BlendInt {
 
 		switch (action) {
 			case GLFW_RELEASE:
-				mouse_action = MouseRelease;
+				mouse_action = PerformMouseRelease;
 				break;
 			case GLFW_PRESS:
-				mouse_action = MousePress;
+				mouse_action = PerformMousePress;
 				break;
 			case GLFW_REPEAT:
 				mouse_action = MouseNone;
@@ -100,7 +100,7 @@ namespace BlendInt {
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
-        global_mouse_event.set_action(MouseMove);
+        global_mouse_event.set_action(PerformMouseMove);
         global_mouse_event.set_button(MouseButtonNone);
 		global_mouse_event.set_position(static_cast<int>(xpos), main_context->size().height() - static_cast<int>(ypos));
 

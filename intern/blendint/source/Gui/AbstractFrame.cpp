@@ -34,9 +34,17 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Core/Rect.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
+
+	using Stock::Shaders;
 
 	glm::mat4 AbstractFrame::default_view_matrix = glm::lookAt(
 		glm::vec3(0.f, 0.f, 1.f),
@@ -91,17 +99,17 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType AbstractFrame::PerformContextMenuPress (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	ResponseType AbstractFrame::PerformContextMenuRelease (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const KeyEvent& event)
+	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -110,21 +118,21 @@ namespace BlendInt {
 			ResponseType response = Ignore;
 
 			if(subview->superview ()) {
-				response = DispatchKeyEvent(subview->superview(), event);
+				response = DispatchKeyEvent(subview->superview(), context);
 				if(response == Finish) {
 					return response;
 				} else {
-					return subview->KeyPressEvent(event);
+					return subview->PerformKeyPress(context);
 				}
 			} else {
-				return subview->KeyPressEvent(event);
+				return subview->PerformKeyPress(context);
 			}
 
 		}
 	}
 
 	AbstractView* AbstractFrame::DispatchMousePressEvent(
-			AbstractView* subview, const MouseEvent& event)
+			AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return 0;
@@ -135,11 +143,11 @@ namespace BlendInt {
 
 			if(subview->superview ()) {
 
-				ret_val = DispatchMousePressEvent(subview->superview(), event);
+				ret_val = DispatchMousePressEvent(subview->superview(), context);
 
 				if(ret_val == 0) {
 
-					response = subview->MousePressEvent(event);
+					response = subview->PerformMousePress(context);
 
 					return response == Finish ? subview : 0;
 
@@ -148,108 +156,93 @@ namespace BlendInt {
 				}
 
 			} else {
-				response = subview->MousePressEvent(event);
+				response = subview->PerformMousePress(context);
 				return response == Finish ? subview : 0;
 			}
 
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const MouseEvent& event)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
 		} else {
 
 			if(subview->superview ()) {
-				if(DispatchMouseMoveEvent(subview->superview (), event) == Ignore) {
-					return subview->MouseMoveEvent(event);
+				if(DispatchMouseMoveEvent(subview->superview (), context) == Ignore) {
+					return subview->PerformMouseMove(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
-				return subview->MouseMoveEvent(event);
+				return subview->PerformMouseMove(context);
 			}
 
 		}
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractView* subview, const MouseEvent& event)
+			AbstractView* subview, const Context* context)
 	{
 		if(subview == this) {
 			return Ignore;
 		} else {
 
 			if(subview->superview ()) {
-				if(DispatchMouseReleaseEvent(subview->superview (), event) == Ignore) {
-					return subview->MouseReleaseEvent(event);
+				if(DispatchMouseReleaseEvent(subview->superview (), context) == Ignore) {
+					return subview->PerformMouseRelease(context);
 				} else {
 					return Finish;
 				}
 
 			} else {
 				DBG_PRINT_MSG("mouse press in %s", subview->name().c_str());
-				return subview->MouseReleaseEvent(event);
+				return subview->PerformMouseRelease(context);
 			}
 
 		}
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventsInSubWidgets(AbstractWidget* orig,
-			const MouseEvent& event)
+			const Context* context)
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		assign_event_frame(event, this);
-		Point local_position;	// the relative local position of the cursor in a widget
+		SetActiveFrame(context, this);
+		Point local;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
-		if (hovered_widget) {
+		if (hovered_widget != nullptr) {
 
 			AbstractView* superview = hovered_widget->superview();
-			Point parent_position;
+			Rect rect;
 
-			AbstractWidget* parent_widget = dynamic_cast<AbstractWidget*>(superview);
-			if(parent_widget) {
-				parent_position = this->GetAbsolutePosition(parent_widget);
+			AbstractWidget* widget = dynamic_cast<AbstractWidget*>(superview);
+			if(widget) {
+				rect.set_position(GetAbsolutePosition(widget));
+				rect.set_size(widget->size());
 			} else {
 				assert(superview == this);
-				parent_position = position();
+				rect.set_position(position());
+				rect.set_size(size());
 			}
 
-			bool not_hover_through = event.position().x() < parent_position.x() ||
-					event.position().y() < parent_position.y() ||
-					event.position().x() > (parent_position.x() + superview->size().width()) ||
-					event.position().y() > (parent_position.y() + superview->size().height());
+			bool hovered = rect.contains(context->cursor_position());
 
-			local_position.reset(event.position().x() - parent_position.x() - superview->offset().x(),
-					event.position().y() - parent_position.y() - superview->offset().y());
+			if(hovered) {
 
-			if(!not_hover_through) {
+				local.reset(
+						context->cursor_position().x() - rect.x() - superview->offset().x(),
+						context->cursor_position().y() - rect.y() - superview->offset().y());
 
-				if(hovered_widget->Contain(local_position)) {
-
-					AbstractWidget* orig = hovered_widget;
-
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
-
-					if(orig != hovered_widget) {
-//						orig->destroyed().disconnectOne(this,
-//								&SingleFrame::OnHoverWidgetDestroyed);
-//						events()->connect(hovered_widget->destroyed(), this,
-//						        &SingleFrame::OnHoverWidgetDestroyed);
-					}
-
+				if(hovered_widget->Contain(local)) {
+					hovered_widget = DispatchHoverEventDeeper(
+							hovered_widget, context, local);
 				} else {
 
-//					hovered_widget->destroyed ().disconnectOne (this,
-//								&SingleFrame::OnHoverWidgetDestroyed);
-					delegate_mouse_hover_out_event(hovered_widget, event);
-//					hovered_widget->set_hover(false);
-//					hovered_widget->MouseHoverOutEvent(event);
-
+					delegate_mouse_hover_out_event(hovered_widget, context);
 
 					// find which contianer contains cursor position
 					while (superview) {
@@ -259,11 +252,11 @@ namespace BlendInt {
 							break;
 						}
 
-						local_position.reset(
-								local_position.x() + superview->position().x() + superview->offset().x(),
-								local_position.y() + superview->position().y() + superview->offset().y());
+						local.reset(
+								local.x() + superview->position().x() + superview->offset().x(),
+								local.y() + superview->position().y() + superview->offset().y());
 
-						if (superview->Contain(local_position)) break;
+						if (superview->Contain(local)) break;
 
 						superview = superview->superview();
 					}
@@ -271,107 +264,75 @@ namespace BlendInt {
 					hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 
 					if(hovered_widget) {
-						hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
-//						events()->connect(hovered_widget->destroyed(), this,
-//						        &SingleFrame::OnHoverWidgetDestroyed);
+						hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
 					}
 
 				}
 
 			} else {
 
-//				hovered_widget->destroyed().disconnectOne(this,
-//					        &SingleFrame::OnHoverWidgetDestroyed);
-				delegate_mouse_hover_out_event(hovered_widget, event);
-
-//				hovered_widget->set_hover(false);
-//				hovered_widget->MouseHoverOutEvent(event);
-
+				delegate_mouse_hover_out_event(hovered_widget, context);
 
 				// find which contianer contains cursor position
 				superview = superview->superview();
-				while (superview) {
+				while (superview != nullptr) {
 
 					if (superview == this) {	// FIXME: the widget may be mvoed to another context
-						superview = 0;
+						superview = nullptr;
 						break;
 					}
 
-					local_position.reset(
-							local_position.x() + superview->position().x() + superview->offset().x(),
-							local_position.y() + superview->position().y() + superview->offset().y());
+					widget = dynamic_cast<AbstractWidget*>(superview);
+					if(widget) {
+						rect.set_position(GetAbsolutePosition(widget));
+						rect.set_size(widget->size());
+					} else {
+						assert(superview == this);
+						rect.set_position(position());
+						rect.set_size(size());
+					}
 
-					if(IsHoverThroughExt(superview, event.position())) break;
+					local.reset(
+							context->cursor_position().x() - rect.x() - superview->offset().x(),
+							context->cursor_position().y() - rect.y() - superview->offset().y());
+
+					if(rect.contains(context->cursor_position())) break;
+
 					superview = superview->superview();
 				}
 
 				hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 				if(hovered_widget) {
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
-//					events()->connect(hovered_widget->destroyed(), this,
-//					        &SingleFrame::OnHoverWidgetDestroyed);
+					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
 				}
 
 			}
 
 		} else {
 
-			local_position.reset(
-					event.position().x() - position().x() - offset().x(),
-					event.position().y() - position().y() - offset().y());
+			local.reset(
+					context->cursor_position().x() - position().x() - offset().x(),
+					context->cursor_position().y() - position().y() - offset().y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
-				if (p->visiable() && p->Contain(local_position)) {
+				if (p->visiable() && p->Contain(local)) {
 
 					hovered_widget = dynamic_cast<AbstractWidget*>(p);
-					delegate_mouse_hover_in_event(hovered_widget, event);
-//					hovered_widget->set_hover(true);
-//					hovered_widget->MouseHoverInEvent(event);
+					delegate_mouse_hover_in_event(hovered_widget, context);
 
 					break;
 				}
 			}
 
 			if(hovered_widget) {
-				hovered_widget = DispatchHoverEventDeeper(hovered_widget, event, local_position);
-//				events()->connect(hovered_widget->destroyed(), this,
-//				        &SingleFrame::OnHoverWidgetDestroyed);
+				hovered_widget = DispatchHoverEventDeeper(
+						hovered_widget, context, local);
 			}
 
 		}
 
 		return hovered_widget;
-	}
-
-	AbstractFrame* AbstractFrame::CheckHoveredFrame(AbstractFrame* old, const MouseEvent& event)
-	{
-		AbstractFrame* frame_hovered = old;
-
-		if(frame_hovered) {
-			if(!frame_hovered->Contain(event.position())) {
-
-				frame_hovered = 0;
-				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(event.position())) {
-						frame_hovered = dynamic_cast<AbstractFrame*>(p);
-						break;
-					}
-				}
-
-			}
-		} else {
-
-			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(event.position())) {
-					frame_hovered = dynamic_cast<AbstractFrame*>(p);
-					break;
-				}
-			}
-
-		}
-
-		return frame_hovered;
 	}
 
 	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget)
@@ -381,15 +342,12 @@ namespace BlendInt {
 #endif
 
 		while (hovered_widget && (hovered_widget != this)) {
-			set_widget_hover_status(hovered_widget, false);
+			hovered_widget->set_hover(false);
 			hovered_widget = hovered_widget->superview();
 		}
-
-		if(hovered_widget == this)
-			hovered_widget = 0;
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const MouseEvent& event)
+	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const Context* context)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -397,34 +355,126 @@ namespace BlendInt {
 
 		while (hovered_widget && (hovered_widget != this)) {
 			hovered_widget->set_hover(false);
-			hovered_widget->MouseHoverOutEvent(event);
+			hovered_widget->PerformHoverOut(context);
 			hovered_widget = hovered_widget->superview();
 		}
-
-		if(hovered_widget == this)
-			hovered_widget = 0;
 	}
 
-	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const MouseEvent& event,
-			Point& local_position)
+	void AbstractFrame::SetActiveFrame(const Context* context, AbstractFrame* frame)
+	{
+		const_cast<Context*>(context)->active_frame_ = frame;
+	}
+
+	bool AbstractFrame::RenderSubFramesToTexture (
+		AbstractFrame* frame,
+		const Context* context,
+		const glm::mat4& projection,
+		const glm::mat3& model,
+		GLTexture2D* texture)
+	{
+		bool retval = false;
+
+		assert(texture != nullptr);
+
+        GLTexture2D* tex = texture;
+        if(!tex->id())
+            tex->generate();
+
+        tex->bind();
+        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+        tex->SetMinFilter(GL_NEAREST);
+        tex->SetMagFilter(GL_NEAREST);
+        tex->SetImage(0, GL_RGBA, frame->size().width(), frame->size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+        GLFramebuffer* fb = new GLFramebuffer;
+        fb->generate();
+        fb->bind();
+
+        // Set "renderedTexture" as our colour attachement #0
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, tex->id(), 0);
+        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
+        GLuint rb;
+        glGenRenderbuffers(1, &rb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
+                              frame->size().width(), frame->size().height());
+        //Attach depth buffer to FBO
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, rb);
+
+        if(GLFramebuffer::CheckStatus()) {
+
+            fb->bind();
+
+            Shaders::instance->SetWidgetProjectionMatrix(projection);
+            Shaders::instance->SetWidgetModelMatrix(model);
+
+            // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
+            GLuint original_stencil_count = context->stencil_count_;
+			const_cast<Context*>(context)->stencil_count_ = 0;
+
+            glClearColor(0.f, 0.f, 0.f, 0.f);
+            glClearDepth(1.0);
+            glClearStencil(0);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+
+            glViewport(0, 0, frame->size().width(), frame->size().height());
+
+            // Draw context:
+            frame->DrawSubViewsOnce(context);
+
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glViewport(0, 0, context->size().width(), context->size().height());
+			#ifdef DEBUG
+			assert(context->stencil_count_ == 0);
+			#endif
+			const_cast<Context*>(context)->stencil_count_ = original_stencil_count;
+
+			retval = true;
+        }
+
+        fb->reset();
+        tex->reset();
+
+        //delete tex; tex = 0;
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glDeleteRenderbuffers(1, &rb);
+
+        delete fb; fb = nullptr;
+
+        return retval;
+	}
+
+	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const Context* context,
+			Point& local)
 	{
 		AbstractWidget* retval = widget;
 
-		local_position.reset(
-				local_position.x () - widget->position ().x ()
-				- widget->offset ().x (),
-				local_position.y () - widget->position ().y ()
-				- widget->offset ().y ()
-		);
+		local.reset(
+				local.x() - widget->position().x() - widget->offset().x(),
+		        local.y() - widget->position().y() - widget->offset().y());
 
 		for (AbstractView* p = widget->last_subview (); p;
 				p = p->previous_view ()) {
 
-			if (p->visiable () && p->Contain (local_position)) {
+			if (p->visiable () && p->Contain (local)) {
 				retval = dynamic_cast<AbstractWidget*>(p);
-				delegate_mouse_hover_in_event (retval, event);
+				delegate_mouse_hover_in_event (retval, context);
 
-				retval = DispatchHoverEventDeeper(retval, event, local_position);
+				retval = DispatchHoverEventDeeper(retval, context, local);
 				break;
 			}
 	

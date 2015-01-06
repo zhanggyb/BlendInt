@@ -68,7 +68,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		void CalculateIconTextPosition (const Size& size, int round_type, float radius);
 

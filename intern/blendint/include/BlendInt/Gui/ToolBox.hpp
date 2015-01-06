@@ -58,29 +58,31 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 	private:
+
+		virtual ResponseType DispatchHoverEvent (const Context* context);
 
 		void InitializeToolBoxOnce ();
 
@@ -92,13 +94,11 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		void SetFocusedWidget (AbstractWidget* widget);
+		void SetFocusedWidget (AbstractWidget* widget, const Context* context);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void RenderToBuffer (Profile& profile);
 
 		glm::mat4 projection_matrix_;
 
@@ -126,6 +126,7 @@ namespace BlendInt {
 
         GLTexture2D texture_buffer_;
 
+        int cursor_position_;
 	};
 
 }

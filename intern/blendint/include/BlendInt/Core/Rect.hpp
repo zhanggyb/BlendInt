@@ -98,6 +98,30 @@ namespace BlendInt {
 			return true;
 		}
 
+		void set_position (int x, int y)
+		{
+			x_ = x;
+			y_ = y;
+		}
+
+		void set_position (const Point& pos)
+		{
+			x_ = pos.x();
+			y_ = pos.y();
+		}
+
+		void set_size (int width, int height)
+		{
+			set_width(width);
+			set_height(height);
+		}
+
+		void set_size (const Size& size)
+		{
+			set_width(size.width());
+			set_height(size.height());
+		}
+
 		int x (void) const {return x_;}
 
 		void set_x (int x) {x_ = x;}

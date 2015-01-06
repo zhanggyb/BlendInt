@@ -156,12 +156,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitterHandle::PreDraw(Profile& profile)
+	bool FrameSplitterHandle::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitterHandle::Draw(Profile& profile)
+	ResponseType FrameSplitterHandle::Draw(const Context* context)
 	{
 		Shaders::instance->frame_inner_program()->use();
 
@@ -186,36 +186,42 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitterHandle::PostDraw(Profile& profile)
+	void FrameSplitterHandle::PostDraw(const Context* context)
 	{
 	}
 
-	void FrameSplitterHandle::FocusEvent(bool focus)
+	void FrameSplitterHandle::PerformFocusOn(const Context* context)
 	{
+
 	}
 
-	ResponseType FrameSplitterHandle::KeyPressEvent(const KeyEvent& event)
+	void FrameSplitterHandle::PerformFocusOff (const Context* context)
 	{
-		return Ignore;
+
 	}
 
-	ResponseType FrameSplitterHandle::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType FrameSplitterHandle::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
+	ResponseType FrameSplitterHandle::PerformKeyPress(const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::MousePressEvent(
-			const MouseEvent& event)
+	ResponseType FrameSplitterHandle::PerformContextMenuPress(
+			const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType FrameSplitterHandle::PerformContextMenuRelease(
+			const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType FrameSplitterHandle::PerformMousePress(
+			const Context* context)
 	{
 		last_ = position();
-		cursor_ = event.position();
+		cursor_ = context->cursor_position();
 
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous_view()->size().height();
@@ -232,8 +238,8 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitterHandle::MouseReleaseEvent(
-			const MouseEvent& event)
+	ResponseType FrameSplitterHandle::PerformMouseRelease(
+			const Context* context)
 	{
 		if(!hover()) {
 			Cursor::instance->PopCursor();
@@ -243,7 +249,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void FrameSplitterHandle::MouseHoverInEvent(const MouseEvent& event)
+	void FrameSplitterHandle::PerformHoverIn(const Context* context)
 	{
 		Cursor::instance->PushCursor();
 		if(orientation_ == Horizontal) {
@@ -255,7 +261,7 @@ namespace BlendInt {
 		//RequestRedraw();
 	}
 
-	void FrameSplitterHandle::MouseHoverOutEvent(const MouseEvent& event)
+	void FrameSplitterHandle::PerformHoverOut(const Context* context)
 	{
 		if(!pressed_ext())
 			Cursor::instance->PopCursor();
@@ -263,16 +269,16 @@ namespace BlendInt {
 		//RequestRedraw();
 	}
 
-	ResponseType FrameSplitterHandle::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType FrameSplitterHandle::DispatchHoverEvent(const Context* context)
 	{
-		if(Contain(event.position())) {
+		if(Contain(context->cursor_position())) {
 			return Finish;
 		} else {
 			return Ignore;
 		}
 	}
 
-	ResponseType FrameSplitterHandle::MouseMoveEvent(const MouseEvent& event)
+	ResponseType FrameSplitterHandle::PerformMouseMove(const Context* context)
 	{
 		if(pressed_ext()) {
 
@@ -281,7 +287,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = event.position().y() - cursor_.y();
+				int offset = context->cursor_position().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -297,7 +303,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = event.position().x() - cursor_.x();
+				int offset = context->cursor_position().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
@@ -535,19 +541,19 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitter::PreDraw(Profile& profile)
+	bool FrameSplitter::PreDraw(const Context* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitter::Draw(Profile& profile)
+	ResponseType FrameSplitter::Draw(const Context* context)
 	{
-		DrawSubFormsOnce(profile);
+		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitter::PostDraw(Profile& profile)
+	void FrameSplitter::PostDraw(const Context* context)
 	{
 	}
 
@@ -606,99 +612,87 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::FocusEvent(bool focus)
+	void FrameSplitter::PerformFocusOn (const Context* context)
 	{
 	}
 
-	void FrameSplitter::MouseHoverInEvent(const MouseEvent& event)
+	void FrameSplitter::PerformFocusOff (const Context* context)
 	{
 	}
 
-	void FrameSplitter::MouseHoverOutEvent(const MouseEvent& event)
+	void FrameSplitter::PerformHoverIn(const Context* context)
+	{
+	}
+
+	void FrameSplitter::PerformHoverOut(const Context* context)
 	{
 		if(hover_frame_) {
-			delegate_mouse_hover_out_event(hover_frame_, event);
-			hover_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
-			hover_frame_ = 0;
+			delegate_mouse_hover_out_event(hover_frame_, context);
+			hover_frame_ = nullptr;
 		}
 	}
 
-	ResponseType FrameSplitter::KeyPressEvent(const KeyEvent& event)
+	ResponseType FrameSplitter::PerformKeyPress(const Context* context)
 	{
 		if(focused_frame_) {
-			return delegate_key_press_event(focused_frame_, event);
+			return delegate_key_press_event(focused_frame_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType FrameSplitter::MousePressEvent(const MouseEvent& event)
+	ResponseType FrameSplitter::PerformMousePress(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
 
 		if(hover_frame_ != nullptr) {
-			response = delegate_mouse_press_event(hover_frame_, event);
+			response = delegate_mouse_press_event(hover_frame_, context);
 
 			if(response == Finish) {
-				SetFocusedFrame(hover_frame_);
+				SetFocusedFrame(hover_frame_, context);
 			}
 		} else {
-			SetFocusedFrame(0);
+			SetFocusedFrame(0, context);
 		}
 
 		return Finish;
 	}
 
-	ResponseType FrameSplitter::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType FrameSplitter::PerformMouseRelease(const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
 		if(focused_frame_ != nullptr) {
-			response = delegate_mouse_release_event(focused_frame_, event);
+			response = delegate_mouse_release_event(focused_frame_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType FrameSplitter::MouseMoveEvent(const MouseEvent& event)
+	ResponseType FrameSplitter::PerformMouseMove(const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		if(pressed_ext() && focused_frame_) {
-			response = delegate_mouse_move_event(focused_frame_, event);
+			response = delegate_mouse_move_event(focused_frame_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType FrameSplitter::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType FrameSplitter::DispatchHoverEvent(const Context* context)
 	{
-		if(Contain(event.position())) {
+		if(Contain(context->cursor_position())) {
 
-			AbstractFrame* new_hovered = CheckHoveredFrame(hover_frame_, event);
-
-			if(new_hovered != hover_frame_) {
-
-				if(hover_frame_) {
-					delegate_mouse_hover_out_event(hover_frame_, event);
-					hover_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
-				}
-
-				hover_frame_ = new_hovered;
-				if(hover_frame_) {
-					delegate_mouse_hover_in_event(hover_frame_, event);
-					events()->connect(hover_frame_->destroyed(), this, &FrameSplitter::OnHoverFrameDestroyed);
-				}
-
+			ResponseType response = Finish;
+			SetHoveredFrame(context);
+			if(hover_frame_ != nullptr) {
+				response = delegate_dispatch_hover_event(hover_frame_, context);
 			}
 
-			if(hover_frame_) {
-				delegate_dispatch_hover_event(hover_frame_, event);
-			}
-
-			return Finish;
+			return response;
 
 		} else {
 			return Ignore;
@@ -1425,43 +1419,77 @@ namespace BlendInt {
         }
     }
 
-    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame)
+    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, const Context* context)
     {
     	if(focused_frame_ == frame) return;
 
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, false);
-    		focused_frame_->destroyed().disconnectOne(this, &FrameSplitter::OnFocusedFrameDestroyed);
+    		delegate_focus_off(focused_frame_, context);
     	}
 
     	focused_frame_ = frame;
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_event(focused_frame_, true);
-    		events()->connect(focused_frame_->destroyed(), this, &FrameSplitter::OnFocusedFrameDestroyed);
+    		delegate_focus_on(focused_frame_, context);
     	}
     }
 
-	void FrameSplitter::OnHoverFrameDestroyed(AbstractFrame* frame)
+	bool FrameSplitter::RemoveSubView (AbstractView* view)
 	{
-		assert(frame->hover());
-		assert(hover_frame_ == frame);
+		DBG_PRINT_MSG("%s", "Remove sub frame");
 
-		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &FrameSplitter::OnHoverFrameDestroyed);
+		if(view == focused_frame_) {
+			focused_frame_->set_focus(false);
+			focused_frame_ = nullptr;
+		}
 
-		hover_frame_ = 0;
+		if(view == hover_frame_) {
+			hover_frame_->set_hover(false);
+			hover_frame_ = nullptr;
+		}
+
+		// TODO: re-layout
+
+		return AbstractFrame::RemoveSubView(view);
 	}
 
-	void FrameSplitter::OnFocusedFrameDestroyed(AbstractFrame* frame)
+	void FrameSplitter::SetHoveredFrame (const Context* context)
 	{
-		assert(focused_frame_ == frame);
-		assert(frame->focus());
+		AbstractFrame* original = hover_frame_;
 
-		//set_widget_focus_status(widget, false);
-		DBG_PRINT_MSG("focused frame %s destroyed", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &FrameSplitter::OnFocusedFrameDestroyed);
+		if(hover_frame_ != nullptr) {
+			if(!hover_frame_->Contain(context->cursor_position())) {
 
-		focused_frame_ = 0;
+				hover_frame_ = nullptr;
+				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+					if(p->Contain(context->cursor_position())) {
+						hover_frame_ = dynamic_cast<AbstractFrame*>(p);
+						break;
+					}
+				}
+
+			}
+		} else {
+
+			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+				if(p->Contain(context->cursor_position())) {
+					hover_frame_ = dynamic_cast<AbstractFrame*>(p);
+					break;
+				}
+			}
+
+		}
+
+		if (original != hover_frame_) {
+
+			if (original != nullptr) {
+				delegate_mouse_hover_out_event(original, context);
+			}
+
+			if (hover_frame_ != nullptr) {
+				delegate_mouse_hover_in_event(hover_frame_, context);
+			}
+
+		}
 	}
 
 }

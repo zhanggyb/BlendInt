@@ -25,6 +25,8 @@
 #define _BLENDINT_GUI_VIEWPORT3D_HPP_
 
 #include <deque>
+
+#include <BlendInt/Core/Input.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Gui/GridFloor.hpp>
@@ -65,23 +67,23 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 		virtual void Render ();
 
 	private:
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		void InitializeViewport3DOnce ();
 

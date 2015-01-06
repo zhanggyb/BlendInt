@@ -251,7 +251,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType RadioButton::Draw (Profile& profile)
+	ResponseType RadioButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

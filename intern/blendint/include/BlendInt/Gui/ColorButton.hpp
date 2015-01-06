@@ -24,8 +24,8 @@
 #ifndef _BLENDINT_GUI_COLORBUTTON_HPP_
 #define _BLENDINT_GUI_COLORBUTTON_HPP_
 
-#include <BlendInt/Core/String.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
@@ -57,15 +57,14 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 
 		void InitializeColorButton ();
 
 		GLuint vao_[2];
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		Color color0_;
 		Color color1_;

@@ -28,7 +28,9 @@
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
+#include <BlendInt/Gui/AbstractDecoration.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
+
 #include <BlendInt/Gui/FrameShadow.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
@@ -39,7 +41,9 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (const String& title = String(""), bool modal = false);
+		Dialog (bool modal = false);
+
+		Dialog (const String& title, bool modal = false);
 
 		virtual ~Dialog();
 
@@ -74,31 +78,33 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType DispatchHoverEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseMove (const Context* context);
+
+		virtual ResponseType DispatchHoverEvent (const Context* context);
 
 		virtual void UpdateLayout ();
 
@@ -129,7 +135,7 @@ namespace BlendInt {
 
 		void InitializeDialogOnce ();
 
-		void SetFocusedWidget (AbstractWidget* widget);
+		void SetFocusedWidget (AbstractWidget* widget, const Context* context);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
@@ -137,9 +143,7 @@ namespace BlendInt {
 
 		void OnLayoutDestroyed (AbstractWidget* layout);
 
-		void OnCloseButtonClicked (AbstractButton* button);
-
-		void RenderToBuffer (Profile& profile);
+		void OnCloseButtonClicked ();
 
 		inline bool modal () const
 		{
@@ -199,7 +203,7 @@ namespace BlendInt {
 
 		AbstractWidget* hovered_widget_;
 
-		Decoration* decoration_;
+		AbstractDecoration* decoration_;
 
 		AbstractLayout* layout_;
 

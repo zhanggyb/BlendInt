@@ -69,62 +69,46 @@ namespace BlendInt {
 	}
 
 	Action::Action (const String& text)
-	: m_text(text)
+	: text_(text)
 	{
 	}
 
 	Action::Action (const String& text, const String& shortcut)
-	: m_text(text), m_shortcut(shortcut)
+	: text_(text), shortcut_(shortcut)
 	{
 	}
 
 	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text)
-	: m_icon(icon), m_text(text)
+	: icon_(icon), text_(text)
 	{
 	}
 
 	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
-	: m_icon(icon), m_text(text), m_shortcut(shortcut)
+	: icon_(icon), text_(text), shortcut_(shortcut)
 	{
 	}
 
 	Action::~Action ()
 	{
-		m_list.clear();
-	}
-	
-	void Action::AddSubItem (const RefPtr<Action>& item, bool check)
-	{
-		// TODO: check item is this one
-
-		if(check) {
-			std::list<RefPtr<Action> >::iterator it;
-			it = std::find (m_list.begin(), m_list.end(), item);
-			if(it != m_list.end()) {
-				return;
-			}
-		}
-
-		m_list.push_back(item);
 	}
 	
 	Size Action::GetHSize (const Font& font, const Margin& margin, int space)
 	{
 		Size size;
 
-		Rect text_outline = font.GetTextOutline(m_text);
+		Rect text_outline = font.GetTextOutline(text_);
 
 		size.add_width(margin.left() + margin.right());
-		if(m_icon) {
-			size.add_width(m_icon->size().width());
-			size.set_height(m_icon->size().height());
+		if(icon_) {
+			size.add_width(icon_->size().width());
+			size.set_height(icon_->size().height());
 		}
 		size.add_width(space);
 		size.add_width(text_outline.width());
 
 		size.set_height(std::max(size.height(), text_outline.height()));
 
-		text_outline = font.GetTextOutline(m_shortcut);
+		text_outline = font.GetTextOutline(shortcut_);
 
 		size.add_width(space);
 		size.add_width(text_outline.width());
@@ -140,15 +124,15 @@ namespace BlendInt {
 	{
 		unsigned int length = 0;
 
-		Rect text_outline = font.GetTextOutline(m_text);
+		Rect text_outline = font.GetTextOutline(text_);
 
-		if(m_icon) {
-			length += m_icon->size().width();
+		if(icon_) {
+			length += icon_->size().width();
 		}
 
 		length += text_outline.width();
 
-		text_outline = font.GetTextOutline(m_shortcut);
+		text_outline = font.GetTextOutline(shortcut_);
 
 		length += text_outline.width();
 

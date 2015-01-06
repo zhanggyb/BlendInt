@@ -22,7 +22,6 @@
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
-#include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
@@ -58,15 +57,20 @@ class GLFWDemoContext: public BI::Context
 {
 public:
 
-	GLFWDemoContext ();
+	GLFWDemoContext (GLFWwindow* win);
 
 	virtual ~GLFWDemoContext ();
 
+	virtual void SynchronizeWindow ();
+
 private:
 
-	void TryToolBox ();
+	void Debug ();
 
 	void InitializeGLFWDemoContext ();
+
+	GLFWwindow* window_;
+
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

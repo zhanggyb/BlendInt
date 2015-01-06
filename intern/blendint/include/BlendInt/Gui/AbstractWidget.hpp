@@ -27,6 +27,7 @@
 #include <glm/glm.hpp>
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
 
 namespace BlendInt {
@@ -51,39 +52,40 @@ namespace BlendInt {
 			return *destroyed_;
 		}
 
-		inline glm::vec2 get_relative_position (const glm::mat3& model_matrix)
-		{
-			glm::vec3 point = model_matrix * glm::vec3(position().x(), position().y(), 1.f);
-			return glm::vec2(point.x, point.y);
-		}
-
 	protected:
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
 		// virtual ResponseType Draw (Profile& profile);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
+
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
+
+		static bool RenderSubWidgetsToTexture (
+			AbstractWidget* widget,
+			const Context* context,
+			GLTexture2D* texture);
 
 	private:
 

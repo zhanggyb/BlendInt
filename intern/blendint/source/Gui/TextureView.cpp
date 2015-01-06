@@ -159,7 +159,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextureView::Draw (Profile& profile)
+	ResponseType TextureView::Draw (const Context* context)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
@@ -198,7 +198,7 @@ namespace BlendInt {
 		texture_->reset();
 		program->reset();
 
-		return AbstractScrollable::Draw(profile);
+		return AbstractScrollable::Draw(context);
 	}
 	
 	void TextureView::InitializeImageView ()

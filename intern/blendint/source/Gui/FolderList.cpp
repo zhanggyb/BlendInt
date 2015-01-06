@@ -62,7 +62,7 @@ namespace BlendInt {
 		return Size(240, 160);
 	}
 
-	ResponseType FolderList::Draw (Profile& profile)
+	ResponseType FolderList::Draw (const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 

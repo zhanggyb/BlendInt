@@ -73,15 +73,11 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 
-		void InitializeFrame ();
-
-		void RenderToBuffer (Profile& profile);
-
-		void DrawPanel ();
+		void InitializePanelOnce ();
 
 		void OnLayoutDestroyed (AbstractWidget* layout);
 

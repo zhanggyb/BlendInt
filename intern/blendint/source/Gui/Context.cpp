@@ -53,9 +53,10 @@ namespace BlendInt
 {
 	using Stock::Shaders;
 
-	glm::mat4 Context::default_view_matrix = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-			glm::vec3(0.f, 0.f, 0.f),
-            glm::vec3(0.f, 1.f, 0.f));
+	glm::mat4 Context::default_view_matrix =
+		glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+					glm::vec3(0.f, 0.f, 0.f),
+					glm::vec3(0.f, 1.f, 0.f));
 
 	std::set<Context*> Context::context_set;
 
@@ -103,7 +104,8 @@ namespace BlendInt
 		if (success && Shaders::Initialize()) {
 			// do nothing
 		} else {
-			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
+			DBG_PRINT_MSG("%s",
+						  "The Shader Manager is not initialized successfully!");
 			success = false;
 		}
 
@@ -175,13 +177,11 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractView(),
-	  hovered_frame_(0),
-	  focused_frame_(0)
+	  active_frame_(nullptr),
+	  stencil_count_(0)
 	{
 		set_size(640, 480);
 		set_refresh(true);
-
-		profile_.context_ = this;
 
 		events_.reset(new Cpp::ConnectionScope);
 
@@ -193,16 +193,85 @@ namespace BlendInt
 	Context::~Context ()
 	{
 		if(superview() != 0) {
-			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other superview");
+			DBG_PRINT_MSG("Error: %s",
+						  "Context MUST NOT be in any other superview");
 		}
 		context_set.erase(this);
 	}
 
-	void Context::AddFrame (AbstractFrame* vp)
+	bool Context::AddFrame (AbstractFrame* frame, bool focus)
 	{
-		if(PushBackSubView(vp)) {
-			// TODO:
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(PushBackSubView(frame)) {
+
+			if(focus) {
+
+				if(original_last) {
+					original_last->set_focus(false);
+					original_last->PerformFocusOff(this);
+				}
+
+				frame->set_focus(true);
+				frame->PerformFocusOn(this);
+
+			}
+
 			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	bool Context::InsertFrame(int index, AbstractFrame* frame, bool focus)
+	{
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(InsertSubView(index, frame)) {
+
+			if(focus) {
+
+				if(original_last != last_subview()) {
+					assert(last_subview() == frame);
+
+					if(original_last) {
+						original_last->set_focus(false);
+						original_last->PerformFocusOff(this);
+					}
+
+					frame->set_focus(true);
+					frame->PerformFocusOn(this);
+
+				}
+
+			}
+
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	void Context::MoveFrameToTop(AbstractFrame* frame, bool focus)
+	{
+		if(frame == nullptr) return;
+
+		if(frame == last_subview()) return;
+
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		MoveToLast(frame);
+
+		if(focus) {
+			if(original_last) {
+				original_last->set_focus(false);
+				original_last->PerformFocusOff(this);
+			}
+
+			frame->set_focus(true);
+			frame->PerformFocusOn(this);
 		}
 	}
 
@@ -221,6 +290,12 @@ namespace BlendInt
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
+
+		viewport_origin_.reset(0, 0);
+		if(stencil_count_ != 0) {
+			DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count_);
+		}
+		stencil_count_ = 0;
 
 		glViewport(0, 0, size().width(), size().height());
 
@@ -251,71 +326,86 @@ namespace BlendInt
 		*/
 
 		set_refresh(false);
-		if(PreDraw(profile_)) {
-			Draw(profile_);
-			PostDraw(profile_);
+		if(PreDraw(this)) {
+			Draw(this);
+			PostDraw(this);
 		}
 
 	}
 
-	void Context::DispatchKeyEvent(const KeyEvent& event)
+	void Context::DispatchKeyEvent(KeyAction action,
+								   int key,
+								   int modifiers,
+								   int scancode,
+								   String text)
 	{
-		const_cast<KeyEvent&>(event).context_ = this;
-		const_cast<KeyEvent&>(event).frame_ = 0;
+		key_action_ = action;
+		key_ = key;
+		modifiers_ = modifiers;
+		scancode_ = scancode;
+		text_ = text;
 
-		switch (event.action()) {
+		active_frame_ = nullptr;
+
+		switch (key_action_) {
 
 			case KeyPress: {
-				KeyPressEvent(event);
+				PerformKeyPress(this);
 				break;
 			}
 
 			case KeyRelease: {
-				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-				//cm->m_focus->KeyReleaseEvent(event);
 				break;
 			}
 
 			case KeyRepeat: {
-				// item->KeyRepeatEvent(&event);
 				break;
 			}
 
 			default:
-			break;
+				break;
 		}
+
 	}
 
-	void Context::DispatchMouseEvent(const MouseEvent& event)
+	void Context::DispatchMouseEvent(int x,
+									 int y,
+									 MouseAction action,
+									 MouseButton button,
+									 int modifiers)
 	{
-		const_cast<MouseEvent&>(event).context_ = this;
-		const_cast<MouseEvent&>(event).frame_ = 0;
+		cursor_position_.reset(x, size().height() - y);
 
-		switch (event.action()) {
+		mouse_action_ = action;
+		mouse_button_ = button;
+		modifiers_ = modifiers;
+
+		active_frame_ = nullptr;
+
+		switch (mouse_action_) {
 
 			case MouseMove: {
-				DispatchHoverEvent(event);
-				if(hovered_frame_) {
-					hovered_frame_->DispatchHoverEvent(event);
-				}
-
-				MouseMoveEvent(event);
-				return;
+				DispatchHoverEvent();
+				PerformMouseMove(this);
+				break;
 			}
 
 			case MousePress: {
-				MousePressEvent(event);
-				return;
+				DispatchHoverEvent();
+				PerformMousePress(this);
+				break;
 			}
 
 			case MouseRelease: {
-				MouseReleaseEvent(event);
-				return;
+				PerformMouseRelease(this);
+				DispatchHoverEvent();
+				break;
 			}
 
 			default:
 				break;
 		}
+
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -331,6 +421,52 @@ namespace BlendInt
 	void Context::MakeGLContextCurrent()
 	{
 		// TODO: override this to support GL Context manipulation in thread
+	}
+
+	void Context::BeginPushStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+		if(stencil_count_ == 0) {
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_NEVER, 1, 0xFF);	// GL_NEVER: always fails
+			glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+		} else {
+			glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+			glStencilOp(GL_INCR, GL_KEEP, GL_KEEP); // increase 1s on test fail (always)
+		}
+
+		stencil_count_++;
+	}
+
+	void Context::EndPushStencil()
+	{
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	}
+
+	void Context::BeginPopStencil()
+	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glStencilFunc(GL_LESS, stencil_count_, 0xFF);
+		glStencilOp(GL_DECR, GL_KEEP, GL_KEEP); // draw 1s on test fail (always)
+	}
+
+	void Context::EndPopStencil()
+	{
+		if(stencil_count_ > 0) {
+			stencil_count_--;
+
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glStencilFunc(GL_EQUAL, stencil_count_, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+			if(stencil_count_ == 0) {
+				glDisable(GL_STENCIL_TEST);
+			}
+
+		}
 	}
 
 	Context* Context::GetContext (AbstractView* widget)
@@ -392,106 +528,127 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::PreDraw(Profile& profile)
+	bool Context::PreDraw(const Context* context)
 	{
 		return true;
 	}
 
-	ResponseType Context::Draw (Profile& profile)
+	ResponseType Context::Draw (const Context* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
-			p->PreDraw(profile);
-			p->Draw(profile);
+			p->PreDraw(context);
+			p->Draw(context);
 			p->set_refresh(this->refresh());
-			p->PostDraw(profile);
+			p->PostDraw(context);
 		}
 
 		return Finish;
 	}
 
-	void Context::PostDraw(Profile& profile)
+	void Context::PostDraw(const Context* context)
 	{
 	}
 
-	ResponseType Context::KeyPressEvent (const KeyEvent& event)
+	ResponseType Context::PerformKeyPress (const Context* context)
 	{
 		ResponseType response = Ignore;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-			response = p->KeyPressEvent(event);
+			response = p->PerformKeyPress(context);
 			if(response == Finish) break;
 		}
 
 		return response;
 	}
 
-	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
+	ResponseType Context::PerformContextMenuPress (const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
-	ResponseType Context::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
+	ResponseType Context::PerformContextMenuRelease (
+	        const Context* context)
 	{
-		const_cast<ContextMenuEvent&>(event).context_ = this;
 
 		return Ignore;
 	}
 
-	ResponseType Context::MousePressEvent (const MouseEvent& event)
+	ResponseType Context::PerformMousePress (const Context* context)
 	{
 		ResponseType response = Ignore;
-		assert(event.frame() == 0);
+		//assert(context->leaf_frame() == 0);
 
 		set_pressed(true);
 
-		/*
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-
-			if(p->Contain(event.position())) {
-				response = p->MousePressEvent(event);
-
-				//p->MoveToLast();
-				break;
-			}
-		}
-		*/
-
-		if(hovered_frame_) {
-			response = hovered_frame_->MousePressEvent(event);
-
+			response = p->PerformMousePress(context);
 			if(response == Finish) {
-				SetFocusedFrame(hovered_frame_);
+				break;
 			}
 		}
 
 		return response;
 	}
 
-	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Context::PerformMouseRelease (const Context* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
 
-		if(focused_frame_) {
-			response = focused_frame_->MouseReleaseEvent(event);
+		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+		{
+			response = p->PerformMouseRelease(context);
+			if(response == Finish) {
+				break;
+			}
 		}
 
 		return response;
 	}
 
-	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Context::PerformMouseMove (const Context* context)
 	{
 		ResponseType response = Ignore;
 
-		if(pressed_ext() && focused_frame_) {
-			response = focused_frame_->MouseMoveEvent(event);
+		if(pressed_ext()) {
+
+			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+			{
+				response = p->PerformMouseMove(context);
+				if(response == Finish) {
+					break;
+				}
+			}
+
 		}
 
 		return response;
+	}
+
+	bool Context::RemoveSubView(AbstractView* view)
+	{
+		AbstractFrame* new_last = nullptr;
+		AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
+
+		if(view->next_view() == nullptr) {
+			new_last = dynamic_cast<AbstractFrame*>(view->previous_view());
+
+			if(frame != nullptr) {
+				frame->set_focus(false);
+			}
+		}
+
+		bool retval = AbstractView::RemoveSubView(view);
+
+		if(new_last != nullptr) {
+			DBG_PRINT_MSG("%s", "call focus event");
+			new_last->set_focus(true);
+			new_last->PerformFocusOn(this);
+		}
+
+		return retval;
 	}
 
 	void Context::GetGLVersion (int *major, int *minor)
@@ -571,97 +728,32 @@ namespace BlendInt
 		*/
 	}
 
-	void Context::DispatchHoverEvent(const MouseEvent& event)
+	void Context::DispatchHoverEvent()
 	{
-		AbstractFrame* original_hover = hovered_frame_;
-
 		ResponseType response = Ignore;
-		hovered_frame_ = 0;
-
 		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-
 			frame = dynamic_cast<AbstractFrame*>(p);
-
-			response = frame->DispatchHoverEvent(event);
-
-			if(response == Finish) {
-				hovered_frame_ = frame;
-				break;
-			}
-
-		}
-
-		if(original_hover != hovered_frame_) {
-
-			if(original_hover) {
-				original_hover->set_hover(false);
-				original_hover->MouseHoverOutEvent(event);
-				original_hover->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
-			}
-
-			if(hovered_frame_) {
-				hovered_frame_->set_hover(true);
-				hovered_frame_->MouseHoverInEvent(event);
-				events_->connect(hovered_frame_->destroyed(), this, &Context::OnHoverFrameDestroyed);
-			}
-
+			response = frame->DispatchHoverEvent(this);
+			if(response == Finish) break;
 		}
 	}
 
-	void Context::FocusEvent(bool focus)
+	void Context::PerformFocusOn(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverInEvent(const MouseEvent& event)
+	void Context::PerformFocusOff(const Context* context)
 	{
 	}
 
-	void Context::MouseHoverOutEvent(const MouseEvent& event)
+	void Context::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void Context::SetFocusedFrame(AbstractFrame* frame)
+	void Context::PerformHoverOut(const Context* context)
 	{
-		if(focused_frame_ == frame) return;
-
-		if(focused_frame_) {
-			focused_frame_->set_focus(false);
-			focused_frame_->FocusEvent(false);
-			focused_frame_->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
-		}
-
-		focused_frame_ = frame;
-		if(focused_frame_) {
-			focused_frame_->set_focus(true);
-			focused_frame_->FocusEvent(true);
-			events_->connect(focused_frame_->destroyed(), this, &Context::OnFocusedFrameDestroyed);
-		}
-	}
-
-	void Context::OnHoverFrameDestroyed(AbstractFrame* frame)
-	{
-		assert(frame->hover());
-		assert(hovered_frame_ == frame);
-
-		DBG_PRINT_MSG("unset hover status of widget %s", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &Context::OnHoverFrameDestroyed);
-
-		hovered_frame_ = 0;
-
-		RequestRedraw();
-	}
-
-	void Context::OnFocusedFrameDestroyed(AbstractFrame* frame)
-	{
-		assert(focused_frame_ == frame);
-		DBG_PRINT_MSG("focused frame %s destroyed", frame->name().c_str());
-		frame->destroyed().disconnectOne(this, &Context::OnFocusedFrameDestroyed);
-
-		focused_frame_ = 0;
-
-		RequestRedraw();
 	}
 
 	/*
@@ -737,4 +829,5 @@ namespace BlendInt
     }
     */
     
+
 }

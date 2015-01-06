@@ -40,6 +40,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -91,8 +92,10 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	ResponseType ListView::Draw (Profile& profile)
+	ResponseType ListView::Draw (const Context* context)
 	{
+		Context* c = const_cast<Context*>(context);
+
 		int y = position().y() + size().height();
 		int h = font_.GetHeight();
 
@@ -107,10 +110,10 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		profile.BeginPushStencil();	// inner stencil
+		c->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
-		profile.EndPushStencil();
+		c->EndPushStencil();
 
         RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 
@@ -118,7 +121,6 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
-
 
 		glBindVertexArray(vaos_[1]);
 
@@ -164,19 +166,19 @@ namespace BlendInt {
 
         Shaders::instance->widget_inner_program()->use();
 
-		profile.BeginPopStencil();	// pop inner stencil
+		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
-		profile.EndPopStencil();
+		c->EndPopStencil();
 
 		program->reset();
 
 		return Finish;
 	}
 
-	ResponseType ListView::MousePressEvent (const MouseEvent& event)
+	ResponseType ListView::PerformMousePress (const Context* context)
 	{
 		if(model_) {
 
@@ -190,9 +192,9 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() - event.position().y();
+					i = position().y() - context->cursor_position().y();
 				} else {	// no vbar
-					i = position().y() + size().height() - event.position().y();
+					i = position().y() + size().height() - context->cursor_position().y();
 				}
 
 				i = i / h;

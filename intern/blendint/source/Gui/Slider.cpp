@@ -38,7 +38,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <iostream>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Slider::Draw (Profile& profile)
+	ResponseType Slider::Draw (const Context* context)
 	{
 		using Stock::Shaders;
 
@@ -191,14 +191,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Slider::PerformMouseMove (const Context* context)
 	{
 		if(m_pressed) {
 
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if(GetNewValue(event.position(), &new_value)) {
+			if(GetNewValue(context->cursor_position(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				RequestRedraw();
@@ -207,7 +207,7 @@ namespace BlendInt {
 			return Finish;
 
 		} else {
-			if(CursorOnSlideIcon(event.position())) {
+			if(CursorOnSlideIcon(context->cursor_position())) {
 
 				//m_slide_icon.set_highlight(true);
 
@@ -223,12 +223,12 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::MousePressEvent (const MouseEvent& event)
+	ResponseType Slider::PerformMousePress (const Context* context)
 	{
-		if(CursorOnSlideIcon(event.position())) {
+		if(CursorOnSlideIcon(context->cursor_position())) {
 			m_pressed = true;
 			m_last_value = value();
-			m_last_cursor = event.position();
+			m_last_cursor = context->cursor_position();
 			fire_slider_pressed();
 
 			return Finish;
@@ -237,12 +237,12 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Slider::PerformMouseRelease (const Context* context)
 	{
 		if(m_pressed) {
 			m_pressed = false;
 
-			if(CursorOnSlideIcon(event.position())) {
+			if(CursorOnSlideIcon(context->cursor_position())) {
 				fire_slider_released();
 			}
 

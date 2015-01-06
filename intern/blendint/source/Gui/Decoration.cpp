@@ -46,7 +46,7 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	Decoration::Decoration(const String& title)
-	: Widget(),
+	: AbstractDecoration(),
 	  space_(4),
 	  close_button_(nullptr)
 	{
@@ -67,6 +67,8 @@ namespace BlendInt {
 		//set_round_radius(5.f);
 
 		InitializeDecorationOnce();
+
+		events()->connect(close_button_->clicked(), this, &Decoration::OnCloseButtonClicked);
 	}
 
 	Decoration::~Decoration ()
@@ -125,7 +127,16 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			std::vector<GLfloat> inner_verts;
-			GenerateRoundedVertices(&inner_verts, 0);
+
+			if (Theme::instance->decoration().shaded) {
+				GenerateRoundedVertices(Vertical,
+						Theme::instance->decoration().shadetop,
+						Theme::instance->decoration().shadedown,
+						&inner_verts,
+						nullptr);
+			} else {
+				GenerateRoundedVertices(&inner_verts, nullptr);
+			}
 
 			inner_.bind();
 			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -146,7 +157,16 @@ namespace BlendInt {
 		set_round_type(round_type);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
 
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -160,7 +180,17 @@ namespace BlendInt {
 		set_round_radius(radius);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
+
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		inner_.reset();
@@ -168,12 +198,12 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Decoration::Draw (Profile& profile)
+	ResponseType Decoration::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Theme::instance->decoration().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -211,7 +241,16 @@ namespace BlendInt {
 	void Decoration::InitializeDecorationOnce()
 	{
 		std::vector<GLfloat> inner_verts;
-		GenerateRoundedVertices(&inner_verts, 0);
+
+		if (Theme::instance->decoration().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Theme::instance->decoration().shadetop,
+					Theme::instance->decoration().shadedown,
+					&inner_verts,
+					nullptr);
+		} else {
+			GenerateRoundedVertices(&inner_verts, nullptr);
+		}
 
 		glGenVertexArrays(1, vao_);
 
@@ -226,6 +265,11 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		inner_.reset();
+	}
+
+	void Decoration::OnCloseButtonClicked(AbstractButton* button)
+	{
+		fire_close_triggered();
 	}
 
 }

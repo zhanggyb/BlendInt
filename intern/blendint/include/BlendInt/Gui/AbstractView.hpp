@@ -21,9 +21,19 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
-#define _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTVIEW_HPP_
+#define _BLENDINT_GUI_ABSTRACTVIEW_HPP_
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+ 
 #include <vector>
 #include <pthread.h>
 
@@ -35,18 +45,16 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/HID/MouseEvent.hpp>
-#include <BlendInt/HID/KeyEvent.hpp>
-#include <BlendInt/HID/ContextMenuEvent.hpp>
-
-#include <BlendInt/Gui/Profile.hpp>
-
 namespace BlendInt {
 
+	class Context;
 	class AbstractView;
 
-	typedef RefPtr<AbstractView> AbstractInteractiveFormPtr;
-
+	/**
+	 * @brief Set/reset the managed flag of a View
+	 *
+	 * A managed View will be deleted when the superview is destroyed.
+	 */
 	template<typename T>
 	T* Manage (T* obj, bool val = true)
 	{
@@ -192,16 +200,29 @@ namespace BlendInt {
 	/**
 	 * @brief Abstract class for all views
 	 *
-	 * A view is a unit of the user interface in BlendInt that knows how to draw itself.
-	 * A view also knows how to process the event from window system, e.g. a mouse click.
+	 * AbstractView is the base class of all user interface objects in
+	 * BlendInt, it receives mouse, keyboard and other events from the
+	 * window system, and draw a representation of itself with OpenGL
+	 * APIs in the OpenGL Context.
 	 *
-	 * AbstractView is the basic class for all views, and there're 2 different groups of sub classes:
-	 * 	- frames
-	 * 	- widgets
+	 * There're 2 main different groups of the sub classes of
+	 * AbstractView:
 	 *
-	 * Frame works like a window in the desktop, it usually has a background, shadow, and contains widgets.
+	 *	- frames
+	 *	- widgets
 	 *
-	 * The other group of view are called widgets, for example, buttons, sliders.
+	 * A Frame inherit from AbstractFrame and works like a window in
+	 * the desktop, it's used to contains other widgets or other
+	 * frames, dispatch render or input events, and usually manages
+	 * its own projection/view/model matrix to display its sub views.
+	 *
+	 * The other group is called widget. All widgets inherit from
+	 * AbstractWidget. A widget must be contained in a frame for
+	 * display and interact with the user.
+	 *
+	 * @see AbstractFrame
+	 * @see AbstractWidget
+	 * @see Context
 	 *
 	 * @ingroup gui
 	 */
@@ -210,11 +231,6 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractView);
 
 	public:
-
-		friend class Context;
-		friend class AbstractFrame;
-
-		template <typename T> friend T* Manage (T* obj, bool val);
 
 		/**
 		 * @brief The default constructor
@@ -277,14 +293,6 @@ namespace BlendInt {
 
 		AbstractView* GetWidgetAt (int i) const;
 
-		void MoveBackward ();
-
-		void MoveForward ();
-
-		void MoveToFirst ();
-
-		void MoveToLast ();
-
 		const Point& position () const
 		{
 			return position_;
@@ -312,7 +320,7 @@ namespace BlendInt {
 
 		inline bool visiable () const
 		{
-			return flags_ & ViewVisibility;
+			return flags_ & ViewVisible;
 		}
 
 		inline bool managed () const
@@ -370,14 +378,13 @@ namespace BlendInt {
 			return last_subview_;
 		}
 
-		/**
-		 * @brief Check if the view and its all container are under cursor position
-		 *
-		 * @note There's no meaning to use this function to test Context or Frame.
-		 */
-		static bool IsHoverThrough (const AbstractView* view, const Point& cursor);
+		static void MoveToFirst (AbstractView* view);
 
-		static bool IsHoverThroughExt (const AbstractView* view, const Point& global_cursor_position);
+		static void MoveToLast (AbstractView* view);
+
+		static void MoveForward (AbstractView* view);
+
+		static void MoveBackward (AbstractView* view);
 
 		static void SetDefaultBorderWidth (float border);
 
@@ -469,6 +476,15 @@ namespace BlendInt {
 			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
 		}
 
+		inline void set_focusable (bool focusable)
+		{
+			if(focusable) {
+				SETBIT(flags_, ViewFocusable);
+			} else {
+				CLRBIT(flags_, ViewFocusable);
+			}
+		}
+
 		inline void set_focus (bool focus)
 		{
 			if(focus) {
@@ -490,9 +506,9 @@ namespace BlendInt {
 		inline void set_visible (bool visiable)
 		{
 			if(visiable) {
-				SETBIT(flags_, ViewVisibility);
+				SETBIT(flags_, ViewVisible);
 			} else {
-				CLRBIT(flags_, ViewVisibility);
+				CLRBIT(flags_, ViewVisible);
 			}
 		}
 
@@ -523,29 +539,31 @@ namespace BlendInt {
 			}
 		}
 
-		virtual bool PreDraw (Profile& profile) = 0;
+		virtual bool PreDraw (const Context* context) = 0;
 
-		virtual ResponseType Draw (Profile& profile) = 0;
+		virtual ResponseType Draw (const Context* context) = 0;
 
-		virtual void PostDraw (Profile& profile) = 0;
+		virtual void PostDraw (const Context* context) = 0;
 
-		virtual void FocusEvent (bool focus) = 0;
+		virtual void PerformFocusOn (const Context* context) = 0;
 
-		virtual void MouseHoverInEvent (const MouseEvent& event) = 0;
+		virtual void PerformFocusOff (const Context* context) = 0;
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event) = 0;
+		virtual void PerformHoverIn (const Context* context) = 0;
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
+		virtual void PerformHoverOut (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType PerformKeyPress (const Context* context) = 0;
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event) = 0;
+		virtual ResponseType PerformContextMenuPress (const Context* context) = 0;
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event) = 0;
+		virtual ResponseType PerformContextMenuRelease (const Context* context) = 0;
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event) = 0;
+		virtual ResponseType PerformMousePress (const Context* context) = 0;
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
+		virtual ResponseType PerformMouseRelease (const Context* context) = 0;
+
+		virtual ResponseType PerformMouseMove (const Context* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
@@ -621,7 +639,7 @@ namespace BlendInt {
 		 */
 		int GetHalfOutlineVertices (int round_type) const;
 
-		void DrawSubFormsOnce (Profile& profile);
+		void DrawSubViewsOnce (const Context* context);
 
 		static void GenerateVertices (
 				const Size& size,
@@ -646,6 +664,12 @@ namespace BlendInt {
 
 	private:
 
+		friend class Context;
+		friend class AbstractFrame;
+		friend class AbstractWidget;
+
+		template <typename T> friend T* Manage (T* obj, bool val);
+
 		enum ViewFlagIndex {
 
 			ViewRoundTopLeft = (1 << 0),
@@ -661,17 +685,19 @@ namespace BlendInt {
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocused = (1 << 6),
+			ViewFocusable = (1 << 6),
+
+			ViewFocused = (1 << 7),
 
 			/** If this view is in cursor hover list in Context */
-			ViewHover = (1 << 7),
+			ViewHover = (1 << 8),
 
-			ViewVisibility = (1 << 8),
+			ViewVisible = (1 << 9),
 
-			ViewEmboss = (1 << 9),
+			ViewEmboss = (1 << 10),
 
 			// only valid when use off-screen render in container
-			ViewRefresh = (1 << 10),
+			ViewRefresh = (1 << 11),
 
 		};
 
@@ -683,7 +709,7 @@ namespace BlendInt {
 		 * 	- true: use superview refresh() status to set view's refresh flag
 		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractView* view, Profile& profile);
+		static void DispatchDrawEvent (AbstractView* view, const Context* context);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,
@@ -745,4 +771,4 @@ namespace BlendInt {
 
 } /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_ABSTRACTINTERACTIVEFORM_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTVIEW_HPP_ */

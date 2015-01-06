@@ -5,6 +5,8 @@
 #ifndef _MARKERBASEDARCONTEXT_HPP_
 #define _MARKERBASEDARCONTEXT_HPP_
 
+#include <GLFW/glfw3.h>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -15,6 +17,8 @@
 #include <BlendInt/Core/Timer.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
+
+#include "MBARViewport.hpp"
 
 namespace BI=BlendInt;
 
@@ -46,7 +50,7 @@ private:
 
 	void OnStop(BI::AbstractButton* sender);
 
-	BI::CVVideoViewport* viewport_;
+	MBARViewport* viewport_;
 
 	GLFWwindow* window_;
 

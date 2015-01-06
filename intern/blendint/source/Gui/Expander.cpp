@@ -113,7 +113,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ExpandButton::Draw (Profile& profile)
+	ResponseType ExpandButton::Draw (const Context* context)
 	{
 		if(text().size()) {
 			font().Print(0.f, 0.f, text(), text_length(), 0);
@@ -294,7 +294,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Expander::Draw (Profile& profile)
+	ResponseType Expander::Draw (const Context* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

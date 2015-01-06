@@ -113,7 +113,7 @@ namespace BlendInt {
             RequestRedraw();
 	}
 
-	ResponseType MenuButton::Draw (Profile& profile)
+	ResponseType MenuButton::Draw (const Context* context)
 	{
 		if (hover()) {
 
@@ -181,7 +181,7 @@ namespace BlendInt {
 		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		inner_.reset();
 	}
 
 } /* namespace BlendInt */

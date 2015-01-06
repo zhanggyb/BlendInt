@@ -51,12 +51,12 @@ namespace BlendInt {
 
 	using Stock::Shaders;
 
-	Dialog::Dialog(const String& title, bool modal)
+	Dialog::Dialog (bool modal)
 	: AbstractFloatingFrame(),
-	  focused_widget_(0),
-	  hovered_widget_(0),
-	  decoration_(0),
-	  layout_(0),
+	  focused_widget_(nullptr),
+	  hovered_widget_(nullptr),
+	  decoration_(nullptr),
+	  layout_(nullptr),
 	  cursor_position_(InsideRectangle),
 	  dialog_flags_(0)
 	{
@@ -74,11 +74,44 @@ namespace BlendInt {
 
 		InitializeDialogOnce();
 
+		// create default layout
+		layout_ = Manage(new FreeLayout);
+		PushBackSubView(layout_);
+		layout_->Resize(size());
+		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
+
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+	}
+
+	Dialog::Dialog(const String& title, bool modal)
+	: AbstractFloatingFrame(),
+	  focused_widget_(nullptr),
+	  hovered_widget_(nullptr),
+	  decoration_(nullptr),
+	  layout_(nullptr),
+	  cursor_position_(InsideRectangle),
+	  dialog_flags_(0)
+	{
+		set_size(400, 300);
+		set_round_type(RoundAll);
+		set_round_radius(5.f);
+		set_refresh(true);
+		set_modal(modal);
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat3(1.f);
+
+		applied_.reset(new Cpp::Event<Dialog*>);
+		canceled_.reset(new Cpp::Event<Dialog*>);
+
+		InitializeDialogOnce();
+
+		DBG_PRINT_MSG("%s", "create decoration");
 		decoration_ = Manage(new Decoration(title));
 		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
 		decoration_->MoveTo(0, size().height() - decoration_->size().height());
 		PushBackSubView(decoration_);
-		events()->connect(decoration_->close_button_clicked(), this, &Dialog::OnCloseButtonClicked);
+		events()->connect(decoration_->close_triggered(), this, &Dialog::OnCloseButtonClicked);
 
 		// create default layout
 		layout_ = Manage(new FreeLayout);
@@ -129,7 +162,12 @@ namespace BlendInt {
 			layout_ = layout;
 			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 			MoveSubViewTo(layout_, 0, 0);
-			ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
+
+			if(decoration_ != nullptr) {
+				ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
+			} else {
+				ResizeSubView(layout_, size());
+			}
 		} else {
 			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
 		}
@@ -228,20 +266,20 @@ namespace BlendInt {
 		}
 	}
 
-	bool Dialog::PreDraw(Profile& profile)
+	bool Dialog::PreDraw(const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		if(refresh()) {
-			RenderToBuffer(profile);
+			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
 		}
 
 		return true;
 	}
 
-	ResponseType Dialog::Draw(Profile& profile)
+	ResponseType Dialog::Draw(const Context* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -249,7 +287,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->dialog().inner.data());
+		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -286,70 +324,76 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Dialog::PostDraw(Profile& profile)
+	void Dialog::PostDraw (const Context* context)
 	{
 	}
 
-	void Dialog::FocusEvent(bool focus)
+	void Dialog::PerformFocusOn (const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverInEvent(const MouseEvent& event)
+	void Dialog::PerformFocusOff (const Context* context)
+	{
+
+	}
+
+	void Dialog::PerformHoverIn(const Context* context)
 	{
 	}
 
-	void Dialog::MouseHoverOutEvent(const MouseEvent& event)
+	void Dialog::PerformHoverOut(const Context* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_, context);
+			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType Dialog::KeyPressEvent(const KeyEvent& event)
+	ResponseType Dialog::PerformKeyPress(const Context* context)
 	{
 		ResponseType response = Ignore;
 
-		if(event.key() == Key_Escape) {
+		if(context->key() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			response = DispatchKeyEvent(focused_widget_, event);
+			SetActiveFrame(context, this);
+			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType Dialog::ContextMenuPressEvent(
-			const ContextMenuEvent& event)
+	ResponseType Dialog::PerformContextMenuPress(
+			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::ContextMenuReleaseEvent(
-			const ContextMenuEvent& event)
+	ResponseType Dialog::PerformContextMenuRelease(
+			const Context* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::MousePressEvent(const MouseEvent& event)
+	ResponseType Dialog::PerformMousePress(const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetActiveFrame(context, this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = event.position();
+			cursor_point_ = context->cursor_position();
 
 			if(hovered_widget_) {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, event);
+				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -358,7 +402,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "hovered is layout");
 					set_mouse_button_pressed(true);
 				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 			} else {
@@ -366,7 +410,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				MoveToLast();
+				const_cast<Context*>(context)->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -377,35 +421,39 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = event.position();
+			cursor_point_ = context->cursor_position();
 
+			return Finish;
+		}
+
+		if(modal()) {
 			return Finish;
 		}
 
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseReleaseEvent(const MouseEvent& event)
+	ResponseType Dialog::PerformMouseRelease(const Context* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			return delegate_mouse_release_event(focused_widget_, event);
+			SetActiveFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType Dialog::MouseMoveEvent(const MouseEvent& event)
+	ResponseType Dialog::PerformMouseMove(const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(mouse_button_pressed()) {
 
-			int ox = event.position().x() - cursor_point_.x();
-			int oy = event.position().y() - cursor_point_.y();
+			int ox = context->cursor_position().x() - cursor_point_.x();
+			int oy = context->cursor_position().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -475,8 +523,8 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				assign_event_frame(event, this);
-				retval = delegate_mouse_move_event(focused_widget_, event);
+				SetActiveFrame(context, this);
+				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
 		}
@@ -484,7 +532,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const MouseEvent& event)
+	ResponseType Dialog::DispatchHoverEvent(const Context* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
@@ -494,13 +542,15 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(event.position())) {
+		if(valid_rect.contains(context->cursor_position())) {
 
-			if(Contain(event.position())) {
+			if(Contain(context->cursor_position())) {
 
 				cursor_position_ = InsideRectangle;
 
-				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->cursor_position().x(), context->cursor_position().y());
+
+				AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 				if(new_hovered_widget != hovered_widget_) {
 
@@ -517,6 +567,10 @@ namespace BlendInt {
 
 				}
 
+				if(hovered_widget_) {
+					// DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
+				}
+
 				// set cursor shape
 				if(cursor_on_border()) {
 					set_cursor_on_border(false);
@@ -528,15 +582,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(event.position().x() <= position().x()) {
+				if(context->cursor_position().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (event.position().x() >= (position().x() + size().width())) {
+				} else if (context->cursor_position().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (event.position().y() >= (position().y() + size().height())) {
+				if (context->cursor_position().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (event.position().y () <= position().y()) {
+				} else if (context->cursor_position().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 
@@ -600,26 +654,30 @@ namespace BlendInt {
 
 	void Dialog::UpdateLayout()
 	{
-		decoration_->Resize(size().width(), decoration_->size().height());
-		decoration_->MoveTo(0, size().height() - decoration_->size().height());
+		int h = 0;
+		if(decoration_ != nullptr) {
+			decoration_->Resize(size().width(), decoration_->size().height());
+			decoration_->MoveTo(0, size().height() - decoration_->size().height());
+			h = decoration_->size().height();
+		}
 
 		layout_->MoveTo(0, 0);
-		layout_->Resize(size().width(), size().height() - decoration_->size().height());
+		layout_->Resize(size().width(), size().height() - h);
 	}
 
-	void Dialog::SetFocusedWidget(AbstractWidget* widget)
+	void Dialog::SetFocusedWidget(AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &Dialog::OnFocusedWidgetDestroyed);
 		}
 	}
@@ -717,86 +775,10 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
-	void Dialog::OnCloseButtonClicked(AbstractButton* button)
+	void Dialog::OnCloseButtonClicked()
 	{
-		assert(button == decoration_->close_button());
-
+		//assert(button == decoration_->close_button());
 		delete this;
-	}
-
-	void Dialog::RenderToBuffer(Profile& profile)
-	{
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-
-        if(GLFramebuffer::CheckStatus()) {
-
-            fb->bind();
-
-            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            glViewport(0, 0, size().width(), size().height());
-
-            // Draw context:
-            DrawSubFormsOnce(profile);
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
-        }
-
-        fb->reset();
-        tex->reset();
-
-        //delete tex; tex = 0;
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-
-        fb->reset();
-        delete fb; fb = 0;
 	}
 
 }

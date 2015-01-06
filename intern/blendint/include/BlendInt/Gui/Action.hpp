@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		Action ();
 
-		explicit Action (const String& text);
+		Action (const String& text);
 
 		Action (const String& text, const String& shortcut);
 
@@ -67,16 +67,9 @@ namespace BlendInt {
 
 		const RefPtr<AbstractIcon>& icon () const
 		{
-			return m_icon;
+			return icon_;
 		}
 		
-		/**
-		 * @brief Add one sub item
-		 * @param[in] item A sub item
-		 * @param[in] check If need to check whether the item already exist
-		 */
-		void AddSubItem (const RefPtr<Action>& item, bool check = false);
-
 		/**
 		 * @brief Get size if icon and text alighed horizontally
 		 */
@@ -86,43 +79,36 @@ namespace BlendInt {
 
 		void set_icon (const RefPtr<AbstractIcon>& icon)
 		{
-			m_icon = icon;
+			icon_ = icon;
 		}
 		
 		const String& text () const
 		{
-			return m_text;
+			return text_;
 		}
 		
 		void set_text (const String& text)
 		{
-			m_text = text;
+			text_ = text;
 		}
 
 		const String& shortcut () const
 		{
-			return m_shortcut;
+			return shortcut_;
 		}
 
 		void set_shortcut (const String& shortcut)
 		{
-			m_shortcut = shortcut;
-		}
-
-		const std::list<RefPtr<Action> >& list () const
-		{
-			return m_list;
+			shortcut_ = shortcut;
 		}
 
 	private:
 
-		RefPtr<AbstractIcon> m_icon;
+		RefPtr<AbstractIcon> icon_;
 
-		String m_text;
+		String text_;
 
-		String m_shortcut;
-
-		std::list<RefPtr<Action> > m_list;
+		String shortcut_;
 	};
 
 }

@@ -31,80 +31,107 @@
 
 namespace BlendInt {
 
-	MenuItem::MenuItem ()
-	: m_icon(0), m_parent(0), m_sub(0), m_highlight(false)
+	MenuItem::MenuItem (const String& text)
+	: AbstractMenuItem()
 	{
+		action_.reset(new Action(text));
+
+		InitializeMenuItem();
 	}
 
-	MenuItem::MenuItem (const String& text)
-	: m_icon(0), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
+	MenuItem::MenuItem(const RefPtr<Action>& action)
+	: AbstractMenuItem()
 	{
+#ifdef DEBUG
+		assert(action);
+#endif
+
+		action_ = action;
+		InitializeMenuItem();
 	}
 
 	MenuItem::MenuItem (const String& text, const String& shortcut)
-	: m_icon(0), m_text(text), m_shortcut(shortcut), m_parent(0), m_sub(0), m_highlight(false)
+	: AbstractMenuItem()
 	{
+		action_.reset(new Action(text, shortcut));
+		InitializeMenuItem();
 	}
 
-
-	MenuItem::MenuItem (AbstractIcon* icon, const String& text)
-	: m_icon(icon), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
+	MenuItem::MenuItem (const RefPtr<AbstractIcon>& icon, const String& text)
+	: AbstractMenuItem()
 	{
+		action_.reset(new Action(icon, text));
+		InitializeMenuItem();
 	}
 
-	MenuItem::MenuItem (AbstractIcon* icon, const String& text, const String& shortcut)
-	: m_icon(icon), m_text(text), m_shortcut(shortcut), m_parent(0), m_sub(0), m_highlight(false)
+	MenuItem::MenuItem (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
+	: AbstractMenuItem()
 	{
+		action_.reset(new Action(icon, text, shortcut));
+		InitializeMenuItem();
 	}
 
 	MenuItem::~MenuItem()
 	{
-		if(m_sub) {
-			m_sub->m_parent = 0;
-			delete m_sub;
-			m_sub = 0;
-		}
-
-		if(m_parent) {
-			m_parent->Remove(this);
-		}
-
-		RemoveIcon();
+		// nothing to do here
 	}
 
-	void MenuItem::SetIcon(AbstractIcon* icon)
+	bool MenuItem::AddSubMenuItem(MenuItem* menuitem)
 	{
-		m_icon.reset(icon);
-	}
-
-	void MenuItem::SetParentMenu(MenuItemBin* superview)
-	{
-		if(m_parent == superview) return;
-
-		if(superview) {
-			superview->m_list.push_back(this);
+		if(PushBackSubView(menuitem)) {
+			RequestRedraw();
+			return true;
 		}
 
-		m_parent = superview;
+		return false;
 	}
 
-	void MenuItem::SetSubMenu (MenuItemBin* sub)
+	bool MenuItem::InsertSubMenuItem(int index, MenuItem* menuitem)
 	{
-		if(m_sub == sub) return;
-
-		if(m_sub) {
-			m_sub->m_parent = 0;
-			// delete m_sub;
+		if(InsertSubView(index, menuitem)) {
+			RequestRedraw();
+			return true;
 		}
 
-		if(sub) {
-			sub->SetParent(this);
-		}
+		return false;
 	}
 
-	void MenuItem::RemoveIcon()
+	void MenuItem::PerformHoverIn(const Context* context)
 	{
+		RequestRedraw();
 	}
 
+	void MenuItem::PerformHoverOut(const Context* context)
+	{
+		RequestRedraw();
+	}
+
+	ResponseType MenuItem::Draw(const Context* context)
+	{
+		// Menu Icon only show itself
+		if(action_->icon()) {
+			action_->icon()->Draw(0.f, 0.f, 0);
+		}
+
+		Font font;
+
+		if(hover()) {
+			font.set_color(Color(1.f, 0.f, 0.f, 1.f));
+		} else {
+			font.set_color(Color(1.f, 1.f, 1.f, 1.f));
+		}
+
+		int x = 16 + 2;
+		int y = (size().height() - font.GetHeight()) / 2 + std::abs(font.GetDescender());
+		font.set_pen(x, y);
+
+		font.Print(0.f, 0.f, action_->text());
+
+		return Finish;
+	}
+
+	void MenuItem::InitializeMenuItem()
+	{
+		set_size(240, 20);
+	}
 }
-

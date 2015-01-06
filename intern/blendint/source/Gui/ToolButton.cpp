@@ -154,17 +154,17 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void ToolButton::MouseHoverInEvent(const MouseEvent& event)
+	void ToolButton::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void ToolButton::MouseHoverOutEvent(const MouseEvent& event)
+	void ToolButton::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType ToolButton::Draw (Profile& profile)
+	ResponseType ToolButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 

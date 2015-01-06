@@ -96,6 +96,9 @@ namespace BlendInt {
 
 		if(superview_) {
 
+			superview_->RemoveSubView(this);
+
+			/*
 			if(previous_view_) {
 				previous_view_->next_view_ = next_view_;
 			} else {
@@ -116,6 +119,7 @@ namespace BlendInt {
 			previous_view_ = 0;
 			next_view_ = 0;
 			superview_ = 0;
+			*/
 
 		} else {
 			assert(previous_view_ == 0);
@@ -294,150 +298,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractView::MoveBackward()
-	{
-		if(superview_) {
-
-			if(previous_view_) {
-
-				AbstractView* tmp = previous_view_;
-
-				tmp->next_view_ = next_view_;
-				if(next_view_) {
-					next_view_->previous_view_ = tmp;
-				} else {
-					assert(superview_->last_subview_ == this);
-					superview_->last_subview_ = tmp;
-				}
-
-				next_view_ = tmp;
-				previous_view_ = tmp->previous_view_;
-				if(tmp->previous_view_) {
-					tmp->previous_view_->next_view_ = this;
-				}
-				tmp->previous_view_ = this;
-
-				if(previous_view_ == 0) {
-					assert(superview_->first_subview_ == tmp);
-					superview_->first_subview_ = this;
-				}
-
-				DBG_PRINT_MSG("this: %s", name_.c_str());
-				if(previous_view_) {
-					DBG_PRINT_MSG("previous_view: %s", previous_view_->name_.c_str());
-					assert(previous_view_->next_view_ == this);
-				}
-				if(next_view_) {
-					DBG_PRINT_MSG("next_view: %s", next_view_->name_.c_str());
-					assert(next_view_->previous_view_ == this);
-				}
-
-				superview_->RequestRedraw();
-
-			} else {
-				assert(superview_->first_subview_ == this);
-			}
-
-		}
-	}
-
-	void AbstractView::MoveForward()
-	{
-		if(superview_) {
-
-			if(next_view_) {
-
-				AbstractView* tmp = next_view_;
-
-				tmp->previous_view_ = previous_view_;
-				if(previous_view_) {
-					previous_view_->next_view_ = tmp;
-				} else {
-					assert(superview_->first_subview_ == this);
-					superview_->first_subview_ = tmp;
-				}
-
-				previous_view_ = tmp;
-				next_view_ = tmp->next_view_;
-				if(tmp->next_view_) {
-					tmp->next_view_->previous_view_ = this;
-				}
-				tmp->next_view_ = this;
-
-				if(next_view_ == 0) {
-					assert(superview_->last_subview_ == tmp);
-					superview_->last_subview_ = this;
-				}
-
-				if(previous_view_) {
-					assert(previous_view_->next_view_ == this);
-				}
-				if(next_view_) {
-					assert(next_view_->previous_view_ == this);
-				}
-
-				superview_->RequestRedraw();
-
-			} else {
-				assert(superview_->last_subview_ == this);
-			}
-
-		}
-	}
-
-	void AbstractView::MoveToFirst()
-	{
-		if(superview_) {
-
-			if(superview_->first_subview_ == this) {
-				assert(previous_view_ == 0);
-				return;	// already at first
-			}
-
-			previous_view_->next_view_ = next_view_;
-			if(next_view_) {
-				next_view_->previous_view_ = previous_view_;
-			} else {
-				assert(superview_->last_subview_ == this);
-				superview_->last_subview_ = previous_view_;
-			}
-
-			previous_view_ = 0;
-			next_view_ = superview_->first_subview_;
-			superview_->first_subview_->previous_view_ = this;
-			superview_->first_subview_ = this;
-
-			superview_->RequestRedraw();
-		}
-	}
-
-	void AbstractView::MoveToLast()
-	{
-		if(superview_) {
-
-			if(superview_->last_subview_ == this) {
-				assert(next_view_ == 0);
-				return;	// already at last
-			}
-
-			next_view_->previous_view_ = previous_view_;
-
-			if(previous_view_) {
-				previous_view_->next_view_ = next_view_;
-			} else {
-				assert(superview_->first_subview_ == this);
-				superview_->first_subview_ = next_view_;
-			}
-
-			next_view_ = 0;
-			previous_view_ = superview_->last_subview_;
-			superview_->last_subview_->next_view_ = this;
-			superview_->last_subview_ = this;
-
-			superview_->RequestRedraw();
-		}
-	}
-
 	void AbstractView::SetDefaultBorderWidth(float border)
 	{
 		kBorderWidth = border;
@@ -452,40 +312,148 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	bool AbstractView::IsHoverThrough(const AbstractView* widget, const Point& cursor)
+	void AbstractView::MoveToFirst(AbstractView* view)
 	{
-		AbstractView* container = widget->superview_;
-		if(container == 0) return false;	// if a widget hovered was removed from any container.
+		if(view->superview_) {
 
-		if(widget->visiable() && widget->Contain(cursor)) {
-
-			while(container) {
-				if((!container->visiable()) || (!container->Contain(cursor)))
-					return false;
-
-				container = container->superview();
+			if(view->superview_->first_subview_ == view) {
+				assert(view->previous_view_ == 0);
+				return;	// already at first
 			}
 
-			return true;
+			view->previous_view_->next_view_ = view->next_view_;
+			if(view->next_view_) {
+				view->next_view_->previous_view_ = view->previous_view_;
+			} else {
+				assert(view->superview_->last_subview_ == view);
+				view->superview_->last_subview_ = view->previous_view_;
+			}
 
+			view->previous_view_ = 0;
+			view->next_view_ = view->superview_->first_subview_;
+			view->superview_->first_subview_->previous_view_ = view;
+			view->superview_->first_subview_ = view;
+
+			view->superview_->RequestRedraw();
 		}
-
-		return false;
 	}
 
-	bool AbstractView::IsHoverThroughExt (const AbstractView* widget, const Point& global_cursor_position)
+	void AbstractView::MoveToLast(AbstractView* view)
 	{
-		Point global_position = widget->GetGlobalPosition();
+		if(view->superview_) {
 
-		if(global_cursor_position.x() < global_position.x() ||
-				global_cursor_position.y() < global_position.y() ||
-				global_cursor_position.x() > (global_position.x() + widget->size().width()) ||
-				global_cursor_position.y() > (global_position.y() + widget->size().height()))
-		{
-			return false;
+			if(view->superview_->last_subview_ == view) {
+				assert(view->next_view_ == 0);
+				return;	// already at last
+			}
+
+			view->next_view_->previous_view_ = view->previous_view_;
+
+			if(view->previous_view_) {
+				view->previous_view_->next_view_ = view->next_view_;
+			} else {
+				assert(view->superview_->first_subview_ == view);
+				view->superview_->first_subview_ = view->next_view_;
+			}
+
+			view->next_view_ = 0;
+			view->previous_view_ = view->superview_->last_subview_;
+			view->superview_->last_subview_->next_view_ = view;
+			view->superview_->last_subview_ = view;
+
+			view->superview_->RequestRedraw();
 		}
+	}
 
-		return true;
+	void AbstractView::MoveForward(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->next_view_) {
+
+				AbstractView* tmp = view->next_view_;
+
+				tmp->previous_view_ = view->previous_view_;
+				if(view->previous_view_) {
+					view->previous_view_->next_view_ = tmp;
+				} else {
+					assert(view->superview_->first_subview_ == view);
+					view->superview_->first_subview_ = tmp;
+				}
+
+				view->previous_view_ = tmp;
+				view->next_view_ = tmp->next_view_;
+				if(tmp->next_view_) {
+					tmp->next_view_->previous_view_ = view;
+				}
+				tmp->next_view_ = view;
+
+				if(view->next_view_ == 0) {
+					assert(view->superview_->last_subview_ == tmp);
+					view->superview_->last_subview_ = view;
+				}
+
+				if(view->previous_view_) {
+					assert(view->previous_view_->next_view_ == view);
+				}
+				if(view->next_view_) {
+					assert(view->next_view_->previous_view_ == view);
+				}
+
+				view->superview_->RequestRedraw();
+
+			} else {
+				assert(view->superview_->last_subview_ == view);
+			}
+
+		}
+	}
+
+	void AbstractView::MoveBackward(AbstractView* view)
+	{
+		if(view->superview_) {
+
+			if(view->previous_view_) {
+
+				AbstractView* tmp = view->previous_view_;
+
+				tmp->next_view_ = view->next_view_;
+				if(view->next_view_) {
+					view->next_view_->previous_view_ = tmp;
+				} else {
+					assert(view->superview_->last_subview_ == view);
+					view->superview_->last_subview_ = tmp;
+				}
+
+				view->next_view_ = tmp;
+				view->previous_view_ = tmp->previous_view_;
+				if(tmp->previous_view_) {
+					tmp->previous_view_->next_view_ = view;
+				}
+				tmp->previous_view_ = view;
+
+				if(view->previous_view_ == 0) {
+					assert(view->superview_->first_subview_ == tmp);
+					view->superview_->first_subview_ = view;
+				}
+
+				DBG_PRINT_MSG("this: %s", view->name_.c_str());
+				if(view->previous_view_) {
+					DBG_PRINT_MSG("previous_view: %s", view->previous_view_->name_.c_str());
+					assert(view->previous_view_->next_view_ == view);
+				}
+				if(view->next_view_) {
+					DBG_PRINT_MSG("next_view: %s", view->next_view_->name_.c_str());
+					assert(view->next_view_->previous_view_ == view);
+				}
+
+				view->superview_->RequestRedraw();
+
+			} else {
+				assert(view->superview_->first_subview_ == view);
+			}
+
+		}
 	}
 
 	int AbstractView::GetOutlineVertices (int round_type)
@@ -501,26 +469,26 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractView::DrawSubFormsOnce(Profile& profile)
+	void AbstractView::DrawSubViewsOnce(const Context* context)
 	{
 		bool refresh_record = false;
 
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
 			set_refresh(false);	// allow pass to superview in RequestRedraw()
-			if (p->PreDraw(profile)) {
+			if (p->PreDraw(context)) {
 
-				ResponseType response = p->Draw(profile);
+				ResponseType response = p->Draw(context);
 				p->set_refresh(refresh());
 
 				if(response == Ignore) {
 					for(AbstractView* sub = p->first_subview(); sub; sub = sub->next_view())
 					{
-						DispatchDrawEvent(sub, profile);
+						DispatchDrawEvent(sub, context);
 					}
 				}
 
-				p->PostDraw(profile);
+				p->PostDraw(context);
 			}
 
 			if(refresh()) refresh_record = true;
@@ -530,25 +498,25 @@ namespace BlendInt {
 	}
 
 	void AbstractView::DispatchDrawEvent (AbstractView* widget,
-	        Profile& profile)
+	        const Context* context)
 	{
 #ifdef DEBUG
 		assert(widget != 0);
 #endif
 
-		if (widget->PreDraw(profile)) {
+		if (widget->PreDraw(context)) {
 
-			ResponseType response = widget->Draw(profile);
+			ResponseType response = widget->Draw(context);
 			widget->set_refresh(widget->superview_->refresh());
 
 			if(response == Ignore) {
 				for(AbstractView* sub = widget->first_subview(); sub; sub = sub->next_view())
 				{
-					DispatchDrawEvent(sub, profile);
+					DispatchDrawEvent(sub, context);
 				}
 			}
 
-			widget->PostDraw(profile);
+			widget->PostDraw(context);
 		}
 	}
 
@@ -1194,11 +1162,11 @@ namespace BlendInt {
 			int round_type, float radius, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
-		if(inner == 0 && outer == 0) return;
+		if(inner == nullptr && outer == nullptr) return;
 
-		std::vector<GLfloat>* inner_ptr = 0;
+		std::vector<GLfloat>* inner_ptr = nullptr;
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			inner_ptr = new std::vector<GLfloat>;
 		} else {
 			inner_ptr = inner;
@@ -1332,7 +1300,7 @@ namespace BlendInt {
 			(*inner_ptr)[count * 3 + 2] = 0.f;
 		}
 
-		if(outer) {
+		if(outer != nullptr) {
 
 			if(border > 0.f) {
 
@@ -1400,7 +1368,7 @@ namespace BlendInt {
 
 		}
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			delete inner_ptr;
 		}
 	}
@@ -1410,11 +1378,11 @@ namespace BlendInt {
 			short shadedown, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
-		if(inner == 0 && outer == 0) return;
+		if(inner == nullptr && outer == nullptr) return;
 
-		std::vector<GLfloat>* inner_ptr = 0;
+		std::vector<GLfloat>* inner_ptr = nullptr;
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			inner_ptr = new std::vector<GLfloat>;
 		} else {
 			inner_ptr = inner;
@@ -1624,7 +1592,7 @@ namespace BlendInt {
 
 		}
 
-		if(outer) {
+		if(outer != nullptr) {
 
 			if (border > 0.f) {
 
@@ -1692,7 +1660,7 @@ namespace BlendInt {
 
 		}
 
-		if(inner == 0) {
+		if(inner == nullptr) {
 			delete inner_ptr;
 		}
 
@@ -1795,9 +1763,6 @@ namespace BlendInt {
 		view->superview_ = this;
 		subs_count_++;
 
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
-
 		return true;
 	}
 
@@ -1876,8 +1841,6 @@ namespace BlendInt {
 
 		view->superview_ = this;
 		subs_count_++;
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
 
 		return true;
 	}
@@ -1919,9 +1882,6 @@ namespace BlendInt {
 		view->superview_ = this;
 		subs_count_++;
 
-		//events()->connect(widget->destroyed(), this,
-		//				&AbstractContainer::OnSubWidgetDestroyed);
-
 		return true;
 	}
 
@@ -1931,9 +1891,6 @@ namespace BlendInt {
 			return false;
 
 		assert(view->superview_ == this);
-
-		//widget->destroyed().disconnectOne(this,
-		//        &AbstractContainer::OnSubWidgetDestroyed);
 
 		if (view->previous_view_) {
 			view->previous_view_->next_view_ = view->next_view_;
@@ -1949,14 +1906,12 @@ namespace BlendInt {
 			last_subview_ = view->previous_view_;
 		}
 
+		subs_count_--;
+		assert(subs_count_ >= 0);
+
 		view->previous_view_ = 0;
 		view->next_view_ = 0;
 		view->superview_ = 0;
-		subs_count_--;
-
-		if(view->hover()) {
-			view->set_hover(false);
-		}
 
 		return true;
 	}

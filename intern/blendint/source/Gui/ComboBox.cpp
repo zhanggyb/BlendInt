@@ -37,7 +37,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ComboBox.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Icons.hpp>
@@ -205,7 +204,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ComboBox::Draw(Profile& profile)
+	ResponseType ComboBox::Draw(const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -265,11 +264,9 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::MousePressEvent (const MouseEvent& event)
+	ResponseType ComboBox::PerformMousePress (const Context* context)
 	{
 		status_down_ = true;
-
-		Context* context = event.context();
 
 		if(popup_) {
 			delete popup_;
@@ -290,7 +287,7 @@ namespace BlendInt {
 
 			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
 
-			Point pos = event.frame()->GetAbsolutePosition(this);
+			Point pos = context->active_frame()->GetAbsolutePosition(this);
 
 			int top = pos.y() + size().height() + popup_->size().height();
 			int bottom = pos.y() - popup_->size().height();
@@ -318,7 +315,7 @@ namespace BlendInt {
 
 			}
 
-			context->AddFrame(popup_);
+			const_cast<Context*>(context)->AddFrame(popup_);
 		}
 
 		RequestRedraw();
@@ -326,7 +323,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType ComboBox::PerformMouseRelease (const Context* context)
 	{
 		status_down_ = false;
 
@@ -334,12 +331,12 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ComboBox::MouseHoverInEvent(const MouseEvent& event)
+	void ComboBox::PerformHoverIn(const Context* context)
 	{
 		RequestRedraw();
 	}
 
-	void ComboBox::MouseHoverOutEvent(const MouseEvent& event)
+	void ComboBox::PerformHoverOut(const Context* context)
 	{
 		RequestRedraw();
 	}

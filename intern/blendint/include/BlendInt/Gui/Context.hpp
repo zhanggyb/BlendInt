@@ -28,16 +28,25 @@
 
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/Input.hpp>
+
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief Layout to hold and manage all widgets in a OpenGL window
+	 * @brief The root view to interact with window system and manage
+	 * the interface
 	 *
-	 * Context is a special container which holds and manage all widgets in a OpenGL window.
-	 * There should be at least one Context object to work with Interface to show and dispatch events.
+	 * Context is a special view in BlendInt, it provide public
+	 * entries for the windows system to control the display and input
+	 * events.
+	 *
+	 * There should be at least one Context object to work with
+	 * Interface to show and dispatch events.
 	 */
 	class Context: public AbstractView
 	{
@@ -53,13 +62,25 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		void AddFrame (AbstractFrame* vp);
+		bool AddFrame (AbstractFrame* frame, bool focus = true);
+
+		bool InsertFrame (int index, AbstractFrame* frame, bool focus = true);
+
+		void MoveFrameToTop (AbstractFrame* frame, bool focus = true);
 
 		void Draw ();
 
-		void DispatchKeyEvent (const KeyEvent& event);
+		void DispatchKeyEvent (KeyAction action,
+							   int key,
+							   int modifier,
+							   int scancode,
+							   String text);
 
-		void DispatchMouseEvent (const MouseEvent& event);
+		void DispatchMouseEvent (int x,
+								 int y,
+								 MouseAction action,
+								 MouseButton button,
+								 int modifier);
 
 		/**
 		 * @brief Always return true
@@ -70,14 +91,52 @@ namespace BlendInt {
 
 		virtual void MakeGLContextCurrent ();
 
+		AbstractFrame* active_frame () const
+		{
+#ifdef DEBUG
+			assert(active_frame_ != nullptr);
+#endif
+			return active_frame_;
+		}
+
+		const Point& cursor_position () const
+		{
+			return cursor_position_;
+		}
+
+		const Point& viewport_origin () const
+		{
+			return viewport_origin_;
+		}
+
+		void BeginPushStencil ();
+
+		void EndPushStencil ();
+
+		void BeginPopStencil ();
+
+		void EndPopStencil ();
+
+		int key() const {return key_;}
+
+		int scancode () const {return scancode_;}
+
+		MouseAction mouse_action() const {return mouse_action_;}
+
+		KeyAction key_action () const {return key_action_;}
+
+		int modifiers () const {return modifiers_;}
+
+		MouseButton mouse_button() const {return mouse_button_;}
+
+		const String& text () const {return text_;}
+
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return resized_;
 		}
 
 		static Context* GetContext (AbstractView* widget);
-
-		static glm::mat4 default_view_matrix;
 
 	protected:
 
@@ -89,35 +148,40 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (Profile& profile);
+		virtual bool PreDraw (const Context* context);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void PostDraw (Profile& profile);
+		virtual void PostDraw (const Context* context);
 
-		virtual void FocusEvent (bool focus);
+		virtual void PerformFocusOn (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformFocusOff (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformKeyPress (const Context* context);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType PerformContextMenuPress (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		void SetFocusedFrame (AbstractFrame* frame);
+		virtual ResponseType PerformMouseMove (const Context* context);
+
+		virtual bool RemoveSubView (AbstractView* view);
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
 	private:
+
+		friend class AbstractFrame;
+		friend class AbstractWidget;
 
 		static void GetGLVersion (int *major, int *minor);
 
@@ -125,11 +189,7 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void DispatchHoverEvent (const MouseEvent& event);
-
-		void OnHoverFrameDestroyed (AbstractFrame* frame);
-
-		void OnFocusedFrameDestroyed (AbstractFrame* frame);
+		void DispatchHoverEvent ();
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
@@ -137,20 +197,44 @@ namespace BlendInt {
 
         //GLuint vao_;
         
-		Profile profile_;
-
-		AbstractFrame* hovered_frame_;
-
-		AbstractFrame* focused_frame_;
-        
         //GLTexture2D texture_buffer_;
 
 		//GLBuffer<> vertex_buffer_;
+
+		Point cursor_position_;
+
+		AbstractFrame* active_frame_;
+
+		// ------- input
+
+		int modifiers_;
+
+		KeyAction key_action_;
+
+		int key_;
+
+		int scancode_;
+
+		MouseAction mouse_action_;
+
+		MouseButton mouse_button_;
+
+		String text_;
+
+		// the following 2 variables are used when rendering
+
+		// the viewport offset
+		Point viewport_origin_;
+
+		GLuint stencil_count_;
+
+		// ------
 
 		Cpp::Event<const Size&> resized_;
 
 		static std::set<Context*> context_set;
 
+		static glm::mat4 default_view_matrix;
 	};
 
 }

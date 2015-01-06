@@ -40,7 +40,7 @@ namespace BlendInt {
 		return ModelIndex();
 	}
 
-	ResponseType TreeView::Draw (Profile& profile)
+	ResponseType TreeView::Draw (const Context* context)
 	{
 		return Ignore;
 	}

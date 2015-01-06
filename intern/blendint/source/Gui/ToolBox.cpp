@@ -53,7 +53,8 @@ namespace BlendInt {
 	  hovered_widget_(0),
 	  space_(1),
 	  margin_(2, 2, 2, 2),
-	  orientation_(orientation)
+	  orientation_(orientation),
+	  cursor_position_(0)
 	{
 		if(orientation_ == Horizontal) {
 			set_size(400, 240);
@@ -69,7 +70,8 @@ namespace BlendInt {
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
-	  orientation_(orientation)
+	  orientation_(orientation),
+	  cursor_position_(0)
 	{
 		set_size(width, height);
 
@@ -267,14 +269,14 @@ namespace BlendInt {
 		}
 	}
 
-	bool ToolBox::PreDraw (Profile& profile)
+	bool ToolBox::PreDraw (const Context* context)
 	{
 		if(!visiable()) return false;
 
-		assign_profile_frame(profile, this);
+		SetActiveFrame(context, this);
 
 		if(refresh()) {
-			RenderToBuffer(profile);
+			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
 		}
 
 		//texture_buffer_.bind();
@@ -284,7 +286,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ToolBox::Draw (Profile& profile)
+	ResponseType ToolBox::Draw (const Context* context)
 	{
 		Shaders::instance->frame_inner_program()->use();
 
@@ -327,93 +329,122 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ToolBox::PostDraw (Profile& profile)
+	void ToolBox::PostDraw (const Context* context)
 	{
 	}
 
-	void ToolBox::FocusEvent (bool focus)
+	void ToolBox::PerformFocusOn (const Context* context)
 	{
+		DBG_PRINT_MSG("%s", "focus in");
 	}
 
-	void ToolBox::MouseHoverInEvent (const MouseEvent& event)
+	void ToolBox::PerformFocusOff (const Context* context)
 	{
-	}
+		DBG_PRINT_MSG("%s", "focus out");
 
-	void ToolBox::MouseHoverOutEvent (const MouseEvent& event)
-	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, event);
+			ClearHoverWidgets(hovered_widget_);
+			hovered_widget_ = 0;
 		}
 	}
 
-	ResponseType ToolBox::KeyPressEvent (const KeyEvent& event)
+	void ToolBox::PerformHoverIn (const Context* context)
 	{
-		assign_event_frame(event, this);
+	}
+
+	void ToolBox::PerformHoverOut (const Context* context)
+	{
+		if(hovered_widget_) {
+			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
+			ClearHoverWidgets(hovered_widget_, context);
+			hovered_widget_ = 0;
+		}
+	}
+
+	ResponseType ToolBox::PerformKeyPress (const Context* context)
+	{
+		SetActiveFrame(context, this);
 
 		ResponseType response = Ignore;
 
 		if(focused_widget_) {
-			delegate_key_press_event(focused_widget_, event);
+			delegate_key_press_event(focused_widget_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType ToolBox::MousePressEvent (const MouseEvent& event)
+	ResponseType ToolBox::PerformMousePress (const Context* context)
 	{
-		assign_event_frame(event, this);
+		SetActiveFrame(context, this);
 
-		if(hovered_widget_) {
+		if(cursor_position_ == InsideRectangle) {
 
-			AbstractView* widget = 0;	// widget may be focused
+			if(hovered_widget_) {
 
-			widget = DispatchMousePressEvent(hovered_widget_, event);
+				AbstractView* widget = 0;	// widget may be focused
 
-			if(widget == 0) {
-				DBG_PRINT_MSG("%s", "widget 0");
+				widget = DispatchMousePressEvent(hovered_widget_, context);
+
+				if(widget == 0) {
+					DBG_PRINT_MSG("%s", "widget 0");
+					set_pressed(true);
+				} else {
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
+				}
+
 			} else {
-				SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget));
+				set_pressed(true);
+				// SetFocusedWidget(0);
 			}
 
 		} else {
-			set_pressed(true);
-			// SetFocusedWidget(0);
+			set_pressed(false);
 		}
 
 		return Finish;
 	}
 
-	ResponseType ToolBox::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType ToolBox::PerformMouseRelease (const Context* context)
 	{
-		ResponseType retval = Ignore;
-
-		if(focused_widget_) {
-			assign_event_frame(event, this);
-			retval = delegate_mouse_release_event(focused_widget_, event);
-		}
-
+		cursor_position_ = InsideRectangle;
 		set_pressed(false);
-		return retval;
+
+		if(focused_widget_) {
+			SetActiveFrame(context, this);
+			return delegate_mouse_release_event(focused_widget_, context);
+		}
+
+		return Ignore;
 	}
 
-	ResponseType ToolBox::MouseMoveEvent (const MouseEvent& event)
+	ResponseType ToolBox::PerformMouseMove (const Context* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			assign_event_frame(event, this);
-			retval = delegate_mouse_move_event(focused_widget_, event);
+			SetActiveFrame(context, this);
+			retval = delegate_mouse_move_event(focused_widget_, context);
 		}
 
 		return retval;
 	}
 
-	ResponseType ToolBox::DispatchHoverEvent (const MouseEvent& event)
+	ResponseType ToolBox::DispatchHoverEvent (const Context* context)
 	{
-		if(Contain(event.position())) {
+		if(pressed_ext()) return Finish;
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, event);
+		if(Contain(context->cursor_position())) {
+
+			cursor_position_ = InsideRectangle;
+
+			if(!hover()) {
+				set_hover(true);
+				PerformHoverIn(context);
+			}
+
+			AbstractWidget* new_hovered_widget = DispatchHoverEventsInSubWidgets(hovered_widget_, context);
 
 			if(new_hovered_widget != hovered_widget_) {
 
@@ -430,10 +461,17 @@ namespace BlendInt {
 
 			}
 
-			assign_event_frame(event, this);
 			return Finish;
+
 		} else {
-			assign_event_frame(event, 0);
+
+			cursor_position_ = OutsideRectangle;
+
+			if(hover()) {
+				set_hover(false);
+				PerformHoverOut(context);
+			}
+
 			return Ignore;
 		}
 	}
@@ -586,19 +624,19 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void ToolBox::SetFocusedWidget (AbstractWidget* widget)
+	void ToolBox::SetFocusedWidget (AbstractWidget* widget, const Context* context)
 	{
 		if(focused_widget_ == widget)
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, false);
+			delegate_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_event(focused_widget_, true);
+			delegate_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &ToolBox::OnFocusedWidgetDestroyed);
 		}
 	}
@@ -624,81 +662,6 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = 0;
-	}
-
-	void ToolBox::RenderToBuffer(Profile& profile)
-	{
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-
-        if(GLFramebuffer::CheckStatus()) {
-
-            fb->bind();
-
-            Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-            Shaders::instance->SetWidgetModelMatrix(model_matrix_);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            glViewport(0, 0, size().width(), size().height());
-
-            // Draw context:
-            DrawSubFormsOnce(profile);
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			glViewport(0, 0, profile.context()->size().width(), profile.context()->size().height());
-
-        }
-
-        fb->reset();
-        tex->reset();
-
-        //delete tex; tex = 0;
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-
-        fb->reset();
-        delete fb; fb = 0;
 	}
 
 }

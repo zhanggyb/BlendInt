@@ -65,11 +65,11 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
 	private:
 
@@ -87,9 +87,9 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
-		Font m_font;
+		Font font_;
 
-		String m_title;
+		String title_;
 
 		static Margin default_numberslider_padding;
 	};

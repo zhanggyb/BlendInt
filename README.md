@@ -4,13 +4,13 @@
 
 ## What is BlendInt
 
-**BlendInt** is a lightweight, open-source GUI library for building
-application with [Blender](http://www.blender.org)-like style. It's
-written in C++ and make use of the modern OpenGL technology, and
-provides a comprehensive set of widgets that are easily extensible via
+**BlendInt** is a lightweight C++ GUI toolkit for building
+cross-platform application with [Blender](http://www.blender.org)-like
+style. It makes use of the modern OpenGL technology, and provides a
+comprehensive set of widgets that are easily extensible via
 inheritance.
 
-BlendInt is free software distributed under the GNU Library General
+BlendInt is free software and covered by the GNU Library General
 Public License (LGPL) v3.
 
 **Warning: BlendInt is under heavy development. Support cannot be
@@ -20,21 +20,20 @@ Public License (LGPL) v3.
 
 Like Blender, all widgets in BlendInt are drawn in OpenGL context and
 use the same color schemes. But BlendInt is totally rewritten and only
-focus on user interface and it's improved with some new technologies:
+focused on user interface with some new technologies:
 
 - It's based on new OpenGL API (3.3 and later), all widgets are drawn
   through vertex/fragment/geometry shaders. (Legacy OpenGL APIs which
   are being used in Blender were removed since GL 3.3)
 - It's OOP designed and written by C++, every widget is now a C++
-  object, you can use the pre-defined Button, Slider, Menu, etc or
-  subclass one of them and customize it easily.
+  object, you can use the pre-defined UI classes such as Button,
+  Slider, Menu etc, or subclass one of them and customize it easily.
 - It uses [CppEvent](http://code.google.com/p/cpp-events/) to provide
   a fast Event/Delegate (signal/slot) mechanism.
 - It just needs an OpenGL Context, so theoretically you can integrate
   it in any other OpenGL Window or GUI toolkit, for example, Glut,
-  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 (in
-  development) to display and manage OpenGL context for some demos and
-  unit tests.
+  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 to display
+  and manage OpenGL context for some demos and unit tests.
 
 ## Usage
 
@@ -84,7 +83,7 @@ int main (int argc, char* argv[])
 }
 ```
 
-## Requirements
+## Dependencies
 
 BlendInt make use of the modern OpenGL technology, to run your
 application linked with BlendInt, you must have a graphics card which
@@ -93,12 +92,22 @@ supports OpenGL 3.3 or newer.
 To build BlendInt, make sure the following development tools and
 libraries are installed:
 
-* cmake 2.8.11 or newer
-* OpenGL header and libraries, in Linux, Mesa 9.2 or newer
-* OpenImageIO 1.1+
-* boost (system, filesystem, thread)
-* freetype
-* fontconfig (recommanded)
+Required:
+
+* [cmake](http://www.cmake.org)  2.8.11 or newer
+* [OpenGL](http://www.khronos.org) header and libraries, in Linux, Mesa 9.2 or newer
+* [OpenImageIO](https://sites.google.com/site/openimageio/home) 1.1+
+* [boost](http://www.boost.org) (system, filesystem, thread)
+* [Freetype2](http://www.freetype.org)
+* [GLM](http://glm.g-truc.net)
+* [Fontconfig](http://freedesktop.org/wiki/Software/fontconfig/) (recommanded)
+
+Optional:
+
+* [GLFW](http://www.glfw.org) 3.1+
+* [Qt](http://www.qt-project.org) 5.x+
+* [Opencv](http://www.opencv.org)
+* [Doxygen](http://www.stack.nl/~dimitri/doxygen/) (to build api documentation)
 
 The source code is verified to be built and workable on:
 
@@ -107,7 +116,7 @@ The source code is verified to be built and workable on:
 * Ubuntu 13.10, 14.04(LTS)
 * Fedora 20
 
-### Install Prerequsites in Mac OS X
+### Install Dependencies in Mac OS X
 
 The packages required above can be install through
 [Homebrew](http://brew.sh):
@@ -116,7 +125,7 @@ The packages required above can be install through
 $ brew install cmake openimageio boost freetype fontconfig
 ```
 
-### Install Prerequsites in ArchLinux
+### Install Dependencies in ArchLinux
 
 Use Pacman in ArchLinux:
 
@@ -124,11 +133,21 @@ Use Pacman in ArchLinux:
 $ sudo pacman -S cmake openimageio boost freetype fontconfig
 ```
 
-### Install Prerequsites in Ubuntu
+### Install Dependencies in Ubuntu
 
 Use apt-get in Ubuntu:
 
-### Install Prerequsites in Fedora
+```shell
+$ sudo apt-get install cmake libopenimageio-dev libboost-dev
+```
+
+### Install Dependencies in Fedora
+
+Use yum in Fedora:
+
+```shell
+$ sudo yum install cmake OpenImageIO-devel boost-devel freetype-devel fontconfig-devel
+```
 
 ## Build the Source Code
 
@@ -139,6 +158,29 @@ Use git to checkout the source code from the repository on Bitbucket:
 ```shell
 $ git clone https://zhanggyb@bitbucket.org/zhanggyb/blendint.git
 ```
+
+or (to checkout submodules as well):
+
+```shell
+$ git clone --recursive https://zhanggyb@bitbucket.org/zhanggyb/blendint.git
+```
+
+### Useful cmake options and environment variables
+
+````
+-DCMAKE_BUILD_TYPE=[Debug|Release]
+
+-DCMAKE_INSTALL_PREFIX=[base path to install BlendInt (default: /usr/local)]
+
+-DBUILD_STATIC_LIBRARY		// Build static library instead of shared (default: OFF)
+-DWITH_BUILTIN_GLFW3		// Build with built-in GLFW3.1 source (default: ON)
+-DWITH_BUILTIN_GLM			// Build with built-in GLM headers (default: ON)
+-DENABLE_OPENCV				// Enable OpenCV support (default: OFF)
+-DWITH_GPERFTOOLS			// Build with Google perftools option (default: OFF)
+-DWITH_GLFW3_DEMO			// Build GLFW3 demos (default: OFF)
+-DWITH_UNIT_TEST			// Build unit test (default: OFF)
+-DBUILD_DOCUMENTATION		// Use Doxygen to create the HTML based API documentation (default: OFF)
+````
 
 ### Build the Library
 
@@ -194,10 +236,6 @@ To build static library, add cmake option:
 `-DBUILD_STATIC_LIBRARY=TRUE` instead.
 
 ## Contributing
-
-TBD
-
-## Credits
 
 TBD
 

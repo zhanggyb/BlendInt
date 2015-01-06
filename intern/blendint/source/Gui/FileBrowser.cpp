@@ -31,6 +31,7 @@
 #include <BlendInt/Stock/Theme.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -120,8 +121,10 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (Profile& profile)
+	ResponseType FileBrowser::Draw (const Context* context)
 	{
+		Context* c = const_cast<Context*>(context);
+
 		Shaders::instance->widget_inner_program()->use();
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
@@ -133,10 +136,10 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		profile.BeginPushStencil();	// inner stencil
+		c->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
-		profile.EndPushStencil();
+		c->EndPushStencil();
 
 		Shaders::instance->widget_simple_triangle_program()->use();
 
@@ -186,12 +189,12 @@ namespace BlendInt {
 
 		Shaders::instance->widget_inner_program()->use();
 
-		profile.BeginPopStencil();	// pop inner stencil
+		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
-		profile.EndPopStencil();
+		c->EndPopStencil();
 
 		GLSLProgram::reset();
 
@@ -254,7 +257,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
+	ResponseType FileBrowser::PerformMousePress (const Context* context)
 	{
 		ModelIndex index;
 
@@ -264,7 +267,7 @@ namespace BlendInt {
 			int h = font_.GetHeight();	// the row height
 
 			int i = 0;
-			Point local_position = event.position() - event.frame()->GetAbsolutePosition(this);
+			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
 			// TODO: count offset
 
 			i = size().height() - local_position.y();

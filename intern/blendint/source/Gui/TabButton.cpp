@@ -92,7 +92,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType TabButton::Draw (Profile& profile)
+	ResponseType TabButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_triangle_program()->use();
 

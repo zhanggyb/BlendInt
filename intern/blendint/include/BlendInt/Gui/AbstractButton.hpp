@@ -84,17 +84,17 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (Profile& profile) = 0;
+		virtual ResponseType Draw (const Context* context) = 0;
 
-		virtual void MouseHoverInEvent (const MouseEvent& event);
+		virtual void PerformHoverIn (const Context* context);
 
-		virtual void MouseHoverOutEvent (const MouseEvent& event);
+		virtual void PerformHoverOut (const Context* context);
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
+		virtual ResponseType PerformMousePress (const Context* context);
 
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseRelease (const Context* context);
 
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		virtual ResponseType PerformMouseMove (const Context* context);
 
 		int text_length () const {return text_length_;}
 

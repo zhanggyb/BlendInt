@@ -21,79 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Core/RefPtr.hpp>
-#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Gui/AbstractMenuItem.hpp>
+#include <BlendInt/Gui/Action.hpp>
 
-#include <BlendInt/Gui/MenuItemBin.hpp>
-#include <BlendInt/Gui/AbstractIcon.hpp>
-
-#ifndef _BLENDINT_MENUITEM_HPP_
-#define _BLENDINT_MENUITEM_HPP_
+#ifndef _BLENDINT_GUI_MENUITEM_HPP_
+#define _BLENDINT_GUI_MENUITEM_HPP_
 
 namespace BlendInt {
 
-	class MenuItemBin;
-
-	class MenuItem
+	class MenuItem: public AbstractMenuItem
 	{
 	public:
 
-		friend class MenuItemBin;
-
-		MenuItem ();
-
 		MenuItem (const String& text);
+
+		MenuItem (const RefPtr<Action>& action);
 
 		MenuItem (const String& text, const String& shortcut);
 
-		MenuItem (AbstractIcon* icon, const String& text);
+		MenuItem (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		MenuItem (AbstractIcon* icon, const String& text, const String& shortcut);
+		MenuItem (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
 
-		~MenuItem();
+		bool AddSubMenuItem (MenuItem* menuitem);
 
-		void SetIcon (AbstractIcon* icon);
+		bool InsertSubMenuItem (int index, MenuItem* menuitem);
 
-		inline void set_text (const String& text)
-		{
-			m_text = text;
-		}
+		virtual ~MenuItem();
 
-		inline const String& text () const {return m_text;}
+	protected:
 
-		RefPtr<AbstractIcon> icon() const {return m_icon;}
+		virtual void PerformHoverIn (const Context* context);
 
-		inline void set_shortcut (const String& shortcut)
-		{
-			m_shortcut = shortcut;
-		}
+		virtual void PerformHoverOut (const Context* context);
 
-		inline const String& shortcut () const {return m_shortcut;}
-
-		inline void set_highlight (bool highlight)
-		{
-			m_highlight = highlight;
-		}
-
-		void SetParentMenu (MenuItemBin* superview);
-
-		void SetSubMenu (MenuItemBin* sub);
+		virtual ResponseType Draw (const Context* context);
 
 	private:
 
-		void RemoveIcon ();
+		void InitializeMenuItem ();
 
-		RefPtr<AbstractIcon> m_icon;
+		RefPtr<Action> action_;
 
-		String m_text;
-		String m_shortcut;
-
-		MenuItemBin* m_parent;
-		MenuItemBin* m_sub;
-
-		bool m_highlight;
 	};
 
 }
 
-#endif /* _BLENDINT_MENUITEM_HPP_ */
+#endif /* _BLENDINT_GUI_MENUITEM_HPP_ */

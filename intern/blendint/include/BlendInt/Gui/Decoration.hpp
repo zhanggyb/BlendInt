@@ -27,7 +27,9 @@
 #include <Cpp/Events.hpp>
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-#include <BlendInt/Gui/Widget.hpp>
+
+#include <BlendInt/Gui/AbstractDecoration.hpp>
+
 #include <BlendInt/Gui/CloseButton.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
@@ -36,7 +38,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special widget used as a title/decoration of a dialog
 	 */
-	class Decoration:  public Widget
+	class Decoration:  public AbstractDecoration
 	{
 		DISALLOW_COPY_AND_ASSIGN(Decoration);
 
@@ -58,19 +60,9 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		CloseButton* close_button () const
-		{
-			return close_button_;
-		}
-
-		Cpp::EventRef<AbstractButton*> close_button_clicked ()
-		{
-			return close_button_->clicked();
-		}
-
 	protected:
 
-		virtual ResponseType Draw (Profile& profile);
+		virtual ResponseType Draw (const Context* context);
 
 		virtual void UpdateLayout ();
 
@@ -83,6 +75,8 @@ namespace BlendInt {
 		virtual void PerformRoundRadiusUpdate (float radius);
 
 		void InitializeDecorationOnce ();
+
+		void OnCloseButtonClicked (AbstractButton* button);
 
 		// background for debug, remove later
 		GLuint vao_[1];

@@ -82,7 +82,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType NodeView::Draw(Profile& profile)
+	ResponseType NodeView::Draw(const Context* context)
 	{
 		curve_->Draw();
 

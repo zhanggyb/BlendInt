@@ -1,32 +1,34 @@
 /**
- * CVCursor.hpp
+ * GLFWCursor.hpp
  */
 
-#ifndef _CV_CURSOR_HPP_
-#define _CV_CURSOR_HPP_
+#ifndef _GLFW_CURSOR_HPP_
+#define _GLFW_CURSOR_HPP_
 
 #include <GLFW/glfw3.h>
 
 #include <BlendInt/Gui/CursorType.hpp>
 
-namespace BI=BlendInt;
+namespace BlendInt {
 
-class CVCursor: public BI::CursorType
+class GLFWCursor: public CursorType
 {
 public:
 
-	CVCursor (GLFWwindow* window)
-	: BI::CursorType(),
+	GLFWCursor (GLFWwindow* window)
+	: CursorType(),
 	window_(window),
 	arrow_(nullptr),
 	cross_(nullptr),
 	split_v_(nullptr),
-	split_h_(nullptr)
+	split_h_(nullptr),
+	top_left_corner_(nullptr),
+	top_right_corner_(nullptr)
 	{
 		Initialize();
 	}
 
-	virtual ~CVCursor ()
+	virtual ~GLFWCursor ()
 	{
 		Release();
 	}
@@ -48,6 +50,12 @@ private:
 	GLFWcursor* split_v_;
 
 	GLFWcursor* split_h_;
+
+	GLFWcursor* top_left_corner_;
+
+	GLFWcursor* top_right_corner_;
 };
 
-#endif	// _CV_CURSOR_HPP_
+}
+
+#endif	// _GLFW_CURSOR_HPP_

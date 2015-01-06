@@ -54,12 +54,19 @@ TEST_F(PanelTest1, Foo1)
 	layout->AddWidget(btn1);
 	layout->AddWidget(btn2);
 
+	Panel* panel2 = Manage(new Panel);
+	Button* btn3 = Manage(new Button("Button3"));
+	btn3->MoveTo(20, 20);
+	panel2->AddWidget(btn3);
+
+	layout->AddWidget(panel2);
+
 //	dialog->AddWidget(layout);
 	p->SetLayout(layout);
 
 	context->AddFrame(dialog);
 
-	p->Resize(200, 400);
+	p->Resize(400, 300);
 
 	DBG_PRINT_MSG("btn1: %d, %d", btn1->position().x(), btn1->position().y());
 

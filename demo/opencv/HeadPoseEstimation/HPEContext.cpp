@@ -18,6 +18,7 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Gui/ToggleButton.hpp>
 
 using namespace BlendInt;
 
@@ -32,7 +33,7 @@ HPEContext::HPEContext()
 	FrameSplitter* splitter = Manage(new FrameSplitter);
 
 	ToolBox* tools = CreateToolBoxOnce();
-	FrameSplitter* workspace = CreateWorkspaceOnce();
+	Workspace* workspace = CreateWorkspaceOnce();
 
 	splitter->AddFrame(workspace);
 	splitter->AddFrame(tools, PreferredWidth);
@@ -111,20 +112,40 @@ ToolBox* HPEContext::CreateToolBarOnce()
 	return bar;
 }
 
+Workspace* HPEContext::CreateWorkspaceOnce()
+{
+	Workspace* workspace = Manage(new Workspace);
+	
+	return workspace;
+}
+
 Panel* HPEContext::CreateButtons()
 {
 	Panel* panel = Manage(new Panel);
 	panel->SetRoundType(RoundAll);
 
+	Block* hblock1 = Manage(new Block(Horizontal));
+
+	ComboBox* camera_no = Manage(new ComboBox);
+	ToggleButton* btn1 = Manage(new ToggleButton("Open Camera"));
+
+	hblock1->AddWidget(camera_no);
+	hblock1->AddWidget(btn1);
+
 	VLayout* layout = Manage(new VLayout);
+
+	Block* hblock2 = Manage(new Block(Horizontal));
 
 	Button* play = Manage(new Button("Play"));
 	Button* pause = Manage(new Button("Pause"));
 	Button* stop = Manage(new Button("Stop"));
 
-	layout->AddWidget(play);
-	layout->AddWidget(pause);
-	layout->AddWidget(stop);
+	hblock2->AddWidget(play);
+	hblock2->AddWidget(pause);
+	hblock2->AddWidget(stop);
+
+	layout->AddWidget(hblock1);
+	layout->AddWidget(hblock2);
 
 	panel->SetLayout(layout);
 	panel->Resize(layout->GetPreferredSize());
@@ -174,24 +195,6 @@ void HPEContext::OnStop(AbstractButton* sender)
 	DBG_PRINT_MSG("%s", "Stop Play");
 	//viewport_->Stop();
 	timer_->Stop();
-}
-
-BI::FrameSplitter* HPEContext::CreateWorkspaceOnce()
-{
-	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
-
-	FrameSplitter* hsplitter = Manage(new FrameSplitter(Horizontal));
-	viewport_image_ = Manage(new ImageViewport);
-	viewport_3d_ = Manage(new Viewport);
-	hsplitter->AddFrame(viewport_image_);
-	hsplitter->AddFrame(viewport_3d_);
-
-	ToolBox* toolbar = Manage(new ToolBox(Horizontal));
-
-	vsplitter->AddFrame(hsplitter);
-	vsplitter->AddFrame(toolbar);
-
-	return vsplitter;
 }
 
 void HPEContext::OnTimeout(Timer* t)

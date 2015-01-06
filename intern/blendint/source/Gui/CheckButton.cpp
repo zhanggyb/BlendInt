@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
@@ -64,7 +63,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	ResponseType CheckButton::Draw (Profile& profile)
+	ResponseType CheckButton::Draw (const Context* context)
 	{
 		Shaders::instance->widget_inner_program()->use();
 
@@ -115,7 +114,7 @@ namespace BlendInt {
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		buffer_.reset();
 	}
 
 }

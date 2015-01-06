@@ -342,9 +342,9 @@ namespace BlendInt {
 
 	enum MouseAction {
 		MouseNone = -1,                      //!< MouseNone
-		MouseRelease = 0,				/* GLFW_RELEASE *///!< MousePress
-		MousePress,			/* GLFW_PRESS */     //!< MouseRelease
-		MouseMove				/* GLFW_REPEAT */       //!< MouseMove
+		MouseRelease = 0,				/* GLFW_RELEASE *///!< PerformMousePress
+		MousePress,			/* GLFW_PRESS */     //!< PerformMouseRelease
+		MouseMove				/* GLFW_REPEAT */       //!< PerformMouseMove
 	};
 
 	enum MouseButton {

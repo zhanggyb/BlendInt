@@ -103,7 +103,7 @@ namespace BlendInt {
 
 	}
 
-	ResponseType ScrollArea::Draw (Profile& profile)
+	ResponseType ScrollArea::Draw (const Context* context)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
 		program->use();
