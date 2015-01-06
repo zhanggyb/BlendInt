@@ -27,37 +27,10 @@
 
 #include <boost/filesystem.hpp>
 #include <rapidxml_print.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 
-#include <BlendInt/Core/Image.hpp>
-
 namespace BlendInt {
-
-	Theme* Theme::instance = 0;
-
-	bool Theme::Initialize ()
-	{
-		bool result = false;
-
-		if (!instance) {
-			instance = new Theme;
-		}
-
-		if (instance) {
-			instance->Reset();
-			result = true;
-		}
-
-		return result;
-	}
-
-	void Theme::Release (void)
-	{
-		if (instance) {
-			delete instance;
-			instance = 0;
-		}
-	}
 
 	ColorScheme::ColorScheme ()
 			: outline(0x191919FF), item(0x191919FF), inner(0x999999FF), inner_sel(

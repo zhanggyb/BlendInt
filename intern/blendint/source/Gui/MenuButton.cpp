@@ -37,7 +37,7 @@
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -120,7 +120,7 @@ namespace BlendInt {
 			Shaders::instance->widget_inner_program()->use();
 
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Theme::instance->menu_item().inner_sel.data());
+			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Context::theme->menu_item().inner_sel.data());
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,

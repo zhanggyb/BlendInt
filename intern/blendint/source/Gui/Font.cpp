@@ -39,7 +39,7 @@
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -54,7 +54,7 @@ namespace BlendInt {
 		m_data.name = name;
 		m_data.size = size;
 		m_data.flag = flag;
-		m_data.dpi = Theme::instance->dpi();
+		m_data.dpi = Context::theme->dpi();
 		m_color = 0x000000FF;
 		m_cache = FontCache::Create(m_data);
 	}

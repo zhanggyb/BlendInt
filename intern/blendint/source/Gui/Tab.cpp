@@ -40,7 +40,7 @@
 #include <BlendInt/Gui/Tab.hpp>
 #include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {

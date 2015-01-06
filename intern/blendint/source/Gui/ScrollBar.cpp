@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ScrollBar.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
@@ -161,13 +161,13 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if(Theme::instance->scroll().shaded) {
+			if(Context::theme->scroll().shaded) {
 
-				short shadetop = Theme::instance->scroll().shadetop;
-				short shadedown = Theme::instance->scroll().shadedown;
+				short shadetop = Context::theme->scroll().shadetop;
+				short shadedown = Context::theme->scroll().shadedown;
 				if(orientation() == Vertical) {
-					shadetop = Theme::instance->scroll().shadedown;
-					shadedown = Theme::instance->scroll().shadetop;
+					shadetop = Context::theme->scroll().shadedown;
+					shadedown = Context::theme->scroll().shadetop;
 				}
 
 				GenerateVertices(size(),
@@ -236,7 +236,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				Theme::instance->scroll().inner.data());
+				Context::theme->scroll().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -246,7 +246,7 @@ namespace BlendInt {
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->scroll().outline.data());
+		        Context::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -374,13 +374,13 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if(Theme::instance->scroll().shaded) {
+		if(Context::theme->scroll().shaded) {
 
-			short shadetop = Theme::instance->scroll().shadetop;
-			short shadedown = Theme::instance->scroll().shadedown;
+			short shadetop = Context::theme->scroll().shadetop;
+			short shadedown = Context::theme->scroll().shadedown;
 			if(orientation() == Vertical) {
-				shadetop = Theme::instance->scroll().shadedown;
-				shadedown = Theme::instance->scroll().shadetop;
+				shadetop = Context::theme->scroll().shadedown;
+				shadedown = Context::theme->scroll().shadetop;
 			}
 
 			GenerateVertices(slot_size,

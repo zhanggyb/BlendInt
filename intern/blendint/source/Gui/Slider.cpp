@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Slider.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
@@ -159,7 +159,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_AA", 0);
 
 		program->SetVertexAttrib4fv("a_color",
-		        Theme::instance->scroll().outline.data());
+		        Context::theme->scroll().outline.data());
 
 		glEnableVertexAttribArray(0);
 		m_line->bind();

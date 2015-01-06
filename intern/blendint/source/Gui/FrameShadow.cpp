@@ -40,7 +40,7 @@
 
 #include <BlendInt/Gui/FrameShadow.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -83,14 +83,14 @@ namespace BlendInt {
 		int count = GetOutlineVertexCount(round_type());
 
 		int i = 0;
-		if( i < Theme::instance->shadow_width()) {
+		if( i < Context::theme->shadow_width()) {
 			glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
 		glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 0);
 		i++;
-		for(; i < Theme::instance->shadow_width(); i++) {
+		for(; i < Context::theme->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
@@ -192,9 +192,9 @@ namespace BlendInt {
 
 	void FrameShadow::GenerateShadowVertices(std::vector<GLfloat>& vertices, std::vector<GLuint>& elements)
 	{
-		int width = Theme::instance->shadow_width();
+		int width = Context::theme->shadow_width();
 
-		float rad = radius() * Theme::instance->pixel();
+		float rad = radius() * Context::theme->pixel();
 
 		float minx = 0.0f;
 		float miny = 0.0f;
@@ -208,7 +208,7 @@ namespace BlendInt {
 
 		float vec[WIDGET_CURVE_RESOLU][2];
 
-		width *= Theme::instance->pixel();
+		width *= Context::theme->pixel();
 
 		int outline_vertex_count = GetOutlineVertexCount(round_type());
 		unsigned int verts_num = (width + 1) * outline_vertex_count * 3;	// 3 float for one vertex: 0, 1: coord, 2: shade

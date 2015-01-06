@@ -22,7 +22,7 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Core/String.hpp>

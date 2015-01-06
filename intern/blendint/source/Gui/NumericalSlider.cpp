@@ -40,14 +40,12 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
-#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
-	using Stock::Icons;
 
 	Margin NumericalSlider::default_numberslider_padding(2, 2, 2, 2);
 
@@ -60,7 +58,7 @@ namespace BlendInt {
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
 
-		font_.set_pen(Icons::instance->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
+		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
 				+ std::abs(font_.GetDescender()));
 
 		InitializeNumericalSlider ();
@@ -76,7 +74,7 @@ namespace BlendInt {
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
 
-		font_.set_pen(Icons::instance->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
+		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
 				+ std::abs(font_.GetDescender()));
 
 		InitializeNumericalSlider ();
@@ -161,10 +159,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->number_slider().shaded) {
+			if (Context::theme->number_slider().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->number_slider().shadetop,
-						Theme::instance->number_slider().shadedown,
+						Context::theme->number_slider().shadetop,
+						Context::theme->number_slider().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -191,10 +189,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->number_slider().shaded) {
+		if (Context::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->number_slider().shadetop,
-					Theme::instance->number_slider().shadedown,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -216,10 +214,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->number_slider().shaded) {
+		if (Context::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->number_slider().shadetop,
-					Theme::instance->number_slider().shadedown,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -252,8 +250,8 @@ namespace BlendInt {
 		}
 
 		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), x + len);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Theme::instance->number_slider().inner_sel.data());
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Theme::instance->number_slider().inner.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Context::theme->number_slider().inner_sel.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Context::theme->number_slider().inner.data());
 
 		vao_.bind(0);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
@@ -262,7 +260,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 				0.f, 0.f);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->number_slider().outline.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Context::theme->number_slider().outline.data());
 
 		vao_.bind(1);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
@@ -281,13 +279,13 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		float icon_x = Icons::instance->num()->size().width();
+		float icon_x = Context::icons->num()->size().width();
 
 		float icon_y = size().height() / 2.f;
-		Icons::instance->num()->Draw(icon_x, icon_y, 180.f, 1.f, Color(0x0F0F0FFF));
+		Context::icons->num()->Draw(icon_x, icon_y, 180.f, 1.f, Color(0x0F0F0FFF));
 
-		icon_x = size().width() - Icons::instance->num()->size().width();
-		Icons::instance->num()->Draw(icon_x, icon_y, 0.f, 1.f, Color(0x0F0F0FFF));
+		icon_x = size().width() - Context::icons->num()->size().width();
+		Context::icons->num()->Draw(icon_x, icon_y, 0.f, 1.f, Color(0x0F0F0FFF));
 
 		int last_text = 0;
 		if(title_.size()) {
@@ -317,10 +315,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->number_slider().shaded) {
+		if (Context::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->number_slider().shadetop,
-					Theme::instance->number_slider().shadedown,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -353,9 +351,9 @@ namespace BlendInt {
 	
 	float NumericalSlider::GetSlidePosition (float border, double v)
 	{
-		float minxi = 0.f + border * Theme::instance->pixel();
-		float maxxi = size().width() - border * Theme::instance->pixel();
-		//float radi = (round_radius() - border) * Theme::instance->pixel();
+		float minxi = 0.f + border * Context::theme->pixel();
+		float maxxi = size().width() - border * Context::theme->pixel();
+		//float radi = (round_radius() - border) * Context::theme->pixel();
 
 		return (maxxi - minxi) * v / (maximum() - minimum());
 	}

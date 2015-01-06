@@ -47,13 +47,12 @@
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
-	using Stock::Icons;
 	using Stock::Shaders;
 
 	ColorSelector::ColorSelector()
@@ -101,7 +100,7 @@ namespace BlendInt {
 		color_box->AddWidget(stack_);
 		color_box->AddWidget(alpha_slider);
 
-		Button* pick_btn = Manage(new Button(Icons::instance->icon_16x16(Stock::EYEDROPPER)));
+		Button* pick_btn = Manage(new Button(Context::icons->icon_16x16(Icons::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		HLayout* hbox2 = Manage(new HLayout(AlignTop));

@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->regular().outline.data());
+		        Context::theme->regular().outline.data());
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 

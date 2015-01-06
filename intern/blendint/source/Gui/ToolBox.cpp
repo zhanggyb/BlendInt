@@ -37,7 +37,7 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
@@ -239,7 +239,7 @@ namespace BlendInt {
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
-			GenerateVertices(size(), 1.f * Theme::instance->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+			GenerateVertices(size(), 1.f * Context::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 			buffer_.bind(0);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -483,7 +483,7 @@ namespace BlendInt {
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
-		GenerateVertices(size(), 1.f * Theme::instance->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+		GenerateVertices(size(), 1.f * Context::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 		buffer_.generate();
 		glGenVertexArrays(3, vao_);

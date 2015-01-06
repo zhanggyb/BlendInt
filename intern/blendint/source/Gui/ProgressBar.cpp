@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
 
 namespace BlendInt {
@@ -152,7 +152,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Context::theme->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

@@ -34,7 +34,7 @@
 #include <BlendInt/Gui/Block.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 

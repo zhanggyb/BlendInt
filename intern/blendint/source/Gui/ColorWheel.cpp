@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -88,7 +88,7 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Context::theme->regular().outline.data());
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);

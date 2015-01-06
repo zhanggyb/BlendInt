@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
@@ -47,7 +47,6 @@
 namespace BlendInt {
 
 	using Stock::Shaders;
-	using Stock::Icons;
 
 	EdgeButton::EdgeButton(int round_type)
 	: AbstractButton()
@@ -121,20 +120,20 @@ namespace BlendInt {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 			if (is_checked()) {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner_sel.data());
+				        Context::theme->radio_button().inner_sel.data());
 			} else {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner.data());
+				        Context::theme->radio_button().inner.data());
 			}
 
 		} else {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			if (is_checked()) {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner_sel.data());
+				        Context::theme->radio_button().inner_sel.data());
 			} else {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner.data());
+				        Context::theme->radio_button().inner.data());
 			}
 		}
 
@@ -144,7 +143,7 @@ namespace BlendInt {
 		Shaders::instance->widget_outer_program()->use();
 
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->radio_button().outline.data());
+		        Context::theme->radio_button().outline.data());
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);
 

@@ -37,7 +37,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/FolderList.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -71,14 +71,14 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
-				Theme::instance->regular().inner.data());
+				Context::theme->regular().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
-				Theme::instance->regular().outline.data());
+				Context::theme->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,

@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -107,7 +107,7 @@ namespace BlendInt {
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
-			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().item.data());
+			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Context::theme->tab().item.data());
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(m_vao[0]);
@@ -116,7 +116,7 @@ namespace BlendInt {
 
 		if (is_checked()) {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().outline.data());
+			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Context::theme->tab().outline.data());
 
 			glBindVertexArray(m_vao[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
@@ -175,7 +175,7 @@ namespace BlendInt {
 	{
 		int amp = size.height() / 2;
 		int shift_x = 5;
-		border = Theme::instance->pixel() * border;
+		border = Context::theme->pixel() * border;
 
 		if (inner.size() != 2 * 11 * 2)
 			inner.resize(2 * 11 * 2);

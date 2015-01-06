@@ -28,7 +28,7 @@
 #include <BlendInt/Gui/FileBrowser.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -129,7 +129,7 @@ namespace BlendInt {
 
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR),
-				1, Theme::instance->box().inner.data());
+				1, Context::theme->box().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 
@@ -144,7 +144,7 @@ namespace BlendInt {
 		Shaders::instance->widget_simple_triangle_program()->use();
 
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				Theme::instance->box().inner_sel.data());
+				Context::theme->box().inner_sel.data());
 
 		glBindVertexArray(vaos_[1]);
 
@@ -214,14 +214,14 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> row_verts;
 
-			if (Theme::instance->box().shaded) {
+			if (Context::theme->box().shaded) {
 				GenerateVertices(size(),
 						0.f,
 						round_type(),
 						round_radius(),
 						Vertical,
-						Theme::instance->box().shadetop,
-						Theme::instance->box().shadedown,
+						Context::theme->box().shadetop,
+						Context::theme->box().shadedown,
 						&inner_verts,
 						0);
 			} else {
@@ -311,14 +311,14 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> row_verts;
 
-		if (Theme::instance->box().shaded) {
+		if (Context::theme->box().shaded) {
 			GenerateVertices(size(),
 					0.f,
 					round_type(),
 					round_radius(),
 					Vertical,
-					Theme::instance->box().shadetop,
-					Theme::instance->box().shadedown,
+					Context::theme->box().shadetop,
+					Context::theme->box().shadedown,
 					&inner_verts,
 					0);
 		} else {

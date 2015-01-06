@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
 #include <BlendInt/Gui/Dialog.hpp>
@@ -229,10 +229,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->dialog().shaded) {
+			if (Context::theme->dialog().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->dialog().shadetop,
-						Theme::instance->dialog().shadedown,
+						Context::theme->dialog().shadetop,
+						Context::theme->dialog().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -313,7 +313,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
 		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
-		//        Theme::instance->dialog().outline.data());
+		//        Context::theme->dialog().outline.data());
 		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(vao_[1]);
@@ -719,10 +719,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->dialog().shaded) {
+		if (Context::theme->dialog().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->dialog().shadetop,
-					Theme::instance->dialog().shadedown,
+					Context::theme->dialog().shadetop,
+					Context::theme->dialog().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {

@@ -36,7 +36,7 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/ListView.hpp>
@@ -104,7 +104,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				Theme::instance->regular().inner.data());
+				Context::theme->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,

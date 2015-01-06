@@ -37,7 +37,7 @@
 #include <BlendInt/Gui/RadioButton.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -169,10 +169,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->radio_button().shaded) {
+			if (Context::theme->radio_button().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->radio_button().shadetop,
-						Theme::instance->radio_button().shadedown,
+						Context::theme->radio_button().shadetop,
+						Context::theme->radio_button().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -202,10 +202,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->radio_button().shaded) {
+			if (Context::theme->radio_button().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->radio_button().shadetop,
-						Theme::instance->radio_button().shadedown,
+						Context::theme->radio_button().shadetop,
+						Context::theme->radio_button().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -230,10 +230,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->radio_button().shaded) {
+		if (Context::theme->radio_button().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->radio_button().shadetop,
-					Theme::instance->radio_button().shadedown,
+					Context::theme->radio_button().shadetop,
+					Context::theme->radio_button().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -260,20 +260,20 @@ namespace BlendInt {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 			if (is_checked()) {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner_sel.data());
+				        Context::theme->radio_button().inner_sel.data());
 			} else {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner.data());
+				        Context::theme->radio_button().inner.data());
 			}
 
 		} else {
 			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
 			if (is_checked()) {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner_sel.data());
+				        Context::theme->radio_button().inner_sel.data());
 			} else {
 				glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				        Theme::instance->radio_button().inner.data());
+				        Context::theme->radio_button().inner.data());
 			}
 		}
 
@@ -284,7 +284,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->radio_button().outline.data());
+		        Context::theme->radio_button().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -320,14 +320,14 @@ namespace BlendInt {
 	void RadioButton::CalculateIconTextPosition (const Size& size, int round_type,
 	        float radius)
 	{
-		int x = kDefaultPadding.left() * Theme::instance->pixel();
-		int y = kDefaultPadding.bottom() * Theme::instance->pixel();
+		int x = kDefaultPadding.left() * Context::theme->pixel();
+		int y = kDefaultPadding.bottom() * Context::theme->pixel();
 
 		icon_offset_x_ = 0.f;
 		icon_offset_y_ = 0.f;
 
-		int valid_width = size.width() - kDefaultPadding.hsum() * Theme::instance->pixel();
-		int valid_height = size.height() - kDefaultPadding.vsum() * Theme::instance->pixel();
+		int valid_width = size.width() - kDefaultPadding.hsum() * Context::theme->pixel();
+		int valid_height = size.height() - kDefaultPadding.vsum() * Context::theme->pixel();
 
 		if(valid_width <= 0 || valid_height <= 0) {
 			show_icon_ = false;
@@ -335,7 +335,7 @@ namespace BlendInt {
 			return;
 		}
 
-		icon_offset_x_ += kDefaultPadding.left() * Theme::instance->pixel();
+		icon_offset_x_ += kDefaultPadding.left() * Context::theme->pixel();
 
 		if(text().empty()) {
 
@@ -450,10 +450,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->radio_button().shaded) {
+		if (Context::theme->radio_button().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->radio_button().shadetop,
-					Theme::instance->radio_button().shadedown,
+					Context::theme->radio_button().shadetop,
+					Context::theme->radio_button().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -487,21 +487,21 @@ namespace BlendInt {
 
 	void RadioButton::InitializeRadioButtonOnce (const String& text)
 	{
-		int left = kDefaultPadding.left() * Theme::instance->pixel();
-		int right = kDefaultPadding.right() * Theme::instance->pixel();
-		int top = kDefaultPadding.top() * Theme::instance->pixel();
-		int bottom = kDefaultPadding.bottom() * Theme::instance->pixel();
+		int left = kDefaultPadding.left() * Context::theme->pixel();
+		int right = kDefaultPadding.right() * Context::theme->pixel();
+		int top = kDefaultPadding.top() * Context::theme->pixel();
+		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 * Theme::instance->pixel() + left + right,
+			set_size(h + round_radius() * 2 * Context::theme->pixel() + left + right,
 							h + top + bottom);
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
 			int width = text_outline.width()
-							+ round_radius() * 2 * Theme::instance->pixel()
+							+ round_radius() * 2 * Context::theme->pixel()
 							+ left + right;
 			int height = h + top + bottom;
 
@@ -518,10 +518,10 @@ namespace BlendInt {
 	void RadioButton::InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon,
 	        const String& text)
 	{
-		int left = kDefaultPadding.left() * Theme::instance->pixel();
-		int right = kDefaultPadding.right() * Theme::instance->pixel();
-		int top = kDefaultPadding.top() * Theme::instance->pixel();
-		int bottom = kDefaultPadding.bottom() * Theme::instance->pixel();
+		int left = kDefaultPadding.left() * Context::theme->pixel();
+		int right = kDefaultPadding.right() * Context::theme->pixel();
+		int top = kDefaultPadding.top() * Context::theme->pixel();
+		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
 		int font_height = font().GetHeight();
 		int h = 0;
 
@@ -529,10 +529,10 @@ namespace BlendInt {
 
 			if(icon) {
 				h = std::max(icon->size().height(), font_height);
-				set_size(icon->size().width() + round_radius() * 2 * Theme::instance->pixel() + left + right,
+				set_size(icon->size().width() + round_radius() * 2 * Context::theme->pixel() + left + right,
 						h + top + bottom);
 			} else {
-				set_size(font_height + round_radius() * 2 * Theme::instance->pixel() + left + right,
+				set_size(font_height + round_radius() * 2 * Context::theme->pixel() + left + right,
 						font_height + top + bottom);
 			}
 
@@ -545,7 +545,7 @@ namespace BlendInt {
 				h = std::max(icon->size().height(), font_height);
 
 				int width = icon->size().width() + text_outline.width()
-								+ round_radius() * 2 * Theme::instance->pixel()
+								+ round_radius() * 2 * Context::theme->pixel()
 								+ left + right;
 				int height = h + top + bottom;
 
@@ -558,7 +558,7 @@ namespace BlendInt {
 			} else {
 
 				int width = text_outline.width()
-								+ round_radius() * 2 * Theme::instance->pixel()
+								+ round_radius() * 2 * Context::theme->pixel()
 								+ left + right;
 				int height = font_height + top + bottom;
 

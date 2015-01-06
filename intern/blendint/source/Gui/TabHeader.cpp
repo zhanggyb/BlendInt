@@ -37,7 +37,7 @@
 #include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 

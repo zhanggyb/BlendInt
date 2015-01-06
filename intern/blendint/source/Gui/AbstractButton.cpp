@@ -34,7 +34,7 @@
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(
-				max_font_height + kDefaultPadding.vsum() * Theme::instance->pixel()); // top padding: 2, bottom padding: 2
+				max_font_height + kDefaultPadding.vsum() * Context::theme->pixel()); // top padding: 2, bottom padding: 2
 
 		if (text_.empty()) {
 			preferred_size.set_width(

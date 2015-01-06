@@ -37,7 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/CircularPicker.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -167,7 +167,7 @@ namespace BlendInt {
 		Shaders::instance->widget_outer_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->scroll().outline.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Context::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

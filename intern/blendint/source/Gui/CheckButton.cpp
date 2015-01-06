@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Gui/CheckButton.hpp>
 

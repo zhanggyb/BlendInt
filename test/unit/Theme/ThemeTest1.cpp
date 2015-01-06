@@ -1,6 +1,6 @@
 #include "ThemeTest1.hpp"
 #include <BlendInt/Core/Object.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <iostream>
 
@@ -29,7 +29,7 @@ TEST_F(ThemeTest1, Save1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-	Theme::instance->Save("theme.xml");
+	Context::theme->Save("theme.xml");
 
 	RunLoop(window);
 
@@ -52,7 +52,7 @@ TEST_F(ThemeTest1, Load1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-	Theme::instance->Load("theme.xml");
+	Context::theme->Load("theme.xml");
 
 	RunLoop(window);
 

@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 

@@ -37,19 +37,18 @@
 #include <BlendInt/Gui/CloseButton.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
 	using Stock::Shaders;
-	using Stock::Icons;
 
 	CloseButton::CloseButton()
 	: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		int h = 16 * Theme::instance->pixel();
+		int h = 16 * Context::theme->pixel();
 		set_size(h, h);
 		set_round_radius(h / 2.f);
 
@@ -63,7 +62,7 @@ namespace BlendInt {
 
 	Size CloseButton::GetPreferredSize() const
 	{
-		int h = 16 * Theme::instance->pixel();
+		int h = 16 * Context::theme->pixel();
 		return Size(h, h);
 	}
 
@@ -76,10 +75,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->regular().shaded) {
+			if (Context::theme->regular().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->regular().shadetop,
-						Theme::instance->regular().shadedown,
+						Context::theme->regular().shadetop,
+						Context::theme->regular().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -107,10 +106,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->regular().shaded) {
+		if (Context::theme->regular().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->regular().shadetop,
-					Theme::instance->regular().shadedown,
+					Context::theme->regular().shadetop,
+					Context::theme->regular().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -133,10 +132,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->regular().shaded) {
+		if (Context::theme->regular().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->regular().shadetop,
-					Theme::instance->regular().shadedown,
+					Context::theme->regular().shadetop,
+					Context::theme->regular().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -160,14 +159,14 @@ namespace BlendInt {
 
 		if (is_down()) {
 			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-			        Theme::instance->regular().inner_sel.data());
+			        Context::theme->regular().inner_sel.data());
 		} else {
 			if (hover()) {
 				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 15);
 			}
 
 			glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-					Theme::instance->regular().inner.data());
+					Context::theme->regular().inner.data());
 		}
 
 		glBindVertexArray(vao_[0]);
@@ -177,7 +176,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->regular().outline.data());
+		        Context::theme->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -198,7 +197,7 @@ namespace BlendInt {
 		float x = size().width() / 2.f;
 		float y = size().height() / 2.f;
 
-		Icons::instance->cross()->Draw(x, y, Color(0x0F0F0FFF));
+		Context::icons->cross()->Draw(x, y, Color(0x0F0F0FFF));
 
 		return Finish;
 	}
@@ -208,10 +207,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->regular().shaded) {
+		if (Context::theme->regular().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->regular().shadetop,
-					Theme::instance->regular().shadedown,
+					Context::theme->regular().shadetop,
+					Context::theme->regular().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {

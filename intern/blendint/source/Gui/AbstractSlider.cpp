@@ -37,7 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -66,9 +66,9 @@ namespace BlendInt {
 		Orientation shadedir =
 						size.width() < size.height() ?
 										Horizontal : Vertical;
-		const Color& color = Theme::instance->scroll().item;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
+		const Color& color = Context::theme->scroll().item;
+		short shadetop = Context::theme->scroll().shadetop;
+		short shadedown = Context::theme->scroll().shadedown;
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
@@ -90,9 +90,9 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		const Color& color = Theme::instance->scroll().item;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
+		const Color& color = Context::theme->scroll().item;
+		short shadetop = Context::theme->scroll().shadetop;
+		short shadedown = Context::theme->scroll().shadedown;
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
@@ -114,8 +114,8 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
+		short shadetop = Context::theme->scroll().shadetop;
+		short shadedown = Context::theme->scroll().shadedown;
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
@@ -136,7 +136,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
 		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				Theme::instance->scroll().item.data());
+				Context::theme->scroll().item.data());
 		glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
 
 		glBindVertexArray(vao_[0]);
@@ -145,7 +145,7 @@ namespace BlendInt {
 		Shaders::instance->widget_outer_program()->use();
 
 		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Theme::instance->scroll().outline.data());
+		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Context::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -161,9 +161,9 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		const Color& color = Theme::instance->scroll().item;
-		short shadetop = Theme::instance->scroll().shadetop;
-		short shadedown = Theme::instance->scroll().shadedown;
+		const Color& color = Context::theme->scroll().item;
+		short shadetop = Context::theme->scroll().shadetop;
+		short shadedown = Context::theme->scroll().shadedown;
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;

@@ -40,7 +40,7 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -247,10 +247,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->menu_back().shaded) {
+			if (Context::theme->menu_back().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->menu_back().shadetop,
-						Theme::instance->menu_back().shadedown,
+						Context::theme->menu_back().shadetop,
+						Context::theme->menu_back().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -288,10 +288,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu_back().shaded) {
+		if (Context::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu_back().shadetop,
-					Theme::instance->menu_back().shadedown,
+					Context::theme->menu_back().shadetop,
+					Context::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -313,10 +313,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu_back().shaded) {
+		if (Context::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu_back().shadetop,
-					Theme::instance->menu_back().shadedown,
+					Context::theme->menu_back().shadetop,
+					Context::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -343,8 +343,8 @@ namespace BlendInt {
 				RoundNone,
 				0.f,
 				Vertical,
-				Theme::instance->menu_item().shadetop,
-				Theme::instance->menu_item().shadedown,
+				Context::theme->menu_item().shadetop,
+				Context::theme->menu_item().shadedown,
 				&inner_verts,
 				nullptr
 				);
@@ -383,7 +383,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), (float) position().x(), (float) position().y());
 		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Theme::instance->menu_back().inner.data());
+		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Context::theme->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -393,7 +393,7 @@ namespace BlendInt {
 
 		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
 		glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
-		        Theme::instance->menu_back().outline.data());
+		        Context::theme->menu_back().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -506,10 +506,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu_back().shaded) {
+		if (Context::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu_back().shadetop,
-					Theme::instance->menu_back().shadedown,
+					Context::theme->menu_back().shadetop,
+					Context::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -563,10 +563,10 @@ namespace BlendInt {
 //				DefaultBorderWidth(),
 //				RoundNone,
 //				0,
-//				Theme::instance->menu_item().inner_sel,
+//				Context::theme->menu_item().inner_sel,
 //				Vertical,
-//				Theme::instance->menu_item().shadetop,
-//				Theme::instance->menu_item().shadedown
+//				Context::theme->menu_item().shadetop,
+//				Context::theme->menu_item().shadedown
 //				);
 //
 //		glBindVertexArray(vao_[2]);
