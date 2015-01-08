@@ -33,12 +33,9 @@
 
 #include <BlendInt/Gui/Block.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Block::Block(Orientation orienatiaon)
 	: Widget (),

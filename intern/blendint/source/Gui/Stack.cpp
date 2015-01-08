@@ -38,11 +38,9 @@
 
 #include <BlendInt/Gui/Stack.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Stack::Stack()
 	: Widget(),

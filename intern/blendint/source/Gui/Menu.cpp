@@ -40,12 +40,7 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	int Menu::kDefaultIconSpace = 4;
 	int Menu::kDefaultShortcutSpace = 20;
@@ -379,20 +374,20 @@ namespace BlendInt {
 	{
 		shadow_->Draw(position().x(), position().y());
 
-		Shaders::instance->frame_inner_program()->use();
+		Context::shaders->frame_inner_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), (float) position().x(), (float) position().y());
-		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 1, Context::theme->menu_back().inner.data());
+		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), (float) position().x(), (float) position().y());
+		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4fv(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 1, Context::theme->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->frame_outer_program()->use();
+		Context::shaders->frame_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
-		glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
+		glUniform2f(Context::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
 		        Context::theme->menu_back().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -401,12 +396,12 @@ namespace BlendInt {
 		// Draw texture buffer
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        Shaders::instance->frame_image_program()->use();
+        Context::shaders->frame_image_program()->use();
 
         texture_buffer_.bind();
-        glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
+        glUniform2f(Context::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -522,14 +517,14 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
 
@@ -545,12 +540,12 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
+				Context::shaders->location (Shaders::FRAME_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
+				Context::shaders->location (Shaders::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
+		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

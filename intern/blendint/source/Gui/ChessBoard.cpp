@@ -39,11 +39,9 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/ChessBoard.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ChessBoard::ChessBoard(size_t cell_size)
 	: AbstractForm(),
@@ -126,22 +124,22 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
+		RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
 		program->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glEnableVertexAttribArray(0);
 
 		m_vbo->bind();	// bind ARRAY BUFFER
 		m_light_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -154,11 +152,11 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
 
 		m_dark_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is

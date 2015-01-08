@@ -48,12 +48,8 @@
 #include <BlendInt/Gui/Label.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ColorSelector::ColorSelector()
 	: PopupFrame(), stack_(0)

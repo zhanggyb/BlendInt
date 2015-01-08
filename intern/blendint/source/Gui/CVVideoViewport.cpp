@@ -40,13 +40,10 @@
 //#include <opencv2/imgproc/imgproc.hpp>
 
 #include <BlendInt/Gui/CVVideoViewport.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	CVVideoViewport::CVVideoViewport()
 	: Frame(),
@@ -246,8 +243,8 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+		Context::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+		Context::shaders->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
@@ -315,13 +312,13 @@ namespace BlendInt {
 			DBG_PRINT_MSG("%s", "fail to lock: capturing video into frame");
 		}
 
-		Shaders::instance->widget_image_program()->use();
+		Context::shaders->widget_image_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION),
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
 				(size().width() - frame_.cols)/2.f,
 				(size().height() - frame_.rows) / 2.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -360,11 +357,11 @@ namespace BlendInt {
 		frame_plane_.bind();
 		frame_plane_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

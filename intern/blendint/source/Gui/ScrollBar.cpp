@@ -35,15 +35,10 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ScrollBar.hpp>
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
@@ -231,21 +226,21 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::Draw (const Context* context)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
 				Context::theme->scroll().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->widget_outer_program()->use();
+		Context::shaders->widget_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
 		        Context::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -253,9 +248,9 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.f,
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 					0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -408,15 +403,15 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0,
 		        BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

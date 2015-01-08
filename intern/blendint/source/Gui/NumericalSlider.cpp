@@ -34,18 +34,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/AbstractFrame.hpp>
-
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Margin NumericalSlider::default_numberslider_padding(2, 2, 2, 2);
 
@@ -241,34 +234,34 @@ namespace BlendInt {
 		int outline_vertices = GetOutlineVertices(round_type());
 		float len = GetSlidePosition(default_border_width(), value());
 
-		Shaders::instance->widget_split_inner_program()->use();
+		Context::shaders->widget_split_inner_program()->use();
 
 		if(hover()) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 15);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_GAMMA), 0);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
-		glUniform1f(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_PARTING), x + len);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR0), 1, Context::theme->number_slider().inner_sel.data());
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COLOR1), 1, Context::theme->number_slider().inner.data());
+		glUniform1f(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, Context::theme->number_slider().inner_sel.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, Context::theme->number_slider().inner.data());
 
 		vao_.bind(0);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		Shaders::instance->widget_outer_program()->use();
+		Context::shaders->widget_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 				0.f, 0.f);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Context::theme->number_slider().outline.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, Context::theme->number_slider().outline.data());
 
 		vao_.bind(1);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -333,16 +326,16 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_SPLIT_INNER_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
 		vao_.bind(1);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		vao_.reset();

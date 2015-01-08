@@ -38,11 +38,8 @@
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	SlideIcon::SlideIcon ()
 	: AbstractRoundForm()
@@ -132,20 +129,20 @@ namespace BlendInt {
 
 	void SlideIcon::Draw (float x, float y, short gamma) const
 	{
-		Shaders::instance->widget_simple_triangle_program()->use();
+		Context::shaders->widget_simple_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
 				Context::theme->scroll().item.data());
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->widget_outer_program()->use();
+		Context::shaders->widget_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1, Context::theme->scroll().outline.data());
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), x, y);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, Context::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -178,16 +175,16 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

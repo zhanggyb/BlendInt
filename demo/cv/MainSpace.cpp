@@ -42,7 +42,7 @@
 #include "MainSpace.hpp"
 
 using namespace BI;
-using Stock::Shaders;
+using Shaders::Shaders;
 
 MainSpace::MainSpace ()
 : VLayout(),
@@ -175,12 +175,12 @@ void MainSpace::RenderToBuffer(BI::Profile& profile)
 
 		glm::mat4 origin;
 
-		Shaders::instance->GetWidgetProjectionMatrix(origin);
+		Context::shaders->GetWidgetProjectionMatrix(origin);
 
 		glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
 		        -100.f);
 
-		Shaders::instance->SetWidgetProjectionMatrix(projection);
+		Context::shaders->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -198,7 +198,7 @@ void MainSpace::RenderToBuffer(BI::Profile& profile)
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->SetWidgetProjectionMatrix(origin);
+		Context::shaders->SetWidgetProjectionMatrix(origin);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

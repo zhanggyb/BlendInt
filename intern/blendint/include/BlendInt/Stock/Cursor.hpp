@@ -31,15 +31,11 @@
 
 namespace BlendInt {
 
-	class Context;
-
 	class Cursor
 	{
 		DISALLOW_COPY_AND_ASSIGN(Cursor);
 
 	public:
-
-		static Cursor* instance;
 
 		void RegisterCursorType (CursorType* cursor_type);
 
@@ -63,10 +59,6 @@ namespace BlendInt {
 	private:
 
 		friend class Context;
-
-		static bool Initialize ();
-
-		static void Release ();
 
 		Cursor ();
 

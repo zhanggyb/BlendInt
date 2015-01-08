@@ -44,18 +44,17 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
 {
-	using Stock::Shaders;
-
 	Theme* Context::theme = 0;
 
 	Icons* Context::icons = 0;
+
+	Shaders* Context::shaders = 0;
+
+	Cursor* Context::cursor = 0;
 
 	glm::mat4 Context::default_view_matrix =
 		glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
@@ -66,8 +65,6 @@ namespace BlendInt
 
 	bool Context::Initialize()
 	{
-		using Stock::Shaders;
-
 		bool success = true;
 
 #ifdef DEBUG
@@ -104,7 +101,7 @@ namespace BlendInt
 			success = false;
 		}
 
-		if (success && Shaders::Initialize()) {
+		if (success && InitializeShaders()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s",
@@ -119,7 +116,7 @@ namespace BlendInt
 			success = false;
 		}
 
-		if (success && Cursor::Initialize()) {
+		if (success && InitializeCursor()) {
 			// do nothing;
 		} else {
 			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
@@ -153,8 +150,6 @@ namespace BlendInt
 
 	void Context::Release()
 	{
-		using Stock::Shaders;
-
 		while(context_set.size()) {
 			std::set<Context*>::iterator it = context_set.begin();
 
@@ -167,10 +162,10 @@ namespace BlendInt
 		}
 
 		ReleaseIcons();
-		Shaders::Release();
+		ReleaseShaders();
 		ReleaseTheme();
 		FontCache::ReleaseAll();
-		Cursor::Release();
+		ReleaseCursor();
 
 #ifdef USE_FONTCONFIG
 		FontConfig::release();
@@ -482,7 +477,7 @@ namespace BlendInt
 			set_size(*request.size());
 
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-			Shaders::instance->SetFrameProjectionMatrix(projection);
+			shaders->SetFrameProjectionMatrix(projection);
 
 			set_refresh(true);
 
@@ -637,6 +632,33 @@ namespace BlendInt
 		return true;
 	}
 
+	bool Context::InitializeShaders ()
+	{
+		bool ret = false;
+
+		if (!shaders) {
+			shaders = new Shaders;
+
+			if (shaders) {
+				ret = shaders->Setup();
+			} else {
+				ret = false;
+			}
+		}
+
+		return ret;
+
+	}
+
+	bool Context::InitializeCursor ()
+	{
+		cursor = new Cursor;
+
+		cursor->RegisterCursorType(new CursorType);
+
+		return true;
+	}
+
 	void Context::ReleaseTheme ()
 	{
 		if (theme) {
@@ -650,6 +672,22 @@ namespace BlendInt
 		if (icons) {
 			delete icons;
 			icons = 0;
+		}
+	}
+
+	void Context::ReleaseShaders ()
+	{
+		if (shaders) {
+			delete shaders;
+			shaders = 0;
+		}
+	}
+
+	void Context::ReleaseCursor ()
+	{
+		if(cursor) {
+			delete cursor;
+			cursor = nullptr;
 		}
 	}
 
@@ -691,12 +729,12 @@ namespace BlendInt
 	void Context::InitializeContext ()
 	{
 		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		Shaders::instance->SetFrameProjectionMatrix(projection);
-		Shaders::instance->SetFrameViewMatrix(default_view_matrix);
-		Shaders::instance->SetFrameModelMatrix(glm::mat3(1.f));
+		shaders->SetFrameProjectionMatrix(projection);
+		shaders->SetFrameViewMatrix(default_view_matrix);
+		shaders->SetFrameModelMatrix(glm::mat3(1.f));
 
-		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
-		Shaders::instance->SetWidgetModelMatrix(glm::mat3(1.f));
+		shaders->SetWidgetViewMatrix(default_view_matrix);
+		shaders->SetWidgetModelMatrix(glm::mat3(1.f));
 	}
 
 	void Context::DispatchHoverEvent()

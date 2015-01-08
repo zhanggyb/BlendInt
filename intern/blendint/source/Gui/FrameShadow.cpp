@@ -36,16 +36,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Core/Types.hpp>
-
 #include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	FrameShadow::FrameShadow(const Size& size, int round_type, float round_radius)
 	: AbstractRoundForm(),
@@ -73,10 +68,10 @@ namespace BlendInt {
 
 	void FrameShadow::Draw(float x, float y, short gamma) const
 	{
-		Shaders::instance->frame_shadow_program()->use();
+		Context::shaders->frame_shadow_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_POSITION), x, y);
-		glUniform2f(Shaders::instance->location(Stock::FRAME_SHADOW_SIZE), size().width(), size().height());
+		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_POSITION), x, y);
+		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_SIZE), size().width(), size().height());
 
 		glBindVertexArray(vao_);
 
@@ -84,11 +79,11 @@ namespace BlendInt {
 
 		int i = 0;
 		if( i < Context::theme->shadow_width()) {
-			glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 1);
+			glUniform1i(Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 1);
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
-		glUniform1i(Shaders::instance->location(Stock::FRAME_SHADOW_ANTI_ALIAS), 0);
+		glUniform1i(Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 0);
 		i++;
 		for(; i < Context::theme->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
@@ -175,9 +170,9 @@ namespace BlendInt {
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_SHADOW_COORD));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_SHADOW_COORD));
 
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_SHADOW_COORD),
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_SHADOW_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();

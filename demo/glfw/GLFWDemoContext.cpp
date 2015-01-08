@@ -25,7 +25,6 @@
 #include <BlendInt/Gui/CloseButton.hpp>
 
 using namespace BI;
-using BI::Stock::Shaders;
 
 GLFWDemoContext::GLFWDemoContext(GLFWwindow* win)
 : BI::Context(),

@@ -25,25 +25,6 @@
 
 namespace BlendInt {
 
-	Cursor* Cursor::instance = 0;
-
-	bool Cursor::Initialize ()
-	{
-		instance = new Cursor;
-
-		instance->RegisterCursorType(new CursorType);
-
-		return true;
-	}
-
-	void Cursor::Release ()
-	{
-		if(instance) {
-			delete instance;
-			instance = nullptr;
-		}
-	}
-
 	Cursor::Cursor ()
 	: cursor_type_(nullptr)
 	{

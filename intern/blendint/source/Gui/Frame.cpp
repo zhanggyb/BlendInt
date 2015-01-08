@@ -36,11 +36,8 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Frame::Frame ()
 	: AbstractFrame()

@@ -40,11 +40,8 @@
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	glm::mat4 AbstractFrame::default_view_matrix = glm::lookAt(
 		glm::vec3(0.f, 0.f, 1.f),
@@ -430,8 +427,8 @@ namespace BlendInt {
 
             fb->bind();
 
-            Shaders::instance->SetWidgetProjectionMatrix(projection);
-            Shaders::instance->SetWidgetModelMatrix(model);
+            Context::shaders->SetWidgetProjectionMatrix(projection);
+            Context::shaders->SetWidgetModelMatrix(model);
 
             // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
             GLuint original_stencil_count = context->stencil_count_;

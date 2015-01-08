@@ -37,13 +37,10 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ScrollView::ScrollView()
 	: AbstractScrollable(),
@@ -63,8 +60,8 @@ namespace BlendInt {
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_.reset();
@@ -242,20 +239,20 @@ namespace BlendInt {
 		if(!visiable()) return false;
 		Context* c = const_cast<Context*>(context);
 
-		glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
 				glm::vec2(position().x(), position().y()));
 
-		Shaders::instance->PushWidgetModelMatrix();
-		Shaders::instance->SetWidgetModelMatrix(matrix);
+		Context::shaders->PushWidgetModelMatrix();
+		Context::shaders->SetWidgetModelMatrix(matrix);
 
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(subs_count()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
 		}
 
 		glBindVertexArray(vao_);
@@ -275,11 +272,11 @@ namespace BlendInt {
 	ResponseType ScrollView::Draw (const Context* context)
 	{
 		if(subs_count()) {
-			glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+			glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
 					glm::vec2(offset().x(), offset().y()));
 
-			Shaders::instance->PushWidgetModelMatrix();
-			Shaders::instance->SetWidgetModelMatrix(matrix);
+			Context::shaders->PushWidgetModelMatrix();
+			Context::shaders->SetWidgetModelMatrix(matrix);
 
 			return Ignore;
 
@@ -290,16 +287,16 @@ namespace BlendInt {
 
 	void ScrollView::PostDraw(const Context* context)
 	{
-		Shaders::instance->PopWidgetModelMatrix();
+		Context::shaders->PopWidgetModelMatrix();
 
 		// draw mask
-		Shaders::instance->widget_inner_program()->use();
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		Context::shaders->widget_inner_program()->use();
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(subs_count()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
 		}
 
 		glBindVertexArray(vao_);
@@ -309,7 +306,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		Shaders::instance->PopWidgetModelMatrix();
+		Context::shaders->PopWidgetModelMatrix();
 	}
 
 	ResponseType ScrollView::PerformMousePress (const Context* context)

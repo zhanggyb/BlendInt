@@ -145,13 +145,11 @@ namespace BlendInt {
 
 	ResponseType Slider::Draw (const Context* context)
 	{
-		using Stock::Shaders;
-
 		// ----- draw line
 
 		/*
 		glBindVertexArray(vao_);
-		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
+		RefPtr<GLSLProgram> program = Context::shaders->line_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);

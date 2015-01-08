@@ -38,6 +38,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
@@ -146,6 +147,10 @@ namespace BlendInt {
 
 		static Icons* icons;
 
+		static Shaders* shaders;
+
+		static Cursor* cursor;
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
@@ -195,9 +200,17 @@ namespace BlendInt {
 
 		static bool InitializeIcons ();
 
+		static bool InitializeShaders ();
+
+		static bool InitializeCursor ();
+
 		static void ReleaseTheme ();
 
 		static void ReleaseIcons ();
+
+		static void ReleaseShaders ();
+
+		static void ReleaseCursor ();
 
 		static void GetGLVersion (int *major, int *minor);
 

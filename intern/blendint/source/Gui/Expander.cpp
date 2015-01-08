@@ -38,14 +38,12 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 
-namespace BlendInt {
+#include <BlendInt/Gui/Context.hpp>
 
-	using Stock::Shaders;
+namespace BlendInt {
 
 	ExpandButton::ExpandButton()
 	: AbstractButton()

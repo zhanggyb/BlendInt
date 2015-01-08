@@ -7,7 +7,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 
 using namespace BlendInt;
-using Stock::Icons;
+using Shaders::Icons;
 
 HBlockTest1::HBlockTest1()
 : testing::Test()

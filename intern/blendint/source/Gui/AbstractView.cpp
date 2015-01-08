@@ -39,12 +39,7 @@
 #include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	bool IsContained (AbstractView* container, AbstractView* widget)
 	{

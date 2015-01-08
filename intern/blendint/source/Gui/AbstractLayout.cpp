@@ -35,11 +35,10 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	AbstractLayout::AbstractLayout()
 	: AbstractWidget()

@@ -40,15 +40,8 @@
 #include <BlendInt/Gui/Splitter.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Cursor.hpp>
-
-#include <BlendInt/Gui/AbstractFrame.hpp>
-#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
 	: Widget(),
@@ -98,8 +91,8 @@ namespace BlendInt {
 
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -198,20 +191,20 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::Draw (const Context* context)
 	{
-		Shaders::instance->widget_triangle_program()->use();
+		Context::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
 		if(highlight_) {
-			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 50);
-			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
+			//glUniform1i(Context::shaders->location(Shaders::TRIANGLE_GAMMA), 50);
+			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
 		} else {
-			//glUniform1i(Shaders::instance->location(Stock::TRIANGLE_GAMMA), 0);
-			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+			//glUniform1i(Context::shaders->location(Shaders::TRIANGLE_GAMMA), 0);
+			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 		}
-		//glVertexAttrib4f(Shaders::instance->location(Stock::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+		//glVertexAttrib4f(Context::shaders->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -225,15 +218,15 @@ namespace BlendInt {
 	void SplitterHandle::PerformHoverIn(const Context* context)
 	{
 		highlight_ = true;
-		Cursor::instance->PushCursor();
-		Cursor::instance->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
+		Context::cursor->PushCursor();
+		Context::cursor->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		RequestRedraw();
 	}
 
 	void SplitterHandle::PerformHoverOut(const Context* context)
 	{
 		highlight_ = false;
-		Cursor::instance->PopCursor();
+		Context::cursor->PopCursor();
 		RequestRedraw();
 	}
 

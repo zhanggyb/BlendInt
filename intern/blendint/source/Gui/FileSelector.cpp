@@ -44,14 +44,10 @@
 #include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/FolderList.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Separator.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	FileSelector::FileSelector ()
 	: Dialog(),
