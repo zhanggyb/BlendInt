@@ -204,8 +204,8 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		if(icon_) {
-			float x = (size().width() - icon_->size().width()) / 2;
-			float y = (size().height() - icon_->size().height()) / 2;
+			float x = size().width() / 2.f;
+			float y = size().height() / 2.f;
 
 			if(hover()) {
 				icon_->Draw(x, y, 15);
