@@ -24,7 +24,7 @@
 #include <assert.h>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -54,8 +54,8 @@ namespace BlendInt {
 					int round_type,
 					float radius)
 	{
-		float rad = radius * Theme::instance->pixel();
-		float radi = rad - border * Theme::instance->pixel();
+		float rad = radius * Context::theme->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -64,10 +64,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - border * Theme::instance->pixel(); 	// U.pixelsize;
-		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
-		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
+		float minxi = minx + border * Context::theme->pixel();		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border * Context::theme->pixel(); 	// U.pixelsize;
+		float minyi = miny + border * Context::theme->pixel();		// U.pixelsize;
+		float maxyi = maxy - border * Context::theme->pixel();		// U.pixelsize;
 
 		int count = 0;
 
@@ -95,8 +95,8 @@ namespace BlendInt {
 		if (2.0f * rad > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -241,8 +241,8 @@ namespace BlendInt {
 					int round_type,
 					float radius)
 	{
-		float rad = radius * Theme::instance->pixel();
-		float radi = rad - border * Theme::instance->pixel();
+		float rad = radius * Context::theme->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -251,10 +251,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - border * Theme::instance->pixel(); 	// U.pixelsize;
-		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
-		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
+		float minxi = minx + border * Context::theme->pixel();		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border * Context::theme->pixel(); 	// U.pixelsize;
+		float minyi = miny + border * Context::theme->pixel();		// U.pixelsize;
+		float maxyi = maxy - border * Context::theme->pixel();		// U.pixelsize;
 
 		int count = 0;
 
@@ -282,8 +282,8 @@ namespace BlendInt {
 		if (2.0f * rad > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -438,8 +438,8 @@ namespace BlendInt {
 					int round_type,
 					float radius)
 	{
-		float rad = radius * Theme::instance->pixel();
-		float radi = rad - border * Theme::instance->pixel();
+		float rad = radius * Context::theme->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -448,10 +448,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - border * Theme::instance->pixel(); 	// U.pixelsize;
-		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
-		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
+		float minxi = minx + border * Context::theme->pixel();		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border * Context::theme->pixel(); 	// U.pixelsize;
+		float minyi = miny + border * Context::theme->pixel();		// U.pixelsize;
+		float maxyi = maxy - border * Context::theme->pixel();		// U.pixelsize;
 
 		int count = 0;
 
@@ -479,8 +479,8 @@ namespace BlendInt {
 		if (2.0f * rad > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -634,7 +634,7 @@ namespace BlendInt {
 			short shadedown)
 	{
 		float rad = radius;
-		float radi = rad - border * Theme::instance->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -643,10 +643,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();
-		float maxxi = maxx - border * Theme::instance->pixel();
-		float minyi = miny + border * Theme::instance->pixel();
-		float maxyi = maxy - border * Theme::instance->pixel();
+		float minxi = minx + border * Context::theme->pixel();
+		float maxxi = maxx - border * Context::theme->pixel();
+		float minyi = miny + border * Context::theme->pixel();
+		float maxyi = maxy - border * Context::theme->pixel();
 
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
@@ -678,8 +678,8 @@ namespace BlendInt {
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -905,7 +905,7 @@ namespace BlendInt {
 			short shadedown)
 	{
 		float rad = radius;
-		float radi = rad - border * Theme::instance->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -914,10 +914,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();
-		float maxxi = maxx - border * Theme::instance->pixel();
-		float minyi = miny + border * Theme::instance->pixel();
-		float maxyi = maxy - border * Theme::instance->pixel();
+		float minxi = minx + border * Context::theme->pixel();
+		float maxxi = maxx - border * Context::theme->pixel();
+		float minyi = miny + border * Context::theme->pixel();
+		float maxyi = maxy - border * Context::theme->pixel();
 
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
@@ -949,8 +949,8 @@ namespace BlendInt {
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -1176,7 +1176,7 @@ namespace BlendInt {
 			short shadetop, short shadedown)
 	{
 		float rad = radius;
-		float radi = rad - border * Theme::instance->pixel();
+		float radi = rad - border * Context::theme->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -1185,10 +1185,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border * Theme::instance->pixel();
-		float maxxi = maxx - border * Theme::instance->pixel();
-		float minyi = miny + border * Theme::instance->pixel();
-		float maxyi = maxy - border * Theme::instance->pixel();
+		float minxi = minx + border * Context::theme->pixel();
+		float maxxi = maxx - border * Context::theme->pixel();
+		float minyi = miny + border * Context::theme->pixel();
+		float maxyi = maxy - border * Context::theme->pixel();
 
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
@@ -1222,8 +1222,8 @@ namespace BlendInt {
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
-			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
+		if (2.0f * (radi + border * Context::theme->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

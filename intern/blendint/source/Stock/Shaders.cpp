@@ -44,8 +44,6 @@
 
 namespace BlendInt {
 
-	namespace Stock {
-
 	const char* Shaders::widget_text_vertex_shader =
 		"#version 330\n"
 		"layout(location = 0) in vec4 aCoord;"
@@ -842,33 +840,6 @@ namespace BlendInt {
 				"	FragmentColor = vec4(vec3(0.05, 0.05, 0.05), 0.8 * alpha);"
 				"}";
 
-		Shaders* Shaders::instance = 0;
-
-		bool Shaders::Initialize ()
-		{
-			bool ret = false;
-
-			if (!instance) {
-				instance = new Shaders;
-
-				if (instance) {
-					ret = instance->Setup();
-				} else {
-					ret = false;
-				}
-			}
-
-			return ret;
-		}
-
-		void Shaders::Release ()
-		{
-			if (instance) {
-				delete instance;
-				instance = 0;
-			}
-		}
-
 		Shaders::Shaders ()
 		: widget_matrices_ubo_total_size_(0),
 		  widget_matrices_ubo_binding_point_(0),
@@ -1258,13 +1229,13 @@ namespace BlendInt {
 			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
 
 			/*
-			Stock::location[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
+			Shaders::location[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
 			//location[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
 			//location[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
-			Stock::location[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
-			Stock::location[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
-			Stock::location[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
-			Stock::location[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
+			Shaders::location[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
+			Shaders::location[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
+			Shaders::location[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
+			Shaders::location[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
 			*/
 
 			return true;
@@ -1656,8 +1627,6 @@ namespace BlendInt {
 
 			return size;
 		}
-
-	}
 
 }
 

@@ -36,7 +36,7 @@ TexBufContext::~TexBufContext ()
 void TexBufContext::CreateWidgets ()
 {
 	using namespace BlendInt;
-	using Stock::Icons;
+	using Shaders::Icons;
 
 	Frame* screen1 = Manage(new Frame);
 	AddFrame(screen1);

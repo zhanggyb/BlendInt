@@ -6,8 +6,6 @@
 
 #include <BlendInt/Core/Types.hpp>
 
-#include <BlendInt/Stock/Cursor.hpp>
-
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include "../Common/GLFWCursor.hpp"
@@ -70,7 +68,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
-	Cursor::instance->RegisterCursorType (new GLFWCursor(win));
+	Context::cursor->RegisterCursorType (new GLFWCursor(win));
 
 	GLFWDemoContext* context = Manage (new GLFWDemoContext(win));
 	DBG_SET_NAME(context, "Context");

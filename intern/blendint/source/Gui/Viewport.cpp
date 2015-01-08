@@ -38,11 +38,7 @@
 #include <BlendInt/Gui/Viewport.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
-
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Viewport::Viewport()
 	: Frame(),
@@ -184,22 +180,22 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Shaders::instance->SetWidgetProjectionMatrix(projection_matrix_);
-		Shaders::instance->SetWidgetModelMatrix(model_matrix_);
+		Context::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+		Context::shaders->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
 
 	ResponseType Viewport::Draw(const Context* context)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(hover()) {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
 		} else {
-			glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
 		}
 
 		glBindVertexArray(vao_);
@@ -233,8 +229,8 @@ namespace BlendInt {
 		buffer_.generate();
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 		glBindVertexArray(0);
 		buffer_.reset();

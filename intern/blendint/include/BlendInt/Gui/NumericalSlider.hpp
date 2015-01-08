@@ -27,6 +27,8 @@
 #include <BlendInt/Core/Margin.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/AbstractSlider.hpp>
+
+#include <BlendInt/OpenGL/GLVertexArrays.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
@@ -38,6 +40,8 @@ namespace BlendInt {
 	public:
 
 		NumericalSlider (Orientation orientation = Horizontal);
+
+		NumericalSlider (const String& title, Orientation orientation = Horizontal);
 
 		virtual ~NumericalSlider ();
 
@@ -83,7 +87,7 @@ namespace BlendInt {
 		 * [0] - inner buffer
 		 * [1] - outer buffer
 		 */
-		GLuint vao_[2];
+		GLVertexArrays<2> vao_;
 
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 

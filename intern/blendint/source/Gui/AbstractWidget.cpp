@@ -45,15 +45,10 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
-
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	AbstractWidget::AbstractWidget()
 	: AbstractView()
@@ -72,23 +67,23 @@ namespace BlendInt {
 		if(!visiable()) return false;
 
 		//glm::mat4 model;
-		//Shaders::instance->GetUIModelMatrix(model);
+		//Context::shaders->GetUIModelMatrix(model);
 
 //		Point pos = GetGlobalPosition();
 
-		glm::mat3 matrix = glm::translate(Shaders::instance->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
 				glm::vec2(position().x() + offset().x(), position().y() + offset().y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
-		Shaders::instance->PushWidgetModelMatrix();
-		Shaders::instance->SetWidgetModelMatrix(matrix);
+		Context::shaders->PushWidgetModelMatrix();
+		Context::shaders->SetWidgetModelMatrix(matrix);
 
 		return true;
 	}
 
 	void AbstractWidget::PostDraw(const Context* context)
 	{
-		Shaders::instance->PopWidgetModelMatrix();
+		Context::shaders->PopWidgetModelMatrix();
 	}
 
 	void AbstractWidget::PerformFocusOn (const Context* context)
@@ -195,21 +190,21 @@ namespace BlendInt {
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
 			Context* c = const_cast<Context*>(context);
-            glm::vec3 pos = Shaders::instance->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
+            glm::vec3 pos = Context::shaders->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
             Point original = context->viewport_origin();
             c->viewport_origin_.reset(original.x() + pos.x, original.y() + pos.y);
 
-			Shaders::instance->PushWidgetModelMatrix();
-			Shaders::instance->PushWidgetProjectionMatrix();
+			Context::shaders->PushWidgetModelMatrix();
+			Context::shaders->PushWidgetProjectionMatrix();
 
 			glm::mat3 identity(1.f);
-			Shaders::instance->SetWidgetModelMatrix(identity);
+			Context::shaders->SetWidgetModelMatrix(identity);
 
 			glm::mat4 projection = glm::ortho(
 				0.f, (float)widget->size().width(),
 				0.f, (float)widget->size().height(),
 				100.f, -100.f);
-			Shaders::instance->SetWidgetProjectionMatrix(projection);
+			Context::shaders->SetWidgetProjectionMatrix(projection);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -239,8 +234,8 @@ namespace BlendInt {
 
             // restore viewport and framebuffer
 
-			Shaders::instance->PopWidgetProjectionMatrix();
-			Shaders::instance->PopWidgetModelMatrix();
+			Context::shaders->PopWidgetProjectionMatrix();
+			Context::shaders->PopWidgetModelMatrix();
 
 			if(scissor_test) {
 				glEnable(GL_SCISSOR_TEST);

@@ -44,14 +44,17 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
 {
-	using Stock::Shaders;
+	Theme* Context::theme = 0;
+
+	Icons* Context::icons = 0;
+
+	Shaders* Context::shaders = 0;
+
+	Cursor* Context::cursor = 0;
 
 	glm::mat4 Context::default_view_matrix =
 		glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
@@ -62,9 +65,6 @@ namespace BlendInt
 
 	bool Context::Initialize()
 	{
-		using Stock::Icons;
-		using Stock::Shaders;
-
 		bool success = true;
 
 #ifdef DEBUG
@@ -94,14 +94,14 @@ namespace BlendInt
 		}
 #endif
 
-		if (success && Theme::Initialize()) {
+		if (success && InitializeTheme()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
 			success = false;
 		}
 
-		if (success && Shaders::Initialize()) {
+		if (success && InitializeShaders()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s",
@@ -109,14 +109,14 @@ namespace BlendInt
 			success = false;
 		}
 
-		if (success && Icons::Initialize()) {
+		if (success && InitializeIcons()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
 			success = false;
 		}
 
-		if (success && Cursor::Initialize()) {
+		if (success && InitializeCursor()) {
 			// do nothing;
 		} else {
 			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
@@ -150,9 +150,6 @@ namespace BlendInt
 
 	void Context::Release()
 	{
-		using Stock::Icons;
-		using Stock::Shaders;
-
 		while(context_set.size()) {
 			std::set<Context*>::iterator it = context_set.begin();
 
@@ -164,11 +161,11 @@ namespace BlendInt
 			}
 		}
 
-		Icons::Release();
-		Shaders::Release();
-		Theme::Release();
+		ReleaseIcons();
+		ReleaseShaders();
+		ReleaseTheme();
 		FontCache::ReleaseAll();
-		Cursor::Release();
+		ReleaseCursor();
 
 #ifdef USE_FONTCONFIG
 		FontConfig::release();
@@ -298,32 +295,6 @@ namespace BlendInt
 		stencil_count_ = 0;
 
 		glViewport(0, 0, size().width(), size().height());
-
-		/*
-		if(refresh()) {
-
-			DBG_PRINT_MSG("%s", "Render to texture once");
-			set_refresh(false);
-			RenderToBuffer(profile_);
-		}
-
-		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-		Shaders::instance->frame_image_program()->use();
-		texture_buffer_.bind();
-		glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
-		glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-
-		texture_buffer_.reset();
-		GLSLProgram::reset();
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		*/
 
 		set_refresh(false);
 		if(PreDraw(this)) {
@@ -506,21 +477,7 @@ namespace BlendInt
 			set_size(*request.size());
 
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-			Shaders::instance->SetFrameProjectionMatrix(projection);
-
-			/*
-			GLfloat vertices[] = {
-					// coord						uv
-					0.f, 0.f,						0.f, 0.f,
-					(float)size().width(), 0.f,		1.f, 0.f,
-					0.f, (float)size().height(),	0.f, 1.f,
-					(float)size().width(), (float)size().height(),		1.f, 1.f
-			};
-
-			vertex_buffer_.bind();
-			vertex_buffer_.set_data(sizeof(vertices), vertices);
-			vertex_buffer_.reset();
-			*/
+			shaders->SetFrameProjectionMatrix(projection);
 
 			set_refresh(true);
 
@@ -651,6 +608,89 @@ namespace BlendInt
 		return retval;
 	}
 
+	bool Context::InitializeTheme ()
+	{
+		bool result = false;
+
+		if (!theme) {
+			theme = new Theme;
+		}
+
+		if (theme) {
+			theme->Reset();
+			result = true;
+		}
+
+		return result;
+	}
+
+	bool Context::InitializeIcons ()
+	{
+		if (!icons)
+			icons = new Icons;
+
+		return true;
+	}
+
+	bool Context::InitializeShaders ()
+	{
+		bool ret = false;
+
+		if (!shaders) {
+			shaders = new Shaders;
+
+			if (shaders) {
+				ret = shaders->Setup();
+			} else {
+				ret = false;
+			}
+		}
+
+		return ret;
+
+	}
+
+	bool Context::InitializeCursor ()
+	{
+		cursor = new Cursor;
+
+		cursor->RegisterCursorType(new CursorType);
+
+		return true;
+	}
+
+	void Context::ReleaseTheme ()
+	{
+		if (theme) {
+			delete theme;
+			theme = 0;
+		}
+	}
+
+	void Context::ReleaseIcons()
+	{
+		if (icons) {
+			delete icons;
+			icons = 0;
+		}
+	}
+
+	void Context::ReleaseShaders ()
+	{
+		if (shaders) {
+			delete shaders;
+			shaders = 0;
+		}
+	}
+
+	void Context::ReleaseCursor ()
+	{
+		if(cursor) {
+			delete cursor;
+			cursor = nullptr;
+		}
+	}
+
 	void Context::GetGLVersion (int *major, int *minor)
 	{
 		const char* verstr = (const char*) glGetString(GL_VERSION);
@@ -689,43 +729,12 @@ namespace BlendInt
 	void Context::InitializeContext ()
 	{
 		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		Shaders::instance->SetFrameProjectionMatrix(projection);
-		Shaders::instance->SetFrameViewMatrix(default_view_matrix);
-		Shaders::instance->SetFrameModelMatrix(glm::mat3(1.f));
+		shaders->SetFrameProjectionMatrix(projection);
+		shaders->SetFrameViewMatrix(default_view_matrix);
+		shaders->SetFrameModelMatrix(glm::mat3(1.f));
 
-		Shaders::instance->SetWidgetViewMatrix(default_view_matrix);
-		Shaders::instance->SetWidgetModelMatrix(glm::mat3(1.f));
-
-		/*
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		vertex_buffer_.generate();
-
-		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
-
-		vertex_buffer_.bind();
-		vertex_buffer_.set_data(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
-		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-		vertex_buffer_.reset();
-		*/
+		shaders->SetWidgetViewMatrix(default_view_matrix);
+		shaders->SetWidgetModelMatrix(glm::mat3(1.f));
 	}
 
 	void Context::DispatchHoverEvent()
@@ -755,79 +764,5 @@ namespace BlendInt
 	void Context::PerformHoverOut(const Context* context)
 	{
 	}
-
-	/*
-    void Context::RenderToBuffer(Profile &profile)
-    {
-        // Create and set texture to render to.
-        GLTexture2D* tex = &texture_buffer_;
-        if(!tex->id())
-            tex->generate();
-        
-        tex->bind();
-        tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-        tex->SetMinFilter(GL_NEAREST);
-        tex->SetMagFilter(GL_NEAREST);
-        tex->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        
-        // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-        GLFramebuffer* fb = new GLFramebuffer;
-        fb->generate();
-        fb->bind();
-        
-        // Set "renderedTexture" as our colour attachement #0
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, tex->id(), 0);
-        //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-        
-        // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
-        GLuint rb;
-        glGenRenderbuffers(1, &rb);
-        
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                              size().width(), size().height());
-        //Attach depth buffer to FBO
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, rb);
-        
-        if(GLFramebuffer::CheckStatus()) {
-            
-            fb->bind();
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClearDepth(1.0);
-            glClearStencil(0);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-            
-            // Draw context:
-    		if(PreDraw(profile_)) {
-    			Draw(profile_);
-    			PostDraw(profile_);
-    		}
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            
-        }
-
-        fb->reset();
-        tex->reset();
-        
-        //delete tex; tex = 0;
-        
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-        glDeleteRenderbuffers(1, &rb);
-        
-        fb->reset();
-        delete fb; fb = 0;
-    }
-    */
-    
 
 }

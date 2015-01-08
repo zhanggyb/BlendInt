@@ -38,12 +38,7 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
-
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Decoration::Decoration(const String& title)
 	: AbstractDecoration(),
@@ -128,10 +123,10 @@ namespace BlendInt {
 
 			std::vector<GLfloat> inner_verts;
 
-			if (Theme::instance->decoration().shaded) {
+			if (Context::theme->decoration().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->decoration().shadetop,
-						Theme::instance->decoration().shadedown,
+						Context::theme->decoration().shadetop,
+						Context::theme->decoration().shadedown,
 						&inner_verts,
 						nullptr);
 			} else {
@@ -158,10 +153,10 @@ namespace BlendInt {
 
 		std::vector<GLfloat> inner_verts;
 
-		if (Theme::instance->decoration().shaded) {
+		if (Context::theme->decoration().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->decoration().shadetop,
-					Theme::instance->decoration().shadedown,
+					Context::theme->decoration().shadetop,
+					Context::theme->decoration().shadedown,
 					&inner_verts,
 					nullptr);
 		} else {
@@ -181,10 +176,10 @@ namespace BlendInt {
 
 		std::vector<GLfloat> inner_verts;
 
-		if (Theme::instance->decoration().shaded) {
+		if (Context::theme->decoration().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->decoration().shadetop,
-					Theme::instance->decoration().shadedown,
+					Context::theme->decoration().shadetop,
+					Context::theme->decoration().shadedown,
 					&inner_verts,
 					nullptr);
 		} else {
@@ -200,10 +195,10 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (const Context* context)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1, Theme::instance->decoration().inner.data());
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, Context::theme->decoration().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -242,10 +237,10 @@ namespace BlendInt {
 	{
 		std::vector<GLfloat> inner_verts;
 
-		if (Theme::instance->decoration().shaded) {
+		if (Context::theme->decoration().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->decoration().shadetop,
-					Theme::instance->decoration().shadedown,
+					Context::theme->decoration().shadetop,
+					Context::theme->decoration().shadedown,
 					&inner_verts,
 					nullptr);
 		} else {
@@ -260,8 +255,8 @@ namespace BlendInt {
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		inner_.reset();

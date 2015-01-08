@@ -36,15 +36,10 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ListView::ListView ()
 	: AbstractItemView(),
@@ -99,12 +94,12 @@ namespace BlendInt {
 		int y = position().y() + size().height();
 		int h = font_.GetHeight();
 
-        Shaders::instance->widget_inner_program()->use();
+        Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				Theme::instance->regular().inner.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				Context::theme->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -115,11 +110,11 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		c->EndPushStencil();
 
-        RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
+        RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
 
-        glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.475f,
+        glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 		glBindVertexArray(vaos_[1]);
@@ -129,16 +124,16 @@ namespace BlendInt {
 			y -= h;
 
 
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION),
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
 					(float) position().x(), (float) y);
 
 			if(i == highlight_index_) {	// TODO: use different functions for performance
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), -35);
+				glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+					glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 15);
+					glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -164,7 +159,7 @@ namespace BlendInt {
 
 		}
 
-        Shaders::instance->widget_inner_program()->use();
+        Context::shaders->widget_inner_program()->use();
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
@@ -275,8 +270,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -285,8 +280,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

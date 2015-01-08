@@ -27,15 +27,9 @@
 
 #include <BlendInt/Gui/FileBrowser.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
-
-#include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	FileBrowser::FileBrowser ()
 	: AbstractItemView(),
@@ -125,11 +119,11 @@ namespace BlendInt {
 	{
 		Context* c = const_cast<Context*>(context);
 
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR),
-				1, Theme::instance->box().inner.data());
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR),
+				1, Context::theme->box().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 
@@ -141,10 +135,10 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		c->EndPushStencil();
 
-		Shaders::instance->widget_simple_triangle_program()->use();
+		Context::shaders->widget_simple_triangle_program()->use();
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				Theme::instance->box().inner_sel.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
+				Context::theme->box().inner_sel.data());
 
 		glBindVertexArray(vaos_[1]);
 
@@ -154,15 +148,15 @@ namespace BlendInt {
 		while(y > 0) {
 			y -= h;
 
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, (float)y);
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, (float)y);
 
 			if(i == highlight_index_) {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
+				glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
+					glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
+					glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -187,7 +181,7 @@ namespace BlendInt {
 
 		}
 
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
@@ -214,14 +208,14 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> row_verts;
 
-			if (Theme::instance->box().shaded) {
+			if (Context::theme->box().shaded) {
 				GenerateVertices(size(),
 						0.f,
 						round_type(),
 						round_radius(),
 						Vertical,
-						Theme::instance->box().shadetop,
-						Theme::instance->box().shadedown,
+						Context::theme->box().shadetop,
+						Context::theme->box().shadedown,
 						&inner_verts,
 						0);
 			} else {
@@ -311,14 +305,14 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> row_verts;
 
-		if (Theme::instance->box().shaded) {
+		if (Context::theme->box().shaded) {
 			GenerateVertices(size(),
 					0.f,
 					round_type(),
 					round_radius(),
 					Vertical,
-					Theme::instance->box().shadetop,
-					Theme::instance->box().shadedown,
+					Context::theme->box().shadetop,
+					Context::theme->box().shadedown,
 					&inner_verts,
 					0);
 		} else {
@@ -338,8 +332,8 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		GenerateVertices(Size(size().width(), row_height),
@@ -354,8 +348,8 @@ namespace BlendInt {
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * row_verts.size(), &row_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		buffer_.reset();

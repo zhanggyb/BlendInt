@@ -28,6 +28,8 @@
 #include <BlendInt/Gui/AbstractScrollable.hpp>
 #include <BlendInt/Gui/AbstractItemView.hpp>
 
+#include <BlendInt/Gui/Font.hpp>
+
 namespace BlendInt {
 
 	/**

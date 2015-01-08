@@ -221,7 +221,7 @@ void StudioContext::OnOpenDialogForNumericalSlider()
 	panel2->MoveTo(20, 20);
 	panel2->Resize(250, 250);
 
-	NumericalSlider* ns = Manage(new NumericalSlider);
+	NumericalSlider* ns = Manage(new NumericalSlider("X:"));
 	ns->Resize(150, ns->size().height());
 	ns->MoveTo(50, 50);
 	ns->SetValue(50.0);

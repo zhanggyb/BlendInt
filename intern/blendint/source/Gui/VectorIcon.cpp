@@ -37,15 +37,14 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VectorIcon.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 #ifndef WIDGET_AA_JITTER
 #define WIDGET_AA_JITTER 8
 #endif
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	const float VectorIcon::num_tria_vert[3][2] ={
 		{ -0.352077, 0.532607 },
@@ -157,8 +156,8 @@ namespace BlendInt {
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();
 		element_buffer_.bind();
@@ -176,23 +175,18 @@ namespace BlendInt {
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
-		Draw(glm::vec2(x, y), color, gamma);
+		Draw(x, y, color, gamma);
 	}
 
-	void VectorIcon::Draw (float x, float y, const Color& color, short gamma) const
+	void VectorIcon::Draw(float x, float y, const Color& color, short gamma) const
 	{
-		Draw(glm::vec2(x, y), color, gamma);
-	}
+		Context::shaders->widget_triangle_program()->use();
 
-	void VectorIcon::Draw(const glm::vec2& pos, const Color& color, short gamma) const
-	{
-		Shaders::instance->widget_triangle_program()->use();
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -204,17 +198,17 @@ namespace BlendInt {
 		GLSLProgram::reset();
 	}
 
-	void VectorIcon::Draw(const glm::vec2& pos, float angle, float scale, const Color& color, short gamma) const
+	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const
 	{
-		Shaders::instance->widget_triangle_program()->use();
+		Context::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), pos.x, pos.y);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), angle);
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), scale, scale);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), color.data());
+		glUniform1f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), angle);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale, scale);
+		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
 
 		glBindVertexArray(vao_);
 
@@ -223,8 +217,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		glUniform1f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ROTATION), 0.f);
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
+		glUniform1f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 
 		GLSLProgram::reset();
 	}

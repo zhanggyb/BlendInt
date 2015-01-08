@@ -35,9 +35,17 @@
 
 namespace BlendInt {
 
-	class Context;
+	//extern GLint location[LocationLast];
 
-	namespace Stock {
+	/**
+	 * @brief A class which provide pre-defined shaders
+	 *
+	 * The ShaderManager class works as a service in BlendInt and
+	 * provide simple pre-defined shaders for widgets.
+	 */
+	class Shaders
+	{
+	public:
 
 		enum LocationType {
 
@@ -53,7 +61,7 @@ namespace BlendInt {
 			WIDGET_TRIANGLE_GAMMA,
 
 			WIDGET_SIMPLE_TRIANGLE_COORD,
-			WIDGET_SIMPLE_TRIANGLE_POSITION,	// vec2 of outline or emboss vertices
+			WIDGET_SIMPLE_TRIANGLE_POSITION,// vec2 of outline or emboss vertices
 			WIDGET_SIMPLE_TRIANGLE_COLOR,
 			WIDGET_SIMPLE_TRIANGLE_GAMMA,
 
@@ -124,315 +132,276 @@ namespace BlendInt {
 			LocationLast
 		};
 
-		//extern GLint location[LocationLast];
-
-		/**
-		 * @brief A class which provide pre-defined shaders
-		 *
-		 * The ShaderManager class works as a service in BlendInt and
-		 * provide simple pre-defined shaders for widgets.
-		 */
-		class Shaders
-		{
-		public:
-
-			static Shaders* instance;
-
-			const RefPtr<GLSLProgram>& widget_text_program () const
-			{
-				return widget_text_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_text_program () const {
+			return widget_text_program_;
+		}
 
-			const RefPtr<GLSLProgram>& primitive_program () const
-			{
-				return primitive_program_;
-			}
+		const RefPtr<GLSLProgram>& primitive_program () const {
+			return primitive_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_triangle_program () const
-			{
-				return widget_triangle_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_triangle_program () const {
+			return widget_triangle_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_simple_triangle_program () const
-			{
-				return widget_simple_triangle_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_simple_triangle_program () const {
+			return widget_simple_triangle_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_inner_program () const
-			{
-				return widget_inner_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_inner_program () const {
+			return widget_inner_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_split_inner_program () const
-			{
-				return widget_split_inner_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_split_inner_program () const {
+			return widget_split_inner_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_outer_program () const
-			{
-				return widget_outer_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_outer_program () const {
+			return widget_outer_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_image_program () const
-			{
-				return widget_image_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_image_program () const {
+			return widget_image_program_;
+		}
 
-			const RefPtr<GLSLProgram>& widget_line_program () const
-			{
-				return widget_line_program_;
-			}
+		const RefPtr<GLSLProgram>& widget_line_program () const {
+			return widget_line_program_;
+		}
 
-			const RefPtr<GLSLProgram>& frame_inner_program () const
-			{
-				return frame_inner_program_;
-			}
+		const RefPtr<GLSLProgram>& frame_inner_program () const {
+			return frame_inner_program_;
+		}
 
-			const RefPtr<GLSLProgram>& frame_outer_program () const
-			{
-				return frame_outer_program_;
-			}
+		const RefPtr<GLSLProgram>& frame_outer_program () const {
+			return frame_outer_program_;
+		}
 
-			const RefPtr<GLSLProgram>& frame_image_program () const
-			{
-				return frame_image_program_;
-			}
+		const RefPtr<GLSLProgram>& frame_image_program () const {
+			return frame_image_program_;
+		}
 
-			const RefPtr<GLSLProgram>& frame_shadow_program () const
-			{
-				return frame_shadow_program_;
-			}
+		const RefPtr<GLSLProgram>& frame_shadow_program () const {
+			return frame_shadow_program_;
+		}
 
-			const glm::mat4& widget_projection_matrix () const
-			{
-				return widget_projection_matrix_;
-			}
+		const glm::mat4& widget_projection_matrix () const {
+			return widget_projection_matrix_;
+		}
 
-			const glm::mat4& widget_view_matrix () const
-			{
-				return widget_view_matrix_;
-			}
+		const glm::mat4& widget_view_matrix () const {
+			return widget_view_matrix_;
+		}
 
-			const glm::mat3& widget_model_matrix () const
-			{
-				return widget_model_matrix_;
-			}
+		const glm::mat3& widget_model_matrix () const {
+			return widget_model_matrix_;
+		}
 
-			void GetWidgetProjectionMatrix (glm::mat4& matrix);
+		void GetWidgetProjectionMatrix (glm::mat4& matrix);
 
-			void SetWidgetProjectionMatrix (const glm::mat4& matrix);
+		void SetWidgetProjectionMatrix (const glm::mat4& matrix);
 
-			void PushWidgetProjectionMatrix ();
+		void PushWidgetProjectionMatrix ();
 
-			void PopWidgetProjectionMatrix ();
+		void PopWidgetProjectionMatrix ();
 
-			void GetWidgetViewMatrix (glm::mat4& matrix);
+		void GetWidgetViewMatrix (glm::mat4& matrix);
 
-			void SetWidgetViewMatrix (const glm::mat4& matrix);
+		void SetWidgetViewMatrix (const glm::mat4& matrix);
 
-			void PushWidgetViewMatrix ();
+		void PushWidgetViewMatrix ();
 
-			void PopWidgetViewMatrix ();
+		void PopWidgetViewMatrix ();
 
-			void SetWidgetModelMatrix (const glm::mat3& matrix);
+		void SetWidgetModelMatrix (const glm::mat3& matrix);
 
-			void GetWidgetModelMatrix (glm::mat3& matrix);
+		void GetWidgetModelMatrix (glm::mat3& matrix);
 
-			void PushWidgetModelMatrix ();
+		void PushWidgetModelMatrix ();
 
-			void PopWidgetModelMatrix ();
+		void PopWidgetModelMatrix ();
 
-			void SetFrameProjectionMatrix (const glm::mat4& matrix);
+		void SetFrameProjectionMatrix (const glm::mat4& matrix);
 
-			void SetFrameViewMatrix (const glm::mat4& matrix);
+		void SetFrameViewMatrix (const glm::mat4& matrix);
 
-			void SetFrameModelMatrix (const glm::mat3& matrix);
+		void SetFrameModelMatrix (const glm::mat3& matrix);
 
-			inline GLint location (LocationType index) const
-			{
-				return locations_[index];
-			}
+		inline GLint location (LocationType index) const {
+			return locations_[index];
+		}
 
-		private:
+	private:
 
-			enum {
-				ProjectionIndex,
-				ViewIndex,
-				ModelIndex
-			};
-
-			friend class BlendInt::Context;
-
-			static bool Initialize ();
-
-			static void Release ();
-
-			static size_t TypeSize(GLenum type);
-
-			Shaders ();
-
-			~Shaders ();
-
-			bool Setup ();
-
-			bool SetupWidgetInnerProgram ();
-
-			bool SetupWidgetSplitInnerProgram ();
-
-			bool SetupWidgetOuterProgram ();
-
-			bool SetupWidgetTextProgram ();
-
-			bool SetupWidgetTriangleProgram ();
-
-			bool SetupWidgetSimpleTriangleProgram ();
-
-			bool SetupWidgetImageProgram ();
-
-			bool SetupWidgetLineProgram ();
-
-			bool SetupPrimitiveProgram ();
-
-			bool SetupFrameInnerProgram ();
-
-			bool SetupFrameOuterProgram ();
-
-			bool SetupFrameImageProgram ();
-
-			bool SetupFrameShadowProgram ();
-
-			RefPtr<GLSLProgram> widget_text_program_;
-
-			RefPtr<GLSLProgram> primitive_program_;
-
-			RefPtr<GLSLProgram> widget_triangle_program_;
-
-			RefPtr<GLSLProgram> widget_simple_triangle_program_;
-
-			RefPtr<GLSLProgram> widget_inner_program_;
-
-			RefPtr<GLSLProgram> widget_split_inner_program_;
-
-			RefPtr<GLSLProgram> widget_outer_program_;
-
-			RefPtr<GLSLProgram> widget_image_program_;
-
-			RefPtr<GLSLProgram> widget_line_program_;
-
-			RefPtr<GLSLProgram> frame_inner_program_;
-
-			RefPtr<GLSLProgram> frame_outer_program_;
-
-			RefPtr<GLSLProgram> frame_image_program_;
-
-			RefPtr<GLSLProgram> frame_shadow_program_;
-
-			GLint locations_[LocationLast];
-
-			RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrices_ubo_;
-
-			RefPtr<GLBuffer<UNIFORM_BUFFER> > frame_matrices_ubo_;
-
-			// the offset of uniform block in shaders
-			GLint widget_matrices_ubo_offset_[3];
-
-			GLint widget_matrices_ubo_size_[3];
-
-			GLint widget_matrices_ubo_type_[3];
-
-			GLint widget_matrices_ubo_total_size_;
-			
-			GLuint widget_matrices_ubo_binding_point_;
-
-			GLint frame_matrices_ubo_offset_[3];
-
-			GLint frame_matrices_ubo_size_[3];
-
-			GLint frame_matrices_ubo_type_[3];
-
-			GLint frame_matrices_ubo_total_size_;
-
-			GLuint frame_matrices_ubo_binding_point_;
-
-			glm::mat4 widget_projection_matrix_;
-
-			glm::mat4 widget_view_matrix_;
-
-			glm::mat3 widget_model_matrix_;
-
-			std::stack<glm::mat4> widget_projection_matrix_stack;
-
-			std::stack<glm::mat4> widget_view_matrix_stack;
-
-			std::stack<glm::mat3> widget_model_matrix_stack;
-
-			static const char* widget_text_vertex_shader;
-
-			static const char* widget_text_fragment_shader;
-
-			static const char* primitive_vertex_shader;
-
-			static const char* primitive_fragment_shader;
-
-			static const char* widget_triangle_vertex_shader;
-
-			static const char* widget_triangle_geometry_shader;
-
-			static const char* widget_triangle_fragment_shader;
-
-			static const char* widget_simple_triangle_vertex_shader;
-
-			static const char* widget_simple_triangle_fragment_shader;
-
-			static const char* widget_inner_vertex_shader;
-
-			static const char* widget_inner_fragment_shader;
-
-			static const char* widget_split_inner_vertex_shader;
-
-			static const char* widget_split_inner_fragment_shader;
-
-			static const char* widget_outer_vertex_shader;
-
-			static const char* widget_outer_geometry_shader;
-
-			static const char* widget_outer_fragment_shader;
-
-			static const char* widget_line_vertex_shader;
-
-			static const char* widget_line_fragment_shader;
-
-			static const char* widget_image_vertex_shader;
-
-			static const char* widget_image_fragment_shader;
-
-			static const char* frame_inner_vertex_shader;
-
-			static const char* frame_inner_fragment_shader;
-
-			static const char* frame_outer_vertex_shader;
-
-			static const char* frame_outer_geometry_shader;
-
-			static const char* frame_outer_fragment_shader;
-
-			static const char* frame_image_vertex_shader;
-
-			static const char* frame_image_fragment_shader;
-
-			static const char* frame_shadow_vertex_shader;
-
-			static const char* frame_shadow_geometry_shader;
-
-			static const char* frame_shadow_fragment_shader;
-
-			static const char* context_vertex_shader;
-
-			static const char* context_fragment_shader;
-
+		enum {
+			ProjectionIndex, ViewIndex, ModelIndex
 		};
 
-	}
+		friend class Context;
+
+		static size_t TypeSize (GLenum type);
+
+		Shaders ();
+
+		~Shaders ();
+
+		bool Setup ();
+
+		bool SetupWidgetInnerProgram ();
+
+		bool SetupWidgetSplitInnerProgram ();
+
+		bool SetupWidgetOuterProgram ();
+
+		bool SetupWidgetTextProgram ();
+
+		bool SetupWidgetTriangleProgram ();
+
+		bool SetupWidgetSimpleTriangleProgram ();
+
+		bool SetupWidgetImageProgram ();
+
+		bool SetupWidgetLineProgram ();
+
+		bool SetupPrimitiveProgram ();
+
+		bool SetupFrameInnerProgram ();
+
+		bool SetupFrameOuterProgram ();
+
+		bool SetupFrameImageProgram ();
+
+		bool SetupFrameShadowProgram ();
+
+		RefPtr<GLSLProgram> widget_text_program_;
+
+		RefPtr<GLSLProgram> primitive_program_;
+
+		RefPtr<GLSLProgram> widget_triangle_program_;
+
+		RefPtr<GLSLProgram> widget_simple_triangle_program_;
+
+		RefPtr<GLSLProgram> widget_inner_program_;
+
+		RefPtr<GLSLProgram> widget_split_inner_program_;
+
+		RefPtr<GLSLProgram> widget_outer_program_;
+
+		RefPtr<GLSLProgram> widget_image_program_;
+
+		RefPtr<GLSLProgram> widget_line_program_;
+
+		RefPtr<GLSLProgram> frame_inner_program_;
+
+		RefPtr<GLSLProgram> frame_outer_program_;
+
+		RefPtr<GLSLProgram> frame_image_program_;
+
+		RefPtr<GLSLProgram> frame_shadow_program_;
+
+		GLint locations_[LocationLast];
+
+		RefPtr<GLBuffer<UNIFORM_BUFFER> > widget_matrices_ubo_;
+
+		RefPtr<GLBuffer<UNIFORM_BUFFER> > frame_matrices_ubo_;
+
+		// the offset of uniform block in shaders
+		GLint widget_matrices_ubo_offset_[3];
+
+		GLint widget_matrices_ubo_size_[3];
+
+		GLint widget_matrices_ubo_type_[3];
+
+		GLint widget_matrices_ubo_total_size_;
+
+		GLuint widget_matrices_ubo_binding_point_;
+
+		GLint frame_matrices_ubo_offset_[3];
+
+		GLint frame_matrices_ubo_size_[3];
+
+		GLint frame_matrices_ubo_type_[3];
+
+		GLint frame_matrices_ubo_total_size_;
+
+		GLuint frame_matrices_ubo_binding_point_;
+
+		glm::mat4 widget_projection_matrix_;
+
+		glm::mat4 widget_view_matrix_;
+
+		glm::mat3 widget_model_matrix_;
+
+		std::stack<glm::mat4> widget_projection_matrix_stack;
+
+		std::stack<glm::mat4> widget_view_matrix_stack;
+
+		std::stack<glm::mat3> widget_model_matrix_stack;
+
+		static const char* widget_text_vertex_shader;
+
+		static const char* widget_text_fragment_shader;
+
+		static const char* primitive_vertex_shader;
+
+		static const char* primitive_fragment_shader;
+
+		static const char* widget_triangle_vertex_shader;
+
+		static const char* widget_triangle_geometry_shader;
+
+		static const char* widget_triangle_fragment_shader;
+
+		static const char* widget_simple_triangle_vertex_shader;
+
+		static const char* widget_simple_triangle_fragment_shader;
+
+		static const char* widget_inner_vertex_shader;
+
+		static const char* widget_inner_fragment_shader;
+
+		static const char* widget_split_inner_vertex_shader;
+
+		static const char* widget_split_inner_fragment_shader;
+
+		static const char* widget_outer_vertex_shader;
+
+		static const char* widget_outer_geometry_shader;
+
+		static const char* widget_outer_fragment_shader;
+
+		static const char* widget_line_vertex_shader;
+
+		static const char* widget_line_fragment_shader;
+
+		static const char* widget_image_vertex_shader;
+
+		static const char* widget_image_fragment_shader;
+
+		static const char* frame_inner_vertex_shader;
+
+		static const char* frame_inner_fragment_shader;
+
+		static const char* frame_outer_vertex_shader;
+
+		static const char* frame_outer_geometry_shader;
+
+		static const char* frame_outer_fragment_shader;
+
+		static const char* frame_image_vertex_shader;
+
+		static const char* frame_image_fragment_shader;
+
+		static const char* frame_shadow_vertex_shader;
+
+		static const char* frame_shadow_geometry_shader;
+
+		static const char* frame_shadow_fragment_shader;
+
+		static const char* context_vertex_shader;
+
+		static const char* context_fragment_shader;
+
+	};
 
 }
 

@@ -40,7 +40,7 @@
 #include <boost/filesystem.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
@@ -49,26 +49,6 @@
 #include "BlendIntConfig.hpp"
 
 namespace BlendInt {
-
-	namespace Stock {
-
-		Icons* Icons::instance = 0;
-
-		bool Icons::Initialize ()
-		{
-			if (!instance)
-				instance = new Icons;
-
-			return true;
-		}
-
-		void Icons::Release ()
-		{
-			if (instance) {
-				delete instance;
-				instance = 0;
-			}
-		}
 
 		Icons::Icons ()
 		{
@@ -286,7 +266,5 @@ namespace BlendInt {
 			}
 
 		}
-
-	}
 
 }

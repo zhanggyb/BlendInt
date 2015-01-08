@@ -21,55 +21,70 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_CURSOR_HPP_
-#define _BLENDINT_STOCK_CURSOR_HPP_
+#ifndef _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_
+#define _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_
 
-#include <stack>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/CursorType.hpp>
+#include <string.h>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 
-	class Cursor
+	template <int SIZE = 1>
+	class GLVertexArrays: public Object
 	{
-		DISALLOW_COPY_AND_ASSIGN(Cursor);
-
 	public:
 
-		void RegisterCursorType (CursorType* cursor_type);
-
-		void SetCursor (int cursor_type);
-
-		void PushCursor ();
-
-		void PushCursor (int cursor_type);
-
-		void PopCursor ();
-
-		int cursor_type () const
+		GLVertexArrays ()
+			: Object()
 		{
-			if(cursor_type_ != nullptr) {
-				return cursor_type_->current_cursor();
-			} else {
-				return ArrowCursor;
-			}
+			memset(ids_, 0, SIZE);
 		}
 
+		virtual ~GLVertexArrays ()
+		{
+			glDeleteVertexArrays (SIZE, ids_);
+		}
+
+		inline void generate ()
+		{
+			if(ids_[0] != 0) clear();
+			glGenVertexArrays(SIZE, ids_);
+		}
+
+		inline void clear ()
+		{
+			glDeleteBuffers(SIZE, ids_);
+			memset(ids_, 0, SIZE);
+		}
+
+		inline GLuint id (int index = 0) const
+		{return ids_[index];}
+
+		inline void bind (int index = 0) const
+		{
+			glBindVertexArray (ids_[index]);
+		}
+
+		static inline void reset ()
+		{
+			glBindVertexArray (0);
+		}
+		
 	private:
 
-		friend class Context;
-
-		Cursor ();
-
-		~Cursor ();
-
-		CursorType * cursor_type_;
-
-		std::stack<int> cursor_stack_;
-
+		GLuint ids_[SIZE];
 	};
 
 }
 
-#endif	// _BLENDINT_STOCK_CURSOR_HPP_
+#endif /* _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_ */

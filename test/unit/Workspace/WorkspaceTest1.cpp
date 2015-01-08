@@ -32,7 +32,7 @@ TEST_F(WorkspaceTest1, Foo1)
 	Init ();
 
     GLFWwindow* win = CreateWindow("Workspace - Foo1", 1280, 800);
-	Cursor::instance->RegisterCursorType (new UnitTestCursor(win));
+	Context::cursor->RegisterCursorType (new UnitTestCursor(win));
 
     UnitTestContext* context = Manage (new UnitTestContext);
 	DBG_SET_NAME(context, "Context");

@@ -49,7 +49,9 @@ namespace BlendInt {
 
 		virtual AbstractView* GetFocusedView () const = 0;
 
-		Point GetAbsolutePosition (const AbstractWidget* view);
+		Point GetAbsolutePosition (const AbstractWidget* widget);
+
+		Point GetRelativePosition (const AbstractWidget* widget);
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
 		{

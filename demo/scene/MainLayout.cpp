@@ -22,7 +22,7 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Core/String.hpp>
@@ -40,7 +40,7 @@
 #include "MainLayout.hpp"
 
 using namespace BI;
-using Stock::Shaders;
+using Shaders::Shaders;
 
 MainLayout::MainLayout ()
 : VLayout(),
@@ -157,8 +157,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		Profile off_screen_profile(profile, GetGlobalPosition());
 
 		glm::mat4 identity(1.f);
-		Shaders::instance->PushWidgetModelMatrix();
-		Shaders::instance->SetWidgetModelMatrix(identity);
+		Context::shaders->PushWidgetModelMatrix();
+		Context::shaders->SetWidgetModelMatrix(identity);
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 		glClearDepth(1.0);
@@ -172,8 +172,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f,
 		        -100.f);
 
-		Shaders::instance->PushWidgetProjectionMatrix();
-		Shaders::instance->SetWidgetProjectionMatrix(projection);
+		Context::shaders->PushWidgetProjectionMatrix();
+		Context::shaders->SetWidgetProjectionMatrix(projection);
 
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
@@ -193,8 +193,8 @@ void MainLayout::RenderToBuffer(BI::Profile& profile)
 		// Restore the viewport setting and projection matrix
 		glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-		Shaders::instance->PopWidgetProjectionMatrix();
-		Shaders::instance->PopWidgetModelMatrix();
+		Context::shaders->PopWidgetProjectionMatrix();
+		Context::shaders->PopWidgetModelMatrix();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -281,19 +281,19 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	m_tool_open = Manage(new ToolButton);
 
 	ToolButton* btn1 = Manage(new ToolButton);
-	btn1->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_PREVIEW), String("SEQ PREVIEW"));
+	btn1->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::SEQ_PREVIEW), String("SEQ PREVIEW"));
 
 	ToolButton* btn2 = Manage(new ToolButton);
-	btn2->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_LUMA_WAVEFORM), String("SEQ LUMA WAVEFORM"));
+	btn2->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::SEQ_LUMA_WAVEFORM), String("SEQ LUMA WAVEFORM"));
 
 	ToolButton* btn3 = Manage(new ToolButton);
-	btn3->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_CHROMA_SCOPE), String("SEQ CHROMA SCOPE"));
+	btn3->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::SEQ_CHROMA_SCOPE), String("SEQ CHROMA SCOPE"));
 
 	ToolButton* btn4 = Manage(new ToolButton);
-	btn4->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_HISTOGRAM), String("SEQ HISTOGRAM"));
+	btn4->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::SEQ_HISTOGRAM), String("SEQ HISTOGRAM"));
 
 	ToolButton* btn5 = Manage(new ToolButton);
-	btn5->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::SEQ_SPLITVIEW), String("SEQ SPLITVIEW"));
+	btn5->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::SEQ_SPLITVIEW), String("SEQ SPLITVIEW"));
 
 	hblock->Append(m_tool_open);
 	hblock->Append(btn1);
@@ -306,13 +306,13 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	HBlockLayout* hblock2 = Manage (new HBlockLayout);
 
 	ToolButton* btn6 = Manage(new ToolButton);
-	btn6->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_TRANS), String("MAN TRANS"));
+	btn6->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::MAN_TRANS), String("MAN TRANS"));
 
 	ToolButton* btn7 = Manage(new ToolButton);
-	btn7->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_ROT), String("MAN ROT"));
+	btn7->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::MAN_ROT), String("MAN ROT"));
 
 	ToolButton* btn8 = Manage(new ToolButton);
-	btn8->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::MAN_SCALE), String("MAN SCALE"));
+	btn8->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::MAN_SCALE), String("MAN SCALE"));
 
 	hblock2->Append(btn6);
 	hblock2->Append(btn7);
@@ -322,19 +322,19 @@ BI::ToolBar* MainLayout::CreateToolBar()
 	HBlockLayout* hblock3 = Manage (new HBlockLayout);
 
 	ToolButton* btn9 = Manage(new ToolButton);
-	btn9->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB), String("IMAGE RGB"));
+	btn9->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::IMAGE_RGB), String("IMAGE RGB"));
 
 	ToolButton* btn10 = Manage(new ToolButton);
-	btn10->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_RGB_ALPHA), String("IMAGE RGB ALPHA"));
+	btn10->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::IMAGE_RGB_ALPHA), String("IMAGE RGB ALPHA"));
 
 	ToolButton* btn11 = Manage(new ToolButton);
-	btn11->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ALPHA), String("IMAGE ALPHA"));
+	btn11->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::IMAGE_ALPHA), String("IMAGE ALPHA"));
 
 	ToolButton* btn12 = Manage(new ToolButton);
-	btn12->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGE_ZDEPTH), String("IMAGE ZDEPTH"));
+	btn12->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::IMAGE_ZDEPTH), String("IMAGE ZDEPTH"));
 
 	ToolButton* btn13 = Manage(new ToolButton);
-	btn13->SetAction(BI::Stock::Icons::instance->icon_16x16(Stock::IMAGEFILE), String("IMAGEFILE"));
+	btn13->SetAction(BI::Shaders::Icons::instance->icon_16x16(Shaders::IMAGEFILE), String("IMAGEFILE"));
 
 	hblock3->Append(btn9);
 	hblock3->Append(btn10);
@@ -359,7 +359,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	RefPtr<Menu> file_menu(new Menu);
 
     file_menu->SetRoundType(RoundAll);
-    file_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction(Shaders::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");
     file_menu->AddAction("MenuItem4", "Ctrl + 1");
@@ -370,7 +370,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	RefPtr<Menu> edit_menu(new Menu);
 
 	edit_menu->SetRoundType(RoundAll);
-	edit_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
+	edit_menu->AddAction(Shaders::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
 	edit_menu->AddAction("MenuItem2", "Ctrl + 1");
 	edit_menu->AddAction("MenuItem3", "Ctrl + 1");
 	edit_menu->AddAction("MenuItem4", "Ctrl + 1");
@@ -381,7 +381,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	RefPtr<Menu> help_menu(new Menu);
 
 	help_menu->SetRoundType(RoundAll);
-	help_menu->AddAction(Stock::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
+	help_menu->AddAction(Shaders::Icons::instance->check(), "MenuItem1", "Ctrl + 1");
 	help_menu->AddAction("MenuItem2", "Ctrl + 1");
 	help_menu->AddAction("MenuItem3", "Ctrl + 1");
 	help_menu->AddAction("MenuItem4", "Ctrl + 1");

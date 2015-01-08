@@ -35,6 +35,11 @@
 #include <BlendInt/Gui/AbstractView.hpp>
 #include <BlendInt/Gui/AbstractFrame.hpp>
 
+#include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Cursor.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -138,6 +143,14 @@ namespace BlendInt {
 
 		static Context* GetContext (AbstractView* widget);
 
+		static Theme* theme;
+
+		static Icons* icons;
+
+		static Shaders* shaders;
+
+		static Cursor* cursor;
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
@@ -183,6 +196,22 @@ namespace BlendInt {
 		friend class AbstractFrame;
 		friend class AbstractWidget;
 
+		static bool InitializeTheme ();
+
+		static bool InitializeIcons ();
+
+		static bool InitializeShaders ();
+
+		static bool InitializeCursor ();
+
+		static void ReleaseTheme ();
+
+		static void ReleaseIcons ();
+
+		static void ReleaseShaders ();
+
+		static void ReleaseCursor ();
+
 		static void GetGLVersion (int *major, int *minor);
 
 		static void GetGLSLVersion (int *major, int *minor);
@@ -192,14 +221,6 @@ namespace BlendInt {
 		void DispatchHoverEvent ();
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-		//void RenderToBuffer (Profile& profile);
-
-        //GLuint vao_;
-        
-        //GLTexture2D texture_buffer_;
-
-		//GLBuffer<> vertex_buffer_;
 
 		Point cursor_position_;
 
@@ -238,6 +259,5 @@ namespace BlendInt {
 	};
 
 }
-
 
 #endif /* _BLENDINT_GUI_CONTEXT_HPP_ */

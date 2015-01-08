@@ -38,15 +38,12 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 
-namespace BlendInt {
+#include <BlendInt/Gui/Context.hpp>
 
-	using Stock::Shaders;
-	using Stock::Icons;
+namespace BlendInt {
 
 	ExpandButton::ExpandButton()
 	: AbstractButton()
@@ -126,11 +123,10 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		glm::vec2 pos(0.f, 0.f);
-		pos.x += Icons::instance->num()->size().width()/2.f;
-		pos.y += size().height()/2.f;
+		float x = Context::icons->num()->size().width()/2.f;
+		float y = size().height()/2.f;
 
-		Icons::instance->num()->Draw(pos, rotate, 1.5f, Color(0x0F0F0FFF));
+		Context::icons->num()->Draw(x, y, rotate, 1.5f, Color(0x0F0F0FFF));
 
 		return Finish;
 	}

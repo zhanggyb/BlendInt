@@ -37,11 +37,10 @@
 #include <vector>
 
 #include <BlendInt/Gui/PixelIcon.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
+
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	PixelIcon::PixelIcon (int width, int height)
 	: AbstractIcon(width, height),
@@ -78,11 +77,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
@@ -137,11 +136,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
@@ -207,11 +206,11 @@ namespace BlendInt {
 		buffer_->bind();
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		buffer_->reset();
@@ -322,14 +321,13 @@ namespace BlendInt {
 	void PixelIcon::Draw (float x, float y, short gamma) const
 	{
 		if(texture_) {
-			RefPtr<GLSLProgram> program = Shaders::instance->widget_image_program();
-			program->use();
+			Context::shaders->widget_image_program()->use();
 
-			glUniform2f(Shaders::instance->location(Stock::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_GAMMA), gamma);
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 
 			texture_->bind();
 			glBindVertexArray(vao_);
@@ -337,8 +335,7 @@ namespace BlendInt {
 			glBindVertexArray(0);
 			texture_->reset();
 
-			program->reset();
-
+			GLSLProgram::reset();
 		}
 	}
 

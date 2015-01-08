@@ -35,13 +35,10 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	ProgressBar::ProgressBar(Orientation orientation)
 	: Widget(),
@@ -138,21 +135,19 @@ namespace BlendInt {
 
 	ResponseType ProgressBar::Draw(const Context* context)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->widget_triangle_program();
+						Context::shaders->widget_triangle_program();
 		program->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->regular().outline.data());
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -198,10 +193,10 @@ namespace BlendInt {
 		inner_->set_data(36 * sizeof(GLfloat), verts);
 		//tool.SetInnerBufferData(m_inner.get());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		//glEnableVertexAttribArray(0);
 		//glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
@@ -211,8 +206,8 @@ namespace BlendInt {
 		outer_->generate();
 		outer_->bind();
 		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

@@ -37,9 +37,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ComboBox.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
@@ -47,9 +44,6 @@
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
-	using Stock::Icons;
 
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
@@ -128,10 +122,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->menu().shaded) {
+			if (Context::theme->menu().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->menu().shadetop,
-						Theme::instance->menu().shadedown,
+						Context::theme->menu().shadetop,
+						Context::theme->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -159,10 +153,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu().shaded) {
+		if (Context::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-						Theme::instance->menu().shadetop,
-						Theme::instance->menu().shadedown,
+						Context::theme->menu().shadetop,
+						Context::theme->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
 		} else {
@@ -185,10 +179,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu().shaded) {
+		if (Context::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu().shadetop,
-					Theme::instance->menu().shadedown,
+					Context::theme->menu().shadetop,
+					Context::theme->menu().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -206,19 +200,19 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(const Context* context)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 1,
-				Theme::instance->menu().inner.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				Context::theme->menu().inner.data());
 
 		if (status_down_) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 20);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
 		} else {
 			if (hover()) {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA),
+				glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA),
 						15);
 			} else {
-				glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA),
+				glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA),
 						0);
 			}
 		}
@@ -226,20 +220,20 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->widget_outer_program()->use();
+		Context::shaders->widget_outer_program()->use();
 
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-				Theme::instance->menu().outline.data());
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+				Context::theme->menu().outline.data());
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 				GetOutlineVertices(round_type()) * 2 + 2);
 
 //		if (emboss()) {
-//			glUniform4f(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1.0f,
+//			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 //			        1.0f, 1.0f, 0.16f);
-//			glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION),
+//			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 //			        0.f, - 1.f);
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 //			        GetHalfOutlineVertices(round_type()) * 2);
@@ -256,10 +250,10 @@ namespace BlendInt {
 
 		//icon->Draw(mvp * translate * rotate * scale);
 
-		float x = size().width() - Icons::instance->menu()->size().width()/2.f;
+		float x = size().width() - Context::icons->menu()->size().width()/2.f;
 		float y = size().height()/2.f;
 
-		Icons::instance->menu()->Draw(x, y, Color(0xEFEFEFFF));
+		Context::icons->menu()->Draw(x, y, Color(0xEFEFEFFF));
 
 		return Finish;
 	}
@@ -346,10 +340,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->menu().shaded) {
+		if (Context::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->menu().shadetop,
-					Theme::instance->menu().shadedown,
+					Context::theme->menu().shadetop,
+					Context::theme->menu().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -365,8 +359,8 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD),
+				Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
@@ -374,8 +368,8 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
-				Shaders::instance->location (Stock::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD),
+				Context::shaders->location (Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD),
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

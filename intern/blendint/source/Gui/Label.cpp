@@ -35,11 +35,8 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Label::Label (const String& text, Alignment alignment)
     : Widget(),

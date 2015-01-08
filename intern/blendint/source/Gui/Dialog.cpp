@@ -38,18 +38,12 @@
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/Cursor.hpp>
-
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Gui/FreeLayout.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	Dialog::Dialog (bool modal)
 	: AbstractFloatingFrame(),
@@ -229,10 +223,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Theme::instance->dialog().shaded) {
+			if (Context::theme->dialog().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Theme::instance->dialog().shadetop,
-						Theme::instance->dialog().shadedown,
+						Context::theme->dialog().shadetop,
+						Context::theme->dialog().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -283,23 +277,23 @@ namespace BlendInt {
 	{
 		shadow_->Draw(position().x(), position().y());
 
-		Shaders::instance->frame_inner_program()->use();
+		Context::shaders->frame_inner_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        Shaders::instance->frame_image_program()->use();
+        Context::shaders->frame_image_program()->use();
 
         texture_buffer_.bind();
-        glUniform2f(Shaders::instance->location(Stock::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(Shaders::instance->location(Stock::FRAME_IMAGE_GAMMA), 0);
+        glUniform2f(Context::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -309,12 +303,12 @@ namespace BlendInt {
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Shaders::instance->frame_outer_program()->use();
+		Context::shaders->frame_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_OUTER_POSITION), position().x(), position().y());
-		//glUniform4fv(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 1,
-		//        Theme::instance->dialog().outline.data());
-		glUniform4f(Shaders::instance->location(Stock::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform2f(Context::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		//glUniform4fv(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
+		//        Context::theme->dialog().outline.data());
+		glUniform4f(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -574,7 +568,7 @@ namespace BlendInt {
 				// set cursor shape
 				if(cursor_on_border()) {
 					set_cursor_on_border(false);
-					Cursor::instance->PopCursor();
+					Context::cursor->PopCursor();
 				}
 
 			} else {
@@ -599,30 +593,30 @@ namespace BlendInt {
 
 					case OnLeftBorder:
 					case OnRightBorder: {
-						Cursor::instance->PushCursor();
-						Cursor::instance->SetCursor(SplitHCursor);
+						Context::cursor->PushCursor();
+						Context::cursor->SetCursor(SplitHCursor);
 
 						break;
 					}
 
 					case OnTopBorder:
 					case OnBottomBorder: {
-						Cursor::instance->PushCursor();
-						Cursor::instance->SetCursor(SplitVCursor);
+						Context::cursor->PushCursor();
+						Context::cursor->SetCursor(SplitVCursor);
 						break;
 					}
 
 					case OnTopLeftCorner:
 					case OnBottomRightCorner: {
-						Cursor::instance->PushCursor();
-						Cursor::instance->SetCursor(SizeFDiagCursor);
+						Context::cursor->PushCursor();
+						Context::cursor->SetCursor(SizeFDiagCursor);
 						break;
 					}
 
 					case OnTopRightCorner:
 					case OnBottomLeftCorner: {
-						Cursor::instance->PushCursor();
-						Cursor::instance->SetCursor(SizeBDiagCursor);
+						Context::cursor->PushCursor();
+						Context::cursor->SetCursor(SizeBDiagCursor);
 						break;
 					}
 
@@ -638,7 +632,7 @@ namespace BlendInt {
 			// set cursor shape
 			if(cursor_on_border()) {
 				set_cursor_on_border(false);
-				Cursor::instance->PopCursor();
+				Context::cursor->PopCursor();
 			}
 
 			retval = Ignore;
@@ -719,10 +713,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Theme::instance->dialog().shaded) {
+		if (Context::theme->dialog().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Theme::instance->dialog().shadetop,
-					Theme::instance->dialog().shadedown,
+					Context::theme->dialog().shadetop,
+					Context::theme->dialog().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -736,16 +730,16 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_OUTER_COORD),
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_OUTER_COORD),
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
@@ -762,12 +756,12 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_COORD));
+				Context::shaders->location (Shaders::FRAME_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Shaders::instance->location (Stock::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_COORD),
+				Context::shaders->location (Shaders::FRAME_IMAGE_UV));
+		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Shaders::instance->location (Stock::FRAME_IMAGE_UV), 2,
+		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -70,7 +70,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Theme::instance->pixel(),
+				default_border_width() * Context::theme->pixel(),
 				round_type_,
 				radius_,
 				inner,
@@ -82,7 +82,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Theme::instance->pixel(),
+				default_border_width() * Context::theme->pixel(),
 				round_type_,
 				radius_,
 				shadedir,

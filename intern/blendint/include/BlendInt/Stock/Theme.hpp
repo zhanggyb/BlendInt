@@ -34,8 +34,6 @@
 
 namespace BlendInt {
 
-	class Context;
-
 	class Theme;
 
 	struct ColorScheme
@@ -60,8 +58,6 @@ namespace BlendInt {
 
 	public:
 
-		static Theme* instance;
-
 		/**
 		 * @brief Load theme from an existing xml file
 		 */
@@ -81,12 +77,12 @@ namespace BlendInt {
 		{
 			return box_;
 		}
-		
+
 		unsigned int dpi () const
 		{
 			return dpi_;
 		}
-		
+
 		short pixel () const
 		{
 			return pixel_;
@@ -96,32 +92,32 @@ namespace BlendInt {
 		{
 			return list_item_;
 		}
-		
+
 		const ColorScheme& menu () const
 		{
 			return menu_;
 		}
-		
+
 		const ColorScheme& menu_back () const
 		{
 			return menu_back_;
 		}
-		
+
 		const ColorScheme& menu_item () const
 		{
 			return menu_item_;
 		}
-		
+
 		const ColorScheme& number_field () const
 		{
 			return number_field_;
 		}
-		
+
 		const ColorScheme& number_slider () const
 		{
 			return number_slider_;
 		}
-		
+
 		const ColorScheme& option () const
 		{
 			return option_;
@@ -131,52 +127,52 @@ namespace BlendInt {
 		{
 			return progress_;
 		}
-		
+
 		const ColorScheme& pulldown () const
 		{
 			return pulldown_;
 		}
-		
+
 		const ColorScheme& radio_button () const
 		{
 			return radio_button_;
 		}
-		
+
 		const ColorScheme& regular () const
 		{
 			return regular_;
 		}
-		
+
 		const ColorScheme& scroll () const
 		{
 			return scroll_;
 		}
-		
+
 		const ColorScheme& tab () const
 		{
 			return tab_;
 		}
-		
+
 		const ColorScheme& text () const
 		{
 			return text_;
 		}
-		
+
 		const ColorScheme& toggle () const
 		{
 			return toggle_;
 		}
-		
+
 		const ColorScheme& tool () const
 		{
 			return tool_;
 		}
-		
+
 		const ColorScheme& tooltip () const
 		{
 			return tooltip_;
 		}
-		
+
 		const ColorScheme& dialog () const
 		{
 			return dialog_;
@@ -191,17 +187,17 @@ namespace BlendInt {
 		{
 			return shadow_fac_;
 		}
-		
+
 		short menu_shadow_width1 () const
 		{
 			return shadow_width_;
 		}
-		
+
 		float shadow_fac () const
 		{
 			return shadow_fac_;
 		}
-		
+
 		short shadow_width () const
 		{
 			return shadow_width_;
@@ -210,10 +206,6 @@ namespace BlendInt {
 	private:
 
 		friend class Context;
-
-		static bool Initialize ();
-
-		static void Release ();
 
 		/**
 		 * @brief Default constructor
@@ -278,4 +270,5 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-#endif /* THEME_H_ */
+
+#endif // _BLENDINT_STOCK_THEME_HPP_

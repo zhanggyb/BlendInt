@@ -35,12 +35,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/BrightnessSlider.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	BrightnessSlider::BrightnessSlider(Orientation orientation)
 	: AbstractSlider<int>(orientation)
@@ -87,20 +84,20 @@ namespace BlendInt {
 
 	ResponseType BrightnessSlider::Draw (const Context* context)
 	{
-		Shaders::instance->widget_inner_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform4f(Shaders::instance->location(Stock::WIDGET_INNER_COLOR), 0.f, 0.f, 0.f, 1.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		Shaders::instance->widget_outer_program()->use();
+		Context::shaders->widget_outer_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_OUTER_POSITION), 0.f, 0.f);
-		glUniform4fv(Shaders::instance->location(Stock::WIDGET_OUTER_COLOR), 1,
-		        Theme::instance->regular().outline.data());
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+		        Context::theme->regular().outline.data());
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
@@ -198,8 +195,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		outer_.reset(new GLArrayBuffer);
@@ -207,8 +204,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
 		glBindVertexArray(0);

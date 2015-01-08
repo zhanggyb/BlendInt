@@ -37,12 +37,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/TabButton.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	TabButton::TabButton ()
 	: AbstractButton()
@@ -94,29 +91,29 @@ namespace BlendInt {
 
 	ResponseType TabButton::Draw (const Context* context)
 	{
-		Shaders::instance->widget_triangle_program()->use();
+		Context::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
 		// draw inner, simple fill
 		if (is_checked()) {
-			glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
-			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().item.data());
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+			glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->tab().item.data());
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
 		if (is_checked()) {
-			glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-			glVertexAttrib4fv(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR), Theme::instance->tab().outline.data());
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+			glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->tab().outline.data());
 
 			glBindVertexArray(m_vao[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
@@ -150,8 +147,8 @@ namespace BlendInt {
 		m_inner_buffer->bind();
 		m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(m_vao[1]);
 
@@ -159,8 +156,8 @@ namespace BlendInt {
 		m_outer_buffer->bind();
 		m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
@@ -175,7 +172,7 @@ namespace BlendInt {
 	{
 		int amp = size.height() / 2;
 		int shift_x = 5;
-		border = Theme::instance->pixel() * border;
+		border = Context::theme->pixel() * border;
 
 		if (inner.size() != 2 * 11 * 2)
 			inner.resize(2 * 11 * 2);

@@ -40,13 +40,10 @@
 #include <BlendInt/Gui/Viewport2D.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	const float Viewport2D::camera_factor = 50.f;
 
@@ -116,14 +113,14 @@ namespace BlendInt {
 
         glGetIntegerv(GL_VIEWPORT, vp);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->widget_triangle_program();
+		RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
 		program->use();
 
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COLOR),
+		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR),
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
@@ -156,9 +153,9 @@ namespace BlendInt {
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
         program->use();
-		glUniform2f(Shaders::instance->location(Stock::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Shaders::instance->location(Stock::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
@@ -184,8 +181,8 @@ namespace BlendInt {
 
 		inner_->set_data(tool.inner_size(), tool.inner_data());
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::WIDGET_TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

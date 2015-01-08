@@ -35,16 +35,10 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FrameSplitter.hpp>
-#include <BlendInt/Gui/Widget.hpp>
-
-#include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Cursor.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
-
-	using Stock::Shaders;
 
 	FrameSplitterHandle::FrameSplitterHandle(Orientation orientation)
 	: Frame(),
@@ -70,8 +64,8 @@ namespace BlendInt {
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Shaders::instance->location(Stock::FRAME_INNER_COORD));
-		glVertexAttribPointer(Shaders::instance->location(Stock::FRAME_INNER_COORD), 3,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -163,20 +157,20 @@ namespace BlendInt {
 
 	ResponseType FrameSplitterHandle::Draw(const Context* context)
 	{
-		Shaders::instance->frame_inner_program()->use();
+		Context::shaders->frame_inner_program()->use();
 
-		glUniform2f(Shaders::instance->location(Stock::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform4f(Shaders::instance->location(Stock::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
+		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform4f(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
 
 		/*
 		if(hover()) {
-			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 25);
+			glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 25);
 		} else {
-			glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
+			glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
 		}
 		*/
 
-		glUniform1i(Shaders::instance->location(Stock::FRAME_INNER_GAMMA), 0);
+		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -242,7 +236,7 @@ namespace BlendInt {
 			const Context* context)
 	{
 		if(!hover()) {
-			Cursor::instance->PopCursor();
+			Context::cursor->PopCursor();
 		}
 
 		set_pressed(false);
@@ -251,11 +245,11 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::PerformHoverIn(const Context* context)
 	{
-		Cursor::instance->PushCursor();
+		Context::cursor->PushCursor();
 		if(orientation_ == Horizontal) {
-			Cursor::instance->SetCursor(SplitVCursor);
+			Context::cursor->SetCursor(SplitVCursor);
 		} else {
-			Cursor::instance->SetCursor(SplitHCursor);
+			Context::cursor->SetCursor(SplitHCursor);
 		}
 
 		//RequestRedraw();
@@ -264,7 +258,7 @@ namespace BlendInt {
 	void FrameSplitterHandle::PerformHoverOut(const Context* context)
 	{
 		if(!pressed_ext())
-			Cursor::instance->PopCursor();
+			Context::cursor->PopCursor();
 
 		//RequestRedraw();
 	}

@@ -36,9 +36,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
+
 #include <BlendInt/Gui/Cube.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -62,9 +63,7 @@ namespace BlendInt {
 
 	void Cube::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		using BlendInt::Stock::Shaders;
-
-		RefPtr<GLSLProgram> program = Shaders::instance->primitive_program();
+		RefPtr<GLSLProgram> program = Context::shaders->primitive_program();
 
 		program->use();
 		program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));
