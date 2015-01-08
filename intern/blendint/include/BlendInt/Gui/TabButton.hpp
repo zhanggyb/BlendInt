@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_TABBUTTON_HPP_
 
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
@@ -80,10 +80,9 @@ namespace BlendInt {
 		 * [0] - for inner buffer
 		 * [1] - for outline buffer
 		 */
-		GLuint m_vao[2];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 
 }

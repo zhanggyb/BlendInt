@@ -116,9 +116,6 @@ namespace BlendInt {
 
 		inline GLvoid* map (GLenum access = GL_READ_ONLY) const
 		{
-			//GLvoid* ptr = 0;
-			//ptr = glMapBuffer(TARGET, access);
-			//return ptr;
 			return glMapBuffer(TARGET, access);
 		}
 

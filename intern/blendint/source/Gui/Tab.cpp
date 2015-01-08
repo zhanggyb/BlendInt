@@ -124,21 +124,6 @@ namespace BlendInt {
 		return stack->GetIndex();
 	}
 
-	void Tab::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

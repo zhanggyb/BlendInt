@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 
+#include <BlendInt/Gui/TableLayout.hpp>
+
 namespace BlendInt {
 
 	class ScrollArea: public Widget
@@ -39,19 +41,13 @@ namespace BlendInt {
 
 		virtual ~ScrollArea ();
 
-		void SetViewport (AbstractWidget* widget);
+		void SetViewport (AbstractScrollable* scrollable);
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
-		void CentralizeViewport () const;
-
 	protected:
-
-		virtual void PerformMarginUpdate (const Margin& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -66,20 +62,13 @@ namespace BlendInt {
 			CornerWidgetIndex
 		};
 
-		void OnHorizontalScroll (int value);
-
-		void OnVerticalScroll (int value);
-
 		void InitializeScrollArea ();
 
-		void AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin);
+		GLuint vao_;
 
-		void AdjustGeometries (int x, int y, int width, int height);
+		GLBuffer<> vbo_;
 
-		GLuint m_vao;
-
-		RefPtr<GLArrayBuffer> inner_;
-
+		TableLayout* layout_;
 	};
 }
 

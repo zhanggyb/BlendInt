@@ -21,46 +21,37 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TAB_HPP_
-#define _BLENDINT_GUI_TAB_HPP_
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/TableLayout.hpp>
 
 namespace BlendInt {
 
-	class Tab: public Widget
+	TableLayout::TableLayout(unsigned int row, unsigned int column)
+	: AbstractLayout(),
+	  row_(row),
+	  column_(column)
 	{
-		DISALLOW_COPY_AND_ASSIGN(Tab);
 
-	public:
+	}
 
-		Tab ();
+	bool TableLayout::AddWidget (AbstractWidget* widget)
+	{
+		return true;
+	}
 
-		virtual ~Tab ();
+	bool TableLayout::InsertWidget (int index, AbstractWidget* widget)
+	{
+		return true;
+	}
 
-		void AddWidget (const String& title, AbstractWidget* widget);
+	bool TableLayout::InsertWidget (int row, int column,
+	        AbstractWidget* widget)
+	{
+		return true;
+	}
 
-		virtual bool IsExpandX () const;
+	void TableLayout::PerformMarginUpdate (const Margin& margin)
+	{
 
-		virtual bool IsEXpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-		int GetIndex () const;
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-	private:
-
-		void OnButtonToggled (int index, bool toggled);
-
-		void FillSubWidgetsInTab (const Size& out_size);
-
-		void FillSubWidgetsInTab (int x, int y, int w, int h);
-	};
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_TAB_HPP_ */

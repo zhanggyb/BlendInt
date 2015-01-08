@@ -19,6 +19,7 @@
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/RadioButton.hpp>
 
 using namespace BlendInt;
 
@@ -69,22 +70,23 @@ ToolBox* HPEContext::CreateToolBoxOnce()
 {
 	ToolBox* tools = Manage(new ToolBox(Vertical));
 
-	Expander* expander = Manage(new Expander("Light"));
+	HLayout* head_layout = CreateRadios();
+
+	Expander* expander = Manage(new Expander("Resolution"));
 
 	NumericalSlider* ns1 = Manage(new NumericalSlider);
 	NumericalSlider* ns2 = Manage(new NumericalSlider);
-	NumericalSlider* ns3 = Manage(new NumericalSlider);
 
 	Block* vblock = Manage(new Block(Vertical));
 	vblock->AddWidget(ns1);
 	vblock->AddWidget(ns2);
-	vblock->AddWidget(ns3);
 
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());
 
 	Panel* btn_panel = CreateButtons();
 
+	tools->AddWidget(head_layout);
 	tools->AddWidget(expander);
 	tools->AddWidget(btn_panel);
 
@@ -117,6 +119,44 @@ Workspace* HPEContext::CreateWorkspaceOnce()
 	Workspace* workspace = Manage(new Workspace);
 	
 	return workspace;
+}
+
+HLayout* HPEContext::CreateRadios()
+{
+	radio_group_.reset(new ButtonGroup);
+
+	HLayout* layout = Manage(new HLayout);
+
+	ComboBox* combo = Manage(new ComboBox);
+
+	Block* hblock = Manage(new Block(Horizontal));
+
+	RadioButton* radio1 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SCENE)));
+	RadioButton* radio2 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SCENE_DATA)));
+	RadioButton* radio3 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NSURFACE)));
+	RadioButton* radio4 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCIRCLE)));
+	RadioButton* radio5 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCURVE)));
+
+	radio_group_->AddButton(radio1);
+	radio_group_->AddButton(radio2);
+	radio_group_->AddButton(radio3);
+	radio_group_->AddButton(radio4);
+	radio_group_->AddButton(radio5);
+
+	radio1->SetChecked(true);
+
+	hblock->AddWidget(radio1);
+	hblock->AddWidget(radio2);
+	hblock->AddWidget(radio3);
+	hblock->AddWidget(radio4);
+	hblock->AddWidget(radio5);
+
+	layout->AddWidget(combo);
+	layout->AddWidget(hblock);
+
+	layout->Resize(layout->GetPreferredSize());
+
+	return layout;
 }
 
 Panel* HPEContext::CreateButtons()

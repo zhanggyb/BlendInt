@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	BlendInt::TabButton::~TabButton ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	void TabButton::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -72,12 +72,12 @@ namespace BlendInt {
 			GenerateTabButtonVertices(*request.size(), default_border_width(),
 			        inner, outer);
 
-			m_inner_buffer->bind();
-			m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(),
+			vbo_.bind(0);
+			vbo_.set_data(sizeof(GLfloat) * inner.size(),
 			        &inner[0]);
 
-			m_outer_buffer->bind();
-			m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(),
+			vbo_.bind(1);
+			vbo_.set_data(sizeof(GLfloat) * outer.size(),
 			        &outer[0]);
 
 			GLArrayBuffer::reset();
@@ -101,13 +101,13 @@ namespace BlendInt {
 			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
 			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-			glBindVertexArray(m_vao[0]);
+			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
 			glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->tab().item.data());
 			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-			glBindVertexArray(m_vao[0]);
+			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
@@ -115,7 +115,7 @@ namespace BlendInt {
 			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 			glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->tab().outline.data());
 
-			glBindVertexArray(m_vao[1]);
+			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
 		}
 
@@ -136,25 +136,21 @@ namespace BlendInt {
 
 		GenerateTabButtonVertices(size(), default_border_width(), inner, outer);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		glGenVertexArrays(2, vao_);
 
-		glGenVertexArrays(2, m_vao);
+		glBindVertexArray(vao_[0]);
 
-		glBindVertexArray(m_vao[0]);
-
-		m_inner_buffer->generate();
-		m_inner_buffer->bind();
-		m_inner_buffer->set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
+		vbo_.generate();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 
-		m_outer_buffer->generate();
-		m_outer_buffer->bind();
-		m_outer_buffer->set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);

@@ -1924,10 +1924,28 @@ namespace BlendInt {
 			widget->next_view_ = 0;
 			widget->superview_ = 0;
 
-			if(widget->managed() && widget->reference_count() == 0) {
-				delete widget;
+			if (widget->managed()) {
+
+				if (widget->reference_count() == 0) {
+					delete widget;
+				} else {
+					DBG_PRINT_MSG(
+					        "%s is set managed but is referenced by another object, it will be deleted later",
+					        widget->name_.c_str());
+				}
+
 			} else {
-				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
+
+				if (widget->reference_count() == 0) {
+					DBG_PRINT_MSG(
+					        "Warning: %s is not set managed and will not be deleted",
+					        widget->name_.c_str());
+				} else {
+					DBG_PRINT_MSG(
+					        "%s is set unmanaged but is referenced by another object, it will be deleted later",
+					        widget->name_.c_str());
+				}
+
 			}
 
 			widget = next_view;

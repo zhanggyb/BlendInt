@@ -109,7 +109,6 @@ namespace BlendInt {
 		}
 
 		RequestRedraw();
-		//if(!refresh()) RequestRedrawInThread();
 	}
 
 	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)

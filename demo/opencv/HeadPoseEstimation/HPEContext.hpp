@@ -21,6 +21,8 @@
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Workspace.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/ButtonGroup.hpp>
 
 namespace BI=BlendInt;
 
@@ -52,6 +54,8 @@ private:
 
 	BI::Workspace* CreateWorkspaceOnce ();
 
+	BI::HLayout* CreateRadios ();
+
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
 
 	void OnPlay (BI::AbstractButton* sender);
@@ -71,6 +75,8 @@ private:
 	cv::VideoCapture video_stream_;
 
 	BI::RefPtr<BI::Timer> timer_;
+
+	BI::RefPtr<BI::ButtonGroup> radio_group_;
 };
 
 #endif /* _HPECONTEXT_HPP_ */

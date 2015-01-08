@@ -39,8 +39,6 @@
 
 #include <BlendInt/Gui/Viewport2D.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -84,13 +82,13 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0.f);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			inner_->reset();
-
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(*request.size(), 0, RoundNone, 0.f, &inner_verts, 0);
+			inner_->bind();
+			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			inner_->reset();
 
 			float left = -size().width() / camera_factor;
 			float right = size().width() / camera_factor;
@@ -113,14 +111,11 @@ namespace BlendInt {
 
         glGetIntegerv(GL_VIEWPORT, vp);
 
-		RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
+		RefPtr<GLSLProgram> program = Context::shaders->widget_inner_program();
 		program->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR),
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR),
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
@@ -153,9 +148,7 @@ namespace BlendInt {
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
         program->use();
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
@@ -169,8 +162,8 @@ namespace BlendInt {
 
 	void Viewport2D::InitializeViewport2D()
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0.f);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
@@ -179,10 +172,10 @@ namespace BlendInt {
 		inner_->generate();
 		inner_->bind();
 
-		inner_->set_data(tool.inner_size(), tool.inner_data());
+		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

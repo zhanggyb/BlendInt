@@ -8,6 +8,7 @@
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Clock.hpp>
+#include <BlendInt/Gui/ScrollArea.hpp>
 
 using namespace BI;
 
@@ -48,60 +49,71 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	Block * group1 = Manage(new Block(Horizontal));
 
-	Button* btn1 = Manage(new Button("Button"));
-	Button* btn2 = Manage(new Button("ToggleButton"));
-	Button* btn3 = Manage(new Button("RadioButton"));
+	Button* btn = nullptr;
 
-	group1->AddWidget(btn1);
-	group1->AddWidget(btn2);
-	group1->AddWidget(btn3);
+	btn = Manage(new Button("Button"));
+	group1->AddWidget(btn);
+
+	btn = Manage(new Button("ToggleButton"));
+	group1->AddWidget(btn);
+
+	btn = Manage(new Button("RadioButton"));
+	group1->AddWidget(btn);
 
 	vlayout->AddWidget(group1);
 
 	Block * group2 = Manage(new Block(Horizontal));
 	
-	Button* btn4 = Manage(new Button("TextEntry"));
-	Button* btn5 = Manage(new Button("NumericalSlider"));
-	events()->connect(btn5->clicked(), this, &StudioContext::OnOpenDialogForNumericalSlider);
+	btn = Manage(new Button("TextEntry"));
+	group2->AddWidget(btn);
 
-	group2->AddWidget(btn4);
-	group2->AddWidget(btn5);
+	btn = Manage(new Button("Tab"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForTab);
+	group2->AddWidget(btn);
+
+	btn = Manage(new Button("NumericalSlider"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForNumericalSlider);
+	group2->AddWidget(btn);
 
 	vlayout->AddWidget(group2);
 
 	Block * group3 = Manage(new Block(Horizontal));
 
-	Button* btn6 = Manage(new Button("TextureView"));
-	events()->connect(btn6->clicked(), this, &StudioContext::OnOpenDialogForTextureView);
-	Button* btn7 = Manage(new Button("FileSelector"));
-	events()->connect(btn7->clicked(), this, &StudioContext::OnOpenFileSelector);
+	btn = Manage(new Button("TextureView"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForTextureView);
+	group3->AddWidget(btn);
 
-	group3->AddWidget(btn6);
-	group3->AddWidget(btn7);
+	btn = Manage(new Button("ScrollArea"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForScrollArea);
+	group3->AddWidget(btn);
+
+	btn = Manage(new Button("FileSelector"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenFileSelector);
+	group3->AddWidget(btn);
 
 	vlayout->AddWidget(group3);
 
 	Block * group4 = Manage(new Block(Horizontal));
 
-	Button* btn8 = Manage(new Button("Decoration"));
-	events()->connect(btn8->clicked(), this, &StudioContext::OnOpenDialogForDecoration);
-	Button* btn9 = Manage(new Button("Modal Dialog"));
-	events()->connect(btn9->clicked(), this, &StudioContext::OnOpenModalDialog);
+	btn = Manage(new Button("Decoration"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForDecoration);
+	group4->AddWidget(btn);
 
-	group4->AddWidget(btn8);
-	group4->AddWidget(btn9);
+	btn = Manage(new Button("Modal Dialog"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenModalDialog);
+	group4->AddWidget(btn);
 
 	vlayout->AddWidget(group4);
 
 	Block * group5 = Manage(new Block(Horizontal));
 
-	Button* btn10 = Manage(new Button("ScrollView"));
-	events()->connect(btn10->clicked(), this, &StudioContext::OnOpenDialogForScrollView);
-	Button* btn11 = Manage(new Button("Blocks"));
-	events()->connect(btn11->clicked(), this, &StudioContext::OnOpenDialogForBlocks);
+	btn = Manage(new Button("ScrollView"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForScrollView);
+	group5->AddWidget(btn);
 
-	group5->AddWidget(btn10);
-	group5->AddWidget(btn11);
+	btn = Manage(new Button("Blocks"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForBlocks);
+	group5->AddWidget(btn);
 
 	vlayout->AddWidget(group5);
 
@@ -328,6 +340,38 @@ void StudioContext::OnOpenPanel2(BI::AbstractButton* btn)
 	pop_->AddWidget(panel);
 
 	AddFrame(pop_);
+}
+
+void StudioContext::OnOpenDialogForTab()
+{
+	Tab* tab = Manage(new Tab);
+	tab->AddWidget("test1", new Button("Button1"));
+	tab->AddWidget("test2", new Button("Button2"));
+
+	Dialog * dialog = Manage(new Dialog("Tab", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	tab->MoveTo(10, 10);
+
+	dialog->AddWidget(tab);
+
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenDialogForScrollArea()
+{
+	ScrollArea* area = Manage(new ScrollArea);
+
+	Dialog * dialog = Manage(new Dialog("Tab", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	area->MoveTo(10, 10);
+
+	dialog->AddWidget(area);
+
+	AddFrame(dialog);
 }
 
 BI::ToolBox* StudioContext::CreateMenuBar()

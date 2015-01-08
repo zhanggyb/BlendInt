@@ -99,6 +99,10 @@ private:
 
 	void OnOpenPanel2 (BI::AbstractButton* btn);
 
+	void OnOpenDialogForTab ();
+
+	void OnOpenDialogForScrollArea ();
+
 	BI::ToolBox* CreateMenuBar ();
 
 	BI::Button* button_;

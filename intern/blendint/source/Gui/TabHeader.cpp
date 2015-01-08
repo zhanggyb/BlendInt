@@ -35,7 +35,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/TabHeader.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -47,22 +46,21 @@ namespace BlendInt {
 		set_size(400, 24);
 
 		glGenVertexArrays(1, &vao_);
-
 		glBindVertexArray(vao_);
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
+		vbo_.generate();
+		vbo_.bind();
 
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		vbo_.reset();
 
 		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
@@ -138,12 +136,15 @@ namespace BlendInt {
 	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			GLArrayBuffer::reset();
+
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+			vbo_.bind();
+			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.reset();
 		}
 
 		if(request.source() == this) {
@@ -153,13 +154,10 @@ namespace BlendInt {
 
 	ResponseType TabHeader::Draw (const Context* context)
 	{
-		Context::shaders->widget_triangle_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
