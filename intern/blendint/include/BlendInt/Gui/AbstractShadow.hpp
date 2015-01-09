@@ -21,48 +21,43 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAMESHADOW_HPP_
-#define _BLENDINT_GUI_FRAMESHADOW_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTSHADOW_HPP_
+#define _BLENDINT_GUI_ABSTRACTSHADOW_HPP_
 
-#include <deque>
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
-
-#include <BlendInt/Gui/AbstractShadow.hpp>
+#include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
 
-	class FrameShadow: public AbstractShadow
+	class AbstractShadow: public AbstractRoundForm
 	{
-
 	public:
 
-		FrameShadow (const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
+		AbstractShadow (short shadow_width = 9);
 
-		virtual ~FrameShadow ();
+		virtual ~AbstractShadow ();
 
-		virtual void Draw (float x, float y, short gamma = 0) const;
+		inline short shadow_width () const
+		{
+			return shadow_width_;
+		}
 
 	protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+		inline void set_shadow_width (short width)
+		{
+			shadow_width_ = width;
+		}
 
-		virtual void PerformRoundTypeUpdate (int type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
+		void GenerateShadowVertices (std::vector<GLfloat>& vertices, std::vector<GLuint>& elements);
 
 	private:
 
-		void InitializeShadowMap ();
-
-		GLuint vao_;
-
-		GLBuffer<ARRAY_BUFFER> vertex_buffer_;
-
-		GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
+		short shadow_width_;
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_FRAMESHADOW_HPP_ */
+
+
+#endif /* _BLENDINT_GUI_ABSTRACTSHADOW_HPP_ */

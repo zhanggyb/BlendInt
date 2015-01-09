@@ -42,8 +42,9 @@
 
 namespace BlendInt {
 
-	FrameShadow::FrameShadow(const Size& size, int round_type, float round_radius)
-	: AbstractRoundForm(),
+	FrameShadow::FrameShadow (const Size& size, int round_type,
+	        float round_radius)
+	: AbstractShadow(),
 	  vao_(0)
 	{
 		set_size(size);
@@ -70,28 +71,34 @@ namespace BlendInt {
 	{
 		Context::shaders->frame_shadow_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_POSITION), x, y);
-		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_SIZE), size().width(), size().height());
+		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_POSITION),
+		        x, y);
+		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_SIZE),
+		        size().width(), size().height());
 
 		glBindVertexArray(vao_);
 
 		int count = GetOutlineVertexCount(round_type());
 
 		int i = 0;
-		if( i < Context::theme->shadow_width()) {
-			glUniform1i(Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 1);
-			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
+		if (i < Context::theme->shadow_width()) {
+			glUniform1i(
+			        Context::shaders->location(
+			                Shaders::FRAME_SHADOW_ANTI_ALIAS), 1);
+			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
+			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
-		glUniform1i(Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 0);
+		glUniform1i(
+		        Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS),
+		        0);
 		i++;
-		for(; i < Context::theme->shadow_width(); i++) {
-			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT, BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
+		for (; i < Context::theme->shadow_width(); i++) {
+			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
+			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
-
 
 		glBindVertexArray(0);
-
 		GLSLProgram::reset();
 	}
 
@@ -170,10 +177,12 @@ namespace BlendInt {
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_SHADOW_COORD));
+		glEnableVertexAttribArray(
+		        Context::shaders->location(Shaders::FRAME_SHADOW_COORD));
 
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_SHADOW_COORD),
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(
+		        Context::shaders->location(Shaders::FRAME_SHADOW_COORD), 3,
+		        GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();
 		element_buffer_.bind();
@@ -183,151 +192,6 @@ namespace BlendInt {
 
 		vertex_buffer_.reset();
 		element_buffer_.reset();
-	}
-
-	void FrameShadow::GenerateShadowVertices(std::vector<GLfloat>& vertices, std::vector<GLuint>& elements)
-	{
-		int width = Context::theme->shadow_width();
-
-		float rad = radius() * Context::theme->pixel();
-
-		float minx = 0.0f;
-		float miny = 0.0f;
-		float maxx = size().width();
-		float maxy = size().height();
-
-		if(2.0f * rad > maxy)
-			rad = 0.5f * maxy;
-
-		maxy -= 2 * rad;
-
-		float vec[WIDGET_CURVE_RESOLU][2];
-
-		width *= Context::theme->pixel();
-
-		int outline_vertex_count = GetOutlineVertexCount(round_type());
-		unsigned int verts_num = (width + 1) * outline_vertex_count * 3;	// 3 float for one vertex: 0, 1: coord, 2: shade
-
-		if(vertices.size() != verts_num) {
-			vertices.resize(verts_num);
-		}
-
-		float alpha = 1.f;
-		int count = 0;
-		for(int i = 0; i <= width; i++) {
-
-			for(int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-				vec[j][0] = rad * cornervec[j][0];
-				vec[j][1] = rad * cornervec[j][1];
-			}
-
-			//shade = 1.0 - std::sqrt(i * (1.0 / width));
-			alpha = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
-
-			// for shadow, start from left-top
-
-			// corner left-top
-			if (round_type() & RoundTopLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = minx + rad - vec[j][0];
-					vertices[count + 1] = maxy - vec[j][1];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
-
-			// corner left-bottom
-			if (round_type() & RoundBottomLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = minx + vec[j][1];
-					vertices[count + 1] = miny + rad - vec[j][0];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
-
-			// corner right-bottom
-			if (round_type() & RoundBottomRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = maxx - rad + vec[j][0];
-					vertices[count + 1] = miny + vec[j][1];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
-
-			// corner right-top
-			if (round_type() & RoundTopRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = maxx - vec[j][1];
-					vertices[count + 1] = maxy - rad + vec[j][0];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
-
-			rad += 1.f;
-			minx -= 1.f;
-			miny -= 1.f;
-			maxx += 1.f;
-			maxy += 1.f;
-		}
-
-#ifdef DEBUG
-		assert(count == (int)verts_num);
-#endif
-
-		unsigned int elements_num = outline_vertex_count * 2 * width;
-
-		if(elements.size() != elements_num) {
-			elements.resize(elements_num);
-		}
-
-		count = 0;
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < (int)outline_vertex_count; j++) {
-				elements[count + 0] = i * outline_vertex_count + j;
-				elements[count + 1] = (i + 1) * outline_vertex_count + j;
-				count += 2;
-			}
-		}
-
-#ifdef DEBUG
-		assert(count == (int)elements_num);
-#endif
-	}
-
-	int FrameShadow::GetOutlineVertexCount (int round_type)
-	{
-		round_type = round_type & RoundAll;
-		int count = 0;
-
-		while (round_type != 0) {
-			count += round_type & 0x1;
-			round_type = round_type >> 1;
-		}
-
-		return (4 - count) + count * WIDGET_CURVE_RESOLU;
 	}
 
 }

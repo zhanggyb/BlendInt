@@ -92,4 +92,18 @@ namespace BlendInt {
 				outer);
 	}
 
+
+	int AbstractRoundForm::GetOutlineVertexCount (int round_type)
+	{
+		round_type = round_type & RoundAll;
+		int count = 0;
+
+		while (round_type != 0) {
+			count += round_type & 0x1;
+			round_type = round_type >> 1;
+		}
+
+		return (4 - count) + count * WIDGET_CURVE_RESOLU;
+	}
+
 }

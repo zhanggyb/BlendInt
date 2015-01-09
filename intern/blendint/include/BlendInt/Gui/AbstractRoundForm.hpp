@@ -73,6 +73,8 @@ namespace BlendInt {
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
 
+		static int GetOutlineVertexCount (int round_type);
+
 	private:
 
 		int round_type_;
