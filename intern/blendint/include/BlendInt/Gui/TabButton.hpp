@@ -72,8 +72,6 @@ namespace BlendInt {
 
 		void InitializeTabButton ();
 
-		void InitializeTabButton (const String& text);
-
 		/**
 		 * @brief Vertex Arrays for widget
 		 *

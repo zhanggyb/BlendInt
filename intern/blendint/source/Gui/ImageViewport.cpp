@@ -298,7 +298,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

@@ -118,6 +118,9 @@ Workspace* HPEContext::CreateWorkspaceOnce()
 {
 	Workspace* workspace = Manage(new Workspace);
 	
+	ToolBox* header = Manage(new ToolBox(Horizontal));
+	workspace->SetHeader(header);
+
 	return workspace;
 }
 

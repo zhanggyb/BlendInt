@@ -75,7 +75,7 @@ namespace BlendInt {
 
 		GLuint vao_;
 
-		ButtonGroup m_group;
+		ButtonGroup group_;
 
 		Cpp::Event<int> m_button_index_clicked;
 

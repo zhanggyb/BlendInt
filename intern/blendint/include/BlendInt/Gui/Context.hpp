@@ -96,6 +96,11 @@ namespace BlendInt {
 
 		virtual void MakeGLContextCurrent ();
 
+		void register_active_frame (AbstractFrame* frame)
+		{
+			active_frame_ = frame;
+		}
+
 		AbstractFrame* active_frame () const
 		{
 #ifdef DEBUG

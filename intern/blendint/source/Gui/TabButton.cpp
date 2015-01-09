@@ -55,8 +55,9 @@ namespace BlendInt {
 	{
 		set_size(80, 14);
 		set_checkable(true);
+		set_text(text);
 
-		InitializeTabButton(text);
+		InitializeTabButton();
 	}
 
 	BlendInt::TabButton::~TabButton ()
@@ -86,7 +87,9 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	ResponseType TabButton::Draw (const Context* context)
@@ -145,7 +148,7 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
@@ -153,16 +156,12 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE,	0, 0);
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 	}
 
-	void TabButton::InitializeTabButton(const String& text)
-	{
-	}
-	
 	void TabButton::GenerateTabButtonVertices (const Size& size, float border,
 					std::vector<GLfloat>& inner, std::vector<GLfloat>& outer)
 	{

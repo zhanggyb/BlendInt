@@ -9,6 +9,7 @@
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/TabHeader.hpp>
 
 using namespace BI;
 
@@ -51,13 +52,8 @@ Panel* StudioContext::CreateButtonsForWidgets()
 
 	Button* btn = nullptr;
 
-	btn = Manage(new Button("Button"));
-	group1->AddWidget(btn);
-
-	btn = Manage(new Button("ToggleButton"));
-	group1->AddWidget(btn);
-
-	btn = Manage(new Button("RadioButton"));
+	btn = Manage(new Button("Buttons"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForButtons);
 	group1->AddWidget(btn);
 
 	vlayout->AddWidget(group1);
@@ -94,6 +90,10 @@ Panel* StudioContext::CreateButtonsForWidgets()
 	vlayout->AddWidget(group3);
 
 	Block * group4 = Manage(new Block(Horizontal));
+
+	btn = Manage(new Button("TabHeader"));
+	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForTabHeader);
+	group4->AddWidget(btn);
 
 	btn = Manage(new Button("Decoration"));
 	events()->connect(btn->clicked(), this, &StudioContext::OnOpenDialogForDecoration);
@@ -150,6 +150,28 @@ Panel* StudioContext::CreateButtonsForMenuTest()
 
 void StudioContext::OnSaveTextureToFile()
 {
+}
+
+void StudioContext::OnOpenDialogForButtons()
+{
+	Dialog* dialog = Manage(new Dialog);
+
+	Button* btn = Manage(new Button("Button"));
+	btn->MoveTo(100, 50);
+
+	ToggleButton* toggle_btn = Manage(new ToggleButton("ToggleButton"));
+	toggle_btn->MoveTo(100, 100);
+
+	TabButton* tab_btn = Manage(new TabButton("TabButton"));
+	tab_btn->MoveTo(100, 150);
+
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	dialog->AddWidget(btn);
+	dialog->AddWidget(toggle_btn);
+	dialog->AddWidget(tab_btn);
+
+	AddFrame(dialog);
 }
 
 void StudioContext::OnOpenDialogForTextureView()
@@ -214,10 +236,6 @@ void StudioContext::OnOpenDialogForScrollView()
 	dialog->AddWidget(scroll);
 
 	AddFrame(dialog);
-}
-
-void StudioContext::OnOpenDialogForButton()
-{
 }
 
 void StudioContext::OnOpenDialogForNumericalSlider()
@@ -370,6 +388,24 @@ void StudioContext::OnOpenDialogForScrollArea()
 	area->MoveTo(10, 10);
 
 	dialog->AddWidget(area);
+
+	AddFrame(dialog);
+}
+
+void StudioContext::OnOpenDialogForTabHeader()
+{
+	TabHeader* header = Manage(new TabHeader);
+	header->AddButton(Manage(new TabButton("tab1")));
+	header->AddButton(Manage(new TabButton("tab2")));
+	header->AddButton(Manage(new TabButton("tab3")));
+
+	Dialog * dialog = Manage(new Dialog("Tab", true));
+	dialog->Resize(500, 400);
+	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
+
+	header->MoveTo(100, 100);
+
+	dialog->AddWidget(header);
 
 	AddFrame(dialog);
 }

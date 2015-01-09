@@ -53,7 +53,6 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget()
 	: AbstractView()
 	{
-		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 	}
 

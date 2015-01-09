@@ -43,13 +43,13 @@ namespace BlendInt {
 	: Widget(),
 	  vao_(0)
 	{
-		set_size(400, 24);
+		set_size(320, 20);
 
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
 
 		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
 		vbo_.generate();
 		vbo_.bind();
@@ -62,9 +62,9 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		vbo_.reset();
 
-		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
+		events()->connect(group_.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
-		events()->connect(m_group.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+		events()->connect(group_.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
 
 		// FIXME: cannot use the following line
 		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
@@ -94,9 +94,9 @@ namespace BlendInt {
 
 			}
 
-			m_group.AddButton(button);
+			group_.AddButton(button);
 
-			if(m_group.button_count() == 1) {
+			if(group_.button_count() == 1) {
 				button->SetChecked(true);
 			}
 		}
@@ -109,7 +109,7 @@ namespace BlendInt {
 
 	Size TabHeader::GetPreferredSize () const
 	{
-		Size prefer(400, 24);
+		Size prefer(320, 20);
 
 		if(first_subview() == 0) {
 			Font font;
@@ -166,7 +166,7 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		return Ignore;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
@@ -178,9 +178,8 @@ namespace BlendInt {
 	{
 		int x = 0;
 
-		if(first_subview()) {
-			x = last_subview()->position().x();
-			x += last_subview()->size().width();
+		if(subs_count()) {
+			x = last_subview()->position().x()+ last_subview()->size().width();
 		}
 
 		return x;

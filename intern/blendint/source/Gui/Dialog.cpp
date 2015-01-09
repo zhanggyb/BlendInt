@@ -264,7 +264,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 
 		if(refresh()) {
 			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
@@ -355,7 +355,7 @@ namespace BlendInt {
 		}
 
 		if(focused_widget_) {
-			SetActiveFrame(context, this);
+			const_cast<Context*>(context)->register_active_frame(this);
 			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
@@ -376,7 +376,7 @@ namespace BlendInt {
 
 	ResponseType Dialog::PerformMousePress(const Context* context)
 	{
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 
 		if(cursor_position_ == InsideRectangle) {
 
@@ -433,7 +433,7 @@ namespace BlendInt {
 		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
-			SetActiveFrame(context, this);
+			const_cast<Context*>(context)->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
@@ -517,7 +517,7 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				SetActiveFrame(context, this);
+				const_cast<Context*>(context)->register_active_frame(this);
 				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}

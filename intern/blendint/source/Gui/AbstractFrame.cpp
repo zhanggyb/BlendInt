@@ -51,7 +51,6 @@ namespace BlendInt {
 	AbstractFrame::AbstractFrame()
 	: AbstractView()
 	{
-		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
@@ -224,7 +223,7 @@ namespace BlendInt {
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 		Point local;	// the relative local position of the cursor in a widget
 
 		// find the new top hovered widget
@@ -372,11 +371,6 @@ namespace BlendInt {
 			hovered_widget->PerformHoverOut(context);
 			hovered_widget = hovered_widget->superview();
 		}
-	}
-
-	void AbstractFrame::SetActiveFrame(const Context* context, AbstractFrame* frame)
-	{
-		const_cast<Context*>(context)->active_frame_ = frame;
 	}
 
 	bool AbstractFrame::RenderSubFramesToTexture (
