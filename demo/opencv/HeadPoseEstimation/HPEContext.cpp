@@ -119,8 +119,23 @@ Workspace* HPEContext::CreateWorkspaceOnce()
 	Workspace* workspace = Manage(new Workspace);
 	
 	ToolBox* header = Manage(new ToolBox(Horizontal));
-	workspace->SetHeader(header);
 
+	ComboBox* combo = Manage(new ComboBox);
+
+	Block* block1 = Manage(new Block(Horizontal));
+
+	Button* btn = Manage(new Button("Button1"));
+	block1->AddWidget(btn);
+
+	btn = Manage(new Button("Button2"));
+	block1->AddWidget(btn);
+
+	header->AddWidget(combo);
+	header->AddWidget(block1);
+
+	header->Resize(header->GetPreferredSize());
+
+	workspace->SetHeader(header);
 	return workspace;
 }
 
