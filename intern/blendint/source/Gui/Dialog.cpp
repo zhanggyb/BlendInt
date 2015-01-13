@@ -561,9 +561,9 @@ namespace BlendInt {
 
 				}
 
-				if(hovered_widget_) {
-					// DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
-				}
+//				if(hovered_widget_) {
+//					 DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
+//				}
 
 				// set cursor shape
 				if(cursor_on_border()) {

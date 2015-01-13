@@ -90,6 +90,16 @@ namespace BlendInt {
 		: Object()
 		{}
 
+		AbstractForm (int width, int height)
+		: Object(),
+		  size_(width, height)
+		{}
+
+		AbstractForm (const Size& size)
+		: Object(),
+		  size_(size)
+		{}
+
 		virtual ~AbstractForm ()
 		{}
 

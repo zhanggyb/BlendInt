@@ -64,7 +64,7 @@ namespace BlendInt {
 		events()->connect(timer_->timeout(), this, &CVVideoViewport::OnUpdateFrame);
 
 		// initialize thread mutex with default attribute.
-		ThreadMutexAttrib attrib;
+		MutexAttrib attrib;
 		attrib.initialize();
 
 		mutex_.initialize(attrib);

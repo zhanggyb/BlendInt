@@ -363,8 +363,8 @@ void StudioContext::OnOpenPanel2(BI::AbstractButton* btn)
 void StudioContext::OnOpenDialogForTab()
 {
 	Tab* tab = Manage(new Tab);
-	tab->AddWidget("test1", new Button("Button1"));
-	tab->AddWidget("test2", new Button("Button2"));
+	tab->AddWidget("test1", Manage(new Button("Button1")));
+	tab->AddWidget("test2", Manage(new Button("Button2")));
 
 	Dialog * dialog = Manage(new Dialog("Tab", true));
 	dialog->Resize(500, 400);

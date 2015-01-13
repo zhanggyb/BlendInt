@@ -30,9 +30,9 @@ GLFWDemoContext::GLFWDemoContext(GLFWwindow* win)
 : BI::Context(),
   window_(win)
 {
-//	TryToolBox();
+	Debug();
 
-	InitializeGLFWDemoContext ();
+//	InitializeGLFWDemoContext ();
 }
 
 GLFWDemoContext::~GLFWDemoContext ()
@@ -46,51 +46,33 @@ void GLFWDemoContext::SynchronizeWindow()
 
 void GLFWDemoContext::Debug()
 {
-	Dialog * dialog = Manage(new Dialog("ScrollView", true));
-	dialog->Resize(500, 400);
+	Tab* tab = Manage(new Tab);
+	DBG_SET_NAME(tab, "Tab");
+
+	Button* btn1 = Manage(new Button("Button1"));
+	DBG_SET_NAME(btn1, "Button in stack1");
+
+	Button* btn2 = Manage(new Button("Button2"));
+	DBG_SET_NAME(btn2, "Button in stack2");
+
+	tab->AddWidget("test1", btn1);
+	tab->AddWidget("test2", btn2);
+
+	Dialog * dialog = Manage(new Dialog("Tab", true));
+	DBG_SET_NAME(dialog, "Dialog");
+
+	dialog->Resize(500, 420);
 	dialog->MoveTo(100, 100);
 
-	Block* main_block = Manage(new Block(Vertical));
-//	VLayout* main_block = Manage(new VLayout);
-	DBG_SET_NAME(main_block, "MainBlock");
+	tab->MoveTo(50, 50);
 
-//	HLayout* block1 = Manage(new HLayout);
-	Block* block1 = Manage(new Block(Horizontal));
-	DBG_SET_NAME(block1, "Block1");
-	Button* btn1 = Manage(new Button("Button1"));
-	Button* btn2 = Manage(new Button("Button2"));
-	Button* btn3 = Manage(new Button("Button3"));
-	block1->AddWidget(btn1);
-	block1->AddWidget(btn2);
-	block1->AddWidget(btn3);
-
-//	HLayout* block2 = Manage(new HLayout);
-	Block* block2 = Manage(new Block(Horizontal));
-	DBG_SET_NAME(block2, "Block2");
-	Button* btn4 = Manage(new Button("Button4"));
-	Button* btn5 = Manage(new Button("Button5"));
-	Button* btn6 = Manage(new Button("Button6"));
-	block2->AddWidget(btn4);
-	block2->AddWidget(btn5);
-	block2->AddWidget(btn6);
-
-	main_block->AddWidget(block1);
-	main_block->AddWidget(block2);
-	main_block->Resize(main_block->GetPreferredSize());
-	main_block->MoveTo(100, 100);
-
-	DBG_PRINT_MSG("block1 size: (%d, %d)", block1->size().width(), block1->size().height());
-	DBG_PRINT_MSG("button1 size: (%d, %d)", btn1->size().width(), btn1->size().height());
-	DBG_PRINT_MSG("button2 size: (%d, %d)", btn2->size().width(), btn2->size().height());
-	DBG_PRINT_MSG("button3 size: (%d, %d)", btn3->size().width(), btn3->size().height());
-	DBG_PRINT_MSG("block2 size: (%d, %d)", block2->size().width(), block2->size().height());
-	DBG_PRINT_MSG("main block size: (%d, %d)", main_block->size().width(), main_block->size().height());
-
-	DBG_PRINT_MSG("main block size: (%d, %d)", main_block->size().width(), main_block->size().height());
-
-	dialog->AddWidget(main_block);
+	dialog->AddWidget(tab);
 
 	AddFrame(dialog);
+
+	DBG_PRINT_MSG("tab rect: (%d, %d), (%d, %d)", tab->position().x(), tab->position().y(), tab->size().width(), tab->size().height());
+	DBG_PRINT_MSG("btn1 rect: (%d, %d), (%d, %d)", btn1->position().x(), btn1->position().y(), btn1->size().width(), btn1->size().height());
+
 }
 
 void GLFWDemoContext::InitializeGLFWDemoContext ()

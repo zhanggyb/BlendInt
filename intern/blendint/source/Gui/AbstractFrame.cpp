@@ -316,7 +316,15 @@ namespace BlendInt {
 
 				hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 				if(hovered_widget) {
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+					for (AbstractView* p = widget->last_subview (); p;
+							p = p->previous_view ()) {
+						if (p->visiable () && p->Contain (local)) {
+							hovered_widget = dynamic_cast<AbstractWidget*>(p);
+							delegate_mouse_hover_in_event (hovered_widget, context);
+							hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+							break;
+						}
+					}
 				}
 
 			}
