@@ -134,6 +134,22 @@ namespace BlendInt {
 		return height;
 	}
 
+	Size GLTexture2D::GetSize(GLint level) const
+	{
+		GLint width = 0;
+		GLint height = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+		  	level,
+		  	GL_TEXTURE_WIDTH,
+		  	&width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+		  	level,
+		  	GL_TEXTURE_HEIGHT,
+		  	&height);
+
+		return Size(width, height);
+	}
+
 	bool GLTexture2D::WriteToFile (const std::string& filename, GLint level, GLenum format, GLenum type)
 	{
 		//if(!m_flag[2]) return false;

@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	VLayout::VLayout (int align, int space)
-	: AbstractLayout(), m_alignment(align), m_space(space)
+	: AbstractLayout(), alignment_(align), space_(space)
 	{
 		set_size (200, 200);
 	}
@@ -49,7 +49,7 @@ namespace BlendInt {
 	bool VLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
-			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
 
 			return true;
@@ -61,9 +61,8 @@ namespace BlendInt {
 	bool VLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
-			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
-
 			return true;
 		}
 
@@ -74,13 +73,13 @@ namespace BlendInt {
 			AbstractWidget* widget)
 	{
 		if(column != 0) {
-			DBG_PRINT_MSG("Error: %s", "HLayout contains only 1 row, and the 1st parameter will be ignored");
+			DBG_PRINT_MSG("Error: %s",
+						  "HLayout contains only 1 row, and the 1st parameter will be ignored");
 		}
 
 		if(InsertSubView(row, widget)) {
-			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
-
 			return true;
 		}
 
@@ -90,7 +89,7 @@ namespace BlendInt {
 	bool VLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubView(widget)) {
-			FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			return true;
 		}
 
@@ -99,18 +98,20 @@ namespace BlendInt {
 
 	void VLayout::SetAlignment (int align)
 	{
-		if(m_alignment == align) return;
+		if(alignment_ == align) return;
 
-		m_alignment = align;
-		FillSubWidgetsInVBox(size(), margin(), align, m_space);
+		alignment_ = align;
+		UpdateLayout();
+		RequestRedraw();
 	}
 
 	void VLayout::SetSpace (int space)
 	{
-		if(m_space == space) return;
+		if(space_ == space) return;
 
-		m_space = space;
-		FillSubWidgetsInVBox(size(), margin(), m_alignment, m_space);
+		space_ = space;
+		UpdateLayout();
+		RequestRedraw();
 	}
 
 	Size BlendInt::VLayout::GetPreferredSize () const
@@ -126,14 +127,14 @@ namespace BlendInt {
 
 			Size tmp_size;
 
-			preferred_size.set_height(-m_space);
+			preferred_size.set_height(-space_);
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
 
 					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
-					preferred_size.add_height(tmp_size.height() + m_space);
+					preferred_size.add_height(tmp_size.height() + space_);
 				}
 			}
 
@@ -176,7 +177,8 @@ namespace BlendInt {
 
 	void VLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInVBox(size(), request, m_alignment, m_space);
+		set_margin(request);
+		UpdateLayout();
 		RequestRedraw();
 	}
 
@@ -204,9 +206,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-
-			FillSubWidgetsInVBox(size(), margin(), m_alignment,
-											m_space);
+			UpdateLayout();
 			RequestRedraw();
 		}
 
@@ -215,20 +215,13 @@ namespace BlendInt {
 		}
 	}
 
-	void VLayout::FillSubWidgetsInVBox (const Size& out_size, const Margin& margin,
-			int alignment, int space)
+	void VLayout::UpdateLayout ()
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int width = out_size.width() - margin.hsum();
-		int height = out_size.height() - margin.vsum();
+		int x = margin().left();
+		int y = margin().bottom();
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
 
-		FillSubWidgetsProportionallyInVBox(x, y, width, height, alignment, space);
-	}
-
-	void VLayout::FillSubWidgetsProportionallyInVBox (int x, int y, int width,
-					int height, int alignment, int space)
-	{
 		boost::scoped_ptr<std::deque<int> > expandable_preferred_heights(new std::deque<int>);
 		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_heights(new std::deque<int>);
 		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_widths(new std::deque<int>);
@@ -257,34 +250,40 @@ namespace BlendInt {
 			}
 		}
 
-		if((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) == 0) return;	// do nothing if all sub widgets are invisible
+		if ((expandable_preferred_heights->size()
+		        + unexpandable_preferred_heights->size()) == 0)
+			return;	// do nothing if all sub widgets are invisible
 
-		int total_space = ((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) - 1) * space;
+		int total_space = ((expandable_preferred_heights->size()
+		        + unexpandable_preferred_heights->size()) - 1) * space_;
 
 		int total_preferred_height = expandable_preferred_height_sum
 						+ unexpandable_preferred_height_sum
 						+ total_space;
 
 		if (total_preferred_height == height) {
-			DistributeWithPreferredHeight(y, height, space,
-					expandable_preferred_heights.get(),
-					unexpandable_preferred_heights.get());
+			DistributeWithPreferredHeight(y, height,
+			        expandable_preferred_heights.get(),
+			        unexpandable_preferred_heights.get());
 		} else if (total_preferred_height < height) {
-			DistributeWithLargeHeight(y, height, space, expandable_preferred_heights.get(),
-							expandable_preferred_height_sum, unexpandable_preferred_heights.get(),
-							unexpandable_preferred_height_sum);
+			DistributeWithLargeHeight(y, height,
+			        expandable_preferred_heights.get(),
+			        expandable_preferred_height_sum,
+			        unexpandable_preferred_heights.get(),
+			        unexpandable_preferred_height_sum);
 		} else {
-			DistributeWithSmallHeight(y, height, space, expandable_preferred_heights.get(),
-							expandable_preferred_height_sum, unexpandable_preferred_heights.get(),
-							unexpandable_preferred_height_sum);
+			DistributeWithSmallHeight(y, height,
+			        expandable_preferred_heights.get(),
+			        expandable_preferred_height_sum,
+			        unexpandable_preferred_heights.get(),
+			        unexpandable_preferred_height_sum);
 		}
 
-		AlignInVBox(x, width, alignment, unexpandable_preferred_widths.get());
+		AlignInVBox(x, width, unexpandable_preferred_widths.get());
 	}
 
 	void VLayout::DistributeWithPreferredHeight (int y,
 					int height,
-					int space,
 					const std::deque<int>* expandable_preferred_heights,
 					const std::deque<int>* unexpandable_preferred_heights)
 	{
@@ -310,7 +309,7 @@ namespace BlendInt {
 					unexp_it++;
 				}
 
-				y = y - space;
+				y = y - space_;
 			}
 
 			p = p->next_view();
@@ -319,13 +318,12 @@ namespace BlendInt {
 
 	void VLayout::DistributeWithSmallHeight (int y,
 					int height,
-					int space,
 					const std::deque<int>* expandable_preferred_heights,
 					int expandable_prefer_sum,
 					const std::deque<int>* unexpandable_preferred_heights,
 					int unexpandable_prefer_sum)
 	{
-		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
+		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space_;
 
 		if(widgets_height <= 0) {
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
@@ -365,7 +363,7 @@ namespace BlendInt {
 						unexp_it++;
 					}
 
-					y = y - space;
+					y = y - space_;
 				}
 
 				p = p->next_view();
@@ -393,7 +391,7 @@ namespace BlendInt {
 						unexp_it++;
 					}
 
-					y = y - space;
+					y = y - space_;
 				}
 
 				p = p->next_view();
@@ -404,13 +402,12 @@ namespace BlendInt {
 
 	void VLayout::DistributeWithLargeHeight (int y,
 					int height,
-					int space,
 					const std::deque<int>* expandable_preferred_heights,
 					int expandable_prefer_sum,
 					const std::deque<int>* unexpandable_preferred_heights,
 					int unexpandable_prefer_sum)
 	{
-		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
+		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space_;
 
 		int expandable_height = widgets_height - unexpandable_prefer_sum;
 
@@ -439,14 +436,14 @@ namespace BlendInt {
 					unexp_it++;
 				}
 
-				y = y - space;
+				y = y - space_;
 			}
 
 			p = p->next_view();
 		}
 	}
 
-	void VLayout::AlignInVBox (int x, int width, int alignment,
+	void VLayout::AlignInVBox (int x, int width,
 	        const std::deque<int>* unexpandable_preferred_widths)
 	{
 		std::deque<int>::const_iterator unexp_it =
@@ -469,13 +466,13 @@ namespace BlendInt {
 					ResizeSubView(p, (*unexp_it),
 					        p->size().height());
 
-					if (alignment & AlignLeft) {
+					if (alignment_ & AlignLeft) {
 						MoveSubViewTo(p, x, p->position().y());
-					} else if (alignment & AlignRight) {
+					} else if (alignment_ & AlignRight) {
 						MoveSubViewTo(p,
 						        x + (width - p->size().width()),
 						        p->position().y());
-					} else if (alignment & AlignVerticalCenter) {
+					} else if (alignment_ & AlignVerticalCenter) {
 						MoveSubViewTo(p,
 						        x + (width - p->size().width()) / 2,
 						        p->position().y());

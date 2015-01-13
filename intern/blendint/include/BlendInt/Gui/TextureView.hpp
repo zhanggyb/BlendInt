@@ -47,6 +47,8 @@ namespace BlendInt {
 
 		void Load (const RefPtr<Image>& image);
 
+		void Load (const RefPtr<GLTexture2D>& texture);
+
 		void Clear ();
 
 		virtual bool IsExpandX () const;

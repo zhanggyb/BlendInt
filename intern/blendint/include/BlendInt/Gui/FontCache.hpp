@@ -134,7 +134,7 @@ namespace BlendInt {
 
 		FontCache (const FontTypeBase& data);
 
-		~FontCache ();
+		virtual ~FontCache ();
 
 		void Initialize (const FontTypeBase& font_data, uint32_t char_code = 32, int size = 95);
 

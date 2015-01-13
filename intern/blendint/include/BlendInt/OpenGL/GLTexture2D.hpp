@@ -26,8 +26,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -35,6 +35,7 @@
 #endif  // __UNIX__
 
 #include <BlendInt/Core/Object.hpp>
+#include <BlendInt/Core/Size.hpp>
 
 namespace BlendInt {
 
@@ -164,6 +165,8 @@ namespace BlendInt {
 		GLint GetWidth (GLint level = 0) const;
 
 		GLint GetHeight (GLint level = 0) const;
+
+		Size GetSize (GLint level = 0) const;
 
 		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
 

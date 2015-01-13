@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		int alignment () const
 		{
-			return m_alignment;
+			return alignment_;
 		}
 
 		void SetAlignment (int align);
@@ -59,7 +59,7 @@ namespace BlendInt {
 
 		int space () const
 		{
-			return m_space;
+			return space_;
 		}
 
 		virtual Size GetPreferredSize () const;
@@ -78,21 +78,17 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void FillSubWidgetsInHBox (const Size& out_size, const Margin& margin, int alignment, int space);
-
-		void FillSubWidgetsProportionallyInHBox (int x, int y, int width, int height, int alignment, int space);
+		void UpdateLayout ();
 
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
 		void DistributeWithPreferredWidth (int x,
-				int space,
 		        const std::deque<int>* expandable_preferred_widths,
 		        const std::deque<int>* unexpandable_preferred_widths);
 
 		void DistributeWithSmallWidth (int x,
 						int width,
-						int space,
 						const std::deque<int>* expandable_preferred_widths,
 						int expandable_prefer_sum,
 						const std::deque<int>* unexpandable_preferred_widths,
@@ -100,29 +96,28 @@ namespace BlendInt {
 
 		void DistributeWithLargeWidth (int x,
 						int width,
-						int space,
 						const std::deque<int>* expandable_preferred_widths,
 						int expandable_prefer_sum,
 						const std::deque<int>* unexpandable_preferred_widths,
 						int unexpandable_prefer_sum);
 
-		void AlignInHBox (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights);
+		void AlignInHBox (int y, int height, const std::deque<int>* unexpandable_preferred_heights);
 
 		void set_alignment (int align)
 		{
-			m_alignment = align;
+			alignment_ = align;
 		}
 
 		void set_space (int space)
 		{
-			m_space = space;
+			space_ = space;
 		}
 
 	private:
 
-		int m_alignment;
+		int alignment_;
 
-		int m_space;
+		int space_;
 
 	};
 

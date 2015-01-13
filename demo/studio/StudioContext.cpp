@@ -203,8 +203,10 @@ void StudioContext::OnOpenFileSelector()
 
 void StudioContext::OnResize(const BI::Size& size)
 {
-	menubar_->MoveTo(0, size.height() - 32);
-	menubar_->Resize(size.width(), 32);
+	Size menubar_size = menubar_->GetPreferredSize();
+
+	menubar_->MoveTo(0, size.height() - menubar_size.height());
+	menubar_->Resize(size.width(), menubar_size.height());
 }
 
 void StudioContext::OnOpenDialogForDecoration()

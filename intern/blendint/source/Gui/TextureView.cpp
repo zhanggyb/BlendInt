@@ -90,6 +90,8 @@ namespace BlendInt {
 
 			AdjustImageArea(size());
 
+			RequestRedraw();
+
 			retval = true;
 		}
 
@@ -98,6 +100,23 @@ namespace BlendInt {
 
 	void TextureView::Load (const RefPtr<Image>& image)
 	{
+	}
+
+	void TextureView::Load (const RefPtr<GLTexture2D>& texture)
+	{
+		if(texture_ == texture) return;
+
+		texture_ = texture;
+
+		if(texture_->id()) {
+			texture_->bind();
+			image_size_ = texture_->GetSize();
+			texture_->reset();
+		}
+
+		AdjustImageArea(size());
+
+		RequestRedraw();
 	}
 
 	void TextureView::Clear()

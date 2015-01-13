@@ -164,6 +164,12 @@ namespace BlendInt {
 			return m_color;
 		}
 
+#ifdef DEBUG
+
+		const RefPtr<GLTexture2D>& GetTexture (uint32_t character);
+
+#endif
+
 	private:
 
 		FontTypeBase m_data;

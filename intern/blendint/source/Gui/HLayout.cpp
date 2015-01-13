@@ -38,7 +38,7 @@
 namespace BlendInt {
 
 	HLayout::HLayout (int align, int space)
-	: AbstractLayout(), m_alignment(align), m_space(space)
+	: AbstractLayout(), alignment_(align), space_(space)
 	{
 		set_size (200, 200);
 	}
@@ -50,7 +50,7 @@ namespace BlendInt {
 	bool HLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
 			return true;
 		}
@@ -61,7 +61,7 @@ namespace BlendInt {
 	bool HLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
 			return true;
 		}
@@ -77,7 +77,7 @@ namespace BlendInt {
 		}
 
 		if(InsertSubView(column, widget)) {
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
 
 			return true;
@@ -89,7 +89,7 @@ namespace BlendInt {
 	bool HLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubView(widget)) {
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			return true;
 		}
 
@@ -98,18 +98,20 @@ namespace BlendInt {
 
 	void HLayout::SetAlignment (int align)
 	{
-		if(m_alignment == align) return;
+		if(alignment_ == align) return;
 
-		m_alignment = align;
-		FillSubWidgetsInHBox(size(), margin(), align, m_space);
+		alignment_ = align;
+		UpdateLayout();
+		RequestRedraw();
 	}
 
 	void HLayout::SetSpace (int space)
 	{
-		if(m_space == space) return;
+		if(space_ == space) return;
 
-		m_space = space;
-		FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+		space_ = space;
+		UpdateLayout();
+		RequestRedraw();
 	}
 
 	Size BlendInt::HLayout::GetPreferredSize () const
@@ -125,13 +127,13 @@ namespace BlendInt {
 
 			Size tmp_size;
 
-			preferred_size.set_width(-m_space);
+			preferred_size.set_width(-space_);
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
 					tmp_size = p->GetPreferredSize();
 
-					preferred_size.add_width(tmp_size.width() + m_space);
+					preferred_size.add_width(tmp_size.width() + space_);
 					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
 				}
 			}
@@ -175,8 +177,12 @@ namespace BlendInt {
 
 	void HLayout::PerformMarginUpdate(const Margin& request)
 	{
-		FillSubWidgetsInHBox(size(), request, m_alignment, m_space);
-		RequestRedraw();
+		set_margin(request);
+
+		if(subs_count()) {
+			UpdateLayout();
+			RequestRedraw();
+		}
 	}
 
 	bool HLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -203,7 +209,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			FillSubWidgetsInHBox(size(), margin(), m_alignment, m_space);
+			UpdateLayout();
 			RequestRedraw();
 		}
 
@@ -212,20 +218,13 @@ namespace BlendInt {
 		}
 	}
 
-	void HLayout::FillSubWidgetsInHBox (const Size& out_size, const Margin& margin,
-	        int alignment, int space)
+	void HLayout::UpdateLayout ()
 	{
-		int x = margin.left();
-		int y = margin.bottom();
-		int width = out_size.width() - margin.hsum();
-		int height = out_size.height() - margin.vsum();
+		int x = margin().left();
+		int y = margin().bottom();
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
 
-		FillSubWidgetsProportionallyInHBox(x, y, width, height, alignment, space);
-	}
-
-	void HLayout::FillSubWidgetsProportionallyInHBox (int x, int y, int width,
-					int height, int alignment, int space)
-	{
 		boost::scoped_ptr<std::deque<int> > expandable_preferred_widths(new std::deque<int>);
 		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_widths(new std::deque<int>);
 		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_heights(new std::deque<int>);
@@ -250,36 +249,41 @@ namespace BlendInt {
 				if(!p->IsExpandY()) {
 					unexpandable_preferred_heights->push_back(tmp_size.height());
 				}
-
 			}
 		}
 
-		if((expandable_preferred_widths->size() + unexpandable_preferred_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
+		if ((expandable_preferred_widths->size()
+		        + unexpandable_preferred_widths->size()) == 0)
+			return;	// do nothing if all sub widgets are invisible
 
-		int total_space = ((expandable_preferred_widths->size() + unexpandable_preferred_widths->size()) - 1) * space;
+		int total_space = ((expandable_preferred_widths->size() + unexpandable_preferred_widths->size()) - 1) * space_;
 
 		int total_preferred_width = expandable_preferred_width_sum
 						+ unexpandable_preferred_width_sum
 						+ total_space;
 
 		if (total_preferred_width == width) {
-			DistributeWithPreferredWidth(x, space,
-							expandable_preferred_widths.get(),
-							unexpandable_preferred_widths.get());
+			DistributeWithPreferredWidth(x,
+			        expandable_preferred_widths.get(),
+			        unexpandable_preferred_widths.get());
 		} else if (total_preferred_width < width) {
-			DistributeWithLargeWidth(x, width, space, expandable_preferred_widths.get(),
-							expandable_preferred_width_sum, unexpandable_preferred_widths.get(),
-							unexpandable_preferred_width_sum);
+			DistributeWithLargeWidth(x, width,
+			        expandable_preferred_widths.get(),
+			        expandable_preferred_width_sum,
+			        unexpandable_preferred_widths.get(),
+			        unexpandable_preferred_width_sum);
 		} else {
-			DistributeWithSmallWidth(x, width, space, expandable_preferred_widths.get(),
-							expandable_preferred_width_sum, unexpandable_preferred_widths.get(),
-							unexpandable_preferred_width_sum);
+			DistributeWithSmallWidth(x, width,
+			        expandable_preferred_widths.get(),
+			        expandable_preferred_width_sum,
+			        unexpandable_preferred_widths.get(),
+			        unexpandable_preferred_width_sum);
 		}
 
-		AlignInHBox(y, height, alignment, unexpandable_preferred_heights.get());
+		AlignInHBox(y, height, unexpandable_preferred_heights.get());
 	}
 
-	void HLayout::DistributeWithPreferredWidth (int x, int space,
+	void HLayout::DistributeWithPreferredWidth (int x,
 					const std::deque<int>* expandable_preferred_widths,
 					const std::deque<int>* unexpandable_preferred_widths)
 	{
@@ -302,7 +306,7 @@ namespace BlendInt {
 					unexp_it++;
 				}
 
-				x = x + p->size().width() + space;
+				x = x + p->size().width() + space_;
 			}
 
 			p = p->next_view();
@@ -311,13 +315,12 @@ namespace BlendInt {
 
 	void HLayout::DistributeWithSmallWidth (int x,
 					int width,
-					int space,
 					const std::deque<int>* expandable_preferred_widths,
 					int expandable_prefer_sum,
 					const std::deque<int>* unexpandable_preferred_widths,
 					int unexpandable_prefer_sum)
 	{
-		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
+		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space_;
 
 		if(widgets_width <= 0) {
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
@@ -353,7 +356,7 @@ namespace BlendInt {
 						unexp_it++;
 					}
 
-					x = x + p->size().width() + space;
+					x = x + p->size().width() + space_;
 				}
 
 				p = p->next_view();
@@ -379,7 +382,7 @@ namespace BlendInt {
 						unexp_it++;
 					}
 
-					x = x + p->size().width() + space;
+					x = x + p->size().width() + space_;
 				}
 
 				p = p->next_view();
@@ -390,13 +393,12 @@ namespace BlendInt {
 
 	void HLayout::DistributeWithLargeWidth (int x,
 					int width,
-					int space,
 					const std::deque<int>* expandable_preferred_widths,
 					int expandable_prefer_sum,
 					const std::deque<int>* unexpandable_preferred_widths,
 					int unexpandable_prefer_sum)
 	{
-		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
+		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space_;
 
 		int expandable_width = widgets_width - unexpandable_prefer_sum;
 
@@ -421,14 +423,14 @@ namespace BlendInt {
 					unexp_it++;
 				}
 
-				x = x + p->size().width() + space;
+				x = x + p->size().width() + space_;
 			}
 
 			p = p->next_view();
 		}
 	}
 
-	void HLayout::AlignInHBox (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights)
+	void HLayout::AlignInHBox (int y, int height, const std::deque<int>* unexpandable_preferred_heights)
 	{
 		std::deque<int>::const_iterator unexp_it =
 		        unexpandable_preferred_heights->begin();
@@ -450,12 +452,12 @@ namespace BlendInt {
 					ResizeSubView(p, p->size().width(),
 					        (*unexp_it));
 
-					if (alignment & AlignTop) {
+					if (alignment_ & AlignTop) {
 						MoveSubViewTo(p, p->position().x(),
 						        y + (height - p->size().height()));
-					} else if (alignment & AlignBottom) {
+					} else if (alignment_ & AlignBottom) {
 						MoveSubViewTo(p, p->position().x(), y);
-					} else if (alignment & AlignHorizontalCenter) {
+					} else if (alignment_ & AlignHorizontalCenter) {
 						MoveSubViewTo(p, p->position().x(),
 						        y + (height - p->size().height()) / 2);
 					}

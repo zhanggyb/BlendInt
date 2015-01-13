@@ -566,4 +566,12 @@ namespace BlendInt {
 		return width;
 	}
 
+	const RefPtr<GLTexture2D>& Font::GetTexture (uint32_t character)
+	{
+		const GlyphExt* glyph = m_cache->Query(m_data, character);
+
+		return glyph->texture;
+	}
+
 }
+

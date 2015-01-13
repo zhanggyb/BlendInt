@@ -147,7 +147,7 @@ namespace BlendInt {
 				delete layout_;
 			} else {
 				DBG_PRINT_MSG("Warning: %s", "Layout is not set managed, remove this will not delete it");
-				RemoveSubView(layout_);
+				AbstractFloatingFrame::RemoveSubView(layout_);
 			}
 		}
 
