@@ -27,8 +27,7 @@
 #include <BlendInt/Core/Image.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/ChessBoard.hpp>
 #include <BlendInt/Gui/AbstractScrollable.hpp>
@@ -43,11 +42,11 @@ namespace BlendInt {
 
 		virtual ~TextureView ();
 
-		bool Open (const char* filename);
+		bool OpenFile (const char* filename);
 
-		void Load (const RefPtr<Image>& image);
+		void LoadImage (const RefPtr<Image>& image);
 
-		void Load (const RefPtr<GLTexture2D>& texture);
+		void SetTexture (const RefPtr<GLTexture2D>& texture);
 
 		void Clear ();
 
@@ -59,28 +58,35 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual bool PreDraw (const Context* context);
+
 		virtual ResponseType Draw (const Context* context);
+
+		virtual void PostDraw (const Context* context);
 
 	private:
 
 		void InitializeImageView ();
 
-		void AdjustImageArea (const Size& size);
+		// void AdjustImageArea (const Size& size);
 
 		Size image_size_;
 
-		GLuint vaos_[2];
+		/**
+		 * @brief Vertex Array Objects
+		 *
+		 * 0 - for background
+		 * 1 - for plane to display image texture
+		 */
+
+		GLuint vao_[2];
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		RefPtr<GLTexture2D> texture_;
 
-		RefPtr<GLArrayBuffer> background_;
-		RefPtr<GLArrayBuffer> plane_;
-
-		RefPtr<ChessBoard> checkerboard_;
+		RefPtr<ChessBoard> chessboard_;
 	};
 
 }

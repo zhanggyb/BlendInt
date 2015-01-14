@@ -33,6 +33,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <algorithm>
 
@@ -52,16 +53,17 @@ namespace BlendInt {
 
 	TextureView::~TextureView ()
 	{
-		glDeleteVertexArrays(2, vaos_);
+		glDeleteVertexArrays(2, vao_);
 	}
 
-	bool TextureView::Open (const char* filename)
+	bool TextureView::OpenFile (const char* filename)
 	{
 		bool retval = false;
 
 		Image image;
 
 		if(image.Read(filename)) {
+
 			texture_->bind();
 
 			switch(image.channels()) {
@@ -88,7 +90,17 @@ namespace BlendInt {
 			image_size_.set_width(image.width());
 			image_size_.set_height(image.height());
 
-			AdjustImageArea(size());
+			//AdjustImageArea(size());
+			chessboard_->Resize(image_size_);
+
+			vbo_.bind(1);
+			float* ptr = (float*)vbo_.map();
+			*(ptr + 4) = image.width();
+			*(ptr + 9) = image.height();
+			*(ptr + 12) = image.width();
+			*(ptr + 13) = image.height();
+			vbo_.unmap();
+			vbo_.reset();
 
 			RequestRedraw();
 
@@ -98,11 +110,11 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void TextureView::Load (const RefPtr<Image>& image)
+	void TextureView::LoadImage (const RefPtr<Image>& image)
 	{
 	}
 
-	void TextureView::Load (const RefPtr<GLTexture2D>& texture)
+	void TextureView::SetTexture (const RefPtr<GLTexture2D>& texture)
 	{
 		if(texture_ == texture) return;
 
@@ -110,11 +122,24 @@ namespace BlendInt {
 
 		if(texture_->id()) {
 			texture_->bind();
+
 			image_size_ = texture_->GetSize();
+
+			chessboard_->Resize(image_size_);
+
+			vbo_.bind(1);
+			float* ptr = (float*)vbo_.map();
+			*(ptr + 4) = image_size_.width();
+			*(ptr + 9) = image_size_.height();
+			*(ptr + 12) = image_size_.width();
+			*(ptr + 13) = image_size_.height();
+			vbo_.unmap();
+			vbo_.reset();
+
 			texture_->reset();
 		}
 
-		AdjustImageArea(size());
+		///AdjustImageArea(size());
 
 		RequestRedraw();
 	}
@@ -136,37 +161,23 @@ namespace BlendInt {
 
 	Size TextureView::GetPreferredSize () const
 	{
-		if(texture_ && glIsTexture(texture_->id())) {
-			return image_size_;
-		}
-
-		return Size(400, 300);
-	}
-
-	void TextureView::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			RequestRedraw();
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
+		return image_size_;
 	}
 
 	void TextureView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 
-			background_->bind();
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), 0, RoundNone, 0);
-			background_->set_data(tool.inner_size(), tool.inner_data());
-			background_->reset();
-
 			set_size(*request.size());
 
-			AdjustImageArea (*request.size());
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+			vbo_.bind(0);
+			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.reset();
+
+			//AdjustImageArea (*request.size());
 
 			RequestRedraw();
 		}
@@ -176,52 +187,89 @@ namespace BlendInt {
 		}
 	}
 
+	bool TextureView::PreDraw (const Context* context)
+	{
+		if(!visiable()) return false;
+		Context* c = const_cast<Context*>(context);
+
+		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+				glm::vec2(position().x() + offset().x(),
+						position().y() + offset().y()));
+
+		Context::shaders->PushWidgetModelMatrix();
+		Context::shaders->SetWidgetModelMatrix(matrix);
+
+		// draw background and stencil mask
+
+		Context::shaders->widget_inner_program()->use();
+
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+		c->BeginPushStencil();	// inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		c->EndPushStencil();
+
+		return true;
+	}
+
 	ResponseType TextureView::Draw (const Context* context)
 	{
-		RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
-		program->use();
-
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
-
-		glBindVertexArray(vaos_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-
-		float x = (size().width() - checkerboard_->size().width()) / 2.f;
-		float y = (size().height() - checkerboard_->size().height()) / 2.f;
+		float x = (size().width() - image_size_.width()) / 2.f;
+		float y = (size().height() - image_size_.height()) / 2.f;
 
 		// draw checkerboard
-		checkerboard_->Draw(x, y);
+		chessboard_->Draw(x, y);
 
-		glActiveTexture(GL_TEXTURE0);
-		texture_->bind();
+		if(texture_ && glIsTexture(texture_->id())) {
 
-		if (texture_->GetWidth() > 0) {
-			program = Context::shaders->widget_image_program();
-			program->use();
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION), 0.f, 0.f);
+			// draw texture
+			glActiveTexture(GL_TEXTURE0);
+
+			texture_->bind();
+
+			Context::shaders->widget_image_program()->use();
+			glUniform2f(
+			        Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+			        x, y);
 			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
-			glBindVertexArray(vaos_[1]);
+			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			texture_->reset();
+
 		}
 
-		glBindVertexArray(0);
-		texture_->reset();
-		program->reset();
-
-		return AbstractScrollable::Draw(context);
+		return Finish;
 	}
-	
+
+	void TextureView::PostDraw (const Context* context)
+	{
+		// draw background again to unmask stencil
+		Context::shaders->widget_inner_program()->use();
+
+		glBindVertexArray(vao_[0]);
+
+		const_cast<Context*>(context)->BeginPopStencil();	// pop inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		const_cast<Context*>(context)->EndPopStencil();
+
+		glBindVertexArray(0);
+
+		GLSLProgram::reset();
+
+		Context::shaders->PopWidgetModelMatrix();
+	}
+
 	void TextureView::InitializeImageView ()
 	{
-		checkerboard_.reset(new ChessBoard(20));
-		checkerboard_->Resize(size());
+		chessboard_.reset(new ChessBoard(20));
+		chessboard_->Resize(size());
 
 		texture_.reset(new GLTexture2D);
 		texture_->generate();
@@ -231,21 +279,21 @@ namespace BlendInt {
 		texture_->SetMagFilter(GL_LINEAR);
 		texture_->reset();
 
-		glGenVertexArrays(2, vaos_);
-		glBindVertexArray(vaos_[0]);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-		background_.reset(new GLArrayBuffer);
-		background_->generate();
-		background_->bind();
+		vbo_.generate();
 
-		VertexTool tool;
-		tool.GenerateVertices(size(), 0, RoundNone, 0);
-		background_->set_data(tool.inner_size(), tool.inner_data());
+		glGenVertexArrays(2, vao_);
+		glBindVertexArray(vao_[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glBindVertexArray(vaos_[1]);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindVertexArray(vao_[1]);
 
 		GLfloat vertices[] = {
 			0.f, 0.f, 		0.f, 1.f,
@@ -254,10 +302,8 @@ namespace BlendInt {
 			400.f, 300.f,	1.f, 0.f
 		};
 
-		plane_.reset(new GLArrayBuffer);
-		plane_->generate();
-		plane_->bind();
-		plane_->set_data(sizeof(vertices), vertices);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
 				Context::shaders->location (Shaders::WIDGET_IMAGE_COORD));
@@ -270,9 +316,10 @@ namespace BlendInt {
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		vbo_.reset();
 	}
 
+	/*
 	void TextureView::AdjustImageArea(const Size& size)
 	{
 		if(image_size_.width() == 0 || image_size_.height() == 0) {
@@ -307,9 +354,9 @@ namespace BlendInt {
 			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
-		plane_->bind();
-		plane_->set_data(sizeof(vertices), vertices);
-		plane_->reset();
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(vertices), vertices);
+		vbo_.reset();
 	}
-
+	*/
 }

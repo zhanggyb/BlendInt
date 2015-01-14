@@ -270,7 +270,8 @@ namespace BlendInt {
 
 	void ScrollView::PostDraw(const Context* context)
 	{
-		Context::shaders->PopWidgetModelMatrix();
+		if(subs_count())
+			Context::shaders->PopWidgetModelMatrix();
 
 		// draw mask
 		Context::shaders->widget_inner_program()->use();

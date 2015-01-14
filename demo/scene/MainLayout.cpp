@@ -241,7 +241,7 @@ void MainLayout::OnOpenClick()
 
 		case 1: {
 
-			if(m_image_view->Open(filename.c_str())) {
+			if(m_image_view->OpenFile(filename.c_str())) {
 				m_msg_label->SetText("Image is loaded");
 				
 				Size prefer = m_msg_label->GetPreferredSize();

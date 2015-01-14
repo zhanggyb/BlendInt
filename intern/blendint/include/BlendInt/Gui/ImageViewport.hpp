@@ -86,10 +86,6 @@ namespace BlendInt {
 
 		void InitializeImageViewport ();
 
-		void AdjustImageArea (const Size& size);
-
-		void AdjustScrollArea (const Size& size);
-
 		/**
 		 * @brief Vertex Array Objects
 		 *

@@ -287,6 +287,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 			//AdjustImageArea(*request.size());
+
+			RequestRedraw();
 		}
 
 		if(request.source() == this) {
@@ -382,44 +384,6 @@ namespace BlendInt {
 		texture_->SetImage(0, GL_RGBA, size().width(), size().height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		texture_->reset();
 
-	}
-
-	void ImageViewport::AdjustImageArea (const Size& size)
-	{
-		/*
-		int w = std::min(size.width(), cv_image_.cols);
-		int h = std::min(size.height(), cv_image_.rows);
-
-		if(h == 0) {
-			w = 0;
-		} else {
-			float ratio = (float)w / h;
-			float ref_ratio = (float)cv_image_.cols / cv_image_.rows;
-			if(ratio > ref_ratio) {
-				w = h * ref_ratio;
-			} else if (ratio < ref_ratio) {
-				h = w / ref_ratio;
-			}
-		}
-
-		GLfloat x = (size.width() - w) / 2.f;
-		GLfloat y = (size.height() - h) / 2.f;
-		GLfloat vertices[] = {
-			x, y,	0.f, 1.f,
-			x + (GLfloat)w, y,		1.f, 1.f,
-			x, y + (GLfloat)h,		0.f, 0.f,
-			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
-		};
-
-		image_plane_.bind();
-		image_plane_.set_data(sizeof(vertices), vertices);
-		image_plane_.reset();
-		*/
-	}
-
-	void ImageViewport::AdjustScrollArea(const Size& size)
-	{
-		//cv_image_.cols;
 	}
 
 }

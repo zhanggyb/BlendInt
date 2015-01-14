@@ -76,7 +76,7 @@ void FontViewerContext::OnOpen(AbstractButton* sender)
 
 	Font font;
 
-	textureview->Load(font.GetTexture(L'A'));
+	textureview->SetTexture(font.GetTexture(L'A'));
 
 	VLayout* layout = Manage(new VLayout);
 	layout->AddWidget(textureview);
@@ -86,6 +86,8 @@ void FontViewerContext::OnOpen(AbstractButton* sender)
 	dialog->Resize(textureview->size().width() + 100, textureview->size().height() + 100);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 //	dialog->AddWidget(textureview);
+
+	dialog->Resize(520, 520);
 
 	AddFrame(dialog);
 }
