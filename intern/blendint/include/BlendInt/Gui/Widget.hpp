@@ -45,6 +45,13 @@ namespace BlendInt {
 
 		void SetRoundRadius (float radius);
 
+		void SetRoundType (int type);
+
+		inline uint32_t round_type () const
+		{
+			return round_type_ & 0x0F;
+		}
+
 		inline float round_radius () const
 		{
 			return round_radius_;
@@ -63,9 +70,16 @@ namespace BlendInt {
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
 
+		virtual void PerformRoundTypeUpdate (int round_type);
+
 		virtual void PerformRoundRadiusUpdate (float radius);
 
 		virtual ResponseType Draw (const Context* context);
+
+		inline void set_round_type (int type)
+		{
+			round_type_ = (type & 0x0F);
+		}
 
 		inline void set_round_radius (float radius)
 		{
@@ -73,6 +87,8 @@ namespace BlendInt {
 		}
 
 	private:
+
+		uint32_t round_type_;
 
 		float round_radius_;
 

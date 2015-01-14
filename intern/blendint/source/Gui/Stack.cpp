@@ -196,7 +196,10 @@ namespace BlendInt {
 		if(request.target() == this) {
 
 			set_size(*request.size());
-			ResizeSubWidgets(size().width(), size().height());
+
+			for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+				ResizeSubView(p, size());
+			}
 		}
 
 		if(request.source() == this) {

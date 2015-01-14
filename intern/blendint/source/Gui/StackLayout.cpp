@@ -211,7 +211,9 @@ namespace BlendInt {
 		int w = size().width() - request.hsum();
 		int h = size().height() - request.vsum();
 
-		ResizeSubWidgets(w, h);
+		for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+			ResizeSubView(p, w, h);
+		}
 	}
 
 	void StackLayout::PerformSizeUpdate (
@@ -223,7 +225,11 @@ namespace BlendInt {
 			int h = request.size()->height() - margin().vsum();
 
 			set_size(*request.size());
-			ResizeSubWidgets(w, h);
+
+			for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+				ResizeSubView(p, w, h);
+			}
+
 		}
 
 		if(request.source() == this) {

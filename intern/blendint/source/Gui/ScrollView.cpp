@@ -191,23 +191,6 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ScrollView::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-
-			if(first_subview()) {
-				MoveSubWidgets(x, y);
-			}
-		}
-
-		ReportPositionUpdate(request);
-	}
-
 	void ScrollView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {

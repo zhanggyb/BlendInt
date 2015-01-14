@@ -41,7 +41,7 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (bool modal = false);
+		explicit Dialog (bool modal = false);
 
 		Dialog (const String& title, bool modal = false);
 

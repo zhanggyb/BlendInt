@@ -28,6 +28,7 @@ namespace BlendInt {
 
 	AbstractFloatingFrame::AbstractFloatingFrame()
 	: AbstractFrame(),
+	  round_type_(0),
 	  round_radius_(5.f)
 	{
 	}
@@ -39,6 +40,13 @@ namespace BlendInt {
 	AbstractView* AbstractFloatingFrame::GetFocusedView () const
 	{
 		return nullptr;
+	}
+
+	void AbstractFloatingFrame::SetRoundType (int type)
+	{
+		if(round_type_ == (type & 0x0F)) return;
+
+		PerformRoundTypeUpdate(type);
 	}
 
 	void AbstractFloatingFrame::SetRoundRadius(float radius)
@@ -74,10 +82,14 @@ namespace BlendInt {
 				outer);
 	}
 
+	void AbstractFloatingFrame::PerformRoundTypeUpdate (int round_type)
+	{
+		set_round_type(round_type);
+	}
+
 	void AbstractFloatingFrame::PerformRoundRadiusUpdate(float radius)
 	{
 		round_radius_ = radius;
 	}
 
 }
-

@@ -514,8 +514,14 @@ namespace BlendInt {
 		if(request.target() == this) {
 			int ox = request.position()->x() - position().x();
 			int oy = request.position()->y() - position().y();
-			MoveSubWidgets(ox, oy);
+
 			set_position(*request.position());
+
+			for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+				MoveSubViewTo(p, p->position().x() + ox,
+				        p->position().y() + oy);
+			}
+
 		}
 
 		if(request.source() == this) {

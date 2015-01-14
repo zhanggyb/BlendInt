@@ -28,6 +28,7 @@ namespace BlendInt {
 
 	Widget::Widget()
 	: AbstractWidget(),
+	  round_type_(0),
 	  round_radius_(5.f)
 	{
 	}
@@ -41,6 +42,18 @@ namespace BlendInt {
 		if(round_radius_ == radius) return;
 
 		PerformRoundRadiusUpdate(radius);
+	}
+
+	void Widget::SetRoundType(int type)
+	{
+		if(round_type_ == (type & 0x0F)) return;
+
+		PerformRoundTypeUpdate(type);
+	}
+
+	void Widget::PerformRoundTypeUpdate(int round)
+	{
+		set_round_type(round);
 	}
 
 	void Widget::PerformRoundRadiusUpdate(float radius)

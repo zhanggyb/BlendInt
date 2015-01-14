@@ -69,7 +69,7 @@ BI::ToolBox* FontViewerContext::CreateMenuBar()
 
 void FontViewerContext::OnOpen(AbstractButton* sender)
 {
-	Dialog* dialog = Manage(new Dialog);
+	Dialog* dialog = Manage(new Dialog("Font Viewer"));
 
 	TextureView* textureview = Manage(new TextureView);
 	textureview->MoveTo(50, 50);
