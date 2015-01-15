@@ -75,6 +75,8 @@ private:
 
 	void OnSaveTextureToFile ();
 
+	void OnOpenDialogForButtons ();
+
 	void OnOpenDialogForTextureView ();
 
 	void OnOpenDialogForDecoration ();
@@ -82,8 +84,6 @@ private:
 	void OnOpenModalDialog ();
 
 	void OnOpenFileSelector ();
-
-	void OnOpenDialogForButton ();
 
 	void OnOpenDialogForNumericalSlider ();
 
@@ -98,6 +98,12 @@ private:
 	void OnOpenPanel1 (BI::AbstractButton* btn);
 
 	void OnOpenPanel2 (BI::AbstractButton* btn);
+
+	void OnOpenDialogForTab ();
+
+	void OnOpenDialogForScrollArea ();
+
+	void OnOpenDialogForTabHeader ();
 
 	BI::ToolBox* CreateMenuBar ();
 

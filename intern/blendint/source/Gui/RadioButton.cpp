@@ -105,8 +105,7 @@ namespace BlendInt {
 	{
 		icon_ = icon;
 
-		icon_offset_x_ = kDefaultPadding.left();
-		icon_offset_y_ = (size().height() - icon_->size().height()) / 2.f;
+		// TODO: reset icon_offset
 
 		RequestRedraw();
 	}
@@ -301,9 +300,9 @@ namespace BlendInt {
 
 		if(show_icon_ && icon_) {
 			if(hover()) {
-				icon_->Draw(0.f + icon_offset_x_, 0.f + icon_offset_y_, 15);
+				icon_->Draw(icon_offset_x_, icon_offset_y_, 15);
 			} else {
-				icon_->Draw(0.f + icon_offset_x_, 0.f + icon_offset_y_, 0);
+				icon_->Draw(icon_offset_x_, icon_offset_y_, 0);
 			}
 		}
 
@@ -345,8 +344,8 @@ namespace BlendInt {
 					show_icon_ = false;
 				} else {
 					show_icon_ = true;
-					icon_offset_x_ = (size.width() - icon_->size().width()) / 2.f;
-					icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
+					icon_offset_x_ = size.width() / 2.f;
+					icon_offset_y_ = size.height() / 2.f;
 				}
 
 			} else {
@@ -361,7 +360,8 @@ namespace BlendInt {
 
 			if(icon_) {
 
-				icon_offset_y_ = (size.height() - icon_->size().height()) / 2.f;
+				icon_offset_x_ += icon_->size().width() / 2.f;
+				icon_offset_y_ = size.height() / 2.f;
 
 				int text_width = valid_width - icon_->size().width() - icon_text_space;
 
@@ -569,8 +569,8 @@ namespace BlendInt {
 		}
 
 		if(icon) {
-			icon_offset_x_ = round_radius() + left;
-			icon_offset_y_ = (size().height() - icon->size().height()) / 2.f;
+			icon_offset_x_ = round_radius() + left + icon_->size().width() / 2.f;
+			icon_offset_y_ = size().height() / 2.f;
 		}
 
 		InitializeRadioButtonOnce();

@@ -21,58 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/FreeLayout.hpp>
+#ifndef _BLENDINT_FONT_CHARSET_HPP_
+#define _BLENDINT_FONT_CHARSET_HPP_
+
+#include <fontconfig/fontconfig.h>
 
 namespace BlendInt {
 
-	FreeLayout::FreeLayout()
-	: AbstractLayout()
-	{
+	namespace Fc {
 
-	}
+		class CharSet
+		{
+		public:
 
-	FreeLayout::~FreeLayout()
-	{
-	}
+			inline CharSet ()
+			: charset_(0)
+			{
+				charset_ = FcCharSetCreate();
+			}
 
-	bool FreeLayout::AddWidget(AbstractWidget* widget)
-	{
-		if(PushBackSubView(widget)) {
-			RequestRedraw();
-			return true;
+			inline ~CharSet ()
+			{
+				FcCharSetDestroy(charset_);
+			}
+
+			inline ::FcCharSet* charset () const
+			{
+				return charset_;
+			}
+
+		private:
+
+			friend inline bool operator == (const CharSet& a, const CharSet& b);
+
+			::FcCharSet* charset_;
+		};
+
+		bool operator == (const CharSet& a, const CharSet& b)
+		{
+			return FcCharSetEqual(a.charset_, b.charset_);
 		}
 
-		return false;
-	}
-
-	bool FreeLayout::InsertWidget(int index, AbstractWidget* widget)
-	{
-		if(InsertSubView(index, widget)) {
-			RequestRedraw();
-			return true;
-		}
-
-		return false;
-	}
-
-	bool FreeLayout::InsertWidget(int row, int column, AbstractWidget* widget)
-	{
-		if(InsertSubView(column, widget)) {
-			RequestRedraw();
-			return true;
-		}
-
-		return false;
-	}
-
-	bool FreeLayout::SizeUpdateTest(const SizeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool FreeLayout::PositionUpdateTest(const PositionUpdateRequest& request)
-	{
-		return true;
 	}
 
 }
+
+#endif /* _BLENDINT_FONT_CHARSET_HPP_ */

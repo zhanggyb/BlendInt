@@ -4,9 +4,16 @@
 include_directories(${BlendInt_SOURCE_DIR}/demo)
 
 if(WITH_GLFW3_DEMO)
+
+if(OS_APPLE)
+	add_definitions(-DGLFW_INCLUDE_GLCOREARB)
+	add_definitions(-DGLFW_INCLUDE_GLEXT)
+endif()
+
     add_subdirectory(Common)
     add_subdirectory(glfw)
     add_subdirectory(studio)
+    add_subdirectory(fontviewer)
     #add_subdirectory(scene)
     #add_subdirectory(texteditor)
     #add_subdirectory(texbuf)

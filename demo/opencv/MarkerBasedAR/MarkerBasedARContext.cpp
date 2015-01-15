@@ -28,12 +28,12 @@ MarkerBasedARContext::MarkerBasedARContext(GLFWwindow* window)
   viewport_(0),
   window_(window)
 {
-	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
+	FrameSplitter* vsplitter = new FrameSplitter(Vertical);
 
-	FrameSplitter* splitter = Manage(new FrameSplitter);
+	FrameSplitter* splitter = new FrameSplitter;
 
 	ToolBox* tools = CreateToolBoxOnce();
-	viewport_ = Manage(new MBARViewport);
+	viewport_ = new MBARViewport;
 
 	splitter->AddFrame(viewport_);
 	splitter->AddFrame(tools, PreferredWidth);
@@ -67,31 +67,31 @@ void MarkerBasedARContext::MakeGLContextCurrent()
 
 ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 {
-	ToolBox* tools = Manage(new ToolBox(Vertical));
+	ToolBox* tools = new ToolBox(Vertical);
 
-	Expander* expander = Manage(new Expander("Resolution"));
+	Expander* expander = new Expander("Resolution");
 
-	NumericalSlider* ns1 = Manage(new NumericalSlider("Width:"));
+	NumericalSlider* ns1 = new NumericalSlider("Width:");
 	ns1->SetValue(50.f);
-	NumericalSlider* ns2 = Manage(new NumericalSlider("Height:"));
+	NumericalSlider* ns2 = new NumericalSlider("Height:");
 	ns2->SetValue(50.f);
 
-	ToggleButton* open = Manage(new ToggleButton("Open Camera 0"));
-	Separator* separator1 = Manage(new Separator);
-	Separator* separator2 = Manage(new Separator);
+	ToggleButton* open = new ToggleButton("Open Camera 0");
+	Separator* separator1 = new Separator;
+	Separator* separator2 = new Separator;
 
-	Block* vblock = Manage(new Block(Vertical));
+	Block* vblock = new Block(Vertical);
 	vblock->AddWidget(ns1);
 	vblock->AddWidget(ns2);
 
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());
 
-	Button* play = Manage(new Button("Play"));
-	Button* pause = Manage(new Button("Pause"));
-	Button* stop = Manage(new Button("Stop"));
+	Button* play = new Button("Play");
+	Button* pause = new Button("Pause");
+	Button* stop = new Button("Stop");
 
-	Block* vblock1 = Manage(new Block(Vertical));
+	Block* vblock1 = new Block(Vertical);
 	vblock1->AddWidget(play);
 	vblock1->AddWidget(pause);
 	vblock1->AddWidget(stop);
@@ -112,14 +112,14 @@ ToolBox* MarkerBasedARContext::CreateToolBoxOnce()
 
 ToolBox* MarkerBasedARContext::CreateToolBarOnce()
 {
-	ToolBox* bar = Manage(new ToolBox(Horizontal));
+	ToolBox* bar = new ToolBox(Horizontal);
 
-	ComboBox* combo = Manage(new ComboBox);
+	ComboBox* combo = new ComboBox;
 	combo->Resize(48, combo->size().height());
 
-	MenuButton* btn1 = Manage(new MenuButton("File"));
-	MenuButton* btn2 = Manage(new MenuButton("Edit"));
-	MenuButton* btn3 = Manage(new MenuButton("View"));
+	MenuButton* btn1 = new MenuButton("File");
+	MenuButton* btn2 = new MenuButton("Edit");
+	MenuButton* btn3 = new MenuButton("View");
 
 	bar->AddWidget(combo);
 	bar->AddWidget(btn1);

@@ -51,7 +51,6 @@ namespace BlendInt {
 	AbstractFrame::AbstractFrame()
 	: AbstractView()
 	{
-		events_.reset(new Cpp::ConnectionScope);
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
@@ -70,11 +69,11 @@ namespace BlendInt {
 
 		AbstractView* p = widget->superview();
 		while(p && (p != this)) {
-			pos = pos + p->position() + p->offset();
+			pos = pos + p->position() + p->GetOffset();
 			p = p->superview();
 		}
 
-		pos = pos + position() + offset();
+		pos = pos + position() + GetOffset();
 		return pos;
 	}
 
@@ -88,7 +87,7 @@ namespace BlendInt {
 
 		AbstractView* p = widget->superview();
 		while(p && (p != this)) {
-			pos = pos + p->position() + p->offset();
+			pos = pos + p->position() + p->GetOffset();
 			p = p->superview();
 		}
 
@@ -224,8 +223,9 @@ namespace BlendInt {
 	{
 		AbstractWidget* hovered_widget = orig;
 
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 		Point local;	// the relative local position of the cursor in a widget
+		Point offset;
 
 		// find the new top hovered widget
 		if (hovered_widget != nullptr) {
@@ -247,9 +247,10 @@ namespace BlendInt {
 
 			if(hovered) {
 
+				offset = superview->GetOffset();
 				local.reset(
-						context->cursor_position().x() - rect.x() - superview->offset().x(),
-						context->cursor_position().y() - rect.y() - superview->offset().y());
+						context->cursor_position().x() - rect.x() - offset.x(),
+						context->cursor_position().y() - rect.y() - offset.y());
 
 				if(hovered_widget->Contain(local)) {
 					hovered_widget = DispatchHoverEventDeeper(
@@ -266,9 +267,10 @@ namespace BlendInt {
 							break;
 						}
 
+						offset = superview->GetOffset();
 						local.reset(
-								local.x() + superview->position().x() + superview->offset().x(),
-								local.y() + superview->position().y() + superview->offset().y());
+								local.x() + superview->position().x() + offset.x(),
+								local.y() + superview->position().y() + offset.y());
 
 						if (superview->Contain(local)) break;
 
@@ -306,9 +308,10 @@ namespace BlendInt {
 						rect.set_size(size());
 					}
 
+					offset = superview->GetOffset();
 					local.reset(
-							context->cursor_position().x() - rect.x() - superview->offset().x(),
-							context->cursor_position().y() - rect.y() - superview->offset().y());
+							context->cursor_position().x() - rect.x() - offset.x(),
+							context->cursor_position().y() - rect.y() - offset.y());
 
 					if(rect.contains(context->cursor_position())) break;
 
@@ -317,16 +320,25 @@ namespace BlendInt {
 
 				hovered_widget = dynamic_cast<AbstractWidget*>(superview);
 				if(hovered_widget) {
-					hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+					for (AbstractView* p = widget->last_subview (); p;
+							p = p->previous_view ()) {
+						if (p->visiable () && p->Contain (local)) {
+							hovered_widget = dynamic_cast<AbstractWidget*>(p);
+							delegate_mouse_hover_in_event (hovered_widget, context);
+							hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+							break;
+						}
+					}
 				}
 
 			}
 
 		} else {
 
+			offset = GetOffset();
 			local.reset(
-					context->cursor_position().x() - position().x() - offset().x(),
-					context->cursor_position().y() - position().y() - offset().y());
+					context->cursor_position().x() - position().x() - offset.x(),
+					context->cursor_position().y() - position().y() - offset.y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
@@ -372,11 +384,6 @@ namespace BlendInt {
 			hovered_widget->PerformHoverOut(context);
 			hovered_widget = hovered_widget->superview();
 		}
-	}
-
-	void AbstractFrame::SetActiveFrame(const Context* context, AbstractFrame* frame)
-	{
-		const_cast<Context*>(context)->active_frame_ = frame;
 	}
 
 	bool AbstractFrame::RenderSubFramesToTexture (
@@ -477,9 +484,10 @@ namespace BlendInt {
 	{
 		AbstractWidget* retval = widget;
 
+		Point offset = widget->GetOffset();
 		local.reset(
-				local.x() - widget->position().x() - widget->offset().x(),
-		        local.y() - widget->position().y() - widget->offset().y());
+				local.x() - widget->position().x() - offset.x(),
+		        local.y() - widget->position().y() - offset.y());
 
 		for (AbstractView* p = widget->last_subview (); p;
 				p = p->previous_view ()) {

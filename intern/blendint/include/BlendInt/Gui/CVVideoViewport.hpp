@@ -31,7 +31,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <BlendInt/Core/Timer.hpp>
-#include <BlendInt/Core/Thread.hpp>
+#include <BlendInt/Core/Mutex.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
@@ -108,7 +108,7 @@ namespace BlendInt {
 		// if upload to GPU (texture)
 		bool upload_;
 
-		ThreadMutex mutex_;
+		Mutex mutex_;
 
 		RefPtr<Timer> timer_;
 

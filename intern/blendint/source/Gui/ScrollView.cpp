@@ -191,23 +191,6 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ScrollView::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-
-			if(first_subview()) {
-				MoveSubWidgets(x, y);
-			}
-		}
-
-		ReportPositionUpdate(request);
-	}
-
 	void ScrollView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -272,8 +255,11 @@ namespace BlendInt {
 	ResponseType ScrollView::Draw (const Context* context)
 	{
 		if(subs_count()) {
+
+			Point offset = GetOffset();
+
 			glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
-					glm::vec2(offset().x(), offset().y()));
+					glm::vec2(offset.x(), offset.y()));
 
 			Context::shaders->PushWidgetModelMatrix();
 			Context::shaders->SetWidgetModelMatrix(matrix);
@@ -287,7 +273,8 @@ namespace BlendInt {
 
 	void ScrollView::PostDraw(const Context* context)
 	{
-		Context::shaders->PopWidgetModelMatrix();
+		if(subs_count())
+			Context::shaders->PopWidgetModelMatrix();
 
 		// draw mask
 		Context::shaders->widget_inner_program()->use();
@@ -314,7 +301,7 @@ namespace BlendInt {
 		if (context->mouse_button() == MouseButtonMiddle) {
 			moving_ = true;
 			cursor_point_ = context->cursor_position();
-			last_offset_ = offset();
+			last_offset_ = GetOffset();
 
 			return Finish;
 		}

@@ -37,7 +37,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Splitter.hpp>

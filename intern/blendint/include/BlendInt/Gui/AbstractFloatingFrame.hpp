@@ -38,7 +38,14 @@ namespace BlendInt {
 
 		virtual AbstractView* GetFocusedView () const;
 
+		void SetRoundType (int type);
+
 		void SetRoundRadius (float radius);
+
+		inline uint32_t round_type () const
+		{
+			return floating_frame_flag_ & 0x0F;
+		}
 
 		inline float round_radius () const
 		{
@@ -58,7 +65,14 @@ namespace BlendInt {
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
 
+		virtual void PerformRoundTypeUpdate (int round_type);
+
 		virtual void PerformRoundRadiusUpdate (float radius);
+
+		inline void set_round_type (int type)
+		{
+			floating_frame_flag_ = (floating_frame_flag_ & 0xFFF0) + (type & 0x0F);
+		}
 
 		inline void set_round_radius (float radius)
 		{
@@ -66,6 +80,20 @@ namespace BlendInt {
 		}
 
 	private:
+
+		enum FloatingFrameFlagIndex {
+
+			FloatingFrameRoundTopLeft = (1 << 0),
+
+			FloatingFrameRoundTopRight = (1 << 1),
+
+			FloatingFrameRoundBottomRight = (1 << 2),
+
+			FloatingFrameRoundBottomLeft = (1 << 3),
+
+		};
+
+		uint32_t floating_frame_flag_;
 
 		float round_radius_;
 

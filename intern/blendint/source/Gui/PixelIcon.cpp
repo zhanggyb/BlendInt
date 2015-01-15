@@ -42,110 +42,18 @@
 
 namespace BlendInt {
 
-	PixelIcon::PixelIcon (int width, int height)
+	PixelIcon::PixelIcon (unsigned int width, unsigned int height)
 	: AbstractIcon(width, height),
 	  vao_(0)
 	{
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		/*
-			// x, 			y, 					u, 				v
-			0.f, 			0.f, 				0.0, 			0.0,
-			(GLfloat)width, 0.f,				1.0,			0.0,
-			0.f, 			(GLfloat)height, 	0.0,			1.0,
-			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
-		*/
-		std::vector<GLfloat> vertices(16, 0.f);
-
-		vertices[4] = (GLfloat)width;
-		vertices[9] = (GLfloat)height;
-		vertices[12] = (GLfloat)width;
-		vertices[13] = (GLfloat)height;
-
-		//vertices[2] = 0.f;
-		//vertices[3] = 0.f;
-		vertices[6] = 1.f;
-		//vertices[7] = 0.f;
-		//vertices[10] = 0.f;
-		vertices[11] = 1.f;
-		vertices[14] = 1.f;
-		vertices[15] = 1.f;
-
-		buffer_.reset(new GLArrayBuffer);
-		buffer_->generate();
-		buffer_->bind();
-		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
-				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-
-		buffer_->reset();
+		CreateVertexArray(width, height);
 	}
 
-	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
+	PixelIcon::PixelIcon (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv)
 	: AbstractIcon(width, height),
 	  vao_(0)
 	{
-		glGenVertexArrays(1, &vao_);
-
-		glBindVertexArray(vao_);
-
-		/*
-			// x, 			y, 					u, 				v
-			0.f, 			0.f, 				0.0, 			0.0,
-			(GLfloat)width, 0.f,				1.0,			0.0,
-			0.f, 			(GLfloat)height, 	0.0,			1.0,
-			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
-		*/
-		std::vector<GLfloat> vertices(16, 0.f);
-
-		vertices[4] = (GLfloat)width;
-		vertices[9] = (GLfloat)height;
-		vertices[12] = (GLfloat)width;
-		vertices[13] = (GLfloat)height;
-
-		if(uv) {
-			vertices[2] = *(uv + 0);
-			vertices[3] = *(uv + 1);
-			vertices[6] = *(uv + 2);
-			vertices[7] = *(uv + 3);
-			vertices[10] = *(uv + 4);
-			vertices[11] = *(uv + 5);
-			vertices[14] = *(uv + 6);
-			vertices[15] = *(uv + 7);
-		} else {
-			//vertices[2] = 0.f;
-			//vertices[3] = 0.f;
-			vertices[6] = 1.f;
-			//vertices[7] = 0.f;
-			//vertices[10] = 0.f;
-			vertices[11] = 1.f;
-			vertices[14] = 1.f;
-			vertices[15] = 1.f;
-		}
-
-		buffer_.reset(new GLArrayBuffer);
-		buffer_->generate();
-		buffer_->bind();
-		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
-				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-
-		buffer_->reset();
+		CreateVertexArray(width, height, uv);
 
 		texture_.reset(new GLTexture2D);
 		texture_->generate();
@@ -158,63 +66,12 @@ namespace BlendInt {
 		texture_->reset();
 	}
 
-	PixelIcon::PixelIcon (int width, int height,
+	PixelIcon::PixelIcon (unsigned int width, unsigned int height,
 					const RefPtr<GLTexture2D>& texture, const GLfloat* uv)
 	: AbstractIcon(width, height),
 	  vao_(0)
 	{
-		glGenVertexArrays(1, &vao_);
-
-		glBindVertexArray(vao_);
-
-		/*
-			// x, 			y, 					u, 				v
-			0.f, 			0.f, 				0.0, 			0.0,
-			(GLfloat)width, 0.f,				1.0,			0.0,
-			0.f, 			(GLfloat)height, 	0.0,			1.0,
-			(GLfloat)width, (GLfloat)height, 	1.0,			1.0
-		*/
-		std::vector<GLfloat> vertices(16, 0.f);
-
-		vertices[4] = (GLfloat)width;
-		vertices[9] = (GLfloat)height;
-		vertices[12] = (GLfloat)width;
-		vertices[13] = (GLfloat)height;
-
-		if(uv) {
-			vertices[2] = *(uv + 0);
-			vertices[3] = *(uv + 1);
-			vertices[6] = *(uv + 2);
-			vertices[7] = *(uv + 3);
-			vertices[10] = *(uv + 4);
-			vertices[11] = *(uv + 5);
-			vertices[14] = *(uv + 6);
-			vertices[15] = *(uv + 7);
-		} else {
-			//vertices[2] = 0.f;
-			//vertices[3] = 0.f;
-			vertices[6] = 1.f;
-			//vertices[7] = 0.f;
-			//vertices[10] = 0.f;
-			vertices[11] = 1.f;
-			vertices[14] = 1.f;
-			vertices[15] = 1.f;
-		}
-
-		buffer_.reset(new GLArrayBuffer);
-		buffer_->generate();
-		buffer_->bind();
-		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));	// 0: Coord
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
-				GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
-				GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		buffer_->reset();
-		glBindVertexArray(0);
+		CreateVertexArray(width, height, uv);
 
 		texture_ = texture;
 	}
@@ -224,7 +81,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void PixelIcon::SetPixels (int width, int height, const unsigned char* pixels, const GLfloat* uv)
+	void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv)
 	{
 		assert(pixels);
 
@@ -240,9 +97,9 @@ namespace BlendInt {
 
 		texture_ = texture;
 
-		buffer_->bind();
+		vbo_->bind();
 
-		GLfloat* ptr = (GLfloat*)buffer_->map(GL_READ_WRITE);
+		GLfloat* ptr = (GLfloat*)vbo_->map(GL_READ_WRITE);
 
 		*(ptr + 4) = (GLfloat)width;
 		*(ptr + 9) = (GLfloat)height;
@@ -269,13 +126,13 @@ namespace BlendInt {
 			*(ptr + 15) = 1.f;
 		}
 
-		buffer_->unmap();
-		buffer_->reset();
+		vbo_->unmap();
+		vbo_->reset();
 
 		set_size(width, height);
 	}
 
-	void PixelIcon::SetTexture (int width, int height, const RefPtr<GLTexture2D>& texture,
+	void PixelIcon::SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture,
 					const GLfloat* uv)
 	{
 		if(!texture) return;
@@ -283,9 +140,9 @@ namespace BlendInt {
 
 		texture_ = texture;
 
-		buffer_->bind();
+		vbo_->bind();
 
-		GLfloat* ptr = (GLfloat*)buffer_->map(GL_READ_WRITE);
+		GLfloat* ptr = (GLfloat*)vbo_->map(GL_READ_WRITE);
 
 		*(ptr + 4) = (GLfloat)width;
 		*(ptr + 9) = (GLfloat)height;
@@ -312,8 +169,8 @@ namespace BlendInt {
 			*(ptr + 15) = 1.f;
 		}
 
-		buffer_->unmap();
-		buffer_->reset();
+		vbo_->unmap();
+		vbo_->reset();
 
 		set_size(width, height);
 	}
@@ -342,6 +199,80 @@ namespace BlendInt {
 	void PixelIcon::PerformSizeUpdate(const Size& size)
 	{
 		// Pixel Icon cannot resized
+	}
+
+	void PixelIcon::CreateVertexArray (unsigned int width, unsigned int height, const GLfloat* uv)
+	{
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		float x = width / 2.f;
+		float y = height / 2.f;
+
+		// (x, y) (u, v)
+		std::vector<GLfloat> v(16, 0.f);
+
+		v[0] = -x;
+		v[1] = -y;
+
+		v[4] = x;
+		v[5] = -y;
+
+		v[8] = -x;
+		v[9] = y;
+
+		v[12] = x;
+		v[13] = y;
+
+		if(uv == 0) {
+
+			v[2] = 0.f;
+			v[3] = 0.f;
+
+			v[6] = 1.f;
+			v[7] = 0.f;
+
+			v[10] = 0.f;
+			v[11] = 1.f;
+
+			v[14] = 1.f;
+			v[15] = 1.f;
+
+		} else {
+
+			v[2] = *(uv + 0);
+			v[3] = *(uv + 1);
+
+			v[6] = *(uv + 2);
+			v[7] = *(uv + 3);
+
+			v[10] = *(uv + 4);
+			v[11] = *(uv + 5);
+
+			v[14] = *(uv + 6);
+			v[15] = *(uv + 7);
+		}
+
+		vbo_.reset(new GLArrayBuffer);
+		vbo_->generate();
+		vbo_->bind();
+		vbo_->set_data(sizeof(GLfloat) * v.size(), &v[0]);
+
+		glEnableVertexAttribArray(
+		        Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
+		glEnableVertexAttribArray(
+		        Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		glVertexAttribPointer(
+		        Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		        GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(
+		        Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2,
+		        GL_FLOAT,
+		        GL_FALSE, 4 * sizeof(GLfloat),
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		vbo_->reset();
 	}
 
 }

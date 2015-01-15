@@ -82,7 +82,14 @@ namespace BlendInt {
 
 		void ClearHoverWidgets (AbstractView* hovered_widget, const Context* context);
 
-		Cpp::ConnectionScope* events() const {return events_.get();}
+		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
+		{
+			if(!events_) {
+				events_.reset(new Cpp::ConnectionScope);
+			}
+
+			return events_;
+		}
 
 		static inline ResponseType delegate_key_press_event (AbstractView* view, const Context* context)
 		{
@@ -137,8 +144,6 @@ namespace BlendInt {
 		{
 			return frame->DispatchHoverEvent(context);
 		}
-
-		static void SetActiveFrame (const Context* context, AbstractFrame* frame);
 
 		/**
 		 * @brief Render to texture

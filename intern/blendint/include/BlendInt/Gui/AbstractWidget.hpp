@@ -80,7 +80,14 @@ namespace BlendInt {
 
 		virtual ResponseType PerformMouseMove (const Context* context);
 
-		Cpp::ConnectionScope* events() const {return events_.get();}
+		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
+		{
+			if(!events_) {
+				events_.reset(new Cpp::ConnectionScope);
+			}
+
+			return events_;
+		}
 
 		static bool RenderSubWidgetsToTexture (
 			AbstractWidget* widget,

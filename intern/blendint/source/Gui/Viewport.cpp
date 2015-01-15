@@ -85,8 +85,9 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(request.position()->x()  + offset().x());
-			float y = static_cast<float>(request.position()->y()  + offset().y());
+			Point offset = GetOffset();
+			float x = static_cast<float>(request.position()->x()  + offset.x());
+			float y = static_cast<float>(request.position()->y()  + offset.y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -110,8 +111,9 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			float x = static_cast<float>(position().x() + offset().x());
-			float y = static_cast<float>(position().y() + offset().y());
+			Point offset = GetOffset();
+			float x = static_cast<float>(position().x() + offset.x());
+			float y = static_cast<float>(position().y() + offset.y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -173,7 +175,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		SetActiveFrame(context, this);
+		const_cast<Context*>(context)->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

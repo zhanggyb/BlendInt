@@ -41,9 +41,11 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (bool modal = false);
+		Dialog (AbstractLayout* layout = nullptr, bool modal = false);
 
-		Dialog (const String& title, bool modal = false);
+		Dialog (const String& title, AbstractLayout* layout = nullptr, bool modal = false);
+
+		Dialog (AbstractDecoration* decoration, AbstractLayout* layout = nullptr, bool modal = false);
 
 		virtual ~Dialog();
 
@@ -106,6 +108,8 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (const Context* context);
 
+		virtual bool RemoveSubView (AbstractView* view);
+
 		virtual void UpdateLayout ();
 
 	private:
@@ -140,8 +144,6 @@ namespace BlendInt {
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void OnLayoutDestroyed (AbstractWidget* layout);
 
 		void OnCloseButtonClicked ();
 

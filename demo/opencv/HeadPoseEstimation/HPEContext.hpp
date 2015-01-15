@@ -21,6 +21,8 @@
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Workspace.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/ButtonGroup.hpp>
 
 namespace BI=BlendInt;
 
@@ -44,33 +46,21 @@ private:
 		VideoStop
 	};
 
-	BI::ToolBox* CreateToolBoxOnce ();
-
 	BI::ToolBox* CreateToolBarOnce ();
 
 	BI::Panel* CreateButtons ();
 
 	BI::Workspace* CreateWorkspaceOnce ();
 
+	BI::Workspace* CreateToolsOnce ();
+
+	BI::ToolBox* CreateRadios ();
+
 	bool OpenCamera (int n, const BI::Size& resolution = BI::Size(640, 480));
-
-	void OnPlay (BI::AbstractButton* sender);
-
-	void OnPause (BI::AbstractButton* sender);
-
-	void OnStop(BI::AbstractButton* sender);
-
-	void OnTimeout (BI::Timer* t);
-
-	BI::ImageViewport* viewport_image_;
 
 	BI::Viewport* viewport_3d_;
 
-	Status status_;
-
-	cv::VideoCapture video_stream_;
-
-	BI::RefPtr<BI::Timer> timer_;
+	BI::RefPtr<BI::ButtonGroup> radio_group_;
 };
 
 #endif /* _HPECONTEXT_HPP_ */

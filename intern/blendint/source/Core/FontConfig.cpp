@@ -29,6 +29,8 @@
 
 #include <BlendInt/Core/FontConfig.hpp>
 
+#include <BlendInt/Font/FcConfig.hpp>
+
 using namespace std;
 using namespace boost;
 using namespace boost::filesystem;
@@ -130,32 +132,31 @@ namespace BlendInt {
 		int weight = bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
 		int slant = italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
 
-		FcPattern *pattern = FcPatternCreate();
-		FcPatternAddDouble(pattern, FC_SIZE, size);
-		FcPatternAddInteger(pattern, FC_WEIGHT, weight);
-		FcPatternAddInteger(pattern, FC_SLANT, slant);
-		FcPatternAddString(pattern, FC_FAMILY, (FcChar8*) family.c_str());
-		FcConfigSubstitute(0, pattern, FcMatchPattern);
-		FcDefaultSubstitute(pattern);
+		Fc::Pattern pattern;
+		pattern.add(FC_SIZE, size);
+		pattern.add(FC_WEIGHT, weight);
+		pattern.add(FC_SLANT, slant);
+		pattern.add(FC_FAMILY, (FcChar8*) family.c_str());
+		Fc::Config::substitute(0, pattern, FcMatchPattern);
+		pattern.default_substitute();
+
 		FcResult result;
-		FcPattern *match = FcFontMatch(0, pattern, &result);
-		FcPatternDestroy(pattern);
+		Fc::Pattern match = Fc::Config::match (0, pattern, &result);
 
 		if (match) {
 			FcValue value;
-			FcResult result = FcPatternGet(match, FC_FILE, 0, &value);
+			FcResult result = match.get(FC_FILE, 0, &value);
 			if (result) {
 				// print erro
 				fprintf(stderr, "ERROR: Fail to match font file");
 			} else {
 				file = (char*) (value.u.s);
 			}
+			//FcValueDestroy(value);
 		} else {
 			// TODO: if no file found, return the default font file
 			fprintf(stderr, "ERROR: font %s is not found\n", family.c_str());
 		}
-
-		FcPatternDestroy(match);
 
 		return file;
 	}

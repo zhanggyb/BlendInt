@@ -51,6 +51,9 @@ namespace BlendInt {
 
 	void AbstractLayout::SetMargin(const Margin& margin)
 	{
+		if(margin_ == margin) return;
+
+		PerformMarginUpdate(margin);
 	}
 
 	ResponseType BlendInt::AbstractLayout::Draw(const Context* context)

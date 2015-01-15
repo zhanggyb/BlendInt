@@ -73,7 +73,7 @@ namespace BlendInt {
 
 	AbstractView::AbstractView ()
 	: Object(),
-	  flags_(0),
+	  view_flag_(ViewManaged | ViewVisible),
 	  subs_count_(0),
 	  superview_(0),
 	  previous_view_(0),
@@ -81,8 +81,19 @@ namespace BlendInt {
 	  first_subview_(0),
 	  last_subview_(0)
 	{
-		set_visible(true);
-		//set_refresh(true);
+	}
+
+	AbstractView::AbstractView (int width, int height)
+	: Object(),
+	  view_flag_(ViewManaged | ViewVisible),
+	  subs_count_(0),
+	  superview_(0),
+	  previous_view_(0),
+	  next_view_(0),
+	  first_subview_(0),
+	  last_subview_(0)
+	{
+		set_size(std::abs(width), std::abs(height));
 	}
 
 	AbstractView::~AbstractView ()
@@ -128,9 +139,7 @@ namespace BlendInt {
 
 		AbstractView* p = superview_;
 		while(p) {
-			retval.reset(
-					retval.x() + p->position().x() + p->offset().x(),
-					retval.y() + p->position().y() + p->offset().y());
+			retval = retval + p->position() + p->GetOffset();
 			p = p->superview_;
 		}
 
@@ -220,13 +229,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractView::SetRoundType(int type)
-	{
-		if(round_type() == type) return;
-
-		PerformRoundTypeUpdate(type);
-	}
-
 	void AbstractView::SetVisible (bool visible)
 	{
 		if(this->visiable() == visible)
@@ -296,15 +298,6 @@ namespace BlendInt {
 	void AbstractView::SetDefaultBorderWidth(float border)
 	{
 		kBorderWidth = border;
-	}
-
-	void AbstractView::SetEmboss(bool emboss)
-	{
-		if(this->emboss() == emboss)
-			return;
-
-		set_emboss(emboss);
-		RequestRedraw();
 	}
 
 	void AbstractView::MoveToFirst(AbstractView* view)
@@ -558,11 +551,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractView::PerformRoundTypeUpdate(int round_type)
-	{
-		set_round_type(round_type);
-	}
-
 	void AbstractView::PerformVisibilityUpdate(const VisibilityUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -596,7 +584,7 @@ namespace BlendInt {
 		}
 	}
 
-	int AbstractView::GetHalfOutlineVertices(int round_type) const
+	int AbstractView::GetHalfOutlineVertices(int round_type)
 	{
 		round_type = round_type & (RoundBottomLeft | RoundBottomRight);
 		int count = 0;
@@ -1924,10 +1912,28 @@ namespace BlendInt {
 			widget->next_view_ = 0;
 			widget->superview_ = 0;
 
-			if(widget->managed() && widget->reference_count() == 0) {
-				delete widget;
+			if (widget->managed()) {
+
+				if (widget->reference_count() == 0) {
+					delete widget;
+				} else {
+					DBG_PRINT_MSG(
+					        "%s is set managed but is referenced by another object, it will be deleted later",
+					        widget->name_.c_str());
+				}
+
 			} else {
-				DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted", widget->name_.c_str());
+
+				if (widget->reference_count() == 0) {
+					DBG_PRINT_MSG(
+					        "Warning: %s is not set managed and will not be deleted",
+					        widget->name_.c_str());
+				} else {
+					DBG_PRINT_MSG(
+					        "%s is set unmanaged but is referenced by another object, it will be deleted later",
+					        widget->name_.c_str());
+				}
+
 			}
 
 			widget = next_view;
@@ -2017,115 +2023,6 @@ namespace BlendInt {
 		if(sub->VisibilityUpdateTest(request)) {
 			sub->PerformVisibilityUpdate(request);
 			sub->set_visible(visible);
-		}
-	}
-
-	void AbstractView::MoveSubWidgets(int move_x, int move_y)
-	{
-		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-			MoveSubViewTo(p, p->position().x() + move_x,
-			        p->position().y() + move_y);
-		}
-	}
-
-	void AbstractView::ResizeSubWidgets(const Size& size)
-	{
-		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-			ResizeSubView(p, size);
-		}
-	}
-
-	void AbstractView::ResizeSubWidgets(int w, int h)
-	{
-		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-			ResizeSubView(p, w, h);
-		}
-	}
-
-	void AbstractView::FillSingleWidget(int index, const Size& size,
-			const Margin& margin)
-	{
-		int x = margin.left();
-		int y = margin.bottom();
-
-		int w = size.width() - margin.hsum();
-		int h = size.height() - margin.vsum();
-
-		FillSingleWidget(index, x, y, w, h);
-	}
-
-	void AbstractView::FillSingleWidget(int index, const Point& pos,
-			const Size& size)
-	{
-		FillSingleWidget(index, pos.x(), pos.y(), size.width(), size.height());
-	}
-
-	void AbstractView::FillSingleWidget(int index, int left, int bottom,
-			int width, int height)
-	{
-		AbstractView* widget = GetWidgetAt(index);
-
-		if (widget) {
-			ResizeSubView(widget, width, height);
-			MoveSubViewTo(widget, left, bottom);
-
-			if (widget->size().width() < width) {
-				MoveSubViewTo(widget,
-				        left + (width - widget->size().width()) / 2, bottom);
-			}
-
-			if (widget->size().height() < height) {
-				MoveSubViewTo(widget, left,
-				        bottom + (height - widget->size().height() / 2));
-			}
-		}
-	}
-
-	void AbstractView::FillSubWidgetsAveragely(const Point& out_pos,
-			const Size& out_size, const Margin& margin, Orientation orientation,
-			int alignment, int space)
-	{
-		if(first_subview_ == 0) return;
-
-		int x = out_pos.x() + margin.left();
-		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
-
-		if(orientation == Horizontal) {
-			DistributeHorizontally(x, width, space);
-			AlignHorizontally(y, height, alignment);
-		} else {
-			DistributeVertically(y, height, space);
-			AlignVertically(x, width, alignment);
-		}
-	}
-
-	void AbstractView::FillSubWidgetsAveragely(const Point& pos,
-			const Size& size, Orientation orientation, int alignment, int space)
-	{
-		if(first_subview_ == 0) return;
-
-		if(orientation == Horizontal) {
-			DistributeHorizontally(pos.x(), size.width(), space);
-			AlignHorizontally(pos.y(), size.height(), alignment);
-		} else {
-			DistributeVertically(pos.y(), size.height(), space);
-			AlignVertically(pos.x(), size.width(), alignment);
-		}
-	}
-
-	void AbstractView::FillSubWidgetsAveragely(int x, int y, int width,
-			int height, Orientation orientation, int alignment, int space)
-	{
-		if(first_subview_ == 0) return;
-
-		if(orientation == Horizontal) {
-			DistributeHorizontally(x, width, space);
-			AlignHorizontally(y, height, alignment);
-		} else {
-			DistributeVertically(y, height, space);
-			AlignVertically(x, width, alignment);
 		}
 	}
 

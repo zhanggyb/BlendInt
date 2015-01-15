@@ -237,6 +237,8 @@ namespace BlendInt {
 		 */
 		AbstractView ();
 
+		AbstractView (int width, int height);
+
 		/**
 		 * @brief Destructor
 		 */
@@ -269,11 +271,18 @@ namespace BlendInt {
 
 		void MoveTo (const Point& pos);
 
-		void SetRoundType (int type);
-
 		void SetVisible (bool visible);
 
-		void SetEmboss (bool emboss);
+		void RequestRedraw ();
+
+		AbstractView* operator [] (int i) const;
+
+		AbstractView* GetWidgetAt (int i) const;
+
+		const Point& position () const
+		{
+			return position_;
+		}
 
 		virtual bool IsExpandX () const
 		{
@@ -287,20 +296,10 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
-		void RequestRedraw ();
-
-		AbstractView* operator [] (int i) const;
-
-		AbstractView* GetWidgetAt (int i) const;
-
-		const Point& position () const
+		// always return (0, 0) except AbstractScrollable
+		virtual Point GetOffset () const
 		{
-			return position_;
-		}
-
-		const Point& offset () const
-		{
-			return offset_;
+			return Point(0, 0);
 		}
 
 		const Size& size () const
@@ -310,42 +309,32 @@ namespace BlendInt {
 
 		inline bool focus () const
 		{
-			return flags_ & ViewFocused;
+			return view_flag_ & ViewFocused;
 		}
 
 		inline bool hover () const
 		{
-			return flags_ & ViewHover;
+			return view_flag_ & ViewHover;
 		}
 
 		inline bool visiable () const
 		{
-			return flags_ & ViewVisible;
+			return view_flag_ & ViewVisible;
 		}
 
 		inline bool managed () const
 		{
-			return flags_ & ViewManaged;
-		}
-
-		inline bool emboss () const
-		{
-			return flags_ & ViewEmboss;
-		}
-
-		inline int round_type () const
-		{
-			return flags_ & 0x0F;
+			return view_flag_ & ViewManaged;
 		}
 
 		inline bool refresh () const
 		{
-			return flags_ & ViewRefresh;
+			return view_flag_ & ViewRefresh;
 		}
 
 		inline bool pressed_ext () const
 		{
-			return flags_ & ViewPressed;
+			return view_flag_ & ViewPressed;
 		}
 
 		inline int subs_count () const
@@ -436,16 +425,6 @@ namespace BlendInt {
 			position_ = pos;
 		}
 
-		void set_offset (int x, int y)
-		{
-			offset_.reset(x, y);
-		}
-
-		void set_offset (const Point& pos)
-		{
-			offset_ = pos;
-		}
-
 		/**
 		 * @brief preset the size of the form
 		 * @param width
@@ -471,71 +450,57 @@ namespace BlendInt {
 			size_ = size;
 		}
 
-		inline void set_round_type (int type)
-		{
-			flags_ = (flags_ & 0xFFF0) + (type & 0x0F);
-		}
-
 		inline void set_focusable (bool focusable)
 		{
 			if(focusable) {
-				SETBIT(flags_, ViewFocusable);
+				SETBIT(view_flag_, ViewFocusable);
 			} else {
-				CLRBIT(flags_, ViewFocusable);
+				CLRBIT(view_flag_, ViewFocusable);
 			}
 		}
 
 		inline void set_focus (bool focus)
 		{
 			if(focus) {
-				SETBIT(flags_, ViewFocused);
+				SETBIT(view_flag_, ViewFocused);
 			} else {
-				CLRBIT(flags_, ViewFocused);
+				CLRBIT(view_flag_, ViewFocused);
 			}
 		}
 
 		inline void set_hover (bool hover)
 		{
 			if(hover) {
-				SETBIT(flags_, ViewHover);
+				SETBIT(view_flag_, ViewHover);
 			} else {
-				CLRBIT(flags_, ViewHover);
+				CLRBIT(view_flag_, ViewHover);
 			}
 		}
 
 		inline void set_visible (bool visiable)
 		{
 			if(visiable) {
-				SETBIT(flags_, ViewVisible);
+				SETBIT(view_flag_, ViewVisible);
 			} else {
-				CLRBIT(flags_, ViewVisible);
-			}
-		}
-
-		inline void set_emboss (bool emboss)
-		{
-			if (emboss) {
-				SETBIT(flags_, ViewEmboss);
-			} else {
-				CLRBIT(flags_, ViewEmboss);
+				CLRBIT(view_flag_, ViewVisible);
 			}
 		}
 
 		inline void set_pressed (bool pressed)
 		{
 			if(pressed) {
-				SETBIT(flags_, ViewPressed);
+				SETBIT(view_flag_, ViewPressed);
 			} else {
-				CLRBIT(flags_, ViewPressed);
+				CLRBIT(view_flag_, ViewPressed);
 			}
 		}
 
 		inline void set_refresh (bool refresh)
 		{
 			if(refresh) {
-				SETBIT(flags_, ViewRefresh);
+				SETBIT(view_flag_, ViewRefresh);
 			} else {
-				CLRBIT(flags_, ViewRefresh);
+				CLRBIT(view_flag_, ViewRefresh);
 			}
 		}
 
@@ -575,8 +540,6 @@ namespace BlendInt {
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
-
 		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
 		void ReportSizeUpdate (const SizeUpdateRequest& request);
@@ -605,40 +568,6 @@ namespace BlendInt {
 
 		void SetSubViewVisibility (AbstractView* sub, bool visible);
 
-		void MoveSubWidgets (int offset_x, int offset_y);
-
-		void ResizeSubWidgets (const Size& size);
-
-		void ResizeSubWidgets (int w, int h);
-
-		void FillSingleWidget (int index, const Size& size, const Margin& margin);
-
-		void FillSingleWidget (int index, const Point& pos, const Size& size);
-
-		void FillSingleWidget (int index, int left, int bottom, int width, int height);
-
-		void FillSubWidgetsAveragely (const Point& out_pos, const Size& out_size,
-						const Margin& margin, Orientation orientation,
-						int alignment, int space);
-
-		void FillSubWidgetsAveragely (const Point& pos, const Size& size,
-						Orientation orientation, int alignment, int space);
-
-		/**
-		 * @brief Fill in the container with average size
-		 * @param[in] x the left position
-		 * @param[in] y the bottom position
-		 */
-		void FillSubWidgetsAveragely (int x, int y, int width,
-						int height, Orientation orientation,
-						int alignment, int space);
-
-		/**
-		 * @brief Used to get emboss vertices
-		 * @return
-		 */
-		int GetHalfOutlineVertices (int round_type) const;
-
 		void DrawSubViewsOnce (const Context* context);
 
 		static void GenerateVertices (
@@ -662,6 +591,12 @@ namespace BlendInt {
 
 		static int GetOutlineVertices (int round_type);
 
+		/**
+		 * @brief Used to get emboss vertices
+		 * @return
+		 */
+		static int GetHalfOutlineVertices (int round_type);
+
 	private:
 
 		friend class Context;
@@ -672,32 +607,22 @@ namespace BlendInt {
 
 		enum ViewFlagIndex {
 
-			ViewRoundTopLeft = (1 << 0),
+			ViewManaged = (1 << 0),
 
-			ViewRoundTopRight = (1 << 1),
+			ViewVisible = (1 << 1),
 
-			ViewRoundBottomRight = (1 << 2),
+			// only valid when use off-screen render in container
+			ViewRefresh = (1 << 2),
 
-			ViewRoundBottomLeft = (1 << 3),
+			ViewFocused = (1 << 3),
 
-			ViewManaged = (1 << 4),
+			/** If this view is in cursor hover list in Context */
+			ViewHover = (1 << 4),
 
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocusable = (1 << 6),
-
-			ViewFocused = (1 << 7),
-
-			/** If this view is in cursor hover list in Context */
-			ViewHover = (1 << 8),
-
-			ViewVisible = (1 << 9),
-
-			ViewEmboss = (1 << 10),
-
-			// only valid when use off-screen render in container
-			ViewRefresh = (1 << 11),
+			ViewFocusable = (1 << 6)
 
 		};
 
@@ -730,19 +655,17 @@ namespace BlendInt {
 		void set_manage (bool val)
 		{
 			if(val) {
-				SETBIT(flags_, ViewManaged);
+				SETBIT(view_flag_, ViewManaged);
 			} else {
-				CLRBIT(flags_, ViewManaged);
+				CLRBIT(view_flag_, ViewManaged);
 			}
 		}
 
 		Point position_;
 
-		Point offset_;
-
 		Size size_;
 
-		unsigned int flags_;
+		uint32_t view_flag_;
 
 		int subs_count_;	// count of sub widgets
 

@@ -70,7 +70,7 @@ void MainLayout::InitOnce ()
 
 void MainLayout::OnOpenClick()
 {
-	m_imgview->Open(ConvertFromString(m_input->text()).c_str());
+	m_imgview->OpenFile(ConvertFromString(m_input->text()).c_str());
 }
 
 void MainLayout::OnResize (AbstractWidget* context, int type)

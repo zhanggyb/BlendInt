@@ -54,7 +54,7 @@ namespace BlendInt {
 
 	void Block::AddWidget(Widget* widget)
 	{
-		AbstractView* orig_last = last_subview();
+		Widget* orig_last = dynamic_cast<Widget*>(last_subview());
 
 		if(PushBackSubView(widget)) {
 

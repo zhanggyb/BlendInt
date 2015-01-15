@@ -128,6 +128,7 @@ namespace BlendInt {
 		main_context->Draw();
 		glfwSwapBuffers(window);
 	}
+
 #endif
 	
 	void Init ()
@@ -159,7 +160,7 @@ namespace BlendInt {
 		glfwSetMouseButtonCallback(window, &CbMouseButton);
 		glfwSetCursorPosCallback(window, &CbCursorPos);
 #ifdef __APPLE__
-		glfwSetWindowRefreshCall(window, &CbWindowRefresh);
+		glfwSetWindowRefreshCallback(window, &CbWindowRefresh);
 #endif
 
 		/* Make the window's context current */

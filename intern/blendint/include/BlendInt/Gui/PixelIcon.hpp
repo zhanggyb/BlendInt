@@ -38,17 +38,17 @@ namespace BlendInt {
 	{
 	public:
 
-		PixelIcon (int width, int height);
+		PixelIcon (unsigned int width, unsigned int height);
 
-		PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
+		PixelIcon (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv = 0);
 
-		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
+		PixelIcon (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
 		virtual ~PixelIcon ();
 
-		void SetPixels (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
+		void SetPixels (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv = 0);
 
-		void SetTexture (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
+		void SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
@@ -58,12 +58,17 @@ namespace BlendInt {
 
 	private:
 
+		/**
+		 * @brief Create VBO, VAO and bind VBO to vao_
+		 */
+		void CreateVertexArray (unsigned int width, unsigned int height, const GLfloat* uv = 0);
+
 		GLuint vao_;
 
 		/**
 		 * @brief Coord and UV vertex buffer
 		 */
-		RefPtr<GLArrayBuffer> buffer_;
+		RefPtr<GLArrayBuffer> vbo_;
 
 		RefPtr<GLTexture2D> texture_;
 

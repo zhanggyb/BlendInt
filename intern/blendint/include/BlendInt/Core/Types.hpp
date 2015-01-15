@@ -78,12 +78,12 @@ namespace BlendInt {
 	enum Alignment
 	{
 		AlignNone = 0x0,
-		AlignTop = 0x1,
-		AlignBottom = 0x2,
-		AlignHorizontalCenter = 0x4,
-		AlignLeft = 0x10,
-		AlignRight = 0x20,
-		AlignVerticalCenter = 0x40,
+		AlignTop = (1 << 0),
+		AlignBottom = (1 << 1),
+		AlignHorizontalCenter = (1 << 2),
+		AlignLeft = (1 << 3),
+		AlignRight = (1 << 4),
+		AlignVerticalCenter = (1 << 5),
 		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter,
 		AlignTopLeft = AlignTop | AlignLeft,
 		AlignTopRight = AlignTop | AlignRight,
@@ -114,25 +114,6 @@ namespace BlendInt {
 		OnBottomRightCorner = OnRightBorder | OnBottomBorder,
 		OutsideRectangle = 0xF
 	};
-
-	/**
-	 * flags to set which corners will become rounded:
-	 *
-	 * 1------2
-	 * |      		|
-	 * 8------4
-	 */
-//	enum CornerType
-//	{
-//		CornerNone = 0,
-//		CornerTopLeft = (1 << 0),
-//		CornerTopRight = (1 << 1),
-//		CornerBottomRight = (1 << 2),
-//		CornerBottomLeft = (1 << 3),
-//		/* just for convenience */
-//		CornerAll = (CornerTopLeft | CornerTopRight
-//		        | CornerBottomRight | CornerBottomLeft)
-//	};
 
 	enum FocusStyle {
 		FocusOnClick,
@@ -178,23 +159,6 @@ namespace BlendInt {
 				| RoundBottomRight | RoundBottomLeft),
 		UI_RB_ALPHA = RoundAll + 1
 	};
-
-	/*
-	enum FormPropertyType {
-		FormSize,
-		FormPosition,
-		WidgetLayer,
-		WidgetVisibility,
-
-		SliderPropertyOrientation,
-		SliderPropertyValue,
-		SliderPropertyMinimum,
-		SliderPropertyMaximum,
-		SliderPropertyStep,
-
-		FormPropertyLast
-	};
-	*/
 
 	enum CursorShape {
 		ArrowCursor = 0,	//	The standard arrow cursor.

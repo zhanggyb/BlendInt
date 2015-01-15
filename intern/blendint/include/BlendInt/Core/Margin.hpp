@@ -99,11 +99,22 @@ namespace BlendInt {
 
 	private:
 
+		friend inline bool operator == (const Margin& src, const Margin& dst);
+
 		int left_;
 		int right_;
 		int top_;
 		int bottom_;
 	};
+
+	inline bool operator == (const Margin& src, const Margin& dst)
+	{
+		return (src.left_ == dst.left_) &&
+				(src.right_ == dst.right_) &&
+				(src.top_ == dst.top_) &&
+				(src.bottom_ == dst.bottom_);
+	}
+
 }
 
 #endif /* _BIL_MARGIN_HPP_ */

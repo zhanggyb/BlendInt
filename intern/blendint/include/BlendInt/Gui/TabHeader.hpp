@@ -24,8 +24,11 @@
 #ifndef _BLENDINT_GUI_TABHEADER_HPP_
 #define _BLENDINT_GUI_TABHEADER_HPP_
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/ButtonGroup.hpp>
+
 #include <BlendInt/Gui/TabButton.hpp>
 
 namespace BlendInt {
@@ -68,11 +71,11 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		RefPtr<GLArrayBuffer> inner_;
+		GLBuffer<> vbo_;
 
 		GLuint vao_;
 
-		ButtonGroup m_group;
+		ButtonGroup group_;
 
 		Cpp::Event<int> m_button_index_clicked;
 

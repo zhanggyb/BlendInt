@@ -132,6 +132,18 @@ namespace BlendInt {
 		return result_;
 	}
 
+	void Thread::CreateGLContext ()
+	{
+	}
+
+	void Thread::MakeGLContextCurrent ()
+	{
+	}
+
+	void Thread::DestroyGLContext ()
+	{
+	}
+
 	void Thread::SetCompleted()
 	{
 		/* completion was handled by pthread_join() */

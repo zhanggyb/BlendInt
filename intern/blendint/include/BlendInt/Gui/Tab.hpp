@@ -50,8 +50,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 	private:

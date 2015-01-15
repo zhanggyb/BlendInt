@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/TabButton.hpp>
 
 #include <BlendInt/Gui/Tab.hpp>
@@ -51,7 +50,9 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		TabHeader* header = Manage(new TabHeader);
+		DBG_SET_NAME(header, "TabHeader");
 		Stack* stack = Manage(new Stack);
+		DBG_SET_NAME(stack, "Stack");
 
 		PushBackSubView(header);	// 0
 		PushBackSubView(stack);	// 1
@@ -68,6 +69,7 @@ namespace BlendInt {
 	void Tab::AddWidget (const String& title, AbstractWidget* widget)
 	{
 		TabButton* btn = Manage(new TabButton);
+		DBG_SET_NAME(btn, ConvertFromString(title).c_str());
 		btn->SetText(title);
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
@@ -124,26 +126,11 @@ namespace BlendInt {
 		return stack->GetIndex();
 	}
 
-	void Tab::PerformPositionUpdate (const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			int x = request.position()->x() - position().x();
-			int y = request.position()->y() - position().y();
-
-			set_position(*request.position());
-			MoveSubWidgets(x, y);
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
 	void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillSubWidgetsInTab(*request.size());
 			set_size(*request.size());
+			FillSubWidgetsInTab(*request.size());
 		}
 
 		if(request.source() == this) {
@@ -161,8 +148,8 @@ namespace BlendInt {
 
 	void Tab::FillSubWidgetsInTab(const Size& out_size)
 	{
-		int x = position().x();
-		int y = position().y();
+		int x = 0;
+		int y = 0;
 		int w = out_size.width();
 		int h = out_size.height();
 
@@ -171,7 +158,7 @@ namespace BlendInt {
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
 	{
-		int header_y = position().y() + size().height();
+		int header_y = h;
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
 		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));

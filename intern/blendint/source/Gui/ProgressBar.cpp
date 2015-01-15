@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
 
@@ -42,7 +41,7 @@ namespace BlendInt {
 
 	ProgressBar::ProgressBar(Orientation orientation)
 	: Widget(),
-	  m_orientation(orientation)
+	  orientation_(orientation)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 20);
@@ -50,19 +49,19 @@ namespace BlendInt {
 			set_size(20, 200);
 		}
 
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vao_);
 
 		InitializeProgressBar();
 	}
 
 	ProgressBar::~ProgressBar ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 	
 	bool ProgressBar::IsExpandX () const
 	{
-		if(m_orientation == Horizontal) {
+		if(orientation_ == Horizontal) {
 			return true;
 		} else {
 			return false;
@@ -71,7 +70,7 @@ namespace BlendInt {
 	
 	bool ProgressBar::IsExpandY () const
 	{
-		if(m_orientation == Vertical) {
+		if(orientation_ == Vertical) {
 			return true;
 		} else {
 			return false;
@@ -88,15 +87,28 @@ namespace BlendInt {
 	void ProgressBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), default_border_width(),
-			        round_type(), round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
 
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			if (Context::theme->number_slider().shaded) {
+				GenerateRoundedVertices(Vertical,
+						Context::theme->number_slider().shadetop,
+						Context::theme->number_slider().shadedown,
+						&inner_verts,
+						&outer_verts);
+			} else {
+				GenerateRoundedVertices(&inner_verts, &outer_verts);
+			}
+
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::reset();
+
 			RequestRedraw();
 		}
 
@@ -107,111 +119,139 @@ namespace BlendInt {
 
 	void ProgressBar::PerformRoundTypeUpdate (int round_type)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type,
-				round_radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-
 		set_round_type(round_type);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Context::theme->number_slider().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		vbo_.bind(0);
+		vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
 		RequestRedraw();
 	}
 
 	void ProgressBar::PerformRoundRadiusUpdate (float radius)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(),
-				round_type(), radius);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-
 		set_round_radius(radius);
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (Context::theme->number_slider().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		vbo_.bind(0);
+		vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		GLArrayBuffer::reset();
+
 		RequestRedraw();
 	}
 
 	ResponseType ProgressBar::Draw(const Context* context)
 	{
-		RefPtr<GLSLProgram> program =
-						Context::shaders->widget_triangle_program();
-		program->use();
+		float x = context->active_frame()->GetRelativePosition(this).x()
+				- context->viewport_origin().x();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		int outline_vertices = GetOutlineVertices(round_type());
+		float len = 20.f;
 
-		glBindVertexArray(m_vao[0]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+		Context::shaders->widget_split_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), Context::theme->regular().outline.data());
+		if(hover()) {
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
+		} else {
+			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
+		}
 
-		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+		glUniform1f(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, Context::theme->number_slider().inner_sel.data());
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, Context::theme->number_slider().inner.data());
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
+
+		Context::shaders->widget_outer_program()->use();
+
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+				0.f, 0.f);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, Context::theme->number_slider().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
+
+		if (emboss()) {
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+					0.f, - 1.f);
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							GetHalfOutlineVertices(round_type()) * 2);
+		}
 
 		glBindVertexArray(0);
-		program->reset();
+
+		GLSLProgram::reset();
 
 		return Finish;
 	}
 
 	void ProgressBar::InitializeProgressBar ()
 	{
-		float minxi = default_border_width();
-		float maxxi = size().width() - default_border_width();
-		float minyi = default_border_width();
-		float maxyi = size().height() - default_border_width();
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-		float midx = (minxi + maxxi) / 2.f;
+		if (Context::theme->number_slider().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Context::theme->number_slider().shadetop,
+					Context::theme->number_slider().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
 
-		GLfloat verts[] = {
+		vbo_.generate();
 
-				minxi, minyi,	0.25f, 0.25f, 0.25f, 0.75f,
-				minxi, maxyi,	0.25f, 0.25f, 0.25f, 0.75f,
+		glGenVertexArrays(2, vao_);
 
-				midx, minyi,	0.25f, 0.25f, 0.25f, 0.25f,
-				midx, maxyi, 	0.25f, 0.25f, 0.25f, 0.25f,
+		glBindVertexArray(vao_[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
-				maxxi, minyi,	0.25f, 0.25f, 0.25f, 0.025f,
-				maxxi, maxyi,	0.25f, 0.25f, 0.25f, 0.025f
-
-		};
-
-		VertexTool tool;
-		tool.GenerateVertices (size(), default_border_width(), round_type(), round_radius());
-
-		glGenVertexArrays(2, m_vao);
-		glBindVertexArray(m_vao[0]);
-
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-
-		inner_->set_data(36 * sizeof(GLfloat), verts);
-		//tool.SetInnerBufferData(m_inner.get());
-
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		//glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(m_vao[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		// generate buffer for outer
+		glBindVertexArray(vao_[1]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
+				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-
+		vbo_.reset();
 	}
 
 }

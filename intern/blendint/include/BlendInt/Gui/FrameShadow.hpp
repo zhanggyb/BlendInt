@@ -28,11 +28,11 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractRoundForm.hpp>
+#include <BlendInt/Gui/AbstractShadow.hpp>
 
 namespace BlendInt {
 
-	class FrameShadow: public AbstractRoundForm
+	class FrameShadow: public AbstractShadow
 	{
 
 	public:
@@ -54,10 +54,6 @@ namespace BlendInt {
 	private:
 
 		void InitializeShadowMap ();
-
-		void GenerateShadowVertices (std::vector<GLfloat>& vertices, std::vector<GLuint>& elements);
-
-		static int GetOutlineVertexCount (int round_type);
 
 		GLuint vao_;
 
