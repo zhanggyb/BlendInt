@@ -34,7 +34,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/FolderList.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
@@ -61,20 +60,18 @@ namespace BlendInt {
 
 	ResponseType FolderList::Draw (const Context* context)
 	{
-		Context::shaders->widget_triangle_program()->use();
+		Context::shaders->widget_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), (GLfloat)position().x(), (GLfloat)position().y());
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR),
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
 				Context::theme->regular().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR),
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+		        0.f, 0.f);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
 				Context::theme->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
@@ -82,11 +79,10 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 1.0f,
+			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
-			        (float) position().x(), (float) position().y() - 1.f);
+			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			        0.f, -1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
@@ -100,16 +96,18 @@ namespace BlendInt {
 	void FolderList::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			VertexTool tool;
-			tool.GenerateVertices(*request.size(), default_border_width(),
-			        round_type(), round_radius());
-			inner_->bind();
-			inner_->set_data(tool.inner_size(), tool.inner_data());
-			outer_->bind();
-			outer_->set_data(tool.outer_size(), tool.outer_data());
-			GLArrayBuffer::reset();
-
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+			vbo_.bind(0);
+			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -119,63 +117,68 @@ namespace BlendInt {
 
 	void FolderList::PerformRoundTypeUpdate (int round_type)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(), round_type,
-				round_radius());
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
-
 		set_round_type(round_type);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
 
 	void FolderList::PerformRoundRadiusUpdate (float radius)
 	{
-		VertexTool tool;
-		tool.GenerateVertices(size(), default_border_width(),
-				round_type(), radius);
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		GLArrayBuffer::reset();
-
 		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
 
 	void FolderList::InitializeFolderListOnce ()
 	{
-		VertexTool tool;
-		tool.GenerateVertices (size(), default_border_width(), round_type(), round_radius());
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		vbo_.generate();
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(tool.inner_size(), tool.inner_data());
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(tool.outer_size(), tool.outer_data());
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		vbo_.reset();
 	}
 
 }

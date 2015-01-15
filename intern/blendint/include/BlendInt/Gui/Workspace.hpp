@@ -24,14 +24,11 @@
 #ifndef _BLENDINT_GUI_WORKSPACE_HPP_
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
-#include <BlendInt/Gui/VLayout.hpp>
-
-#include <BlendInt/Gui/Splitter.hpp>
-#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/FrameSplitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/FrameSplitter.hpp>
 
 namespace BlendInt {
 
@@ -66,37 +63,6 @@ namespace BlendInt {
 
 	};
 
-	/**
-	 * @brief A special container used in Workspace
-	 */
-	class EdgeButtonLayer: public Widget
-	{
-		DISALLOW_COPY_AND_ASSIGN(EdgeButtonLayer);
-
-	public:
-
-		EdgeButtonLayer();
-
-		virtual ~EdgeButtonLayer ();
-
-		virtual bool Contain (const Point& point) const;
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-	private:
-
-		void InitializeSideButtonLayer ();
-
-		void AlighButtons (const Point& out_pos, const Size& out_size);
-
-		void AlignButtons (int x, int y, int w, int h);
-
-	};
-
 	// ------------------------
 
 	/**
@@ -124,7 +90,7 @@ namespace BlendInt {
 
 		void SetRightSideBar (ToolBox* sidebar);
 
-		void SetHeader (ToolBox* header);
+		void SetHeader (ToolBox* header, bool append = true);
 
 		void SwitchHeaderPosition ();
 
@@ -165,6 +131,8 @@ namespace BlendInt {
 		virtual ResponseType PerformMouseMove (const Context* context);
 
 		virtual ResponseType DispatchHoverEvent (const Context* context);
+
+		virtual bool RemoveSubView (AbstractView* view);
 
 	private:
 

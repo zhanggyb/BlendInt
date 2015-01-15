@@ -28,36 +28,40 @@
 
 namespace BlendInt {
 
-	class FcCharSet
-	{
-	public:
+	namespace Fc {
 
-		inline FcCharSet ()
-		: charset_(0)
+		class CharSet
 		{
-			charset_ = FcCharSetCreate();
+		public:
+
+			inline CharSet ()
+			: charset_(0)
+			{
+				charset_ = FcCharSetCreate();
+			}
+
+			inline ~CharSet ()
+			{
+				FcCharSetDestroy(charset_);
+			}
+
+			inline ::FcCharSet* charset () const
+			{
+				return charset_;
+			}
+
+		private:
+
+			friend inline bool operator == (const CharSet& a, const CharSet& b);
+
+			::FcCharSet* charset_;
+		};
+
+		bool operator == (const CharSet& a, const CharSet& b)
+		{
+			return FcCharSetEqual(a.charset_, b.charset_);
 		}
 
-		inline ~FcCharSet ()
-		{
-			FcCharSetDestroy(charset_);
-		}
-
-		inline ::FcCharSet* charset () const
-		{
-			return charset_;
-		}
-
-	private:
-
-		friend inline bool operator == (const FcCharSet& a, const FcCharSet& b);
-
-		::FcCharSet* charset_;
-	};
-
-	bool operator == (const FcCharSet& a, const FcCharSet& b)
-	{
-		return FcCharSetEqual(a.charset_, b.charset_);
 	}
 
 }

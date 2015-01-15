@@ -34,129 +34,134 @@
 
 namespace BlendInt {
 
-	class FcPattern
-	{
-	public:
+	namespace Fc {
 
-		inline FcPattern ()
-		: pattern_(0)
+		class Pattern
 		{
-			pattern_ = FcPatternCreate();
-		}
+		public:
 
-		// the p must be created through FcPatternCreate;
-		inline FcPattern (::FcPattern* p)
-		: pattern_(p)
-		{
-		}
+			inline Pattern ()
+			: pattern_(0)
+			{
+				pattern_ = FcPatternCreate();
+			}
 
-		inline FcPattern (const FcPattern& p)
-		: pattern_(0)
-		{
-			pattern_ = p.pattern_;
+			// the p must be created through FcPatternCreate;
+			inline Pattern (::FcPattern* p)
+			: pattern_(p)
+			{
+			}
 
-			if(pattern_)
-				FcPatternReference(pattern_);
-		}
+			inline Pattern (const Pattern& p)
+			: pattern_(0)
+			{
+				pattern_ = p.pattern_;
 
-		inline ~FcPattern ()
-		{
-			FcPatternDestroy(pattern_);
-		}
+				if(pattern_)
+					FcPatternReference(pattern_);
+			}
 
-		inline FcPattern& operator = (const FcPattern& orig)
-		{
-			if(pattern_)
+			inline ~Pattern ()
+			{
 				FcPatternDestroy(pattern_);
+			}
 
-			pattern_ = orig.pattern_;
+			inline Pattern& operator = (const Pattern& orig)
+			{
+				if(pattern_)
+					FcPatternDestroy(pattern_);
 
-			if(pattern_)
-				FcPatternReference(pattern_);
+				pattern_ = orig.pattern_;
 
-			return *this;
-		}
+				if(pattern_)
+					FcPatternReference(pattern_);
 
-		inline void reference (const FcPattern& p);
+				return *this;
+			}
 
-		inline bool add (const char* object, FcValue value, bool append = true);
+			inline bool add (const char* object, FcValue value, bool append = true)
+			{
+				return FcPatternAdd(pattern_, object, value, append ? FcTrue : FcFalse);
+			}
 
-		inline bool add (const char* object, int i)
+			inline bool add (const char* object, int i)
+			{
+				return FcPatternAddInteger(pattern_, object, i);
+			}
+
+			inline bool add (const char* object, double d)
+			{
+				return FcPatternAddDouble(pattern_, object, d);
+			}
+
+			// add string
+			inline bool add (const char* object, const FcChar8* s)
+			{
+				return FcPatternAddString(pattern_, object, s);
+			}
+
+			inline bool add (const char* object, const FcMatrix* m)
+			{
+				return FcPatternAddMatrix(pattern_, object, m);
+			}
+
+			inline bool add (const char* object, const CharSet& c)
+			{
+				return FcPatternAddCharSet(pattern_, object, c.charset());
+			}
+
+			inline bool add (const char* object, bool b)
+			{
+				return FcPatternAddBool(pattern_, object, b ? FcTrue : FcFalse);
+			}
+
+			inline bool add (const char *object, const FcLangSet *l)
+			{
+				return FcPatternAddLangSet (pattern_, object, l);
+			}
+
+			inline FcResult get (const char* object, int id, FcValue* v)
+			{
+				return FcPatternGet(pattern_, object, id, v);
+			}
+
+			inline bool remove (const char* object, int id)
+			{
+				return FcPatternRemove(pattern_, object, id);
+			}
+
+			inline void default_substitute ()
+			{
+				FcDefaultSubstitute(pattern_);
+			}
+
+			inline void print ()
+			{
+				FcPatternPrint(pattern_);
+			}
+
+			inline operator bool () const
+			{
+				return pattern_ != 0;
+			}
+
+			::FcPattern* pattern () const {return pattern_;}
+
+			inline static Pattern duplicate (const Pattern& pattern);
+
+		private:
+
+			friend inline bool operator == (const Pattern& pa, const Pattern& pb);
+
+			::FcPattern* pattern_;
+
+		};
+
+		inline bool operator == (const Pattern& pa, const Pattern& pb)
 		{
-			return FcPatternAddInteger(pattern_, object, i);
+			return FcPatternEqual(pa.pattern_, pb.pattern_);
 		}
 
-		inline bool add (const char* object, double d)
-		{
-			return FcPatternAddDouble(pattern_, object, d);
-		}
-
-		// add string
-		inline bool add (const char* object, const FcChar8* s)
-		{
-			return FcPatternAddString(pattern_, object, s);
-		}
-
-		inline bool add (const char* object, const FcMatrix* m)
-		{
-			return FcPatternAddMatrix(pattern_, object, m);
-		}
-
-		inline bool add (const char* object, const FcCharSet& c)
-		{
-			return FcPatternAddCharSet(pattern_, object, c.charset());
-		}
-
-		inline bool add (const char* object, bool b)
-		{
-			return FcPatternAddBool(pattern_, object, b ? FcTrue : FcFalse);
-		}
-
-		inline bool add (const char *object, const FcLangSet *l)
-		{
-			return FcPatternAddLangSet (pattern_, object, l);
-		}
-
-		inline FcResult get (const char* object, int id, FcValue* v)
-		{
-			return FcPatternGet(pattern_, object, id, v);
-		}
-
-		inline bool remove (const char* object, int id)
-		{
-			return FcPatternRemove(pattern_, object, id);
-		}
-
-		inline void default_substitute ()
-		{
-			FcDefaultSubstitute(pattern_);
-		}
-
-		inline void print ()
-		{
-			FcPatternPrint(pattern_);
-		}
-
-		inline operator bool () const
-		{
-			return pattern_ != 0;
-		}
-
-		::FcPattern* pattern () const {return pattern_;}
-
-		inline static FcPattern duplicate (const FcPattern& pattern);
-
-	private:
-
-		friend inline bool operator == (const FcPattern& pa, const FcPattern& pb);
-
-		::FcPattern* pattern_;
-
-	};
-
-	inline bool operator == (const FcPattern& pa, const FcPattern& pb)
-	{
-		return FcPatternEqual(pa.pattern_, pb.pattern_);
 	}
 
 }

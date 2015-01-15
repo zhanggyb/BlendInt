@@ -25,15 +25,13 @@ using namespace BlendInt;
 
 HPEContext::HPEContext()
 : BI::Context(),
-  viewport_image_(0),
-  viewport_3d_(0),
-  status_(VideoStop)
+  viewport_3d_(0)
 {
 	FrameSplitter* vsplitter = new FrameSplitter(Vertical);
 
 	FrameSplitter* splitter = new FrameSplitter;
 
-	ToolBox* tools = CreateToolBoxOnce();
+	Workspace* tools = CreateToolsOnce();
 	Workspace* workspace = CreateWorkspaceOnce();
 
 	splitter->AddFrame(workspace);
@@ -47,13 +45,6 @@ HPEContext::HPEContext()
 	AddFrame(vsplitter);
 
 	events()->connect(resized(), vsplitter, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
-
-	timer_.reset(new Timer);
-	timer_->SetInterval(1000 / 30);	// 30 fps
-
-	events()->connect(timer_->timeout(), this, &HPEContext::OnTimeout);
-
-	viewport_image_->OpenFile("test.jpg");
 }
 
 HPEContext::~HPEContext ()
@@ -64,33 +55,6 @@ HPEContext::~HPEContext ()
 void HPEContext::SynchronizeWindow()
 {
 	glfwPostEmptyEvent();
-}
-
-ToolBox* HPEContext::CreateToolBoxOnce()
-{
-	ToolBox* tools = new ToolBox(Vertical);
-
-	HLayout* head_layout = CreateRadios();
-
-	Expander* expander = new Expander("Resolution");
-
-	NumericalSlider* ns1 = new NumericalSlider;
-	NumericalSlider* ns2 = new NumericalSlider;
-
-	Block* vblock = new Block(Vertical);
-	vblock->AddWidget(ns1);
-	vblock->AddWidget(ns2);
-
-	expander->Setup(vblock);
-	expander->Resize(expander->GetPreferredSize());
-
-	Panel* btn_panel = CreateButtons();
-
-	tools->AddWidget(head_layout);
-	tools->AddWidget(expander);
-	tools->AddWidget(btn_panel);
-
-	return tools;
 }
 
 ToolBox* HPEContext::CreateToolBarOnce()
@@ -139,11 +103,42 @@ Workspace* HPEContext::CreateWorkspaceOnce()
 	return workspace;
 }
 
-HLayout* HPEContext::CreateRadios()
+Workspace* HPEContext::CreateToolsOnce()
 {
-	radio_group_.reset(new ButtonGroup);
+	Workspace* workspace = new Workspace;
 
-	HLayout* layout = new HLayout;
+	ToolBox* header = CreateRadios();
+
+	ToolBox* tools = new ToolBox(Vertical);
+
+	Expander* expander = new Expander("Resolution");
+
+	NumericalSlider* ns1 = new NumericalSlider;
+	NumericalSlider* ns2 = new NumericalSlider;
+
+	Block* vblock = new Block(Vertical);
+	vblock->AddWidget(ns1);
+	vblock->AddWidget(ns2);
+
+	expander->Setup(vblock);
+	expander->Resize(expander->GetPreferredSize());
+
+	Panel* btn_panel = CreateButtons();
+
+	tools->AddWidget(expander);
+	tools->AddWidget(btn_panel);
+
+	workspace->SetHeader(header, false);
+	workspace->SetViewport(tools);
+
+	return workspace;
+}
+
+ToolBox* HPEContext::CreateRadios()
+{
+	ToolBox* radio_tool = new ToolBox(Horizontal);
+
+	radio_group_.reset(new ButtonGroup);
 
 	ComboBox* combo = new ComboBox;
 
@@ -169,12 +164,12 @@ HLayout* HPEContext::CreateRadios()
 	hblock->AddWidget(radio4);
 	hblock->AddWidget(radio5);
 
-	layout->AddWidget(combo);
-	layout->AddWidget(hblock);
+	radio_tool->AddWidget(combo);
+	radio_tool->AddWidget(hblock);
 
-	layout->Resize(layout->GetPreferredSize());
+	radio_tool->Resize(radio_tool->GetPreferredSize());
 
-	return layout;
+	return radio_tool;
 }
 
 Panel* HPEContext::CreateButtons()
@@ -208,58 +203,5 @@ Panel* HPEContext::CreateButtons()
 	panel->SetLayout(layout);
 	panel->Resize(layout->GetPreferredSize());
 
-	events()->connect(play->clicked(), this, &HPEContext::OnPlay);
-	events()->connect(pause->clicked(), this, &HPEContext::OnPause);
-	events()->connect(stop->clicked(), this, &HPEContext::OnStop);
-
 	return panel;
-}
-
-bool HPEContext::OpenCamera(int n, const BI::Size& resolution)
-{
-	bool retval = false;
-
-	video_stream_.open(n);
-	if(video_stream_.isOpened()) {
-
-		video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
-		video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
-
-		RequestRedraw();
-	} else {
-		DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
-	}
-
-	return retval;
-}
-
-void HPEContext::OnPlay(AbstractButton* sender)
-{
-	DBG_PRINT_MSG("%s", "Start Play");
-	//viewport_->OpenCamera(0, Size(800, 600));
-	//viewport_->Play();
-	timer_->Start();
-}
-
-void HPEContext::OnPause (AbstractButton* sender)
-{
-	DBG_PRINT_MSG("%s", "Pause");
-	//viewport_->Pause();
-	timer_->Stop();
-}
-
-void HPEContext::OnStop(AbstractButton* sender)
-{
-	DBG_PRINT_MSG("%s", "Stop Play");
-	//viewport_->Stop();
-	timer_->Stop();
-}
-
-void HPEContext::OnTimeout(Timer* t)
-{
-	DBG_PRINT_MSG("%s", "refresh");
-
-	// TODO: create opengl context and load texture
-
-	RequestRedraw();
 }

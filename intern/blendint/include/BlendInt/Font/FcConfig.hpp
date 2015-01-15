@@ -30,45 +30,76 @@
 
 namespace BlendInt {
 
-	class FcConfig
-	{
-	public:
+	namespace Fc {
 
-		inline FcConfig ()
-		: config_(0)
+		class Config
 		{
-			config_ = FcConfigCreate();
-		}
+		public:
 
-		inline ~FcConfig ()
-		{
-			FcConfigDestroy(config_);
-		}
+			inline Config ()
+			: config_(0)
+			{
+				config_ = FcConfigCreate();
+			}
 
-		static inline bool substitute (const FcConfig* config, const FcPattern& p, FcMatchKind kind)
-		{
-			return FcConfigSubstitute(
-					config == nullptr ? NULL : config->config_,
-							p.pattern(),
-							kind
-			);
-		}
+			inline Config (::FcConfig* config)
+			: config_(config)
+			{
+			}
 
-		static inline FcPattern match (const FcConfig* config, const FcPattern& p, FcResult* result)
-		{
-			::FcPattern* pattern = FcFontMatch (
-					config == nullptr ? NULL : config->config_,
-					p.pattern(),
-					result);
+			inline Config (const Config& orig)
+			: config_(0)
+			{
+				config_ = orig.config_;
 
-			return FcPattern(pattern);
-		}
+				if(config_)
+					FcConfigReference(config_);
+			}
 
-	private:
+			inline ~Config ()
+			{
+				FcConfigDestroy(config_);
+			}
 
-		::FcConfig* config_;
+			inline Config& operator = (const Config& orig)
+			{
+				if(config_)
+					FcConfigDestroy(config_);
 
-	};
+				config_ = orig.config_;
+
+				if(config_)
+					FcConfigReference(config_);
+
+				return *this;
+			}
+
+			static inline bool substitute (const Config* config, const Pattern& p, FcMatchKind kind)
+			{
+				return FcConfigSubstitute(
+						config == nullptr ? NULL : config->config_,
+								p.pattern(),
+								kind
+				);
+			}
+
+			static inline Pattern match (const Config* config, const Pattern& p, FcResult* result)
+			{
+				::FcPattern* pattern = FcFontMatch (
+						config == nullptr ? NULL : config->config_,
+						p.pattern(),
+						result);
+
+				return Pattern(pattern);
+			}
+
+		private:
+
+			::FcConfig* config_;
+
+		};
+
+	}
 
 }
 

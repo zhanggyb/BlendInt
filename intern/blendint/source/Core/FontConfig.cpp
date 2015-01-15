@@ -132,16 +132,16 @@ namespace BlendInt {
 		int weight = bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
 		int slant = italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
 
-		FcPattern pattern;
+		Fc::Pattern pattern;
 		pattern.add(FC_SIZE, size);
 		pattern.add(FC_WEIGHT, weight);
 		pattern.add(FC_SLANT, slant);
 		pattern.add(FC_FAMILY, (FcChar8*) family.c_str());
-		FcConfig::substitute(0, pattern, FcMatchPattern);
+		Fc::Config::substitute(0, pattern, FcMatchPattern);
 		pattern.default_substitute();
 
 		FcResult result;
-		FcPattern match = FcConfig::match (0, pattern, &result);
+		Fc::Pattern match = Fc::Config::match (0, pattern, &result);
 
 		if (match) {
 			FcValue value;

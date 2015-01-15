@@ -35,8 +35,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Workspace.hpp>
-#include <BlendInt/Gui/ToolBox.hpp>
-#include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -161,96 +159,6 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	EdgeButtonLayer::EdgeButtonLayer()
-	: Widget()
-	{
-		InitializeSideButtonLayer();
-	}
-
-	EdgeButtonLayer::~EdgeButtonLayer()
-	{
-
-	}
-
-	bool EdgeButtonLayer::Contain(const Point& point) const
-	{
-		bool retval = false;
-
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
-
-			if(p->visiable()) {
-				retval = p->Contain(point);
-			}
-
-			if(retval) break;
-		}
-
-		return retval;
-	}
-
-	void EdgeButtonLayer::PerformSizeUpdate(const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			AlighButtons(position(), *request.size());
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void EdgeButtonLayer::PerformPositionUpdate(
-			const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			AlighButtons(*request.position(), size());
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
-		}
-	}
-
-	void EdgeButtonLayer::InitializeSideButtonLayer()
-	{
-		EdgeButton* left = Manage(new EdgeButton(RoundTopRight | RoundBottomRight));
-		DBG_SET_NAME(left, "LeftButton");
-		EdgeButton* right = Manage(new EdgeButton(RoundTopLeft | RoundBottomLeft));
-		DBG_SET_NAME(right, "RightButton");
-		EdgeButton* head = Manage(new EdgeButton(RoundTopLeft | RoundTopRight));
-		DBG_SET_NAME(head, "HeadButton");
-
-		PushBackSubView(left);
-		PushBackSubView(right);
-		PushBackSubView(head);
-
-		AlighButtons(position(), size());
-	}
-
-	void EdgeButtonLayer::AlighButtons(const Point& out_pos,
-			const Size& out_size)
-	{
-		int x = out_pos.x();
-		int y = out_pos.y();
-		int w = out_size.width();
-		int h = out_size.height();
-
-		AlignButtons(x, y, w, h);
-	}
-
-	void EdgeButtonLayer::AlignButtons(int x, int y, int w, int h)
-	{
-		AbstractView* p = first_subview();
-
-		MoveSubViewTo(p, x, y + h * 9 / 10);
-		p = p->next_view();
-		MoveSubViewTo(p, x + w - last_subview()->size().width(), y + h * 9 / 10);
-		p = p->next_view();
-		MoveSubViewTo(p, x + w * 9 / 10, y);
-	}
-
-	// -------------------------------
-
 	Workspace::Workspace()
 	: Frame(),
 	  left_sidebar_(0),
@@ -315,35 +223,84 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Workspace::SetHeader (ToolBox* header)
+	void Workspace::SetHeader (ToolBox* header, bool append)
 	{
 		if((header == nullptr) || (header_ == header)) return;
 
-		// TODO: check null and resize
 		header_ = header;
 
-		if(PushBackSubView(header_)) {
-			Size prefer = header_->GetPreferredSize();
-			MoveSubViewTo(header_, position());
-			ResizeSubView(header_, size().width(), prefer.height());
+		if(append) {
 
-			MoveSubViewTo(splitter_, position().x(), position().y() + prefer.height());
-			ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
+			if(PushBackSubView(header_)) {
+				Size prefer = header_->GetPreferredSize();
+				ResizeSubView(header_, size().width(), prefer.height());
+				ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
+
+				MoveSubViewTo(header_, position());
+				MoveSubViewTo(splitter_, position().x(), position().y() + header_->size().height());
+			} else {
+				DBG_PRINT_MSG("Error: %s", "cannot add header frame");
+			}
+
 		} else {
-			DBG_PRINT_MSG("Error: %s", "cannot add header frame");
+
+			if(PushFrontSubView(header_)) {
+				Size prefer = header_->GetPreferredSize();
+				ResizeSubView(header_, size().width(), prefer.height());
+				ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
+
+				MoveSubViewTo(splitter_, position());
+				MoveSubViewTo(header_, position().x(), position().y() + splitter_->size().height());
+			} else {
+				DBG_PRINT_MSG("Error: %s", "cannot add header frame");
+			}
+
 		}
 
 		RequestRedraw();
 	}
 
+	void Workspace::SwitchHeaderPosition ()
+	{
+		if(header_) {
+
+			if(first_subview() == header_) {
+
+				MoveToLast(header_);
+
+				MoveSubViewTo(header_, position());
+				MoveSubViewTo(splitter_, position().x(), position().y() + header_->size().height());
+
+
+			} else {
+
+				MoveToFirst(header_);
+
+				MoveSubViewTo(splitter_, position());
+				MoveSubViewTo(header_, position().x(), position().y() + splitter_->size().height());
+
+			}
+
+			RequestRedraw();
+		}
+	}
+
 	bool Workspace::IsExpandX () const
 	{
-		return true;
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+			if(p->IsExpandX()) return true;
+		}
+
+		return false;
 	}
 
 	bool Workspace::IsExpandY () const
 	{
-		return true;
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+			if(p->IsExpandY()) return true;
+		}
+
+		return false;
 	}
 
 	Size Workspace::GetPreferredSize () const
@@ -358,7 +315,7 @@ namespace BlendInt {
 			{
 				tmp = p->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
-				prefer.set_height(std::max(prefer.height(), tmp.height()));
+				prefer.set_height(prefer.height() + tmp.height());
 			}
 		}
 
@@ -392,12 +349,20 @@ namespace BlendInt {
 			set_size(*request.size());
 
 			if(header_) {
-				Size prefer = header_->GetPreferredSize();
-				MoveSubViewTo(header_, position());
-				ResizeSubView(header_, size().width(), prefer.height());
 
-				MoveSubViewTo(splitter_, position().x(), position().y() + prefer.height());
-				ResizeSubView(splitter_, size().width(), size().height() - prefer.height());
+				Size prefer = header_->GetPreferredSize();
+
+				ResizeSubView(header_, size().width(), prefer.height());
+				ResizeSubView(splitter_, size().width(), size().height() - header_->size().height());
+
+				if(first_subview() == header_) {
+					MoveSubViewTo(splitter_, position());
+					MoveSubViewTo(header_, position().x(), position().y() + splitter_->size().height());
+				} else {
+					MoveSubViewTo(header_, position());
+					MoveSubViewTo(splitter_, position().x(), position().y() + header_->size().height());
+				}
+
 			} else {
 				ResizeSubView(splitter_, size());
 			}
@@ -538,6 +503,29 @@ namespace BlendInt {
     	if(focused_frame_ != nullptr) {
     		delegate_focus_on(focused_frame_, context);
     	}
+	}
+
+	bool Workspace::RemoveSubView (AbstractView* view)
+	{
+		if(view == left_sidebar_) {
+			left_sidebar_ = nullptr;
+		} else if (view == right_sidebar_) {
+			right_sidebar_ = nullptr;
+		} else if (view == header_) {
+			header_ = nullptr;
+		} else if (view == viewport_) {
+			viewport_ = nullptr;
+		}
+
+		if(view == hover_frame_) {
+			hover_frame_ = nullptr;
+		}
+
+		if(view == focused_frame_) {
+			focused_frame_ = nullptr;
+		}
+
+		return Frame::RemoveSubView(view);
 	}
 
 	void Workspace::SetHoveredFrame (const Context* context)

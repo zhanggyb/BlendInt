@@ -37,7 +37,6 @@
 
 #include <algorithm>
 
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/Context.hpp>
 

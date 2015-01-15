@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_PROGRESSBAR_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -58,12 +59,11 @@ namespace BlendInt {
 
 		void InitializeProgressBar ();
 
-		GLuint m_vao[2];
+		GLuint vao_[2];
 
-		Orientation m_orientation;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		Orientation orientation_;
 	};
 
 }

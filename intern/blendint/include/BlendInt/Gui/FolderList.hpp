@@ -25,8 +25,7 @@
 #define _BLENDINT_GUI_FOLDERLIST_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -60,11 +59,7 @@ namespace BlendInt {
 		void InitializeFolderListOnce ();
 
 		GLuint vao_[2];
-
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
-
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 }
 
