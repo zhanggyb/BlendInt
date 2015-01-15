@@ -148,14 +148,25 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
 
-# build glfw
+# configure glfw
 if(WITH_BUILTIN_GLFW3)
     add_subdirectory(extern/glfw)
     include_directories(extern/glfw/include)
 
     if(OS_LINUX)
-        set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
+      set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
     endif()
+else()
+    if(OS_APPLE)
+        set(LIBS ${LIBS} glfw3)
+    else()
+        set(LIBS ${LIBS} glfw)
+    endif()
+endif()
+
+if(OS_APPLE)
+    add_definitions(-DGLFW_INCLUDE_GLCOREARB)
+    add_definitions(-DGLFW_INCLUDE_GLEXT)
 endif()
 
 # add rapidxml header files
@@ -166,7 +177,7 @@ if(WITH_BUILTIN_GLM)
 	# glm header in extern/glm
 	include_directories(extern)
 else()
-    if(OS_APPLE)
+  if(OS_APPLE)
 	#include_directories(/usr/local/include/glm)
 	else()
 		find_package(GLM REQUIRED)
@@ -212,4 +223,3 @@ endif()
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)
-

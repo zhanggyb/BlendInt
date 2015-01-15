@@ -51,7 +51,7 @@ For example, create a button with BlendInt:
 int main (int argc, char* argv[])
 {
 	using namespace BlendInt;
-	
+
 	// Don't forget to initialize CppEvents in main stack
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
@@ -66,7 +66,7 @@ int main (int argc, char* argv[])
 	// Create a button
 	Button* btn = Manage(new Button);
 	btn->SetText("Hello World!");
-	btn->SetPosition(200, 200); 
+	btn->SetPosition(200, 200);
 
 	// Create a dialog
 	Dialog* dlg = Manage(new Dialog);
@@ -100,11 +100,11 @@ Required:
 * [boost](http://www.boost.org) (system, filesystem, thread)
 * [Freetype2](http://www.freetype.org)
 * [GLM](http://glm.g-truc.net)
-* [Fontconfig](http://freedesktop.org/wiki/Software/fontconfig/) (recommanded)
+* [Fontconfig](http://freedesktop.org/wiki/Software/fontconfig/)
+* [GLFW](http://www.glfw.org) 3.1+
 
 Optional:
 
-* [GLFW](http://www.glfw.org) 3.1+
 * [Qt](http://www.qt-project.org) 5.x+
 * [Opencv](http://www.opencv.org)
 * [Doxygen](http://www.stack.nl/~dimitri/doxygen/) (to build api documentation)
@@ -247,11 +247,11 @@ TBD
 * BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
   sending/receiving events between objects, it's released under MIT
   License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
-* GLFW 3.1+ - used in some demos and unit tests, released under
+* [GLFW](http://www.glfw.org) 3.1+ - used in some demos and unit tests, released under
   zlib/libpng license.
-* glm - a header only C++ mathematics library for graphics software
+* [GLM](http://glm.g-truc.net) - a header only C++ mathematics library for graphics software
   based on the OpenGL Shading Language (GLSL) specification and
   released under the MIT license.
-* rapidxml - The author of RapidXml is Marcin Kalicinski, use of this
+* [RapidXml](http://rapidxml.sourceforge.net/) - The author of RapidXml is Marcin Kalicinski, use of this
   software is granted under one of the following two licenses: boost
   software license or MIT license.
