@@ -47,14 +47,21 @@ namespace BlendInt {
 
 		void SetRoundType (int type);
 
+		void SetEmboss (bool emboss);
+
 		inline uint32_t round_type () const
 		{
-			return round_type_ & 0x0F;
+			return widget_flag_ & 0x0F;
 		}
 
 		inline float round_radius () const
 		{
 			return round_radius_;
+		}
+
+		inline bool emboss () const
+		{
+			return widget_flag_ & WidgetEmboss;
 		}
 
 	protected:
@@ -74,11 +81,13 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
+		virtual void PerformEmbossUpdate (bool emboss);
+
 		virtual ResponseType Draw (const Context* context);
 
 		inline void set_round_type (int type)
 		{
-			round_type_ = (type & 0x0F);
+			widget_flag_ = (widget_flag_ & 0xFFF0) + (type & 0x0F);
 		}
 
 		inline void set_round_radius (float radius)
@@ -86,9 +95,32 @@ namespace BlendInt {
 			round_radius_ = radius;
 		}
 
+		inline void set_emboss (bool emboss)
+		{
+			if (emboss) {
+				SETBIT(widget_flag_, WidgetEmboss);
+			} else {
+				CLRBIT(widget_flag_, WidgetEmboss);
+			}
+		}
+
 	private:
 
-		uint32_t round_type_;
+		enum WidgetFlagIndex {
+
+			WidgetRoundTopLeft = (1 << 0),
+
+			WidgetRoundTopRight = (1 << 1),
+
+			WidgetRoundBottomRight = (1 << 2),
+
+			WidgetRoundBottomLeft = (1 << 3),
+
+			WidgetEmboss = (1 << 4),
+
+		};
+
+		uint32_t widget_flag_;
 
 		float round_radius_;
 

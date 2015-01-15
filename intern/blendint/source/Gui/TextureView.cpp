@@ -47,6 +47,7 @@ namespace BlendInt {
 	: AbstractScrollable()
 	{
 		set_size(400, 300);
+		image_size_ = size();
 
 		InitializeImageView();
 	}
@@ -64,22 +65,60 @@ namespace BlendInt {
 
 		if(image.Read(filename)) {
 
-			texture_->bind();
+			if(!texture_) {
+
+				texture_.reset(new GLTexture2D);
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+
+			} else if(!glIsTexture(texture_->id())){
+
+				texture_->generate();
+				texture_->bind();
+				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+				texture_->SetMinFilter(GL_LINEAR);
+				texture_->SetMagFilter(GL_LINEAR);
+
+			} else {
+
+				texture_->bind();
+
+			}
 
 			switch(image.channels()) {
-				case 3:
+
+				case 1: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+					texture_->SetImage(0, GL_RED, image.width(), image.height(),
+							0, GL_RED, GL_UNSIGNED_BYTE, image.pixels());
+					break;
+				}
+
+				case 2: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+					texture_->SetImage(0, GL_RG, image.width(), image.height(),
+							0, GL_RG, GL_UNSIGNED_BYTE, image.pixels());
+					break;
+				}
+
+				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
 					texture_->SetImage(0, GL_RGB, image.width(),
-					        image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
-					        image.pixels());
+							image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+							image.pixels());
 					break;
+				}
 
-				case 4:
+				case 4: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 					texture_->SetImage(0, GL_RGBA, image.width(),
 					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					        image.pixels());
 					break;
+				}
 
 				default:
 					break;
@@ -271,14 +310,6 @@ namespace BlendInt {
 	{
 		chessboard_.reset(new ChessBoard(20));
 		chessboard_->Resize(size());
-
-		texture_.reset(new GLTexture2D);
-		texture_->generate();
-		texture_->bind();
-		texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		texture_->SetMinFilter(GL_LINEAR);
-		texture_->SetMagFilter(GL_LINEAR);
-		texture_->reset();
 
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);

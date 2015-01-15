@@ -46,69 +46,54 @@ void GLFWDemoContext::SynchronizeWindow()
 
 void GLFWDemoContext::Debug()
 {
-	Tab* tab = Manage(new Tab);
-	DBG_SET_NAME(tab, "Tab");
+	TextureView* image = new TextureView;
 
-	Button* btn1 = Manage(new Button("Button1"));
-	DBG_SET_NAME(btn1, "Button in stack1");
-
-	Button* btn2 = Manage(new Button("Button2"));
-	DBG_SET_NAME(btn2, "Button in stack2");
-
-	tab->AddWidget("test1", btn1);
-	tab->AddWidget("test2", btn2);
-
-	Dialog * dialog = Manage(new Dialog("Tab", true));
+	Dialog * dialog = new Dialog("Tab");
 	DBG_SET_NAME(dialog, "Dialog");
 
-	dialog->Resize(500, 420);
+	dialog->Resize(600, 500);
 	dialog->MoveTo(100, 100);
 
-	tab->MoveTo(50, 50);
-
-	dialog->AddWidget(tab);
+	dialog->AddWidget(image);
+	image->MoveTo(100, 100);
 
 	AddFrame(dialog);
-
-	DBG_PRINT_MSG("tab rect: (%d, %d), (%d, %d)", tab->position().x(), tab->position().y(), tab->size().width(), tab->size().height());
-	DBG_PRINT_MSG("btn1 rect: (%d, %d), (%d, %d)", btn1->position().x(), btn1->position().y(), btn1->size().width(), btn1->size().height());
-
 }
 
 void GLFWDemoContext::InitializeGLFWDemoContext ()
 {
-	ToolBox* vp1 = Manage(new ToolBox(Vertical));
+	ToolBox* vp1 = new ToolBox(Vertical);
 	//vp1->SetPosition(200, 200);
 	//frame->Resize(400, 32);
 
-	Block* block = Manage(new Block(Vertical));
+	Block* block = new Block(Vertical);
 
-	Button* btn1 = Manage(new Button("Hello"));
+	Button* btn1 = new Button("Hello");
 	DBG_SET_NAME(btn1, "Button1");
-	Button* btn2 = Manage(new Button("Hello"));
+	Button* btn2 = new Button("Hello");
 	DBG_SET_NAME(btn2, "Button2");
-	Button* btn3 = Manage(new Button("Hello"));
+	Button* btn3 = new Button("Hello");
 	DBG_SET_NAME(btn3, "Button3");
 
 	block->AddWidget(btn1);
 	block->AddWidget(btn2);
 	block->AddWidget(btn3);
 
-	ScrollBar* bar = Manage(new ScrollBar);
+	ScrollBar* bar = new ScrollBar;
 
 	vp1->AddWidget(block);
 	vp1->AddWidget(bar);
 
-	Viewport* vp2 = Manage(new Viewport);
+	Viewport* vp2 = new Viewport;
 	DBG_SET_NAME(vp2, "Viewport2");
 
-	Viewport* vp3 = Manage(new Viewport);
+	Viewport* vp3 = new Viewport;
 	DBG_SET_NAME(vp3, "VFrame");
 
-	FrameSplitter* splitter1 = Manage(new FrameSplitter);
+	FrameSplitter* splitter1 = new FrameSplitter;
 	DBG_SET_NAME(splitter1, "Splitter1");
 
-	FrameSplitter* splitter2 = Manage(new FrameSplitter(Vertical));
+	FrameSplitter* splitter2 = new FrameSplitter(Vertical);
 	DBG_SET_NAME(splitter2, "Splitter2");
 	splitter2->Resize(600, 720);
 
@@ -127,33 +112,33 @@ void GLFWDemoContext::InitializeGLFWDemoContext ()
 
 	events()->connect(resized(), splitter1, static_cast<void (BI::AbstractView::*)(const BI::Size&) >(&BI::FrameSplitter::Resize));
 
-	Dialog* dlg = Manage(new Dialog(String("Hello")));
+	Dialog* dlg = new Dialog(String("Hello"));
     dlg->Resize(800, 600);
     dlg->MoveTo(200, 150);
 	AddFrame(dlg);
 
-	Button* ok = Manage(new Button("OK"));
-	Button* cancel = Manage(new Button("Cancel"));
+	Button* ok = new Button("OK");
+	Button* cancel = new Button("Cancel");
 	dlg->AddWidget(cancel);
 	dlg->AddWidget(ok);
 
 	ok->MoveTo(dlg->size().width() - ok->size().width() - 10, 10);
 	cancel->MoveTo(ok->position().x() - 5 - cancel->size().width(), 10);
 
-	PopupFrame* cs = Manage(new PopupFrame);
+	PopupFrame* cs = new PopupFrame;
 	cs->Resize(240, 320);
 	cs->MoveTo(500, 300);
 	AddFrame(cs);
 
-	TextEntry* text = Manage(new TextEntry);
+	TextEntry* text = new TextEntry;
 	text->MoveTo(20, 20);
 	cs->AddWidget(text);
 
-	ScrollBar* scroll = Manage(new ScrollBar(Horizontal));
+	ScrollBar* scroll = new ScrollBar(Horizontal);
 	scroll->MoveTo(20, 100);
 	cs->AddWidget(scroll);
 
-	Button* b = Manage(new Button("Test"));
+	Button* b = new Button("Test");
 	b->MoveTo(20, 150);
 	cs->AddWidget(b);
 

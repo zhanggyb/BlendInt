@@ -28,7 +28,7 @@ namespace BlendInt {
 
 	AbstractFloatingFrame::AbstractFloatingFrame()
 	: AbstractFrame(),
-	  round_type_(0),
+	  floating_frame_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
@@ -44,9 +44,9 @@ namespace BlendInt {
 
 	void AbstractFloatingFrame::SetRoundType (int type)
 	{
-		if(round_type_ == (type & 0x0F)) return;
+		if((floating_frame_flag_ & 0x0F) == (type & 0x0F)) return;
 
-		PerformRoundTypeUpdate(type);
+		PerformRoundTypeUpdate(type & 0x0F);
 	}
 
 	void AbstractFloatingFrame::SetRoundRadius(float radius)

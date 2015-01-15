@@ -29,9 +29,9 @@ HPEContext::HPEContext()
   viewport_3d_(0),
   status_(VideoStop)
 {
-	FrameSplitter* vsplitter = Manage(new FrameSplitter(Vertical));
+	FrameSplitter* vsplitter = new FrameSplitter(Vertical);
 
-	FrameSplitter* splitter = Manage(new FrameSplitter);
+	FrameSplitter* splitter = new FrameSplitter;
 
 	ToolBox* tools = CreateToolBoxOnce();
 	Workspace* workspace = CreateWorkspaceOnce();
@@ -68,16 +68,16 @@ void HPEContext::SynchronizeWindow()
 
 ToolBox* HPEContext::CreateToolBoxOnce()
 {
-	ToolBox* tools = Manage(new ToolBox(Vertical));
+	ToolBox* tools = new ToolBox(Vertical);
 
 	HLayout* head_layout = CreateRadios();
 
-	Expander* expander = Manage(new Expander("Resolution"));
+	Expander* expander = new Expander("Resolution");
 
-	NumericalSlider* ns1 = Manage(new NumericalSlider);
-	NumericalSlider* ns2 = Manage(new NumericalSlider);
+	NumericalSlider* ns1 = new NumericalSlider;
+	NumericalSlider* ns2 = new NumericalSlider;
 
-	Block* vblock = Manage(new Block(Vertical));
+	Block* vblock = new Block(Vertical);
 	vblock->AddWidget(ns1);
 	vblock->AddWidget(ns2);
 
@@ -95,14 +95,14 @@ ToolBox* HPEContext::CreateToolBoxOnce()
 
 ToolBox* HPEContext::CreateToolBarOnce()
 {
-	ToolBox* bar = Manage(new ToolBox(Horizontal));
+	ToolBox* bar = new ToolBox(Horizontal);
 
-	ComboBox* combo = Manage(new ComboBox);
+	ComboBox* combo = new ComboBox;
 	combo->Resize(48, combo->size().height());
 
-	MenuButton* btn1 = Manage(new MenuButton("File"));
-	MenuButton* btn2 = Manage(new MenuButton("Edit"));
-	MenuButton* btn3 = Manage(new MenuButton("View"));
+	MenuButton* btn1 = new MenuButton("File");
+	MenuButton* btn2 = new MenuButton("Edit");
+	MenuButton* btn3 = new MenuButton("View");
 
 	bar->AddWidget(combo);
 	bar->AddWidget(btn1);
@@ -116,18 +116,18 @@ ToolBox* HPEContext::CreateToolBarOnce()
 
 Workspace* HPEContext::CreateWorkspaceOnce()
 {
-	Workspace* workspace = Manage(new Workspace);
+	Workspace* workspace = new Workspace;
 	
-	ToolBox* header = Manage(new ToolBox(Horizontal));
+	ToolBox* header = new ToolBox(Horizontal);
 
-	ComboBox* combo = Manage(new ComboBox);
+	ComboBox* combo = new ComboBox;
 
-	Block* block1 = Manage(new Block(Horizontal));
+	Block* block1 = new Block(Horizontal);
 
-	Button* btn = Manage(new Button("Button1"));
+	Button* btn = new Button("Button1");
 	block1->AddWidget(btn);
 
-	btn = Manage(new Button("Button2"));
+	btn = new Button("Button2");
 	block1->AddWidget(btn);
 
 	header->AddWidget(combo);
@@ -143,17 +143,17 @@ HLayout* HPEContext::CreateRadios()
 {
 	radio_group_.reset(new ButtonGroup);
 
-	HLayout* layout = Manage(new HLayout);
+	HLayout* layout = new HLayout;
 
-	ComboBox* combo = Manage(new ComboBox);
+	ComboBox* combo = new ComboBox;
 
-	Block* hblock = Manage(new Block(Horizontal));
+	Block* hblock = new Block(Horizontal);
 
-	RadioButton* radio1 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SCENE)));
-	RadioButton* radio2 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SCENE_DATA)));
-	RadioButton* radio3 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NSURFACE)));
-	RadioButton* radio4 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCIRCLE)));
-	RadioButton* radio5 = Manage(new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCURVE)));
+	RadioButton* radio1 = new RadioButton(Context::icons->icon_16x16(Icons::SCENE));
+	RadioButton* radio2 = new RadioButton(Context::icons->icon_16x16(Icons::SCENE_DATA));
+	RadioButton* radio3 = new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NSURFACE));
+	RadioButton* radio4 = new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCIRCLE));
+	RadioButton* radio5 = new RadioButton(Context::icons->icon_16x16(Icons::SURFACE_NCURVE));
 
 	radio_group_->AddButton(radio1);
 	radio_group_->AddButton(radio2);
@@ -179,24 +179,24 @@ HLayout* HPEContext::CreateRadios()
 
 Panel* HPEContext::CreateButtons()
 {
-	Panel* panel = Manage(new Panel);
+	Panel* panel = new Panel;
 	panel->SetRoundType(RoundAll);
 
-	Block* hblock1 = Manage(new Block(Horizontal));
+	Block* hblock1 = new Block(Horizontal);
 
-	ComboBox* camera_no = Manage(new ComboBox);
-	ToggleButton* btn1 = Manage(new ToggleButton("Open Camera"));
+	ComboBox* camera_no = new ComboBox;
+	ToggleButton* btn1 = new ToggleButton("Open Camera");
 
 	hblock1->AddWidget(camera_no);
 	hblock1->AddWidget(btn1);
 
-	VLayout* layout = Manage(new VLayout);
+	VLayout* layout = new VLayout;
 
-	Block* hblock2 = Manage(new Block(Horizontal));
+	Block* hblock2 = new Block(Horizontal);
 
-	Button* play = Manage(new Button("Play"));
-	Button* pause = Manage(new Button("Pause"));
-	Button* stop = Manage(new Button("Stop"));
+	Button* play = new Button("Play");
+	Button* pause = new Button("Pause");
+	Button* stop = new Button("Stop");
 
 	hblock2->AddWidget(play);
 	hblock2->AddWidget(pause);

@@ -41,11 +41,11 @@
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Gui/FreeLayout.hpp>
+#include <BlendInt/Gui/FlowLayout.hpp>
 
 namespace BlendInt {
 
-	Dialog::Dialog (bool modal)
+	Dialog::Dialog (AbstractLayout* layout, bool modal)
 	: AbstractFloatingFrame(),
 	  focused_widget_(nullptr),
 	  hovered_widget_(nullptr),
@@ -68,16 +68,19 @@ namespace BlendInt {
 
 		InitializeDialogOnce();
 
-		// create default layout
-		layout_ = Manage(new FreeLayout);
+		if(layout != nullptr) {
+			layout_ = layout;
+		} else {
+			layout_ = Manage(new FlowLayout);
+		}
+
 		PushBackSubView(layout_);
 		layout_->Resize(size());
-		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
 
-	Dialog::Dialog(const String& title, bool modal)
+	Dialog::Dialog(const String& title, AbstractLayout* layout, bool modal)
 	: AbstractFloatingFrame(),
 	  focused_widget_(nullptr),
 	  hovered_widget_(nullptr),
@@ -107,11 +110,67 @@ namespace BlendInt {
 		PushBackSubView(decoration_);
 		events()->connect(decoration_->close_triggered(), this, &Dialog::OnCloseButtonClicked);
 
-		// create default layout
-		layout_ = Manage(new FreeLayout);
+		if(layout != nullptr) {
+			layout_ = layout;
+		} else {
+			layout_ = Manage(new FlowLayout);
+		}
+
 		PushBackSubView(layout_);
 		layout_->Resize(size().width(), size().height() - decoration_->size().height());
-		events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
+
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+	}
+
+	Dialog::Dialog (AbstractDecoration* decoration, AbstractLayout* layout,
+	        bool modal)
+	: AbstractFloatingFrame(),
+	  focused_widget_(nullptr),
+	  hovered_widget_(nullptr),
+	  decoration_(nullptr),
+	  layout_(nullptr),
+	  cursor_position_(InsideRectangle),
+	  dialog_flags_(0)
+	{
+		set_size(400, 300);
+		set_round_type(RoundAll);
+		set_round_radius(5.f);
+		set_refresh(true);
+		set_modal(modal);
+
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		model_matrix_ = glm::mat3(1.f);
+
+		applied_.reset(new Cpp::Event<Dialog*>);
+		canceled_.reset(new Cpp::Event<Dialog*>);
+
+		InitializeDialogOnce();
+
+		if(layout != nullptr) {
+			layout_ = layout;
+		} else {
+			layout_ = Manage(new FlowLayout);
+		}
+
+		DBG_PRINT_MSG("%s", "create decoration");
+		if(decoration != nullptr) {
+			decoration_ = decoration;
+
+			decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
+			decoration_->MoveTo(0, size().height() - decoration_->size().height());
+
+			PushBackSubView(decoration_);
+			events()->connect(decoration_->close_triggered(), this, &Dialog::OnCloseButtonClicked);
+
+			PushBackSubView(layout_);
+			layout_->Resize(size().width(), size().height() - decoration_->size().height());
+
+		} else {
+
+			PushBackSubView(layout_);
+			layout_->Resize(size());
+
+		}
 
 		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
 	}
@@ -137,7 +196,6 @@ namespace BlendInt {
 		if((layout == 0) || (layout == layout_)) return;
 
 		if(layout_) {
-			layout_->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
 
 			for(AbstractView* p = layout_->first_subview(); p; p = p->next_view()) {
 				layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
@@ -154,7 +212,6 @@ namespace BlendInt {
 		// index 1 is for layout
 		if(InsertSubView(1, layout)) {
 			layout_ = layout;
-			events()->connect(layout_->destroyed(), this, &Dialog::OnLayoutDestroyed);
 			MoveSubViewTo(layout_, 0, 0);
 
 			if(decoration_ != nullptr) {
@@ -699,15 +756,6 @@ namespace BlendInt {
 		hovered_widget_ = 0;
 	}
 
-	void Dialog::OnLayoutDestroyed(AbstractWidget* layout)
-	{
-		assert(layout == layout_);
-
-		DBG_PRINT_MSG("layout %s is destroyed", layout->name().c_str());
-		layout->destroyed().disconnectOne(this, &Dialog::OnLayoutDestroyed);
-		layout_ = 0;
-	}
-
 	void Dialog::InitializeDialogOnce()
 	{
 		std::vector<GLfloat> inner_verts;
@@ -767,6 +815,17 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		buffer_.reset();
+	}
+
+	bool Dialog::RemoveSubView (AbstractView* view)
+	{
+		if(view == layout_) {
+			layout_ = nullptr;
+		} else if(view == decoration_) {
+			decoration_ = nullptr;
+		}
+
+		return AbstractFloatingFrame::RemoveSubView(view);
 	}
 
 	void Dialog::OnCloseButtonClicked()

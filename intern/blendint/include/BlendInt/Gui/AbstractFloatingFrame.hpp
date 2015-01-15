@@ -44,7 +44,7 @@ namespace BlendInt {
 
 		inline uint32_t round_type () const
 		{
-			return round_type_ & 0x0F;
+			return floating_frame_flag_ & 0x0F;
 		}
 
 		inline float round_radius () const
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		inline void set_round_type (int type)
 		{
-			round_type_ = (type & 0x0F);
+			floating_frame_flag_ = (floating_frame_flag_ & 0xFFF0) + (type & 0x0F);
 		}
 
 		inline void set_round_radius (float radius)
@@ -81,7 +81,19 @@ namespace BlendInt {
 
 	private:
 
-		uint32_t round_type_;
+		enum FloatingFrameFlagIndex {
+
+			FloatingFrameRoundTopLeft = (1 << 0),
+
+			FloatingFrameRoundTopRight = (1 << 1),
+
+			FloatingFrameRoundBottomRight = (1 << 2),
+
+			FloatingFrameRoundBottomLeft = (1 << 3),
+
+		};
+
+		uint32_t floating_frame_flag_;
 
 		float round_radius_;
 

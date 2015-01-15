@@ -73,7 +73,7 @@ namespace BlendInt {
 
 	AbstractView::AbstractView ()
 	: Object(),
-	  flags_(0),
+	  view_flag_(ViewManaged | ViewVisible),
 	  subs_count_(0),
 	  superview_(0),
 	  previous_view_(0),
@@ -81,12 +81,11 @@ namespace BlendInt {
 	  first_subview_(0),
 	  last_subview_(0)
 	{
-		set_visible(true);
 	}
 
 	AbstractView::AbstractView (int width, int height)
 	: Object(),
-	  flags_(0),
+	  view_flag_(ViewManaged | ViewVisible),
 	  subs_count_(0),
 	  superview_(0),
 	  previous_view_(0),
@@ -94,8 +93,6 @@ namespace BlendInt {
 	  first_subview_(0),
 	  last_subview_(0)
 	{
-		set_visible(true);
-
 		set_size(std::abs(width), std::abs(height));
 	}
 
@@ -301,15 +298,6 @@ namespace BlendInt {
 	void AbstractView::SetDefaultBorderWidth(float border)
 	{
 		kBorderWidth = border;
-	}
-
-	void AbstractView::SetEmboss(bool emboss)
-	{
-		if(this->emboss() == emboss)
-			return;
-
-		set_emboss(emboss);
-		RequestRedraw();
 	}
 
 	void AbstractView::MoveToFirst(AbstractView* view)

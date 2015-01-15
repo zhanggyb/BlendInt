@@ -28,7 +28,7 @@ namespace BlendInt {
 
 	Widget::Widget()
 	: AbstractWidget(),
-	  round_type_(0),
+	  widget_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
@@ -46,9 +46,16 @@ namespace BlendInt {
 
 	void Widget::SetRoundType(int type)
 	{
-		if(round_type_ == (type & 0x0F)) return;
+		if((widget_flag_ & 0x0F) == (type & 0x0F)) return;
 
-		PerformRoundTypeUpdate(type);
+		PerformRoundTypeUpdate(type & 0x0F);
+	}
+
+	void Widget::SetEmboss(bool emboss)
+	{
+		if(this->emboss() == emboss) return;
+
+		PerformEmbossUpdate(emboss);
 	}
 
 	void Widget::PerformRoundTypeUpdate(int round)
@@ -59,6 +66,11 @@ namespace BlendInt {
 	void Widget::PerformRoundRadiusUpdate(float radius)
 	{
 		round_radius_ = radius;
+	}
+
+	void Widget::PerformEmbossUpdate(bool emboss)
+	{
+		set_emboss(emboss);
 	}
 
 	void Widget::GenerateRoundedVertices(std::vector<GLfloat>* inner,

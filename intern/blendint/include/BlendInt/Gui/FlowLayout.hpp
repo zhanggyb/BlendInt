@@ -21,58 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/FreeLayout.hpp>
+#ifndef _BLENDINT_GUI_FLOWLAYOUT_HPP_
+#define _BLENDINT_GUI_FLOWLAYOUT_HPP_
+
+#include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	FreeLayout::FreeLayout()
-	: AbstractLayout()
+	class FlowLayout: public AbstractLayout
 	{
+	public:
 
-	}
+		FlowLayout ();
 
-	FreeLayout::~FreeLayout()
-	{
-	}
+		virtual ~FlowLayout ();
 
-	bool FreeLayout::AddWidget(AbstractWidget* widget)
-	{
-		if(PushBackSubView(widget)) {
-			RequestRedraw();
-			return true;
-		}
+		virtual bool AddWidget (AbstractWidget* widget);
 
-		return false;
-	}
+		virtual bool InsertWidget (int index, AbstractWidget* widget);
 
-	bool FreeLayout::InsertWidget(int index, AbstractWidget* widget)
-	{
-		if(InsertSubView(index, widget)) {
-			RequestRedraw();
-			return true;
-		}
+		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-		return false;
-	}
+	protected:
 
-	bool FreeLayout::InsertWidget(int row, int column, AbstractWidget* widget)
-	{
-		if(InsertSubView(column, widget)) {
-			RequestRedraw();
-			return true;
-		}
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		return false;
-	}
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-	bool FreeLayout::SizeUpdateTest(const SizeUpdateRequest& request)
-	{
-		return true;
-	}
-
-	bool FreeLayout::PositionUpdateTest(const PositionUpdateRequest& request)
-	{
-		return true;
-	}
+	};
 
 }
+
+#endif /* _BLENDINT_GUI_FLOWLAYOUT_HPP_ */

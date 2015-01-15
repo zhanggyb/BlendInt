@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
 	Context::cursor->RegisterCursorType (new GLFWCursor(win));
 
-	FontViewerContext* context = Manage (new FontViewerContext(win));
+	FontViewerContext* context = new FontViewerContext(win);
 	DBG_SET_NAME(context, "Context");
 	SetContext(context);
 	context->Resize(1280, 800);

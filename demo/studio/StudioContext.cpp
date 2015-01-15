@@ -187,7 +187,7 @@ void StudioContext::OnOpenDialogForTextureView()
 
 void StudioContext::OnOpenModalDialog()
 {
-	Dialog * dialog = Manage(new Dialog("Hello", true));
+	Dialog * dialog = Manage(new Dialog("Hello"));
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 	AddFrame(dialog);
 }
@@ -211,7 +211,7 @@ void StudioContext::OnResize(const BI::Size& size)
 
 void StudioContext::OnOpenDialogForDecoration()
 {
-	Dialog * dialog = Manage(new Dialog("Hello World", true));
+	Dialog * dialog = Manage(new Dialog("Hello World"));
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
 	Decoration* dec = Manage(new Decoration("Test Decoration"));
@@ -224,7 +224,7 @@ void StudioContext::OnOpenDialogForDecoration()
 
 void StudioContext::OnOpenDialogForScrollView()
 {
-	Dialog * dialog = Manage(new Dialog("ScrollView", true));
+	Dialog * dialog = Manage(new Dialog("ScrollView"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
@@ -242,7 +242,7 @@ void StudioContext::OnOpenDialogForScrollView()
 
 void StudioContext::OnOpenDialogForNumericalSlider()
 {
-	Dialog * dialog = Manage(new Dialog("NumericalSlider", true));
+	Dialog * dialog = Manage(new Dialog("NumericalSlider"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
@@ -283,7 +283,7 @@ void StudioContext::OnOpenPanel1 (AbstractButton* btn)
 
 void StudioContext::OnOpenDialogForBlocks()
 {
-	Dialog * dialog = Manage(new Dialog("ScrollView", true));
+	Dialog * dialog = Manage(new Dialog("ScrollView"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
@@ -368,7 +368,7 @@ void StudioContext::OnOpenDialogForTab()
 	tab->AddWidget("test1", Manage(new Button("Button1")));
 	tab->AddWidget("test2", Manage(new Button("Button2")));
 
-	Dialog * dialog = Manage(new Dialog("Tab", true));
+	Dialog * dialog = Manage(new Dialog("Tab"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
@@ -383,7 +383,7 @@ void StudioContext::OnOpenDialogForScrollArea()
 {
 	ScrollArea* area = Manage(new ScrollArea);
 
-	Dialog * dialog = Manage(new Dialog("Tab", true));
+	Dialog * dialog = Manage(new Dialog("Tab"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 
@@ -401,7 +401,7 @@ void StudioContext::OnOpenDialogForTabHeader()
 	header->AddButton(Manage(new TabButton("tab2")));
 	header->AddButton(Manage(new TabButton("tab3")));
 
-	Dialog * dialog = Manage(new Dialog("Tab", true));
+	Dialog * dialog = Manage(new Dialog("Tab"));
 	dialog->Resize(500, 400);
 	dialog->MoveTo((size().width() - dialog->size().width()) / 2, (size().height() - dialog->size().height()) / 2);
 

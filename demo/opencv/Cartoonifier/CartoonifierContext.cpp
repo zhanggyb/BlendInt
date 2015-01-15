@@ -23,10 +23,10 @@ CartoonifierContext::CartoonifierContext()
 : BI::Context(),
   video_(0)
 {
-	FrameSplitter* splitter = Manage(new FrameSplitter);
+	FrameSplitter* splitter = new FrameSplitter;
 
 	ToolBox* tools = CreateToolBoxOnce();
-	video_ = Manage(new CVVideoViewport);
+	video_ = new CVVideoViewport;
 
 	splitter->AddFrame(video_);
 	splitter->AddFrame(tools);
@@ -48,15 +48,15 @@ void CartoonifierContext::SynchronizeWindow()
 
 ToolBox* CartoonifierContext::CreateToolBoxOnce()
 {
-	ToolBox* tools = Manage(new ToolBox(Vertical));
+	ToolBox* tools = new ToolBox(Vertical);
 
-	Expander* expander = Manage(new Expander("Light"));
+	Expander* expander = new Expander("Light");
 
-	NumericalSlider* ns1 = Manage(new NumericalSlider);
-	NumericalSlider* ns2 = Manage(new NumericalSlider);
-	NumericalSlider* ns3 = Manage(new NumericalSlider);
+	NumericalSlider* ns1 = new NumericalSlider;
+	NumericalSlider* ns2 = new NumericalSlider;
+	NumericalSlider* ns3 = new NumericalSlider;
 
-	Block* vblock = Manage(new Block(Vertical));
+	Block* vblock = new Block(Vertical);
 	vblock->AddWidget(ns1);
 	vblock->AddWidget(ns2);
 	vblock->AddWidget(ns3);
@@ -64,9 +64,9 @@ ToolBox* CartoonifierContext::CreateToolBoxOnce()
 	expander->Setup(vblock);
 	expander->Resize(expander->GetPreferredSize());
 
-	Button* play = Manage(new Button("Play"));
-	Button* pause = Manage(new Button("Pause"));
-	Button* stop = Manage(new Button("Stop"));
+	Button* play = new Button("Play");
+	Button* pause = new Button("Pause");
+	Button* stop = new Button("Stop");
 
 	tools->AddWidget(expander);
 	tools->AddWidget(play);

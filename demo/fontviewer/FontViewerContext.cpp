@@ -50,16 +50,16 @@ void FontViewerContext::OnResize(const BI::Size& size)
 
 BI::ToolBox* FontViewerContext::CreateMenuBar()
 {
-	MenuButton* menubtn1 = Manage(new MenuButton("Open"));
+	MenuButton* menubtn1 = new MenuButton("Open");
 
-	ToolBox* menubar = Manage(new ToolBox(size().width(), 24, Horizontal));
+	ToolBox* menubar = new ToolBox(size().width(), 24, Horizontal);
 	menubar->MoveTo(0, size().height() - menubar->size().height());
 
 	menubar->AddWidget(menubtn1);
 
 	events()->connect(menubtn1->clicked(), this, &FontViewerContext::OnOpen);
 
-	MenuButton* menubtn2 = Manage(new MenuButton("Menus"));
+	MenuButton* menubtn2 = new MenuButton("Menus");
 	menubar->AddWidget(menubtn2);
 
 	//events()->connect(menubtn2->clicked(), this, &FontViewerContext::OnOpenPanel2);
@@ -69,16 +69,16 @@ BI::ToolBox* FontViewerContext::CreateMenuBar()
 
 void FontViewerContext::OnOpen(AbstractButton* sender)
 {
-	Dialog* dialog = Manage(new Dialog("Font Viewer"));
+	Dialog* dialog = new Dialog("Font Viewer");
 
-	TextureView* textureview = Manage(new TextureView);
+	TextureView* textureview = new TextureView;
 	textureview->MoveTo(50, 50);
 
 	Font font;
 
 	textureview->SetTexture(font.GetTexture(L'A'));
 
-	VLayout* layout = Manage(new VLayout);
+	VLayout* layout = new VLayout;
 	layout->AddWidget(textureview);
 
 	dialog->SetLayout(layout);
