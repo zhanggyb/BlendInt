@@ -1,8 +1,0 @@
-# CMake file for BIL project
-#
-
-include_directories(${BlendInt_SOURCE_DIR}/demo/opencv)
-
-add_subdirectory(Cartoonifier)
-add_subdirectory(MarkerBasedAR)
-add_subdirectory(HeadPoseEstimation)

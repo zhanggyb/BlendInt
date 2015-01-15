@@ -195,7 +195,9 @@ endif()
 
 if(WITH_UNIT_TEST)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros")
-    add_subdirectory(test)
+	if(EXISTS test)
+	add_subdirectory(test)
+	endif()
 endif()
 
 if(WITH_ALL_DEMOS)
@@ -204,7 +206,9 @@ if(WITH_ALL_DEMOS)
     set(WITH_QT5_DEMO TRUE)
 endif()
 
+if(EXISTS demo)
 add_subdirectory(demo)
+endif()
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)
