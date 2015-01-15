@@ -70,8 +70,10 @@ namespace BlendInt {
 
 //		Point pos = GetGlobalPosition();
 
+		Point offset = GetOffset();
+
 		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
-				glm::vec2(position().x() + offset().x(), position().y() + offset().y()));
+				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
 		Context::shaders->PushWidgetModelMatrix();

@@ -45,15 +45,29 @@ namespace BlendInt {
 		}
 
 		// virtual Size GetContentSize () const;
+		virtual Point GetOffset () const;
 
 	protected:
+
+		inline void set_offset (int x, int y)
+		{
+			offset_.reset(x, y);
+		}
+
+		inline void set_offset (const Point& offset)
+		{
+			offset_ = offset;
+		}
 
 		inline void fire_scrolled_event (int x, int y)
 		{
 			scrolled_->fire(x, y);
 		}
 
+
 	private:
+
+		Point offset_;
 
 		boost::scoped_ptr<Cpp::Event<int, int> > scrolled_;
 

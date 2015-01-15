@@ -192,9 +192,10 @@ namespace BlendInt {
 		if(!visiable()) return false;
 		Context* c = const_cast<Context*>(context);
 
+		Point offset = GetOffset();
 		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
-				glm::vec2(position().x() + offset().x(),
-						position().y() + offset().y()));
+				glm::vec2(position().x() + offset.x(),
+						position().y() + offset.y()));
 
 		Context::shaders->PushWidgetModelMatrix();
 		Context::shaders->SetWidgetModelMatrix(matrix);

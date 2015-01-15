@@ -35,4 +35,9 @@ namespace BlendInt {
 	{
 	}
 
+	Point AbstractScrollable::GetOffset() const
+	{
+		return offset_;
+	}
+
 }

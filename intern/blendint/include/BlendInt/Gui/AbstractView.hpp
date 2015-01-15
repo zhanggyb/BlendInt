@@ -275,6 +275,17 @@ namespace BlendInt {
 
 		void SetEmboss (bool emboss);
 
+		void RequestRedraw ();
+
+		AbstractView* operator [] (int i) const;
+
+		AbstractView* GetWidgetAt (int i) const;
+
+		const Point& position () const
+		{
+			return position_;
+		}
+
 		virtual bool IsExpandX () const
 		{
 			return false;
@@ -287,20 +298,9 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
-		void RequestRedraw ();
-
-		AbstractView* operator [] (int i) const;
-
-		AbstractView* GetWidgetAt (int i) const;
-
-		const Point& position () const
+		virtual Point GetOffset () const
 		{
-			return position_;
-		}
-
-		const Point& offset () const
-		{
-			return offset_;
+			return Point(0, 0);
 		}
 
 		const Size& size () const
@@ -429,16 +429,6 @@ namespace BlendInt {
 		void set_position (const Point& pos)
 		{
 			position_ = pos;
-		}
-
-		void set_offset (int x, int y)
-		{
-			offset_.reset(x, y);
-		}
-
-		void set_offset (const Point& pos)
-		{
-			offset_ = pos;
 		}
 
 		/**
@@ -689,8 +679,6 @@ namespace BlendInt {
 		}
 
 		Point position_;
-
-		Point offset_;
 
 		Size size_;
 

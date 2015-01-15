@@ -142,9 +142,7 @@ namespace BlendInt {
 
 		AbstractView* p = superview_;
 		while(p) {
-			retval.reset(
-					retval.x() + p->position().x() + p->offset().x(),
-					retval.y() + p->position().y() + p->offset().y());
+			retval = retval + p->position() + p->GetOffset();
 			p = p->superview_;
 		}
 

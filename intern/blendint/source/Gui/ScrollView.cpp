@@ -255,8 +255,11 @@ namespace BlendInt {
 	ResponseType ScrollView::Draw (const Context* context)
 	{
 		if(subs_count()) {
+
+			Point offset = GetOffset();
+
 			glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
-					glm::vec2(offset().x(), offset().y()));
+					glm::vec2(offset.x(), offset.y()));
 
 			Context::shaders->PushWidgetModelMatrix();
 			Context::shaders->SetWidgetModelMatrix(matrix);
@@ -298,7 +301,7 @@ namespace BlendInt {
 		if (context->mouse_button() == MouseButtonMiddle) {
 			moving_ = true;
 			cursor_point_ = context->cursor_position();
-			last_offset_ = offset();
+			last_offset_ = GetOffset();
 
 			return Finish;
 		}
