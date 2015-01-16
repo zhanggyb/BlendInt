@@ -23,6 +23,7 @@
 
 #include <Font/FcPattern.hpp>
 #include <Font/FcConfig.hpp>
+#include <Font/FcFontSet.hpp>
 
 namespace BlendInt {
 

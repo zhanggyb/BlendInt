@@ -104,7 +104,7 @@ namespace BlendInt {
 		InitializeDialogOnce();
 
 		DBG_PRINT_MSG("%s", "create decoration");
-		decoration_ = Manage(new Decoration(title));
+		decoration_ = Manage(new Decoration);
 		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
 		decoration_->MoveTo(0, size().height() - decoration_->size().height());
 		PushBackSubView(decoration_);
@@ -191,6 +191,47 @@ namespace BlendInt {
 		}
 	}
 
+	void Dialog::SetDecoration(AbstractDecoration* decoration)
+	{
+		if((decoration == 0) || (decoration == decoration_)) return;
+
+		if(decoration_) {
+
+			if(decoration_->managed() && (decoration_->reference_count() == 0)) {
+				delete decoration_;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "Decoration is not set managed, remove this will not delete it");
+				AbstractFloatingFrame::RemoveSubView(decoration_);
+			}
+
+		}
+
+		if(InsertSubView(0, decoration)) {
+			decoration_ = decoration;
+
+			// TODO: check decoration_ size
+
+			ResizeSubView(decoration_, size().width(), decoration_->size().height());
+
+			if(layout_) {
+
+				MoveSubViewTo(decoration_, 0, size().height() - decoration_->size().height());
+
+				ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
+				MoveSubViewTo(layout_, 0, 0);
+
+			} else {
+
+				MoveSubViewTo(decoration_, 0, size().height() - decoration_->size().height());
+
+			}
+		} else {
+			DBG_PRINT_MSG("Warning: %s", "Fail to set layout");
+		}
+
+		RequestRedraw();
+	}
+
 	void Dialog::SetLayout(AbstractLayout* layout)
 	{
 		if((layout == 0) || (layout == layout_)) return;
@@ -201,7 +242,7 @@ namespace BlendInt {
 				layout->AddWidget(dynamic_cast<AbstractWidget*>(p));
 			}
 
-			if(layout_->managed()) {
+			if(layout_->managed() && (layout_->reference_count() == 0)) {
 				delete layout_;
 			} else {
 				DBG_PRINT_MSG("Warning: %s", "Layout is not set managed, remove this will not delete it");
@@ -214,7 +255,7 @@ namespace BlendInt {
 			layout_ = layout;
 			MoveSubViewTo(layout_, 0, 0);
 
-			if(decoration_ != nullptr) {
+			if(decoration_) {
 				ResizeSubView(layout_, size().width(), size().height() - decoration_->size().height());
 			} else {
 				ResizeSubView(layout_, size());
@@ -706,7 +747,7 @@ namespace BlendInt {
 	void Dialog::UpdateLayout()
 	{
 		int h = 0;
-		if(decoration_ != nullptr) {
+		if(decoration_) {
 			decoration_->Resize(size().width(), decoration_->size().height());
 			decoration_->MoveTo(0, size().height() - decoration_->size().height());
 			h = decoration_->size().height();

@@ -44,15 +44,9 @@ namespace BlendInt {
 
 	public:
 
-		Decoration (const String& title = String(""));
+		Decoration ();
 
 		virtual ~Decoration ();
-
-		void SetTitle (const String& title);
-
-		//bool AddWidget (AbstractWidget* widget);
-
-		//bool InsertWidget (int index, AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -64,33 +58,18 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		virtual void UpdateLayout ();
-
 	private:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		void InitializeDecorationOnce ();
-
 		void OnCloseButtonClicked (AbstractButton* button);
-
-		// background for debug, remove later
-		GLuint vao_[1];
 
 		/**
 		 * space between tool buttons
 		 */
 		int space_;
 
-		GLBuffer<> inner_;
-
 		CloseButton* close_button_;
-
-		Label* title_label_;
 
 	};
 

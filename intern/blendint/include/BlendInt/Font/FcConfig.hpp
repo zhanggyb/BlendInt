@@ -26,29 +26,31 @@
 
 #include <fontconfig/fontconfig.h>
 
+#include <BlendInt/Core/Object.hpp>
+
 #include <BlendInt/Font/FcPattern.hpp>
+#include <BlendInt/Font/FcFontSet.hpp>
+#include <BlendInt/Font/FcObjectSet.hpp>
 
 namespace BlendInt {
 
 	namespace Fc {
 
-		class Config
+		class Config: public Object
 		{
 		public:
 
-			inline Config ()
-			: config_(0)
+			Config (::FcConfig* config = 0)
+			: Object(),
+			  config_(config)
 			{
-				config_ = FcConfigCreate();
+				if(config_ == 0)
+					config_ = FcConfigCreate();
 			}
 
-			inline Config (::FcConfig* config)
-			: config_(config)
-			{
-			}
-
-			inline Config (const Config& orig)
-			: config_(0)
+			Config (const Config& orig)
+			: Object(),
+			  config_(0)
 			{
 				config_ = orig.config_;
 
@@ -56,7 +58,7 @@ namespace BlendInt {
 					FcConfigReference(config_);
 			}
 
-			inline ~Config ()
+			virtual ~Config ()
 			{
 				FcConfigDestroy(config_);
 			}
@@ -72,6 +74,27 @@ namespace BlendInt {
 					FcConfigReference(config_);
 
 				return *this;
+			}
+
+			inline bool set_current ()
+			{
+				return FcConfigSetCurrent(config_);
+			}
+
+			inline bool upto_date ()
+			{
+				return FcConfigUptoDate (config_);
+			}
+
+			inline operator bool () const
+			{
+				return config_ != 0;
+			}
+
+			static inline Config get_current ()
+			{
+				FcConfig* config = FcConfigGetCurrent();
+				return Config(config);
 			}
 
 			static inline bool substitute (const Config* config, const Pattern& p, FcMatchKind kind)
@@ -91,6 +114,19 @@ namespace BlendInt {
 						result);
 
 				return Pattern(pattern);
+			}
+
+			static inline RefPtr<FontSet> list (const Config* config, const Pattern& p, const ObjectSet& os)
+			{
+				::FcFontSet* fs = 0;
+
+				if(config) {
+					fs = FcFontList(config->config_, p.pattern(), os.object_set());
+				} else {
+					fs = FcFontList(NULL, p.pattern(), os.object_set());
+				}
+
+				return RefPtr<FontSet>(new FontSet(fs));
 			}
 
 		private:

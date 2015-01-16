@@ -21,44 +21,62 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
-#define _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
+#ifndef _BLENDINT_FONT_FCFONTSET_HPP_
+#define _BLENDINT_FONT_FCFONTSET_HPP_
 
-#include <Cpp/Events.hpp>
+#include <fontconfig/fontconfig.h>
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Core/Object.hpp>
+
+#include <BlendInt/Font/FcPattern.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The base class of the decorations for dialog
-	 */
-	class AbstractDecoration: public Widget
-	{
-	public:
+	namespace Fc {
 
-		AbstractDecoration ();
-
-		virtual ~AbstractDecoration ();
-
-		Cpp::EventRef<> close_triggered ()
+		class FontSet: public Object
 		{
-			return *close_triggered_;
-		}
+		public:
 
-	protected:
+			FontSet (::FcFontSet* fs = 0)
+			: Object(),
+			  fontset_(fs)
+			{
+				if(fontset_ == 0)
+					fontset_ = FcFontSetCreate();
+			}
 
-		void fire_close_triggered ()
-		{
-			close_triggered_->fire();
-		}
+			virtual ~FontSet ()
+			{
+				FcFontSetDestroy(fontset_);
+			}
 
-	private:
+			inline bool add (const Pattern& font)
+			{
+				return FcFontSetAdd (fontset_, font.pattern());
+			}
 
-		boost::scoped_ptr<Cpp::Event<> > close_triggered_;
+			inline void print ()
+			{
+				FcFontSetPrint(fontset_);
+			}
 
-	};
+			inline ::FcFontSet* fontset () const
+			{
+				return fontset_;
+			}
+
+		private:
+
+			FontSet (const FontSet& orig);
+
+			FontSet& operator = (const FontSet& orig);
+
+			::FcFontSet* fontset_;
+		};
+
+	}
 
 }
 
-#endif /* _BLENDINT_GUI_ABSTRACTDECORATION_HPP_ */
+#endif /* _BLENDINT_FONT_FCFONTSET_HPP_ */

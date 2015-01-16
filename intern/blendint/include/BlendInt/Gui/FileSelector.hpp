@@ -38,6 +38,30 @@
 
 namespace BlendInt {
 
+	class FileSelectorDecoration: public AbstractDecoration
+	{
+		DISALLOW_COPY_AND_ASSIGN(FileSelectorDecoration);
+
+	public:
+
+		FileSelectorDecoration();
+
+		virtual ~FileSelectorDecoration ();
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+	private:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		void OnCloseButtonClicked (AbstractButton* button);
+
+	};
+
 	/**
 	 * @brief A widget to browse and select local directories/files.
 	 */
@@ -58,15 +82,11 @@ namespace BlendInt {
 
 		Cpp::EventRef<> opened () {return opened_;}
 
-		Cpp::EventRef<> canceled () {return canceled_;}
-
 	private:
 
 		void InitializeFileSelector ();
 
 		VLayout* CreateBrowserAreaOnce ();
-
-		HLayout* CreateToolButtonsOnce ();
 
 		//ToolBox* CreateSideBarOnce ();
 
@@ -76,17 +96,15 @@ namespace BlendInt {
 
 		void OnFileSelect ();
 
+		void OnCloseButtonClicked ();
+
 		TextEntry* path_entry_;
 		TextEntry* file_entry_;
-
-		Button* open_;
-		Button* cancel_;
 
 		FileBrowser* browser_;
 
 		Cpp::Event<> opened_;
 
-		Cpp::Event<> canceled_;
 	};
 
 }

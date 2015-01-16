@@ -49,6 +49,8 @@ namespace BlendInt {
 
 		virtual ~Dialog();
 
+		void SetDecoration (AbstractDecoration* decoration);
+
 		void SetLayout (AbstractLayout* layout);
 
 		void AddWidget (AbstractWidget* widget);

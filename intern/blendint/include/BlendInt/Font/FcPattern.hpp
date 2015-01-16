@@ -25,10 +25,8 @@
 #define _BLENDINT_FONT_PATTERN_HPP_
 
 #include <fontconfig/fontconfig.h>
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_LCD_FILTER_H
-#include FT_STROKER_H
+
+#include <BlendInt/Core/Object.hpp>
 
 #include <BlendInt/Font/FcCharSet.hpp>
 
@@ -36,24 +34,22 @@ namespace BlendInt {
 
 	namespace Fc {
 
-		class Pattern
+		class Pattern: public Object
 		{
 		public:
 
-			inline Pattern ()
-			: pattern_(0)
-			{
-				pattern_ = FcPatternCreate();
-			}
-
 			// the p must be created through FcPatternCreate;
-			inline Pattern (::FcPattern* p)
-			: pattern_(p)
+			Pattern (::FcPattern* p = 0)
+			: Object(),
+			  pattern_(p)
 			{
+				if(pattern_ == 0)
+					pattern_ = FcPatternCreate();
 			}
 
-			inline Pattern (const Pattern& p)
-			: pattern_(0)
+			Pattern (const Pattern& p)
+			: Object(),
+			  pattern_(0)
 			{
 				pattern_ = p.pattern_;
 
@@ -61,7 +57,7 @@ namespace BlendInt {
 					FcPatternReference(pattern_);
 			}
 
-			inline ~Pattern ()
+			virtual ~Pattern ()
 			{
 				FcPatternDestroy(pattern_);
 			}

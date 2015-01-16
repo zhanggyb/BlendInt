@@ -43,114 +43,21 @@
 #include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/FolderList.hpp>
 
+#include <BlendInt/Gui/CloseButton.hpp>
+
 #include <BlendInt/Gui/Separator.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
-	FileSelector::FileSelector ()
-	: Dialog(),
-	  path_entry_(0),
-	  file_entry_(0)
-	{
-		set_size(500, 400);
-
-		InitializeFileSelector();
-
-		//events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
-	}
-
-	FileSelector::~FileSelector ()
-	{
-	}
-	
-	void FileSelector::InitializeFileSelector ()
-	{
-		// create sub widgets
-		VLayout* layout = Manage(new VLayout);
-		DBG_SET_NAME(layout, "Main Layout");
-		layout->SetMargin(Margin(2, 2, 2, 2));
-		layout->SetSpace(0);
-
-		HLayout* toolbar = CreateToolButtonsOnce();
-		//ToolBox* sidebar = CreateSideBarOnce();
-		VLayout* area = CreateBrowserAreaOnce();
-
-		//Splitter* splitter = Manage(new Splitter);
-		//DBG_SET_NAME(splitter, "Splitter");
-		//splitter->Append(sidebar);
-		//splitter->Append(area);
-
-		layout->AddWidget(toolbar);
-		//layout->Append(splitter);
-		layout->AddWidget(area);
-
-		SetLayout(layout);
-
-		std::string pwd =getenv("PWD");
-		pwd.append("/");
-		path_entry_->SetText(pwd);
-		browser_->Load(getenv("PWD"));
-
-		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
-		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
-		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
-	}
-
-	void FileSelector::OnFileSelect ()
-	{
-		file_entry_->SetText(browser_->file_selected());
-	}
-
-	VLayout* FileSelector::CreateBrowserAreaOnce()
-	{
-		VLayout* vbox = Manage(new VLayout);
-		DBG_SET_NAME(vbox, "VBox in Broser Area");
-		vbox->SetMargin(Margin(1, 1, 1, 1));
-		vbox->SetSpace(2);
-
-		path_entry_ = Manage(new TextEntry);
-		DBG_SET_NAME(path_entry_, "Path Entry");
-		path_entry_->SetRoundType(RoundAll);
-
-		open_ = Manage(new Button(String("Open")));
-		DBG_SET_NAME(open_, "Open Button");
-
-		HLayout* dir_layout = Manage(new HLayout);
-		DBG_SET_NAME(dir_layout, "DIR Layout");
-
-		dir_layout->SetMargin(Margin(0, 0, 0, 0));
-		dir_layout->AddWidget(path_entry_);
-		dir_layout->AddWidget(open_);
-
-		file_entry_ = Manage(new TextEntry);
-		DBG_SET_NAME(file_entry_, "File Entry");
-
-		file_entry_->SetRoundType(RoundAll);
-		cancel_ = Manage(new Button(String("Cancel")));
-		DBG_SET_NAME(cancel_, "Cancel Button");
-
-		HLayout* file_layout = Manage(new HLayout);
-		DBG_SET_NAME(file_layout, "File Layout");
-
-		file_layout->SetMargin(Margin(0, 0, 0, 0));
-		file_layout->AddWidget(file_entry_);
-		file_layout->AddWidget(cancel_);
-
-		browser_ = Manage(new FileBrowser);
-		DBG_SET_NAME(browser_, "FileBrowser");
-
-		vbox->AddWidget(dir_layout);
-		vbox->AddWidget(file_layout);
-		vbox->AddWidget(browser_);
-
-		return vbox;
-	}
-
-	HLayout* FileSelector::CreateToolButtonsOnce()
+	FileSelectorDecoration::FileSelectorDecoration ()
+	: AbstractDecoration()
 	{
 		HLayout* hlayout = Manage(new HLayout);
-		DBG_SET_NAME(hlayout, "ToolBar Layout");
+		DBG_SET_NAME(hlayout, "FileSelectorDecorationLayout");
+
+		// create close button
+		CloseButton* close_button = Manage(new CloseButton);
 
 		// directory control group
 		Block* block1 = Manage(new Block);
@@ -193,17 +100,145 @@ namespace BlendInt {
 		block3->AddWidget(btn_sort_time);
 		block3->AddWidget(btn_sort_size);
 
-		Separator* separator1 = Manage(new Separator);
-		Separator* separator2 = Manage(new Separator(true));
+		Button* open = Manage(new Button(String("Open")));
+		DBG_SET_NAME(open, "Open Button");
 
-		hlayout->AddWidget(block1);
+		Separator* separator1 = Manage(new Separator);
+		Separator* separator2 = Manage(new Separator);
+		Separator* separator3 = Manage(new Separator(true));
+
+		hlayout->AddWidget(close_button);
 		hlayout->AddWidget(separator1);
+		hlayout->AddWidget(block1);
+		hlayout->AddWidget(separator2);
 		hlayout->AddWidget(btn_new);
 		hlayout->AddWidget(block2);
 		hlayout->AddWidget(block3);
-		hlayout->AddWidget(separator2);
+		hlayout->AddWidget(separator3);
+		hlayout->AddWidget(open);
 
-		return hlayout;
+		hlayout->Resize(hlayout->GetPreferredSize());
+
+		PushBackSubView(hlayout);
+
+		set_size(hlayout->size());
+
+		events()->connect(close_button->clicked(), this, &FileSelectorDecoration::OnCloseButtonClicked);
+	}
+
+	FileSelectorDecoration::~FileSelectorDecoration ()
+	{
+	}
+
+	bool FileSelectorDecoration::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool FileSelectorDecoration::IsExpandY () const
+	{
+		return false;
+	}
+
+	Size FileSelectorDecoration::GetPreferredSize () const
+	{
+		return first_subview()->GetPreferredSize();
+	}
+
+	void FileSelectorDecoration::PerformSizeUpdate (
+	        const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			set_size(*request.size());
+
+			ResizeSubView(first_subview(), size());
+
+			RequestRedraw();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void FileSelectorDecoration::OnCloseButtonClicked(AbstractButton* button)
+	{
+		fire_close_triggered();
+	}
+
+	// -----------------------------
+
+	FileSelector::FileSelector ()
+	: Dialog(),
+	  path_entry_(0),
+	  file_entry_(0)
+	{
+		set_size(500, 400);
+
+		InitializeFileSelector();
+
+		//events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
+	}
+
+	FileSelector::~FileSelector ()
+	{
+	}
+	
+	void FileSelector::InitializeFileSelector ()
+	{
+		FileSelectorDecoration* dec = Manage(new FileSelectorDecoration);
+
+		//ToolBox* sidebar = CreateSideBarOnce();
+		VLayout* area = CreateBrowserAreaOnce();
+
+		SetDecoration(dec);
+		SetLayout(area);
+
+		std::string pwd =getenv("PWD");
+		pwd.append("/");
+		path_entry_->SetText(pwd);
+		browser_->Load(getenv("PWD"));
+
+		events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
+
+		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
+		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
+	}
+
+	void FileSelector::OnFileSelect ()
+	{
+		file_entry_->SetText(browser_->file_selected());
+	}
+
+	void FileSelector::OnCloseButtonClicked()
+	{
+		delete this;
+	}
+
+	VLayout* FileSelector::CreateBrowserAreaOnce()
+	{
+		VLayout* vbox = Manage(new VLayout);
+		DBG_SET_NAME(vbox, "VBox in Broser Area");
+		vbox->SetSpace(2);
+
+		path_entry_ = Manage(new TextEntry);
+		DBG_SET_NAME(path_entry_, "Path Entry");
+		path_entry_->SetRoundType(RoundAll);
+
+		file_entry_ = Manage(new TextEntry);
+		DBG_SET_NAME(file_entry_, "File Entry");
+		file_entry_->SetRoundType(RoundAll);
+
+		browser_ = Manage(new FileBrowser);
+		DBG_SET_NAME(browser_, "FileBrowser");
+
+		vbox->AddWidget(path_entry_);
+		vbox->AddWidget(file_entry_);
+		vbox->AddWidget(browser_);
+
+		return vbox;
 	}
 
 	/*

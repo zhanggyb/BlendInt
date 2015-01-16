@@ -21,44 +21,36 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
-#define _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTADJUSTMENT_HPP_
+#define _BLENDINT_GUI_ABSTRACTADJUSTMENT_HPP_
 
-#include <Cpp/Events.hpp>
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief The base class of the decorations for dialog
+	 * @brief Used for layouts to adjust sub views' geometry
 	 */
-	class AbstractDecoration: public Widget
+	class AbstractAdjustment
 	{
 	public:
 
-		AbstractDecoration ();
-
-		virtual ~AbstractDecoration ();
-
-		Cpp::EventRef<> close_triggered ()
+		AbstractAdjustment (AbstractView* superview)
+		: superview_(superview)
 		{
-			return *close_triggered_;
+
 		}
 
-	protected:
-
-		void fire_close_triggered ()
+		virtual ~AbstractAdjustment ()
 		{
-			close_triggered_->fire();
+
 		}
 
 	private:
 
-		boost::scoped_ptr<Cpp::Event<> > close_triggered_;
-
+		AbstractView* superview_;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_ABSTRACTDECORATION_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTADJUSTMENT_HPP_ */
