@@ -59,7 +59,7 @@ namespace BlendInt {
 			{
 				va_list args;
 				va_start(args, first);
-				::FcObjectSet* os = FcObjectSetBuild(first, args);
+				::FcObjectSet* os = FcObjectSetBuild(first, args, NULL);
 				va_end(args);
 
 				return RefPtr<ObjectSet>(new ObjectSet(os));

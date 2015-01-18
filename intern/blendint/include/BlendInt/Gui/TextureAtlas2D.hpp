@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef TEXTUREATLAS2D_HPP_
-#define TEXTUREATLAS2D_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
@@ -113,6 +112,90 @@ namespace BlendInt {
 		short space_y_;
 	};
 
-}
+	// ----------------------
 
-#endif /* TEXTUREATLAS2D_HPP_ */
+	class TextureAtlas2DExt: public Object
+	{
+
+	public:
+
+		TextureAtlas2DExt()
+		: Object(),
+		id_(0),
+		width_(0),
+		height_(0),
+		last_x_(0),
+		last_y_(0),
+		space_(0)
+		{}
+
+		virtual ~TextureAtlas2DExt()
+		{
+			if(id_) glDeleteTextures(1, &id_);
+		}
+
+		inline void generate (GLsizei width, GLsizei height)
+		{
+			if(id_) clear ();
+
+			glGenTextures(1, &id_);
+
+			width_ = width;
+			height_ = height;
+		}
+
+		inline void bind () const
+		{
+			glBindTexture (GL_TEXTURE_2D, id_);
+		}
+
+		static inline void reset ()
+		{
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		/**
+		 * @brief Upload glyph bitmap to the texture
+		 * @param[in] bitmap_width
+		 * @param[in] bitmap_rows
+		 * @param[in] bitmap
+		 * @param[out] x
+		 * @param[out] y
+		 *
+		 * Upload glyph bitmap to texture and get the position in the
+		 * texture for calculating UV.
+		 */
+		bool Upload (int bitmap_width,
+					 int bitmap_rows,
+					 const unsigned char* bitmap,
+					 int* x,
+					 int* y);
+
+	private:
+
+		inline void clear()
+		{
+			glDeleteTextures(1, &id_);
+			id_ = 0;
+
+			last_x_ = 0;
+			last_y_ = 0;
+		}
+
+		GLuint id_;
+
+		GLsizei width_;
+
+		GLsizei height_;
+
+		GLsizei last_x_;
+
+		GLsizei last_y_;
+
+		GLsizei h_;
+		
+		GLsizei space_;
+
+	};
+
+}

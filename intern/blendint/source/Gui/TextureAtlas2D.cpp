@@ -34,7 +34,7 @@
 #include <BlendInt/Core/Types.hpp>
 #include <vector>
 
-#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+#include <BlendInt/Gui/TextureAtlas2D.hpp>
 
 namespace BlendInt {
 
@@ -233,4 +233,42 @@ namespace BlendInt {
 		return num;
 	}
 
+	// ----------------------
+
+	bool TextureAtlas2DExt::Upload (int bitmap_width, int bitmap_rows, const unsigned char* bitmap, int* x, int* y)
+	{
+		// TODO: check the texture size
+
+		int xi = last_x_;
+		int yi = last_y_;
+
+		if((xi + bitmap_width) >= width_) {
+			xi = space_;
+			yi = last_y_ + bitmap_rows;
+		}
+
+		if(yi >= height_) {
+			// TODO: expand texture size
+		}
+
+		glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+		glTexSubImage2D(GL_TEXTURE_2D,
+						0,	// level
+						xi,
+						yi,
+						bitmap_width,
+						bitmap_rows,
+						GL_RED,	// format
+						GL_UNSIGNED_BYTE,
+						bitmap);
+
+		last_x_ = xi;
+		last_y_ = std::max(last_y_, yi);
+		
+		if(x) *x = xi;
+		if(y) *y = yi;
+		
+		return true;
+	}
+	
 }

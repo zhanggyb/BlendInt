@@ -75,6 +75,11 @@ namespace BlendInt {
 				return *this;
 			}
 
+			inline FcChar32 hash ()
+			{
+				return FcPatternHash (pattern_);
+			}
+			
 			inline bool add (const char* object, FcValue value, bool append = true)
 			{
 				return FcPatternAdd(pattern_, object, value, append ? FcTrue : FcFalse);
@@ -143,7 +148,12 @@ namespace BlendInt {
 
 			::FcPattern* pattern () const {return pattern_;}
 
-			inline static Pattern duplicate (const Pattern& pattern);
+			static inline Pattern duplicate (const Pattern& pattern)
+			{
+				::FcPattern* p = FcPatternDuplicate (pattern.pattern_);
+
+				return Pattern(p);
+			}
 
 		private:
 

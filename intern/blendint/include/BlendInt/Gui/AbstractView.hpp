@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTVIEW_HPP_
-#define _BLENDINT_GUI_ABSTRACTVIEW_HPP_
+#pragma once
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -694,5 +693,3 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-
-#endif /* _BLENDINT_GUI_ABSTRACTVIEW_HPP_ */

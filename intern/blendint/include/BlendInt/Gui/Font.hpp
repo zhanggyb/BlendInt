@@ -188,6 +188,27 @@ namespace BlendInt {
 		RefPtr<FontCache> m_cache;
 	};
 
+	/**
+	 *
+	 */
+	class FontExt
+	{
 
+	public:
+
+		FontExt()
+		{
+		}
+		
+		~FontExt()
+		{
+		}
+
+	private:
+
+		RefPtr<FontCache> cache_;
+		
+	};
+	
 } /* namespace BlendInt */
 #endif /* FONT_H_ */

@@ -21,44 +21,42 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_GLYPHATLAS_HPP_
-#define _BLENDINT_GUI_GLYPHATLAS_HPP_
+#pragma once
 
-#include <BlendInt/Gui/TextureAtlas2D.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
+
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
-	class GlyphAtlas: public TextureAtlas2D
+	class Text: public AbstractForm
 	{
 	public:
 
-		GlyphAtlas ();
+		Text (const String& text);
 
-		virtual ~GlyphAtlas ();
+		virtual ~Text ();
 
-		bool Push (int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
+	protected:
 
-		bool IsFull () const;
+		virtual void PerformSizeUpdate (const Size& size);
 
-		void MoveToFirst ();
-
-		bool MoveNext ();
-
-		int index () const
-		{
-			return m_index;
-		}
+		virtual void Draw (float x, float y, short gamma = 0) const;
 
 	private:
 
-		int m_index;
+		unsigned int str_len_;
+
+		GLuint vao_;
+
+		GLBuffer<> vbo_;
+
+		RefPtr<GLTexture2D> texture_;
+
+		String text_;
+
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_GLYPHATLAS_HPP_ */

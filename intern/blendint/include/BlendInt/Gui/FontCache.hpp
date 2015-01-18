@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FONTCACHE_HPP_
-#define _BLENDINT_FONTCACHE_HPP_
+#pragma once
 
 #include <map>
 #include <functional>
@@ -165,4 +164,3 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-#endif /* FONTCACHE_H_ */

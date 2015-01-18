@@ -21,44 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_GLYPHATLAS_HPP_
-#define _BLENDINT_GUI_GLYPHATLAS_HPP_
+ #include <BlendInt/Gui/Text.hpp>
 
-#include <BlendInt/Gui/TextureAtlas2D.hpp>
+ namespace BlendInt {
 
-namespace BlendInt {
+ 	Text::Text (const String& text)
+ 	: AbstractForm(),
+ 	vao_(0),
+ 	text_(text)
+ 	{
 
-	class GlyphAtlas: public TextureAtlas2D
-	{
-	public:
+ 	}
 
-		GlyphAtlas ();
+ 	Text::~Text ()
+ 	{
 
-		virtual ~GlyphAtlas ();
+ 	}
 
-		bool Push (int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
+ 	void Text::PerformSizeUpdate (const Size& size)
+ 	{
 
-		bool IsFull () const;
+ 	}
 
-		void MoveToFirst ();
+ 	void Text::Draw (float x, float y, short gamma) const
+ 	{
 
-		bool MoveNext ();
+ 	}
 
-		int index () const
-		{
-			return m_index;
-		}
-
-	private:
-
-		int m_index;
-	};
-
-}
-
-#endif /* _BLENDINT_GUI_GLYPHATLAS_HPP_ */
+ }

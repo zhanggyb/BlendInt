@@ -43,7 +43,7 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+#include <BlendInt/Gui/TextureAtlas2D.hpp>
 #include <BlendInt/Core/Image.hpp>
 
 #include "BlendIntConfig.hpp"
