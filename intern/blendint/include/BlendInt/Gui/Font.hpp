@@ -188,26 +188,56 @@ namespace BlendInt {
 		RefPtr<FontCache> m_cache;
 	};
 
+	// ------------------------
+
 	/**
 	 *
 	 */
-	class FontExt
+	class FontExt: public Object
 	{
 
 	public:
 
-		FontExt()
-		{
-		}
+		FontExt();
 		
-		~FontExt()
-		{
-		}
+		FontExt (const FcChar8* family,
+				double size,
+				int weight = FC_WEIGHT_REGULAR,
+				int slant = FC_SLANT_ROMAN);
+
+		virtual ~FontExt();
+
+		void SetFamily (const FcChar8* family);
+
+		/**
+		 * @brief Set font style, overrides weight and slant
+		 */
+		void SetStyle (const FcChar8* style);
+
+		void SetFullName (const FcChar8* fullname);
+
+		/**
+		 * @brief Set font slant
+		 *
+		 * Italic, oblique or roman
+		 */
+		void SetSlant (int slant);
+
+		/**
+		 * @brief Set font weight
+		 *
+		 * Light, medium, demibold, bold or blank
+		 */
+		void SetWeight (int weight);
+
+		void SetSize (double size);
+
+		void SetPixelSize (double pixel_size);
 
 	private:
 
-		RefPtr<FontCache> cache_;
-		
+		RefPtr<FontCacheExt> cache_;
+
 	};
 	
 } /* namespace BlendInt */

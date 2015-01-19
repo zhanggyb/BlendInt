@@ -46,6 +46,8 @@ namespace BlendInt {
 		set_size(240, 160);
 
 		InitializeFolderListOnce();
+
+		text_.reset(new Text("foo"));
 	}
 
 	FolderList::~FolderList()
@@ -89,6 +91,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLSLProgram::reset();
+
+		text_->Draw(10.f, 10.f);
 
 		return Finish;
 	}

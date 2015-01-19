@@ -126,7 +126,7 @@ namespace BlendInt {
 		height_(0),
 		last_x_(0),
 		last_y_(0),
-		space_(0)
+		last_row_height_(0)
 		{}
 
 		virtual ~TextureAtlas2DExt()
@@ -134,15 +134,8 @@ namespace BlendInt {
 			if(id_) glDeleteTextures(1, &id_);
 		}
 
-		inline void generate (GLsizei width, GLsizei height)
-		{
-			if(id_) clear ();
-
-			glGenTextures(1, &id_);
-
-			width_ = width;
-			height_ = height;
-		}
+		void Generate (GLsizei width,
+				GLsizei height);
 
 		inline void bind () const
 		{
@@ -164,12 +157,14 @@ namespace BlendInt {
 		 *
 		 * Upload glyph bitmap to texture and get the position in the
 		 * texture for calculating UV.
+		 *
+		 * @note MUST call bind() before use this function
 		 */
 		bool Upload (int bitmap_width,
 					 int bitmap_rows,
 					 const unsigned char* bitmap,
-					 int* x,
-					 int* y);
+					 int* ox,
+					 int* oy);
 
 	private:
 
@@ -178,8 +173,12 @@ namespace BlendInt {
 			glDeleteTextures(1, &id_);
 			id_ = 0;
 
+
+			width_ = 0;
+			height_ = 0;
 			last_x_ = 0;
 			last_y_ = 0;
+			last_row_height_ = 0;
 		}
 
 		GLuint id_;
@@ -192,10 +191,8 @@ namespace BlendInt {
 
 		GLsizei last_y_;
 
-		GLsizei h_;
+		GLsizei last_row_height_;
 		
-		GLsizei space_;
-
 	};
 
 }

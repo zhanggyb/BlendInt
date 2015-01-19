@@ -37,6 +37,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Font/FcConfig.hpp>
+
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
@@ -566,6 +568,9 @@ namespace BlendInt {
 		return width;
 	}
 
+	void Font::SetOutlineThickness (float thickness) {
+	}
+
 	const RefPtr<GLTexture2D>& Font::GetTexture (uint32_t character)
 	{
 		const GlyphExt* glyph = m_cache->Query(m_data, character);
@@ -573,5 +578,197 @@ namespace BlendInt {
 		return glyph->texture;
 	}
 
-}
+	// --------
 
+	FontExt::FontExt ()
+	{
+		Fc::Pattern p;
+
+#ifdef __LINUX__
+		p.add(FC_FAMILY, "Sans");
+#endif
+#ifdef __APPLE__
+		p.add(FC_FAMILY, "Helvetical Neue");
+#endif
+
+		p.add(FC_SIZE, 12);
+		p.add(FC_WEIGHT, FC_WEIGHT_REGULAR);
+		p.add(FC_SLANT, FC_SLANT_ROMAN);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	FontExt::FontExt (const FcChar8* family, double size, int weight,
+	        int slant)
+	{
+		Fc::Pattern p;
+		p.add(FC_FAMILY, family);
+		p.add(FC_SIZE, size);
+		p.add(FC_WEIGHT, weight);
+		p.add(FC_SLANT, slant);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	FontExt::~FontExt ()
+	{
+	}
+
+	void FontExt::SetFamily (const FcChar8* family)
+	{
+		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+		if(!p.del(FC_FAMILY)) {
+			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+		}
+
+		p.add(FC_FAMILY, family);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	void FontExt::SetStyle (const FcChar8* style)
+	{
+	}
+
+	void FontExt::SetFullName (const FcChar8* fullname)
+	{
+	}
+
+	void FontExt::SetSlant (int slant)
+	{
+		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+		if(!p.del(FC_SLANT)) {
+			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+		}
+
+		p.add(FC_SLANT, slant);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	void FontExt::SetWeight (int weight)
+	{
+		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+		if(!p.del(FC_WEIGHT)) {
+			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+		}
+
+		p.add(FC_WEIGHT, weight);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	void FontExt::SetSize (double size)
+	{
+		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+		if(!p.del(FC_SIZE)) {
+			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+		}
+
+		p.add(FC_SIZE, size);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+	void FontExt::SetPixelSize (double pixel_size)
+	{
+		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+		if(!p.del(FC_PIXEL_SIZE)) {
+			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+		}
+
+		p.add(FC_PIXEL_SIZE, pixel_size);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		assert(match);
+
+		if(result != FcResultMatch) {
+			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+		}
+
+		cache_ = FontCacheExt::Create(match);
+	}
+
+}

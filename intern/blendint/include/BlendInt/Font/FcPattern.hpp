@@ -75,7 +75,7 @@ namespace BlendInt {
 				return *this;
 			}
 
-			inline FcChar32 hash ()
+			inline FcChar32 hash () const
 			{
 				return FcPatternHash (pattern_);
 			}
@@ -124,6 +124,11 @@ namespace BlendInt {
 			inline FcResult get (const char* object, int id, FcValue* v)
 			{
 				return FcPatternGet(pattern_, object, id, v);
+			}
+
+			inline bool del (const char* object)
+			{
+				return FcPatternDel (pattern_, object);
 			}
 
 			inline bool remove (const char* object, int id)

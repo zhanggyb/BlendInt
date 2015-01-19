@@ -498,4 +498,41 @@ namespace BlendInt {
 
     }
 
+    // ----------------------------
+
+    map<FcChar32, RefPtr<FontCacheExt> > FontCacheExt::kCacheDB;
+
+    RefPtr<FontCacheExt> FontCacheExt::Create (const Fc::Pattern& pattern)
+    {
+    	RefPtr<FontCacheExt> cache;
+
+    	if(kCacheDB.count(pattern.hash())) {
+
+    	}
+
+    	return cache;
+    }
+
+    bool FontCacheExt::Release (const Fc::Pattern& data)
+    {
+    	return true;
+    }
+
+    void FontCacheExt::ReleaseAll ()
+    {
+    }
+
+    size_t FontCacheExt::GetCacheSize ()
+    {
+    	return kCacheDB.size();
+    }
+
+    FontCacheExt::FontCacheExt ()
+    {
+    }
+
+    FontCacheExt::~FontCacheExt ()
+    {
+    }
+
 } /* namespace BlendInt */

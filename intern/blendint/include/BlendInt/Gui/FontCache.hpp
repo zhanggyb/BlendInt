@@ -24,7 +24,6 @@
 #pragma once
 
 #include <map>
-#include <functional>
 #include <string>
 #include <vector>
 
@@ -37,7 +36,7 @@
 #include <BlendInt/Gui/Glyph.hpp>
 #include <BlendInt/Gui/GlyphAtlas.hpp>
 
-using namespace std;
+#include <BlendInt/Font/FcPattern.hpp>
 
 namespace BlendInt {
 
@@ -161,6 +160,43 @@ namespace BlendInt {
 
 		static int default_texture_width;
 		static int default_texture_height;
+	};
+
+	// ---------------------------
+
+	class FontCacheExt: public Object
+	{
+	public:
+
+		static RefPtr<FontCacheExt> Create (const Fc::Pattern& pattern);
+
+		static bool Release (const Fc::Pattern& data);
+
+		static void ReleaseAll ();
+
+		static size_t GetCacheSize ();
+
+		FontCacheExt ();
+
+		virtual ~FontCacheExt ();
+
+		const Fc::Pattern& pattern () const
+		{
+			return pattern_;
+		}
+
+		const RefPtr<TextureAtlas2DExt> texture_atlas () const
+		{
+			return texture_atlas_;
+		}
+
+	private:
+
+		Fc::Pattern pattern_;
+
+		RefPtr<TextureAtlas2DExt> texture_atlas_;
+
+		static map<FcChar32, RefPtr<FontCacheExt> > kCacheDB;
 	};
 
 } /* namespace BlendInt */

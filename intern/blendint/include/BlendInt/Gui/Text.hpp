@@ -27,7 +27,8 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
+#include <BlendInt/Gui/TextureAtlas2D.hpp>
 
 namespace BlendInt {
 
@@ -39,11 +40,11 @@ namespace BlendInt {
 
 		virtual ~Text ();
 
+		virtual void Draw (float x, float y, short gamma = 0) const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const Size& size);
-
-		virtual void Draw (float x, float y, short gamma = 0) const;
 
 	private:
 
@@ -53,7 +54,7 @@ namespace BlendInt {
 
 		GLBuffer<> vbo_;
 
-		RefPtr<GLTexture2D> texture_;
+		TextureAtlas2DExt atlas_;	// temp for debug
 
 		String text_;
 

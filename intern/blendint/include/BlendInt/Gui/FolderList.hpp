@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
+#include <BlendInt/Gui/Text.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -60,6 +62,9 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+		RefPtr<Text> text_;
+
 	};
 }
 
