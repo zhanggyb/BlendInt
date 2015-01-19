@@ -535,4 +535,30 @@ namespace BlendInt {
     {
     }
 
+	const GlyphMetrics* FontCacheExt::Query (uint32_t charcode, bool create)
+	{
+		if(glyph_data_.count(charcode)) {
+			return &glyph_data_[charcode];
+		}
+
+		face_.LoadChar(charcode, FT_LOAD_RENDER);
+		FT_GlyphSlot g = face_.face()->glyph;
+
+		GlyphMetrics glyph;
+		glyph.bitmap_left = g->bitmap_left;
+		glyph.bitmap_top = g->bitmap_top;
+		glyph.bitmap_width = g->bitmap.width;
+		glyph.bitmap_height = g->bitmap.rows;
+		glyph.advance_x = g->advance.x >> 6;
+		glyph.advance_y = g->advance.y >> 6;
+
+		texture_atlas_->bind();
+		texture_atlas_->Upload(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, &glyph.offset_x, &glyph.offset_y);
+		texture_atlas_->reset();
+
+		glyph_data_[charcode] = glyph;
+
+		return &glyph_data_[charcode];
+	}
+
 } /* namespace BlendInt */

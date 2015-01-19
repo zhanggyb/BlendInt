@@ -91,7 +91,10 @@ namespace BlendInt {
 		"out vec4 FragmentColor;"
 		""
 		"void main(void) {"
-		"	float alpha = texture(u_tex, uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+		""
+		"	ivec2 size = textureSize(u_tex, 0);"
+		"	vec2 normalized_uv = vec2(uv.x / size.x, uv.y / size.y);"
+		"	float alpha = texture(u_tex, normalized_uv).r;"// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
 		"	FragmentColor = vec4(uColor.rgb, uColor.a * alpha);"
 		"}";
 

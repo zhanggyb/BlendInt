@@ -44,6 +44,21 @@
 
 namespace BlendInt {
 
+	struct GlyphMetrics
+	{
+		int bitmap_width;
+		int bitmap_height;
+
+		int bitmap_left;
+		int bitmap_top;
+
+		int advance_x;
+		int advance_y;
+
+		int offset_x;
+		int offset_y;
+	};
+
 	struct GlyphVertex
 	{
 		GLfloat x;	// coord x

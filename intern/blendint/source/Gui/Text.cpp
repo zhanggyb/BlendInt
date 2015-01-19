@@ -26,9 +26,9 @@
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
- namespace BlendInt {
+namespace BlendInt {
 
- 	Text::Text (const String& text)
+	Text::Text (const String& text)
  	: AbstractForm(),
  	  str_len_(0),
  	  vao_(0),
@@ -58,23 +58,23 @@
 
  	 		verts[i * 16 + 0] = advance + g->bitmap_left;
  	 		verts[i * 16 + 1] = g->bitmap_top - g->bitmap.rows;
- 	 		verts[i * 16 + 2] = p[i * 2 + 0] / 128.f;
- 	 		verts[i * 16 + 3] = p[i * 2 + 1] / 32.f + g->bitmap.rows / 32.f;
+ 	 		verts[i * 16 + 2] = p[i * 2 + 0];
+ 	 		verts[i * 16 + 3] = p[i * 2 + 1] + g->bitmap.rows;
 
  	 		verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap.width;
  	 		verts[i * 16 + 5] = g->bitmap_top - g->bitmap.rows;
- 	 		verts[i * 16 + 6] = p[i * 2 + 0] / 128.f + g->bitmap.width / 128.f;
- 	 		verts[i * 16 + 7] = p[i * 2 + 1] / 32.f + g->bitmap.rows / 32.f;
+ 	 		verts[i * 16 + 6] = p[i * 2 + 0] + g->bitmap.width;
+ 	 		verts[i * 16 + 7] = p[i * 2 + 1] + g->bitmap.rows;
 
  	 		verts[i * 16 + 8] = advance + g->bitmap_left;
  	 		verts[i * 16 + 9] = g->bitmap_top;
- 	 		verts[i * 16 + 10] = p[i * 2 + 0] / 128.f;
- 	 		verts[i * 16 + 11] = p[i * 2 + 1] / 32.f;
+ 	 		verts[i * 16 + 10] = p[i * 2 + 0];
+ 	 		verts[i * 16 + 11] = p[i * 2 + 1];
 
  	 		verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap.width;
  	 		verts[i * 16 + 13] = g->bitmap_top;
- 	 		verts[i * 16 + 14] = p[i * 2 + 0] / 128.f + g->bitmap.width / 128.f;
- 	 		verts[i * 16 + 15] = p[i * 2 + 1] / 32.f;
+ 	 		verts[i * 16 + 14] = p[i * 2 + 0] + g->bitmap.width;
+ 	 		verts[i * 16 + 15] = p[i * 2 + 1];
 
  	 		advance = advance + (g->advance.x >> 6);
  		}

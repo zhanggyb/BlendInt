@@ -37,6 +37,8 @@
 #include <BlendInt/Gui/GlyphAtlas.hpp>
 
 #include <BlendInt/Font/FcPattern.hpp>
+#include <BlendInt/Font/FtLibrary.hpp>
+#include <BlendInt/Font/FtFace.hpp>
 
 namespace BlendInt {
 
@@ -180,6 +182,8 @@ namespace BlendInt {
 
 		virtual ~FontCacheExt ();
 
+		const GlyphMetrics* Query (uint32_t charcode, bool create = true);
+
 		const Fc::Pattern& pattern () const
 		{
 			return pattern_;
@@ -194,7 +198,12 @@ namespace BlendInt {
 
 		Fc::Pattern pattern_;
 
+		Ft::Library library_;
+		Ft::Face face_;
+
 		RefPtr<TextureAtlas2DExt> texture_atlas_;
+
+		std::map<uint32_t, GlyphMetrics> glyph_data_;
 
 		static map<FcChar32, RefPtr<FontCacheExt> > kCacheDB;
 	};

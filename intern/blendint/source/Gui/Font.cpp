@@ -147,6 +147,8 @@ namespace BlendInt {
 	{
 		if(length == 0)	return 0;
 
+		return 0;
+
 		size_t str_len = strlen(string);
 
 		if(start >= str_len) return 0;
@@ -250,6 +252,8 @@ namespace BlendInt {
 	{
 		if(length == 0)	return 0;
 
+		return 0;
+
 		int advance = 0;	// the return value
 
 		RefPtr<GLSLProgram> program = Context::shaders->widget_text_program();
@@ -341,6 +345,8 @@ namespace BlendInt {
 	        size_t start) const
 	{
 		if(length == 0)	return 0;
+
+		return 0;
 
 		int advance = 0;	// the return value
 
