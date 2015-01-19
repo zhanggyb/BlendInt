@@ -40,7 +40,11 @@ namespace BlendInt {
  		FTFace ft_face;
 
  		ft_lib.Initialize();
- 		ft_face.New(ft_lib, "/usr/share/fonts/adobe-source-han-sans-cn/SourceHanSansCN-Regular.otf");
+ 		#ifdef __APPLE__
+	 		ft_face.New(ft_lib, "/System/Library/Fonts/HelveticaNeue.dfont");
+ 		#else
+	 		ft_face.New(ft_lib, "/usr/share/fonts/adobe-source-han-sans-cn/SourceHanSansCN-Regular.otf");
+ 		#endif
  		ft_face.SetCharSize(16 << 6, 0, 96, 0);
  		FT_GlyphSlot g = NULL;
 
