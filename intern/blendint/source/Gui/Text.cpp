@@ -35,41 +35,8 @@ namespace BlendInt {
  	  vao_(0),
  	  text_(text)
  	{
- 		std::vector<GLfloat> verts(text.length() * 4 * 4, 0.f);
-
- 		float advance = 0.f;
-
- 		const GlyphMetrics* g;
-
- 		int i = 0;
- 		for(String::const_iterator it = text.begin(); it != text.end(); it++)
- 		{
- 			g = font_.glyph(*it);
-
- 	 		verts[i * 16 + 0] = advance + g->bitmap_left;
- 	 		verts[i * 16 + 1] = g->bitmap_top - g->bitmap_height;
- 	 		verts[i * 16 + 2] = g->offset_u;
- 	 		verts[i * 16 + 3] = g->offset_v + g->bitmap_height;
-
- 	 		verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap_width;
- 	 		verts[i * 16 + 5] = g->bitmap_top - g->bitmap_height;
- 	 		verts[i * 16 + 6] = g->offset_u + g->bitmap_width;
- 	 		verts[i * 16 + 7] = g->offset_v + g->bitmap_height;
-
- 	 		verts[i * 16 + 8] = advance + g->bitmap_left;
- 	 		verts[i * 16 + 9] = g->bitmap_top;
- 	 		verts[i * 16 + 10] = g->offset_u;
- 	 		verts[i * 16 + 11] = g->offset_v;
-
- 	 		verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap_width;
- 	 		verts[i * 16 + 13] = g->bitmap_top;
- 	 		verts[i * 16 + 14] = g->offset_u + g->bitmap_width;
- 	 		verts[i * 16 + 15] = g->offset_v;
-
- 	 		advance = advance + g->advance_x;
-
- 	 		i++;
- 		}
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(text, verts);
 
  		glGenVertexArrays(1, &vao_);
  		glBindVertexArray(vao_);
@@ -123,4 +90,45 @@ namespace BlendInt {
 		GLSLProgram::reset();
  	}
 
+    void Text::GenerateTextVertices(const String &text, std::vector<GLfloat> &verts)
+    {
+        float advance = 0.f;
+        const GlyphMetrics* g;
+        int i = 0;
+
+        size_t buf_size = text.length() * 4 * 4;
+        if(verts.size() != buf_size) {
+            verts.resize(buf_size, 0.f);
+        }
+        
+        for(String::const_iterator it = text.begin(); it != text.end(); it++)
+        {
+            g = font_.glyph(*it);
+            
+            verts[i * 16 + 0] = advance + g->bitmap_left;
+            verts[i * 16 + 1] = g->bitmap_top - g->bitmap_height;
+            verts[i * 16 + 2] = g->offset_u;
+            verts[i * 16 + 3] = g->offset_v + g->bitmap_height;
+            
+            verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap_width;
+            verts[i * 16 + 5] = g->bitmap_top - g->bitmap_height;
+            verts[i * 16 + 6] = g->offset_u + g->bitmap_width;
+            verts[i * 16 + 7] = g->offset_v + g->bitmap_height;
+            
+            verts[i * 16 + 8] = advance + g->bitmap_left;
+            verts[i * 16 + 9] = g->bitmap_top;
+            verts[i * 16 + 10] = g->offset_u;
+            verts[i * 16 + 11] = g->offset_v;
+            
+            verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap_width;
+            verts[i * 16 + 13] = g->bitmap_top;
+            verts[i * 16 + 14] = g->offset_u + g->bitmap_width;
+            verts[i * 16 + 15] = g->offset_v;
+            
+            advance = advance + g->advance_x;
+            
+            i++;
+        }
+    }
+    
  }

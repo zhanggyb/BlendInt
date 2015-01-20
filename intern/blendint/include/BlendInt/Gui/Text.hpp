@@ -49,6 +49,8 @@ namespace BlendInt {
 
 	private:
 
+        void GenerateTextVertices (const String& text, std::vector<GLfloat>& verts);
+        
 		unsigned int str_len_;
 
 		GLuint vao_;

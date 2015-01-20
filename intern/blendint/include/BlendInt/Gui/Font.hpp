@@ -32,6 +32,36 @@ using namespace std;
 
 namespace BlendInt {
 
+    /**
+     * @brief Font kerning
+     */
+    struct Kerning
+    {
+        Kerning()
+        : x(0), y(0)
+        {}
+        
+        Kerning(int xi, int yi)
+        : x(xi), y(yi)
+        {}
+        
+        Kerning (const Kerning& orig)
+        : x(orig.x), y(orig.y)
+        {
+        }
+
+        Kerning& operator = (const Kerning& orig)
+        {
+            x = orig.x;
+            y = orig.y;
+            
+            return *this;
+        }
+        
+        int x;
+        int y;
+    };
+    
 	/**
 	 *
 	 */
@@ -40,6 +70,12 @@ namespace BlendInt {
 
 	public:
 
+        enum KerningMode {
+            KerningDefault = FT_KERNING_DEFAULT,
+            KerningUnfitted = FT_KERNING_UNFITTED,
+            KerningUnscaled = FT_KERNING_UNSCALED
+        };
+        
 		Font();
 		
 		Font (const FcChar8* family,
@@ -92,6 +128,8 @@ namespace BlendInt {
 
 		size_t GetTextWidth (const String& string, size_t length, size_t start) const;
 
+        Kerning GetKerning (uint32_t left_glyph, uint32_t right_glyph, KerningMode mode = KerningDefault) const;
+        
 		const GlyphMetrics* glyph (uint32_t charcode) const
 		{
 			return cache_->Query(charcode, true);

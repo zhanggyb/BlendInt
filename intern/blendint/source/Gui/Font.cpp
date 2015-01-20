@@ -50,7 +50,7 @@ namespace BlendInt {
 		p.add(FC_FAMILY, "Sans");
 #endif
 #ifdef __APPLE__
-		p.add(FC_FAMILY, "Helvetical Neue");
+		p.add(FC_FAMILY, "Helvetica Neue");
 #endif
 
 		p.add(FC_SIZE, 12);
@@ -246,5 +246,19 @@ namespace BlendInt {
 		// TODO: implement this function
 		return 0;
 	}
+
+    Kerning Font::GetKerning (uint32_t left_glyph, uint32_t right_glyph, KerningMode mode) const
+    {
+        Kerning retval;
+        FT_Vector akerning;
+        
+        if(cache_->face_.get_kerning(left_glyph, right_glyph, mode, &akerning) == 0) {
+            retval.x = akerning.x >> 6;
+            retval.y = akerning.y >> 6;
+        }
+        
+        return retval;
+    }
+    
 
 }
