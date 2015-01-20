@@ -113,7 +113,7 @@ namespace BlendInt {
 
 		if(first_subview() == 0) {
 			Font font;
-			int max_font_height = font.GetHeight();
+			int max_font_height = font.height();
 			prefer.set_height(max_font_height);
 		} else {
 			Size tmp_size;

@@ -113,19 +113,19 @@ namespace BlendInt {
 			action_->icon()->Draw(0.f, 0.f, 0);
 		}
 
-		Font font;
+//		Font font;
 
-		if(hover()) {
-			font.set_color(Color(1.f, 0.f, 0.f, 1.f));
-		} else {
-			font.set_color(Color(1.f, 1.f, 1.f, 1.f));
-		}
-
-		int x = 16 + 2;
-		int y = (size().height() - font.GetHeight()) / 2 + std::abs(font.GetDescender());
-		font.set_pen(x, y);
-
-		font.Print(0.f, 0.f, action_->text());
+//		if(hover()) {
+//			font.set_color(Color(1.f, 0.f, 0.f, 1.f));
+//		} else {
+//			font.set_color(Color(1.f, 1.f, 1.f, 1.f));
+//		}
+//
+//		int x = 16 + 2;
+//		int y = (size().height() - font.GetHeight()) / 2 + std::abs(font.descender());
+//		font.set_pen(x, y);
+//
+//		font.Print(0.f, 0.f, action_->text());
 
 		return Finish;
 	}

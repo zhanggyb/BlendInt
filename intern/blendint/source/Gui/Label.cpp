@@ -84,7 +84,7 @@ namespace BlendInt {
 	ResponseType Label::Draw (const Context* context)
 	{
 		if(text_.length()) {
-			font_.Print(0.f, 0.f, text_, text_length_, 0);
+			//font_.Print(0.f, 0.f, text_, text_length_, 0);
 		}
 
 		return Finish;
@@ -108,7 +108,7 @@ namespace BlendInt {
 			return 0;
 		}
 
-		Rect text_outline = font.GetTextOutline(text);
+		Rect text_outline; // = font.GetTextOutline(text);
 
 		if(height < text_outline.height()) {
 			str_len = 0;
@@ -123,9 +123,9 @@ namespace BlendInt {
 			}
 		}
 
-		font.set_pen((size.width() - text_outline.width()) / 2,
-						(size.height() - font.GetHeight()) / 2
-										+ std::abs(font.GetDescender()));
+//		font.set_pen((size.width() - text_outline.width()) / 2,
+//						(size.height() - font.height()) / 2
+//										+ std::abs(font.descender()));
 		return str_len;
 	}
 
@@ -153,7 +153,7 @@ namespace BlendInt {
 	{
 		Size preferred_size;
 
-		int max_font_height = font().GetHeight();
+		int max_font_height = font().height();
 
 		preferred_size.set_height(max_font_height + 2 + 2);	// top padding: 2, bottom padding: 2
 
@@ -177,21 +177,21 @@ namespace BlendInt {
 	{
 		text_ = text;
 
-		int h = font_.GetHeight();
+		int h = font_.height();
 
 		if(text.empty()) {
 			set_size (h + 2 + 2,
 							h + 2 + 2);
 		} else {
 			text_length_ = text.length();
-			Rect text_outline = font_.GetTextOutline(text);
+			Rect text_outline; // = font_.GetTextOutline(text);
 
 			int width = text_outline.width() + 2 + 2;
 			int height = h + 2 + 2;
 			set_size(width, height);
-			font_.set_pen((width - text_outline.width()) / 2,
-							(height - font_.GetHeight()) / 2 +
-											std::abs(font_.GetDescender()));
+//			font_.set_pen((width - text_outline.width()) / 2,
+//							(height - font_.height()) / 2 +
+//											std::abs(font_.descender()));
 		}
 	}
 

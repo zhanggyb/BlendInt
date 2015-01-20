@@ -134,7 +134,7 @@ namespace BlendInt {
 
 		void set_pen (int x, int y)
 		{
-			font_.set_pen(x, y);
+			//font_.set_pen(x, y);
 		}
 
 		int GetValidTextLength (const String& text, const Font& font, int max_width);

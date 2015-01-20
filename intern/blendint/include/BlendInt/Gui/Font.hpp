@@ -21,12 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FONT_HPP_
-#define _BLENDINT_GUI_FONT_HPP_
+#pragma once
 
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Gui/FontCache.hpp>
 
@@ -34,178 +32,34 @@ using namespace std;
 
 namespace BlendInt {
 
-	class Font
-	{
-	public:
-
-#ifdef __LINUX__
-		Font (const std::string& name = std::string("Droid Sans"),
-						unsigned int size = 12,
-						int flag = 0);
-#endif
-
-#ifdef __APPLE__
-		Font (const std::string& family = std::string("Helvetical Neue"),
-						unsigned int size = 12,
-						int flag = 0);
-#endif
-
-		Font (const Font& orig);
-
-		~Font ()
-		{
-
-		}
-
-		Font& operator = (const Font& orig);
-
-		void SetName (const std::string& name);
-
-		void SetSize (unsigned int size);
-
-		void SetBold (bool bold);
-
-		bool IsBold () const
-		{
-			return m_data.flag & FontStyleBold;
-		}
-
-		void SetItalic (bool italic);
-
-		bool IsItalic () const
-		{
-			return m_data.flag & FontStyleItalic;
-		}
-
-		void SetOutline (bool outline, float thickness = 0.5f);
-
-		bool IsOutline () const
-		{
-			return m_data.flag & FontStyleOutline;
-		}
-
-		void SetOutlineThickness (float thickness);
-
-		void SetShadow (bool shadow, float offset_x = 1.5f, float offset_y = -1.5f);
-
-		int Print (float x, float y, const char* string, size_t start = 0) const;
-
-		int Print (float x, float y, const char* string, size_t length, size_t start) const;
-
-		int Print (float x, float y, const std::string& string, size_t start = 0) const;
-
-		int Print (float x, float y, const std::string& string, size_t length, size_t start) const;
-
-		int Print (float x, float y, const String& string, size_t start = 0) const;
-
-		int Print (float x, float y, const String& string, size_t length, size_t start) const;
-
-		int GetHeight () const
-		{
-			return m_cache->m_ft_face.face()->size->metrics.height >> 6;
-		}
-
-		int GetAscender () const
-		{
-			return m_cache->m_ft_face.face()->size->metrics.ascender >> 6;
-		}
-
-		int GetDescender () const
-		{
-			return m_cache->m_ft_face.face()->size->metrics.descender >> 6;
-		}
-
-		int GetMaxAdvance () const
-		{
-			return m_cache->m_ft_face.face()->size->metrics.max_advance >> 6;
-		}
-
-		Rect GetTextOutline (const String& string) const;
-
-		size_t GetTextWidth (const std::string& string) const;
-
-		size_t GetTextWidth (const std::string& string, size_t length, size_t start) const;
-
-		size_t GetTextWidth (const String& string) const;
-
-		size_t GetTextWidth (const String& string, size_t length, size_t start) const;
-
-		size_t GetReversedTextWidth (const std::string& string) const;
-
-		size_t GetReversedTextWidth (const std::string& string, size_t length, size_t start) const;
-
-		size_t GetReversedTextWidth (const String& string) const;
-
-		size_t GetReversedTextWidth (const String& string, size_t length, size_t start) const;
-
-		void set_pen (const Point& pen)
-		{
-			m_pen = pen;
-		}
-
-		void set_pen (int x, int y)
-		{
-			m_pen.set_x(x);
-			m_pen.set_y(y);
-		}
-
-		const Point& pen () const
-		{
-			return m_pen;
-		}
-
-		void set_color (const Color& color)
-		{
-			m_color = color;
-		}
-
-		const Color& color () const
-		{
-			return m_color;
-		}
-
-#ifdef DEBUG
-
-		const RefPtr<GLTexture2D>& GetTexture (uint32_t character);
-
-#endif
-
-	private:
-
-		FontTypeBase m_data;
-
-		Point m_pen;
-
-		Color m_color;	// for foreground
-
-		bool m_shadow;
-
-		float m_shadow_offset_x;
-		float m_shadow_offset_y;
-
-		// Color m_background	// for shadow
-
-		RefPtr<FontCache> m_cache;
-	};
-
-	// ------------------------
-
 	/**
 	 *
 	 */
-	class FontExt: public Object
+	class Font: public Object
 	{
 
 	public:
 
-		FontExt();
+		Font();
 		
-		FontExt (const FcChar8* family,
+		Font (const FcChar8* family,
 				double size,
 				int weight = FC_WEIGHT_REGULAR,
 				int slant = FC_SLANT_ROMAN);
 
-		virtual ~FontExt();
+		Font (const Font& orig)
+		: Object()
+		{
+			cache_ = orig.cache_;
+		}
+
+		virtual ~Font();
+
+		Font& operator = (const Font& orig)
+		{
+			cache_ = orig.cache_;
+			return *this;
+		}
 
 		void SetFamily (const FcChar8* family);
 
@@ -233,6 +87,10 @@ namespace BlendInt {
 		void SetSize (double size);
 
 		void SetPixelSize (double pixel_size);
+
+		size_t GetTextWidth (const String& text) const;
+
+		size_t GetTextWidth (const String& string, size_t length, size_t start) const;
 
 		const GlyphMetrics* glyph (uint32_t charcode) const
 		{
@@ -276,9 +134,8 @@ namespace BlendInt {
 
 	private:
 
-		RefPtr<FontCacheExt> cache_;
+		RefPtr<FontCache> cache_;
 
 	};
 	
 } /* namespace BlendInt */
-#endif /* FONT_H_ */

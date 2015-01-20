@@ -44,7 +44,7 @@ namespace BlendInt {
 		: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		int h = font().GetHeight();
+		int h = font().height();
 		set_size(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
 						h + kDefaultPadding.vsum());
 
@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	Size ColorButton::GetPreferredSize () const
 	{
-		int h = font().GetHeight();
+		int h = font().height();
 
 		Size prefer(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
 					h + kDefaultPadding.vsum());
@@ -191,7 +191,7 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		if(text().size()) {
-			font().Print(0.f, 0.f, text(), text_length(), 0);
+			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;

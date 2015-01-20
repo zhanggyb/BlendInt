@@ -42,135 +42,11 @@
 
 namespace BlendInt {
 
-	template<class T>
-	struct greater_second: std::binary_function<T, T, bool>
-	{
-		inline bool operator() (const T& lhs, const T& rhs)
-		{
-			return lhs.second > rhs.second;
-		}
-	};
-
-	enum FontStyleFlag {
-		FontStyleBold = 0x0,
-		FontStyleItalic = 0x1 << 1,
-		FontStyleOutline = 0x1 << 2
-	};
-
-	/**
-	 * @brief Basic structure to identify a font file and texture atlas
-	 */
-	struct FontTypeBase {
-
-		FontTypeBase ()
-		: size(9),
-		  flag(0),
-		  dpi(72),
-		  thickness(0.5f)
-		{
-
-		}
-
-		~FontTypeBase ()
-		{
-
-		}
-
-		FontTypeBase (const FontTypeBase& orig)
-		: name(orig.name),
-		  size(orig.size),
-		  flag(orig.flag),
-		  dpi(orig.dpi),
-		  thickness(orig.thickness)
-		{
-
-		}
-
-		FontTypeBase& operator = (const FontTypeBase& orig)
-		{
-			name = orig.name;
-			size = orig.size;
-			flag = orig.flag;
-			dpi = orig.dpi;
-			thickness = orig.thickness;
-
-			return *this;
-		}
-
-		std::string name;	/** The font name or filepath to the font file */
-		unsigned int size;	/** Character size want to be loaded */
-		unsigned int flag;	/** The font style flag, see FontStyleFlag */
-		unsigned int dpi;	/** The DPI used in Freetype setting */
-		float thickness;	/** The thickness of outline */
-	};
-
-	extern bool operator < (const FontTypeBase& src, const FontTypeBase& dist);
-	extern bool operator == (const FontTypeBase& src, const FontTypeBase& dist);
-
 	class FontCache: public Object
 	{
 	public:
 
-		static RefPtr<FontCache> Create (const FontTypeBase& data);
-
-		static bool Release (const FontTypeBase& data);
-
-		static void ReleaseAll ();
-
-		static size_t GetCacheSize ();
-
-		static void SetDefaultTextureSize (int width, int height);
-
-		static int GetDefaultTextureWidth ();
-
-		static int GetDefaultTextureHeight ();
-
-		const GlyphExt* Query (const FontTypeBase& font_data, uint32_t charcode, bool create = true);
-
-	private:
-
-		friend class Font;
-		template <typename T> friend class RefPtr;
-
-		FontCache (const FontTypeBase& data);
-
-		virtual ~FontCache ();
-
-		void Initialize (const FontTypeBase& font_data, uint32_t char_code = 32, int size = 95);
-
-		void SetGlyphData (GlyphExt& glyph, int x, int y, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas);
-
-		void SetGlyphData (GlyphExt& glyph, int x, int y, FT_GlyphSlot slot, FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas);
-
-		GLuint m_vao;
-
-		GLuint m_vbo;
-
-		uint32_t m_start;
-		int m_size;
-
-		std::vector<GlyphExt> m_preset;
-
-		std::map<uint32_t, GlyphExt> m_extension;
-
-		RefPtr<GlyphAtlas> m_last;
-
-		FTLibrary m_ft_lib;
-		FTFace m_ft_face;
-
-		static map<FontTypeBase, RefPtr<FontCache> > cache_db;
-
-		static int default_texture_width;
-		static int default_texture_height;
-	};
-
-	// ---------------------------
-
-	class FontCacheExt: public Object
-	{
-	public:
-
-		static RefPtr<FontCacheExt> Create (const Fc::Pattern& pattern);
+		static RefPtr<FontCache> Create (const Fc::Pattern& pattern);
 
 		static bool Release (const Fc::Pattern& data);
 
@@ -178,9 +54,9 @@ namespace BlendInt {
 
 		static size_t GetCacheSize ();
 
-		FontCacheExt (const Fc::Pattern& pattern);
+		FontCache (const Fc::Pattern& pattern);
 
-		virtual ~FontCacheExt ();
+		virtual ~FontCache ();
 
 		const GlyphMetrics* Query (uint32_t charcode, bool create = true);
 
@@ -201,7 +77,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class FontExt;
+		friend class Font;
 
 		Fc::Pattern pattern_;
 
@@ -213,7 +89,7 @@ namespace BlendInt {
 
 		std::map<uint32_t, GlyphMetrics> glyph_data_;
 
-		static map<FcChar32, RefPtr<FontCacheExt> > kCacheDB;
+		static map<FcChar32, RefPtr<FontCache> > kCacheDB;
 	};
 
 } /* namespace BlendInt */

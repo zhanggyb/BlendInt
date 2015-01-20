@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		String text_;
 
-		FontExt font_;
+		Font font_;
 	};
 
 }

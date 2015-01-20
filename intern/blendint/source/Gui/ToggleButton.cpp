@@ -48,7 +48,7 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
-		int h = font().GetHeight();
+		int h = font().height();
 		set_size(h + kDefaultPadding.hsum(),
 				h + kDefaultPadding.vsum());
 
@@ -114,7 +114,7 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		int font_height = font().GetHeight();
+		int font_height = font().height();
 		int h = font_height;
 
 		if(icon_) {
@@ -141,7 +141,7 @@ namespace BlendInt {
 				w = w + icon_->size().width() + icon_text_space;
 			}
 
-			int text_width = font().GetTextWidth(text());
+			int text_width; // = font().GetTextWidth(text());
 			w = w + text_width + kDefaultPadding.hsum(); // left padding: 2, right padding: 2
 
 		}
@@ -307,7 +307,7 @@ namespace BlendInt {
 		}
 
 		if (text().size()) {
-			font().Print(0.f, 0.f, text(), text_length(), 0);
+			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;
@@ -389,7 +389,7 @@ namespace BlendInt {
 
 					bool cal_width = true;
 
-					Rect text_outline = font().GetTextOutline(text());
+					Rect text_outline; // = font().GetTextOutline(text());
 
 					if(valid_height < text_outline.height()) {
 						text_length = 0;
@@ -405,7 +405,7 @@ namespace BlendInt {
 							text_length = text().length();
 							x = x + (valid_width - icon_->size().width() - text_outline.width()) / 2;
 						}
-						y = (size.height() - font().GetHeight()) / 2 + std::abs(font().GetDescender());
+						y = (size.height() - font().height()) / 2 + std::abs(font().descender());
 					}
 
 					set_pen(x, y);
@@ -417,7 +417,7 @@ namespace BlendInt {
 				// If size changed, we need to update the text length for printing too.
 				bool cal_width = true;
 
-				Rect text_outline = font().GetTextOutline(text());
+				Rect text_outline; // = font().GetTextOutline(text());
 
 				if(valid_height < text_outline.height()) {
 					text_length = 0;
@@ -431,7 +431,7 @@ namespace BlendInt {
 						text_length = text().length();
 						x = (size.width() - text_outline.width()) / 2;
 					}
-					y = (size.height() - font().GetHeight()) / 2 + std::abs(font().GetDescender());
+					y = (size.height() - font().height()) / 2 + std::abs(font().descender());
 				}
 
 				set_pen(x, y);
@@ -488,14 +488,14 @@ namespace BlendInt {
 		int right = kDefaultPadding.right() * Context::theme->pixel();
 		int top = kDefaultPadding.top() * Context::theme->pixel();
 		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int h = font().GetHeight();
+		int h = font().height();
 
 		if(text.empty()) {
 			set_size(h + round_radius() * 2 * Context::theme->pixel() + left + right,
 							h + top + bottom);
 		} else {
 			set_text_length(text.length());
-			Rect text_outline = font().GetTextOutline(text);
+			Rect text_outline; // = font().GetTextOutline(text);
 
 			int width = text_outline.width()
 							+ round_radius() * 2 * Context::theme->pixel()
@@ -505,8 +505,8 @@ namespace BlendInt {
 			set_size(width, height);
 
 			set_pen((width - text_outline.width()) / 2,
-							(height - font().GetHeight()) / 2
-											+ std::abs(font().GetDescender()));
+							(height - font().height()) / 2
+											+ std::abs(font().descender()));
 		}
 
 		InitializeToggleButtonOnce();
@@ -519,7 +519,7 @@ namespace BlendInt {
 		int right = kDefaultPadding.right() * Context::theme->pixel();
 		int top = kDefaultPadding.top() * Context::theme->pixel();
 		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int font_height = font().GetHeight();
+		int font_height = font().height();
 		int h = 0;
 
 		if(text.empty()) {
@@ -536,7 +536,7 @@ namespace BlendInt {
 		} else {
 
 			set_text_length(text.length());
-			Rect text_outline = font().GetTextOutline(text);
+			Rect text_outline; // = font().GetTextOutline(text);
 
 			if(icon) {
 				h = std::max(icon->size().height(), font_height);
@@ -549,8 +549,8 @@ namespace BlendInt {
 				set_size(width, height);
 
 				set_pen(((width - icon_->size().width()) - text_outline.width()) / 2 + icon_->size().width(),
-								(height - font().GetHeight()) / 2
-												+ std::abs(font().GetDescender()));
+								(height - font().height()) / 2
+												+ std::abs(font().descender()));
 
 			} else {
 
@@ -562,8 +562,8 @@ namespace BlendInt {
 				set_size(width, height);
 
 				set_pen((width - text_outline.width()) / 2,
-								(height - font().GetHeight()) / 2
-												+ std::abs(font().GetDescender()));
+								(height - font().height()) / 2
+												+ std::abs(font().descender()));
 			}
 
 		}

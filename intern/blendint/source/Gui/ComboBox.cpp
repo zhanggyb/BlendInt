@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 
-		int h = font_.GetHeight();
+		int h = font_.height();
 
 		set_size(
 		        h + round_radius() * 2 + default_combobox_padding.hsum() + 100,
@@ -82,7 +82,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = font_.GetHeight();
+		int max_font_height = font_.height();
 
 		preferred_size.set_height(max_font_height + default_combobox_padding.vsum());	// top padding: 2, bottom padding: 2
 

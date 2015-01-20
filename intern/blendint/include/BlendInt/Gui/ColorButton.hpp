@@ -26,6 +26,7 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
+#include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {

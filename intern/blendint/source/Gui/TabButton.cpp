@@ -126,7 +126,7 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		if(text().size()) {
-			font().Print(0.f, 0.f, text(), text_length(), 0);
+			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;

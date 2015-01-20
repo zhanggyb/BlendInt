@@ -96,7 +96,7 @@ namespace BlendInt {
 	{
 		Size size;
 
-		Rect text_outline = font.GetTextOutline(text_);
+		Rect text_outline; // = font.GetTextOutline(text_);
 
 		size.add_width(margin.left() + margin.right());
 		if(icon_) {
@@ -108,7 +108,7 @@ namespace BlendInt {
 
 		size.set_height(std::max(size.height(), text_outline.height()));
 
-		text_outline = font.GetTextOutline(shortcut_);
+		text_outline; // = font.GetTextOutline(shortcut_);
 
 		size.add_width(space);
 		size.add_width(text_outline.width());
@@ -124,7 +124,7 @@ namespace BlendInt {
 	{
 		unsigned int length = 0;
 
-		Rect text_outline = font.GetTextOutline(text_);
+		Rect text_outline; // = font.GetTextOutline(text_);
 
 		if(icon_) {
 			length += icon_->size().width();
@@ -132,7 +132,7 @@ namespace BlendInt {
 
 		length += text_outline.width();
 
-		text_outline = font.GetTextOutline(shortcut_);
+		text_outline;	// = font.GetTextOutline(shortcut_);
 
 		length += text_outline.width();
 

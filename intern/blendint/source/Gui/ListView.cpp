@@ -75,7 +75,7 @@ namespace BlendInt {
 		model_ = model;
 
 		if(model_) {
-			int h = font_.GetHeight();
+			int h = font_.height();
 			h = model_->GetRows() * h;	// total height
 		}
 	}
@@ -92,7 +92,7 @@ namespace BlendInt {
 		Context* c = const_cast<Context*>(context);
 
 		int y = position().y() + size().height();
-		int h = font_.GetHeight();
+		int h = font_.height();
 
         Context::shaders->widget_inner_program()->use();
 
@@ -153,7 +153,7 @@ namespace BlendInt {
 			y = position().y() + size().height();
 			while(index.IsValid()) {
 				y -= h;
-				font_.Print(position().x(), y, *index.GetData());
+				//font_.Print(position().x(), y, *index.GetData());
 				index = index.GetDownIndex();
 			}
 
@@ -182,7 +182,7 @@ namespace BlendInt {
 			int rows = model_->GetRows();
 
 			if(rows > 0) {
-				int h = font_.GetHeight();	// the row height
+				int h = font_.height();	// the row height
 				int total = rows * h;
 
 				int i = 0;
@@ -224,7 +224,7 @@ namespace BlendInt {
 
             set_size(*request.size());
 
-			GLfloat h = font_.GetHeight();
+			GLfloat h = font_.height();
 			GLfloat verts[] = {
 					0.f, 0.f,
 					(GLfloat)request.size()->width(), 0.f,
@@ -249,7 +249,7 @@ namespace BlendInt {
 
 	void ListView::InitializeListView ()
 	{
-		GLfloat h = (GLfloat)font_.GetHeight();
+		GLfloat h = (GLfloat)font_.height();
 		GLfloat verts[] = {
 				0.f, 0.f,
 				(GLfloat)size().width(), 0.f,
@@ -286,7 +286,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();
 
-		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));
+		//font_.set_pen(font_.pen().x() + 4, std::abs(font_.descender()));
 	}
 
 }

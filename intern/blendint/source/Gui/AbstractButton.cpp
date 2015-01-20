@@ -71,7 +71,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = font_.GetHeight();
+		int max_font_height = font_.height();
 
 		preferred_size.set_height(
 				max_font_height + kDefaultPadding.vsum() * Context::theme->pixel()); // top padding: 2, bottom padding: 2
@@ -136,7 +136,7 @@ namespace BlendInt {
 			return 0;
 		}
 
-		Rect text_outline = font.GetTextOutline(text);
+		Rect text_outline;	// = font.GetTextOutline(text);
 
 		if(valid_height < text_outline.height()) {
 			text_length = 0;
@@ -150,10 +150,10 @@ namespace BlendInt {
 				text_length = text.length();
 				x = (size.width() - text_outline.width()) / 2;
 			}
-			y = (size.height() - font.GetHeight()) / 2 + std::abs(font.GetDescender());
+			y = (size.height() - font.height()) / 2 + std::abs(font.descender());
 		}
 
-		font.set_pen(x, y);
+		// font.set_pen(x, y);
 
 		return text_length;
 	}

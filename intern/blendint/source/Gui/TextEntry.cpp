@@ -48,7 +48,7 @@ namespace BlendInt {
 	  length_(0),
 	  index_(0)
 	{
-		int h = font_.GetHeight();
+		int h = font_.height();
 		int initial_width = h + round_radius() * 2 * Context::theme->pixel()
 				+ 120;
 		int initial_height = h + vertical_space * 2 * Context::theme->pixel();
@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		text_ = text;
 
-		Rect text_outline = font_.GetTextOutline(text_);
+		Rect text_outline;	// = font_.GetTextOutline(text_);
 
 		length_ = text_.length();
 
@@ -84,8 +84,8 @@ namespace BlendInt {
 			}
 		}
 
-		font_.set_pen(round_radius(),
-				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
+//		font_.set_pen(round_radius(),
+//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
 
 		index_ = text_.length();
 
@@ -100,8 +100,8 @@ namespace BlendInt {
 
 		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
-		font_.set_pen(round_radius(),
-				(size().height() - font_.GetHeight()) / 2 + std::abs(font_.GetDescender()));
+//		font_.set_pen(round_radius(),
+//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
 	}
 
 	void TextEntry::Clear ()
@@ -126,7 +126,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = font_.GetHeight();
+		int max_font_height = font_.height();
 
 		preferred_size.set_height(
 				max_font_height
@@ -315,8 +315,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		font_.set_pen(radius,
-				font_.pen().y());
+//		font_.set_pen(radius,
+//				font_.pen().y());
 
 		RequestRedraw();
 	}
@@ -374,7 +374,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		font_.Print(0.f, 0.f, text_, length_, start_);
+		//font_.Print(0.f, 0.f, text_, length_, start_);
 
 		return Finish;
 	}
@@ -457,9 +457,9 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		// TODO: count Theme::pixel for retina
-		font_.set_pen(round_radius(),
-				(size().height() - font_.GetHeight()) / 2
-		                + std::abs(font_.GetDescender()));
+//		font_.set_pen(round_radius(),
+//				(size().height() - font_.height()) / 2
+//		                + std::abs(font_.descender()));
 	}
 
 	int TextEntry::GetValidTextSize ()
@@ -493,7 +493,7 @@ namespace BlendInt {
 			size_t len = text_.length();
 			while(len > 0)
 			{
-				text_width = font_.GetReversedTextWidth(text_, len, 0);
+				// text_width = font_.GetReversedTextWidth(text_, len, 0);
 				if(text_width < valid_width) {
 					break;
 				}

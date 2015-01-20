@@ -91,7 +91,7 @@ namespace BlendInt {
 		int rows = model_->GetRows();
 
 		if(rows > 0) {
-			int h = font_.GetHeight();	// the row height
+			int h = font_.height();	// the row height
 			int total = rows * h;
 
 			int i = 0;
@@ -143,7 +143,7 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 
 		int y = size().height();
-		int h = font_.GetHeight();
+		int h = font_.height();
 		int i = 0;
 		while(y > 0) {
 			y -= h;
@@ -175,7 +175,7 @@ namespace BlendInt {
 			y = size().height();
 			while(index.IsValid()) {
 				y -= h;
-				font_.Print(0.f, y, *index.GetData());
+				//font_.Print(0.f, y, *index.GetData());
 				index = index.GetDownIndex();
 			}
 
@@ -203,7 +203,7 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			GLfloat row_height = (GLfloat)font_.GetHeight();
+			GLfloat row_height = (GLfloat)font_.height();
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> row_verts;
@@ -258,7 +258,7 @@ namespace BlendInt {
 		int rows = model_->GetRows();
 
 		if(rows > 0) {
-			int h = font_.GetHeight();	// the row height
+			int h = font_.height();	// the row height
 
 			int i = 0;
 			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
@@ -300,7 +300,7 @@ namespace BlendInt {
 
 	void FileBrowser::InitializeFileBrowserOnce ()
 	{
-		GLfloat row_height = (GLfloat)font_.GetHeight();
+		GLfloat row_height = (GLfloat)font_.height();
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> row_verts;
@@ -354,8 +354,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		font_.set_color(Color(0xF0F0F0FF));
-		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));
+		//font_.set_color(Color(0xF0F0F0FF));
+		//font_.set_pen(font_.pen().x() + 4, std::abs(font_.descender()));
 
 		model_.reset(new FileSystemModel);
 

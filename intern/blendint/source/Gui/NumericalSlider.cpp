@@ -46,13 +46,13 @@ namespace BlendInt {
 	: AbstractSlider<double>(orientation)
 	{
 		set_round_type(RoundAll);
-		int h = font_.GetHeight();
+		int h = font_.height();
 		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
 
-		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
-				+ std::abs(font_.GetDescender()));
+//		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.height()) / 2
+//				+ std::abs(font_.descender()));
 
 		InitializeNumericalSlider ();
 	}
@@ -62,13 +62,13 @@ namespace BlendInt {
 	  title_(title)
 	{
 		set_round_type(RoundAll);
-		int h = font_.GetHeight();
+		int h = font_.height();
 		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
 						h + default_numberslider_padding.vsum());
 		set_round_radius(size().height() / 2);
 
-		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.GetHeight()) / 2
-				+ std::abs(font_.GetDescender()));
+//		font_.set_pen(Context::icons->num()->size().width() * 1.5f, (size().height() - font_.height()) / 2
+//				+ std::abs(font_.descender()));
 
 		InitializeNumericalSlider ();
 	}
@@ -111,7 +111,7 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = font_.GetHeight();
+		int max_font_height = font_.height();
 
 		preferred_size.set_height(
 		        max_font_height + default_numberslider_padding.vsum());	// top padding: 2, bottom padding: 2
@@ -282,13 +282,13 @@ namespace BlendInt {
 
 		int last_text = 0;
 		if(title_.size()) {
-			last_text = font_.Print(0.f, 0.f, title_);
+			//last_text = font_.Print(0.f, 0.f, title_);
 		}
 
 		char buf[32];
 		snprintf(buf, 32, "%.1f", value());
 
-		font_.Print(last_text + 1, 0.f, buf);
+		// font_.Print(last_text + 1, 0.f, buf);
 
 		return Finish;
 	}

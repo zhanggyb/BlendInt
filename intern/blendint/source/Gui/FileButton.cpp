@@ -194,7 +194,7 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		if (text().size()) {
-			font().Print(0.f, 0.f, text(), text_length(), 0);
+			//font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;
@@ -210,10 +210,10 @@ namespace BlendInt {
 		int right = kDefaultPadding.right() * Context::theme->pixel();
 		int top = kDefaultPadding.top() * Context::theme->pixel();
 		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int h = font().GetHeight();
+		int h = font().height();
 
 		set_text_length(text.length());
-		Rect text_outline = font().GetTextOutline(text);
+		Rect text_outline;	// = font().GetTextOutline(text);
 
 		int width = text_outline.width()
 		        + round_radius() * 2 * Context::theme->pixel() + left + right;
@@ -222,8 +222,8 @@ namespace BlendInt {
 		set_size(width, height);
 
 		set_pen((width - text_outline.width()) / 2,
-		        (height - font().GetHeight()) / 2
-		                + std::abs(font().GetDescender()));
+		        (height - font().height()) / 2
+		                + std::abs(font().descender()));
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;

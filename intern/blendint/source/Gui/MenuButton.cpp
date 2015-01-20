@@ -128,7 +128,7 @@ namespace BlendInt {
 		}
 
 		if(text().size()) {
-			font().Print(0.f, 0.f, text(), text_length(), 0);
+			//font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;
@@ -144,14 +144,14 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_text(text);
 
-		int h = font().GetHeight();
+		int h = font().height();
 
 		if(text.empty()) {
 			set_size(h + round_radius() * 2 + kDefaultPadding.hsum(),
 							h + kDefaultPadding.vsum());
 		} else {
 			set_text_length(text.length());
-			Rect text_outline = font().GetTextOutline(text);
+			Rect text_outline;	// = font().GetTextOutline(text);
 
 			int width = text_outline.width() + round_radius() * 2 + kDefaultPadding.hsum();
 			int height = h + kDefaultPadding.vsum();
@@ -159,8 +159,8 @@ namespace BlendInt {
 			set_size(width, height);
 
 			set_pen((width - text_outline.width()) / 2,
-							(height - font().GetHeight()) / 2
-											+ std::abs(font().GetDescender()));
+							(height - font().height()) / 2
+											+ std::abs(font().descender()));
 		}
 
 		glGenVertexArrays(1, &vao_);

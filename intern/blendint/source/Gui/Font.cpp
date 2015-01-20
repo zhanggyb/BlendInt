@@ -34,559 +34,15 @@
 #include <string.h>
 #include <cwchar>
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Font/FcConfig.hpp>
 
-#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/Font.hpp>
-
-#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
-	Font::Font (const std::string& name, unsigned int size, int flag)
-	: m_shadow(false),
-	  m_shadow_offset_x(1.5f),
-	  m_shadow_offset_y(-1.5f)
-	{
-		m_data.name = name;
-		m_data.size = size;
-		m_data.flag = flag;
-		m_data.dpi = Context::theme->dpi();
-		m_color = 0x000000FF;
-		m_cache = FontCache::Create(m_data);
-	}
-
-	Font::Font (const Font& orig)
-	: m_data(orig.m_data),
-	  m_pen(orig.m_pen),
-	  m_color(orig.m_color),
-	  m_shadow(false),
-	  m_shadow_offset_x(1.5f),
-	  m_shadow_offset_y(-1.5f)
-	{
-		m_cache = orig.m_cache;
-	}
-
-	Font& Font::operator = (const Font& orig)
-	{
-		m_data = orig.m_data;
-		m_pen = orig.m_pen;
-		m_color = orig.m_color;
-		m_cache = orig.m_cache;
-		m_shadow = orig.m_shadow;
-		m_shadow_offset_x = orig.m_shadow_offset_x;
-		m_shadow_offset_y = orig.m_shadow_offset_y;
-
-		m_cache = orig.m_cache;
-
-		return *this;
-	}
-
-	void Font::SetName (const std::string& name)
-	{
-		m_data.name = name;
-		m_cache = FontCache::Create(m_data);
-	}
-
-	void Font::SetSize (unsigned int size)
-	{
-		m_data.size = size;
-		m_cache = FontCache::Create(m_data);
-	}
-
-	void Font::SetBold (bool bold)
-	{
-		if(bold) {
-			SETBIT(m_data.flag, FontStyleBold);
-		} else {
-			CLRBIT(m_data.flag, FontStyleBold);
-		}
-
-		m_cache = FontCache::Create(m_data);
-	}
-
-	void Font::SetItalic (bool italic)
-	{
-		if(italic) {
-			SETBIT(m_data.flag, FontStyleItalic);
-		} else {
-			CLRBIT(m_data.flag, FontStyleItalic);
-		}
-
-		m_cache = FontCache::Create(m_data);
-	}
-
-	void Font::SetOutline(bool outline, float thickness)
-	{
-		if(outline) {
-			SETBIT(m_data.flag, FontStyleOutline);
-		} else {
-			CLRBIT(m_data.flag, FontStyleOutline);
-		}
-		m_data.thickness = thickness;
-
-		m_cache = FontCache::Create(m_data);
-	}
-
-	void Font::SetShadow(bool shadow, float offset_x, float offset_y)
-	{
-		m_shadow = shadow;
-		m_shadow_offset_x = offset_x;
-		m_shadow_offset_y = offset_y;
-	}
-
-	int Font::Print (float x, float y, const char* string, size_t start) const
-	{
-		return Print(x, y, string, strlen(string), start);
-	}
-
-	int Font::Print (float x, float y, const char* string, size_t length, size_t start) const
-	{
-		if(length == 0)	return 0;
-
-		return 0;
-
-		size_t str_len = strlen(string);
-
-		if(start >= str_len) return 0;
-
-		int advance = 0;	// the return value
-
-		RefPtr<GLSLProgram> program = Context::shaders->widget_text_program();
-		program->use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
-
-		size_t valid_str_len = std::min(str_len, length);
-
-		// TODO: support left->right, and right->left text
-		char const* p = 0;
-		const GlyphExt* glyph_p = 0;
-
-		glBindVertexArray(m_cache->m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-
-		float tx = x + m_pen.x() + m_shadow_offset_x;
-		float ty = y + m_pen.y() + m_shadow_offset_y;
-
-		if(m_shadow) {
-
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR),
-					m_color.r() / 4,
-					m_color.g() / 4,
-					m_color.b() / 4,
-					m_color.a() / 4);
-
-			p = string;
-			for (size_t i = 0; i < start; i++) {
-				p++;
-			}
-
-			for (size_t i = 0; i < valid_str_len; i++) {
-				glyph_p = m_cache->Query(m_data, *p);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-				advance += glyph_p->advance_x;
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-								&(glyph_p->vertices[0]),
-								GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				tx += glyph_p->advance_x;
-				glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-
-				p++;
-			}
-
-		}
-
-		tx = x + m_pen.x();
-		ty = y + m_pen.y();
-
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, m_color.data());
-
-		p = string;
-		for (size_t i = 0; i < start; i++) {
-			p++;
-		}
-
-		for (size_t i = 0; i < valid_str_len; i++) {
-
-			glyph_p = m_cache->Query(m_data, *p);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-			advance += glyph_p->advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_p->vertices[0]),
-							GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			tx += glyph_p->advance_x;
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-
-			p++;
-		}
-
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->reset();
-
-		return advance;
-	}
-
-	int Font::Print (float x, float y, const std::string& string, size_t start) const
-	{
-		return Print(x, y, string, string.length(), start);
-	}
-
-	int Font::Print (float x, float y, const std::string& string, size_t length, size_t start) const
-	{
-		if(length == 0)	return 0;
-
-		return 0;
-
-		int advance = 0;	// the return value
-
-		RefPtr<GLSLProgram> program = Context::shaders->widget_text_program();
-		program->use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
-
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		std::string::const_iterator it;
-		const GlyphExt* glyph_p = 0;
-
-		glBindVertexArray(m_cache->m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-
-		float tx = x + m_pen.x() + m_shadow_offset_x;
-		float ty = y + m_pen.y() + m_shadow_offset_y;
-
-		if(m_shadow) {
-
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR),
-					m_color.r() / 4,
-					m_color.g() / 4,
-					m_color.b() / 4,
-					m_color.a() / 4);
-
-			it = string.begin();
-			std::advance(it, start);
-
-			for (size_t i = 0; i < str_length; it++, i++) {
-				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-				advance += glyph_p->advance_x;
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-								&(glyph_p->vertices[0]),
-								GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				tx += glyph_p->advance_x;
-				glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-			}
-
-		}
-
-		tx = x + m_pen.x();
-		ty = y + m_pen.y();
-
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, m_color.data());
-
-		it = string.begin();
-		std::advance(it, start);
-
-		for (size_t i = 0; i < str_length; it++, i++) {
-
-			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-			advance += glyph_p->advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_p->vertices[0]),
-							GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			tx += glyph_p->advance_x;
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-		}
-
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->reset();
-
-		return advance;
-	}
-
-	int Font::Print (float x, float y, const String& string, size_t start) const
-	{
-		return Print(x, y, string, string.length(), start);
-	}
-
-	int Font::Print (float x, float y, const String& string, size_t length,
-	        size_t start) const
-	{
-		if(length == 0)	return 0;
-
-		return 0;
-
-		int advance = 0;	// the return value
-
-		RefPtr<GLSLProgram> program = Context::shaders->widget_text_program();
-		program->use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
-
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		String::const_iterator it;
-		const GlyphExt* glyph_p = 0;
-
-		glBindVertexArray(m_cache->m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-
-		float tx = x + m_pen.x() + m_shadow_offset_x;
-		float ty = y + m_pen.y() + m_shadow_offset_y;
-
-		if(m_shadow) {
-
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR),
-					m_color.r() / 4,
-					m_color.g() / 4,
-					m_color.b() / 4,
-					m_color.a() / 4);
-
-			it = string.begin();
-			std::advance(it, start);
-
-			for (size_t i = 0; i < str_length; it++, i++) {
-				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-				advance += glyph_p->advance_x;
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-								&(glyph_p->vertices[0]),
-								GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				tx += glyph_p->advance_x;
-				glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-			}
-
-		}
-
-		tx = x + m_pen.x();
-		ty = y + m_pen.y();
-
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, m_color.data());
-
-		it = string.begin();
-		std::advance(it, start);
-
-		for (size_t i = 0; i < str_length; it++, i++) {
-
-			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->id());
-
-			advance += glyph_p->advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_p->vertices[0]),
-							GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			tx += glyph_p->advance_x;
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), tx, ty);
-		}
-
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->reset();
-
-		return advance;
-	}
-
-	Rect Font::GetTextOutline (const String& string) const
-	{
-		int xmin = 0;
-		int ymin = 0;
-		int xmax = 0;
-		int ymax = 0;
-
-		const GlyphExt* glyph_p = 0;
-
-		for (String::const_iterator it = string.begin(); it != string.end(); it++)
-		{
-			glyph_p = m_cache->Query(m_data, *it);
-			xmax += glyph_p->advance_x;
-			ymin = std::min(static_cast<int>(glyph_p->bitmap_top - glyph_p->bitmap_height), ymin);
-			ymax = std::max(static_cast<int>(glyph_p->bitmap_top), ymax);
-		}
-
-		return Rect(Point(xmin, ymin), Point(xmax, ymax));
-	}
-
-	size_t Font::GetTextWidth (const std::string& string) const
-	{
-		size_t width = 0;
-
-		std::string::const_iterator it = string.begin();
-
-		while(it != string.end()) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetTextWidth (const std::string& string, size_t length,
-	        size_t start) const
-	{
-		size_t width = 0;
-		std::string::const_iterator it = string.begin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while(it != string.end() && (i < length)) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetTextWidth (const String& string) const
-	{
-		size_t width = 0;
-
-		String::const_iterator it = string.begin();
-
-		while(it != string.end()) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetTextWidth (const String& string, size_t length,
-	        size_t start) const
-	{
-		size_t width = 0;
-		String::const_iterator it = string.begin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while(it != string.end() && (i < length)) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetReversedTextWidth (const std::string& string) const
-	{
-		size_t width = 0;
-
-		std::string::const_reverse_iterator it = string.rbegin();
-
-		while (it != string.rend()) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetReversedTextWidth (const std::string& string,
-	        size_t length, size_t start) const
-	{
-		size_t width = 0;
-		std::string::const_reverse_iterator it = string.rbegin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while (it != string.rend() && (i < length)) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetReversedTextWidth (const String& string) const
-	{
-		size_t width = 0;
-
-		String::const_reverse_iterator it = string.rbegin();
-
-		while (it != string.rend()) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-		}
-
-		return width;
-	}
-
-	size_t Font::GetReversedTextWidth (const String& string,
-	        size_t length, size_t start) const
-	{
-		size_t width = 0;
-		String::const_reverse_iterator it = string.rbegin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while (it != string.rend() && (i < length)) {
-			width += m_cache->Query(m_data, *it)->advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-	void Font::SetOutlineThickness (float thickness) {
-	}
-
-	const RefPtr<GLTexture2D>& Font::GetTexture (uint32_t character)
-	{
-		const GlyphExt* glyph = m_cache->Query(m_data, character);
-
-		return glyph->texture;
-	}
-
-	// --------
-
-	FontExt::FontExt ()
+	Font::Font ()
+	: Object()
 	{
 		Fc::Pattern p;
 
@@ -613,11 +69,12 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	FontExt::FontExt (const FcChar8* family, double size, int weight,
+	Font::Font (const FcChar8* family, double size, int weight,
 	        int slant)
+	: Object()
 	{
 		Fc::Pattern p;
 		p.add(FC_FAMILY, family);
@@ -637,14 +94,14 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	FontExt::~FontExt ()
+	Font::~Font ()
 	{
 	}
 
-	void FontExt::SetFamily (const FcChar8* family)
+	void Font::SetFamily (const FcChar8* family)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -666,18 +123,18 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	void FontExt::SetStyle (const FcChar8* style)
+	void Font::SetStyle (const FcChar8* style)
 	{
 	}
 
-	void FontExt::SetFullName (const FcChar8* fullname)
+	void Font::SetFullName (const FcChar8* fullname)
 	{
 	}
 
-	void FontExt::SetSlant (int slant)
+	void Font::SetSlant (int slant)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -699,10 +156,10 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	void FontExt::SetWeight (int weight)
+	void Font::SetWeight (int weight)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -724,10 +181,10 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	void FontExt::SetSize (double size)
+	void Font::SetSize (double size)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -749,10 +206,10 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
 	}
 
-	void FontExt::SetPixelSize (double pixel_size)
+	void Font::SetPixelSize (double pixel_size)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -774,7 +231,20 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
 		}
 
-		cache_ = FontCacheExt::Create(match);
+		cache_ = FontCache::Create(match);
+	}
+
+	size_t Font::GetTextWidth (const String& text) const
+	{
+		// TODO: implement this function
+		return 0;
+	}
+
+	size_t Font::GetTextWidth (const String& string, size_t length,
+	        size_t start) const
+	{
+		// TODO: implement this function
+		return 0;
 	}
 
 }
