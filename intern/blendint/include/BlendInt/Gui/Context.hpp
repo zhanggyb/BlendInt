@@ -209,6 +209,8 @@ namespace BlendInt {
 
 		static bool InitializeCursor ();
 
+		static bool InitializeFont ();
+
 		static void ReleaseTheme ();
 
 		static void ReleaseIcons ();
@@ -216,6 +218,8 @@ namespace BlendInt {
 		static void ReleaseShaders ();
 
 		static void ReleaseCursor ();
+
+		static void ReleaseFont ();
 
 		static void GetGLVersion (int *major, int *minor);
 

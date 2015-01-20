@@ -78,6 +78,7 @@ namespace BlendInt {
 	private:
 
 		friend class Font;
+		friend class Context;
 
 		Fc::Pattern pattern_;
 
@@ -90,6 +91,8 @@ namespace BlendInt {
 		std::map<uint32_t, GlyphMetrics> glyph_data_;
 
 		static map<FcChar32, RefPtr<FontCache> > kCacheDB;
+
+		static FcChar32 kDefaultFontHash;
 	};
 
 } /* namespace BlendInt */

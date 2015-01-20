@@ -142,6 +142,8 @@ namespace BlendInt {
 
     map<FcChar32, RefPtr<FontCache> > FontCache::kCacheDB;
 
+    FcChar32 FontCache::kDefaultFontHash = 0;
+
     RefPtr<FontCache> FontCache::Create (const Fc::Pattern& pattern)
     {
     	RefPtr<FontCache> cache;

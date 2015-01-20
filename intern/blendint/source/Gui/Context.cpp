@@ -39,11 +39,13 @@
 #endif
 #include <BlendInt/Core/Time.hpp>
 
+#include <BlendInt/Font/FcPattern.hpp>
+#include <BlendInt/Font/FcConfig.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-
 #include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
@@ -123,23 +125,13 @@ namespace BlendInt
 			success = false;
 		}
 
-#ifdef USE_FONTCONFIG
-
-#ifdef __APPLE__
-
-		// Create a default font
-		//FontCache::Create("Sans-Serif", 9, 96, false, false);
-
-#endif
-
-#ifdef __LINUX__
-
-		// Create a default font
-		//FontCache::Create("Sans", 9, 96, false, false);
-
-#endif
-
-#endif
+		// Create Default font:
+		if(success && InitializeFont()) {
+			// do nothing
+		} else {
+			DBG_PRINT_MSG("%s", "Cannot initialize font");
+			success = false;
+		}
 
 		if(success) {
 			Time::SaveCurrent();
@@ -161,10 +153,10 @@ namespace BlendInt
 			}
 		}
 
+		ReleaseFont();
 		ReleaseIcons();
 		ReleaseShaders();
 		ReleaseTheme();
-		FontCache::ReleaseAll();
 		ReleaseCursor();
 
 #ifdef USE_FONTCONFIG
@@ -659,6 +651,36 @@ namespace BlendInt
 		return true;
 	}
 
+	bool Context::InitializeFont()
+	{
+		Fc::Pattern p;
+
+#ifdef __LINUX__
+		p.add(FC_FAMILY, "Sans");
+#endif
+#ifdef __APPLE__
+		p.add(FC_FAMILY, "Helvetica Neue");
+#endif
+
+		p.add(FC_SIZE, 12);
+		p.add(FC_WEIGHT, FC_WEIGHT_REGULAR);
+		p.add(FC_SLANT, FC_SLANT_ROMAN);
+
+		Fc::Config::substitute(0, p, FcMatchPattern);
+		p.default_substitute();
+
+		FcResult result;
+		Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+		if(match) {
+			FontCache::Create(match);
+			FontCache::kDefaultFontHash = match.hash();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	void Context::ReleaseTheme ()
 	{
 		if (theme) {
@@ -689,6 +711,11 @@ namespace BlendInt
 			delete cursor;
 			cursor = nullptr;
 		}
+	}
+
+	void Context::ReleaseFont()
+	{
+		FontCache::ReleaseAll();
 	}
 
 	void Context::GetGLVersion (int *major, int *minor)

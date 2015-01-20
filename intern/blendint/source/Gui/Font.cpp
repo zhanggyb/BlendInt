@@ -44,32 +44,7 @@ namespace BlendInt {
 	Font::Font ()
 	: Object()
 	{
-		Fc::Pattern p;
-
-#ifdef __LINUX__
-		p.add(FC_FAMILY, "Sans");
-#endif
-#ifdef __APPLE__
-		p.add(FC_FAMILY, "Helvetica Neue");
-#endif
-
-		p.add(FC_SIZE, 12);
-		p.add(FC_WEIGHT, FC_WEIGHT_REGULAR);
-		p.add(FC_SLANT, FC_SLANT_ROMAN);
-
-		Fc::Config::substitute(0, p, FcMatchPattern);
-		p.default_substitute();
-
-		FcResult result;
-		Fc::Pattern match = Fc::Config::match(0, p, &result);
-
-		assert(match);
-
-		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
-		}
-
-		cache_ = FontCache::Create(match);
+		cache_ = FontCache::kCacheDB[FontCache::kDefaultFontHash];
 	}
 
 	Font::Font (const FcChar8* family, double size, int weight,
