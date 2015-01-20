@@ -41,8 +41,8 @@ namespace BlendInt {
 				if(err) {
 					DBG_PRINT_MSG("Warning: %s", "Fail to destroy Freetype Face");
 				}
-
-			}		}
+			}
+		}
 
 		bool Face::New (const Library& lib, const char* filepathname,
 		        FT_Long face_index)

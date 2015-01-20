@@ -234,6 +234,21 @@ namespace BlendInt {
 
 		void SetPixelSize (double pixel_size);
 
+		const GlyphMetrics* glyph (uint32_t charcode) const
+		{
+			return cache_->Query(charcode, true);
+		}
+
+		void bind () const
+		{
+			cache_->texture_atlas()->bind();
+		}
+
+		void reset () const
+		{
+			cache_->texture_atlas()->reset();
+		}
+
 	private:
 
 		RefPtr<FontCacheExt> cache_;

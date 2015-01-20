@@ -29,6 +29,7 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/TextureAtlas2D.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
 
@@ -54,10 +55,9 @@ namespace BlendInt {
 
 		GLBuffer<> vbo_;
 
-		TextureAtlas2DExt atlas_;	// temp for debug
-
 		String text_;
 
+		FontExt font_;
 	};
 
 }

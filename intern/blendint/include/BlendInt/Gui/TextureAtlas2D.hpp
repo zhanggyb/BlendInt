@@ -173,7 +173,6 @@ namespace BlendInt {
 			glDeleteTextures(1, &id_);
 			id_ = 0;
 
-
 			width_ = 0;
 			height_ = 0;
 			last_x_ = 0;

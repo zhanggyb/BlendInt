@@ -29,13 +29,13 @@ namespace BlendInt {
 
 	namespace Ft {
 
-		class Face: public Object
+		class Face
 		{
 		public:
 
 			Face ();
 
-			virtual ~Face ();
+			~Face ();
 
 			bool New (const Library& lib, const char* filepathname, FT_Long face_index = 0);
 

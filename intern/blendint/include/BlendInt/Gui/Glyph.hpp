@@ -46,6 +46,45 @@ namespace BlendInt {
 
 	struct GlyphMetrics
 	{
+		GlyphMetrics ()
+		: bitmap_width(0),
+		  bitmap_height(0),
+		  bitmap_left(0),
+		  bitmap_top(0),
+		  advance_x(0),
+		  advance_y(0),
+		  offset_u(0),
+		  offset_v(0)
+		{
+		}
+
+		GlyphMetrics (const GlyphMetrics& orig)
+		: bitmap_width(orig.bitmap_width),
+		  bitmap_height(orig.bitmap_height),
+		  bitmap_left(orig.bitmap_left),
+		  bitmap_top(orig.bitmap_top),
+		  advance_x(orig.advance_x),
+		  advance_y(orig.advance_y),
+		  offset_u(orig.offset_u),
+		  offset_v(orig.offset_v)
+		{}
+
+		GlyphMetrics& operator = (const GlyphMetrics& orig)
+		{
+			bitmap_width = orig.bitmap_width;
+			bitmap_height = orig.bitmap_height;
+			bitmap_left = orig.bitmap_left;
+			bitmap_top = orig.bitmap_top;
+
+			advance_x = orig.advance_x;
+			advance_y = orig.advance_y;
+
+			offset_u = orig.offset_u;
+			offset_v = orig.offset_v;
+
+			return *this;
+		}
+
 		int bitmap_width;
 		int bitmap_height;
 
@@ -55,8 +94,8 @@ namespace BlendInt {
 		int advance_x;
 		int advance_y;
 
-		int offset_x;
-		int offset_y;
+		int offset_u;
+		int offset_v;
 	};
 
 	struct GlyphVertex

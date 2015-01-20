@@ -178,11 +178,16 @@ namespace BlendInt {
 
 		static size_t GetCacheSize ();
 
-		FontCacheExt ();
+		FontCacheExt (const Fc::Pattern& pattern);
 
 		virtual ~FontCacheExt ();
 
 		const GlyphMetrics* Query (uint32_t charcode, bool create = true);
+
+		size_t glyph_count () const
+		{
+			return glyph_data_.size();
+		}
 
 		const Fc::Pattern& pattern () const
 		{
@@ -196,9 +201,12 @@ namespace BlendInt {
 
 	private:
 
+		friend class FontExt;
+
 		Fc::Pattern pattern_;
 
 		Ft::Library library_;
+
 		Ft::Face face_;
 
 		RefPtr<TextureAtlas2DExt> texture_atlas_;

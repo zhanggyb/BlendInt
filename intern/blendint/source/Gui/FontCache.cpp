@@ -506,20 +506,32 @@ namespace BlendInt {
     {
     	RefPtr<FontCacheExt> cache;
 
-    	if(kCacheDB.count(pattern.hash())) {
-
+    	FcChar32 hash_id = pattern.hash();
+    	if(kCacheDB.count(hash_id)) {
+    		cache = kCacheDB[hash_id];
+    	} else {
+    		cache.reset(new FontCacheExt(pattern));
+    		kCacheDB[hash_id] = cache;
     	}
 
     	return cache;
     }
 
-    bool FontCacheExt::Release (const Fc::Pattern& data)
+    bool FontCacheExt::Release (const Fc::Pattern& pattern)
     {
+    	FcChar32 hash_id = pattern.hash();
+
+    	if(kCacheDB.count(hash_id)) {
+    		kCacheDB.erase(hash_id);
+    	}
+
     	return true;
     }
 
     void FontCacheExt::ReleaseAll ()
     {
+    	DBG_PRINT_MSG("%s", "release all");
+    	kCacheDB.clear();
     }
 
     size_t FontCacheExt::GetCacheSize ()
@@ -527,12 +539,49 @@ namespace BlendInt {
     	return kCacheDB.size();
     }
 
-    FontCacheExt::FontCacheExt ()
+    FontCacheExt::FontCacheExt (const Fc::Pattern& pattern)
+    : pattern_(pattern)
     {
+    	FcValue file;
+    	FcValue size;
+    	FcValue dpi;
+
+    	FcResult result = pattern_.get(FC_FILE, 0, &file);
+    	if(result) {
+			fprintf(stderr, "ERROR: Fail to get font file");
+			exit(EXIT_FAILURE);
+    	}
+    	DBG_PRINT_MSG("file: %s", file.u.s);
+
+    	result = pattern_.get(FC_SIZE, 0, &size);
+    	if(result) {
+			fprintf(stderr, "ERROR: Fail to get font size");
+			exit(EXIT_FAILURE);
+    	}
+
+    	result = pattern_.get(FC_DPI, 0, &dpi);
+    	if(result) {
+			fprintf(stderr, "ERROR: Fail to get font dpi");
+			exit(EXIT_FAILURE);
+    	}
+
+    	// DBG_PRINT_MSG("size: %d, dpi: %u", size.u.i, (unsigned int)dpi.u.d);
+
+    	library_.Init();
+    	face_.New(library_, (const char*)file.u.s);
+    	face_.SetCharSize(size.u.i << 6, 0, (unsigned int)dpi.u.d, 0);
+
+    	texture_atlas_.reset(new TextureAtlas2DExt);
+    	texture_atlas_->Generate(500, 32);
     }
 
     FontCacheExt::~FontCacheExt ()
     {
+    	texture_atlas_.destroy();
+    	glyph_data_.clear();
+    	 pattern_.destroy();
+    	face_.Done();
+    	library_.Done();
     }
 
 	const GlyphMetrics* FontCacheExt::Query (uint32_t charcode, bool create)
@@ -553,12 +602,18 @@ namespace BlendInt {
 		glyph.advance_y = g->advance.y >> 6;
 
 		texture_atlas_->bind();
-		texture_atlas_->Upload(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, &glyph.offset_x, &glyph.offset_y);
+		texture_atlas_->Upload(g->bitmap.width,
+				g->bitmap.rows,
+				g->bitmap.buffer,
+				&(glyph.offset_u),
+				&(glyph.offset_v));
 		texture_atlas_->reset();
 
-		glyph_data_[charcode] = glyph;
+		typedef std::map<uint32_t, GlyphMetrics>::iterator iterator_type;
 
-		return &glyph_data_[charcode];
+		std::pair<iterator_type, bool> result = glyph_data_.insert(std::pair<uint32_t, GlyphMetrics>(charcode, glyph));
+
+		return &(result.first->second);
 	}
 
 } /* namespace BlendInt */

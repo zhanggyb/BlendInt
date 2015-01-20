@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		InitializeFolderListOnce();
 
-		text_.reset(new Text("foo"));
+		text_.reset(new Text(L"床前明月光"));
 	}
 
 	FolderList::~FolderList()
@@ -70,6 +70,8 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		Context::shaders->widget_outer_program()->use();
 
 		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);

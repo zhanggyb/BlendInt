@@ -23,7 +23,8 @@
 
  #include <BlendInt/Gui/Text.hpp>
 
-#include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Font/FtFace.hpp>
+
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -34,55 +35,41 @@ namespace BlendInt {
  	  vao_(0),
  	  text_(text)
  	{
- 		atlas_.Generate(128, 32);
-
- 		FTLibrary ft_lib;
- 		FTFace ft_face;
-
- 		ft_lib.Initialize();
- 		#ifdef __APPLE__
-	 		ft_face.New(ft_lib, "/System/Library/Fonts/HelveticaNeue.dfont");
- 		#else
-	 		ft_face.New(ft_lib, "/usr/share/fonts/adobe-source-han-sans-cn/SourceHanSansCN-Regular.otf");
- 		#endif
- 		ft_face.SetCharSize(16 << 6, 0, 96, 0);
- 		FT_GlyphSlot g = NULL;
-
  		std::vector<GLfloat> verts(5 * 4 * 4, 0.f);
- 		int p [2 * 5];
+
  		float advance = 0.f;
 
- 		atlas_.bind();
- 		for(int i = 0; i < 5; i++) {
+ 		const GlyphMetrics* g;
 
- 	 		ft_face.LoadChar('A' + i, FT_LOAD_RENDER);
- 	 		g = ft_face.face()->glyph;
-
- 	 		atlas_.Upload(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, &p[i * 2 + 0], &p[i * 2 + 1]);
+ 		int i = 0;
+ 		for(String::const_iterator it = text.begin(); it != text.end(); it++)
+ 		{
+ 			g = font_.glyph(*it);
 
  	 		verts[i * 16 + 0] = advance + g->bitmap_left;
- 	 		verts[i * 16 + 1] = g->bitmap_top - g->bitmap.rows;
- 	 		verts[i * 16 + 2] = p[i * 2 + 0];
- 	 		verts[i * 16 + 3] = p[i * 2 + 1] + g->bitmap.rows;
+ 	 		verts[i * 16 + 1] = g->bitmap_top - g->bitmap_height;
+ 	 		verts[i * 16 + 2] = g->offset_u;
+ 	 		verts[i * 16 + 3] = g->offset_v + g->bitmap_height;
 
- 	 		verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap.width;
- 	 		verts[i * 16 + 5] = g->bitmap_top - g->bitmap.rows;
- 	 		verts[i * 16 + 6] = p[i * 2 + 0] + g->bitmap.width;
- 	 		verts[i * 16 + 7] = p[i * 2 + 1] + g->bitmap.rows;
+ 	 		verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap_width;
+ 	 		verts[i * 16 + 5] = g->bitmap_top - g->bitmap_height;
+ 	 		verts[i * 16 + 6] = g->offset_u + g->bitmap_width;
+ 	 		verts[i * 16 + 7] = g->offset_v + g->bitmap_height;
 
  	 		verts[i * 16 + 8] = advance + g->bitmap_left;
  	 		verts[i * 16 + 9] = g->bitmap_top;
- 	 		verts[i * 16 + 10] = p[i * 2 + 0];
- 	 		verts[i * 16 + 11] = p[i * 2 + 1];
+ 	 		verts[i * 16 + 10] = g->offset_u;
+ 	 		verts[i * 16 + 11] = g->offset_v;
 
- 	 		verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap.width;
+ 	 		verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap_width;
  	 		verts[i * 16 + 13] = g->bitmap_top;
- 	 		verts[i * 16 + 14] = p[i * 2 + 0] + g->bitmap.width;
- 	 		verts[i * 16 + 15] = p[i * 2 + 1];
+ 	 		verts[i * 16 + 14] = g->offset_u + g->bitmap_width;
+ 	 		verts[i * 16 + 15] = g->offset_v;
 
- 	 		advance = advance + (g->advance.x >> 6);
+ 	 		advance = advance + g->advance_x;
+
+ 	 		i++;
  		}
- 		atlas_.reset();
 
  		glGenVertexArrays(1, &vao_);
  		glBindVertexArray(vao_);
@@ -117,7 +104,7 @@ namespace BlendInt {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		atlas_.bind();
+		font_.bind();
 
 		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
 		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
@@ -131,7 +118,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		atlas_.reset();
+		font_.reset();
+
 		GLSLProgram::reset();
  	}
 

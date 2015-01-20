@@ -165,6 +165,7 @@ namespace BlendInt
 		ReleaseShaders();
 		ReleaseTheme();
 		FontCache::ReleaseAll();
+		FontCacheExt::ReleaseAll();
 		ReleaseCursor();
 
 #ifdef USE_FONTCONFIG

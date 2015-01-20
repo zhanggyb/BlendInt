@@ -34,22 +34,20 @@ namespace BlendInt {
 
 	namespace Fc {
 
-		class Pattern: public Object
+		class Pattern
 		{
 		public:
 
 			// the p must be created through FcPatternCreate;
 			Pattern (::FcPattern* p = 0)
-			: Object(),
-			  pattern_(p)
+			: pattern_(p)
 			{
 				if(pattern_ == 0)
 					pattern_ = FcPatternCreate();
 			}
 
 			Pattern (const Pattern& p)
-			: Object(),
-			  pattern_(0)
+			: pattern_(0)
 			{
 				pattern_ = p.pattern_;
 
@@ -59,7 +57,16 @@ namespace BlendInt {
 
 			virtual ~Pattern ()
 			{
-				FcPatternDestroy(pattern_);
+				if(pattern_)
+					FcPatternDestroy(pattern_);
+			}
+
+			inline void destroy ()
+			{
+				if(pattern_) {
+					FcPatternDestroy(pattern_);
+					pattern_ = 0;
+				}
 			}
 
 			inline Pattern& operator = (const Pattern& orig)
@@ -121,10 +128,62 @@ namespace BlendInt {
 				return FcPatternAddLangSet (pattern_, object, l);
 			}
 
+			/**
+			 * @brief Get a value from a pattern
+			 *
+			 * @note The value returned is not a copy, but rather
+			 * refers to the data stored within the pattern
+			 * directly. Same as all get functions.
+			 */
 			inline FcResult get (const char* object, int id, FcValue* v)
 			{
 				return FcPatternGet(pattern_, object, id, v);
 			}
+
+			inline FcResult get (const char* object, int n, int *i)
+			{
+				return FcPatternGetInteger(pattern_, object, n, i);
+			}
+
+			inline FcResult get (const char *object, int n, double *d)
+			{
+				return FcPatternGetDouble(pattern_, object, n, d);
+			}
+
+			inline FcResult get (const char *object, int n, FcChar8 **s)
+			{
+				return FcPatternGetString(pattern_, object, n, s);
+			}
+
+			inline FcResult get (const char *object, int n, FcMatrix **s)
+			{
+				return FcPatternGetMatrix(pattern_, object, n, s);
+			}
+
+			inline FcResult get (const char *object, int n, FcCharSet **c)
+			{
+				return FcPatternGetCharSet(pattern_, object, n, c);
+			}
+
+//			inline FcResult get (const char *object, int n, FcBool *b)
+//			{
+//				return FcPatternGetBool(pattern_, object, n, b);
+//			}
+
+//			inline FcResult get (const char *object, int n, FT_Face *f)
+//			{
+//				return FcPatternGetFTFace(pattern_, object, n, f);
+//			}
+
+			inline FcResult get (const char *object, int n, FcLangSet **l)
+			{
+				return FcPatternGetLangSet(pattern_, object, n, l);
+			}
+
+//			inline FcResult get (const char *object, int n, FcRange **r)
+//			{
+//				return FcPatternGetRange(pattern_, object, n, r);
+//			}
 
 			inline bool del (const char* object)
 			{

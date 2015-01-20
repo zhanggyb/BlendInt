@@ -33,7 +33,7 @@ namespace BlendInt {
 
 	namespace Ft {
 
-		class Library: public Object
+		class Library
 		{
 		public:
 

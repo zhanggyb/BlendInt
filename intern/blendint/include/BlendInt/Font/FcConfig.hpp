@@ -36,21 +36,19 @@ namespace BlendInt {
 
 	namespace Fc {
 
-		class Config: public Object
+		class Config
 		{
 		public:
 
 			Config (::FcConfig* config = 0)
-			: Object(),
-			  config_(config)
+			: config_(config)
 			{
 				if(config_ == 0)
 					config_ = FcConfigCreate();
 			}
 
 			Config (const Config& orig)
-			: Object(),
-			  config_(0)
+			: config_(0)
 			{
 				config_ = orig.config_;
 
@@ -60,7 +58,8 @@ namespace BlendInt {
 
 			virtual ~Config ()
 			{
-				FcConfigDestroy(config_);
+				if(config_)
+					FcConfigDestroy(config_);
 			}
 
 			inline Config& operator = (const Config& orig)
@@ -97,7 +96,7 @@ namespace BlendInt {
 				return Config(config);
 			}
 
-			static inline bool substitute (const Config* config, const Pattern& p, FcMatchKind kind)
+			static inline bool substitute (const Config* config, Pattern& p, FcMatchKind kind)
 			{
 				return FcConfigSubstitute(
 						config == nullptr ? NULL : config->config_,
