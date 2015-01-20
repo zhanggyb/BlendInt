@@ -35,7 +35,7 @@ namespace BlendInt {
  	  vao_(0),
  	  text_(text)
  	{
- 		std::vector<GLfloat> verts(5 * 4 * 4, 0.f);
+ 		std::vector<GLfloat> verts(text.length() * 4 * 4, 0.f);
 
  		float advance = 0.f;
 
@@ -112,7 +112,7 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 
-		for(int i = 0; i < 5; i++) {
+		for(unsigned int i = 0; i < text_.length(); i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
 

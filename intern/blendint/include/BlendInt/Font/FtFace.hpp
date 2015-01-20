@@ -41,7 +41,10 @@ namespace BlendInt {
 
 			bool New (const Library& lib, const FT_Byte* mem, FT_Long size, FT_Long face_index = 0);
 
-			bool HasKerning ();
+			inline bool has_kerning ()
+			{
+				return face_->face_flags & FT_FACE_FLAG_KERNING;
+			}
 
 			/**
 			 * @brief Check whether any of the patented opcodes are used.
@@ -57,19 +60,40 @@ namespace BlendInt {
 			 * Note that this function parses all glyph instructions in
 			 * the font file, which may be slow.
 			 */
-			bool CheckTrueTypePatents ();
+			inline bool check_truetype_patents () const
+			{
+				return FT_Face_CheckTrueTypePatents(face_);
+			}
 
-			bool SetCharSize (FT_F26Dot6 width, FT_F26Dot6 height, FT_UInt h_res, FT_UInt v_res);
+			inline FT_Error set_char_size (FT_F26Dot6 width, FT_F26Dot6 height, FT_UInt h_res, FT_UInt v_res) const
+			{
+				return FT_Set_Char_Size(face_, width, height, h_res, v_res);
+			}
 
-			FT_UInt GetCharIndex (FT_ULong charcode) const;
+			inline FT_UInt get_char_index (FT_ULong charcode) const
+			{
+				return FT_Get_Char_Index(face_, charcode);
+			}
 
-			bool LoadGlyph (FT_UInt glyph_index, FT_Int32 load_flags) const;
+			inline FT_Error load_glyph (FT_UInt glyph_index, FT_Int32 load_flags) const
+			{
+				return FT_Load_Glyph(face_, glyph_index, load_flags);
+			}
 
-			bool RenderGlyph (FT_GlyphSlot slot, FT_Render_Mode render_mode) const;
+			inline FT_Error render_glyph (FT_GlyphSlot slot, FT_Render_Mode render_mode) const
+			{
+				return FT_Render_Glyph(slot, render_mode);
+			}
 
-			bool LoadChar (FT_ULong char_code, FT_Int32 load_flags) const;
+			inline FT_Error load_char (FT_ULong char_code, FT_Int32 load_flags) const
+			{
+				return FT_Load_Char(face_, char_code, load_flags);
+			}
 
-			bool GetKerning (FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector* akerning);
+			inline FT_Error get_kerning (FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector* akerning)
+			{
+				return FT_Get_Kerning(face_, left_glyph, right_glyph, kern_mode, akerning);
+			}
 
 			bool Done ();
 

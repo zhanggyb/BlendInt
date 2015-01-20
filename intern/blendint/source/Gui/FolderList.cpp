@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		InitializeFolderListOnce();
 
-		text_.reset(new Text(L"床前明月光"));
+		text_.reset(new Text(String(L"abcdefghijklmn慈母手中线")));
 	}
 
 	FolderList::~FolderList()
@@ -94,7 +94,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		text_->Draw(10.f, 10.f);
+		text_->Draw(0.f, 0.f);
 
 		return Finish;
 	}

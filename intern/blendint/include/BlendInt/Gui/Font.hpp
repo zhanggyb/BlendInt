@@ -239,6 +239,31 @@ namespace BlendInt {
 			return cache_->Query(charcode, true);
 		}
 
+		int height () const
+		{
+			return cache_->face_.face()->size->metrics.height >> 6;
+		}
+
+		int ascender () const
+		{
+			return cache_->face_.face()->size->metrics.ascender >> 6;
+		}
+
+		int descender () const
+		{
+			return cache_->face_.face()->size->metrics.descender >> 6;
+		}
+
+		int max_advance () const
+		{
+			return cache_->face_.face()->size->metrics.max_advance >> 6;
+		}
+
+		bool has_kerning () const
+		{
+			return cache_->face_.has_kerning();
+		}
+
 		void bind () const
 		{
 			cache_->texture_atlas()->bind();
