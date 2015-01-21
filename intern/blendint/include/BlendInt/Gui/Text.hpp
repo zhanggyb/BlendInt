@@ -28,7 +28,6 @@
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/TextureAtlas2D.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
@@ -53,8 +52,13 @@ namespace BlendInt {
         
 		unsigned int str_len_;
 
-		GLuint vao_;
+		// the ascender of this text
+		int ascender_;
 
+		// the descender of this text
+		int descender_;
+
+		GLuint vao_;
 		GLBuffer<> vbo_;
 
 		String text_;

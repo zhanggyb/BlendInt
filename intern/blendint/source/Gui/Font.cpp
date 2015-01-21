@@ -21,18 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <string.h>
-#include <cwchar>
+#include <cassert>
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Font/FcConfig.hpp>

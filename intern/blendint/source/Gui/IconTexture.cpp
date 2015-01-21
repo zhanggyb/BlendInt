@@ -31,14 +31,14 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Core/Types.hpp>
 #include <vector>
 
-#include <BlendInt/Gui/TextureAtlas2D.hpp>
+#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Gui/IconTexture.hpp>
 
 namespace BlendInt {
 
-	TextureAtlas2D::TextureAtlas2D ()
+	IconTexture::IconTexture ()
 	: GLTexture2D(),
 	  cell_width_(0),
 	  cell_height_(0),
@@ -49,11 +49,11 @@ namespace BlendInt {
 	{
 	}
 
-	TextureAtlas2D::~TextureAtlas2D ()
+	IconTexture::~IconTexture ()
 	{
 	}
 
-	void TextureAtlas2D::Generate (int width, int height, short cell_x,
+	void IconTexture::Generate (int width, int height, short cell_x,
 					short cell_y, short xoffset, short yoffset, short xspace,
 					short yspace)
 	{
@@ -92,7 +92,7 @@ namespace BlendInt {
 		offset_y_ = yoffset;
 	}
 
-	bool TextureAtlas2D::SetSubImage (int index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
+	bool IconTexture::SetSubImage (int index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
 	{
 		if(bitmap_width > cell_width_ || bitmap_rows > cell_height_) {
 			return false;
@@ -138,7 +138,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool TextureAtlas2D::SetSubImage (int column_index, int row_index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
+	bool IconTexture::SetSubImage (int column_index, int row_index, int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
 	{
 		if(bitmap_width > cell_width_ || bitmap_rows > cell_height_) {
 			return false;
@@ -181,7 +181,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	int TextureAtlas2D::GetColumns () const
+	int IconTexture::GetColumns () const
 	{
 		GLint tex_width = 0;
 
@@ -195,7 +195,7 @@ namespace BlendInt {
 		return columns;
 	}
 
-	int TextureAtlas2D::GetRows () const
+	int IconTexture::GetRows () const
 	{
 		GLint tex_height = 0;
 
@@ -209,7 +209,7 @@ namespace BlendInt {
 		return rows;
 	}
 
-	int TextureAtlas2D::GetMaxNumber() const
+	int IconTexture::GetMaxNumber() const
 	{
 		int num = 0;
 
@@ -233,87 +233,5 @@ namespace BlendInt {
 		return num;
 	}
 
-	// ----------------------
 
-	void TextureAtlas2DExt::Generate(GLsizei width, GLsizei height)
-	{
-		if(id_) clear ();
-
-		width_ = width;
-		height_ = height;
-
-		glGenTextures(1, &id_);
-		glBindTexture(GL_TEXTURE_2D, id_);
-
-#ifdef __APPLE__
-		// The Texture showed in testTextureAtlas is not clear in Mac OS, try to initialize this
-		// TODO: these 2 lines just for test, remove later
-		std::vector<unsigned char> blank(width * height, 0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
-#else
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
-#endif
-
-		// Clamping to edges is important to prevent artifacts when scaling
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		// Linear filtering usually looks best for text
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	bool TextureAtlas2DExt::Upload (int bitmap_width,
-			int bitmap_rows,
-			const unsigned char* bitmap, int* ox, int* oy)
-	{
-		// check the texture size
-		if(bitmap_width > width_) {
-
-			if(bitmap_rows > height_) {
-				// TODO: expand texture both horizontally and vertically
-			} else {
-				// TODO: expand texture horizontally
-			}
-
-		} else if (bitmap_rows > height_) {
-			// TODO: expand texture vertically
-		}
-
-		int x = last_x_;
-		int y = last_y_;
-		last_row_height_ = std::max(last_row_height_, bitmap_rows);
-
-		if((x + bitmap_width) > width_) {
-			x = 0;
-			y = last_y_ + last_row_height_;
-			last_row_height_ = bitmap_rows;
-		}
-
-		if((y + bitmap_rows) > height_) {
-			// TODO: expand texture size
-		}
-
-		glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-		glTexSubImage2D(GL_TEXTURE_2D,
-						0,	// level
-						x,
-						y,
-						bitmap_width,
-						bitmap_rows,
-						GL_RED,	// format
-						GL_UNSIGNED_BYTE,
-						bitmap);
-
-		if(ox) *ox = x;
-		if(oy) *oy = y;
-
-		last_x_ = x + bitmap_width;
-		last_y_ = y;
-		
-		return true;
-	}
-	
 }

@@ -24,21 +24,16 @@
 #pragma once
 
 #include <map>
-#include <string>
-#include <vector>
-
-#include <glm/mat4x4.hpp>
 
 #include <BlendInt/Core/String.hpp>
-
 #include <BlendInt/Core/Object.hpp>
-#include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Gui/Glyph.hpp>
-#include <BlendInt/Gui/GlyphAtlas.hpp>
 
 #include <BlendInt/Font/FcPattern.hpp>
 #include <BlendInt/Font/FtLibrary.hpp>
 #include <BlendInt/Font/FtFace.hpp>
+
+#include <BlendInt/Gui/TextureAtlas.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
 
 namespace BlendInt {
 
@@ -58,7 +53,7 @@ namespace BlendInt {
 
 		virtual ~FontCache ();
 
-		const GlyphMetrics* Query (uint32_t charcode, bool create = true);
+		const Glyph* Query (uint32_t charcode, bool create = true);
 
 		size_t glyph_count () const
 		{
@@ -70,7 +65,7 @@ namespace BlendInt {
 			return pattern_;
 		}
 
-		const RefPtr<TextureAtlas2DExt> texture_atlas () const
+		const RefPtr<TextureAtlas> texture_atlas () const
 		{
 			return texture_atlas_;
 		}
@@ -86,11 +81,11 @@ namespace BlendInt {
 
 		Ft::Face face_;
 
-		RefPtr<TextureAtlas2DExt> texture_atlas_;
+		RefPtr<TextureAtlas> texture_atlas_;
 
-		std::map<uint32_t, GlyphMetrics> glyph_data_;
+		std::map<uint32_t, Glyph> glyph_data_;
 
-		static map<FcChar32, RefPtr<FontCache> > kCacheDB;
+		static std::map<FcChar32, RefPtr<FontCache> > kCacheDB;
 
 		static FcChar32 kDefaultFontHash;
 	};

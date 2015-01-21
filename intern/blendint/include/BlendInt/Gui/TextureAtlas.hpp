@@ -21,105 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #pragma once
 
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special GLTexture2D class to store M x N sub images
-	 */
-	class TextureAtlas2D: public GLTexture2D
-	{
-	public:
-
-		TextureAtlas2D ();
-
-		virtual ~TextureAtlas2D ();
-
-		void Generate (int width,
-						int height,
-						short cell_x,
-						short cell_y,
-						short xoffset = 1,
-						short yoffset = 1,
-						short xspace = 1,
-						short yspace = 1);
-
-		bool SetSubImage (int index,
-						int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
-
-		bool SetSubImage (int hindex,
-						int yindex,
-						int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
-
-		int GetMaxNumber () const;
-
-		int GetColumns () const;
-
-		int GetRows () const;
-
-		short offset_x () const
-		{
-			return offset_x_;
-		}
-
-		short offset_y () const
-		{
-			return offset_y_;
-		}
-
-		short space_x () const
-		{
-			return space_x_;
-		}
-
-		short space_y () const
-		{
-			return space_y_;
-		}
-
-		short cell_width () const
-		{
-			return cell_width_;
-		}
-
-		short cell_height () const
-		{
-			return cell_height_;
-		}
-
-	private:
-
-		short cell_width_;
-		short cell_height_;
-
-		short offset_x_;
-		short offset_y_;
-
-		short space_x_;
-		short space_y_;
-	};
-
-	// ----------------------
-
-	class TextureAtlas2DExt: public Object
+	class TextureAtlas: public Object
 	{
 
 	public:
 
-		TextureAtlas2DExt()
+		TextureAtlas()
 		: Object(),
 		id_(0),
 		width_(0),
@@ -129,7 +52,7 @@ namespace BlendInt {
 		last_row_height_(0)
 		{}
 
-		virtual ~TextureAtlas2DExt()
+		virtual ~TextureAtlas()
 		{
 			if(id_) glDeleteTextures(1, &id_);
 		}

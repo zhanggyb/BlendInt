@@ -93,7 +93,7 @@ namespace BlendInt {
     void Text::GenerateTextVertices(const String &text, std::vector<GLfloat> &verts)
     {
         float advance = 0.f;
-        const GlyphMetrics* g;
+        const Glyph* g;
         int i = 0;
 
         size_t buf_size = text.length() * 4 * 4;
@@ -101,10 +101,14 @@ namespace BlendInt {
             verts.resize(buf_size, 0.f);
         }
         
+        ascender_ = 0;
+        descender_ = 0;
+        int width = 0;
+
         for(String::const_iterator it = text.begin(); it != text.end(); it++)
         {
             g = font_.glyph(*it);
-            
+
             verts[i * 16 + 0] = advance + g->bitmap_left;
             verts[i * 16 + 1] = g->bitmap_top - g->bitmap_height;
             verts[i * 16 + 2] = g->offset_u;
@@ -126,9 +130,17 @@ namespace BlendInt {
             verts[i * 16 + 15] = g->offset_v;
             
             advance = advance + g->advance_x;
-            
+
+            width += g->advance_x;	// and kerning
+
+            ascender_ = std::max(g->bitmap_top, ascender_);
+            descender_ = std::min(g->bitmap_top - g->bitmap_height, descender_);
+
             i++;
         }
+
+        DBG_PRINT_MSG("ascender: %d, deescender: %d", ascender_, descender_);
+        set_size(width, ascender_ - descender_);
     }
     
  }

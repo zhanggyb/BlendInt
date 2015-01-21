@@ -43,7 +43,7 @@
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/TextureAtlas2D.hpp>
+#include <BlendInt/Gui/IconTexture.hpp>
 #include <BlendInt/Core/Image.hpp>
 
 #include "BlendIntConfig.hpp"
@@ -120,7 +120,7 @@ namespace BlendInt {
 			Image image;
 			image.Read(icon16_path.native());
 
-			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
+			RefPtr<IconTexture> texture(new IconTexture);
 			texture->Generate(image.width(),
 					image.height(),
 					16,
@@ -200,7 +200,7 @@ namespace BlendInt {
 			Image image;
 			image.Read(icon32_path.native());
 
-			RefPtr<TextureAtlas2D> texture(new TextureAtlas2D);
+			RefPtr<IconTexture> texture(new IconTexture);
 			texture->Generate(image.width(),
 					image.height(),
 					32,

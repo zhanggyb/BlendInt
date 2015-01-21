@@ -140,7 +140,7 @@ namespace BlendInt {
     }
     */
 
-    map<FcChar32, RefPtr<FontCache> > FontCache::kCacheDB;
+    std::map<FcChar32, RefPtr<FontCache> > FontCache::kCacheDB;
 
     FcChar32 FontCache::kDefaultFontHash = 0;
 
@@ -208,7 +208,7 @@ namespace BlendInt {
     	face_.New(library_, (const char*)file.u.s);
     	face_.set_char_size(size.u.i << 6, 0, (unsigned int)dpi.u.d, 0);
 
-    	texture_atlas_.reset(new TextureAtlas2DExt);
+    	texture_atlas_.reset(new TextureAtlas);
     	texture_atlas_->Generate(500, 32);
     }
 
@@ -221,9 +221,9 @@ namespace BlendInt {
     	library_.Done();
     }
 
-	const GlyphMetrics* FontCache::Query (uint32_t charcode, bool create)
+	const Glyph* FontCache::Query (uint32_t charcode, bool create)
 	{
-		typedef std::map<uint32_t, GlyphMetrics>::iterator iterator_type;
+		typedef std::map<uint32_t, Glyph>::iterator iterator_type;
 
 		iterator_type it = glyph_data_.find(charcode);
 
@@ -234,7 +234,7 @@ namespace BlendInt {
 		face_.load_char(charcode, FT_LOAD_RENDER);
 		FT_GlyphSlot g = face_.face()->glyph;
 
-		GlyphMetrics glyph;
+		Glyph glyph;
 		glyph.bitmap_left = g->bitmap_left;
 		glyph.bitmap_top = g->bitmap_top;
 		glyph.bitmap_width = g->bitmap.width;
@@ -251,7 +251,7 @@ namespace BlendInt {
 		texture_atlas_->reset();
 
 
-		std::pair<iterator_type, bool> result = glyph_data_.insert(std::pair<uint32_t, GlyphMetrics>(charcode, glyph));
+		std::pair<iterator_type, bool> result = glyph_data_.insert(std::pair<uint32_t, Glyph>(charcode, glyph));
 
 		return &(result.first->second);
 	}

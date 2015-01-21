@@ -130,7 +130,7 @@ namespace BlendInt {
 
         Kerning GetKerning (uint32_t left_glyph, uint32_t right_glyph, KerningMode mode = KerningDefault) const;
         
-		const GlyphMetrics* glyph (uint32_t charcode) const
+		const Glyph* glyph (uint32_t charcode) const
 		{
 			return cache_->Query(charcode, true);
 		}
