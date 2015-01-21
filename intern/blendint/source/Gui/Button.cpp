@@ -21,72 +21,88 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#else
-#include <GL/glcorearb.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
 	Button::Button ()
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		int h = font().height();
-		set_size(h + kDefaultPadding.hsum(),
-		        h + kDefaultPadding.vsum());
+
+		Font font;	// default font
+		int w = 80;
+		int h = font.height();
+
+		set_size(w + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
 
 		InitializeButtonOnce();
 	}
 
 	Button::Button (const String& text)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		set_text(text);
 
-		InitializeButtonOnce(text);
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
+
+		int w = t->size().width();
+		int h = t->font().height();
+		if(w < 80) w = 80;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeButtonOnce();
 	}
 
 	Button::Button (const RefPtr<AbstractIcon>& icon)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
 		icon_ = icon;
 
-		InitializeButtonOnce(icon, String());
+		int w = icon_->size().width();
+		int h = icon_->size().height();
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeButtonOnce();
 	}
 
 	Button::Button (const RefPtr<AbstractIcon>& icon, const String& text)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		set_text(text);
+
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
+
 		icon_ = icon;
 
-		InitializeButtonOnce(icon, text);
+		int w = icon_->size().width();
+		int h = icon_->size().height();
+
+		w += kIconTextSpace;
+
+		w += t->size().width();
+		h = std::max(h, t->font().height());
+
+		if(w < 80) w = 80;
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeButtonOnce();
 	}
 
 	Button::~Button ()
@@ -97,8 +113,6 @@ namespace BlendInt {
 	void Button::SetIcon (const RefPtr<AbstractIcon>& icon)
 	{
 		icon_ = icon;
-
-		// TODO: reset icon_offset
 
 		RequestRedraw();
 	}
@@ -112,43 +126,28 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		int font_height = font().height();
-		int h = font_height;
+		int w = 0;
+		int h = 0;
 
 		if(icon_) {
-			h = std::max(icon_->size().height(), font_height);
+			w = icon_->size().width();
+			h = icon_->size().height();
 		}
 
-		prefer.set_height(h + kDefaultPadding.vsum());
-		// top padding: 2, bottom padding: 2
+		w += kIconTextSpace;
 
-		int w = 0;
-		if (text().empty()) {
-
-			if(icon_) {
-				w = icon_->size().width();
-			} else {
-				w = font_height;
-			}
-
-			w = w + kDefaultPadding.hsum();
-
-		} else {
-
-			if(icon_) {
-				w = w + icon_->size().width() + icon_text_space;
-			}
-
-			int text_width = font().GetTextWidth(text());
-			w = w + text_width + kDefaultPadding.hsum(); // left padding: 2, right padding: 2
-
+		Font font;	// default font
+		if(text()) {
+			font = text()->font();
+			w += text()->size().width();
 		}
 
-		if((!icon_) && (w < 80)) {
-			w = 80;
-		}
+		h = std::max(h, font.height());
 
-		prefer.set_width(w);
+		if(w < 80) w = 80;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
 
 		return prefer;
 	}
@@ -177,8 +176,6 @@ namespace BlendInt {
 			buffer_.bind(1);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			buffer_.reset();
-
-			CalculateIconTextPosition(size(), round_type(), round_radius());
 
 			RequestRedraw();
 		}
@@ -211,8 +208,6 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
 
-		CalculateIconTextPosition(size(), round_type(), round_radius());
-
 		RequestRedraw();
 	}
 
@@ -238,8 +233,6 @@ namespace BlendInt {
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		buffer_.reset();
-
-		CalculateIconTextPosition(size(), round_type(), round_radius());
 
 		RequestRedraw();
 	}
@@ -287,148 +280,43 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(show_icon_ && icon_) {
-			if(hover()) {
-				icon_->Draw(icon_offset_x_, icon_offset_y_, 15);
-			} else {
-				icon_->Draw(icon_offset_x_, icon_offset_y_, 0);
+		int w = size().width() - pixel_size(kPadding.hsum());
+		int h = size().height() - pixel_size(kPadding.vsum());
+		float x = pixel_size(kPadding.left());
+		float y = size().height() / 2.f;
+
+		if(icon_) {
+			if(icon_->size().height() <= h) {
+
+				if(icon_->size().width() <= w) {
+
+					icon_->Draw(x + icon_->size().width() / 2.f, y);
+					x += icon_->size().width();
+					x += kIconTextSpace;
+					w -= icon_->size().width();
+					w -= kIconTextSpace;
+				}
+
 			}
 		}
 
-		if (text().size()) {
-			//font().Print(0.f, 0.f, text(), text_length(), 0);
+		if (text()) {
+
+			if(text()->size().height() <= h) {
+
+				y = y - text()->size().height() / 2.f;
+				if(text()->size().width() < w) {
+					x += (w - text()->size().width()) / 2.f;
+					text()->Draw(x, y);
+				} else {
+					text()->Draw(x, y, (float)w);
+				}
+
+			}
+
 		}
 
 		return Finish;
-	}
-
-	void Button::CalculateIconTextPosition(const Size& size, int round_type, float radius)
-	{
-		int x = kDefaultPadding.left() * Context::theme->pixel();
-		int y = kDefaultPadding.bottom() * Context::theme->pixel();
-
-		icon_offset_x_ = 0.f;
-		icon_offset_y_ = 0.f;
-
-		int valid_width = size.width() - kDefaultPadding.hsum() * Context::theme->pixel();
-		int valid_height = size.height() - kDefaultPadding.vsum() * Context::theme->pixel();
-
-		if(valid_width <= 0 || valid_height <= 0) {
-			show_icon_ = false;
-			set_text_length(0);
-			return;
-		}
-
-		icon_offset_x_ += kDefaultPadding.left() * Context::theme->pixel();
-
-		if(text().empty()) {
-
-			set_text_length(0);
-
-			if(icon_) {
-
-				if((icon_->size().width() > valid_width) ||
-						(icon_->size().height() > valid_height)) {
-					show_icon_ = false;
-				} else {
-					show_icon_ = true;
-					icon_offset_x_ = size.width() / 2.f;
-					icon_offset_y_ = size.height() / 2.f;
-				}
-
-			} else {
-
-				// Nothing to configure
-
-			}
-
-		} else {
-
-			int text_length = 0;
-
-			if(icon_) {
-
-				icon_offset_x_ += icon_->size().width() / 2.f;
-				icon_offset_y_ = size.height() / 2.f;
-
-				int text_width = valid_width - icon_->size().width() - icon_text_space;
-
-				if(text_width < 0) {
-
-					show_icon_ = false;
-
-				} else if (text_width == 0) {
-
-					if(icon_->size().height() > valid_height) {
-						show_icon_ = false;
-					} else {
-						show_icon_ = true;
-					}
-
-				} else {
-
-					if(icon_->size().height() > valid_height) {
-						show_icon_ = false;
-					} else {
-						show_icon_ = true;
-					}
-
-					x = x + icon_->size().width() + icon_text_space;
-
-					bool cal_width = true;
-
-					Rect text_outline;	// = font().GetTextOutline(text());
-
-					if(valid_height < text_outline.height()) {
-						text_length = 0;
-						cal_width = false;
-					}
-
-					if(cal_width) {
-						if(text_width < text_outline.width()) {
-							text_length = GetValidTextLength(text(), font(), text_width);
-						} else if (text_width == text_outline.width()) {
-							text_length = text().length();
-						} else {
-							text_length = text().length();
-							x = x + (valid_width - icon_->size().width() - text_outline.width()) / 2;
-						}
-						y = (size.height() - font().height()) / 2 + std::abs(font().descender());
-					}
-
-					set_pen(x, y);
-
-				}
-
-			} else {
-
-				// If size changed, we need to update the text length for printing too.
-				bool cal_width = true;
-
-				Rect text_outline;	// = font().GetTextOutline(text());
-
-				if(valid_height < text_outline.height()) {
-					text_length = 0;
-					cal_width = false;
-				}
-
-				if(cal_width) {
-					if(valid_width < text_outline.width()) {
-						text_length = GetValidTextLength(text(), font(), valid_width);
-					} else {
-						text_length = text().length();
-						x = (size.width() - text_outline.width()) / 2;
-					}
-					y = (size.height() - font().height()) / 2 + std::abs(font().descender());
-				}
-
-				set_pen(x, y);
-
-			}
-
-			set_text_length(text_length);
-		}
-
 	}
 
 	void Button::InitializeButtonOnce ()
@@ -466,99 +354,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		buffer_.reset();
-	}
-
-	void Button::InitializeButtonOnce (const String& text)
-	{
-		int left = kDefaultPadding.left() * Context::theme->pixel();
-		int right = kDefaultPadding.right() * Context::theme->pixel();
-		int top = kDefaultPadding.top() * Context::theme->pixel();
-		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int h = font().height();
-
-		if(text.empty()) {
-			set_size(h + round_radius() * 2 * Context::theme->pixel() + left + right,
-							h + top + bottom);
-		} else {
-			set_text_length(text.length());
-			Rect text_outline;	// = font().GetTextOutline(text);
-
-			int width = text_outline.width()
-							+ round_radius() * 2 * Context::theme->pixel()
-							+ left + right;
-			int height = h + top + bottom;
-
-			set_size(width, height);
-
-			set_pen((width - text_outline.width()) / 2,
-							(height - font().height()) / 2
-											+ std::abs(font().descender()));
-		}
-
-		InitializeButtonOnce();
-	}
-
-	void Button::InitializeButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text)
-	{
-		int left = kDefaultPadding.left() * Context::theme->pixel();
-		int right = kDefaultPadding.right() * Context::theme->pixel();
-		int top = kDefaultPadding.top() * Context::theme->pixel();
-		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int font_height = font().height();
-		int h = 0;
-
-		if(text.empty()) {
-
-			if(icon) {
-				h = std::max(icon->size().height(), font_height);
-				set_size(icon->size().width() + round_radius() * 2 * Context::theme->pixel() + left + right,
-						h + top + bottom);
-			} else {
-				set_size(font_height + round_radius() * 2 * Context::theme->pixel() + left + right,
-						font_height + top + bottom);
-			}
-
-		} else {
-
-			set_text_length(text.length());
-			Rect text_outline;	// = font().GetTextOutline(text);
-
-			if(icon) {
-				h = std::max(icon->size().height(), font_height);
-
-				int width = icon->size().width() + text_outline.width()
-								+ round_radius() * 2 * Context::theme->pixel()
-								+ left + right;
-				int height = h + top + bottom;
-
-				set_size(width, height);
-
-				set_pen(((width - icon_->size().width()) - text_outline.width()) / 2 + icon_->size().width(),
-								(height - font().height()) / 2
-												+ std::abs(font().descender()));
-
-			} else {
-
-				int width = text_outline.width()
-								+ round_radius() * 2 * Context::theme->pixel()
-								+ left + right;
-				int height = font_height + top + bottom;
-
-				set_size(width, height);
-
-				set_pen((width - text_outline.width()) / 2,
-								(height - font().height()) / 2
-												+ std::abs(font().descender()));
-			}
-
-		}
-
-		if(icon) {
-			icon_offset_x_ = round_radius() + left + icon_->size().width() / 2.f;
-			icon_offset_y_ = size().height() / 2.f;
-		}
-
-		InitializeButtonOnce();
 	}
 
 }

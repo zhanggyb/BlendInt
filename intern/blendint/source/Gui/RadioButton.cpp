@@ -41,38 +41,31 @@
 namespace BlendInt {
 
 	RadioButton::RadioButton ()
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
-		int h = font().height();
-		set_size(h + kDefaultPadding.hsum(),
-				h + kDefaultPadding.vsum());
+		Font font;	// default font
+		set_size(font.height() + kPadding.hsum(),
+		        font.height() + kPadding.vsum());
 
 		InitializeRadioButtonOnce();
 	}
 
 	RadioButton::RadioButton (const String& text)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
-		set_text(text);
+
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
 
 		InitializeRadioButtonOnce(text);
 	}
 
 	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
@@ -83,14 +76,14 @@ namespace BlendInt {
 
 	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon,
 	        const String& text)
-	: AbstractButton(),
-	  icon_offset_x_(0.f),
-	  icon_offset_y_(0.f),
-	  show_icon_(true)
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
-		set_text(text);
+
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
+
 		icon_ = icon;
 
 		InitializeRadioButtonOnce(icon, text);
@@ -114,18 +107,23 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		int font_height = font().height();
+		Font font;	// default font
+		if(text()) {
+			font = text()->font();
+		}
+
+		int font_height = font.height();
 		int h = font_height;
 
 		if(icon_) {
 			h = std::max(icon_->size().height(), font_height);
 		}
 
-		prefer.set_height(h + kDefaultPadding.vsum());
+		prefer.set_height(h + kPadding.vsum());
 		// top padding: 2, bottom padding: 2
 
 		int w = 0;
-		if (text().empty()) {
+		if (text()) {
 
 			if(icon_) {
 				w = icon_->size().width();
@@ -133,16 +131,16 @@ namespace BlendInt {
 				w = font_height;
 			}
 
-			w = w + kDefaultPadding.hsum();
+			w = w + kPadding.hsum();
 
 		} else {
 
 			if(icon_) {
-				w = w + icon_->size().width() + icon_text_space;
+				w = w + icon_->size().width() + kIconTextSpace;
 			}
 
 			int text_width; // = font().GetTextWidth(text());
-			w = w + text_width + kDefaultPadding.hsum(); // left padding: 2, right padding: 2
+			w = w + text_width + kPadding.hsum(); // left padding: 2, right padding: 2
 
 		}
 
@@ -181,8 +179,6 @@ namespace BlendInt {
 			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			CalculateIconTextPosition(size(), round_type(), round_radius());
-
 			RequestRedraw();
 		}
 
@@ -214,8 +210,6 @@ namespace BlendInt {
 			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::reset();
 
-			CalculateIconTextPosition(size(), round_type, round_radius());
-
 			RequestRedraw();
 	}
 
@@ -241,8 +235,6 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
-
-		CalculateIconTextPosition(size(), round_type(), round_radius());
 
 		RequestRedraw();
 	}
@@ -298,148 +290,15 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(show_icon_ && icon_) {
-			if(hover()) {
-				icon_->Draw(icon_offset_x_, icon_offset_y_, 15);
-			} else {
-				icon_->Draw(icon_offset_x_, icon_offset_y_, 0);
-			}
+		if(icon_) {
+
 		}
 
-		if (text().size()) {
-			// font().Print(0.f, 0.f, text(), text_length(), 0);
+		if (text()) {
+			//font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
 		return Finish;
-	}
-
-	void RadioButton::CalculateIconTextPosition (const Size& size, int round_type,
-	        float radius)
-	{
-		int x = kDefaultPadding.left() * Context::theme->pixel();
-		int y = kDefaultPadding.bottom() * Context::theme->pixel();
-
-		icon_offset_x_ = 0.f;
-		icon_offset_y_ = 0.f;
-
-		int valid_width = size.width() - kDefaultPadding.hsum() * Context::theme->pixel();
-		int valid_height = size.height() - kDefaultPadding.vsum() * Context::theme->pixel();
-
-		if(valid_width <= 0 || valid_height <= 0) {
-			show_icon_ = false;
-			set_text_length(0);
-			return;
-		}
-
-		icon_offset_x_ += kDefaultPadding.left() * Context::theme->pixel();
-
-		if(text().empty()) {
-
-			set_text_length(0);
-
-			if(icon_) {
-
-				if((icon_->size().width() > valid_width) ||
-						(icon_->size().height() > valid_height)) {
-					show_icon_ = false;
-				} else {
-					show_icon_ = true;
-					icon_offset_x_ = size.width() / 2.f;
-					icon_offset_y_ = size.height() / 2.f;
-				}
-
-			} else {
-
-				// Nothing to configure
-
-			}
-
-		} else {
-
-			int text_length = 0;
-
-			if(icon_) {
-
-				icon_offset_x_ += icon_->size().width() / 2.f;
-				icon_offset_y_ = size.height() / 2.f;
-
-				int text_width = valid_width - icon_->size().width() - icon_text_space;
-
-				if(text_width < 0) {
-
-					show_icon_ = false;
-
-				} else if (text_width == 0) {
-
-					if(icon_->size().height() > valid_height) {
-						show_icon_ = false;
-					} else {
-						show_icon_ = true;
-					}
-
-				} else {
-
-					if(icon_->size().height() > valid_height) {
-						show_icon_ = false;
-					} else {
-						show_icon_ = true;
-					}
-
-					x = x + icon_->size().width() + icon_text_space;
-
-					bool cal_width = true;
-
-					Rect text_outline; // = font().GetTextOutline(text());
-
-					if(valid_height < text_outline.height()) {
-						text_length = 0;
-						cal_width = false;
-					}
-
-					if(cal_width) {
-						if(text_width < text_outline.width()) {
-							text_length = GetValidTextLength(text(), font(), text_width);
-						} else if (text_width == text_outline.width()) {
-							text_length = text().length();
-						} else {
-							text_length = text().length();
-							x = x + (valid_width - icon_->size().width() - text_outline.width()) / 2;
-						}
-						y = (size.height() - font().height()) / 2 + std::abs(font().descender());
-					}
-
-					set_pen(x, y);
-
-				}
-
-			} else {
-
-				// If size changed, we need to update the text length for printing too.
-				bool cal_width = true;
-
-				Rect text_outline; // = font().GetTextOutline(text());
-
-				if(valid_height < text_outline.height()) {
-					text_length = 0;
-					cal_width = false;
-				}
-
-				if(cal_width) {
-					if(valid_width < text_outline.width()) {
-						text_length = GetValidTextLength(text(), font(), valid_width);
-					} else {
-						text_length = text().length();
-						x = (size.width() - text_outline.width()) / 2;
-					}
-					y = (size.height() - font().height()) / 2 + std::abs(font().descender());
-				}
-
-				set_pen(x, y);
-
-			}
-
-			set_text_length(text_length);
-		}
 	}
 
 	void RadioButton::InitializeRadioButtonOnce ()
@@ -484,10 +343,11 @@ namespace BlendInt {
 
 	void RadioButton::InitializeRadioButtonOnce (const String& text)
 	{
-		int left = kDefaultPadding.left() * Context::theme->pixel();
-		int right = kDefaultPadding.right() * Context::theme->pixel();
-		int top = kDefaultPadding.top() * Context::theme->pixel();
-		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
+		/*
+		int left = kPadding.left() * Context::theme->pixel();
+		int right = kPadding.right() * Context::theme->pixel();
+		int top = kPadding.top() * Context::theme->pixel();
+		int bottom = kPadding.bottom() * Context::theme->pixel();
 		int h = font().height();
 
 		if(text.empty()) {
@@ -510,15 +370,17 @@ namespace BlendInt {
 		}
 
 		InitializeRadioButtonOnce();
+		*/
 	}
 
 	void RadioButton::InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon,
 	        const String& text)
 	{
-		int left = kDefaultPadding.left() * Context::theme->pixel();
-		int right = kDefaultPadding.right() * Context::theme->pixel();
-		int top = kDefaultPadding.top() * Context::theme->pixel();
-		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
+		/*
+		int left = kPadding.left() * Context::theme->pixel();
+		int right = kPadding.right() * Context::theme->pixel();
+		int top = kPadding.top() * Context::theme->pixel();
+		int bottom = kPadding.bottom() * Context::theme->pixel();
 		int font_height = font().height();
 		int h = 0;
 
@@ -574,6 +436,7 @@ namespace BlendInt {
 		}
 
 		InitializeRadioButtonOnce();
+		*/
 	}
 
 }

@@ -21,20 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LABEL_HPP_
-#define _BLENDINT_GUI_LABEL_HPP_
+#pragma once
 
 #include <string>
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-
+#include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 
@@ -66,14 +61,11 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
-		const Font& font () const
-		{
-			return font_;
-		}
-
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
+
+        static Margin kPadding;
 
 	protected:
 
@@ -81,30 +73,12 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		size_t UpdateTextPosition (const Size& size, const String& text, Font& font);
-
-		size_t GetValidTextSize (const Size& size, const String& text, const Font& font);
-
 	private:
 
-		void InitializeLabel (const String& text);
-
-		/**
-		 * @brief the text of the label
-		 *
-		 * new line character is not allowed
-		 */
-		String text_;
-
-		Font font_;
-
-        /**
-        * @brief the text string length to be printed
-        */
-        size_t text_length_;
+		RefPtr<Text> text_;
 
         Alignment alignment_;
+
     };
 
 } /* namespace BlendInt */
-#endif /* _BlendIntLABEL_HPP_ */

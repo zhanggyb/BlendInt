@@ -21,30 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
+#include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/Label.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
+	Margin Label::kPadding (2, 2, 2, 2);
+
 	Label::Label (const String& text, Alignment alignment)
     : Widget(),
-	  text_(text),
-	  text_length_(0),
 	  alignment_(alignment)
 	{
-		InitializeLabel(text);
+		text_.reset(new Text(text));
+
+		int w = text_->size().width();
+		int h = text_->font().height();
+		if(w < 80) w = 80;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 	}
 
 	Label::~Label ()
@@ -53,25 +51,19 @@ namespace BlendInt {
 
 	void Label::SetText (const String& text)
 	{
-		text_ = text;
-		text_length_ = UpdateTextPosition(size(), text, font_);
-
+		text_->SetText(text);
 		RequestRedraw();
 	}
 
 	void Label::SetFont (const Font& font)
 	{
-		font_ = font;
-		text_length_ = UpdateTextPosition(size(), text_, font_);
-
+		text_->SetFont(font);
 		RequestRedraw();
 	}
 
 	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
-
 			set_size (*request.size());
 			RequestRedraw();
 		}
@@ -83,116 +75,38 @@ namespace BlendInt {
 
 	ResponseType Label::Draw (const Context* context)
 	{
-		if(text_.length()) {
-			//font_.Print(0.f, 0.f, text_, text_length_, 0);
+		if(text_) {
+
+			int w = size().width() - pixel_size(kPadding.hsum());
+			int h = size().height() - pixel_size(kPadding.vsum());
+			float x = pixel_size(kPadding.left());
+			float y = (size().height() - text_->size().height()) / 2.f;
+
+			if(text_->size().height() <= h) {
+				text_->Draw(x, y, (float)w);
+			}
+
 		}
 
 		return Finish;
 	}
 
-	size_t Label::UpdateTextPosition(const Size& size, const String& text, Font& font)
-	{
-		size_t str_len = 0;
-
-		// If size changed, we need to update the text length for printing too.
-		bool cal_width = true;
-
-		int width = size.width() - 2 - 2;
-		int height = size.height() - 2 - 2;
-
-		if(width <= 0 || height <= 0) {
-			return 0;
-		}
-
-		if(text.length() == 0) {
-			return 0;
-		}
-
-		Rect text_outline; // = font.GetTextOutline(text);
-
-		if(height < text_outline.height()) {
-			str_len = 0;
-			cal_width = false;
-		}
-
-		if(cal_width) {
-			if(width < text_outline.width()) {
-				str_len = GetValidTextSize(size, text, font);
-			} else {
-				str_len = text.length();
-			}
-		}
-
-//		font.set_pen((size.width() - text_outline.width()) / 2,
-//						(size.height() - font.height()) / 2
-//										+ std::abs(font.descender()));
-		return str_len;
-	}
-
-	size_t Label::GetValidTextSize(const Size& size, const String& text, const Font& font)
-	{
-		int width = 0;
-		int str_len = text.length();
-
-		width = font.GetTextWidth(text, str_len, 0);
-
-		int text_width_space = size.width() - 2 - 2;
-
-		if(width > text_width_space) {
-			while(str_len > 0) {
-				width = font.GetTextWidth(text, str_len, 0);
-				if(width < text_width_space) break;
-				str_len--;
-			}
-		}
-
-		return str_len;
-	}
-	
 	Size Label::GetPreferredSize () const
 	{
-		Size preferred_size;
+		int h = text_->font().height();
+		int w = text_->size().width();
 
-		int max_font_height = font().height();
+		if(w < 80) w = 80;
 
-		preferred_size.set_height(max_font_height + 2 + 2);	// top padding: 2, bottom padding: 2
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
 
-		if (text_.empty()) {
-			preferred_size.set_width(
-							max_font_height + 2 + 2);
-		} else {
-			size_t width = font().GetTextWidth(text_);
-			preferred_size.set_width(width + 2 + 2);	// left padding: 2, right padding: 2
-		}
-
-		return preferred_size;
+		return Size(w, h);
 	}
 
 	bool Label::IsExpandX() const
 	{
 		return true;
-	}
-
-	void Label::InitializeLabel (const String& text)
-	{
-		text_ = text;
-
-		int h = font_.height();
-
-		if(text.empty()) {
-			set_size (h + 2 + 2,
-							h + 2 + 2);
-		} else {
-			text_length_ = text.length();
-			Rect text_outline; // = font_.GetTextOutline(text);
-
-			int width = text_outline.width() + 2 + 2;
-			int height = h + 2 + 2;
-			set_size(width, height);
-//			font_.set_pen((width - text_outline.width()) / 2,
-//							(height - font_.height()) / 2 +
-//											std::abs(font_.descender()));
-		}
 	}
 
 } /* namespace BlendInt */

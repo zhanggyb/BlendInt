@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_BUTTON_HPP_
-#define _BLENDINT_GUI_BUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
@@ -68,28 +67,15 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		void CalculateIconTextPosition (const Size& size, int round_type, float radius);
-
 	private:
 
 		void InitializeButtonOnce ();
-
-		void InitializeButtonOnce (const String& text);
-
-		void InitializeButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text);
 
 		GLuint vao_[2];
 
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		RefPtr<AbstractIcon> icon_;
-
-		float icon_offset_x_;	// the offset along x to draw the icon
-		float icon_offset_y_;
-
-		bool show_icon_;
 	};
 
 }
-
-#endif	// _BIL_BUTTON_H_

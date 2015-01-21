@@ -57,9 +57,37 @@ namespace BlendInt {
  		vbo_.reset();
  	}
 
+	Text::Text (const Text& text)
+	: AbstractForm(),
+	  ascender_(0),
+	  descender_(0),
+	  vao_(0),
+	  text_(text.text_)
+	{
+		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        set_size(width, ascender_ - descender_);
+
+        glGenVertexArrays(1, &vao_);
+ 		glBindVertexArray(vao_);
+
+ 		vbo_.generate();
+ 		vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TEXT_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TEXT_COORD),
+				4, GL_FLOAT, GL_FALSE, 0, 0);
+
+ 		glBindVertexArray(0);
+ 		vbo_.reset();
+	}
+
  	Text::~Text ()
  	{
-
+ 		glDeleteVertexArrays(1, &vao_);
  	}
 
  	void Text::SetText (const String& text)
@@ -70,11 +98,11 @@ namespace BlendInt {
  		std::vector<GLfloat> verts;
         GenerateTextVertices(verts, &width, &ascender_, &descender_);
 
-        set_size(width, ascender_ - descender_);
-
         vbo_.bind();
  		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
  		vbo_.reset();
+
+ 		set_size(width, ascender_ - descender_);
  	}
 
  	void Text::SetFont(const Font& font)
@@ -87,11 +115,46 @@ namespace BlendInt {
  		std::vector<GLfloat> verts;
         GenerateTextVertices(verts, &width, &ascender_, &descender_);
 
-        set_size(width, ascender_ - descender_);
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+
+ 		set_size(width, ascender_ - descender_);
+ 	}
+
+ 	Text& Text::operator = (const Text& orig)
+ 	{
+ 		font_ = orig.font_;
+ 		text_ = orig.text_;
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
 
         vbo_.bind();
  		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
  		vbo_.reset();
+
+        set_size(width, ascender_ - descender_);
+
+ 		return *this;
+ 	}
+
+ 	Text& Text::operator = (const String& text)
+ 	{
+ 		text_ = text;
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+
+        set_size(width, ascender_ - descender_);
+
+ 		return *this;
  	}
 
  	void Text::PerformSizeUpdate (const Size& size)
@@ -161,6 +224,66 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
  	}
+
+	void Text::Draw (float x, float y, float width, short gamma) const
+	{
+ 		Color color(0x000000FF);
+ 		Draw(x, y, width, color, gamma);
+	}
+
+	void Text::Draw (float x, float y, float width, const Color& color,
+	        short gamma) const
+	{
+		if(width <= 0.f) return;
+
+		Context::shaders->widget_text_program()->use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		font_.bind_texture();
+
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+
+		glBindVertexArray(vao_);
+
+		const Glyph* g = 0;
+		float max = 0.f;
+		int count = 0;
+		String::const_iterator next_it;
+		Kerning kerning;
+
+		for(String::const_iterator it = text_.begin(); it != text_.end(); it++)
+		{
+			g = font_.glyph(*it);
+
+			if(font_.has_kerning()) {
+
+                next_it = it + 1;
+                if(next_it != text_.end()) {
+                	kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
+                	max += (g->advance_x + kerning.x);
+                } else {
+                	max += g->advance_x;
+                }
+
+			} else {
+				max += g->advance_x;
+			}
+
+			if (max > width) break;
+
+			glDrawArrays(GL_TRIANGLE_STRIP, count * 4, 4);
+
+			count++;
+		}
+
+		glBindVertexArray(0);
+		font_.release_texture();
+
+		GLSLProgram::reset();
+	}
 
     void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
     {

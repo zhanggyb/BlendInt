@@ -21,19 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/MenuButton.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
@@ -55,9 +42,6 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 
-			UpdateTextPosition(*request.size(), round_type(),
-			        round_radius(), text());
-
             set_size(*request.size());
 
             std::vector<GLfloat> inner_verts;
@@ -77,36 +61,30 @@ namespace BlendInt {
 
 	void MenuButton::PerformRoundTypeUpdate (int round_type)
 	{
-			UpdateTextPosition(size(), round_type, round_radius(),
-			        text());
+		set_round_type(round_type);
 
-            set_round_type(round_type);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
 
-            std::vector<GLfloat> inner_verts;
-            GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		inner_.reset();
 
-            inner_.bind();
-            inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_.reset();
-
-			RequestRedraw();
+		RequestRedraw();
 	}
 
 	void MenuButton::PerformRoundRadiusUpdate (float radius)
 	{
-			UpdateTextPosition(size(), round_type(), radius,
-			        text());
+		set_round_radius(radius);
 
-			set_round_radius(radius);
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-            std::vector<GLfloat> inner_verts;
-            GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+		inner_.bind();
+		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		inner_.reset();
 
-            inner_.bind();
-            inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_.reset();
-
-            RequestRedraw();
+		RequestRedraw();
 	}
 
 	ResponseType MenuButton::Draw (const Context* context)
@@ -127,7 +105,7 @@ namespace BlendInt {
 
 		}
 
-		if(text().size()) {
+		if(text()) {
 			//font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
@@ -142,25 +120,26 @@ namespace BlendInt {
 	void MenuButton::InitializeMenuButton (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_text(text);
 
-		int h = font().height();
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
+
+		int h = t->font().height();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + kDefaultPadding.hsum(),
-							h + kDefaultPadding.vsum());
+			set_size(h + round_radius() * 2 + kPadding.hsum(),
+							h + kPadding.vsum());
 		} else {
-			set_text_length(text.length());
 			Rect text_outline;	// = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + kDefaultPadding.hsum();
-			int height = h + kDefaultPadding.vsum();
+			int width = text_outline.width() + round_radius() * 2 + kPadding.hsum();
+			int height = h + kPadding.vsum();
 
 			set_size(width, height);
-
-			set_pen((width - text_outline.width()) / 2,
-							(height - font().height()) / 2
-											+ std::abs(font().descender()));
+//
+//			set_pen((width - text_outline.width()) / 2,
+//							(height - font().height()) / 2
+//											+ std::abs(font().descender()));
 		}
 
 		glGenVertexArrays(1, &vao_);

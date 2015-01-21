@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTBUTTON_HPP_
-#define _BLENDINT_GUI_ABSTRACTBUTTON_HPP_
+#pragma once
 
 #include <string>
 #include <bitset>
@@ -31,7 +30,7 @@
 
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/Gui/Font.hpp>
+#include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -60,8 +59,6 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		const String& text () const {return text_;}
-
 		bool is_down () const {return m_status[ButtonDown];}
 
 		bool is_checked () const {return m_status[ButtonChecked];}
@@ -76,11 +73,14 @@ namespace BlendInt {
 
 		Cpp::EventRef<AbstractButton*> pressed () {return pressed_;}
 
-		const Font& font () const {return font_;}
+		static Margin kPadding;
 
-		static Margin kDefaultPadding;
+		static int kIconTextSpace;	// the space between icon and text
 
-		static int icon_text_space;	// the space between icon and text
+		const RefPtr<Text>& text () const
+		{
+			return text_;
+		}
 
 	protected:
 
@@ -95,8 +95,6 @@ namespace BlendInt {
 		virtual ResponseType PerformMouseRelease (const Context* context);
 
 		virtual ResponseType PerformMouseMove (const Context* context);
-
-		int text_length () const {return text_length_;}
 
 		void set_down (bool down)
 		{
@@ -113,31 +111,10 @@ namespace BlendInt {
 			m_status[ButtonChecked] = checked ? 1 : 0;
 		}
 
-		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text);
-
-		int UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font);
-
-		inline void set_text (const String& text)
+		void set_text (const RefPtr<Text>& text)
 		{
 			text_ = text;
 		}
-
-		inline void set_font (const Font& font)
-		{
-			font_ = font;
-		}
-
-		void set_text_length (int length)
-		{
-			text_length_ = length;
-		}
-
-		void set_pen (int x, int y)
-		{
-			//font_.set_pen(x, y);
-		}
-
-		int GetValidTextLength (const String& text, const Font& font, int max_width);
 
 	private:
 
@@ -151,14 +128,9 @@ namespace BlendInt {
 			ButtonLastChecked
 		};
 
+		RefPtr<Text> text_;
+
 		std::bitset<8> m_status;
-
-		int text_length_;	// How many text to be printed, depends on the button size
-
-		// TextBuffer text_;
-		String text_;
-
-		Font font_;
 
 		/**
 		 * @brief press event
@@ -183,5 +155,3 @@ namespace BlendInt {
 	};
 
 } /* namespace BIL */
-
-#endif // _BLENDINT_GUI_ABSTRACTBUTTON_HPP_

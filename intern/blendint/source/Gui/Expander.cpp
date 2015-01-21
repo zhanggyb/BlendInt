@@ -68,10 +68,11 @@ namespace BlendInt {
 
 	Size ExpandButton::GetPreferredSize () const
 	{
-		int h = font().height();
+		Font font;
+		int h = font.height();
 
-		Size prefer(h + round_radius() * 2 + kDefaultPadding.hsum() + 100,
-						h + kDefaultPadding.vsum());
+		Size prefer(h + round_radius() * 2 + kPadding.hsum() + 100,
+						h + kPadding.vsum());
 
 		return prefer;
 	}
@@ -79,9 +80,6 @@ namespace BlendInt {
 	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			UpdateTextPosition(*request.size(), round_type(),
-			        round_radius(), text());
-
 			set_size(*request.size());
 			RequestRedraw();
 		}
@@ -93,9 +91,6 @@ namespace BlendInt {
 
 	void ExpandButton::PerformRoundTypeUpdate (int round_type)
 	{
-		UpdateTextPosition(size(), round_type, round_radius(),
-				text());
-
 		set_round_type(round_type);
 
 		RequestRedraw();
@@ -103,16 +98,13 @@ namespace BlendInt {
 
 	void ExpandButton::PerformRoundRadiusUpdate (float radius)
 	{
-		UpdateTextPosition(size(), round_type(), radius,
-				text());
-
 		set_round_radius(radius);
 		RequestRedraw();
 	}
 
 	ResponseType ExpandButton::Draw (const Context* context)
 	{
-		if(text().size()) {
+		if(text()) {
 			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
@@ -134,33 +126,36 @@ namespace BlendInt {
 	void ExpandButton::InitializeExpandButton ()
 	{
 		set_checkable(true);
-		int h = font().height();
-		set_size(h + round_radius() * 2 + kDefaultPadding.hsum(),
-						h + kDefaultPadding.vsum());
+
+		Font font;
+		int h = font.height();
+		set_size(h + round_radius() * 2 + kPadding.hsum(),
+						h + kPadding.vsum());
 	}
 
 	void ExpandButton::InitializeExpandButton (const String& text)
 	{
 		set_checkable(true);
-		set_text(text);
 
-		int h = font().height();
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
+
+		int h = t->font().height();
 
 		if(text.empty()) {
-			set_size(h + round_radius() * 2 + kDefaultPadding.hsum(),
-							h + kDefaultPadding.vsum());
+			set_size(h + round_radius() * 2 + kPadding.hsum(),
+							h + kPadding.vsum());
 		} else {
-			set_text_length(text.length());
 			Rect text_outline;	// = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_radius() * 2 + kDefaultPadding.hsum();
-			int height = h + kDefaultPadding.vsum();
+			int width = text_outline.width() + round_radius() * 2 + kPadding.hsum();
+			int height = h + kPadding.vsum();
 
 			set_size(width, height);
 
-			set_pen((width - text_outline.width()) / 2,
-							(height - font().height()) / 2
-											+ std::abs(font().descender()));
+//			set_pen((width - text_outline.width()) / 2,
+//							(height - font().height()) / 2
+//											+ std::abs(font().descender()));
 		}
 	}
 
@@ -352,7 +347,7 @@ namespace BlendInt {
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
 
-		return button->text();
+		return button->text()->text();
 	}
 	
 	void Expander::OnToggled (AbstractButton* sender, bool toggle)

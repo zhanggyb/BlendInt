@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_THEME_HPP_
-#define _BLENDINT_STOCK_THEME_HPP_
+#pragma once
 
 #include <rapidxml.hpp>
 #include <rapidxml_utils.hpp>
@@ -270,5 +269,3 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-
-#endif // _BLENDINT_STOCK_THEME_HPP_

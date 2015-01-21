@@ -63,8 +63,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-		void CalculateIconTextPosition (const Size& size, int round_type, float radius);
-
 	private:
 
 		void InitializeRadioButtonOnce ();
@@ -80,11 +78,6 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> outer_;
 
 		RefPtr<AbstractIcon> icon_;
-
-		float icon_offset_x_;	// the offset along x to draw the icon
-		float icon_offset_y_;
-
-		bool show_icon_;
 
 	};
 }

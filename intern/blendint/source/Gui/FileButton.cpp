@@ -63,9 +63,6 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			UpdateTextPosition(*request.size(), round_type(),
-			        round_radius(), text());
-
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
@@ -97,9 +94,6 @@ namespace BlendInt {
 	{
 		set_round_type(round_type);
 
-		UpdateTextPosition(size(), round_type, round_radius(),
-				text());
-
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
@@ -125,8 +119,6 @@ namespace BlendInt {
 	void FileButton::PerformRoundRadiusUpdate (float radius)
 	{
 		set_round_radius(radius);
-
-		UpdateTextPosition(size(), round_type(), radius, text());
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
@@ -193,7 +185,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if (text().size()) {
+		if (text()) {
 			//font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 
@@ -203,6 +195,9 @@ namespace BlendInt {
 	void FileButton::InitializeFileButtonOnce ()
 	{
 		set_round_type(RoundAll);
+
+		set_size(20, 20);
+		/*
 		String text("...");
 		set_text(text);
 
@@ -212,7 +207,6 @@ namespace BlendInt {
 		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
 		int h = font().height();
 
-		set_text_length(text.length());
 		Rect text_outline;	// = font().GetTextOutline(text);
 
 		int width = text_outline.width()
@@ -220,10 +214,7 @@ namespace BlendInt {
 		int height = h + top + bottom;
 
 		set_size(width, height);
-
-		set_pen((width - text_outline.width()) / 2,
-		        (height - font().height()) / 2
-		                + std::abs(font().descender()));
+		*/
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;

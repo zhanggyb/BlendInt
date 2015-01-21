@@ -55,7 +55,9 @@ namespace BlendInt {
 	{
 		set_size(80, 14);
 		set_checkable(true);
-		set_text(text);
+
+		RefPtr<Text> t(new Text(text));
+		set_text(t);
 
 		InitializeTabButton();
 	}
@@ -125,7 +127,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(text().size()) {
+		if(text()) {
 			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 

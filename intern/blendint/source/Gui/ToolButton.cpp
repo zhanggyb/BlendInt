@@ -59,8 +59,6 @@ namespace BlendInt {
 	void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			UpdateTextPosition(*request.size(), round_type(),
-					round_radius(), text());
 
 			set_size(*request.size());
 
@@ -93,9 +91,6 @@ namespace BlendInt {
 
 	void ToolButton::PerformRoundTypeUpdate(int round_type)
 	{
-		UpdateTextPosition(size(), round_type, round_radius(),
-				text());
-
 		set_round_type(round_type);
 
 		std::vector<GLfloat> inner_verts;
@@ -122,9 +117,6 @@ namespace BlendInt {
 
 	void ToolButton::PerformRoundRadiusUpdate(float radius)
 	{
-		UpdateTextPosition(size(), round_type(), radius,
-				text());
-
 		set_round_radius(radius);
 
 		std::vector<GLfloat> inner_verts;

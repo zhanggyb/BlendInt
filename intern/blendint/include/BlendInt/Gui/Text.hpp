@@ -38,11 +38,17 @@ namespace BlendInt {
 
 		Text (const String& text);
 
+		Text (const Text& orig);
+
 		virtual ~Text ();
 
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
+
+		Text& operator = (const Text& orig);
+
+		Text& operator = (const String& text);
 
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
@@ -51,6 +57,10 @@ namespace BlendInt {
 		void Draw (float x, float y, size_t length, size_t start = 0, short gamma = 0) const;
 
 		void Draw (float x, float y, size_t length, size_t start, const Color& color, short gamma = 0) const;
+
+		void Draw (float x, float y, float width, short gamma = 0) const;
+
+		void Draw (float x, float y, float width, const Color& color, short gamma = 0) const;
 
 		/**
 		 * @brief Ascender in this text

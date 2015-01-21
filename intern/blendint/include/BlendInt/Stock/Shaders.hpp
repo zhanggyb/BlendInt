@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_SHADERS_HPP_
-#define _BLENDINT_STOCK_SHADERS_HPP_
+#pragma once
 
 #include <stack>
 
@@ -404,5 +403,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BIL_SHADERMANAGER_HPP_ */

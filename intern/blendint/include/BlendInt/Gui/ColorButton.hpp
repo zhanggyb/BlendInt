@@ -48,8 +48,6 @@ namespace BlendInt {
 
 		void SetColor (const Color& color);
 
-		virtual Size GetPreferredSize () const;
-
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

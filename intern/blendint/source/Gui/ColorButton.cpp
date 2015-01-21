@@ -44,9 +44,9 @@ namespace BlendInt {
 		: AbstractButton()
 	{
 		set_round_type(RoundAll);
-		int h = font().height();
-		set_size(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
-						h + kDefaultPadding.vsum());
+		Font font;	// default font
+		set_size(font.height() + kPadding.hsum(),
+		        font.height() + kPadding.vsum());
 
 		color0_.set_red(0.3f);
 		color0_.set_blue(0.8f);
@@ -65,16 +65,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	Size ColorButton::GetPreferredSize () const
-	{
-		int h = font().height();
-
-		Size prefer(4 * h + round_radius() * 2 +kDefaultPadding.hsum(),
-					h + kDefaultPadding.vsum());
-
-		return prefer;
-	}
-
 	void ColorButton::SetColor(const Color& color)
 	{
 		color0_ = color;
@@ -86,8 +76,6 @@ namespace BlendInt {
 	void ColorButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			UpdateTextPosition(*request.size(), round_type(), round_radius(),
-			        text());
 
 			set_size(*request.size());
 
@@ -111,40 +99,36 @@ namespace BlendInt {
 
 	void ColorButton::PerformRoundTypeUpdate (int round_type)
 	{
-			UpdateTextPosition(size(), round_type, round_radius(),
-			        text());
-			set_round_type(round_type);
+		set_round_type(round_type);
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 
-			RequestRedraw();
+		RequestRedraw();
 	}
 
 	void ColorButton::PerformRoundRadiusUpdate (float radius)
 	{
-			UpdateTextPosition(size(), round_type(), radius,
-			        text());
-			set_round_radius(radius);
+		set_round_radius(radius);
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+		buffer_.bind(0);
+		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		buffer_.bind(1);
+		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		buffer_.reset();
 
-			RequestRedraw();
+		RequestRedraw();
 	}
 
 	ResponseType ColorButton::Draw (const Context* context)
@@ -190,7 +174,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(text().size()) {
+		if(text()) {
 			// font().Print(0.f, 0.f, text(), text_length(), 0);
 		}
 

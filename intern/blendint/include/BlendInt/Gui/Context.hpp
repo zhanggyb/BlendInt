@@ -267,6 +267,16 @@ namespace BlendInt {
 		static glm::mat4 default_view_matrix;
 	};
 
+	inline float pixel_size (int a)
+	{
+		return a * Context::theme->pixel();
+	}
+
+	inline float pixel_size (unsigned int a)
+	{
+		return a * Context::theme->pixel();
+	}
+
 }
 
 #endif /* _BLENDINT_GUI_CONTEXT_HPP_ */
