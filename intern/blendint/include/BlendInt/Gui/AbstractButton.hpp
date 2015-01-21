@@ -30,6 +30,7 @@
 
 #include <BlendInt/Core/Margin.hpp>
 
+#include <BlendInt/Gui/AbstractIcon.hpp>
 #include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
@@ -45,6 +46,12 @@ namespace BlendInt {
 
 		AbstractButton ();
 
+		AbstractButton (const String& text);
+
+		AbstractButton (const RefPtr<AbstractIcon>& icon);
+
+		AbstractButton (const RefPtr<AbstractIcon>& icon, const String& text);
+
 		virtual ~AbstractButton ();
 
 		void SetDown (bool down);
@@ -55,9 +62,21 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		void SetIcon (const RefPtr<AbstractIcon>& icon);
+
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
+
+		const RefPtr<AbstractIcon>& icon () const
+		{
+			return icon_;
+		}
+
+		const RefPtr<Text>& text () const
+		{
+			return text_;
+		}
 
 		bool is_down () const {return m_status[ButtonDown];}
 
@@ -77,11 +96,6 @@ namespace BlendInt {
 
 		static int kIconTextSpace;	// the space between icon and text
 
-		const RefPtr<Text>& text () const
-		{
-			return text_;
-		}
-
 	protected:
 
 		virtual ResponseType Draw (const Context* context) = 0;
@@ -95,6 +109,8 @@ namespace BlendInt {
 		virtual ResponseType PerformMouseRelease (const Context* context);
 
 		virtual ResponseType PerformMouseMove (const Context* context);
+
+		void DrawIconText ();
 
 		void set_down (bool down)
 		{
@@ -127,6 +143,8 @@ namespace BlendInt {
 			ButtonChecked,
 			ButtonLastChecked
 		};
+
+		RefPtr<AbstractIcon> icon_;
 
 		RefPtr<Text> text_;
 

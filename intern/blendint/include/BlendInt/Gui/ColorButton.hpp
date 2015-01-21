@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COLORBUTTON_HPP_
-#define _BLENDINT_GUI_COLORBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
@@ -63,12 +62,10 @@ namespace BlendInt {
 		void InitializeColorButton ();
 
 		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		Color color0_;
 		Color color1_;
 	};
 
 }
-
-#endif	// _BIL_BUTTON_H_

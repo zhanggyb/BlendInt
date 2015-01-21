@@ -21,21 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/RadioButton.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
@@ -45,108 +31,79 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
+
 		Font font;	// default font
-		set_size(font.height() + kPadding.hsum(),
-		        font.height() + kPadding.vsum());
+		int w = 80;
+		int h = font.height();
+
+		set_size(w + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
 
 		InitializeRadioButtonOnce();
 	}
 
 	RadioButton::RadioButton (const String& text)
-	: AbstractButton()
+	: AbstractButton(text)
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
 
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
+		int w = this->text()->size().width();
+		int h = this->text()->font().height();
+		if(w < 80) w = 80;
 
-		InitializeRadioButtonOnce(text);
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeRadioButtonOnce();
 	}
 
 	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon)
-	: AbstractButton()
+	: AbstractButton(icon)
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
-		icon_ = icon;
 
-		InitializeRadioButtonOnce(icon, String());
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeRadioButtonOnce();
 	}
 
 	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon,
 	        const String& text)
-	: AbstractButton()
+	: AbstractButton(icon, text)
 	{
 		set_round_type(RoundAll);
 		set_checkable(true);
 
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
 
-		icon_ = icon;
+		w += kIconTextSpace;
 
-		InitializeRadioButtonOnce(icon, text);
+		w += this->text()->size().width();
+		h = std::max(h, this->text()->font().height());
+
+		if(w < 80) w = 80;
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeRadioButtonOnce();
 	}
 
 	RadioButton::~RadioButton ()
 	{
 		glDeleteVertexArrays(2, vao_);
-	}
-
-	void RadioButton::SetIcon (const RefPtr<AbstractIcon>& icon)
-	{
-		icon_ = icon;
-
-		// TODO: reset icon_offset
-
-		RequestRedraw();
-	}
-
-	Size RadioButton::GetPreferredSize () const
-	{
-		Size prefer;
-
-		Font font;	// default font
-		if(text()) {
-			font = text()->font();
-		}
-
-		int font_height = font.height();
-		int h = font_height;
-
-		if(icon_) {
-			h = std::max(icon_->size().height(), font_height);
-		}
-
-		prefer.set_height(h + kPadding.vsum());
-		// top padding: 2, bottom padding: 2
-
-		int w = 0;
-		if (text()) {
-
-			if(icon_) {
-				w = icon_->size().width();
-			} else {
-				w = font_height;
-			}
-
-			w = w + kPadding.hsum();
-
-		} else {
-
-			if(icon_) {
-				w = w + icon_->size().width() + kIconTextSpace;
-			}
-
-			int text_width; // = font().GetTextWidth(text());
-			w = w + text_width + kPadding.hsum(); // left padding: 2, right padding: 2
-
-		}
-
-		prefer.set_width(w);
-
-		return prefer;
 	}
 
 	bool RadioButton::IsExpandX () const
@@ -173,11 +130,11 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			inner_->bind();
-			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -189,28 +146,28 @@ namespace BlendInt {
 
 	void RadioButton::PerformRoundTypeUpdate (int round_type)
 	{
-			set_round_type(round_type);
+		set_round_type(round_type);
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->radio_button().shaded) {
-				GenerateRoundedVertices(Vertical,
-						Context::theme->radio_button().shadetop,
-						Context::theme->radio_button().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateRoundedVertices(&inner_verts, &outer_verts);
-			}
+		if (Context::theme->radio_button().shaded) {
+			GenerateRoundedVertices(Vertical,
+					Context::theme->radio_button().shadetop,
+					Context::theme->radio_button().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
 
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			GLArrayBuffer::reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
-			RequestRedraw();
+		RequestRedraw();
 	}
 
 	void RadioButton::PerformRoundRadiusUpdate (float radius)
@@ -230,11 +187,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		GLArrayBuffer::reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -290,13 +247,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(icon_) {
-
-		}
-
-		if (text()) {
-			//font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
+		DrawIconText();
 
 		return Finish;
 	}
@@ -317,126 +268,25 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(2, vao_);
+		vbo_.generate();
+
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
-
-	void RadioButton::InitializeRadioButtonOnce (const String& text)
-	{
-		/*
-		int left = kPadding.left() * Context::theme->pixel();
-		int right = kPadding.right() * Context::theme->pixel();
-		int top = kPadding.top() * Context::theme->pixel();
-		int bottom = kPadding.bottom() * Context::theme->pixel();
-		int h = font().height();
-
-		if(text.empty()) {
-			set_size(h + round_radius() * 2 * Context::theme->pixel() + left + right,
-							h + top + bottom);
-		} else {
-			set_text_length(text.length());
-			Rect text_outline; // = font().GetTextOutline(text);
-
-			int width = text_outline.width()
-							+ round_radius() * 2 * Context::theme->pixel()
-							+ left + right;
-			int height = h + top + bottom;
-
-			set_size(width, height);
-
-//			set_pen((width - text_outline.width()) / 2,
-//							(height - font().GetHeight()) / 2
-//											+ std::abs(font().GetDescender()));
-		}
-
-		InitializeRadioButtonOnce();
-		*/
-	}
-
-	void RadioButton::InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon,
-	        const String& text)
-	{
-		/*
-		int left = kPadding.left() * Context::theme->pixel();
-		int right = kPadding.right() * Context::theme->pixel();
-		int top = kPadding.top() * Context::theme->pixel();
-		int bottom = kPadding.bottom() * Context::theme->pixel();
-		int font_height = font().height();
-		int h = 0;
-
-		if(text.empty()) {
-
-			if(icon) {
-				h = std::max(icon->size().height(), font_height);
-				set_size(icon->size().width() + round_radius() * 2 * Context::theme->pixel() + left + right,
-						h + top + bottom);
-			} else {
-				set_size(font_height + round_radius() * 2 * Context::theme->pixel() + left + right,
-						font_height + top + bottom);
-			}
-
-		} else {
-
-			set_text_length(text.length());
-			Rect text_outline; // = font().GetTextOutline(text);
-
-			if(icon) {
-				h = std::max(icon->size().height(), font_height);
-
-				int width = icon->size().width() + text_outline.width()
-								+ round_radius() * 2 * Context::theme->pixel()
-								+ left + right;
-				int height = h + top + bottom;
-
-				set_size(width, height);
-
-//				set_pen(((width - icon_->size().width()) - text_outline.width()) / 2 + icon_->size().width(),
-//								(height - font().GetHeight()) / 2
-//												+ std::abs(font().GetDescender()));
-
-			} else {
-
-				int width = text_outline.width()
-								+ round_radius() * 2 * Context::theme->pixel()
-								+ left + right;
-				int height = font_height + top + bottom;
-
-				set_size(width, height);
-
-//				set_pen((width - text_outline.width()) / 2,
-//								(height - font().GetHeight()) / 2
-//												+ std::abs(font().GetDescender()));
-			}
-
-		}
-
-		if(icon) {
-			icon_offset_x_ = round_radius() + left + icon_->size().width() / 2.f;
-			icon_offset_y_ = size().height() / 2.f;
-		}
-
-		InitializeRadioButtonOnce();
-		*/
+		vbo_.reset();
 	}
 
 }

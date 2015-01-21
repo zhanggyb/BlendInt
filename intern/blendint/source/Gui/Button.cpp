@@ -42,15 +42,12 @@ namespace BlendInt {
 	}
 
 	Button::Button (const String& text)
-	: AbstractButton()
+	: AbstractButton(text)
 	{
 		set_round_type(RoundAll);
 
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
-
-		int w = t->size().width();
-		int h = t->font().height();
+		int w = this->text()->size().width();
+		int h = this->text()->font().height();
 		if(w < 80) w = 80;
 
 		w += pixel_size(kPadding.hsum());
@@ -62,13 +59,12 @@ namespace BlendInt {
 	}
 
 	Button::Button (const RefPtr<AbstractIcon>& icon)
-	: AbstractButton()
+	: AbstractButton(icon)
 	{
 		set_round_type(RoundAll);
-		icon_ = icon;
 
-		int w = icon_->size().width();
-		int h = icon_->size().height();
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
 
 		w += pixel_size(kPadding.hsum());
 		h += pixel_size(kPadding.vsum());
@@ -79,22 +75,17 @@ namespace BlendInt {
 	}
 
 	Button::Button (const RefPtr<AbstractIcon>& icon, const String& text)
-	: AbstractButton()
+	: AbstractButton(icon, text)
 	{
 		set_round_type(RoundAll);
 
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
-
-		icon_ = icon;
-
-		int w = icon_->size().width();
-		int h = icon_->size().height();
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
 
 		w += kIconTextSpace;
 
-		w += t->size().width();
-		h = std::max(h, t->font().height());
+		w += this->text()->size().width();
+		h = std::max(h, this->text()->font().height());
 
 		if(w < 80) w = 80;
 		w += pixel_size(kPadding.hsum());
@@ -110,46 +101,9 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	void Button::SetIcon (const RefPtr<AbstractIcon>& icon)
-	{
-		icon_ = icon;
-
-		RequestRedraw();
-	}
-
 	bool Button::IsExpandX() const
 	{
 		return false;
-	}
-
-	Size Button::GetPreferredSize() const
-	{
-		Size prefer;
-
-		int w = 0;
-		int h = 0;
-
-		if(icon_) {
-			w = icon_->size().width();
-			h = icon_->size().height();
-		}
-
-		w += kIconTextSpace;
-
-		Font font;	// default font
-		if(text()) {
-			font = text()->font();
-			w += text()->size().width();
-		}
-
-		h = std::max(h, font.height());
-
-		if(w < 80) w = 80;
-
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
-
-		return prefer;
 	}
 
 	void Button::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -171,11 +125,11 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -202,11 +156,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -228,11 +182,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -280,41 +234,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		int w = size().width() - pixel_size(kPadding.hsum());
-		int h = size().height() - pixel_size(kPadding.vsum());
-		float x = pixel_size(kPadding.left());
-		float y = size().height() / 2.f;
-
-		if(icon_) {
-			if(icon_->size().height() <= h) {
-
-				if(icon_->size().width() <= w) {
-
-					icon_->Draw(x + icon_->size().width() / 2.f, y);
-					x += icon_->size().width();
-					x += kIconTextSpace;
-					w -= icon_->size().width();
-					w -= kIconTextSpace;
-				}
-
-			}
-		}
-
-		if (text()) {
-
-			if(text()->size().height() <= h) {
-
-				y = y - text()->size().height() / 2.f;
-				if(text()->size().width() < w) {
-					x += (w - text()->size().width()) / 2.f;
-					text()->Draw(x, y);
-				} else {
-					text()->Draw(x, y, (float)w);
-				}
-
-			}
-
-		}
+		DrawIconText();
 
 		return Finish;
 	}
@@ -335,25 +255,25 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(2, vao_);
-		buffer_.generate ();
+		vbo_.generate ();
 
 		glBindVertexArray(vao_[0]);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		buffer_.reset();
+		vbo_.reset();
 	}
 
 }

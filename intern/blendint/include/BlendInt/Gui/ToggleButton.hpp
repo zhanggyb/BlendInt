@@ -21,17 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOGGLEBUTTON_HPP_
-#define _BLENDINT_GUI_TOGGLEBUTTON_HPP_
+#pragma once
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
-#include <BlendInt/Gui/AbstractIcon.hpp>
-
 namespace BlendInt {
-
-	class String;
 
 	/**
 	 * @brief Toggle Button
@@ -54,11 +49,7 @@ namespace BlendInt {
 
 		virtual ~ToggleButton ();
 
-		void SetIcon (const RefPtr<AbstractIcon>& icon);
-
 		virtual bool IsExpandX () const;
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -74,19 +65,9 @@ namespace BlendInt {
 
 		void InitializeToggleButtonOnce ();
 
-		void InitializeToggleButtonOnce (const String& text);
-
-		void InitializeToggleButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text);
-
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<AbstractIcon> icon_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 
 }
-
-#endif /* _BIL_CHECKBUTTON_HPP_ */

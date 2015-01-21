@@ -21,32 +21,19 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/ColorButton.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
 	ColorButton::ColorButton ()
-		: AbstractButton()
+	: AbstractButton()
 	{
 		set_round_type(RoundAll);
+
 		Font font;	// default font
-		set_size(font.height() + kPadding.hsum(),
-		        font.height() + kPadding.vsum());
+		set_size(font.height() + pixel_size(kPadding.hsum()),
+		        font.height() + pixel_size(kPadding.vsum()));
 
 		color0_.set_red(0.3f);
 		color0_.set_blue(0.8f);
@@ -83,11 +70,11 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+			vbo_.bind(0);
+			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -105,11 +92,11 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		GenerateRoundedVertices(&inner_verts, &outer_verts);
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -122,11 +109,11 @@ namespace BlendInt {
 		std::vector<GLfloat> outer_verts;
 
 		GenerateRoundedVertices(&inner_verts, &outer_verts);
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -174,9 +161,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(text()) {
-			// font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
+		DrawIconText();
 
 		return Finish;
 	}
@@ -188,13 +173,13 @@ namespace BlendInt {
 
 		GenerateRoundedVertices(&inner_verts, &outer_verts);
 
-		buffer_.generate();
+		vbo_.generate();
 
 		glGenVertexArrays(2, vao_);
 		glBindVertexArray(vao_[0]);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
 				Context::shaders->location(Shaders::WIDGET_INNER_COORD));
@@ -202,8 +187,8 @@ namespace BlendInt {
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
 				Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
@@ -211,7 +196,7 @@ namespace BlendInt {
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		buffer_.reset();
+		vbo_.reset();
 	}
 
 }

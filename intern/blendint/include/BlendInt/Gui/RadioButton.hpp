@@ -21,13 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_RADIOBUTTON_HPP_
-#define _BLENDINT_GUI_RADIOBUTTON_HPP_
+#pragma once
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
-
-#include <BlendInt/Gui/AbstractIcon.hpp>
 
 namespace BlendInt {
 
@@ -47,11 +44,7 @@ namespace BlendInt {
 
 		virtual ~RadioButton ();
 
-		void SetIcon (const RefPtr<AbstractIcon>& icon);
-
 		virtual bool IsExpandX () const;
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -67,19 +60,9 @@ namespace BlendInt {
 
 		void InitializeRadioButtonOnce ();
 
-		void InitializeRadioButtonOnce (const String& text);
-
-		void InitializeRadioButtonOnce (const RefPtr<AbstractIcon>& icon, const String& text);
-
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<AbstractIcon> icon_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 	};
 }
-
-#endif /* _BLENDINT_GUI_RADIOBUTTON_HPP_ */

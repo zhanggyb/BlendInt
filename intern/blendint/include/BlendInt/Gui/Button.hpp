@@ -26,8 +26,6 @@
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
-#include <BlendInt/Gui/AbstractIcon.hpp>
-
 namespace BlendInt {
 
 	/**
@@ -51,11 +49,7 @@ namespace BlendInt {
 
 		virtual ~Button ();
 
-		void SetIcon (const RefPtr<AbstractIcon>& icon);
-
 		virtual bool IsExpandX () const;
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -73,9 +67,8 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<AbstractIcon> icon_;
 	};
 
 }

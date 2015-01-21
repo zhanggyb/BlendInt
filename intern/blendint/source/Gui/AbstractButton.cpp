@@ -37,6 +37,30 @@ namespace BlendInt {
 	: Widget(),
 	  group_(0)
 	{
+
+	}
+
+	AbstractButton::AbstractButton(const String& text)
+	: Widget(),
+	  group_(0)
+	{
+		text_.reset(new Text(text));
+	}
+
+	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon)
+	: Widget(),
+	  group_(0)
+	{
+		icon_ = icon;
+	}
+
+	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon,
+			const String& text)
+	: Widget(),
+	  group_(0)
+	{
+		icon_ = icon;
+		text_.reset(new Text(text));
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -46,24 +70,37 @@ namespace BlendInt {
 
 	Size AbstractButton::GetPreferredSize () const
 	{
-		Size preferred_size;
-
 		int w = 0;
+		int h = 0;
 
-		Font font;
-		if(text_) {
-			font = text_->font();
-			w = text_->size().width();
+		if(icon_) {
+			w = icon_->size().width();
+			h = icon_->size().height();
 		}
 
-		int h = font.height();
+		w += kIconTextSpace;
+
+		Font font;	// default font
+		if(text_) {
+			font = text_->font();
+			w += text_->size().width();
+		}
+
+		h = std::max(h, font.height());
 
 		if(w < 80) w = 80;
 
-		w += kPadding.hsum();
-		h += kPadding.vsum();
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
 
 		return Size(w, h);
+	}
+
+	void AbstractButton::SetIcon (const RefPtr<AbstractIcon>& icon)
+	{
+		icon_ = icon;
+
+		RequestRedraw();
 	}
 
 	void AbstractButton::SetText (const String& text)
@@ -73,8 +110,6 @@ namespace BlendInt {
 
 			RequestRedraw();
 		}
-
-		RequestRedraw();
 	}
 
 	void AbstractButton::SetFont (const Font& font)
@@ -208,6 +243,45 @@ namespace BlendInt {
 		return Finish;
 	}
 	
+	void AbstractButton::DrawIconText()
+	{
+		int w = size().width() - pixel_size(kPadding.hsum());
+		int h = size().height() - pixel_size(kPadding.vsum());
+		float x = pixel_size(kPadding.left());
+		float y = size().height() / 2.f;
+
+		if(icon_) {
+			if(icon_->size().height() <= h) {
+
+				if(icon_->size().width() <= w) {
+
+					icon_->Draw(x + icon_->size().width() / 2.f, y);
+					x += icon_->size().width();
+					x += kIconTextSpace;
+					w -= icon_->size().width();
+					w -= kIconTextSpace;
+				}
+
+			}
+		}
+
+		if (text_) {
+
+			if(text_->size().height() <= h) {
+
+				y = y - text_->size().height() / 2.f;
+				if(text_->size().width() < w) {
+					x += (w - text_->size().width()) / 2.f;
+					text_->Draw(x, y);
+				} else {
+					text_->Draw(x, y, (float)w);
+				}
+
+			}
+
+		}
+	}
+
 	void AbstractButton::SetDown (bool down)
 	{
 		if(m_status[ButtonCheckable]) {
