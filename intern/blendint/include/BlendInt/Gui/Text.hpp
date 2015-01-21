@@ -26,8 +26,8 @@
 #include <BlendInt/Gui/AbstractForm.hpp>
 
 #include <BlendInt/Core/String.hpp>
+#include <BlendInt/Core/Color.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-
 #include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
@@ -40,7 +40,47 @@ namespace BlendInt {
 
 		virtual ~Text ();
 
+		void SetText (const String& text);
+
+		void SetFont (const Font& font);
+
 		virtual void Draw (float x, float y, short gamma = 0) const;
+
+		void Draw (float x, float y, const Color& color, short gamma = 0) const;
+
+		void Draw (float x, float y, size_t length, size_t start = 0, short gamma = 0) const;
+
+		void Draw (float x, float y, size_t length, size_t start, const Color& color, short gamma = 0) const;
+
+		/**
+		 * @brief Ascender in this text
+		 *
+		 * @note This is not the same as Font::ascender ()
+		 */
+		int ascender () const
+		{
+			return ascender_;
+		}
+
+		/**
+		 * @brief Descender in this text
+		 *
+		 * @note This is not the same as Font::descender ()
+		 */
+		int descender () const
+		{
+			return descender_;
+		}
+
+		const String& text () const
+		{
+			return text_;
+		}
+
+		const Font& font () const
+		{
+			return font_;
+		}
 
 	protected:
 
@@ -48,10 +88,8 @@ namespace BlendInt {
 
 	private:
 
-        void GenerateTextVertices (const String& text, std::vector<GLfloat>& verts);
+        void GenerateTextVertices (std::vector<GLfloat>& verts, int* ptr_width, int* ptr_ascender, int* ptr_descender);
         
-		unsigned int str_len_;
-
 		// the ascender of this text
 		int ascender_;
 
@@ -62,7 +100,6 @@ namespace BlendInt {
 		GLBuffer<> vbo_;
 
 		String text_;
-
 		Font font_;
 	};
 

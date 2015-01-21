@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		InitializeFolderListOnce();
 
-		text_.reset(new Text(String(L"abcdefghijklmn慈母手中线")));
+		text_.reset(new Text(String(L"Hello World!")));
 	}
 
 	FolderList::~FolderList()

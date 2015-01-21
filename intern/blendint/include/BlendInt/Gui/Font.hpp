@@ -160,20 +160,27 @@ namespace BlendInt {
 			return cache_->face_.has_kerning();
 		}
 
-		void bind () const
+		void bind_texture () const
 		{
 			cache_->texture_atlas()->bind();
 		}
 
-		void reset () const
+		void release_texture () const
 		{
 			cache_->texture_atlas()->reset();
 		}
 
 	private:
 
+		friend inline bool operator == (const Font& src, const Font& dst);
+
 		RefPtr<FontCache> cache_;
 
 	};
 	
+	inline bool operator == (const Font& src, const Font& dst)
+	{
+		return src.cache_->pattern().hash() == dst.cache_->pattern().hash();
+	}
+
 } /* namespace BlendInt */

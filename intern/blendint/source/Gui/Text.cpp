@@ -31,12 +31,16 @@ namespace BlendInt {
 
 	Text::Text (const String& text)
  	: AbstractForm(),
- 	  str_len_(0),
+ 	  ascender_(0),
+ 	  descender_(0),
  	  vao_(0),
  	  text_(text)
  	{
+		int width;
  		std::vector<GLfloat> verts;
-        GenerateTextVertices(text, verts);
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        set_size(width, ascender_ - descender_);
 
  		glGenVertexArrays(1, &vao_);
  		glBindVertexArray(vao_);
@@ -58,89 +62,200 @@ namespace BlendInt {
 
  	}
 
+ 	void Text::SetText (const String& text)
+ 	{
+ 		text_ = text;
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        set_size(width, ascender_ - descender_);
+
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+ 	}
+
+ 	void Text::SetFont(const Font& font)
+ 	{
+ 		if(font_ == font) return;
+
+ 		font_ = font;
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        set_size(width, ascender_ - descender_);
+
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+ 	}
+
  	void Text::PerformSizeUpdate (const Size& size)
  	{
-
+ 		// Do nothing, this form does not allow resize
  	}
 
  	void Text::Draw (float x, float y, short gamma) const
  	{
  		Color color(0x000000FF);
 
+ 		Draw(x, y, color, gamma);
+ 	}
+
+ 	void Text::Draw (float x, float y, const Color& color, short gamma) const
+ 	{
 		Context::shaders->widget_text_program()->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
-		font_.bind();
+		font_.bind_texture();
 
 		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
 		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
 		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
 		glBindVertexArray(vao_);
-
-		for(unsigned int i = 0; i < text_.length(); i++) {
+		size_t str_len = text_.length();
+		for(size_t i = 0; i < str_len; i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
-
 		glBindVertexArray(0);
-
-		font_.reset();
+		font_.release_texture();
 
 		GLSLProgram::reset();
  	}
 
-    void Text::GenerateTextVertices(const String &text, std::vector<GLfloat> &verts)
-    {
-        float advance = 0.f;
-        const Glyph* g;
-        int i = 0;
+ 	void Text::Draw (float x, float y, size_t length, size_t start,
+ 	        short gamma) const
+ 	{
+ 		Color color(0x000000FF);
+ 		Draw(x, y, length, start, color, gamma);
+ 	}
 
-        size_t buf_size = text.length() * 4 * 4;
+ 	void Text::Draw (float x, float y, size_t length, size_t start,
+ 	        const Color& color, short gamma) const
+ 	{
+		Context::shaders->widget_text_program()->use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		font_.bind_texture();
+
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+
+		glBindVertexArray(vao_);
+		size_t str_len = text_.length();
+		size_t last = std::min(start + length, str_len);
+		for(size_t i = start; i < last; i++) {
+			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
+		}
+
+		glBindVertexArray(0);
+		font_.release_texture();
+
+		GLSLProgram::reset();
+ 	}
+
+    void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
+    {
+        size_t buf_size = text_.length() * 4 * 4;
         if(verts.size() != buf_size) {
             verts.resize(buf_size, 0.f);
         }
         
-        ascender_ = 0;
-        descender_ = 0;
-        int width = 0;
+        int w = 0;	// width
+        int a = 0;	// ascender
+        int d = 0;	// descender
+        const Glyph* g = 0;
 
-        for(String::const_iterator it = text.begin(); it != text.end(); it++)
-        {
-            g = font_.glyph(*it);
+    	String::const_iterator next_it;
 
-            verts[i * 16 + 0] = advance + g->bitmap_left;
-            verts[i * 16 + 1] = g->bitmap_top - g->bitmap_height;
-            verts[i * 16 + 2] = g->offset_u;
-            verts[i * 16 + 3] = g->offset_v + g->bitmap_height;
-            
-            verts[i * 16 + 4] = advance + g->bitmap_left + g->bitmap_width;
-            verts[i * 16 + 5] = g->bitmap_top - g->bitmap_height;
-            verts[i * 16 + 6] = g->offset_u + g->bitmap_width;
-            verts[i * 16 + 7] = g->offset_v + g->bitmap_height;
-            
-            verts[i * 16 + 8] = advance + g->bitmap_left;
-            verts[i * 16 + 9] = g->bitmap_top;
-            verts[i * 16 + 10] = g->offset_u;
-            verts[i * 16 + 11] = g->offset_v;
-            
-            verts[i * 16 + 12] = advance + g->bitmap_left + g->bitmap_width;
-            verts[i * 16 + 13] = g->bitmap_top;
-            verts[i * 16 + 14] = g->offset_u + g->bitmap_width;
-            verts[i * 16 + 15] = g->offset_v;
-            
-            advance = advance + g->advance_x;
+        int count = 0;
+    	if(font_.has_kerning()) {
 
-            width += g->advance_x;	// and kerning
+        	Kerning kerning;
+        	for(String::const_iterator it = text_.begin(); it != text_.end(); it++)
+            {
+                g = font_.glyph(*it);
 
-            ascender_ = std::max(g->bitmap_top, ascender_);
-            descender_ = std::min(g->bitmap_top - g->bitmap_height, descender_);
+                verts[count * 16 + 0] = w + g->bitmap_left;
+                verts[count * 16 + 1] = g->bitmap_top - g->bitmap_height;
+                verts[count * 16 + 2] = g->offset_u;
+                verts[count * 16 + 3] = g->offset_v + g->bitmap_height;
 
-            i++;
-        }
+                verts[count * 16 + 4] = w + g->bitmap_left + g->bitmap_width;
+                verts[count * 16 + 5] = g->bitmap_top - g->bitmap_height;
+                verts[count * 16 + 6] = g->offset_u + g->bitmap_width;
+                verts[count * 16 + 7] = g->offset_v + g->bitmap_height;
 
-        DBG_PRINT_MSG("ascender: %d, deescender: %d", ascender_, descender_);
-        set_size(width, ascender_ - descender_);
+                verts[count * 16 + 8] = w + g->bitmap_left;
+                verts[count * 16 + 9] = g->bitmap_top;
+                verts[count * 16 + 10] = g->offset_u;
+                verts[count * 16 + 11] = g->offset_v;
+
+                verts[count * 16 + 12] = w + g->bitmap_left + g->bitmap_width;
+                verts[count * 16 + 13] = g->bitmap_top;
+                verts[count * 16 + 14] = g->offset_u + g->bitmap_width;
+                verts[count * 16 + 15] = g->offset_v;
+
+                next_it = it + 1;
+                if(next_it != text_.end()) {
+                	kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
+                    w += (g->advance_x + kerning.x);
+                } else {
+                	w += g->advance_x;
+                }
+                a = std::max(g->bitmap_top, a);
+                d = std::min(g->bitmap_top - g->bitmap_height, d);
+
+                count++;
+            }
+
+    	} else {
+
+        	for(String::const_iterator it = text_.begin(); it != text_.end(); it++)
+            {
+                g = font_.glyph(*it);
+
+                verts[count * 16 + 0] = w + g->bitmap_left;
+                verts[count * 16 + 1] = g->bitmap_top - g->bitmap_height;
+                verts[count * 16 + 2] = g->offset_u;
+                verts[count * 16 + 3] = g->offset_v + g->bitmap_height;
+
+                verts[count * 16 + 4] = w + g->bitmap_left + g->bitmap_width;
+                verts[count * 16 + 5] = g->bitmap_top - g->bitmap_height;
+                verts[count * 16 + 6] = g->offset_u + g->bitmap_width;
+                verts[count * 16 + 7] = g->offset_v + g->bitmap_height;
+
+                verts[count * 16 + 8] = w + g->bitmap_left;
+                verts[count * 16 + 9] = g->bitmap_top;
+                verts[count * 16 + 10] = g->offset_u;
+                verts[count * 16 + 11] = g->offset_v;
+
+                verts[count * 16 + 12] = w + g->bitmap_left + g->bitmap_width;
+                verts[count * 16 + 13] = g->bitmap_top;
+                verts[count * 16 + 14] = g->offset_u + g->bitmap_width;
+                verts[count * 16 + 15] = g->offset_v;
+
+                w += (g->advance_x);
+                a = std::max(g->bitmap_top, a);
+                d = std::min(g->bitmap_top - g->bitmap_height, d);
+
+                count++;
+            }
+
+    	}
+
+    	if(ptr_width) *ptr_width = w;
+    	if(ptr_ascender) *ptr_ascender = a;
+    	if(ptr_descender) *ptr_descender = d;
     }
     
  }
+

@@ -200,15 +200,46 @@ namespace BlendInt {
 
 	size_t Font::GetTextWidth (const String& text) const
 	{
-		// TODO: implement this function
-		return 0;
+		return GetTextWidth(text, text.length(), 0);
 	}
 
-	size_t Font::GetTextWidth (const String& string, size_t length,
+	size_t Font::GetTextWidth (const String& text, size_t length,
 	        size_t start) const
 	{
-		// TODO: implement this function
-		return 0;
+		size_t width = 0;
+		const Glyph* g = 0;
+
+		size_t str_len = text.length();
+		size_t last = std::min(start + length, str_len);
+		size_t next = 0;
+
+		if(has_kerning()) {
+
+			Kerning kerning;
+			for(size_t i = start; i < last; i++) {
+
+				g = glyph(text[i]);
+				next = i + 1;
+
+				if(next < last) {
+					kerning = GetKerning(text[i], text[next], KerningDefault);
+					width += (g->advance_x + kerning.x);
+				} else {
+					width += g->advance_x;
+				}
+
+			}
+
+		} else {
+
+			for(size_t i = start; i < last; i++) {
+				g = glyph(text[i]);
+				width += g->advance_x;
+			}
+
+		}
+
+		return width;
 	}
 
     Kerning Font::GetKerning (uint32_t left_glyph, uint32_t right_glyph, KerningMode mode) const
