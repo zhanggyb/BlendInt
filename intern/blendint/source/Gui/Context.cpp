@@ -21,22 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#ifdef USE_FONTCONFIG
-#include <BlendInt/Core/FontConfig.hpp>
-#endif
 #include <BlendInt/Core/Time.hpp>
 
 #include <BlendInt/Font/FcPattern.hpp>
@@ -77,24 +66,14 @@ namespace BlendInt
 		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
 #endif
 
-#ifdef USE_FONTCONFIG
-		if (success && FontConfig::initialize()) {
-
-			/*
-			 FontConfig* ftconfig = FontConfig::instance();
-			 if (!ftconfig->loadDefaultFontToMem()) {
-			 cerr << "Cannot load default font into memory" << endl;
-			 success = false;
-			 }
-			 */
-
+		if (success && Fc::Config::init()) {
+			// do nothing
 		} else {
 
 			DBG_PRINT_MSG("%s", "Cannot initialize FontConfig");
 			success = false;
 
 		}
-#endif
 
 		if (success && InitializeTheme()) {
 			// do nothing
@@ -158,10 +137,7 @@ namespace BlendInt
 		ReleaseShaders();
 		ReleaseTheme();
 		ReleaseCursor();
-
-#ifdef USE_FONTCONFIG
-		FontConfig::release();
-#endif
+		Fc::Config::fini();
 	}
 
 	Context::Context ()
@@ -656,15 +632,15 @@ namespace BlendInt
 		Fc::Pattern p;
 
 #ifdef __LINUX__
-		p.add(FC_FAMILY, "Sans");
+		p.add_string(FC_FAMILY, (const FcChar8*)"Droid Sans");
 #endif
 #ifdef __APPLE__
-		p.add(FC_FAMILY, "Helvetica Neue");
+		p.add_integer(FC_FAMILY, (const FcChar8*)"Helvetica Neue");
 #endif
 
-		p.add(FC_SIZE, 12);
-		p.add(FC_WEIGHT, FC_WEIGHT_REGULAR);
-		p.add(FC_SLANT, FC_SLANT_ROMAN);
+		p.add_integer(FC_SIZE, 12);
+		p.add_integer(FC_WEIGHT, FC_WEIGHT_REGULAR);
+		p.add_integer(FC_SLANT, FC_SLANT_ROMAN);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();

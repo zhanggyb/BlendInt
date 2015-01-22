@@ -35,8 +35,6 @@ namespace BlendInt {
 	{
 		text_.reset(new Text(text));
 
-		DBG_PRINT_MSG("descender: %d", text_->font().descender());
-
 		int w = text_->size().width();
 		int h = text_->font().height();
 		if(w < 80) w = 80;

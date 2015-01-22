@@ -24,10 +24,6 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Freetype.hpp>
 
-#ifdef USE_FONTCONFIG
-#include <BlendInt/Core/FontConfig.hpp>
-#endif
-
 namespace BlendInt {
 
 	FTGlyph::FTGlyph ()

@@ -36,15 +36,15 @@ namespace BlendInt {
 		cache_ = FontCache::kCacheDB[FontCache::kDefaultFontHash];
 	}
 
-	Font::Font (const FcChar8* family, double size, int weight,
+	Font::Font (const FcChar8* family, int size, int weight,
 	        int slant)
 	: Object()
 	{
 		Fc::Pattern p;
-		p.add(FC_FAMILY, family);
-		p.add(FC_SIZE, size);
-		p.add(FC_WEIGHT, weight);
-		p.add(FC_SLANT, slant);
+		p.add_string(FC_FAMILY, family);
+		p.add_integer(FC_SIZE, size);
+		p.add_integer(FC_WEIGHT, weight);
+		p.add_integer(FC_SLANT, slant);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -73,7 +73,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
 		}
 
-		p.add(FC_FAMILY, family);
+		p.add_string(FC_FAMILY, family);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -106,7 +106,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
 		}
 
-		p.add(FC_SLANT, slant);
+		p.add_integer(FC_SLANT, slant);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -131,7 +131,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
 		}
 
-		p.add(FC_WEIGHT, weight);
+		p.add_integer(FC_WEIGHT, weight);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -148,7 +148,7 @@ namespace BlendInt {
 		cache_ = FontCache::Create(match);
 	}
 
-	void Font::SetSize (double size)
+	void Font::SetSize (int size)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
@@ -156,7 +156,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
 		}
 
-		p.add(FC_SIZE, size);
+		p.add_integer(FC_SIZE, size);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -181,7 +181,7 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
 		}
 
-		p.add(FC_PIXEL_SIZE, pixel_size);
+		p.add_double(FC_PIXEL_SIZE, pixel_size);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();

@@ -92,38 +92,38 @@ namespace BlendInt {
 				return FcPatternAdd(pattern_, object, value, append ? FcTrue : FcFalse);
 			}
 
-			inline bool add (const char* object, int i)
+			inline bool add_integer (const char* object, int i)
 			{
 				return FcPatternAddInteger(pattern_, object, i);
 			}
 
-			inline bool add (const char* object, double d)
+			inline bool add_double (const char* object, double d)
 			{
 				return FcPatternAddDouble(pattern_, object, d);
 			}
 
 			// add string
-			inline bool add (const char* object, const FcChar8* s)
+			inline bool add_string (const char* object, const FcChar8* s)
 			{
 				return FcPatternAddString(pattern_, object, s);
 			}
 
-			inline bool add (const char* object, const FcMatrix* m)
+			inline bool add_matrix (const char* object, const FcMatrix* m)
 			{
 				return FcPatternAddMatrix(pattern_, object, m);
 			}
 
-			inline bool add (const char* object, const CharSet& c)
+			inline bool add_charset (const char* object, const CharSet& c)
 			{
 				return FcPatternAddCharSet(pattern_, object, c.charset());
 			}
 
-			inline bool add (const char* object, bool b)
+			inline bool add_bool (const char* object, bool b)
 			{
 				return FcPatternAddBool(pattern_, object, b ? FcTrue : FcFalse);
 			}
 
-			inline bool add (const char *object, const FcLangSet *l)
+			inline bool add_langset (const char *object, const FcLangSet *l)
 			{
 				return FcPatternAddLangSet (pattern_, object, l);
 			}
@@ -140,27 +140,27 @@ namespace BlendInt {
 				return FcPatternGet(pattern_, object, id, v);
 			}
 
-			inline FcResult get (const char* object, int n, int *i)
+			inline FcResult get_integer (const char* object, int n, int *i)
 			{
 				return FcPatternGetInteger(pattern_, object, n, i);
 			}
 
-			inline FcResult get (const char *object, int n, double *d)
+			inline FcResult get_double (const char *object, int n, double *d)
 			{
 				return FcPatternGetDouble(pattern_, object, n, d);
 			}
 
-			inline FcResult get (const char *object, int n, FcChar8 **s)
+			inline FcResult get_string (const char *object, int n, FcChar8 **s)
 			{
 				return FcPatternGetString(pattern_, object, n, s);
 			}
 
-			inline FcResult get (const char *object, int n, FcMatrix **s)
+			inline FcResult get_matrix (const char *object, int n, FcMatrix **s)
 			{
 				return FcPatternGetMatrix(pattern_, object, n, s);
 			}
 
-			inline FcResult get (const char *object, int n, FcCharSet **c)
+			inline FcResult get_charset (const char *object, int n, FcCharSet **c)
 			{
 				return FcPatternGetCharSet(pattern_, object, n, c);
 			}
@@ -175,7 +175,7 @@ namespace BlendInt {
 //				return FcPatternGetFTFace(pattern_, object, n, f);
 //			}
 
-			inline FcResult get (const char *object, int n, FcLangSet **l)
+			inline FcResult get_langset (const char *object, int n, FcLangSet **l)
 			{
 				return FcPatternGetLangSet(pattern_, object, n, l);
 			}
@@ -211,6 +211,12 @@ namespace BlendInt {
 			}
 
 			::FcPattern* pattern () const {return pattern_;}
+
+			static inline Pattern name_parse (const FcChar8 *name)
+			{
+				::FcPattern* p = FcNameParse(name);
+				return Pattern(p);
+			}
 
 			static inline Pattern duplicate (const Pattern& pattern)
 			{

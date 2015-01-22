@@ -75,6 +75,14 @@ namespace BlendInt {
 				return *this;
 			}
 
+			inline void destroy ()
+			{
+				if(config_) {
+					FcConfigDestroy(config_);
+					config_ = 0;
+				}
+			}
+
 			inline bool set_current ()
 			{
 				return FcConfigSetCurrent(config_);
@@ -88,6 +96,22 @@ namespace BlendInt {
 			inline operator bool () const
 			{
 				return config_ != 0;
+			}
+
+			static inline bool init ()
+			{
+				return FcInit();
+			}
+
+			static inline void fini ()
+			{
+				FcFini();
+			}
+
+			static inline Config init_load_config_and_fonts ()
+			{
+				FcConfig* config = FcInitLoadConfigAndFonts();
+				return Config(config);
 			}
 
 			static inline Config get_current ()
