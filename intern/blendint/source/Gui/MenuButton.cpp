@@ -35,7 +35,6 @@ namespace BlendInt {
 
 		int w = this->text()->size().width();
 		int h = this->text()->font().height();
-		if(w < 80) w = 80;
 
 		w += pixel_size(kPadding.hsum());
 		h += pixel_size(kPadding.vsum());
@@ -50,19 +49,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 	
-	Size MenuButton::GetPreferredSize() const
-	{
-		Size s = AbstractButton::GetPreferredSize();
-
-		if(text()) {
-			if(s.width() < 80) {
-				s.set_width(80);
-			}
-		}
-
-		return s;
-	}
-
 	void MenuButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

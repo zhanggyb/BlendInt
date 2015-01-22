@@ -35,6 +35,8 @@ namespace BlendInt {
 	{
 		text_.reset(new Text(text));
 
+		DBG_PRINT_MSG("descender: %d", text_->font().descender());
+
 		int w = text_->size().width();
 		int h = text_->font().height();
 		if(w < 80) w = 80;
@@ -79,17 +81,17 @@ namespace BlendInt {
 
 			int w = size().width() - pixel_size(kPadding.hsum());
 			int h = size().height() - pixel_size(kPadding.vsum());
-			float x = pixel_size(kPadding.left());
-			float y = (size().height() - text_->size().height()) / 2.f;
+			int x = pixel_size(kPadding.left());
+			int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
 
 			if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
-				x += (w - text_->size().width()) / 2.f;
+				x += (w - text_->size().width()) / 2;
 			} else if (alignment_ == AlignRight) {
 				x = w - text_->size().width();
 			}
 
 			if(text_->size().height() <= h) {
-				text_->Draw(x, y, (float)w);
+				text_->DrawWithin(x, y, w);
 			}
 
 		}

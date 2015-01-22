@@ -54,6 +54,12 @@ namespace BlendInt {
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
+	AbstractFrame::AbstractFrame(int width, int height)
+	: AbstractView(width, height)
+	{
+		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
+	}
+
 	AbstractFrame::~AbstractFrame()
 	{
 		destroyed_->fire(this);

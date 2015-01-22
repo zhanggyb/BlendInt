@@ -42,7 +42,11 @@ namespace BlendInt {
 	Frame::Frame ()
 	: AbstractFrame()
 	{
-		set_size(500, 400);
+	}
+
+	Frame::Frame (int width, int height)
+	: AbstractFrame(width, height)
+	{
 	}
 
 	Frame::~Frame()

@@ -23,26 +23,12 @@
 
 #include <assert.h>
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/AbstractForm.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
-	float AbstractForm::border_width = 1.f;
+	float AbstractForm::kBorderWidth = 1.f;
 
 	const float AbstractForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
 					{ 0.0, 0.0 },
@@ -55,11 +41,9 @@ namespace BlendInt {
 					{ 0.98, 0.805 },
 					{ 1.0, 1.0 } };
 
-	const Jitter AbstractForm::kJit;
-
 	void AbstractForm::SetDefaultBorderWidth (int border)
 	{
-		border_width = border;
+		kBorderWidth = border;
 	}
 
 	void AbstractForm::Resize (int width, int height)

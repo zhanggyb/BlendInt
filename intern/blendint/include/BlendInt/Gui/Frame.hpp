@@ -37,6 +37,8 @@ namespace BlendInt {
 
 		Frame ();
 
+		Frame (int width, int height);
+
 		virtual ~Frame ();
 
 		virtual AbstractView* GetFocusedView () const;

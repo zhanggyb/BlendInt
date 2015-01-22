@@ -45,8 +45,6 @@ namespace BlendInt {
 
 		RefPtr<Menu> menu () const {return m_menu;}
 
-		virtual Size GetPreferredSize () const;
-
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

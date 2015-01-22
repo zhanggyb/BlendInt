@@ -251,15 +251,15 @@ namespace BlendInt {
 	{
 		int w = size().width() - pixel_size(kPadding.hsum());
 		int h = size().height() - pixel_size(kPadding.vsum());
-		float x = pixel_size(kPadding.left());
-		float y = size().height() / 2.f;
+		int x = pixel_size(kPadding.left());
+		int y = size().height() / 2;
 
 		if(icon_) {
 			if(icon_->size().height() <= h) {
 
 				if(icon_->size().width() <= w) {
 
-					icon_->Draw(x + icon_->size().width() / 2.f, y);
+					icon_->Draw(x + icon_->size().width() / 2, y);
 					x += icon_->size().width();
 					x += kIconTextSpace;
 					w -= icon_->size().width();
@@ -273,12 +273,13 @@ namespace BlendInt {
 
 			if(text_->size().height() <= h) {
 
-				y = y - text_->size().height() / 2.f;
+				//y = y - text_->font().height() / 2 - text_->font().descender();
+				y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
 				if(text_->size().width() < w) {
-					x += (w - text_->size().width()) / 2.f;
+					x += (w - text_->size().width()) / 2;
 					text_->Draw(x, y);
 				} else {
-					text_->Draw(x, y, (float)w);
+					text_->DrawWithin(x, y, w);
 				}
 
 			}

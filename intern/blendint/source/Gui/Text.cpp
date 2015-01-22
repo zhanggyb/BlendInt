@@ -225,16 +225,16 @@ namespace BlendInt {
 		GLSLProgram::reset();
  	}
 
-	void Text::Draw (float x, float y, float width, short gamma) const
+	void Text::DrawWithin (float x, float y, int width, short gamma) const
 	{
  		Color color(0x000000FF);
- 		Draw(x, y, width, color, gamma);
+ 		DrawWithin(x, y, width, color, gamma);
 	}
 
-	void Text::Draw (float x, float y, float width, const Color& color,
+	void Text::DrawWithin (float x, float y, int width, const Color& color,
 	        short gamma) const
 	{
-		if(width <= 0.f) return;
+		if(width <= 0) return;
 
 		Context::shaders->widget_text_program()->use();
 
@@ -249,7 +249,7 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 
 		const Glyph* g = 0;
-		float max = 0.f;
+		int max = 0;
 		int count = 0;
 		String::const_iterator next_it;
 		Kerning kerning;

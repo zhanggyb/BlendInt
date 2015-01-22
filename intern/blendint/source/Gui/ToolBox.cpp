@@ -61,15 +61,13 @@ namespace BlendInt {
 	}
 
 	ToolBox::ToolBox (int width, int height, Orientation orientation)
-	: Frame(),
+	: Frame(width, height),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
 	  orientation_(orientation),
 	  cursor_position_(0)
 	{
-		set_size(width, height);
-
 		InitializeToolBoxOnce();
 	}
 
