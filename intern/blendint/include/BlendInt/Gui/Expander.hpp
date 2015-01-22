@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_EXPANDER_HPP_
-#define _BLENDINT_GUI_EXPANDER_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 
@@ -44,8 +43,6 @@ namespace BlendInt {
 
 		virtual bool IsExpandX () const;
 
-		virtual Size GetPreferredSize () const;
-
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -56,11 +53,6 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const Context* context);
 
-	private:
-
-		void InitializeExpandButton ();
-
-		void InitializeExpandButton (const String& text);
 	};
 
 
@@ -112,5 +104,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_EXPANDER_HPP_ */

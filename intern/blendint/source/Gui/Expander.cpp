@@ -21,40 +21,45 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/Expander.hpp>
-
-#include <BlendInt/Gui/ToggleButton.hpp>
-
-#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
 	ExpandButton::ExpandButton()
-	: AbstractButton()
+	: AbstractButton(Context::icons->num())
 	{
-		InitializeExpandButton();
+		set_checkable(true);
+
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 	}
 
 	ExpandButton::ExpandButton (const String& text)
-	: AbstractButton()
+	: AbstractButton(Context::icons->num(), text)
 	{
-		InitializeExpandButton(text);
+		set_checkable(true);
+
+		int w = this->icon()->size().width();
+		int h = this->icon()->size().height();
+
+		w += kIconTextSpace;
+
+		w += this->text()->size().width();
+		h = std::max(h, this->text()->font().height());
+
+		if(w < 80) w = 80;
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 	}
 
 	ExpandButton::~ExpandButton ()
@@ -64,17 +69,6 @@ namespace BlendInt {
 	bool ExpandButton::IsExpandX () const
 	{
 		return true;
-	}
-
-	Size ExpandButton::GetPreferredSize () const
-	{
-		Font font;
-		int h = font.height();
-
-		Size prefer(h + round_radius() * 2 + kPadding.hsum() + 100,
-						h + kPadding.vsum());
-
-		return prefer;
 	}
 
 	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -104,10 +98,6 @@ namespace BlendInt {
 
 	ResponseType ExpandButton::Draw (const Context* context)
 	{
-		if(text()) {
-			// font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
-
 		float rotate = 0.f;
 		if(is_checked()) {
 			rotate = 0.f;
@@ -115,48 +105,52 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-		float x = Context::icons->num()->size().width()/2.f;
-		float y = size().height()/2.f;
 
-		Context::icons->num()->Draw(x, y, rotate, 1.5f, Color(0x0F0F0FFF));
+		int w = size().width() - pixel_size(kPadding.hsum());
+		int h = size().height() - pixel_size(kPadding.vsum());
+		int x = pixel_size(kPadding.left());
+		int y = size().height() / 2;
+
+		if(icon()) {
+			if(icon()->size().height() <= h) {
+
+				if(icon()->size().width() <= w) {
+
+					Context::icons->num()->Draw(x + icon()->size().width() / 2, y, rotate, 1.5f, Color(0x0F0F0FFF));
+
+					x += icon()->size().width();
+					x += kIconTextSpace;
+					w -= icon()->size().width();
+					w -= kIconTextSpace;
+				}
+
+			}
+		}
+
+		if (text()) {
+
+			if(text()->size().height() <= h) {
+
+				y = (size().height() - text()->font().height()) / 2 - text()->font().descender();
+
+				// A workaround for Adobe Source Han Sans
+				int diff = text()->font().ascender() - text()->font().descender();
+				if(diff < text()->font().height()) {
+					y += (text()->font().height() - diff - 1) / 2;
+				}
+
+				if(text()->size().width() < w) {
+					x += (w - text()->size().width()) / 2;
+					text()->Draw(x, y);
+				} else {
+					text()->DrawWithin(x, y, w);
+				}
+
+			}
+
+		}
 
 		return Finish;
-	}
-
-	void ExpandButton::InitializeExpandButton ()
-	{
-		set_checkable(true);
-
-		Font font;
-		int h = font.height();
-		set_size(h + round_radius() * 2 + kPadding.hsum(),
-						h + kPadding.vsum());
-	}
-
-	void ExpandButton::InitializeExpandButton (const String& text)
-	{
-		set_checkable(true);
-
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
-
-		int h = t->font().height();
-
-		if(text.empty()) {
-			set_size(h + round_radius() * 2 + kPadding.hsum(),
-							h + kPadding.vsum());
-		} else {
-			Rect text_outline;	// = font().GetTextOutline(text);
-
-			int width = text_outline.width() + round_radius() * 2 + kPadding.hsum();
-			int height = h + kPadding.vsum();
-
-			set_size(width, height);
-
-//			set_pen((width - text_outline.width()) / 2,
-//							(height - font().height()) / 2
-//											+ std::abs(font().descender()));
-		}
 	}
 
 	// ----------------------

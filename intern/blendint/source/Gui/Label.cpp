@@ -84,6 +84,12 @@ namespace BlendInt {
 			int x = pixel_size(kPadding.left());
 			int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
 
+			// A workaround for Adobe Source Han Sans
+			int diff = text_->font().ascender() - text_->font().descender();
+			if(diff < text_->font().height()) {
+				y += (text_->font().height() - diff - 1) / 2;
+			}
+
 			if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
 				x += (w - text_->size().width()) / 2;
 			} else if (alignment_ == AlignRight) {

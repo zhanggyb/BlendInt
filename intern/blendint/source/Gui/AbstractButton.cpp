@@ -273,8 +273,14 @@ namespace BlendInt {
 
 			if(text_->size().height() <= h) {
 
-				//y = y - text_->font().height() / 2 - text_->font().descender();
 				y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
+
+				// A workaround for Adobe Source Han Sans
+				int diff = text_->font().ascender() - text_->font().descender();
+				if(diff < text_->font().height()) {
+					y += (text_->font().height() - diff - 1) / 2;
+				}
+
 				if(text_->size().width() < w) {
 					x += (w - text_->size().width()) / 2;
 					text_->Draw(x, y);
