@@ -42,10 +42,18 @@
 namespace BlendInt {
 
 	FileButton::FileButton ()
-	: AbstractButton(),
+	: AbstractButton(String("...")),
 	  dialog_(0)
 	{
 		set_round_type(RoundAll);
+
+		int h = this->text()->font().height();
+		int w = h;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 
 		InitializeFileButtonOnce();
 
@@ -55,6 +63,17 @@ namespace BlendInt {
 	FileButton::~FileButton ()
 	{
 		glDeleteVertexArrays(2, vao_);
+	}
+
+	Size FileButton::GetPreferredSize() const
+	{
+		int h = this->text()->font().height();
+		int w = h;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		return Size(w, h);
 	}
 
 	void FileButton::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -76,11 +95,11 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -107,11 +126,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -133,11 +152,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -185,37 +204,13 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if (text()) {
-			//font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
+		DrawIconText();
 
 		return Finish;
 	}
 
 	void FileButton::InitializeFileButtonOnce ()
 	{
-		set_round_type(RoundAll);
-
-		set_size(20, 20);
-		/*
-		String text("...");
-		set_text(text);
-
-		int left = kDefaultPadding.left() * Context::theme->pixel();
-		int right = kDefaultPadding.right() * Context::theme->pixel();
-		int top = kDefaultPadding.top() * Context::theme->pixel();
-		int bottom = kDefaultPadding.bottom() * Context::theme->pixel();
-		int h = font().height();
-
-		Rect text_outline;	// = font().GetTextOutline(text);
-
-		int width = text_outline.width()
-		        + round_radius() * 2 * Context::theme->pixel() + left + right;
-		int height = h + top + bottom;
-
-		set_size(width, height);
-		*/
-
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
@@ -230,25 +225,25 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(2, vao_);
-		buffer_.generate ();
+		vbo_.generate ();
 
 		glBindVertexArray(vao_[0]);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		buffer_.reset();
+		vbo_.reset();
 
 	}
 

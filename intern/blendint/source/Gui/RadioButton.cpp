@@ -111,6 +111,19 @@ namespace BlendInt {
 		return true;
 	}
 
+	Size RadioButton::GetPreferredSize() const
+	{
+		Size s = AbstractButton::GetPreferredSize();
+
+		if(text()) {
+			if(s.width() < 80) {
+				s.set_width(80);
+			}
+		}
+
+		return s;
+	}
+
 	void RadioButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

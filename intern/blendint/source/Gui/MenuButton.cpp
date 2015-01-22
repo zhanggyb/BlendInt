@@ -28,9 +28,21 @@
 namespace BlendInt {
 
 	MenuButton::MenuButton (const String& text)
-	: AbstractButton(), vao_(0)
+	: AbstractButton(text),
+	  vao_(0)
 	{
-		InitializeMenuButton(text);
+		set_round_type(RoundAll);
+
+		int w = this->text()->size().width();
+		int h = this->text()->font().height();
+		if(w < 80) w = 80;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeMenuButton();
 	}
 	
 	MenuButton::~MenuButton ()
@@ -38,6 +50,19 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 	
+	Size MenuButton::GetPreferredSize() const
+	{
+		Size s = AbstractButton::GetPreferredSize();
+
+		if(text()) {
+			if(s.width() < 80) {
+				s.set_width(80);
+			}
+		}
+
+		return s;
+	}
+
 	void MenuButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -47,9 +72,9 @@ namespace BlendInt {
             std::vector<GLfloat> inner_verts;
             AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-			inner_.bind();
-			inner_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            inner_.reset();
+			vbo_.bind();
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -66,9 +91,9 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
 
-		inner_.bind();
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		inner_.reset();
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -80,9 +105,9 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
-		inner_.bind();
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		inner_.reset();
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -105,9 +130,7 @@ namespace BlendInt {
 
 		}
 
-		if(text()) {
-			//font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
+		DrawIconText();
 
 		return Finish;
 	}
@@ -117,46 +140,23 @@ namespace BlendInt {
 		m_menu = menu;
 	}
 
-	void MenuButton::InitializeMenuButton (const String& text)
+	void MenuButton::InitializeMenuButton ()
 	{
-		set_round_type(RoundAll);
-
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
-
-		int h = t->font().height();
-
-		if(text.empty()) {
-			set_size(h + round_radius() * 2 + kPadding.hsum(),
-							h + kPadding.vsum());
-		} else {
-			Rect text_outline;	// = font().GetTextOutline(text);
-
-			int width = text_outline.width() + round_radius() * 2 + kPadding.hsum();
-			int height = h + kPadding.vsum();
-
-			set_size(width, height);
-//
-//			set_pen((width - text_outline.width()) / 2,
-//							(height - font().height()) / 2
-//											+ std::abs(font().descender()));
-		}
-
 		glGenVertexArrays(1, &vao_);
 
         std::vector<GLfloat> inner_verts;
         GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
 		glBindVertexArray(vao_);
-		inner_.generate();
-		inner_.bind();
-		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.generate();
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
 		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		inner_.reset();
+		vbo_.reset();
 	}
 
 } /* namespace BlendInt */

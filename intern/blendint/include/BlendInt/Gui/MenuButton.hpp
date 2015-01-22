@@ -21,11 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
-#define _BLENDINT_GUI_MENUBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 #include <BlendInt/Gui/Menu.hpp>
@@ -47,6 +45,8 @@ namespace BlendInt {
 
 		RefPtr<Menu> menu () const {return m_menu;}
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -59,15 +59,13 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeMenuButton (const String& text);
+		void InitializeMenuButton ();
 
 		GLuint vao_;
 
-		GLBuffer<> inner_;
+		GLBuffer<> vbo_;
 
 		RefPtr<Menu> m_menu;
 	};
 
 } /* namespace BlendInt */
-
-#endif /* _BLENDINT_GUI_MENUBUTTON_HPP_ */

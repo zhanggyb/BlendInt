@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOOLBUTTON_HPP_
-#define _BLENDINT_GUI_TOOLBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
@@ -78,12 +77,8 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-        GLBuffer<ARRAY_BUFFER, 2> buffer_;
+        GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		RefPtr<Action> action_;
-
-		RefPtr<AbstractIcon> icon_;
 	};
 }
-
-#endif /* _BLENDINT_GUI_TOOLBUTTON_HPP_ */

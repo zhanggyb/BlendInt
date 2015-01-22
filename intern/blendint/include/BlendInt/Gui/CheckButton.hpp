@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 }
 

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FILEBUTTON_HPP_
-#define _BLENDINT_GUI_FILEBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
@@ -38,7 +37,6 @@ namespace BlendInt {
 	 */
 	class FileButton: public AbstractButton
 	{
-
 		DISALLOW_COPY_AND_ASSIGN(FileButton);
 
 	public:
@@ -53,6 +51,8 @@ namespace BlendInt {
 		}
 
 		Cpp::EventRef<> file_selected() {return file_selected_;}
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		FileSelector* dialog_;
 
@@ -88,5 +88,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_FILEBUTTON_HPP_ */

@@ -21,21 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/ToolButton.hpp>
-
 #include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Core/Image.hpp>
@@ -45,8 +31,8 @@ namespace BlendInt {
 	ToolButton::ToolButton ()
 	: AbstractButton()
 	{
-		set_size(24, 24);
 		set_round_type(RoundAll);
+		set_size(24, 24);
 
 		InitializeToolButton();
 	}
@@ -75,10 +61,10 @@ namespace BlendInt {
             	GenerateRoundedVertices(&inner_verts, &outer_verts);
             }
 
-            buffer_.bind(0);
-            buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            buffer_.bind(1);
-            buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+            vbo_.bind(0);
+            vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            vbo_.bind(1);
+            vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
             GLArrayBuffer::reset();
 
             RequestRedraw();
@@ -106,10 +92,10 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
 		RequestRedraw();
@@ -132,10 +118,10 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		GLArrayBuffer::reset();
 
 		RequestRedraw();
@@ -195,16 +181,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		if(icon_) {
-			float x = size().width() / 2.f;
-			float y = size().height() / 2.f;
+		DrawIconText();
 
-			if(hover()) {
-				icon_->Draw(x, y, 15);
-			} else {
-				icon_->Draw(x, y, 0);
-			}
-		}
 		return Finish;
 	}
 
@@ -228,7 +206,8 @@ namespace BlendInt {
 
 		action_ = action;
 
-		icon_ = icon;	// for temporary use
+		SetIcon(icon);
+		SetText(text);
 	}
 
 	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text,
@@ -237,6 +216,9 @@ namespace BlendInt {
 		RefPtr<Action> action(new Action(icon, text, shortcut));
 
 		action_ = action;
+
+		SetIcon(icon);
+		SetText(text);
 	}
 
 	void ToolButton::SetAction (const RefPtr<Action>& item)
@@ -246,7 +228,11 @@ namespace BlendInt {
 
 	Size ToolButton::GetPreferredSize() const
 	{
-		return Size(24, 24);
+		if(!text()) {
+			return Size(24, 24);
+		} else {
+			return Size(24, 24);
+		}
 	}
 
 	void ToolButton::InitializeToolButton ()
@@ -265,28 +251,25 @@ namespace BlendInt {
         }
 
         glGenVertexArrays(2, vao_);
-        buffer_.generate ();
+        vbo_.generate ();
 
         glBindVertexArray(vao_[0]);
 
-        buffer_.bind(0);
-        buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+        vbo_.bind(0);
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
         glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
         glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
                 GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindVertexArray(vao_[1]);
-        buffer_.bind(1);
-        buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+        vbo_.bind(1);
+        vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
         glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
         glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
                 GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindVertexArray(0);
-        buffer_.reset();
-
-		// demo
-		icon_ = Context::icons->icon_16x16(Icons::IMAGE_ALPHA);
+        vbo_.reset();
 	}
 
 }

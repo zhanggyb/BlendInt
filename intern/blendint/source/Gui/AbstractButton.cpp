@@ -88,7 +88,9 @@ namespace BlendInt {
 
 		h = std::max(h, font.height());
 
-		if(w < 80) w = 80;
+		if (w == kIconTextSpace) {
+			w = h;
+		}
 
 		w += pixel_size(kPadding.hsum());
 		h += pixel_size(kPadding.vsum());
@@ -107,9 +109,11 @@ namespace BlendInt {
 	{
 		if(text_) {
 			text_->SetText(text);
-
-			RequestRedraw();
+		} else {
+			text_.reset(new Text(text));
 		}
+
+		RequestRedraw();
 	}
 
 	void AbstractButton::SetFont (const Font& font)

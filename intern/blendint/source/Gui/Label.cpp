@@ -82,6 +82,12 @@ namespace BlendInt {
 			float x = pixel_size(kPadding.left());
 			float y = (size().height() - text_->size().height()) / 2.f;
 
+			if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
+				x += (w - text_->size().width()) / 2.f;
+			} else if (alignment_ == AlignRight) {
+				x = w - text_->size().width();
+			}
+
 			if(text_->size().height() <= h) {
 				text_->Draw(x, y, (float)w);
 			}
