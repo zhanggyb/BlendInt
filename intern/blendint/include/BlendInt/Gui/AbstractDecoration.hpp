@@ -21,11 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
-#define _BLENDINT_GUI_ABSTRACTDECORATION_HPP_
+#pragma once
 
 #include <Cpp/Events.hpp>
-
+#include <BlendInt/Core/Margin.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -46,6 +45,8 @@ namespace BlendInt {
 			return *close_triggered_;
 		}
 
+		static Margin kPadding;
+
 	protected:
 
 		void fire_close_triggered ()
@@ -60,5 +61,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTDECORATION_HPP_ */

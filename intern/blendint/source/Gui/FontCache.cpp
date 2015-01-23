@@ -188,7 +188,7 @@ namespace BlendInt {
 			fprintf(stderr, "ERROR: Fail to get font file");
 			exit(EXIT_FAILURE);
     	}
-    	DBG_PRINT_MSG("file: %s", file.u.s);
+    	DBG_PRINT_MSG("load font file: %s", file.u.s);
 
     	result = pattern_.get(FC_SIZE, 0, &size);
     	if(result) {

@@ -31,7 +31,8 @@ namespace BlendInt {
 
 	Label::Label (const String& text, Alignment alignment)
     : Widget(),
-	  alignment_(alignment)
+	  alignment_(alignment),
+	  vao_(0)
 	{
 		text_.reset(new Text(text));
 
@@ -43,10 +44,27 @@ namespace BlendInt {
 		h += pixel_size(kPadding.vsum());
 
 		set_size(w, h);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+
+		vbo_.generate();
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		vbo_.reset();
 	}
 
 	Label::~Label ()
 	{
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Label::SetText (const String& text)
@@ -65,6 +83,14 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 			set_size (*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+			vbo_.bind();
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.reset();
+
 			RequestRedraw();
 		}
 
@@ -73,8 +99,60 @@ namespace BlendInt {
 		}
 	}
 
+	void Label::PerformRoundTypeUpdate (int type)
+	{
+		set_round_type(type);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
+
+		RequestRedraw();
+	}
+
+	void Label::PerformRoundRadiusUpdate (float radius)
+	{
+		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
+
+		RequestRedraw();
+	}
+
+	ResponseType Label::PerformMousePress (const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::PerformMouseRelease (const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::PerformMouseMove (const Context* context)
+	{
+		return Ignore;
+	}
+
 	ResponseType Label::Draw (const Context* context)
 	{
+		Context::shaders->widget_inner_program()->use();
+
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+		glBindVertexArray(0);
+
 		if(text_) {
 
 			int w = size().width() - pixel_size(kPadding.hsum());

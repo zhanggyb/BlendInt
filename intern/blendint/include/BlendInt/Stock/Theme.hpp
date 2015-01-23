@@ -77,16 +77,6 @@ namespace BlendInt {
 			return box_;
 		}
 
-		unsigned int dpi () const
-		{
-			return dpi_;
-		}
-
-		short pixel () const
-		{
-			return pixel_;
-		}
-
 		const ColorScheme& list_item () const
 		{
 			return list_item_;
@@ -182,6 +172,21 @@ namespace BlendInt {
 			return decoration_;
 		}
 
+		const char* default_font () const
+		{
+			return default_font_;
+		}
+
+		unsigned int dpi () const
+		{
+			return dpi_;
+		}
+
+		short pixel () const
+		{
+			return pixel_;
+		}
+
 		float menu_shadow_fac1 () const
 		{
 			return shadow_fac_;
@@ -246,6 +251,9 @@ namespace BlendInt {
 		ColorScheme list_item_;
 		ColorScheme dialog_;
 		ColorScheme decoration_;
+
+		/** Default font */
+		char default_font_[256];
 
 		/** Font DPI */
 		unsigned int dpi_;

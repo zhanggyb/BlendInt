@@ -21,20 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/Decoration.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
@@ -42,18 +30,41 @@ namespace BlendInt {
 
 	Decoration::Decoration()
 	: AbstractDecoration(),
-	  space_(4),
 	  close_button_(nullptr)
 	{
 		// create close button
 		close_button_ = Manage(new CloseButton);
 
-		set_size(200, 5 + 5 + close_button_->size().height());
-		close_button_->MoveTo(5, size().height() - close_button_->size().height() - 5);
-
 		PushBackSubView(close_button_);
 
-		set_round_type(RoundTopLeft | RoundTopRight);
+		MoveSubViewTo(close_button_, pixel_size(kPadding.left()), pixel_size(kPadding.bottom()));
+		set_size(200 + pixel_size(kPadding.hsum()), close_button_->size().height() + pixel_size(kPadding.vsum()));
+
+		events()->connect(close_button_->clicked(), this, &Decoration::OnCloseButtonClicked);
+	}
+
+	Decoration::Decoration(const String& title)
+	: AbstractDecoration(),
+	  close_button_(nullptr)
+	{
+		// create close button
+		close_button_ = Manage(new CloseButton);
+		Label* label = Manage(new Label(title, AlignCenter));
+
+		int x = pixel_size(kPadding.left());
+		int y = pixel_size(kPadding.bottom());
+
+		int w = close_button_->size().width() + label->size().width();
+		int h = std::max(close_button_->size().height(), label->size().height());
+
+		PushBackSubView(close_button_);
+		PushBackSubView(label);
+
+		set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+
+		MoveSubViewTo(close_button_, x, y + (h - close_button_->size().height()) / 2);
+		x += close_button_->size().width();
+		MoveSubViewTo(label, x, y + (h - label->size().height()) / 2);
 
 		events()->connect(close_button_->clicked(), this, &Decoration::OnCloseButtonClicked);
 	}
@@ -69,12 +80,23 @@ namespace BlendInt {
 
 	bool Decoration::IsExpandY () const
 	{
-		return true;
+		return false;
 	}
 
 	Size Decoration::GetPreferredSize () const
 	{
-		return Size(200, close_button_->size().height() + 5 + 5);
+		int w = 0;
+		int h = 0;
+
+		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+			w += p->size().width();
+			h = std::max(h, p->size().height());
+		}
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		return Size(w, h);
 	}
 
 	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -83,9 +105,16 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			int x = 5;
-			int y = (size().height() - close_button_->size().height()) / 2;
-			close_button_->MoveTo(x, y);
+			int x = pixel_size(kPadding.left());
+			//int y = pixel_size(kPadding.bottom());
+
+			MoveSubViewTo(close_button_, x, (size().height() - close_button_->size().height()) / 2);
+			x += close_button_->size().width();
+
+			if(subs_count() > 1) {
+				MoveSubViewTo(last_subview(), x, (size().height() - last_subview()->size().height()) / 2);
+				ResizeSubView(last_subview(), size().width() - pixel_size(kPadding.right()) - x, size().height() - pixel_size(kPadding.vsum()));
+			}
 
 			RequestRedraw();
 		}
@@ -97,7 +126,7 @@ namespace BlendInt {
 
 	ResponseType Decoration::Draw (const Context* context)
 	{
-		return Ignore;
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Decoration::OnCloseButtonClicked(AbstractButton* button)

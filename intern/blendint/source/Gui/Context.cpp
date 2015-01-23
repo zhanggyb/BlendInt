@@ -40,11 +40,8 @@
 namespace BlendInt
 {
 	Theme* Context::theme = 0;
-
 	Icons* Context::icons = 0;
-
 	Shaders* Context::shaders = 0;
-
 	Cursor* Context::cursor = 0;
 
 	glm::mat4 Context::default_view_matrix =
@@ -104,7 +101,7 @@ namespace BlendInt
 			success = false;
 		}
 
-		// Create Default font:
+		// Create Default font: must call this after theme initialized as it read the default_font
 		if(success && InitializeFont()) {
 			// do nothing
 		} else {
@@ -631,13 +628,7 @@ namespace BlendInt
 	{
 		Fc::Pattern p;
 
-#ifdef __LINUX__
-		p.add_string(FC_FAMILY, (const FcChar8*)"Droid Sans");
-#endif
-#ifdef __APPLE__
-		p.add_integer(FC_FAMILY, (const FcChar8*)"Helvetica Neue");
-#endif
-
+		p.add_string(FC_FAMILY, (const FcChar8*)theme->default_font());
 		p.add_integer(FC_SIZE, 12);
 		p.add_integer(FC_WEIGHT, FC_WEIGHT_REGULAR);
 		p.add_integer(FC_SLANT, FC_SLANT_ROMAN);

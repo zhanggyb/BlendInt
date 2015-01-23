@@ -28,6 +28,8 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+
 #include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
@@ -71,6 +73,16 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual void PerformRoundTypeUpdate (int round_type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
+
+		virtual ResponseType PerformMousePress (const Context* context);
+
+		virtual ResponseType PerformMouseRelease (const Context* context);
+
+		virtual ResponseType PerformMouseMove (const Context* context);
+
 		virtual ResponseType Draw (const Context* context);
 
 	private:
@@ -78,6 +90,9 @@ namespace BlendInt {
 		RefPtr<Text> text_;
 
         Alignment alignment_;
+
+        GLuint vao_;
+        GLBuffer<> vbo_;
 
     };
 

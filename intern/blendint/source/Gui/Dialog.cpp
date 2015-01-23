@@ -104,7 +104,7 @@ namespace BlendInt {
 		InitializeDialogOnce();
 
 		DBG_PRINT_MSG("%s", "create decoration");
-		decoration_ = Manage(new Decoration);
+		decoration_ = Manage(new Decoration(title));
 		decoration_->Resize(size().width(), decoration_->GetPreferredSize().height());
 		decoration_->MoveTo(0, size().height() - decoration_->size().height());
 		PushBackSubView(decoration_);
@@ -488,7 +488,7 @@ namespace BlendInt {
 				widget = DispatchMousePressEvent(hovered_widget_, context);
 
 				if(widget == 0) {
-					DBG_PRINT_MSG("%s", "widget 0");
+					//DBG_PRINT_MSG("%s", "widget 0");
 					set_mouse_button_pressed(true);
 				} else if (widget == layout_) {
 					DBG_PRINT_MSG("%s", "hovered is layout");

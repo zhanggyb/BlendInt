@@ -25,6 +25,8 @@
 
 namespace BlendInt {
 
+	Margin AbstractDecoration::kPadding(4, 4, 4, 4);
+
 	AbstractDecoration::AbstractDecoration()
 	: Widget()
 	{

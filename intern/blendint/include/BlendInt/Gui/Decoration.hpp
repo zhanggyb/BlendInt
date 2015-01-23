@@ -21,17 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_DECORATION_HPP_
-#define _BLENDINT_GUI_DECORATION_HPP_
-
-#include <Cpp/Events.hpp>
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#pragma once
 
 #include <BlendInt/Gui/AbstractDecoration.hpp>
-
 #include <BlendInt/Gui/CloseButton.hpp>
-#include <BlendInt/Gui/Label.hpp>
 
 namespace BlendInt {
 
@@ -45,6 +38,8 @@ namespace BlendInt {
 	public:
 
 		Decoration ();
+
+		Decoration (const String& title);
 
 		virtual ~Decoration ();
 
@@ -64,16 +59,9 @@ namespace BlendInt {
 
 		void OnCloseButtonClicked (AbstractButton* button);
 
-		/**
-		 * space between tool buttons
-		 */
-		int space_;
-
 		CloseButton* close_button_;
 
 	};
 
 }
 
-
-#endif /* _BLENDINT_GUI_DECORATION_HPP_ */

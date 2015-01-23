@@ -132,9 +132,13 @@ namespace BlendInt {
 
 		char* value = 0;
 
+		value = doc.allocate_string(default_font_);
+		xml_attribute<>* attr = doc.allocate_attribute("default_font", value);
+		ui_node->append_attribute(attr);
+
 		snprintf(buf, 16, "%u", dpi_);
 		value = doc.allocate_string(buf);
-		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
+		attr = doc.allocate_attribute("dpi", value);
 		ui_node->append_attribute(attr);
 
 		snprintf(buf, 16, "%hd", pixel_);
@@ -431,12 +435,18 @@ namespace BlendInt {
 		decoration_.shadetop = 15;
 		decoration_.shadedown = 0;
 
+#ifdef DEBUG
+		strncpy (default_font_, "Source Han Sans CN", 256);
+#else
+		strncpy (default_font_, "Droid Sans", 256);
+#endif
+
+		dpi_ = 72;
+
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 		shadow_fac_ = 0.5f;
 		shadow_width_ = 9;
-
-		dpi_ = 72;
 
 		// TODO: check if retina in Mac OS
 		pixel_ = 1;
@@ -454,7 +464,11 @@ namespace BlendInt {
 				node->first_attribute(); attrib != NULL;
 		        attrib = attrib->next_attribute())
 		{
-			if(strcmp("dpi", attrib->name()) == 0) {
+			if(strcmp("default_font", attrib->name()) == 0) {
+
+				strncpy(default_font_, attrib->value(), 256);
+
+			} else if(strcmp("dpi", attrib->name()) == 0) {
 
 				if(sscanf(attrib->value(), "%u", &tmp) == 1) {
 					dpi_ = tmp;

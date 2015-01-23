@@ -33,6 +33,13 @@ namespace BlendInt {
 	{
 	}
 
+	AbstractFloatingFrame::AbstractFloatingFrame(int width, int height)
+	: AbstractFrame(width, height),
+	  floating_frame_flag_(0),
+	  round_radius_(5.f)
+	{
+	}
+
 	AbstractFloatingFrame::~AbstractFloatingFrame()
 	{
 	}
