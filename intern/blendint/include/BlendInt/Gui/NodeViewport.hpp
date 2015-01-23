@@ -23,38 +23,28 @@
 
 #pragma once
 
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/AbstractNode.hpp>
-#include <BlendInt/Gui/CubicBezierCurve.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public Widget
+	/**
+	 * @brief A frame to manage and display nodes
+	 */
+	class NodeViewport: public Frame
 	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
-
 	public:
 
-		NodeView ();
+		NodeViewport ();
 
-		virtual ~NodeView ();
-
-		bool AddNode (AbstractNode* node);
+		virtual ~NodeViewport ();
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual ResponseType Draw (const Context* context);
-
 	private:
 
-		CubicBezierCurve* curve_;
+		glm::mat4 projection_matrix_;
+
+		glm::mat3 model_matrix_;
 
 	};
 

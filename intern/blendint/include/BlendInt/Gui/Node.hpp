@@ -21,39 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CURSORTYPE_HPP_
-#define _BLENDINT_GUI_CURSORTYPE_HPP_
-
-#include <stack>
+#pragma once
 
 namespace BlendInt {
 
- 	class CursorType
- 	{
- 	public:
+	/**
+	 * @brief A special view used to display and manage a node in NodeView
+	 */
+	class Node: public AbstractNode
+	{
+	public:
 
- 		CursorType ();
-
- 		virtual ~CursorType ();
-
-		/**
-		 * @brief Set the cursor
-		 *
-		 * Override this to set custom cursor
-		 */
-		virtual void SetCursor (int cursor_type);
-
-		inline int current_cursor () const
+		Node ()
 		{
-			return current_cursor_;
+
 		}
 
- 	private:
+		virtual ~Node()
+		{
 
-		int current_cursor_;
+		}
 
- 	};
+	};
 
 }
-
-#endif	// _BLENDINT_GUI_CURSORTYPE_HPP_

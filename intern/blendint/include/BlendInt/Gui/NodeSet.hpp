@@ -21,25 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/CursorType.hpp>
+#pragma once
 
 namespace BlendInt {
 
-	CursorType::CursorType ()
- 	: current_cursor_(ArrowCursor)
- 	{
-
- 	}
-
- 	CursorType::~CursorType ()
- 	{
-
- 	}
-
-	void CursorType::SetCursor (int cursor_type)
+	class NodeSet: public AbstractNode
 	{
-		// TODO: overwrite this
-	}
+	public:
+
+		NodeSet ()
+		{
+
+		}
+
+		virtual ~NodeSet ()
+		{
+
+		}
+
+	};
 
 }

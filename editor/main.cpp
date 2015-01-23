@@ -21,41 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#pragma once
+/**
+ * @brief BlendInt UI Editor
+ */
 
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/AbstractNode.hpp>
-#include <BlendInt/Gui/CubicBezierCurve.hpp>
+#include "CursorTheme.hpp"
+#include "Window.hpp"
+#include "EditorContext.hpp"
 
-namespace BlendInt {
+int main (int argc, char* argv[])
+{
+	using namespace BlendInt;
 
-	class NodeView: public Widget
-	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
+	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	public:
+	Init();
 
-		NodeView ();
+	GLFWwindow* win = CreateWindow("UI Editor", 1280, 800);
+	Context::cursor->RegisterCursorType (new CursorTheme(win));
 
-		virtual ~NodeView ();
+	EditorContext* context = Manage (new EditorContext(win));
+	SetContext(context);
+	context->Resize(1280, 800);
 
-		bool AddNode (AbstractNode* node);
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual ResponseType Draw (const Context* context);
-
-	private:
-
-		CubicBezierCurve* curve_;
-
-	};
-
+	RunLoop(win);
+	Terminate();
 }

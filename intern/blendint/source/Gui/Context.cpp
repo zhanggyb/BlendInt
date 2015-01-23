@@ -619,7 +619,7 @@ namespace BlendInt
 	{
 		cursor = new Cursor;
 
-		cursor->RegisterCursorType(new CursorType);
+		cursor->RegisterCursorType(new BlankCursorTheme);
 
 		return true;
 	}

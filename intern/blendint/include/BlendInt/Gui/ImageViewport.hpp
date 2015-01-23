@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_IMAGEVIEWPORT_HPP_
-#define _BLENDINT_GUI_IMAGEVIEWPORT_HPP_
+#pragma once
 
 // generate makefile with cmake -DENABLE_OPENCV to activate
 #ifdef __USE_OPENCV__
@@ -32,7 +31,6 @@
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 #include <BlendInt/Gui/ChessBoard.hpp>
@@ -106,7 +104,3 @@ namespace BlendInt {
 	};
 
 }
-
-//#endif	// __USE_OPENCV__
-
-#endif /* _BLENDINT_GUI_IMAGEVIEWPORT_HPP_ */

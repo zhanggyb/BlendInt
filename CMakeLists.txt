@@ -71,7 +71,6 @@ endif()
 
 find_package(FontConfig REQUIRED)
 if(FONTCONFIG_FOUND)
-    add_definitions(-DUSE_FONTCONFIG)
     include_directories(${FONTCONFIG_INCLUDE_DIR})
     set(LIBS ${LIBS} ${FONTCONFIG_LIBRARY})
 endif()
@@ -195,6 +194,7 @@ if(ENABLE_OPENCV)
 endif()
 
 add_subdirectory(intern/blendint/source)
+add_subdirectory(editor)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
@@ -221,5 +221,5 @@ if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
 	add_subdirectory(demo)
 endif()
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/BlendInt" DESTINATION include)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/intern/blendint/include/BlendInt" DESTINATION include)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)

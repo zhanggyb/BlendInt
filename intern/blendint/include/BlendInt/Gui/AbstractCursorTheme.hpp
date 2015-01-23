@@ -24,38 +24,56 @@
 #pragma once
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/AbstractNode.hpp>
-#include <BlendInt/Gui/CubicBezierCurve.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public Widget
-	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
+ 	class AbstractCursorTheme
+ 	{
+ 	public:
 
-	public:
+ 		AbstractCursorTheme ()
+ 		: current_cursor_(ArrowCursor)
+ 		{}
 
-		NodeView ();
+ 		virtual ~AbstractCursorTheme ()
+ 		{}
 
-		virtual ~NodeView ();
+		/**
+		 * @brief Set the cursor
+		 *
+		 * Override this to set custom cursor
+		 */
+		virtual void SetCursor (int cursor_type) = 0;
 
-		bool AddNode (AbstractNode* node);
+		inline int current_cursor () const
+		{
+			return current_cursor_;
+		}
 
-	protected:
+ 	private:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		int current_cursor_;
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+ 	};
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+ 	class BlankCursorTheme: public AbstractCursorTheme
+ 	{
+ 	public:
 
-		virtual ResponseType Draw (const Context* context);
+ 		BlankCursorTheme ()
+ 		: AbstractCursorTheme()
+ 		{
+ 		}
 
-	private:
+ 		virtual ~BlankCursorTheme()
+ 		{
 
-		CubicBezierCurve* curve_;
+ 		}
 
-	};
+ 		virtual void SetCursor (int cursor_type)
+ 		{
+
+ 		}
+ 	};
 
 }

@@ -39,7 +39,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Cursor::RegisterCursorType (CursorType* cursor_type)
+	void Cursor::RegisterCursorType (AbstractCursorTheme* cursor_type)
 	{
 		if(cursor_type == 0) return;
 		

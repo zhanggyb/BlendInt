@@ -21,13 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_CURSOR_HPP_
-#define _BLENDINT_STOCK_CURSOR_HPP_
+#pragma once
 
 #include <stack>
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/CursorType.hpp>
+#include <BlendInt/Gui/AbstractCursorTheme.hpp>
 
 namespace BlendInt {
 
@@ -37,7 +36,7 @@ namespace BlendInt {
 
 	public:
 
-		void RegisterCursorType (CursorType* cursor_type);
+		void RegisterCursorType (AbstractCursorTheme* cursor_type);
 
 		void SetCursor (int cursor_type);
 
@@ -64,12 +63,10 @@ namespace BlendInt {
 
 		~Cursor ();
 
-		CursorType * cursor_type_;
+		AbstractCursorTheme * cursor_type_;
 
 		std::stack<int> cursor_stack_;
 
 	};
 
 }
-
-#endif	// _BLENDINT_STOCK_CURSOR_HPP_

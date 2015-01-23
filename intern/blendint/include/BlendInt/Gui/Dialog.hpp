@@ -21,18 +21,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_DIALOG_HPP_
-#define _BLENDINT_GUI_DIALOG_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
-#include <BlendInt/Gui/AbstractDecoration.hpp>
+#include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 #include <BlendInt/Gui/FrameShadow.hpp>
-#include <BlendInt/Gui/Decoration.hpp>
 
 namespace BlendInt {
 
@@ -232,5 +230,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_DIALOG_HPP_ */

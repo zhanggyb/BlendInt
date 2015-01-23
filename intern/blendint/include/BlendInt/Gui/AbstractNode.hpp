@@ -23,29 +23,37 @@
 
 #pragma once
 
-#include <BlendInt/Gui/AbstractFrame.hpp>
+#include <BlendInt/Gui/AbstractView.hpp>
 
 namespace BlendInt {
 
-	class AbstractFloatingFrame: public AbstractFrame
+	/**
+	 * @brief Base class of node and nodeset
+	 */
+	class AbstractNode: public AbstractView
 	{
 	public:
 
-		AbstractFloatingFrame ();
+		AbstractNode ()
+		: AbstractView(),
+		  node_flag_(0),
+		  round_radius_(5.f)
+		{
 
-		AbstractFloatingFrame (int width, int height);
+		}
 
-		virtual ~AbstractFloatingFrame ();
+		virtual ~AbstractNode ()
+		{
 
-		virtual AbstractView* GetFocusedView () const;
-
-		void SetRoundType (int type);
+		}
 
 		void SetRoundRadius (float radius);
 
+		void SetRoundType (int type);
+
 		inline uint32_t round_type () const
 		{
-			return floating_frame_flag_ & 0x0F;
+			return node_flag_ & 0x0F;
 		}
 
 		inline float round_radius () const
@@ -66,13 +74,13 @@ namespace BlendInt {
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+		virtual void PerformRoundTypeUpdate (int round);
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
 		inline void set_round_type (int type)
 		{
-			floating_frame_flag_ = (floating_frame_flag_ & 0xFFF0) + (type & 0x0F);
+			node_flag_ = (node_flag_ & 0xFFF0) + (type & 0x0F);
 		}
 
 		inline void set_round_radius (float radius)
@@ -82,19 +90,19 @@ namespace BlendInt {
 
 	private:
 
-		enum FloatingFrameFlagIndex {
+		enum NodeFlagIndex {
 
-			FloatingFrameRoundTopLeft = (1 << 0),
+			NodeRoundTopLeft = (1 << 0),
 
-			FloatingFrameRoundTopRight = (1 << 1),
+			NodeRoundTopRight = (1 << 1),
 
-			FloatingFrameRoundBottomRight = (1 << 2),
+			NodeRoundBottomRight = (1 << 2),
 
-			FloatingFrameRoundBottomLeft = (1 << 3),
+			NodeRoundBottomLeft = (1 << 3),
 
 		};
 
-		uint32_t floating_frame_flag_;
+		uint32_t node_flag_;
 
 		float round_radius_;
 
