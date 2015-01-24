@@ -45,9 +45,9 @@ namespace BlendInt {
 
 		static bool Release (const Fc::Pattern& data);
 
-		static void ReleaseAll ();
-
-		static size_t GetCacheSize ();
+        static inline size_t cache_size () {return kCacheDB.size();}
+        
+        static inline size_t max_cache_size () {return kMaxCacheSize;}
 
 		FontCache (const Fc::Pattern& pattern);
 
@@ -75,6 +75,8 @@ namespace BlendInt {
 		friend class Font;
 		friend class Context;
 
+        static void ReleaseAll ();
+        
 		Fc::Pattern pattern_;
 
 		Ft::Library library_;
@@ -88,6 +90,8 @@ namespace BlendInt {
 		static std::map<FcChar32, RefPtr<FontCache> > kCacheDB;
 
 		static FcChar32 kDefaultFontHash;
+        
+        static const unsigned int kMaxCacheSize = 16;
 	};
 
 } /* namespace BlendInt */

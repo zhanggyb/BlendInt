@@ -21,7 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef DEBUG
 #include <cassert>
+#endif
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Font/FcConfig.hpp>
@@ -36,13 +38,35 @@ namespace BlendInt {
 		cache_ = FontCache::kCacheDB[FontCache::kDefaultFontHash];
 	}
 
-	Font::Font (const FcChar8* family, int size, int weight,
+    Font::Font (const FcChar8* name)
+    : Object()
+    {
+        Fc::Pattern p = Fc::Pattern::name_parse(name);
+        
+        Fc::Config::substitute(0, p, FcMatchPattern);
+        p.default_substitute();
+        
+        FcResult result;
+        Fc::Pattern match = Fc::Config::match(0, p, &result);
+        
+#ifdef DEBUG
+        assert(match);
+#endif
+        
+        if(result != FcResultMatch) {
+            DBG_PRINT_MSG("Warning: %s", "the font was not found");
+        }
+        
+        cache_ = FontCache::Create(match);
+    }
+    
+	Font::Font (const FcChar8* family, double size, int weight,
 	        int slant)
 	: Object()
 	{
 		Fc::Pattern p;
 		p.add_string(FC_FAMILY, family);
-		p.add_integer(FC_SIZE, size);
+		p.add_double(FC_SIZE, size);
 		p.add_integer(FC_WEIGHT, weight);
 		p.add_integer(FC_SLANT, slant);
 
@@ -52,10 +76,12 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
+#ifdef DEBUG
 		assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);
@@ -81,10 +107,12 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-		assert(match);
+#ifdef DEBUG
+        assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);
@@ -103,7 +131,7 @@ namespace BlendInt {
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
 		if(!p.del(FC_SLANT)) {
-			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+			DBG_PRINT_MSG("Warning: %s", "no fullname property");
 		}
 
 		p.add_integer(FC_SLANT, slant);
@@ -114,10 +142,12 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-		assert(match);
+#ifdef DEBUG
+        assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);
@@ -128,7 +158,7 @@ namespace BlendInt {
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
 		if(!p.del(FC_WEIGHT)) {
-			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+			DBG_PRINT_MSG("Warning: %s", "no weight property");
 		}
 
 		p.add_integer(FC_WEIGHT, weight);
@@ -139,24 +169,26 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-		assert(match);
+#ifdef DEBUG
+        assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);
 	}
 
-	void Font::SetSize (int size)
+	void Font::SetSize (double size)
 	{
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
 		if(!p.del(FC_SIZE)) {
-			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+			DBG_PRINT_MSG("Warning: %s", "no size property");
 		}
 
-		p.add_integer(FC_SIZE, size);
+		p.add_double(FC_SIZE, size);
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();
@@ -164,10 +196,12 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-		assert(match);
+#ifdef DEBUG
+        assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);
@@ -178,7 +212,7 @@ namespace BlendInt {
 		Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
 		if(!p.del(FC_PIXEL_SIZE)) {
-			DBG_PRINT_MSG("Warning: %s", "no faimliy property");
+			DBG_PRINT_MSG("Warning: %s", "no pixelsize property");
 		}
 
 		p.add_double(FC_PIXEL_SIZE, pixel_size);
@@ -189,10 +223,12 @@ namespace BlendInt {
 		FcResult result;
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-		assert(match);
+#ifdef DEBUG
+        assert(match);
+#endif
 
 		if(result != FcResultMatch) {
-			DBG_PRINT_MSG("Warning: %s", "the default font was not found");
+			DBG_PRINT_MSG("Warning: %s", "the font was not found");
 		}
 
 		cache_ = FontCache::Create(match);

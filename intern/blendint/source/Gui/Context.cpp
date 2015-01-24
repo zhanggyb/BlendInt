@@ -626,12 +626,7 @@ namespace BlendInt
 
 	bool Context::InitializeFont()
 	{
-		Fc::Pattern p;
-
-		p.add_string(FC_FAMILY, (const FcChar8*)theme->default_font());
-		p.add_integer(FC_SIZE, 12);
-		p.add_integer(FC_WEIGHT, FC_WEIGHT_REGULAR);
-		p.add_integer(FC_SLANT, FC_SLANT_ROMAN);
+        Fc::Pattern p = Fc::Pattern::name_parse((const FcChar8*)theme->default_font());
 
 		Fc::Config::substitute(0, p, FcMatchPattern);
 		p.default_substitute();

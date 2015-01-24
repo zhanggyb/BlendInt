@@ -78,8 +78,10 @@ namespace BlendInt {
         
 		Font();
 		
+        Font (const FcChar8* name);
+        
 		Font (const FcChar8* family,
-				int size,
+				double size,
 				int weight = FC_WEIGHT_REGULAR,
 				int slant = FC_SLANT_ROMAN);
 
@@ -120,7 +122,7 @@ namespace BlendInt {
 		 */
 		void SetWeight (int weight);
 
-		void SetSize (int size);
+		void SetSize (double size);
 
 		void SetPixelSize (double pixel_size);
 

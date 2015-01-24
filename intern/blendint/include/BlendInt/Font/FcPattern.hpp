@@ -200,7 +200,7 @@ namespace BlendInt {
 				FcDefaultSubstitute(pattern_);
 			}
 
-			inline void print ()
+			inline void print () const
 			{
 				FcPatternPrint(pattern_);
 			}

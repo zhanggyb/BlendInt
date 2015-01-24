@@ -146,8 +146,13 @@ namespace BlendInt {
 
     RefPtr<FontCache> FontCache::Create (const Fc::Pattern& pattern)
     {
-    	RefPtr<FontCache> cache;
+        if(kCacheDB.size() == kMaxCacheSize) {
+            DBG_PRINT_MSG("Warning: %s", "max font cache reached, use default font");
+            return kCacheDB[kDefaultFontHash];
+        }
 
+        RefPtr<FontCache> cache;
+        
     	FcChar32 hash_id = pattern.hash();
     	if(kCacheDB.count(hash_id)) {
     		cache = kCacheDB[hash_id];
@@ -162,6 +167,11 @@ namespace BlendInt {
     bool FontCache::Release (const Fc::Pattern& pattern)
     {
     	FcChar32 hash_id = pattern.hash();
+        
+        if(hash_id == kDefaultFontHash) {
+            DBG_PRINT_MSG("Warning: %s", "cannot release the default font");
+            return false;
+        }
 
     	return kCacheDB.erase(hash_id);
     }
@@ -171,42 +181,38 @@ namespace BlendInt {
     	kCacheDB.clear();
     }
 
-    size_t FontCache::GetCacheSize ()
-    {
-    	return kCacheDB.size();
-    }
-
     FontCache::FontCache (const Fc::Pattern& pattern)
     : pattern_(pattern)
     {
-    	FcValue file;
-    	FcValue size;
-    	FcValue dpi;
+        FcChar8* file = 0;
+        double size;
+    	double dpi;
 
-    	FcResult result = pattern_.get(FC_FILE, 0, &file);
+        pattern.print();
+    	FcResult result = pattern_.get_string(FC_FILE, 0, &file);
     	if(result) {
 			fprintf(stderr, "ERROR: Fail to get font file");
 			exit(EXIT_FAILURE);
     	}
-    	DBG_PRINT_MSG("load font file: %s", file.u.s);
+    	DBG_PRINT_MSG("load font file: %s", file);
 
-    	result = pattern_.get(FC_SIZE, 0, &size);
+    	result = pattern_.get_double(FC_SIZE, 0, &size);
     	if(result) {
 			fprintf(stderr, "ERROR: Fail to get font size");
 			exit(EXIT_FAILURE);
     	}
 
-    	result = pattern_.get(FC_DPI, 0, &dpi);
+    	result = pattern_.get_double(FC_DPI, 0, &dpi);
     	if(result) {
 			fprintf(stderr, "ERROR: Fail to get font dpi");
 			exit(EXIT_FAILURE);
     	}
 
-    	// DBG_PRINT_MSG("size: %d, dpi: %u", size.u.i, (unsigned int)dpi.u.d);
+        DBG_PRINT_MSG("size: %f, dpi: %f", size, dpi);
 
     	library_.Init();
-    	face_.New(library_, (const char*)file.u.s);
-    	face_.set_char_size(size.u.i << 6, 0, (unsigned int)dpi.u.d, 0);
+    	face_.New(library_, (const char*)(file));
+    	face_.set_char_size((unsigned long)size << 6, 0, (unsigned int)dpi, 0);
 
     	texture_atlas_.reset(new TextureAtlas);
     	texture_atlas_->Generate(500, 32);
