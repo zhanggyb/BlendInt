@@ -21,23 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_HLAYOUT_HPP_
-#define _BLENDINT_GUI_HLAYOUT_HPP_
+#pragma once
 
-#include <deque>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	class HLayout: public AbstractLayout
+	class LinearLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(HLayout);
+		DISALLOW_COPY_AND_ASSIGN(LinearLayout);
 
 	public:
 
-		HLayout(int align = AlignHorizontalCenter, int space = 4);
+		LinearLayout(Orientation orient = Horizontal, int align = AlignHorizontalCenter, int space = 4);
 
-		virtual ~HLayout ();
+		virtual ~LinearLayout ();
 
 		virtual bool AddWidget (AbstractWidget* widget);
 
@@ -48,14 +47,16 @@ namespace BlendInt {
 
 		bool Remove (AbstractWidget* widget);
 
-		int alignment () const
-		{
-			return alignment_;
-		}
+		void SetOrientation (Orientation orient);
 
 		void SetAlignment (int align);
 
 		void SetSpace (int space);
+
+		int alignment () const
+		{
+			return alignment_;
+		}
 
 		int space () const
 		{
@@ -80,29 +81,6 @@ namespace BlendInt {
 
 		void UpdateLayout ();
 
-		/**
-		 * @brief distribute horizontally with preferred size
-		 */
-		void DistributeWithPreferredWidth (int x,
-		        const std::deque<int>* expandable_preferred_widths,
-		        const std::deque<int>* unexpandable_preferred_widths);
-
-		void DistributeWithSmallWidth (int x,
-						int width,
-						const std::deque<int>* expandable_preferred_widths,
-						int expandable_prefer_sum,
-						const std::deque<int>* unexpandable_preferred_widths,
-						int unexpandable_prefer_sum);
-
-		void DistributeWithLargeWidth (int x,
-						int width,
-						const std::deque<int>* expandable_preferred_widths,
-						int expandable_prefer_sum,
-						const std::deque<int>* unexpandable_preferred_widths,
-						int unexpandable_prefer_sum);
-
-		void AlignInHBox (int y, int height, const std::deque<int>* unexpandable_preferred_heights);
-
 		void set_alignment (int align)
 		{
 			alignment_ = align;
@@ -115,6 +93,8 @@ namespace BlendInt {
 
 	private:
 
+		Orientation orientation_;
+
 		int alignment_;
 
 		int space_;
@@ -122,5 +102,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_HLAYOUT_HPP_ */

@@ -23,6 +23,9 @@
 
 #pragma once
 
+#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/AbstractNode.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -32,15 +35,25 @@ namespace BlendInt {
 	{
 	public:
 
-		Node ()
-		{
+		Node ();
 
-		}
+		virtual ~Node();
 
-		virtual ~Node()
-		{
+	protected:
 
-		}
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (int round_type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
+
+		virtual ResponseType Draw (const Context* context);
+
+	private:
+
+		GLuint vao_[2];
+
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 	};
 

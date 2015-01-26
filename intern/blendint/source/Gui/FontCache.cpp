@@ -188,13 +188,11 @@ namespace BlendInt {
         double size;
     	double dpi;
 
-        pattern.print();
     	FcResult result = pattern_.get_string(FC_FILE, 0, &file);
     	if(result) {
 			fprintf(stderr, "ERROR: Fail to get font file");
 			exit(EXIT_FAILURE);
     	}
-    	DBG_PRINT_MSG("load font file: %s", file);
 
     	result = pattern_.get_double(FC_SIZE, 0, &size);
     	if(result) {
@@ -207,8 +205,6 @@ namespace BlendInt {
 			fprintf(stderr, "ERROR: Fail to get font dpi");
 			exit(EXIT_FAILURE);
     	}
-
-        DBG_PRINT_MSG("size: %f, dpi: %f", size, dpi);
 
     	library_.Init();
     	face_.New(library_, (const char*)(file));

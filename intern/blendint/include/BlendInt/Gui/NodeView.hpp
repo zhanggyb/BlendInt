@@ -38,11 +38,17 @@ namespace BlendInt {
 
 		NodeView ();
 
+		NodeView (int width, int height);
+
 		virtual ~NodeView ();
 
 		bool AddNode (AbstractNode* node);
 
 	protected:
+
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
@@ -54,7 +60,13 @@ namespace BlendInt {
 
 	private:
 
-		CubicBezierCurve* curve_;
+		void InitializeNodeView ();
+
+		//CubicBezierCurve* curve_;
+
+		GLuint vao_;
+
+		GLBuffer<> vbo_;
 
 	};
 

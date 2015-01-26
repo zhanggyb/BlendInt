@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <glm/gtx/matrix_transform_2d.hpp>
+
 #include <BlendInt/Gui/AbstractNode.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
@@ -69,6 +71,74 @@ namespace BlendInt {
 	void AbstractNode::PerformRoundTypeUpdate (int round)
 	{
 		set_round_type(round);
+	}
+
+	bool AbstractNode::PreDraw (const Context* context)
+	{
+		if(!visiable()) return false;
+
+		Point offset = GetOffset();
+
+		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
+
+		Context::shaders->PushWidgetModelMatrix();
+		Context::shaders->SetWidgetModelMatrix(matrix);
+
+		return true;
+	}
+
+	void AbstractNode::PostDraw (const Context* context)
+	{
+		Context::shaders->PopWidgetModelMatrix();
+	}
+
+	void AbstractNode::PerformFocusOn (const Context* context)
+	{
+	}
+
+	void AbstractNode::PerformFocusOff (const Context* context)
+	{
+	}
+
+	void AbstractNode::PerformHoverIn (const Context* context)
+	{
+	}
+
+	void AbstractNode::PerformHoverOut (const Context* context)
+	{
+	}
+
+	ResponseType AbstractNode::PerformKeyPress (const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractNode::PerformContextMenuPress (
+	        const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractNode::PerformContextMenuRelease (
+	        const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractNode::PerformMousePress (const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractNode::PerformMouseRelease (const Context* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractNode::PerformMouseMove (const Context* context)
+	{
+		return Ignore;
 	}
 
 	void AbstractNode::PerformRoundRadiusUpdate (float radius)

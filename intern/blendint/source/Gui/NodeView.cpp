@@ -28,20 +28,47 @@ namespace BlendInt {
 
 	NodeView::NodeView()
 	: Widget(),
-	  curve_(0)
+	  vao_(0)
 	{
 		set_size (400, 300);
 
-		curve_ = new CubicBezierCurve;
-		curve_->Unpack();
+		InitializeNodeView();
+//		curve_ = new CubicBezierCurve;
+//		curve_->Unpack();
+	}
+
+	NodeView::NodeView(int width, int height)
+	: Widget(width, height)
+	{
+
+		InitializeNodeView();
+//		curve_ = new CubicBezierCurve;
+//		curve_->Unpack();
 	}
 
 	NodeView::~NodeView ()
 	{
-		delete curve_;
+//		delete curve_;
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool NodeView::AddNode (AbstractNode* node)
+	{
+		if(PushBackSubView(node)) {
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool NodeView::PositionUpdateTest (
+	        const PositionUpdateRequest& request)
 	{
 		return true;
 	}
@@ -72,9 +99,41 @@ namespace BlendInt {
 
 	ResponseType NodeView::Draw(const Context* context)
 	{
-		curve_->Draw();
+//		curve_->Draw();
+		Context::shaders->widget_inner_program()->use();
+
+		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.f);
+
+		glBindVertexArray(vao_);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		glBindVertexArray(0);
+		GLSLProgram::reset();
 
 		return Finish;
+	}
+
+	void BlendInt::NodeView::InitializeNodeView ()
+	{
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		vbo_.generate();
+		glGenVertexArrays(1, &vao_);
+
+		glBindVertexArray(vao_);
+
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+				GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		vbo_.reset();
+
 	}
 
 }

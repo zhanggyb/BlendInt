@@ -74,7 +74,7 @@ namespace BlendInt {
 	{
 		if(column != 0) {
 			DBG_PRINT_MSG("Error: %s",
-						  "HLayout contains only 1 row, and the 1st parameter will be ignored");
+						  "LinearLayout contains only 1 row, and the 1st parameter will be ignored");
 		}
 
 		if(InsertSubView(row, widget)) {

@@ -21,15 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <assert.h>
 #include <algorithm>
@@ -52,6 +44,12 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget()
 	: AbstractView()
+	{
+		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
+	}
+
+	AbstractWidget::AbstractWidget(int width, int height)
+	: AbstractView(width, height)
 	{
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 	}

@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_FILESELECTOR_HPP_
 
 #include <BlendInt/Gui/VLayout.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 #include <BlendInt/Gui/Button.hpp>

@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ColorSelector.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 		VLayout* main_layout = Manage(new VLayout);
 
-		HLayout* hbox1 = Manage(new HLayout);
+		LinearLayout* hbox1 = Manage(new LinearLayout);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
 		BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
 
@@ -99,7 +99,7 @@ namespace BlendInt {
 		Button* pick_btn = Manage(new Button(Context::icons->icon_16x16(Icons::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
-		HLayout* hbox2 = Manage(new HLayout(AlignTop));
+		LinearLayout* hbox2 = Manage(new LinearLayout(Horizontal, AlignTop));
 		hbox2->AddWidget(color_box);
 		hbox2->AddWidget(pick_btn);
 

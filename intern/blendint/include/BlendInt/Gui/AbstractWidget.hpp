@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
-#define _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
+#pragma once
 
 #include <glm/glm.hpp>
 #include <boost/smart_ptr.hpp>
@@ -44,6 +43,8 @@ namespace BlendInt {
 	public:
 
 		AbstractWidget ();
+
+		AbstractWidget (int width, int height);
 
 		virtual ~AbstractWidget();
 
@@ -103,5 +104,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTWIDGET_HPP_ */

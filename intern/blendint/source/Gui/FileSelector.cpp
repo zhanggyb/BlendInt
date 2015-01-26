@@ -38,7 +38,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FileSelector.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/FolderList.hpp>
@@ -53,7 +53,7 @@ namespace BlendInt {
 	FileSelectorDecoration::FileSelectorDecoration ()
 	: AbstractDecoration()
 	{
-		HLayout* hlayout = Manage(new HLayout);
+		LinearLayout* hlayout = Manage(new LinearLayout);
 		DBG_SET_NAME(hlayout, "FileSelectorDecorationLayout");
 
 		// create close button

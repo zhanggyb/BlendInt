@@ -34,8 +34,8 @@ namespace BlendInt {
 	{
 	public:
 
-		AbstractAdjustment (AbstractView* superview)
-		: superview_(superview)
+		AbstractAdjustment (AbstractView* view)
+		: view_(view)
 		{
 
 		}
@@ -45,9 +45,38 @@ namespace BlendInt {
 
 		}
 
+		virtual void Adjust (int x, int y, int w, int h) = 0;
+
+	protected:
+
+		inline void move (AbstractView* sub, int x, int y)
+		{
+			view_->MoveSubViewTo(sub, x, y);
+		}
+
+		inline void move (AbstractView* sub, const Point& point)
+		{
+			view_->MoveSubViewTo(sub, point);
+		}
+
+		inline void resize (AbstractView* sub, int width, int height)
+		{
+			view_->ResizeSubView(sub, width, height);
+		}
+
+		inline void resize (AbstractView* sub, const Size& size)
+		{
+			view_->ResizeSubView(sub, size);
+		}
+
+		AbstractView* view() const
+		{
+			return view_;
+		}
+
 	private:
 
-		AbstractView* superview_;
+		AbstractView* view_;
 	};
 
 }

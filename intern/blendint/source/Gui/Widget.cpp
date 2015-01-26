@@ -33,6 +33,13 @@ namespace BlendInt {
 	{
 	}
 
+	Widget::Widget(int width, int height)
+	: AbstractWidget(width, height),
+	  widget_flag_(0),
+	  round_radius_(5.f)
+	{
+	}
+
 	Widget::~Widget()
 	{
 	}

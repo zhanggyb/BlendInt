@@ -63,6 +63,32 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool PreDraw (const Context* context);
+
+		// virtual ResponseType Draw (Profile& profile);
+
+		virtual void PostDraw (const Context* context);
+
+		virtual void PerformFocusOn (const Context* context);
+
+		virtual void PerformFocusOff (const Context* context);
+
+		virtual void PerformHoverIn (const Context* context);
+
+		virtual void PerformHoverOut (const Context* context);
+
+		virtual ResponseType PerformKeyPress (const Context* context);
+
+		virtual ResponseType PerformContextMenuPress (const Context* context);
+
+		virtual ResponseType PerformContextMenuRelease (const Context* context);
+
+		virtual ResponseType PerformMousePress (const Context* context);
+
+		virtual ResponseType PerformMouseRelease (const Context* context);
+
+		virtual ResponseType PerformMouseMove (const Context* context);
+
 		void GenerateRoundedVertices (
 				std::vector<GLfloat>* inner,
 				std::vector<GLfloat>* outer);
