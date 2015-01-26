@@ -23,7 +23,6 @@
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>

@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/Expander.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
@@ -159,7 +159,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		VLayout* frame = Manage(new VLayout);
+		LinearLayout* frame = Manage(new LinearLayout(Vertical));
 
 		PushBackSubView(title_button);	// 0
 		PushBackSubView(frame);	// 1
@@ -187,7 +187,7 @@ namespace BlendInt {
 	: Widget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		VLayout* frame = Manage(new VLayout);
+		LinearLayout* frame = Manage(new LinearLayout(Vertical));
 
 		PushBackSubView(title_button);	// 0
 		PushBackSubView(frame);	// 1
@@ -217,7 +217,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
 		frame->AddWidget(widget);
 		return true;
 	}
@@ -300,7 +300,7 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -347,7 +347,7 @@ namespace BlendInt {
 	void Expander::OnToggled (AbstractButton* sender, bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		VLayout* frame = dynamic_cast<VLayout*>(GetWidgetAt(1));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
 
 		if(toggle) {
 			int x = position().x();

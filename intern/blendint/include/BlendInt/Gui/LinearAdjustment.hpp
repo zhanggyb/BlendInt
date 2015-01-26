@@ -61,6 +61,26 @@ namespace BlendInt {
 
 		void AlignHorizontally (int y, int height);
 
+		void AdjustVertically (int x, int y, int w, int h);
+
+		/**
+		 * @brief distribute horizontally with preferred size
+		 */
+		void DistributeWithPreferredHeight (int y,
+						int height);
+
+		void DistributeWithSmallHeight (int y,
+						int height,
+						int expandable_prefer_sum,
+						int unexpandable_prefer_sum);
+
+		void DistributeWithLargeHeight (int y,
+						int height,
+						int expandable_prefer_sum,
+						int unexpandable_prefer_sum);
+
+		void AlignVertically (int x, int width);
+
 		Orientation orientation_;
 
 		int alignment_;

@@ -21,22 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
@@ -63,7 +51,7 @@ namespace BlendInt {
 
 	void ColorSelector::InitializeColorSelector()
 	{
-		VLayout* main_layout = Manage(new VLayout);
+		LinearLayout* main_layout = Manage(new LinearLayout(Vertical));
 
 		LinearLayout* hbox1 = Manage(new LinearLayout);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
@@ -91,7 +79,7 @@ namespace BlendInt {
 		NumericalSlider* alpha_slider = Manage(new NumericalSlider);
 		alpha_slider->SetEmboss(true);
 
-		VLayout* color_box = Manage(new VLayout);
+		LinearLayout* color_box = Manage(new LinearLayout(Vertical));
 		color_box->SetMargin(Margin(0, 0, 0, 0));
 		color_box->AddWidget(stack_);
 		color_box->AddWidget(alpha_slider);
@@ -142,9 +130,9 @@ namespace BlendInt {
 		return block;
 	}
 	
-	VLayout* ColorSelector::CreateHexBlock ()
+	LinearLayout* ColorSelector::CreateHexBlock ()
 	{
-		VLayout* box = Manage(new VLayout(AlignLeft, 0));
+		LinearLayout* box = Manage(new LinearLayout(Vertical, AlignLeft, 0));
 		box->SetMargin(Margin(2, 2, 2, 2));
 
 		TextEntry* hex_edit = Manage(new TextEntry);
@@ -168,7 +156,7 @@ namespace BlendInt {
 
 		Block* rgb_block = CreateRGBBlock();
 		Block* hsv_block = CreateHSVBlock();
-		VLayout* hex_box = CreateHexBlock();
+		LinearLayout* hex_box = CreateHexBlock();
 
 		stack->AddWidget(rgb_block);
 		stack->AddWidget(hsv_block);

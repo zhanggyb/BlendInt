@@ -190,7 +190,7 @@ namespace BlendInt {
 		FileSelectorDecoration* dec = Manage(new FileSelectorDecoration);
 
 		//ToolBox* sidebar = CreateSideBarOnce();
-		VLayout* area = CreateBrowserAreaOnce();
+		LinearLayout* area = CreateBrowserAreaOnce();
 
 		SetDecoration(dec);
 		SetLayout(area);
@@ -217,9 +217,9 @@ namespace BlendInt {
 		delete this;
 	}
 
-	VLayout* FileSelector::CreateBrowserAreaOnce()
+	LinearLayout* FileSelector::CreateBrowserAreaOnce()
 	{
-		VLayout* vbox = Manage(new VLayout);
+		LinearLayout* vbox = Manage(new LinearLayout(Vertical));
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetSpace(2);
 

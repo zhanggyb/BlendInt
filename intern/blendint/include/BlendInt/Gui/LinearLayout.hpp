@@ -34,7 +34,7 @@ namespace BlendInt {
 
 	public:
 
-		LinearLayout(Orientation orient = Horizontal, int align = AlignHorizontalCenter, int space = 4);
+		LinearLayout(Orientation orient = Horizontal, int align = AlignCenter, int space = 4);
 
 		virtual ~LinearLayout ();
 
