@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CHECKBUTTON_HPP_
-#define _BLENDINT_GUI_CHECKBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
@@ -42,7 +41,17 @@ namespace BlendInt {
 
 		virtual ~CheckButton ();
 
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (int round_type);
+
+		virtual void PerformRoundRadiusUpdate (float radius);
 
 		virtual ResponseType Draw (const Context* context);
 
@@ -55,6 +64,3 @@ namespace BlendInt {
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 }
-
-
-#endif /* _BLENDINT_GUI_CHECKBUTTON_HPP_ */

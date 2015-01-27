@@ -21,38 +21,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/CheckButton.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
 	CheckButton::CheckButton()
 	: AbstractButton()
 	{
-		set_size(200, 100);
 		set_round_type(RoundAll);
+
+		Font font;	// default font
+		int w = 80;
+		int h = font.height();
+
+		set_size(w + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
 
 		InitializeCheckButton();
 	}
 
 	CheckButton::CheckButton (const String& text)
-	: AbstractButton()
+	: AbstractButton(text)
 	{
+		int w = this->text()->size().width();
+		int h = this->text()->font().height();
+		if(w < 80) w = 80;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeCheckButton();
 	}
 
 	CheckButton::~CheckButton ()
@@ -82,6 +85,85 @@ namespace BlendInt {
 		GLSLProgram::reset();
 
 		return Finish;
+	}
+
+	Size CheckButton::GetPreferredSize () const
+	{
+		Size s = AbstractButton::GetPreferredSize();
+
+		if(text()) {
+			if(s.width() < 80) {
+				s.set_width(80);
+			}
+		}
+
+		return s;
+	}
+
+	bool CheckButton::IsExpandX () const
+	{
+		return false;
+	}
+
+	void CheckButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
+
+			RequestRedraw();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
+	}
+
+	void CheckButton::PerformRoundTypeUpdate (int type)
+	{
+		set_round_type(type);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
+
+		RequestRedraw();
+	}
+
+	void CheckButton::PerformRoundRadiusUpdate (float radius)
+	{
+		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
+
+		RequestRedraw();
 	}
 
 	void CheckButton::InitializeCheckButton ()

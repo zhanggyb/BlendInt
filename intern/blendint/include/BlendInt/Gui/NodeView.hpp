@@ -44,6 +44,12 @@ namespace BlendInt {
 
 		bool AddNode (AbstractNode* node);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

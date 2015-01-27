@@ -24,52 +24,38 @@
 #pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
-
-#include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Gui/AbstractButton.hpp>
+#include <BlendInt/Gui/AbstractShadow.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup widgets
-	 */
-	class ColorButton: public AbstractButton
+	class WidgetShadow: public AbstractShadow
 	{
-		DISALLOW_COPY_AND_ASSIGN(ColorButton);
-
 	public:
 
-		ColorButton ();
+		WidgetShadow(const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
 
-		virtual ~ColorButton ();
+		virtual ~WidgetShadow();
 
-		void SetColor (const Color& color);
-
-		virtual bool IsExpandX () const;
-
-		virtual Size GetPreferredSize () const;
+		virtual void Draw (float x, float y, short gamma = 0) const;
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformSizeUpdate (const Size& size);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+		virtual void PerformRoundTypeUpdate (int type);
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (const Context* context);
-
 	private:
 
-		void InitializeColorButton ();
+		void InitializeWidgetShadowOnce ();
 
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+		GLuint vao_;
 
-		Color color0_;
-		Color color1_;
+		GLBuffer<ARRAY_BUFFER> vertex_buffer_;
+
+		GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
+
 	};
 
 }

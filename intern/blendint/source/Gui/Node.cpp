@@ -30,7 +30,7 @@ namespace BlendInt {
 	: AbstractNode()
 	{
 		set_round_type(RoundAll);
-		set_size(240, 360);
+		set_size(200, 200);
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
@@ -57,6 +57,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		vbo_.reset();
+
+		shadow_.reset(new WidgetShadow(size(), round_type(), round_radius()));
 	}
 
 	Node::~Node()
@@ -80,6 +82,8 @@ namespace BlendInt {
 			vbo_.bind(1);
 			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			vbo_.reset();
+
+			shadow_->Resize(size());
 
 			RequestRedraw();
 		}
@@ -143,6 +147,8 @@ namespace BlendInt {
 
 	ResponseType Node::Draw (const Context* context)
 	{
+		shadow_->Draw(0.f, 0.f);
+
 		Context::shaders->widget_inner_program()->use();
 
 		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);

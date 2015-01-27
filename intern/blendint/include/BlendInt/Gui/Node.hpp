@@ -25,6 +25,7 @@
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractNode.hpp>
+#include <BlendInt/Gui/WidgetShadow.hpp>
 
 namespace BlendInt {
 
@@ -54,6 +55,8 @@ namespace BlendInt {
 		GLuint vao_[2];
 
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+		RefPtr<WidgetShadow> shadow_;
 
 	};
 

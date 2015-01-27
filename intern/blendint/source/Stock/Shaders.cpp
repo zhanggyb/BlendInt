@@ -573,7 +573,7 @@ namespace BlendInt {
 			"	VertexShade = aCoord.z;"
 			"}";
 
-	const char* Shaders::widget_line_fragment_shader =
+			const char* Shaders::widget_line_fragment_shader =
 	        "#version 330\n"
 			""
 			"in float VertexShade;"
@@ -584,6 +584,104 @@ namespace BlendInt {
 			"void main(void) {"
 			"	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
 			"	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+			"}";
+
+			// -----------------------------------
+
+			const char* Shaders::widget_shadow_vertex_shader =
+				"#version 330\n"
+				""
+			"layout(location=0) in vec3 aCoord;"
+			"out float gAlpha;"
+			""
+			"void main(void) {"
+			"	gl_Position = vec4(aCoord.xy, 0.0, 1.0);"
+			"	gAlpha = aCoord.z;"
+			"}";
+
+			const char* Shaders::widget_shadow_geometry_shader =
+			"#version 330\n"
+			""
+			"layout (triangles) in;"
+			"layout (triangle_strip, max_vertices = 24) out;"
+			"in float gAlpha[];"
+			"out float fAlpha;"
+			""
+			"layout (std140) uniform WidgetMatrices {"
+			"	mat4 projection;"
+			"	mat4 view;"
+			"	mat3 model;"
+			"};"
+			""
+			"uniform vec2 uPosition;"
+			"uniform bool uAA = false;"// position
+			""
+			"const vec2 AA_JITTER[8] = vec2[8]("
+			"	vec2(0.468813, -0.481430),"
+			"	vec2(-0.155755, -0.352820),"
+			"	vec2(0.219306, -0.238501),"
+			"	vec2(-0.393286,-0.110949),"
+			"	vec2(-0.024699, 0.013908),"
+			"	vec2(0.343805, 0.147431),"
+			"	vec2(-0.272855, 0.269918),"
+			"	vec2(0.095909, 0.388710));"
+			""
+			"mat3 translate (const in vec2 t)"
+			"{"
+			"	return mat3(1.0, 0.0, 0.0,"
+			"				0.0, 1.0, 0.0,"
+			"				t.x, t.y, 1.0);"
+			"}"
+			""
+			"void main()"
+			"{"
+			"	mat3 model_matrix_2d = model * translate(uPosition);"
+			"	vec3 point;"
+			""
+			"	if(uAA) {"
+			"		mat3 aa_matrix = mat3(1.0);"
+			"		for(int jit = 0; jit < 8; jit++) {"
+			"			aa_matrix[2] = vec3(AA_JITTER[jit], 1.f);"
+			"			for(int n = 0; n < gl_in.length(); n++)"
+			"			{"
+			"				point = model_matrix_2d * aa_matrix * vec3(gl_in[n].gl_Position.xy, 1.f);"
+			"				fAlpha = gAlpha[n] / 8.f;"
+			"				gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"				EmitVertex();"
+			"			}"
+			"			EndPrimitive();"
+			"		}"
+			"		return;"
+			"	} else {"
+			"		for(int n = 0; n < gl_in.length(); n++) {"
+			"			point = model_matrix_2d  * vec3(gl_in[n].gl_Position.xy, 1.f);"
+			"			fAlpha = gAlpha[n];"
+			"			gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+			"			EmitVertex();"
+			"		}"
+			"		EndPrimitive();"
+			"		return;"
+			"	}"
+			"}";
+
+			const char* Shaders::widget_shadow_fragment_shader =
+			"#version 330\n"
+			""
+			"in float fAlpha;"
+			"out vec4 FragmentColor;"
+			"uniform vec2 uPosition;"
+			"uniform vec2 uSize;"
+			""
+			"void main(void) {"
+			"	float alpha = fAlpha;"
+			""
+			"	if(gl_FragCoord.y > (uPosition.y + uSize.y / 2.f)) {"
+			"		if((gl_FragCoord.x > uPosition.x) && (gl_FragCoord.x < (uPosition.x + uSize.x))) {"
+			"			alpha = 0.f;"
+			"		}"
+			"	}"
+			""
+			"	FragmentColor = vec4(vec3(0.05, 0.05, 0.05), 0.8 * alpha);"
 			"}";
 
 		// ---------------------------------------------------------------
@@ -858,6 +956,7 @@ namespace BlendInt {
 			widget_outer_program_.reset(new GLSLProgram);
 			widget_image_program_.reset(new GLSLProgram);
 			widget_line_program_.reset(new GLSLProgram);
+			widget_shadow_program_.reset(new GLSLProgram);
 			frame_inner_program_.reset(new GLSLProgram);
 			frame_outer_program_.reset(new GLSLProgram);
 			frame_image_program_.reset(new GLSLProgram);
@@ -1027,6 +1126,9 @@ namespace BlendInt {
 			if(!SetupWidgetLineProgram())
 				return false;
 
+			if(!SetupWidgetShadowProgram())
+				return false;
+
 			if(!SetupPrimitiveProgram())
 				return false;
 
@@ -1144,6 +1246,9 @@ namespace BlendInt {
 
 			block_index = glGetUniformBlockIndex(widget_line_program_->id(), "WidgetMatrices");
 			glUniformBlockBinding(widget_line_program_->id(), block_index, widget_matrices_ubo_binding_point_);
+
+			block_index = glGetUniformBlockIndex(widget_shadow_program_->id(), "WidgetMatrices");
+			glUniformBlockBinding(widget_shadow_program_->id(), block_index, widget_matrices_ubo_binding_point_);
 
 			// ------------------------------ Frame matrix uniform block
 
@@ -1426,6 +1531,33 @@ namespace BlendInt {
 			return true;
 		}
 
+		bool Shaders::SetupWidgetShadowProgram()
+		{
+			if (!widget_shadow_program_->Create()) {
+				return false;
+			}
+
+			widget_shadow_program_->AttachShader(
+			        widget_shadow_vertex_shader, GL_VERTEX_SHADER);
+			widget_shadow_program_->AttachShader(
+			        widget_shadow_geometry_shader,
+			        GL_GEOMETRY_SHADER);
+			widget_shadow_program_->AttachShader(
+			        widget_shadow_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!widget_shadow_program_->Link()) {
+				DBG_PRINT_MSG("Fail to link the widget shadow program: %d",
+						widget_shadow_program_->id());
+				return false;
+			}
+
+			locations_[WIDGET_SHADOW_COORD] = widget_shadow_program_->GetAttributeLocation("aCoord");
+			locations_[WIDGET_SHADOW_POSITION] = widget_shadow_program_->GetUniformLocation("uPosition");
+			locations_[WIDGET_SHADOW_ANTI_ALIAS] = widget_shadow_program_->GetUniformLocation("uAA");
+			locations_[WIDGET_SHADOW_SIZE] = widget_shadow_program_->GetUniformLocation("uSize");
+
+			return true;
+		}
+
 		bool Shaders::SetupPrimitiveProgram()
 		{
 			if (!primitive_program_->Create()) {
@@ -1632,4 +1764,3 @@ namespace BlendInt {
 		}
 
 }
-

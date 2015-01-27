@@ -21,28 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <cmath>
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <BlendInt/Gui/FrameShadow.hpp>
-
+#include <BlendInt/Gui/WidgetShadow.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
-	FrameShadow::FrameShadow (const Size& size, int round_type,
+	WidgetShadow::WidgetShadow (const Size& size, int round_type,
 	        float round_radius)
 	: AbstractShadow(),
 	  vao_(0)
@@ -59,21 +45,21 @@ namespace BlendInt {
 
 		set_round_type(round_type);
 
-		InitializeFrameShadowOnce();
+		InitializeWidgetShadowOnce();
 	}
 
-	FrameShadow::~FrameShadow()
+	WidgetShadow::~WidgetShadow()
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void FrameShadow::Draw(float x, float y, short gamma) const
+	void WidgetShadow::Draw(float x, float y, short gamma) const
 	{
-		Context::shaders->frame_shadow_program()->use();
+		Context::shaders->widget_shadow_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_POSITION),
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_SHADOW_POSITION),
 		        x, y);
-		glUniform2f(Context::shaders->location(Shaders::FRAME_SHADOW_SIZE),
+		glUniform2f(Context::shaders->location(Shaders::WIDGET_SHADOW_SIZE),
 		        size().width(), size().height());
 
 		glBindVertexArray(vao_);
@@ -84,13 +70,13 @@ namespace BlendInt {
 		if (i < Context::theme->shadow_width()) {
 			glUniform1i(
 			        Context::shaders->location(
-			                Shaders::FRAME_SHADOW_ANTI_ALIAS), 1);
+			                Shaders::WIDGET_SHADOW_ANTI_ALIAS), 1);
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
 		glUniform1i(
-		        Context::shaders->location(Shaders::FRAME_SHADOW_ANTI_ALIAS),
+		        Context::shaders->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
 		        0);
 		i++;
 		for (; i < Context::theme->shadow_width(); i++) {
@@ -102,7 +88,7 @@ namespace BlendInt {
 		GLSLProgram::reset();
 	}
 
-	void FrameShadow::PerformSizeUpdate(const Size& size)
+	void WidgetShadow::PerformSizeUpdate(const Size& size)
 	{
 		set_size(size);
 
@@ -120,7 +106,7 @@ namespace BlendInt {
 		element_buffer_.reset();
 	}
 
-	void FrameShadow::PerformRoundTypeUpdate(int type)
+	void WidgetShadow::PerformRoundTypeUpdate(int type)
 	{
 		type &= 0x0F;
 		type |= (RoundTopLeft | RoundTopRight);
@@ -142,7 +128,7 @@ namespace BlendInt {
 		element_buffer_.reset();
 	}
 
-	void FrameShadow::PerformRoundRadiusUpdate(float radius)
+	void WidgetShadow::PerformRoundRadiusUpdate(float radius)
 	{
 		if(radius < 1.f) radius = 1.f;
 
@@ -161,10 +147,9 @@ namespace BlendInt {
 		element_buffer_.bind();
 		element_buffer_.set_data(sizeof(GLuint) * elements.size(), &elements[0]);
 		element_buffer_.reset();
-
 	}
 
-	void FrameShadow::InitializeFrameShadowOnce()
+	void WidgetShadow::InitializeWidgetShadowOnce()
 	{
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
@@ -178,10 +163,10 @@ namespace BlendInt {
 		vertex_buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(
-		        Context::shaders->location(Shaders::FRAME_SHADOW_COORD));
+		        Context::shaders->location(Shaders::WIDGET_SHADOW_COORD));
 
 		glVertexAttribPointer(
-		        Context::shaders->location(Shaders::FRAME_SHADOW_COORD), 3,
+		        Context::shaders->location(Shaders::WIDGET_SHADOW_COORD), 3,
 		        GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();

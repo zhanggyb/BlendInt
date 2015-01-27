@@ -32,8 +32,11 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 
 		Font font;	// default font
-		set_size(font.height() + pixel_size(kPadding.hsum()),
-		        font.height() + pixel_size(kPadding.vsum()));
+		int w = 80;
+		int h = font.height();
+
+		set_size(w + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
 
 		color0_.set_red(0.3f);
 		color0_.set_blue(0.8f);
@@ -164,6 +167,24 @@ namespace BlendInt {
 		DrawIconText();
 
 		return Finish;
+	}
+
+	Size ColorButton::GetPreferredSize () const
+	{
+		Size s = AbstractButton::GetPreferredSize();
+
+		if(text()) {
+			if(s.width() < 80) {
+				s.set_width(80);
+			}
+		}
+
+		return s;
+	}
+
+	bool ColorButton::IsExpandX () const
+	{
+		return true;
 	}
 
 	void ColorButton::InitializeColorButton ()

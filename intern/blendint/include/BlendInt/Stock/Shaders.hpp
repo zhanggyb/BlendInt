@@ -34,8 +34,6 @@
 
 namespace BlendInt {
 
-	//extern GLint location[LocationLast];
-
 	/**
 	 * @brief A class which provide pre-defined shaders
 	 *
@@ -97,8 +95,15 @@ namespace BlendInt {
 			WIDGET_IMAGE_TEXTURE,
 			WIDGET_IMAGE_GAMMA,
 
+			// Line
 			WIDGET_LINE_COORD,
 			WIDGET_LINE_COLOR,
+
+			// Widget shadow
+			WIDGET_SHADOW_COORD,
+			WIDGET_SHADOW_POSITION,
+			WIDGET_SHADOW_ANTI_ALIAS,
+			WIDGET_SHADOW_SIZE,
 
 			PRIMITIVE_COORD,
 			PRIMITIVE_COLOR,
@@ -165,6 +170,10 @@ namespace BlendInt {
 
 		const RefPtr<GLSLProgram>& widget_line_program () const {
 			return widget_line_program_;
+		}
+
+		const RefPtr<GLSLProgram>& widget_shadow_program () const {
+			return widget_shadow_program_;
 		}
 
 		const RefPtr<GLSLProgram>& frame_inner_program () const {
@@ -261,6 +270,8 @@ namespace BlendInt {
 
 		bool SetupWidgetLineProgram ();
 
+		bool SetupWidgetShadowProgram ();
+
 		bool SetupPrimitiveProgram ();
 
 		bool SetupFrameInnerProgram ();
@@ -288,6 +299,8 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> widget_image_program_;
 
 		RefPtr<GLSLProgram> widget_line_program_;
+
+		RefPtr<GLSLProgram> widget_shadow_program_;
 
 		RefPtr<GLSLProgram> frame_inner_program_;
 
@@ -375,6 +388,12 @@ namespace BlendInt {
 		static const char* widget_image_vertex_shader;
 
 		static const char* widget_image_fragment_shader;
+
+		static const char* widget_shadow_vertex_shader;
+
+		static const char* widget_shadow_geometry_shader;
+
+		static const char* widget_shadow_fragment_shader;
 
 		static const char* frame_inner_vertex_shader;
 

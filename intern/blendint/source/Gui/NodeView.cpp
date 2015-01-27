@@ -62,6 +62,22 @@ namespace BlendInt {
 		return false;
 	}
 
+	bool NodeView::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool NodeView::IsExpandY () const
+	{
+		return true;
+	}
+
+	Size NodeView::GetPreferredSize () const
+	{
+		// if subs_count == 0
+		return Size(400, 300);
+	}
+
 	bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		return true;
@@ -77,6 +93,14 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
+
+			std::vector<GLfloat> inner_verts;
+			GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+			vbo_.bind();
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.reset();
+
 			RequestRedraw();
 		}
 
@@ -85,15 +109,31 @@ namespace BlendInt {
 		}
 	}
 
-	void NodeView::PerformRoundTypeUpdate (int round_type)
+	void NodeView::PerformRoundTypeUpdate (int type)
 	{
-		set_round_type(round_type);
+		set_round_type(type);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
+
 		RequestRedraw();
 	}
 
 	void NodeView::PerformRoundRadiusUpdate (float radius)
 	{
 		set_round_radius(radius);
+
+		std::vector<GLfloat> inner_verts;
+		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+
+		vbo_.bind();
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.reset();
+
 		RequestRedraw();
 	}
 
@@ -111,7 +151,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		return Finish;
+		return Ignore;
 	}
 
 	void BlendInt::NodeView::InitializeNodeView ()

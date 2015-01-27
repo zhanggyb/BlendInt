@@ -142,12 +142,32 @@ namespace BlendInt {
 
 	bool ToolBox::IsExpandX () const
 	{
-		return orientation_ == Horizontal ? true : false;
+		bool expand = false;
+
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		{
+			if(p->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
 	}
 
 	bool ToolBox::IsExpandY () const
 	{
-		return orientation_ == Vertical ? true : false;
+		bool expand = false;
+
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		{
+			if(p->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
 	}
 
 	Size ToolBox::GetPreferredSize () const

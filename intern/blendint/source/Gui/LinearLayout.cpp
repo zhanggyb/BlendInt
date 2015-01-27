@@ -23,6 +23,7 @@
 
 #include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/LinearAdjustment.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -118,33 +119,46 @@ namespace BlendInt {
 
 	Size BlendInt::LinearLayout::GetPreferredSize () const
 	{
-		Size preferred_size;
+		if(subs_count() == 0) {
+			return Size(200, 200);
+		}
 
-		if(first_subview() == 0) {
+		int w = 0;
+		int h = 0;
 
-			preferred_size.set_width(200);
-			preferred_size.set_height(200);
+		Size tmp;
 
-		} else {
-
-			Size tmp_size;
-
-			preferred_size.set_width(-space_);
+		if(orientation_ == Horizontal) {
+			w = -space_;
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
-					tmp_size = p->GetPreferredSize();
+					tmp = p->GetPreferredSize();
 
-					preferred_size.add_width(tmp_size.width() + space_);
-					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
+					w += (tmp.width() + space_);
+					h = std::max(h, tmp.height());
 				}
 			}
 
-			preferred_size.add_width(margin().hsum());
-			preferred_size.add_height(margin().vsum());
+			w += pixel_size(margin().hsum());
+			h += pixel_size(margin().vsum());
+		} else {
+			h = -space_;
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			{
+				if(p->visiable()) {
+					tmp = p->GetPreferredSize();
+
+					w = std::max(w, tmp.width());
+					h += (tmp.height() + space_);
+				}
+			}
+
+			w += pixel_size(margin().hsum());
+			h += pixel_size(margin().vsum());
 		}
 
-		return preferred_size;
+		return Size(w, h);
 	}
 
 	bool LinearLayout::IsExpandX () const
