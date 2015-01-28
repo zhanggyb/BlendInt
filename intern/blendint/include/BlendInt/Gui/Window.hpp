@@ -70,6 +70,8 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+        virtual bool PreDraw (const AbstractWindow* context);
+        
 	private:
 
 		GLFWwindow* window_;

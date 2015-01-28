@@ -112,28 +112,6 @@ namespace BlendInt {
 
 			if(refresh()) {
 
-				glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-				//glClearColor(1.f, 1.f, 1.f, 1.f);
-				glClearStencil(0);
-				glClearDepth(1.0);
-
-				glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
-
-				// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				glEnable(GL_BLEND);
-
-				set_viewport_origin(0, 0);
-				if(stencil_count() != 0) {
-					DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count());
-				}
-				set_stencil_count(0);
-
-				glViewport(0, 0, size().width(), size().height());
-
 				set_refresh(false);
 				if(PreDraw(this)) {
 					Draw(this);
@@ -227,6 +205,33 @@ namespace BlendInt {
 		}
 	}
 
+    bool Window::PreDraw (const AbstractWindow* context)
+    {
+        glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+        //glClearColor(1.f, 1.f, 1.f, 1.f);
+        glClearStencil(0);
+        glClearDepth(1.0);
+        
+        glClear(GL_COLOR_BUFFER_BIT |
+                GL_DEPTH_BUFFER_BIT |
+                GL_STENCIL_BUFFER_BIT);
+        
+        // Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+        
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        
+        set_viewport_origin(0, 0);
+        if(stencil_count() != 0) {
+            DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count());
+        }
+        set_stencil_count(0);
+        
+        glViewport(0, 0, size().width(), size().height());
+
+        return true;
+    }
+    
 	void Window::CbError (int error, const char* description)
 	{
 		DBG_PRINT_MSG("Error: %s (error code: %d)", description, error);
@@ -429,9 +434,15 @@ namespace BlendInt {
 #ifdef __APPLE__
 
 	// MUST set this callback to render the context when resizing in OSX
-	static void Window::CbWindowRefresh (GLFWwindow* window)
+	void Window::CbWindowRefresh (GLFWwindow* window)
 	{
 		Window* win = kWindowMap[window];
+
+        win->set_refresh(false);
+        if(win->PreDraw(win)) {
+            win->Draw(win);
+            win->PostDraw(win);
+        }
 
 		glfwSwapBuffers(win->window_);
 	}
