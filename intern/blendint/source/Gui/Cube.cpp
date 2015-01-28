@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 #include <BlendInt/Gui/Cube.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 
 	void Cube::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		RefPtr<GLSLProgram> program = Context::shaders->primitive_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders->primitive_program();
 
 		program->use();
 		program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));

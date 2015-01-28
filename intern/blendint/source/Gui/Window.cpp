@@ -46,7 +46,7 @@ namespace BlendInt {
 
 	Point Window::kCursor;
 
-	Window::Window (int width, int height, const char* title)
+	Window::Window (int width, int height, const char* title, Window* share)
 	: AbstractWindow(width, height),
 	  window_(0)
 	{
@@ -58,56 +58,31 @@ namespace BlendInt {
 		}
 
 		glfwSetWindowSizeCallback(window_, &CbWindowSize);
-//		glfwSetKeyCallback(window, &CbKey);
-//		glfwSetCharCallback(window, &CbChar);
-//		glfwSetMouseButtonCallback(window, &CbMouseButton);
-//		glfwSetCursorPosCallback(window, &CbCursorPos);
-//#ifdef __APPLE__
-//		glfwSetWindowRefreshCallback(window, &CbWindowRefresh);
-//#endif
+		glfwSetKeyCallback(window_, &CbKey);
+		glfwSetCharCallback(window_, &CbChar);
+		glfwSetMouseButtonCallback(window_, &CbMouseButton);
+		glfwSetCursorPosCallback(window_, &CbCursorPos);
+#ifdef __APPLE__
+		glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
+#endif
 
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window_);
 
-		if(!InitializeGLContext()) {
-			DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
-			exit(EXIT_FAILURE);
+		if(share == 0) {
+			if(!InitializeGLContext()) {
+				DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
+				exit(EXIT_FAILURE);
+			}
+
+			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+			shaders->SetFrameProjectionMatrix(projection);
+			shaders->SetFrameViewMatrix(default_view_matrix);
+			shaders->SetFrameModelMatrix(glm::mat3(1.f));
+
+			shaders->SetWidgetViewMatrix(default_view_matrix);
+			shaders->SetWidgetModelMatrix(glm::mat3(1.f));
 		}
-
-		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		shaders->SetFrameProjectionMatrix(projection);
-		shaders->SetFrameViewMatrix(default_view_matrix);
-		shaders->SetFrameModelMatrix(glm::mat3(1.f));
-
-		shaders->SetWidgetViewMatrix(default_view_matrix);
-		shaders->SetWidgetModelMatrix(glm::mat3(1.f));
-
-		kWindowMap[window_] = this;
-	}
-
-	Window::Window (int width, int height, const char* title,
-	        const Window& share)
-	: AbstractWindow(width, height),
-	  window_(0)
-	{
-		window_ = glfwCreateWindow(width, height, title, NULL, share.window_);
-
-		if(!window_) {
-			glfwTerminate();
-			exit(EXIT_FAILURE);
-		}
-
-		glfwSetWindowSizeCallback(window_, &CbWindowSize);
-//		glfwSetKeyCallback(window, &CbKey);
-//		glfwSetCharCallback(window, &CbChar);
-//		glfwSetMouseButtonCallback(window, &CbMouseButton);
-//		glfwSetCursorPosCallback(window, &CbCursorPos);
-//#ifdef __APPLE__
-//		glfwSetWindowRefreshCallback(window, &CbWindowRefresh);
-//#endif
-
-		/* Make the window's context current */
-		glfwMakeContextCurrent(window_);
 
 		kWindowMap[window_] = this;
 	}

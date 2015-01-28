@@ -23,7 +23,7 @@
 
 #include <BlendInt/Gui/AbstractShadow.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 #ifdef DEBUG
 #include <cassert>
@@ -47,7 +47,7 @@ namespace BlendInt {
 	{
 		int width = shadow_width_;
 
-		float rad = radius() * Context::theme->pixel();
+		float rad = radius() * AbstractWindow::theme->pixel();
 
 		float minx = 0.0f;
 		float miny = 0.0f;
@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		float vec[WIDGET_CURVE_RESOLU][2];
 
-		width *= Context::theme->pixel();
+		width *= AbstractWindow::theme->pixel();
 
 		int outline_vertex_count = GetOutlineVertexCount(round_type());
 		unsigned int verts_num = (width + 1) * outline_vertex_count * 3;	// 3 float for one vertex: 0, 1: coord, 2: shade

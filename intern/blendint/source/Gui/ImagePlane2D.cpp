@@ -24,7 +24,7 @@
 #include <BlendInt/Gui/ImagePlane2D.hpp>
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -49,12 +49,12 @@ namespace BlendInt {
 		vertex_buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::WIDGET_IMAGE_COORD));
+				AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer (Context::shaders->location (Shaders::WIDGET_IMAGE_COORD),
+				AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_UV));
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Context::shaders->location (Shaders::WIDGET_IMAGE_UV), 2,
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
@@ -90,10 +90,10 @@ namespace BlendInt {
 		if(texture_->id()) {
 
 			texture_->bind();
-			Context::shaders->widget_image_program()->use();
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			AbstractWindow::shaders->widget_image_program()->use();
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

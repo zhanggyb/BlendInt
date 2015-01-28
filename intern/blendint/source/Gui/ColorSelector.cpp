@@ -35,7 +35,7 @@
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -84,7 +84,7 @@ namespace BlendInt {
 		color_box->AddWidget(stack_);
 		color_box->AddWidget(alpha_slider);
 
-		Button* pick_btn = Manage(new Button(Context::icons->icon_16x16(Icons::EYEDROPPER)));
+		Button* pick_btn = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::EYEDROPPER)));
 		pick_btn->SetEmboss(true);
 
 		LinearLayout* hbox2 = Manage(new LinearLayout(Horizontal, AlignTop));

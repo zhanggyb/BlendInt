@@ -24,7 +24,7 @@
 #include <cmath>
 
 #include <BlendInt/Gui/WidgetShadow.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -55,11 +55,11 @@ namespace BlendInt {
 
 	void WidgetShadow::Draw(float x, float y, short gamma) const
 	{
-		Context::shaders->widget_shadow_program()->use();
+		AbstractWindow::shaders->widget_shadow_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_SHADOW_POSITION),
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_POSITION),
 		        x, y);
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_SHADOW_SIZE),
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_SIZE),
 		        size().width(), size().height());
 
 		glBindVertexArray(vao_);
@@ -67,19 +67,19 @@ namespace BlendInt {
 		int count = GetOutlineVertexCount(round_type());
 
 		int i = 0;
-		if (i < Context::theme->shadow_width()) {
+		if (i < AbstractWindow::theme->shadow_width()) {
 			glUniform1i(
-			        Context::shaders->location(
+			        AbstractWindow::shaders->location(
 			                Shaders::WIDGET_SHADOW_ANTI_ALIAS), 1);
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
 		glUniform1i(
-		        Context::shaders->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
+		        AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
 		        0);
 		i++;
-		for (; i < Context::theme->shadow_width(); i++) {
+		for (; i < AbstractWindow::theme->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
@@ -163,10 +163,10 @@ namespace BlendInt {
 		vertex_buffer_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
 		glEnableVertexAttribArray(
-		        Context::shaders->location(Shaders::WIDGET_SHADOW_COORD));
+		        AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_COORD));
 
 		glVertexAttribPointer(
-		        Context::shaders->location(Shaders::WIDGET_SHADOW_COORD), 3,
+		        AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_COORD), 3,
 		        GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();

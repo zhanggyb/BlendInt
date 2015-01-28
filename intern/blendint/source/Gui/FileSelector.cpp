@@ -46,7 +46,7 @@
 #include <BlendInt/Gui/CloseButton.hpp>
 
 #include <BlendInt/Gui/Separator.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -62,10 +62,10 @@ namespace BlendInt {
 		// directory control group
 		Block* block1 = Manage(new Block);
 
-		Button* btn_back = Manage(new Button(Context::icons->icon_16x16(Icons::BACK)));
-		Button* btn_forward = Manage(new Button(Context::icons->icon_16x16(Icons::FORWARD)));
-		Button* btn_up = Manage(new Button(Context::icons->icon_16x16(Icons::FILE_PARENT)));
-		Button* btn_reload = Manage(new Button(Context::icons->icon_16x16(Icons::FILE_REFRESH)));
+		Button* btn_back = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::BACK)));
+		Button* btn_forward = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FORWARD)));
+		Button* btn_up = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FILE_PARENT)));
+		Button* btn_reload = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FILE_REFRESH)));
 
 		block1->AddWidget(btn_back);
 		block1->AddWidget(btn_forward);
@@ -75,14 +75,14 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		Button* btn_new = Manage(new Button(Context::icons->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
+		Button* btn_new = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
 
 		// display mode
 		Block* block2 = Manage(new Block);
 
-		Button* btn_short_list = Manage(new Button(Context::icons->icon_16x16(Icons::SHORTDISPLAY)));
-		Button* btn_detail_list = Manage(new Button(Context::icons->icon_16x16(Icons::LONGDISPLAY)));
-		Button* btn_thumbnail = Manage(new Button(Context::icons->icon_16x16(Icons::IMGDISPLAY)));
+		Button* btn_short_list = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SHORTDISPLAY)));
+		Button* btn_detail_list = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::LONGDISPLAY)));
+		Button* btn_thumbnail = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::IMGDISPLAY)));
 
 		block2->AddWidget(btn_short_list);
 		block2->AddWidget(btn_detail_list);
@@ -90,10 +90,10 @@ namespace BlendInt {
 
 		Block* block3 = Manage(new Block);
 
-		Button* btn_sort_alpha = Manage(new Button(Context::icons->icon_16x16(Icons::SORTALPHA)));
-		Button* btn_sort_ext = Manage(new Button(Context::icons->icon_16x16(Icons::SORTBYEXT)));
-		Button* btn_sort_time = Manage(new Button(Context::icons->icon_16x16(Icons::SORTTIME)));
-		Button* btn_sort_size = Manage(new Button(Context::icons->icon_16x16(Icons::SORTSIZE)));
+		Button* btn_sort_alpha = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTALPHA)));
+		Button* btn_sort_ext = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTBYEXT)));
+		Button* btn_sort_time = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTTIME)));
+		Button* btn_sort_size = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTSIZE)));
 
 		block3->AddWidget(btn_sort_alpha);
 		block3->AddWidget(btn_sort_ext);

@@ -38,7 +38,10 @@ int main (int argc, char* argv[])
 
 	if(Window::Initialize()) {
 
-		Window win(1280, 800, "窗口");
+		Window win(1280, 800, "UI Editor");
+
+		Dialog* dlg = new Dialog;
+		win.AddFrame(dlg);
 
 		win.Exec();
 

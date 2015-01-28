@@ -36,9 +36,7 @@ namespace BlendInt {
 	{
 	public:
 
-		Window (int width, int height, const char* title);
-
-		Window (int width, int height, const char* title, const Window& share);
+		Window (int width, int height, const char* title, Window* share = 0);
 
 		virtual ~Window ();
 

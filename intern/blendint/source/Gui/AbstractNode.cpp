@@ -24,7 +24,7 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/AbstractNode.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 	        std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				inner,
@@ -58,7 +58,7 @@ namespace BlendInt {
 	        std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				shadedir,
@@ -79,18 +79,18 @@ namespace BlendInt {
 
 		Point offset = GetOffset();
 
-		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-		Context::shaders->PushWidgetModelMatrix();
-		Context::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
 		return true;
 	}
 
 	void AbstractNode::PostDraw (const AbstractWindow* context)
 	{
-		Context::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
 	void AbstractNode::PerformFocusOn (const AbstractWindow* context)

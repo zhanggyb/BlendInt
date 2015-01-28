@@ -92,69 +92,10 @@ namespace BlendInt {
 		 */
 		virtual bool Contain (const Point& point) const;
 
-		virtual void SynchronizeWindow ();
-
-		virtual void MakeGLContextCurrent ();
-
-		void register_active_frame (AbstractFrame* frame)
-		{
-			active_frame_ = frame;
-		}
-
-		AbstractFrame* active_frame () const
-		{
-#ifdef DEBUG
-			assert(active_frame_ != nullptr);
-#endif
-			return active_frame_;
-		}
-
-		const Point& cursor_position () const
-		{
-			return cursor_position_;
-		}
-
-		const Point& viewport_origin () const
-		{
-			return viewport_origin_;
-		}
-
-		void BeginPushStencil ();
-
-		void EndPushStencil ();
-
-		void BeginPopStencil ();
-
-		void EndPopStencil ();
-
-		int key() const {return key_;}
-
-		int scancode () const {return scancode_;}
-
-		MouseAction mouse_action() const {return mouse_action_;}
-
-		KeyAction key_action () const {return key_action_;}
-
-		int modifiers () const {return modifiers_;}
-
-		MouseButton mouse_button() const {return mouse_button_;}
-
-		const String& text () const {return text_;}
-
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return resized_;
 		}
-
-		static Context* GetContext (AbstractView* widget);
-
-		static Theme* theme;
-
-		static Icons* icons;
-
-		static Shaders* shaders;
-
-		static Cursor* cursor;
 
 	protected:
 
@@ -201,64 +142,11 @@ namespace BlendInt {
 		friend class AbstractFrame;
 		friend class AbstractWidget;
 
-		static bool InitializeTheme ();
-
-		static bool InitializeIcons ();
-
-		static bool InitializeShaders ();
-
-		static bool InitializeCursor ();
-
-		static bool InitializeFont ();
-
-		static void ReleaseTheme ();
-
-		static void ReleaseIcons ();
-
-		static void ReleaseShaders ();
-
-		static void ReleaseCursor ();
-
-		static void ReleaseFont ();
-
-		static void GetGLVersion (int *major, int *minor);
-
-		static void GetGLSLVersion (int *major, int *minor);
-
 		void InitializeContext ();
 
 		void DispatchHoverEvent ();
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-		Point cursor_position_;
-
-		AbstractFrame* active_frame_;
-
-		// ------- input
-
-		int modifiers_;
-
-		KeyAction key_action_;
-
-		int key_;
-
-		int scancode_;
-
-		MouseAction mouse_action_;
-
-		MouseButton mouse_button_;
-
-		String text_;
-
-		// the following 2 variables are used when rendering
-
-		// the viewport offset
-		Point viewport_origin_;
-
-		GLuint stencil_count_;
-
-		// ------
 
 		Cpp::Event<const Size&> resized_;
 

@@ -36,7 +36,7 @@
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/CubicBezierCurve.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -57,8 +57,8 @@ namespace BlendInt {
 
 		buffer_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_LINE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_LINE_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_LINE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_LINE_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -94,9 +94,9 @@ namespace BlendInt {
 
 	void CubicBezierCurve::Draw()
 	{
-		Context::shaders->widget_line_program()->use();
+		AbstractWindow::shaders->widget_line_program()->use();
 
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_LINE_COLOR), 1.f, 0.1f, 0.1f, 1.f);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_LINE_COLOR), 1.f, 0.1f, 0.1f, 1.f);
 
 		size_t n = GetPointNumber(max_subdiv_count);
 
