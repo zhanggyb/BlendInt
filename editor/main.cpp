@@ -28,6 +28,7 @@
 #include "CursorTheme.hpp"
 #include "Window.hpp"
 #include "EditorContext.hpp"
+#include <BlendInt/Gui/Window.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -35,15 +36,18 @@ int main (int argc, char* argv[])
 
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	Init();
+	if(Window::Initialize()) {
 
-	GLFWwindow* win = CreateWindow("UI Editor", 1280, 800);
-	Context::cursor->RegisterCursorType (new CursorTheme(win));
+		Window win(1280, 800, "UI Editor");
+		bool ret = win.InitializeGLContext();
+		if(!ret) {
+			DBG_PRINT_MSG("Error: %s", "Fail to initialize GL context");
+			exit(EXIT_FAILURE);
+		}
 
-	EditorContext* context = Manage (new EditorContext(win));
-	SetContext(context);
-	context->Resize(1280, 800);
+		win.Exec();
 
-	RunLoop(win);
-	Terminate();
+		win.ReleaseGLContext();
+		Window::Terminate();
+	}
 }

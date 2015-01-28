@@ -74,6 +74,7 @@ namespace BlendInt {
 
 		friend class Font;
 		friend class Context;
+		friend class AbstractWindow;
 
         static void ReleaseAll ();
         

@@ -58,6 +58,7 @@ namespace BlendInt {
 	private:
 
 		friend class Context;
+		friend class AbstractWindow;
 
 		Cursor ();
 

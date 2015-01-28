@@ -23,26 +23,19 @@
 
 #pragma once
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
- 
+
 #include <vector>
 #include <pthread.h>
 
-#include <Cpp/Events.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
+
+#include <BlendInt/CppEvents/Cpp/Events.hpp>
 
 namespace BlendInt {
 
@@ -598,6 +591,7 @@ namespace BlendInt {
 
 	private:
 
+		friend class AbstractWindow;
 		friend class Context;
 		friend class AbstractFrame;
 		friend class AbstractWidget;
