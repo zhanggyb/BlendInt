@@ -137,7 +137,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType NodeView::Draw(const Context* context)
+	ResponseType NodeView::Draw(const AbstractWindow* context)
 	{
 //		curve_->Draw();
 		Context::shaders->widget_inner_program()->use();
@@ -154,7 +154,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType NodeView::PerformMousePress (const Context* context)
+	ResponseType NodeView::PerformMousePress (const AbstractWindow* context)
 	{
 		return Finish;
 	}

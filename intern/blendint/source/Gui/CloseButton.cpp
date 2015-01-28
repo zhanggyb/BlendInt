@@ -147,7 +147,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType CloseButton::Draw(const Context* context)
+	ResponseType CloseButton::Draw(const AbstractWindow* context)
 	{
 		Context::shaders->widget_inner_program()->use();
 

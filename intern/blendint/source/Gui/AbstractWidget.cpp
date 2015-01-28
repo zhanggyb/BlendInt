@@ -38,7 +38,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -59,85 +59,85 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	bool AbstractWidget::PreDraw(const Context* context)
+	bool AbstractWidget::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
 		//glm::mat4 model;
-		//Context::shaders->GetUIModelMatrix(model);
+		//AbstractWindow::shaders->GetUIModelMatrix(model);
 
 //		Point pos = GetGlobalPosition();
 
 		Point offset = GetOffset();
 
-		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
-		Context::shaders->PushWidgetModelMatrix();
-		Context::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
 		return true;
 	}
 
-	void AbstractWidget::PostDraw(const Context* context)
+	void AbstractWidget::PostDraw(const AbstractWindow* context)
 	{
-		Context::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	void AbstractWidget::PerformFocusOn (const Context* context)
-	{
-
-	}
-
-	void AbstractWidget::PerformFocusOff (const Context* context)
+	void AbstractWidget::PerformFocusOn (const AbstractWindow* context)
 	{
 
 	}
 
-	void AbstractWidget::PerformHoverIn(const Context* context)
+	void AbstractWidget::PerformFocusOff (const AbstractWindow* context)
 	{
 
 	}
 
-	void AbstractWidget::PerformHoverOut(const Context* context)
+	void AbstractWidget::PerformHoverIn(const AbstractWindow* context)
 	{
 
 	}
 
-	ResponseType AbstractWidget::PerformKeyPress (const Context* context)
+	void AbstractWidget::PerformHoverOut(const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+
 	}
 
-	ResponseType AbstractWidget::PerformContextMenuPress (const Context* context)
+	ResponseType AbstractWidget::PerformKeyPress (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformContextMenuRelease (const Context* context)
+	ResponseType AbstractWidget::PerformContextMenuPress (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMousePress (const Context* context)
+	ResponseType AbstractWidget::PerformContextMenuRelease (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseRelease (const Context* context)
+	ResponseType AbstractWidget::PerformMousePress (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseMove (const Context* context)
+	ResponseType AbstractWidget::PerformMouseRelease (const AbstractWindow* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	ResponseType AbstractWidget::PerformMouseMove (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
 	bool AbstractWidget::RenderSubWidgetsToTexture (
 			AbstractWidget* widget,
-			const Context* context,
+			const AbstractWindow* context,
 			GLTexture2D* texture)
 	{
 		bool retval = false;
@@ -188,22 +188,22 @@ namespace BlendInt {
 			GLboolean scissor_test;
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
-			Context* c = const_cast<Context*>(context);
-            glm::vec3 pos = Context::shaders->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
+			AbstractWindow* c = const_cast<AbstractWindow*>(context);
+            glm::vec3 pos = AbstractWindow::shaders->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
             Point original = context->viewport_origin();
             c->viewport_origin_.reset(original.x() + pos.x, original.y() + pos.y);
 
-			Context::shaders->PushWidgetModelMatrix();
-			Context::shaders->PushWidgetProjectionMatrix();
+			AbstractWindow::shaders->PushWidgetModelMatrix();
+			AbstractWindow::shaders->PushWidgetProjectionMatrix();
 
 			glm::mat3 identity(1.f);
-			Context::shaders->SetWidgetModelMatrix(identity);
+			AbstractWindow::shaders->SetWidgetModelMatrix(identity);
 
 			glm::mat4 projection = glm::ortho(
 				0.f, (float)widget->size().width(),
 				0.f, (float)widget->size().height(),
 				100.f, -100.f);
-			Context::shaders->SetWidgetProjectionMatrix(projection);
+			AbstractWindow::shaders->SetWidgetProjectionMatrix(projection);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -233,8 +233,8 @@ namespace BlendInt {
 
             // restore viewport and framebuffer
 
-			Context::shaders->PopWidgetProjectionMatrix();
-			Context::shaders->PopWidgetModelMatrix();
+			AbstractWindow::shaders->PopWidgetProjectionMatrix();
+			AbstractWindow::shaders->PopWidgetModelMatrix();
 
 			if(scissor_test) {
 				glEnable(GL_SCISSOR_TEST);

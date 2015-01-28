@@ -94,7 +94,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TabButton::Draw (const Context* context)
+	ResponseType TabButton::Draw (const AbstractWindow* context)
 	{
 		Context::shaders->widget_triangle_program()->use();
 

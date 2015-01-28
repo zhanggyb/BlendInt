@@ -38,13 +38,11 @@ namespace BlendInt {
 
 		Window (int width, int height, const char* title);
 
+		Window (int width, int height, const char* title, const Window& share);
+
 		virtual ~Window ();
 
-		bool AddFrame (AbstractFrame* frame, bool focus = true);
-
-		bool InsertFrame (int index, AbstractFrame* frame, bool focus = true);
-
-		void MoveFrameToTop (AbstractFrame* frame, bool focus = true);
+		virtual void MakeCurrent ();
 
 		virtual void Synchronize ();
 
@@ -69,6 +67,10 @@ namespace BlendInt {
 		static bool Initialize ();
 
 		static void Terminate ();
+
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 	private:
 
@@ -98,6 +100,22 @@ namespace BlendInt {
 
 		static void CbKey(GLFWwindow* window, int key, int scancode, int action,
 							  int mods);
+
+		static void CbChar(GLFWwindow* window, unsigned int character);
+
+		static void CbMouseButton(GLFWwindow* window, int button, int action,
+								  int mods);
+
+		static void CbCursorPos(GLFWwindow* window, double xpos, double ypos);
+
+#ifdef __APPLE__
+
+		// MUST set this callback to render the context when resizing in OSX
+		static void CbWindowRefresh (GLFWwindow* window);
+
+#endif
+
+
 	};
 
 }

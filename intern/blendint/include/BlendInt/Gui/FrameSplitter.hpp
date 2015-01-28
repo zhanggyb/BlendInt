@@ -54,33 +54,33 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (const AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (const AbstractWindow* context);
 
-		virtual void PerformFocusOn (const Context* context);
+		virtual void PerformFocusOn (const AbstractWindow* context);
 
-		virtual void PerformFocusOff (const Context* context);
+		virtual void PerformFocusOff (const AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (const AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (const AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const Context* context);
+		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuPress (const Context* context);
+		virtual ResponseType PerformContextMenuPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (const AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (const Context* context);
+		virtual ResponseType DispatchHoverEvent (const AbstractWindow* context);
 
 	private:
 
@@ -136,29 +136,29 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (const AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (const AbstractWindow* context);
 
-		virtual void PerformFocusOn (const Context* context);
+		virtual void PerformFocusOn (const AbstractWindow* context);
 
-		virtual void PerformFocusOff (const Context* context);
+		virtual void PerformFocusOff (const AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (const AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (const AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const Context* context);
+		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (const Context* context);
+		virtual ResponseType DispatchHoverEvent (const AbstractWindow* context);
 
 		virtual bool RemoveSubView (AbstractView* view);
 
@@ -220,9 +220,9 @@ namespace BlendInt {
 
 		int GetAverageRoom (Orientation orientation, const Size& size);
 
-		void SetFocusedFrame (AbstractFrame* frame, const Context* context);
+		void SetFocusedFrame (AbstractFrame* frame, const AbstractWindow* context);
 
-		void SetHoveredFrame (const Context* context);
+		void SetHoveredFrame (const AbstractWindow* context);
 
 		Orientation orientation_;
 

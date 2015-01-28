@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
 		virtual void PerformMarginUpdate (const Margin& margin);
 

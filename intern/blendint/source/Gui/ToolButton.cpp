@@ -127,17 +127,17 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void ToolButton::PerformHoverIn(const Context* context)
+	void ToolButton::PerformHoverIn(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void ToolButton::PerformHoverOut(const Context* context)
+	void ToolButton::PerformHoverOut(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType ToolButton::Draw (const Context* context)
+	ResponseType ToolButton::Draw (const AbstractWindow* context)
 	{
 		Context::shaders->widget_inner_program()->use();
 

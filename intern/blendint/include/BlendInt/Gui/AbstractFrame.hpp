@@ -41,6 +41,7 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
+		friend class AbstractWindow;
 
 		AbstractFrame ();
 
@@ -63,25 +64,25 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType PerformContextMenuPress (const Context* context);
+		virtual ResponseType PerformContextMenuPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (const AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (const Context* context) = 0;
+		virtual ResponseType DispatchHoverEvent (const AbstractWindow* context) = 0;
 
-		ResponseType DispatchKeyEvent (AbstractView* view, const Context* context);
+		ResponseType DispatchKeyEvent (AbstractView* view, const AbstractWindow* context);
 
-		AbstractView* DispatchMousePressEvent (AbstractView* view, const Context* context);
+		AbstractView* DispatchMousePressEvent (AbstractView* view, const AbstractWindow* context);
 
-		ResponseType DispatchMouseMoveEvent (AbstractView* view, const Context* context);
+		ResponseType DispatchMouseMoveEvent (AbstractView* view, const AbstractWindow* context);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const Context* context);
+		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const AbstractWindow* context);
 
-		AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig, const Context* context);
+		AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig, const AbstractWindow* context);
 
 		void ClearHoverWidgets (AbstractView* hovered_widget);
 
-		void ClearHoverWidgets (AbstractView* hovered_widget, const Context* context);
+		void ClearHoverWidgets (AbstractView* hovered_widget, const AbstractWindow* context);
 
 		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
 		{
@@ -92,22 +93,22 @@ namespace BlendInt {
 			return events_;
 		}
 
-		static inline ResponseType delegate_key_press_event (AbstractView* view, const Context* context)
+		static inline ResponseType delegate_key_press_event (AbstractView* view, const AbstractWindow* context)
 		{
 			return view->PerformKeyPress(context);
 		}
 
-		static inline ResponseType delegate_mouse_press_event (AbstractView* view, const Context* context)
+		static inline ResponseType delegate_mouse_press_event (AbstractView* view, const AbstractWindow* context)
 		{
 			return view->PerformMousePress(context);
 		}
 
-		static inline ResponseType delegate_mouse_release_event(AbstractView* view, const Context* context)
+		static inline ResponseType delegate_mouse_release_event(AbstractView* view, const AbstractWindow* context)
 		{
 			return view->PerformMouseRelease(context);
 		}
 
-		static inline ResponseType delegate_mouse_move_event(AbstractView* view, const Context* context)
+		static inline ResponseType delegate_mouse_move_event(AbstractView* view, const AbstractWindow* context)
 		{
 			return view->PerformMouseMove(context);
 		}
@@ -117,31 +118,31 @@ namespace BlendInt {
 			view->set_focus(focus);
 		}
 
-		static void delegate_focus_on (AbstractView* view, const Context* context)
+		static void delegate_focus_on (AbstractView* view, const AbstractWindow* context)
 		{
 			view->set_focus(true);
 			view->PerformFocusOn(context);
 		}
 
-		static void delegate_focus_off (AbstractView* view, const Context* context)
+		static void delegate_focus_off (AbstractView* view, const AbstractWindow* context)
 		{
 			view->set_focus(false);
 			view->PerformFocusOff(context);
 		}
 
-		static inline void delegate_mouse_hover_in_event (AbstractView* view, const Context* context)
+		static inline void delegate_mouse_hover_in_event (AbstractView* view, const AbstractWindow* context)
 		{
 			view->set_hover(true);
 			view->PerformHoverIn(context);
 		}
 
-		static inline void delegate_mouse_hover_out_event (AbstractView* view, const Context* context)
+		static inline void delegate_mouse_hover_out_event (AbstractView* view, const AbstractWindow* context)
 		{
 			view->set_hover(false);
 			view->PerformHoverOut(context);
 		}
 
-		static inline ResponseType delegate_dispatch_hover_event(AbstractFrame* frame, const Context* context)
+		static inline ResponseType delegate_dispatch_hover_event(AbstractFrame* frame, const AbstractWindow* context)
 		{
 			return frame->DispatchHoverEvent(context);
 		}
@@ -154,7 +155,7 @@ namespace BlendInt {
 		 */
 		static bool RenderSubFramesToTexture (
 			AbstractFrame* frame,
-			const Context* context,
+			const AbstractWindow* context,
 			const glm::mat4& projection,
 			const glm::mat3& model,
 			GLTexture2D* texture);
@@ -163,7 +164,7 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
-		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, const Context* context, Point& local_position);
+		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, const AbstractWindow* context, Point& local_position);
 
 		inline void set_widget_hover_status (AbstractView* view, bool hover)
 		{

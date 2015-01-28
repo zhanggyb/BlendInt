@@ -106,7 +106,7 @@ namespace BlendInt {
 				outer);
 	}
 
-	ResponseType Widget::Draw(const Context* context)
+	ResponseType Widget::Draw(const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

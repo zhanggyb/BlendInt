@@ -150,7 +150,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TimeRuler::Draw(const Context* context)
+	ResponseType TimeRuler::Draw(const AbstractWindow* context)
 	{
 		Context::shaders->widget_inner_program()->use();
 

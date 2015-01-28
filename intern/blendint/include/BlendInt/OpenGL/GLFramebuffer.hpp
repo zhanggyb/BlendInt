@@ -21,22 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLFRAMEBUFFER_HPP_
-#define _BLENDINT_GLFRAMEBUFFER_HPP_
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#pragma once
 
 #include <vector>
 
 #include <BlendInt/Core/Object.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
@@ -94,5 +84,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GLFRAMEBUFFER_HPP_ */

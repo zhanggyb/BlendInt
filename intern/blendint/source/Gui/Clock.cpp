@@ -66,7 +66,7 @@ namespace BlendInt {
 		timer_->Stop();
 	}
 
-	ResponseType Clock::Draw(const Context* context)
+	ResponseType Clock::Draw(const AbstractWindow* context)
 	{
 		Context::shaders->widget_triangle_program()->use();
 

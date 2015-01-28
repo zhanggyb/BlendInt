@@ -74,11 +74,11 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (const AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (const AbstractWindow* context);
 
 	private:
 

@@ -36,7 +36,7 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/Viewport.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -72,9 +72,9 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	ResponseType Viewport::DispatchHoverEvent(const Context* context)
+	ResponseType Viewport::DispatchHoverEvent(const AbstractWindow* context)
 	{
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 			return Finish;
 		} else {
 			return Ignore;
@@ -141,63 +141,63 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::PerformKeyPress(const Context* context)
+	ResponseType Viewport::PerformKeyPress(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	void Viewport::PerformHoverIn(const Context* context)
+	void Viewport::PerformHoverIn(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void Viewport::PerformHoverOut(const Context* context)
+	void Viewport::PerformHoverOut(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType Viewport::PerformMousePress(const Context* context)
+	ResponseType Viewport::PerformMousePress(const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseRelease(const Context* context)
+	ResponseType Viewport::PerformMouseRelease(const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseMove(const Context* context)
+	ResponseType Viewport::PerformMouseMove(const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	bool Viewport::PreDraw(const Context* context)
+	bool Viewport::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Context::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-		Context::shaders->SetWidgetModelMatrix(model_matrix_);
+		AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+		AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
 
-	ResponseType Viewport::Draw(const Context* context)
+	ResponseType Viewport::Draw(const AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(hover()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
 		} else {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
 		}
 
 		glBindVertexArray(vao_);
@@ -214,7 +214,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Viewport::PostDraw(const Context* context)
+	void Viewport::PostDraw(const AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());
@@ -231,8 +231,8 @@ namespace BlendInt {
 		buffer_.generate();
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 		glBindVertexArray(0);
 		buffer_.reset();

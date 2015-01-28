@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/FrameSplitter.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -64,8 +64,8 @@ namespace BlendInt {
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -150,27 +150,27 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitterHandle::PreDraw(const Context* context)
+	bool FrameSplitterHandle::PreDraw(const AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitterHandle::Draw(const Context* context)
+	ResponseType FrameSplitterHandle::Draw(const AbstractWindow* context)
 	{
-		Context::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders->frame_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform4f(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
 
 		/*
 		if(hover()) {
-			glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 25);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 25);
 		} else {
-			glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
 		}
 		*/
 
-		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -180,42 +180,42 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitterHandle::PostDraw(const Context* context)
+	void FrameSplitterHandle::PostDraw(const AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitterHandle::PerformFocusOn(const Context* context)
-	{
-
-	}
-
-	void FrameSplitterHandle::PerformFocusOff (const Context* context)
+	void FrameSplitterHandle::PerformFocusOn(const AbstractWindow* context)
 	{
 
 	}
 
-	ResponseType FrameSplitterHandle::PerformKeyPress(const Context* context)
+	void FrameSplitterHandle::PerformFocusOff (const AbstractWindow* context)
+	{
+
+	}
+
+	ResponseType FrameSplitterHandle::PerformKeyPress(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformContextMenuPress(
-			const Context* context)
+			const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformContextMenuRelease(
-			const Context* context)
+			const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformMousePress(
-			const Context* context)
+			const AbstractWindow* context)
 	{
 		last_ = position();
-		cursor_ = context->cursor_position();
+		cursor_ = context->GetCursorPosition();
 
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous_view()->size().height();
@@ -233,46 +233,46 @@ namespace BlendInt {
 	}
 
 	ResponseType FrameSplitterHandle::PerformMouseRelease(
-			const Context* context)
+			const AbstractWindow* context)
 	{
 		if(!hover()) {
-			Context::cursor->PopCursor();
+			AbstractWindow::cursor->PopCursor();
 		}
 
 		set_pressed(false);
 		return Finish;
 	}
 
-	void FrameSplitterHandle::PerformHoverIn(const Context* context)
+	void FrameSplitterHandle::PerformHoverIn(const AbstractWindow* context)
 	{
-		Context::cursor->PushCursor();
+		AbstractWindow::cursor->PushCursor();
 		if(orientation_ == Horizontal) {
-			Context::cursor->SetCursor(SplitVCursor);
+			AbstractWindow::cursor->SetCursor(SplitVCursor);
 		} else {
-			Context::cursor->SetCursor(SplitHCursor);
+			AbstractWindow::cursor->SetCursor(SplitHCursor);
 		}
 
 		//RequestRedraw();
 	}
 
-	void FrameSplitterHandle::PerformHoverOut(const Context* context)
+	void FrameSplitterHandle::PerformHoverOut(const AbstractWindow* context)
 	{
 		if(!pressed_ext())
-			Context::cursor->PopCursor();
+			AbstractWindow::cursor->PopCursor();
 
 		//RequestRedraw();
 	}
 
-	ResponseType FrameSplitterHandle::DispatchHoverEvent(const Context* context)
+	ResponseType FrameSplitterHandle::DispatchHoverEvent(const AbstractWindow* context)
 	{
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 			return Finish;
 		} else {
 			return Ignore;
 		}
 	}
 
-	ResponseType FrameSplitterHandle::PerformMouseMove(const Context* context)
+	ResponseType FrameSplitterHandle::PerformMouseMove(const AbstractWindow* context)
 	{
 		if(pressed_ext()) {
 
@@ -281,7 +281,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = context->cursor_position().y() - cursor_.y();
+				int offset = context->GetCursorPosition().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -297,7 +297,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = context->cursor_position().x() - cursor_.x();
+				int offset = context->GetCursorPosition().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
@@ -541,19 +541,19 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitter::PreDraw(const Context* context)
+	bool FrameSplitter::PreDraw(const AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitter::Draw(const Context* context)
+	ResponseType FrameSplitter::Draw(const AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitter::PostDraw(const Context* context)
+	void FrameSplitter::PostDraw(const AbstractWindow* context)
 	{
 	}
 
@@ -612,19 +612,19 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::PerformFocusOn (const Context* context)
+	void FrameSplitter::PerformFocusOn (const AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformFocusOff (const Context* context)
+	void FrameSplitter::PerformFocusOff (const AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformHoverIn(const Context* context)
+	void FrameSplitter::PerformHoverIn(const AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformHoverOut(const Context* context)
+	void FrameSplitter::PerformHoverOut(const AbstractWindow* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -632,7 +632,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitter::PerformKeyPress(const Context* context)
+	ResponseType FrameSplitter::PerformKeyPress(const AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -641,7 +641,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType FrameSplitter::PerformMousePress(const Context* context)
+	ResponseType FrameSplitter::PerformMousePress(const AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -659,7 +659,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitter::PerformMouseRelease(const Context* context)
+	ResponseType FrameSplitter::PerformMouseRelease(const AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -671,7 +671,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::PerformMouseMove(const Context* context)
+	ResponseType FrameSplitter::PerformMouseMove(const AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -682,9 +682,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::DispatchHoverEvent(const Context* context)
+	ResponseType FrameSplitter::DispatchHoverEvent(const AbstractWindow* context)
 	{
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 
 			ResponseType response = Finish;
 			SetHoveredFrame(context);
@@ -1419,7 +1419,7 @@ namespace BlendInt {
         }
     }
 
-    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, const Context* context)
+    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, const AbstractWindow* context)
     {
     	if(focused_frame_ == frame) return;
 
@@ -1452,16 +1452,16 @@ namespace BlendInt {
 		return AbstractFrame::RemoveSubView(view);
 	}
 
-	void FrameSplitter::SetHoveredFrame (const Context* context)
+	void FrameSplitter::SetHoveredFrame (const AbstractWindow* context)
 	{
 		AbstractFrame* original = hover_frame_;
 
 		if(hover_frame_ != nullptr) {
-			if(!hover_frame_->Contain(context->cursor_position())) {
+			if(!hover_frame_->Contain(context->GetCursorPosition())) {
 
 				hover_frame_ = nullptr;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(context->cursor_position())) {
+					if(p->Contain(context->GetCursorPosition())) {
 						hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -1471,7 +1471,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(context->cursor_position())) {
+				if(p->Contain(context->GetCursorPosition())) {
 					hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}

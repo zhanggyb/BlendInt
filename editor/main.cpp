@@ -38,16 +38,10 @@ int main (int argc, char* argv[])
 
 	if(Window::Initialize()) {
 
-		Window win(1280, 800, "UI Editor");
-		bool ret = win.InitializeGLContext();
-		if(!ret) {
-			DBG_PRINT_MSG("Error: %s", "Fail to initialize GL context");
-			exit(EXIT_FAILURE);
-		}
+		Window win(1280, 800, "窗口");
 
 		win.Exec();
 
-		win.ReleaseGLContext();
 		Window::Terminate();
 	}
 }

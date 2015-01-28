@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/ComboBox.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
 
 #include <BlendInt/Gui/FileSystemModel.hpp>
@@ -122,10 +122,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->menu().shaded) {
+			if (AbstractWindow::theme->menu().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Context::theme->menu().shadetop,
-						Context::theme->menu().shadedown,
+						AbstractWindow::theme->menu().shadetop,
+						AbstractWindow::theme->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -153,10 +153,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->menu().shaded) {
+		if (AbstractWindow::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-						Context::theme->menu().shadetop,
-						Context::theme->menu().shadedown,
+						AbstractWindow::theme->menu().shadetop,
+						AbstractWindow::theme->menu().shadedown,
 						&inner_verts,
 						&outer_verts);
 		} else {
@@ -179,10 +179,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->menu().shaded) {
+		if (AbstractWindow::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->menu().shadetop,
-					Context::theme->menu().shadedown,
+					AbstractWindow::theme->menu().shadetop,
+					AbstractWindow::theme->menu().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -198,21 +198,21 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ComboBox::Draw(const Context* context)
+	ResponseType ComboBox::Draw(const AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				Context::theme->menu().inner.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				AbstractWindow::theme->menu().inner.data());
 
 		if (status_down_) {
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
 		} else {
 			if (hover()) {
-				glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
 						15);
 			} else {
-				glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
 						0);
 			}
 		}
@@ -220,20 +220,20 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-				Context::theme->menu().outline.data());
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+				AbstractWindow::theme->menu().outline.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 				GetOutlineVertices(round_type()) * 2 + 2);
 
 //		if (emboss()) {
-//			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+//			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 //			        1.0f, 1.0f, 0.16f);
-//			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+//			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 //			        0.f, - 1.f);
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 //			        GetHalfOutlineVertices(round_type()) * 2);
@@ -250,15 +250,15 @@ namespace BlendInt {
 
 		//icon->Draw(mvp * translate * rotate * scale);
 
-		float x = size().width() - Context::icons->menu()->size().width()/2.f;
+		float x = size().width() - AbstractWindow::icons->menu()->size().width()/2.f;
 		float y = size().height()/2.f;
 
-		Context::icons->menu()->Draw(x, y, Color(0xEFEFEFFF));
+		AbstractWindow::icons->menu()->Draw(x, y, Color(0xEFEFEFFF));
 
 		return Finish;
 	}
 	
-	ResponseType ComboBox::PerformMousePress (const Context* context)
+	ResponseType ComboBox::PerformMousePress (const AbstractWindow* context)
 	{
 		status_down_ = true;
 
@@ -309,7 +309,7 @@ namespace BlendInt {
 
 			}
 
-			const_cast<Context*>(context)->AddFrame(popup_);
+			const_cast<AbstractWindow*>(context)->AddFrame(popup_);
 		}
 
 		RequestRedraw();
@@ -317,7 +317,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::PerformMouseRelease (const Context* context)
+	ResponseType ComboBox::PerformMouseRelease (const AbstractWindow* context)
 	{
 		status_down_ = false;
 
@@ -325,12 +325,12 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ComboBox::PerformHoverIn(const Context* context)
+	void ComboBox::PerformHoverIn(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void ComboBox::PerformHoverOut(const Context* context)
+	void ComboBox::PerformHoverOut(const AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
@@ -340,10 +340,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->menu().shaded) {
+		if (AbstractWindow::theme->menu().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->menu().shadetop,
-					Context::theme->menu().shadedown,
+					AbstractWindow::theme->menu().shadetop,
+					AbstractWindow::theme->menu().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -359,8 +359,8 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
-				Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD),
+				AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD),
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
@@ -368,8 +368,8 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(
-				Context::shaders->location (Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD),
+				AbstractWindow::shaders->location (Shaders::WIDGET_OUTER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COORD),
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

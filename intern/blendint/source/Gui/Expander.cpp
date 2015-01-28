@@ -23,13 +23,13 @@
 
 #include <BlendInt/Gui/Expander.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
 	ExpandButton::ExpandButton()
-	: AbstractButton(Context::icons->num())
+	: AbstractButton(AbstractWindow::icons->num())
 	{
 		set_checkable(true);
 
@@ -43,7 +43,7 @@ namespace BlendInt {
 	}
 
 	ExpandButton::ExpandButton (const String& text)
-	: AbstractButton(Context::icons->num(), text)
+	: AbstractButton(AbstractWindow::icons->num(), text)
 	{
 		set_checkable(true);
 
@@ -96,7 +96,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ExpandButton::Draw (const Context* context)
+	ResponseType ExpandButton::Draw (const AbstractWindow* context)
 	{
 		float rotate = 0.f;
 		if(is_checked()) {
@@ -116,7 +116,7 @@ namespace BlendInt {
 
 				if(icon()->size().width() <= w) {
 
-					Context::icons->num()->Draw(x + icon()->size().width() / 2, y, rotate, 1.5f, Color(0x0F0F0FFF));
+					AbstractWindow::icons->num()->Draw(x + icon()->size().width() / 2, y, rotate, 1.5f, Color(0x0F0F0FFF));
 
 					x += icon()->size().width();
 					x += kIconTextSpace;
@@ -279,7 +279,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Expander::Draw (const Context* context)
+	ResponseType Expander::Draw (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

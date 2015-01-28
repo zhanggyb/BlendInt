@@ -73,7 +73,7 @@ namespace BlendInt {
 		set_round_type(round);
 	}
 
-	bool AbstractNode::PreDraw (const Context* context)
+	bool AbstractNode::PreDraw (const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -88,55 +88,55 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractNode::PostDraw (const Context* context)
+	void AbstractNode::PostDraw (const AbstractWindow* context)
 	{
 		Context::shaders->PopWidgetModelMatrix();
 	}
 
-	void AbstractNode::PerformFocusOn (const Context* context)
+	void AbstractNode::PerformFocusOn (const AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformFocusOff (const Context* context)
+	void AbstractNode::PerformFocusOff (const AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverIn (const Context* context)
+	void AbstractNode::PerformHoverIn (const AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverOut (const Context* context)
+	void AbstractNode::PerformHoverOut (const AbstractWindow* context)
 	{
 	}
 
-	ResponseType AbstractNode::PerformKeyPress (const Context* context)
+	ResponseType AbstractNode::PerformKeyPress (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuPress (
-	        const Context* context)
+	        const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuRelease (
-	        const Context* context)
+	        const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMousePress (const Context* context)
+	ResponseType AbstractNode::PerformMousePress (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseRelease (const Context* context)
+	ResponseType AbstractNode::PerformMouseRelease (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseMove (const Context* context)
+	ResponseType AbstractNode::PerformMouseMove (const AbstractWindow* context)
 	{
 		return Ignore;
 	}

@@ -37,7 +37,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/PopupFrame.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -61,10 +61,10 @@ namespace BlendInt {
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
-		if (Context::theme->menu_back().shaded) {
+		if (AbstractWindow::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->menu_back().shadetop,
-					Context::theme->menu_back().shadedown,
+					AbstractWindow::theme->menu_back().shadetop,
+					AbstractWindow::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -78,15 +78,15 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
 
@@ -102,12 +102,12 @@ namespace BlendInt {
 		buffer_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_COORD));
+				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_COORD),
+				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV));
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
@@ -205,10 +205,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->menu_back().shaded) {
+			if (AbstractWindow::theme->menu_back().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Context::theme->menu_back().shadetop,
-						Context::theme->menu_back().shadedown,
+						AbstractWindow::theme->menu_back().shadetop,
+						AbstractWindow::theme->menu_back().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -251,10 +251,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->menu_back().shaded) {
+		if (AbstractWindow::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->menu_back().shadetop,
-					Context::theme->menu_back().shadedown,
+					AbstractWindow::theme->menu_back().shadetop,
+					AbstractWindow::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -277,10 +277,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->menu_back().shaded) {
+		if (AbstractWindow::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->menu_back().shadetop,
-					Context::theme->menu_back().shadedown,
+					AbstractWindow::theme->menu_back().shadetop,
+					AbstractWindow::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -296,11 +296,11 @@ namespace BlendInt {
 		shadow_->SetRadius(radius);
 	}
 
-	bool PopupFrame::PreDraw(const Context* context)
+	bool PopupFrame::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(refresh()) {
 			//DBG_PRINT_MSG("%s", "refresh once");
@@ -310,36 +310,36 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType PopupFrame::Draw(const Context* context)
+	ResponseType PopupFrame::Draw(const AbstractWindow* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
-		Context::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders->frame_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 1, Context::theme->menu_back().inner.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->frame_outer_program()->use();
+		AbstractWindow::shaders->frame_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		glUniform4fv(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
-		        Context::theme->menu_back().outline.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
+		        AbstractWindow::theme->menu_back().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        Context::shaders->frame_image_program()->use();
+        AbstractWindow::shaders->frame_image_program()->use();
 
         texture_buffer_.bind();
-        glUniform2f(Context::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+        glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -353,16 +353,16 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void PopupFrame::PostDraw(const Context* context)
+	void PopupFrame::PostDraw(const AbstractWindow* context)
 	{
 	}
 
-	void PopupFrame::PerformFocusOn (const Context* context)
+	void PopupFrame::PerformFocusOn (const AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus on");
 	}
 
-	void PopupFrame::PerformFocusOff (const Context* context)
+	void PopupFrame::PerformFocusOff (const AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus out");
 
@@ -373,11 +373,11 @@ namespace BlendInt {
 		}
 	}
 
-	void PopupFrame::PerformHoverIn(const Context* context)
+	void PopupFrame::PerformHoverIn(const AbstractWindow* context)
 	{
 	}
 
-	void PopupFrame::PerformHoverOut(const Context* context)
+	void PopupFrame::PerformHoverOut(const AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
@@ -388,42 +388,42 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("%s", "hover out");
 	}
 
-	ResponseType PopupFrame::PerformKeyPress(const Context* context)
+	ResponseType PopupFrame::PerformKeyPress(const AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
-		if(context->key() == Key_Escape) {
+		if(context->GetKeyInput() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
 		return response;
 	}
 
-	ResponseType PopupFrame::PerformContextMenuPress(const Context* context)
+	ResponseType PopupFrame::PerformContextMenuPress(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformContextMenuRelease(const Context* context)
+	ResponseType PopupFrame::PerformContextMenuRelease(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformMousePress(const Context* context)
+	ResponseType PopupFrame::PerformMousePress(const AbstractWindow* context)
 	{
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = context->cursor_position();
+			cursor_point_ = context->GetCursorPosition();
 
 			if(hovered_widget_) {
 
@@ -452,27 +452,27 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType PopupFrame::PerformMouseRelease(const Context* context)
+	ResponseType PopupFrame::PerformMouseRelease(const AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformMouseMove(const Context* context)
+	ResponseType PopupFrame::PerformMouseMove(const AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(pressed_ext()) {
 
-			int ox = context->cursor_position().x() - cursor_point_.x();
-			int oy = context->cursor_position().y() - cursor_point_.y();
+			int ox = context->GetCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetCursorPosition().y() - cursor_point_.y();
 
 			set_position(last_position_.x() + ox, last_position_.y() + oy);
 
@@ -485,7 +485,7 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				const_cast<Context*>(context)->register_active_frame(this);
+				const_cast<AbstractWindow*>(context)->register_active_frame(this);
 				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
@@ -495,11 +495,11 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType PopupFrame::DispatchHoverEvent(const Context* context)
+	ResponseType PopupFrame::DispatchHoverEvent(const AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 
 			cursor_position_ = InsideRectangle;
 
@@ -536,7 +536,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void PopupFrame::SetFocusedWidget(AbstractWidget* widget, const Context* context)
+	void PopupFrame::SetFocusedWidget(AbstractWidget* widget, const AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;

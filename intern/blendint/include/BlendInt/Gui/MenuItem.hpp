@@ -51,11 +51,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (const AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (const AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
 	private:
 

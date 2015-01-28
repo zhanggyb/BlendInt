@@ -43,7 +43,7 @@
 #include <BlendInt/Core/Image.hpp>
 #include <BlendInt/Gui/ImageViewport.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -298,24 +298,24 @@ namespace BlendInt {
 		}
 	}
 
-	bool ImageViewport::PreDraw(const Context* context)
+	bool ImageViewport::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Context::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-		Context::shaders->SetWidgetModelMatrix(model_matrix_);
+		AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+		AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
 
-	ResponseType ImageViewport::Draw (const Context* context)
+	ResponseType ImageViewport::Draw (const AbstractWindow* context)
 	{
 		if(texture_ && glIsTexture(texture_->id())) {
 
@@ -325,13 +325,13 @@ namespace BlendInt {
 			float w = texture_->GetWidth();
 			float h = texture_->GetHeight();
 
-			Context::shaders->widget_image_program()->use();
+			AbstractWindow::shaders->widget_image_program()->use();
 
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
 					(size().width() - w)/2.f,
 					(size().height() - h) / 2.f);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -345,7 +345,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ImageViewport::PostDraw(const Context* context)
+	void ImageViewport::PostDraw(const AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());
@@ -367,11 +367,11 @@ namespace BlendInt {
 		image_plane_.bind();
 		image_plane_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

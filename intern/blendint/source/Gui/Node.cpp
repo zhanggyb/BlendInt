@@ -145,7 +145,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Node::Draw (const Context* context)
+	ResponseType Node::Draw (const AbstractWindow* context)
 	{
 		shadow_->Draw(0.f, 0.f);
 

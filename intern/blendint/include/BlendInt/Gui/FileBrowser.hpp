@@ -81,11 +81,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (const AbstractWindow* context);
 
 	private:
 

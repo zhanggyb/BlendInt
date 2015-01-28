@@ -38,7 +38,7 @@
 
 #include <BlendInt/Gui/ScrollView.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -60,8 +60,8 @@ namespace BlendInt {
 		inner_.bind();
 		inner_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_.reset();
@@ -217,25 +217,25 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	bool ScrollView::PreDraw(const Context* context)
+	bool ScrollView::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
-		Context* c = const_cast<Context*>(context);
+		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
-		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 				glm::vec2(position().x(), position().y()));
 
-		Context::shaders->PushWidgetModelMatrix();
-		Context::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(subs_count()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
 		}
 
 		glBindVertexArray(vao_);
@@ -252,17 +252,17 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollView::Draw (const Context* context)
+	ResponseType ScrollView::Draw (const AbstractWindow* context)
 	{
 		if(subs_count()) {
 
 			Point offset = GetOffset();
 
-			glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+			glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 					glm::vec2(offset.x(), offset.y()));
 
-			Context::shaders->PushWidgetModelMatrix();
-			Context::shaders->SetWidgetModelMatrix(matrix);
+			AbstractWindow::shaders->PushWidgetModelMatrix();
+			AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
 			return Ignore;
 
@@ -271,36 +271,36 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::PostDraw(const Context* context)
+	void ScrollView::PostDraw(const AbstractWindow* context)
 	{
 		if(subs_count())
-			Context::shaders->PopWidgetModelMatrix();
+			AbstractWindow::shaders->PopWidgetModelMatrix();
 
 		// draw mask
-		Context::shaders->widget_inner_program()->use();
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		AbstractWindow::shaders->widget_inner_program()->use();
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(subs_count()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
 		}
 
 		glBindVertexArray(vao_);
-		const_cast<Context*>(context)->BeginPopStencil();	// pop inner stencil
+		const_cast<AbstractWindow*>(context)->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		const_cast<Context*>(context)->EndPopStencil();
+		const_cast<AbstractWindow*>(context)->EndPopStencil();
 		glBindVertexArray(0);
 		GLSLProgram::reset();
 
-		Context::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	ResponseType ScrollView::PerformMousePress (const Context* context)
+	ResponseType ScrollView::PerformMousePress (const AbstractWindow* context)
 	{
-		if (context->mouse_button() == MouseButtonMiddle) {
+		if (context->GetMouseButton() == MouseButtonMiddle) {
 			moving_ = true;
-			cursor_point_ = context->cursor_position();
+			cursor_point_ = context->GetCursorPosition();
 			last_offset_ = GetOffset();
 
 			return Finish;
@@ -309,7 +309,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseRelease(const Context* context)
+	ResponseType ScrollView::PerformMouseRelease(const AbstractWindow* context)
 	{
 		if(moving_) {
 			moving_ = false;
@@ -319,12 +319,12 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseMove(const Context* context)
+	ResponseType ScrollView::PerformMouseMove(const AbstractWindow* context)
 	{
 		if(moving_) {
 
-			int ox = context->cursor_position().x() - cursor_point_.x();
-			int oy = context->cursor_position().y() - cursor_point_.y();
+			int ox = context->GetCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetCursorPosition().y() - cursor_point_.y();
 
 			set_offset(last_offset_.x() + ox, last_offset_.y() + oy);
 

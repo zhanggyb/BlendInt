@@ -38,7 +38,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/ToolBox.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -252,7 +252,7 @@ namespace BlendInt {
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
-			GenerateVertices(size(), 1.f * Context::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+			GenerateVertices(size(), 1.f * AbstractWindow::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 			buffer_.bind(0);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -282,11 +282,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool ToolBox::PreDraw (const Context* context)
+	bool ToolBox::PreDraw (const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(refresh()) {
 			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
@@ -299,36 +299,36 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ToolBox::Draw (const Context* context)
+	ResponseType ToolBox::Draw (const AbstractWindow* context)
 	{
-		Context::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders->frame_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		Context::shaders->frame_outer_program()->use();
+		AbstractWindow::shaders->frame_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
 		glBindVertexArray(vao_[1]);
 
-		glUniform4f(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
 
-		glUniform4f(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        Context::shaders->frame_image_program()->use();
+        AbstractWindow::shaders->frame_image_program()->use();
         
         texture_buffer_.bind();
-        glUniform2f(Context::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+        glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
         
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -342,16 +342,16 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ToolBox::PostDraw (const Context* context)
+	void ToolBox::PostDraw (const AbstractWindow* context)
 	{
 	}
 
-	void ToolBox::PerformFocusOn (const Context* context)
+	void ToolBox::PerformFocusOn (const AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus in");
 	}
 
-	void ToolBox::PerformFocusOff (const Context* context)
+	void ToolBox::PerformFocusOff (const AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus out");
 
@@ -362,11 +362,11 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::PerformHoverIn (const Context* context)
+	void ToolBox::PerformHoverIn (const AbstractWindow* context)
 	{
 	}
 
-	void ToolBox::PerformHoverOut (const Context* context)
+	void ToolBox::PerformHoverOut (const AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
@@ -375,9 +375,9 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ToolBox::PerformKeyPress (const Context* context)
+	ResponseType ToolBox::PerformKeyPress (const AbstractWindow* context)
 	{
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		ResponseType response = Ignore;
 
@@ -388,9 +388,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ToolBox::PerformMousePress (const Context* context)
+	ResponseType ToolBox::PerformMousePress (const AbstractWindow* context)
 	{
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(cursor_position_ == InsideRectangle) {
 
@@ -419,36 +419,36 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ToolBox::PerformMouseRelease (const Context* context)
+	ResponseType ToolBox::PerformMouseRelease (const AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType ToolBox::PerformMouseMove (const Context* context)
+	ResponseType ToolBox::PerformMouseMove (const AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			retval = delegate_mouse_move_event(focused_widget_, context);
 		}
 
 		return retval;
 	}
 
-	ResponseType ToolBox::DispatchHoverEvent (const Context* context)
+	ResponseType ToolBox::DispatchHoverEvent (const AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 
 			cursor_position_ = InsideRectangle;
 
@@ -496,7 +496,7 @@ namespace BlendInt {
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
-		GenerateVertices(size(), 1.f * Context::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+		GenerateVertices(size(), 1.f * AbstractWindow::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 		buffer_.generate();
 		glGenVertexArrays(3, vao_);
@@ -504,14 +504,14 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
 
@@ -528,12 +528,12 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_COORD));
+				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD));
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_COORD),
+				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV));
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD),
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
+		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
@@ -637,7 +637,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void ToolBox::SetFocusedWidget (AbstractWidget* widget, const Context* context)
+	void ToolBox::SetFocusedWidget (AbstractWidget* widget, const AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;

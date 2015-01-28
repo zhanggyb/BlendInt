@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -118,17 +118,17 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuPress (const Context* context)
+	ResponseType AbstractFrame::PerformContextMenuPress (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuRelease (const Context* context)
+	ResponseType AbstractFrame::PerformContextMenuRelease (const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const Context* context)
+	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -151,7 +151,7 @@ namespace BlendInt {
 	}
 
 	AbstractView* AbstractFrame::DispatchMousePressEvent(
-			AbstractView* subview, const Context* context)
+			AbstractView* subview, const AbstractWindow* context)
 	{
 		if(subview == this) {
 			return 0;
@@ -182,7 +182,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const Context* context)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -203,7 +203,7 @@ namespace BlendInt {
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractView* subview, const Context* context)
+			AbstractView* subview, const AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -225,12 +225,12 @@ namespace BlendInt {
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets(AbstractWidget* orig,
-			const Context* context)
+			const AbstractWindow* context)
 	{
 		AbstractWidget* hovered_widget = orig;
 		AbstractWidget* tmp = 0;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 		Point local;	// the relative local position of the cursor in a widget
 		Point offset;
 
@@ -250,14 +250,14 @@ namespace BlendInt {
 				rect.set_size(size());
 			}
 
-			bool hovered = rect.contains(context->cursor_position());
+			bool hovered = rect.contains(context->GetCursorPosition());
 
 			if(hovered) {
 
 				offset = superview->GetOffset();
 				local.reset(
-						context->cursor_position().x() - rect.x() - offset.x(),
-						context->cursor_position().y() - rect.y() - offset.y());
+						context->GetCursorPosition().x() - rect.x() - offset.x(),
+						context->GetCursorPosition().y() - rect.y() - offset.y());
 
 				if(hovered_widget->Contain(local)) {
 					hovered_widget = DispatchHoverEventDeeper(
@@ -317,10 +317,10 @@ namespace BlendInt {
 
 					offset = superview->GetOffset();
 					local.reset(
-							context->cursor_position().x() - rect.x() - offset.x(),
-							context->cursor_position().y() - rect.y() - offset.y());
+							context->GetCursorPosition().x() - rect.x() - offset.x(),
+							context->GetCursorPosition().y() - rect.y() - offset.y());
 
-					if(rect.contains(context->cursor_position())) break;
+					if(rect.contains(context->GetCursorPosition())) break;
 
 					superview = superview->superview();
 				}
@@ -353,8 +353,8 @@ namespace BlendInt {
 
 			offset = GetOffset();
 			local.reset(
-					context->cursor_position().x() - position().x() - offset.x(),
-					context->cursor_position().y() - position().y() - offset.y());
+					context->GetCursorPosition().x() - position().x() - offset.x(),
+					context->GetCursorPosition().y() - position().y() - offset.y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
@@ -393,7 +393,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const Context* context)
+	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const AbstractWindow* context)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -408,7 +408,7 @@ namespace BlendInt {
 
 	bool AbstractFrame::RenderSubFramesToTexture (
 		AbstractFrame* frame,
-		const Context* context,
+		const AbstractWindow* context,
 		const glm::mat4& projection,
 		const glm::mat3& model,
 		GLTexture2D* texture)
@@ -454,12 +454,12 @@ namespace BlendInt {
 
             fb->bind();
 
-            Context::shaders->SetWidgetProjectionMatrix(projection);
-            Context::shaders->SetWidgetModelMatrix(model);
+            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection);
+            AbstractWindow::shaders->SetWidgetModelMatrix(model);
 
             // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
             GLuint original_stencil_count = context->stencil_count_;
-			const_cast<Context*>(context)->stencil_count_ = 0;
+			const_cast<AbstractWindow*>(context)->stencil_count_ = 0;
 
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClearDepth(1.0);
@@ -481,7 +481,7 @@ namespace BlendInt {
 			#ifdef DEBUG
 			assert(context->stencil_count_ == 0);
 			#endif
-			const_cast<Context*>(context)->stencil_count_ = original_stencil_count;
+			const_cast<AbstractWindow*>(context)->stencil_count_ = original_stencil_count;
 
 			retval = true;
         }
@@ -499,7 +499,7 @@ namespace BlendInt {
         return retval;
 	}
 
-	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const Context* context,
+	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const AbstractWindow* context,
 			Point& local)
 	{
 		AbstractWidget* retval = widget;

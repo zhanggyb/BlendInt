@@ -74,6 +74,82 @@ namespace BlendInt {
 	{
 	}
 
+	bool AbstractWindow::AddFrame (AbstractFrame* frame, bool focus)
+	{
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(PushBackSubView(frame)) {
+
+			if(focus) {
+
+				if(original_last) {
+					original_last->set_focus(false);
+					original_last->PerformFocusOff(this);
+				}
+
+				frame->set_focus(true);
+				frame->PerformFocusOn(this);
+
+			}
+
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	bool AbstractWindow::InsertFrame (int index, AbstractFrame* frame, bool focus)
+	{
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		if(InsertSubView(index, frame)) {
+
+			if(focus) {
+
+				if(original_last != last_subview()) {
+					assert(last_subview() == frame);
+
+					if(original_last) {
+						original_last->set_focus(false);
+						original_last->PerformFocusOff(this);
+					}
+
+					frame->set_focus(true);
+					frame->PerformFocusOn(this);
+
+				}
+
+			}
+
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
+	}
+
+	void AbstractWindow::MoveFrameToTop (AbstractFrame* frame, bool focus)
+	{
+		if(frame == nullptr) return;
+
+		if(frame == last_subview()) return;
+
+		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+
+		MoveToLast(frame);
+
+		if(focus) {
+			if(original_last) {
+				original_last->set_focus(false);
+				original_last->PerformFocusOff(this);
+			}
+
+			frame->set_focus(true);
+			frame->PerformFocusOn(this);
+		}
+	}
+
 	bool AbstractWindow::Contain (const Point& point) const
 	{
 		return true;
@@ -123,6 +199,23 @@ namespace BlendInt {
 			}
 
 		}
+	}
+
+	AbstractWindow* AbstractWindow::GetContext (AbstractView* widget)
+	{
+		AbstractView* superview = widget->superview();
+
+		if(superview == 0) {
+			return dynamic_cast<AbstractWindow*>(widget);
+		} else {
+
+			while(superview->superview()) {
+				superview = superview->superview();
+			}
+
+		}
+
+		return dynamic_cast<AbstractWindow*>(superview);
 	}
 
 	bool AbstractWindow::InitializeGLContext ()
@@ -221,66 +314,142 @@ namespace BlendInt {
 	{
 	}
 
-	bool AbstractWindow::PreDraw (const Context* context)
+	bool AbstractWindow::PreDraw (const AbstractWindow* context)
 	{
 		return true;
 	}
 
-	ResponseType AbstractWindow::Draw (const Context* context)
+	ResponseType AbstractWindow::Draw (const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		{
+			p->PreDraw(context);
+			p->Draw(context);
+			p->set_refresh(this->refresh());
+			p->PostDraw(context);
+		}
+
+		return Finish;
 	}
 
-	void AbstractWindow::PostDraw (const Context* context)
-	{
-	}
-
-	void AbstractWindow::PerformFocusOn (const Context* context)
-	{
-	}
-
-	void AbstractWindow::PerformFocusOff (const Context* context)
-	{
-	}
-
-	void AbstractWindow::PerformHoverIn (const Context* context)
+	void AbstractWindow::PostDraw (const AbstractWindow* context)
 	{
 	}
 
-	void AbstractWindow::PerformHoverOut (const Context* context)
+	void AbstractWindow::PerformFocusOn (const AbstractWindow* context)
 	{
 	}
 
-	ResponseType AbstractWindow::PerformKeyPress (const Context* context)
+	void AbstractWindow::PerformFocusOff (const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+	}
+
+	void AbstractWindow::PerformHoverIn (const AbstractWindow* context)
+	{
+	}
+
+	void AbstractWindow::PerformHoverOut (const AbstractWindow* context)
+	{
+	}
+
+	ResponseType AbstractWindow::PerformKeyPress (const AbstractWindow* context)
+	{
+		ResponseType response = Ignore;
+
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+			response = p->PerformKeyPress(context);
+			if(response == Finish) break;
+		}
+
+		return response;
 	}
 
 	ResponseType AbstractWindow::PerformContextMenuPress (
-	        const Context* context)
+	        const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWindow::PerformContextMenuRelease (
-	        const Context* context)
+	        const AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWindow::PerformMousePress (const Context* context)
+	ResponseType AbstractWindow::PerformMousePress (const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		ResponseType response = Ignore;
+		//assert(context->leaf_frame() == 0);
+
+		set_pressed(true);
+
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+			response = p->PerformMousePress(context);
+			if(response == Finish) {
+				break;
+			}
+		}
+
+		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseRelease (const Context* context)
+	ResponseType AbstractWindow::PerformMouseRelease (const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		ResponseType response = Ignore;
+		set_pressed(false);
+
+		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+		{
+			response = p->PerformMouseRelease(context);
+			if(response == Finish) {
+				break;
+			}
+		}
+
+		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseMove (const Context* context)
+	ResponseType AbstractWindow::PerformMouseMove (const AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		ResponseType response = Ignore;
+
+		if(pressed_ext()) {
+
+			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+			{
+				response = p->PerformMouseMove(context);
+				if(response == Finish) {
+					break;
+				}
+			}
+
+		}
+
+		return response;
+	}
+
+	bool AbstractWindow::RemoveSubView (AbstractView* view)
+	{
+		AbstractFrame* new_last = nullptr;
+		AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
+
+		if(view->next_view() == nullptr) {
+			new_last = dynamic_cast<AbstractFrame*>(view->previous_view());
+
+			if(frame != nullptr) {
+				frame->set_focus(false);
+			}
+		}
+
+		bool retval = AbstractView::RemoveSubView(view);
+
+		if(new_last != nullptr) {
+			DBG_PRINT_MSG("%s", "call focus event");
+			new_last->set_focus(true);
+			new_last->PerformFocusOn(this);
+		}
+
+		return retval;
 	}
 
 	bool AbstractWindow::InitializeTheme ()
@@ -425,15 +594,16 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWindow::InitializeMatrices ()
+	void AbstractWindow::DispatchHoverEvent ()
 	{
-		glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		shaders->SetFrameProjectionMatrix(projection);
-		shaders->SetFrameViewMatrix(default_view_matrix);
-		shaders->SetFrameModelMatrix(glm::mat3(1.f));
+		ResponseType response = Ignore;
+		AbstractFrame* frame = 0;
 
-		shaders->SetWidgetViewMatrix(default_view_matrix);
-		shaders->SetWidgetModelMatrix(glm::mat3(1.f));
+		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+			frame = dynamic_cast<AbstractFrame*>(p);
+			response = frame->DispatchHoverEvent(this);
+			if(response == Finish) break;
+		}
 	}
 
 }

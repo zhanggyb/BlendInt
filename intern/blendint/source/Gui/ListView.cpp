@@ -37,7 +37,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/ListView.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -87,19 +87,19 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	ResponseType ListView::Draw (const Context* context)
+	ResponseType ListView::Draw (const AbstractWindow* context)
 	{
-		Context* c = const_cast<Context*>(context);
+		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
 		int y = position().y() + size().height();
 		int h = font_.height();
 
-        Context::shaders->widget_inner_program()->use();
+        AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				Context::theme->regular().inner.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				AbstractWindow::theme->regular().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -110,11 +110,11 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		c->EndPushStencil();
 
-        RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
+        RefPtr<GLSLProgram> program = AbstractWindow::shaders->widget_triangle_program();
 
-        glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.475f,
+        glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 		glBindVertexArray(vaos_[1]);
@@ -124,16 +124,16 @@ namespace BlendInt {
 			y -= h;
 
 
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
 					(float) position().x(), (float) y);
 
 			if(i == highlight_index_) {	// TODO: use different functions for performance
-				glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), -35);
+				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 15);
+					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -159,7 +159,7 @@ namespace BlendInt {
 
 		}
 
-        Context::shaders->widget_inner_program()->use();
+        AbstractWindow::shaders->widget_inner_program()->use();
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
@@ -173,7 +173,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ListView::PerformMousePress (const Context* context)
+	ResponseType ListView::PerformMousePress (const AbstractWindow* context)
 	{
 		if(model_) {
 
@@ -187,9 +187,9 @@ namespace BlendInt {
 
 				int i = 0;
 				if(total > size().height()) {
-					i = position().y() - context->cursor_position().y();
+					i = position().y() - context->GetCursorPosition().y();
 				} else {	// no vbar
-					i = position().y() + size().height() - context->cursor_position().y();
+					i = position().y() + size().height() - context->GetCursorPosition().y();
 				}
 
 				i = i / h;
@@ -270,8 +270,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -280,8 +280,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

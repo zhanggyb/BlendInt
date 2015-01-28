@@ -48,7 +48,15 @@ namespace BlendInt {
 
 		virtual ~AbstractWindow ();
 
+		bool AddFrame (AbstractFrame* frame, bool focus = true);
+
+		bool InsertFrame (int index, AbstractFrame* frame, bool focus = true);
+
+		void MoveFrameToTop (AbstractFrame* frame, bool focus = true);
+
 		virtual bool Contain (const Point& point) const;
+
+		virtual void MakeCurrent () = 0;
 
 		virtual void Synchronize () = 0;
 
@@ -78,6 +86,11 @@ namespace BlendInt {
 
 		virtual const Point& GetCursorPosition () const = 0;
 
+		void register_active_frame (AbstractFrame* frame)
+		{
+			active_frame_ = frame;
+		}
+
 		AbstractFrame* active_frame () const
 		{
 #ifdef DEBUG
@@ -90,6 +103,8 @@ namespace BlendInt {
 		{
 			return viewport_origin_;
 		}
+
+		static AbstractWindow* GetContext (AbstractView* widget);
 
 		static bool InitializeGLContext ();
 
@@ -113,35 +128,64 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (const AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (const AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (const AbstractWindow* context);
 
-		virtual void PerformFocusOn (const Context* context);
+		virtual void PerformFocusOn (const AbstractWindow* context);
 
-		virtual void PerformFocusOff (const Context* context);
+		virtual void PerformFocusOff (const AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (const AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (const AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const Context* context);
+		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuPress (const Context* context);
+		virtual ResponseType PerformContextMenuPress (const AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (const AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
+
+		virtual bool RemoveSubView (AbstractView* view);
+
+		void DispatchHoverEvent ();
+
+		Cpp::ConnectionScope* events() const {return events_.get();}
+
+		inline void set_viewport_origin (int x, int y)
+		{
+			viewport_origin_.reset(x, y);
+		}
+
+		inline void set_viewport_origin (const Point& point)
+		{
+			viewport_origin_ = point;
+		}
+
+		inline GLuint stencil_count () const
+		{
+			return stencil_count_;
+		}
+
+		inline void set_stencil_count (GLuint count)
+		{
+			stencil_count_ = count;
+		}
 
 		static glm::mat4 default_view_matrix;
 
 	private:
+
+		friend class AbstractFrame;
+		friend class AbstractWidget;
 
 		static bool InitializeTheme ();
 
@@ -167,8 +211,6 @@ namespace BlendInt {
 
 		static void GetGLSLVersion (int *major, int *minor);
 
-		void InitializeMatrices ();
-
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
 		AbstractFrame* active_frame_;
@@ -179,5 +221,15 @@ namespace BlendInt {
 		GLuint stencil_count_;
 
 	};
+
+	inline int pixel_size (int a)
+	{
+		return a * AbstractWindow::theme->pixel();
+	}
+
+	inline int pixel_size (unsigned int a)
+	{
+		return a * AbstractWindow::theme->pixel();
+	}
 
 }

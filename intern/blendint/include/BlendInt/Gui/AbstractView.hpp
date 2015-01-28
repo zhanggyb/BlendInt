@@ -40,6 +40,7 @@
 namespace BlendInt {
 
 	class Context;
+	class AbstractWindow;
 	class AbstractView;
 
 	/**
@@ -496,31 +497,31 @@ namespace BlendInt {
 			}
 		}
 
-		virtual bool PreDraw (const Context* context) = 0;
+		virtual bool PreDraw (const AbstractWindow* context) = 0;
 
-		virtual ResponseType Draw (const Context* context) = 0;
+		virtual ResponseType Draw (const AbstractWindow* context) = 0;
 
-		virtual void PostDraw (const Context* context) = 0;
+		virtual void PostDraw (const AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOn (const Context* context) = 0;
+		virtual void PerformFocusOn (const AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOff (const Context* context) = 0;
+		virtual void PerformFocusOff (const AbstractWindow* context) = 0;
 
-		virtual void PerformHoverIn (const Context* context) = 0;
+		virtual void PerformHoverIn (const AbstractWindow* context) = 0;
 
-		virtual void PerformHoverOut (const Context* context) = 0;
+		virtual void PerformHoverOut (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformKeyPress (const Context* context) = 0;
+		virtual ResponseType PerformKeyPress (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuPress (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuPress (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuRelease (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMousePress (const Context* context) = 0;
+		virtual ResponseType PerformMousePress (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseRelease (const Context* context) = 0;
+		virtual ResponseType PerformMouseRelease (const AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseMove (const Context* context) = 0;
+		virtual ResponseType PerformMouseMove (const AbstractWindow* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
@@ -560,7 +561,7 @@ namespace BlendInt {
 
 		void SetSubViewVisibility (AbstractView* sub, bool visible);
 
-		void DrawSubViewsOnce (const Context* context);
+		void DrawSubViewsOnce (const AbstractWindow* context);
 
 		static void GenerateVertices (
 				const Size& size,
@@ -628,7 +629,7 @@ namespace BlendInt {
 		 * 	- true: use superview refresh() status to set view's refresh flag
 		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractView* view, const Context* context);
+		static void DispatchDrawEvent (AbstractView* view, const AbstractWindow* context);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,

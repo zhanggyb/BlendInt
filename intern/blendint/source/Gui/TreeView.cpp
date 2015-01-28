@@ -40,7 +40,7 @@ namespace BlendInt {
 		return ModelIndex();
 	}
 
-	ResponseType TreeView::Draw (const Context* context)
+	ResponseType TreeView::Draw (const AbstractWindow* context)
 	{
 		return Ignore;
 	}

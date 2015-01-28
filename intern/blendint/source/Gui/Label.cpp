@@ -23,7 +23,7 @@
 
 #include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -54,8 +54,8 @@ namespace BlendInt {
 		vbo_.generate();
 		vbo_.bind();
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -127,27 +127,27 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Label::PerformMousePress (const Context* context)
+	ResponseType Label::PerformMousePress (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseRelease (const Context* context)
+	ResponseType Label::PerformMouseRelease (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseMove (const Context* context)
+	ResponseType Label::PerformMouseMove (const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::Draw (const Context* context)
+	ResponseType Label::Draw (const AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);

@@ -41,7 +41,7 @@
 
 #include <BlendInt/Gui/CVVideoViewport.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -236,24 +236,24 @@ namespace BlendInt {
 		}
 	}
 
-	bool CVVideoViewport::PreDraw(const Context* context)
+	bool CVVideoViewport::PreDraw(const AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		Context::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-		Context::shaders->SetWidgetModelMatrix(model_matrix_);
+		AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+		AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
 
-	ResponseType CVVideoViewport::Draw(const Context* context)
+	ResponseType CVVideoViewport::Draw(const AbstractWindow* context)
 	{
 		if(status_ == VideoStop) {
 			return Finish;
@@ -316,13 +316,13 @@ namespace BlendInt {
 			DBG_PRINT_MSG("%s", "fail to lock: capturing video into frame");
 		}
 
-		Context::shaders->widget_image_program()->use();
+		AbstractWindow::shaders->widget_image_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
 				(size().width() - frame_.cols)/2.f,
 				(size().height() - frame_.rows) / 2.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -334,7 +334,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void CVVideoViewport::PostDraw(const Context* context)
+	void CVVideoViewport::PostDraw(const AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());
@@ -361,11 +361,11 @@ namespace BlendInt {
 		frame_plane_.bind();
 		frame_plane_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

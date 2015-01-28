@@ -58,61 +58,61 @@ namespace BlendInt {
 		return nullptr;
 	}
 
-	bool Frame::PreDraw(const Context* context)
+	bool Frame::PreDraw(const AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType Frame::Draw (const Context* context)
+	ResponseType Frame::Draw (const AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Frame::PostDraw(const Context* context)
+	void Frame::PostDraw(const AbstractWindow* context)
 	{
 
 	}
 
-	void Frame::PerformFocusOn(const Context* context)
+	void Frame::PerformFocusOn(const AbstractWindow* context)
 	{
 	}
 
-	void Frame::PerformFocusOff (const Context* context)
+	void Frame::PerformFocusOff (const AbstractWindow* context)
 	{
 
 	}
 
-	void Frame::PerformHoverIn(const Context* context)
+	void Frame::PerformHoverIn(const AbstractWindow* context)
 	{
 	}
 
-	void Frame::PerformHoverOut(const Context* context)
+	void Frame::PerformHoverOut(const AbstractWindow* context)
 	{
 	}
 
-	ResponseType Frame::PerformKeyPress(const Context* context)
-	{
-		return Ignore;
-	}
-
-	ResponseType Frame::PerformMousePress(const Context* context)
+	ResponseType Frame::PerformKeyPress(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::PerformMouseRelease(const Context* context)
+	ResponseType Frame::PerformMousePress(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::PerformMouseMove(const Context* context)
+	ResponseType Frame::PerformMouseRelease(const AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::DispatchHoverEvent(const Context* context)
+	ResponseType Frame::PerformMouseMove(const AbstractWindow* context)
+	{
+		return Ignore;
+	}
+
+	ResponseType Frame::DispatchHoverEvent(const AbstractWindow* context)
 	{
 		return Ignore;
 	}

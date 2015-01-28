@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -91,8 +91,8 @@ namespace BlendInt {
 
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
@@ -189,22 +189,22 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SplitterHandle::Draw (const Context* context)
+	ResponseType SplitterHandle::Draw (const AbstractWindow* context)
 	{
-		Context::shaders->widget_triangle_program()->use();
+		AbstractWindow::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
 		if(highlight_) {
-			//glUniform1i(Context::shaders->location(Shaders::TRIANGLE_GAMMA), 50);
-			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
+			//glUniform1i(AbstractWindow::shaders->location(Shaders::TRIANGLE_GAMMA), 50);
+			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.85f, 0.15f, 0.15f, 0.6f);
 		} else {
-			//glUniform1i(Context::shaders->location(Shaders::TRIANGLE_GAMMA), 0);
-			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+			//glUniform1i(AbstractWindow::shaders->location(Shaders::TRIANGLE_GAMMA), 0);
+			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 		}
-		//glVertexAttrib4f(Context::shaders->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+		//glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -215,25 +215,25 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void SplitterHandle::PerformHoverIn(const Context* context)
+	void SplitterHandle::PerformHoverIn(const AbstractWindow* context)
 	{
 		highlight_ = true;
-		Context::cursor->PushCursor();
-		Context::cursor->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
+		AbstractWindow::cursor->PushCursor();
+		AbstractWindow::cursor->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		RequestRedraw();
 	}
 
-	void SplitterHandle::PerformHoverOut(const Context* context)
+	void SplitterHandle::PerformHoverOut(const AbstractWindow* context)
 	{
 		highlight_ = false;
-		Context::cursor->PopCursor();
+		AbstractWindow::cursor->PopCursor();
 		RequestRedraw();
 	}
 
-	ResponseType SplitterHandle::PerformMousePress (const Context* context)
+	ResponseType SplitterHandle::PerformMousePress (const AbstractWindow* context)
 	{
 		last_ = position();
-		cursor_ = context->cursor_position();
+		cursor_ = context->GetCursorPosition();
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
@@ -249,7 +249,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseRelease (const Context* context)
+	ResponseType SplitterHandle::PerformMouseRelease (const AbstractWindow* context)
 	{
 		if (pressed_) {
 			pressed_ = false;
@@ -258,7 +258,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseMove (const Context* context)
+	ResponseType SplitterHandle::PerformMouseMove (const AbstractWindow* context)
 	{
 		if(pressed_) {
 
@@ -266,7 +266,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = context->cursor_position().y() - cursor_.y();
+				int offset = context->GetCursorPosition().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -282,7 +282,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = context->cursor_position().x() - cursor_.x();
+				int offset = context->GetCursorPosition().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
