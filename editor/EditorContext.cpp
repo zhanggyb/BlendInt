@@ -57,12 +57,12 @@ void EditorContext::InitializeGLFWDemoContext ()
 	AddFrame(dlg);
 
 	NodeView* nodeview = new NodeView;
-	nodeview->MoveTo(100, 100);
+	nodeview->MoveTo(10, 10);
 	nodeview->Resize(500, 400);
 
 	Node* node = new Node;
 	nodeview->AddNode(node);
-	node->MoveTo(50, 50);
+	node->MoveTo(10, 10);
 
 	dlg->AddWidget(nodeview);
 

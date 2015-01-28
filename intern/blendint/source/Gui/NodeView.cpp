@@ -154,6 +154,11 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	ResponseType NodeView::PerformMousePress (const Context* context)
+	{
+		return Finish;
+	}
+
 	void BlendInt::NodeView::InitializeNodeView ()
 	{
 		std::vector<GLfloat> inner_verts;

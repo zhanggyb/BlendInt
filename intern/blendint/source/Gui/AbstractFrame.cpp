@@ -224,10 +224,11 @@ namespace BlendInt {
 		}
 	}
 
-	AbstractWidget* AbstractFrame::DispatchHoverEventsInSubWidgets(AbstractWidget* orig,
+	AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets(AbstractWidget* orig,
 			const Context* context)
 	{
 		AbstractWidget* hovered_widget = orig;
+		AbstractWidget* tmp = 0;
 
 		const_cast<Context*>(context)->register_active_frame(this);
 		Point local;	// the relative local position of the cursor in a widget
@@ -328,10 +329,19 @@ namespace BlendInt {
 				if(hovered_widget) {
 					for (AbstractView* p = widget->last_subview (); p;
 							p = p->previous_view ()) {
-						if (p->visiable () && p->Contain (local)) {
-							hovered_widget = dynamic_cast<AbstractWidget*>(p);
-							delegate_mouse_hover_in_event (hovered_widget, context);
-							hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+
+						tmp = dynamic_cast<AbstractWidget*>(p);
+
+						if(tmp) {
+							if (p->visiable () && p->Contain (local)) {
+								hovered_widget = tmp;
+
+								delegate_mouse_hover_in_event (hovered_widget, context);
+								hovered_widget = DispatchHoverEventDeeper(hovered_widget, context, local);
+
+								break;
+							}
+						} else {
 							break;
 						}
 					}
@@ -348,11 +358,15 @@ namespace BlendInt {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{
-				if (p->visiable() && p->Contain(local)) {
+				tmp = dynamic_cast<AbstractWidget*>(p);
 
-					hovered_widget = dynamic_cast<AbstractWidget*>(p);
-					delegate_mouse_hover_in_event(hovered_widget, context);
-
+				if(tmp) {
+					if (p->visiable() && p->Contain(local)) {
+						hovered_widget = tmp;
+						delegate_mouse_hover_in_event(hovered_widget, context);
+						break;
+					}
+				} else {
 					break;
 				}
 			}
@@ -489,6 +503,7 @@ namespace BlendInt {
 			Point& local)
 	{
 		AbstractWidget* retval = widget;
+		AbstractWidget* tmp = 0;
 
 		Point offset = widget->GetOffset();
 		local.reset(
@@ -498,11 +513,17 @@ namespace BlendInt {
 		for (AbstractView* p = widget->last_subview (); p;
 				p = p->previous_view ()) {
 
-			if (p->visiable () && p->Contain (local)) {
-				retval = dynamic_cast<AbstractWidget*>(p);
-				delegate_mouse_hover_in_event (retval, context);
+			tmp = dynamic_cast<AbstractWidget*>(p);
 
-				retval = DispatchHoverEventDeeper(retval, context, local);
+			if(tmp) {
+				if (p->visiable () && p->Contain (local)) {
+					retval = tmp;
+					delegate_mouse_hover_in_event (retval, context);
+					retval = DispatchHoverEventDeeper(retval, context, local);
+
+					break;
+				}
+			} else {
 				break;
 			}
 	

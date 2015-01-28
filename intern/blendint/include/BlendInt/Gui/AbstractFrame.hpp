@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTFRAME_HPP_
-#define _BLENDINT_GUI_ABSTRACTFRAME_HPP_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -78,7 +77,7 @@ namespace BlendInt {
 
 		ResponseType DispatchMouseReleaseEvent (AbstractView* view, const Context* context);
 
-		AbstractWidget* DispatchHoverEventsInSubWidgets (AbstractWidget* orig, const Context* context);
+		AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig, const Context* context);
 
 		void ClearHoverWidgets (AbstractView* hovered_widget);
 
@@ -179,5 +178,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTFRAME_HPP_ */
