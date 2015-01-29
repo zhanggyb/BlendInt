@@ -85,27 +85,27 @@ namespace BlendInt {
 		return expand_y_;
 	}
 
-	ResponseType Separator::PerformMousePress (const AbstractWindow* context)
+	ResponseType Separator::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Separator::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType Separator::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	bool Separator::PreDraw(const AbstractWindow* context)
+	bool Separator::PreDraw(AbstractWindow* context)
 	{
 		return true;
 	}
 
-	ResponseType Separator::Draw(const AbstractWindow* context)
+	ResponseType Separator::Draw(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	void Separator::PostDraw(const AbstractWindow* context)
+	void Separator::PostDraw(AbstractWindow* context)
 	{
 		return;
 	}

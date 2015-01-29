@@ -29,6 +29,7 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
+#include <BlendInt/Gui/AbstractCursorTheme.hpp>
 
 namespace BlendInt {
 
@@ -45,6 +46,8 @@ namespace BlendInt {
 		virtual void Synchronize ();
 
 		virtual void Exec ();
+
+		virtual void SetCursor (int cursor_type);
 
 		virtual int GetKeyInput () const;
 
@@ -68,13 +71,29 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-        virtual bool PreDraw (const AbstractWindow* context);
+        virtual bool PreDraw (AbstractWindow* context);
         
 	private:
 
+        void Close ();
+
 		GLFWwindow* window_;
+
+		static GLFWcursor* kArrowCursor;
+
+		static GLFWcursor* kCrossCursor;
+
+		static GLFWcursor* kSplitVCursor;
+
+		static GLFWcursor* kSplitHCursor;
+
+		static GLFWcursor* kTopLeftCornerCursor;
+
+		static GLFWcursor* kTopRightCornerCursor;
 
 		static std::map<GLFWwindow*, Window*> kWindowMap;
 
@@ -98,6 +117,8 @@ namespace BlendInt {
 
 		static void CbWindowSize(GLFWwindow* window, int w, int h);
 
+		static void CbWindowPosition (GLFWwindow* window, int x, int y);
+
 		static void CbKey(GLFWwindow* window, int key, int scancode, int action,
 							  int mods);
 
@@ -108,6 +129,8 @@ namespace BlendInt {
 
 		static void CbCursorPos(GLFWwindow* window, double xpos, double ypos);
 
+		static void CbClose (GLFWwindow* window);
+
 #ifdef __APPLE__
 
 		// MUST set this callback to render the context when resizing in OSX
@@ -115,6 +138,7 @@ namespace BlendInt {
 
 #endif
 
+		static void CreateCursors ();
 
 	};
 

@@ -35,7 +35,6 @@
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt
 {
@@ -208,12 +207,12 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::PreDraw(const AbstractWindow* context)
+	bool Context::PreDraw(AbstractWindow* context)
 	{
 		return true;
 	}
 
-	ResponseType Context::Draw (const AbstractWindow* context)
+	ResponseType Context::Draw (AbstractWindow* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
@@ -226,11 +225,11 @@ namespace BlendInt
 		return Finish;
 	}
 
-	void Context::PostDraw(const AbstractWindow* context)
+	void Context::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	ResponseType Context::PerformKeyPress (const AbstractWindow* context)
+	ResponseType Context::PerformKeyPress (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -242,20 +241,20 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::PerformContextMenuPress (const AbstractWindow* context)
+	ResponseType Context::PerformContextMenuPress (AbstractWindow* context)
 	{
 
 		return Ignore;
 	}
 
 	ResponseType Context::PerformContextMenuRelease (
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 
 		return Ignore;
 	}
 
-	ResponseType Context::PerformMousePress (const AbstractWindow* context)
+	ResponseType Context::PerformMousePress (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		//assert(context->leaf_frame() == 0);
@@ -272,7 +271,7 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType Context::PerformMouseRelease (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -288,7 +287,7 @@ namespace BlendInt
 		return response;
 	}
 
-	ResponseType Context::PerformMouseMove (const AbstractWindow* context)
+	ResponseType Context::PerformMouseMove (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -354,19 +353,19 @@ namespace BlendInt
 		}
 	}
 
-	void Context::PerformFocusOn(const AbstractWindow* context)
+	void Context::PerformFocusOn(AbstractWindow* context)
 	{
 	}
 
-	void Context::PerformFocusOff(const AbstractWindow* context)
+	void Context::PerformFocusOff(AbstractWindow* context)
 	{
 	}
 
-	void Context::PerformHoverIn(const AbstractWindow* context)
+	void Context::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Context::PerformHoverOut(const AbstractWindow* context)
+	void Context::PerformHoverOut(AbstractWindow* context)
 	{
 	}
 

@@ -225,7 +225,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool TextureView::PreDraw (const AbstractWindow* context)
+	bool TextureView::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
@@ -255,7 +255,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextureView::Draw (const AbstractWindow* context)
+	ResponseType TextureView::Draw (AbstractWindow* context)
 	{
 		float x = (size().width() - image_size_.width()) / 2.f;
 		float y = (size().height() - image_size_.height()) / 2.f;
@@ -287,7 +287,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextureView::PostDraw (const AbstractWindow* context)
+	void TextureView::PostDraw (AbstractWindow* context)
 	{
 		// draw background again to unmask stencil
 		AbstractWindow::shaders->widget_inner_program()->use();

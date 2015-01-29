@@ -282,7 +282,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool ToolBox::PreDraw (const AbstractWindow* context)
+	bool ToolBox::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -299,7 +299,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ToolBox::Draw (const AbstractWindow* context)
+	ResponseType ToolBox::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->frame_inner_program()->use();
 
@@ -342,16 +342,16 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ToolBox::PostDraw (const AbstractWindow* context)
+	void ToolBox::PostDraw (AbstractWindow* context)
 	{
 	}
 
-	void ToolBox::PerformFocusOn (const AbstractWindow* context)
+	void ToolBox::PerformFocusOn (AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus in");
 	}
 
-	void ToolBox::PerformFocusOff (const AbstractWindow* context)
+	void ToolBox::PerformFocusOff (AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus out");
 
@@ -362,11 +362,11 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::PerformHoverIn (const AbstractWindow* context)
+	void ToolBox::PerformHoverIn (AbstractWindow* context)
 	{
 	}
 
-	void ToolBox::PerformHoverOut (const AbstractWindow* context)
+	void ToolBox::PerformHoverOut (AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
@@ -375,7 +375,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ToolBox::PerformKeyPress (const AbstractWindow* context)
+	ResponseType ToolBox::PerformKeyPress (AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -388,7 +388,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ToolBox::PerformMousePress (const AbstractWindow* context)
+	ResponseType ToolBox::PerformMousePress (AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -419,7 +419,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ToolBox::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType ToolBox::PerformMouseRelease (AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
@@ -432,7 +432,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ToolBox::PerformMouseMove (const AbstractWindow* context)
+	ResponseType ToolBox::PerformMouseMove (AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -444,7 +444,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType ToolBox::DispatchHoverEvent (const AbstractWindow* context)
+	ResponseType ToolBox::DispatchHoverEvent (AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 
@@ -637,7 +637,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void ToolBox::SetFocusedWidget (AbstractWidget* widget, const AbstractWindow* context)
+	void ToolBox::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;

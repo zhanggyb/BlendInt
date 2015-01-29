@@ -296,7 +296,7 @@ namespace BlendInt {
 		shadow_->SetRadius(radius);
 	}
 
-	bool PopupFrame::PreDraw(const AbstractWindow* context)
+	bool PopupFrame::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -310,7 +310,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType PopupFrame::Draw(const AbstractWindow* context)
+	ResponseType PopupFrame::Draw(AbstractWindow* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -353,16 +353,16 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void PopupFrame::PostDraw(const AbstractWindow* context)
+	void PopupFrame::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	void PopupFrame::PerformFocusOn (const AbstractWindow* context)
+	void PopupFrame::PerformFocusOn (AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus on");
 	}
 
-	void PopupFrame::PerformFocusOff (const AbstractWindow* context)
+	void PopupFrame::PerformFocusOff (AbstractWindow* context)
 	{
 		DBG_PRINT_MSG("%s", "focus out");
 
@@ -373,11 +373,11 @@ namespace BlendInt {
 		}
 	}
 
-	void PopupFrame::PerformHoverIn(const AbstractWindow* context)
+	void PopupFrame::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void PopupFrame::PerformHoverOut(const AbstractWindow* context)
+	void PopupFrame::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &PopupFrame::OnHoverWidgetDestroyed);
@@ -388,7 +388,7 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("%s", "hover out");
 	}
 
-	ResponseType PopupFrame::PerformKeyPress(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformKeyPress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -406,17 +406,17 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType PopupFrame::PerformContextMenuPress(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformContextMenuPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformContextMenuRelease(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformContextMenuRelease(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformMousePress(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformMousePress(AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -452,7 +452,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType PopupFrame::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformMouseRelease(AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
@@ -465,7 +465,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType PopupFrame::PerformMouseMove(const AbstractWindow* context)
+	ResponseType PopupFrame::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -495,7 +495,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType PopupFrame::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType PopupFrame::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 
@@ -536,7 +536,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void PopupFrame::SetFocusedWidget(AbstractWidget* widget, const AbstractWindow* context)
+	void PopupFrame::SetFocusedWidget(AbstractWidget* widget, AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;

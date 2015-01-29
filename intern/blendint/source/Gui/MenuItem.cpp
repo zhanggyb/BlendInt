@@ -96,17 +96,17 @@ namespace BlendInt {
 		return false;
 	}
 
-	void MenuItem::PerformHoverIn(const AbstractWindow* context)
+	void MenuItem::PerformHoverIn(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void MenuItem::PerformHoverOut(const AbstractWindow* context)
+	void MenuItem::PerformHoverOut(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType MenuItem::Draw(const AbstractWindow* context)
+	ResponseType MenuItem::Draw(AbstractWindow* context)
 	{
 		// Menu Icon only show itself
 		if(action_->icon()) {

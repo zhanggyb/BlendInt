@@ -98,7 +98,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType MenuButton::Draw (const AbstractWindow* context)
+	ResponseType MenuButton::Draw (AbstractWindow* context)
 	{
 		if (hover()) {
 

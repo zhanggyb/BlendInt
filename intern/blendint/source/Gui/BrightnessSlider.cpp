@@ -82,7 +82,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType BrightnessSlider::Draw (const AbstractWindow* context)
+	ResponseType BrightnessSlider::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

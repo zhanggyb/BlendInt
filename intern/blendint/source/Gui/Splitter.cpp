@@ -189,7 +189,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SplitterHandle::Draw (const AbstractWindow* context)
+	ResponseType SplitterHandle::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_triangle_program()->use();
 
@@ -215,22 +215,22 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void SplitterHandle::PerformHoverIn(const AbstractWindow* context)
+	void SplitterHandle::PerformHoverIn(AbstractWindow* context)
 	{
 		highlight_ = true;
-		AbstractWindow::cursor->PushCursor();
-		AbstractWindow::cursor->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
+		context->PushCursor();
+		context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
 		RequestRedraw();
 	}
 
-	void SplitterHandle::PerformHoverOut(const AbstractWindow* context)
+	void SplitterHandle::PerformHoverOut(AbstractWindow* context)
 	{
 		highlight_ = false;
-		AbstractWindow::cursor->PopCursor();
+		context->PopCursor();
 		RequestRedraw();
 	}
 
-	ResponseType SplitterHandle::PerformMousePress (const AbstractWindow* context)
+	ResponseType SplitterHandle::PerformMousePress (AbstractWindow* context)
 	{
 		last_ = position();
 		cursor_ = context->GetCursorPosition();
@@ -249,7 +249,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType SplitterHandle::PerformMouseRelease (AbstractWindow* context)
 	{
 		if (pressed_) {
 			pressed_ = false;
@@ -258,7 +258,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseMove (const AbstractWindow* context)
+	ResponseType SplitterHandle::PerformMouseMove (AbstractWindow* context)
 	{
 		if(pressed_) {
 

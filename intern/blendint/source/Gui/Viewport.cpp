@@ -72,7 +72,7 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	ResponseType Viewport::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType Viewport::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -141,37 +141,37 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::PerformKeyPress(const AbstractWindow* context)
+	ResponseType Viewport::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	void Viewport::PerformHoverIn(const AbstractWindow* context)
+	void Viewport::PerformHoverIn(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void Viewport::PerformHoverOut(const AbstractWindow* context)
+	void Viewport::PerformHoverOut(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType Viewport::PerformMousePress(const AbstractWindow* context)
+	ResponseType Viewport::PerformMousePress(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType Viewport::PerformMouseRelease(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseMove(const AbstractWindow* context)
+	ResponseType Viewport::PerformMouseMove(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	bool Viewport::PreDraw(const AbstractWindow* context)
+	bool Viewport::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -188,7 +188,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Viewport::Draw(const AbstractWindow* context)
+	ResponseType Viewport::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -214,7 +214,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Viewport::PostDraw(const AbstractWindow* context)
+	void Viewport::PostDraw(AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());

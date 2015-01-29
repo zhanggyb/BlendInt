@@ -77,13 +77,13 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
 	private:
 

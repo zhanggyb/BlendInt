@@ -115,7 +115,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (const AbstractWindow* context)
+	ResponseType FileBrowser::Draw (AbstractWindow* context)
 	{
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
@@ -251,7 +251,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::PerformMousePress (const AbstractWindow* context)
+	ResponseType FileBrowser::PerformMousePress (AbstractWindow* context)
 	{
 		ModelIndex index;
 

@@ -52,15 +52,15 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual bool PreDraw (const AbstractWindow* context);
+		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PostDraw (const AbstractWindow* context);
+		virtual void PostDraw (AbstractWindow* context);
 
 	private:
 

@@ -226,7 +226,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 	
-	ResponseType NumericalSlider::Draw (const AbstractWindow* context)
+	ResponseType NumericalSlider::Draw (AbstractWindow* context)
 	{
 		float x = context->active_frame()->GetRelativePosition(this).x()
 				- context->viewport_origin().x();
@@ -293,12 +293,12 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void NumericalSlider::PerformHoverIn(const AbstractWindow* context)
+	void NumericalSlider::PerformHoverIn(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void NumericalSlider::PerformHoverOut(const AbstractWindow* context)
+	void NumericalSlider::PerformHoverOut(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}

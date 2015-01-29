@@ -102,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButton::Draw(const AbstractWindow* context)
+	ResponseType EdgeButton::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -374,35 +374,35 @@ namespace BlendInt {
 		}
 	}
 
-	bool Workspace::PreDraw(const AbstractWindow* context)
+	bool Workspace::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType Workspace::Draw (const AbstractWindow* context)
+	ResponseType Workspace::Draw (AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Workspace::PostDraw(const AbstractWindow* context)
+	void Workspace::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformFocusOn (const AbstractWindow* context)
+	void Workspace::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformFocusOff (const AbstractWindow* context)
+	void Workspace::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformHoverIn(const AbstractWindow* context)
+	void Workspace::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformHoverOut(const AbstractWindow* context)
+	void Workspace::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -410,7 +410,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Workspace::PerformKeyPress(const AbstractWindow* context)
+	ResponseType Workspace::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -418,7 +418,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Workspace::PerformMousePress(const AbstractWindow* context)
+	ResponseType Workspace::PerformMousePress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -436,7 +436,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Workspace::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType Workspace::PerformMouseRelease(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -448,7 +448,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::PerformMouseMove(const AbstractWindow* context)
+	ResponseType Workspace::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -459,7 +459,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType Workspace::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 
@@ -491,7 +491,7 @@ namespace BlendInt {
 		return focused_frame_;
 	}
 
-	void Workspace::SetFocusedFrame(AbstractFrame* frame, const AbstractWindow* context)
+	void Workspace::SetFocusedFrame(AbstractFrame* frame, AbstractWindow* context)
 	{
     	if(focused_frame_ == frame) return;
 
@@ -528,7 +528,7 @@ namespace BlendInt {
 		return Frame::RemoveSubView(view);
 	}
 
-	void Workspace::SetHoveredFrame (const AbstractWindow* context)
+	void Workspace::SetHoveredFrame (AbstractWindow* context)
 	{
 		AbstractFrame* original = hover_frame_;
 

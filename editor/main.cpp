@@ -25,8 +25,6 @@
  * @brief BlendInt UI Editor
  */
 
-#include "CursorTheme.hpp"
-#include "Window.hpp"
 #include "EditorContext.hpp"
 #include <BlendInt/Gui/Window.hpp>
 
@@ -43,8 +41,13 @@ int main (int argc, char* argv[])
 		Dialog* dlg = new Dialog;
 		win.AddFrame(dlg);
 
+		Button* lb = new Button("Hello");
+		dlg->AddWidget(lb);
+
 		win.Exec();
 
 		Window::Terminate();
 	}
+
+	return 0;
 }

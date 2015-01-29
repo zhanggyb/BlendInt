@@ -38,7 +38,6 @@ namespace BlendInt {
 	Theme* AbstractWindow::theme = 0;
 	Icons* AbstractWindow::icons = 0;
 	Shaders* AbstractWindow::shaders = 0;
-	BlendInt::Cursor* AbstractWindow::cursor = 0;
 
 	glm::mat4 AbstractWindow::default_view_matrix =
 		glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
@@ -48,7 +47,8 @@ namespace BlendInt {
 	AbstractWindow::AbstractWindow()
 	: AbstractView(),
 	  active_frame_(nullptr),
-	  stencil_count_(0)
+	  stencil_count_(0),
+	  current_cursor_(ArrowCursor)
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -61,7 +61,8 @@ namespace BlendInt {
 	AbstractWindow::AbstractWindow (int width, int height)
 	: AbstractView(width, height),
 	  active_frame_(nullptr),
-	  stencil_count_(0)
+	  stencil_count_(0),
+	  current_cursor_(ArrowCursor)
 	{
 		set_refresh(true);
 
@@ -155,6 +156,28 @@ namespace BlendInt {
 		return true;
 	}
 
+	void AbstractWindow::SetCursor(int cursor_type)
+	{
+		current_cursor_ = cursor_type;
+	}
+
+	void AbstractWindow::PushCursor ()
+	{
+		cursor_stack_.push(current_cursor_);
+	}
+
+	void AbstractWindow::PopCursor ()
+	{
+		int cursor = ArrowCursor;
+
+		if(!cursor_stack_.empty()) {
+			cursor = cursor_stack_.top();
+			cursor_stack_.pop();
+		}
+
+		SetCursor(cursor);
+	}
+
 	void AbstractWindow::BeginPushStencil ()
 	{
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -230,15 +253,6 @@ namespace BlendInt {
 		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
 #endif
 
-		if (success && Fc::Config::init()) {
-			// do nothing
-		} else {
-
-			DBG_PRINT_MSG("%s", "Cannot initialize FontConfig");
-			success = false;
-
-		}
-
 		if (success && InitializeTheme()) {
 			// do nothing
 		} else {
@@ -258,13 +272,6 @@ namespace BlendInt {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
-			success = false;
-		}
-
-		if (success && InitializeCursor()) {
-			// do nothing;
-		} else {
-			DBG_PRINT_MSG ("%s", "Cannot initilize Cursor");
 			success = false;
 		}
 
@@ -290,8 +297,6 @@ namespace BlendInt {
 		ReleaseIcons();
 		ReleaseShaders();
 		ReleaseTheme();
-		ReleaseCursor();
-		Fc::Config::fini();
 	}
 
 	bool AbstractWindow::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -305,21 +310,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWindow::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-	}
-
-	void AbstractWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-	}
-
-	bool AbstractWindow::PreDraw (const AbstractWindow* context)
+	bool AbstractWindow::PreDraw (AbstractWindow* context)
 	{
 		return true;
 	}
 
-	ResponseType AbstractWindow::Draw (const AbstractWindow* context)
+	ResponseType AbstractWindow::Draw (AbstractWindow* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
@@ -332,27 +328,27 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void AbstractWindow::PostDraw (const AbstractWindow* context)
+	void AbstractWindow::PostDraw (AbstractWindow* context)
 	{
 	}
 
-	void AbstractWindow::PerformFocusOn (const AbstractWindow* context)
+	void AbstractWindow::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void AbstractWindow::PerformFocusOff (const AbstractWindow* context)
+	void AbstractWindow::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void AbstractWindow::PerformHoverIn (const AbstractWindow* context)
+	void AbstractWindow::PerformHoverIn (AbstractWindow* context)
 	{
 	}
 
-	void AbstractWindow::PerformHoverOut (const AbstractWindow* context)
+	void AbstractWindow::PerformHoverOut (AbstractWindow* context)
 	{
 	}
 
-	ResponseType AbstractWindow::PerformKeyPress (const AbstractWindow* context)
+	ResponseType AbstractWindow::PerformKeyPress (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -365,21 +361,20 @@ namespace BlendInt {
 	}
 
 	ResponseType AbstractWindow::PerformContextMenuPress (
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
 	ResponseType AbstractWindow::PerformContextMenuRelease (
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWindow::PerformMousePress (const AbstractWindow* context)
+	ResponseType AbstractWindow::PerformMousePress (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
-		//assert(context->leaf_frame() == 0);
 
 		set_pressed(true);
 
@@ -393,7 +388,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType AbstractWindow::PerformMouseRelease (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -409,7 +404,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseMove (const AbstractWindow* context)
+	ResponseType AbstractWindow::PerformMouseMove (AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -493,16 +488,6 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool AbstractWindow::InitializeCursor ()
-	{
-		if(!cursor) {
-			cursor = new Cursor;
-			cursor->RegisterCursorType(new BlankCursorTheme);
-		}
-
-		return true;
-	}
-
 	bool AbstractWindow::InitializeFont ()
 	{
         Fc::Pattern p = Fc::Pattern::name_parse((const FcChar8*)theme->default_font());
@@ -543,14 +528,6 @@ namespace BlendInt {
 		if (shaders) {
 			delete shaders;
 			shaders = 0;
-		}
-	}
-
-	void AbstractWindow::ReleaseCursor ()
-	{
-		if(cursor) {
-			delete cursor;
-			cursor = nullptr;
 		}
 	}
 

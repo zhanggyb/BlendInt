@@ -67,23 +67,23 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformHoverIn (const AbstractWindow* context);
+		virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const AbstractWindow* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
+		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
 		virtual void Render ();
 
 	private:
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
 		void InitializeViewport3DOnce ();
 

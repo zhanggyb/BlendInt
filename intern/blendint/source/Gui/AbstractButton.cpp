@@ -125,7 +125,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractButton::PerformHoverIn(const AbstractWindow* context)
+	void AbstractButton::PerformHoverIn(AbstractWindow* context)
 	{
 		if(m_status[ButtonPressed]) {
 			m_status[ButtonDown] = 1;
@@ -138,7 +138,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void AbstractButton::PerformHoverOut(const AbstractWindow* context)
+	void AbstractButton::PerformHoverOut(AbstractWindow* context)
 	{
 		if(m_status[ButtonPressed]) {
 			m_status[ButtonDown] = 0;
@@ -152,7 +152,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType AbstractButton::PerformMousePress (const AbstractWindow* context)
+	ResponseType AbstractButton::PerformMousePress (AbstractWindow* context)
 	{
 		set_pressed(true);
 
@@ -173,7 +173,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType AbstractButton::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType AbstractButton::PerformMouseRelease(AbstractWindow* context)
 	{
 		if (context->GetMouseButton() == MouseButtonLeft) {
 			int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
@@ -236,7 +236,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType AbstractButton::PerformMouseMove (const AbstractWindow* context)
+	ResponseType AbstractButton::PerformMouseMove (AbstractWindow* context)
 	{
 		/*
 		if (m_status[ButtonDown]) {

@@ -33,19 +33,39 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Stock/Cursor.hpp>
 
 namespace BlendInt {
 
+	/**
+	 * @brief Abstract class for window
+	 *
+	 * The AbstractWindow class represents a window in the desktop.
+	 *
+	 * A sub class should override the virual functions and make sure
+	 * an OpenGL context is created.
+	 *
+	 * @see Window
+	 */
 	class AbstractWindow: public AbstractView
 	{
 
 	public:
 
+		/**
+		 * @brief Default constructor
+		 *
+		 * Create a 640, 480 window
+		 */
 		AbstractWindow();
 
+		/**
+		 * @brief Constructor with window size
+		 */
 		AbstractWindow(int width, int height);
 
+		/**
+		 * @brief Destructor
+		 */
 		virtual ~AbstractWindow ();
 
 		bool AddFrame (AbstractFrame* frame, bool focus = true);
@@ -56,11 +76,23 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
+		/**
+		 * @brief Make this window as the current OpenGL Context
+		 */
 		virtual void MakeCurrent () = 0;
 
+		/**
+		 * @brief Synchronize this window to redraw contents
+		 */
 		virtual void Synchronize () = 0;
 
 		virtual void Exec () = 0;
+
+		virtual void SetCursor (int cursor_type);
+
+		void PushCursor ();
+
+		void PopCursor ();
 
 		void BeginPushStencil ();
 
@@ -104,6 +136,13 @@ namespace BlendInt {
 			return viewport_origin_;
 		}
 
+		int current_cursor () const
+		{
+			return current_cursor_;
+		}
+
+		Cpp::ConnectionScope* events() const {return events_.get();}
+
 		static AbstractWindow* GetContext (AbstractView* widget);
 
 		static bool InitializeGLContext ();
@@ -116,49 +155,41 @@ namespace BlendInt {
 
 		static Shaders* shaders;
 
-		static Cursor* cursor;
-
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual bool PreDraw (const AbstractWindow* context);
+		virtual void PostDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PostDraw (const AbstractWindow* context);
+		virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformFocusOn (const AbstractWindow* context);
+		virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (const AbstractWindow* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual void PerformHoverIn (const AbstractWindow* context);
+		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const AbstractWindow* context);
+		virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
+		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuPress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (const AbstractWindow* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
-
-		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
-
-		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
 		virtual bool RemoveSubView (AbstractView* view);
 
 		void DispatchHoverEvent ();
-
-		Cpp::ConnectionScope* events() const {return events_.get();}
 
 		inline void set_viewport_origin (int x, int y)
 		{
@@ -193,8 +224,6 @@ namespace BlendInt {
 
 		static bool InitializeShaders ();
 
-		static bool InitializeCursor ();
-
 		static bool InitializeFont ();
 
 		static void ReleaseTheme ();
@@ -202,8 +231,6 @@ namespace BlendInt {
 		static void ReleaseIcons ();
 
 		static void ReleaseShaders ();
-
-		static void ReleaseCursor ();
 
 		static void ReleaseFont ();
 
@@ -219,6 +246,10 @@ namespace BlendInt {
 		Point viewport_origin_;
 
 		GLuint stencil_count_;
+
+		int current_cursor_;
+
+		std::stack<int> cursor_stack_;
 
 	};
 

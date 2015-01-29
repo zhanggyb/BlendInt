@@ -60,7 +60,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
 		void GenerateClockVertices (int radius, float border,
 		        std::vector<GLfloat>& inner_vertices,

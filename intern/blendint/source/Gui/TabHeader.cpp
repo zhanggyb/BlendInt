@@ -152,7 +152,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TabHeader::Draw (const AbstractWindow* context)
+	ResponseType TabHeader::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

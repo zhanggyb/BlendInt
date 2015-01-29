@@ -73,7 +73,7 @@ namespace BlendInt {
 		set_round_type(round);
 	}
 
-	bool AbstractNode::PreDraw (const AbstractWindow* context)
+	bool AbstractNode::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -88,55 +88,55 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractNode::PostDraw (const AbstractWindow* context)
+	void AbstractNode::PostDraw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	void AbstractNode::PerformFocusOn (const AbstractWindow* context)
+	void AbstractNode::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformFocusOff (const AbstractWindow* context)
+	void AbstractNode::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverIn (const AbstractWindow* context)
+	void AbstractNode::PerformHoverIn (AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverOut (const AbstractWindow* context)
+	void AbstractNode::PerformHoverOut (AbstractWindow* context)
 	{
 	}
 
-	ResponseType AbstractNode::PerformKeyPress (const AbstractWindow* context)
+	ResponseType AbstractNode::PerformKeyPress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuPress (
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuRelease (
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMousePress (const AbstractWindow* context)
+	ResponseType AbstractNode::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType AbstractNode::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseMove (const AbstractWindow* context)
+	ResponseType AbstractNode::PerformMouseMove (AbstractWindow* context)
 	{
 		return Ignore;
 	}

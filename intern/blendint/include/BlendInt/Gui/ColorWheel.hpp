@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
 		void GenerateWheelVertices (int radius,
 						std::vector<GLfloat>& inner_vertices,

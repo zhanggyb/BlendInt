@@ -78,15 +78,15 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PerformFocusOn (const AbstractWindow* context);
+		virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (const AbstractWindow* context);
+		virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const AbstractWindow* context);
+		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
 	private:
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		int GetValidTextSize ();
 
-		int GetCursorPosition (const AbstractWindow* context);
+		int GetCursorPosition (AbstractWindow* context);
 
 		/**
 		 * @brief Get the index and length of the text to show

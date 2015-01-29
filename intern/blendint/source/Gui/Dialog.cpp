@@ -350,7 +350,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Dialog::PreDraw(const AbstractWindow* context)
+	bool Dialog::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -363,7 +363,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Dialog::Draw(const AbstractWindow* context)
+	ResponseType Dialog::Draw(AbstractWindow* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -408,24 +408,24 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Dialog::PostDraw (const AbstractWindow* context)
+	void Dialog::PostDraw (AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformFocusOn (const AbstractWindow* context)
+	void Dialog::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformFocusOff (const AbstractWindow* context)
+	void Dialog::PerformFocusOff (AbstractWindow* context)
 	{
 
 	}
 
-	void Dialog::PerformHoverIn(const AbstractWindow* context)
+	void Dialog::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformHoverOut(const AbstractWindow* context)
+	void Dialog::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
@@ -434,7 +434,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Dialog::PerformKeyPress(const AbstractWindow* context)
+	ResponseType Dialog::PerformKeyPress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -453,18 +453,18 @@ namespace BlendInt {
 	}
 
 	ResponseType Dialog::PerformContextMenuPress(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType Dialog::PerformContextMenuRelease(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMousePress(const AbstractWindow* context)
+	ResponseType Dialog::PerformMousePress(AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -517,7 +517,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType Dialog::PerformMouseRelease(AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
@@ -530,7 +530,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMouseMove(const AbstractWindow* context)
+	ResponseType Dialog::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
@@ -616,7 +616,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType Dialog::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
@@ -658,7 +658,7 @@ namespace BlendInt {
 				// set cursor shape
 				if(cursor_on_border()) {
 					set_cursor_on_border(false);
-					AbstractWindow::cursor->PopCursor();
+					context->PopCursor();
 				}
 
 			} else {
@@ -683,30 +683,30 @@ namespace BlendInt {
 
 					case OnLeftBorder:
 					case OnRightBorder: {
-						AbstractWindow::cursor->PushCursor();
-						AbstractWindow::cursor->SetCursor(SplitHCursor);
+						context->PushCursor();
+						context->SetCursor(SplitHCursor);
 
 						break;
 					}
 
 					case OnTopBorder:
 					case OnBottomBorder: {
-						AbstractWindow::cursor->PushCursor();
-						AbstractWindow::cursor->SetCursor(SplitVCursor);
+						context->PushCursor();
+						context->SetCursor(SplitVCursor);
 						break;
 					}
 
 					case OnTopLeftCorner:
 					case OnBottomRightCorner: {
-						AbstractWindow::cursor->PushCursor();
-						AbstractWindow::cursor->SetCursor(SizeFDiagCursor);
+						context->PushCursor();
+						context->SetCursor(SizeFDiagCursor);
 						break;
 					}
 
 					case OnTopRightCorner:
 					case OnBottomLeftCorner: {
-						AbstractWindow::cursor->PushCursor();
-						AbstractWindow::cursor->SetCursor(SizeBDiagCursor);
+						context->PushCursor();
+						context->SetCursor(SizeBDiagCursor);
 						break;
 					}
 
@@ -722,7 +722,7 @@ namespace BlendInt {
 			// set cursor shape
 			if(cursor_on_border()) {
 				set_cursor_on_border(false);
-				AbstractWindow::cursor->PopCursor();
+				context->PopCursor();
 			}
 
 			retval = Ignore;
@@ -749,7 +749,7 @@ namespace BlendInt {
 		layout_->Resize(size().width(), size().height() - h);
 	}
 
-	void Dialog::SetFocusedWidget(AbstractWidget* widget, const AbstractWindow* context)
+	void Dialog::SetFocusedWidget(AbstractWidget* widget, AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;
@@ -811,17 +811,16 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD), 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
+		GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD),
-				2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
 

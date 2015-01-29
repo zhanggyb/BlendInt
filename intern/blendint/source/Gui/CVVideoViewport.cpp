@@ -236,7 +236,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool CVVideoViewport::PreDraw(const AbstractWindow* context)
+	bool CVVideoViewport::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -253,7 +253,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType CVVideoViewport::Draw(const AbstractWindow* context)
+	ResponseType CVVideoViewport::Draw(AbstractWindow* context)
 	{
 		if(status_ == VideoStop) {
 			return Finish;
@@ -334,7 +334,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void CVVideoViewport::PostDraw(const AbstractWindow* context)
+	void CVVideoViewport::PostDraw(AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());

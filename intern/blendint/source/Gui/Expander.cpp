@@ -96,7 +96,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ExpandButton::Draw (const AbstractWindow* context)
+	ResponseType ExpandButton::Draw (AbstractWindow* context)
 	{
 		float rotate = 0.f;
 		if(is_checked()) {
@@ -279,7 +279,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Expander::Draw (const AbstractWindow* context)
+	ResponseType Expander::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

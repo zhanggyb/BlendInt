@@ -161,7 +161,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType FileButton::Draw (const AbstractWindow* context)
+	ResponseType FileButton::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

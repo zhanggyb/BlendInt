@@ -60,7 +60,7 @@ namespace BlendInt {
 		return Size(240, 160);
 	}
 
-	ResponseType FolderList::Draw (const AbstractWindow* context)
+	ResponseType FolderList::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

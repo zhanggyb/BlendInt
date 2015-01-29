@@ -71,15 +71,15 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (const AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const AbstractWindow* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const AbstractWindow* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const AbstractWindow* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const AbstractWindow* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
 		/**
 		 * @brief calculate the space width in which slider can move

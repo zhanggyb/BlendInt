@@ -147,7 +147,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextEntry::PerformKeyPress (const AbstractWindow* context)
+	ResponseType TextEntry::PerformKeyPress (AbstractWindow* context)
 	{
 		if(!context->GetTextInput().empty()) {
 
@@ -214,7 +214,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextEntry::PerformMousePress(const AbstractWindow* context)
+	ResponseType TextEntry::PerformMousePress(AbstractWindow* context)
 	{
 		if(text_.size()) {
 			index_ = GetCursorPosition(context);
@@ -321,7 +321,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType TextEntry::Draw (const AbstractWindow* context)
+	ResponseType TextEntry::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -379,12 +379,12 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextEntry::PerformFocusOn (const AbstractWindow* context)
+	void TextEntry::PerformFocusOn (AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void TextEntry::PerformFocusOff (const AbstractWindow* context)
+	void TextEntry::PerformFocusOff (AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
@@ -610,7 +610,7 @@ namespace BlendInt {
 		}
 	}
 	
-	int TextEntry::GetCursorPosition (const AbstractWindow* context)
+	int TextEntry::GetCursorPosition (AbstractWindow* context)
 	{
 		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
 

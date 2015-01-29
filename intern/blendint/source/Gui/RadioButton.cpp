@@ -209,7 +209,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType RadioButton::Draw (const AbstractWindow* context)
+	ResponseType RadioButton::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

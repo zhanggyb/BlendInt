@@ -168,12 +168,12 @@ namespace BlendInt {
 		return false;
 	}
 
-	ResponseType Menu::PerformMouseMove(const AbstractWindow* context)
+	ResponseType Menu::PerformMouseMove(AbstractWindow* context)
 	{
 		return Finish;
 	}
 
-	ResponseType Menu::PerformMousePress (const AbstractWindow* context)
+	ResponseType Menu::PerformMousePress (AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -205,7 +205,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Menu::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType Menu::PerformMouseRelease (AbstractWindow* context)
 	{
 		cursor_range_ = InsideRectangle;
 		set_pressed(false);
@@ -341,15 +341,15 @@ namespace BlendInt {
 //		highlight_buffer_->reset();
 	}
 	
-	void Menu::PerformFocusOn (const AbstractWindow* context)
+	void Menu::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void Menu::PerformFocusOff (const AbstractWindow* context)
+	void Menu::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	bool Menu::PreDraw(const AbstractWindow* context)
+	bool Menu::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -362,7 +362,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Menu::Draw (const AbstractWindow* context)
+	ResponseType Menu::Draw (AbstractWindow* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
@@ -407,15 +407,15 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Menu::PostDraw(const AbstractWindow* context)
+	void Menu::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	void Menu::PerformHoverIn(const AbstractWindow* context)
+	void Menu::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Menu::PerformHoverOut(const AbstractWindow* context)
+	void Menu::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Menu::OnHoverWidgetDestroyed);
@@ -424,7 +424,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Menu::PerformKeyPress(const AbstractWindow* context)
+	ResponseType Menu::PerformKeyPress(AbstractWindow* context)
 	{
 		if(context->GetKeyInput() == Key_Escape) {
 			RequestRedraw();
@@ -435,17 +435,17 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Menu::PerformContextMenuPress(const AbstractWindow* context)
+	ResponseType Menu::PerformContextMenuPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::PerformContextMenuRelease(const AbstractWindow* context)
+	ResponseType Menu::PerformContextMenuRelease(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Menu::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType Menu::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 
@@ -593,7 +593,7 @@ namespace BlendInt {
 		hovered_widget_ = nullptr;
 	}
 
-	void Menu::SetFocusedWidget(AbstractWidget* widget, const AbstractWindow* context)
+	void Menu::SetFocusedWidget(AbstractWidget* widget, AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;

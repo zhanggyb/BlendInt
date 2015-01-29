@@ -217,7 +217,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	bool ScrollView::PreDraw(const AbstractWindow* context)
+	bool ScrollView::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
@@ -252,7 +252,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollView::Draw (const AbstractWindow* context)
+	ResponseType ScrollView::Draw (AbstractWindow* context)
 	{
 		if(subs_count()) {
 
@@ -271,7 +271,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::PostDraw(const AbstractWindow* context)
+	void ScrollView::PostDraw(AbstractWindow* context)
 	{
 		if(subs_count())
 			AbstractWindow::shaders->PopWidgetModelMatrix();
@@ -296,7 +296,7 @@ namespace BlendInt {
 		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	ResponseType ScrollView::PerformMousePress (const AbstractWindow* context)
+	ResponseType ScrollView::PerformMousePress (AbstractWindow* context)
 	{
 		if (context->GetMouseButton() == MouseButtonMiddle) {
 			moving_ = true;
@@ -309,7 +309,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType ScrollView::PerformMouseRelease(AbstractWindow* context)
 	{
 		if(moving_) {
 			moving_ = false;
@@ -319,7 +319,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseMove(const AbstractWindow* context)
+	ResponseType ScrollView::PerformMouseMove(AbstractWindow* context)
 	{
 		if(moving_) {
 

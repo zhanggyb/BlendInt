@@ -59,7 +59,7 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	bool AbstractWidget::PreDraw(const AbstractWindow* context)
+	bool AbstractWidget::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -80,64 +80,64 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWidget::PostDraw(const AbstractWindow* context)
+	void AbstractWidget::PostDraw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	void AbstractWidget::PerformFocusOn (const AbstractWindow* context)
+	void AbstractWidget::PerformFocusOn (AbstractWindow* context)
 	{
 
 	}
 
-	void AbstractWidget::PerformFocusOff (const AbstractWindow* context)
+	void AbstractWidget::PerformFocusOff (AbstractWindow* context)
 	{
 
 	}
 
-	void AbstractWidget::PerformHoverIn(const AbstractWindow* context)
+	void AbstractWidget::PerformHoverIn(AbstractWindow* context)
 	{
 
 	}
 
-	void AbstractWidget::PerformHoverOut(const AbstractWindow* context)
+	void AbstractWidget::PerformHoverOut(AbstractWindow* context)
 	{
 
 	}
 
-	ResponseType AbstractWidget::PerformKeyPress (const AbstractWindow* context)
-	{
-		return subs_count() ? Ignore : Finish;
-	}
-
-	ResponseType AbstractWidget::PerformContextMenuPress (const AbstractWindow* context)
+	ResponseType AbstractWidget::PerformKeyPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformContextMenuRelease (const AbstractWindow* context)
+	ResponseType AbstractWidget::PerformContextMenuPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMousePress (const AbstractWindow* context)
+	ResponseType AbstractWidget::PerformContextMenuRelease (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType AbstractWidget::PerformMousePress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseMove (const AbstractWindow* context)
+	ResponseType AbstractWidget::PerformMouseRelease (AbstractWindow* context)
+	{
+		return subs_count() ? Ignore : Finish;
+	}
+
+	ResponseType AbstractWidget::PerformMouseMove (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
 	bool AbstractWidget::RenderSubWidgetsToTexture (
 			AbstractWidget* widget,
-			const AbstractWindow* context,
+			AbstractWindow* context,
 			GLTexture2D* texture)
 	{
 		bool retval = false;

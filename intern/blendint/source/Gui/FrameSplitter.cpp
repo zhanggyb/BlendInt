@@ -150,12 +150,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitterHandle::PreDraw(const AbstractWindow* context)
+	bool FrameSplitterHandle::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitterHandle::Draw(const AbstractWindow* context)
+	ResponseType FrameSplitterHandle::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->frame_inner_program()->use();
 
@@ -180,39 +180,39 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitterHandle::PostDraw(const AbstractWindow* context)
+	void FrameSplitterHandle::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitterHandle::PerformFocusOn(const AbstractWindow* context)
-	{
-
-	}
-
-	void FrameSplitterHandle::PerformFocusOff (const AbstractWindow* context)
+	void FrameSplitterHandle::PerformFocusOn(AbstractWindow* context)
 	{
 
 	}
 
-	ResponseType FrameSplitterHandle::PerformKeyPress(const AbstractWindow* context)
+	void FrameSplitterHandle::PerformFocusOff (AbstractWindow* context)
+	{
+
+	}
+
+	ResponseType FrameSplitterHandle::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformContextMenuPress(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformContextMenuRelease(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType FrameSplitterHandle::PerformMousePress(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		last_ = position();
 		cursor_ = context->GetCursorPosition();
@@ -233,37 +233,37 @@ namespace BlendInt {
 	}
 
 	ResponseType FrameSplitterHandle::PerformMouseRelease(
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		if(!hover()) {
-			AbstractWindow::cursor->PopCursor();
+			context->PopCursor();
 		}
 
 		set_pressed(false);
 		return Finish;
 	}
 
-	void FrameSplitterHandle::PerformHoverIn(const AbstractWindow* context)
+	void FrameSplitterHandle::PerformHoverIn(AbstractWindow* context)
 	{
-		AbstractWindow::cursor->PushCursor();
+		context->PushCursor();
 		if(orientation_ == Horizontal) {
-			AbstractWindow::cursor->SetCursor(SplitVCursor);
+			context->SetCursor(SplitVCursor);
 		} else {
-			AbstractWindow::cursor->SetCursor(SplitHCursor);
+			context->SetCursor(SplitHCursor);
 		}
 
 		//RequestRedraw();
 	}
 
-	void FrameSplitterHandle::PerformHoverOut(const AbstractWindow* context)
+	void FrameSplitterHandle::PerformHoverOut(AbstractWindow* context)
 	{
 		if(!pressed_ext())
-			AbstractWindow::cursor->PopCursor();
+			context->PopCursor();
 
 		//RequestRedraw();
 	}
 
-	ResponseType FrameSplitterHandle::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType FrameSplitterHandle::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -272,7 +272,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitterHandle::PerformMouseMove(const AbstractWindow* context)
+	ResponseType FrameSplitterHandle::PerformMouseMove(AbstractWindow* context)
 	{
 		if(pressed_ext()) {
 
@@ -541,19 +541,19 @@ namespace BlendInt {
 		}
 	}
 
-	bool FrameSplitter::PreDraw(const AbstractWindow* context)
+	bool FrameSplitter::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType FrameSplitter::Draw(const AbstractWindow* context)
+	ResponseType FrameSplitter::Draw(AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void FrameSplitter::PostDraw(const AbstractWindow* context)
+	void FrameSplitter::PostDraw(AbstractWindow* context)
 	{
 	}
 
@@ -612,19 +612,19 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::PerformFocusOn (const AbstractWindow* context)
+	void FrameSplitter::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformFocusOff (const AbstractWindow* context)
+	void FrameSplitter::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformHoverIn(const AbstractWindow* context)
+	void FrameSplitter::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void FrameSplitter::PerformHoverOut(const AbstractWindow* context)
+	void FrameSplitter::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -632,7 +632,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitter::PerformKeyPress(const AbstractWindow* context)
+	ResponseType FrameSplitter::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -641,7 +641,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType FrameSplitter::PerformMousePress(const AbstractWindow* context)
+	ResponseType FrameSplitter::PerformMousePress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -659,7 +659,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitter::PerformMouseRelease(const AbstractWindow* context)
+	ResponseType FrameSplitter::PerformMouseRelease(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -671,7 +671,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::PerformMouseMove(const AbstractWindow* context)
+	ResponseType FrameSplitter::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -682,7 +682,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::DispatchHoverEvent(const AbstractWindow* context)
+	ResponseType FrameSplitter::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 
@@ -1419,7 +1419,7 @@ namespace BlendInt {
         }
     }
 
-    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, const AbstractWindow* context)
+    void FrameSplitter::SetFocusedFrame(AbstractFrame* frame, AbstractWindow* context)
     {
     	if(focused_frame_ == frame) return;
 
@@ -1452,7 +1452,7 @@ namespace BlendInt {
 		return AbstractFrame::RemoveSubView(view);
 	}
 
-	void FrameSplitter::SetHoveredFrame (const AbstractWindow* context)
+	void FrameSplitter::SetHoveredFrame (AbstractWindow* context)
 	{
 		AbstractFrame* original = hover_frame_;
 

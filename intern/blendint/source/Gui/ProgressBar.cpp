@@ -167,7 +167,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ProgressBar::Draw(const AbstractWindow* context)
+	ResponseType ProgressBar::Draw(AbstractWindow* context)
 	{
 		float x = context->active_frame()->GetRelativePosition(this).x()
 				- context->viewport_origin().x();

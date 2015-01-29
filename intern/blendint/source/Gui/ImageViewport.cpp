@@ -298,7 +298,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool ImageViewport::PreDraw(const AbstractWindow* context)
+	bool ImageViewport::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
@@ -315,7 +315,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ImageViewport::Draw (const AbstractWindow* context)
+	ResponseType ImageViewport::Draw (AbstractWindow* context)
 	{
 		if(texture_ && glIsTexture(texture_->id())) {
 
@@ -345,7 +345,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ImageViewport::PostDraw(const AbstractWindow* context)
+	void ImageViewport::PostDraw(AbstractWindow* context)
 	{
 		glDisable(GL_SCISSOR_TEST);
 		glViewport(0, 0, context->size().width(), context->size().height());

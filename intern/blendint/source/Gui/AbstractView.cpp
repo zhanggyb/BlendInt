@@ -449,7 +449,7 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractView::DrawSubViewsOnce(const AbstractWindow* context)
+	void AbstractView::DrawSubViewsOnce(AbstractWindow* context)
 	{
 		bool refresh_record = false;
 
@@ -478,7 +478,7 @@ namespace BlendInt {
 	}
 
 	void AbstractView::DispatchDrawEvent (AbstractView* widget,
-	        const AbstractWindow* context)
+	        AbstractWindow* context)
 	{
 #ifdef DEBUG
 		assert(widget != 0);

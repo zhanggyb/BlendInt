@@ -21,12 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <cassert>
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <boost/filesystem.hpp>
+
+#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Core/Image.hpp>
+
+#include <BlendInt/Font/FcConfig.hpp>
+
 #include <BlendInt/Gui/Window.hpp>
 
+#include <BlendIntConfig.hpp>
+
 namespace BlendInt {
+
+	GLFWcursor* Window::kArrowCursor = NULL;
+	GLFWcursor* Window::kCrossCursor = NULL;
+	GLFWcursor* Window::kSplitVCursor = NULL;
+	GLFWcursor* Window::kSplitHCursor = NULL;
+	GLFWcursor* Window::kTopLeftCornerCursor = NULL;
+	GLFWcursor* Window::kTopRightCornerCursor = NULL;
 
 	std::map<GLFWwindow*, Window*> Window::kWindowMap;
 
@@ -58,10 +76,12 @@ namespace BlendInt {
 		}
 
 		glfwSetWindowSizeCallback(window_, &CbWindowSize);
+		glfwSetWindowPosCallback(window_, &CbWindowPosition);
 		glfwSetKeyCallback(window_, &CbKey);
 		glfwSetCharCallback(window_, &CbChar);
 		glfwSetMouseButtonCallback(window_, &CbMouseButton);
 		glfwSetCursorPosCallback(window_, &CbCursorPos);
+		glfwSetWindowCloseCallback(window_, &CbClose);
 #ifdef __APPLE__
 		glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
 #endif
@@ -74,6 +94,8 @@ namespace BlendInt {
 				DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
 				exit(EXIT_FAILURE);
 			}
+
+			// cursor->RegisterCursorTheme(new GLFWCursor(window_));
 
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 			shaders->SetFrameProjectionMatrix(projection);
@@ -89,9 +111,8 @@ namespace BlendInt {
 
 	Window::~Window ()
 	{
-		ReleaseGLContext();
-
 		kWindowMap.erase(window_);
+		//glfwDestroyWindow(window_);
 		window_ = 0;
 	}
 
@@ -127,6 +148,51 @@ namespace BlendInt {
 #else
             glfwWaitEvents();
 #endif  // __APPLE__
+		}
+	}
+
+	void Window::SetCursor(int cursor_type)
+	{
+		if (cursor_type < 0 || cursor_type >= CursorShapeLast) {
+			return;
+		}
+
+		switch (cursor_type) {
+
+			case ArrowCursor: {
+				glfwSetCursor(window_, kArrowCursor);
+				break;
+			}
+
+			case CrossCursor: {
+				glfwSetCursor(window_, kCrossCursor);
+				break;
+			}
+
+			case SplitVCursor: {
+				glfwSetCursor(window_, kSplitVCursor);
+				break;
+			}
+
+			case SplitHCursor: {
+				glfwSetCursor(window_, kSplitHCursor);
+				break;
+			}
+
+			case SizeFDiagCursor: {
+				glfwSetCursor(window_, kTopLeftCornerCursor);
+				break;
+			}
+
+			case SizeBDiagCursor: {
+				glfwSetCursor(window_, kTopRightCornerCursor);
+				break;
+			}
+
+			default: {
+				glfwSetCursor(window_, kArrowCursor);
+				break;
+			}
 		}
 	}
 
@@ -172,11 +238,18 @@ namespace BlendInt {
 
 	bool Window::Initialize ()
 	{
+		if (!Fc::Config::init()) {
+			DBG_PRINT_MSG("Critical: %s", "Cannot initialize Fontconfig");
+			return false;
+		}
+
 		/* Initialize the library */
 		if (!glfwInit()) {
 			DBG_PRINT_MSG("Critical: %s", "Cannot initialize GLFW");
 			return false;
 		}
+
+		CreateCursors();
 
 		glfwSetErrorCallback(&CbError);
 
@@ -190,7 +263,35 @@ namespace BlendInt {
 
 	void Window::Terminate ()
 	{
+		glfwDestroyCursor(kArrowCursor);
+		glfwDestroyCursor(kCrossCursor);
+		glfwDestroyCursor(kSplitVCursor);
+		glfwDestroyCursor(kSplitHCursor);
+		glfwDestroyCursor(kTopLeftCornerCursor);
+		glfwDestroyCursor(kTopRightCornerCursor);
+
 		glfwTerminate();
+		Fc::Config::fini();
+	}
+
+	void Window::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_position(*request.position());
+
+//			GLFWmonitor* monitor = glfwGetWindowMonitor(window_);
+//
+//			int monitor_width, monitor_height;
+//			glfwGetMonitorPhysicalSize(monitor, &monitor_width, &monitor_height);
+
+//			DBG_PRINT_MSG("monitor size: %d, %d", monitor_width, monitor_height);
+
+			if(request.source() == this) {
+				glfwSetWindowPosCallback(window_, NULL);
+				glfwSetWindowPos(window_, position().x(), position().y());
+				glfwSetWindowPosCallback(window_, &CbWindowPosition);
+			}
+		}
 	}
 
 	void Window::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -202,10 +303,16 @@ namespace BlendInt {
 			shaders->SetFrameProjectionMatrix(projection);
 
 			set_refresh(true);
+
+			if(request.source() == this) {
+				glfwSetWindowSizeCallback(window_, NULL);
+				glfwSetWindowSize(window_, size().width(), size().height());
+				glfwSetWindowSizeCallback(window_, &CbWindowSize);
+			}
 		}
 	}
 
-    bool Window::PreDraw (const AbstractWindow* context)
+    bool Window::PreDraw (AbstractWindow* context)
     {
         glClearColor(0.208f, 0.208f, 0.208f, 1.f);
         //glClearColor(1.f, 1.f, 1.f, 1.f);
@@ -232,6 +339,13 @@ namespace BlendInt {
         return true;
     }
     
+	void Window::Close()
+	{
+		// MUST clear sub views before releasing gl context, unload all fonts to make sure Fc::Fini success.
+		ClearSubViews();
+		ReleaseGLContext();
+	}
+
 	void Window::CbError (int error, const char* description)
 	{
 		DBG_PRINT_MSG("Error: %s (error code: %d)", description, error);
@@ -241,7 +355,20 @@ namespace BlendInt {
 	{
 		Window* win = kWindowMap[window];
 
-		win->Resize(w, h);
+		Size size(w, h);
+		SizeUpdateRequest request(0, win, &size);
+
+		win->PerformSizeUpdate(request);
+	}
+
+	void Window::CbWindowPosition(GLFWwindow* window, int x, int y)
+	{
+		Window* win = kWindowMap[window];
+
+		Point pos(x, y);
+		PositionUpdateRequest request(0, win, &pos);
+
+		win->PerformPositionUpdate(request);
 	}
 
 	void Window::CbKey (GLFWwindow* window, int key, int scancode, int action,
@@ -448,5 +575,104 @@ namespace BlendInt {
 	}
 
 #endif
+
+	void Window::CbClose (GLFWwindow* window)
+	{
+		Window* win = kWindowMap[window];
+
+		win->Close();
+	}
+
+	void Window::CreateCursors()
+	{
+		namespace fs = boost::filesystem;
+
+		fs::path cursors_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/cursors");
+
+		if(!fs::exists(cursors_path)) {
+			cursors_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/cursors");
+		}
+
+		if(!fs::exists(cursors_path))
+			return;
+
+		GLFWimage cursor;
+		Image img;
+
+		std::string filepath;
+
+		filepath = cursors_path.string() + "/" + "left_ptr.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kArrowCursor = glfwCreateCursor(&cursor, 9, 5);
+			assert(kArrowCursor != nullptr);
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+		filepath = cursors_path.string() + "/" + "hand2.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kCrossCursor = glfwCreateCursor(&cursor, 9, 4);
+			assert(kCrossCursor != nullptr);
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+		filepath = cursors_path.string() + "/" + "sb_v_double_arrow.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kSplitVCursor = glfwCreateCursor(&cursor, 11, 10);
+			assert(kSplitVCursor != nullptr);
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+		filepath = cursors_path.string() + "/" + "sb_h_double_arrow.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kSplitHCursor = glfwCreateCursor(&cursor, 11, 11);
+			assert(kSplitHCursor != nullptr);
+		} else {
+		DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+		filepath = cursors_path.string() + "/" + "top_left_corner.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kTopLeftCornerCursor = glfwCreateCursor(&cursor, 11, 11);
+			assert(kTopLeftCornerCursor != nullptr);
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+		filepath = cursors_path.string() + "/" + "top_right_corner.png";
+		if(img.Read(filepath)) {
+			cursor.width = img.width();
+			cursor.height = img.height();
+			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+			kTopRightCornerCursor = glfwCreateCursor(&cursor, 12, 11);
+			assert(kTopRightCornerCursor != nullptr);
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to load cursor");
+		}
+
+	}
 
 }

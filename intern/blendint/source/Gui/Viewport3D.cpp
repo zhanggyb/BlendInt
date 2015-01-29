@@ -63,18 +63,18 @@ namespace BlendInt {
 		cameras_.clear();
 	}
 
-	void Viewport3D::PerformHoverIn(const AbstractWindow* context)
+	void Viewport3D::PerformHoverIn(AbstractWindow* context)
 	{
-		AbstractWindow::cursor->PushCursor();
-		AbstractWindow::cursor->SetCursor(CrossCursor);
+		context->PushCursor();
+		context->SetCursor(CrossCursor);
 	}
 
-	void Viewport3D::PerformHoverOut(const AbstractWindow* context)
+	void Viewport3D::PerformHoverOut(AbstractWindow* context)
 	{
-		AbstractWindow::cursor->PopCursor();
+		context->PopCursor();
 	}
 
-	ResponseType Viewport3D::PerformKeyPress (const AbstractWindow* context)
+	ResponseType Viewport3D::PerformKeyPress (AbstractWindow* context)
 	{
 		if (context->GetKeyAction() == KeyPress) {
 			switch (context->GetKeyInput()) {
@@ -115,7 +115,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::PerformMousePress (const AbstractWindow* context)
+	ResponseType Viewport3D::PerformMousePress (AbstractWindow* context)
 	{
 		m_button_down = context->GetMouseButton();
 
@@ -161,14 +161,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Viewport3D::PerformMouseRelease (const AbstractWindow* context)
+	ResponseType Viewport3D::PerformMouseRelease (AbstractWindow* context)
 	{
 		m_button_down = MouseButtonNone;
 
 		return Finish;
 	}
 
-	ResponseType Viewport3D::PerformMouseMove (const AbstractWindow* context)
+	ResponseType Viewport3D::PerformMouseMove (AbstractWindow* context)
 	{
 		switch (m_button_down) {
 			case MouseButtonLeft: {
@@ -249,7 +249,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport3D::Draw (const AbstractWindow* context)
+	ResponseType Viewport3D::Draw (AbstractWindow* context)
 	{
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
         GLint vp[4];	// Original viewport

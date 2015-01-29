@@ -75,6 +75,10 @@
 
 namespace BlendInt {
 
+	enum AttributeLayout {
+		AttributeCoord = 0,
+	};
+
 	enum Alignment
 	{
 		AlignNone = 0x0,

@@ -118,17 +118,17 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuPress (const AbstractWindow* context)
+	ResponseType AbstractFrame::PerformContextMenuPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuRelease (const AbstractWindow* context)
+	ResponseType AbstractFrame::PerformContextMenuRelease (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, const AbstractWindow* context)
+	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -151,7 +151,7 @@ namespace BlendInt {
 	}
 
 	AbstractView* AbstractFrame::DispatchMousePressEvent(
-			AbstractView* subview, const AbstractWindow* context)
+			AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return 0;
@@ -182,7 +182,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, const AbstractWindow* context)
+	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -203,7 +203,7 @@ namespace BlendInt {
 	}
 
 	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
-			AbstractView* subview, const AbstractWindow* context)
+			AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -225,7 +225,7 @@ namespace BlendInt {
 	}
 
 	AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets(AbstractWidget* orig,
-			const AbstractWindow* context)
+			AbstractWindow* context)
 	{
 		AbstractWidget* hovered_widget = orig;
 		AbstractWidget* tmp = 0;
@@ -393,7 +393,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, const AbstractWindow* context)
+	void AbstractFrame::ClearHoverWidgets(AbstractView* hovered_widget, AbstractWindow* context)
 	{
 #ifdef DEBUG
 		assert(hovered_widget);
@@ -408,7 +408,7 @@ namespace BlendInt {
 
 	bool AbstractFrame::RenderSubFramesToTexture (
 		AbstractFrame* frame,
-		const AbstractWindow* context,
+		AbstractWindow* context,
 		const glm::mat4& projection,
 		const glm::mat3& model,
 		GLTexture2D* texture)
@@ -499,7 +499,7 @@ namespace BlendInt {
         return retval;
 	}
 
-	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, const AbstractWindow* context,
+	AbstractWidget* AbstractFrame::DispatchHoverEventDeeper(AbstractWidget* widget, AbstractWindow* context,
 			Point& local)
 	{
 		AbstractWidget* retval = widget;
