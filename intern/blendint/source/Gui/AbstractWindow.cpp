@@ -245,6 +245,8 @@ namespace BlendInt {
 	{
 		bool success = true;
 
+		Time::SaveCurrent();
+
 #ifdef DEBUG
 		int major, minor;
 		GetGLVersion(&major, &minor);
@@ -254,14 +256,14 @@ namespace BlendInt {
 #endif
 
 		if (success && InitializeTheme()) {
-			// do nothing
+			DBG_PRINT_MSG("Time to intialize theme: %llu (ms)", Time::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
 			success = false;
 		}
 
 		if (success && InitializeShaders()) {
-			// do nothing
+			DBG_PRINT_MSG("Time to intialize shaders: %llu (ms)", Time::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s",
 						  "The Shader Manager is not initialized successfully!");
@@ -269,7 +271,7 @@ namespace BlendInt {
 		}
 
 		if (success && InitializeIcons()) {
-			// do nothing
+			DBG_PRINT_MSG("Time to intialize icons: %llu (ms)", Time::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
 			success = false;
@@ -277,7 +279,7 @@ namespace BlendInt {
 
 		// Create Default font: must call this after theme initialized as it read the default_font
 		if(success && InitializeFont()) {
-			// do nothing
+			DBG_PRINT_MSG("Time to intialize font: %llu (ms)", Time::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize font");
 			success = false;
@@ -449,18 +451,12 @@ namespace BlendInt {
 
 	bool AbstractWindow::InitializeTheme ()
 	{
-		bool result = false;
-
 		if (!theme) {
 			theme = new Theme;
-		}
-
-		if (theme) {
 			theme->Reset();
-			result = true;
 		}
 
-		return result;
+		return true;
 	}
 
 	bool AbstractWindow::InitializeIcons ()
@@ -473,7 +469,7 @@ namespace BlendInt {
 
 	bool AbstractWindow::InitializeShaders ()
 	{
-		bool ret = false;
+		bool ret = true;
 
 		if (!shaders) {
 			shaders = new Shaders;
@@ -490,21 +486,28 @@ namespace BlendInt {
 
 	bool AbstractWindow::InitializeFont ()
 	{
-        Fc::Pattern p = Fc::Pattern::name_parse((const FcChar8*)theme->default_font());
+		bool retval = true;
 
-		Fc::Config::substitute(0, p, FcMatchPattern);
-		p.default_substitute();
+		if(FontCache::kDefaultFontHash == 0) {
 
-		FcResult result;
-		Fc::Pattern match = Fc::Config::match(0, p, &result);
+	        Fc::Pattern p = Fc::Pattern::name_parse((const FcChar8*)theme->default_font());
 
-		if(match) {
-			FontCache::Create(match);
-			FontCache::kDefaultFontHash = match.hash();
-			return true;
-		} else {
-			return false;
+			Fc::Config::substitute(0, p, FcMatchPattern);
+			p.default_substitute();
+
+			FcResult result;
+			Fc::Pattern match = Fc::Config::match(0, p, &result);
+
+			if(match) {
+				FontCache::Create(match);
+				FontCache::kDefaultFontHash = match.hash();
+			} else {
+				retval = false;
+			}
+
 		}
+
+		return retval;
 	}
 
 	void AbstractWindow::ReleaseTheme ()
