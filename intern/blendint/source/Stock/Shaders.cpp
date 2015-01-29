@@ -21,17 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -39,7 +28,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Core/Types.hpp>
-
+#include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
@@ -1329,22 +1318,10 @@ namespace BlendInt {
 			}
 
 			locations_[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
-			//locations_[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
-			//locations_[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
 			locations_[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
 			locations_[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
 			locations_[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
 			locations_[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
-
-			/*
-			Shaders::location[WIDGET_TEXT_COORD] = widget_text_program_->GetAttributeLocation("aCoord");
-			//location[TEXT_PROJECTION] = text_program_->GetUniformLocation("u_projection");
-			//location[TEXT_VIEW] = text_program_->GetUniformLocation("u_view");
-			Shaders::location[WIDGET_TEXT_POSITION] = widget_text_program_->GetUniformLocation("uPosition");
-			Shaders::location[WIDGET_TEXT_ROTATION] = widget_text_program_->GetUniformLocation("uRotation");
-			Shaders::location[WIDGET_TEXT_TEXTURE] = widget_text_program_->GetUniformLocation("u_tex");
-			Shaders::location[WIDGET_TEXT_COLOR] = widget_text_program_->GetUniformLocation("uColor");
-			*/
 
 			return true;
 		}
@@ -1370,8 +1347,6 @@ namespace BlendInt {
 
 			locations_[WIDGET_TRIANGLE_COORD] = widget_triangle_program_->GetAttributeLocation("aCoord");
 			locations_[WIDGET_TRIANGLE_COLOR] = widget_triangle_program_->GetAttributeLocation("aColor");
-			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
-			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
 			locations_[WIDGET_TRIANGLE_POSITION] = widget_triangle_program_->GetUniformLocation("uPosition");
 			locations_[WIDGET_TRIANGLE_ROTATION] = widget_triangle_program_->GetUniformLocation("uRotation");
 			locations_[WIDGET_TRIANGLE_SCALE] = widget_triangle_program_->GetUniformLocation("uScale");
@@ -1401,8 +1376,6 @@ namespace BlendInt {
 			locations_[WIDGET_SIMPLE_TRIANGLE_POSITION] = widget_simple_triangle_program_->GetUniformLocation("uPosition");
 			locations_[WIDGET_SIMPLE_TRIANGLE_COLOR] = widget_simple_triangle_program_->GetUniformLocation("uColor");
 			locations_[WIDGET_SIMPLE_TRIANGLE_GAMMA] = widget_simple_triangle_program_->GetUniformLocation("uGamma");
-			//locations_[TRIANGLE_PROJECTION] = triangle_program_->GetUniformLocation("u_projection");
-			//locations_[TRIANGLE_VIEW] = triangle_program_->GetUniformLocation("u_view");
 
 			return true;
 		}
@@ -1499,8 +1472,6 @@ namespace BlendInt {
 
 			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("aCoord");
 			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("a_uv");
-			//locations_[IMAGE_PROJECTION] = image_program_->GetUniformLocation("u_projection");
-			//locations_[IMAGE_VIEW] = image_program_->GetUniformLocation("u_view");
 			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("uPosition");
 			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("uRotation");
 			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("uTexture");
