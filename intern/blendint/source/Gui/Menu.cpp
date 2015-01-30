@@ -507,18 +507,20 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[0]);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COORD), 3,	GL_FLOAT, GL_FALSE, 0, 0);
+		buffer_.bind (0);
+		buffer_.set_data (sizeof(GLfloat) * inner_verts.size (),
+				&inner_verts[0]);
+		glEnableVertexAttribArray (AttributeCoord);
+		glVertexAttribPointer (AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COORD), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray (vao_[1]);
+		buffer_.bind (1);
+		buffer_.set_data (sizeof(GLfloat) * outer_verts.size (),
+				&outer_verts[0]);
+		glEnableVertexAttribArray (AttributeCoord);
+		glVertexAttribPointer (AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(vao_[2]);
+		glBindVertexArray (vao_[2]);
 
 		GLfloat vertices[] = {
 				// coord											uv
@@ -531,14 +533,12 @@ namespace BlendInt {
 		buffer_.bind(2);
 		buffer_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray (
-				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD));
-		glEnableVertexAttribArray (
-				AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV));
-		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		glEnableVertexAttribArray (AttributeCoord);
+		glEnableVertexAttribArray (AttributeUV);
+		glVertexAttribPointer (AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+				sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer (AttributeUV, 2,
+		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);

@@ -114,7 +114,7 @@ namespace BlendInt {
 
         glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-		glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.475f,
+		glVertexAttrib4f(AttributeColor, 0.475f,
 				0.475f, 0.475f, 0.75f);
 
 		glBindVertexArray(vaos_[1]);
@@ -270,8 +270,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -280,8 +280,8 @@ namespace BlendInt {
 		row_->bind();
 		row_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

@@ -103,13 +103,13 @@ namespace BlendInt {
 
 		// draw inner, simple fill
 		if (is_checked()) {
-			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.447f, 0.447f, 0.447f, 1.0f);
+			glVertexAttrib4f(AttributeColor, 0.447f, 0.447f, 0.447f, 1.0f);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
-			glVertexAttrib4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), AbstractWindow::theme->tab().item.data());
+			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->tab().item.data());
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(vao_[0]);
@@ -118,7 +118,7 @@ namespace BlendInt {
 
 		if (is_checked()) {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-			glVertexAttrib4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), AbstractWindow::theme->tab().outline.data());
+			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->tab().outline.data());
 
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
@@ -149,16 +149,16 @@ namespace BlendInt {
 		vbo_.bind(0);
 		vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
 		vbo_.bind(1);
 		vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

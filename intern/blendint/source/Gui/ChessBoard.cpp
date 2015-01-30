@@ -132,14 +132,14 @@ namespace BlendInt {
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);
-		glVertexAttrib4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(AttributeColor, color.data());
 
 		glEnableVertexAttribArray(0);
 
 		m_vbo->bind();	// bind ARRAY BUFFER
 		m_light_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(AttributeCoord, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -152,11 +152,11 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		glVertexAttrib4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(AttributeColor, color.data());
 
 		m_dark_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(AttributeCoord, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is

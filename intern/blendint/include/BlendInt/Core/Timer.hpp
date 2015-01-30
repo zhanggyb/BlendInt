@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TIMER_HPP_
-#define _BLENDINT_TIMER_HPP_
+#pragma once
 
 #include <signal.h>
 #include <time.h>
@@ -108,6 +107,21 @@ namespace BlendInt {
 		 */
 		Cpp::EventRef<Timer*> timeout() {return timeout_;}
 
+		static double GetIntervalOfSeconds ();
+
+		static double GetIntervalOfMilliseconds ();
+
+		static double GetIntervalOfMicroseconds ();
+
+		static uint64_t GetMicroSeconds ();
+
+		static void SaveCurrent ();
+
+		static inline uint64_t saved_time ()
+		{
+			return kSavedTime;
+		}
+
 	protected:
 
 #if BLENDINT_USE_POSIX_TIMER
@@ -145,8 +159,8 @@ namespace BlendInt {
 		 */
 		Cpp::Event<Timer*> timeout_;
 
+		static uint64_t kSavedTime;
+
 	};
 
 }
-
-#endif /* _BLENDINT_TIMER_HPP_ */

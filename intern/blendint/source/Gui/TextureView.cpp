@@ -321,8 +321,8 @@ namespace BlendInt {
 		vbo_.bind(0);
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 
@@ -337,12 +337,12 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_COORD));
+				AttributeCoord);
 		glEnableVertexAttribArray (
-				AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_COORD),
+				AttributeUV);
+		glVertexAttribPointer (AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (AbstractWindow::shaders->location (Shaders::WIDGET_IMAGE_UV), 2,
+		glVertexAttribPointer (AttributeUV, 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

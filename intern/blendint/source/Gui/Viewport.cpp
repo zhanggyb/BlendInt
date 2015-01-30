@@ -231,8 +231,8 @@ namespace BlendInt {
 		buffer_.generate();
 		buffer_.bind();
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 		glBindVertexArray(0);
 		buffer_.reset();

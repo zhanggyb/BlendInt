@@ -24,7 +24,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Core/Time.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 #include <BlendInt/OpenGL/GLHeader.hpp>
 
@@ -253,42 +253,42 @@ namespace BlendInt {
 		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
 #endif
 
-		Time::SaveCurrent();
+		Timer::SaveCurrent();
 		if (success && InitializeTheme()) {
-			DBG_PRINT_MSG("Time to intialize theme: %lu (ms)", Time::GetIntervalOfMilliseconds());
+			DBG_PRINT_MSG("Timer to intialize theme: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
 			success = false;
 		}
 
-		Time::SaveCurrent();
+		Timer::SaveCurrent();
 		if (success && InitializeShaders()) {
-			DBG_PRINT_MSG("Time to intialize shaders: %lu (ms)", Time::GetIntervalOfMilliseconds());
+			DBG_PRINT_MSG("Timer to intialize shaders: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s",
 						  "The Shader Manager is not initialized successfully!");
 			success = false;
 		}
 
-		Time::SaveCurrent();
+		Timer::SaveCurrent();
 		if (success && InitializeIcons()) {
-			DBG_PRINT_MSG("Time to intialize icons: %lu (ms)", Time::GetIntervalOfMilliseconds());
+			DBG_PRINT_MSG("Timer to intialize icons: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
 			success = false;
 		}
 
-		Time::SaveCurrent();
+		Timer::SaveCurrent();
 		// Create Default font: must call this after theme initialized as it read the default_font
 		if(success && InitializeFont()) {
-			DBG_PRINT_MSG("Time to intialize font: %lu (ms)", Time::GetIntervalOfMilliseconds());
+			DBG_PRINT_MSG("Timer to intialize font: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize font");
 			success = false;
 		}
 
 		if(success) {
-			Time::SaveCurrent();
+			Timer::SaveCurrent();
 		}
 
 		return success;

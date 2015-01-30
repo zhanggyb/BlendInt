@@ -34,6 +34,12 @@
 
 namespace BlendInt {
 
+	enum AttributeLayout {
+		AttributeCoord = 0,
+		AttributeColor = 1,
+		AttributeUV = 1
+	};
+
 	/**
 	 * @brief A class which provide pre-defined shaders
 	 *

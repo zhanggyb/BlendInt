@@ -238,16 +238,16 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		vbo_.bind(0);
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
 		glBindVertexArray(vao_[1]);
 		vbo_.bind(1);
 		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

@@ -85,7 +85,7 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		glVertexAttrib4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), AbstractWindow::theme->regular().outline.data());
+		glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->regular().outline.data());
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
@@ -332,11 +332,11 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR));
+		glEnableVertexAttribArray(AttributeCoord);
+		glEnableVertexAttribArray(AttributeColor);
 
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(AttributeColor, 4, GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(vaos_[1]);
 
@@ -345,8 +345,8 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(0);
 		GLArrayBuffer::reset();

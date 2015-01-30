@@ -26,7 +26,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Core/Time.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 #include <BlendInt/Font/FcPattern.hpp>
 #include <BlendInt/Font/FcConfig.hpp>
