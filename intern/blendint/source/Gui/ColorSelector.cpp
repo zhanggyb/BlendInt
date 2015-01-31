@@ -21,8 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/OpenGL/GLHeader.hpp>
-
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>

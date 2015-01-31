@@ -403,8 +403,6 @@ namespace BlendInt {
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		GLSLProgram::reset();
-
 		return Finish;
 	}
 
@@ -835,15 +833,13 @@ namespace BlendInt {
 		buffer_.bind(2);
 		buffer_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray (
-				AttributeCoord);
-		glEnableVertexAttribArray (
-				AttributeUV);
-		glVertexAttribPointer (AttributeCoord,
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (AttributeUV, 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(AttributeCoord);
+		glEnableVertexAttribArray(AttributeUV);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(AttributeUV, 2,
+		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		buffer_.reset();

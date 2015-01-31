@@ -21,18 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
@@ -100,9 +89,6 @@ namespace BlendInt {
 		        AbstractWindow::theme->regular().outline.data());
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 
 		glm::mat4 icon_mvp;
 

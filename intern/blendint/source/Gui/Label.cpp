@@ -151,7 +151,6 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
 
 		if(text_) {
 

@@ -90,10 +90,6 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
-		glBindVertexArray(0);
-
-		program->reset();
-
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
 		picker_.Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);

@@ -21,21 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TEXTURE2D_HPP_
-#define _BLENDINT_TEXTURE2D_HPP_
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#pragma once
 
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Size.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 namespace BlendInt {
 
@@ -214,5 +204,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif	// _BLENDINT_TEXTURE2D_HPP_

@@ -253,7 +253,7 @@ namespace BlendInt {
 		DBG_PRINT_MSG("OpenGL shading language version: %d.%d", major, minor);
 #endif
 
-		Timer::SaveCurrent();
+		Timer::SaveCurrentTime();
 		if (success && InitializeTheme()) {
 			DBG_PRINT_MSG("Timer to intialize theme: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
@@ -261,7 +261,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		Timer::SaveCurrent();
+		Timer::SaveCurrentTime();
 		if (success && InitializeShaders()) {
 			DBG_PRINT_MSG("Timer to intialize shaders: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
@@ -270,7 +270,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		Timer::SaveCurrent();
+		Timer::SaveCurrentTime();
 		if (success && InitializeIcons()) {
 			DBG_PRINT_MSG("Timer to intialize icons: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
@@ -278,17 +278,13 @@ namespace BlendInt {
 			success = false;
 		}
 
-		Timer::SaveCurrent();
+		Timer::SaveCurrentTime();
 		// Create Default font: must call this after theme initialized as it read the default_font
 		if(success && InitializeFont()) {
 			DBG_PRINT_MSG("Timer to intialize font: %g (ms)", Timer::GetIntervalOfMilliseconds());
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize font");
 			success = false;
-		}
-
-		if(success) {
-			Timer::SaveCurrent();
 		}
 
 		return success;

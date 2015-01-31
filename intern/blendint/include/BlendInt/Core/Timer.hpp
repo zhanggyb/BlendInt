@@ -113,13 +113,26 @@ namespace BlendInt {
 
 		static double GetIntervalOfMicroseconds ();
 
+		static double GetProgramSeconds ();
+
+		static double GetProgramMilliseconds ();
+
+		static double GetProgramMicroseconds ();
+
 		static uint64_t GetMicroSeconds ();
 
-		static void SaveCurrent ();
+		static void SaveCurrentTime ();
+
+		static void SaveProgramTime ();
 
 		static inline uint64_t saved_time ()
 		{
 			return kSavedTime;
+		}
+
+		static inline uint64_t program_time ()
+		{
+			return kProgramTime;
 		}
 
 	protected:
@@ -160,6 +173,8 @@ namespace BlendInt {
 		Cpp::Event<Timer*> timeout_;
 
 		static uint64_t kSavedTime;
+
+		static uint64_t kProgramTime;
 
 	};
 

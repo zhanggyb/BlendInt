@@ -180,13 +180,8 @@ namespace BlendInt {
 		glVertexAttrib4fv(AttributeColor, color.data());
 
 		glBindVertexArray(vao_);
-
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
 	}
 
 	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const

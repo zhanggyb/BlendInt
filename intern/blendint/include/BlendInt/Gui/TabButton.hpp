@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TABBUTTON_HPP_
-#define _BLENDINT_GUI_TABBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
@@ -84,5 +83,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_TABBUTTON_HPP_ */

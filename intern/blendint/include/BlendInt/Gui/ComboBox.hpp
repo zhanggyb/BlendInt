@@ -21,10 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COMBOBOX_HPP_
-#define _BLENDINT_GUI_COMBOBOX_HPP_
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#pragma once
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Menu.hpp>
@@ -95,5 +92,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_COMBOBOX_HPP_ */

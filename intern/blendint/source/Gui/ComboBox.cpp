@@ -23,25 +23,13 @@
 
 #include <math.h>
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
-#include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/AbstractWindow.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
-
 #include <BlendInt/Gui/FileSystemModel.hpp>
+
+#include <BlendInt/Gui/ComboBox.hpp>
 
 namespace BlendInt {
 
@@ -238,9 +226,6 @@ namespace BlendInt {
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 //			        GetHalfOutlineVertices(round_type()) * 2);
 //		}
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 
 		//RefPtr<VertexIcon> icon = Icons::instance->icon_menu();
 

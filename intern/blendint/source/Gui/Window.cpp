@@ -30,6 +30,7 @@
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Image.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 #include <BlendInt/Font/FcConfig.hpp>
 
@@ -104,6 +105,9 @@ namespace BlendInt {
 
 			shaders->SetWidgetViewMatrix(default_view_matrix);
 			shaders->SetWidgetModelMatrix(glm::mat3(1.f));
+
+			Timer::SaveProgramTime();
+
 		}
 
 		kWindowMap[window_] = this;
@@ -133,11 +137,17 @@ namespace BlendInt {
 
 			if(refresh()) {
 
+#ifdef DEBUG
+				Timer::SaveCurrentTime();
+#endif
+
 				set_refresh(false);
 				if(PreDraw(this)) {
 					Draw(this);
 					PostDraw(this);
 				}
+
+				DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
 
     			glfwSwapBuffers(window_);
 			}

@@ -244,9 +244,6 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
 		DrawIconText();
 
 		return Finish;

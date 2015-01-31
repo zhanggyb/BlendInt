@@ -21,19 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/ListView.hpp>
@@ -123,7 +110,6 @@ namespace BlendInt {
 		while(y > position().y()) {
 			y -= h;
 
-
 			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
 					(float) position().x(), (float) y);
 
@@ -140,9 +126,6 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			i++;
 		}
-
-		glBindVertexArray(0);
-		program->reset();
 
 		RefPtr<AbstractItemModel> model = GetModel();
 		if(model) {
@@ -167,8 +150,6 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 		c->EndPopStencil();
-
-		program->reset();
 
 		return Finish;
 	}

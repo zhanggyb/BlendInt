@@ -216,11 +216,6 @@ namespace BlendInt {
 		for(size_t i = start; i < last; i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
-
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
  	}
 
 	void Text::DrawWithin (float x, float y, int width, short gamma) const

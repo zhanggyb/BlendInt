@@ -37,6 +37,8 @@ namespace BlendInt {
 
 	uint64_t Timer::kSavedTime = 0;
 
+	uint64_t Timer::kProgramTime = 0;
+
 	Timer::Timer()
 	: Object(),
 #if BLENDINT_USE_POSIX_TIMER
@@ -160,6 +162,27 @@ namespace BlendInt {
 		return (double)(current - kSavedTime);
 	}
 
+	double Timer::GetProgramSeconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kProgramTime) / (1000000.0);
+	}
+
+	double Timer::GetProgramMilliseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kProgramTime) / (1000.0);
+	}
+
+	double Timer::GetProgramMicroseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (double)(current - kProgramTime);
+	}
+
 	uint64_t Timer::GetMicroSeconds()
 	{
 		uint64_t retval = 0;
@@ -172,9 +195,14 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void Timer::SaveCurrent()
+	void Timer::SaveCurrentTime()
 	{
 		kSavedTime = GetMicroSeconds();
+	}
+
+	void Timer::SaveProgramTime ()
+	{
+		kProgramTime = GetMicroSeconds();
 	}
 
 	void Timer::Create()

@@ -21,18 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLRENDERBUFFER_HPP_
-#define _BLENDINT_GLRENDERBUFFER_HPP_
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#pragma once
 
 #include <BlendInt/Core/Object.hpp>
 
@@ -69,5 +58,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GLRENDERBUFFER_HPP_ */

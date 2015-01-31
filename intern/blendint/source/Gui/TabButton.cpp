@@ -21,20 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <math.h>
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
+#include <cmath>
 
 #include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
@@ -123,9 +110,6 @@ namespace BlendInt {
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
 		}
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 
 		if(text()) {
 			// font().Print(0.f, 0.f, text(), text_length(), 0);

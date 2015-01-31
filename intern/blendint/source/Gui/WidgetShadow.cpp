@@ -83,9 +83,6 @@ namespace BlendInt {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 	}
 
 	void WidgetShadow::PerformSizeUpdate(const Size& size)

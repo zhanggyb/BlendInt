@@ -187,9 +187,6 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
 		float x = size().width() / 2.f;
 		float y = size().height() / 2.f;
 

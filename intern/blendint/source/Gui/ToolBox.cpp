@@ -332,11 +332,7 @@ namespace BlendInt {
         
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
-        
-        texture_buffer_.reset();
-        GLSLProgram::reset();
-        
+
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		return Finish;
