@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SCREEN_HPP_
-#define _BLENDINT_GUI_SCREEN_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/Gui/AbstractLayout.hpp>
@@ -42,6 +41,20 @@ namespace BlendInt {
 		virtual ~Frame ();
 
 		virtual AbstractView* GetFocusedView () const;
+
+        void SetRoundType (int type);
+        
+        void SetRoundRadius (float radius);
+        
+        inline uint32_t round_type () const
+        {
+            return frame_flag_ & 0x0F;
+        }
+        
+        inline float round_radius () const
+        {
+            return round_radius_;
+        }
 
 	protected:
 
@@ -69,8 +82,49 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
 
+        void GenerateRoundedVertices (
+                                      std::vector<GLfloat>* inner,
+                                      std::vector<GLfloat>* outer);
+        
+        void GenerateRoundedVertices (
+                                      Orientation shadedir,
+                                      short shadetop,
+                                      short shadedown,
+                                      std::vector<GLfloat>* inner,
+                                      std::vector<GLfloat>* outer);
+        
+        virtual void PerformRoundTypeUpdate (int round_type);
+        
+        virtual void PerformRoundRadiusUpdate (float radius);
+        
+        inline void set_round_type (int type)
+        {
+            frame_flag_ = (frame_flag_ & 0xFFF0) + (type & 0x0F);
+        }
+        
+        inline void set_round_radius (float radius)
+        {
+            round_radius_ = radius;
+        }
+
+    private:
+        
+        enum FrameFlagIndex {
+            
+            FrameRoundTopLeft = (1 << 0),
+            
+            FrameRoundTopRight = (1 << 1),
+            
+            FrameRoundBottomRight = (1 << 2),
+            
+            FrameRoundBottomLeft = (1 << 3),
+            
+        };
+        
+        uint32_t frame_flag_;
+        
+        float round_radius_;
+        
 	};
 
 }
-
- #endif	// _BLENDINT_GUI_SCREEN_HPP_

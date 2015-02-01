@@ -288,7 +288,6 @@ namespace BlendInt {
 		}
 
 		return success;
-
 	}
 
 	void AbstractWindow::ReleaseGLContext ()

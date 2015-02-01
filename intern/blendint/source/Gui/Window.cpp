@@ -138,7 +138,7 @@ namespace BlendInt {
 			if(refresh()) {
 
 #ifdef DEBUG
-				Timer::SaveCurrentTime();
+				//Timer::SaveCurrentTime();
 #endif
 
 				set_refresh(false);
@@ -147,7 +147,7 @@ namespace BlendInt {
 					PostDraw(this);
 				}
 
-				DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
+				//DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
 
     			glfwSwapBuffers(window_);
 			}

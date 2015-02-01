@@ -21,21 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -58,6 +45,20 @@ namespace BlendInt {
 		return nullptr;
 	}
 
+    void Frame::SetRoundType (int type)
+    {
+        if((frame_flag_ & 0x0F) == (type & 0x0F)) return;
+        
+        PerformRoundTypeUpdate(type & 0x0F);
+    }
+    
+    void Frame::SetRoundRadius(float radius)
+    {
+        if(round_radius_ == radius) return;
+        
+        PerformRoundRadiusUpdate(radius);
+    }
+    
 	bool Frame::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
@@ -116,5 +117,43 @@ namespace BlendInt {
 	{
 		return Ignore;
 	}
+
+    void Frame::GenerateRoundedVertices(std::vector<GLfloat>* inner,
+                                        std::vector<GLfloat>* outer)
+    {
+        GenerateVertices(size(),
+                         default_border_width() * AbstractWindow::theme->pixel(),
+                         round_type(),
+                         round_radius_,
+                         inner,
+                         outer);
+    }
+    
+    void Frame::GenerateRoundedVertices(Orientation shadedir,
+                                        short shadetop,
+                                        short shadedown,
+                                        std::vector<GLfloat>* inner,
+                                        std::vector<GLfloat>* outer)
+    {
+        GenerateVertices(size(),
+                         default_border_width() * AbstractWindow::theme->pixel(),
+                         round_type(),
+                         round_radius_,
+                         shadedir,
+                         shadetop,
+                         shadedown,
+                         inner,
+                         outer);
+    }
+    
+    void Frame::PerformRoundTypeUpdate (int round_type)
+    {
+        set_round_type(round_type);
+    }
+    
+    void Frame::PerformRoundRadiusUpdate(float radius)
+    {
+        round_radius_ = radius;
+    }
 
 }
