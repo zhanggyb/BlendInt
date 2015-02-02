@@ -150,6 +150,11 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
+	void CircularPicker::Draw () const
+	{
+
+	}
+
 	void CircularPicker::Draw (float x, float y, short gamma) const
 	{
 		AbstractWindow::shaders->widget_simple_triangle_program()->use();

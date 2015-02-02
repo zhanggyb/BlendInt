@@ -120,6 +120,11 @@ namespace BlendInt {
 		set_size(size);
 	}
 
+	void ChessBoard::Draw () const
+	{
+
+	}
+
 	void ChessBoard::Draw (float x, float y, short gamma) const
 	{
 		glBindVertexArray(m_vao);

@@ -23,40 +23,42 @@
 
 #pragma once
 
-#include <BlendInt/Core/String.hpp>
-#include <BlendInt/Gui/AbstractDialog.hpp>
-#include <BlendInt/Gui/FrameShadow.hpp>
-#include <BlendInt/Gui/CloseButton.hpp>
-#include <BlendInt/Gui/Label.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
-    
-    class MessageBox: public AbstractDialog
-    {
-    public:
-        
-        MessageBox (const String& title, const String& description);
-        
-        virtual ~MessageBox ();
-        
-    protected:
-        
-		virtual ResponseType Draw (AbstractWindow* context);
 
-        virtual void UpdateLayout ();
+	class ViewBuffer: public AbstractForm
+	{
+	public:
 
-    private:
+		ViewBuffer ();
 
-        void OnClose (AbstractButton* btn);
+		ViewBuffer (int width, int height);
 
-		RefPtr<FrameShadow> shadow_;
+		virtual ~ViewBuffer ();
 
-		Label* title_;
+		void Draw () const;
 
-		Label* description_;
+		inline GLTexture2D* texture ()
+		{
+			return &texture_;
+		}
 
-		CloseButton* close_;
+	protected:
 
-    };
-    
+		virtual void PerformSizeUpdate (const Size& size);
+
+	private:
+
+		GLuint vao_;
+
+		GLBuffer<> vbo_;
+
+		GLTexture2D texture_;
+
+	};
+
 }

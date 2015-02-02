@@ -48,8 +48,6 @@ namespace BlendInt {
 
 		virtual ~AbstractFrame ();
 
-		virtual AbstractView* GetFocusedView () const = 0;
-
 		Point GetAbsolutePosition (const AbstractWidget* widget);
 
 		Point GetRelativePosition (const AbstractWidget* widget);

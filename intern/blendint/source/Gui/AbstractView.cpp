@@ -506,7 +506,8 @@ namespace BlendInt {
 			return false;
 		} else {
 			return true;
-		}	}
+		}
+	}
 
 	bool AbstractView::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
@@ -514,7 +515,8 @@ namespace BlendInt {
 			return false;
 		} else {
 			return true;
-		}	}
+		}
+	}
 
 	void AbstractView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{

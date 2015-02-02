@@ -127,6 +127,11 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
+	void SlideIcon::Draw () const
+	{
+
+	}
+
 	void SlideIcon::Draw (float x, float y, short gamma) const
 	{
 		AbstractWindow::shaders->widget_simple_triangle_program()->use();

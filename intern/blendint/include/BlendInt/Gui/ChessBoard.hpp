@@ -48,7 +48,9 @@ namespace BlendInt {
 
 		size_t cell_size () const {return m_cell_size;}
 
-		virtual void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw () const;
+
+		void Draw (float x, float y, short gamma = 0) const;
 
 	protected:
 

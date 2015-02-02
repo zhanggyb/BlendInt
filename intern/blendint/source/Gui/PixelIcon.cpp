@@ -163,25 +163,26 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (float x, float y, short gamma) const
+	void PixelIcon::Draw () const
 	{
 		if(texture_) {
-			AbstractWindow::shaders->widget_image_program()->use();
-
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
-
-			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-
 			texture_->bind();
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glBindVertexArray(0);
-			texture_->reset();
-
-			GLSLProgram::reset();
 		}
+	}
+
+	void PixelIcon::Draw (float x, float y, short gamma) const
+	{
+		AbstractWindow::shaders->widget_image_program()->use();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+
+		Draw();
 	}
 
 	void PixelIcon::PerformSizeUpdate(const Size& size)

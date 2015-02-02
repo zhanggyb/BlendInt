@@ -329,6 +329,11 @@ namespace BlendInt {
 			return view_flag_ & ViewPressed;
 		}
 
+		inline bool buffered () const
+		{
+			return view_flag_ & ViewBuffered;
+		}
+
 		inline int subs_count () const
 		{
 			return subs_count_;
@@ -496,6 +501,15 @@ namespace BlendInt {
 			}
 		}
 
+		inline void set_buffered (bool buffered)
+		{
+			if(buffered) {
+				SETBIT(view_flag_, ViewBuffered);
+			} else {
+				CLRBIT(view_flag_, ViewBuffered);
+			}
+		}
+
 		virtual bool PreDraw (AbstractWindow* context) = 0;
 
 		virtual ResponseType Draw (AbstractWindow* context) = 0;
@@ -615,7 +629,10 @@ namespace BlendInt {
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocusable = (1 << 6)
+			ViewFocusable = (1 << 6),
+
+			// A satic view use 2D texture as a buffer, redraw only when there's update
+			ViewBuffered = (1 << 7)
 
 		};
 

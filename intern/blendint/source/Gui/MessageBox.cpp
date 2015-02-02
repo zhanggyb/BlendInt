@@ -22,23 +22,61 @@
  */
 
 #include <BlendInt/Gui/MessageBox.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 
 namespace BlendInt {
     
     MessageBox::MessageBox(const String& title, const String& description)
-    : AbstractDialog()
+    : AbstractDialog(),
+      title_(0),
+      description_(0),
+      close_(0)
     {
-        
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+
+		title_ = new Label(title, AlignCenter);
+		description_ = new Label(description);
+		close_ = new CloseButton;
+
+		events()->connect(close_->clicked(), this, &MessageBox::OnClose);
+
+		LinearLayout* hlayout = new LinearLayout(Horizontal);
+		hlayout->SetMargin(Margin(0, 0, 0, 0));
+		hlayout->SetSpace(0);
+		hlayout->AddWidget(close_);
+		hlayout->AddWidget(title_);
+
+		LinearLayout* vlayout = new LinearLayout(Vertical);
+		vlayout->AddWidget(hlayout);
+		vlayout->AddWidget(description_);
+
+		vlayout->Resize(size());
+
+		PushBackSubView(vlayout);
     }
     
     MessageBox::~MessageBox()
     {
         
     }
-    
-    ResponseType MessageBox::Draw(AbstractWindow* context)
+
+    void MessageBox::UpdateLayout()
     {
-        return Ignore;
+		shadow_->Resize(size());
+
+		ResizeSubView(first_subview(), size());
     }
     
+    ResponseType BlendInt::MessageBox::Draw (AbstractWindow* context)
+    {
+    	shadow_->Draw(position().x(), position().y());
+
+    	return AbstractDialog::Draw(context);
+    }
+
+	void MessageBox::OnClose (AbstractButton* btn)
+	{
+		delete this;
+	}
+
 }

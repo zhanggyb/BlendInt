@@ -52,10 +52,12 @@ namespace BlendInt {
 		 */
 		virtual ~SlideIcon ();
 
+		virtual void Draw () const;
+
 		/**
 		 * @brief Draw the icon
 		 */
-		virtual void Draw (float x, float y, short gamma = 0) const;
+		void Draw (float x, float y, short gamma = 0) const;
 
 	protected:
 

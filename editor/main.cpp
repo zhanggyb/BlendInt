@@ -28,21 +28,23 @@
 #include "EditorContext.hpp"
 #include <BlendInt/Gui/Window.hpp>
 
+#include <BlendInt/Gui/AbstractDialog.hpp>
+#include <BlendInt/Gui/MessageBox.hpp>
+
 int main (int argc, char* argv[])
 {
 	using namespace BlendInt;
 
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
+	DBG_PRINT_MSG("Dialog size: %ld", sizeof(AbstractDialog));
+
 	if(Window::Initialize()) {
 
 		Window win(1280, 800, "UI Editor");
 
-		Dialog* dlg = new Dialog;
-		win.AddFrame(dlg);
-
-		Button* lb = new Button("Hello");
-		dlg->AddWidget(lb);
+		MessageBox* msg = new MessageBox("Title", "Hello");
+		win.AddFrame(msg);
 
 		win.Exec();
 

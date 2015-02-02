@@ -160,6 +160,11 @@ namespace BlendInt {
  		// Do nothing, this form does not allow resize
  	}
 
+ 	void Text::Draw () const
+ 	{
+
+ 	}
+
  	void Text::Draw (float x, float y, short gamma) const
  	{
  		Color color(0x000000FF);

@@ -86,7 +86,7 @@ namespace BlendInt {
 			return size_;
 		}
 
-		virtual void Draw (float x, float y, short gamma = 0) const = 0;
+		virtual void Draw () const = 0;
 
 		static void SetDefaultBorderWidth (int border);
 
