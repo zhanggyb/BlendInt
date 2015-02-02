@@ -24,9 +24,7 @@
 #pragma once
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
-#include <BlendInt/Gui/AbstractLayout.hpp>
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/ViewBuffer.hpp>
 
 namespace BlendInt {
 
@@ -72,6 +70,10 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
+        virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
+        
+        virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
+
 		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
 		virtual ResponseType PerformMousePress (AbstractWindow* context);
@@ -82,6 +84,10 @@ namespace BlendInt {
 
 		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
 
+        void EnableViewBuffer ();
+        
+        void DisableViewBuffer ();
+        
         void GenerateRoundedVertices (
                                       std::vector<GLfloat>* inner,
                                       std::vector<GLfloat>* outer);
@@ -107,6 +113,16 @@ namespace BlendInt {
             round_radius_ = radius;
         }
 
+        inline const RefPtr<ViewBuffer>& buffer () const
+        {
+            return buffer_;
+        }
+        
+        inline void set_buffer (const RefPtr<ViewBuffer>& buffer)
+        {
+            buffer_ = buffer;
+        }
+        
     private:
         
         enum FrameFlagIndex {
@@ -125,6 +141,8 @@ namespace BlendInt {
         
         float round_radius_;
         
+        RefPtr<ViewBuffer> buffer_;
+
 	};
 
 }

@@ -93,6 +93,16 @@ namespace BlendInt {
 	{
 	}
 
+    ResponseType Frame::PerformContextMenuPress (AbstractWindow* context)
+    {
+        return Ignore;
+    }
+    
+    ResponseType Frame::PerformContextMenuRelease (AbstractWindow* context)
+    {
+        return Ignore;
+    }
+
 	ResponseType Frame::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
@@ -144,6 +154,20 @@ namespace BlendInt {
                          shadedown,
                          inner,
                          outer);
+    }
+    
+    void Frame::EnableViewBuffer()
+    {
+        set_buffered(true);
+        if(!buffer_) {
+            buffer_.reset(new ViewBuffer(size().width(), size().height()));
+        }
+    }
+    
+    void Frame::DisableViewBuffer()
+    {
+        set_buffered(false);
+        buffer_.destroy();
     }
     
     void Frame::PerformRoundTypeUpdate (int round_type)

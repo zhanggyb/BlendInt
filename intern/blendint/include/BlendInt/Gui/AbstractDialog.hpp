@@ -57,21 +57,7 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
-
-		virtual void PerformFocusOn (AbstractWindow* context);
-
-		virtual void PerformFocusOff (AbstractWindow* context);
-
-		virtual void PerformHoverIn (AbstractWindow* context);
-
-		virtual void PerformHoverOut (AbstractWindow* context);
-
 		virtual ResponseType PerformKeyPress (AbstractWindow* context);
-
-		virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
-
-		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
 
 		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
@@ -179,8 +165,6 @@ namespace BlendInt {
 		AbstractWidget* focused_widget_;
 
 		AbstractWidget* hovered_widget_;
-
-        RefPtr<ViewBuffer> buffer_;
 
         int cursor_position_;
 

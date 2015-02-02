@@ -89,8 +89,8 @@ namespace BlendInt {
 				0.f + (float)size().height(),
 				100.f, -100.f);
 
-			if(buffer_) {
-				buffer_->Resize(size());
+			if(buffer()) {
+				buffer()->Resize(size());
 			}
 
 			UpdateLayout();
@@ -109,12 +109,12 @@ namespace BlendInt {
 
 		context->register_active_frame(this);
 
-		if(refresh() && buffer_) {
+		if(refresh() && buffer()) {
 			RenderSubFramesToTexture(this,
 					context,
 					projection_matrix_,
 					model_matrix_,
-					buffer_->texture());
+					buffer()->texture());
 		}
 
 		return true;
@@ -122,37 +122,17 @@ namespace BlendInt {
 
 	ResponseType AbstractDialog::Draw (AbstractWindow* context)
 	{
-		if(buffer_) {
+		if(buffer()) {
 
 			AbstractWindow::shaders->frame_image_program()->use();
 
 			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
-			buffer_->Draw();
+			buffer()->Draw();
 		}
 
 		return Finish;
-	}
-
-	void AbstractDialog::PostDraw (AbstractWindow* context)
-	{
-	}
-
-	void AbstractDialog::PerformFocusOn (AbstractWindow* context)
-	{
-	}
-
-	void AbstractDialog::PerformFocusOff (AbstractWindow* context)
-	{
-	}
-
-	void AbstractDialog::PerformHoverIn (AbstractWindow* context)
-	{
-	}
-
-	void AbstractDialog::PerformHoverOut (AbstractWindow* context)
-	{
 	}
 
 	ResponseType AbstractDialog::PerformKeyPress (
@@ -172,18 +152,6 @@ namespace BlendInt {
 		}
 
 		return response;
-	}
-
-	ResponseType AbstractDialog::PerformContextMenuPress (
-	        AbstractWindow* context)
-	{
-		return Ignore;
-	}
-
-	ResponseType AbstractDialog::PerformContextMenuRelease (
-	        AbstractWindow* context)
-	{
-		return Ignore;
 	}
 
 	ResponseType AbstractDialog::PerformMousePress (
@@ -510,9 +478,7 @@ namespace BlendInt {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
 
-        set_buffered(true);
-
-        buffer_.reset(new ViewBuffer(size().width(), size().height()));
+        EnableViewBuffer();
 	}
 
 }
