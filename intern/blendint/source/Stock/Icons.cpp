@@ -32,7 +32,6 @@
 #include <boost/filesystem.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
-#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/IconTexture.hpp>

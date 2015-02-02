@@ -21,13 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
-
 #include <BlendInt/Gui/MenuItem.hpp>
-#include <BlendInt/Gui/FontCache.hpp>
-
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 

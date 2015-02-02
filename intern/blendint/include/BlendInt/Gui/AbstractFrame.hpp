@@ -40,7 +40,6 @@ namespace BlendInt {
 	{
 	public:
 
-		friend class Context;
 		friend class AbstractWindow;
 
 		AbstractFrame ();

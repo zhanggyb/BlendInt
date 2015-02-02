@@ -39,7 +39,6 @@
 
 namespace BlendInt {
 
-	class Context;
 	class AbstractWindow;
 	class AbstractView;
 
@@ -593,7 +592,6 @@ namespace BlendInt {
 	private:
 
 		friend class AbstractWindow;
-		friend class Context;
 		friend class AbstractFrame;
 		friend class AbstractWidget;
 		friend class AbstractAdjustment;

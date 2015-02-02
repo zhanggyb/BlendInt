@@ -250,7 +250,6 @@ namespace BlendInt {
 			ProjectionIndex, ViewIndex, ModelIndex
 		};
 
-		friend class Context;
 		friend class AbstractWindow;
 
 		static size_t TypeSize (GLenum type);
