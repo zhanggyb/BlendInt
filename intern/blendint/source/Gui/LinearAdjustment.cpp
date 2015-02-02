@@ -164,9 +164,8 @@ namespace BlendInt {
 						exp_it++;
 					} else {
 						resize(p,
-						        reference_width * (*unexp_it)
-						                / unexpandable_prefer_sum,
-						        p->size().height());
+							   reference_width * (*unexp_it) / unexpandable_prefer_sum,
+							   p->size().height());
 						move(p, x, p->position().y());
 						unexp_it++;
 					}
@@ -186,9 +185,8 @@ namespace BlendInt {
 
 					if (p->IsExpandX()) {
 						resize(p,
-						        reference_width * (*exp_it)
-						                / expandable_prefer_sum,
-						        p->size().height());
+							   reference_width * (*exp_it) / expandable_prefer_sum,
+							   p->size().height());
 						move(p, x, p->position().y());
 						exp_it++;
 					} else {
@@ -224,9 +222,8 @@ namespace BlendInt {
 
 				if (p->IsExpandX()) {
 					resize(p,
-									expandable_width * (*exp_it)
-													/ expandable_prefer_sum,
-									p->size().height());
+						   expandable_width * (*exp_it) / expandable_prefer_sum,
+						   p->size().height());
 					move(p, x, p->position().y());
 					exp_it++;
 				} else {
@@ -240,6 +237,7 @@ namespace BlendInt {
 
 			p = p->next_view();
 		}
+
 	}
 
 	void LinearAdjustment::AlignHorizontally (int y, int height)
@@ -265,13 +263,15 @@ namespace BlendInt {
 					        (*unexp_it));
 
 					if (alignment_ & AlignTop) {
-						move(p, p->position().x(),
-						        y + (height - p->size().height()));
+						move(p,
+							 p->position().x(),
+							 y + (height - p->size().height()));
 					} else if (alignment_ & AlignBottom) {
 						move(p, p->position().x(), y);
 					} else if (alignment_ & AlignHorizontalCenter) {
-						move(p, p->position().x(),
-						        y + (height - p->size().height()) / 2);
+						move(p,
+							 p->position().x(),
+							 y + (height - p->size().height()) / 2);
 					}
 				}
 
@@ -400,10 +400,9 @@ namespace BlendInt {
 						exp_it++;
 					} else {
 						resize(p,
-										p->size().width(),
-										reference_height * (*unexp_it)
-														/ unexpandable_prefer_sum
-										);
+							   p->size().width(),
+							   reference_height * (*unexp_it) / unexpandable_prefer_sum
+							   );
 						y = y - p->size().height();
 						move(p, p->position().x(), y);
 						unexp_it++;
@@ -424,9 +423,8 @@ namespace BlendInt {
 
 					if (p->IsExpandY()) {
 						resize(p,
-										p->size().width(),
-										reference_height * (*exp_it)
-														/ expandable_prefer_sum);
+							   p->size().width(),
+							   reference_height * (*exp_it) / expandable_prefer_sum);
 						y = y - p->size().height();
 						move(p, p->position().x(), y);
 						exp_it++;
@@ -457,18 +455,16 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
 
-		AbstractView* p = view()->first_subview();
-
 		y = y + height;
+		AbstractView* p = view()->first_subview();
 		while (p) {
 
 			if(p->visiable()) {
 
 				if (p->IsExpandY()) {
 					resize(p,
-									p->size().width(),
-									expandable_height * (*exp_it)
-													/ expandable_prefer_sum);
+						   p->size().width(),
+						   expandable_height * (*exp_it) / expandable_prefer_sum);
 					y = y - p->size().height();
 					move(p, p->position().x(), y);
 					exp_it++;

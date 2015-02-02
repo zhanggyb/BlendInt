@@ -63,8 +63,6 @@ namespace BlendInt {
 
     AbstractDialog::~AbstractDialog()
     {
-		glDeleteVertexArrays(3, vao_);
-
 		if(focused_widget_) {
 			delegate_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &AbstractDialog::OnFocusedWidgetDestroyed);
@@ -91,33 +89,9 @@ namespace BlendInt {
 				0.f + (float)size().height(),
 				100.f, -100.f);
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (AbstractWindow::theme->dialog().shaded) {
-				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->dialog().shadetop,
-						AbstractWindow::theme->dialog().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateRoundedVertices(&inner_verts, &outer_verts);
+			if(buffer_) {
+				buffer_->Resize(size());
 			}
-
-			vbo_.bind(0);
-			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.bind(1);
-			vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-			vbo_.bind(2);
-			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = (float)size().width();
-			*(ptr + 9) = (float)size().height();
-			*(ptr + 12) = (float)size().width();
-			*(ptr + 13) = (float)size().height();
-			vbo_.unmap();
-
-			vbo_.reset();
 
 			UpdateLayout();
 
@@ -135,12 +109,12 @@ namespace BlendInt {
 
 		context->register_active_frame(this);
 
-		if(refresh()) {
+		if(refresh() && buffer_) {
 			RenderSubFramesToTexture(this,
 					context,
 					projection_matrix_,
 					model_matrix_,
-					&texture_buffer_);
+					buffer_->texture());
 		}
 
 		return true;
@@ -148,38 +122,15 @@ namespace BlendInt {
 
 	ResponseType AbstractDialog::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->frame_inner_program()->use();
+		if(buffer_) {
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+			AbstractWindow::shaders->frame_image_program()->use();
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
-
-		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-		AbstractWindow::shaders->frame_image_program()->use();
-
-		texture_buffer_.bind();
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
-
-		glBindVertexArray(vao_[2]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		texture_buffer_.reset();
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		AbstractWindow::shaders->frame_outer_program()->use();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
-
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+			buffer_->Draw();
+		}
 
 		return Finish;
 	}
@@ -559,60 +510,9 @@ namespace BlendInt {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+        set_buffered(true);
 
-		if (AbstractWindow::theme->dialog().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->dialog().shadetop,
-					AbstractWindow::theme->dialog().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
-
-		glGenVertexArrays(3, vao_);
-		glBindVertexArray(vao_[0]);
-
-		vbo_.generate();
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3,
-		GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[1]);
-
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[2]);
-
-		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
-
-		vbo_.bind(2);
-		vbo_.set_data(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray(AttributeCoord);
-		glEnableVertexAttribArray(AttributeUV);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
-		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(AttributeUV, 2,
-		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-		vbo_.reset();
+        buffer_.reset(new ViewBuffer(size().width(), size().height()));
 	}
 
 }

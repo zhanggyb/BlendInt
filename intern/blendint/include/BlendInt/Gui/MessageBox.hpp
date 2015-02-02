@@ -49,6 +49,10 @@ namespace BlendInt {
 
         void OnClose (AbstractButton* btn);
 
+        GLuint vao_[2];
+
+        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
 		RefPtr<FrameShadow> shadow_;
 
 		Label* title_;

@@ -47,6 +47,10 @@ namespace BlendInt {
 			return &texture_;
 		}
 
+#ifdef DEBUG
+		void SaveToFile (const char* file);
+#endif
+
 	protected:
 
 		virtual void PerformSizeUpdate (const Size& size);

@@ -262,49 +262,43 @@ namespace BlendInt {
 		glActiveTexture(GL_TEXTURE0);
 		texture_.bind();
 
-		if (mutex_.trylock()) {
+		if (mutex_.trylock() && upload_ && frame_.data) {
 
-			if(upload_) {
+			switch (frame_.channels()) {
 
-				if(frame_.data) {
+				case 1: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+					texture_.SetImage(0, GL_RED, frame_.cols, frame_.rows,
+							0, GL_RED, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
 
-					switch (frame_.channels()) {
+				case 2: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+					texture_.SetImage(0, GL_RG, frame_.cols, frame_.rows,
+							0, GL_RG, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
 
-						case 1: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-							texture_.SetImage(0, GL_RED, frame_.cols, frame_.rows,
-									0, GL_RED, GL_UNSIGNED_BYTE, frame_.data);
-							break;
-						}
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
+							0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
 
-						case 2: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-							texture_.SetImage(0, GL_RG, frame_.cols, frame_.rows,
-									0, GL_RG, GL_UNSIGNED_BYTE, frame_.data);
-							break;
-						}
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
+							0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
+					break;
+				}
 
-						case 3: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-							texture_.SetImage(0, GL_RGB, frame_.cols, frame_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, frame_.data);
-							break;
-						}
-
-						case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-						{
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-							texture_.SetImage(0, GL_RGBA, frame_.cols, frame_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, frame_.data);
-							break;
-						}
-
-						default: {
-							texture_.reset();
-							return Finish;
-							break;
-						}
-					}
+				default: {
+					texture_.reset();
+					return Finish;
+					break;
 				}
 
 				upload_ = false;
@@ -326,10 +320,6 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-
-		texture_.reset();
-		GLSLProgram::reset();
 
 		return Finish;
 	}

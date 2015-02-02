@@ -28,21 +28,23 @@
 
 namespace BlendInt {
 
+	// FIXME: the default constructor has no effect
 	ViewBuffer::ViewBuffer ()
 	: AbstractForm(),
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
 		vbo_.generate();
 
 		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
+			// coord											uv
+			0.f, 0.f,											0.f, 0.f,
+			(float)size().width(), 0.f,							1.f, 0.f,
+			0.f, (float)size().height(),						0.f, 1.f,
+			(float)size().width(), (float)size().height(),		1.f, 1.f
 		};
+
+		glBindVertexArray(vao_);
 
 		vbo_.bind();
 		vbo_.set_data(sizeof(vertices), vertices);
@@ -64,27 +66,35 @@ namespace BlendInt {
 	  vao_(0)
 	{
 		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
 		vbo_.generate();
 
 		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
+			// coord											uv
+			0.f, 0.f,											0.f, 0.f,
+			(float)size().width(), 0.f,							1.f, 0.f,
+			0.f, (float)size().height(),						0.f, 1.f,
+			(float)size().width(), (float)size().height(),		1.f, 1.f
 		};
+
+		glBindVertexArray(vao_);
 
 		vbo_.bind();
 		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glEnableVertexAttribArray(AttributeUV);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
-		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(AttributeUV, 2,
-		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glVertexAttribPointer(AttributeCoord,
+							  2,
+							  GL_FLOAT,
+							  GL_FALSE,
+							  sizeof(GLfloat) * 4,
+							  BUFFER_OFFSET(0));
+		glVertexAttribPointer(AttributeUV,
+							  2,
+							  GL_FLOAT,
+							  GL_FALSE,
+							  sizeof(GLfloat) * 4,
+							  BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		vbo_.reset();
@@ -105,6 +115,16 @@ namespace BlendInt {
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+
+#ifdef DEBUG
+
+	void ViewBuffer::SaveToFile(const char* name)
+	{
+		texture_.bind();
+		texture_.WriteToFile(name);
+	}
+
+#endif
 
 	void ViewBuffer::PerformSizeUpdate (const Size& size)
 	{

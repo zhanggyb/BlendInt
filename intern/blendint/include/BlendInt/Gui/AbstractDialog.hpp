@@ -180,16 +180,7 @@ namespace BlendInt {
 
 		AbstractWidget* hovered_widget_;
 
-		//
-		// 0: inner
-		// 1: outer
-		// 2: texture buffer
-		GLuint vao_[3];
-
-		GLBuffer<ARRAY_BUFFER, 3> vbo_;
-
-        GLTexture2D texture_buffer_;
-        //RefPtr<ViewBuffer> buffer_;
+        RefPtr<ViewBuffer> buffer_;
 
         int cursor_position_;
 
