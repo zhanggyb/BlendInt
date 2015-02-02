@@ -45,6 +45,9 @@ namespace BlendInt {
 
 		set_size(w, h);
 
+		foreground_ = Color::Black;
+		background_ = 0xFFFFFF00;
+
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
@@ -76,6 +79,18 @@ namespace BlendInt {
 	void Label::SetFont (const Font& font)
 	{
 		text_->SetFont(font);
+		RequestRedraw();
+	}
+
+	void Label::SetForeground(const Color& color)
+	{
+		foreground_ = color;
+		RequestRedraw();
+	}
+
+	void Label::SetBackground(const Color& color)
+	{
+		background_ = color;
 		RequestRedraw();
 	}
 
@@ -147,7 +162,7 @@ namespace BlendInt {
 		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, background_.data());
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -172,7 +187,7 @@ namespace BlendInt {
 			}
 
 			if(text_->size().height() <= h) {
-				text_->DrawWithin(x, y, w);
+				text_->DrawWithin(x, y, w, foreground_);
 			}
 
 		}

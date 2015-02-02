@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SCREENSPLITTER_HPP_
-#define _BLENDINT_GUI_SCREENSPLITTER_HPP_
+#pragma once
 
 #include <deque>
 #include <BlendInt/Core/Types.hpp>
@@ -42,6 +41,10 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 		virtual ~FrameSplitterHandle ();
 
 	protected:
@@ -49,10 +52,6 @@ namespace BlendInt {
 		friend class FrameSplitter;
 
 		FrameSplitterHandle (Orientation orientation = Horizontal);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual bool PreDraw (AbstractWindow* context);
 
@@ -85,10 +84,6 @@ namespace BlendInt {
 	private:
 
 		Orientation orientation_;
-
-		GLuint vao_;
-
-		GLBuffer<ARRAY_BUFFER> buffer_;
 
 		Point last_;
 		Point cursor_;
@@ -231,5 +226,3 @@ namespace BlendInt {
 		AbstractFrame* focused_frame_;
 	};
 }
-
-#endif /* _BLENDINT_GUI_SCREENSPLITTER_HPP_ */

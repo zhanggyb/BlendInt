@@ -21,21 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/Gui/FrameSplitter.hpp>
-
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
@@ -43,7 +29,6 @@ namespace BlendInt {
 	FrameSplitterHandle::FrameSplitterHandle(Orientation orientation)
 	: Frame(),
 	  orientation_(orientation),
-	  vao_(0),
 	  prev_size_(0),
 	  next_size_(0),
 	  nearby_pos_(0)
@@ -53,39 +38,10 @@ namespace BlendInt {
 		} else {
 			set_size(1, 200);
 		}
-
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		buffer_.generate();
-		buffer_.bind();
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		buffer_.reset();
 	}
 
 	FrameSplitterHandle::~FrameSplitterHandle()
 	{
-		glDeleteVertexArrays(1, &vao_);
-	}
-
-	Size FrameSplitterHandle::GetPreferredSize() const
-	{
-		Size preferred_size(1, 1);
-
-		if(subs_count()) {
-			preferred_size = first_subview()->GetPreferredSize();
-		}
-
-		return preferred_size;
 	}
 
 	bool FrameSplitterHandle::Contain(const Point& point) const
@@ -115,69 +71,41 @@ namespace BlendInt {
 		return true;
 	}
 
-	void FrameSplitterHandle::PerformPositionUpdate(
-			const PositionUpdateRequest& request)
+	bool FrameSplitterHandle::IsExpandX() const
 	{
-		if(request.target() == this) {
-
-			set_position(*request.position());
-
-		}
-
-		if(request.source() == this) {
-			ReportPositionUpdate (request);
+		if(orientation_ == Horizontal) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void FrameSplitterHandle::PerformSizeUpdate(
-			const SizeUpdateRequest& request)
+	bool FrameSplitterHandle::IsExpandY() const
 	{
-		if(request.target() == this) {
-
-			set_size(*request.size());
-
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-
-			buffer_.bind();
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.reset();
-
+		if(orientation_ == Vertical) {
+			return true;
+		} else {
+			return false;
 		}
+	}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+	Size FrameSplitterHandle::GetPreferredSize() const
+	{
+		if(orientation_ == Horizontal) {
+			return Size(200, 1);
+		} else {
+			return Size(1, 200);
 		}
 	}
 
 	bool FrameSplitterHandle::PreDraw(AbstractWindow* context)
 	{
-		return visiable();
+		return false;
 	}
 
 	ResponseType FrameSplitterHandle::Draw(AbstractWindow* context)
 	{
-		AbstractWindow::shaders->frame_inner_program()->use();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.105f, 0.105f, 0.105f, 0.75f);
-
-		/*
-		if(hover()) {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 25);
-		} else {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		}
-		*/
-
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
-		return subs_count() ? Ignore : Finish;
+		return Finish;
 	}
 
 	void FrameSplitterHandle::PostDraw(AbstractWindow* context)

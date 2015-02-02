@@ -96,8 +96,6 @@ namespace BlendInt {
 				exit(EXIT_FAILURE);
 			}
 
-			// cursor->RegisterCursorTheme(new GLFWCursor(window_));
-
 			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
 			shaders->SetFrameProjectionMatrix(projection);
 			shaders->SetFrameViewMatrix(default_view_matrix);
@@ -319,6 +317,8 @@ namespace BlendInt {
 				glfwSetWindowSize(window_, size().width(), size().height());
 				glfwSetWindowSizeCallback(window_, &CbWindowSize);
 			}
+
+			resized_.fire(this, size());
 		}
 	}
 

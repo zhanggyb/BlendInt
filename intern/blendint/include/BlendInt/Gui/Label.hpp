@@ -63,6 +63,10 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
+		void SetForeground (const Color& color);
+
+		void SetBackground (const Color& color);
+
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
@@ -93,6 +97,10 @@ namespace BlendInt {
 
         GLuint vao_;
         GLBuffer<> vbo_;
+
+        Color foreground_;
+
+        Color background_;
 
     };
 
