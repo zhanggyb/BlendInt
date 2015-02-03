@@ -178,6 +178,7 @@ namespace BlendInt {
 
     void FontCache::ReleaseAll ()
     {
+        kDefaultFontHash = 0;
     	kCacheDB.clear();
     }
 

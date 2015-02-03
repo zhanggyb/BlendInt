@@ -23,7 +23,7 @@
 
 #include <BlendInt/Gui/MenuButton.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -98,14 +98,14 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType MenuButton::Draw (const Context* context)
+	ResponseType MenuButton::Draw (AbstractWindow* context)
 	{
 		if (hover()) {
 
-			Context::shaders->widget_inner_program()->use();
+			AbstractWindow::shaders->widget_inner_program()->use();
 
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-			glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, Context::theme->menu_item().inner_sel.data());
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+			glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, AbstractWindow::theme->menu_item().inner_sel.data());
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -138,8 +138,8 @@ namespace BlendInt {
 		vbo_.bind();
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		vbo_.reset();

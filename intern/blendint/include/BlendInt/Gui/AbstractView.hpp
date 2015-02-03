@@ -23,20 +23,11 @@
 
 #pragma once
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
- 
+
 #include <vector>
 #include <pthread.h>
 
-#include <Cpp/Events.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Object.hpp>
@@ -44,9 +35,11 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
+#include <BlendInt/CppEvents/Cpp/Events.hpp>
+
 namespace BlendInt {
 
-	class Context;
+	class AbstractWindow;
 	class AbstractView;
 
 	/**
@@ -336,6 +329,11 @@ namespace BlendInt {
 			return view_flag_ & ViewPressed;
 		}
 
+		inline bool buffered () const
+		{
+			return view_flag_ & ViewBuffered;
+		}
+
 		inline int subs_count () const
 		{
 			return subs_count_;
@@ -503,31 +501,40 @@ namespace BlendInt {
 			}
 		}
 
-		virtual bool PreDraw (const Context* context) = 0;
+		inline void set_buffered (bool buffered)
+		{
+			if(buffered) {
+				SETBIT(view_flag_, ViewBuffered);
+			} else {
+				CLRBIT(view_flag_, ViewBuffered);
+			}
+		}
 
-		virtual ResponseType Draw (const Context* context) = 0;
+		virtual bool PreDraw (AbstractWindow* context) = 0;
 
-		virtual void PostDraw (const Context* context) = 0;
+		virtual ResponseType Draw (AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOn (const Context* context) = 0;
+		virtual void PostDraw (AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOff (const Context* context) = 0;
+		virtual void PerformFocusOn (AbstractWindow* context) = 0;
 
-		virtual void PerformHoverIn (const Context* context) = 0;
+		virtual void PerformFocusOff (AbstractWindow* context) = 0;
 
-		virtual void PerformHoverOut (const Context* context) = 0;
+		virtual void PerformHoverIn (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformKeyPress (const Context* context) = 0;
+		virtual void PerformHoverOut (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuPress (const Context* context) = 0;
+		virtual ResponseType PerformKeyPress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuPress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMousePress (const Context* context) = 0;
+		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseRelease (const Context* context) = 0;
+		virtual ResponseType PerformMousePress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseMove (const Context* context) = 0;
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context) = 0;
+
+		virtual ResponseType PerformMouseMove (AbstractWindow* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
@@ -567,7 +574,7 @@ namespace BlendInt {
 
 		void SetSubViewVisibility (AbstractView* sub, bool visible);
 
-		void DrawSubViewsOnce (const Context* context);
+		void DrawSubViewsOnce (AbstractWindow* context);
 
 		static void GenerateVertices (
 				const Size& size,
@@ -598,7 +605,7 @@ namespace BlendInt {
 
 	private:
 
-		friend class Context;
+		friend class AbstractWindow;
 		friend class AbstractFrame;
 		friend class AbstractWidget;
 		friend class AbstractAdjustment;
@@ -622,7 +629,10 @@ namespace BlendInt {
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocusable = (1 << 6)
+			ViewFocusable = (1 << 6),
+
+			// A satic view use 2D texture as a buffer, redraw only when there's update
+			ViewBuffered = (1 << 7)
 
 		};
 
@@ -634,7 +644,7 @@ namespace BlendInt {
 		 * 	- true: use superview refresh() status to set view's refresh flag
 		 * 	- false: set view's flag to false after Draw()
 		 */
-		static void DispatchDrawEvent (AbstractView* view, const Context* context);
+		static void DispatchDrawEvent (AbstractView* view, AbstractWindow* context);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>* inner,

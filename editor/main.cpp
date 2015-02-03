@@ -25,9 +25,11 @@
  * @brief BlendInt UI Editor
  */
 
-#include "CursorTheme.hpp"
-#include "Window.hpp"
 #include "EditorContext.hpp"
+#include <BlendInt/Gui/Window.hpp>
+
+#include <BlendInt/Gui/AbstractDialog.hpp>
+#include <BlendInt/Gui/MessageBox.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -35,15 +37,20 @@ int main (int argc, char* argv[])
 
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	Init();
+	DBG_PRINT_MSG("Dialog size: %ld", sizeof(AbstractDialog));
 
-	GLFWwindow* win = CreateWindow("UI Editor", 1280, 800);
-	Context::cursor->RegisterCursorType (new CursorTheme(win));
+	if(Window::Initialize()) {
 
-	EditorContext* context = Manage (new EditorContext(win));
-	SetContext(context);
-	context->Resize(1280, 800);
+		Window win(1280, 800, "UI Editor");
 
-	RunLoop(win);
-	Terminate();
+		MessageBox* msg = new MessageBox("Title", "Hello World!");
+		msg->MoveTo(400, 400);
+		win.AddFrame(msg);
+
+		win.Exec();
+
+		Window::Terminate();
+	}
+
+	return 0;
 }

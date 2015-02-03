@@ -65,6 +65,8 @@ namespace BlendInt {
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
+		virtual void Draw () const;
+
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
 		void Draw (float x, float y, const Color& color, short gamma = 0) const;

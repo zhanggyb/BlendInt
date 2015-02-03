@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/TextEntry.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -49,9 +49,9 @@ namespace BlendInt {
 	  index_(0)
 	{
 		int h = font_.height();
-		int initial_width = h + round_radius() * 2 * Context::theme->pixel()
+		int initial_width = h + round_radius() * 2 * AbstractWindow::theme->pixel()
 				+ 120;
-		int initial_height = h + vertical_space * 2 * Context::theme->pixel();
+		int initial_height = h + vertical_space * 2 * AbstractWindow::theme->pixel();
 
 		set_size(initial_width, initial_height);
 
@@ -130,7 +130,7 @@ namespace BlendInt {
 
 		preferred_size.set_height(
 				max_font_height
-						+ default_padding.vsum() * Context::theme->pixel());// top padding: 2, bottom padding: 2
+						+ default_padding.vsum() * AbstractWindow::theme->pixel());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
 			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
@@ -147,13 +147,13 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextEntry::PerformKeyPress (const Context* context)
+	ResponseType TextEntry::PerformKeyPress (AbstractWindow* context)
 	{
-		if(!context->text().empty()) {
+		if(!context->GetTextInput().empty()) {
 
-			text_.insert(index_, context->text());
-			index_ += context->text().length();
-			length_ += context->text().length();
+			text_.insert(index_, context->GetTextInput());
+			index_ += context->GetTextInput().length();
+			length_ += context->GetTextInput().length();
 
 			int text_width = font_.GetTextWidth(text_, length_,
 							start_);
@@ -176,7 +176,7 @@ namespace BlendInt {
 
 		} else {
 
-			switch (context->key()) {
+			switch (context->GetKeyInput()) {
 
 				case Key_Backspace: {
 					DisposeBackspacePress();
@@ -214,7 +214,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextEntry::PerformMousePress(const Context* context)
+	ResponseType TextEntry::PerformMousePress(AbstractWindow* context)
 	{
 		if(text_.size()) {
 			index_ = GetCursorPosition(context);
@@ -236,10 +236,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->text().shaded) {
+			if (AbstractWindow::theme->text().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Context::theme->text().shadetop,
-						Context::theme->text().shadedown,
+						AbstractWindow::theme->text().shadetop,
+						AbstractWindow::theme->text().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -254,9 +254,9 @@ namespace BlendInt {
 			cursor_buffer_->bind();
 			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
 			*(buf_p + 5) = (GLfloat) (request.size()->height()
-					- vertical_space * 2 * Context::theme->pixel());
+					- vertical_space * 2 * AbstractWindow::theme->pixel());
 			*(buf_p + 7) = (GLfloat) (request.size()->height()
-					- vertical_space * 2 * Context::theme->pixel());
+					- vertical_space * 2 * AbstractWindow::theme->pixel());
 			cursor_buffer_->unmap();
 			cursor_buffer_->reset();
 
@@ -275,10 +275,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->text().shaded) {
+		if (AbstractWindow::theme->text().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->text().shadetop,
-					Context::theme->text().shadedown,
+					AbstractWindow::theme->text().shadetop,
+					AbstractWindow::theme->text().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -300,10 +300,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->text().shaded) {
+		if (AbstractWindow::theme->text().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->text().shadetop,
-					Context::theme->text().shadedown,
+					AbstractWindow::theme->text().shadetop,
+					AbstractWindow::theme->text().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -321,31 +321,31 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType TextEntry::Draw (const Context* context)
+	ResponseType TextEntry::Draw (AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				Context::theme->text().inner.data());
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				AbstractWindow::theme->text().inner.data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-				Context::theme->text().outline.data());
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+				AbstractWindow::theme->text().outline.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 			        0.f, - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -353,18 +353,18 @@ namespace BlendInt {
 
 		if(focus()) {			// draw a cursor
 
-			Context::shaders->widget_triangle_program()->use();
+			AbstractWindow::shaders->widget_triangle_program()->use();
 			unsigned int cursor_pos = font_.GetTextWidth(text_,
 						        index_ - start_, start_);
 			cursor_pos += round_radius();
 
 			glm::vec2 pos(0.f + cursor_pos, 0.f + 1);
 
-			glUniform2fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 1,
+			glUniform2fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 1,
 					glm::value_ptr(pos));
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-			glVertexAttrib4f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), 0.f,
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glVertexAttrib4f(AttributeColor, 0.f,
 					0.215f, 1.f, 0.75f);
 
 			glBindVertexArray(vaos_[2]);
@@ -379,12 +379,12 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextEntry::PerformFocusOn (const Context* context)
+	void TextEntry::PerformFocusOn (AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void TextEntry::PerformFocusOff (const Context* context)
+	void TextEntry::PerformFocusOff (AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
@@ -394,10 +394,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->text().shaded) {
+		if (AbstractWindow::theme->text().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->text().shadetop,
-					Context::theme->text().shadedown,
+					AbstractWindow::theme->text().shadetop,
+					AbstractWindow::theme->text().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -412,8 +412,8 @@ namespace BlendInt {
 		inner_->bind();
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD),
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord,
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
@@ -422,25 +422,25 @@ namespace BlendInt {
 		outer_->bind();
 		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD),
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		std::vector<GLfloat> cursor_vertices(8, 0.f);
 
 		cursor_vertices[0] = 1.f;
-		cursor_vertices[1] = (GLfloat) vertical_space * Context::theme->pixel();
+		cursor_vertices[1] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
 		cursor_vertices[2] = 3.f;
-		cursor_vertices[3] = (GLfloat) vertical_space * Context::theme->pixel();
+		cursor_vertices[3] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
 		cursor_vertices[4] = 1.f;
 		cursor_vertices[5] = (GLfloat) (size().height()
-				- vertical_space * 2 * Context::theme->pixel());
+				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
 		cursor_vertices[6] = 3.f;
 		cursor_vertices[7] = (GLfloat) (size().height()
-				- vertical_space * 2 * Context::theme->pixel());
+				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
 		glBindVertexArray(vaos_[2]);
 		cursor_buffer_.reset(new GLArrayBuffer);
@@ -449,8 +449,8 @@ namespace BlendInt {
 		cursor_buffer_->bind();
 		cursor_buffer_->set_data(sizeof(GLfloat) * cursor_vertices.size(), &cursor_vertices[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD),
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::reset();
@@ -610,11 +610,11 @@ namespace BlendInt {
 		}
 	}
 	
-	int TextEntry::GetCursorPosition (const Context* context)
+	int TextEntry::GetCursorPosition (AbstractWindow* context)
 	{
 		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
 
-		int click_position = context->cursor_position().x() - global_pos.x()
+		int click_position = context->GetCursorPosition().x() - global_pos.x()
 						- round_radius();
 
 		if((click_position < 0) ||

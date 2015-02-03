@@ -21,21 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_
-#define _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
+#pragma once
 
 #include <string.h>
 #include <BlendInt/Core/Object.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 namespace BlendInt {
 
@@ -86,5 +76,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_OPENGL_GLVERTEXARRAYS_HPP_ */

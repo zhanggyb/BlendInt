@@ -59,37 +59,37 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PerformFocusOn (const Context* context);
+		virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (const Context* context);
+		virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const Context* context);
+		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuPress (const Context* context);
+		virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (const Context* context);
+		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (const Context* context);
+		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
 
 	private:
 
-		void SetFocusedWidget (AbstractWidget* widget, const Context* context);
+		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 

@@ -23,7 +23,7 @@
 
 #include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/LinearAdjustment.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 

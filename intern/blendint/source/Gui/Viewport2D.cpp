@@ -39,7 +39,7 @@
 
 #include <BlendInt/Gui/Viewport2D.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -103,19 +103,19 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport2D::Draw(const Context* context)
+	ResponseType Viewport2D::Draw(AbstractWindow* context)
 	{
-		Context* c = const_cast<Context*>(context);
+		AbstractWindow* c = const_cast<AbstractWindow*>(context);
         GLint vp[4];	// Original viewport
         int n = GetOutlineVertices(round_type()) + 2;
 
         glGetIntegerv(GL_VIEWPORT, vp);
 
-		RefPtr<GLSLProgram> program = Context::shaders->widget_inner_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders->widget_inner_program();
 		program->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR),
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
 				0.25f, 0.25f, 0.25f, 1.f);
 
 		glBindVertexArray(vao_);
@@ -148,7 +148,7 @@ namespace BlendInt {
         glViewport(vp[0], vp[1], vp[2], vp[3]);
 
         program->use();
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vao_);
@@ -174,8 +174,8 @@ namespace BlendInt {
 
 		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

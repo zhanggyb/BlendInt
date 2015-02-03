@@ -38,7 +38,7 @@
 #include <algorithm>
 
 #include <BlendInt/Gui/TextureView.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -225,25 +225,25 @@ namespace BlendInt {
 		}
 	}
 
-	bool TextureView::PreDraw (const Context* context)
+	bool TextureView::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
-		Context* c = const_cast<Context*>(context);
+		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
 		Point offset = GetOffset();
-		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(),
 						position().y() + offset.y()));
 
-		Context::shaders->PushWidgetModelMatrix();
-		Context::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
 		// draw background and stencil mask
 
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -255,7 +255,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextureView::Draw (const Context* context)
+	ResponseType TextureView::Draw (AbstractWindow* context)
 	{
 		float x = (size().width() - image_size_.width()) / 2.f;
 		float y = (size().height() - image_size_.height()) / 2.f;
@@ -270,12 +270,12 @@ namespace BlendInt {
 
 			texture_->bind();
 
-			Context::shaders->widget_image_program()->use();
+			AbstractWindow::shaders->widget_image_program()->use();
 			glUniform2f(
-			        Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+			        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
 			        x, y);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -287,22 +287,22 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void TextureView::PostDraw (const Context* context)
+	void TextureView::PostDraw (AbstractWindow* context)
 	{
 		// draw background again to unmask stencil
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glBindVertexArray(vao_[0]);
 
-		const_cast<Context*>(context)->BeginPopStencil();	// pop inner stencil
+		const_cast<AbstractWindow*>(context)->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		const_cast<Context*>(context)->EndPopStencil();
+		const_cast<AbstractWindow*>(context)->EndPopStencil();
 
 		glBindVertexArray(0);
 
 		GLSLProgram::reset();
 
-		Context::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
 	void TextureView::InitializeImageView ()
@@ -321,8 +321,8 @@ namespace BlendInt {
 		vbo_.bind(0);
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 
@@ -337,12 +337,12 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(vertices), vertices);
 
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::WIDGET_IMAGE_COORD));
+				AttributeCoord);
 		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer (Context::shaders->location (Shaders::WIDGET_IMAGE_COORD),
+				AttributeUV);
+		glVertexAttribPointer (AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Context::shaders->location (Shaders::WIDGET_IMAGE_UV), 2,
+		glVertexAttribPointer (AttributeUV, 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

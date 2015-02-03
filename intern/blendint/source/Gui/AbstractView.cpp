@@ -21,23 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/OpenGL/GLHeader.hpp>
+
 #include <BlendInt/Gui/AbstractView.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -284,10 +276,10 @@ namespace BlendInt {
 			}
 
 			if(root->superview() == 0) {
-				Context* context = dynamic_cast<Context*>(root);
-				if(context) {
-					//DBG_PRINT_MSG("Call %s", "virtual Context::SynchronizeWindow()");
-					context->SynchronizeWindow();
+				AbstractWindow* window = dynamic_cast<AbstractWindow*>(root);
+				if(window) {
+					//DBG_PRINT_MSG("Call %s", "virtual AbstractWindow::SynchronizeWindow()");
+					window->Synchronize();
 				}
 			}
 
@@ -457,7 +449,7 @@ namespace BlendInt {
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	void AbstractView::DrawSubViewsOnce(const Context* context)
+	void AbstractView::DrawSubViewsOnce(AbstractWindow* context)
 	{
 		bool refresh_record = false;
 
@@ -486,7 +478,7 @@ namespace BlendInt {
 	}
 
 	void AbstractView::DispatchDrawEvent (AbstractView* widget,
-	        const Context* context)
+	        AbstractWindow* context)
 	{
 #ifdef DEBUG
 		assert(widget != 0);
@@ -514,7 +506,8 @@ namespace BlendInt {
 			return false;
 		} else {
 			return true;
-		}	}
+		}
+	}
 
 	bool AbstractView::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
@@ -522,7 +515,8 @@ namespace BlendInt {
 			return false;
 		} else {
 			return true;
-		}	}
+		}
+	}
 
 	void AbstractView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
@@ -611,9 +605,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		float border = default_border_width * Context::theme->pixel();
+		float border = default_border_width * AbstractWindow::theme->pixel();
 
-		float rad = round_radius_ * Context::theme->pixel();
+		float rad = round_radius_ * AbstractWindow::theme->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -826,9 +820,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		float border = default_border_width * Context::theme->pixel();
+		float border = default_border_width * AbstractWindow::theme->pixel();
 
-		float rad = round_radius_ * Context::theme->pixel();
+		float rad = round_radius_ * AbstractWindow::theme->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -875,7 +869,7 @@ namespace BlendInt {
 			rad = 0.5f * minsize;
 
 		if (2.0f * (radi + border) > minsize)
-			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
+			radi = 0.5f * minsize - border * AbstractWindow::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -1155,9 +1149,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		border *= Context::theme->pixel();
+		border *= AbstractWindow::theme->pixel();
 
-		float rad = radius * Context::theme->pixel();
+		float rad = radius * AbstractWindow::theme->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -1371,9 +1365,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		border *= Context::theme->pixel();
+		border *= AbstractWindow::theme->pixel();
 
-		float rad = radius * Context::theme->pixel();
+		float rad = radius * AbstractWindow::theme->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -1420,7 +1414,7 @@ namespace BlendInt {
 			rad = 0.5f * minsize;
 
 		if (2.0f * (radi + border) > minsize)
-			radi = 0.5f * minsize - border * Context::theme->pixel();	// U.pixelsize;
+			radi = 0.5f * minsize - border * AbstractWindow::theme->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

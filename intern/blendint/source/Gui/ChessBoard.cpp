@@ -39,7 +39,7 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/ChessBoard.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -120,26 +120,31 @@ namespace BlendInt {
 		set_size(size);
 	}
 
+	void ChessBoard::Draw () const
+	{
+
+	}
+
 	void ChessBoard::Draw (float x, float y, short gamma) const
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = Context::shaders->widget_triangle_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders->widget_triangle_program();
 		program->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(AttributeColor, color.data());
 
 		glEnableVertexAttribArray(0);
 
 		m_vbo->bind();	// bind ARRAY BUFFER
 		m_light_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(AttributeCoord, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -152,11 +157,11 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(AttributeColor, color.data());
 
 		m_dark_ibo->bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), // attribute
+		glVertexAttribPointer(AttributeCoord, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is

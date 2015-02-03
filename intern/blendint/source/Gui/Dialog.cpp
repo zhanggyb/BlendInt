@@ -31,7 +31,7 @@
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/Dialog.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 #include <BlendInt/Gui/FlowLayout.hpp>
 
@@ -313,10 +313,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->dialog().shaded) {
+			if (AbstractWindow::theme->dialog().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Context::theme->dialog().shadetop,
-						Context::theme->dialog().shadedown,
+						AbstractWindow::theme->dialog().shadetop,
+						AbstractWindow::theme->dialog().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -350,11 +350,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool Dialog::PreDraw(const Context* context)
+	bool Dialog::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(refresh()) {
 			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
@@ -363,27 +363,27 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Dialog::Draw(const Context* context)
+	ResponseType Dialog::Draw(AbstractWindow* context)
 	{
 		shadow_->Draw(position().x(), position().y());
 
-		Context::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders->frame_inner_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(Context::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        Context::shaders->frame_image_program()->use();
+        AbstractWindow::shaders->frame_image_program()->use();
 
         texture_buffer_.bind();
-        glUniform2f(Context::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(Context::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+        glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -393,39 +393,37 @@ namespace BlendInt {
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Context::shaders->frame_outer_program()->use();
+		AbstractWindow::shaders->frame_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		//glUniform4fv(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
-		//        Context::theme->dialog().outline.data());
-		glUniform4f(Context::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		//glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 1,
+		//        AbstractWindow::theme->dialog().outline.data());
+		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		GLSLProgram::reset();
-
 		return Finish;
 	}
 
-	void Dialog::PostDraw (const Context* context)
+	void Dialog::PostDraw (AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformFocusOn (const Context* context)
+	void Dialog::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformFocusOff (const Context* context)
+	void Dialog::PerformFocusOff (AbstractWindow* context)
 	{
 
 	}
 
-	void Dialog::PerformHoverIn(const Context* context)
+	void Dialog::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Dialog::PerformHoverOut(const Context* context)
+	void Dialog::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &Dialog::OnHoverWidgetDestroyed);
@@ -434,18 +432,18 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Dialog::PerformKeyPress(const Context* context)
+	ResponseType Dialog::PerformKeyPress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
-		if(context->key() == Key_Escape) {
+		if(context->GetKeyInput() == Key_Escape) {
 			RequestRedraw();
 			delete this;
 			return Finish;
 		}
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
@@ -453,25 +451,25 @@ namespace BlendInt {
 	}
 
 	ResponseType Dialog::PerformContextMenuPress(
-			const Context* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType Dialog::PerformContextMenuRelease(
-			const Context* context)
+			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMousePress(const Context* context)
+	ResponseType Dialog::PerformMousePress(AbstractWindow* context)
 	{
-		const_cast<Context*>(context)->register_active_frame(this);
+		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = context->cursor_position();
+			cursor_point_ = context->GetCursorPosition();
 
 			if(hovered_widget_) {
 
@@ -494,7 +492,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				const_cast<Context*>(context)->MoveFrameToTop(this);
+				const_cast<AbstractWindow*>(context)->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -505,7 +503,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = context->cursor_position();
+			cursor_point_ = context->GetCursorPosition();
 
 			return Finish;
 		}
@@ -517,27 +515,27 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMouseRelease(const Context* context)
+	ResponseType Dialog::PerformMouseRelease(AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
-			const_cast<Context*>(context)->register_active_frame(this);
+			const_cast<AbstractWindow*>(context)->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
 		return Ignore;
 	}
 
-	ResponseType Dialog::PerformMouseMove(const Context* context)
+	ResponseType Dialog::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType retval = Ignore;
 
 		if(mouse_button_pressed()) {
 
-			int ox = context->cursor_position().x() - cursor_point_.x();
-			int oy = context->cursor_position().y() - cursor_point_.y();
+			int ox = context->GetCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetCursorPosition().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -607,7 +605,7 @@ namespace BlendInt {
 
 			if(focused_widget_) {
 
-				const_cast<Context*>(context)->register_active_frame(this);
+				const_cast<AbstractWindow*>(context)->register_active_frame(this);
 				retval = delegate_mouse_move_event(focused_widget_, context);
 
 			}
@@ -616,7 +614,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType Dialog::DispatchHoverEvent(const Context* context)
+	ResponseType Dialog::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
@@ -626,13 +624,13 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(context->cursor_position())) {
+		if(valid_rect.contains(context->GetCursorPosition())) {
 
-			if(Contain(context->cursor_position())) {
+			if(Contain(context->GetCursorPosition())) {
 
 				cursor_position_ = InsideRectangle;
 
-				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->cursor_position().x(), context->cursor_position().y());
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetCursorPosition().x(), context->GetCursorPosition().y());
 
 				AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
 
@@ -658,7 +656,7 @@ namespace BlendInt {
 				// set cursor shape
 				if(cursor_on_border()) {
 					set_cursor_on_border(false);
-					Context::cursor->PopCursor();
+					context->PopCursor();
 				}
 
 			} else {
@@ -666,15 +664,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(context->cursor_position().x() <= position().x()) {
+				if(context->GetCursorPosition().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (context->cursor_position().x() >= (position().x() + size().width())) {
+				} else if (context->GetCursorPosition().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (context->cursor_position().y() >= (position().y() + size().height())) {
+				if (context->GetCursorPosition().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (context->cursor_position().y () <= position().y()) {
+				} else if (context->GetCursorPosition().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 
@@ -683,30 +681,30 @@ namespace BlendInt {
 
 					case OnLeftBorder:
 					case OnRightBorder: {
-						Context::cursor->PushCursor();
-						Context::cursor->SetCursor(SplitHCursor);
+						context->PushCursor();
+						context->SetCursor(SplitHCursor);
 
 						break;
 					}
 
 					case OnTopBorder:
 					case OnBottomBorder: {
-						Context::cursor->PushCursor();
-						Context::cursor->SetCursor(SplitVCursor);
+						context->PushCursor();
+						context->SetCursor(SplitVCursor);
 						break;
 					}
 
 					case OnTopLeftCorner:
 					case OnBottomRightCorner: {
-						Context::cursor->PushCursor();
-						Context::cursor->SetCursor(SizeFDiagCursor);
+						context->PushCursor();
+						context->SetCursor(SizeFDiagCursor);
 						break;
 					}
 
 					case OnTopRightCorner:
 					case OnBottomLeftCorner: {
-						Context::cursor->PushCursor();
-						Context::cursor->SetCursor(SizeBDiagCursor);
+						context->PushCursor();
+						context->SetCursor(SizeBDiagCursor);
 						break;
 					}
 
@@ -722,7 +720,7 @@ namespace BlendInt {
 			// set cursor shape
 			if(cursor_on_border()) {
 				set_cursor_on_border(false);
-				Context::cursor->PopCursor();
+				context->PopCursor();
 			}
 
 			retval = Ignore;
@@ -749,7 +747,7 @@ namespace BlendInt {
 		layout_->Resize(size().width(), size().height() - h);
 	}
 
-	void Dialog::SetFocusedWidget(AbstractWidget* widget, const Context* context)
+	void Dialog::SetFocusedWidget(AbstractWidget* widget, AbstractWindow* context)
 	{
 		if(focused_widget_ == widget)
 			return;
@@ -794,10 +792,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->dialog().shaded) {
+		if (AbstractWindow::theme->dialog().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->dialog().shadetop,
-					Context::theme->dialog().shadedown,
+					AbstractWindow::theme->dialog().shadetop,
+					AbstractWindow::theme->dialog().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -811,17 +809,16 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_INNER_COORD), 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
+		GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::FRAME_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::FRAME_OUTER_COORD),
-				2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[2]);
 
@@ -836,15 +833,13 @@ namespace BlendInt {
 		buffer_.bind(2);
 		buffer_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_COORD));
-		glEnableVertexAttribArray (
-				Context::shaders->location (Shaders::FRAME_IMAGE_UV));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_COORD),
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (Context::shaders->location (Shaders::FRAME_IMAGE_UV), 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(AttributeCoord);
+		glEnableVertexAttribArray(AttributeUV);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(AttributeUV, 2,
+		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 		buffer_.reset();

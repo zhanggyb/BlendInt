@@ -33,20 +33,14 @@
 
 using namespace BI;
 
-EditorContext::EditorContext(GLFWwindow* win)
-: BI::Context(),
-  window_(win)
+EditorContext::EditorContext(int width, int height, const char* name)
+: BI::Window(width, height, name)
 {
 	InitializeGLFWDemoContext ();
 }
 
 EditorContext::~EditorContext ()
 {
-}
-
-void EditorContext::SynchronizeWindow()
-{
-	glfwPostEmptyEvent();
 }
 
 void EditorContext::InitializeGLFWDemoContext ()

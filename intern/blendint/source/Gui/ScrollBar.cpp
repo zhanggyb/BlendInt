@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/ScrollBar.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -156,13 +156,13 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if(Context::theme->scroll().shaded) {
+			if(AbstractWindow::theme->scroll().shaded) {
 
-				short shadetop = Context::theme->scroll().shadetop;
-				short shadedown = Context::theme->scroll().shadedown;
+				short shadetop = AbstractWindow::theme->scroll().shadetop;
+				short shadedown = AbstractWindow::theme->scroll().shadedown;
 				if(orientation() == Vertical) {
-					shadetop = Context::theme->scroll().shadedown;
-					shadedown = Context::theme->scroll().shadetop;
+					shadetop = AbstractWindow::theme->scroll().shadedown;
+					shadedown = AbstractWindow::theme->scroll().shadetop;
 				}
 
 				GenerateVertices(size(),
@@ -224,33 +224,33 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType ScrollBar::Draw (const Context* context)
+	ResponseType ScrollBar::Draw (AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				Context::theme->scroll().inner.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				AbstractWindow::theme->scroll().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-		        Context::theme->scroll().outline.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+		        AbstractWindow::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
 			        1.f, 1.f, 0.16f);
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 					0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -271,7 +271,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void ScrollBar::PerformHoverOut(const Context* context)
+	void ScrollBar::PerformHoverOut(AbstractWindow* context)
 	{
 		/*
 		if(m_slide.highlight()) {
@@ -281,13 +281,13 @@ namespace BlendInt {
 		*/
 	}
 
-	ResponseType ScrollBar::PerformMousePress (const Context* context)
+	ResponseType ScrollBar::PerformMousePress (AbstractWindow* context)
 	{
-		Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
+		Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 
 		if (CursorOnSlideIcon(local_position)) {
 
-			m_cursor_origin = context->cursor_position();
+			m_cursor_origin = context->GetCursorPosition();
 			m_last_value = value();
 			set_pressed(true);
 			fire_slider_pressed();
@@ -298,14 +298,14 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ScrollBar::PerformMouseMove (const Context* context)
+	ResponseType ScrollBar::PerformMouseMove (AbstractWindow* context)
 	{
 		if (pressed_ext()) {
 
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if (GetNewValue(context->cursor_position(), &new_value)) {
+			if (GetNewValue(context->GetCursorPosition(), &new_value)) {
 				set_value(new_value);
 				RequestRedraw();
 				fire_slider_moved_event(value());
@@ -313,7 +313,7 @@ namespace BlendInt {
 
 		} else {
 
-			//Point local_position = context->cursor_position() - event.frame()->GetAbsolutePosition(this);
+			//Point local_position = context->GetCursorPosition() - event.frame()->GetAbsolutePosition(this);
 
 			/*
 			if (CursorOnSlideIcon(local_position)) {
@@ -330,13 +330,13 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollBar::PerformMouseRelease (const Context* context)
+	ResponseType ScrollBar::PerformMouseRelease (AbstractWindow* context)
 	{
 		if (pressed_ext()) {
 
 			set_pressed(false);
 
-			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
+			Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 
 			RequestRedraw();
 
@@ -369,13 +369,13 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if(Context::theme->scroll().shaded) {
+		if(AbstractWindow::theme->scroll().shaded) {
 
-			short shadetop = Context::theme->scroll().shadetop;
-			short shadedown = Context::theme->scroll().shadedown;
+			short shadetop = AbstractWindow::theme->scroll().shadetop;
+			short shadedown = AbstractWindow::theme->scroll().shadedown;
 			if(orientation() == Vertical) {
-				shadetop = Context::theme->scroll().shadedown;
-				shadedown = Context::theme->scroll().shadetop;
+				shadetop = AbstractWindow::theme->scroll().shadedown;
+				shadedown = AbstractWindow::theme->scroll().shadetop;
 			}
 
 			GenerateVertices(slot_size,
@@ -403,15 +403,15 @@ namespace BlendInt {
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3, GL_FLOAT, GL_FALSE, 0,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0,
 		        BUFFER_OFFSET(0));
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
+		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

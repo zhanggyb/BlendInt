@@ -63,6 +63,10 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
+		void SetForeground (const Color& color);
+
+		void SetBackground (const Color& color);
+
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
@@ -77,13 +81,13 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
 	private:
 
@@ -93,6 +97,10 @@ namespace BlendInt {
 
         GLuint vao_;
         GLBuffer<> vbo_;
+
+        Color foreground_;
+
+        Color background_;
 
     };
 

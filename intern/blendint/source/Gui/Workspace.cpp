@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Workspace.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -57,15 +57,15 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -102,40 +102,40 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButton::Draw(const Context* context)
+	ResponseType EdgeButton::Draw(AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
 		if (hover()) {
 
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 15);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 15);
 			if (is_checked()) {
-				glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        Context::theme->radio_button().inner_sel.data());
+				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme->radio_button().inner_sel.data());
 			} else {
-				glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        Context::theme->radio_button().inner.data());
+				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme->radio_button().inner.data());
 			}
 
 		} else {
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 			if (is_checked()) {
-				glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        Context::theme->radio_button().inner_sel.data());
+				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme->radio_button().inner_sel.data());
 			} else {
-				glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        Context::theme->radio_button().inner.data());
+				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme->radio_button().inner.data());
 			}
 		}
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-		        Context::theme->radio_button().outline.data());
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
+		        AbstractWindow::theme->radio_button().outline.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 		        0.f, 0.f);
 
 		glBindVertexArray(vao_[1]);
@@ -143,9 +143,9 @@ namespace BlendInt {
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 			        0.f, - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -374,35 +374,35 @@ namespace BlendInt {
 		}
 	}
 
-	bool Workspace::PreDraw(const Context* context)
+	bool Workspace::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	ResponseType Workspace::Draw (const Context* context)
+	ResponseType Workspace::Draw (AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Workspace::PostDraw(const Context* context)
+	void Workspace::PostDraw(AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformFocusOn (const Context* context)
+	void Workspace::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformFocusOff (const Context* context)
+	void Workspace::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformHoverIn(const Context* context)
+	void Workspace::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Workspace::PerformHoverOut(const Context* context)
+	void Workspace::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hover_frame_) {
 			delegate_mouse_hover_out_event(hover_frame_, context);
@@ -410,7 +410,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Workspace::PerformKeyPress(const Context* context)
+	ResponseType Workspace::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -418,7 +418,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Workspace::PerformMousePress(const Context* context)
+	ResponseType Workspace::PerformMousePress(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(true);
@@ -436,7 +436,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Workspace::PerformMouseRelease(const Context* context)
+	ResponseType Workspace::PerformMouseRelease(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 		set_pressed(false);
@@ -448,7 +448,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::PerformMouseMove(const Context* context)
+	ResponseType Workspace::PerformMouseMove(AbstractWindow* context)
 	{
 		ResponseType response = Ignore;
 
@@ -459,9 +459,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::DispatchHoverEvent(const Context* context)
+	ResponseType Workspace::DispatchHoverEvent(AbstractWindow* context)
 	{
-		if(Contain(context->cursor_position())) {
+		if(Contain(context->GetCursorPosition())) {
 
 			ResponseType response = Finish;
 			SetHoveredFrame(context);
@@ -491,7 +491,7 @@ namespace BlendInt {
 		return focused_frame_;
 	}
 
-	void Workspace::SetFocusedFrame(AbstractFrame* frame, const Context* context)
+	void Workspace::SetFocusedFrame(AbstractFrame* frame, AbstractWindow* context)
 	{
     	if(focused_frame_ == frame) return;
 
@@ -528,16 +528,16 @@ namespace BlendInt {
 		return Frame::RemoveSubView(view);
 	}
 
-	void Workspace::SetHoveredFrame (const Context* context)
+	void Workspace::SetHoveredFrame (AbstractWindow* context)
 	{
 		AbstractFrame* original = hover_frame_;
 
 		if(hover_frame_ != nullptr) {
-			if(!hover_frame_->Contain(context->cursor_position())) {
+			if(!hover_frame_->Contain(context->GetCursorPosition())) {
 
 				hover_frame_ = nullptr;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(context->cursor_position())) {
+					if(p->Contain(context->GetCursorPosition())) {
 						hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -547,7 +547,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(context->cursor_position())) {
+				if(p->Contain(context->GetCursorPosition())) {
 					hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}

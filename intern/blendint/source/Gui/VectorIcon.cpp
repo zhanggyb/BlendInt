@@ -21,24 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <iostream>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/VectorIcon.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 #ifndef WIDGET_AA_JITTER
 #define WIDGET_AA_JITTER 8
@@ -156,8 +147,8 @@ namespace BlendInt {
 		vertex_buffer_.bind();
 		vertex_buffer_.set_data(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COORD), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		element_buffer_.generate();
 		element_buffer_.bind();
@@ -171,6 +162,13 @@ namespace BlendInt {
 		elements_ = indeces_size * 3;
 	}
 
+	void VectorIcon::Draw () const
+	{
+		glBindVertexArray(vao_);
+		glDrawElements(GL_TRIANGLES, elements_,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+	}
+
 	void VectorIcon::Draw(float x, float y, short gamma) const
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
@@ -180,47 +178,33 @@ namespace BlendInt {
 
 	void VectorIcon::Draw(float x, float y, const Color& color, short gamma) const
 	{
-		Context::shaders->widget_triangle_program()->use();
+		AbstractWindow::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glVertexAttrib4fv(AttributeColor, color.data());
 
-		glBindVertexArray(vao_);
-
-		glDrawElements(GL_TRIANGLES, elements_,
-						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
+		Draw();
 	}
 
 	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const
 	{
-		Context::shaders->widget_triangle_program()->use();
+		AbstractWindow::shaders->widget_triangle_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glUniform1f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), angle);
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale, scale);
-		glVertexAttrib4fv(Context::shaders->location(Shaders::WIDGET_TRIANGLE_COLOR), color.data());
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), angle);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale, scale);
+		glVertexAttrib4fv(AttributeColor, color.data());
 
-		glBindVertexArray(vao_);
+		Draw();
 
-		glDrawElements(GL_TRIANGLES, elements_,
-						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-		glBindVertexArray(0);
-
-		glUniform1f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
-
-		GLSLProgram::reset();
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 	}
 
 	void VectorIcon::PerformSizeUpdate(const Size& size)

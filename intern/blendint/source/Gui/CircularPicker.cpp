@@ -37,7 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/CircularPicker.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -61,16 +61,16 @@ namespace BlendInt {
 		buffer_.generate();
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
 
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -150,27 +150,29 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
+	void CircularPicker::Draw () const
+	{
+
+	}
+
 	void CircularPicker::Draw (float x, float y, short gamma) const
 	{
-		Context::shaders->widget_simple_triangle_program()->use();
+		AbstractWindow::shaders->widget_simple_triangle_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
+		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, Context::theme->scroll().outline.data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 	}
 
 }

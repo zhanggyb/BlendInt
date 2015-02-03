@@ -21,13 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SCREEN_HPP_
-#define _BLENDINT_GUI_SCREEN_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractFrame.hpp>
-#include <BlendInt/Gui/AbstractLayout.hpp>
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#include <BlendInt/Gui/ViewBuffer.hpp>
 
 namespace BlendInt {
 
@@ -43,34 +40,109 @@ namespace BlendInt {
 
 		virtual AbstractView* GetFocusedView () const;
 
+        void SetRoundType (int type);
+        
+        void SetRoundRadius (float radius);
+        
+        inline uint32_t round_type () const
+        {
+            return frame_flag_ & 0x0F;
+        }
+        
+        inline float round_radius () const
+        {
+            return round_radius_;
+        }
+
 	protected:
 
-		virtual bool PreDraw (const Context* context);
+		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PostDraw (const Context* context);
+		virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PerformFocusOn (const Context* context);
+		virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (const Context* context);
+		virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (const Context* context);
+        virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
+        
+        virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (const Context* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (const Context* context);
+		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+
+		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
+
+        void EnableViewBuffer ();
+        
+        void DisableViewBuffer ();
+        
+        void GenerateRoundedVertices (
+                                      std::vector<GLfloat>* inner,
+                                      std::vector<GLfloat>* outer);
+        
+        void GenerateRoundedVertices (
+                                      Orientation shadedir,
+                                      short shadetop,
+                                      short shadedown,
+                                      std::vector<GLfloat>* inner,
+                                      std::vector<GLfloat>* outer);
+        
+        virtual void PerformRoundTypeUpdate (int round_type);
+        
+        virtual void PerformRoundRadiusUpdate (float radius);
+        
+        inline void set_round_type (int type)
+        {
+            frame_flag_ = (frame_flag_ & 0xFFF0) + (type & 0x0F);
+        }
+        
+        inline void set_round_radius (float radius)
+        {
+            round_radius_ = radius;
+        }
+
+        inline const RefPtr<ViewBuffer>& buffer () const
+        {
+            return buffer_;
+        }
+        
+        inline void set_buffer (const RefPtr<ViewBuffer>& buffer)
+        {
+            buffer_ = buffer;
+        }
+        
+    private:
+        
+        enum FrameFlagIndex {
+            
+            FrameRoundTopLeft = (1 << 0),
+            
+            FrameRoundTopRight = (1 << 1),
+            
+            FrameRoundBottomRight = (1 << 2),
+            
+            FrameRoundBottomLeft = (1 << 3),
+            
+        };
+        
+        uint32_t frame_flag_;
+        
+        float round_radius_;
+        
+        RefPtr<ViewBuffer> buffer_;
 
 	};
 
 }
-
- #endif	// _BLENDINT_GUI_SCREEN_HPP_

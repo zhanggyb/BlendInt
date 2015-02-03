@@ -35,10 +35,10 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Slider.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -143,13 +143,13 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Slider::Draw (const Context* context)
+	ResponseType Slider::Draw (AbstractWindow* context)
 	{
 		// ----- draw line
 
 		/*
 		glBindVertexArray(vao_);
-		RefPtr<GLSLProgram> program = Context::shaders->line_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders->line_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -157,7 +157,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_AA", 0);
 
 		program->SetVertexAttrib4fv("a_color",
-		        Context::theme->scroll().outline.data());
+		        AbstractWindow::theme->scroll().outline.data());
 
 		glEnableVertexAttribArray(0);
 		m_line->bind();
@@ -189,14 +189,14 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Slider::PerformMouseMove (const Context* context)
+	ResponseType Slider::PerformMouseMove (AbstractWindow* context)
 	{
 		if(m_pressed) {
 
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if(GetNewValue(context->cursor_position(), &new_value)) {
+			if(GetNewValue(context->GetCursorPosition(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				RequestRedraw();
@@ -205,7 +205,7 @@ namespace BlendInt {
 			return Finish;
 
 		} else {
-			if(CursorOnSlideIcon(context->cursor_position())) {
+			if(CursorOnSlideIcon(context->GetCursorPosition())) {
 
 				//m_slide_icon.set_highlight(true);
 
@@ -221,12 +221,12 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::PerformMousePress (const Context* context)
+	ResponseType Slider::PerformMousePress (AbstractWindow* context)
 	{
-		if(CursorOnSlideIcon(context->cursor_position())) {
+		if(CursorOnSlideIcon(context->GetCursorPosition())) {
 			m_pressed = true;
 			m_last_value = value();
-			m_last_cursor = context->cursor_position();
+			m_last_cursor = context->GetCursorPosition();
 			fire_slider_pressed();
 
 			return Finish;
@@ -235,12 +235,12 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::PerformMouseRelease (const Context* context)
+	ResponseType Slider::PerformMouseRelease (AbstractWindow* context)
 	{
 		if(m_pressed) {
 			m_pressed = false;
 
-			if(CursorOnSlideIcon(context->cursor_position())) {
+			if(CursorOnSlideIcon(context->GetCursorPosition())) {
 				fire_slider_released();
 			}
 

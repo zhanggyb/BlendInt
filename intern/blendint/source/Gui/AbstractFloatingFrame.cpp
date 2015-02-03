@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/AbstractFloatingFrame.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -67,7 +67,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				inner,
@@ -79,7 +79,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				shadedir,

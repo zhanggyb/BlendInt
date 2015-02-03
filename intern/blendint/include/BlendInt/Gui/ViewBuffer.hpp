@@ -21,44 +21,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _INCLUDE_BLENDINT_CORE_TIME_HPP_
-#define _INCLUDE_BLENDINT_CORE_TIME_HPP_
+#pragma once
 
-#include <stdint.h>
+#include <BlendInt/Gui/AbstractForm.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	class Time
+	class ViewBuffer: public AbstractForm
 	{
 	public:
 
-		Time()
-		{}
+		ViewBuffer ();
 
-		~Time ()
-		{}
+		ViewBuffer (int width, int height);
 
-		static uint64_t GetIntervalOfSeconds ();
+		virtual ~ViewBuffer ();
 
-		static uint64_t GetIntervalOfMilliseconds ();
+		void Draw () const;
 
-		static uint64_t GetIntervalOfMicroseconds ();
-
-		static uint64_t GetMicroSeconds ();
-
-		static void SaveCurrent ();
-
-		static inline uint64_t saved_time ()
+		inline GLTexture2D* texture ()
 		{
-			return kSavedTime;
+			return &texture_;
 		}
+
+#ifdef DEBUG
+		void SaveToFile (const char* file);
+#endif
+
+	protected:
+
+		virtual void PerformSizeUpdate (const Size& size);
 
 	private:
 
-		static uint64_t kSavedTime;
+		GLuint vao_;
+
+		GLBuffer<> vbo_;
+
+		GLTexture2D texture_;
 
 	};
 
 }
-
-#endif /* _INCLUDE_BLENDINT_CORE_TIME_HPP_ */

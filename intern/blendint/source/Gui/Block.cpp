@@ -21,19 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
 #include <BlendInt/Gui/Block.hpp>
-
-#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -221,7 +209,7 @@ namespace BlendInt {
 		FillInVBlock(x, y, w, h);
 	}
 
-	ResponseType Block::Draw (const Context* context)
+	ResponseType Block::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

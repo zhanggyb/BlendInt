@@ -37,7 +37,6 @@
 #include <BlendInt/Gui/ColorButton.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
-#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/Block.hpp>
 
@@ -48,26 +47,21 @@
 #include <BlendInt/Gui/Workspace.hpp>
 #include <BlendInt/Gui/ListView.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Window.hpp>
 
 namespace BI=BlendInt;
 
-class EditorContext: public BI::Context
+class EditorContext: public BI::Window
 {
 public:
 
-	EditorContext (GLFWwindow* win);
+	EditorContext (int width, int height, const char* name);
 
 	virtual ~EditorContext ();
-
-	virtual void SynchronizeWindow ();
 
 private:
 
 	void InitializeGLFWDemoContext ();
-
-	GLFWwindow* window_;
-
 };
 
 #endif /* GLFWCONTEXT_HPP_ */

@@ -36,6 +36,8 @@ namespace BlendInt {
 
 		virtual ~AbstractIcon ();
 
+		virtual void Draw (float x, float y, short gamma = 0) const = 0;
+
 	};
 
 }

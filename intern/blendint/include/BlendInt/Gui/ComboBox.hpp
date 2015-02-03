@@ -21,10 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COMBOBOX_HPP_
-#define _BLENDINT_GUI_COMBOBOX_HPP_
-
-#include <BlendInt/OpenGL/GLBuffer.hpp>
+#pragma once
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Menu.hpp>
@@ -60,15 +57,15 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (const Context* context);
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		virtual void PerformHoverIn (const Context* context);
+		virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (const Context* context);
+		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (const Context* context);
+		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (const Context* context);
+		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
 
 	private:
 
@@ -95,5 +92,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_COMBOBOX_HPP_ */

@@ -23,7 +23,7 @@
 
 #include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -45,6 +45,9 @@ namespace BlendInt {
 
 		set_size(w, h);
 
+		foreground_ = Color::Black;
+		background_ = 0xFFFFFF00;
+
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
 
@@ -54,8 +57,8 @@ namespace BlendInt {
 		vbo_.generate();
 		vbo_.bind();
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
@@ -76,6 +79,18 @@ namespace BlendInt {
 	void Label::SetFont (const Font& font)
 	{
 		text_->SetFont(font);
+		RequestRedraw();
+	}
+
+	void Label::SetForeground(const Color& color)
+	{
+		foreground_ = color;
+		RequestRedraw();
+	}
+
+	void Label::SetBackground(const Color& color)
+	{
+		background_ = color;
 		RequestRedraw();
 	}
 
@@ -127,31 +142,30 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Label::PerformMousePress (const Context* context)
+	ResponseType Label::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseRelease (const Context* context)
+	ResponseType Label::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseMove (const Context* context)
+	ResponseType Label::PerformMouseMove (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::Draw (const Context* context)
+	ResponseType Label::Draw (AbstractWindow* context)
 	{
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(Context::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.f, 0.f, 0.25f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, background_.data());
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
 
 		if(text_) {
 
@@ -173,7 +187,7 @@ namespace BlendInt {
 			}
 
 			if(text_->size().height() <= h) {
-				text_->DrawWithin(x, y, w);
+				text_->DrawWithin(x, y, w, foreground_);
 			}
 
 		}

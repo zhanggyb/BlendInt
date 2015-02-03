@@ -27,7 +27,7 @@
 
 #include <BlendInt/Gui/FileBrowser.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -115,15 +115,15 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (const Context* context)
+	ResponseType FileBrowser::Draw (AbstractWindow* context)
 	{
-		Context* c = const_cast<Context*>(context);
+		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_INNER_COLOR),
-				1, Context::theme->box().inner.data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+				1, AbstractWindow::theme->box().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 
@@ -135,10 +135,10 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		c->EndPushStencil();
 
-		Context::shaders->widget_simple_triangle_program()->use();
+		AbstractWindow::shaders->widget_simple_triangle_program()->use();
 
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				Context::theme->box().inner_sel.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
+				AbstractWindow::theme->box().inner_sel.data());
 
 		glBindVertexArray(vaos_[1]);
 
@@ -148,15 +148,15 @@ namespace BlendInt {
 		while(y > 0) {
 			y -= h;
 
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, (float)y);
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, (float)y);
 
 			if(i == highlight_index_) {
-				glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
+				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
+					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
+					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -181,7 +181,7 @@ namespace BlendInt {
 
 		}
 
-		Context::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders->widget_inner_program()->use();
 
 		c->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
@@ -208,14 +208,14 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> row_verts;
 
-			if (Context::theme->box().shaded) {
+			if (AbstractWindow::theme->box().shaded) {
 				GenerateVertices(size(),
 						0.f,
 						round_type(),
 						round_radius(),
 						Vertical,
-						Context::theme->box().shadetop,
-						Context::theme->box().shadedown,
+						AbstractWindow::theme->box().shadetop,
+						AbstractWindow::theme->box().shadedown,
 						&inner_verts,
 						0);
 			} else {
@@ -251,7 +251,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::PerformMousePress (const Context* context)
+	ResponseType FileBrowser::PerformMousePress (AbstractWindow* context)
 	{
 		ModelIndex index;
 
@@ -261,7 +261,7 @@ namespace BlendInt {
 			int h = font_.height();	// the row height
 
 			int i = 0;
-			Point local_position = context->cursor_position() - context->active_frame()->GetAbsolutePosition(this);
+			Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 			// TODO: count offset
 
 			i = size().height() - local_position.y();
@@ -305,14 +305,14 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> row_verts;
 
-		if (Context::theme->box().shaded) {
+		if (AbstractWindow::theme->box().shaded) {
 			GenerateVertices(size(),
 					0.f,
 					round_type(),
 					round_radius(),
 					Vertical,
-					Context::theme->box().shadetop,
-					Context::theme->box().shadedown,
+					AbstractWindow::theme->box().shadetop,
+					AbstractWindow::theme->box().shadedown,
 					&inner_verts,
 					0);
 		} else {
@@ -332,8 +332,8 @@ namespace BlendInt {
 
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		GenerateVertices(Size(size().width(), row_height),
@@ -348,8 +348,8 @@ namespace BlendInt {
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * row_verts.size(), &row_verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		buffer_.reset();

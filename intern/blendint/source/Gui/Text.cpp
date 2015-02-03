@@ -25,7 +25,7 @@
 
 #include <BlendInt/Font/FtFace.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -49,9 +49,8 @@ namespace BlendInt {
  		vbo_.bind();
  		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TEXT_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TEXT_COORD),
-				4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray (AttributeCoord);
+		glVertexAttribPointer (AttributeCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
  		glBindVertexArray(0);
  		vbo_.reset();
@@ -77,9 +76,8 @@ namespace BlendInt {
  		vbo_.bind();
  		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
 
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_TEXT_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_TEXT_COORD),
-				4, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray (AttributeCoord);
+		glVertexAttribPointer (AttributeCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
  		glBindVertexArray(0);
  		vbo_.reset();
@@ -162,6 +160,11 @@ namespace BlendInt {
  		// Do nothing, this form does not allow resize
  	}
 
+ 	void Text::Draw () const
+ 	{
+
+ 	}
+
  	void Text::Draw (float x, float y, short gamma) const
  	{
  		Color color(0x000000FF);
@@ -171,15 +174,15 @@ namespace BlendInt {
 
  	void Text::Draw (float x, float y, const Color& color, short gamma) const
  	{
-		Context::shaders->widget_text_program()->use();
+		AbstractWindow::shaders->widget_text_program()->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
 		font_.bind_texture();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
 		glBindVertexArray(vao_);
 		size_t str_len = text_.length();
@@ -202,15 +205,15 @@ namespace BlendInt {
  	void Text::Draw (float x, float y, size_t length, size_t start,
  	        const Color& color, short gamma) const
  	{
-		Context::shaders->widget_text_program()->use();
+		AbstractWindow::shaders->widget_text_program()->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
 		font_.bind_texture();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
 		glBindVertexArray(vao_);
 		size_t str_len = text_.length();
@@ -218,11 +221,6 @@ namespace BlendInt {
 		for(size_t i = start; i < last; i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
-
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
  	}
 
 	void Text::DrawWithin (float x, float y, int width, short gamma) const
@@ -236,15 +234,15 @@ namespace BlendInt {
 	{
 		if(width <= 0) return;
 
-		Context::shaders->widget_text_program()->use();
+		AbstractWindow::shaders->widget_text_program()->use();
 
 		glActiveTexture(GL_TEXTURE0);
 
 		font_.bind_texture();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
-		glUniform1i(Context::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
 		glBindVertexArray(vao_);
 

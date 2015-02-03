@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
 
 namespace BlendInt {
@@ -93,10 +93,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if (Context::theme->number_slider().shaded) {
+			if (AbstractWindow::theme->number_slider().shaded) {
 				GenerateRoundedVertices(Vertical,
-						Context::theme->number_slider().shadetop,
-						Context::theme->number_slider().shadedown,
+						AbstractWindow::theme->number_slider().shadetop,
+						AbstractWindow::theme->number_slider().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -123,10 +123,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->number_slider().shaded) {
+		if (AbstractWindow::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->number_slider().shadetop,
-					Context::theme->number_slider().shadedown,
+					AbstractWindow::theme->number_slider().shadetop,
+					AbstractWindow::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -148,10 +148,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->number_slider().shaded) {
+		if (AbstractWindow::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->number_slider().shadetop,
-					Context::theme->number_slider().shadedown,
+					AbstractWindow::theme->number_slider().shadetop,
+					AbstractWindow::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -167,7 +167,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ProgressBar::Draw(const Context* context)
+	ResponseType ProgressBar::Draw(AbstractWindow* context)
 	{
 		float x = context->active_frame()->GetRelativePosition(this).x()
 				- context->viewport_origin().x();
@@ -175,34 +175,34 @@ namespace BlendInt {
 		int outline_vertices = GetOutlineVertices(round_type());
 		float len = 20.f;
 
-		Context::shaders->widget_split_inner_program()->use();
+		AbstractWindow::shaders->widget_split_inner_program()->use();
 
 		if(hover()) {
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
 		} else {
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
 		}
 
-		glUniform1f(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, Context::theme->number_slider().inner_sel.data());
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, Context::theme->number_slider().inner.data());
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, AbstractWindow::theme->number_slider().inner_sel.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, AbstractWindow::theme->number_slider().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		Context::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 				0.f, 0.f);
-		glUniform4fv(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, Context::theme->number_slider().outline.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme->number_slider().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(Context::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
 					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -221,10 +221,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (Context::theme->number_slider().shaded) {
+		if (AbstractWindow::theme->number_slider().shaded) {
 			GenerateRoundedVertices(Vertical,
-					Context::theme->number_slider().shadetop,
-					Context::theme->number_slider().shadedown,
+					AbstractWindow::theme->number_slider().shadetop,
+					AbstractWindow::theme->number_slider().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -238,16 +238,16 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		vbo_.bind(0);
 		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_SPLIT_INNER_COORD), 3,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		// generate buffer for outer
 		glBindVertexArray(vao_[1]);
 		vbo_.bind(1);
 		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(Context::shaders->location(Shaders::WIDGET_OUTER_COORD));
-		glVertexAttribPointer(Context::shaders->location(Shaders::WIDGET_OUTER_COORD), 2,
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);

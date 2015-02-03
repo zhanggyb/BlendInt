@@ -21,13 +21,23 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
+#ifdef __UNIX__
+#include <stddef.h>
+#include <sys/time.h>
+#endif	// __UNIX__
+
 #include <errno.h>
 #include <string.h>
+
+#include <iostream>
 
 #include <BlendInt/Core/Timer.hpp>
 
 namespace BlendInt {
+
+	uint64_t Timer::kSavedTime = 0;
+
+	uint64_t Timer::kProgramTime = 0;
 
 	Timer::Timer()
 	: Object(),
@@ -129,6 +139,70 @@ namespace BlendInt {
 			Start();
 		}
 #endif
+	}
+
+	double Timer::GetIntervalOfSeconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kSavedTime) / (1000000.0);
+	}
+
+	double Timer::GetIntervalOfMilliseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kSavedTime) / (1000.0);
+	}
+
+	double Timer::GetIntervalOfMicroseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (double)(current - kSavedTime);
+	}
+
+	double Timer::GetProgramSeconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kProgramTime) / (1000000.0);
+	}
+
+	double Timer::GetProgramMilliseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (current - kProgramTime) / (1000.0);
+	}
+
+	double Timer::GetProgramMicroseconds()
+	{
+		uint64_t current = GetMicroSeconds();
+
+		return (double)(current - kProgramTime);
+	}
+
+	uint64_t Timer::GetMicroSeconds()
+	{
+		uint64_t retval = 0;
+		struct timeval tv = {0, 0};
+
+		gettimeofday(&tv, NULL);
+
+		retval = tv.tv_sec * 1000 * 1000 + tv.tv_usec;
+
+		return retval;
+	}
+
+	void Timer::SaveCurrentTime()
+	{
+		kSavedTime = GetMicroSeconds();
+	}
+
+	void Timer::SaveProgramTime ()
+	{
+		kProgramTime = GetMicroSeconds();
 	}
 
 	void Timer::Create()

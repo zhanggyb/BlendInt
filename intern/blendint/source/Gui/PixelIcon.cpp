@@ -21,24 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 #include <vector>
 
-#include <BlendInt/Gui/PixelIcon.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/PixelIcon.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -175,25 +163,26 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (float x, float y, short gamma) const
+	void PixelIcon::Draw () const
 	{
 		if(texture_) {
-			Context::shaders->widget_image_program()->use();
-
-			glUniform2f(Context::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
-
-			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(Context::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-
 			texture_->bind();
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glBindVertexArray(0);
-			texture_->reset();
-
-			GLSLProgram::reset();
 		}
+	}
+
+	void PixelIcon::Draw (float x, float y, short gamma) const
+	{
+		AbstractWindow::shaders->widget_image_program()->use();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+
+		Draw();
 	}
 
 	void PixelIcon::PerformSizeUpdate(const Size& size)
@@ -259,14 +248,14 @@ namespace BlendInt {
 		vbo_->set_data(sizeof(GLfloat) * v.size(), &v[0]);
 
 		glEnableVertexAttribArray(
-		        Context::shaders->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
+		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
 		glEnableVertexAttribArray(
-		        Context::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
 		glVertexAttribPointer(
-		        Context::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
 		glVertexAttribPointer(
-		        Context::shaders->location(Shaders::WIDGET_IMAGE_UV), 2,
+		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV), 2,
 		        GL_FLOAT,
 		        GL_FALSE, 4 * sizeof(GLfloat),
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));

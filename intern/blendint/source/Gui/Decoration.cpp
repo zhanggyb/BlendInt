@@ -24,7 +24,7 @@
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -124,7 +124,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Decoration::Draw (const Context* context)
+	ResponseType Decoration::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

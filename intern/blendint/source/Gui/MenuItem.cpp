@@ -21,13 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
-
 #include <BlendInt/Gui/MenuItem.hpp>
-#include <BlendInt/Gui/FontCache.hpp>
-
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -96,17 +90,17 @@ namespace BlendInt {
 		return false;
 	}
 
-	void MenuItem::PerformHoverIn(const Context* context)
+	void MenuItem::PerformHoverIn(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	void MenuItem::PerformHoverOut(const Context* context)
+	void MenuItem::PerformHoverOut(AbstractWindow* context)
 	{
 		RequestRedraw();
 	}
 
-	ResponseType MenuItem::Draw(const Context* context)
+	ResponseType MenuItem::Draw(AbstractWindow* context)
 	{
 		// Menu Icon only show itself
 		if(action_->icon()) {

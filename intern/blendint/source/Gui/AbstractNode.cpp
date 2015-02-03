@@ -24,7 +24,7 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <BlendInt/Gui/AbstractNode.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 	        std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				inner,
@@ -58,7 +58,7 @@ namespace BlendInt {
 	        std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				shadedir,
@@ -73,70 +73,70 @@ namespace BlendInt {
 		set_round_type(round);
 	}
 
-	bool AbstractNode::PreDraw (const Context* context)
+	bool AbstractNode::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
 
 		Point offset = GetOffset();
 
-		glm::mat3 matrix = glm::translate(Context::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-		Context::shaders->PushWidgetModelMatrix();
-		Context::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
 		return true;
 	}
 
-	void AbstractNode::PostDraw (const Context* context)
+	void AbstractNode::PostDraw (AbstractWindow* context)
 	{
-		Context::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	void AbstractNode::PerformFocusOn (const Context* context)
-	{
-	}
-
-	void AbstractNode::PerformFocusOff (const Context* context)
+	void AbstractNode::PerformFocusOn (AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverIn (const Context* context)
+	void AbstractNode::PerformFocusOff (AbstractWindow* context)
 	{
 	}
 
-	void AbstractNode::PerformHoverOut (const Context* context)
+	void AbstractNode::PerformHoverIn (AbstractWindow* context)
 	{
 	}
 
-	ResponseType AbstractNode::PerformKeyPress (const Context* context)
+	void AbstractNode::PerformHoverOut (AbstractWindow* context)
+	{
+	}
+
+	ResponseType AbstractNode::PerformKeyPress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuPress (
-	        const Context* context)
+	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
 	ResponseType AbstractNode::PerformContextMenuRelease (
-	        const Context* context)
+	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMousePress (const Context* context)
+	ResponseType AbstractNode::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseRelease (const Context* context)
+	ResponseType AbstractNode::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseMove (const Context* context)
+	ResponseType AbstractNode::PerformMouseMove (AbstractWindow* context)
 	{
 		return Ignore;
 	}

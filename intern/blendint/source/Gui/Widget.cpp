@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
@@ -84,7 +84,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				inner,
@@ -96,7 +96,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * Context::theme->pixel(),
+				default_border_width() * AbstractWindow::theme->pixel(),
 				round_type(),
 				round_radius_,
 				shadedir,
@@ -106,7 +106,7 @@ namespace BlendInt {
 				outer);
 	}
 
-	ResponseType Widget::Draw(const Context* context)
+	ResponseType Widget::Draw(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

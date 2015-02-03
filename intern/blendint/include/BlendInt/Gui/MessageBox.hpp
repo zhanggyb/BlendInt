@@ -23,50 +23,54 @@
 
 #pragma once
 
-#include <stack>
-
-#include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/AbstractCursorTheme.hpp>
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Gui/AbstractDialog.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
+#include <BlendInt/Gui/CloseButton.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 namespace BlendInt {
+    
+    class MessageBox: public AbstractDialog
+    {
+    public:
+        
+        MessageBox (const String& title, const String& description);
+        
+        virtual ~MessageBox ();
+        
+        void SetTitleFont (const Font& font);
 
-	class Cursor
-	{
-		DISALLOW_COPY_AND_ASSIGN(Cursor);
+        void SetTextFont (const Font& font);
 
-	public:
+    protected:
 
-		void RegisterCursorType (AbstractCursorTheme* cursor_type);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void SetCursor (int cursor_type);
+		virtual bool PreDraw (AbstractWindow* context);
 
-		void PushCursor ();
+		virtual ResponseType Draw (AbstractWindow* context);
 
-		void PushCursor (int cursor_type);
+    private:
 
-		void PopCursor ();
+        void OnClose (AbstractButton* btn);
 
-		int cursor_type () const
-		{
-			if(cursor_type_ != nullptr) {
-				return cursor_type_->current_cursor();
-			} else {
-				return ArrowCursor;
-			}
-		}
+        GLuint vao_[2];
 
-	private:
+        GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		friend class Context;
+		RefPtr<FrameShadow> shadow_;
 
-		Cursor ();
+		Label* title_;
 
-		~Cursor ();
+		Label* text_;
 
-		AbstractCursorTheme * cursor_type_;
+		CloseButton* close_;
 
-		std::stack<int> cursor_stack_;
+		glm::mat4 projection_matrix_;
 
-	};
+		glm::mat3 model_matrix_;
 
+    };
+    
 }
