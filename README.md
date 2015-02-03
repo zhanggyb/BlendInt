@@ -40,8 +40,8 @@ focused on user interface with some new technologies:
 Using **BlendInt** is as simple as any C++ object-oriented GUI toolkit
 like Qt, gtkmm. Of course, you must create an OpenGL window first.
 
-For example, the following code create an 240x180 pixel window, and
-show a MessageBox within.
+Here is a simple example to create an 240x180 pixel window, and show a
+MessageBox within.
 
 ```cpp
 #include <BlendInt/Gui/Window.hpp>
@@ -73,9 +73,13 @@ int main(int argc, char* argv[])
 }
 ```
 
-In Linux:
+Don't worry about the "message" instance, it will be destroyed when
+ the window is closed.
 
-![Hello World in Linux](https://github.com/zhanggyb/BlendInt/tree/master/doc/images/hello_linux.png)
+![Hello World in Linux](https://github.com/zhanggyb/BlendInt/blob/master/doc/images/hello_linux.png
+ "Hello World in Linux")
+
+See wiki page for more information of how to use BlendInt.
 
 ## Dependencies
 
