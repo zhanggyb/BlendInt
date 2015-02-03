@@ -78,8 +78,10 @@ Don't worry about the "message" instance, it will be destroyed when
 
 ![Hello World in Linux](https://github.com/zhanggyb/BlendInt/blob/master/doc/images/hello_linux.png
  "Hello World in Linux")
+![Hello World in OS X](https://github.com/zhanggyb/BlendInt/blob/master/doc/images/hello_osx.png
+ "Hello World in OS X")
 
-See wiki page for more information of how to use BlendInt.
+See wiki page for more information of how to programming with BlendInt.
 
 ## Dependencies
 
