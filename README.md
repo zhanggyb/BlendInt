@@ -37,51 +37,45 @@ focused on user interface with some new technologies:
 
 ## Usage
 
-Useing **BlendInt** is as simple as any C++ object-oriented GUI
-toolkit like Qt, gtkmm. Of course, you must create an OpenGL window
-first.
+Using **BlendInt** is as simple as any C++ object-oriented GUI toolkit
+like Qt, gtkmm. Of course, you must create an OpenGL window first.
 
-For example, create a button with BlendInt:
+For example, the following code create an 240x180 pixel window, and
+show a MessageBox within.
 
 ```cpp
-#include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/Dialog.hpp>
-#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Window.hpp>
+#include <BlendInt/Gui/MessageBox.hpp>
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-	using namespace BlendInt;
+  using namespace BlendInt;
 
-	// Don't forget to initialize CppEvents in main stack
-	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+  BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	// Create opengl context and make it current in your favoriate
-	// OpenGL window system such as GLUT, GLFW, Cocoa
+  if(Window::Initialize()) {
 
-	Context::Initialize();
+    Window win(240, 180, "Tutorial 01");
 
-	// Context is a special object, create at least one and set in GL Window
-	Context* context = Manage(new Context);
+    MessageBox* message = new MessageBox("Hello World!",
+        "Click the \"close\" button.");
+    win.AddFrame(message);
+    message->MoveTo(
+        (win.size().width() - message->size().width()) / 2,
+        (win.size().height() - message->size().height()) / 2);
 
-	// Create a button
-	Button* btn = Manage(new Button);
-	btn->SetText("Hello World!");
-	btn->SetPosition(200, 200);
+    win.Exec();
 
-	// Create a dialog
-	Dialog* dlg = Manage(new Dialog);
-	dlg->AddWidget(btn);
+    Window::Terminate();
+  }
 
-	// Add dialog to the context
-	context->AddFrame(dlg);
-
-	// In the event-render loop
-	context->Draw();
-
-	// Ready to close application
-	Context::Release();
+  return 0;
 }
 ```
+
+In Linux:
+
+![Hello World in Linux](https://github.com/zhanggyb/BlendInt/tree/master/doc/images/hello_linux.png)
 
 ## Dependencies
 
@@ -247,11 +241,12 @@ TBD
 * BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
   sending/receiving events between objects, it's released under MIT
   License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
-* [GLFW](http://www.glfw.org) 3.1+ - used in some demos and unit tests, released under
-  zlib/libpng license.
-* [GLM](http://glm.g-truc.net) - a header only C++ mathematics library for graphics software
-  based on the OpenGL Shading Language (GLSL) specification and
-  released under the MIT license.
-* [RapidXml](http://rapidxml.sourceforge.net/) - The author of RapidXml is Marcin Kalicinski, use of this
-  software is granted under one of the following two licenses: boost
-  software license or MIT license.
+* [GLFW](http://www.glfw.org) 3.1+ - used in some demos and unit
+  tests, released under zlib/libpng license.
+* [GLM](http://glm.g-truc.net) - a header only C++ mathematics library
+  for graphics software based on the OpenGL Shading Language (GLSL)
+  specification and released under the MIT license.
+* [RapidXml](http://rapidxml.sourceforge.net/) - The author of
+  RapidXml is Marcin Kalicinski, use of this software is granted under
+  one of the following two licenses: boost software license or MIT
+  license.
