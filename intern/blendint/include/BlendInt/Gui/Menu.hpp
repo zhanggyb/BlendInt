@@ -21,12 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENU_HPP_
-#define _BLENDINT_GUI_MENU_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractFloatingFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <BlendInt/Gui/MenuItem.hpp>
@@ -39,7 +38,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public AbstractFloatingFrame
+	class Menu: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 
@@ -160,6 +159,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_MENUBIN_HPP_ */
-

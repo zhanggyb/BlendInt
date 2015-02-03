@@ -37,8 +37,8 @@ namespace BlendInt {
 
 	ComboBox::ComboBox ()
 	: Widget(),
-	  status_down_(false),
-	  popup_(0)
+	  status_down_(false)//,
+	//popup_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -247,6 +247,7 @@ namespace BlendInt {
 	{
 		status_down_ = true;
 
+		/*
 		if(popup_) {
 			delete popup_;
 			popup_ = 0;
@@ -294,8 +295,9 @@ namespace BlendInt {
 
 			}
 
-			const_cast<AbstractWindow*>(context)->AddFrame(popup_);
+			context->AddFrame(popup_);
 		}
+		*/
 
 		RequestRedraw();
 
@@ -361,9 +363,9 @@ namespace BlendInt {
 
 	void ComboBox::OnPopupListDestroyed(AbstractFrame* frame)
 	{
-		assert(frame == popup_);
-		popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
-		popup_ = 0;
+		//assert(frame == popup_);
+		//popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
+		//popup_ = 0;
 		SetRoundType(RoundAll);
 	}
 

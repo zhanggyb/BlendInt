@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTITEMMODEL_HPP_
-#define _BLENDINT_GUI_ABSTRACTITEMMODEL_HPP_
+#pragma once
 
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/String.hpp>
@@ -59,6 +58,7 @@ namespace BlendInt {
 		ModelNode* down;
 		ModelNode* left;
 		ModelNode* right;
+
 		String data;	// temporarily use String to store data
 	};
 
@@ -162,5 +162,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTITEMMODEL_HPP_ */

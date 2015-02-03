@@ -38,7 +38,7 @@ namespace BlendInt {
 	int Menu::kDefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: AbstractFloatingFrame(),
+	: Frame(),
 	  focused_widget_(nullptr),
 	  hovered_widget_(nullptr),
 	  cursor_range_(0)

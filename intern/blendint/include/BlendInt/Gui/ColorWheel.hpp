@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COLORWHEEL_HPP_
-#define _BLENDINT_GUI_COLORWHEEL_HPP_
+#pragma once
 
 #include <vector>
 
@@ -41,6 +40,8 @@ namespace BlendInt {
 		ColorWheel ();
 
 		virtual ~ColorWheel ();
+
+		virtual bool Contain (const Point& point) const;
 
 		virtual bool IsExpandX () const;
 
@@ -72,5 +73,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_COLORWHEEL_HPP_ */

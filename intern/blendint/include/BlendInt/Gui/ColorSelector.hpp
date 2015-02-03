@@ -26,15 +26,16 @@
 #include <BlendInt/Gui/Block.hpp>
 #include <BlendInt/Gui/StackLayout.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
-#include <BlendInt/Gui/PopupFrame.hpp>
+#include <BlendInt/Gui/AbstractDialog.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {
 
-	class ColorSelector: public PopupFrame
+	class ColorSelector: public AbstractDialog
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
@@ -44,9 +45,15 @@ namespace BlendInt {
 
 		virtual ~ColorSelector();
 
-	private:
+    protected:
 
-		void InitializeColorSelector ();
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual bool PreDraw (AbstractWindow* context);
+
+		virtual ResponseType Draw (AbstractWindow* context);
+
+	private:
 
 		void OnButtonToggled (int index, bool toggled);
 
@@ -58,8 +65,19 @@ namespace BlendInt {
 
 		Stack* CreateBlockStack ();
 
+        GLuint vao_[2];
+
+        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+		RefPtr<FrameShadow> shadow_;
+
 		ButtonGroup radio_group_;
 
 		Stack* stack_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat3 model_matrix_;
+
 	};
 }

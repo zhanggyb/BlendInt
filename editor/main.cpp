@@ -30,6 +30,8 @@
 
 #include <BlendInt/Gui/AbstractDialog.hpp>
 #include <BlendInt/Gui/MessageBox.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
+#include <BlendInt/Gui/FileSelector.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -46,6 +48,12 @@ int main (int argc, char* argv[])
 		MessageBox* msg = new MessageBox("Title", "Hello World!");
 		msg->MoveTo(400, 400);
 		win.AddFrame(msg);
+
+		ColorSelector* cs = new ColorSelector;
+		win.AddFrame(cs);
+
+		FileSelector* fs = new FileSelector;
+		win.AddFrame(fs);
 
 		win.Exec();
 

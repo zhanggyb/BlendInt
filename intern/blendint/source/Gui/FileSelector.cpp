@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
@@ -34,11 +36,217 @@
 
 namespace BlendInt {
 
-	FileSelectorDecoration::FileSelectorDecoration ()
-	: AbstractDecoration()
+	FileSelector::FileSelector ()
+	: AbstractDialog(),
+	  path_entry_(0),
+	  file_entry_(0)
+	{
+		LinearLayout* button_layout = CreateButtons();
+
+		//ToolBox* sidebar = CreateSideBarOnce();
+		LinearLayout* area = CreateBrowserAreaOnce();
+
+		LinearLayout* main_layout = new LinearLayout(Vertical);
+
+		main_layout->AddWidget(button_layout);
+		main_layout->AddWidget(area);
+
+		main_layout->Resize(main_layout->GetPreferredSize());
+
+		PushBackSubView(main_layout);
+
+		set_round_type(RoundAll);
+		set_round_radius(5.f);
+		set_size(main_layout->size());
+		EnableViewBuffer();
+		set_refresh(true);
+
+		projection_matrix_  = glm::ortho(
+				0.f, (float)size().width(),
+				0.f, (float)size().height(),
+				100.f, -100.f);
+		model_matrix_ = glm::mat3(1.f);
+
+		std::vector<GLfloat> inner_verts;
+		std::vector<GLfloat> outer_verts;
+
+		if (AbstractWindow::theme->dialog().shaded) {
+			GenerateRoundedVertices(Vertical,
+					AbstractWindow::theme->dialog().shadetop,
+					AbstractWindow::theme->dialog().shadedown,
+					&inner_verts,
+					&outer_verts);
+		} else {
+			GenerateRoundedVertices(&inner_verts, &outer_verts);
+		}
+
+		glGenVertexArrays(2, vao_);
+		vbo_.generate();
+
+		glBindVertexArray(vao_[0]);
+
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 3,
+		GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(vao_[1]);
+
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glEnableVertexAttribArray(AttributeCoord);
+		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+
+		std::string pwd =getenv("PWD");
+		pwd.append("/");
+		path_entry_->SetText(pwd);
+		browser_->Load(getenv("PWD"));
+
+		//events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
+
+		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
+		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
+
+		//events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
+	}
+
+	FileSelector::~FileSelector ()
+	{
+        glDeleteVertexArrays(2, vao_);
+	}
+
+	void FileSelector::OnFileSelect ()
+	{
+		file_entry_->SetText(browser_->file_selected());
+	}
+
+	void FileSelector::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+    	if(request.target() == this) {
+
+    		set_size(*request.size());
+
+    		projection_matrix_  = glm::ortho(
+    				0.f,
+    				0.f + (float)size().width(),
+    				0.f,
+    				0.f + (float)size().height(),
+    				100.f, -100.f);
+
+    		if(buffer()) {
+    			buffer()->Resize(size());
+    		}
+
+    		shadow_->Resize(size());
+
+    		std::vector<GLfloat> inner_verts;
+    		std::vector<GLfloat> outer_verts;
+
+    		if (AbstractWindow::theme->dialog().shaded) {
+    			GenerateRoundedVertices(Vertical,
+    					AbstractWindow::theme->dialog().shadetop,
+    					AbstractWindow::theme->dialog().shadedown,
+    					&inner_verts,
+    					&outer_verts);
+    		} else {
+    			GenerateRoundedVertices(&inner_verts, &outer_verts);
+    		}
+
+    		vbo_.bind(0);
+    		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    		vbo_.bind(1);
+    		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    		vbo_.reset();
+
+    		ResizeSubView(first_subview(), size());
+
+    		RequestRedraw();
+
+    	}
+
+    	if(request.source() == this) {
+    		ReportSizeUpdate(request);
+    	}
+	}
+
+	bool FileSelector::PreDraw (AbstractWindow* context)
+	{
+		if(!visiable()) return false;
+
+		context->register_active_frame(this);
+
+		if(refresh() && buffer()) {
+			RenderSubFramesToTexture(this,
+					context,
+					projection_matrix_,
+					model_matrix_,
+					buffer()->texture());
+		}
+
+		return true;
+	}
+
+	ResponseType FileSelector::Draw (AbstractWindow* context)
+	{
+    	shadow_->Draw(position().x(), position().y());
+
+		AbstractWindow::shaders->frame_inner_program()->use();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme->dialog().inner.data());
+
+		glBindVertexArray(vao_[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		if(buffer()) {
+
+			AbstractWindow::shaders->frame_image_program()->use();
+
+			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+			buffer()->Draw();
+		}
+
+		AbstractWindow::shaders->frame_outer_program()->use();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme->dialog().outline.data());
+
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+
+		return Finish;
+	}
+
+	void FileSelector::OnCloseButtonClicked(AbstractButton* sender)
+	{
+		AbstractView* super = superview();
+		delete this;
+
+		super->RequestRedraw();
+	}
+
+	void FileSelector::OnOpenButtonClicked(AbstractButton* sender)
+	{
+		AbstractView* super = superview();
+		fire_applied_event();
+
+		delete this;
+		super->RequestRedraw();
+	}
+
+	LinearLayout* FileSelector::CreateButtons()
 	{
 		LinearLayout* hlayout = Manage(new LinearLayout);
 		DBG_SET_NAME(hlayout, "FileSelectorDecorationLayout");
+		hlayout->SetMargin(Margin(0, 0, 0, 0));
 
 		// create close button
 		CloseButton* close_button = Manage(new CloseButton);
@@ -103,107 +311,16 @@ namespace BlendInt {
 
 		hlayout->Resize(hlayout->GetPreferredSize());
 
-		PushBackSubView(hlayout);
+		events()->connect(close_button->clicked(), this, &FileSelector::OnCloseButtonClicked);
+		events()->connect(open->clicked(), this, &FileSelector::OnOpenButtonClicked);
 
-		set_size(hlayout->size());
-
-		events()->connect(close_button->clicked(), this, &FileSelectorDecoration::OnCloseButtonClicked);
-	}
-
-	FileSelectorDecoration::~FileSelectorDecoration ()
-	{
-	}
-
-	bool FileSelectorDecoration::IsExpandX () const
-	{
-		return true;
-	}
-
-	bool FileSelectorDecoration::IsExpandY () const
-	{
-		return false;
-	}
-
-	Size FileSelectorDecoration::GetPreferredSize () const
-	{
-		return first_subview()->GetPreferredSize();
-	}
-
-	void FileSelectorDecoration::PerformSizeUpdate (
-	        const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			set_size(*request.size());
-
-			ResizeSubView(first_subview(), size());
-
-			RequestRedraw();
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void FileSelectorDecoration::OnCloseButtonClicked(AbstractButton* button)
-	{
-		fire_close_triggered();
-	}
-
-	// -----------------------------
-
-	FileSelector::FileSelector ()
-	: Dialog(),
-	  path_entry_(0),
-	  file_entry_(0)
-	{
-		set_size(500, 400);
-
-		InitializeFileSelector();
-
-		//events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
-	}
-
-	FileSelector::~FileSelector ()
-	{
-	}
-	
-	void FileSelector::InitializeFileSelector ()
-	{
-		FileSelectorDecoration* dec = Manage(new FileSelectorDecoration);
-
-		//ToolBox* sidebar = CreateSideBarOnce();
-		LinearLayout* area = CreateBrowserAreaOnce();
-
-		SetDecoration(dec);
-		SetLayout(area);
-
-		std::string pwd =getenv("PWD");
-		pwd.append("/");
-		path_entry_->SetText(pwd);
-		browser_->Load(getenv("PWD"));
-
-		events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
-
-		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
-		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
-		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
-	}
-
-	void FileSelector::OnFileSelect ()
-	{
-		file_entry_->SetText(browser_->file_selected());
-	}
-
-	void FileSelector::OnCloseButtonClicked()
-	{
-		delete this;
+		return hlayout;
 	}
 
 	LinearLayout* FileSelector::CreateBrowserAreaOnce()
 	{
 		LinearLayout* vbox = Manage(new LinearLayout(Vertical));
+		vbox->SetMargin(Margin(0, 0, 0, 0));
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetSpace(2);
 

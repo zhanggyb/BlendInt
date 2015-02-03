@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	FontSelector::FontSelector()
-	: Dialog()
+	: AbstractDialog()
 	{
 
 	}

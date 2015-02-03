@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTLISTMODEL_HPP_
-#define _BLENDINT_GUI_ABSTRACTLISTMODEL_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractItemModel.hpp>
 
@@ -100,5 +99,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_ABSTRACTLISTMODEL_HPP_ */

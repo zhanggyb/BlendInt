@@ -21,20 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
 #include <cmath>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
@@ -52,6 +44,23 @@ namespace BlendInt {
 	ColorWheel::~ColorWheel ()
 	{
 		glDeleteVertexArrays(2, vaos_);
+	}
+
+	bool ColorWheel::Contain (const Point& point) const
+	{
+		float radius = std::min(size().width(), size().height()) / 2.f;
+		radius += 1.f;
+
+		float x = size().width() / 2.f;
+		float y = size().height() / 2.f;
+
+		float dist = sqrt (pow(point.x() - x, 2) + pow(point.y() - y, 2));
+
+		if(dist <= radius) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	bool ColorWheel::IsExpandX () const

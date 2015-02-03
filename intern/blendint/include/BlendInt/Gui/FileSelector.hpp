@@ -30,40 +30,17 @@
 #include <BlendInt/Gui/FileBrowser.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/Expander.hpp>
-#include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Gui/AbstractDialog.hpp>
+#include <BlendInt/Gui/FrameShadow.hpp>
 
 #include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
-	class FileSelectorDecoration: public AbstractDecoration
-	{
-		DISALLOW_COPY_AND_ASSIGN(FileSelectorDecoration);
-
-	public:
-
-		FileSelectorDecoration();
-
-		virtual ~FileSelectorDecoration ();
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-	private:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		void OnCloseButtonClicked (AbstractButton* button);
-
-	};
-
 	/**
 	 * @brief A widget to browse and select local directories/files.
 	 */
-	class FileSelector: public Dialog
+	class FileSelector: public AbstractDialog
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileSelector);
 
@@ -78,11 +55,17 @@ namespace BlendInt {
 			return browser_->file_selected();
 		}
 
-		Cpp::EventRef<> opened () {return opened_;}
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual bool PreDraw (AbstractWindow* context);
+
+		virtual ResponseType Draw (AbstractWindow* context);
 
 	private:
 
-		void InitializeFileSelector ();
+		LinearLayout* CreateButtons ();
 
 		LinearLayout* CreateBrowserAreaOnce ();
 
@@ -94,14 +77,24 @@ namespace BlendInt {
 
 		void OnFileSelect ();
 
-		void OnCloseButtonClicked ();
+		void OnCloseButtonClicked (AbstractButton* sender);
+
+		void OnOpenButtonClicked (AbstractButton* sender);
+
+        GLuint vao_[2];
+
+        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+		RefPtr<FrameShadow> shadow_;
 
 		TextEntry* path_entry_;
 		TextEntry* file_entry_;
 
 		FileBrowser* browser_;
 
-		Cpp::Event<> opened_;
+		glm::mat4 projection_matrix_;
+
+		glm::mat3 model_matrix_;
 
 	};
 

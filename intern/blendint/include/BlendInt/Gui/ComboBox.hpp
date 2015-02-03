@@ -26,7 +26,6 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/ListView.hpp>
-#include <BlendInt/Gui/PopupFrame.hpp>
 
 namespace BlendInt {
 
@@ -83,7 +82,7 @@ namespace BlendInt {
 
 		String text_;
 
-		PopupFrame* popup_;
+		//PopupFrame* popup_;
 
 		RefPtr<AbstractItemModel> model_;
 

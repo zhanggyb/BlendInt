@@ -21,14 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FONTSELECTOR_HPP_
-#define _BLENDINT_GUI_FONTSELECTOR_HPP_
+#pragma once
 
-#include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Gui/AbstractDialog.hpp>
 
 namespace BlendInt {
 
-	class FontSelector: public Dialog
+	class FontSelector: public AbstractDialog
 	{
 	public:
 
@@ -41,5 +40,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_FONTSELECTOR_HPP_ */
