@@ -32,6 +32,8 @@
 #include <BlendInt/Gui/MessageBox.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/FileSelector.hpp>
+#include <BlendInt/Gui/Dialog.hpp>
+#include <BlendInt/Gui/TextureView.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -54,6 +56,12 @@ int main (int argc, char* argv[])
 
 		FileSelector* fs = new FileSelector;
 		win.AddFrame(fs);
+
+		Dialog* dlg = new Dialog("Demo", Dialog::DialogButtonApply | Dialog::DialogButtonOK);
+		TextureView* texview = new TextureView;
+		dlg->AddWidget(texview);
+
+		win.AddFrame(dlg);
 
 		win.Exec();
 

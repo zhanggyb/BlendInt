@@ -50,9 +50,9 @@ namespace BlendInt {
 
     	};
 
-        AbstractDialog (int flag = 0);
+        AbstractDialog (int flags = 0);
         
-        AbstractDialog (int width, int height, int flag = 0);
+        AbstractDialog (int width, int height, int flags = 0);
         
         virtual ~AbstractDialog ();
 

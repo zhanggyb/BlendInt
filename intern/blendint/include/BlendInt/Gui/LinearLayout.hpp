@@ -69,6 +69,8 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		void UpdateLayout ();
+
 	protected:
 
 		virtual void PerformMarginUpdate (const Margin& margin);
@@ -78,8 +80,6 @@ namespace BlendInt {
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		void UpdateLayout ();
 
 		void set_alignment (int align)
 		{

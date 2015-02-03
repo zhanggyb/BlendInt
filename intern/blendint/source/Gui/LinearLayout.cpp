@@ -191,6 +191,17 @@ namespace BlendInt {
 		return expand;
 	}
 
+	void LinearLayout::UpdateLayout ()
+	{
+		int x = margin().left();
+		int y = margin().bottom();
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
+
+		LinearAdjustment adjustment(this, orientation_, alignment_, space_);
+		adjustment.Adjust(x, y, width, height);
+	}
+
 	void LinearLayout::PerformMarginUpdate(const Margin& request)
 	{
 		set_margin(request);
@@ -232,17 +243,6 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
-	}
-
-	void LinearLayout::UpdateLayout ()
-	{
-		int x = margin().left();
-		int y = margin().bottom();
-		int width = size().width() - margin().hsum();
-		int height = size().height() - margin().vsum();
-
-		LinearAdjustment adjustment(this, orientation_, alignment_, space_);
-		adjustment.Adjust(x, y, width, height);
 	}
 
 }

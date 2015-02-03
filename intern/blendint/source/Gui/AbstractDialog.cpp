@@ -28,23 +28,23 @@
 
 namespace BlendInt {
     
-    AbstractDialog::AbstractDialog(int flag)
+    AbstractDialog::AbstractDialog(int flags)
     : Frame(),
       focused_widget_(0),
       hovered_widget_(0),
       cursor_position_(InsideRectangle),
-      dialog_flags_(flag & 0x0F)
+      dialog_flags_(flags & 0x0F)
     {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
     }
     
-    AbstractDialog::AbstractDialog(int width, int height, int flag)
+    AbstractDialog::AbstractDialog(int width, int height, int flags)
     : Frame(width, height),
     focused_widget_(0),
     hovered_widget_(0),
     cursor_position_(InsideRectangle),
-    dialog_flags_(flag & 0x0F)
+    dialog_flags_(flags & 0x0F)
     {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
