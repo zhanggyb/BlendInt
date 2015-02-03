@@ -325,6 +325,7 @@ namespace BlendInt {
     bool Window::PreDraw (AbstractWindow* context)
     {
         glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+    	//glClearColor(0.105f, 0.105f, 0.105f, 0.75f);
         //glClearColor(1.f, 1.f, 1.f, 1.f);
         glClearStencil(0);
         glClearDepth(1.0);

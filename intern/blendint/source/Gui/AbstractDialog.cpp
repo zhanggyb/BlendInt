@@ -21,8 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <glm/gtx/transform.hpp>
-
 #include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
@@ -30,35 +28,26 @@
 
 namespace BlendInt {
     
-    AbstractDialog::AbstractDialog()
+    AbstractDialog::AbstractDialog(int flag)
     : Frame(),
       focused_widget_(0),
       hovered_widget_(0),
       cursor_position_(InsideRectangle),
-      dialog_flags_(0)
+      dialog_flags_(flag & 0x0F)
     {
-		set_size(400, 300);
-		set_round_type(RoundAll);
-		set_round_radius(5.f);
-		set_refresh(true);
-		//set_modal(modal);
-
-        InitializeAbstractDialog();
+        applied_.reset(new Cpp::Event<AbstractDialog*>);
+        canceled_.reset(new Cpp::Event<AbstractDialog*>);
     }
     
-    AbstractDialog::AbstractDialog(int width, int height)
+    AbstractDialog::AbstractDialog(int width, int height, int flag)
     : Frame(width, height),
     focused_widget_(0),
     hovered_widget_(0),
     cursor_position_(InsideRectangle),
-    dialog_flags_(0)
+    dialog_flags_(flag & 0x0F)
     {
-		set_round_type(RoundAll);
-		set_round_radius(5.f);
-		set_refresh(true);
-		//set_modal(modal);
-
-        InitializeAbstractDialog();
+        applied_.reset(new Cpp::Event<AbstractDialog*>);
+        canceled_.reset(new Cpp::Event<AbstractDialog*>);
     }
 
     AbstractDialog::~AbstractDialog()
@@ -74,66 +63,6 @@ namespace BlendInt {
 			ClearHoverWidgets(hovered_widget_);
 		}
     }
-
-	void AbstractDialog::PerformSizeUpdate (
-	        const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			set_size(*request.size());
-
-			projection_matrix_  = glm::ortho(
-				0.f,
-				0.f + (float)size().width(),
-				0.f,
-				0.f + (float)size().height(),
-				100.f, -100.f);
-
-			if(buffer()) {
-				buffer()->Resize(size());
-			}
-
-			UpdateLayout();
-
-			RequestRedraw();
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	bool AbstractDialog::PreDraw (AbstractWindow* context)
-	{
-		if(!visiable()) return false;
-
-		context->register_active_frame(this);
-
-		if(refresh() && buffer()) {
-			RenderSubFramesToTexture(this,
-					context,
-					projection_matrix_,
-					model_matrix_,
-					buffer()->texture());
-		}
-
-		return true;
-	}
-
-	ResponseType AbstractDialog::Draw (AbstractWindow* context)
-	{
-		if(buffer()) {
-
-			AbstractWindow::shaders->frame_image_program()->use();
-
-			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
-			buffer()->Draw();
-		}
-
-		return Finish;
-	}
 
 	ResponseType AbstractDialog::PerformKeyPress (
 	        AbstractWindow* context)
@@ -468,17 +397,6 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &AbstractDialog::OnHoverWidgetDestroyed);
 
 		hovered_widget_ = 0;
-	}
-
-	void AbstractDialog::InitializeAbstractDialog ()
-	{
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-		model_matrix_ = glm::mat3(1.f);
-
-        applied_.reset(new Cpp::Event<AbstractDialog*>);
-        canceled_.reset(new Cpp::Event<AbstractDialog*>);
-
-        EnableViewBuffer();
 	}
 
 }

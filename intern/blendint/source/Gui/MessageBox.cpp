@@ -21,24 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/MessageBox.hpp>
 #include <BlendInt/Gui/LinearLayout.hpp>
 
 #include <BlendInt/Gui/AbstractWindow.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
     
     MessageBox::MessageBox(const String& title, const String& description)
     : AbstractDialog(),
       title_(0),
-      description_(0),
+      text_(0),
       close_(0)
     {
-		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
-
 		title_ = new Label(title, AlignCenter);
-		description_ = new Label(description);
+		text_ = new Label(description, AlignCenter);
 		close_ = new CloseButton;
+
+		title_->SetForeground(AbstractWindow::theme->menu_back().text_sel);
+		text_->SetForeground(AbstractWindow::theme->menu_back().text);
 
 		events()->connect(close_->clicked(), this, &MessageBox::OnClose);
 
@@ -50,19 +54,31 @@ namespace BlendInt {
 
 		LinearLayout* vlayout = new LinearLayout(Vertical);
 		vlayout->AddWidget(hlayout);
-		vlayout->AddWidget(description_);
+		vlayout->AddWidget(text_);
 
-		vlayout->Resize(size());
+		vlayout->Resize(vlayout->GetPreferredSize());
+
+		set_round_type(RoundAll);
+		set_round_radius(5.f);
+		set_size(vlayout->size());
+		EnableViewBuffer();
+		set_refresh(true);
 
 		PushBackSubView(vlayout);
+
+		projection_matrix_  = glm::ortho(
+				0.f, (float)size().width(),
+				0.f, (float)size().height(),
+				100.f, -100.f);
+		model_matrix_ = glm::mat3(1.f);
 
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme->dialog().shaded) {
+		if (AbstractWindow::theme->menu_back().shaded) {
 			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->dialog().shadetop,
-					AbstractWindow::theme->dialog().shadedown,
+					AbstractWindow::theme->menu_back().shadetop,
+					AbstractWindow::theme->menu_back().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -87,6 +103,8 @@ namespace BlendInt {
 		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
     }
     
     MessageBox::~MessageBox()
@@ -94,32 +112,82 @@ namespace BlendInt {
         glDeleteVertexArrays(2, vao_);
     }
 
-    void MessageBox::UpdateLayout()
+    void MessageBox::SetTitleFont (const BlendInt::Font& font)
     {
-		shadow_->Resize(size());
+    	title_->SetFont(font);
+    }
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    void MessageBox::SetTextFont (const BlendInt::Font& font)
+    {
+    	text_->SetFont(font);
+    }
 
-		if (AbstractWindow::theme->dialog().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->dialog().shadetop,
-					AbstractWindow::theme->dialog().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
+    void MessageBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+    {
+    	if(request.target() == this) {
+
+    		set_size(*request.size());
+
+    		projection_matrix_  = glm::ortho(
+    				0.f,
+    				0.f + (float)size().width(),
+    				0.f,
+    				0.f + (float)size().height(),
+    				100.f, -100.f);
+
+    		if(buffer()) {
+    			buffer()->Resize(size());
+    		}
+
+    		shadow_->Resize(size());
+
+    		std::vector<GLfloat> inner_verts;
+    		std::vector<GLfloat> outer_verts;
+
+    		if (AbstractWindow::theme->menu_back().shaded) {
+    			GenerateRoundedVertices(Vertical,
+    					AbstractWindow::theme->menu_back().shadetop,
+    					AbstractWindow::theme->menu_back().shadedown,
+    					&inner_verts,
+    					&outer_verts);
+    		} else {
+    			GenerateRoundedVertices(&inner_verts, &outer_verts);
+    		}
+
+    		vbo_.bind(0);
+    		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    		vbo_.bind(1);
+    		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    		vbo_.reset();
+
+    		ResizeSubView(first_subview(), size());
+
+    		RequestRedraw();
+
+    	}
+
+    	if(request.source() == this) {
+    		ReportSizeUpdate(request);
+    	}
+    }
+
+    bool MessageBox::PreDraw (AbstractWindow* context)
+    {
+		if(!visiable()) return false;
+
+		context->register_active_frame(this);
+
+		if(refresh() && buffer()) {
+			RenderSubFramesToTexture(this,
+					context,
+					projection_matrix_,
+					model_matrix_,
+					buffer()->texture());
 		}
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		vbo_.reset();
-
-		ResizeSubView(first_subview(), size());
+		return true;
     }
-    
+
     ResponseType BlendInt::MessageBox::Draw (AbstractWindow* context)
     {
     	shadow_->Draw(position().x(), position().y());
@@ -128,27 +196,37 @@ namespace BlendInt {
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
 		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme->menu_back().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		ResponseType retval = AbstractDialog::Draw(context);
+		if(buffer()) {
+
+			AbstractWindow::shaders->frame_image_program()->use();
+
+			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+			buffer()->Draw();
+		}
 
 		AbstractWindow::shaders->frame_outer_program()->use();
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme->menu_back().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		return retval;
+		return Finish;
     }
 
 	void MessageBox::OnClose (AbstractButton* btn)
 	{
+		AbstractView* super = superview();
 		delete this;
+		super->RequestRedraw();
 	}
 
 }

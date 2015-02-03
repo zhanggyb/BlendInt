@@ -30,12 +30,29 @@ namespace BlendInt {
 
     class AbstractDialog: public Frame
     {
-        
     public:
+
+    	enum DialogFlag {
+
+			/**
+			 * @brief If this dialog is a modal dialog
+			 *
+			 * 0 - modaless dialog
+			 * 1 - modal dialog
+			 */
+			DialogModal = 0x1 << 0,
+
+			DialogButtonOK = 0x1 << 1,
+
+			DialogButtonApply = 0x1 << 2,
+
+			DialogButtonCancel = 0x1 << 3
+
+    	};
+
+        AbstractDialog (int flag = 0);
         
-        AbstractDialog ();
-        
-        AbstractDialog (int width, int height);
+        AbstractDialog (int width, int height, int flag = 0);
         
         virtual ~AbstractDialog ();
 
@@ -51,11 +68,7 @@ namespace BlendInt {
 
     protected:
         
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual bool PreDraw (AbstractWindow* context);
-
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual ResponseType Draw (AbstractWindow* context) = 0;
 
 		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
@@ -66,8 +79,6 @@ namespace BlendInt {
 		virtual ResponseType PerformMouseMove (AbstractWindow* context);
 
 		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
-
-		virtual void UpdateLayout () = 0;
 
 		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
@@ -125,36 +136,22 @@ namespace BlendInt {
 
     private:
 
-		enum DialogFlagIndex {
-
-			/**
-			 * @brief If this dialog is a modal dialog
-			 *
-			 * 0 - modaless dialog
-			 * 1 - modal dialog
-			 */
-			DialogModal = 0x1 << 0,
+		enum DialogFlagPrivate {
 
 			/**
 			 * @brief If the cursor is on border
 			 */
-			DialogCursorOnBorder = 0x1 << 1,
+			DialogCursorOnBorder = 0x1 << 4,
 
 			/**
 			 * @brief If mouse button pressed
 			 */
-			DialogMouseButtonPressed = 0x1 << 2
+			DialogMouseButtonPressed = 0x1 << 5
 		};
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		void InitializeAbstractDialog ();
-
-		glm::mat4 projection_matrix_;
-
-		glm::mat3 model_matrix_;
 
 		Point last_position_;
 

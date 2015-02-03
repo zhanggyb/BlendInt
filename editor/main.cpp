@@ -43,7 +43,8 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		MessageBox* msg = new MessageBox("Title", "Hello");
+		MessageBox* msg = new MessageBox("Title", "Hello World!");
+		msg->MoveTo(400, 400);
 		win.AddFrame(msg);
 
 		win.Exec();

@@ -39,11 +39,17 @@ namespace BlendInt {
         
         virtual ~MessageBox ();
         
-    protected:
-        
-		virtual ResponseType Draw (AbstractWindow* context);
+        void SetTitleFont (const Font& font);
 
-        virtual void UpdateLayout ();
+        void SetTextFont (const Font& font);
+
+    protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual bool PreDraw (AbstractWindow* context);
+
+		virtual ResponseType Draw (AbstractWindow* context);
 
     private:
 
@@ -57,9 +63,13 @@ namespace BlendInt {
 
 		Label* title_;
 
-		Label* description_;
+		Label* text_;
 
 		CloseButton* close_;
+
+		glm::mat4 projection_matrix_;
+
+		glm::mat3 model_matrix_;
 
     };
     
