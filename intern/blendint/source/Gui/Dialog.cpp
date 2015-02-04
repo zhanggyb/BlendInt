@@ -156,6 +156,11 @@ namespace BlendInt {
 		return false;
 	}
 
+	Size Dialog::GetPreferredSize () const
+	{
+		return main_layout_->GetPreferredSize();
+	}
+
 	void Dialog::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
     	if(request.target() == this) {

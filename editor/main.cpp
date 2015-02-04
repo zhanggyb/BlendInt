@@ -48,28 +48,12 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		MessageBox* msg = new MessageBox("Title", "Hello World!");
-		msg->MoveTo(400, 400);
-		win.AddFrame(msg);
-
-		ColorSelector* cs = new ColorSelector;
-		win.AddFrame(cs);
-
-		FileSelector* fs = new FileSelector;
-		win.AddFrame(fs);
-
-		Dialog* dlg = new Dialog("Demo", Dialog::DialogButtonApply | Dialog::DialogButtonOK);
+		Dialog* dlg = new Dialog("Demo", Dialog::DialogButtonOK);
 		TextureView* texview = new TextureView;
+		texview->OpenFile("test.jpg");
 		dlg->AddWidget(texview);
 		win.AddFrame(dlg);
-
-		Dialog* cdlg = new Dialog("Clock");
-		Clock* clock = new Clock;
-		clock->Start();
-		cdlg->AddWidget(clock);
-		cdlg->Resize(cdlg->GetPreferredSize());
-
-		win.AddFrame(cdlg);
+		dlg->Resize(dlg->GetPreferredSize());
 
 		win.Exec();
 

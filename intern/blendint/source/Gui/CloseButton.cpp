@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	Size CloseButton::GetPreferredSize() const
 	{
-		int h = 16 * AbstractWindow::theme->pixel();
+		int h = pixel_size(16);
 		return Size(h, h);
 	}
 

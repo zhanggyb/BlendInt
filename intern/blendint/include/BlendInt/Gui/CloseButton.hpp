@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CLOSEBUTTON_HPP_
-#define _BLENDINT_GUI_CLOSEBUTTON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
@@ -68,5 +67,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_CLOSEBUTTON_HPP_ */

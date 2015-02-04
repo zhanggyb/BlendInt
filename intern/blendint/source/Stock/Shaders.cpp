@@ -424,6 +424,7 @@ namespace BlendInt {
 
 	// ---------------------------------------------------------------
 
+	/*
 	const char* Shaders::context_vertex_shader = "#version 330\n"
 			"layout(location = 0) in vec2 aCoord;"
 			"layout(location = 1) in vec2 UVCoord;"
@@ -449,7 +450,6 @@ namespace BlendInt {
 			""
 			"void main(void) {"
 			""
-			/*
 			 "	if(Blur) {"
 			 ""
 			 "		vec4 color;"
@@ -480,10 +480,10 @@ namespace BlendInt {
 			 //"FragmentColor = color;"
 			 ""
 			 "	} else {"
-			 */
 			"		FragmentColor = texture(uTexture, f_texcoord);"
 			//"	}"
 			"}";
+	*/
 
 	const char* Shaders::widget_image_vertex_shader =
 			"#version 330\n"

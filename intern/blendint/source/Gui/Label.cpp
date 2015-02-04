@@ -200,8 +200,6 @@ namespace BlendInt {
 		int h = text_->font().height();
 		int w = text_->size().width();
 
-		if(w < 80) w = 80;
-
 		w += pixel_size(kPadding.hsum());
 		h += pixel_size(kPadding.vsum());
 

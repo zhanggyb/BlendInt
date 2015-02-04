@@ -48,6 +48,8 @@ namespace BlendInt {
 
 		bool InsertWidget (int index, AbstractWidget* widget);
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
