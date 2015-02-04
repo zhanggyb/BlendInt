@@ -53,15 +53,23 @@ namespace BlendInt {
 		title_layout->AddWidget(close_button);
 		title_layout->AddWidget(title_label);
 
+		LinearLayout* bottom_layout = 0;
+		if(flags & (DialogButtonApply | DialogButtonOK)) {
+			bottom_layout = new LinearLayout(Horizontal);
+			bottom_layout->SetMargin(Margin(0, 0, 0, 0));
+			Separator* sp = new Separator(true);
+			bottom_layout->AddWidget(sp);
+		}
+
 		if(flags & DialogButtonApply) {
 			Button* apply_button = Manage(new Button("Apply"));
-			title_layout->AddWidget(apply_button);
+			bottom_layout->AddWidget(apply_button);
 			events()->connect(apply_button->clicked(), this, &Dialog::OnApplyButtonClicked);
 		}
 
 		if(flags & DialogButtonOK) {
 			Button* ok_button = Manage(new Button("OK"));
-			title_layout->AddWidget(ok_button);
+			bottom_layout->AddWidget(ok_button);
 			events()->connect(ok_button->clicked(), this, &Dialog::OnOKButtonClicked);
 		}
 
@@ -70,6 +78,7 @@ namespace BlendInt {
 
 		main_layout_->AddWidget(title_layout);
 		main_layout_->AddWidget(content_layout_);
+		main_layout_->AddWidget(bottom_layout);
 
 		main_layout_->Resize(500, 400);
 

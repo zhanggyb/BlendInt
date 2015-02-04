@@ -26,14 +26,14 @@
 #include <deque>
 #include <BlendInt/Core/Types.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/AbstractFrame.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
 	class FrameSplitter;
 
-	class FrameSplitterHandle: public Frame
+	class FrameSplitterHandle: public AbstractFrame
 	{
 	public:
 
@@ -95,7 +95,7 @@ namespace BlendInt {
 
 	// -------------------------------
 
-	class FrameSplitter: public Frame
+	class FrameSplitter: public AbstractFrame
 	{
 	public:
 
@@ -103,15 +103,15 @@ namespace BlendInt {
 
 		virtual ~FrameSplitter ();
 
-		void AddFrame (Frame* frame, SizePolicy policy = DefaultSizePolicy);
+		void AddFrame (AbstractFrame* frame, SizePolicy policy = DefaultSizePolicy);
 
-		void InsertFrame (int index, Frame* frame, SizePolicy policy = DefaultSizePolicy);
+		void InsertFrame (int index, AbstractFrame* frame, SizePolicy policy = DefaultSizePolicy);
 
-		int GetFrameIndex (Frame* frame) const;
+		int GetFrameIndex (AbstractFrame* frame) const;
 
 		int GetHandleIndex (FrameSplitterHandle* handle) const;
 
-		Frame* GetFrame (int index) const;
+		AbstractFrame* GetFrame (int index) const;
 
 		FrameSplitterHandle* GetHandle (int index) const;
 
@@ -163,13 +163,13 @@ namespace BlendInt {
 
 		friend class FrameSplitterHandle;
 
-		void AddColumn (Frame* frame, SizePolicy policy);
+		void AddColumn (AbstractFrame* frame, SizePolicy policy);
 
-		void AddRow (Frame* frame, SizePolicy policy);
+		void AddRow (AbstractFrame* frame, SizePolicy policy);
 
-		void InsertColumn (int index, Frame* frame, SizePolicy policy);
+		void InsertColumn (int index, AbstractFrame* frame, SizePolicy policy);
 
-		void InsertRow (int index, Frame* frame, SizePolicy policy);
+		void InsertRow (int index, AbstractFrame* frame, SizePolicy policy);
 
 		void DistributeHorizontally ();
 

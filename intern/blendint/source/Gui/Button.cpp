@@ -101,11 +101,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	bool Button::IsExpandX() const
-	{
-		return false;
-	}
-
 	Size Button::GetPreferredSize() const
 	{
 		Size s = AbstractButton::GetPreferredSize();

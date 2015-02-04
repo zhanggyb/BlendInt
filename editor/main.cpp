@@ -34,6 +34,7 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -60,8 +61,15 @@ int main (int argc, char* argv[])
 		Dialog* dlg = new Dialog("Demo", Dialog::DialogButtonApply | Dialog::DialogButtonOK);
 		TextureView* texview = new TextureView;
 		dlg->AddWidget(texview);
-
 		win.AddFrame(dlg);
+
+		Dialog* cdlg = new Dialog("Clock");
+		Clock* clock = new Clock;
+		clock->Start();
+		cdlg->AddWidget(clock);
+		cdlg->Resize(cdlg->GetPreferredSize());
+
+		win.AddFrame(cdlg);
 
 		win.Exec();
 

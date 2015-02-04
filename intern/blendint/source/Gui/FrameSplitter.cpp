@@ -27,7 +27,7 @@
 namespace BlendInt {
 
 	FrameSplitterHandle::FrameSplitterHandle(Orientation orientation)
-	: Frame(),
+	: AbstractFrame(),
 	  orientation_(orientation),
 	  prev_size_(0),
 	  next_size_(0),
@@ -250,7 +250,7 @@ namespace BlendInt {
 	// --------------------------------
 
 	FrameSplitter::FrameSplitter(Orientation orientation)
-	: Frame(),
+	: AbstractFrame(),
 	  orientation_(orientation),
 	  hover_frame_(0),
 	  focused_frame_(0)
@@ -263,7 +263,7 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::AddFrame (Frame* frame, SizePolicy policy)
+	void FrameSplitter::AddFrame (AbstractFrame* frame, SizePolicy policy)
 	{
 		if((frame == 0) || (frame->superview() == this)) return;
 
@@ -283,7 +283,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void FrameSplitter::InsertFrame(int index, Frame* frame, SizePolicy policy)
+	void FrameSplitter::InsertFrame(int index, AbstractFrame* frame, SizePolicy policy)
 	{
 		if((frame == 0) || (frame->superview() == this)) return;
 
@@ -303,7 +303,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	int FrameSplitter::GetFrameIndex (Frame* frame) const
+	int FrameSplitter::GetFrameIndex (AbstractFrame* frame) const
 	{
 		if(frame->superview() != this) return -1;
 
@@ -335,7 +335,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	Frame* FrameSplitter::GetFrame (int index) const
+	AbstractFrame* FrameSplitter::GetFrame (int index) const
 	{
 		if(subs_count() == 0) return 0;
 
@@ -344,7 +344,7 @@ namespace BlendInt {
 
 		index = index * 2;
 
-		return dynamic_cast<Frame*>(GetWidgetAt(index));
+		return dynamic_cast<AbstractFrame*>(GetWidgetAt(index));
 	}
 
 	FrameSplitterHandle* FrameSplitter::GetHandle (int index) const
@@ -681,7 +681,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	void FrameSplitter::AddColumn(Frame* frame, SizePolicy policy)
+	void FrameSplitter::AddColumn(AbstractFrame* frame, SizePolicy policy)
 	{
 #ifdef DEBUG
 		assert(orientation_ == Horizontal);
@@ -738,7 +738,7 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::AddRow(Frame* frame, SizePolicy policy)
+	void FrameSplitter::AddRow(AbstractFrame* frame, SizePolicy policy)
 	{
 #ifdef DEBUG
 		assert(orientation_ == Vertical);
@@ -796,7 +796,7 @@ namespace BlendInt {
 
 	}
 
-	void FrameSplitter::InsertColumn(int index, Frame* frame, SizePolicy policy)
+	void FrameSplitter::InsertColumn(int index, AbstractFrame* frame, SizePolicy policy)
 	{
 #ifdef DEBUG
 		assert(orientation_ == Horizontal);
@@ -865,7 +865,7 @@ namespace BlendInt {
 		}
 	}
 
-	void FrameSplitter::InsertRow(int index, Frame* frame, SizePolicy policy)
+	void FrameSplitter::InsertRow(int index, AbstractFrame* frame, SizePolicy policy)
 	{
 #ifdef DEBUG
 		assert(orientation_ == Vertical);

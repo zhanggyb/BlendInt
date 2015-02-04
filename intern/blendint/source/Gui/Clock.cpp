@@ -56,6 +56,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(3, vao_);
 	}
 
+	Size Clock::GetPreferredSize() const
+	{
+		return Size(160, 160);
+	}
+
 	void Clock::Start()
 	{
 		timer_->Start();

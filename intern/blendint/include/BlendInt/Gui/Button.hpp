@@ -49,8 +49,6 @@ namespace BlendInt {
 
 		virtual ~Button ();
 
-		virtual bool IsExpandX () const;
-
 		virtual Size GetPreferredSize () const;
 
 	protected:
