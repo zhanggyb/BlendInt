@@ -55,6 +55,9 @@ int main (int argc, char* argv[])
 		win.AddFrame(dlg);
 		dlg->Resize(dlg->GetPreferredSize());
 
+		FileSelector* fs = new FileSelector;
+		win.AddFrame(fs);
+
 		win.Exec();
 
 		Window::Terminate();

@@ -26,7 +26,7 @@
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/String.hpp>
 
-#include <BlendInt/Core/Types.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 namespace BlendInt {
 
@@ -38,7 +38,7 @@ namespace BlendInt {
 	struct ModelNode
 	{
 		ModelNode ()
-		: superview(0),
+		: parent(0),
 		  child(0),
 		  up(0),
 		  down(0),
@@ -52,14 +52,15 @@ namespace BlendInt {
 			// DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
 		}
 
-		ModelNode* superview;
+		ModelNode* parent;
 		ModelNode* child;
 		ModelNode* up;
 		ModelNode* down;
 		ModelNode* left;
 		ModelNode* right;
 
-		String data;	// temporarily use String to store data
+		RefPtr<AbstractForm> data;
+		//String data;	// temporarily use String to store data
 	};
 
 	class ModelIndex
@@ -78,7 +79,9 @@ namespace BlendInt {
 
 		int GetColumn () const;
 
-		const String* GetData () const;	// Use String temporarily
+		RefPtr<AbstractForm> GetData () const;
+
+		const AbstractForm* GetRawData () const;
 
 		ModelIndex GetRootIndex () const;
 

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTROUNDFORM_HPP_
-#define _BLENDINT_ABSTRACTROUNDFORM_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractForm.hpp>
 
@@ -83,5 +82,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_ABSTRACTROUNDFORM_HPP_ */

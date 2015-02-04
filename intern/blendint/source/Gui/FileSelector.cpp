@@ -108,7 +108,7 @@ namespace BlendInt {
 
 		//events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
 
-		events()->connect(browser_->clicked(), this, &FileSelector::OnFileSelect);
+		events()->connect(browser_->selected(), this, &FileSelector::OnFileSelect);
 		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
 		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
 

@@ -160,9 +160,9 @@ namespace BlendInt {
  		// Do nothing, this form does not allow resize
  	}
 
- 	void Text::Draw () const
+ 	void Text::Draw (float x, float y) const
  	{
-
+ 		Draw(x, y, (short)0);
  	}
 
  	void Text::Draw (float x, float y, short gamma) const

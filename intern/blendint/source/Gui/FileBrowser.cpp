@@ -21,13 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FileBrowser.hpp>
 
 #include <BlendInt/Gui/AbstractWindow.hpp>
+#include <BlendInt/Gui/Text.hpp>
 
 namespace BlendInt {
 
@@ -50,11 +50,9 @@ namespace BlendInt {
 		assert(model_);
 
 		bool retval = false;
-
 		retval = model_->Load(pathname);
 
 		RequestRedraw();
-
 		return retval;
 	}
 
@@ -117,8 +115,6 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::Draw (AbstractWindow* context)
 	{
-		AbstractWindow* c = const_cast<AbstractWindow*>(context);
-
 		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
@@ -126,14 +122,13 @@ namespace BlendInt {
 				1, AbstractWindow::theme->box().inner.data());
 
 		glBindVertexArray(vaos_[0]);
-
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
 
-		c->BeginPushStencil();	// inner stencil
+		context->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
-		c->EndPushStencil();
+		context->EndPushStencil();
 
 		AbstractWindow::shaders->widget_simple_triangle_program()->use();
 
@@ -164,18 +159,28 @@ namespace BlendInt {
 			i++;
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
 		if(GetModel()) {
 
 			ModelIndex index = GetModel()->GetRootIndex();
 			index = index.GetChildIndex(0, 0);
 
 			y = size().height();
+
+			int calib = 0;
+			float ty = 0.f;
+
+			// A workaround for Adobe Source Han Sans
+			calib = font_.ascender() - font_.descender();
+			if(calib < font_.height()) {
+				calib = (font_.height() - calib - 1) / 2;
+			} else {
+				calib = 0;
+			}
+
 			while(index.IsValid()) {
 				y -= h;
-				//font_.Print(0.f, y, *index.GetData());
+				ty = y - font_.descender() + calib;
+				index.GetRawData()->Draw(0.f, ty);
 				index = index.GetDownIndex();
 			}
 
@@ -183,14 +188,11 @@ namespace BlendInt {
 
 		AbstractWindow::shaders->widget_inner_program()->use();
 
-		c->BeginPopStencil();	// pop inner stencil
+		context->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
-		c->EndPopStencil();
-
-		GLSLProgram::reset();
+		context->EndPopStencil();
 
 		return Finish;
 	}
@@ -283,7 +285,8 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("highlight index: %d", highlight_index_);
 
 		if(index.IsValid()) {
-			file_selected_ = *index.GetData();
+			Text* t = dynamic_cast<Text*>(index.GetData().get());
+			file_selected_ = t->text();
 			//DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
 			RequestRedraw();
 		} else {
@@ -294,7 +297,7 @@ namespace BlendInt {
 			}
 		}
 
-		clicked_.fire();
+		selected_.fire();
 		return Finish;
 	}
 

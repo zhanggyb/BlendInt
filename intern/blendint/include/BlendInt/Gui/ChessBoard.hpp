@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CHECKERBOARD_HPP_
-#define _BLENDINT_CHECKERBOARD_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
@@ -48,9 +47,7 @@ namespace BlendInt {
 
 		size_t cell_size () const {return m_cell_size;}
 
-		virtual void Draw () const;
-
-		void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw (float x, float y) const;
 
 	protected:
 
@@ -86,5 +83,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_CHECKERBOARD_HPP_ */

@@ -21,9 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-
-#ifndef _BLENDINT_GUI_PIXELICON_HPP_
-#define _BLENDINT_GUI_PIXELICON_HPP_
+#pragma once
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
@@ -50,7 +48,7 @@ namespace BlendInt {
 
 		void SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
-		virtual void Draw () const;
+		virtual void Draw (float x, float y) const;
 
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
@@ -78,5 +76,3 @@ namespace BlendInt {
 		PixelIcon& operator = (const PixelIcon& orig);
 	};
 }
-
-#endif /* _BIL_ICON_HPP_ */

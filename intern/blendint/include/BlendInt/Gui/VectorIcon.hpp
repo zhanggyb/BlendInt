@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VERTEXICON_HPP_
-#define _BLENDINT_VERTEXICON_HPP_
+#pragma once
 
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/OpenGL/GLBuffer.hpp>
@@ -65,7 +64,7 @@ namespace BlendInt {
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
-		virtual void Draw () const;
+		virtual void Draw (float x, float y) const;
 
 		virtual void Draw (float x, float y, short gamma = 0) const;
 
@@ -87,5 +86,3 @@ namespace BlendInt {
 		int elements_;
 	};
 }
-
-#endif /* VERTEXICON_HPP_ */

@@ -50,9 +50,9 @@ namespace BlendInt {
 
 		Text& operator = (const String& text);
 
-		virtual void Draw () const;
+		virtual void Draw (float x, float y) const;
 
-		void Draw (float x, float y, short gamma = 0) const;
+		void Draw (float x, float y, short gamma) const;
 
 		void Draw (float x, float y, const Color& color, short gamma = 0) const;
 

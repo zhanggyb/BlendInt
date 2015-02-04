@@ -42,6 +42,8 @@ namespace BlendInt {
 
 		void Draw () const;
 
+		virtual void Draw (float x, float y) const;
+
 		inline GLTexture2D* texture ()
 		{
 			return &texture_;

@@ -116,6 +116,11 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
+	void ViewBuffer::Draw (float x, float y) const
+	{
+
+	}
+
 #ifdef DEBUG
 
 	void ViewBuffer::SaveToFile(const char* name)

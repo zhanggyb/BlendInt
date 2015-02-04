@@ -48,12 +48,10 @@ namespace BlendInt {
 
 		void Resize (unsigned int radius);
 
-		virtual void Draw () const;
-
 		/**
 		 * @brief Draw the icon
 		 */
-		void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw (float x, float y) const;
 
 	protected:
 

@@ -40,9 +40,7 @@ namespace BlendInt {
 
 		virtual ~FrameShadow ();
 
-		virtual void Draw () const;
-
-		void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw (float x, float y) const;
 
 	protected:
 

@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include <BlendInt/Gui/AbstractItemModel.hpp>
+#include <BlendInt/Gui/Text.hpp>
 
 namespace BlendInt {
 
@@ -93,10 +94,19 @@ namespace BlendInt {
 		}
 	}
 
-	const String* ModelIndex::GetData() const
+	RefPtr<AbstractForm> ModelIndex::GetData() const
 	{
 		if(node_) {
-			return &(node_->data);
+			return node_->data;
+		} else {
+			return RefPtr<AbstractForm>(0);
+		}
+	}
+
+	const AbstractForm* ModelIndex::GetRawData() const
+	{
+		if(node_) {
+			return node_->data.get();
 		} else {
 			return 0;
 		}
@@ -108,10 +118,10 @@ namespace BlendInt {
 
 		if(node_) {
 
-			ModelNode* node = node_->superview;
+			ModelNode* node = node_->parent;
 
-			while(node->superview) {
-				node = node->superview;
+			while(node->parent) {
+				node = node->parent;
 			}
 
 			retval.node_ = node;
@@ -124,7 +134,7 @@ namespace BlendInt {
 	{
 		ModelIndex retval;
 		if(node_) {
-			retval.node_ = node_->superview;
+			retval.node_ = node_->parent;
 		}
 
 		return retval;
@@ -316,7 +326,7 @@ namespace BlendInt {
 			const String& data)
 	{
 		if(index.IsValid()) {
-			index.node_->data = data;
+			index.node_->data = RefPtr<Text>(new Text(data));
 			return true;
 		} else {
 			return false;

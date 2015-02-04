@@ -40,8 +40,7 @@ namespace BlendInt {
 	 * An AbstractForm is the base class for all GUI elements in 2 dimension.
 	 *
 	 * The default size is 0 at (0, 0) and the subclass must provide a public
-	 * method to resize the form, this method usually need to call Update for redraw
-	 * the form.
+	 * method to resize the form.
 	 *
 	 * @sa Update()
 	 */
@@ -86,7 +85,7 @@ namespace BlendInt {
 			return size_;
 		}
 
-		virtual void Draw () const = 0;
+		virtual void Draw (float x, float y) const = 0;
 
 		static void SetDefaultBorderWidth (int border);
 

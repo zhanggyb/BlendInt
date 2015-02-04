@@ -127,9 +127,9 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
-	void SlideIcon::Draw () const
+	void SlideIcon::Draw (float x, float y) const
 	{
-
+		Draw (x, y, 0);
 	}
 
 	void SlideIcon::Draw (float x, float y, short gamma) const

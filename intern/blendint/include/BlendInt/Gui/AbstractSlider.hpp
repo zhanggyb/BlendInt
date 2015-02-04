@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
-#define _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
+#pragma once
 
 #include <BlendInt/Core/Types.hpp>
 
@@ -52,12 +51,12 @@ namespace BlendInt {
 		 */
 		virtual ~SlideIcon ();
 
-		virtual void Draw () const;
+		virtual void Draw (float x, float y) const;
 
 		/**
 		 * @brief Draw the icon
 		 */
-		void Draw (float x, float y, short gamma = 0) const;
+		void Draw (float x, float y, short gamma) const;
 
 	protected:
 
@@ -297,5 +296,3 @@ namespace BlendInt {
 	}
 
 }
-
-#endif	// _BLENDINT_GUI_ABSTRACTSLIDER_HPP_

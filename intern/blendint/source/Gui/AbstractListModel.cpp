@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include <BlendInt/Gui/AbstractListModel.hpp>
+#include <BlendInt/Gui/Text.hpp>
 
 namespace BlendInt {
 
@@ -32,7 +33,7 @@ namespace BlendInt {
 	  root_(0)
 	{
 		root_ = new ModelNode;
-		root_->data = String("Root Node");
+		root_->data = RefPtr<Text>(new Text("Root Node"));
 	}
 
 	AbstractListModel::~AbstractListModel ()
@@ -69,13 +70,13 @@ namespace BlendInt {
 
 		char buf[8];
 		first = new ModelNode;
-		first->data = String("row 0");
+		first->data = RefPtr<Text>(new Text("row 0"));
 		last = first;
 
 		for(int i = 1; i < count; i++) {
 			last->down = new ModelNode;
 			snprintf(buf, 8, "row %d", i);
-			last->down->data = String(buf);
+			last->down->data = RefPtr<Text>(new Text(buf));
 			last->down->up = last;
 			last = last->down;
 		}
@@ -83,7 +84,7 @@ namespace BlendInt {
 		// if the node has no child, create and append count rows
 		if(node->child == 0) {
 			node->child = first;
-			first->superview = node;
+			first->parent = node;
 		} else {
 			node = node->child;
 			// find wher to insert the new list
@@ -94,9 +95,9 @@ namespace BlendInt {
 
 			if(row == 0) {	// Insert
 				if(node->up == 0) {	// Insert 0
-					node->superview->child = first;
-					first->superview = node->superview;
-					node->superview = 0;
+					node->parent->child = first;
+					first->parent = node->parent;
+					node->parent = 0;
 					last->down = node;
 					node->up = last;
 				} else {
@@ -156,7 +157,7 @@ namespace BlendInt {
 					node->child = 0;
 				} else {	// remove the first count rows from the original list
 					node->child = last;
-					last->superview = node;
+					last->parent = node;
 					last->up = 0;
 				}
 
@@ -199,7 +200,7 @@ namespace BlendInt {
 			node->child = 0;
 		}
 
-		ModelNode* superview = node->superview;
+		ModelNode* superview = node->parent;
 		ModelNode* tmp = 0;
 
 		while(node) {
@@ -208,7 +209,7 @@ namespace BlendInt {
 
 			DestroyRow(node);
 			node = tmp;
-			node->superview = superview;	// no needed but looks resonable
+			node->parent = superview;	// no needed but looks resonable
 
 		}
 	}

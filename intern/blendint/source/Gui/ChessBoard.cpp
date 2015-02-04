@@ -120,12 +120,7 @@ namespace BlendInt {
 		set_size(size);
 	}
 
-	void ChessBoard::Draw () const
-	{
-
-	}
-
-	void ChessBoard::Draw (float x, float y, short gamma) const
+	void ChessBoard::Draw (float x, float y) const
 	{
 		glBindVertexArray(m_vao);
 
@@ -133,7 +128,7 @@ namespace BlendInt {
 		program->use();
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);

@@ -85,7 +85,7 @@ namespace BlendInt {
 
 		int i = 0;
 		while(node) {
-			DBG_PRINT_MSG("node %d: %s", i, ConvertFromString(node->data).c_str());
+			// DBG_PRINT_MSG("node %d: %s", i, ConvertFromString(node->data).c_str());
 			node = node->down;
 			i++;
 		}

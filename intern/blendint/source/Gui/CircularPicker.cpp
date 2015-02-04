@@ -150,18 +150,13 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
-	void CircularPicker::Draw () const
-	{
-
-	}
-
-	void CircularPicker::Draw (float x, float y, short gamma) const
+	void CircularPicker::Draw (float x, float y) const
 	{
 		AbstractWindow::shaders->widget_simple_triangle_program()->use();
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
 		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1.f, 1.f, 1.f, 1.f);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);

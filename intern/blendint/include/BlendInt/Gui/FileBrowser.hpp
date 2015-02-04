@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FILEBROWSER_HPP_
-#define _BLENDINT_GUI_FILEBROWSER_HPP_
+#pragma once
 
 #include <string>
 
@@ -74,9 +73,9 @@ namespace BlendInt {
 
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
-		Cpp::EventRef<> clicked ()
+		Cpp::EventRef<> selected ()
 		{
-			return clicked_;
+			return selected_;
 		}
 
 	protected:
@@ -107,9 +106,7 @@ namespace BlendInt {
 
 		int highlight_index_;
 
-		Cpp::Event<> clicked_;
+		Cpp::Event<> selected_;
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_FILEBROWSER_HPP_ */

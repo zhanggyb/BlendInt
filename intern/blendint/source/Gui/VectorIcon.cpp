@@ -162,11 +162,9 @@ namespace BlendInt {
 		elements_ = indeces_size * 3;
 	}
 
-	void VectorIcon::Draw () const
+	void VectorIcon::Draw (float x, float y) const
 	{
-		glBindVertexArray(vao_);
-		glDrawElements(GL_TRIANGLES, elements_,
-						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		Draw(x, y, 0);
 	}
 
 	void VectorIcon::Draw(float x, float y, short gamma) const
@@ -186,7 +184,9 @@ namespace BlendInt {
 
 		glVertexAttrib4fv(AttributeColor, color.data());
 
-		Draw();
+		glBindVertexArray(vao_);
+		glDrawElements(GL_TRIANGLES, elements_,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 	}
 
 	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const
@@ -201,7 +201,9 @@ namespace BlendInt {
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale, scale);
 		glVertexAttrib4fv(AttributeColor, color.data());
 
-		Draw();
+		glBindVertexArray(vao_);
+		glDrawElements(GL_TRIANGLES, elements_,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);

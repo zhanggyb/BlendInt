@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
 namespace BlendInt {
@@ -34,7 +35,8 @@ namespace BlendInt {
 	  root_(0)
 	{
 		root_ = new ModelNode;
-		root_->data = String("Root Node");
+		RefPtr<Text> data(new Text("Root Node"));
+		root_->data = data;
 	}
 
 	FileSystemModel::~FileSystemModel()
@@ -72,7 +74,7 @@ namespace BlendInt {
 
 					if(first == 0) {
 						first = new ModelNode;
-						first->superview = root_;
+						first->parent = root_;
 						root_->child = first;
 						assert(first->up == 0);
 					} else {
@@ -82,7 +84,9 @@ namespace BlendInt {
 					}
 
 					assert(first->left == 0);
-					first->data = String(it->path().filename().native());
+
+					first->data = RefPtr<Text>(new Text(it->path().filename().native()));
+;
 					j++;
 
 					tmp = first;
@@ -91,13 +95,13 @@ namespace BlendInt {
 					std::string time_str = std::asctime(std::localtime(&time));
 					time_str.erase(time_str.size() - 1, 1);	// remove the '\n' char
 					tmp->right = new ModelNode;
-					tmp->right->data = String(time_str);
+					tmp->right->data = RefPtr<Text>(new Text(time_str));
 					tmp->right->left = tmp->right;
 					tmp = tmp->right;
 					j++;
 
 					tmp->right = new ModelNode;
-					tmp->right->data = String(fs::is_directory(it->path())? "d" : "-");
+					tmp->right->data = RefPtr<Text>(new Text(fs::is_directory(it->path())? "d" : "-"));
 					tmp->right->left = tmp->right;
 					tmp = tmp->right;
 					j++;
@@ -108,14 +112,14 @@ namespace BlendInt {
 						snprintf(buf, 32, " ");
 					}
 					tmp->right = new ModelNode;
-					tmp->right->data = String(buf);
+					tmp->right->data = RefPtr<Text>(new Text(buf));
 					tmp->right->left = tmp->right;
 					tmp = tmp->right;
 					j++;
 
 					snprintf(buf, 32, "%o", status.permissions());
 					tmp->right = new ModelNode;
-					tmp->right->data = String(buf);
+					tmp->right->data = RefPtr<Text>(new Text(buf));
 					tmp->right->left = tmp->right;
 					j++;
 
@@ -259,14 +263,14 @@ namespace BlendInt {
 
 		char buf[32];
 		first = new ModelNode;
-		first->data = String("row 0, col 0");
+		first->data = RefPtr<Text>(new Text("row 0, col 0"));
 
 		// add (columns - 1) nodes at right
 		tmp = first;
 		for(int j = 1; j < columns_; j++) {
 			tmp->right = new ModelNode;
 			snprintf(buf, 32, "row 0, col %d", j);
-			tmp->right->data = String(buf);
+			tmp->right->data = RefPtr<Text>(new Text(buf));
 			tmp->right->left = tmp;
 			tmp = tmp->right;
 		}
@@ -276,7 +280,7 @@ namespace BlendInt {
 		for(int i = 1; i < count; i++) {
 			last->down = new ModelNode;
 			snprintf(buf, 32, "row %d, col 0", i);
-			last->down->data = String(buf);
+			last->down->data = RefPtr<Text>(new Text(buf));
 			last->down->up = last;
 
 			// add (columns - 1) nodes at right
@@ -284,7 +288,7 @@ namespace BlendInt {
 			for(int j = 1; j < columns_; j++) {
 				tmp->right = new ModelNode;
 				snprintf(buf, 32, "row %d, col %d", i, j);
-				tmp->right->data = String(buf);
+				tmp->right->data = RefPtr<Text>(new Text(buf));
 				tmp->right->left = tmp;
 				tmp = tmp->right;
 			}
@@ -295,7 +299,7 @@ namespace BlendInt {
 		// if the node has no child, create and append count rows
 		if(node->child == 0) {
 			node->child = first;
-			first->superview = node;
+			first->parent = node;
 		} else {
 			node = node->child;
 			while(node->down && (row > 0)) {
@@ -305,9 +309,9 @@ namespace BlendInt {
 
 			if(row == 0) {	// Insert
 				if(node->up == 0) {	// Insert 0
-					node->superview->child = first;
-					first->superview = node->superview;
-					node->superview = 0;
+					node->parent->child = first;
+					first->parent = node->parent;
+					node->parent = 0;
 					last->down = node;
 					node->up = last;
 				} else {
@@ -369,7 +373,7 @@ namespace BlendInt {
 					node->child = 0;
 				} else {	// remove the first count rows from the original list
 					node->child = last;
-					last->superview = node;
+					last->parent = node;
 					last->up = 0;
 				}
 
@@ -467,7 +471,7 @@ namespace BlendInt {
 				assert(tmp->down == 0);
 			}
 
-			std::cout << ConvertFromString(tmp->data).c_str() << " ";
+			//std::cout << ConvertFromString(tmp->data).c_str() << " ";
 			tmp = tmp->right;
 
 			i++;
@@ -507,14 +511,14 @@ namespace BlendInt {
 
 		char buf[32];
 		first = new ModelNode;
-		first->data = String("new col 0");
+		first->data = RefPtr<Text>(new Text("new col 0"));
 
 		// add (columns - 1) nodes at right
 		tmp = first;
 		for(int j = 1; j < count; j++) {
 			tmp->right = new ModelNode;
 			snprintf(buf, 32, "new col %d", j);
-			tmp->right->data = String(buf);
+			tmp->right->data = RefPtr<Text>(new Text(buf));
 			tmp->right->left = tmp;
 			tmp = tmp->right;
 		}
@@ -528,10 +532,10 @@ namespace BlendInt {
 
 		if(column == 0) {	// Insert
 			if(tmp->left == 0) {	// Insert 0
-				if(tmp->superview) {
-					tmp->superview->child = first;
-					first->superview = tmp->superview;
-					tmp->superview = 0;
+				if(tmp->parent) {
+					tmp->parent->child = first;
+					first->parent = tmp->parent;
+					tmp->parent = 0;
 				}
 
 				first->up = tmp->up;
@@ -584,7 +588,7 @@ namespace BlendInt {
 
 			ModelNode* up = node->up;
 			ModelNode* down = node->down;
-			ModelNode* superview = node->superview;
+			ModelNode* superview = node->parent;
 			ModelNode* tmp = 0;
 
 			if (node->left == 0) {	// the first column in this model
@@ -613,7 +617,7 @@ namespace BlendInt {
 					if (down)
 						down->up = node;
 
-					node->superview = superview;	// mostly is 0
+					node->parent = superview;	// mostly is 0
 					if(superview) {
 						superview->child = node;
 					}
@@ -624,7 +628,7 @@ namespace BlendInt {
 						up->down = down;
 
 					if (down) {
-						down->superview = superview;
+						down->parent = superview;
 						down->up = up;
 					}
 
