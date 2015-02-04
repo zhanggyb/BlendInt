@@ -76,9 +76,11 @@ int main(int argc, char* argv[])
 }
 ```
 
-Compile these same pieces of code with BlendInt and run in different
-OS platforms, you'll get a small window with the same context. (Same
-font was loaded in this example).
+Compile these pieces of code with BlendInt and run in different OS
+platforms, you'll get a small window with the same context. (In this
+example,
+[Adobe Source Han Sans CN](https://github.com/adobe-fonts/source-han-sans)
+was loaded in both platforms)
 
 ![Hello World in Linux](https://github.com/zhanggyb/BlendInt/blob/master/doc/images/hello_linux.png
  "Hello World in Linux")
@@ -86,7 +88,7 @@ font was loaded in this example).
  "Hello World in OS X")
 
 See [Wiki page](https://github.com/zhanggyb/BlendInt/wiki) for more
-information of how to programming with BlendInt.
+information of how to program with BlendInt.
 
 ## Dependencies
 

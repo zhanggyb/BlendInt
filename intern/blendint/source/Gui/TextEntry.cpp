@@ -21,26 +21,17 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
+#include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
-	Margin TextEntry::default_padding = Margin(2, 2, 2, 2);
+	Margin TextEntry::kPadding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
 	: Widget(),
@@ -56,11 +47,13 @@ namespace BlendInt {
 		set_size(initial_width, initial_height);
 
 		InitializeTextEntry();
+        
+        text_ext_.reset(new Text("Text"));
 	}
 
 	TextEntry::~TextEntry ()
 	{
-		glDeleteVertexArrays(3, vaos_);
+		glDeleteVertexArrays(3, vao_);
 	}
 
 	void TextEntry::SetText (const String& text)
@@ -89,6 +82,8 @@ namespace BlendInt {
 
 		index_ = text_.length();
 
+        text_ext_->SetText(text);
+        
 		RequestRedraw();
 	}
 
@@ -130,7 +125,7 @@ namespace BlendInt {
 
 		preferred_size.set_height(
 				max_font_height
-						+ default_padding.vsum() * AbstractWindow::theme->pixel());// top padding: 2, bottom padding: 2
+						+ kPadding.vsum() * AbstractWindow::theme->pixel());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
 			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
@@ -246,19 +241,19 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			inner_->bind();
-			inner_->set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-			cursor_buffer_->bind();
-			GLfloat* buf_p = (GLfloat*) cursor_buffer_->map(GL_READ_WRITE);
+            vbo_.bind(2);
+			GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
 			*(buf_p + 5) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * AbstractWindow::theme->pixel());
 			*(buf_p + 7) = (GLfloat) (request.size()->height()
 					- vertical_space * 2 * AbstractWindow::theme->pixel());
-			cursor_buffer_->unmap();
-			cursor_buffer_->reset();
+            vbo_.unmap();
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -285,10 +280,10 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+        vbo_.bind(0);
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		RequestRedraw();
 	}
@@ -310,10 +305,10 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+        vbo_.bind(0);
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 //		font_.set_pen(radius,
 //				font_.pen().y());
@@ -329,7 +324,7 @@ namespace BlendInt {
 				AbstractWindow::theme->text().inner.data());
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		glBindVertexArray(vaos_[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
@@ -339,7 +334,7 @@ namespace BlendInt {
 				AbstractWindow::theme->text().outline.data());
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
-		glBindVertexArray(vaos_[1]);
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
@@ -367,15 +362,38 @@ namespace BlendInt {
 			glVertexAttrib4f(AttributeColor, 0.f,
 					0.215f, 1.f, 0.75f);
 
-			glBindVertexArray(vaos_[2]);
+			glBindVertexArray(vao_[2]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
 		//font_.Print(0.f, 0.f, text_, length_, start_);
 
+        if(text_ext_) {
+            
+            int w = size().width() - pixel_size(kPadding.hsum());
+            int h = size().height() - pixel_size(kPadding.vsum());
+            int x = pixel_size(kPadding.left());
+            int y = (size().height() - text_ext_->font().height()) / 2 - text_ext_->font().descender();
+            
+            // A workaround for Adobe Source Han Sans
+            int diff = text_ext_->font().ascender() - text_ext_->font().descender();
+            if(diff < text_ext_->font().height()) {
+                y += (text_ext_->font().height() - diff - 1) / 2;
+            }
+            
+//            if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
+//                x += (w - text_ext_->size().width()) / 2;
+//            } else if (alignment_ == AlignRight) {
+//                x = w - text_ext_->size().width();
+//            }
+            
+            if(text_ext_->size().height() <= h) {
+                text_ext_->DrawWithin(x, y, w, AbstractWindow::theme->text().text);
+            }
+            
+        }
+
+        
 		return Finish;
 	}
 
@@ -404,23 +422,20 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		glGenVertexArrays(3, vaos_);
+		glGenVertexArrays(3, vao_);
+        vbo_.generate();
 
-		glBindVertexArray(vaos_[0]);
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		glBindVertexArray(vao_[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord,
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(vaos_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		glBindVertexArray(vao_[1]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord,
@@ -442,18 +457,15 @@ namespace BlendInt {
 		cursor_vertices[7] = (GLfloat) (size().height()
 				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
-		glBindVertexArray(vaos_[2]);
-		cursor_buffer_.reset(new GLArrayBuffer);
-
-		cursor_buffer_->generate();
-		cursor_buffer_->bind();
-		cursor_buffer_->set_data(sizeof(GLfloat) * cursor_vertices.size(), &cursor_vertices[0]);
+		glBindVertexArray(vao_[2]);
+		vbo_.bind(2);
+		vbo_.set_data(sizeof(GLfloat) * cursor_vertices.size(), &cursor_vertices[0]);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::reset();
+		vbo_.reset();
 		glBindVertexArray(0);
 
 		// TODO: count Theme::pixel for retina

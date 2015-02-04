@@ -21,19 +21,17 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TEXTENTRY_HPP_
-#define _BLENDINT_GUI_TEXTENTRY_HPP_
+#pragma once
 
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/Timer.hpp>
-#include <BlendInt/Core/String.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
+#include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
 
@@ -65,9 +63,9 @@ namespace BlendInt {
 
 		virtual bool IsExpandX () const;
 
-		static const Margin& DefaultPadding ()
+		static inline const Margin& padding ()
 		{
-			return default_padding;
+			return kPadding;
 		}
 
 	protected:
@@ -118,8 +116,12 @@ namespace BlendInt {
 		 * 	- 1: for outline buffer
 		 * 	- 2: for cursor buffer
 		 */
-		GLuint vaos_[3];
+		GLuint vao_[3];
 
+        GLBuffer<ARRAY_BUFFER, 3> vbo_;
+
+        RefPtr<Text> text_ext_;
+        
 		Font font_;
 
 		String text_;
@@ -133,18 +135,11 @@ namespace BlendInt {
 		 */
 		int index_;
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-
-		RefPtr<GLArrayBuffer> cursor_buffer_;
-
 		// the space between the text and the top
 		// o the text and the bottom
 		static const int vertical_space = 2;
 
-		static Margin default_padding;
+		static Margin kPadding;
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_TEXTENTRY_HPP_ */
