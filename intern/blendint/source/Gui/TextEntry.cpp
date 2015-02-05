@@ -47,8 +47,6 @@ namespace BlendInt {
 		set_size(initial_width, initial_height);
 
 		InitializeTextEntry();
-        
-        text_ext_.reset(new Text("Text"));
 	}
 
 	TextEntry::~TextEntry ()
@@ -82,7 +80,11 @@ namespace BlendInt {
 
 		index_ = text_.length();
 
-        text_ext_->SetText(text);
+		if(!text_ext_) {
+			text_ext_.reset(new Text(text));
+		} else {
+	        text_ext_->SetText(text);
+		}
         
 		RequestRedraw();
 	}
