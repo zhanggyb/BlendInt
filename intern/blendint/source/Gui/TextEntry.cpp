@@ -82,6 +82,8 @@ namespace BlendInt {
 	        text_->SetText(text);
 		}
         
+        //index_ = 0;
+        
 		RequestRedraw();
 	}
 
@@ -347,6 +349,8 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
+        int cursor_pos = 0;
+        
         if(text_) {
 
             int w = size().width() - pixel_size(kPadding.hsum());
@@ -367,7 +371,7 @@ namespace BlendInt {
 //            }
             
             if(text_->size().height() <= h) {
-            	text_->DrawWithin(x, y, w, AbstractWindow::theme->text().text);
+            	cursor_pos = text_->DrawWithCursor(x, y, index_, text_->text().length(), 0, w, AbstractWindow::theme->text().text);
 //                text_->Draw(x, y, 5, 1);
             }
             
@@ -378,10 +382,12 @@ namespace BlendInt {
 			float x = 0.f;
 			float y = 0.f;
 
-			unsigned int cursor_pos = text_->font().GetTextWidth(text_->text(), index_ - start_, start_);
+			//unsigned int cursor_pos = text_->font().GetTextWidth(text_->text(), index_ - start_, start_);
 			//cursor_pos += pixel_size(kPadding.left());
-			cursor_pos = pixel_size(kPadding.left());
+			cursor_pos += pixel_size(kPadding.left());
 
+            //DBG_PRINT_MSG("cursor pos: %d", cursor_pos);
+        
 			x = 0.f + cursor_pos;
 			y = 0.f + 1;
 
@@ -389,8 +395,8 @@ namespace BlendInt {
 			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-			glVertexAttrib4f(AttributeColor, 0.f,
-					0.215f, 1.f, 0.75f);
+			glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+            // glVertexAttrib4f(AttributeColor, 0.f, 0.215f, 1.f, 0.75f);
 
 			glBindVertexArray(vao_[2]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -445,17 +451,17 @@ namespace BlendInt {
 
 		std::vector<GLfloat> cursor_vertices(8, 0.f);
 
-		cursor_vertices[0] = 1.f;
+		cursor_vertices[0] = 0.f;
 		cursor_vertices[1] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
-		cursor_vertices[2] = 3.f;
+		cursor_vertices[2] = 1.f;
 		cursor_vertices[3] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
-		cursor_vertices[4] = 1.f;
+		cursor_vertices[4] = 0.f;
 		cursor_vertices[5] = (GLfloat) (size().height()
 				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
-		cursor_vertices[6] = 3.f;
+		cursor_vertices[6] = 1.f;
 		cursor_vertices[7] = (GLfloat) (size().height()
 				- vertical_space * 2 * AbstractWindow::theme->pixel());
 

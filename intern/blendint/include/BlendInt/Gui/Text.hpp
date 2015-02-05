@@ -69,6 +69,11 @@ namespace BlendInt {
 		void DrawWithin (float x, float y, int width, short gamma = 0) const;
 
 		void DrawWithin (float x, float y, int width, const Color& color, short gamma = 0) const;
+        
+        
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t length, size_t start, int width, const Color& color, short gamma = 0) const;
+        
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t length, size_t start, int width, short gamma = 0) const;
 
 		/**
 		 * @brief Ascender in this text

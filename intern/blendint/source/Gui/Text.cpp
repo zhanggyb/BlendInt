@@ -232,10 +232,6 @@ namespace BlendInt {
 		for(size_t i = 0; i < str_len; i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
  	}
 
  	void Text::Draw (float x, float y, size_t length, size_t start,
@@ -319,13 +315,74 @@ namespace BlendInt {
 
 			count++;
 		}
-
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
 	}
 
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t length, size_t start, int width, const Color &color, short gamma) const
+    {
+        int retval = 0;
+        
+        if(width <= 0) return retval;
+        
+        AbstractWindow::shaders->widget_text_program()->use();
+        
+        glActiveTexture(GL_TEXTURE0);
+        
+        font_.bind_texture();
+        
+        glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+        glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+        glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+        
+        glBindVertexArray(vao_);
+        
+        const Glyph* g = 0;
+        int max = 0;
+        int count = 0;
+        String::const_iterator it = text_.begin();
+        String::const_iterator next_it;
+        Kerning kerning;
+        
+        std::advance(it, start);
+        if(it == text_.end()) return retval;
+        
+        for(; it != text_.end(); it++)
+        {
+            g = font_.glyph(*it);
+
+            if(count <= index) retval = max;
+            
+            if(font_.has_kerning()) {
+                
+                next_it = it + 1;
+                if(next_it != text_.end()) {
+                    kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
+                    max += (g->advance_x + kerning.x);
+                } else {
+                    max += g->advance_x;
+                }
+                
+            } else {
+                max += g->advance_x;
+            }
+            
+            if (max > width) break;
+            
+            glDrawArrays(GL_TRIANGLE_STRIP, count * 4, 4);
+            
+            count++;
+        }
+        if(count <= index) retval = max;
+        
+        return retval;
+    }
+
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t length, size_t start, int width, short gamma) const
+    {
+        Color color(0x000000FF);
+
+        return DrawWithCursor(x, y, index, length, start, width, color, gamma);
+    }
+    
     void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
     {
         size_t buf_size = text_.length() * 4 * 4;
