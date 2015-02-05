@@ -88,6 +88,44 @@ namespace BlendInt {
  		glDeleteVertexArrays(1, &vao_);
  	}
 
+ 	void Text::Add (const String& text)
+ 	{
+ 		if(text.empty()) return;
+
+ 		text_.append(text);
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+
+ 		set_size(width, ascender_ - descender_);
+ 	}
+
+ 	void Text::Insert (size_t index, const String& text)
+ 	{
+ 		if(text.empty()) return;
+
+ 		if(index > text_.length()) {
+ 			text_.append(text);
+ 		} else {
+ 			text_.insert(index, text);
+ 		}
+
+ 		int width;
+ 		std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+
+        vbo_.bind();
+ 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+ 		vbo_.reset();
+
+ 		set_size(width, ascender_ - descender_);
+ 	}
+
  	void Text::SetText (const String& text)
  	{
  		text_ = text;
@@ -119,6 +157,11 @@ namespace BlendInt {
 
  		set_size(width, ascender_ - descender_);
  	}
+
+	size_t Text::GetTextWidth (size_t length, size_t start) const
+	{
+		return font_.GetTextWidth(text_, length, start);
+	}
 
  	Text& Text::operator = (const Text& orig)
  	{
@@ -379,4 +422,3 @@ namespace BlendInt {
     }
     
  }
-

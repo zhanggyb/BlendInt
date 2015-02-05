@@ -42,6 +42,10 @@ namespace BlendInt {
 
 		virtual ~Text ();
 
+		void Add (const String& text);
+
+		void Insert (size_t index, const String& text);
+
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
@@ -49,6 +53,8 @@ namespace BlendInt {
 		Text& operator = (const Text& orig);
 
 		Text& operator = (const String& text);
+
+		size_t GetTextWidth (size_t length, size_t start) const;
 
 		virtual void Draw (float x, float y) const;
 

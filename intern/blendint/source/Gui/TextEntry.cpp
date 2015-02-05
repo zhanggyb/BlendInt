@@ -39,12 +39,32 @@ namespace BlendInt {
 	  length_(0),
 	  index_(0)
 	{
-		int h = font_.height();
-		int initial_width = h + round_radius() * 2 * AbstractWindow::theme->pixel()
-				+ 120;
-		int initial_height = h + vertical_space * 2 * AbstractWindow::theme->pixel();
+		Font font;	// default font
+		int w = 160;
+		int h = font.height();
 
-		set_size(initial_width, initial_height);
+		set_size(w + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
+
+		InitializeTextEntry();
+	}
+
+	TextEntry::TextEntry (const String& text)
+	: Widget(),
+	  start_(0),
+	  length_(0),
+	  index_(0)
+	{
+		text_.reset(new Text(text));
+
+		int w = text_->size().width();
+		int h = text_->font().height();
+		if(w < 160) w = 160;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 
 		InitializeTextEntry();
 	}
@@ -56,34 +76,10 @@ namespace BlendInt {
 
 	void TextEntry::SetText (const String& text)
 	{
-		bool cal_width = true;
-
-		text_ = text;
-
-		Rect text_outline;	// = font_.GetTextOutline(text_);
-
-		length_ = text_.length();
-
-		if(size().height() < text_outline.height()) {
-			length_ = 0;
-			cal_width = false;
-		}
-
-		if(cal_width) {
-			if(size().width() < text_outline.width()) {
-				length_ = GetValidTextSize();
-			}
-		}
-
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
-
-		index_ = text_.length();
-
-		if(!text_ext_) {
-			text_ext_.reset(new Text(text));
+		if(!text_) {
+			text_.reset(new Text(text));
 		} else {
-	        text_ext_->SetText(text);
+	        text_->SetText(text);
 		}
         
 		RequestRedraw();
@@ -91,52 +87,49 @@ namespace BlendInt {
 
 	void TextEntry::SetFont (const Font& font)
 	{
-		font_ = font;
-
-		//Rect text_outline = m_font.GetTextOutline(m_text);
-
-		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
-
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
+		if(text_) {
+			if(!(text_->font() == font)) {
+				text_->SetFont(font);
+				RequestRedraw();
+			}
+		}
 	}
 
 	void TextEntry::Clear ()
 	{
-		text_.clear();
-		index_ = 0;
-		start_ = 0;
-		length_ = 0;
+		if(text_) {
+			text_.destroy();
+			index_ = 0;
+			start_ = 0;
+			length_ = 0;
+
+			RequestRedraw();
+		}
 	}
 
 	Size TextEntry::GetPreferredSize () const
 	{
-		Size preferred_size;
+		int w = 0;
+		int h = 0;
 
-		float radius_plus = 0.f;
-
-		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += round_radius();
+		Font font;	// default font
+		if(text_) {
+			font = text_->font();
+			w += text_->size().width();
 		}
 
-		if ((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
-			radius_plus += round_radius();
+		h = std::max(h, font.height());
+
+		if (w == 0) w = h;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		if(!text_) {
+			if(w < 160) w = 160;
 		}
 
-		int max_font_height = font_.height();
-
-		preferred_size.set_height(
-				max_font_height
-						+ kPadding.vsum() * AbstractWindow::theme->pixel());// top padding: 2, bottom padding: 2
-
-		if (text().empty()) {
-			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
-		} else {
-			int width = font_.GetTextWidth(text());
-			preferred_size.set_width(width + (int)radius_plus);
-		}
-
-		return preferred_size;
+		return Size(w, h);
 	}
 
 	bool TextEntry::IsExpandX () const
@@ -148,6 +141,12 @@ namespace BlendInt {
 	{
 		if(!context->GetTextInput().empty()) {
 
+			text_->Insert(index_, context->GetTextInput());
+			index_ += context->GetTextInput().length();
+
+			RequestRedraw();
+
+			/*
 			text_.insert(index_, context->GetTextInput());
 			index_ += context->GetTextInput().length();
 			length_ += context->GetTextInput().length();
@@ -169,6 +168,7 @@ namespace BlendInt {
 			}
 
 			RequestRedraw();
+			*/
 			return Finish;
 
 		} else {
@@ -213,10 +213,12 @@ namespace BlendInt {
 
 	ResponseType TextEntry::PerformMousePress(AbstractWindow* context)
 	{
-		if(text_.size()) {
-			index_ = GetCursorPosition(context);
+		if(text_) {
 
-			DBG_PRINT_MSG("index: %d", index_);
+			index_ = 0;
+			//index_ = GetCursorPosition(context);
+
+			//DBG_PRINT_MSG("index: %d", index_);
 
 			RequestRedraw();
 		}
@@ -312,9 +314,6 @@ namespace BlendInt {
 		vbo_.bind(1);
 		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-//		font_.set_pen(radius,
-//				font_.pen().y());
-
 		RequestRedraw();
 	}
 
@@ -348,39 +347,17 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		if(focus()) {			// draw a cursor
+        if(text_) {
 
-			AbstractWindow::shaders->widget_triangle_program()->use();
-			unsigned int cursor_pos = font_.GetTextWidth(text_,
-						        index_ - start_, start_);
-			cursor_pos += round_radius();
-
-			glm::vec2 pos(0.f + cursor_pos, 0.f + 1);
-
-			glUniform2fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 1,
-					glm::value_ptr(pos));
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-			glVertexAttrib4f(AttributeColor, 0.f,
-					0.215f, 1.f, 0.75f);
-
-			glBindVertexArray(vao_[2]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
-
-		//font_.Print(0.f, 0.f, text_, length_, start_);
-
-        if(text_ext_) {
-            
             int w = size().width() - pixel_size(kPadding.hsum());
             int h = size().height() - pixel_size(kPadding.vsum());
             int x = pixel_size(kPadding.left());
-            int y = (size().height() - text_ext_->font().height()) / 2 - text_ext_->font().descender();
+            int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
             
             // A workaround for Adobe Source Han Sans
-            int diff = text_ext_->font().ascender() - text_ext_->font().descender();
-            if(diff < text_ext_->font().height()) {
-                y += (text_ext_->font().height() - diff - 1) / 2;
+            int diff = text_->font().ascender() - text_->font().descender();
+            if(diff < text_->font().height()) {
+                y += (text_->font().height() - diff - 1) / 2;
             }
             
 //            if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
@@ -389,12 +366,35 @@ namespace BlendInt {
 //                x = w - text_ext_->size().width();
 //            }
             
-            if(text_ext_->size().height() <= h) {
-                text_ext_->DrawWithin(x, y, w, AbstractWindow::theme->text().text);
+            if(text_->size().height() <= h) {
+            	text_->DrawWithin(x, y, w, AbstractWindow::theme->text().text);
+//                text_->Draw(x, y, 5, 1);
             }
             
         }
 
+		if(focus()) {			// draw a cursor
+
+			float x = 0.f;
+			float y = 0.f;
+
+			unsigned int cursor_pos = text_->font().GetTextWidth(text_->text(), index_ - start_, start_);
+			//cursor_pos += pixel_size(kPadding.left());
+			cursor_pos = pixel_size(kPadding.left());
+
+			x = 0.f + cursor_pos;
+			y = 0.f + 1;
+
+			AbstractWindow::shaders->widget_triangle_program()->use();
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glVertexAttrib4f(AttributeColor, 0.f,
+					0.215f, 1.f, 0.75f);
+
+			glBindVertexArray(vao_[2]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
         
 		return Finish;
 	}
@@ -467,25 +467,20 @@ namespace BlendInt {
 		glVertexAttribPointer(AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		vbo_.reset();
 		glBindVertexArray(0);
-
-		// TODO: count Theme::pixel for retina
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2
-//		                + std::abs(font_.descender()));
+		vbo_.reset();
 	}
 
-	int TextEntry::GetValidTextSize ()
+	int TextEntry::GetVisibleTextLength ()
 	{
 		int width = 0;
-		int str_len = text_.length();
+		int str_len = text_->text().length();
 
-		width = font_.GetTextWidth(text_, str_len, 0);
+		width = text_->font().GetTextWidth(text_->text(), str_len, 0);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = font_.GetTextWidth(text_, str_len, 0);
+				width = text_->font().GetTextWidth(text_->text(), str_len, 0);
 				if(width < size().width()) break;
 				str_len--;
 			}
@@ -496,15 +491,15 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeBackspacePress ()
 	{
-		if (text_.size() && index_ > 0) {
+		if (text_->text().size() && index_ > 0) {
 
 			size_t valid_width = size().width() - round_radius() * 2;
 
-			text_.erase(index_ - 1, 1);
+			//text_.erase(index_ - 1, 1);
 			index_--;
 
 			size_t text_width = 0;
-			size_t len = text_.length();
+			size_t len = text_->text().length();
 			while(len > 0)
 			{
 				// text_width = font_.GetReversedTextWidth(text_, len, 0);
@@ -515,7 +510,7 @@ namespace BlendInt {
 			}
 
 			length_ = len;
-			start_ = text_.length() - length_;
+			//start_ = text_.length() - length_;
 
 			RequestRedraw();
 		}
@@ -523,18 +518,18 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeDeletePress ()
 	{
-		if (text_.size() && (index_ < static_cast<int>(text_.length()))) {
+		if (text_->text().size() && (index_ < static_cast<int>(text_->text().length()))) {
 
 			size_t valid_width = size().width() - round_radius() * 2;
 
-			text_.erase(index_, 1);
+			//text_.erase(index_, 1);
 
 			size_t text_width = 0;
 
 			size_t len = 0;
-			while(len < (text_.length() - start_))
+			while(len < (text_->text().length() - start_))
 			{
-				text_width = font_.GetTextWidth(text_, len, start_);
+				text_width = text_->font().GetTextWidth(text_->text(), len, start_);
 				if(text_width > valid_width) {
 					len--;
 					break;
@@ -550,7 +545,7 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeLeftPress ()
 	{
-		if (text_.size() && index_ > 0) {
+		if (text_->text().size() && index_ > 0) {
 
 			int valid_width = size().width() - round_radius() * 2;
 
@@ -559,24 +554,24 @@ namespace BlendInt {
 			if (index_ < start_) {
 				start_ = index_;
 
-				int text_width = font_.GetTextWidth(text_, length_,
+				int text_width = text_->font().GetTextWidth(text_->text(), length_,
 								start_);
 
-				if((text_width < valid_width) && (length_ < (static_cast<int>(text_.length()) - start_))) {
+				if((text_width < valid_width) && (length_ < (static_cast<int>(text_->text().length()) - start_))) {
 					length_++;
-					text_width = font_.GetTextWidth(text_, length_, start_);
-					while(text_width < valid_width && length_ < (static_cast<int>(text_.length()) - start_)) {
+					text_width = text_->font().GetTextWidth(text_->text(), length_, start_);
+					while(text_width < valid_width && length_ < (static_cast<int>(text_->text().length()) - start_)) {
 						length_++;
-						text_width = font_.GetTextWidth(text_, length_, start_);
+						text_width = text_->font().GetTextWidth(text_->text(), length_, start_);
 					}
 				}
 
 				if(text_width > valid_width && length_ > 0) {
 					length_--;
-					text_width = font_.GetTextWidth(text_, length_, start_);
+					text_width = text_->font().GetTextWidth(text_->text(), length_, start_);
 					while ((text_width > valid_width) && (length_ > 0)) {
 						length_--;
-						text_width = font_.GetTextWidth(text_, length_, start_);
+						text_width = text_->font().GetTextWidth(text_->text(), length_, start_);
 					}
 				}
 
@@ -589,7 +584,7 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeRightPress ()
 	{
-		if ((text_.size() > 0) && (index_ < static_cast<int>(text_.length()))) {
+		if ((text_->text().size() > 0) && (index_ < static_cast<int>(text_->text().length()))) {
 			index_++;
 
 			if (index_ > (start_ + length_))
@@ -606,8 +601,8 @@ namespace BlendInt {
 
 	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)
 	{
-		int str_len = text_.length();
-		int width = font_.GetTextWidth(text_, str_len, 0);
+		int str_len = text_->text().length();
+		int width = text_->font().GetTextWidth(text_->text(), str_len, 0);
 
 		if(width < (size().width() - 4)) {
 			*start = 0;
@@ -615,11 +610,11 @@ namespace BlendInt {
 		} else {
 			while(str_len > 0) {
 				str_len--;
-				width = font_.GetTextWidth(text_, str_len, 0);
+				width = text_->font().GetTextWidth(text_->text(), str_len, 0);
 				if(width < (size().width() - 4)) break;
 			}
 
-			*start = text_.length() - str_len;
+			*start = text_->text().length() - str_len;
 			*length = str_len;
 		}
 	}
@@ -639,7 +634,7 @@ namespace BlendInt {
 		int text_width = 0;
 		int offset = 1;
 		while (offset < length_) {
-			text_width = font_.GetTextWidth(text_, offset, start_);
+			text_width = text_->font().GetTextWidth(text_->text(), offset, start_);
 			if(text_width > click_position) {
 				// FIXME: some character: e.g. 'f' always return small text width
 				offset--;

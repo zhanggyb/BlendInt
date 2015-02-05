@@ -44,7 +44,9 @@ namespace BlendInt {
 
 	public:
 
-		TextEntry();
+		TextEntry ();
+
+		TextEntry (const String& text);
 
 		virtual ~TextEntry();
 
@@ -56,8 +58,6 @@ namespace BlendInt {
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
-
-		const String& text () const {return text_;}
 
 		virtual Size GetPreferredSize () const;
 
@@ -98,7 +98,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		int GetValidTextSize ();
+		int GetVisibleTextLength ();
 
 		int GetCursorPosition (AbstractWindow* context);
 
@@ -120,12 +120,8 @@ namespace BlendInt {
 
         GLBuffer<ARRAY_BUFFER, 3> vbo_;
 
-        RefPtr<Text> text_ext_;
+        RefPtr<Text> text_;
         
-		Font font_;
-
-		String text_;
-
 		int start_;	// where start print the text
 
 		int length_;	// the text length inside this widget

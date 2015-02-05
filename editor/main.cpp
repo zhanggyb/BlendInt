@@ -35,6 +35,7 @@
 #include <BlendInt/Gui/Dialog.hpp>
 #include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/Clock.hpp>
+#include <BlendInt/Gui/TextEntry.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -48,15 +49,20 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		Dialog* dlg = new Dialog("Demo", Dialog::DialogButtonOK);
-		TextureView* texview = new TextureView;
-		texview->OpenFile("test.jpg");
-		dlg->AddWidget(texview);
-		win.AddFrame(dlg);
-		dlg->Resize(dlg->GetPreferredSize());
+		Dialog* dlg = new Dialog("Test TextEntry", Dialog::DialogButtonOK);
 
-		FileSelector* fs = new FileSelector;
-		win.AddFrame(fs);
+		TextEntry* t = new TextEntry;
+
+		String text(L"0123456789");
+
+		t->SetText(text);
+
+		dlg->AddWidget(t);
+		win.AddFrame(dlg);
+
+		dlg->Resize(dlg->GetPreferredSize());
+		dlg->MoveTo((win.size().width() - dlg->size().width()) / 2,
+		        (win.size().height() - dlg->size().height()) / 2);
 
 		win.Exec();
 
