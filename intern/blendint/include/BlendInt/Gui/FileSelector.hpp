@@ -77,9 +77,17 @@ namespace BlendInt {
 
 		void OnFileSelect ();
 
-		void OnCloseButtonClicked (AbstractButton* sender);
+		void OnClose (AbstractButton* sender);
 
-		void OnOpenButtonClicked (AbstractButton* sender);
+		void OnOpenParent (AbstractButton* sender);
+
+		void OnGoBackward (AbstractButton* sender);
+
+		void OnGoForward (AbstractButton* sender);
+
+		void OnReload (AbstractButton* sender);
+
+		void OnOpen (AbstractButton* sender);
 
         GLuint vao_[2];
 

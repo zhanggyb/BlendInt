@@ -21,10 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FILESYSTEMMODEL_HPP_
-#define _BLENDINT_GUI_FILESYSTEMMODEL_HPP_
-
-#include <boost/filesystem.hpp>
+#pragma once
 
 #include <BlendInt/Gui/AbstractItemModel.hpp>
 
@@ -99,8 +96,6 @@ namespace BlendInt {
 
 		static void DestroyColumn (ModelNode* node);
 
-		boost::filesystem::path path_;
-
 		int rows_;
 
 		int columns_;
@@ -112,5 +107,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_FILESYSTEMMODEL_HPP_ */

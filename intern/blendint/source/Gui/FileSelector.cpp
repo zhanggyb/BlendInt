@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <boost/filesystem.hpp>
+
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FileSelector.hpp>
@@ -35,6 +37,8 @@
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
+
+	namespace fs = boost::filesystem;
 
 	FileSelector::FileSelector ()
 	: AbstractDialog(),
@@ -104,7 +108,7 @@ namespace BlendInt {
 		std::string pwd =getenv("PWD");
 		pwd.append("/");
 		path_entry_->SetText(pwd);
-		browser_->Load(getenv("PWD"));
+		browser_->Open(getenv("PWD"));
 
 		//events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
 
@@ -225,7 +229,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void FileSelector::OnCloseButtonClicked(AbstractButton* sender)
+	void FileSelector::OnClose(AbstractButton* sender)
 	{
 		AbstractView* super = superview();
 		delete this;
@@ -233,8 +237,55 @@ namespace BlendInt {
 		super->RequestRedraw();
 	}
 
-	void FileSelector::OnOpenButtonClicked(AbstractButton* sender)
+	void FileSelector::OnOpenParent (AbstractButton* sender)
 	{
+		if(browser_->OpenParent()) {
+			path_entry_->SetText(browser_->pathname());
+		}
+	}
+
+	void FileSelector::OnGoBackward (AbstractButton* sender)
+	{
+		if(browser_->GoBackward()) {
+			path_entry_->SetText(browser_->pathname());
+		}
+	}
+
+	void FileSelector::OnGoForward (AbstractButton* sender)
+	{
+		if(browser_->GoForward()) {
+			path_entry_->SetText(browser_->pathname());
+		}
+	}
+
+	void FileSelector::OnReload (AbstractButton* sender)
+	{
+		browser_->Open(browser_->pathname());
+	}
+
+	void FileSelector::OnOpen(AbstractButton* sender)
+	{
+		// TODO: check directory mode or file mode
+		if(!browser_->file_selected().empty()) {
+
+			std::string file = ConvertFromString(browser_->file_selected());
+
+			if(browser_->pathname() != "/") {
+				file = browser_->pathname() + "/" + file;
+			} else {
+				file = browser_->pathname() + file;
+			}
+
+			fs::path p(file);
+			if(fs::is_directory(p)) {
+				p = fs::absolute(p);
+				browser_->Open(p.native());
+				path_entry_->SetText(browser_->pathname());
+
+				return;
+			}
+		}
+
 		AbstractView* super = superview();
 		fire_applied_event();
 
@@ -311,8 +362,12 @@ namespace BlendInt {
 
 		hlayout->Resize(hlayout->GetPreferredSize());
 
-		events()->connect(close_button->clicked(), this, &FileSelector::OnCloseButtonClicked);
-		events()->connect(open->clicked(), this, &FileSelector::OnOpenButtonClicked);
+		events()->connect(close_button->clicked(), this, &FileSelector::OnClose);
+		events()->connect(btn_back->clicked(), this, &FileSelector::OnGoBackward);
+		events()->connect(btn_forward->clicked(), this, &FileSelector::OnGoForward);
+		events()->connect(btn_up->clicked(), this, &FileSelector::OnOpenParent);
+		events()->connect(btn_reload->clicked(), this, &FileSelector::OnReload);
+		events()->connect(open->clicked(), this, &FileSelector::OnOpen);
 
 		return hlayout;
 	}

@@ -21,23 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
 #include <BlendInt/Gui/FileButton.hpp>
-
 #include <BlendInt/Gui/AbstractWindow.hpp>
-#include <BlendInt/Gui/Dialog.hpp>
 
 namespace BlendInt {
 
@@ -273,6 +260,7 @@ namespace BlendInt {
 
 			context->AddFrame(dialog_);
 
+			events()->connect(dialog_->applied(), this, &FileButton::OnOpened);
 			events()->connect(dialog_->destroyed(), this, &FileButton::OnDialogDestroyed);
 
 			//events()->connect(dialog_->opened(), this, &FileButton::OnOpened);
@@ -281,15 +269,11 @@ namespace BlendInt {
 		}
 	}
 
-	void FileButton::OnOpened ()
+	void FileButton::OnOpened (AbstractDialog* sender)
 	{
+		DBG_PRINT_MSG("file selected: %s", ConvertFromString(dialog_->file_selected()).c_str());
 		// TODO:
 		//file_selected_.fire();
-	}
-
-	void FileButton::OnCanceled ()
-	{
-		// TODO:
 	}
 
 	void FileButton::OnDialogDestroyed(AbstractFrame* dialog)
@@ -299,4 +283,5 @@ namespace BlendInt {
 		dialog_->destroyed().disconnectOne(this, &FileButton::OnDialogDestroyed);
 		dialog_ = 0;
 	}
+
 }

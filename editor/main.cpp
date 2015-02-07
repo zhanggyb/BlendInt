@@ -36,6 +36,7 @@
 #include <BlendInt/Gui/TextureView.hpp>
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/Gui/FileButton.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -59,6 +60,9 @@ int main (int argc, char* argv[])
 
 		dlg->AddWidget(t);
 		win.AddFrame(dlg);
+
+		FileButton* btn = new FileButton;
+		dlg->AddWidget(btn);
 
 		dlg->Resize(dlg->GetPreferredSize());
 		dlg->MoveTo((win.size().width() - dlg->size().width()) / 2,
