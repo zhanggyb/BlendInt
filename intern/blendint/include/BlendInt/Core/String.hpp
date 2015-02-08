@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STRING_HPP_
-#define _BLENDINT_STRING_HPP_
+#pragma once
 
 #include <string>
 #include <stdint.h>
@@ -103,5 +102,3 @@ namespace BlendInt {
 	extern std::string ConvertFromString (const String& src);
 
 }
-
-#endif /* _BIL_STRING_HPP_ */

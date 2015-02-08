@@ -47,7 +47,14 @@ namespace BlendInt {
 		void Insert (size_t index, const String& text);
 
 		void SetText (const String& text);
-
+        
+        /**
+         * @brief Remove specified characters from text
+         * @param[in] index first character to remove
+         * @param[in] count number of characters to remove
+         */
+        void Erase (size_t index, size_t count = 1);
+        
 		void SetFont (const Font& font);
 
 		Text& operator = (const Text& orig);
@@ -111,7 +118,17 @@ namespace BlendInt {
 
 	private:
 
+        /**
+         * @brief Generate vertices to be used in VBO for this text
+         */
         void GenerateTextVertices (std::vector<GLfloat>& verts, int* ptr_width, int* ptr_ascender, int* ptr_descender);
+        
+        /**
+         * @brief Re-calculate vertices and load to VBO
+         *
+         * Also reset the size of this form.
+         */
+        void ReloadBuffer ();
         
 		// the ascender of this text
 		int ascender_;

@@ -46,6 +46,7 @@ namespace BlendInt {
 	GLFWcursor* Window::kSplitHCursor = NULL;
 	GLFWcursor* Window::kTopLeftCornerCursor = NULL;
 	GLFWcursor* Window::kTopRightCornerCursor = NULL;
+    GLFWcursor* Window::kIBeamCursor = NULL;
 
 	std::map<GLFWwindow*, Window*> Window::kWindowMap;
 
@@ -197,6 +198,11 @@ namespace BlendInt {
 				break;
 			}
 
+            case IBeamCursor: {
+                glfwSetCursor(window_, kIBeamCursor);
+                break;
+            }
+                
 			default: {
 				glfwSetCursor(window_, kArrowCursor);
 				break;
@@ -277,6 +283,7 @@ namespace BlendInt {
 		glfwDestroyCursor(kSplitHCursor);
 		glfwDestroyCursor(kTopLeftCornerCursor);
 		glfwDestroyCursor(kTopRightCornerCursor);
+        glfwDestroyCursor(kIBeamCursor);
 
 		glfwTerminate();
 		Fc::Config::fini();
@@ -684,6 +691,18 @@ namespace BlendInt {
 			DBG_PRINT_MSG("%s", "Fail to load cursor");
 		}
 
+        filepath = cursors_path.string() + "/" + "xterm.png";
+        if(img.Read(filepath)) {
+            cursor.width = img.width();
+            cursor.height = img.height();
+            cursor.pixels = const_cast<unsigned char*>(img.pixels());
+            
+            kIBeamCursor = glfwCreateCursor(&cursor, 12, 11);
+            assert(kIBeamCursor != nullptr);
+        } else {
+            DBG_PRINT_MSG("%s", "Fail to load cursor");
+        }
+        
 	}
 
 }

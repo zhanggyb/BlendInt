@@ -101,6 +101,8 @@ namespace BlendInt {
 		static GLFWcursor* kTopLeftCornerCursor;
 
 		static GLFWcursor* kTopRightCornerCursor;
+        
+        static GLFWcursor* kIBeamCursor;
 
 		static std::map<GLFWwindow*, Window*> kWindowMap;
 

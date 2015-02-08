@@ -50,13 +50,13 @@ namespace BlendInt {
 
 		virtual ~TextEntry();
 
-		/**
-		 * @brief Clear the text
-		 */
-		void Clear ();
-
 		void SetText (const String& text);
 
+        /**
+         * @brief Clear the text
+         */
+        void ClearText ();
+        
 		void SetFont (const Font& font);
 
 		virtual Size GetPreferredSize () const;
@@ -76,16 +76,20 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (AbstractWindow* context);
-
-		virtual void PerformFocusOn (AbstractWindow* context);
-
-		virtual void PerformFocusOff (AbstractWindow* context);
-
+        virtual void PerformFocusOn (AbstractWindow* context);
+        
+        virtual void PerformFocusOff (AbstractWindow* context);
+        
+        virtual void PerformHoverIn (AbstractWindow* context);
+        
+        virtual void PerformHoverOut (AbstractWindow* context);
+        
 		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
 		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
+        virtual ResponseType Draw (AbstractWindow* context);
+        
 	private:
 
 		void InitializeTextEntry ();

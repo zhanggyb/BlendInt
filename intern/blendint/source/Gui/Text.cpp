@@ -94,15 +94,7 @@ namespace BlendInt {
 
  		text_.append(text);
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
 
  	void Text::Insert (size_t index, const String& text)
@@ -115,47 +107,28 @@ namespace BlendInt {
  			text_.insert(index, text);
  		}
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
 
  	void Text::SetText (const String& text)
  	{
  		text_ = text;
-
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
 
+    void Text::Erase(size_t index, size_t count)
+    {
+        text_.erase(index, count);
+
+        ReloadBuffer();
+    }
+    
  	void Text::SetFont(const Font& font)
  	{
  		if(font_ == font) return;
-
  		font_ = font;
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
 
 	size_t Text::GetTextWidth (size_t length, size_t start) const
@@ -168,33 +141,15 @@ namespace BlendInt {
  		font_ = orig.font_;
  		text_ = orig.text_;
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+        ReloadBuffer();
 
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
-        set_size(width, ascender_ - descender_);
-
- 		return *this;
+        return *this;
  	}
 
  	Text& Text::operator = (const String& text)
  	{
  		text_ = text;
-
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
-        set_size(width, ascender_ - descender_);
-
+        ReloadBuffer();
  		return *this;
  	}
 
@@ -476,6 +431,19 @@ namespace BlendInt {
     	if(ptr_width) *ptr_width = w;
     	if(ptr_ascender) *ptr_ascender = a;
     	if(ptr_descender) *ptr_descender = d;
+    }
+    
+    void Text::ReloadBuffer()
+    {
+        int width;
+        std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+        
+        vbo_.bind();
+        vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+        vbo_.reset();
+        
+        set_size(width, ascender_ - descender_);
     }
     
  }
