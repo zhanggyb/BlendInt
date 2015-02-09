@@ -54,9 +54,9 @@ int main (int argc, char* argv[])
 
 		TextEntry* t = new TextEntry;
 
-		String text(L"0123456789");
+		//String text(L"0123456789");
 
-		t->SetText(text);
+		//t->SetText(text);
 
 		dlg->AddWidget(t);
 		win.AddFrame(dlg);

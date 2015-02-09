@@ -102,16 +102,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		int GetVisibleTextLength ();
-
 		int GetCursorPosition (AbstractWindow* context);
-
-		/**
-		 * @brief Get the index and length of the text to show
-		 * @param[out] start The index in the text to print
-		 * @param[out] length The length of the text to print
-		 */
-		void GetVisibleTextRange (size_t* start, size_t* length);
 
 		/**
 		 * @brief Vertex array objects
@@ -126,14 +117,12 @@ namespace BlendInt {
 
         RefPtr<Text> text_;
         
-		int start_;	// where start print the text
-
-		int length_;	// the text length inside this widget
+		size_t text_start_;	// where start print the text
 
 		/**
 		 * @brief Where display the cursor and insert new text
 		 */
-		int index_;
+		size_t cursor_index_;
 
 		// the space between the text and the top
 		// o the text and the bottom

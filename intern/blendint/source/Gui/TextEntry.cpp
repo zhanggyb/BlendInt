@@ -35,25 +35,27 @@ namespace BlendInt {
 
 	TextEntry::TextEntry ()
 	: Widget(),
-	  start_(0),
-	  length_(0),
-	  index_(0)
+	  text_start_(0),
+	  cursor_index_(0)
 	{
-		Font font;	// default font
-		int w = 160;
-		int h = font.height();
+		text_.reset(new Text(String("")));
 
-		set_size(w + pixel_size(kPadding.hsum()),
-		        h + pixel_size(kPadding.vsum()));
+		int w = text_->size().width();
+		int h = text_->font().height();
+		if(w < 160) w = 160;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 
 		InitializeTextEntry();
 	}
 
 	TextEntry::TextEntry (const String& text)
 	: Widget(),
-	  start_(0),
-	  length_(0),
-	  index_(0)
+	  text_start_(0),
+	  cursor_index_(0)
 	{
 		text_.reset(new Text(text));
 
@@ -91,9 +93,8 @@ namespace BlendInt {
     {
         if(text_) {
             text_.destroy();
-            index_ = 0;
-            start_ = 0;
-            length_ = 0;
+            cursor_index_ = 0;
+            text_start_ = 0;
             
             RequestRedraw();
         }
@@ -256,24 +257,43 @@ namespace BlendInt {
 		if(!context->GetTextInput().empty()) {
 
             int valid_width = size().width() - pixel_size(kPadding.hsum());
-            int prev_width = text_->size().width();
-			text_->Insert(index_, context->GetTextInput());
-            int new_width = text_->size().width();
-            
-			index_ += context->GetTextInput().length();
-            
-            DBG_PRINT_MSG("prev_width: %d, new_width: %d", prev_width, new_width);
 
-            if(new_width <= valid_width) {
-                start_ = 0;
+            if(text_->empty()) {
+
+                text_->Add(context->GetTextInput());
+    			cursor_index_ += context->GetTextInput().length();
+
             } else {
-                
-                if(prev_width <= valid_width) {
-                    start_++;
+
+            	//int prev_width = text_->size().width();
+                text_->Insert(cursor_index_, context->GetTextInput());
+                int new_width = text_->size().width();
+
+    			cursor_index_ += context->GetTextInput().length();
+
+//                DBG_PRINT_MSG("valid width: %d, prev_width: %d, new_width: %d",
+//                		valid_width,
+//                		prev_width,
+//                		new_width);
+
+                if(new_width <= valid_width) {
+
+                	text_start_ = 0;
+
+                } else {
+
+                	size_t visible_width = text_->GetTextWidth(text_start_ + cursor_index_ + 1, text_start_, false);
+                	//DBG_PRINT_MSG("visiable text width: %ld", visible_width);
+
+                	if(visible_width > (size_t)valid_width) {
+                		//text_offset_ = -text_->GetTextWidth(text_start_ + context->GetTextInput().length(), 0, true);
+                		text_start_ += context->GetTextInput().length();
+                	}
+
                 }
-                
+
             }
-            
+
 			RequestRedraw();
 
 			return Finish;
@@ -324,7 +344,7 @@ namespace BlendInt {
 	{
 		if(text_) {
 
-			index_ = 0;
+			cursor_index_ = 0;
 			//index_ = GetCursorPosition(context);
 
 			//DBG_PRINT_MSG("index: %d", index_);
@@ -367,12 +387,13 @@ namespace BlendInt {
 
         int cursor_pos = 0;
         
+        int x = pixel_size(kPadding.left());
+        int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
+
         if(text_) {
 
             int w = size().width() - pixel_size(kPadding.hsum());
             int h = size().height() - pixel_size(kPadding.vsum());
-            int x = pixel_size(kPadding.left());
-            int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
             
             // A workaround for Adobe Source Han Sans
             int diff = text_->font().ascender() - text_->font().descender();
@@ -380,6 +401,8 @@ namespace BlendInt {
                 y += (text_->font().height() - diff - 1) / 2;
             }
             
+//            DBG_PRINT_MSG("valid width: %d", w);
+
 //            if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
 //                x += (w - text_ext_->size().width()) / 2;
 //            } else if (alignment_ == AlignRight) {
@@ -387,25 +410,22 @@ namespace BlendInt {
 //            }
             
             if(text_->size().height() <= h) {
-            	cursor_pos = text_->DrawWithCursor(x, y, index_, text_->text().length(), start_, w, AbstractWindow::theme->text().text);
-//                text_->Draw(x, y, 5, 1);
+            	cursor_pos = text_->DrawWithCursor(x,
+            			y,
+            			cursor_index_,
+            			text_start_,
+            			w,
+            			AbstractWindow::theme->text().text);
             }
             
         }
 
 		if(focus()) {			// draw a cursor
 
-			float x = 0.f;
-			float y = 0.f;
+//			DBG_PRINT_MSG("cursor pos: %d", cursor_pos);
 
-			//unsigned int cursor_pos = text_->font().GetTextWidth(text_->text(), index_ - start_, start_);
-			//cursor_pos += pixel_size(kPadding.left());
-			cursor_pos += pixel_size(kPadding.left());
-
-            //DBG_PRINT_MSG("cursor pos: %d", cursor_pos);
-        
-			x = 0.f + cursor_pos;
-			y = 0.f + 1;
+			x += cursor_pos;
+			y = 0 + 1;
 
 			AbstractWindow::shaders->widget_triangle_program()->use();
 			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
@@ -485,10 +505,10 @@ namespace BlendInt {
 
 	void TextEntry::DisposeBackspacePress ()
 	{
-		if (text_->text().size() && index_ > 0) {
+		if (text_->text().size() && cursor_index_ > 0) {
 
-            text_->Erase(index_ - 1, 1);
-			index_--;
+            text_->Erase(cursor_index_ - 1, 1);
+			cursor_index_--;
 
 
 			RequestRedraw();
@@ -497,9 +517,9 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeDeletePress ()
 	{
-		if (text_->text().size() && (index_ < static_cast<int>(text_->text().length()))) {
+		if (text_->text().size() && (cursor_index_ < text_->length())) {
 
-            text_->Erase(index_, 1);
+            text_->Erase(cursor_index_, 1);
 
 			RequestRedraw();
 		}
@@ -507,8 +527,14 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeLeftPress ()
 	{
-		if (text_->text().size() && index_ > 0) {
-			index_--;
+		if (text_->text().size() && cursor_index_ > 0) {
+
+			if(cursor_index_ == text_start_) {
+				text_start_--;
+//        		text_offset_ = -text_->GetTextWidth(text_start_, 0, true);
+			}
+
+			cursor_index_--;
             RequestRedraw();
 		}
 
@@ -516,75 +542,30 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeRightPress ()
 	{
-		if ((text_->text().size() > 0) && (index_ < static_cast<int>(text_->text().length()))) {
-			index_++;
+		if ((text_->text().size() > 0) && (cursor_index_ < text_->length())) {
+
+			cursor_index_++;
+//
+//			DBG_PRINT_MSG("text start: %ld", text_start_);
+//			DBG_PRINT_MSG("cursor index: %ld", cursor_index_);
+
+			int valid_width = size().width() - pixel_size(kPadding.hsum());
+        	size_t visible_width = text_->GetTextWidth(text_start_ + (cursor_index_ - text_start_) + 1, text_start_, false);
+
+//        	DBG_PRINT_MSG("visible width: %ld", visible_width);
+
+        	if(visible_width > (size_t)valid_width) {
+//        		text_offset_ = -text_->GetTextWidth(text_start_ + 1, 0, true);
+        		text_start_ += 1;
+        	}
+
 			RequestRedraw();
 		}
 	}
 
-    int TextEntry::GetVisibleTextLength ()
-    {
-        int width = 0;
-        int str_len = text_->text().length();
-        
-        width = text_->font().GetTextWidth(text_->text(), str_len, 0);
-        
-        if(width > size().width()) {
-            while(str_len > 0) {
-                width = text_->font().GetTextWidth(text_->text(), str_len, 0);
-                if(width < size().width()) break;
-                str_len--;
-            }
-        }
-        
-        return str_len;
-    }
-    
-	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)
-	{
-		int str_len = text_->text().length();
-		int width = text_->font().GetTextWidth(text_->text(), str_len, 0);
-
-		if(width < (size().width() - 4)) {
-			*start = 0;
-			*length = str_len;
-		} else {
-			while(str_len > 0) {
-				str_len--;
-				width = text_->font().GetTextWidth(text_->text(), str_len, 0);
-				if(width < (size().width() - 4)) break;
-			}
-
-			*start = text_->text().length() - str_len;
-			*length = str_len;
-		}
-	}
-	
 	int TextEntry::GetCursorPosition (AbstractWindow* context)
 	{
-		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
-
-		int click_position = context->GetCursorPosition().x() - global_pos.x()
-						- round_radius();
-
-		if((click_position < 0) ||
-				(click_position > (size().width() - round_radius()))) {
-			return index_;
-		}
-
-		int text_width = 0;
-		int offset = 1;
-		while (offset < length_) {
-			text_width = text_->font().GetTextWidth(text_->text(), offset, start_);
-			if(text_width > click_position) {
-				// FIXME: some character: e.g. 'f' always return small text width
-				offset--;
-				break;
-			}
-			offset++;
-		}
-
-		return start_ + offset;
+		return 0;
 	}
 
 }

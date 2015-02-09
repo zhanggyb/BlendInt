@@ -90,8 +90,6 @@ namespace BlendInt {
 
  	void Text::Add (const String& text)
  	{
- 		if(text.empty()) return;
-
  		text_.append(text);
 
         ReloadBuffer();
@@ -99,9 +97,7 @@ namespace BlendInt {
 
  	void Text::Insert (size_t index, const String& text)
  	{
- 		if(text.empty()) return;
-
- 		if(index > text_.length()) {
+ 		if(text.empty() || (index > text_.length())) {
  			text_.append(text);
  		} else {
  			text_.insert(index, text);
@@ -131,9 +127,28 @@ namespace BlendInt {
         ReloadBuffer();
  	}
 
-	size_t Text::GetTextWidth (size_t length, size_t start) const
+	size_t Text::GetTextWidth (size_t length, size_t start, bool count_kerning) const
 	{
-		return font_.GetTextWidth(text_, length, start);
+		size_t width = font_.GetTextWidth(text_, length, start);
+
+		if(count_kerning && font_.has_kerning()) {
+
+			int left_kerning = 0;
+			int right_kerning = 0;
+
+			if(start > 0) {
+				left_kerning = font_.GetKerning(text_[start - 1], text_[start]).x;
+			}
+
+			size_t last = start + length;
+			if(last < (text_.length() - 1)) {
+				right_kerning = font_.GetKerning(text_[last], text_[last + 1]).x;
+			}
+
+			width = width + left_kerning + right_kerning;
+		}
+
+		return width;
 	}
 
  	Text& Text::operator = (const Text& orig)
@@ -272,11 +287,37 @@ namespace BlendInt {
 		}
 	}
 
-    int Text::DrawWithCursor(float x, float y, size_t index, size_t length, size_t start, int width, const Color &color, short gamma) const
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, const Color &color, short gamma) const
     {
         int retval = 0;
         
         if(width <= 0) return retval;
+
+        const Glyph* g = 0;
+        int max = 0;
+        size_t count = start;
+        Kerning kerning;
+        size_t i = 0;
+        size_t n = 0;
+        int ox = 0;
+
+        for(; (i < start) && (i < text_.length()); i++) {
+        	g = font_.glyph(text_[i]);
+
+            if(font_.has_kerning()) {
+
+            	n = i + 1;
+                if(n != text_.length()) {
+                    kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
+                    ox -= (g->advance_x + kerning.x);
+                } else {
+                	ox -= g->advance_x;
+                }
+
+            } else {
+            	ox -= g->advance_x;
+            }
+        }
         
         AbstractWindow::shaders->widget_text_program()->use();
         
@@ -284,58 +325,55 @@ namespace BlendInt {
         
         font_.bind_texture();
         
-        glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+        glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x + ox, y);
         glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
         glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
         
         glBindVertexArray(vao_);
-        
-        const Glyph* g = 0;
-        int max = 0;
-        int count = 0;
-        String::const_iterator it = text_.begin();
-        String::const_iterator next_it;
-        Kerning kerning;
-        
-        std::advance(it, start);
-        if(it == text_.end()) return retval;
-        
-        for(; it != text_.end(); it++)
-        {
-            g = font_.glyph(*it);
 
-            if(count <= index) retval = max;
-            
+        int tmp = 0;
+        while(i < text_.length()) {
+
+        	g = font_.glyph(text_[i]);
+
+        	if(count <= index) retval = tmp;
+
             if(font_.has_kerning()) {
-                
-                next_it = it + 1;
-                if(next_it != text_.end()) {
-                    kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
-                    max += (g->advance_x + kerning.x);
+
+            	n = i + 1;
+                if(n != text_.length()) {
+                    kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
+                    tmp += (g->advance_x + kerning.x);
                 } else {
-                    max += g->advance_x;
+                    tmp += g->advance_x;
                 }
-                
+
             } else {
-                max += g->advance_x;
+                tmp += g->advance_x;
             }
-            
-            if (max > width) break;
-            
+
+            if (tmp > width) {
+            	break;
+            } else {
+            	max = tmp;
+            }
+
             glDrawArrays(GL_TRIANGLE_STRIP, count * 4, 4);
-            
+
+            i++;
             count++;
         }
-        if(count <= index) retval = max;
         
+        if(count <= index) retval = max;
+
         return retval;
     }
 
-    int Text::DrawWithCursor(float x, float y, size_t index, size_t length, size_t start, int width, short gamma) const
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, short gamma) const
     {
         Color color(0x000000FF);
 
-        return DrawWithCursor(x, y, index, length, start, width, color, gamma);
+        return DrawWithCursor(x, y, index, start, width, color, gamma);
     }
     
     void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)

@@ -61,7 +61,13 @@ namespace BlendInt {
 
 		Text& operator = (const String& text);
 
-		size_t GetTextWidth (size_t length, size_t start) const;
+		/**
+		 * @brief Get text width
+		 * @param[in] length the text length
+		 * @param[in] start the start character in the text
+		 * @param[in] count_kerning if count kerning before start or after (start + length)
+		 */
+		size_t GetTextWidth (size_t length, size_t start, bool count_kerning) const;
 
 		virtual void Draw (float x, float y) const;
 
@@ -77,17 +83,16 @@ namespace BlendInt {
 
 		void DrawWithin (float x, float y, int width, const Color& color, short gamma = 0) const;
         
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, const Color& color, short gamma = 0) const;
         
-        int DrawWithCursor (float x, float y, size_t cursor_index, size_t length, size_t start, int width, const Color& color, short gamma = 0) const;
-        
-        int DrawWithCursor (float x, float y, size_t cursor_index, size_t length, size_t start, int width, short gamma = 0) const;
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, short gamma = 0) const;
 
 		/**
 		 * @brief Ascender in this text
 		 *
 		 * @note This is not the same as Font::ascender ()
 		 */
-		int ascender () const
+        inline int ascender () const
 		{
 			return ascender_;
 		}
@@ -97,20 +102,30 @@ namespace BlendInt {
 		 *
 		 * @note This is not the same as Font::descender ()
 		 */
-		int descender () const
+        inline int descender () const
 		{
 			return descender_;
 		}
 
-		const String& text () const
+        inline const String& text () const
 		{
 			return text_;
 		}
 
-		const Font& font () const
+        inline const Font& font () const
 		{
 			return font_;
 		}
+
+        inline bool empty () const
+        {
+        	return text_.empty();
+        }
+
+        inline size_t length () const
+        {
+        	return text_.length();
+        }
 
 	protected:
 
