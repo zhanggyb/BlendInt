@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <boost/filesystem.hpp>
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -31,8 +33,11 @@
 
 namespace BlendInt {
 
+	namespace fs = boost::filesystem;
+
 	FileBrowser::FileBrowser ()
 	: AbstractItemView(),
+	  history_index_(0),
 	  highlight_index_(-1)
 	{
 		set_size(400, 300);
@@ -45,15 +50,110 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vaos_);
 	}
 
-	bool FileBrowser::Load (const std::string& pathname)
+	bool FileBrowser::Open (const std::string& pathname)
 	{
 		assert(model_);
 
-		bool retval = false;
-		retval = model_->Load(pathname);
+		bool retval = model_->Load(pathname);
 
-		RequestRedraw();
+		if(retval) {
+
+			if(!history_.empty()) {
+				while(history_index_ < (history_.size() - 1)) {
+					history_.pop_back();
+				}
+			}
+
+			pathname_ = pathname;
+
+			history_.push_back(pathname_);
+			history_index_ = history_.size() - 1;
+
+			highlight_index_ = -1;
+
+			RequestRedraw();
+		}
+
 		return retval;
+	}
+
+	bool FileBrowser::OpenParent ()
+	{
+		fs::path p;
+
+		if(!history_.empty()) {
+
+			if(history_index_ == 0) {
+
+				p = history_[history_index_];
+				p = p.parent_path();
+
+				if(p.native().empty()) return false;
+
+				if(fs::exists(p))
+					history_.push_front(p.native());
+
+			} else {
+
+				history_index_--;
+				p = history_[history_index_];
+
+				if(!fs::exists(p))
+					return false;
+
+			}
+
+		} else {
+			p = pathname_;
+			p = p.parent_path();
+			if(p.native().empty() || (!fs::exists(p))) {
+				return false;
+			}
+		}
+
+		pathname_ = p.native();
+
+		model_->Load(pathname_);
+		RequestRedraw();
+		return true;
+	}
+
+	bool FileBrowser::GoBackward ()
+	{
+		if((!history_.empty()) && history_index_ > 0) {
+
+			history_index_--;
+			bool retval = model_->Load(history_[history_index_]);
+
+			if(retval) {
+				pathname_ = history_[history_index_];
+				highlight_index_ = -1;
+				RequestRedraw();
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+
+	bool FileBrowser::GoForward ()
+	{
+		if((!history_.empty()) && (history_index_ < (history_.size() - 1))) {
+
+			history_index_++;
+			bool retval = model_->Load(history_[history_index_]);
+
+			if(retval) {
+				pathname_ = history_[history_index_];
+				highlight_index_ = -1;
+				RequestRedraw();
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 
 	bool FileBrowser::IsExpandX() const
@@ -199,8 +299,6 @@ namespace BlendInt {
 
 	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		namespace fs = boost::filesystem;
-
 		if(request.target() == this) {
 
 			set_size(*request.size());
@@ -357,12 +455,9 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		buffer_.reset();
 
-		//font_.set_color(Color(0xF0F0F0FF));
-		//font_.set_pen(font_.pen().x() + 4, std::abs(font_.descender()));
-
 		model_.reset(new FileSystemModel);
 
-		Load(getenv("PWD"));
+		// Load(getenv("PWD"));
 	}
 
 }

@@ -42,13 +42,32 @@ namespace BlendInt {
 
 		virtual ~Text ();
 
-		void SetText (const String& text);
+		void Add (const String& text);
 
+		void Insert (size_t index, const String& text);
+
+		void SetText (const String& text);
+        
+        /**
+         * @brief Remove specified characters from text
+         * @param[in] index first character to remove
+         * @param[in] count number of characters to remove
+         */
+        void Erase (size_t index, size_t count = 1);
+        
 		void SetFont (const Font& font);
 
 		Text& operator = (const Text& orig);
 
 		Text& operator = (const String& text);
+
+		/**
+		 * @brief Get text width
+		 * @param[in] length the text length
+		 * @param[in] start the start character in the text
+		 * @param[in] count_kerning if count kerning before start or after (start + length)
+		 */
+		size_t GetTextWidth (size_t length, size_t start, bool count_kerning) const;
 
 		virtual void Draw (float x, float y) const;
 
@@ -63,13 +82,17 @@ namespace BlendInt {
 		void DrawWithin (float x, float y, int width, short gamma = 0) const;
 
 		void DrawWithin (float x, float y, int width, const Color& color, short gamma = 0) const;
+        
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, const Color& color, short gamma = 0) const;
+        
+        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, short gamma = 0) const;
 
 		/**
 		 * @brief Ascender in this text
 		 *
 		 * @note This is not the same as Font::ascender ()
 		 */
-		int ascender () const
+        inline int ascender () const
 		{
 			return ascender_;
 		}
@@ -79,20 +102,30 @@ namespace BlendInt {
 		 *
 		 * @note This is not the same as Font::descender ()
 		 */
-		int descender () const
+        inline int descender () const
 		{
 			return descender_;
 		}
 
-		const String& text () const
+        inline const String& text () const
 		{
 			return text_;
 		}
 
-		const Font& font () const
+        inline const Font& font () const
 		{
 			return font_;
 		}
+
+        inline bool empty () const
+        {
+        	return text_.empty();
+        }
+
+        inline size_t length () const
+        {
+        	return text_.length();
+        }
 
 	protected:
 
@@ -100,7 +133,17 @@ namespace BlendInt {
 
 	private:
 
+        /**
+         * @brief Generate vertices to be used in VBO for this text
+         */
         void GenerateTextVertices (std::vector<GLfloat>& verts, int* ptr_width, int* ptr_ascender, int* ptr_descender);
+        
+        /**
+         * @brief Re-calculate vertices and load to VBO
+         *
+         * Also reset the size of this form.
+         */
+        void ReloadBuffer ();
         
 		// the ascender of this text
 		int ascender_;

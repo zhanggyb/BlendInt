@@ -23,6 +23,8 @@
 
 #include <iostream>
 
+#include <boost/filesystem.hpp>
+
 #include <BlendInt/Gui/Text.hpp>
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
@@ -50,12 +52,13 @@ namespace BlendInt {
 		namespace fs = boost::filesystem;
 		bool is_path = false;
 
-		path_ = fs::path(pathname);
+		fs::path path = fs::path(pathname);
+
 		fs::file_status status;
 		char buf[32];
 
 		try {
-			if (fs::exists(path_) && fs::is_directory(path_)) {
+			if (fs::exists(path) && fs::is_directory(path)) {
 
 				Clear();
 				assert(root_->child == 0);
@@ -64,7 +67,7 @@ namespace BlendInt {
 				ModelNode* tmp = 0;
 
 				int i = 0, j = 0;
-				fs::directory_iterator it(path_);
+				fs::directory_iterator it(path);
 				fs::directory_iterator it_end;
 				while (it != it_end) {
 
@@ -86,7 +89,7 @@ namespace BlendInt {
 					assert(first->left == 0);
 
 					first->data = RefPtr<Text>(new Text(it->path().filename().native()));
-;
+
 					j++;
 
 					tmp = first;
@@ -127,7 +130,7 @@ namespace BlendInt {
 					i++;
 				}
 
-				DBG_PRINT_MSG("ROWS: %d", i);
+//				DBG_PRINT_MSG("ROWS: %d", i);
 				assert(j == DefaultColumns);
 
 				rows_ = i;

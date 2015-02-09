@@ -44,20 +44,20 @@ namespace BlendInt {
 
 	public:
 
-		TextEntry();
+		TextEntry ();
+
+		TextEntry (const String& text);
 
 		virtual ~TextEntry();
 
-		/**
-		 * @brief Clear the text
-		 */
-		void Clear ();
-
 		void SetText (const String& text);
 
+        /**
+         * @brief Clear the text
+         */
+        void ClearText ();
+        
 		void SetFont (const Font& font);
-
-		const String& text () const {return text_;}
 
 		virtual Size GetPreferredSize () const;
 
@@ -76,16 +76,20 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual ResponseType Draw (AbstractWindow* context);
-
-		virtual void PerformFocusOn (AbstractWindow* context);
-
-		virtual void PerformFocusOff (AbstractWindow* context);
-
+        virtual void PerformFocusOn (AbstractWindow* context);
+        
+        virtual void PerformFocusOff (AbstractWindow* context);
+        
+        virtual void PerformHoverIn (AbstractWindow* context);
+        
+        virtual void PerformHoverOut (AbstractWindow* context);
+        
 		virtual ResponseType PerformKeyPress (AbstractWindow* context);
 
 		virtual ResponseType PerformMousePress (AbstractWindow* context);
 
+        virtual ResponseType Draw (AbstractWindow* context);
+        
 	private:
 
 		void InitializeTextEntry ();
@@ -98,16 +102,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		int GetValidTextSize ();
-
-		int GetCursorPosition (AbstractWindow* context);
-
-		/**
-		 * @brief Get the index and length of the text to show
-		 * @param[out] start The index in the text to print
-		 * @param[out] length The length of the text to print
-		 */
-		void GetVisibleTextRange (size_t* start, size_t* length);
+		size_t GetTextCursorIndex (AbstractWindow* context);
 
 		/**
 		 * @brief Vertex array objects
@@ -120,20 +115,14 @@ namespace BlendInt {
 
         GLBuffer<ARRAY_BUFFER, 3> vbo_;
 
-        RefPtr<Text> text_ext_;
+        RefPtr<Text> text_;
         
-		Font font_;
-
-		String text_;
-
-		int start_;	// where start print the text
-
-		int length_;	// the text length inside this widget
+		size_t text_start_;	// where start print the text
 
 		/**
 		 * @brief Where display the cursor and insert new text
 		 */
-		int index_;
+		size_t cursor_index_;
 
 		// the space between the text and the top
 		// o the text and the bottom

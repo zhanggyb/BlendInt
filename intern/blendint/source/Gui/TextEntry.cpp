@@ -35,16 +35,38 @@ namespace BlendInt {
 
 	TextEntry::TextEntry ()
 	: Widget(),
-	  start_(0),
-	  length_(0),
-	  index_(0)
+	  text_start_(0),
+	  cursor_index_(0)
 	{
-		int h = font_.height();
-		int initial_width = h + round_radius() * 2 * AbstractWindow::theme->pixel()
-				+ 120;
-		int initial_height = h + vertical_space * 2 * AbstractWindow::theme->pixel();
+		text_.reset(new Text(String("")));
 
-		set_size(initial_width, initial_height);
+		int w = text_->size().width();
+		int h = text_->font().height();
+		if(w < 160) w = 160;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
+
+		InitializeTextEntry();
+	}
+
+	TextEntry::TextEntry (const String& text)
+	: Widget(),
+	  text_start_(0),
+	  cursor_index_(0)
+	{
+		text_.reset(new Text(text));
+
+		int w = text_->size().width();
+		int h = text_->font().height();
+		if(w < 160) w = 160;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		set_size(w, h);
 
 		InitializeTextEntry();
 	}
@@ -56,87 +78,61 @@ namespace BlendInt {
 
 	void TextEntry::SetText (const String& text)
 	{
-		bool cal_width = true;
-
-		text_ = text;
-
-		Rect text_outline;	// = font_.GetTextOutline(text_);
-
-		length_ = text_.length();
-
-		if(size().height() < text_outline.height()) {
-			length_ = 0;
-			cal_width = false;
-		}
-
-		if(cal_width) {
-			if(size().width() < text_outline.width()) {
-				length_ = GetValidTextSize();
-			}
-		}
-
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
-
-		index_ = text_.length();
-
-		if(!text_ext_) {
-			text_ext_.reset(new Text(text));
+		if(!text_) {
+			text_.reset(new Text(text));
 		} else {
-	        text_ext_->SetText(text);
+	        text_->SetText(text);
 		}
+        
+        //index_ = 0;
         
 		RequestRedraw();
 	}
 
+    void TextEntry::ClearText ()
+    {
+        if(text_) {
+            text_.destroy();
+            cursor_index_ = 0;
+            text_start_ = 0;
+            
+            RequestRedraw();
+        }
+    }
+    
 	void TextEntry::SetFont (const Font& font)
 	{
-		font_ = font;
-
-		//Rect text_outline = m_font.GetTextOutline(m_text);
-
-		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
-
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2 + std::abs(font_.descender()));
-	}
-
-	void TextEntry::Clear ()
-	{
-		text_.clear();
-		index_ = 0;
-		start_ = 0;
-		length_ = 0;
+		if(text_) {
+			if(!(text_->font() == font)) {
+				text_->SetFont(font);
+				RequestRedraw();
+			}
+		}
 	}
 
 	Size TextEntry::GetPreferredSize () const
 	{
-		Size preferred_size;
+		int w = 0;
+		int h = 0;
 
-		float radius_plus = 0.f;
-
-		if ((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += round_radius();
+		Font font;	// default font
+		if(text_) {
+			font = text_->font();
+			w += text_->size().width();
 		}
 
-		if ((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
-			radius_plus += round_radius();
+		h = std::max(h, font.height());
+
+		if (w == 0) w = h;
+
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		if(!text_) {
+			if(w < 160) w = 160;
 		}
 
-		int max_font_height = font_.height();
-
-		preferred_size.set_height(
-				max_font_height
-						+ kPadding.vsum() * AbstractWindow::theme->pixel());// top padding: 2, bottom padding: 2
-
-		if (text().empty()) {
-			preferred_size.set_width(max_font_height + (int)radius_plus + 120);
-		} else {
-			int width = font_.GetTextWidth(text());
-			preferred_size.set_width(width + (int)radius_plus);
-		}
-
-		return preferred_size;
+		return Size(w, h);
 	}
 
 	bool TextEntry::IsExpandX () const
@@ -144,35 +140,171 @@ namespace BlendInt {
 		return true;
 	}
 
+    void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
+    {
+        if (request.target() == this) {
+
+            set_size(*request.size());
+            
+            std::vector<GLfloat> inner_verts;
+            std::vector<GLfloat> outer_verts;
+            
+            if (AbstractWindow::theme->text().shaded) {
+                GenerateRoundedVertices(Vertical,
+                                        AbstractWindow::theme->text().shadetop,
+                                        AbstractWindow::theme->text().shadedown,
+                                        &inner_verts,
+                                        &outer_verts);
+            } else {
+                GenerateRoundedVertices(&inner_verts, &outer_verts);
+            }
+            
+            vbo_.bind(0);
+            vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            vbo_.bind(1);
+            vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+            
+            vbo_.bind(2);
+            GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
+            *(buf_p + 5) = (GLfloat) (request.size()->height()
+                                      - vertical_space * 2 * AbstractWindow::theme->pixel());
+            *(buf_p + 7) = (GLfloat) (request.size()->height()
+                                      - vertical_space * 2 * AbstractWindow::theme->pixel());
+            vbo_.unmap();
+            vbo_.reset();
+            
+            RequestRedraw();
+        }
+        
+        if(request.source() == this) {
+            ReportSizeUpdate(request);
+        }
+    }
+
+    void TextEntry::PerformRoundTypeUpdate (int round_type)
+    {
+        set_round_type(round_type);
+        
+        std::vector<GLfloat> inner_verts;
+        std::vector<GLfloat> outer_verts;
+        
+        if (AbstractWindow::theme->text().shaded) {
+            GenerateRoundedVertices(Vertical,
+                                    AbstractWindow::theme->text().shadetop,
+                                    AbstractWindow::theme->text().shadedown,
+                                    &inner_verts,
+                                    &outer_verts);
+        } else {
+            GenerateRoundedVertices(&inner_verts, &outer_verts);
+        }
+        
+        vbo_.bind(0);
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+        vbo_.bind(1);
+        vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+        
+        RequestRedraw();
+    }
+    
+    void TextEntry::PerformRoundRadiusUpdate (float radius)
+    {
+        set_round_radius(radius);
+        
+        std::vector<GLfloat> inner_verts;
+        std::vector<GLfloat> outer_verts;
+        
+        if (AbstractWindow::theme->text().shaded) {
+            GenerateRoundedVertices(Vertical,
+                                    AbstractWindow::theme->text().shadetop,
+                                    AbstractWindow::theme->text().shadedown,
+                                    &inner_verts,
+                                    &outer_verts);
+        } else {
+            GenerateRoundedVertices(&inner_verts, &outer_verts);
+        }
+        
+        vbo_.bind(0);
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+        vbo_.bind(1);
+        vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+        
+        RequestRedraw();
+    }
+    
+    void TextEntry::PerformFocusOn (AbstractWindow* context)
+    {
+        RequestRedraw();
+    }
+    
+    void TextEntry::PerformFocusOff (AbstractWindow* context)
+    {
+        RequestRedraw();
+    }
+    
+    void TextEntry::PerformHoverIn(AbstractWindow* context)
+    {
+        context->PushCursor();
+        context->SetCursor(IBeamCursor);
+    }
+    
+    void TextEntry::PerformHoverOut(AbstractWindow* context)
+    {
+        context->PopCursor();
+    }
+    
 	ResponseType TextEntry::PerformKeyPress (AbstractWindow* context)
 	{
 		if(!context->GetTextInput().empty()) {
 
-			text_.insert(index_, context->GetTextInput());
-			index_ += context->GetTextInput().length();
-			length_ += context->GetTextInput().length();
+            int valid_width = size().width() - pixel_size(kPadding.hsum());
 
-			int text_width = font_.GetTextWidth(text_, length_,
-							start_);
-			int valid_width = size().width() - round_radius() * 2;
+            if(text_->empty()) {
 
-			if(text_width > valid_width) {
-				start_++;
-				length_--;
+                text_->Add(context->GetTextInput());
+    			cursor_index_ += context->GetTextInput().length();
 
-				text_width = font_.GetTextWidth(text_, length_, start_);
-				while (text_width > valid_width) {
-					start_++;
-					length_--;
-					text_width = font_.GetTextWidth(text_, length_, start_);
-				}
-			}
+            } else {
+
+            	int prev_width = text_->size().width();
+                text_->Insert(cursor_index_, context->GetTextInput());
+                int new_width = text_->size().width();
+
+    			cursor_index_ += context->GetTextInput().length();
+
+                if(new_width <= valid_width) {
+
+                	text_start_ = 0;
+
+                } else {
+
+                	int diff = new_width - prev_width;
+                	assert(diff > 0);
+
+                	size_t visible_width = text_->GetTextWidth(cursor_index_ - text_start_ + 1, text_start_, false);
+
+                	if(visible_width > (size_t)valid_width) {
+
+                    	size_t num = 0;
+                		size_t char_width = 0;
+                		while(char_width < (size_t)diff) {
+                			num++;
+                			char_width = text_->GetTextWidth(num, text_start_, true);
+                		}
+                		text_start_ += num;
+                	}
+
+                }
+
+            }
 
 			RequestRedraw();
+
 			return Finish;
 
 		} else {
 
+            if(!text_) return Finish;
+            
 			switch (context->GetKeyInput()) {
 
 				case Key_Backspace: {
@@ -213,112 +345,19 @@ namespace BlendInt {
 
 	ResponseType TextEntry::PerformMousePress(AbstractWindow* context)
 	{
-		if(text_.size()) {
-			index_ = GetCursorPosition(context);
+		if(text_) {
+			size_t index = GetTextCursorIndex(context);
 
-			DBG_PRINT_MSG("index: %d", index_);
-
-			RequestRedraw();
+			if(index != cursor_index_) {
+				cursor_index_ = index;
+				RequestRedraw();
+			}
 		}
 
 		return Finish;
 	}
 
-	void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if (request.target() == this) {
-
-			set_size(*request.size());
-
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-
-			if (AbstractWindow::theme->text().shaded) {
-				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->text().shadetop,
-						AbstractWindow::theme->text().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateRoundedVertices(&inner_verts, &outer_verts);
-			}
-
-			vbo_.bind(0);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.bind(1);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-            vbo_.bind(2);
-			GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-			*(buf_p + 5) = (GLfloat) (request.size()->height()
-					- vertical_space * 2 * AbstractWindow::theme->pixel());
-			*(buf_p + 7) = (GLfloat) (request.size()->height()
-					- vertical_space * 2 * AbstractWindow::theme->pixel());
-            vbo_.unmap();
-			vbo_.reset();
-
-			RequestRedraw();
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void TextEntry::PerformRoundTypeUpdate (int round_type)
-	{
-		set_round_type(round_type);
-
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
-
-		if (AbstractWindow::theme->text().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->text().shadetop,
-					AbstractWindow::theme->text().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
-
-        vbo_.bind(0);
-        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-		RequestRedraw();
-	}
-
-	void TextEntry::PerformRoundRadiusUpdate (float radius)
-	{
-		set_round_radius(radius);
-
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
-
-		if (AbstractWindow::theme->text().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->text().shadetop,
-					AbstractWindow::theme->text().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
-
-        vbo_.bind(0);
-        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-//		font_.set_pen(radius,
-//				font_.pen().y());
-
-		RequestRedraw();
-	}
-
-	ResponseType TextEntry::Draw (AbstractWindow* context)
+    ResponseType TextEntry::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -348,39 +387,20 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		if(focus()) {			// draw a cursor
+        int cursor_pos = 0;
+        
+        int x = pixel_size(kPadding.left());
+        int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
 
-			AbstractWindow::shaders->widget_triangle_program()->use();
-			unsigned int cursor_pos = font_.GetTextWidth(text_,
-						        index_ - start_, start_);
-			cursor_pos += round_radius();
+        if(text_) {
 
-			glm::vec2 pos(0.f + cursor_pos, 0.f + 1);
-
-			glUniform2fv(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 1,
-					glm::value_ptr(pos));
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-			glVertexAttrib4f(AttributeColor, 0.f,
-					0.215f, 1.f, 0.75f);
-
-			glBindVertexArray(vao_[2]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
-
-		//font_.Print(0.f, 0.f, text_, length_, start_);
-
-        if(text_ext_) {
-            
             int w = size().width() - pixel_size(kPadding.hsum());
             int h = size().height() - pixel_size(kPadding.vsum());
-            int x = pixel_size(kPadding.left());
-            int y = (size().height() - text_ext_->font().height()) / 2 - text_ext_->font().descender();
             
             // A workaround for Adobe Source Han Sans
-            int diff = text_ext_->font().ascender() - text_ext_->font().descender();
-            if(diff < text_ext_->font().height()) {
-                y += (text_ext_->font().height() - diff - 1) / 2;
+            int diff = text_->font().ascender() - text_->font().descender();
+            if(diff < text_->font().height()) {
+                y += (text_->font().height() - diff - 1) / 2;
             }
             
 //            if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
@@ -389,24 +409,34 @@ namespace BlendInt {
 //                x = w - text_ext_->size().width();
 //            }
             
-            if(text_ext_->size().height() <= h) {
-                text_ext_->DrawWithin(x, y, w, AbstractWindow::theme->text().text);
+            if(text_->size().height() <= h) {
+            	cursor_pos = text_->DrawWithCursor(x,
+            			y,
+            			cursor_index_,
+            			text_start_,
+            			w,
+            			AbstractWindow::theme->text().text);
             }
             
         }
 
+		if(focus()) {			// draw a cursor
+
+			x += cursor_pos;
+			y = 0 + 1;
+
+			AbstractWindow::shaders->widget_triangle_program()->use();
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+            // glVertexAttrib4f(AttributeColor, 0.f, 0.215f, 1.f, 0.75f);
+
+			glBindVertexArray(vao_[2]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
         
 		return Finish;
-	}
-
-	void TextEntry::PerformFocusOn (AbstractWindow* context)
-	{
-		RequestRedraw();
-	}
-
-	void TextEntry::PerformFocusOff (AbstractWindow* context)
-	{
-		RequestRedraw();
 	}
 
 	void TextEntry::InitializeTextEntry ()
@@ -445,17 +475,17 @@ namespace BlendInt {
 
 		std::vector<GLfloat> cursor_vertices(8, 0.f);
 
-		cursor_vertices[0] = 1.f;
+		cursor_vertices[0] = 0.f;
 		cursor_vertices[1] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
-		cursor_vertices[2] = 3.f;
+		cursor_vertices[2] = 1.f;
 		cursor_vertices[3] = (GLfloat) vertical_space * AbstractWindow::theme->pixel();
 
-		cursor_vertices[4] = 1.f;
+		cursor_vertices[4] = 0.f;
 		cursor_vertices[5] = (GLfloat) (size().height()
 				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
-		cursor_vertices[6] = 3.f;
+		cursor_vertices[6] = 1.f;
 		cursor_vertices[7] = (GLfloat) (size().height()
 				- vertical_space * 2 * AbstractWindow::theme->pixel());
 
@@ -467,55 +497,33 @@ namespace BlendInt {
 		glVertexAttribPointer(AttributeCoord,
 				2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		vbo_.reset();
 		glBindVertexArray(0);
-
-		// TODO: count Theme::pixel for retina
-//		font_.set_pen(round_radius(),
-//				(size().height() - font_.height()) / 2
-//		                + std::abs(font_.descender()));
+		vbo_.reset();
 	}
 
-	int TextEntry::GetValidTextSize ()
-	{
-		int width = 0;
-		int str_len = text_.length();
-
-		width = font_.GetTextWidth(text_, str_len, 0);
-
-		if(width > size().width()) {
-			while(str_len > 0) {
-				width = font_.GetTextWidth(text_, str_len, 0);
-				if(width < size().width()) break;
-				str_len--;
-			}
-		}
-
-		return str_len;
-	}
-	
 	void TextEntry::DisposeBackspacePress ()
 	{
-		if (text_.size() && index_ > 0) {
+		if (text_->length() && cursor_index_ > 0) {
 
-			size_t valid_width = size().width() - round_radius() * 2;
+			int prev_width = text_->size().width();
+            text_->Erase(cursor_index_ - 1, 1);
+            int new_width = text_->size().width();
 
-			text_.erase(index_ - 1, 1);
-			index_--;
+			cursor_index_--;
 
-			size_t text_width = 0;
-			size_t len = text_.length();
-			while(len > 0)
-			{
-				// text_width = font_.GetReversedTextWidth(text_, len, 0);
-				if(text_width < valid_width) {
-					break;
-				}
-				len--;
+			if(text_start_ > 0) {
+
+				int diff = prev_width - new_width;
+
+            	size_t num = 0;
+        		size_t char_width = 0;
+        		while((char_width < (size_t)diff) && ((text_start_ - num) > 0)) {
+        			num++;
+        			char_width = text_->GetTextWidth(num, text_start_ - num, true);
+        		}
+        		text_start_ -= num;
+
 			}
-
-			length_ = len;
-			start_ = text_.length() - length_;
 
 			RequestRedraw();
 		}
@@ -523,26 +531,9 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeDeletePress ()
 	{
-		if (text_.size() && (index_ < static_cast<int>(text_.length()))) {
+		if (text_->length() && (cursor_index_ < text_->length())) {
 
-			size_t valid_width = size().width() - round_radius() * 2;
-
-			text_.erase(index_, 1);
-
-			size_t text_width = 0;
-
-			size_t len = 0;
-			while(len < (text_.length() - start_))
-			{
-				text_width = font_.GetTextWidth(text_, len, start_);
-				if(text_width > valid_width) {
-					len--;
-					break;
-				}
-				len++;
-			}
-
-			length_ = len;
+            text_->Erase(cursor_index_, 1);
 
 			RequestRedraw();
 		}
@@ -550,105 +541,57 @@ namespace BlendInt {
 	
 	void TextEntry::DisposeLeftPress ()
 	{
-		if (text_.size() && index_ > 0) {
+		if (text_->length() && cursor_index_ > 0) {
 
-			int valid_width = size().width() - round_radius() * 2;
-
-			index_--;
-
-			if (index_ < start_) {
-				start_ = index_;
-
-				int text_width = font_.GetTextWidth(text_, length_,
-								start_);
-
-				if((text_width < valid_width) && (length_ < (static_cast<int>(text_.length()) - start_))) {
-					length_++;
-					text_width = font_.GetTextWidth(text_, length_, start_);
-					while(text_width < valid_width && length_ < (static_cast<int>(text_.length()) - start_)) {
-						length_++;
-						text_width = font_.GetTextWidth(text_, length_, start_);
-					}
-				}
-
-				if(text_width > valid_width && length_ > 0) {
-					length_--;
-					text_width = font_.GetTextWidth(text_, length_, start_);
-					while ((text_width > valid_width) && (length_ > 0)) {
-						length_--;
-						text_width = font_.GetTextWidth(text_, length_, start_);
-					}
-				}
-
+			if(cursor_index_ == text_start_) {
+				text_start_--;
 			}
 
-			RequestRedraw();
+			cursor_index_--;
+            RequestRedraw();
 		}
 
 	}
 	
 	void TextEntry::DisposeRightPress ()
 	{
-		if ((text_.size() > 0) && (index_ < static_cast<int>(text_.length()))) {
-			index_++;
+		if ((text_->length() > 0) && (cursor_index_ < text_->length())) {
 
-			if (index_ > (start_ + length_))
-				start_++;
+			int valid_width = size().width() - pixel_size(kPadding.hsum());
+        	size_t visible_width = text_->GetTextWidth(cursor_index_ - text_start_ + 1, text_start_, false);
 
-			//m_length = GetVisibleTextLength(m_text, m_start);
-
-			//DBG_PRINT_MSG("length: %lu, start: %lu, cursor: %lu",
-			//				m_length, m_start, m_cursor_position);
+			cursor_index_++;
+        	if(visible_width > (size_t)valid_width) {
+        		text_start_ += 1;
+        	}
 
 			RequestRedraw();
 		}
 	}
 
-	void TextEntry::GetVisibleTextRange (size_t* start, size_t* length)
+	size_t TextEntry::GetTextCursorIndex (AbstractWindow* context)
 	{
-		int str_len = text_.length();
-		int width = font_.GetTextWidth(text_, str_len, 0);
+		if (text_->empty())
+			return 0;
 
-		if(width < (size().width() - 4)) {
-			*start = 0;
-			*length = str_len;
-		} else {
-			while(str_len > 0) {
-				str_len--;
-				width = font_.GetTextWidth(text_, str_len, 0);
-				if(width < (size().width() - 4)) break;
-			}
+		Point local_position = context->GetCursorPosition()
+		        - context->active_frame()->GetAbsolutePosition(this);
 
-			*start = text_.length() - str_len;
-			*length = str_len;
-		}
-	}
-	
-	int TextEntry::GetCursorPosition (AbstractWindow* context)
-	{
-		Point global_pos = context->active_frame()->GetAbsolutePosition(this);
+		int x = local_position.x() - pixel_size(kPadding.left());
+		if (x < 0)
+			return 0;
+		if (x >= text_->size().width())
+			return text_->length();
 
-		int click_position = context->GetCursorPosition().x() - global_pos.x()
-						- round_radius();
+		size_t n = 0;
 
-		if((click_position < 0) ||
-				(click_position > (size().width() - round_radius()))) {
-			return index_;
+		size_t dist = 0;
+		while ((dist < (size_t) x) && (n < text_->length())) {
+			n++;
+			dist = text_->GetTextWidth(n, text_start_, true);
 		}
 
-		int text_width = 0;
-		int offset = 1;
-		while (offset < length_) {
-			text_width = font_.GetTextWidth(text_, offset, start_);
-			if(text_width > click_position) {
-				// FIXME: some character: e.g. 'f' always return small text width
-				offset--;
-				break;
-			}
-			offset++;
-		}
-
-		return start_ + offset;
+		return text_start_ + n - 1;
 	}
 
 }

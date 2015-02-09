@@ -70,9 +70,7 @@ namespace BlendInt {
 
 		void OnClicked(AbstractButton* sender);
 
-		void OnOpened ();
-
-		void OnCanceled ();
+		void OnOpened (AbstractDialog* sender);
 
 		void OnDialogDestroyed (AbstractFrame* dialog);
 

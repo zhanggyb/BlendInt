@@ -24,6 +24,7 @@
 #pragma once
 
 #include <string>
+#include <deque>
 
 #include <BlendInt/OpenGL/GLBuffer.hpp>
 
@@ -52,11 +53,34 @@ namespace BlendInt {
 
 		virtual ~FileBrowser ();
 
-		bool Load (const std::string& pathname);
+		/**
+		 * @brief Load and list all files in given pathname
+		 */
+		bool Open (const std::string& pathname);
+
+		/**
+		 * @brief Load and list the parent folder
+		 */
+		bool OpenParent ();
+
+		/**
+		 * @brief Go backward
+		 */
+		bool GoBackward ();
+
+		/**
+		 * @brief Go forward
+		 */
+		bool GoForward ();
 
 		const String& file_selected () const
 		{
 			return file_selected_;
+		}
+
+		const std::string& pathname () const
+		{
+			return pathname_;
 		}
 
 		virtual bool IsExpandX () const;
@@ -101,6 +125,12 @@ namespace BlendInt {
 		GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
 		String file_selected_;
+
+		std::string pathname_;
+
+		std::deque<std::string> history_;
+
+		size_t history_index_;
 
 		RefPtr<FileSystemModel> model_;
 

@@ -88,70 +88,83 @@ namespace BlendInt {
  		glDeleteVertexArrays(1, &vao_);
  	}
 
+ 	void Text::Add (const String& text)
+ 	{
+ 		text_.append(text);
+
+        ReloadBuffer();
+ 	}
+
+ 	void Text::Insert (size_t index, const String& text)
+ 	{
+ 		if(text.empty() || (index > text_.length())) {
+ 			text_.append(text);
+ 		} else {
+ 			text_.insert(index, text);
+ 		}
+
+        ReloadBuffer();
+ 	}
+
  	void Text::SetText (const String& text)
  	{
  		text_ = text;
-
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
 
+    void Text::Erase(size_t index, size_t count)
+    {
+        text_.erase(index, count);
+
+        ReloadBuffer();
+    }
+    
  	void Text::SetFont(const Font& font)
  	{
  		if(font_ == font) return;
-
  		font_ = font;
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
- 		set_size(width, ascender_ - descender_);
+        ReloadBuffer();
  	}
+
+	size_t Text::GetTextWidth (size_t length, size_t start, bool count_kerning) const
+	{
+		size_t width = font_.GetTextWidth(text_, length, start);
+
+		if(count_kerning && font_.has_kerning()) {
+
+			int left_kerning = 0;
+			int right_kerning = 0;
+
+			if(start > 0) {
+				left_kerning = font_.GetKerning(text_[start - 1], text_[start]).x;
+			}
+
+			size_t last = start + length;
+			if(last < (text_.length() - 1)) {
+				right_kerning = font_.GetKerning(text_[last], text_[last + 1]).x;
+			}
+
+			width = width + left_kerning + right_kerning;
+		}
+
+		return width;
+	}
 
  	Text& Text::operator = (const Text& orig)
  	{
  		font_ = orig.font_;
  		text_ = orig.text_;
 
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+        ReloadBuffer();
 
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
-        set_size(width, ascender_ - descender_);
-
- 		return *this;
+        return *this;
  	}
 
  	Text& Text::operator = (const String& text)
  	{
  		text_ = text;
-
- 		int width;
- 		std::vector<GLfloat> verts;
-        GenerateTextVertices(verts, &width, &ascender_, &descender_);
-
-        vbo_.bind();
- 		vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
- 		vbo_.reset();
-
-        set_size(width, ascender_ - descender_);
-
+        ReloadBuffer();
  		return *this;
  	}
 
@@ -189,10 +202,6 @@ namespace BlendInt {
 		for(size_t i = 0; i < str_len; i++) {
 			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
 		}
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
  	}
 
  	void Text::Draw (float x, float y, size_t length, size_t start,
@@ -276,13 +285,97 @@ namespace BlendInt {
 
 			count++;
 		}
-
-		glBindVertexArray(0);
-		font_.release_texture();
-
-		GLSLProgram::reset();
 	}
 
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, const Color &color, short gamma) const
+    {
+        int retval = 0;
+        
+        if(width <= 0) return retval;
+
+        const Glyph* g = 0;
+        int max = 0;
+        size_t count = start;
+        Kerning kerning;
+        size_t i = 0;
+        size_t n = 0;
+        int ox = 0;
+
+        for(; (i < start) && (i < text_.length()); i++) {
+        	g = font_.glyph(text_[i]);
+
+            if(font_.has_kerning()) {
+
+            	n = i + 1;
+                if(n != text_.length()) {
+                    kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
+                    ox -= (g->advance_x + kerning.x);
+                } else {
+                	ox -= g->advance_x;
+                }
+
+            } else {
+            	ox -= g->advance_x;
+            }
+        }
+        
+        AbstractWindow::shaders->widget_text_program()->use();
+        
+        glActiveTexture(GL_TEXTURE0);
+        
+        font_.bind_texture();
+        
+        glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x + ox, y);
+        glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
+        glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+        
+        glBindVertexArray(vao_);
+
+        int tmp = 0;
+        while(i < text_.length()) {
+
+        	g = font_.glyph(text_[i]);
+
+        	if(count <= index) retval = tmp;
+
+            if(font_.has_kerning()) {
+
+            	n = i + 1;
+                if(n != text_.length()) {
+                    kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
+                    tmp += (g->advance_x + kerning.x);
+                } else {
+                    tmp += g->advance_x;
+                }
+
+            } else {
+                tmp += g->advance_x;
+            }
+
+            if (tmp > width) {
+            	break;
+            } else {
+            	max = tmp;
+            }
+
+            glDrawArrays(GL_TRIANGLE_STRIP, count * 4, 4);
+
+            i++;
+            count++;
+        }
+        
+        if(count <= index) retval = max;
+
+        return retval;
+    }
+
+    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, short gamma) const
+    {
+        Color color(0x000000FF);
+
+        return DrawWithCursor(x, y, index, start, width, color, gamma);
+    }
+    
     void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
     {
         size_t buf_size = text_.length() * 4 * 4;
@@ -378,5 +471,17 @@ namespace BlendInt {
     	if(ptr_descender) *ptr_descender = d;
     }
     
+    void Text::ReloadBuffer()
+    {
+        int width;
+        std::vector<GLfloat> verts;
+        GenerateTextVertices(verts, &width, &ascender_, &descender_);
+        
+        vbo_.bind();
+        vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
+        vbo_.reset();
+        
+        set_size(width, ascender_ - descender_);
+    }
+    
  }
-
