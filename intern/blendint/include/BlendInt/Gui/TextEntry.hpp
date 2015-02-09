@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		void DisposeRightPress ();
 
-		int GetCursorPosition (AbstractWindow* context);
+		size_t GetTextCursorIndex (AbstractWindow* context);
 
 		/**
 		 * @brief Vertex array objects
