@@ -23,6 +23,9 @@
 
 #pragma once
 
+#include <vector>
+#include <deque>
+
 #include <BlendInt/Gui/AbstractAdjustment.hpp>
 
 namespace BlendInt {
@@ -39,9 +42,36 @@ namespace BlendInt {
 
 	private:
 
+		void Scan ();
+
+		Size GetTotalPreferredSize () const;
+
+		void DistributeHorizontallyWithSmallWidth (int x, int width) const;
+
+		void DistributeHorizontallyWithPreferredWidth (int x, int width) const;
+
+		void DistributeHorizontallyWithLargeWidth (int x, int width) const;
+
+		void DistributeVerticallyWithSmallHeight () const;
+
+		void DistributeVerticallyWithPreferredHeight() const;
+
+		void DistributeVerticallyWithLargeHeight () const;
+
 		unsigned int row_;
+
 		unsigned int column_;
+
 		int space_;
+
+		std::vector<bool> column_expand_status_;
+		std::vector<bool> row_expand_status_;
+
+		std::vector<int> column_width_list_;
+		std::vector<int> row_height_list_;
+
+		bool expand_x_;
+		bool expand_y_;
 	};
 
 }

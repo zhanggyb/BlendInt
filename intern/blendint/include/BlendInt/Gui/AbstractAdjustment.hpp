@@ -49,22 +49,22 @@ namespace BlendInt {
 
 	protected:
 
-		inline void move (AbstractView* sub, int x, int y)
+		inline void move (AbstractView* sub, int x, int y) const
 		{
 			view_->MoveSubViewTo(sub, x, y);
 		}
 
-		inline void move (AbstractView* sub, const Point& point)
+		inline void move (AbstractView* sub, const Point& point) const
 		{
 			view_->MoveSubViewTo(sub, point);
 		}
 
-		inline void resize (AbstractView* sub, int width, int height)
+		inline void resize (AbstractView* sub, int width, int height) const
 		{
 			view_->ResizeSubView(sub, width, height);
 		}
 
-		inline void resize (AbstractView* sub, const Size& size)
+		inline void resize (AbstractView* sub, const Size& size) const
 		{
 			view_->ResizeSubView(sub, size);
 		}
