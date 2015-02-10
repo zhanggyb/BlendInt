@@ -105,32 +105,32 @@ namespace BlendInt {
 
 	}
 
-	ResponseType AbstractWidget::PerformKeyPress (AbstractWindow* context)
+	Response AbstractWidget::PerformKeyPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformContextMenuPress (AbstractWindow* context)
+	Response AbstractWidget::PerformContextMenuPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformContextMenuRelease (AbstractWindow* context)
+	Response AbstractWidget::PerformContextMenuRelease (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMousePress (AbstractWindow* context)
+	Response AbstractWidget::PerformMousePress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseRelease (AbstractWindow* context)
+	Response AbstractWidget::PerformMouseRelease (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWidget::PerformMouseMove (AbstractWindow* context)
+	Response AbstractWidget::PerformMouseMove (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

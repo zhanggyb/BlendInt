@@ -224,7 +224,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType ScrollBar::Draw (AbstractWindow* context)
+	Response ScrollBar::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -281,7 +281,7 @@ namespace BlendInt {
 		*/
 	}
 
-	ResponseType ScrollBar::PerformMousePress (AbstractWindow* context)
+	Response ScrollBar::PerformMousePress (AbstractWindow* context)
 	{
 		Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 
@@ -298,7 +298,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ScrollBar::PerformMouseMove (AbstractWindow* context)
+	Response ScrollBar::PerformMouseMove (AbstractWindow* context)
 	{
 		if (pressed_ext()) {
 
@@ -330,7 +330,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ScrollBar::PerformMouseRelease (AbstractWindow* context)
+	Response ScrollBar::PerformMouseRelease (AbstractWindow* context)
 	{
 		if (pressed_ext()) {
 

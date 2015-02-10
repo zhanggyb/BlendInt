@@ -100,7 +100,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType MenuItem::Draw(AbstractWindow* context)
+	Response MenuItem::Draw(AbstractWindow* context)
 	{
 		// Menu Icon only show itself
 		if(action_->icon()) {

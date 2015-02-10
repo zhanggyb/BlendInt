@@ -109,34 +109,34 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType AbstractNode::PerformKeyPress (AbstractWindow* context)
+	Response AbstractNode::PerformKeyPress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformContextMenuPress (
+	Response AbstractNode::PerformContextMenuPress (
 	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformContextMenuRelease (
+	Response AbstractNode::PerformContextMenuRelease (
 	        AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMousePress (AbstractWindow* context)
+	Response AbstractNode::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseRelease (AbstractWindow* context)
+	Response AbstractNode::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType AbstractNode::PerformMouseMove (AbstractWindow* context)
+	Response AbstractNode::PerformMouseMove (AbstractWindow* context)
 	{
 		return Ignore;
 	}

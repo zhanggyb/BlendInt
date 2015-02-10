@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		virtual void PerformEmbossUpdate (bool emboss);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		inline void set_round_type (int type)
 		{

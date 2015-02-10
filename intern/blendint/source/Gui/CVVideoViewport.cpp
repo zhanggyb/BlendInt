@@ -253,7 +253,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType CVVideoViewport::Draw(AbstractWindow* context)
+	Response CVVideoViewport::Draw(AbstractWindow* context)
 	{
 		if(status_ == VideoStop) {
 			return Finish;

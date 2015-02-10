@@ -186,7 +186,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ComboBox::Draw(AbstractWindow* context)
+	Response ComboBox::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -243,7 +243,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::PerformMousePress (AbstractWindow* context)
+	Response ComboBox::PerformMousePress (AbstractWindow* context)
 	{
 		status_down_ = true;
 
@@ -304,7 +304,7 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	ResponseType ComboBox::PerformMouseRelease (AbstractWindow* context)
+	Response ComboBox::PerformMouseRelease (AbstractWindow* context)
 	{
 		status_down_ = false;
 

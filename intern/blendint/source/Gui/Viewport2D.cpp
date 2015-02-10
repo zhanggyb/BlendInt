@@ -103,7 +103,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport2D::Draw(AbstractWindow* context)
+	Response Viewport2D::Draw(AbstractWindow* context)
 	{
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
         GLint vp[4];	// Original viewport

@@ -84,11 +84,11 @@ namespace BlendInt {
         
         virtual void PerformHoverOut (AbstractWindow* context);
         
-		virtual ResponseType PerformKeyPress (AbstractWindow* context);
+		virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-        virtual ResponseType Draw (AbstractWindow* context);
+        virtual Response Draw (AbstractWindow* context);
         
 	private:
 

@@ -79,7 +79,7 @@ namespace BlendInt {
 		return Size(160, 160);
 	}
 
-	ResponseType ColorWheel::Draw (AbstractWindow* context)
+	Response ColorWheel::Draw (AbstractWindow* context)
 	{
 		RefPtr<GLSLProgram> program =
 						AbstractWindow::shaders->widget_triangle_program();

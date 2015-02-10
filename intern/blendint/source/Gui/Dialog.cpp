@@ -227,7 +227,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Dialog::Draw(AbstractWindow* context)
+	Response Dialog::Draw(AbstractWindow* context)
 	{
     	shadow_->Draw(position().x(), position().y());
 

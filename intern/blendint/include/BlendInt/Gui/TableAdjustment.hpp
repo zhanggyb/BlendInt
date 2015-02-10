@@ -21,56 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_VIEWPORT2D_HPP_
-#define _BLENDINT_GUI_VIEWPORT2D_HPP_
+#pragma once
 
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/OrthoCamera.hpp>
-
-#include <BlendInt/Gui/GridFloor.hpp>
+#include <BlendInt/Gui/AbstractAdjustment.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special viewport with a OrthoCamera
-	 */
-	class Viewport2D: public Widget
+	class TableAdjustment: public AbstractAdjustment
 	{
-		DISALLOW_COPY_AND_ASSIGN(Viewport2D);
-
 	public:
 
-		Viewport2D ();
+		TableAdjustment (AbstractView* view, unsigned int row, unsigned int column, int space);
 
-		virtual ~Viewport2D ();
+		virtual ~TableAdjustment ();
 
-		virtual Size GetPreferredSize () const;
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual Response Draw (AbstractWindow* context);
+		virtual void Adjust (int x, int y, int w, int h);
 
 	private:
 
-		void InitializeViewport2D ();
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
-
-		OrthoCamera camera_;
-
-		GridFloor* gridfloor_;
-
-		static const float camera_factor;
+		unsigned int row_;
+		unsigned int column_;
+		int space_;
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_VIEWPORT2D_HPP_ */

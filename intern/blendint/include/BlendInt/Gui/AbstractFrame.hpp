@@ -61,19 +61,19 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
+		virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
+		virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (AbstractWindow* context) = 0;
+		virtual Response DispatchHoverEvent (AbstractWindow* context) = 0;
 
-		ResponseType DispatchKeyEvent (AbstractView* view, AbstractWindow* context);
+		Response DispatchKeyEvent (AbstractView* view, AbstractWindow* context);
 
 		AbstractView* DispatchMousePressEvent (AbstractView* view, AbstractWindow* context);
 
-		ResponseType DispatchMouseMoveEvent (AbstractView* view, AbstractWindow* context);
+		Response DispatchMouseMoveEvent (AbstractView* view, AbstractWindow* context);
 
-		ResponseType DispatchMouseReleaseEvent (AbstractView* view, AbstractWindow* context);
+		Response DispatchMouseReleaseEvent (AbstractView* view, AbstractWindow* context);
 
 		AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig, AbstractWindow* context);
 
@@ -90,22 +90,22 @@ namespace BlendInt {
 			return events_;
 		}
 
-		static inline ResponseType delegate_key_press_event (AbstractView* view, AbstractWindow* context)
+		static inline Response delegate_key_press_event (AbstractView* view, AbstractWindow* context)
 		{
 			return view->PerformKeyPress(context);
 		}
 
-		static inline ResponseType delegate_mouse_press_event (AbstractView* view, AbstractWindow* context)
+		static inline Response delegate_mouse_press_event (AbstractView* view, AbstractWindow* context)
 		{
 			return view->PerformMousePress(context);
 		}
 
-		static inline ResponseType delegate_mouse_release_event(AbstractView* view, AbstractWindow* context)
+		static inline Response delegate_mouse_release_event(AbstractView* view, AbstractWindow* context)
 		{
 			return view->PerformMouseRelease(context);
 		}
 
-		static inline ResponseType delegate_mouse_move_event(AbstractView* view, AbstractWindow* context)
+		static inline Response delegate_mouse_move_event(AbstractView* view, AbstractWindow* context)
 		{
 			return view->PerformMouseMove(context);
 		}
@@ -139,7 +139,7 @@ namespace BlendInt {
 			view->PerformHoverOut(context);
 		}
 
-		static inline ResponseType delegate_dispatch_hover_event(AbstractFrame* frame, AbstractWindow* context)
+		static inline Response delegate_dispatch_hover_event(AbstractFrame* frame, AbstractWindow* context)
 		{
 			return frame->DispatchHoverEvent(context);
 		}

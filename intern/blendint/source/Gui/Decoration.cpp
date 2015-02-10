@@ -124,7 +124,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Decoration::Draw (AbstractWindow* context)
+	Response Decoration::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

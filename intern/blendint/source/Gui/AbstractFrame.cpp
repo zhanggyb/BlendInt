@@ -118,23 +118,23 @@ namespace BlendInt {
 		return frame;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuPress (AbstractWindow* context)
+	Response AbstractFrame::PerformContextMenuPress (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::PerformContextMenuRelease (AbstractWindow* context)
+	Response AbstractFrame::PerformContextMenuRelease (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractFrame::DispatchKeyEvent(AbstractView* subview, AbstractWindow* context)
+	Response AbstractFrame::DispatchKeyEvent(AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
 		} else {
 
-			ResponseType response = Ignore;
+			Response response = Ignore;
 
 			if(subview->superview ()) {
 				response = DispatchKeyEvent(subview->superview(), context);
@@ -157,7 +157,7 @@ namespace BlendInt {
 			return 0;
 		} else {
 
-			ResponseType response = Ignore;
+			Response response = Ignore;
 			AbstractView* ret_val = 0;
 
 			if(subview->superview ()) {
@@ -182,7 +182,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, AbstractWindow* context)
+	Response AbstractFrame::DispatchMouseMoveEvent(AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {
 			return Ignore;
@@ -202,7 +202,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType AbstractFrame::DispatchMouseReleaseEvent(
+	Response AbstractFrame::DispatchMouseReleaseEvent(
 			AbstractView* subview, AbstractWindow* context)
 	{
 		if(subview == this) {

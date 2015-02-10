@@ -74,7 +74,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	ResponseType ListView::Draw (AbstractWindow* context)
+	Response ListView::Draw (AbstractWindow* context)
 	{
 		AbstractWindow* c = const_cast<AbstractWindow*>(context);
 
@@ -154,7 +154,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ListView::PerformMousePress (AbstractWindow* context)
+	Response ListView::PerformMousePress (AbstractWindow* context)
 	{
 		if(model_) {
 

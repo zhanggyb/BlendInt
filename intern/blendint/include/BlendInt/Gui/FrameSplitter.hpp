@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		virtual void PostDraw (AbstractWindow* context);
 
@@ -67,19 +67,19 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (AbstractWindow* context);
+		virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuPress (AbstractWindow* context);
+		virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context);
+		virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
+		virtual Response DispatchHoverEvent (AbstractWindow* context);
 
 	private:
 
@@ -133,7 +133,7 @@ namespace BlendInt {
 
 		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		virtual void PostDraw (AbstractWindow* context);
 
@@ -145,15 +145,15 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (AbstractWindow* context);
+		virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
+		virtual Response DispatchHoverEvent (AbstractWindow* context);
 
 		virtual bool RemoveSubView (AbstractView* view);
 

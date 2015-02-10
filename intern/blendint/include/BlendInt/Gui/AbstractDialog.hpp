@@ -68,17 +68,17 @@ namespace BlendInt {
 
     protected:
         
-		virtual ResponseType Draw (AbstractWindow* context) = 0;
+		virtual Response Draw (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformKeyPress (AbstractWindow* context);
+		virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual ResponseType DispatchHoverEvent (AbstractWindow* context);
+		virtual Response DispatchHoverEvent (AbstractWindow* context);
 
 		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 

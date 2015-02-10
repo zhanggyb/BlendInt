@@ -37,6 +37,8 @@
 #include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/FileButton.hpp>
+#include <BlendInt/Gui/TableLayout.hpp>
+#include <BlendInt/Gui/ScrollBar.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -50,23 +52,25 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		Dialog* dlg = new Dialog("Test TextEntry", Dialog::DialogButtonOK);
+		Dialog* dlg = new Dialog("Test TableLayout", Dialog::DialogButtonOK);
 
-		TextEntry* t = new TextEntry;
+		Button* b1 = new Button("Button1");
+		Button* b2 = new Button("Button2");
+		Button* b3 = new Button("Button3");
 
-		//String text(L"0123456789");
+		TableLayout* layout = new TableLayout(2, 2);
+		layout->InsertWidget(0, 0, b1);
+		layout->InsertWidget(0, 1, b2);
+		layout->InsertWidget(1, 0, b3);
+		//layout->InsertWidget(1, 1, b4);
 
-		//t->SetText(text);
-
-		dlg->AddWidget(t);
-		win.AddFrame(dlg);
-
-		FileButton* btn = new FileButton;
-		dlg->AddWidget(btn);
+		dlg->AddWidget(layout);
 
 		dlg->Resize(dlg->GetPreferredSize());
 		dlg->MoveTo((win.size().width() - dlg->size().width()) / 2,
 		        (win.size().height() - dlg->size().height()) / 2);
+
+		win.AddFrame(dlg);
 
 		win.Exec();
 

@@ -299,7 +299,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ToolBox::Draw (AbstractWindow* context)
+	Response ToolBox::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->frame_inner_program()->use();
 
@@ -371,11 +371,11 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType ToolBox::PerformKeyPress (AbstractWindow* context)
+	Response ToolBox::PerformKeyPress (AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		if(focused_widget_) {
 			delegate_key_press_event(focused_widget_, context);
@@ -384,7 +384,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType ToolBox::PerformMousePress (AbstractWindow* context)
+	Response ToolBox::PerformMousePress (AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
 
@@ -415,7 +415,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType ToolBox::PerformMouseRelease (AbstractWindow* context)
+	Response ToolBox::PerformMouseRelease (AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
 		set_pressed(false);
@@ -428,9 +428,9 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType ToolBox::PerformMouseMove (AbstractWindow* context)
+	Response ToolBox::PerformMouseMove (AbstractWindow* context)
 	{
-		ResponseType retval = Ignore;
+		Response retval = Ignore;
 
 		if(focused_widget_) {
 			const_cast<AbstractWindow*>(context)->register_active_frame(this);
@@ -440,7 +440,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType ToolBox::DispatchHoverEvent (AbstractWindow* context)
+	Response ToolBox::DispatchHoverEvent (AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 

@@ -102,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType EdgeButton::Draw(AbstractWindow* context)
+	Response EdgeButton::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -379,7 +379,7 @@ namespace BlendInt {
 		return visiable();
 	}
 
-	ResponseType Workspace::Draw (AbstractWindow* context)
+	Response Workspace::Draw (AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
@@ -410,7 +410,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Workspace::PerformKeyPress(AbstractWindow* context)
+	Response Workspace::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -418,9 +418,9 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType Workspace::PerformMousePress(AbstractWindow* context)
+	Response Workspace::PerformMousePress(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		set_pressed(true);
 
 		if(hover_frame_ != nullptr) {
@@ -436,9 +436,9 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Workspace::PerformMouseRelease(AbstractWindow* context)
+	Response Workspace::PerformMouseRelease(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		set_pressed(false);
 
 		if(focused_frame_ != nullptr) {
@@ -448,9 +448,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::PerformMouseMove(AbstractWindow* context)
+	Response Workspace::PerformMouseMove(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		if(pressed_ext() && focused_frame_) {
 			response = delegate_mouse_move_event(focused_frame_, context);
@@ -459,11 +459,11 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType Workspace::DispatchHoverEvent(AbstractWindow* context)
+	Response Workspace::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 
-			ResponseType response = Finish;
+			Response response = Finish;
 			SetHoveredFrame(context);
 			if(hover_frame_ != nullptr) {
 				response = delegate_dispatch_hover_event(hover_frame_, context);

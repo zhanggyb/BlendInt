@@ -64,7 +64,7 @@ namespace BlendInt {
 		return visiable();
 	}
 
-	ResponseType Frame::Draw (AbstractWindow* context)
+	Response Frame::Draw (AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
@@ -93,37 +93,37 @@ namespace BlendInt {
 	{
 	}
 
-    ResponseType Frame::PerformContextMenuPress (AbstractWindow* context)
+    Response Frame::PerformContextMenuPress (AbstractWindow* context)
     {
         return Ignore;
     }
     
-    ResponseType Frame::PerformContextMenuRelease (AbstractWindow* context)
+    Response Frame::PerformContextMenuRelease (AbstractWindow* context)
     {
         return Ignore;
     }
 
-	ResponseType Frame::PerformKeyPress(AbstractWindow* context)
+	Response Frame::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::PerformMousePress(AbstractWindow* context)
+	Response Frame::PerformMousePress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::PerformMouseRelease(AbstractWindow* context)
+	Response Frame::PerformMouseRelease(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::PerformMouseMove(AbstractWindow* context)
+	Response Frame::PerformMouseMove(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Frame::DispatchHoverEvent(AbstractWindow* context)
+	Response Frame::DispatchHoverEvent(AbstractWindow* context)
 	{
 		return Ignore;
 	}

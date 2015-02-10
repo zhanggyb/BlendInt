@@ -103,7 +103,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	ResponseType FrameSplitterHandle::Draw(AbstractWindow* context)
+	Response FrameSplitterHandle::Draw(AbstractWindow* context)
 	{
 		return Finish;
 	}
@@ -122,24 +122,24 @@ namespace BlendInt {
 
 	}
 
-	ResponseType FrameSplitterHandle::PerformKeyPress(AbstractWindow* context)
+	Response FrameSplitterHandle::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::PerformContextMenuPress(
+	Response FrameSplitterHandle::PerformContextMenuPress(
 			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::PerformContextMenuRelease(
+	Response FrameSplitterHandle::PerformContextMenuRelease(
 			AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType FrameSplitterHandle::PerformMousePress(
+	Response FrameSplitterHandle::PerformMousePress(
 			AbstractWindow* context)
 	{
 		last_ = position();
@@ -160,7 +160,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitterHandle::PerformMouseRelease(
+	Response FrameSplitterHandle::PerformMouseRelease(
 			AbstractWindow* context)
 	{
 		if(!hover()) {
@@ -191,7 +191,7 @@ namespace BlendInt {
 		//RequestRedraw();
 	}
 
-	ResponseType FrameSplitterHandle::DispatchHoverEvent(AbstractWindow* context)
+	Response FrameSplitterHandle::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -200,7 +200,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitterHandle::PerformMouseMove(AbstractWindow* context)
+	Response FrameSplitterHandle::PerformMouseMove(AbstractWindow* context)
 	{
 		if(pressed_ext()) {
 
@@ -344,7 +344,7 @@ namespace BlendInt {
 
 		index = index * 2;
 
-		return dynamic_cast<AbstractFrame*>(GetWidgetAt(index));
+		return dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
 	}
 
 	FrameSplitterHandle* FrameSplitter::GetHandle (int index) const
@@ -356,7 +356,7 @@ namespace BlendInt {
 
 		index = index * 2 + 1;
 
-		return dynamic_cast<FrameSplitterHandle*>(GetWidgetAt(index));
+		return dynamic_cast<FrameSplitterHandle*>(GetSubViewAt(index));
 	}
 
 	int FrameSplitter::GetFramesCount () const
@@ -474,7 +474,7 @@ namespace BlendInt {
 		return visiable();
 	}
 
-	ResponseType FrameSplitter::Draw(AbstractWindow* context)
+	Response FrameSplitter::Draw(AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
@@ -560,7 +560,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FrameSplitter::PerformKeyPress(AbstractWindow* context)
+	Response FrameSplitter::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
 			return delegate_key_press_event(focused_frame_, context);
@@ -569,9 +569,9 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType FrameSplitter::PerformMousePress(AbstractWindow* context)
+	Response FrameSplitter::PerformMousePress(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		set_pressed(true);
 
 		if(hover_frame_ != nullptr) {
@@ -587,9 +587,9 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType FrameSplitter::PerformMouseRelease(AbstractWindow* context)
+	Response FrameSplitter::PerformMouseRelease(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		set_pressed(false);
 
 		if(focused_frame_ != nullptr) {
@@ -599,9 +599,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::PerformMouseMove(AbstractWindow* context)
+	Response FrameSplitter::PerformMouseMove(AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		if(pressed_ext() && focused_frame_) {
 			response = delegate_mouse_move_event(focused_frame_, context);
@@ -610,11 +610,11 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType FrameSplitter::DispatchHoverEvent(AbstractWindow* context)
+	Response FrameSplitter::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 
-			ResponseType response = Finish;
+			Response response = Finish;
 			SetHoveredFrame(context);
 			if(hover_frame_ != nullptr) {
 				response = delegate_dispatch_hover_event(hover_frame_, context);

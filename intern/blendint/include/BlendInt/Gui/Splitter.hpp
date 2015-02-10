@@ -58,17 +58,17 @@ namespace BlendInt
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		virtual void PerformHoverIn (AbstractWindow* context);
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
 	private:
 

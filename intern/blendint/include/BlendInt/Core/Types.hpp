@@ -136,7 +136,7 @@ namespace BlendInt {
 	/**
 	 * TODO: use bool
 	 */
-	enum ResponseType {
+	enum Response {
 		Ignore = 0,
 		Finish = (1 << 0)
 	};

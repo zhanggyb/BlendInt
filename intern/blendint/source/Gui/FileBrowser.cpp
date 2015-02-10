@@ -213,7 +213,7 @@ namespace BlendInt {
 		return index;
 	}
 
-	ResponseType FileBrowser::Draw (AbstractWindow* context)
+	Response FileBrowser::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 
@@ -351,7 +351,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType FileBrowser::PerformMousePress (AbstractWindow* context)
+	Response FileBrowser::PerformMousePress (AbstractWindow* context)
 	{
 		ModelIndex index;
 

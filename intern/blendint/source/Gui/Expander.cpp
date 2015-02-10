@@ -96,7 +96,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ExpandButton::Draw (AbstractWindow* context)
+	Response ExpandButton::Draw (AbstractWindow* context)
 	{
 		float rotate = 0.f;
 		if(is_checked()) {
@@ -217,7 +217,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
 		frame->AddWidget(widget);
 		return true;
 	}
@@ -279,7 +279,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	ResponseType Expander::Draw (AbstractWindow* context)
+	Response Expander::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
@@ -299,8 +299,8 @@ namespace BlendInt {
 					int height)
 	{
 		int button_preferred_height = 0;
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -334,20 +334,20 @@ namespace BlendInt {
 	
 	void Expander::SetTitle (const String& text)
 	{
-		dynamic_cast<ExpandButton*>(GetWidgetAt(0))->SetText(text);
+		dynamic_cast<ExpandButton*>(GetSubViewAt(0))->SetText(text);
 	}
 
 	const String& Expander::GetTitle () const
 	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
 
 		return button->text()->text();
 	}
 	
 	void Expander::OnToggled (AbstractButton* sender, bool toggle)
 	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetWidgetAt(0));
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetWidgetAt(1));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
+		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
 
 		if(toggle) {
 			int x = position().x();

@@ -255,7 +255,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType TextureView::Draw (AbstractWindow* context)
+	Response TextureView::Draw (AbstractWindow* context)
 	{
 		float x = (size().width() - image_size_.width()) / 2.f;
 		float y = (size().height() - image_size_.height()) / 2.f;

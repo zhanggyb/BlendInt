@@ -458,7 +458,7 @@ namespace BlendInt {
 			set_refresh(false);	// allow pass to superview in RequestRedraw()
 			if (p->PreDraw(context)) {
 
-				ResponseType response = p->Draw(context);
+				Response response = p->Draw(context);
 				p->set_refresh(refresh());
 
 				if(response == Ignore) {
@@ -486,7 +486,7 @@ namespace BlendInt {
 
 		if (widget->PreDraw(context)) {
 
-			ResponseType response = widget->Draw(context);
+			Response response = widget->Draw(context);
 			widget->set_refresh(widget->superview_->refresh());
 
 			if(response == Ignore) {
@@ -1673,7 +1673,7 @@ namespace BlendInt {
 		return widget;
 	}
 
-	AbstractView* AbstractView::GetWidgetAt(int i) const
+	AbstractView* AbstractView::GetSubViewAt(int i) const
 	{
 		if((i < 0) || (i >= subs_count_)) return 0;
 

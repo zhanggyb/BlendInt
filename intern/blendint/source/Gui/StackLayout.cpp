@@ -140,7 +140,7 @@ namespace BlendInt {
 
 		if(count) {
 
-			AbstractView* widget = GetWidgetAt(index);
+			AbstractView* widget = GetSubViewAt(index);
 			if(active_widget_ == widget) {
 				return;
 			}
@@ -240,7 +240,7 @@ namespace BlendInt {
 	void BlendInt::StackLayout::HideSubWidget (int index)
 	{
 		if(subs_count() && index < (subs_count() - 1)) {
-			AbstractView* p = GetWidgetAt(index);
+			AbstractView* p = GetSubViewAt(index);
 			p->SetVisible(false);
 		}
 	}

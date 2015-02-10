@@ -25,7 +25,6 @@
 
 #include <deque>
 
-#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/AbstractAdjustment.hpp>
 
 namespace BlendInt {

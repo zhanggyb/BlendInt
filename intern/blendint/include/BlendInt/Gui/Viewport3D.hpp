@@ -71,19 +71,19 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformKeyPress (AbstractWindow* context);
+		virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
 		virtual void Render ();
 
 	private:
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		void InitializeViewport3DOnce ();
 

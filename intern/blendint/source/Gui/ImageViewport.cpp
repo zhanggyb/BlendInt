@@ -315,7 +315,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ImageViewport::Draw (AbstractWindow* context)
+	Response ImageViewport::Draw (AbstractWindow* context)
 	{
 		if(texture_ && glIsTexture(texture_->id())) {
 

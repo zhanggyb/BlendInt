@@ -41,7 +41,7 @@ namespace BlendInt {
 		PerformMarginUpdate(margin);
 	}
 
-	ResponseType BlendInt::AbstractLayout::Draw(AbstractWindow* context)
+	Response BlendInt::AbstractLayout::Draw(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

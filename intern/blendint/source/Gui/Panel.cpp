@@ -261,7 +261,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Panel::Draw (AbstractWindow* context)
+	Response Panel::Draw (AbstractWindow* context)
 	{
 		if(refresh()) {
 			//DBG_PRINT_MSG("%s", "refresh once");

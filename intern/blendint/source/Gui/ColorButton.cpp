@@ -121,7 +121,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType ColorButton::Draw (AbstractWindow* context)
+	Response ColorButton::Draw (AbstractWindow* context)
 	{
 		Point pos = context->active_frame()->GetAbsolutePosition(this);
 

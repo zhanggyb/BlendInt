@@ -269,7 +269,7 @@ namespace BlendInt {
 
 		AbstractView* operator [] (int i) const;
 
-		AbstractView* GetWidgetAt (int i) const;
+		AbstractView* GetSubViewAt (int i) const;
 
 		const Point& position () const
 		{
@@ -512,7 +512,7 @@ namespace BlendInt {
 
 		virtual bool PreDraw (AbstractWindow* context) = 0;
 
-		virtual ResponseType Draw (AbstractWindow* context) = 0;
+		virtual Response Draw (AbstractWindow* context) = 0;
 
 		virtual void PostDraw (AbstractWindow* context) = 0;
 
@@ -524,17 +524,17 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformKeyPress (AbstractWindow* context) = 0;
+		virtual Response PerformKeyPress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuPress (AbstractWindow* context) = 0;
+		virtual Response PerformContextMenuPress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformContextMenuRelease (AbstractWindow* context) = 0;
+		virtual Response PerformContextMenuRelease (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context) = 0;
+		virtual Response PerformMousePress (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context) = 0;
+		virtual Response PerformMouseRelease (AbstractWindow* context) = 0;
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context) = 0;
+		virtual Response PerformMouseMove (AbstractWindow* context) = 0;
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 

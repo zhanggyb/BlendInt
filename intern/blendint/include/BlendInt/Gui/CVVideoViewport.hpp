@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CVVIDEOVIEW_HPP_
-#define _BLENDINT_GUI_CVVIDEOVIEW_HPP_
+#pragma once
 
 // generate makefile with cmake -DENABLE_OPENCV to activate
 #ifdef __USE_OPENCV__
@@ -75,7 +74,7 @@ namespace BlendInt {
 
 		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 		virtual void PostDraw (AbstractWindow* context);
 
@@ -121,5 +120,3 @@ namespace BlendInt {
 }
 
 #endif	// __USE_OPENCV__
-
-#endif /* _BLENDINT_GUI_CVVIDEOVIEW_HPP_ */

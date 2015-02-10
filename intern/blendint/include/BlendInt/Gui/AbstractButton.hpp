@@ -98,17 +98,17 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (AbstractWindow* context) = 0;
+		virtual Response Draw (AbstractWindow* context) = 0;
 
 		virtual void PerformHoverIn (AbstractWindow* context);
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType PerformMousePress (AbstractWindow* context);
+		virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseRelease (AbstractWindow* context);
+		virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual ResponseType PerformMouseMove (AbstractWindow* context);
+		virtual Response PerformMouseMove (AbstractWindow* context);
 
 		void DrawIconText ();
 

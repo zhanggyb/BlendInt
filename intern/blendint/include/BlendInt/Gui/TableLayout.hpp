@@ -21,12 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TABLELAYOUT_HPP_
-#define _BLENDINT_GUI_TABLELAYOUT_HPP_
+#pragma once
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
+
+	/**
+	 * @brief A special widget used in some layout. e.g. TableLayout
+	 */
+	class Cell: public AbstractWidget
+	{
+	public:
+
+		Cell ();
+
+		virtual ~Cell ();
+
+		void SetWidget (AbstractWidget* widget);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual Response Draw (AbstractWindow* context);
+
+	};
+
+	// ------------------------------------
 
 	class TableLayout: public AbstractLayout
 	{
@@ -40,7 +68,17 @@ namespace BlendInt {
 
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+		void UpdateLayout ();
+
 	protected:
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformMarginUpdate (const Margin& margin);
 
@@ -53,5 +91,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_TABLELAYOUT_HPP_ */

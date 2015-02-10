@@ -252,7 +252,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollView::Draw (AbstractWindow* context)
+	Response ScrollView::Draw (AbstractWindow* context)
 	{
 		if(subs_count()) {
 
@@ -296,7 +296,7 @@ namespace BlendInt {
 		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
-	ResponseType ScrollView::PerformMousePress (AbstractWindow* context)
+	Response ScrollView::PerformMousePress (AbstractWindow* context)
 	{
 		if (context->GetMouseButton() == MouseButtonMiddle) {
 			moving_ = true;
@@ -309,7 +309,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseRelease(AbstractWindow* context)
+	Response ScrollView::PerformMouseRelease(AbstractWindow* context)
 	{
 		if(moving_) {
 			moving_ = false;
@@ -319,7 +319,7 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType ScrollView::PerformMouseMove(AbstractWindow* context)
+	Response ScrollView::PerformMouseMove(AbstractWindow* context)
 	{
 		if(moving_) {
 

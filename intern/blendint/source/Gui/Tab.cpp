@@ -58,8 +58,8 @@ namespace BlendInt {
 		DBG_SET_NAME(btn, ConvertFromString(title).c_str());
 		btn->SetText(title);
 
-		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
-		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
+		TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
+		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
 		header->AddButton(btn);
 		stack->AddWidget(widget);
@@ -71,10 +71,10 @@ namespace BlendInt {
 
 	bool Tab::IsExpandX () const
 	{
-		if(GetWidgetAt(0)->IsExpandX())
+		if(GetSubViewAt(0)->IsExpandX())
 			return true;
 
-		if(GetWidgetAt(1)->IsExpandX())
+		if(GetSubViewAt(1)->IsExpandX())
 			return true;
 
 		return false;
@@ -82,10 +82,10 @@ namespace BlendInt {
 
 	bool Tab::IsEXpandY () const
 	{
-		if(GetWidgetAt(0)->IsExpandY())
+		if(GetSubViewAt(0)->IsExpandY())
 			return true;
 
-		if(GetWidgetAt(1)->IsExpandY())
+		if(GetSubViewAt(1)->IsExpandY())
 			return true;
 
 		return false;
@@ -96,8 +96,8 @@ namespace BlendInt {
 		int w = 0;
 		int h = 0;
 
-		Size tmp1 = GetWidgetAt(0)->GetPreferredSize();
-		Size tmp2 = GetWidgetAt(1)->GetPreferredSize();
+		Size tmp1 = GetSubViewAt(0)->GetPreferredSize();
+		Size tmp2 = GetSubViewAt(1)->GetPreferredSize();
 
 		w = std::max(tmp1.width(), tmp2.width());
 		h = tmp1.height() + tmp2.height();
@@ -107,7 +107,7 @@ namespace BlendInt {
 
 	int Tab::GetIndex() const
 	{
-		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
 		return stack->GetIndex();
 	}
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
-		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
+		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
 		stack->SetIndex(index);
 		RequestRedraw();
@@ -146,8 +146,8 @@ namespace BlendInt {
 	{
 		int header_y = h;
 
-		TabHeader* header = dynamic_cast<TabHeader*>(GetWidgetAt(0));
-		Stack* stack = dynamic_cast<Stack*>(GetWidgetAt(1));
+		TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
+		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
 		Size header_size = header->GetPreferredSize();
 

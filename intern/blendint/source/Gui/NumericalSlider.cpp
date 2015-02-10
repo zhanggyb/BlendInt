@@ -226,7 +226,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 	
-	ResponseType NumericalSlider::Draw (AbstractWindow* context)
+	Response NumericalSlider::Draw (AbstractWindow* context)
 	{
 		float x = context->active_frame()->GetRelativePosition(this).x()
 				- context->viewport_origin().x();

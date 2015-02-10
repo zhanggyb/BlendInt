@@ -209,7 +209,7 @@ namespace BlendInt {
 		FillInVBlock(x, y, w, h);
 	}
 
-	ResponseType Block::Draw (AbstractWindow* context)
+	Response Block::Draw (AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

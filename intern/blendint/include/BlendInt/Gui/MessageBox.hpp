@@ -49,7 +49,7 @@ namespace BlendInt {
 
 		virtual bool PreDraw (AbstractWindow* context);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
     private:
 

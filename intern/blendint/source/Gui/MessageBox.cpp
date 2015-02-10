@@ -188,7 +188,7 @@ namespace BlendInt {
 		return true;
     }
 
-    ResponseType BlendInt::MessageBox::Draw (AbstractWindow* context)
+    Response BlendInt::MessageBox::Draw (AbstractWindow* context)
     {
     	shadow_->Draw(position().x(), position().y());
 

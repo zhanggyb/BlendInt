@@ -142,22 +142,22 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Label::PerformMousePress (AbstractWindow* context)
+	Response Label::PerformMousePress (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseRelease (AbstractWindow* context)
+	Response Label::PerformMouseRelease (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::PerformMouseMove (AbstractWindow* context)
+	Response Label::PerformMouseMove (AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	ResponseType Label::Draw (AbstractWindow* context)
+	Response Label::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

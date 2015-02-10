@@ -64,10 +64,10 @@ namespace BlendInt {
 		}
     }
 
-	ResponseType AbstractDialog::PerformKeyPress (
+	Response AbstractDialog::PerformKeyPress (
 	        AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		if(context->GetKeyInput() == Key_Escape) {
 			RequestRedraw();
@@ -83,7 +83,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractDialog::PerformMousePress (
+	Response AbstractDialog::PerformMousePress (
 	        AbstractWindow* context)
 	{
 		const_cast<AbstractWindow*>(context)->register_active_frame(this);
@@ -134,7 +134,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType AbstractDialog::PerformMouseRelease (
+	Response AbstractDialog::PerformMouseRelease (
 	        AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
@@ -148,10 +148,10 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType AbstractDialog::PerformMouseMove (
+	Response AbstractDialog::PerformMouseMove (
 	        AbstractWindow* context)
 	{
-		ResponseType retval = Ignore;
+		Response retval = Ignore;
 
 		if(mouse_button_pressed()) {
 
@@ -235,12 +235,12 @@ namespace BlendInt {
 		return retval;
 	}
 
-	ResponseType AbstractDialog::DispatchHoverEvent (
+	Response AbstractDialog::DispatchHoverEvent (
 	        AbstractWindow* context)
 	{
 		if(mouse_button_pressed()) return Finish;
 
-		ResponseType retval = Finish;
+		Response retval = Finish;
 		int border = 4;
 
 		Rect valid_rect(position().x() - border, position().y() - border,

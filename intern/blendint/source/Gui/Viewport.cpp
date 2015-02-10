@@ -72,7 +72,7 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	ResponseType Viewport::DispatchHoverEvent(AbstractWindow* context)
+	Response Viewport::DispatchHoverEvent(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -141,7 +141,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Viewport::PerformKeyPress(AbstractWindow* context)
+	Response Viewport::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
@@ -156,17 +156,17 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType Viewport::PerformMousePress(AbstractWindow* context)
+	Response Viewport::PerformMousePress(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseRelease(AbstractWindow* context)
+	Response Viewport::PerformMouseRelease(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType Viewport::PerformMouseMove(AbstractWindow* context)
+	Response Viewport::PerformMouseMove(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
@@ -188,7 +188,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType Viewport::Draw(AbstractWindow* context)
+	Response Viewport::Draw(AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

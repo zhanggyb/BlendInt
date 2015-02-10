@@ -74,7 +74,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ScrollArea::Draw (AbstractWindow* context)
+	Response ScrollArea::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

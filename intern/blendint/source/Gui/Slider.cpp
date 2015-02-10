@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType Slider::Draw (AbstractWindow* context)
+	Response Slider::Draw (AbstractWindow* context)
 	{
 		// ----- draw line
 
@@ -189,7 +189,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType Slider::PerformMouseMove (AbstractWindow* context)
+	Response Slider::PerformMouseMove (AbstractWindow* context)
 	{
 		if(m_pressed) {
 
@@ -221,7 +221,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::PerformMousePress (AbstractWindow* context)
+	Response Slider::PerformMousePress (AbstractWindow* context)
 	{
 		if(CursorOnSlideIcon(context->GetCursorPosition())) {
 			m_pressed = true;
@@ -235,7 +235,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Slider::PerformMouseRelease (AbstractWindow* context)
+	Response Slider::PerformMouseRelease (AbstractWindow* context)
 	{
 		if(m_pressed) {
 			m_pressed = false;

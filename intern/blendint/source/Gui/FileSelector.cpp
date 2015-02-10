@@ -195,7 +195,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType FileSelector::Draw (AbstractWindow* context)
+	Response FileSelector::Draw (AbstractWindow* context)
 	{
     	shadow_->Draw(position().x(), position().y());
 

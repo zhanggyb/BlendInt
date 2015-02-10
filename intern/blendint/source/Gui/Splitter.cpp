@@ -189,7 +189,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType SplitterHandle::Draw (AbstractWindow* context)
+	Response SplitterHandle::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_triangle_program()->use();
 
@@ -230,7 +230,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	ResponseType SplitterHandle::PerformMousePress (AbstractWindow* context)
+	Response SplitterHandle::PerformMousePress (AbstractWindow* context)
 	{
 		last_ = position();
 		cursor_ = context->GetCursorPosition();
@@ -249,7 +249,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseRelease (AbstractWindow* context)
+	Response SplitterHandle::PerformMouseRelease (AbstractWindow* context)
 	{
 		if (pressed_) {
 			pressed_ = false;
@@ -258,7 +258,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	ResponseType SplitterHandle::PerformMouseMove (AbstractWindow* context)
+	Response SplitterHandle::PerformMouseMove (AbstractWindow* context)
 	{
 		if(pressed_) {
 
@@ -493,7 +493,7 @@ namespace BlendInt {
 
 		index = index * 2;
 
-		return dynamic_cast<AbstractWidget*>(GetWidgetAt(index));
+		return dynamic_cast<AbstractWidget*>(GetSubViewAt(index));
 	}
 
 	SplitterHandle* Splitter::GetHandle (int index) const
@@ -507,7 +507,7 @@ namespace BlendInt {
 
 		index = index * 2 + 1;
 
-		return dynamic_cast<SplitterHandle*>(GetWidgetAt(index));
+		return dynamic_cast<SplitterHandle*>(GetSubViewAt(index));
 	}
 
 	int Splitter::GetWidgetCount () const

@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 	private:
 

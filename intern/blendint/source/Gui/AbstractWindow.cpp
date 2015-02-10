@@ -314,7 +314,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType AbstractWindow::Draw (AbstractWindow* context)
+	Response AbstractWindow::Draw (AbstractWindow* context)
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
@@ -347,9 +347,9 @@ namespace BlendInt {
 	{
 	}
 
-	ResponseType AbstractWindow::PerformKeyPress (AbstractWindow* context)
+	Response AbstractWindow::PerformKeyPress (AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			response = p->PerformKeyPress(context);
@@ -359,21 +359,21 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractWindow::PerformContextMenuPress (
+	Response AbstractWindow::PerformContextMenuPress (
 	        AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWindow::PerformContextMenuRelease (
+	Response AbstractWindow::PerformContextMenuRelease (
 	        AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
-	ResponseType AbstractWindow::PerformMousePress (AbstractWindow* context)
+	Response AbstractWindow::PerformMousePress (AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		set_pressed(true);
 
@@ -387,9 +387,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseRelease (AbstractWindow* context)
+	Response AbstractWindow::PerformMouseRelease (AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		set_pressed(false);
 
 		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
@@ -403,9 +403,9 @@ namespace BlendInt {
 		return response;
 	}
 
-	ResponseType AbstractWindow::PerformMouseMove (AbstractWindow* context)
+	Response AbstractWindow::PerformMouseMove (AbstractWindow* context)
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 
 		if(pressed_ext()) {
 
@@ -573,7 +573,7 @@ namespace BlendInt {
 
 	void AbstractWindow::DispatchHoverEvent ()
 	{
-		ResponseType response = Ignore;
+		Response response = Ignore;
 		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {

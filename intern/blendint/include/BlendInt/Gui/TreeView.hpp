@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context);
 
 	private:
 

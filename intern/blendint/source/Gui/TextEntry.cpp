@@ -252,7 +252,7 @@ namespace BlendInt {
         context->PopCursor();
     }
     
-	ResponseType TextEntry::PerformKeyPress (AbstractWindow* context)
+	Response TextEntry::PerformKeyPress (AbstractWindow* context)
 	{
 		if(!context->GetTextInput().empty()) {
 
@@ -343,7 +343,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType TextEntry::PerformMousePress(AbstractWindow* context)
+	Response TextEntry::PerformMousePress(AbstractWindow* context)
 	{
 		if(text_) {
 			size_t index = GetTextCursorIndex(context);
@@ -357,7 +357,7 @@ namespace BlendInt {
 		return Finish;
 	}
 
-    ResponseType TextEntry::Draw (AbstractWindow* context)
+    Response TextEntry::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

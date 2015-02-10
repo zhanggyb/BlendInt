@@ -209,7 +209,7 @@ namespace BlendInt {
 			RequestRedraw();
 	}
 
-	ResponseType ToggleButton::Draw (AbstractWindow* context)
+	Response ToggleButton::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_inner_program()->use();
 

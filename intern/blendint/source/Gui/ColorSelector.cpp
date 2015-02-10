@@ -211,7 +211,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	ResponseType ColorSelector::Draw (AbstractWindow* context)
+	Response ColorSelector::Draw (AbstractWindow* context)
 	{
     	shadow_->Draw(position().x(), position().y());
 
