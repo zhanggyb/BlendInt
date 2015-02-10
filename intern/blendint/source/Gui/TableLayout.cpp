@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include <BlendInt/Core/Types.hpp>
+#include <BlendInt/OpenGL/GLHeader.hpp>
 #include <BlendInt/Gui/TableLayout.hpp>
 #include <BlendInt/Gui/TableAdjustment.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
@@ -102,7 +103,8 @@ namespace BlendInt {
 	TableLayout::TableLayout(unsigned int row, unsigned int column)
 	: AbstractLayout(),
 	  row_(row),
-	  column_(column)
+	  column_(column),
+      vao_(0)
 	{
 		int width = 0;
 		int height = 0;
@@ -140,6 +142,22 @@ namespace BlendInt {
 		height += pixel_size(margin().vsum());
 
 		set_size(width, height);
+        
+        std::vector<GLfloat> inner_verts;
+        GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+        
+        glGenVertexArrays(1, &vao_);
+        glBindVertexArray(vao_);
+        
+        vbo_.generate();
+        vbo_.bind();
+        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+        glEnableVertexAttribArray(AttributeCoord);
+        glVertexAttribPointer(AttributeCoord, 3,
+                              GL_FLOAT, GL_FALSE, 0, 0);
+        
+        glBindVertexArray(0);
+        vbo_.reset();
 	}
 
 	bool TableLayout::AddWidget (AbstractWidget* widget)
@@ -216,6 +234,13 @@ namespace BlendInt {
 			TableAdjustment adjust(this, row_, column_, 0);
 			adjust.Adjust(x, y, w, h);
 
+            std::vector<GLfloat> inner_verts;
+            GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+            
+            vbo_.bind();
+            vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+            vbo_.reset();
+
 		}
 
 		if(request.source() == this) {
@@ -237,6 +262,19 @@ namespace BlendInt {
 
 	}
 
+    Response TableLayout::Draw(AbstractWindow* context)
+    {
+        AbstractWindow::shaders->widget_inner_program()->use();
+        
+        glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+        glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 0.25f);
+        
+        glBindVertexArray(vao_);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+        return AbstractLayout::Draw(context);
+    }
+    
 	Size TableLayout::GetPreferredSize () const
 	{
 		int width = 0;

@@ -24,6 +24,7 @@
 #pragma once
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/OpenGL/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -81,12 +82,18 @@ namespace BlendInt {
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformMarginUpdate (const Margin& margin);
+        
+        virtual Response Draw (AbstractWindow* context);
 
 	private:
 
 		unsigned int row_;
 
 		unsigned int column_;
+
+        GLuint vao_;
+
+        GLBuffer<> vbo_;
 
 	};
 
