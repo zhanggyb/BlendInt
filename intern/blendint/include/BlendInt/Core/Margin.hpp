@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MARGIN_HPP_
-#define _BLENDINT_MARGIN_HPP_
+#pragma once
 
 /**
  * @brief Margin
@@ -116,5 +115,3 @@ namespace BlendInt {
 	}
 
 }
-
-#endif /* _BIL_MARGIN_HPP_ */

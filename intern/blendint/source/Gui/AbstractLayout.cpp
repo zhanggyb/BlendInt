@@ -28,6 +28,20 @@ namespace BlendInt {
 	AbstractLayout::AbstractLayout()
 	: AbstractWidget()
 	{
+
+	}
+
+	AbstractLayout::AbstractLayout (int width, int height)
+	: AbstractWidget(width, height)
+	{
+
+	}
+
+	AbstractLayout::AbstractLayout (int width, int height, const Margin& margin)
+	: AbstractWidget(width, height),
+	  margin_(margin)
+	{
+
 	}
 
 	AbstractLayout::~AbstractLayout()

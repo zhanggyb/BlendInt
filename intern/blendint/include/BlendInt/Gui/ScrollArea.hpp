@@ -21,12 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SCROLLAREA_HPP_
-#define _BLENDINT_GUI_SCROLLAREA_HPP_
+#pragma once
 
-#include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Gui/ScrollBar.hpp>
-
+#include <BlendInt/Gui/AbstractScrollable.hpp>
 #include <BlendInt/Gui/TableLayout.hpp>
 
 namespace BlendInt {
@@ -39,37 +36,24 @@ namespace BlendInt {
 
 		ScrollArea();
 
+		ScrollArea (int width, int height, const Margin& margin, int space);
+
 		virtual ~ScrollArea ();
 
-		void SetViewport (AbstractScrollable* scrollable);
+		void SetScrollableWidget (AbstractScrollable* scrollable);
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response Draw (AbstractWindow* context);
-
 	private:
-
-		enum SubWidgetIndex {
-			HScrollBarIndex,
-			VScrollBarIndex,
-			ScrollViewIndex,
-			CornerWidgetIndex
-		};
-
-		void InitializeScrollArea ();
-
-		GLuint vao_;
-
-		GLBuffer<> vbo_;
 
 		TableLayout* layout_;
 	};
 }
-
-#endif /* _BLENDINT_GUI_SCROLLAREA_HPP_ */

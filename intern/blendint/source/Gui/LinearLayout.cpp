@@ -36,6 +36,15 @@ namespace BlendInt {
 		set_size (200, 200);
 	}
 
+	LinearLayout::LinearLayout (int width, int height, const Margin& margin, Orientation orient, int align, int space)
+	: AbstractLayout(width, height, margin),
+	  orientation_(orient),
+	  alignment_(align),
+	  space_(space)
+	{
+		set_size (200, 200);
+	}
+
 	LinearLayout::~LinearLayout ()
 	{
 	}

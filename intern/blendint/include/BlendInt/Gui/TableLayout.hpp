@@ -61,7 +61,9 @@ namespace BlendInt {
 	{
 	public:
 
-		TableLayout (unsigned int row, unsigned int column, int space = 2);
+		TableLayout (unsigned int row, unsigned int column, int space = 4);
+
+		TableLayout (int width, int height, unsigned int row, unsigned int column, const Margin& margin, int space = 4);
 
 		virtual ~TableLayout ();
 

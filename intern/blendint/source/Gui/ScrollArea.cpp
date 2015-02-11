@@ -21,21 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif	// __UNIX__
+#include <BlendInt/OpenGL/GLHeader.hpp>
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
+#include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
-
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
@@ -47,84 +36,61 @@ namespace BlendInt {
 		set_size(360, 240);
 
 		layout_ = Manage(new TableLayout(2, 2));
+
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+
+		PushBackSubView(layout_);
+		ResizeSubView(layout_, size());
+
+		layout_->InsertWidget(0, 1, vbar);
+		layout_->InsertWidget(1, 0, hbar);
+	}
+
+	ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
+	: Widget(width, height),
+	  layout_(nullptr)
+	{
+		layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));
+
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+
 		PushBackSubView(layout_);
 
-		InitializeScrollArea();
+		layout_->InsertWidget(0, 1, vbar);
+		layout_->InsertWidget(1, 0, hbar);
 	}
 
 	ScrollArea::~ScrollArea ()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ScrollArea::SetViewport (AbstractScrollable* widget)
+	void ScrollArea::SetScrollableWidget (AbstractScrollable* widget)
 	{
-		if (!widget)
-			return;
-
+		layout_->InsertWidget(0, 0, widget);
 	}
 
 	bool ScrollArea::IsExpandX() const
 	{
-		return true;
+		return layout_->IsExpandX();
 	}
 
 	bool ScrollArea::IsExpandY() const
 	{
-		return true;
+		return layout_->IsExpandY();
 	}
 
-	Response ScrollArea::Draw (AbstractWindow* context)
+	Size ScrollArea::GetPreferredSize () const
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
-
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 0.447f, 0.447f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
-		return Ignore;
+		return layout_->GetPreferredSize();
 	}
 
-	void ScrollArea::InitializeScrollArea ()
-	{
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		vbo_.generate();
-		vbo_.bind();
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(
-		        AttributeCoord);
-		glVertexAttribPointer(
-		        AttributeCoord, 3,
-		        GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
-	
 	void ScrollArea::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
 			set_size(*request.size());
-
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
-
-			vbo_.bind();
-			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.reset();
-
 			ResizeSubView(layout_, size());
 
 		}

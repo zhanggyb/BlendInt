@@ -39,6 +39,8 @@
 #include <BlendInt/Gui/FileButton.hpp>
 #include <BlendInt/Gui/TableLayout.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
+#include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/ScrollView.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -54,20 +56,18 @@ int main (int argc, char* argv[])
 
 		Dialog* dlg = new Dialog("Test TableLayout", Dialog::DialogButtonOK);
 
-		TextureView* b1 = new TextureView;
-		b1->OpenFile("test.jpg");
-		ScrollBar* b2 = new ScrollBar(Vertical);
-		ScrollBar* b3 = new ScrollBar(Horizontal);
-		//Button* b4 = new Button("Button4");
-		//Label* b4 = new Label("Label");
+//		TextureView* b1 = new TextureView;
+//		b1->OpenFile("test.jpg");
 
-		TableLayout* layout = new TableLayout(2, 2);
-		layout->InsertWidget(0, 0, b1);
-		layout->InsertWidget(0, 1, b2);
-		layout->InsertWidget(1, 0, b3);
-		//layout->InsertWidget(1, 1, b4);
+		ScrollView* b1 = new ScrollView;
 
-		dlg->AddWidget(layout);
+		Button* btn = new Button("Button for test");
+		b1->Setup(btn);
+
+		ScrollArea* area = new ScrollArea(400, 400, Margin(0, 0, 0, 0), 0);
+		area->SetScrollableWidget(b1);
+
+		dlg->AddWidget(area);
 
 		dlg->Resize(dlg->GetPreferredSize());
 		dlg->MoveTo((win.size().width() - dlg->size().width()) / 2,

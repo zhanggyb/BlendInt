@@ -33,6 +33,10 @@ namespace BlendInt {
 
 		AbstractLayout ();
 
+		AbstractLayout (int width, int height);
+
+		AbstractLayout (int width, int height, const Margin& margin);
+
 		virtual ~AbstractLayout ();
 
 		virtual bool AddWidget (AbstractWidget* widget) = 0;

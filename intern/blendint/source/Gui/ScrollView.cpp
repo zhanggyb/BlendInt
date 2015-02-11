@@ -195,6 +195,8 @@ namespace BlendInt {
 	{
 		if (request.target() == this) {
 
+			set_size(*request.size());
+
 			std::vector<GLfloat> inner_verts;
 			GenerateRoundedVertices(&inner_verts, 0);
 
@@ -211,10 +213,11 @@ namespace BlendInt {
 				        first_subview()->position().y() + dy);
 			}
 
-			set_size(*request.size());
 		}
 
-		ReportSizeUpdate(request);
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 	bool ScrollView::PreDraw(AbstractWindow* context)
