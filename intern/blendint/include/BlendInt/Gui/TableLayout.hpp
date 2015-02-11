@@ -61,13 +61,17 @@ namespace BlendInt {
 	{
 	public:
 
-		TableLayout (unsigned int row, unsigned int column);
+		TableLayout (unsigned int row, unsigned int column, int space = 2);
+
+		virtual ~TableLayout ();
 
 		virtual bool AddWidget (AbstractWidget* widget);
 
 		virtual bool InsertWidget (int index, AbstractWidget* widget);
 
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+
+		void SetSpace (int space);
 
 		virtual bool IsExpandX () const;
 
@@ -83,18 +87,13 @@ namespace BlendInt {
 
 		virtual void PerformMarginUpdate (const Margin& margin);
         
-        virtual Response Draw (AbstractWindow* context);
-
 	private:
 
 		unsigned int row_;
 
 		unsigned int column_;
 
-        GLuint vao_;
-
-        GLBuffer<> vbo_;
-
+		int space_;
 	};
 
 }

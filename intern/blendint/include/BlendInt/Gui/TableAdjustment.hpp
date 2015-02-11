@@ -52,11 +52,11 @@ namespace BlendInt {
 
 		void DistributeHorizontallyWithLargeWidth (int x, int width) const;
 
-		void DistributeVerticallyWithSmallHeight () const;
+		void DistributeVerticallyWithSmallHeight (int y, int height) const;
 
-		void DistributeVerticallyWithPreferredHeight() const;
+		void DistributeVerticallyWithPreferredHeight(int y, int height) const;
 
-		void DistributeVerticallyWithLargeHeight () const;
+		void DistributeVerticallyWithLargeHeight (int y, int height) const;
 
 		unsigned int row_;
 
@@ -69,6 +69,12 @@ namespace BlendInt {
 
 		std::vector<int> column_width_list_;
 		std::vector<int> row_height_list_;
+
+		int total_fixed_column_width_;
+		int total_fixed_row_height_;
+
+		int fixed_column_num_;
+		int fixed_row_num_;
 
 		bool expand_x_;
 		bool expand_y_;

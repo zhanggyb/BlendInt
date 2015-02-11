@@ -54,9 +54,12 @@ int main (int argc, char* argv[])
 
 		Dialog* dlg = new Dialog("Test TableLayout", Dialog::DialogButtonOK);
 
-		Button* b1 = new Button("Button1");
-		Button* b2 = new Button("Button2");
-		Button* b3 = new Button("Button3");
+		TextureView* b1 = new TextureView;
+		b1->OpenFile("test.jpg");
+		ScrollBar* b2 = new ScrollBar(Vertical);
+		ScrollBar* b3 = new ScrollBar(Horizontal);
+		//Button* b4 = new Button("Button4");
+		//Label* b4 = new Label("Label");
 
 		TableLayout* layout = new TableLayout(2, 2);
 		layout->InsertWidget(0, 0, b1);

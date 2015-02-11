@@ -34,12 +34,11 @@ namespace BlendInt {
 	Cell::Cell()
 	: AbstractWidget()
 	{
-		set_size(20, 20);
+		set_size(10, 10);
 	}
 
 	Cell::~Cell ()
 	{
-
 	}
 
 	void Cell::SetWidget(AbstractWidget* widget)
@@ -66,7 +65,7 @@ namespace BlendInt {
 
 	Size Cell::GetPreferredSize () const
 	{
-		Size preferred_size(20, 20);
+		Size preferred_size(10, 10);
 
 		if(subs_count()) {
 			preferred_size = first_subview()->GetPreferredSize();
@@ -85,7 +84,6 @@ namespace BlendInt {
 				ResizeSubView(first_subview(), size());
 				RequestRedraw();
 			}
-
 		}
 
 		if(request.source() == this) {
@@ -100,11 +98,11 @@ namespace BlendInt {
 
 	// --------------------------------------
 
-	TableLayout::TableLayout(unsigned int row, unsigned int column)
+	TableLayout::TableLayout(unsigned int row, unsigned int column, int space)
 	: AbstractLayout(),
 	  row_(row),
 	  column_(column),
-      vao_(0)
+	  space_(space)
 	{
 		int width = 0;
 		int height = 0;
@@ -142,22 +140,10 @@ namespace BlendInt {
 		height += pixel_size(margin().vsum());
 
 		set_size(width, height);
-        
-        std::vector<GLfloat> inner_verts;
-        GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-        
-        glGenVertexArrays(1, &vao_);
-        glBindVertexArray(vao_);
-        
-        vbo_.generate();
-        vbo_.bind();
-        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-        glEnableVertexAttribArray(AttributeCoord);
-        glVertexAttribPointer(AttributeCoord, 3,
-                              GL_FLOAT, GL_FALSE, 0, 0);
-        
-        glBindVertexArray(0);
-        vbo_.reset();
+	}
+
+	TableLayout::~TableLayout ()
+	{
 	}
 
 	bool TableLayout::AddWidget (AbstractWidget* widget)
@@ -195,6 +181,15 @@ namespace BlendInt {
 		return true;
 	}
 
+	void TableLayout::SetSpace (int space)
+	{
+		if(space_ == space) return;
+
+		space_ = space;
+		UpdateLayout();
+		RequestRedraw();
+	}
+
 	bool TableLayout::IsExpandX () const
 	{
 		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
@@ -217,7 +212,13 @@ namespace BlendInt {
 
 	void TableLayout::UpdateLayout ()
 	{
+		int x = pixel_size(margin().left());
+		int y = pixel_size(margin().bottom());
+		int w = size().width() - pixel_size(margin().hsum());
+		int h = size().height() - pixel_size(margin().vsum());
 
+		TableAdjustment adjust(this, row_, column_, space_);
+		adjust.Adjust(x, y, w, h);
 	}
 
 	void TableLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -225,22 +226,7 @@ namespace BlendInt {
 		if(request.target() == this) {
 
 			set_size(*request.size());
-
-			int x = pixel_size(margin().left());
-			int y = pixel_size(margin().bottom());
-			int w = size().width() - pixel_size(margin().hsum());
-			int h = size().width() - pixel_size(margin().vsum());
-
-			TableAdjustment adjust(this, row_, column_, 0);
-			adjust.Adjust(x, y, w, h);
-
-            std::vector<GLfloat> inner_verts;
-            GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-            
-            vbo_.bind();
-            vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            vbo_.reset();
-
+			UpdateLayout();
 		}
 
 		if(request.source() == this) {
@@ -252,29 +238,10 @@ namespace BlendInt {
 	{
 		set_margin(margin);
 
-		int x = pixel_size(this->margin().left());
-		int y = pixel_size(this->margin().bottom());
-		int w = size().width() - pixel_size(this->margin().hsum());
-		int h = size().width() - pixel_size(this->margin().vsum());
-
-		TableAdjustment adjust(this, row_, column_, 0);
-		adjust.Adjust(x, y, w, h);
-
+		UpdateLayout();
+		RequestRedraw();
 	}
 
-    Response TableLayout::Draw(AbstractWindow* context)
-    {
-        AbstractWindow::shaders->widget_inner_program()->use();
-        
-        glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-        glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 0.25f);
-        
-        glBindVertexArray(vao_);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-        return AbstractLayout::Draw(context);
-    }
-    
 	Size TableLayout::GetPreferredSize () const
 	{
 		int width = 0;
@@ -302,6 +269,14 @@ namespace BlendInt {
 				j = 0;
 				i++;
 			}
+		}
+
+		if(column_ > 0) {
+			width += (column_ - 1) * space_;
+		}
+
+		if(row_ > 0) {
+			height += (row_ - 1) * space_;
 		}
 
 		width += pixel_size(margin().hsum());
