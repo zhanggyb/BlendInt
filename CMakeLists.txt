@@ -42,8 +42,8 @@ option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentati
 # end of options
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/BlendIntConfig.hpp.in"
-	"${PROJECT_BINARY_DIR}/BlendIntConfig.hpp"
+	"${PROJECT_SOURCE_DIR}/config.hpp.in"
+	"${PROJECT_BINARY_DIR}/config.hpp"
 )
 
 include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
@@ -104,8 +104,8 @@ else()
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/BlendInt)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/BlendInt/CppEvents)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/blendint)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/blendint/cppevents)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -221,5 +221,5 @@ if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
 	add_subdirectory(demo)
 endif()
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/intern/blendint/include/BlendInt" DESTINATION include)
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/BlendInt)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/intern/blendint/include/blendint" DESTINATION include)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/blendint)

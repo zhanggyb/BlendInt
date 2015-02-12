@@ -45,8 +45,8 @@ Here is a simple example to create an 240x180 pixel window, and show a
 MessageBox within.
 
 ```cpp
-#include <BlendInt/Gui/Window.hpp>
-#include <BlendInt/Gui/MessageBox.hpp>
+#include <gui/window.hpp>
+#include <gui/message-box.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -59,16 +59,14 @@ int main(int argc, char* argv[])
     Window win(240, 180, "Tutorial 01");
 
     MessageBox* message = new MessageBox("Hello World!",
-        "Click the \"close\" button.");
+                                         "Click the \"close\" button.");
+    // 'message' will be destroyed when the window is closed.
     win.AddFrame(message);
     message->MoveTo(
         (win.size().width() - message->size().width()) / 2,
         (win.size().height() - message->size().height()) / 2);
 
-    // 'message' will be destroyed when the window is closed.
-
     win.Exec();
-
     Window::Terminate();
   }
 

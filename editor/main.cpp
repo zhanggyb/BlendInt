@@ -25,25 +25,25 @@
  * @brief BlendInt UI Editor
  */
 
-#include "EditorContext.hpp"
-#include <BlendInt/Gui/Window.hpp>
+#include "editorcontext.hpp"
+#include <gui/window.hpp>
 
-#include <BlendInt/Gui/AbstractDialog.hpp>
-#include <BlendInt/Gui/MessageBox.hpp>
-#include <BlendInt/Gui/ColorSelector.hpp>
-#include <BlendInt/Gui/FileSelector.hpp>
-#include <BlendInt/Gui/Dialog.hpp>
-#include <BlendInt/Gui/TextureView.hpp>
-#include <BlendInt/Gui/Clock.hpp>
-#include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/FileButton.hpp>
-#include <BlendInt/Gui/TableLayout.hpp>
-#include <BlendInt/Gui/ScrollBar.hpp>
-#include <BlendInt/Gui/ScrollArea.hpp>
-#include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Gui/NumericalSlider.hpp>
-#include <BlendInt/Gui/NodeView.hpp>
-#include <BlendInt/Gui/Node.hpp>
+#include <gui/abstract-dialog.hpp>
+#include <gui/message-box.hpp>
+#include <gui/colorselector.hpp>
+#include <gui/file-selector.hpp>
+#include <gui/dialog.hpp>
+#include <gui/texture-view.hpp>
+#include <gui/clock.hpp>
+#include <gui/textentry.hpp>
+#include <gui/filebutton.hpp>
+#include <gui/table-layout.hpp>
+#include <gui/scroll-bar.hpp>
+#include <gui/scroll-area.hpp>
+#include <gui/scroll-view.hpp>
+#include <gui/numerical-slider.hpp>
+#include <gui/node-view.hpp>
+#include <gui/node.hpp>
 
 int main (int argc, char* argv[])
 {
