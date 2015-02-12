@@ -21,16 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <iostream>
 #include <boost/filesystem.hpp>
 
@@ -38,6 +28,8 @@
 OIIO_NAMESPACE_USING
 
 #include <core/types.hpp>
+
+#include <opengl/opengl.hpp>
 #include <opengl/gl-texture2d.hpp>
 
 namespace BlendInt {

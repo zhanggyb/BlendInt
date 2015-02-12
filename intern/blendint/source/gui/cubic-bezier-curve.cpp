@@ -21,21 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <cmath>
 
 #include <core/types.hpp>
+#include <opengl/opengl.hpp>
 #include <gui/cubic-bezier-curve.hpp>
-
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {

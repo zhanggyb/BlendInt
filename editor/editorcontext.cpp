@@ -20,7 +20,7 @@
 #include <gui/viewport.hpp>
 #include <gui/colorselector.hpp>
 
-#include <blendint/stock/shaders.hpp>
+#include <stock/shaders.hpp>
 #include <gui/dialog.hpp>
 
 #include <gui/frame.hpp>

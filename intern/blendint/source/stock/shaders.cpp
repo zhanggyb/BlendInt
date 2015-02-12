@@ -29,7 +29,7 @@
 
 #include <core/types.hpp>
 #include <opengl/opengl.hpp>
-#include <blendint/stock/shaders.hpp>
+#include <stock/shaders.hpp>
 
 namespace BlendInt {
 

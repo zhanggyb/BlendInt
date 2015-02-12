@@ -21,19 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
 #include <vector>
 
 #include <core/types.hpp>
+#include <opengl/opengl.hpp>
 #include <gui/icon-texture.hpp>
 
 namespace BlendInt {

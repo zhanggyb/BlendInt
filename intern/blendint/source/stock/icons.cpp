@@ -31,8 +31,8 @@
 #include <vector>
 #include <boost/filesystem.hpp>
 
-#include <blendint/stock/icons.hpp>
-#include <blendint/stock/shaders.hpp>
+#include <stock/icons.hpp>
+#include <stock/shaders.hpp>
 
 #include <gui/icon-texture.hpp>
 #include <core/image.hpp>

@@ -30,9 +30,9 @@
 #include <gui/abstract-view.hpp>
 #include <gui/abstract-frame.hpp>
 
-#include <blendint/stock/icons.hpp>
-#include <blendint/stock/theme.hpp>
-#include <blendint/stock/shaders.hpp>
+#include <stock/icons.hpp>
+#include <stock/theme.hpp>
+#include <stock/shaders.hpp>
 
 namespace BlendInt {
 

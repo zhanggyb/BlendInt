@@ -36,7 +36,7 @@
 #include <gui/expander.hpp>
 #include <gui/color-button.hpp>
 
-#include <blendint/stock/icons.hpp>
+#include <stock/icons.hpp>
 #include <gui/file-selector.hpp>
 #include <gui/block.hpp>
 

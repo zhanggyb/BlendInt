@@ -25,7 +25,7 @@
 
 #include <gui/tab.hpp>
 #include <gui/tabheader.hpp>
-#include <blendint/stock/shaders.hpp>
+#include <stock/shaders.hpp>
 #include <gui/stack.hpp>
 
 namespace BlendInt {

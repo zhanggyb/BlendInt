@@ -24,7 +24,7 @@
 #include <gui/expander.hpp>
 #include <gui/linear-layout.hpp>
 #include <gui/abstract-window.hpp>
-#include <blendint/stock/icons.hpp>
+#include <stock/icons.hpp>
 
 namespace BlendInt {
 

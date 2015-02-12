@@ -21,19 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <math.h>
-#include <assert.h>
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <gl3ext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
+#include <cmath>
+#include <cassert>
 #include <iostream>
 
 // vec3, vec4, ivec4, mat4
@@ -45,7 +34,6 @@
 
 #include <opengl/glsl-program.hpp>
 #include <gui/grid-floor.hpp>
-
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
