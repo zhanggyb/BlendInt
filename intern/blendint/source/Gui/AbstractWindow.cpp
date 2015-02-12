@@ -224,7 +224,51 @@ namespace BlendInt {
 		}
 	}
 
-	AbstractWindow* AbstractWindow::GetContext (AbstractView* widget)
+	Point AbstractWindow::GetAbsolutePosition (const AbstractWidget* widget)
+	{
+#ifdef DEBUG
+		assert(widget);
+#endif
+
+		AbstractFrame* frame = 0;
+		Point pos = widget->position();
+
+		AbstractView* p = widget->superview();
+		while(p && (p != this)) {
+			frame = dynamic_cast<AbstractFrame*>(p);
+			if(frame) break;
+
+			pos = pos + p->position() + p->GetOffset();
+			p = p->superview();
+		}
+
+		pos = pos + frame->position() + frame->GetOffset();
+		return pos;
+	}
+
+	Point AbstractWindow::GetRelativePosition (const AbstractWidget* widget)
+	{
+#ifdef DEBUG
+		assert(widget);
+#endif
+
+		AbstractFrame* frame = 0;
+		Point pos = widget->position();
+
+		AbstractView* p = widget->superview();
+		while(p && (p != this)) {
+
+			frame = dynamic_cast<AbstractFrame*>(p);
+			if(frame) break;
+
+			pos = pos + p->position() + p->GetOffset();
+			p = p->superview();
+		}
+
+		return pos;
+	}
+
+	AbstractWindow* AbstractWindow::GetWindow (AbstractView* widget)
 	{
 		AbstractView* superview = widget->superview();
 

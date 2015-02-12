@@ -233,7 +233,7 @@ namespace BlendInt {
 
 	void FileButton::OnClicked (AbstractButton* sender)
 	{
-		AbstractWindow* context = AbstractWindow::GetContext(this);
+		AbstractWindow* context = AbstractWindow::GetWindow(this);
 		assert(dialog_ == 0);
 
 		if(context) {

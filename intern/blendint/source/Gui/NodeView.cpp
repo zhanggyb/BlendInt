@@ -21,13 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <glm/gtx/matrix_transform_2d.hpp>
+
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/AbstractWindow.hpp>
 
 namespace BlendInt {
 
 	NodeView::NodeView()
-	: Widget(),
+	: AbstractScrollable(),
 	  vao_(0)
 	{
 		set_size (400, 300);
@@ -38,7 +40,7 @@ namespace BlendInt {
 	}
 
 	NodeView::NodeView(int width, int height)
-	: Widget(width, height)
+	: AbstractScrollable(width, height)
 	{
 
 		InitializeNodeView();
@@ -137,18 +139,68 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	Response NodeView::Draw(AbstractWindow* context)
+	bool NodeView::PreDraw (AbstractWindow* context)
 	{
-//		curve_->Draw();
+		if(!visiable()) return false;
+
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
+				glm::vec2(position().x(), position().y()));
+
+		AbstractWindow::shaders->PushWidgetModelMatrix();
+		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+
 		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		return Ignore;
+		context->BeginPushStencil();	// inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		context->EndPushStencil();
+
+		return true;
+	}
+
+	Response NodeView::Draw(AbstractWindow* context)
+	{
+//		curve_->Draw();
+
+		if(subs_count()) {
+
+			Point offset = GetOffset();
+
+			glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
+					glm::vec2(offset.x(), offset.y()));
+
+			AbstractWindow::shaders->PushWidgetModelMatrix();
+			AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+
+			return Ignore;
+
+		} else {
+			return Finish;
+		}
+	}
+
+	void NodeView::PostDraw (AbstractWindow* context)
+	{
+		if(subs_count()) {
+			AbstractWindow::shaders->PopWidgetModelMatrix();
+		}
+
+		// draw mask
+		AbstractWindow::shaders->widget_inner_program()->use();
+
+		glBindVertexArray(vao_);
+
+		context->BeginPopStencil();	// pop inner stencil
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		context->EndPopStencil();
+
+		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
 
 	Response NodeView::PerformMousePress (AbstractWindow* context)

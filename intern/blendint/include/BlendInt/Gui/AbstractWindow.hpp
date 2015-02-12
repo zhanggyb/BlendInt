@@ -118,6 +118,10 @@ namespace BlendInt {
 
 		virtual const Point& GetCursorPosition () const = 0;
 
+		Point GetAbsolutePosition (const AbstractWidget* widget);
+
+		Point GetRelativePosition (const AbstractWidget* widget);
+
 		void register_active_frame (AbstractFrame* frame)
 		{
 			active_frame_ = frame;
@@ -143,7 +147,7 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
 
-		static AbstractWindow* GetContext (AbstractView* widget);
+		static AbstractWindow* GetWindow (AbstractView* widget);
 
 		static bool InitializeGLContext ();
 

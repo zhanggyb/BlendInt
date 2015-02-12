@@ -27,7 +27,8 @@
 namespace BlendInt {
 
 	ColorButton::ColorButton ()
-	: AbstractButton()
+	: AbstractButton(),
+	  selector_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -48,6 +49,8 @@ namespace BlendInt {
 		color1_.set_alpha(0.5f);
 
 		InitializeColorButton();
+
+		events()->connect(clicked(), this, &ColorButton::OnClick);
 	}
 
 	ColorButton::~ColorButton ()
@@ -123,13 +126,13 @@ namespace BlendInt {
 
 	Response ColorButton::Draw (AbstractWindow* context)
 	{
-		Point pos = context->active_frame()->GetAbsolutePosition(this);
+		float x = context->active_frame()->GetRelativePosition(this).x() - context->viewport_origin().x();
 
 		int outline_vertices = GetOutlineVertices(round_type());
 
 		AbstractWindow::shaders->widget_split_inner_program()->use();
 
-		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), pos.x() + size().width() / 2.f);
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + size().width() / 2.f);
 		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, color0_.data());
 		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, color1_.data());
 
@@ -215,6 +218,30 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		vbo_.reset();
+	}
+
+	void ColorButton::OnClick(AbstractButton* sender)
+	{
+		if(selector_ == 0) {
+			selector_ = new ColorSelector;
+			events()->connect(selector_->destroyed(), this, &ColorButton::OnSelectorDestroyed);
+			AbstractWindow* win = AbstractWindow::GetWindow(this);
+			win->AddFrame(selector_);
+
+			Point pos = win->GetCursorPosition();
+
+			if((pos.y() + selector_->size().height()) > win->size().height()) {
+				pos.set_y(win->size().height() - selector_->size().height());
+			}
+
+			selector_->MoveTo(pos);
+		}
+	}
+
+	void ColorButton::OnSelectorDestroyed(AbstractFrame* sender)
+	{
+		assert(sender == selector_);
+		selector_ = 0;
 	}
 
 }

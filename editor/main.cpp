@@ -41,6 +41,9 @@
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
+#include <BlendInt/Gui/NumericalSlider.hpp>
+#include <BlendInt/Gui/NodeView.hpp>
+#include <BlendInt/Gui/Node.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -59,10 +62,12 @@ int main (int argc, char* argv[])
 //		TextureView* b1 = new TextureView;
 //		b1->OpenFile("test.jpg");
 
-		ScrollView* b1 = new ScrollView;
+		NodeView* b1 = new NodeView;
 
-		Button* btn = new Button("Button for test");
-		b1->Setup(btn);
+		Node* node = new Node;
+		b1->AddNode(node);
+
+		node->MoveTo(200, -100);
 
 		ScrollArea* area = new ScrollArea(400, 400, Margin(0, 0, 0, 0), 0);
 		area->SetScrollableWidget(b1);

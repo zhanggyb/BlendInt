@@ -24,13 +24,14 @@
 #pragma once
 
 #include <BlendInt/Core/Types.hpp>
-#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/AbstractNode.hpp>
 #include <BlendInt/Gui/CubicBezierCurve.hpp>
 
+#include <BlendInt/Gui/AbstractScrollable.hpp>
+
 namespace BlendInt {
 
-	class NodeView: public Widget
+	class NodeView: public AbstractScrollable
 	{
 		DISALLOW_COPY_AND_ASSIGN(NodeView);
 
@@ -64,7 +65,11 @@ namespace BlendInt {
 
 		virtual Response PerformMousePress (AbstractWindow* context);
 
+		virtual bool PreDraw (AbstractWindow* context);
+
 		virtual Response Draw (AbstractWindow* context);
+
+		virtual void PostDraw (AbstractWindow* context);
 
 	private:
 

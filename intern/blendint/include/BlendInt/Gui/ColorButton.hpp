@@ -28,6 +28,8 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
+#include <BlendInt/Gui/ColorSelector.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -65,11 +67,17 @@ namespace BlendInt {
 
 		void InitializeColorButton ();
 
+		void OnClick (AbstractButton* sender);
+
+		void OnSelectorDestroyed (AbstractFrame* sender);
+
 		GLuint vao_[2];
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		Color color0_;
 		Color color1_;
+
+		ColorSelector* selector_;
 	};
 
 }
