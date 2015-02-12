@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 }
 ```
 
-Compile these pieces of code with BlendInt and run in different OS
+Compile this piece of code with BlendInt and run in different OS
 platforms, you'll get a small window with the same context. (In this
 example,
 [Adobe Source Han Sans CN](https://github.com/adobe-fonts/source-han-sans)
@@ -131,7 +131,9 @@ Wiki.
 
 ## Contributing
 
-TBD
+See the
+[contributor](https://github.com/zhanggyb/BlendInt/graphs/contributors)
+page.
 
 ## License
 
