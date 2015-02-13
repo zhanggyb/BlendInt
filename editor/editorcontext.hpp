@@ -41,7 +41,6 @@
 #include <gui/block.hpp>
 
 #include <gui/panel.hpp>
-#include <gui/decoration.hpp>
 #include <gui/node-view.hpp>
 #include <gui/progress-bar.hpp>
 #include <gui/workspace.hpp>

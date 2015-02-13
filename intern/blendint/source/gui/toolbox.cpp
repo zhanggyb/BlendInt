@@ -27,37 +27,50 @@
 
 #include <opengl/gl-framebuffer.hpp>
 
+#include <gui/flow-layout.hpp>
 #include <gui/toolbox.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
-	ToolBox::ToolBox (Orientation orientation)
+	ToolBox::ToolBox (AbstractLayout* layout)
 	: Frame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
 	  margin_(2, 2, 2, 2),
-	  orientation_(orientation),
-	  cursor_position_(0)
+	  cursor_position_(0),
+	  layout_(0)
 	{
-		if(orientation_ == Horizontal) {
-			set_size(400, 240);
+		if(layout == nullptr) {
+			layout_ = Manage(new FlowLayout);
 		} else {
-			set_size(240, 400);
+			layout_ = layout;
 		}
+
+		PushBackSubView(layout_);
+		set_size(layout_->size());
 
 		InitializeToolBoxOnce();
 	}
 
-	ToolBox::ToolBox (int width, int height, Orientation orientation)
+	ToolBox::ToolBox (int width, int height, AbstractLayout* layout)
 	: Frame(width, height),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
-	  orientation_(orientation),
-	  cursor_position_(0)
+	  cursor_position_(0),
+	  layout_(0)
 	{
+		if(layout == nullptr) {
+			layout_ = Manage(new FlowLayout);
+		} else {
+			layout_ = layout;
+		}
+
+		PushBackSubView(layout_);
+		ResizeSubView(layout_, size());
+
 		InitializeToolBoxOnce();
 	}
 
@@ -79,142 +92,22 @@ namespace BlendInt {
 
 	void ToolBox::AddWidget (AbstractWidget* widget)
 	{
-		if(orientation_ == Horizontal) {
-
-			int x = GetLastPosition();
-			int y = margin_.bottom();
-			int h = size().height() - margin_.vsum();
-
-			if(PushBackSubView(widget)) {
-
-				Size prefer = widget->GetPreferredSize();
-				MoveSubViewTo(widget, x, y);
-				if(widget->IsExpandY()) {
-					ResizeSubView(widget, prefer.width(), h);
-				} else {
-					if(widget->size().height() > h) {
-						ResizeSubView(widget, prefer.width(), h);
-					} else {
-						ResizeSubView(widget, prefer.width(), widget->size().height());
-						MoveSubViewTo(widget, x,
-										y + (h - widget->size().height()) / 2);
-					}
-				}
-
-				RequestRedraw();
-			}
-
-		} else {
-
-			int x = margin_.left();
-			int y = GetLastPosition();
-			int w = size().width() - margin_.hsum();
-
-			if(PushBackSubView(widget)) {
-				Size prefer = widget->GetPreferredSize();
-				y = y - prefer.height();
-				MoveSubViewTo(widget, x, y);
-				if(widget->IsExpandX()) {
-					ResizeSubView(widget, w, prefer.height());
-				} else {
-					if(widget->size().width() > w) {
-						ResizeSubView(widget, w, prefer.height());
-					} else {
-						ResizeSubView(widget, widget->size().width(), prefer.height());
-					}
-				}
-
-				RequestRedraw();
-			}
-
-		}
+		layout_->AddWidget(widget);
 	}
 
 	bool ToolBox::IsExpandX () const
 	{
-		bool expand = false;
-
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandX()) {
-				expand = true;
-				break;
-			}
-		}
-
-		return expand;
+		return layout_->IsExpandX();
 	}
 
 	bool ToolBox::IsExpandY () const
 	{
-		bool expand = false;
-
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandY()) {
-				expand = true;
-				break;
-			}
-		}
-
-		return expand;
+		return layout_->IsExpandY();
 	}
 
 	Size ToolBox::GetPreferredSize () const
 	{
-		Size preferred_size;
-
-		if(subs_count() == 0) {
-
-			if(orientation_ == Horizontal) {
-				preferred_size.reset(400, 240);
-			} else {
-				preferred_size.reset(240, 400);
-			}
-
-		} else {
-
-			Size tmp;
-
-			if(orientation_ == Horizontal) {
-
-				preferred_size.set_width(-space_);
-
-				for(AbstractView* p = first_subview(); p; p = p->next_view())
-				{
-					if(p->visiable()) {
-						tmp = p->GetPreferredSize();
-
-						preferred_size.add_width(tmp.width() + space_);
-						preferred_size.set_height(std::max(preferred_size.height(), tmp.height()));
-					}
-				}
-
-				preferred_size.add_width(margin_.hsum());
-				preferred_size.add_height(margin_.vsum());
-
-			} else {
-
-				preferred_size.set_height(-space_);
-
-				for(AbstractView* p = first_subview(); p; p = p->next_view())
-				{
-					if(p->visiable()) {
-						tmp = p->GetPreferredSize();
-
-						preferred_size.add_height(tmp.height() + space_);
-						preferred_size.set_width(std::max(preferred_size.width(), tmp.width()));
-					}
-				}
-
-				preferred_size.add_width(margin_.hsum());
-				preferred_size.add_height(margin_.vsum());
-
-			}
-
-		}
-
-		return preferred_size;
+		return layout_->GetPreferredSize();
 	}
 
 	AbstractView* ToolBox::GetFocusedView() const
@@ -259,12 +152,10 @@ namespace BlendInt {
 
 			vbo_.reset();
 
-			FillSubWidgets();
+			ResizeSubView(layout_, size());
 
 			RequestRedraw();
 
-		} else if (request.target()->superview() == this) {
-			FillSubWidgets();
 		}
 
 		if(request.source() == this) {
@@ -527,100 +418,6 @@ namespace BlendInt {
 		vbo_.reset();
 
 		set_refresh(true);
-	}
-
-	void ToolBox::FillSubWidgets ()
-	{
-		if(orientation_ == Horizontal) {
-			FillSubWidgetsHorizontally();
-		} else {
-			FillSubWidgetsVertically();
-		}
-	}
-
-	void ToolBox::FillSubWidgetsHorizontally()
-	{
-		int x = margin_.left();
-		int y = margin_.bottom();
-		//int width = size().width() - margin_.hsum();
-		int height = size().height() - margin_.vsum();
-
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			MoveSubViewTo(p, x, y);
-			ResizeSubView(p, p->size().width(), height);
-			/*
-			if (p->IsExpandY()) {
-				ResizeSubWidget(p, p->size().width(), height);
-			} else {
-
-				if (p->size().height() > height) {
-					ResizeSubWidget(p, p->size().width(), height);
-				} else {
-					SetSubWidgetPosition(p, x,
-							y + (height - p->size().height()) / 2);
-				}
-
-			}
-			*/
-
-			x += p->size().width() + space_;
-		}
-	}
-
-	void ToolBox::FillSubWidgetsVertically()
-	{
-		int x = margin_.left();
-		int y = size().height() - margin_.top();
-		int width = size().width() - margin_.hsum();
-		//int height = size().height() - margin_.vsum();
-
-		y = y + space_;
-
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			y = y - p->size().height() - space_;
-
-			MoveSubViewTo(p, x, y);
-			ResizeSubView(p, width, p->size().height());
-			/*
-			if(p->IsExpandX()) {
-				ResizeSubWidget(p, width, p->size().height());
-			} else {
-
-				if(p->size().width() > width) {
-					ResizeSubWidget(p, width, p->size().height());
-				} else {
-					SetSubWidgetPosition(p, x + (width - p->size().width()) / 2,
-									y);
-				}
-
-			}
-			*/
-		}
-	}
-
-	int ToolBox::GetLastPosition () const
-	{
-		int retval = 0;
-
-		if(orientation_ == Horizontal) {
-
-			retval = margin_.left();
-			if (last_subview()) {
-				retval = last_subview()->position().x() + last_subview()->size().width() + space_;
-			}
-
-		} else {
-
-			retval = size().height() - margin_.top();
-			if(last_subview()) {
-				retval = last_subview()->position().y() - space_;
-			}
-
-		}
-
-		return retval;
 	}
 
 	void ToolBox::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)

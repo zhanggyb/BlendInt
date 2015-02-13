@@ -27,12 +27,16 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: AbstractFrame()
+	: AbstractFrame(),
+	  frame_flag_(0),
+	  round_radius_(5.f)
 	{
 	}
 
 	Frame::Frame (int width, int height)
-	: AbstractFrame(width, height)
+	: AbstractFrame(width, height),
+	  frame_flag_(0),
+	  round_radius_(5.f)
 	{
 	}
 

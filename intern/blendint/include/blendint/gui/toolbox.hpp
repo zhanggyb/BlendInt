@@ -26,6 +26,8 @@
 #include <opengl/gl-buffer.hpp>
 #include <opengl/gl-texture2d.hpp>
 
+#include <gui/abstract-layout.hpp>
+
 #include <gui/widget.hpp>
 #include <gui/frame.hpp>
 
@@ -35,9 +37,9 @@ namespace BlendInt {
 	{
 	public:
 
-		ToolBox (Orientation orientation = Horizontal);
+		ToolBox (AbstractLayout* layout);
 
-		ToolBox (int width, int height, Orientation orientation = Horizontal);
+		ToolBox (int width, int height, AbstractLayout* layout);
 
 		virtual ~ToolBox ();
 
@@ -85,14 +87,6 @@ namespace BlendInt {
 
 		void InitializeToolBoxOnce ();
 
-		void FillSubWidgets ();
-
-		void FillSubWidgetsHorizontally ();
-
-		void FillSubWidgetsVertically ();
-
-		int GetLastPosition () const;
-
 		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
@@ -120,12 +114,12 @@ namespace BlendInt {
 
 		Margin margin_;
 
-		// Layout orientation
-		Orientation orientation_;
-
         GLTexture2D texture_buffer_;
 
         int cursor_position_;
+
+		AbstractLayout* layout_;
+
 	};
 
 }

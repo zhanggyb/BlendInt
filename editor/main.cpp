@@ -58,7 +58,7 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		Dialog* dlg = new Dialog("Test TableLayout", Dialog::DialogButtonOK);
+		Dialog* dlg = new Dialog("Test TableLayout", 0, Dialog::DialogButtonOK);
 
 //		TextureView* b1 = new TextureView;
 //		b1->OpenFile("test.jpg");

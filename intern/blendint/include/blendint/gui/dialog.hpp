@@ -40,7 +40,15 @@ namespace BlendInt {
 
 	public:
 
-		Dialog (const String& title, int flags = 0);
+		/**
+		 * @brief Constructor of Dialog
+		 * @param[in] title The title of this dialog
+		 * @param[in] layout The layout used for content
+		 * @param[in] flags Flag for this dialog
+		 *
+		 * @note Destroy the layout will destoy this dialog too.
+		 */
+		Dialog (const String& title, AbstractLayout* layout = 0, int flags = 0);
 
 		virtual ~Dialog();
 
@@ -78,7 +86,7 @@ namespace BlendInt {
 
 		RefPtr<FrameShadow> shadow_;
 
-		LinearLayout* content_layout_;
+		AbstractLayout* content_layout_;
 
 		LinearLayout* main_layout_;
 	};

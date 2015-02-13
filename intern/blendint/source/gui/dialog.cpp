@@ -38,7 +38,7 @@
 
 namespace BlendInt {
 
-	Dialog::Dialog (const String& title, int flags)
+	Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
 	: AbstractDialog(flags),
 	  content_layout_(0),
 	  main_layout_(0)
@@ -74,7 +74,12 @@ namespace BlendInt {
 		}
 
 		main_layout_ = Manage(new LinearLayout(Vertical));
-		content_layout_ = Manage(new LinearLayout(Vertical));
+
+		if(layout == nullptr) {
+			content_layout_ = Manage(new LinearLayout(Vertical));
+		} else {
+			content_layout_ = layout;
+		}
 
 		main_layout_->AddWidget(title_layout);
 		main_layout_->AddWidget(content_layout_);
@@ -202,7 +207,6 @@ namespace BlendInt {
     		ResizeSubView(main_layout_, size());
 
     		RequestRedraw();
-
     	}
 
     	if(request.source() == this) {

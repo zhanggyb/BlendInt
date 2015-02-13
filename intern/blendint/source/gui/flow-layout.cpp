@@ -26,7 +26,17 @@
 namespace BlendInt {
 
 	FlowLayout::FlowLayout()
-	: AbstractLayout()
+	: AbstractLayout(),
+	  space_(2),
+	  align_(AlignLeft | AlignTop)
+	{
+		set_size(200, 200);
+	}
+
+	FlowLayout::FlowLayout(int width, int height, const Margin& margin, int space, int align)
+	: AbstractLayout(width, height, margin),
+	  space_(2),
+	  align_(align)
 	{
 
 	}

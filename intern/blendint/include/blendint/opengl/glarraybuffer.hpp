@@ -21,6 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+/*
+ * !!! Deprecated, use GLBuffer<> instead !!!
+ */
+
 #ifndef _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
 #define _BLENDINT_OPENGL_GLARRAYBUFFERF_HPP_
 

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FLOWLAYOUT_HPP_
-#define _BLENDINT_GUI_FLOWLAYOUT_HPP_
+#pragma once
 
 #include <gui/abstract-layout.hpp>
 
@@ -33,6 +32,8 @@ namespace BlendInt {
 	public:
 
 		FlowLayout ();
+
+		FlowLayout (int width, int height, const Margin& margin, int space, int align);
 
 		virtual ~FlowLayout ();
 
@@ -48,8 +49,12 @@ namespace BlendInt {
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
+	private:
+
+		int space_;
+
+		int align_;
+
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_FLOWLAYOUT_HPP_ */

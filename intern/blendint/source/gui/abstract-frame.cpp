@@ -443,8 +443,6 @@ namespace BlendInt {
 
         if(GLFramebuffer::CheckStatus()) {
 
-            fb->bind();
-
             AbstractWindow::shaders->SetWidgetProjectionMatrix(projection);
             AbstractWindow::shaders->SetWidgetModelMatrix(model);
 

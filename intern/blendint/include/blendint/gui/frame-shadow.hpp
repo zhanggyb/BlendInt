@@ -27,7 +27,7 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/abstractshadow.hpp>
+#include <gui/abstract-shadow.hpp>
 
 namespace BlendInt {
 
