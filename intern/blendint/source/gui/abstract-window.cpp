@@ -178,29 +178,6 @@ namespace BlendInt {
 		SetCursor(cursor);
 	}
 
-	void AbstractWindow::PushBlendFunc ()
-	{
-		BlendFunc current;
-		glGetIntegerv(GL_BLEND_SRC_RGB, (int*)&(current.srcRGB));
-		glGetIntegerv(GL_BLEND_SRC_ALPHA, (int*)&(current.srcAlpha));
-		glGetIntegerv(GL_BLEND_DST_RGB, (int*)&(current.dstRGB));
-		glGetIntegerv(GL_BLEND_DST_ALPHA, (int*)&(current.dstAlpha));
-
-		blend_func_stack_.push(current);
-	}
-
-	void AbstractWindow::PopBlendFunc ()
-	{
-		if(blend_func_stack_.empty()) {
-			DBG_PRINT_MSG("Error: %s", "no record in stack");
-			return;
-		}
-
-		BlendFunc top = blend_func_stack_.top();
-		glBlendFuncSeparate(top.srcRGB, top.srcAlpha, top.dstRGB, top.dstAlpha);
-		blend_func_stack_.pop();
-	}
-
 	void AbstractWindow::BeginPushStencil ()
 	{
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

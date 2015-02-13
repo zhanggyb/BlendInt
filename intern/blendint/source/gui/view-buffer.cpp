@@ -107,13 +107,9 @@ namespace BlendInt {
 
 	void ViewBuffer::Draw () const
 	{
-		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
 		texture_.bind();
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void ViewBuffer::Draw (float x, float y) const

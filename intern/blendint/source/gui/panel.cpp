@@ -287,7 +287,7 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         AbstractWindow::shaders->widget_image_program()->use();
 
@@ -298,12 +298,8 @@ namespace BlendInt {
 
         glBindVertexArray(vao_[2]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
 
-        texture_buffer_.reset();
-        GLSLProgram::reset();
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         return Finish;
 	}

@@ -36,42 +36,6 @@
 
 namespace BlendInt {
 
-	struct BlendFunc {
-
-		inline BlendFunc ()
-		: srcRGB(GL_ONE),
-		  dstRGB(GL_ZERO),
-		  srcAlpha(GL_ONE),
-		  dstAlpha(GL_ZERO)
-		{
-		}
-
-		inline ~BlendFunc ()
-		{}
-
-		inline BlendFunc (const BlendFunc& orig)
-		: srcRGB(orig.srcRGB),
-		  dstRGB(orig.dstRGB),
-		  srcAlpha(orig.srcAlpha),
-		  dstAlpha(orig.dstAlpha)
-		{}
-
-		inline BlendFunc& operator = (const BlendFunc& orig)
-		{
-			srcRGB = orig.srcRGB;
-			dstRGB = orig.dstRGB;
-			srcAlpha = orig.srcAlpha;
-			dstAlpha = orig.dstAlpha;
-
-			return *this;
-		}
-
-		GLenum srcRGB;
-		GLenum dstRGB;
-		GLenum srcAlpha;
-		GLenum dstAlpha;
-	};
-
 	/**
 	 * @brief Abstract class for window
 	 *
@@ -129,10 +93,6 @@ namespace BlendInt {
 		void PushCursor ();
 
 		void PopCursor ();
-
-		void PushBlendFunc ();
-
-		void PopBlendFunc ();
 
 		void BeginPushStencil ();
 
@@ -297,8 +257,6 @@ namespace BlendInt {
 		CursorShape current_cursor_shape_;
 
 		std::stack<CursorShape> cursor_stack_;
-
-		std::stack<BlendFunc> blend_func_stack_;
 	};
 
 	inline int pixel_size (int a)

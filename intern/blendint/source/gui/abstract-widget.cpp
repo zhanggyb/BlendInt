@@ -218,8 +218,9 @@ namespace BlendInt {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             // FIXME: the blend func works abnormally in most cases.
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            //glEnable(GL_BLEND);
+            if(current_framebuffer == 0) {
+                glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            }
 
             glViewport(0, 0, widget->size().width(), widget->size().height());
 			glDisable(GL_SCISSOR_TEST);
@@ -229,7 +230,9 @@ namespace BlendInt {
             // Draw context:
 			widget->DrawSubViewsOnce(context);
 
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            if(current_framebuffer == 0) {
+    			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
 
             // restore viewport and framebuffer
 

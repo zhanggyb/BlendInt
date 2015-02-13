@@ -44,6 +44,7 @@
 #include <gui/numerical-slider.hpp>
 #include <gui/node-view.hpp>
 #include <gui/node.hpp>
+#include <gui/panel.hpp>
 
 int main (int argc, char* argv[])
 {

@@ -215,7 +215,9 @@ namespace BlendInt {
 			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			buffer()->Draw();
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		AbstractWindow::shaders->frame_outer_program()->use();
