@@ -35,7 +35,7 @@
 #include <core/size.hpp>
 #include <core/margin.hpp>
 
-#include <blendint/cppevents/Cpp/Events.hpp>
+#include <cppevents/Cpp/Events.hpp>
 
 namespace BlendInt {
 

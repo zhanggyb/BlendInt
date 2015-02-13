@@ -104,8 +104,7 @@ else()
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/blendint)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/blendint/cppevents)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/cppevents)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -221,5 +220,5 @@ if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
 	add_subdirectory(demo)
 endif()
 
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/intern/blendint/include/blendint" DESTINATION include)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/blendint)
+
