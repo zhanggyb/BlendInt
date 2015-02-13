@@ -114,7 +114,7 @@ namespace BlendInt {
 
 	private:
 
-		virtual Response DispatchHoverEvent (AbstractWindow* context);
+		virtual Response PerformMouseHover (AbstractWindow* context);
 
 		void InitializeMenu ();
 

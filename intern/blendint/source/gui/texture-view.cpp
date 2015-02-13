@@ -218,7 +218,7 @@ namespace BlendInt {
 	bool TextureView::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
-		AbstractWindow* c = const_cast<AbstractWindow*>(context);
+		AbstractWindow* c = context;
 
 		Point offset = GetOffset();
 		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
@@ -284,9 +284,9 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[0]);
 
-		const_cast<AbstractWindow*>(context)->BeginPopStencil();	// pop inner stencil
+		context->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		const_cast<AbstractWindow*>(context)->EndPopStencil();
+		context->EndPopStencil();
 
 		glBindVertexArray(0);
 

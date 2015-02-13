@@ -76,7 +76,7 @@ namespace BlendInt {
 		}
 
 		if(focused_widget_) {
-			const_cast<AbstractWindow*>(context)->register_active_frame(this);
+			context->register_active_frame(this);
 			response = DispatchKeyEvent(focused_widget_, context);
 		}
 
@@ -86,7 +86,7 @@ namespace BlendInt {
 	Response AbstractDialog::PerformMousePress (
 	        AbstractWindow* context)
 	{
-		const_cast<AbstractWindow*>(context)->register_active_frame(this);
+		context->register_active_frame(this);
 
 		if(cursor_position_ == InsideRectangle) {
 
@@ -111,7 +111,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				const_cast<AbstractWindow*>(context)->MoveFrameToTop(this);
+				context->MoveFrameToTop(this);
 			}
 
 			return Finish;
@@ -235,7 +235,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	Response AbstractDialog::DispatchHoverEvent (
+	Response AbstractDialog::PerformMouseHover (
 	        AbstractWindow* context)
 	{
 		if(mouse_button_pressed()) return Finish;

@@ -48,7 +48,7 @@ namespace BlendInt {
 	: AbstractView(),
 	  active_frame_(nullptr),
 	  stencil_count_(0),
-	  current_cursor_(ArrowCursor)
+	  current_cursor_shape_(ArrowCursor)
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -62,7 +62,7 @@ namespace BlendInt {
 	: AbstractView(width, height),
 	  active_frame_(nullptr),
 	  stencil_count_(0),
-	  current_cursor_(ArrowCursor)
+	  current_cursor_shape_(ArrowCursor)
 	{
 		set_refresh(true);
 
@@ -156,19 +156,19 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWindow::SetCursor(int cursor_type)
+	void AbstractWindow::SetCursor(CursorShape cursor_type)
 	{
-		current_cursor_ = cursor_type;
+		current_cursor_shape_ = cursor_type;
 	}
 
 	void AbstractWindow::PushCursor ()
 	{
-		cursor_stack_.push(current_cursor_);
+		cursor_stack_.push(current_cursor_shape_);
 	}
 
 	void AbstractWindow::PopCursor ()
 	{
-		int cursor = ArrowCursor;
+		CursorShape cursor = ArrowCursor;
 
 		if(!cursor_stack_.empty()) {
 			cursor = cursor_stack_.top();
@@ -176,6 +176,29 @@ namespace BlendInt {
 		}
 
 		SetCursor(cursor);
+	}
+
+	void AbstractWindow::PushBlendFunc ()
+	{
+		BlendFunc current;
+		glGetIntegerv(GL_BLEND_SRC_RGB, (int*)&(current.srcRGB));
+		glGetIntegerv(GL_BLEND_SRC_ALPHA, (int*)&(current.srcAlpha));
+		glGetIntegerv(GL_BLEND_DST_RGB, (int*)&(current.dstRGB));
+		glGetIntegerv(GL_BLEND_DST_ALPHA, (int*)&(current.dstAlpha));
+
+		blend_func_stack_.push(current);
+	}
+
+	void AbstractWindow::PopBlendFunc ()
+	{
+		if(blend_func_stack_.empty()) {
+			DBG_PRINT_MSG("Error: %s", "no record in stack");
+			return;
+		}
+
+		BlendFunc top = blend_func_stack_.top();
+		glBlendFuncSeparate(top.srcRGB, top.srcAlpha, top.dstRGB, top.dstAlpha);
+		blend_func_stack_.pop();
 	}
 
 	void AbstractWindow::BeginPushStencil ()
@@ -615,14 +638,14 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWindow::DispatchHoverEvent ()
+	void AbstractWindow::PerformMouseHover ()
 	{
 		Response response = Ignore;
 		AbstractFrame* frame = 0;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			frame = dynamic_cast<AbstractFrame*>(p);
-			response = frame->DispatchHoverEvent(this);
+			response = frame->PerformMouseHover(this);
 			if(response == Finish) break;
 		}
 	}

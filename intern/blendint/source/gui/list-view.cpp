@@ -76,7 +76,7 @@ namespace BlendInt {
 
 	Response ListView::Draw (AbstractWindow* context)
 	{
-		AbstractWindow* c = const_cast<AbstractWindow*>(context);
+		AbstractWindow* c = context;
 
 		int y = position().y() + size().height();
 		int h = font_.height();

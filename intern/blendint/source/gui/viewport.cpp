@@ -64,7 +64,7 @@ namespace BlendInt {
 		return Size(640, 480);
 	}
 
-	Response Viewport::DispatchHoverEvent(AbstractWindow* context)
+	Response Viewport::PerformMouseHover(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -167,7 +167,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		const_cast<AbstractWindow*>(context)->register_active_frame(this);
+		context->register_active_frame(this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

@@ -160,12 +160,8 @@ namespace BlendInt {
 		}
 	}
 
-	void Window::SetCursor(int cursor_type)
+	void Window::SetCursor(CursorShape cursor_type)
 	{
-		if (cursor_type < 0 || cursor_type >= CursorShapeLast) {
-			return;
-		}
-
 		switch (cursor_type) {
 
 			case ArrowCursor: {
@@ -516,20 +512,20 @@ namespace BlendInt {
 		switch (kMouseAction) {
 
 			case MouseMove: {
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				win->PerformMouseMove(win);
 				break;
 			}
 
 			case MousePress: {
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				win->PerformMousePress(win);
 				break;
 			}
 
 			case MouseRelease: {
 				win->PerformMouseRelease(win);
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				break;
 			}
 
@@ -553,20 +549,20 @@ namespace BlendInt {
 		switch (kMouseAction) {
 
 			case MouseMove: {
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				win->PerformMouseMove(win);
 				break;
 			}
 
 			case MousePress: {
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				win->PerformMousePress(win);
 				break;
 			}
 
 			case MouseRelease: {
 				win->PerformMouseRelease(win);
-				win->DispatchHoverEvent();
+				win->PerformMouseHover();
 				break;
 			}
 

@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response DispatchHoverEvent (AbstractWindow* context);
+		virtual Response PerformMouseHover (AbstractWindow* context);
 
 		virtual bool PreDraw (AbstractWindow* context);
 

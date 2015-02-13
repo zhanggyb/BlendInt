@@ -123,7 +123,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	Response Frame::DispatchHoverEvent(AbstractWindow* context)
+	Response Frame::PerformMouseHover(AbstractWindow* context)
 	{
 		return Ignore;
 	}

@@ -36,6 +36,42 @@
 
 namespace BlendInt {
 
+	struct BlendFunc {
+
+		inline BlendFunc ()
+		: srcRGB(GL_ONE),
+		  dstRGB(GL_ZERO),
+		  srcAlpha(GL_ONE),
+		  dstAlpha(GL_ZERO)
+		{
+		}
+
+		inline ~BlendFunc ()
+		{}
+
+		inline BlendFunc (const BlendFunc& orig)
+		: srcRGB(orig.srcRGB),
+		  dstRGB(orig.dstRGB),
+		  srcAlpha(orig.srcAlpha),
+		  dstAlpha(orig.dstAlpha)
+		{}
+
+		inline BlendFunc& operator = (const BlendFunc& orig)
+		{
+			srcRGB = orig.srcRGB;
+			dstRGB = orig.dstRGB;
+			srcAlpha = orig.srcAlpha;
+			dstAlpha = orig.dstAlpha;
+
+			return *this;
+		}
+
+		GLenum srcRGB;
+		GLenum dstRGB;
+		GLenum srcAlpha;
+		GLenum dstAlpha;
+	};
+
 	/**
 	 * @brief Abstract class for window
 	 *
@@ -88,11 +124,15 @@ namespace BlendInt {
 
 		virtual void Exec () = 0;
 
-		virtual void SetCursor (int cursor_type);
+		virtual void SetCursor (CursorShape cursor_type);
 
 		void PushCursor ();
 
 		void PopCursor ();
+
+		void PushBlendFunc ();
+
+		void PopBlendFunc ();
 
 		void BeginPushStencil ();
 
@@ -140,9 +180,12 @@ namespace BlendInt {
 			return viewport_origin_;
 		}
 
-		int current_cursor () const
+		/**
+		 * @brief Get the current cursor shape
+		 */
+		inline CursorShape current_cursor_shape () const
 		{
-			return current_cursor_;
+			return current_cursor_shape_;
 		}
 
 		Cpp::ConnectionScope* events() const {return events_.get();}
@@ -193,7 +236,7 @@ namespace BlendInt {
 
 		virtual bool RemoveSubView (AbstractView* view);
 
-		void DispatchHoverEvent ();
+		void PerformMouseHover ();
 
 		inline void set_viewport_origin (int x, int y)
 		{
@@ -251,10 +294,11 @@ namespace BlendInt {
 
 		GLuint stencil_count_;
 
-		int current_cursor_;
+		CursorShape current_cursor_shape_;
 
-		std::stack<int> cursor_stack_;
+		std::stack<CursorShape> cursor_stack_;
 
+		std::stack<BlendFunc> blend_func_stack_;
 	};
 
 	inline int pixel_size (int a)

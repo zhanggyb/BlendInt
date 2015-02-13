@@ -32,20 +32,15 @@ namespace BlendInt {
 	 */
 	class AbstractNode: public AbstractView
 	{
+		friend class NodeView;
+
 	public:
 
-		AbstractNode ()
-		: AbstractView(),
-		  node_flag_(0),
-		  round_radius_(5.f)
-		{
+		AbstractNode (int flag = 0);
 
-		}
+		AbstractNode (int width, int height, int flag = 0);
 
-		virtual ~AbstractNode ()
-		{
-
-		}
+		virtual ~AbstractNode ();
 
 		void SetRoundRadius (float radius);
 
@@ -64,8 +59,6 @@ namespace BlendInt {
 	protected:
 
 		virtual bool PreDraw (AbstractWindow* context);
-
-		// virtual Response Draw (Profile& profile);
 
 		virtual void PostDraw (AbstractWindow* context);
 
@@ -88,6 +81,11 @@ namespace BlendInt {
 		virtual Response PerformMouseRelease (AbstractWindow* context);
 
 		virtual Response PerformMouseMove (AbstractWindow* context);
+
+		/**
+		 * @brief Perform mouse hover event from NodeView
+		 */
+		virtual Response PerformMouseHover (AbstractWindow* context);
 
 		void GenerateRoundedVertices (
 				std::vector<GLfloat>* inner,
@@ -126,12 +124,56 @@ namespace BlendInt {
 
 			NodeRoundBottomLeft = (1 << 3),
 
+			/**
+			 * @brief If the cursor is on border
+			 */
+			NodeCursorOnBorder = (1 << 4),
+
+			/**
+			 * @brief If mouse button pressed
+			 */
+			NodeMouseButtonPressed = (1 << 5)
 		};
+
+		inline bool cursor_on_border () const
+		{
+			return node_flag_ & NodeCursorOnBorder;
+		}
+
+		inline bool mouse_button_pressed () const
+		{
+			return node_flag_ & NodeMouseButtonPressed;
+		}
+
+		inline void set_cursor_on_border (bool cursor_on_border)
+		{
+			if(cursor_on_border) {
+				SETBIT(node_flag_, NodeCursorOnBorder);
+			} else {
+				CLRBIT(node_flag_, NodeCursorOnBorder);
+			}
+		}
+
+		inline void set_mouse_button_pressed (bool pressed)
+		{
+			if(pressed) {
+				SETBIT(node_flag_, NodeMouseButtonPressed);
+			} else {
+				CLRBIT(node_flag_, NodeMouseButtonPressed);
+			}
+		}
 
 		uint32_t node_flag_;
 
 		float round_radius_;
 
+		Point last_position_;
+
+		Size last_size_;
+
+		Point cursor_point_;
+
+		int cursor_position_;
 	};
 
 }

@@ -175,7 +175,7 @@ namespace BlendInt {
 
 	Response Menu::PerformMousePress (AbstractWindow* context)
 	{
-		const_cast<AbstractWindow*>(context)->register_active_frame(this);
+		context->register_active_frame(this);
 
 		if(cursor_range_ == InsideRectangle) {
 
@@ -211,7 +211,7 @@ namespace BlendInt {
 		set_pressed(false);
 
 		if(focused_widget_) {
-			const_cast<AbstractWindow*>(context)->register_active_frame(this);
+			context->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
@@ -353,7 +353,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		const_cast<AbstractWindow*>(context)->register_active_frame(this);
+		context->register_active_frame(this);
 
 		if(refresh()) {
 			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
@@ -445,7 +445,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	Response Menu::DispatchHoverEvent(AbstractWindow* context)
+	Response Menu::PerformMouseHover(AbstractWindow* context)
 	{
 		if(pressed_ext()) return Finish;
 

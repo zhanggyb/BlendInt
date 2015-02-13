@@ -221,7 +221,7 @@ namespace BlendInt {
 		AbstractWidget* hovered_widget = orig;
 		AbstractWidget* tmp = 0;
 
-		const_cast<AbstractWindow*>(context)->register_active_frame(this);
+		context->register_active_frame(this);
 		Point local;	// the relative local position of the cursor in a widget
 		Point offset;
 
@@ -450,7 +450,7 @@ namespace BlendInt {
 
             // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
             GLuint original_stencil_count = context->stencil_count_;
-			const_cast<AbstractWindow*>(context)->stencil_count_ = 0;
+			context->stencil_count_ = 0;
 
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClearDepth(1.0);
@@ -459,7 +459,7 @@ namespace BlendInt {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
+            //glEnable(GL_BLEND);
 
             glViewport(0, 0, frame->size().width(), frame->size().height());
 
@@ -472,7 +472,7 @@ namespace BlendInt {
 			#ifdef DEBUG
 			assert(context->stencil_count_ == 0);
 			#endif
-			const_cast<AbstractWindow*>(context)->stencil_count_ = original_stencil_count;
+			context->stencil_count_ = original_stencil_count;
 
 			retval = true;
         }

@@ -448,7 +448,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	Response Workspace::DispatchHoverEvent(AbstractWindow* context)
+	Response Workspace::PerformMouseHover(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 

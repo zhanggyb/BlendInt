@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		virtual void Exec ();
 
-		virtual void SetCursor (int cursor_type);
+		virtual void SetCursor (CursorShape cursor_type);
 
 		virtual int GetKeyInput () const;
 

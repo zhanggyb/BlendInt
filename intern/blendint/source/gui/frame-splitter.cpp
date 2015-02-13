@@ -191,7 +191,7 @@ namespace BlendInt {
 		//RequestRedraw();
 	}
 
-	Response FrameSplitterHandle::DispatchHoverEvent(AbstractWindow* context)
+	Response FrameSplitterHandle::PerformMouseHover(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 			return Finish;
@@ -610,7 +610,7 @@ namespace BlendInt {
 		return response;
 	}
 
-	Response FrameSplitter::DispatchHoverEvent(AbstractWindow* context)
+	Response FrameSplitter::PerformMouseHover(AbstractWindow* context)
 	{
 		if(Contain(context->GetCursorPosition())) {
 

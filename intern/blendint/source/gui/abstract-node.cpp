@@ -128,22 +128,291 @@ namespace BlendInt {
 
 	Response AbstractNode::PerformMousePress (AbstractWindow* context)
 	{
+		if(cursor_position_ == InsideRectangle) {
+
+			last_position_ = position();
+			cursor_point_ = context->GetCursorPosition();
+
+			/*
+			if(hovered_widget_) {
+
+				AbstractView* widget = 0;	// widget may be focused
+
+				widget = DispatchMousePressEvent(hovered_widget_, context);
+
+				if(widget == 0) {
+					//DBG_PRINT_MSG("%s", "widget 0");
+					set_mouse_button_pressed(true);
+				} else {
+					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
+				}
+
+			} else {
+				set_mouse_button_pressed(true);
+			}
+			*/
+			set_mouse_button_pressed(true);
+
+			return Finish;
+
+		} else if (cursor_position_ != OutsideRectangle) {
+
+			set_mouse_button_pressed(true);
+
+			last_position_ = position();
+			last_size_ = size();
+			cursor_point_ = context->GetCursorPosition();
+
+			return Finish;
+		}
+
 		return Ignore;
 	}
 
 	Response AbstractNode::PerformMouseRelease (AbstractWindow* context)
 	{
+		cursor_position_ = InsideRectangle;
+		set_mouse_button_pressed(false);
+
+//		if(focused_widget_) {
+//			context->register_active_frame(this);
+//			return delegate_mouse_release_event(focused_widget_, context);
+//		}
+
 		return Ignore;
 	}
 
 	Response AbstractNode::PerformMouseMove (AbstractWindow* context)
 	{
-		return Ignore;
+		Response retval = Ignore;
+
+		if(mouse_button_pressed()) {
+
+			int ox = context->GetCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetCursorPosition().y() - cursor_point_.y();
+
+			switch(cursor_position_) {
+
+				case InsideRectangle: {
+					set_position(last_position_.x() + ox, last_position_.y() + oy);
+					break;
+				}
+
+				case OnLeftBorder: {
+					set_position(last_position_.x() + ox, last_position_.y());
+					Resize(last_size_.width() - ox, last_size_.height());
+					break;
+				}
+
+				case OnRightBorder: {
+					Resize(last_size_.width() + ox, last_size_.height());
+					break;
+				}
+
+				case OnTopBorder: {
+					Resize(last_size_.width(), last_size_.height() + oy);
+					break;
+				}
+
+				case OnBottomBorder: {
+					set_position(last_position_.x(), last_position_.y() + oy);
+					Resize(last_size_.width(), last_size_.height() - oy);
+					break;
+				}
+
+				case OnTopLeftCorner: {
+					set_position(last_position_.x() + ox, last_position_.y());
+					Resize(last_size_.width() - ox, last_size_.height() + oy);
+					break;
+				}
+
+				case OnTopRightCorner: {
+					Resize(last_size_.width() + ox, last_size_.height() + oy);
+					break;
+				}
+
+				case OnBottomLeftCorner: {
+					set_position(last_position_.x() + ox, last_position_.y() + oy);
+					Resize(last_size_.width() - ox, last_size_.height() - oy);
+					break;
+				}
+
+				case OnBottomRightCorner: {
+					set_position(last_position_.x(), last_position_.y() + oy);
+					Resize(last_size_.width() + ox, last_size_.height() - oy);
+					break;
+				}
+
+				default: {
+					return Finish;
+					break;
+				}
+
+			}
+
+			if(superview()) {
+				superview()->RequestRedraw();
+			}
+			retval = Finish;
+
+		} else {
+
+//			if(focused_widget_) {
+//
+//				context->register_active_frame(this);
+//				retval = delegate_mouse_move_event(focused_widget_, context);
+//
+//			}
+		}
+
+		return retval;
+	}
+
+	AbstractNode::AbstractNode (int flag)
+	: AbstractView(),
+	  node_flag_(flag),
+	  round_radius_(5.f),
+	  cursor_position_(InsideRectangle)
+	{
+	}
+
+	AbstractNode::AbstractNode (int width, int height, int flag)
+	: AbstractView(width, height),
+	  node_flag_(flag),
+	  round_radius_(5.f),
+	  cursor_position_(InsideRectangle)
+	{
+
+	}
+
+	AbstractNode::~AbstractNode ()
+	{
 	}
 
 	void AbstractNode::PerformRoundRadiusUpdate (float radius)
 	{
 		round_radius_ = radius;
+	}
+
+	Response AbstractNode::PerformMouseHover (AbstractWindow* context)
+	{
+		if(mouse_button_pressed()) return Finish;
+
+		Response retval = Finish;
+		int border = 4;
+
+		// Point global_position = context->GetAbsolutePosition(this);
+
+		Rect valid_rect(position().x() - border,
+				position().y() - border,
+				size().width() + 2 * border,
+				size().height() + 2 * border);
+
+		if(valid_rect.contains(context->GetCursorPosition())) {
+
+			if(Contain(context->GetCursorPosition())) {
+
+				cursor_position_ = InsideRectangle;
+
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetCursorPosition().x(), context->GetCursorPosition().y());
+
+				/*
+				AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
+
+				if(new_hovered_widget != hovered_widget_) {
+
+					if(hovered_widget_) {
+						hovered_widget_->destroyed().disconnectOne(this,
+								&AbstractDialog::OnHoverWidgetDestroyed);
+					}
+
+					hovered_widget_ = new_hovered_widget;
+					if(hovered_widget_) {
+						events()->connect(hovered_widget_->destroyed(), this,
+								&AbstractDialog::OnHoverWidgetDestroyed);
+					}
+
+				}
+				*/
+
+//				if(hovered_widget_) {
+//					 DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
+//				}
+
+				// set cursor shape
+				if(cursor_on_border()) {
+					set_cursor_on_border(false);
+					context->PopCursor();
+				}
+
+			} else {
+
+				set_cursor_on_border(true);
+				cursor_position_ = InsideRectangle;
+
+				if(context->GetCursorPosition().x() <= position().x()) {
+					cursor_position_ |= OnLeftBorder;
+				} else if (context->GetCursorPosition().x() >= (position().x() + size().width())) {
+					cursor_position_ |= OnRightBorder;
+				}
+
+				if (context->GetCursorPosition().y() >= (position().y() + size().height())) {
+					cursor_position_ |= OnTopBorder;
+				} else if (context->GetCursorPosition().y () <= position().y()) {
+					cursor_position_ |= OnBottomBorder;
+				}
+
+				// set cursor shape
+				switch(cursor_position_) {
+
+					case OnLeftBorder:
+					case OnRightBorder: {
+						context->PushCursor();
+						context->SetCursor(SplitHCursor);
+
+						break;
+					}
+
+					case OnTopBorder:
+					case OnBottomBorder: {
+						context->PushCursor();
+						context->SetCursor(SplitVCursor);
+						break;
+					}
+
+					case OnTopLeftCorner:
+					case OnBottomRightCorner: {
+						context->PushCursor();
+						context->SetCursor(SizeFDiagCursor);
+						break;
+					}
+
+					case OnTopRightCorner:
+					case OnBottomLeftCorner: {
+						context->PushCursor();
+						context->SetCursor(SizeBDiagCursor);
+						break;
+					}
+
+					default:
+						break;
+				}
+
+			}
+
+		} else {
+			cursor_position_ = OutsideRectangle;
+
+			// set cursor shape
+			if(cursor_on_border()) {
+				set_cursor_on_border(false);
+				context->PopCursor();
+			}
+
+			retval = Ignore;
+		}
+
+		return retval;
 	}
 
 }

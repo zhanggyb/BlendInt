@@ -90,7 +90,7 @@ namespace BlendInt {
 
 	Response Viewport2D::Draw(AbstractWindow* context)
 	{
-		AbstractWindow* c = const_cast<AbstractWindow*>(context);
+		AbstractWindow* c = context;
         GLint vp[4];	// Original viewport
         int n = GetOutlineVertices(round_type()) + 2;
 

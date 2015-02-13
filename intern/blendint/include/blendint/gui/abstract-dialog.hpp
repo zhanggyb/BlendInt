@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response DispatchHoverEvent (AbstractWindow* context);
+		virtual Response PerformMouseHover (AbstractWindow* context);
 
 		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
@@ -87,40 +87,12 @@ namespace BlendInt {
 			return dialog_flags_ & DialogModal;
 		}
 
-		inline bool cursor_on_border () const
-		{
-			return dialog_flags_ & DialogCursorOnBorder;
-		}
-
-		inline bool mouse_button_pressed () const
-		{
-			return dialog_flags_ & DialogMouseButtonPressed;
-		}
-
 		inline void set_modal (bool modal)
 		{
 			if(modal) {
 				SETBIT(dialog_flags_, DialogModal);
 			} else {
 				CLRBIT(dialog_flags_, DialogModal);
-			}
-		}
-
-		inline void set_cursor_on_border (bool cursor_on_border)
-		{
-			if(cursor_on_border) {
-				SETBIT(dialog_flags_, DialogCursorOnBorder);
-			} else {
-				CLRBIT(dialog_flags_, DialogCursorOnBorder);
-			}
-		}
-
-		inline void set_mouse_button_pressed (bool pressed)
-		{
-			if(pressed) {
-				SETBIT(dialog_flags_, DialogMouseButtonPressed);
-			} else {
-				CLRBIT(dialog_flags_, DialogMouseButtonPressed);
 			}
 		}
 
@@ -152,6 +124,34 @@ namespace BlendInt {
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
+		inline bool cursor_on_border () const
+		{
+			return dialog_flags_ & DialogCursorOnBorder;
+		}
+
+		inline bool mouse_button_pressed () const
+		{
+			return dialog_flags_ & DialogMouseButtonPressed;
+		}
+
+		inline void set_cursor_on_border (bool cursor_on_border)
+		{
+			if(cursor_on_border) {
+				SETBIT(dialog_flags_, DialogCursorOnBorder);
+			} else {
+				CLRBIT(dialog_flags_, DialogCursorOnBorder);
+			}
+		}
+
+		inline void set_mouse_button_pressed (bool pressed)
+		{
+			if(pressed) {
+				SETBIT(dialog_flags_, DialogMouseButtonPressed);
+			} else {
+				CLRBIT(dialog_flags_, DialogMouseButtonPressed);
+			}
+		}
 
 		Point last_position_;
 

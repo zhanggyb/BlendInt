@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual Response DispatchHoverEvent (AbstractWindow* context) = 0;
+		virtual Response PerformMouseHover (AbstractWindow* context) = 0;
 
 		Response DispatchKeyEvent (AbstractView* view, AbstractWindow* context);
 
@@ -141,7 +141,7 @@ namespace BlendInt {
 
 		static inline Response delegate_dispatch_hover_event(AbstractFrame* frame, AbstractWindow* context)
 		{
-			return frame->DispatchHoverEvent(context);
+			return frame->PerformMouseHover(context);
 		}
 
 		/**

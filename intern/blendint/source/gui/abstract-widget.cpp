@@ -188,7 +188,7 @@ namespace BlendInt {
 			GLboolean scissor_test;
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
-			AbstractWindow* c = const_cast<AbstractWindow*>(context);
+			AbstractWindow* c = context;
             glm::vec3 pos = AbstractWindow::shaders->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
             Point original = context->viewport_origin();
             c->viewport_origin_.reset(original.x() + pos.x, original.y() + pos.y);
@@ -219,7 +219,7 @@ namespace BlendInt {
 
             // FIXME: the blend func works abnormally in most cases.
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
+            //glEnable(GL_BLEND);
 
             glViewport(0, 0, widget->size().width(), widget->size().height());
 			glDisable(GL_SCISSOR_TEST);

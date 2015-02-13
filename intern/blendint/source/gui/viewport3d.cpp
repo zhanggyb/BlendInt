@@ -242,7 +242,7 @@ namespace BlendInt {
 
 	Response Viewport3D::Draw (AbstractWindow* context)
 	{
-		AbstractWindow* c = const_cast<AbstractWindow*>(context);
+		AbstractWindow* c = context;
         GLint vp[4];	// Original viewport
         //GLint sci[4];
         //GLboolean scissor_status;
