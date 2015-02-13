@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <gui/abstractshadow.hpp>
-
+#include <gui/abstract-shadow.hpp>
 #include <gui/abstract-window.hpp>
 
 #ifdef DEBUG
