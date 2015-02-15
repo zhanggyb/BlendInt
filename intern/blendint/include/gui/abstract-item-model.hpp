@@ -86,6 +86,8 @@ namespace BlendInt {
 
 		const AbstractForm* GetRawData () const;
 
+		bool SetData (const RefPtr<AbstractForm>& data);
+
 		ModelIndex GetRootIndex () const;
 
 		ModelIndex GetParentIndex () const;
@@ -102,11 +104,20 @@ namespace BlendInt {
 
 		ModelIndex GetSibling (int row, int column) const;
 
-		bool IsValid () const;
+		inline bool valid () const
+		{
+			return node_ != 0;
+		}
 
-		bool operator != (const ModelIndex& other) const;
+		inline bool operator != (const ModelIndex& other) const
+		{
+			return node_ != other.node_;
+		}
 
-		bool operator == (const ModelIndex& other) const;
+		inline bool operator == (const ModelIndex& other) const
+		{
+			return node_ == other.node_;
+		}
 
 	private:
 

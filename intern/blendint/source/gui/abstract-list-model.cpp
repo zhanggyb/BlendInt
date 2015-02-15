@@ -33,7 +33,6 @@ namespace BlendInt {
 	  root_(0)
 	{
 		root_ = new ModelNode;
-		root_->data = RefPtr<Text>(new Text("Root Node"));
 	}
 
 	AbstractListModel::~AbstractListModel ()
@@ -44,39 +43,35 @@ namespace BlendInt {
 	}
 
 	bool AbstractListModel::InsertColumns (int column, int count,
-			const ModelIndex& superview)
+			const ModelIndex& parent)
 	{
 		return false;
 	}
 
 	bool AbstractListModel::RemoveColumns (int column, int count,
-			const ModelIndex& superview)
+			const ModelIndex& parent)
 	{
 		return false;
 	}
 
 	bool AbstractListModel::InsertRows (int row, int count,
-			const ModelIndex& superview)
+			const ModelIndex& parent)
 	{
-		if(!superview.IsValid()) return false;
+		if(!parent.valid()) return false;
 
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = get_index_node(superview);
+		ModelNode* node = get_index_node(parent);
 
 		ModelNode* first = 0;
 		ModelNode* last = 0;
 
-		char buf[8];
 		first = new ModelNode;
-		first->data = RefPtr<Text>(new Text("row 0"));
 		last = first;
 
 		for(int i = 1; i < count; i++) {
 			last->down = new ModelNode;
-			snprintf(buf, 8, "row %d", i);
-			last->down->data = RefPtr<Text>(new Text(buf));
 			last->down->up = last;
 			last = last->down;
 		}
@@ -116,15 +111,15 @@ namespace BlendInt {
 	}
 
 	bool AbstractListModel::RemoveRows (int row, int count,
-			const ModelIndex& superview)
+			const ModelIndex& parent)
 	{
-		if (!superview.IsValid())
+		if (!parent.valid())
 			return false;
 
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = get_index_node(superview);
+		ModelNode* node = get_index_node(parent);
 		if(node->child == 0)
 			return false;
 
@@ -150,7 +145,7 @@ namespace BlendInt {
 					break;
 			}
 
-			node = get_index_node(superview);
+			node = get_index_node(parent);
 			if(first == 0) {
 
 				if(last == 0) {	// clear the list
@@ -183,11 +178,36 @@ namespace BlendInt {
 	}
 
 	ModelIndex AbstractListModel::GetIndex (int row, int column,
-			const ModelIndex& superview) const
+			const ModelIndex& parent) const
 	{
-		ModelIndex retval;
+		ModelIndex index;
+		if(!parent.valid()) return index;
 
-		return retval;
+		ModelNode* parent_node = get_index_node(parent);
+		ModelNode* node = parent_node->child;
+
+		if(node == 0) return index;
+
+		// move row down
+		while(node->down && (row > 0)) {
+			node = node->down;
+			row--;
+		}
+
+		if(row == 0) {
+
+			while(node->right && (column > 0)) {
+				node = node->right;
+				column--;
+			}
+
+			if(column == 0) {
+				set_index_node(index, node);
+			}
+
+		}
+
+		return index;
 	}
 
 	void AbstractListModel::DestroyChildNode (ModelNode* node)
@@ -200,7 +220,7 @@ namespace BlendInt {
 			node->child = 0;
 		}
 
-		ModelNode* superview = node->parent;
+		ModelNode* parent = node->parent;
 		ModelNode* tmp = 0;
 
 		while(node) {
@@ -209,7 +229,7 @@ namespace BlendInt {
 
 			DestroyRow(node);
 			node = tmp;
-			node->parent = superview;	// no needed but looks resonable
+			node->parent = parent;	// no needed but looks resonable
 
 		}
 	}

@@ -45,6 +45,7 @@
 #include <gui/node-view.hpp>
 #include <gui/node.hpp>
 #include <gui/panel.hpp>
+#include <gui/string-list-model.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -58,28 +59,58 @@ int main (int argc, char* argv[])
 
 		Window win(1280, 800, "UI Editor");
 
-		Dialog* dlg = new Dialog("Test TableLayout", 0, Dialog::DialogButtonOK);
+		//Dialog* dlg = new Dialog("Test TableLayout", 0, Dialog::DialogButtonOK);
+
+		ToolBox* frame = new ToolBox(new LinearLayout(Vertical));
 
 //		TextureView* b1 = new TextureView;
 //		b1->OpenFile("test.jpg");
 
-		NodeView* b1 = new NodeView;
+//		NodeView* b1 = new NodeView;
+//
+//		Node* node = new Node;
+//		b1->AddNode(node);
+//
+//		node->MoveTo(200, -100);
+//
+//		ScrollArea* area = new ScrollArea(400, 400, Margin(0, 0, 0, 0), 0);
+//		area->SetScrollableWidget(b1);
 
-		Node* node = new Node;
-		b1->AddNode(node);
+//		dlg->AddWidget(area);
 
-		node->MoveTo(200, -100);
+		Label* label = new Label("ComboBox Test:");
 
-		ScrollArea* area = new ScrollArea(400, 400, Margin(0, 0, 0, 0), 0);
-		area->SetScrollableWidget(b1);
+		ComboBox* combo = new ComboBox;
 
-		dlg->AddWidget(area);
+		frame->AddWidget(label);
+		frame->AddWidget(combo);
 
-		dlg->Resize(dlg->GetPreferredSize());
-		dlg->MoveTo((win.size().width() - dlg->size().width()) / 2,
-		        (win.size().height() - dlg->size().height()) / 2);
+		frame->Resize(frame->GetPreferredSize());
+		frame->MoveTo((win.size().width() - frame->size().width()) / 2,
+		        (win.size().height() - frame->size().height()) / 2);
 
-		win.AddFrame(dlg);
+		win.AddFrame(frame);
+
+		{
+			StringListModel model;
+			ModelIndex index = model.GetRootIndex();
+
+			String str("String");
+			char buf[16];
+			for(int i = 0; i < 10; i++) {
+				sprintf(buf, "String %d", i);
+				str = buf;
+				model.AddString(str);
+			}
+
+			//model.InsertRows(0, 5, index);
+			//model.InsertRows(8, 5, index);
+
+			model.InsertString(1, "Insert this text");
+
+			model.Print();
+		}
+
 
 		win.Exec();
 

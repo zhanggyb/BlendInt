@@ -23,9 +23,9 @@
 
 #pragma once
 
+#include <gui/abstract-item-model.hpp>
 #include <gui/abstract-round-widget.hpp>
-#include <gui/menu.hpp>
-#include <gui/list-view.hpp>
+#include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
 
@@ -76,10 +76,10 @@ namespace BlendInt {
 
 		bool status_down_;
 
-		//PopupFrame* popup_;
-
 		RefPtr<AbstractItemModel> model_;
 
+		AbstractFrame* popup_;
+		
 		static Margin kPadding;
 
 	};

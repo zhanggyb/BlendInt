@@ -28,6 +28,7 @@
 #include <gui/abstract-window.hpp>
 
 #include <gui/combo-box.hpp>
+#include <gui/menu.hpp>
 
 namespace BlendInt {
 
@@ -35,8 +36,8 @@ namespace BlendInt {
 
 	ComboBox::ComboBox ()
 	: AbstractRoundWidget(),
-	  status_down_(false)//,
-	//popup_(0)
+	  status_down_(false),
+	  popup_(0)
 	{
 		set_round_type(RoundAll);
 
@@ -227,6 +228,20 @@ namespace BlendInt {
 	{
 		status_down_ = true;
 
+		if(popup_) {
+			delete popup_;
+			popup_ = 0;
+			SetRoundType(RoundAll);
+		} else {
+			popup_ = Manage(new Menu);
+			popup_->Resize(160, 240);
+
+			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
+
+			context->AddFrame(popup_, true);
+			popup_->MoveTo(context->GetCursorPosition());
+		}
+		
 		/*
 		if(popup_) {
 			delete popup_;
@@ -344,8 +359,8 @@ namespace BlendInt {
 	void ComboBox::OnPopupListDestroyed(AbstractFrame* frame)
 	{
 		//assert(frame == popup_);
-		//popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
-		//popup_ = 0;
+		popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
+		popup_ = 0;
 		SetRoundType(RoundAll);
 	}
 

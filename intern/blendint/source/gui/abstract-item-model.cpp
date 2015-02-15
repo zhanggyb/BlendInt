@@ -93,6 +93,16 @@ namespace BlendInt {
 		}
 	}
 
+	bool ModelIndex::SetData (const RefPtr<AbstractForm>& data)
+	{
+		if(node_) {
+			node_->data = data;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	ModelIndex ModelIndex::GetRootIndex () const
 	{
 		ModelIndex retval;
@@ -156,16 +166,6 @@ namespace BlendInt {
 		}
 
 		return retval;
-	}
-
-	bool ModelIndex::IsValid () const
-	{
-		return node_ != 0;
-	}
-
-	bool ModelIndex::operator != (const ModelIndex& other) const
-	{
-		return node_ != other.node_;
 	}
 
 	ModelIndex ModelIndex::GetLeftIndex () const
@@ -254,10 +254,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	bool ModelIndex::operator == (const ModelIndex& other) const
-	{
-		return node_ == other.node_;
-	}
+	// -------------------------------
 
 	AbstractItemModel::AbstractItemModel()
 	: Object ()
@@ -269,33 +266,33 @@ namespace BlendInt {
 	{
 	}
 
-	bool AbstractItemModel::HasChild (const ModelIndex& superview) const
+	bool AbstractItemModel::HasChild (const ModelIndex& parent) const
 	{
-		if(superview.node_) {
-			return superview.node_->child != 0;
+		if(parent.node_) {
+			return parent.node_->child != 0;
 		} else {
 			return false;
 		}
 	}
 
-	bool AbstractItemModel::InsertColumn (int column, const ModelIndex& superview)
+	bool AbstractItemModel::InsertColumn (int column, const ModelIndex& parent)
 	{
-		return InsertColumns (column, 1, superview);
+		return InsertColumns (column, 1, parent);
 	}
 
-	bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& superview)
+	bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& parent)
 	{
-		return RemoveColumns(column, 1, superview);
+		return RemoveColumns(column, 1, parent);
 	}
 
-	bool AbstractItemModel::RemoveRow (int row, const ModelIndex& superview)
+	bool AbstractItemModel::RemoveRow (int row, const ModelIndex& parent)
 	{
-		return RemoveRows(row, 1, superview);
+		return RemoveRows(row, 1, parent);
 	}
 
-	bool AbstractItemModel::InsertRow (int row, const ModelIndex& superview)
+	bool AbstractItemModel::InsertRow (int row, const ModelIndex& parent)
 	{
-		return InsertRows(row, 1, superview);
+		return InsertRows(row, 1, parent);
 	}
 
 	ModelIndex AbstractItemModel::GetRootIndex () const
@@ -306,7 +303,7 @@ namespace BlendInt {
 	bool AbstractItemModel::SetData (const ModelIndex& index,
 			const RefPtr<AbstractForm>& data)
 	{
-		if(index.IsValid()) {
+		if(index.valid()) {
 			index.node_->data = data;
 			return true;
 		} else {

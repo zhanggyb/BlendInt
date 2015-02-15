@@ -204,7 +204,7 @@ namespace BlendInt {
 			index = model_->GetRootIndex();
 
 			index = index.GetChildIndex(0, 0);
-			while((i > 0) && index.IsValid()) {
+			while((i > 0) && index.valid()) {
 				index = index.GetDownIndex();
 				i--;
 			}
@@ -277,7 +277,7 @@ namespace BlendInt {
 				calib = 0;
 			}
 
-			while(index.IsValid()) {
+			while(index.valid()) {
 				y -= h;
 				ty = y - font_.descender() + calib;
 				index.GetRawData()->Draw(0.f, ty);
@@ -370,19 +370,19 @@ namespace BlendInt {
 			highlight_index_ = i;
 
 			index = model_->GetRootIndex().GetChildIndex();
-			while((i > 0) && index.IsValid()) {
+			while((i > 0) && index.valid()) {
 				index = index.GetDownIndex();
 				i--;
 			}
 
-			if(!index.IsValid()) {
+			if(!index.valid()) {
 				highlight_index_ = -1;
 			}
 		}
 
 		//DBG_PRINT_MSG("highlight index: %d", highlight_index_);
 
-		if(index.IsValid()) {
+		if(index.valid()) {
 			Text* t = dynamic_cast<Text*>(index.GetData().get());
 			file_selected_ = t->text();
 			//DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());

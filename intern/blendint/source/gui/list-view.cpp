@@ -134,7 +134,7 @@ namespace BlendInt {
 			index = index.GetChildIndex(0, 0);
 
 			y = position().y() + size().height();
-			while(index.IsValid()) {
+			while(index.valid()) {
 				y -= h;
 				//font_.Print(position().x(), y, *index.GetData());
 				index = index.GetDownIndex();
@@ -177,12 +177,12 @@ namespace BlendInt {
 				highlight_index_ = i;
 
 				index = model_->GetRootIndex().GetChildIndex();
-				while((i > 0) && index.IsValid()) {
+				while((i > 0) && index.valid()) {
 					index = index.GetDownIndex();
 					i--;
 				}
 
-				if(!index.IsValid()) {
+				if(!index.valid()) {
 					highlight_index_ = -1;
 				}
 			}

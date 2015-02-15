@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STRINGLISTMODEL_HPP_
-#define _BLENDINT_GUI_STRINGLISTMODEL_HPP_
+#pragma once
 
 #include <gui/abstract-list-model.hpp>
 
@@ -36,19 +35,25 @@ namespace BlendInt {
 
 		virtual ~StringListModel ();
 
-		virtual int GetRowCount (const ModelIndex& superview = ModelIndex()) const;
+		void AddString (const String& string);
 
-		virtual int GetColumnCount (const ModelIndex& superview = ModelIndex()) const;
+		void InsertString (int row, const String& string);
 
-		virtual bool InsertRows (int row, int count, const ModelIndex& superview = ModelIndex());
+		virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const;
 
-		virtual bool RemoveRows (int row, int count, const ModelIndex& superview = ModelIndex());
+		virtual int GetColumnCount (const ModelIndex& parent = ModelIndex()) const;
 
 #ifdef DEBUG
 
 		void Print ();
 
 #endif
+
+	protected:
+
+		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
 
 	private:
 
@@ -57,5 +62,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_STRINGLISTMODEL_HPP_ */
