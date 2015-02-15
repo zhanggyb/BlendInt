@@ -30,7 +30,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  layout_(nullptr)
 	{
 		set_size(360, 240);
@@ -48,7 +48,7 @@ namespace BlendInt {
 	}
 
 	ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
-	: Widget(width, height),
+	: AbstractRoundWidget(width, height),
 	  layout_(nullptr)
 	{
 		layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));

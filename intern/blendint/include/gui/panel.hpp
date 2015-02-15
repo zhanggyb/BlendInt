@@ -43,7 +43,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Panel: public Widget
+	class Panel: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Panel);
 

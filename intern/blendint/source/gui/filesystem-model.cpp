@@ -163,7 +163,7 @@ namespace BlendInt {
 		}
 	}
 
-	int FileSystemModel::GetRows (const ModelIndex& superview) const
+	int FileSystemModel::GetRowCount (const ModelIndex& superview) const
 	{
 		if(root_->child) {
 			return rows_;
@@ -172,7 +172,7 @@ namespace BlendInt {
 		}
 	}
 
-	int FileSystemModel::GetColumns (const ModelIndex& superview) const
+	int FileSystemModel::GetColumnCount (const ModelIndex& superview) const
 	{
 		if(root_->child) {
 			return columns_;
@@ -187,7 +187,7 @@ namespace BlendInt {
 		if (!superview.IsValid())
 			return false;
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 		if(node->child == 0) return false;
 
 		assert(node == root_);
@@ -212,7 +212,7 @@ namespace BlendInt {
 		if (!superview.IsValid())
 			return false;
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 		if (node->child == 0)
 			return false;
 
@@ -257,7 +257,7 @@ namespace BlendInt {
 			columns_ = DefaultColumns;
 		}
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 
 		// create count nodes
 		ModelNode* first = 0;
@@ -342,7 +342,7 @@ namespace BlendInt {
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 		if(node->child == 0)
 			return false;
 
@@ -369,7 +369,7 @@ namespace BlendInt {
 				}
 			}
 
-			node = GetIndexNode(superview);
+			node = get_index_node(superview);
 			if(first == 0) {
 
 				if(last == 0) {	// clear the list
@@ -397,7 +397,7 @@ namespace BlendInt {
 	ModelIndex FileSystemModel::GetRootIndex () const
 	{
 		ModelIndex index;
-		SetIndexNode(index, root_);
+		set_index_node(index, root_);
 
 		return index;
 	}
@@ -408,7 +408,7 @@ namespace BlendInt {
 		ModelIndex index;
 		if(!superview.IsValid()) return index;
 
-		ModelNode* parent_node = GetIndexNode(superview);
+		ModelNode* parent_node = get_index_node(superview);
 		ModelNode* node = parent_node->child;
 
 		if(node == 0) return index;
@@ -427,7 +427,7 @@ namespace BlendInt {
 			}
 
 			if(column == 0) {
-				SetIndexNode(index, node);
+				set_index_node(index, node);
 			}
 
 		}

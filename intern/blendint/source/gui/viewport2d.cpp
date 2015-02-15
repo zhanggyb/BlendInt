@@ -31,7 +31,7 @@ namespace BlendInt {
 	const float Viewport2D::camera_factor = 50.f;
 
 	Viewport2D::Viewport2D()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  vao_(0),
 	  gridfloor_(0)
 	{

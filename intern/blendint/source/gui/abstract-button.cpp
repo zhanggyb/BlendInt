@@ -34,21 +34,21 @@ namespace BlendInt {
 	int AbstractButton::kIconTextSpace = 2;
 
 	AbstractButton::AbstractButton ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  group_(0)
 	{
 
 	}
 
 	AbstractButton::AbstractButton(const String& text)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  group_(0)
 	{
 		text_.reset(new Text(text));
 	}
 
 	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  group_(0)
 	{
 		icon_ = icon;
@@ -56,7 +56,7 @@ namespace BlendInt {
 
 	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon,
 			const String& text)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  group_(0)
 	{
 		icon_ = icon;

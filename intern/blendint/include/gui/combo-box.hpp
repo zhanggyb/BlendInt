@@ -32,7 +32,7 @@ namespace BlendInt {
 	/**
 	 * @brief A combined button and popup list.
 	 */
-	class ComboBox: public Widget
+	class ComboBox: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ComboBox);
 
@@ -72,19 +72,15 @@ namespace BlendInt {
 
 		GLuint vaos_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		bool status_down_;
-
-		Font font_;
-
-		String text_;
 
 		//PopupFrame* popup_;
 
 		RefPtr<AbstractItemModel> model_;
 
-		static Margin default_combobox_padding;
+		static Margin kPadding;
 
 	};
 

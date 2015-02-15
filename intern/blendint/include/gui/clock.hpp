@@ -37,7 +37,7 @@ namespace BlendInt {
 	 *
 	 * This widget is used for demo or timer testing.
 	 */
-	class Clock: public Widget
+	class Clock: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Clock);
 

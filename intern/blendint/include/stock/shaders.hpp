@@ -105,7 +105,7 @@ namespace BlendInt {
 			WIDGET_LINE_COORD,
 			WIDGET_LINE_COLOR,
 
-			// Widget shadow
+			// AbstractRoundWidget shadow
 			WIDGET_SHADOW_COORD,
 			WIDGET_SHADOW_POSITION,
 			WIDGET_SHADOW_ANTI_ALIAS,

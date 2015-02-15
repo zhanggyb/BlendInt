@@ -29,7 +29,7 @@
 
 namespace BlendInt {
 
-	class ProgressBar: public Widget
+	class ProgressBar: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ProgressBar);
 

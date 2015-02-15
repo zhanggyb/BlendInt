@@ -28,25 +28,6 @@
 
 namespace BlendInt {
 
-	bool operator == (const ModelIndex& src, const ModelIndex& dst)
-	{
-		return src.node_ == dst.node_;
-	}
-
-	ModelIndex::ModelIndex ()
-	: node_(0)
-	{
-	}
-
-	ModelIndex::ModelIndex (const ModelIndex& orig)
-	: node_(orig.node_)
-	{
-	}
-
-	ModelIndex::~ModelIndex ()
-	{
-	}
-
 	ModelIndex& ModelIndex::operator = (const ModelIndex& orig)
 	{
 		node_ = orig.node_;
@@ -323,24 +304,14 @@ namespace BlendInt {
 	}
 
 	bool AbstractItemModel::SetData (const ModelIndex& index,
-			const String& data)
+			const RefPtr<AbstractForm>& data)
 	{
 		if(index.IsValid()) {
-			index.node_->data = RefPtr<Text>(new Text(data));
+			index.node_->data = data;
 			return true;
 		} else {
 			return false;
 		}
-	}
-
-	void AbstractItemModel::SetIndexNode (ModelIndex& index, ModelNode* node)
-	{
-		index.node_ = node;
-	}
-
-	ModelNode* AbstractItemModel::GetIndexNode(const ModelIndex& index)
-	{
-		return index.node_;
 	}
 
 }

@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 	TimeRuler::TimeRuler()
-	: Widget()
+	: AbstractRoundWidget()
 	{
 		set_size(200, 14);
 		set_round_type(RoundAll);

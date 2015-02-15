@@ -35,7 +35,7 @@
 namespace BlendInt {
 
 	Clock::Clock()
-	: Widget(), angle_(-90), timer_(0)
+	: AbstractRoundWidget(), angle_(-90), timer_(0)
 	{
 		set_size(160, 160);
 

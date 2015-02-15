@@ -28,7 +28,7 @@
 
 namespace BlendInt {
 
-	class Tab: public Widget
+	class Tab: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Tab);
 

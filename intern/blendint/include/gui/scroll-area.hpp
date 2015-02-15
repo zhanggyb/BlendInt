@@ -28,7 +28,7 @@
 
 namespace BlendInt {
 
-	class ScrollArea: public Widget
+	class ScrollArea: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollArea);
 

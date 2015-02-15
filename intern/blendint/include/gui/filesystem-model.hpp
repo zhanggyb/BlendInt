@@ -55,9 +55,9 @@ namespace BlendInt {
 
 		void Clear ();
 
-		virtual int GetRows (const ModelIndex& superview = ModelIndex()) const;
+		virtual int GetRowCount (const ModelIndex& superview = ModelIndex()) const;
 
-		virtual int GetColumns (const ModelIndex& superview = ModelIndex()) const;
+		virtual int GetColumnCount (const ModelIndex& superview = ModelIndex()) const;
 
 		virtual bool InsertColumns (int column, int count, const ModelIndex& superview = ModelIndex());
 

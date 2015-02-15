@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special viewport with a OrthoCamera
 	 */
-	class Viewport2D: public Widget
+	class Viewport2D: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport2D);
 

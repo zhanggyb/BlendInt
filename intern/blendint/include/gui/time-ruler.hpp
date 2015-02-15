@@ -29,7 +29,7 @@
 
 namespace BlendInt {
 
-	class TimeRuler: public Widget
+	class TimeRuler: public AbstractRoundWidget
 	{
 	public:
 

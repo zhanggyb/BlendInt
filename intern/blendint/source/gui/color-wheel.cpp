@@ -34,7 +34,7 @@
 namespace BlendInt {
 
 	ColorWheel::ColorWheel()
-	: Widget()
+	: AbstractRoundWidget()
 	{
 		set_size(160, 160);
 

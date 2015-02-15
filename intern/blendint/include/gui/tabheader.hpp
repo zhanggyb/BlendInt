@@ -33,7 +33,7 @@
 
 namespace BlendInt {
 
-	class TabHeader: public Widget
+	class TabHeader: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabHeader);
 

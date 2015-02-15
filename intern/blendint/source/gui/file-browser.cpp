@@ -186,7 +186,7 @@ namespace BlendInt {
 	{
 		ModelIndex index;
 
-		int rows = model_->GetRows();
+		int rows = model_->GetRowCount();
 
 		if(rows > 0) {
 			int h = font_.height();	// the row height
@@ -355,7 +355,7 @@ namespace BlendInt {
 	{
 		ModelIndex index;
 
-		int rows = model_->GetRows();
+		int rows = model_->GetRowCount();
 
 		if(rows > 0) {
 			int h = font_.height();	// the row height

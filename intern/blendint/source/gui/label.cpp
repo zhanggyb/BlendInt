@@ -30,7 +30,7 @@ namespace BlendInt {
 	Margin Label::kPadding (2, 2, 2, 2);
 
 	Label::Label (const String& text, Alignment alignment)
-    : Widget(),
+    : AbstractRoundWidget(),
 	  alignment_(alignment),
 	  vao_(0)
 	{

@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief A simple widget to display and edit folders in FileSelector
 	 */
-	class FolderList: public Widget
+	class FolderList: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(FolderList);
 

@@ -32,7 +32,7 @@
 namespace BlendInt {
 
 	FolderList::FolderList()
-	: Widget()
+	: AbstractRoundWidget()
 	{
 		set_round_type(RoundAll);
 		set_size(240, 160);

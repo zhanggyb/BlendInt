@@ -34,7 +34,7 @@ namespace BlendInt
 
 	class Splitter;
 
-	class SplitterHandle: public Widget
+	class SplitterHandle: public AbstractRoundWidget
 	{
 	DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
@@ -95,7 +95,7 @@ namespace BlendInt
 	 * A Splitter lets the user control the size of the sub widgets by dragging
 	 * the splitter handler between them.
 	 */
-	class Splitter: public Widget
+	class Splitter: public AbstractRoundWidget
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
 

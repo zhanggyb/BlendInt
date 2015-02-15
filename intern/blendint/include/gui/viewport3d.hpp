@@ -42,7 +42,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Viewport3D: public Widget
+	class Viewport3D: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport3D);
 

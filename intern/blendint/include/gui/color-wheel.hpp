@@ -31,7 +31,7 @@
 
 namespace BlendInt {
 
-	class ColorWheel: public Widget
+	class ColorWheel: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorWheel);
 

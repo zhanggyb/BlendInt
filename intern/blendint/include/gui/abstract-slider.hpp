@@ -75,7 +75,7 @@ namespace BlendInt {
 	};
 
 	template<typename T>
-	class AbstractSlider: public Widget
+	class AbstractSlider: public AbstractRoundWidget
 	{
 	public:
 
@@ -180,7 +180,7 @@ namespace BlendInt {
 
 	template <typename T>
 	AbstractSlider<T>::AbstractSlider (Orientation orientation)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  m_orientation(orientation),
 	  m_value(T(0)),
 	  m_minimum(T(0)),

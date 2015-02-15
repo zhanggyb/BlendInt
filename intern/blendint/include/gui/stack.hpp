@@ -28,7 +28,7 @@
 
 namespace BlendInt {
 
-	class Stack: public Widget
+	class Stack: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 

@@ -31,7 +31,7 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: Widget()
+	: AbstractRoundWidget()
 	{
 		set_size(400, 300);
 

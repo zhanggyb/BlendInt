@@ -37,12 +37,12 @@ namespace BlendInt {
 		rows_ = 0;
 	}
 
-	int StringListModel::GetRows (const ModelIndex& superview) const
+	int StringListModel::GetRowCount (const ModelIndex& superview) const
 	{
 		return rows_;
 	}
 
-	int StringListModel::GetColumns (const ModelIndex& superview) const
+	int StringListModel::GetColumnCount (const ModelIndex& superview) const
 	{
 		return 1;
 	}

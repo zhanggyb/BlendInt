@@ -37,7 +37,7 @@ using namespace std;
 
 namespace BlendInt {
 
-	class Label: public Widget
+	class Label: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Label);
 

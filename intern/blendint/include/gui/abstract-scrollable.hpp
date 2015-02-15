@@ -30,7 +30,7 @@ namespace BlendInt {
 	/**
 	 * @brief Base class for widgets with native scroll bar
 	 */
-	class AbstractScrollable: public Widget
+	class AbstractScrollable: public AbstractRoundWidget
 	{
 	public:
 

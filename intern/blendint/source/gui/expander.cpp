@@ -156,7 +156,7 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: Widget(), frame_height_(0)
+	: AbstractRoundWidget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		LinearLayout* frame = Manage(new LinearLayout(Vertical));
@@ -184,7 +184,7 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: Widget(), frame_height_(0)
+	: AbstractRoundWidget(), frame_height_(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		LinearLayout* frame = Manage(new LinearLayout(Vertical));

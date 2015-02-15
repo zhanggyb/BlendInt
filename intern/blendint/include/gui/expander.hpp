@@ -61,7 +61,7 @@ namespace BlendInt {
 	/**
 	 * @brief Expander
 	 */
-	class Expander: public Widget
+	class Expander: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
 

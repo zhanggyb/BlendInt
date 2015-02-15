@@ -31,7 +31,7 @@
 namespace BlendInt {
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  orientation_(orientation),
 	  vao_(0),
 	  highlight_(false),
@@ -292,7 +292,7 @@ namespace BlendInt {
 	}
 
 	Splitter::Splitter(Orientation orientation)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  orientation_(orientation)
 	{
 		set_size(400, 400);

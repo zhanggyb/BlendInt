@@ -28,7 +28,7 @@
 namespace BlendInt {
 
 	Stack::Stack()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  active_widget_(0)
 	{
 		set_size(400, 300);

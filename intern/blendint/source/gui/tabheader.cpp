@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 	TabHeader::TabHeader()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  vao_(0)
 	{
 		set_size(320, 20);

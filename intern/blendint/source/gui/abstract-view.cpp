@@ -1711,7 +1711,7 @@ namespace BlendInt {
 		if (view->superview_) {
 
 			if (view->superview_ == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
+				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
 				return false;
@@ -1751,7 +1751,7 @@ namespace BlendInt {
 		if (view->superview_) {
 
 			if (view->superview_ == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
+				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
 				return false;
@@ -1830,7 +1830,7 @@ namespace BlendInt {
 		if (view->superview_) {
 
 			if (view->superview_ == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
+				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
 				return false;

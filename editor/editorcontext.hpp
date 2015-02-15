@@ -11,7 +11,7 @@
 
 #include <gui/button.hpp>
 #include <gui/clock.hpp>
-#include <gui/combobox.hpp>
+#include <gui/combo-box.hpp>
 #include <gui/toggle-button.hpp>
 #include <gui/linear-layout.hpp>
 #include <gui/label.hpp>

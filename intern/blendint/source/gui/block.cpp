@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	Block::Block(Orientation orienatiaon)
-	: Widget (),
+	: AbstractRoundWidget (),
 	  orientation_(orienatiaon)
 	{
 		if(orienatiaon == Horizontal) {
@@ -40,9 +40,9 @@ namespace BlendInt {
 	{
 	}
 
-	void Block::AddWidget(Widget* widget)
+	void Block::AddWidget(AbstractRoundWidget* widget)
 	{
-		Widget* orig_last = dynamic_cast<Widget*>(last_subview());
+		AbstractRoundWidget* orig_last = dynamic_cast<AbstractRoundWidget*>(last_subview());
 
 		if(PushBackSubView(widget)) {
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Block::InsertWidget(int index, Widget* widget)
+	void Block::InsertWidget(int index, AbstractRoundWidget* widget)
 	{
 		// TODO: implement
 	}

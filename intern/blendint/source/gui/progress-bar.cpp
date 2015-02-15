@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 	ProgressBar::ProgressBar(Orientation orientation)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  orientation_(orientation)
 	{
 		if(orientation == Horizontal) {

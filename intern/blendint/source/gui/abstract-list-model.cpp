@@ -63,7 +63,7 @@ namespace BlendInt {
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 
 		ModelNode* first = 0;
 		ModelNode* last = 0;
@@ -124,7 +124,7 @@ namespace BlendInt {
 		assert(count > 0);
 		assert(row >= 0);
 
-		ModelNode* node = GetIndexNode(superview);
+		ModelNode* node = get_index_node(superview);
 		if(node->child == 0)
 			return false;
 
@@ -150,7 +150,7 @@ namespace BlendInt {
 					break;
 			}
 
-			node = GetIndexNode(superview);
+			node = get_index_node(superview);
 			if(first == 0) {
 
 				if(last == 0) {	// clear the list
@@ -177,7 +177,7 @@ namespace BlendInt {
 	ModelIndex AbstractListModel::GetRootIndex () const
 	{
 		ModelIndex retval;
-		SetIndexNode(retval, root_);
+		set_index_node(retval, root_);
 
 		return retval;
 	}

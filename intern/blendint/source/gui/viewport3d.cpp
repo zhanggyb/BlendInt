@@ -35,7 +35,7 @@
 namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  vao_(0),
 	  m_last_x(0),
 	  m_last_y(0),

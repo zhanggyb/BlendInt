@@ -32,17 +32,17 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Widget: public AbstractWidget
+	class AbstractRoundWidget: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(Widget);
+		DISALLOW_COPY_AND_ASSIGN(AbstractRoundWidget);
 
 	public:
 
-		Widget ();
+		AbstractRoundWidget ();
 
-		Widget (int width, int height);
+		AbstractRoundWidget (int width, int height);
 
-		virtual ~Widget();
+		virtual ~AbstractRoundWidget();
 
 		void SetRoundRadius (float radius);
 

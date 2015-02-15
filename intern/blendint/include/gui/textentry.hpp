@@ -38,7 +38,7 @@ namespace BlendInt {
 	/**
 	 * @brief A one-line text editor
 	 */
-	class TextEntry: public Widget
+	class TextEntry: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TextEntry);
 

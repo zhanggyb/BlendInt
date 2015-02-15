@@ -35,7 +35,7 @@
 namespace BlendInt {
 
 	Panel::Panel ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  layout_(0)
 	{
 		set_size(400, 300);

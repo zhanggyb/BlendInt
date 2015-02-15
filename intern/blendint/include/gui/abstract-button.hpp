@@ -38,7 +38,7 @@ namespace BlendInt {
 
 	class ButtonGroup;
 
-	class AbstractButton: public Widget
+	class AbstractButton: public AbstractRoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 

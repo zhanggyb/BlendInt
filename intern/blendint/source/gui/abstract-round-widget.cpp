@@ -26,61 +26,61 @@
 
 namespace BlendInt {
 
-	Widget::Widget()
+	AbstractRoundWidget::AbstractRoundWidget()
 	: AbstractWidget(),
 	  widget_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
 
-	Widget::Widget(int width, int height)
+	AbstractRoundWidget::AbstractRoundWidget(int width, int height)
 	: AbstractWidget(width, height),
 	  widget_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
 
-	Widget::~Widget()
+	AbstractRoundWidget::~AbstractRoundWidget()
 	{
 	}
 
-	void Widget::SetRoundRadius(float radius)
+	void AbstractRoundWidget::SetRoundRadius(float radius)
 	{
 		if(round_radius_ == radius) return;
 
 		PerformRoundRadiusUpdate(radius);
 	}
 
-	void Widget::SetRoundType(int type)
+	void AbstractRoundWidget::SetRoundType(int type)
 	{
 		if((widget_flag_ & 0x0F) == (type & 0x0F)) return;
 
 		PerformRoundTypeUpdate(type & 0x0F);
 	}
 
-	void Widget::SetEmboss(bool emboss)
+	void AbstractRoundWidget::SetEmboss(bool emboss)
 	{
 		if(this->emboss() == emboss) return;
 
 		PerformEmbossUpdate(emboss);
 	}
 
-	void Widget::PerformRoundTypeUpdate(int round)
+	void AbstractRoundWidget::PerformRoundTypeUpdate(int round)
 	{
 		set_round_type(round);
 	}
 
-	void Widget::PerformRoundRadiusUpdate(float radius)
+	void AbstractRoundWidget::PerformRoundRadiusUpdate(float radius)
 	{
 		round_radius_ = radius;
 	}
 
-	void Widget::PerformEmbossUpdate(bool emboss)
+	void AbstractRoundWidget::PerformEmbossUpdate(bool emboss)
 	{
 		set_emboss(emboss);
 	}
 
-	void Widget::GenerateRoundedVertices(std::vector<GLfloat>* inner,
+	void AbstractRoundWidget::GenerateRoundedVertices(std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
@@ -91,7 +91,7 @@ namespace BlendInt {
 				outer);
 	}
 
-	void Widget::GenerateRoundedVertices(Orientation shadedir, short shadetop,
+	void AbstractRoundWidget::GenerateRoundedVertices(Orientation shadedir, short shadetop,
 			short shadedown, std::vector<GLfloat>* inner,
 			std::vector<GLfloat>* outer)
 	{
@@ -106,7 +106,7 @@ namespace BlendInt {
 				outer);
 	}
 
-	Response Widget::Draw(AbstractWindow* context)
+	Response AbstractRoundWidget::Draw(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}

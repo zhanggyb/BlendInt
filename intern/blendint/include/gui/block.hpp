@@ -28,7 +28,7 @@
 
 namespace BlendInt {
 
-	class Block: public Widget
+	class Block: public AbstractRoundWidget
 	{
 	public:
 
@@ -36,9 +36,9 @@ namespace BlendInt {
 
 		virtual ~Block ();
 
-		void AddWidget (Widget* widget);
+		void AddWidget (AbstractRoundWidget* widget);
 
-		void InsertWidget (int index, Widget* widget);
+		void InsertWidget (int index, AbstractRoundWidget* widget);
 
 		virtual bool IsExpandX () const;
 

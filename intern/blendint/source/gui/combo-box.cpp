@@ -21,32 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <math.h>
-
 #include <opengl/opengl.hpp>
 
-#include <gui/abstract-window.hpp>
 #include <gui/dialog.hpp>
 #include <gui/filesystem-model.hpp>
+#include <gui/abstract-window.hpp>
 
-#include <gui/combobox.hpp>
+#include <gui/combo-box.hpp>
 
 namespace BlendInt {
 
-	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
+	Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  status_down_(false)//,
 	//popup_(0)
 	{
 		set_round_type(RoundAll);
 
-		int h = font_.height();
+		Font font;	// default font
+		int h = font.height();
 
-		set_size(
-		        h + round_radius() * 2 + default_combobox_padding.hsum() + 100,
-		        h + default_combobox_padding.vsum());
+		set_size(h + pixel_size(kPadding.hsum()),
+		        h + pixel_size(kPadding.vsum()));
 
 		InitializeComboBox();
 	}
@@ -58,34 +56,21 @@ namespace BlendInt {
 
 	Size ComboBox::GetPreferredSize () const
 	{
-		Size preferred_size;
+		int w = 0;
+		int h = 0;
 
-		int radius_plus = 0;
+		if(model_) {
 
-		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += round_radius();
-		}
-
-		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
-			radius_plus += round_radius();
-		}
-
-		int max_font_height = font_.height();
-
-		preferred_size.set_height(max_font_height + default_combobox_padding.vsum());	// top padding: 2, bottom padding: 2
-
-		if (text_.empty()) {
-			preferred_size.set_width(
-							max_font_height + default_combobox_padding.hsum()
-											+ radius_plus + 100);
 		} else {
-			size_t width = font_.GetTextWidth(text_);
-			preferred_size.set_width(width
-							+ default_combobox_padding.hsum()
-							+ radius_plus);	// left padding: 2, right padding: 2
+			Font font;	// default font
+			w = font.height();
+			h = font.height();
 		}
 
-		return preferred_size;
+		w += pixel_size(kPadding.hsum());
+		h += pixel_size(kPadding.vsum());
+
+		return Size(w, h);
 	}
 
 	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
@@ -115,11 +100,11 @@ namespace BlendInt {
 				GenerateRoundedVertices(&inner_verts, &outer_verts);
 			}
 
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			buffer_.reset();
+			vbo_.bind(0);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			vbo_.bind(1);
+			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -146,11 +131,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -172,11 +157,11 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -332,13 +317,13 @@ namespace BlendInt {
 			GenerateRoundedVertices(&inner_verts, &outer_verts);
 		}
 
-		buffer_.generate();
+		vbo_.generate();
 
 		glGenVertexArrays(2, vaos_);
 
 		glBindVertexArray(vaos_[0]);
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(
 				AttributeCoord);
@@ -346,14 +331,14 @@ namespace BlendInt {
 				3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray (AttributeCoord);
 		glVertexAttribPointer (AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		GLArrayBuffer::reset();
+		vbo_.reset();
 	}
 
 	void ComboBox::OnPopupListDestroyed(AbstractFrame* frame)

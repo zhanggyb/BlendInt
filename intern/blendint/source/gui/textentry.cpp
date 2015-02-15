@@ -34,7 +34,7 @@ namespace BlendInt {
 	Margin TextEntry::kPadding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: Widget(),
+	: AbstractRoundWidget(),
 	  text_start_(0),
 	  cursor_index_(0)
 	{
@@ -53,7 +53,7 @@ namespace BlendInt {
 	}
 
 	TextEntry::TextEntry (const String& text)
-	: Widget(),
+	: AbstractRoundWidget(),
 	  text_start_(0),
 	  cursor_index_(0)
 	{
