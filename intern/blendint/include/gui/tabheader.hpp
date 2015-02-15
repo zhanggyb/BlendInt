@@ -26,7 +26,7 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <gui/button-group.hpp>
 
 #include <gui/tab-button.hpp>

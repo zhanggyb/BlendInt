@@ -29,7 +29,7 @@
 namespace BlendInt {
     
     AbstractDialog::AbstractDialog(int flags)
-    : Frame(),
+    : AbstractRoundFrame(),
       focused_widget_(0),
       hovered_widget_(0),
       cursor_position_(InsideRectangle),
@@ -40,7 +40,7 @@ namespace BlendInt {
     }
     
     AbstractDialog::AbstractDialog(int width, int height, int flags)
-    : Frame(width, height),
+    : AbstractRoundFrame(width, height),
     focused_widget_(0),
     hovered_widget_(0),
     cursor_position_(InsideRectangle),

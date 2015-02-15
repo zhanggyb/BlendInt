@@ -27,11 +27,11 @@
 #include <gui/perspective-camera.hpp>
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 
 namespace BlendInt {
 
-	class Viewport: public Frame
+	class Viewport: public AbstractRoundFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport);
 

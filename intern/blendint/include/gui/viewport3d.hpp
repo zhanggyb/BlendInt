@@ -27,7 +27,7 @@
 #include <deque>
 
 #include <core/input.hpp>
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 #include <gui/grid-floor.hpp>
 #include <gui/cube.hpp>

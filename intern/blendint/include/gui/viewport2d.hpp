@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_VIEWPORT2D_HPP_
 #define _BLENDINT_GUI_VIEWPORT2D_HPP_
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <gui/ortho-camera.hpp>
 
 #include <gui/grid-floor.hpp>

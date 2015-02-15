@@ -32,13 +32,13 @@
 #include <core/timer.hpp>
 #include <core/mutex.hpp>
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <opengl/gl-buffer.hpp>
 #include <opengl/gl-texture2d.hpp>
 
 namespace BlendInt {
 
-	class CVVideoViewport: public Frame
+	class CVVideoViewport: public AbstractRoundFrame
 	{
 	public:
 

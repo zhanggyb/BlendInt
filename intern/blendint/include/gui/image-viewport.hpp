@@ -34,7 +34,7 @@
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/chessboard.hpp>
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 
 namespace BlendInt {
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 	 *
 	 * Due to opencv design, this widget cannot display images with alpha channel.
 	 */
-	class ImageViewport: public Frame
+	class ImageViewport: public AbstractRoundFrame
 	{
 	public:
 

@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 
 namespace BlendInt {
 

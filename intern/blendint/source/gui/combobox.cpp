@@ -88,11 +88,6 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	bool ComboBox::IsExpandX() const
-	{
-		return true;
-	}
-
 	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
 	{
 		model_ = model;

@@ -33,7 +33,7 @@
 namespace BlendInt {
 
 	Viewport::Viewport()
-	: Frame(),
+	: AbstractRoundFrame(),
 	  vao_(0)
 	{
 		set_size(640, 480);

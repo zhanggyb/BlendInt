@@ -27,7 +27,7 @@
 #include <core/color.hpp>
 #include <core/timer.hpp>
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <opengl/gl-buffer.hpp>
 
 namespace BlendInt {

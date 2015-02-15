@@ -27,7 +27,7 @@
 
 #include <opengl/glarraybuffer.hpp>
 #include <gui/circular-picker.hpp>
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 

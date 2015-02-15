@@ -25,7 +25,7 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/frame-shadow.hpp>
 
 #include <gui/menu-item.hpp>
@@ -38,7 +38,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public Frame
+	class Menu: public AbstractRoundFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 

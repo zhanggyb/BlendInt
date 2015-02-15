@@ -23,12 +23,12 @@
 
 #pragma once
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/view-buffer.hpp>
 
 namespace BlendInt {
 
-    class AbstractDialog: public Frame
+    class AbstractDialog: public AbstractRoundFrame
     {
     public:
 

@@ -28,15 +28,15 @@
 
 namespace BlendInt {
 
-	class Frame: public AbstractFrame
+	class AbstractRoundFrame: public AbstractFrame
 	{
 	public:
 
-		Frame ();
+		AbstractRoundFrame ();
 
-		Frame (int width, int height);
+		AbstractRoundFrame (int width, int height);
 
-		virtual ~Frame ();
+		virtual ~AbstractRoundFrame ();
 
 		virtual AbstractView* GetFocusedView () const;
 

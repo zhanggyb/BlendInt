@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	CVVideoViewport::CVVideoViewport()
-	: Frame(),
+	: AbstractRoundFrame(),
 	  vao_(0),
 	  status_(VideoStop),
 	  upload_(false)

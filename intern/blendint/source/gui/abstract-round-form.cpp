@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <gui/abstract-roundform.hpp>
+#include <gui/abstract-round-form.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {

@@ -34,7 +34,7 @@
 namespace BlendInt {
 
 	ToolBox::ToolBox (AbstractLayout* layout)
-	: Frame(),
+	: AbstractRoundFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),
@@ -55,7 +55,7 @@ namespace BlendInt {
 	}
 
 	ToolBox::ToolBox (int width, int height, AbstractLayout* layout)
-	: Frame(width, height),
+	: AbstractRoundFrame(width, height),
 	  focused_widget_(0),
 	  hovered_widget_(0),
 	  space_(1),

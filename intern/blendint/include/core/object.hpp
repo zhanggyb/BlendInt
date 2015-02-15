@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_OBJECT_HPP_
-#define _BLENDINT_OBJECT_HPP_
+#pragma once
 
 #include <stdint.h>
 
@@ -36,19 +35,13 @@
 namespace BlendInt {
 
 	/**
-	 * @brief The base class of most BlendInt objects
-	 *
-	 * Objects organize themselves in object trees. When you create a Object with another
-	 * object as superior, the object will automatically add itself to the superior's sub set.
-	 * The superior object takes ownership of the object; i.e., it will automatically delete
-	 * its children in its sub objects. You can look for an object by name and optionally type
-	 * using findChild() or findChildren().
+	 * @brief The base class with reference count
 	 */
 	class Object
 	{
 	public:
 
-		Object ()
+		inline Object ()
 		: reference_count_(0)
 		{
 		}
@@ -57,19 +50,16 @@ namespace BlendInt {
 		{
 		}
 
-		Object (const Object& orig)
-		: reference_count_(0)
-		{
-		}
-
-		Object& operator = (const Object& orig);
-
 		inline size_t reference_count ()
 		{
 			return reference_count_;
 		}
 
 	private:
+
+		// disallow copy and assignment:
+		Object (const Object& orig);
+		Object& operator = (const Object& orig);
 
 		template <typename T> friend class RefPtr;
 
@@ -78,5 +68,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_OBJECT_HPP_ */

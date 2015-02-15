@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_TIMERULER_HPP_
 
 #include <opengl/gl-buffer.hpp>
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 

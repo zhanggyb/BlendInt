@@ -31,7 +31,7 @@
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/text.hpp>
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 using namespace std;
 

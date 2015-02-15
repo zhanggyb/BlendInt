@@ -29,8 +29,8 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/widget.hpp>
-#include <gui/abstract-roundform.hpp>
+#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-round-form.hpp>
 
 namespace BlendInt {
 

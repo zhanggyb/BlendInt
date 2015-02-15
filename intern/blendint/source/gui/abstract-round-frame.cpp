@@ -21,118 +21,118 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
-	Frame::Frame ()
+	AbstractRoundFrame::AbstractRoundFrame ()
 	: AbstractFrame(),
 	  frame_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
 
-	Frame::Frame (int width, int height)
+	AbstractRoundFrame::AbstractRoundFrame (int width, int height)
 	: AbstractFrame(width, height),
 	  frame_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
 
-	Frame::~Frame()
+	AbstractRoundFrame::~AbstractRoundFrame()
 	{
 	}
 
-	AbstractView* Frame::GetFocusedView () const
+	AbstractView* AbstractRoundFrame::GetFocusedView () const
 	{
 		return nullptr;
 	}
 
-    void Frame::SetRoundType (int type)
+    void AbstractRoundFrame::SetRoundType (int type)
     {
         if((frame_flag_ & 0x0F) == (type & 0x0F)) return;
         
         PerformRoundTypeUpdate(type & 0x0F);
     }
     
-    void Frame::SetRoundRadius(float radius)
+    void AbstractRoundFrame::SetRoundRadius(float radius)
     {
         if(round_radius_ == radius) return;
         
         PerformRoundRadiusUpdate(radius);
     }
     
-	bool Frame::PreDraw(AbstractWindow* context)
+	bool AbstractRoundFrame::PreDraw(AbstractWindow* context)
 	{
 		return visiable();
 	}
 
-	Response Frame::Draw (AbstractWindow* context)
+	Response AbstractRoundFrame::Draw (AbstractWindow* context)
 	{
 		DrawSubViewsOnce(context);
 
 		return subs_count() ? Ignore : Finish;
 	}
 
-	void Frame::PostDraw(AbstractWindow* context)
+	void AbstractRoundFrame::PostDraw(AbstractWindow* context)
 	{
 
 	}
 
-	void Frame::PerformFocusOn(AbstractWindow* context)
+	void AbstractRoundFrame::PerformFocusOn(AbstractWindow* context)
 	{
 	}
 
-	void Frame::PerformFocusOff (AbstractWindow* context)
+	void AbstractRoundFrame::PerformFocusOff (AbstractWindow* context)
 	{
 
 	}
 
-	void Frame::PerformHoverIn(AbstractWindow* context)
+	void AbstractRoundFrame::PerformHoverIn(AbstractWindow* context)
 	{
 	}
 
-	void Frame::PerformHoverOut(AbstractWindow* context)
+	void AbstractRoundFrame::PerformHoverOut(AbstractWindow* context)
 	{
 	}
 
-    Response Frame::PerformContextMenuPress (AbstractWindow* context)
+    Response AbstractRoundFrame::PerformContextMenuPress (AbstractWindow* context)
     {
         return Ignore;
     }
     
-    Response Frame::PerformContextMenuRelease (AbstractWindow* context)
+    Response AbstractRoundFrame::PerformContextMenuRelease (AbstractWindow* context)
     {
         return Ignore;
     }
 
-	Response Frame::PerformKeyPress(AbstractWindow* context)
+	Response AbstractRoundFrame::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	Response Frame::PerformMousePress(AbstractWindow* context)
+	Response AbstractRoundFrame::PerformMousePress(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	Response Frame::PerformMouseRelease(AbstractWindow* context)
+	Response AbstractRoundFrame::PerformMouseRelease(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	Response Frame::PerformMouseMove(AbstractWindow* context)
+	Response AbstractRoundFrame::PerformMouseMove(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-	Response Frame::PerformMouseHover(AbstractWindow* context)
+	Response AbstractRoundFrame::PerformMouseHover(AbstractWindow* context)
 	{
 		return Ignore;
 	}
 
-    void Frame::GenerateRoundedVertices(std::vector<GLfloat>* inner,
+    void AbstractRoundFrame::GenerateRoundedVertices(std::vector<GLfloat>* inner,
                                         std::vector<GLfloat>* outer)
     {
         GenerateVertices(size(),
@@ -143,7 +143,7 @@ namespace BlendInt {
                          outer);
     }
     
-    void Frame::GenerateRoundedVertices(Orientation shadedir,
+    void AbstractRoundFrame::GenerateRoundedVertices(Orientation shadedir,
                                         short shadetop,
                                         short shadedown,
                                         std::vector<GLfloat>* inner,
@@ -160,7 +160,7 @@ namespace BlendInt {
                          outer);
     }
     
-    void Frame::EnableViewBuffer()
+    void AbstractRoundFrame::EnableViewBuffer()
     {
         set_buffered(true);
         if(!buffer_) {
@@ -168,18 +168,18 @@ namespace BlendInt {
         }
     }
     
-    void Frame::DisableViewBuffer()
+    void AbstractRoundFrame::DisableViewBuffer()
     {
         set_buffered(false);
         buffer_.destroy();
     }
     
-    void Frame::PerformRoundTypeUpdate (int round_type)
+    void AbstractRoundFrame::PerformRoundTypeUpdate (int round_type)
     {
         set_round_type(round_type);
     }
     
-    void Frame::PerformRoundRadiusUpdate(float radius)
+    void AbstractRoundFrame::PerformRoundRadiusUpdate(float radius)
     {
         round_radius_ = radius;
     }

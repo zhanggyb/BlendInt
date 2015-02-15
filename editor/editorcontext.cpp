@@ -9,10 +9,10 @@
 #include <font/fc-config.hpp>
 #include <font/fc-pattern.hpp>
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <gui/radio-button.hpp>
 #include <gui/check-button.hpp>
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/frame-splitter.hpp>
 #include <gui/filebutton.hpp>
 #include <gui/color-wheel.hpp>
@@ -23,7 +23,7 @@
 #include <stock/shaders.hpp>
 #include <gui/dialog.hpp>
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/toolbox.hpp>
 #include <gui/block.hpp>
 #include <gui/close-button.hpp>

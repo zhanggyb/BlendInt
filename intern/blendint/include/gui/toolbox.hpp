@@ -28,12 +28,12 @@
 
 #include <gui/abstract-layout.hpp>
 
-#include <gui/widget.hpp>
-#include <gui/frame.hpp>
+#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-round-frame.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public Frame
+	class ToolBox: public AbstractRoundFrame
 	{
 	public:
 

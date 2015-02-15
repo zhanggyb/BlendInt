@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_STACKPANEL_HPP_
 #define _BLENDINT_GUI_STACKPANEL_HPP_
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 

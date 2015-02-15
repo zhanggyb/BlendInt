@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_PROGRESSBAR_HPP_
 #define _BLENDINT_GUI_PROGRESSBAR_HPP_
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <opengl/gl-buffer.hpp>
 
 namespace BlendInt {

@@ -42,7 +42,7 @@ namespace BlendInt {
 	Color ImageViewport::background_color = Color(Color::Gray);
 
 	ImageViewport::ImageViewport ()
-	: Frame(),
+	: AbstractRoundFrame(),
 	  vao_(0)
 	{
 		set_size(640, 480);

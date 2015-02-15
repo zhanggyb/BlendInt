@@ -24,7 +24,7 @@
 #ifndef _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
 #define _INCLUDE_BLENDINT_GUI_BLOCK_HPP_
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 

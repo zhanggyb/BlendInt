@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 

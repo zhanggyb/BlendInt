@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <gui/menu.hpp>
 #include <gui/list-view.hpp>
 
@@ -43,8 +43,6 @@ namespace BlendInt {
 		virtual ~ComboBox ();
 
 		virtual Size GetPreferredSize () const;
-
-		virtual bool IsExpandX () const;
 
 		void SetModel (const RefPtr<AbstractItemModel>& model);
 

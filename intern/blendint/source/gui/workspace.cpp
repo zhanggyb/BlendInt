@@ -149,7 +149,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: Frame(),
+	: AbstractRoundFrame(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),
@@ -167,7 +167,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Workspace::SetViewport (Frame* viewport)
+	void Workspace::SetViewport (AbstractRoundFrame* viewport)
 	{
 		if((viewport == nullptr) || (viewport == viewport_)) return;
 
@@ -514,7 +514,7 @@ namespace BlendInt {
 			focused_frame_ = nullptr;
 		}
 
-		return Frame::RemoveSubView(view);
+		return AbstractRoundFrame::RemoveSubView(view);
 	}
 
 	void Workspace::SetHoveredFrame (AbstractWindow* context)

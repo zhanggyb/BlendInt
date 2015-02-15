@@ -33,7 +33,7 @@
 #include <opengl/gl-buffer.hpp>
 #include <opengl/gl-texture2d.hpp>
 
-#include <gui/widget.hpp>
+#include <gui/abstract-round-widget.hpp>
 #include <gui/abstract-layout.hpp>
 
 namespace BlendInt {

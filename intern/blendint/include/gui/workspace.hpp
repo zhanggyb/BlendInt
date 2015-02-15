@@ -26,7 +26,7 @@
 
 #include <gui/abstract-button.hpp>
 
-#include <gui/frame.hpp>
+#include <gui/abstract-round-frame.hpp>
 #include <gui/toolbox.hpp>
 #include <gui/frame-splitter.hpp>
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public Frame
+	class Workspace: public AbstractRoundFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (Frame* viewport);
+		void SetViewport (AbstractRoundFrame* viewport);
 
 		void SetLeftSideBar (ToolBox* leftbar);
 
@@ -148,7 +148,7 @@ namespace BlendInt {
 
 		ToolBox* header_;
 
-		Frame* viewport_;
+		AbstractRoundFrame* viewport_;
 
 		FrameSplitter* splitter_;
 
