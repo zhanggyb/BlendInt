@@ -28,14 +28,14 @@ namespace BlendInt {
 
 	AbstractRoundFrame::AbstractRoundFrame ()
 	: AbstractFrame(),
-	  frame_flag_(0),
+	  round_frame_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
 
 	AbstractRoundFrame::AbstractRoundFrame (int width, int height)
 	: AbstractFrame(width, height),
-	  frame_flag_(0),
+	  round_frame_flag_(0),
 	  round_radius_(5.f)
 	{
 	}
@@ -51,7 +51,7 @@ namespace BlendInt {
 
     void AbstractRoundFrame::SetRoundType (int type)
     {
-        if((frame_flag_ & 0x0F) == (type & 0x0F)) return;
+        if((round_frame_flag_ & 0x0F) == (type & 0x0F)) return;
         
         PerformRoundTypeUpdate(type & 0x0F);
     }

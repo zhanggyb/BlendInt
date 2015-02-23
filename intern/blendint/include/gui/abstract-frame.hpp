@@ -36,21 +36,46 @@ namespace BlendInt {
 
 	class FrameSplitter;
 
+	/**
+	 * @brief The abstract class of all frames
+	 *
+	 * In BlendInt, frame is used to divide the window (or GL context)
+	 * into different regions, hold and manage widgets inside and
+	 * process the HID events get from window.
+	 *
+	 * A frame can only be added and removed in a window, and use
+	 * framebuffer object to render widgets into a texture in general.
+	 * This make sure the frame don\'t need to render every widget if
+	 * no one need to redraw.
+	 *
+	 * Frame can be focused. A focused frame has the high priority to
+	 * accept HID events from window and display on other frames.
+	 */
 	class AbstractFrame: public AbstractView
 	{
 	public:
 
 		friend class AbstractWindow;
 
-		AbstractFrame ();
+		AbstractFrame (int flag = FrameFocusable);
 
-		AbstractFrame (int width, int height);
+		AbstractFrame (int width, int height, int flag = FrameFocusable);
 
 		virtual ~AbstractFrame ();
 
 		Point GetAbsolutePosition (const AbstractWidget* widget);
 
 		Point GetRelativePosition (const AbstractWidget* widget);
+
+		inline bool focusable () const
+		{
+			return frame_flag_ & FrameFocusable;
+		}
+
+		inline bool always_on_top() const
+		{
+			return frame_flag_ & FrameAlwaysOnTop;
+		}
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
 		{
@@ -161,18 +186,23 @@ namespace BlendInt {
 
 		friend class FrameSplitter;
 
+		enum FrameFlagIndex {
+
+			FrameFocusable = (1 << 0),
+
+			FrameAlwaysOnTop = (1 << 1)
+
+		};
+
 		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, AbstractWindow* context, Point& local_position);
 
-		inline void set_widget_hover_status (AbstractView* view, bool hover)
-		{
-			view->set_hover(hover);
-		}
+		uint32_t frame_flag_;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
 		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
 
-		static glm::mat4 default_view_matrix;
+		static glm::mat4 kViewMatrix;
 	};
 
 }

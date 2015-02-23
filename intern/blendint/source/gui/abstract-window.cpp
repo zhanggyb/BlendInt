@@ -47,108 +47,291 @@ namespace BlendInt {
 	AbstractWindow::AbstractWindow()
 	: AbstractView(),
 	  active_frame_(nullptr),
+	  focused_frame_(nullptr),
 	  stencil_count_(0),
-	  current_cursor_shape_(ArrowCursor)
+	  current_cursor_shape_(ArrowCursor),
+	  always_on_top_frame_count_(0)
 	{
 		set_size(640, 480);
 		set_refresh(true);
 
 		events_.reset(new Cpp::ConnectionScope);
-
-		//InitializeMatrices();
 	}
 
 	AbstractWindow::AbstractWindow (int width, int height)
 	: AbstractView(width, height),
 	  active_frame_(nullptr),
+	  focused_frame_(nullptr),
 	  stencil_count_(0),
-	  current_cursor_shape_(ArrowCursor)
+	  current_cursor_shape_(ArrowCursor),
+	  always_on_top_frame_count_(0)
 	{
 		set_refresh(true);
 
 		events_.reset(new Cpp::ConnectionScope);
-
-		//InitializeMatrices();
 	}
 
 	AbstractWindow::~AbstractWindow ()
 	{
 	}
 
-	bool AbstractWindow::AddFrame (AbstractFrame* frame, bool focus)
+	bool AbstractWindow::AddFrame (AbstractFrame* frame)
 	{
-		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+		if(frame == nullptr) return false;
 
-		if(PushBackSubView(frame)) {
+		if(frame->always_on_top()) {
 
-			if(focus) {
+			if(PushBackSubView(frame)) {
 
-				if(original_last) {
-					original_last->set_focus(false);
-					original_last->PerformFocusOff(this);
+				if(frame->focusable()) {
+					if(focused_frame_ != nullptr) {
+						focused_frame_->set_focus(false);
+						focused_frame_->PerformFocusOff(this);
+					}
+					focused_frame_ = frame;
+					focused_frame_->set_focus(true);
+					focused_frame_->PerformFocusOn(this);
 				}
 
-				frame->set_focus(true);
-				frame->PerformFocusOn(this);
-
+				always_on_top_frame_count_++;
+				RequestRedraw();
 			}
 
-			RequestRedraw();
-			return true;
-		}
+		} else {
 
-		return false;
-	}
+			if(focused_frame_ != nullptr) {
 
-	bool AbstractWindow::InsertFrame (int index, AbstractFrame* frame, bool focus)
-	{
-		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
+				if(focused_frame_->always_on_top()) {
 
-		if(InsertSubView(index, frame)) {
-
-			if(focus) {
-
-				if(original_last != last_subview()) {
-					assert(last_subview() == frame);
-
-					if(original_last) {
-						original_last->set_focus(false);
-						original_last->PerformFocusOff(this);
+					AbstractFrame* last_unstick_frame = nullptr;
+					for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
+						last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
+						if(!last_unstick_frame->always_on_top()) break;
 					}
 
-					frame->set_focus(true);
-					frame->PerformFocusOn(this);
+					if(last_unstick_frame != nullptr) {
 
+						if(InsertSiblingAfter(last_unstick_frame, frame)) {
+							if(frame->focusable()) {
+								focused_frame_->set_focus(false);
+								focused_frame_->PerformFocusOff(this);
+								focused_frame_ = frame;
+								focused_frame_->set_focus(true);
+								focused_frame_->PerformFocusOn(this);
+							}
+							RequestRedraw();
+						}
+
+					} else {
+
+						if(InsertSubView(0, frame)) {
+							if(frame->focusable()) {
+								focused_frame_->set_focus(false);
+								focused_frame_->PerformFocusOff(this);
+								focused_frame_ = frame;
+								focused_frame_->set_focus(true);
+								focused_frame_->PerformFocusOn(this);
+							}
+							RequestRedraw();
+						}
+					}
+
+				} else {
+
+					if(InsertSiblingAfter(focused_frame_, frame)) {
+						if(frame->focusable()) {
+							focused_frame_->set_focus(false);
+							focused_frame_->PerformFocusOff(this);
+							focused_frame_ = frame;
+							focused_frame_->set_focus(true);
+							focused_frame_->PerformFocusOn(this);
+						}
+						RequestRedraw();
+					}
+
+				}
+
+
+			} else {
+
+				AbstractFrame* last_unstick_frame = nullptr;
+				for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
+					last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
+					if(!last_unstick_frame->always_on_top()) break;
+				}
+
+				if(last_unstick_frame != nullptr) {
+
+					if(InsertSiblingAfter(last_unstick_frame, frame)) {
+						if(frame->focusable()) {
+							focused_frame_ = frame;
+							focused_frame_->set_focus(true);
+							focused_frame_->PerformFocusOn(this);
+						}
+						RequestRedraw();
+					}
+
+				} else {
+
+					if(InsertSubView(0, frame)) {
+						if(frame->focusable()) {
+							focused_frame_ = frame;
+							focused_frame_->set_focus(true);
+							focused_frame_->PerformFocusOn(this);
+						}
+						RequestRedraw();
+					}
 				}
 
 			}
 
+		}
+
+		return true;
+	}
+
+	bool AbstractWindow::SetFocusedFrame(AbstractFrame *frame)
+	{
+		if(focused_frame_ == frame) return false;
+
+		if(frame == nullptr) {
+
+			if(focused_frame_ != nullptr) {
+				assert(focused_frame_->focusable());
+
+				#ifdef DEBUG
+				AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
+				if(next != nullptr) {
+					assert(next->always_on_top());
+				}
+				#endif
+
+				focused_frame_->set_focus(false);
+				focused_frame_->PerformFocusOff(this);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		if(!frame->focusable()) {
+			DBG_PRINT_MSG("%s", "Frame is not focusable!");
+			return false;
+		}
+
+		// if frame is not the root frame in this window, find and switch to it
+		if(frame->superview_ != this) {
+
+			AbstractView* root_frame = frame;
+			AbstractView* window = root_frame->superview_;
+
+			while(window->superview_ != nullptr) {
+				root_frame = root_frame->superview_;
+				window = root_frame->superview_;
+			}
+
+			if(window != this) {
+				DBG_PRINT_MSG("%s", "the frame is not in this window");
+				return false;
+			}
+
+			frame = dynamic_cast<AbstractFrame*>(root_frame);
+			if(frame == nullptr) return false;
+		}
+
+		if(frame->always_on_top()) {
+
+			if(focused_frame_ != nullptr) {
+				assert(focused_frame_->focusable());
+				#ifdef DEBUG
+				AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
+				if(next != nullptr) {
+					assert(next->always_on_top());
+				}
+				#endif
+				focused_frame_->set_focus(false);
+				focused_frame_->PerformFocusOff(this);
+			}
+
+			MoveToLast(frame);
+			focused_frame_ = frame;
+			focused_frame_->set_focus(true);
+			focused_frame_->PerformFocusOn(this);
+
 			RequestRedraw();
+			return true;
+
+		}
+
+		// if frame is not always_on_top:
+		AbstractFrame* last_unstick_frame = nullptr;
+
+		// check the original focused frame and return
+		if(focused_frame_ != nullptr) {
+
+			assert(focused_frame_->focusable());
+			#ifdef DEBUG
+			AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
+			if(next != nullptr) {
+				assert(next->always_on_top());
+			}
+			#endif
+			focused_frame_->set_focus(false);
+			focused_frame_->PerformFocusOff(this);
+
+			if(focused_frame_->always_on_top()) {
+
+				for(AbstractView* p = focused_frame_->previous_view(); p; p = p->previous_view_) {
+					last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
+					if(!last_unstick_frame->always_on_top()) break;
+				}
+
+				if(last_unstick_frame != nullptr) {
+					InsertSiblingAfter(last_unstick_frame, frame);
+				} else {
+					MoveToFirst(frame);
+				}
+
+				focused_frame_ = frame;
+				focused_frame_->set_focus(true);
+				focused_frame_->PerformFocusOn(this);
+
+				RequestRedraw();
+
+			} else {
+
+				InsertSiblingAfter(focused_frame_, frame);
+				focused_frame_ = frame;
+				focused_frame_->set_focus(true);
+				focused_frame_->PerformFocusOn(this);
+
+				RequestRedraw();
+
+			}
+
 			return true;
 		}
 
-		return false;
-	}
-
-	void AbstractWindow::MoveFrameToTop (AbstractFrame* frame, bool focus)
-	{
-		if(frame == nullptr) return;
-
-		if(frame == last_subview()) return;
-
-		AbstractFrame* original_last = dynamic_cast<AbstractFrame*>(last_subview());
-
-		MoveToLast(frame);
-
-		if(focus) {
-			if(original_last) {
-				original_last->set_focus(false);
-				original_last->PerformFocusOff(this);
-			}
-
-			frame->set_focus(true);
-			frame->PerformFocusOn(this);
+		// if no original focused frame, find the last unstick frame
+		for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
+			last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
+			if(!last_unstick_frame->always_on_top()) break;
 		}
+
+		if(last_unstick_frame != nullptr) {
+			InsertSiblingAfter(last_unstick_frame, frame);
+		} else {
+			MoveToFirst(frame);
+		}
+
+		focused_frame_ = frame;
+		focused_frame_->set_focus(true);
+		focused_frame_->PerformFocusOn(this);
+
+		RequestRedraw();
+
+	 	return true;
 	}
 
 	bool AbstractWindow::Contain (const Point& point) const
@@ -468,26 +651,33 @@ namespace BlendInt {
 
 	bool AbstractWindow::RemoveSubView (AbstractView* view)
 	{
-		AbstractFrame* new_last = nullptr;
 		AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
+		if(frame->always_on_top()) {
+			always_on_top_frame_count_--;
+			assert(always_on_top_frame_count_ >= 0);
+		}
 
-		if(view->next_view() == nullptr) {
-			new_last = dynamic_cast<AbstractFrame*>(view->previous_view());
+		if(frame == focused_frame_) {
 
-			if(frame != nullptr) {
-				frame->set_focus(false);
+			frame->set_focus(false);
+
+			AbstractView* prev = frame->previous_view_;
+			AbstractFrame* previous_frame = dynamic_cast<AbstractFrame*>(prev);
+
+			while((prev != nullptr) && (!previous_frame->focusable())) {
+				prev = prev->previous_view_;
+				previous_frame = dynamic_cast<AbstractFrame*>(prev);
 			}
+
+			focused_frame_ = previous_frame;
+			if(focused_frame_ != nullptr) {
+				focused_frame_->set_focus(true);
+				focused_frame_->PerformFocusOn(this);
+			}
+
 		}
 
-		bool retval = AbstractView::RemoveSubView(view);
-
-		if(new_last != nullptr) {
-			DBG_PRINT_MSG("%s", "call focus event");
-			new_last->set_focus(true);
-			new_last->PerformFocusOn(this);
-		}
-
-		return retval;
+		return AbstractView::RemoveSubView(view);
 	}
 
 	bool AbstractWindow::InitializeTheme ()

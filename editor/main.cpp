@@ -91,27 +91,6 @@ int main (int argc, char* argv[])
 
 		win.AddFrame(frame);
 
-		{
-			StringListModel model;
-			ModelIndex index = model.GetRootIndex();
-
-			String str("String");
-			char buf[16];
-			for(int i = 0; i < 10; i++) {
-				sprintf(buf, "String %d", i);
-				str = buf;
-				model.AddString(str);
-			}
-
-			//model.InsertRows(0, 5, index);
-			//model.InsertRows(8, 5, index);
-
-			model.InsertString(1, "Insert this text");
-
-			model.Print();
-		}
-
-
 		win.Exec();
 
 		Window::Terminate();

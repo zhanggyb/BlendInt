@@ -46,7 +46,7 @@ namespace BlendInt {
         
         inline uint32_t round_type () const
         {
-            return frame_flag_ & 0x0F;
+            return round_frame_flag_ & 0x0F;
         }
         
         inline float round_radius () const
@@ -87,10 +87,9 @@ namespace BlendInt {
         void EnableViewBuffer ();
         
         void DisableViewBuffer ();
-        
-        void GenerateRoundedVertices (
-                                      std::vector<GLfloat>* inner,
-                                      std::vector<GLfloat>* outer);
+
+        void GenerateRoundedVertices(std::vector<GLfloat> *inner,
+                std::vector<GLfloat> *outer);
         
         void GenerateRoundedVertices (
                                       Orientation shadedir,
@@ -105,7 +104,7 @@ namespace BlendInt {
         
         inline void set_round_type (int type)
         {
-            frame_flag_ = (frame_flag_ & 0xFFF0) + (type & 0x0F);
+            round_frame_flag_ = (round_frame_flag_ & 0xFFF0) + (type & 0x0F);
         }
         
         inline void set_round_radius (float radius)
@@ -125,7 +124,7 @@ namespace BlendInt {
         
     private:
         
-        enum FrameFlagIndex {
+        enum RoundFrameFlagIndex {
             
             FrameRoundTopLeft = (1 << 0),
             
@@ -137,7 +136,7 @@ namespace BlendInt {
             
         };
         
-        uint32_t frame_flag_;
+        uint32_t round_frame_flag_;
         
         float round_radius_;
         

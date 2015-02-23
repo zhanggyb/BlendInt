@@ -447,15 +447,6 @@ namespace BlendInt {
 			size_ = size;
 		}
 
-		inline void set_focusable (bool focusable)
-		{
-			if(focusable) {
-				SETBIT(view_flag_, ViewFocusable);
-			} else {
-				CLRBIT(view_flag_, ViewFocusable);
-			}
-		}
-
 		inline void set_focus (bool focus)
 		{
 			if(focus) {
@@ -576,6 +567,17 @@ namespace BlendInt {
 
 		void DrawSubViewsOnce (AbstractWindow* context);
 
+		/**
+		* @brief Swap 2 views' position in their superview
+		*
+		* The 2 views must have the same superview, otherwise, this function just retern false and do nothing.
+		*/
+		static bool SwapIndex(AbstractView *view1, AbstractView *view2);
+
+		static bool InsertSiblingBefore (AbstractView* src, AbstractView* dst);
+
+		static bool InsertSiblingAfter (AbstractView* src, AbstractView* dst);
+
 		static void GenerateVertices (
 				const Size& size,
 				float border,
@@ -629,10 +631,8 @@ namespace BlendInt {
 			// set this flag when the view or frame is pressed
 			ViewPressed = (1 << 5),
 
-			ViewFocusable = (1 << 6),
-
 			// A satic view use 2D texture as a buffer, redraw only when there's update
-			ViewBuffered = (1 << 7)
+			ViewBuffered = (1 << 6)
 
 		};
 
@@ -653,14 +653,6 @@ namespace BlendInt {
 						std::vector<GLfloat>* strip);
 
 		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
-
-		void DistributeHorizontally (int x, int width, int space);
-
-		void DistributeVertically (int y, int height, int space);
-
-		void AlignHorizontally (int y, int height, int alignment);
-
-		void AlignVertically (int x, int width, int alignment);
 
 		void set_manage (bool val)
 		{

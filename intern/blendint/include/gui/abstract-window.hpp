@@ -68,11 +68,12 @@ namespace BlendInt {
 		 */
 		virtual ~AbstractWindow ();
 
-		bool AddFrame (AbstractFrame* frame, bool focus = true);
+		/**
+		* @brief Add a frame in this window
+		*/
+		bool AddFrame (AbstractFrame* frame);
 
-		bool InsertFrame (int index, AbstractFrame* frame, bool focus = true);
-
-		void MoveFrameToTop (AbstractFrame* frame, bool focus = true);
+		bool SetFocusedFrame (AbstractFrame* frame);
 
 		virtual bool Contain (const Point& point) const;
 
@@ -249,6 +250,8 @@ namespace BlendInt {
 
 		AbstractFrame* active_frame_;
 
+		AbstractFrame* focused_frame_;
+
 		// the viewport offset
 		Point viewport_origin_;
 
@@ -257,6 +260,8 @@ namespace BlendInt {
 		CursorShape current_cursor_shape_;
 
 		std::stack<CursorShape> cursor_stack_;
+
+		int always_on_top_frame_count_;
 	};
 
 	inline int pixel_size (int a)

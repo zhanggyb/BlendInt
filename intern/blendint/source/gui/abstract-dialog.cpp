@@ -111,7 +111,7 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				context->MoveFrameToTop(this);
+				context->SetFocusedFrame(this);
 			}
 
 			return Finish;
@@ -123,6 +123,8 @@ namespace BlendInt {
 			last_position_ = position();
 			last_size_ = size();
 			cursor_point_ = context->GetCursorPosition();
+
+			context->SetFocusedFrame(this);
 
 			return Finish;
 		}
@@ -137,15 +139,21 @@ namespace BlendInt {
 	Response AbstractDialog::PerformMouseRelease (
 	        AbstractWindow* context)
 	{
+		Response result = Ignore;
+
+		if(mouse_button_pressed()) {
+			set_mouse_button_pressed(false);
+			result = Finish;
+		}
+
 		cursor_position_ = InsideRectangle;
-		set_mouse_button_pressed(false);
 
 		if(focused_widget_) {
 			context->register_active_frame(this);
 			return delegate_mouse_release_event(focused_widget_, context);
 		}
 
-		return Ignore;
+		return result;
 	}
 
 	Response AbstractDialog::PerformMouseMove (

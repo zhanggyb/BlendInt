@@ -56,6 +56,10 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget()
 	{
+		ClearSubViews();
+
+		if(superview_) superview_->RemoveSubView(this);
+
 		destroyed_->fire(this);
 	}
 

@@ -34,25 +34,31 @@
 
 namespace BlendInt {
 
-	glm::mat4 AbstractFrame::default_view_matrix = glm::lookAt(
+	glm::mat4 AbstractFrame::kViewMatrix = glm::lookAt(
 		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(0.f, 0.f, 0.f),
 		glm::vec3(0.f, 1.f, 0.f));
 
-	AbstractFrame::AbstractFrame()
-	: AbstractView()
+	AbstractFrame::AbstractFrame(int flag)
+	: AbstractView(),
+	frame_flag_(flag)
 	{
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
-	AbstractFrame::AbstractFrame(int width, int height)
-	: AbstractView(width, height)
+	AbstractFrame::AbstractFrame(int width, int height, int flag)
+	: AbstractView(width, height),
+	frame_flag_(flag)
 	{
 		destroyed_.reset(new Cpp::Event<AbstractFrame*>);
 	}
 
 	AbstractFrame::~AbstractFrame()
 	{
+		ClearSubViews();
+
+		if(superview_) superview_->RemoveSubView(this);
+
 		destroyed_->fire(this);
 	}
 

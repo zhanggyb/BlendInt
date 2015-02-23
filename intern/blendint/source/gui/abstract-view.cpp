@@ -30,6 +30,7 @@
 
 #include <gui/abstract-view.hpp>
 #include <gui/abstract-window.hpp>
+#include <Python/Python.h>
 
 namespace BlendInt {
 
@@ -93,32 +94,7 @@ namespace BlendInt {
 		ClearSubViews();
 
 		if(superview_) {
-
 			superview_->RemoveSubView(this);
-
-			/*
-			if(previous_view_) {
-				previous_view_->next_view_ = next_view_;
-			} else {
-				assert(superview_->first_subview_ == this);
-				superview_->first_subview_ = next_view_;
-			}
-
-			if(next_view_) {
-				next_view_->previous_view_ = previous_view_;
-			} else {
-				assert(superview_->last_subview_ == this);
-				superview_->last_subview_ = previous_view_;
-			}
-
-			superview_->subs_count_--;
-			assert(superview_->subs_count_ >= 0);
-
-			previous_view_ = 0;
-			next_view_ = 0;
-			superview_ = 0;
-			*/
-
 		} else {
 			assert(previous_view_ == 0);
 			assert(next_view_ == 0);
@@ -475,6 +451,247 @@ namespace BlendInt {
 		}
 
 		set_refresh(refresh_record);
+	}
+
+	bool AbstractView::SwapIndex(AbstractView *view1, AbstractView *view2)
+	{
+		if(view1 == nullptr || view2 == nullptr) return false;
+		if(view1 == view2) return false;
+		if(view1->superview_ != view2->superview_) return false;
+		if(view1->superview_ == nullptr) return false;
+
+		AbstractView* tmp1 = nullptr;
+		AbstractView* tmp2 = nullptr;
+
+		if(view1->next_view_ == view2) {	// view1 is just the previous sibling of view2
+
+			assert(view2->previous_view_ == view1);
+
+			tmp1 = view1->previous_view_;
+			tmp2 = view2->next_view_;
+
+			view2->previous_view_ = tmp1;
+			view1->previous_view_ = view2;
+
+			view2->next_view_ = view1;
+			view1->next_view_ = tmp2;
+
+			if(tmp1 != nullptr) {
+				tmp1->next_view_ = view2;
+			} else {
+				view1->superview_->first_subview_ = view2;
+			}
+
+			if(tmp2 != nullptr) {
+				tmp2->previous_view_ = view1;
+			} else {
+				view2->superview_->last_subview_ = view2;
+			}
+
+		} else if (view1->previous_view_ == view2) {
+
+			assert(view2->next_view_ == view1);
+
+			tmp1 = view2->previous_view_;
+			tmp2 = view1->next_view_;
+
+			view1->previous_view_ = tmp1;
+			view2->previous_view_ = view1;
+
+			view1->next_view_ = view2;
+			view2->next_view_ = tmp2;
+
+			if(tmp1 != nullptr) {
+				tmp1->next_view_ = view1;
+			} else {
+				view2->superview_->first_subview_ = view1;
+			}
+
+			if(tmp2 != nullptr) {
+				tmp2->previous_view_ = view2;
+			} else {
+				view1->superview_->last_subview_ = view2;
+			}
+
+		} else {
+
+			tmp1 = view1->previous_view_;
+			tmp2 = view2->previous_view_;
+
+			view1->previous_view_ = tmp2;
+			view2->previous_view_ = tmp1;
+
+			if(tmp1 != nullptr) {
+				tmp1->next_view_ = view2;
+			} else {
+				view1->superview_->first_subview_ = view2;
+			}
+
+			if(tmp2 != nullptr) {
+				tmp2->next_view_ = view1;
+			} else {
+				view2->superview_->first_subview_ = view1;
+			}
+
+			tmp1 = view1->next_view_;
+			tmp2 = view2->next_view_;
+
+			view1->next_view_ = tmp2;
+			view2->next_view_ = tmp1;
+
+			if(tmp1 != nullptr) {
+				tmp1->previous_view_ = view2;
+			} else {
+				view1->superview_->last_subview_ = view2;
+			}
+
+			if(tmp2 != nullptr) {
+				tmp2->previous_view_ = view1;
+			} else {
+				view2->superview_->last_subview_ = view1;
+			}
+
+		}
+
+		return true;
+	}
+
+	bool AbstractView::InsertSiblingBefore(AbstractView *src, AbstractView *dst)
+	{
+		if(src == nullptr || dst == nullptr) return false;
+
+		if(dst->superview_ != nullptr) {
+
+			if(dst->superview_ == src->superview_) {
+
+				if(src->previous_view_ == dst) {	// already is the previous one of src
+					return true;
+				}
+
+				if (dst->previous_view_) {
+					dst->previous_view_->next_view_ = dst->next_view_;
+				} else {
+					assert(dst->superview_->first_subview_ == dst);
+					dst->superview_->first_subview_ = dst->next_view_;
+				}
+
+				if (dst->next_view_) {
+					dst->next_view_->previous_view_ = dst->previous_view_;
+				} else {
+					assert(dst->superview_->last_subview_ == dst);
+					dst->superview_->last_subview_ = dst->previous_view_;
+				}
+
+				AbstractView* tmp = src->previous_view_;
+
+				src->previous_view_ = dst;
+				dst->next_view_ = src;
+				dst->previous_view_ = tmp;
+
+				if(tmp) {
+					tmp->next_view_ = dst;
+				} else {
+					assert(src->superview_->first_subview_ == src);
+					dst->superview_->first_subview_ = dst;
+				}
+
+				return true;
+
+			} else {
+				dst->superview_->RemoveSubView(dst);
+			}
+
+		}
+
+		assert(dst->superview_ == nullptr);
+		assert(dst->next_view_ == nullptr);
+		assert(dst->previous_view_ == nullptr);
+
+		AbstractView* tmp = src->previous_view_;
+
+		src->previous_view_ = dst;
+		dst->next_view_ = src;
+		dst->previous_view_ = tmp;
+		if(tmp) {
+			tmp->next_view_ = dst;
+		} else {
+			assert(src->superview_->first_subview_ == src);
+			src->superview_->first_subview_ = dst;
+		}
+
+		dst->superview_ = src->superview_;
+		src->superview_->subs_count_++;
+
+		return true;
+	}
+
+	bool AbstractView::InsertSiblingAfter(AbstractView *src, AbstractView *dst)
+	{
+		if(src == nullptr || dst == nullptr) return false;
+
+		if(dst->superview_ != nullptr) {
+
+			if(dst->previous_view_ == src->superview_) {
+
+				if(src->next_view_ == dst) {	// alrady is the next one of src
+					return true;
+				}
+
+				if (dst->previous_view_) {
+					dst->previous_view_->next_view_ = dst->next_view_;
+				} else {
+					assert(dst->superview_->first_subview_ == dst);
+					dst->superview_->first_subview_ = dst->next_view_;
+				}
+
+				if (dst->next_view_) {
+					dst->next_view_->previous_view_ = dst->previous_view_;
+				} else {
+					assert(dst->superview_->last_subview_ == dst);
+					dst->superview_->last_subview_ = dst->previous_view_;
+				}
+
+				AbstractView* tmp = src->next_view_;
+
+				src->next_view_ = dst;
+				dst->previous_view_ = src;
+				dst->next_view_ = tmp;
+
+				if(tmp) {
+					tmp->previous_view_ = dst;
+				} else {
+					assert(src->superview_->last_subview_ == src);
+					dst->superview_->last_subview_ = dst;
+				}
+
+				return true;
+
+			} else {
+				dst->superview_->RemoveSubView(dst);
+			}
+
+		}
+
+		assert(dst->superview_ == nullptr);
+		assert(dst->next_view_ == nullptr);
+		assert(dst->previous_view_ == nullptr);
+
+		AbstractView* tmp = src->next_view_;
+
+		src->next_view_ = dst;
+		dst->previous_view_ = src;
+		dst->next_view_ = tmp;
+		if(tmp) {
+			tmp->previous_view_ = dst;
+		} else {
+			assert(src->superview_->last_subview_ == src);
+			src->superview_->last_subview_ = dst;
+		}
+
+		dst->superview_ = src->superview_;
+		src->superview_->subs_count_++;
+
+		return true;
 	}
 
 	void AbstractView::DispatchDrawEvent (AbstractView* widget,
@@ -1714,7 +1931,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
-				return false;
+				return true;
 			} else {
 				// Set widget's container to 0
 				view->superview_->RemoveSubView(view);
@@ -1754,7 +1971,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
-				return false;
+				return true;
 			} else {
 				// Set widget's container to 0
 				view->superview_->RemoveSubView(view);
@@ -1833,7 +2050,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
 								view->name_.c_str(),
 								view->superview_->name().c_str());
-				return false;
+				return true;
 			} else {
 				// Set widget's container to 0
 				view->superview_->RemoveSubView(view);
@@ -1895,42 +2112,48 @@ namespace BlendInt {
 
 	void AbstractView::ClearSubViews()
 	{
-		AbstractView* widget = first_subview_;
-		AbstractView* next_view = 0;
+		if(subs_count_ == 0) {
+			assert(first_subview_ == 0);
+			assert(last_subview_ == 0);
+			return;
+		}
 
-		while(widget) {
+		AbstractView* ptr = first_subview_;
+		AbstractView* next_ptr = 0;
 
-			next_view = widget->next_view_;
+		while(ptr) {
 
-			widget->previous_view_ = 0;
-			widget->next_view_ = 0;
-			widget->superview_ = 0;
+			next_ptr = ptr->next_view_;
 
-			if (widget->managed()) {
+			ptr->previous_view_ = 0;
+			ptr->next_view_ = 0;
+			ptr->superview_ = 0;
 
-				if (widget->reference_count() == 0) {
-					delete widget;
+			if (ptr->managed()) {
+
+				if (ptr->reference_count() == 0) {
+					delete ptr;
 				} else {
 					DBG_PRINT_MSG(
 					        "%s is set managed but is referenced by another object, it will be deleted later",
-					        widget->name_.c_str());
+					        ptr->name_.c_str());
 				}
 
 			} else {
 
-				if (widget->reference_count() == 0) {
+				if (ptr->reference_count() == 0) {
 					DBG_PRINT_MSG(
 					        "Warning: %s is not set managed and will not be deleted",
-					        widget->name_.c_str());
+					        ptr->name_.c_str());
 				} else {
 					DBG_PRINT_MSG(
 					        "%s is set unmanaged but is referenced by another object, it will be deleted later",
-					        widget->name_.c_str());
+					        ptr->name_.c_str());
 				}
 
 			}
 
-			widget = next_view;
+			ptr = next_ptr;
 		}
 
 		subs_count_ = 0;
@@ -2026,96 +2249,6 @@ namespace BlendInt {
 		float facm = 1.f - fact;
 
 		return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
-	}
-
-	void AbstractView::DistributeHorizontally(int x, int width, int space)
-	{
-		int sum = subs_count();
-
-		if (sum) {
-			int average_width = (width - (sum - 1)* space) / sum;
-
-			if (average_width > 0) {
-
-				for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-					ResizeSubView(p, average_width, p->size().height());
-					MoveSubViewTo(p, x, p->position().y());
-					x += average_width + space;
-				}
-
-			} else {
-
-				// TODO: set invisiable
-
-			}
-		}
-	}
-
-	void AbstractView::DistributeVertically(int y, int height, int space)
-	{
-		int sum = subs_count();
-
-		y = y + height;
-		if (sum) {
-			int average_height = (height - (sum - 1)* space) / sum;
-
-			if (average_height > 0) {
-
-				for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-					ResizeSubView(p, p->size().width(), average_height);
-					y -= average_height;
-					MoveSubViewTo(p, p->position().x(), y);
-					y -= space;
-				}
-
-			} else {
-
-				// TODO: set invisiable
-
-			}
-		}
-	}
-
-	void AbstractView::AlignHorizontally(int y, int height, int alignment)
-	{
-		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-			if(p->IsExpandY()) {
-				ResizeSubView(p, p->size().width(), height);
-				MoveSubViewTo(p, p->position().x(), y);
-			} else {
-
-				if (alignment & AlignTop) {
-					MoveSubViewTo(p, p->position().x(),
-					        y + (height - p->size().height()));
-				} else if (alignment & AlignBottom) {
-					MoveSubViewTo(p, p->position().x(), y);
-				} else if (alignment & AlignHorizontalCenter) {
-					MoveSubViewTo(p, p->position().x(),
-					        y + (height - p->size().height()) / 2);
-				}
-
-			}
-		}
-	}
-
-	void AbstractView::AlignVertically(int x, int width, int alignment)
-	{
-		for (AbstractView* p = first_subview_; p; p = p->next_view_) {
-			if (p->IsExpandX()) {
-				ResizeSubView(p, width, p->size().height());
-				MoveSubViewTo(p, x, p->position().y());
-			} else {
-
-				if (alignment & AlignLeft) {
-					MoveSubViewTo(p, x, p->position().y());
-				} else if (alignment & AlignRight) {
-					MoveSubViewTo(p, x + (width - p->size().width()), p->position().y());
-				} else if (alignment & AlignVerticalCenter) {
-					MoveSubViewTo(p, x + (width - p->size().width()) / 2, p->position().y());
-				}
-
-			}
-		}
 	}
 
 } /* namespace BlendInt */

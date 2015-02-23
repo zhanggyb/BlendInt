@@ -232,14 +232,45 @@ namespace BlendInt {
 			delete popup_;
 			popup_ = 0;
 			SetRoundType(RoundAll);
+            RequestRedraw();
+            return Finish;
 		} else {
 			popup_ = Manage(new Menu);
 			popup_->Resize(160, 240);
 
 			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
 
-			context->AddFrame(popup_, true);
-			popup_->MoveTo(context->GetCursorPosition());
+            Point pos = context->GetAbsolutePosition(this);
+
+            int top = pos.y() + size().height() + popup_->size().height();
+            int bottom = pos.y() - popup_->size().height();
+            
+            if(top <= context->size().height()) {
+                popup_->MoveTo(pos.x(), pos.y() + size().height());
+                SetRoundType(RoundBottomLeft | RoundBottomRight);
+            } else {
+                
+                if(bottom >= 0) {
+                    popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+                    SetRoundType(RoundTopLeft | RoundTopRight);
+                } else {
+                    
+                    int diff = top - context->size().height() + bottom;
+                    if(diff <= 0) {
+                        popup_->MoveTo(pos.x(), pos.y() + size().height());
+                        SetRoundType(RoundBottomLeft | RoundBottomRight);
+                    } else {
+                        popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+                        SetRoundType(RoundTopLeft | RoundTopRight);
+                    }
+                    
+                }
+                
+            }
+
+            context->AddFrame(popup_);
+           
+            return Ignore;
 		}
 		
 		/*
