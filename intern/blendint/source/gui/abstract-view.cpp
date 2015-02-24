@@ -90,7 +90,14 @@ namespace BlendInt {
 
 	AbstractView::~AbstractView ()
 	{
-		ClearSubViews();
+		if(subs_count() > 0) {
+			ClearSubViews();
+		}
+		else {
+			assert(subs_count_ == 0);
+			assert(first_subview_ == 0);
+			assert(last_subview_ == 0);
+		}
 
 		if(superview_) {
 			superview_->RemoveSubView(this);
@@ -2111,12 +2118,6 @@ namespace BlendInt {
 
 	void AbstractView::ClearSubViews()
 	{
-		if(subs_count_ == 0) {
-			assert(first_subview_ == 0);
-			assert(last_subview_ == 0);
-			return;
-		}
-
 		AbstractView* ptr = first_subview_;
 		AbstractView* next_ptr = 0;
 

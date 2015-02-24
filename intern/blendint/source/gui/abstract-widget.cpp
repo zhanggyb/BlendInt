@@ -56,7 +56,14 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget()
 	{
-		ClearSubViews();
+		if(subs_count() > 0) {
+			ClearSubViews();
+		}
+		else {
+			assert(subs_count_ == 0);
+			assert(first_subview_ == 0);
+			assert(last_subview_ == 0);
+		}
 
 		if(superview_) superview_->RemoveSubView(this);
 

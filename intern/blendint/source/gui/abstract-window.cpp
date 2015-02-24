@@ -86,9 +86,7 @@ namespace BlendInt {
 			if(PushBackSubView(frame)) {
 
 				if(frame->focusable()) {
-					if(focused_frame_ != nullptr) {
-						focused_frame_->PerformFocusOff(this);
-					}
+					if(focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
 					focused_frame_ = frame;
 					focused_frame_->PerformFocusOn(this);
 				}
@@ -99,80 +97,29 @@ namespace BlendInt {
 
 		} else {
 
-			if(focused_frame_ != nullptr) {
+			int index = subs_count() - always_on_top_frame_count_ - 1;
 
-				if(focused_frame_->always_on_top()) {
+			if(index < 0) {	// no normal frame
 
-					AbstractFrame* last_unstick_frame = nullptr;
-					for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
-						last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
-						if(!last_unstick_frame->always_on_top()) break;
+				if(InsertSubView(0, frame)) {
+					if(frame->focusable()) {
+						if(focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
+						focused_frame_ = frame;
+						focused_frame_->PerformFocusOn(this);
 					}
-
-					if(last_unstick_frame != nullptr) {
-
-						if(InsertSiblingAfter(last_unstick_frame, frame)) {
-							if(frame->focusable()) {
-								focused_frame_->PerformFocusOff(this);
-								focused_frame_ = frame;
-								focused_frame_->PerformFocusOn(this);
-							}
-							RequestRedraw();
-						}
-
-					} else {
-
-						if(InsertSubView(0, frame)) {
-							if(frame->focusable()) {
-								focused_frame_->PerformFocusOff(this);
-								focused_frame_ = frame;
-								focused_frame_->PerformFocusOn(this);
-							}
-							RequestRedraw();
-						}
-					}
-
-				} else {
-
-					if(InsertSiblingAfter(focused_frame_, frame)) {
-						if(frame->focusable()) {
-							focused_frame_->PerformFocusOff(this);
-							focused_frame_ = frame;
-							focused_frame_->PerformFocusOn(this);
-						}
-						RequestRedraw();
-					}
-
+					RequestRedraw();
 				}
-
 
 			} else {
 
-				AbstractFrame* last_unstick_frame = nullptr;
-				for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
-					last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
-					if(!last_unstick_frame->always_on_top()) break;
-				}
-
-				if(last_unstick_frame != nullptr) {
-
-					if(InsertSiblingAfter(last_unstick_frame, frame)) {
-						if(frame->focusable()) {
-							focused_frame_ = frame;
-							focused_frame_->PerformFocusOn(this);
-						}
-						RequestRedraw();
+				AbstractFrame* top_normal_frame = dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
+				if(InsertSiblingAfter(top_normal_frame, frame)) {
+					if(frame->focusable()) {
+						if(focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
+						focused_frame_ = frame;
+						focused_frame_->PerformFocusOn(this);
 					}
-
-				} else {
-
-					if(InsertSubView(0, frame)) {
-						if(frame->focusable()) {
-							focused_frame_ = frame;
-							focused_frame_->PerformFocusOn(this);
-						}
-						RequestRedraw();
-					}
+					RequestRedraw();
 				}
 
 			}
@@ -184,26 +131,16 @@ namespace BlendInt {
 
 	bool AbstractWindow::SetFocusedFrame(AbstractFrame *frame)
 	{
-		if(focused_frame_ == frame) return false;
+		if(focused_frame_ == frame) return true;
 
 		if(frame == nullptr) {
 
 			if(focused_frame_ != nullptr) {
 				assert(focused_frame_->focusable());
-
-				#ifdef DEBUG
-				AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
-				if(next != nullptr) {
-					assert(next->always_on_top());
-				}
-				#endif
-
 				focused_frame_->PerformFocusOff(this);
-
-				return true;
 			}
 
-			return false;
+			return true;
 		}
 
 		if(!frame->focusable()) {
@@ -235,12 +172,6 @@ namespace BlendInt {
 
 			if(focused_frame_ != nullptr) {
 				assert(focused_frame_->focusable());
-				#ifdef DEBUG
-				AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
-				if(next != nullptr) {
-					assert(next->always_on_top());
-				}
-				#endif
 				focused_frame_->PerformFocusOff(this);
 			}
 
@@ -253,68 +184,18 @@ namespace BlendInt {
 
 		}
 
-		// if frame is not always_on_top:
-		AbstractFrame* last_unstick_frame = nullptr;
+		int index = subs_count() - always_on_top_frame_count_ - 1;
 
-		// check the original focused frame and return
-		if(focused_frame_ != nullptr) {
+		if(index < 0) return false;	// no normal frame
 
-			assert(focused_frame_->focusable());
-			#ifdef DEBUG
-			AbstractFrame* next = dynamic_cast<AbstractFrame*>(focused_frame_->next_view_);
-			if(next != nullptr) {
-				assert(next->always_on_top());
-			}
-			#endif
-			focused_frame_->PerformFocusOff(this);
-
-			if(focused_frame_->always_on_top()) {
-
-				for(AbstractView* p = focused_frame_->previous_view(); p; p = p->previous_view_) {
-					last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
-					if(!last_unstick_frame->always_on_top()) break;
-				}
-
-				if(last_unstick_frame != nullptr) {
-					InsertSiblingAfter(last_unstick_frame, frame);
-				} else {
-					MoveToFirst(frame);
-				}
-
-				focused_frame_ = frame;
-				focused_frame_->PerformFocusOn(this);
-
-				RequestRedraw();
-
-			} else {
-
-				InsertSiblingAfter(focused_frame_, frame);
-				focused_frame_ = frame;
-				focused_frame_->PerformFocusOn(this);
-
-				RequestRedraw();
-
-			}
-
-			return true;
+		AbstractFrame* top_normal_frame = dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
+		// move the frame to the top
+		if(InsertSiblingAfter(top_normal_frame, frame)) {
+			if(focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
+			focused_frame_ = frame;
+			focused_frame_->PerformFocusOn(this);
+			RequestRedraw();
 		}
-
-		// if no original focused frame, find the last unstick frame
-		for(AbstractView* p = last_subview_; p; p = p->previous_view_) {
-			last_unstick_frame = dynamic_cast<AbstractFrame*>(p);
-			if(!last_unstick_frame->always_on_top()) break;
-		}
-
-		if(last_unstick_frame != nullptr) {
-			InsertSiblingAfter(last_unstick_frame, frame);
-		} else {
-			MoveToFirst(frame);
-		}
-
-		focused_frame_ = frame;
-		focused_frame_->PerformFocusOn(this);
-
-		RequestRedraw();
 
 	 	return true;
 	}
