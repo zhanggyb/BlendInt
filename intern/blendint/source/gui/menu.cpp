@@ -42,7 +42,8 @@ namespace BlendInt {
 	  focused_widget_(nullptr),
 	  hovered_widget_(nullptr),
 	  cursor_range_(0),
-	  hover_(false)
+	  hover_(false),
+	  pressed_(false)
 	{
 		set_size (240, 360);
 		set_round_type(RoundAll);
@@ -186,18 +187,17 @@ namespace BlendInt {
 				widget = DispatchMousePressEvent(hovered_widget_, context);
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
-					set_pressed(true);
+					pressed_ = true;
 				} else {
 					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
-
 			} else {
-				set_pressed(true);
+				pressed_ = true;
 			}
 
 		} else if (cursor_range_ == OutsideRectangle) {
-			set_pressed(false);
+			pressed_ = false;
 			delete this;
 			return Finish;
 		}
@@ -208,7 +208,8 @@ namespace BlendInt {
 	Response Menu::PerformMouseRelease (AbstractWindow* context)
 	{
 		cursor_range_ = InsideRectangle;
-		set_pressed(false);
+
+		pressed_ = false;
 
 		if(focused_widget_) {
 			context->register_active_frame(this);
@@ -450,7 +451,7 @@ namespace BlendInt {
 
 	Response Menu::PerformMouseHover(AbstractWindow* context)
 	{
-		if(pressed_ext()) return Finish;
+		if(pressed_) return Finish;
 
 		if(Contain(context->GetCursorPosition())) {
 

@@ -262,6 +262,8 @@ namespace BlendInt {
 		std::stack<CursorShape> cursor_stack_;
 
 		int always_on_top_frame_count_;
+
+		bool pressed_;
 	};
 
 	inline int pixel_size (int a)

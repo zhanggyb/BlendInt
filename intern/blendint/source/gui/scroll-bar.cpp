@@ -30,7 +30,8 @@ namespace BlendInt {
 
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
-	  m_last_value(0)
+	  m_last_value(0),
+	  pressed_(false)
 	{
 		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
@@ -277,7 +278,7 @@ namespace BlendInt {
 
 			m_cursor_origin = context->GetCursorPosition();
 			m_last_value = value();
-			set_pressed(true);
+			pressed_ = true;
 			fire_slider_pressed();
 
 			return Finish;
@@ -288,7 +289,7 @@ namespace BlendInt {
 
 	Response ScrollBar::PerformMouseMove (AbstractWindow* context)
 	{
-		if (pressed_ext()) {
+		if (pressed_) {
 
 			int new_value = value();
 
@@ -320,9 +321,9 @@ namespace BlendInt {
 
 	Response ScrollBar::PerformMouseRelease (AbstractWindow* context)
 	{
-		if (pressed_ext()) {
+		if (pressed_) {
 
-			set_pressed(false);
+			pressed_ = false;
 
 			Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 

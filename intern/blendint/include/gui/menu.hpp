@@ -154,6 +154,8 @@ namespace BlendInt {
 
 		bool hover_;
 
+		bool pressed_;
+
 		static int kDefaultIconSpace;
 
 		static int kDefaultShortcutSpace;

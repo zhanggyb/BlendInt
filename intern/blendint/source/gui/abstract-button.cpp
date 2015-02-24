@@ -158,8 +158,6 @@ namespace BlendInt {
 
 	Response AbstractButton::PerformMousePress (AbstractWindow* context)
 	{
-		set_pressed(true);
-
 		if (context->GetMouseButton() == MouseButtonLeft) {
 			m_status.set(ButtonPressed);
 			m_status.set(ButtonDown);
@@ -230,12 +228,8 @@ namespace BlendInt {
 
 			released_.fire(this);
 
-			set_pressed(false);
-
 			return Finish;
 		}
-
-		set_pressed(false);
 
 		return Ignore;
 	}

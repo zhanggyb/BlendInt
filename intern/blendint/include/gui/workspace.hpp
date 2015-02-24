@@ -156,6 +156,8 @@ namespace BlendInt {
 
 		AbstractFrame* focused_frame_;
 
+		bool pressed_;
+
 	};
 
 }

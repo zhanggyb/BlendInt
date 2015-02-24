@@ -41,7 +41,8 @@ namespace BlendInt {
 	  margin_(2, 2, 2, 2),
 	  cursor_position_(0),
 	  layout_(0),
-	  hover_(false)
+	  hover_(false),
+	  pressed_(false)
 	{
 		if(layout == nullptr) {
 			layout_ = Manage(new FlowLayout);
@@ -62,7 +63,8 @@ namespace BlendInt {
 	  space_(1),
 	  cursor_position_(0),
 	  layout_(0),
-	  hover_(false)
+	  hover_(false),
+	  pressed_(false)
 	{
 		if(layout == nullptr) {
 			layout_ = Manage(new FlowLayout);
@@ -283,18 +285,18 @@ namespace BlendInt {
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
-					set_pressed(true);
+					pressed_ = true;
 				} else {
 					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
 				}
 
 			} else {
-				set_pressed(true);
+				pressed_ = true;
 				// SetFocusedWidget(0);
 			}
 
 		} else {
-			set_pressed(false);
+			pressed_ = false;
 		}
 
 		return Finish;
@@ -303,7 +305,8 @@ namespace BlendInt {
 	Response ToolBox::PerformMouseRelease (AbstractWindow* context)
 	{
 		cursor_position_ = InsideRectangle;
-		set_pressed(false);
+
+		pressed_ = false;
 
 		if(focused_widget_) {
 			context->register_active_frame(this);
@@ -327,7 +330,7 @@ namespace BlendInt {
 
 	Response ToolBox::PerformMouseHover (AbstractWindow* context)
 	{
-		if(pressed_ext()) return Finish;
+		if(pressed_) return Finish;
 
 		if(Contain(context->GetCursorPosition())) {
 

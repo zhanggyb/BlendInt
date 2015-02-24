@@ -119,6 +119,7 @@ namespace BlendInt {
 
 		int m_last_value;
 
+		bool pressed_;
 	};
 
 }

@@ -156,7 +156,8 @@ namespace BlendInt {
 	  viewport_(0),
 	  splitter_(0),
 	  hover_frame_(0),
-	  focused_frame_(0)
+	  focused_frame_(0),
+	  pressed_(false)
 	{
 		set_size(800, 600);
 
@@ -410,7 +411,8 @@ namespace BlendInt {
 	Response Workspace::PerformMousePress(AbstractWindow* context)
 	{
 		Response response = Ignore;
-		set_pressed(true);
+
+		pressed_ = true;
 
 		if(hover_frame_ != nullptr) {
 			response = delegate_mouse_press_event(hover_frame_, context);
@@ -428,7 +430,8 @@ namespace BlendInt {
 	Response Workspace::PerformMouseRelease(AbstractWindow* context)
 	{
 		Response response = Ignore;
-		set_pressed(false);
+
+		pressed_ = false;
 
 		if(focused_frame_ != nullptr) {
 			response = delegate_mouse_release_event(focused_frame_, context);
@@ -441,7 +444,7 @@ namespace BlendInt {
 	{
 		Response response = Ignore;
 
-		if(pressed_ext() && focused_frame_) {
+		if(pressed_ && focused_frame_) {
 			response = delegate_mouse_move_event(focused_frame_, context);
 		}
 

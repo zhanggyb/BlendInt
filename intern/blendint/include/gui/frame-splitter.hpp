@@ -93,6 +93,8 @@ namespace BlendInt {
 		int nearby_pos_;
 
 		bool hover_;
+
+		bool pressed_;
 	};
 
 	// -------------------------------
@@ -226,5 +228,7 @@ namespace BlendInt {
 		AbstractFrame* hover_frame_;
 
 		AbstractFrame* focused_frame_;
+
+		bool pressed_;
 	};
 }

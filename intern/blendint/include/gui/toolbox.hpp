@@ -122,6 +122,7 @@ namespace BlendInt {
 
 		bool hover_;
 
+		bool pressed_;
 	};
 
 }

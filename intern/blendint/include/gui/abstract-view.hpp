@@ -314,11 +314,6 @@ namespace BlendInt {
 			return view_flag_ & ViewRefresh;
 		}
 
-		inline bool pressed_ext () const
-		{
-			return view_flag_ & ViewPressed;
-		}
-
 		inline bool buffered () const
 		{
 			return view_flag_ & ViewBuffered;
@@ -443,15 +438,6 @@ namespace BlendInt {
 				SETBIT(view_flag_, ViewVisible);
 			} else {
 				CLRBIT(view_flag_, ViewVisible);
-			}
-		}
-
-		inline void set_pressed (bool pressed)
-		{
-			if(pressed) {
-				SETBIT(view_flag_, ViewPressed);
-			} else {
-				CLRBIT(view_flag_, ViewPressed);
 			}
 		}
 
@@ -597,9 +583,6 @@ namespace BlendInt {
 
 			// A satic view use 2D texture as a buffer, redraw only when there's update
 			ViewBuffered = (1 << 3),
-
-			// set this flag when the view or frame is pressed
-			ViewPressed = (1 << 4),
 
 		};
 

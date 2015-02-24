@@ -50,7 +50,8 @@ namespace BlendInt {
 	  focused_frame_(nullptr),
 	  stencil_count_(0),
 	  current_cursor_shape_(ArrowCursor),
-	  always_on_top_frame_count_(0)
+	  always_on_top_frame_count_(0),
+	  pressed_(false)
 	{
 		set_size(640, 480);
 		set_refresh(true);
@@ -64,7 +65,8 @@ namespace BlendInt {
 	  focused_frame_(nullptr),
 	  stencil_count_(0),
 	  current_cursor_shape_(ArrowCursor),
-	  always_on_top_frame_count_(0)
+	  always_on_top_frame_count_(0),
+	  pressed_(false)
 	{
 		set_refresh(true);
 
@@ -585,7 +587,7 @@ namespace BlendInt {
 	{
 		Response response = Ignore;
 
-		set_pressed(true);
+		pressed_ = true;
 
 		for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 			response = p->PerformMousePress(context);
@@ -600,7 +602,8 @@ namespace BlendInt {
 	Response AbstractWindow::PerformMouseRelease (AbstractWindow* context)
 	{
 		Response response = Ignore;
-		set_pressed(false);
+
+		pressed_ = false;
 
 		for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 		{
@@ -617,7 +620,7 @@ namespace BlendInt {
 	{
 		Response response = Ignore;
 
-		if(pressed_ext()) {
+		if(pressed_) {
 
 			for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
 			{
