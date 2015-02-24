@@ -78,6 +78,8 @@ namespace BlendInt {
 			return text_;
 		}
 
+		bool hover() const {return m_status[ButtonHover];}
+
 		bool is_down () const {return m_status[ButtonDown];}
 
 		bool is_checked () const {return m_status[ButtonChecked];}
@@ -138,6 +140,7 @@ namespace BlendInt {
 
 		enum ButtonStatusIndex {
 			ButtonPressed = 0,
+			ButtonHover,
 			ButtonDown,
 			ButtonCheckable,
 			ButtonChecked,

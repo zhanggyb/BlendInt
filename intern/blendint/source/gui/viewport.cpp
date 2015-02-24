@@ -34,7 +34,8 @@ namespace BlendInt {
 
 	Viewport::Viewport()
 	: AbstractRoundFrame(),
-	  vao_(0)
+	  vao_(0),
+	  hover_(false)
 	{
 		set_size(640, 480);
 
@@ -140,11 +141,13 @@ namespace BlendInt {
 
 	void Viewport::PerformHoverIn(AbstractWindow* context)
 	{
+		hover_ = true;
 		RequestRedraw();
 	}
 
 	void Viewport::PerformHoverOut(AbstractWindow* context)
 	{
+		hover_ = false;
 		RequestRedraw();
 	}
 
@@ -186,7 +189,7 @@ namespace BlendInt {
 
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
-		if(hover()) {
+		if(hover_) {
 			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
 		} else {
 			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);

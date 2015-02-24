@@ -95,6 +95,8 @@ namespace BlendInt {
 
 		String title_;
 
+		bool hover_;
+
 		static Margin default_numberslider_padding;
 	};
 

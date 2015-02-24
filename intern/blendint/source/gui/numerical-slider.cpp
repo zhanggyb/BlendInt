@@ -31,7 +31,8 @@ namespace BlendInt {
 	Margin NumericalSlider::default_numberslider_padding(2, 2, 2, 2);
 
 	NumericalSlider::NumericalSlider (Orientation orientation)
-	: AbstractSlider<double>(orientation)
+	: AbstractSlider<double>(orientation),
+	  hover_(false)
 	{
 		set_round_type(RoundAll);
 		int h = font_.height();
@@ -47,7 +48,8 @@ namespace BlendInt {
 
 	NumericalSlider::NumericalSlider (const String& title, Orientation orientation)
 	: AbstractSlider<double>(orientation),
-	  title_(title)
+	  title_(title),
+	  hover_(false)
 	{
 		set_round_type(RoundAll);
 		int h = font_.height();
@@ -224,7 +226,7 @@ namespace BlendInt {
 
 		AbstractWindow::shaders->widget_split_inner_program()->use();
 
-		if(hover()) {
+		if(hover_) {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
 		} else {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
@@ -283,11 +285,13 @@ namespace BlendInt {
 	
 	void NumericalSlider::PerformHoverIn(AbstractWindow* context)
 	{
+		hover_ = true;
 		RequestRedraw();
 	}
 
 	void NumericalSlider::PerformHoverOut(AbstractWindow* context)
 	{
+		hover_ = false;
 		RequestRedraw();
 	}
 

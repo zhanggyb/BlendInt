@@ -299,16 +299,6 @@ namespace BlendInt {
 			return size_;
 		}
 
-		inline bool focus () const
-		{
-			return view_flag_ & ViewFocused;
-		}
-
-		inline bool hover () const
-		{
-			return view_flag_ & ViewHover;
-		}
-
 		inline bool visiable () const
 		{
 			return view_flag_ & ViewVisible;
@@ -445,24 +435,6 @@ namespace BlendInt {
 		inline void set_size (const Size& size)
 		{
 			size_ = size;
-		}
-
-		inline void set_focus (bool focus)
-		{
-			if(focus) {
-				SETBIT(view_flag_, ViewFocused);
-			} else {
-				CLRBIT(view_flag_, ViewFocused);
-			}
-		}
-
-		inline void set_hover (bool hover)
-		{
-			if(hover) {
-				SETBIT(view_flag_, ViewHover);
-			} else {
-				CLRBIT(view_flag_, ViewHover);
-			}
 		}
 
 		inline void set_visible (bool visiable)
@@ -623,16 +595,11 @@ namespace BlendInt {
 			// only valid when use off-screen render in container
 			ViewRefresh = (1 << 2),
 
-			ViewFocused = (1 << 3),
-
-			/** If this view is in cursor hover list in Context */
-			ViewHover = (1 << 4),
+			// A satic view use 2D texture as a buffer, redraw only when there's update
+			ViewBuffered = (1 << 3),
 
 			// set this flag when the view or frame is pressed
-			ViewPressed = (1 << 5),
-
-			// A satic view use 2D texture as a buffer, redraw only when there's update
-			ViewBuffered = (1 << 6)
+			ViewPressed = (1 << 4),
 
 		};
 

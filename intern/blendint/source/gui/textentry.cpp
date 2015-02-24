@@ -36,7 +36,8 @@ namespace BlendInt {
 	TextEntry::TextEntry ()
 	: AbstractRoundWidget(),
 	  text_start_(0),
-	  cursor_index_(0)
+	  cursor_index_(0),
+	  focused_(false)
 	{
 		text_.reset(new Text(String("")));
 
@@ -55,7 +56,8 @@ namespace BlendInt {
 	TextEntry::TextEntry (const String& text)
 	: AbstractRoundWidget(),
 	  text_start_(0),
-	  cursor_index_(0)
+	  cursor_index_(0),
+	  focused_(false)
 	{
 		text_.reset(new Text(text));
 
@@ -233,11 +235,13 @@ namespace BlendInt {
     
     void TextEntry::PerformFocusOn (AbstractWindow* context)
     {
+    	focused_ = true;
         RequestRedraw();
     }
     
     void TextEntry::PerformFocusOff (AbstractWindow* context)
     {
+    	focused_ = false;
         RequestRedraw();
     }
     
@@ -420,7 +424,7 @@ namespace BlendInt {
             
         }
 
-		if(focus()) {			// draw a cursor
+		if(focused_) {			// draw a cursor
 
 			x += cursor_pos;
 			y = 0 + 1;

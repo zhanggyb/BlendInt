@@ -85,11 +85,9 @@ namespace BlendInt {
 
 				if(frame->focusable()) {
 					if(focused_frame_ != nullptr) {
-						focused_frame_->set_focus(false);
 						focused_frame_->PerformFocusOff(this);
 					}
 					focused_frame_ = frame;
-					focused_frame_->set_focus(true);
 					focused_frame_->PerformFocusOn(this);
 				}
 
@@ -113,10 +111,8 @@ namespace BlendInt {
 
 						if(InsertSiblingAfter(last_unstick_frame, frame)) {
 							if(frame->focusable()) {
-								focused_frame_->set_focus(false);
 								focused_frame_->PerformFocusOff(this);
 								focused_frame_ = frame;
-								focused_frame_->set_focus(true);
 								focused_frame_->PerformFocusOn(this);
 							}
 							RequestRedraw();
@@ -126,10 +122,8 @@ namespace BlendInt {
 
 						if(InsertSubView(0, frame)) {
 							if(frame->focusable()) {
-								focused_frame_->set_focus(false);
 								focused_frame_->PerformFocusOff(this);
 								focused_frame_ = frame;
-								focused_frame_->set_focus(true);
 								focused_frame_->PerformFocusOn(this);
 							}
 							RequestRedraw();
@@ -140,10 +134,8 @@ namespace BlendInt {
 
 					if(InsertSiblingAfter(focused_frame_, frame)) {
 						if(frame->focusable()) {
-							focused_frame_->set_focus(false);
 							focused_frame_->PerformFocusOff(this);
 							focused_frame_ = frame;
-							focused_frame_->set_focus(true);
 							focused_frame_->PerformFocusOn(this);
 						}
 						RequestRedraw();
@@ -165,7 +157,6 @@ namespace BlendInt {
 					if(InsertSiblingAfter(last_unstick_frame, frame)) {
 						if(frame->focusable()) {
 							focused_frame_ = frame;
-							focused_frame_->set_focus(true);
 							focused_frame_->PerformFocusOn(this);
 						}
 						RequestRedraw();
@@ -176,7 +167,6 @@ namespace BlendInt {
 					if(InsertSubView(0, frame)) {
 						if(frame->focusable()) {
 							focused_frame_ = frame;
-							focused_frame_->set_focus(true);
 							focused_frame_->PerformFocusOn(this);
 						}
 						RequestRedraw();
@@ -206,7 +196,6 @@ namespace BlendInt {
 				}
 				#endif
 
-				focused_frame_->set_focus(false);
 				focused_frame_->PerformFocusOff(this);
 
 				return true;
@@ -250,13 +239,11 @@ namespace BlendInt {
 					assert(next->always_on_top());
 				}
 				#endif
-				focused_frame_->set_focus(false);
 				focused_frame_->PerformFocusOff(this);
 			}
 
 			MoveToLast(frame);
 			focused_frame_ = frame;
-			focused_frame_->set_focus(true);
 			focused_frame_->PerformFocusOn(this);
 
 			RequestRedraw();
@@ -277,7 +264,6 @@ namespace BlendInt {
 				assert(next->always_on_top());
 			}
 			#endif
-			focused_frame_->set_focus(false);
 			focused_frame_->PerformFocusOff(this);
 
 			if(focused_frame_->always_on_top()) {
@@ -294,7 +280,6 @@ namespace BlendInt {
 				}
 
 				focused_frame_ = frame;
-				focused_frame_->set_focus(true);
 				focused_frame_->PerformFocusOn(this);
 
 				RequestRedraw();
@@ -303,7 +288,6 @@ namespace BlendInt {
 
 				InsertSiblingAfter(focused_frame_, frame);
 				focused_frame_ = frame;
-				focused_frame_->set_focus(true);
 				focused_frame_->PerformFocusOn(this);
 
 				RequestRedraw();
@@ -326,7 +310,6 @@ namespace BlendInt {
 		}
 
 		focused_frame_ = frame;
-		focused_frame_->set_focus(true);
 		focused_frame_->PerformFocusOn(this);
 
 		RequestRedraw();
@@ -659,8 +642,6 @@ namespace BlendInt {
 
 		if(frame == focused_frame_) {
 
-			frame->set_focus(false);
-
 			AbstractView* prev = frame->previous_view_;
 			AbstractFrame* previous_frame = dynamic_cast<AbstractFrame*>(prev);
 
@@ -671,7 +652,6 @@ namespace BlendInt {
 
 			focused_frame_ = previous_frame;
 			if(focused_frame_ != nullptr) {
-				focused_frame_->set_focus(true);
 				focused_frame_->PerformFocusOn(this);
 			}
 

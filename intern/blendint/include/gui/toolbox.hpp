@@ -120,6 +120,8 @@ namespace BlendInt {
 
 		AbstractLayout* layout_;
 
+		bool hover_;
+
 	};
 
 }

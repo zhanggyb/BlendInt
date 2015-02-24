@@ -53,7 +53,6 @@ namespace BlendInt {
     AbstractDialog::~AbstractDialog()
     {
 		if(focused_widget_) {
-			delegate_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &AbstractDialog::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
@@ -386,7 +385,6 @@ namespace BlendInt {
 	        AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
-		assert(widget->focus());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
@@ -398,7 +396,6 @@ namespace BlendInt {
 	void AbstractDialog::OnHoverWidgetDestroyed (
 	        AbstractWidget* widget)
 	{
-		assert(widget->hover());
 		assert(hovered_widget_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());

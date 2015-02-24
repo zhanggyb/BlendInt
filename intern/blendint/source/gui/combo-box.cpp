@@ -37,6 +37,7 @@ namespace BlendInt {
 	ComboBox::ComboBox ()
 	: AbstractRoundWidget(),
 	  status_down_(false),
+	  hover_(false),
 	  popup_(0)
 	{
 		set_round_type(RoundAll);
@@ -177,7 +178,7 @@ namespace BlendInt {
 		if (status_down_) {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
 		} else {
-			if (hover()) {
+			if (hover_) {
 				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
 						15);
 			} else {
@@ -340,11 +341,13 @@ namespace BlendInt {
 	
 	void ComboBox::PerformHoverIn(AbstractWindow* context)
 	{
+		hover_ = true;
 		RequestRedraw();
 	}
 
 	void ComboBox::PerformHoverOut(AbstractWindow* context)
 	{
+		hover_ = false;
 		RequestRedraw();
 	}
 

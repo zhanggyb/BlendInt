@@ -76,6 +76,8 @@ namespace BlendInt {
 
 		bool status_down_;
 
+		bool hover_;
+
 		RefPtr<AbstractItemModel> model_;
 
 		AbstractFrame* popup_;

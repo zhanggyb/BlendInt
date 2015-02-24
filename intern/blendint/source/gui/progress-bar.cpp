@@ -166,11 +166,11 @@ namespace BlendInt {
 
 		AbstractWindow::shaders->widget_split_inner_program()->use();
 
-		if(hover()) {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
-		} else {
+		//if(hover()) {
+		//	glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
+		//} else {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
-		}
+		//}
 
 		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
 		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, AbstractWindow::theme->number_slider().inner_sel.data());

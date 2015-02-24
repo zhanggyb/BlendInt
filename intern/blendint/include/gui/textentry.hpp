@@ -124,6 +124,8 @@ namespace BlendInt {
 		 */
 		size_t cursor_index_;
 
+		bool focused_;
+
 		// the space between the text and the top
 		// o the text and the bottom
 		static const int vertical_space = 2;

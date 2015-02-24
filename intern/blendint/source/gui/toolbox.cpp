@@ -40,7 +40,8 @@ namespace BlendInt {
 	  space_(1),
 	  margin_(2, 2, 2, 2),
 	  cursor_position_(0),
-	  layout_(0)
+	  layout_(0),
+	  hover_(false)
 	{
 		if(layout == nullptr) {
 			layout_ = Manage(new FlowLayout);
@@ -60,7 +61,8 @@ namespace BlendInt {
 	  hovered_widget_(0),
 	  space_(1),
 	  cursor_position_(0),
-	  layout_(0)
+	  layout_(0),
+	  hover_(false)
 	{
 		if(layout == nullptr) {
 			layout_ = Manage(new FlowLayout);
@@ -79,7 +81,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(3, vao_);
 
 		if(focused_widget_) {
-			delegate_focus_status(focused_widget_, false);
 			focused_widget_->destroyed().disconnectOne(this, &ToolBox::OnFocusedWidgetDestroyed);
 			focused_widget_ = 0;
 		}
@@ -241,10 +242,13 @@ namespace BlendInt {
 
 	void ToolBox::PerformHoverIn (AbstractWindow* context)
 	{
+		hover_ = true;
 	}
 
 	void ToolBox::PerformHoverOut (AbstractWindow* context)
 	{
+		hover_ = false;
+
 		if(hovered_widget_) {
 			hovered_widget_->destroyed().disconnectOne(this, &ToolBox::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_, context);
@@ -329,8 +333,7 @@ namespace BlendInt {
 
 			cursor_position_ = InsideRectangle;
 
-			if(!hover()) {
-				set_hover(true);
+			if(!hover_) {
 				PerformHoverIn(context);
 			}
 
@@ -357,8 +360,7 @@ namespace BlendInt {
 
 			cursor_position_ = OutsideRectangle;
 
-			if(hover()) {
-				set_hover(false);
+			if(hover_) {
 				PerformHoverOut(context);
 			}
 
@@ -440,7 +442,6 @@ namespace BlendInt {
 	void ToolBox::OnFocusedWidgetDestroyed (AbstractWidget* widget)
 	{
 		assert(focused_widget_ == widget);
-		assert(widget->focus());
 
 		//set_widget_focus_status(widget, false);
 		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
@@ -451,7 +452,6 @@ namespace BlendInt {
 
 	void ToolBox::OnHoverWidgetDestroyed (AbstractWidget* widget)
 	{
-		assert(widget->hover());
 		assert(hovered_widget_ == widget);
 
 		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());

@@ -31,7 +31,8 @@ namespace BlendInt {
 	  orientation_(orientation),
 	  prev_size_(0),
 	  next_size_(0),
-	  nearby_pos_(0)
+	  nearby_pos_(0),
+	  hover_(false)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 1);
@@ -163,7 +164,7 @@ namespace BlendInt {
 	Response FrameSplitterHandle::PerformMouseRelease(
 			AbstractWindow* context)
 	{
-		if(!hover()) {
+		if(!hover_) {
 			context->PopCursor();
 		}
 
@@ -173,6 +174,8 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::PerformHoverIn(AbstractWindow* context)
 	{
+		hover_ = true;
+
 		context->PushCursor();
 		if(orientation_ == Horizontal) {
 			context->SetCursor(SplitVCursor);
@@ -185,6 +188,8 @@ namespace BlendInt {
 
 	void FrameSplitterHandle::PerformHoverOut(AbstractWindow* context)
 	{
+		hover_ = false;
+
 		if(!pressed_ext())
 			context->PopCursor();
 
@@ -1366,12 +1371,10 @@ namespace BlendInt {
 		DBG_PRINT_MSG("%s", "Remove sub frame");
 
 		if(view == focused_frame_) {
-			focused_frame_->set_focus(false);
 			focused_frame_ = nullptr;
 		}
 
 		if(view == hover_frame_) {
-			hover_frame_->set_hover(false);
 			hover_frame_ = nullptr;
 		}
 

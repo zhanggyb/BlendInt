@@ -89,6 +89,7 @@ namespace BlendInt {
 
 		glm::mat3 model_matrix_;
 
+		bool hover_;
 	};
 
 }

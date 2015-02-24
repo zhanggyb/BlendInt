@@ -91,6 +91,8 @@ namespace BlendInt {
 		int prev_size_;
 		int next_size_;
 		int nearby_pos_;
+
+		bool hover_;
 	};
 
 	// -------------------------------

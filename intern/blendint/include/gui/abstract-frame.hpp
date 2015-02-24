@@ -135,32 +135,23 @@ namespace BlendInt {
 			return view->PerformMouseMove(context);
 		}
 
-		static inline void delegate_focus_status (AbstractView* view, bool focus)
-		{
-			view->set_focus(focus);
-		}
-
 		static void delegate_focus_on (AbstractView* view, AbstractWindow* context)
 		{
-			view->set_focus(true);
 			view->PerformFocusOn(context);
 		}
 
 		static void delegate_focus_off (AbstractView* view, AbstractWindow* context)
 		{
-			view->set_focus(false);
 			view->PerformFocusOff(context);
 		}
 
 		static inline void delegate_mouse_hover_in_event (AbstractView* view, AbstractWindow* context)
 		{
-			view->set_hover(true);
 			view->PerformHoverIn(context);
 		}
 
 		static inline void delegate_mouse_hover_out_event (AbstractView* view, AbstractWindow* context)
 		{
-			view->set_hover(false);
 			view->PerformHoverOut(context);
 		}
 

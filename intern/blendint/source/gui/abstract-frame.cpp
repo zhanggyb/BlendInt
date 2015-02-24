@@ -385,7 +385,6 @@ namespace BlendInt {
 #endif
 
 		while (hovered_widget && (hovered_widget != this)) {
-			hovered_widget->set_hover(false);
 			hovered_widget = hovered_widget->superview();
 		}
 	}
@@ -397,7 +396,6 @@ namespace BlendInt {
 #endif
 
 		while (hovered_widget && (hovered_widget != this)) {
-			hovered_widget->set_hover(false);
 			hovered_widget->PerformHoverOut(context);
 			hovered_widget = hovered_widget->superview();
 		}
