@@ -30,7 +30,6 @@
 
 #include <gui/abstract-view.hpp>
 #include <gui/abstract-window.hpp>
-#include <Python/Python.h>
 
 namespace BlendInt {
 
