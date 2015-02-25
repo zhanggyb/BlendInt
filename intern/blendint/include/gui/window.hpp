@@ -37,9 +37,11 @@ namespace BlendInt {
 	{
 	public:
 
-		Window (int width, int height, const char* title, Window* share = 0);
+		Window (int width, int height, const char* title, Window* share = 0, bool visible = true);
 
 		virtual ~Window ();
+
+		virtual AbstractWindow* CreateSharedContext (int width, int height, bool visiable);
 
 		virtual void MakeCurrent ();
 

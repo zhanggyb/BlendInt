@@ -23,37 +23,36 @@
 
 #pragma once
 
-#include <core/image.hpp>
+// generate makefile with cmake -DENABLE_OPENCV to activate
+#ifdef __USE_OPENCV__
 
-#include <opengl/gl-texture2d.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/chessboard.hpp>
 #include <gui/abstract-scrollable.hpp>
 
 namespace BlendInt {
 
-	class TextureView: public AbstractScrollable
+	class CVImageView: public AbstractScrollable
 	{
+
 	public:
 
-		TextureView ();
+		CVImageView();
 
-		virtual ~TextureView ();
-
-		bool OpenFile (const char* filename);
-
-		void LoadImage (const RefPtr<Image>& image);
-
-		void SetTexture (const RefPtr<GLTexture2D>& texture);
-
-		void Clear ();
+		virtual ~CVImageView ();
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
+
+		//bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+
+		bool OpenFile (const std::string& filename);
 
 	protected:
 
@@ -67,12 +66,6 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeImageView ();
-
-		// void AdjustImageArea (const Size& size);
-
-		Size image_size_;
-
 		/**
 		 * @brief Vertex Array Objects
 		 *
@@ -83,9 +76,13 @@ namespace BlendInt {
 		GLuint vao_[2];
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<GLTexture2D> texture_;
+		GLTexture2D texture_;
 
-		RefPtr<ChessBoard> chessboard_;
+		cv::Mat image_;
+
+		cv::VideoCapture video_stream_;
 	};
 
 }
+
+#endif	// __USE_OPENCV__

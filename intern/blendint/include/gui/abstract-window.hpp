@@ -56,12 +56,12 @@ namespace BlendInt {
 		 *
 		 * Create a 640, 480 window
 		 */
-		AbstractWindow();
+		AbstractWindow(bool visible = true);
 
 		/**
 		 * @brief Constructor with window size
 		 */
-		AbstractWindow(int width, int height);
+		AbstractWindow(int width, int height, bool visible = true);
 
 		/**
 		 * @brief Destructor
@@ -76,6 +76,8 @@ namespace BlendInt {
 		bool SetFocusedFrame (AbstractFrame* frame);
 
 		virtual bool Contain (const Point& point) const;
+
+		virtual AbstractWindow* CreateSharedContext (int width, int height, bool visiable) = 0;
 
 		/**
 		 * @brief Make this window as the current OpenGL Context

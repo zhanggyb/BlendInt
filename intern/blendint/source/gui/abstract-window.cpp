@@ -44,7 +44,7 @@ namespace BlendInt {
 					glm::vec3(0.f, 0.f, 0.f),
 					glm::vec3(0.f, 1.f, 0.f));
 
-	AbstractWindow::AbstractWindow()
+	AbstractWindow::AbstractWindow(bool visible)
 	: AbstractView(),
 	  active_frame_(nullptr),
 	  focused_frame_(nullptr),
@@ -55,11 +55,12 @@ namespace BlendInt {
 	{
 		set_size(640, 480);
 		set_refresh(true);
+		set_visible(visible);
 
 		events_.reset(new Cpp::ConnectionScope);
 	}
 
-	AbstractWindow::AbstractWindow (int width, int height)
+	AbstractWindow::AbstractWindow (int width, int height, bool visible)
 	: AbstractView(width, height),
 	  active_frame_(nullptr),
 	  focused_frame_(nullptr),
@@ -69,6 +70,7 @@ namespace BlendInt {
 	  pressed_(false)
 	{
 		set_refresh(true);
+		set_visible(visible);
 
 		events_.reset(new Cpp::ConnectionScope);
 	}

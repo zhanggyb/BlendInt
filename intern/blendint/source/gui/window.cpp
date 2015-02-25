@@ -66,10 +66,12 @@ namespace BlendInt {
 
 	Point Window::kCursor;
 
-	Window::Window (int width, int height, const char* title, Window* share)
-	: AbstractWindow(width, height),
+	Window::Window (int width, int height, const char* title, Window* share, bool visible)
+	: AbstractWindow(width, height, visible),
 	  window_(0)
 	{
+		glfwWindowHint(GLFW_VISIBLE, visible ? GL_TRUE : GL_FALSE);
+
 		window_ = glfwCreateWindow(width, height, title, NULL, NULL);
 
 		if(!window_) {
@@ -77,21 +79,24 @@ namespace BlendInt {
 			exit(EXIT_FAILURE);
 		}
 
-		glfwSetWindowSizeCallback(window_, &CbWindowSize);
-		glfwSetWindowPosCallback(window_, &CbWindowPosition);
-		glfwSetKeyCallback(window_, &CbKey);
-		glfwSetCharCallback(window_, &CbChar);
-		glfwSetMouseButtonCallback(window_, &CbMouseButton);
-		glfwSetCursorPosCallback(window_, &CbCursorPos);
-		glfwSetWindowCloseCallback(window_, &CbClose);
-#ifdef __APPLE__
-		glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
-#endif
-
-		/* Make the window's context current */
-		glfwMakeContextCurrent(window_);
+		if(visible) {
+			glfwSetWindowSizeCallback(window_, &CbWindowSize);
+			glfwSetWindowPosCallback(window_, &CbWindowPosition);
+			glfwSetKeyCallback(window_, &CbKey);
+			glfwSetCharCallback(window_, &CbChar);
+			glfwSetMouseButtonCallback(window_, &CbMouseButton);
+			glfwSetCursorPosCallback(window_, &CbCursorPos);
+			glfwSetWindowCloseCallback(window_, &CbClose);
+	#ifdef __APPLE__
+			glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
+	#endif
+		}
 
 		if(share == 0) {
+
+			/* Make the window's context current */
+			glfwMakeContextCurrent(window_);
+
 			if(!InitializeGLContext()) {
 				DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
 				exit(EXIT_FAILURE);
@@ -117,6 +122,13 @@ namespace BlendInt {
 		kWindowMap.erase(window_);
 		//glfwDestroyWindow(window_);
 		window_ = 0;
+	}
+
+	AbstractWindow* Window::CreateSharedContext(int width, int height, bool visiable)
+	{
+		Window* shared = Manage(new Window(width, height, "", this, visiable));
+
+		return shared;
 	}
 
 	void Window::MakeCurrent ()

@@ -218,7 +218,6 @@ namespace BlendInt {
 	bool TextureView::PreDraw (AbstractWindow* context)
 	{
 		if(!visiable()) return false;
-		AbstractWindow* c = context;
 
 		Point offset = GetOffset();
 		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
@@ -238,9 +237,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		c->BeginPushStencil();	// inner stencil
+		context->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		c->EndPushStencil();
+		context->EndPushStencil();
 
 		return true;
 	}
@@ -287,10 +286,6 @@ namespace BlendInt {
 		context->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		context->EndPopStencil();
-
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
 
 		AbstractWindow::shaders->PopWidgetModelMatrix();
 	}
