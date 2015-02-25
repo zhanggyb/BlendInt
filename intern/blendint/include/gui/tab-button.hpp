@@ -51,6 +51,8 @@ namespace BlendInt {
 
 #endif
 
+		void SetText (const String& text);
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

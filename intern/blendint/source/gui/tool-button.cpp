@@ -178,9 +178,6 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
 		DrawIconText();
 
 		return Finish;
@@ -206,8 +203,8 @@ namespace BlendInt {
 
 		action_ = action;
 
-		SetIcon(icon);
-		SetText(text);
+		set_icon(icon);
+		set_text(text);
 	}
 
 	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text,
@@ -217,8 +214,8 @@ namespace BlendInt {
 
 		action_ = action;
 
-		SetIcon(icon);
-		SetText(text);
+		set_icon(icon);
+		set_text(text);
 	}
 
 	void ToolButton::SetAction (const RefPtr<Action>& item)

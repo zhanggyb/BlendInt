@@ -31,7 +31,7 @@
 namespace BlendInt {
 
 	Tab::Tab ()
-	: AbstractRoundWidget()
+	: AbstractWidget()
 	{
 		set_size(400, 300);
 
@@ -140,6 +140,11 @@ namespace BlendInt {
 		int h = out_size.height();
 
 		FillSubWidgetsInTab(x, y, w, h);
+	}
+
+	Response Tab::Draw (AbstractWindow* context)
+	{
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)

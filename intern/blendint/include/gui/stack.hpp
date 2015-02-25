@@ -21,14 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_STACKPANEL_HPP_
-#define _BLENDINT_GUI_STACKPANEL_HPP_
+#pragma once
 
-#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-	class Stack: public AbstractRoundWidget
+	class Stack: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 
@@ -63,6 +62,8 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual Response Draw (AbstractWindow* context);
+
 		void HideSubWidget (int index);
 
 	private:
@@ -72,5 +73,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_STACKPANEL_HPP_ */

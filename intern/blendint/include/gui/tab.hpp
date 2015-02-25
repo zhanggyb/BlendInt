@@ -21,14 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TAB_HPP_
-#define _BLENDINT_GUI_TAB_HPP_
+#pragma once
 
-#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-	class Tab: public AbstractRoundWidget
+	class Tab: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Tab);
 
@@ -52,6 +51,8 @@ namespace BlendInt {
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
+		virtual Response Draw (AbstractWindow* context);
+
 	private:
 
 		void OnButtonToggled (int index, bool toggled);
@@ -62,5 +63,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_TAB_HPP_ */

@@ -43,6 +43,8 @@ namespace BlendInt {
 
 		virtual bool IsExpandX () const;
 
+		void SetText (const String& text);
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

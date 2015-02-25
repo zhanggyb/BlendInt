@@ -28,7 +28,7 @@
 namespace BlendInt {
 
 	Stack::Stack()
-	: AbstractRoundWidget(),
+	: AbstractWidget(),
 	  active_widget_(0)
 	{
 		set_size(400, 300);
@@ -190,6 +190,11 @@ namespace BlendInt {
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
 		}
+	}
+
+	Response Stack::Draw (AbstractWindow* context)
+	{
+		return subs_count() ? Ignore : Finish;
 	}
 
 	void BlendInt::Stack::HideSubWidget (int index)

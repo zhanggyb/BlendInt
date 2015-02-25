@@ -114,6 +114,18 @@ namespace BlendInt {
 		return s;
 	}
 
+	void Button::SetText(const String& text)
+	{
+		set_text(text);
+		RequestRedraw();
+	}
+
+	void Button::SetIcon(const RefPtr<AbstractIcon>& icon)
+	{
+		set_icon(icon);
+		RequestRedraw();
+	}
+
 	void Button::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

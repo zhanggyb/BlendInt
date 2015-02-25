@@ -51,6 +51,10 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		void SetText (const String& text);
+
+		void SetIcon (const RefPtr<AbstractIcon>& icon);
+
 	protected:
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);

@@ -27,11 +27,11 @@
 
 #include <opengl/glarraybuffer.hpp>
 #include <gui/circular-picker.hpp>
-#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-	class ColorWheel: public AbstractRoundWidget
+	class ColorWheel: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorWheel);
 

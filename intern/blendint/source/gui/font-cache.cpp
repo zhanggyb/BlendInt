@@ -203,7 +203,7 @@ namespace BlendInt {
     	face_.set_char_size((unsigned long)size << 6, 0, (unsigned int)dpi, 0);
 
     	texture_atlas_.reset(new TextureAtlas);
-    	texture_atlas_->Generate(500, 32);
+    	texture_atlas_->Generate(500, face_.face()->size->metrics.height >> 6);
     }
 
     FontCache::~FontCache ()
@@ -242,8 +242,6 @@ namespace BlendInt {
 				g->bitmap.buffer,
 				&(glyph.offset_u),
 				&(glyph.offset_v));
-		texture_atlas_->reset();
-
 
 		std::pair<iterator_type, bool> result = glyph_data_.insert(std::pair<uint32_t, Glyph>(charcode, glyph));
 

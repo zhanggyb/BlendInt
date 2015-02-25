@@ -21,12 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_WORKSPACE_HPP_
-#define _BLENDINT_GUI_WORKSPACE_HPP_
+#pragma once
 
 #include <gui/abstract-button.hpp>
 
-#include <gui/abstract-round-frame.hpp>
+#include <gui/abstract-frame.hpp>
 #include <gui/toolbox.hpp>
 #include <gui/frame-splitter.hpp>
 
@@ -74,7 +73,7 @@ namespace BlendInt {
 	 * 	- A header which on top or bottom
 	 * 	- A viewport
 	 */
-	class Workspace: public AbstractRoundFrame
+	class Workspace: public AbstractFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 
@@ -161,6 +160,3 @@ namespace BlendInt {
 	};
 
 }
-
-
-#endif /* _BLENDINT_GUI_WORKSPACE_HPP_ */

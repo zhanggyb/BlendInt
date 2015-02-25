@@ -62,22 +62,49 @@ namespace BlendInt {
 			int bitmap_rows,
 			const unsigned char* bitmap, int* ox, int* oy)
 	{
-		// check the texture size
+		int new_width = 0;
+		int new_height = 0;
+		bool expand = false;
+		int reference_max_height = 0;
+
 		if(bitmap_width > width_) {
 
+			DBG_PRINT_MSG("%s", "big width");
+
 			if(bitmap_rows > height_) {
-				// TODO: expand texture both horizontally and vertically
+
+				DBG_PRINT_MSG("%s", "big height");
+				// expand texture both horizontally and vertically
+				new_width = width_ + bitmap_width - (width_ - last_x_);
+				new_height = height_ + bitmap_rows - (height_ - last_y_);
+
 			} else {
-				// TODO: expand texture horizontally
+
+				DBG_PRINT_MSG("%s", "big width only");
+				// expand texture horizontally
+				new_width = width_ + bitmap_width - (width_ - last_x_);
+				new_height = height_;
+
 			}
 
+			expand = true;
+
 		} else if (bitmap_rows > height_) {
-			// TODO: expand texture vertically
+
+			DBG_PRINT_MSG("%s", "big height");
+			// expand texture vertically
+
+			new_width = width_;
+			new_height = height_ + bitmap_rows - (height_ - last_y_);
+
+			expand = true;
+
 		}
 
 		int x = last_x_;
 		int y = last_y_;
 		last_row_height_ = std::max(last_row_height_, bitmap_rows);
+		reference_max_height = last_row_height_;
 
 		if((x + bitmap_width) > width_) {
 			x = 0;
@@ -86,7 +113,53 @@ namespace BlendInt {
 		}
 
 		if((y + bitmap_rows) > height_) {
-			// TODO: expand texture size
+			new_width = width_;
+			new_height = height_ + std::max(reference_max_height, bitmap_rows) - (height_ - y);
+			expand = true;
+		}
+
+		if(expand) {
+
+			// FIXME: the following code is not tested and may fail.
+
+			DBG_PRINT_MSG("expand texture: from (%d, %d) to (%d, %d)", width_, height_, new_width, new_height);
+
+			// Generate pixel buffer object for unpack and copy texture data to it.
+			GLuint pbo = 0;
+			glGenBuffers(1, &pbo);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+			glBufferData(GL_PIXEL_UNPACK_BUFFER, width_ * height_ * sizeof(GLubyte), 0, GL_STREAM_DRAW);
+
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+			GLuint new_tex_id = 0;
+			glGenTextures(1, &new_tex_id);
+			glBindTexture(GL_TEXTURE_2D, new_tex_id);
+
+			// Clamping to edges is important to prevent artifacts when scaling
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			// Linear filtering usually looks best for text
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			// set image size
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, new_width, new_height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+			// Copy pixel buffer data back to new texture
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+			glDeleteBuffers(1, &pbo);
+			glDeleteTextures(1, &id_);
+
+			id_ = new_tex_id;
+			width_ = new_width;
+			height_ = new_height;
+
+			glBindTexture(GL_TEXTURE_2D, id_);
+
 		}
 
 		glPixelStorei (GL_UNPACK_ALIGNMENT, 1);

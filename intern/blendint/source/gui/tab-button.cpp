@@ -81,6 +81,12 @@ namespace BlendInt {
 		}
 	}
 
+	void TabButton::SetText (const String& text)
+	{
+		set_text(text);
+		RequestRedraw();
+	}
+
 	Response TabButton::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders->widget_triangle_program()->use();

@@ -62,12 +62,6 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		void SetIcon (const RefPtr<AbstractIcon>& icon);
-
-		void SetText (const String& text);
-
-		void SetFont (const Font& font);
-
 		const RefPtr<AbstractIcon>& icon () const
 		{
 			return icon_;
@@ -111,6 +105,25 @@ namespace BlendInt {
 		virtual Response PerformMouseRelease (AbstractWindow* context);
 
 		virtual Response PerformMouseMove (AbstractWindow* context);
+
+		inline void set_icon (const RefPtr<AbstractIcon>& icon)
+		{
+			icon_ = icon;
+		}
+
+		inline void set_text (const String& text)
+		{
+			if(text_) {
+				text_->SetText(text);
+			} else {
+				text_.reset(new Text(text));
+			}
+		}
+
+		inline void set_font (const Font& font)
+		{
+			if(text_) text_->SetFont(font);
+		}
 
 		void DrawIconText ();
 

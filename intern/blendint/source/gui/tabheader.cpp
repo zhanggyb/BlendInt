@@ -21,35 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <opengl/opengl.hpp>
-
 #include <gui/tabheader.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
 	TabHeader::TabHeader()
-	: AbstractRoundWidget(),
-	  vao_(0)
+	: AbstractWidget()
 	{
 		set_size(320, 20);
-
-		glGenVertexArrays(1, &vao_);
-		glBindVertexArray(vao_);
-
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
-
-		vbo_.generate();
-		vbo_.bind();
-
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		vbo_.reset();
 
 		events()->connect(group_.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
@@ -61,7 +41,6 @@ namespace BlendInt {
 
 	TabHeader::~TabHeader()
 	{
-		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void TabHeader::AddButton (TabButton* button)
@@ -122,39 +101,8 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			set_size(*request.size());
-
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-
-			vbo_.bind();
-			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.reset();
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
 	Response TabHeader::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
-
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
-
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_type()) + 2);
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
-
 		return subs_count() ? Ignore : Finish;
 	}
 

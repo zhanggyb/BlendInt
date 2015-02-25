@@ -149,7 +149,7 @@ namespace BlendInt {
 	// -------------------------------
 
 	Workspace::Workspace()
-	: AbstractRoundFrame(),
+	: AbstractFrame(),
 	  left_sidebar_(0),
 	  right_sidebar_(0),
 	  header_(0),
@@ -517,7 +517,7 @@ namespace BlendInt {
 			focused_frame_ = nullptr;
 		}
 
-		return AbstractRoundFrame::RemoveSubView(view);
+		return AbstractFrame::RemoveSubView(view);
 	}
 
 	void Workspace::SetHoveredFrame (AbstractWindow* context)

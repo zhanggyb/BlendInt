@@ -27,11 +27,11 @@
 #include <gui/perspective-camera.hpp>
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/abstract-round-frame.hpp>
+#include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
 
-	class Viewport: public AbstractRoundFrame
+	class Viewport: public AbstractFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport);
 
@@ -54,6 +54,10 @@ namespace BlendInt {
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual Response PerformKeyPress (AbstractWindow* context);
+
+		virtual void PerformFocusOn (AbstractWindow* context);
+
+		virtual void PerformFocusOff (AbstractWindow* context);
 
 		virtual void PerformHoverIn (AbstractWindow* context);
 

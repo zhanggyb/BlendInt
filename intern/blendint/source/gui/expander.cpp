@@ -71,6 +71,12 @@ namespace BlendInt {
 		return true;
 	}
 
+	void ExpandButton::SetText(const String& text)
+	{
+		set_text(text);
+		RequestRedraw();
+	}
+
 	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

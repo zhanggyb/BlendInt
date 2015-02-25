@@ -21,19 +21,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TABHEADER_HPP_
-#define _BLENDINT_GUI_TABHEADER_HPP_
+#pragma once
 
-#include <opengl/gl-buffer.hpp>
-
-#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-widget.hpp>
 #include <gui/button-group.hpp>
 
 #include <gui/tab-button.hpp>
 
 namespace BlendInt {
 
-	class TabHeader: public AbstractRoundWidget
+	class TabHeader: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabHeader);
 
@@ -61,8 +58,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
 		virtual Response Draw (AbstractWindow* context);
 
 	private:
@@ -70,10 +65,6 @@ namespace BlendInt {
 		void OnButtonIndexToggled (int index, bool toggled);
 
 		int GetLastPosition () const;
-
-		GLBuffer<> vbo_;
-
-		GLuint vao_;
 
 		ButtonGroup group_;
 
@@ -83,5 +74,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_TABHEADER_HPP_ */

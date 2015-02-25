@@ -33,7 +33,7 @@
 namespace BlendInt {
 
 	Viewport::Viewport()
-	: AbstractRoundFrame(),
+	: AbstractFrame(),
 	  vao_(0),
 	  hover_(false)
 	{
@@ -137,6 +137,14 @@ namespace BlendInt {
 	Response Viewport::PerformKeyPress(AbstractWindow* context)
 	{
 		return Ignore;
+	}
+
+	void Viewport::PerformFocusOn (AbstractWindow* context)
+	{
+	}
+
+	void Viewport::PerformFocusOff (AbstractWindow* context)
+	{
 	}
 
 	void Viewport::PerformHoverIn(AbstractWindow* context)

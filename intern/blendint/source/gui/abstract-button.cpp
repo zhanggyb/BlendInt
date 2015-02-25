@@ -98,33 +98,6 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
-	void AbstractButton::SetIcon (const RefPtr<AbstractIcon>& icon)
-	{
-		icon_ = icon;
-
-		RequestRedraw();
-	}
-
-	void AbstractButton::SetText (const String& text)
-	{
-		if(text_) {
-			text_->SetText(text);
-		} else {
-			text_.reset(new Text(text));
-		}
-
-		RequestRedraw();
-	}
-
-	void AbstractButton::SetFont (const Font& font)
-	{
-		if(text_) {
-			text_->SetFont(font);
-
-			RequestRedraw();
-		}
-	}
-
 	void AbstractButton::PerformHoverIn(AbstractWindow* context)
 	{
 		m_status[ButtonHover] = 1;
