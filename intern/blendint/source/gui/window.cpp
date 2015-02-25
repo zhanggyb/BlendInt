@@ -72,7 +72,10 @@ namespace BlendInt {
 	{
 		glfwWindowHint(GLFW_VISIBLE, visible ? GL_TRUE : GL_FALSE);
 
-		window_ = glfwCreateWindow(width, height, title, NULL, NULL);
+		if(share)
+			window_ = glfwCreateWindow(width, height, title, NULL, share->window_);
+		else
+			window_ = glfwCreateWindow(width, height, title, NULL, NULL);
 
 		if(!window_) {
 			glfwTerminate();

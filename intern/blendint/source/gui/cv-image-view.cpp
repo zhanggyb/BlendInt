@@ -38,7 +38,7 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 2);	// default: 15 FPS
+		timer_->SetInterval(1000 / 24);	// default: 15 FPS
 
 		events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
@@ -89,6 +89,16 @@ namespace BlendInt {
 
 	CVImageView::~CVImageView ()
 	{
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+			image_.release();
+		}
+
+		if(off_screen_context_) {
+			delete off_screen_context_;
+			off_screen_context_ = 0;
+		}
+
 		glDeleteVertexArrays(2, vao_);
 	}
 
@@ -242,6 +252,8 @@ namespace BlendInt {
 	{
 		if(!playing_) return;
 
+		timer_->Stop();
+
 		if(video_stream_.isOpened()) {
 			video_stream_.release();
 			image_.release();
@@ -251,6 +263,7 @@ namespace BlendInt {
 			delete off_screen_context_;
 			off_screen_context_ = 0;
 		}
+
 		playing_ = false;
 	}
 
@@ -374,8 +387,8 @@ namespace BlendInt {
 						break;
 					}
 
-					case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-					{
+					case 4:	{
+						// opencv does not support alpha-channel, only masking, these code will never be called
 						glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 						texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
 								0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
@@ -386,6 +399,7 @@ namespace BlendInt {
 						break;
 					}
 				}
+
 			}
 
 			RequestRedraw();
