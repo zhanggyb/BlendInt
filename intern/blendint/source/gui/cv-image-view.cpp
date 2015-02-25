@@ -26,14 +26,21 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <gui/cv-image-view.hpp>
-#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
 	CVImageView::CVImageView()
-	: AbstractScrollable()
+	: AbstractScrollable(),
+	  off_screen_context_(0),
+	  playing_(false),
+	  count(0)
 	{
 		set_size(400, 300);
+
+		timer_.reset(new Timer);
+		timer_->SetInterval(1000 / 2);	// default: 15 FPS
+
+		events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -106,6 +113,41 @@ namespace BlendInt {
 		return prefer;
 	}
 
+	bool CVImageView::OpenCamera (int n, const Size& resolution)
+	{
+		bool retval = false;
+
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+		}
+
+		video_stream_.open(n);
+		if(video_stream_.isOpened()) {
+
+			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
+			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
+
+			float w = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_WIDTH);
+			float h = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_HEIGHT);
+
+			vbo_.bind(1);
+			float* ptr = (float*)vbo_.map();
+			*(ptr + 4) = w;
+			*(ptr + 9) = h;
+			*(ptr + 12) = w;
+			*(ptr + 13) = h;
+			vbo_.unmap();
+			vbo_.reset();
+
+			retval = true;
+
+		} else {
+			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
+		}
+
+		return retval;
+	}
+
 	bool CVImageView::OpenFile(const std::string& filename)
 	{
 		bool status_before = (image_.data != 0);
@@ -123,6 +165,44 @@ namespace BlendInt {
 			vbo_.unmap();
 			vbo_.reset();
 
+			texture_.bind();
+
+			switch (image_.channels()) {
+
+				case 1: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+					texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
+							0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
+					break;
+				}
+
+				case 2: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+					texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
+							0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
+					break;
+				}
+
+				case 3: {
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+					texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
+							0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
+					break;
+				}
+
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+					texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
+							0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
+					break;
+				}
+
+				default: {
+					break;
+				}
+			}
+
 		}
 
 		bool status_after = (image_.data != 0);
@@ -133,6 +213,49 @@ namespace BlendInt {
 
 		RequestRedraw();
 		return image_.data ? true : false;
+	}
+
+	void CVImageView::Play ()
+	{
+		AbstractWindow* win = AbstractWindow::GetWindow(this);
+		if(win == nullptr) return;
+
+		if(playing_) return;
+
+		if(video_stream_.isOpened()) {
+			assert(off_screen_context_ == 0);
+			off_screen_context_ = win->CreateSharedContext(win->size().width(), win->size().height(), false);
+
+			timer_->Start();
+			playing_ = true;
+		}
+	}
+
+	void CVImageView::Pause ()
+	{
+		if(timer_->enabled()) {
+			timer_->Stop();
+		}
+	}
+
+	void CVImageView::Stop ()
+	{
+		if(!playing_) return;
+
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+			image_.release();
+		}
+
+		if(off_screen_context_) {
+			delete off_screen_context_;
+			off_screen_context_ = 0;
+		}
+		playing_ = false;
+	}
+
+	void CVImageView::Release ()
+	{
 	}
 
 	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
@@ -187,75 +310,18 @@ namespace BlendInt {
 
 	Response CVImageView::Draw (AbstractWindow* context)
 	{
-		if(!video_stream_.isOpened()) {
-			video_stream_.open(0);
-		}
+		texture_.bind();
 
-		video_stream_ >> image_;
+		AbstractWindow::shaders->widget_image_program()->use();
 
-		if(image_.data) {
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+				(size().width() - image_.cols)/2.f,
+				(size().height() - image_.rows) / 2.f);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
-			vbo_.bind(1);
-			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = image_.cols;
-			*(ptr + 9) = image_.rows;
-			*(ptr + 12) = image_.cols;
-			*(ptr + 13) = image_.rows;
-			vbo_.unmap();
-			vbo_.reset();
-
-			texture_.bind();
-
-			switch (image_.channels()) {
-
-				case 1: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-					texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
-							0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
-					break;
-				}
-
-				case 2: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-					texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
-							0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
-					break;
-				}
-
-				case 3: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
-							0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
-					break;
-				}
-
-				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
-				{
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
-							0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
-					break;
-				}
-
-				default: {
-					texture_.reset();
-					return Finish;
-					break;
-				}
-			}
-
-			AbstractWindow::shaders->widget_image_program()->use();
-
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
-					(size().width() - image_.cols)/2.f,
-					(size().height() - image_.rows) / 2.f);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
-
-			glBindVertexArray(vao_[1]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		}
+		glBindVertexArray(vao_[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		return Finish;
 	}
@@ -272,8 +338,59 @@ namespace BlendInt {
 		context->EndPopStencil();
 
 		AbstractWindow::shaders->PopWidgetModelMatrix();
+	}
 
-		RequestRedraw();
+	void CVImageView::OnUpdateFrame (Timer* sender)
+	{
+		if(off_screen_context_ && (video_stream_.isOpened())) {
+
+			video_stream_ >> image_;
+			off_screen_context_->MakeCurrent();
+
+			if(image_.data) {
+
+				texture_.bind();
+
+				switch (image_.channels()) {
+
+					case 1: {
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+						texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
+								0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
+						break;
+					}
+
+					case 2: {
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+						texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
+								0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
+						break;
+					}
+
+					case 3: {
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+						texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
+								0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
+						break;
+					}
+
+					case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+					{
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+						texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
+								0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
+						break;
+					}
+
+					default: {
+						break;
+					}
+				}
+			}
+
+			RequestRedraw();
+
+		}
 	}
 
 }

@@ -29,9 +29,11 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <core/timer.hpp>
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/abstract-scrollable.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
@@ -50,9 +52,17 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		//bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
 
 		bool OpenFile (const std::string& filename);
+
+		void Play ();
+
+		void Pause ();
+
+		void Stop ();
+
+		void Release ();
 
 	protected:
 
@@ -66,6 +76,8 @@ namespace BlendInt {
 
 	private:
 
+		void OnUpdateFrame (Timer* sender);
+
 		/**
 		 * @brief Vertex Array Objects
 		 *
@@ -78,9 +90,17 @@ namespace BlendInt {
 
 		GLTexture2D texture_;
 
+		cv::VideoCapture video_stream_;
+
 		cv::Mat image_;
 
-		cv::VideoCapture video_stream_;
+		RefPtr<Timer> timer_;
+
+		AbstractWindow* off_screen_context_;
+
+		bool playing_;
+
+		int count;
 	};
 
 }
