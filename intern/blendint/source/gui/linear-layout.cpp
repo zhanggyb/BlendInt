@@ -42,7 +42,6 @@ namespace BlendInt {
 	  alignment_(align),
 	  space_(space)
 	{
-		set_size (200, 200);
 	}
 
 	LinearLayout::~LinearLayout ()

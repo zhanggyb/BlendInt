@@ -50,7 +50,7 @@ namespace BlendInt {
 	  focused_frame_(nullptr),
 	  stencil_count_(0),
 	  current_cursor_shape_(ArrowCursor),
-	  always_on_top_frame_count_(0),
+	  floating_frame_count_(0),
 	  pressed_(false)
 	{
 		set_size(640, 480);
@@ -66,7 +66,7 @@ namespace BlendInt {
 	  focused_frame_(nullptr),
 	  stencil_count_(0),
 	  current_cursor_shape_(ArrowCursor),
-	  always_on_top_frame_count_(0),
+	  floating_frame_count_(0),
 	  pressed_(false)
 	{
 		set_refresh(true);
@@ -83,7 +83,7 @@ namespace BlendInt {
 	{
 		if(frame == nullptr) return false;
 
-		if(frame->always_on_top()) {
+		if(frame->floating()) {
 
 			if(PushBackSubView(frame)) {
 
@@ -93,13 +93,13 @@ namespace BlendInt {
 					focused_frame_->PerformFocusOn(this);
 				}
 
-				always_on_top_frame_count_++;
+				floating_frame_count_++;
 				RequestRedraw();
 			}
 
 		} else {
 
-			int index = subs_count() - always_on_top_frame_count_ - 1;
+			int index = subs_count() - floating_frame_count_ - 1;
 
 			if(index < 0) {	// no normal frame
 
@@ -170,7 +170,7 @@ namespace BlendInt {
 			if(frame == nullptr) return false;
 		}
 
-		if(frame->always_on_top()) {
+		if(frame->floating()) {
 
 			if(focused_frame_ != nullptr) {
 				assert(focused_frame_->focusable());
@@ -186,13 +186,13 @@ namespace BlendInt {
 
 		}
 
-		int index = subs_count() - always_on_top_frame_count_ - 1;
+		int index = subs_count() - floating_frame_count_ - 1;
 
 		if(index < 0) return false;	// no normal frame
 
-		AbstractFrame* top_normal_frame = dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
+		AbstractFrame* top_regular_frame = dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
 		// move the frame to the top
-		if(InsertSiblingAfter(top_normal_frame, frame)) {
+		if(InsertSiblingAfter(top_regular_frame, frame)) {
 			if(focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
 			focused_frame_ = frame;
 			focused_frame_->PerformFocusOn(this);
@@ -521,9 +521,9 @@ namespace BlendInt {
 	bool AbstractWindow::RemoveSubView (AbstractView* view)
 	{
 		AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
-		if(frame->always_on_top()) {
-			always_on_top_frame_count_--;
-			assert(always_on_top_frame_count_ >= 0);
+		if(frame->floating()) {
+			floating_frame_count_--;
+			assert(floating_frame_count_ >= 0);
 		}
 
 		if(frame == focused_frame_) {

@@ -72,9 +72,9 @@ namespace BlendInt {
 			return frame_flag_ & FrameFocusable;
 		}
 
-		inline bool always_on_top() const
+		inline bool floating () const
 		{
-			return frame_flag_ & FrameAlwaysOnTop;
+			return frame_flag_ & FrameFloating;
 		}
 
 		Cpp::EventRef<AbstractFrame*> destroyed ()
@@ -179,9 +179,15 @@ namespace BlendInt {
 
 		enum FrameFlagIndex {
 
+			/**
+			 * whether the frame can be focused
+			 */
 			FrameFocusable = (1 << 0),
 
-			FrameAlwaysOnTop = (1 << 1)
+			/**
+			 * whether the frame is floating above other regular frames, also called always-on-top.
+			 */
+			FrameFloating = (1 << 1)
 
 		};
 

@@ -263,7 +263,7 @@ namespace BlendInt {
 
 		std::stack<CursorShape> cursor_stack_;
 
-		int always_on_top_frame_count_;
+		int floating_frame_count_;
 
 		bool pressed_;
 	};

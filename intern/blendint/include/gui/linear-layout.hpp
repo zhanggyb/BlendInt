@@ -30,13 +30,14 @@ namespace BlendInt {
 
 	class LinearLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(LinearLayout);
-
 	public:
 
-		LinearLayout(Orientation orient = Horizontal, int align = AlignCenter, int space = 4);
+		LinearLayout (Orientation orient = Horizontal, int align = AlignCenter,
+		        int space = 4);
 
-		LinearLayout(int width, int height, const Margin& margin, Orientation orient = Horizontal, int align = AlignCenter, int space = 4);
+		LinearLayout (int width, int height, const Margin& margin,
+		        Orientation orient = Horizontal, int align = AlignCenter,
+		        int space = 4);
 
 		virtual ~LinearLayout ();
 
@@ -100,6 +101,8 @@ namespace BlendInt {
 		int alignment_;
 
 		int space_;
+
+		DISALLOW_COPY_AND_ASSIGN(LinearLayout);
 
 	};
 
