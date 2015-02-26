@@ -90,6 +90,7 @@ namespace BlendInt {
 		 */
 
 		GLuint vao_[2];
+
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		GLTexture2D texture_;
@@ -103,6 +104,8 @@ namespace BlendInt {
 		Mutex mutex_;
 
 		AbstractWindow* off_screen_context_;
+
+		Size image_size_;
 
 		bool playing_;
 

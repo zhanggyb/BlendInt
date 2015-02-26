@@ -36,6 +36,7 @@ namespace BlendInt {
 	  count(0)
 	{
 		set_size(400, 300);
+		image_size_.reset(400, 300);
 
 		timer_.reset(new Timer);
 		timer_->SetInterval(1000 / 15);	// default: 15 FPS
@@ -121,13 +122,7 @@ namespace BlendInt {
 
 	Size CVImageView::GetPreferredSize() const
 	{
-		Size prefer(400, 300);
-
-		if(image_.data) {
-			prefer.reset(image_.cols, image_.rows);
-		}
-
-		return prefer;
+		return image_size_;
 	}
 
 	bool CVImageView::OpenCamera (int n, const Size& resolution)
@@ -144,15 +139,15 @@ namespace BlendInt {
 			video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
 			video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
 
-			float w = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_WIDTH);
-			float h = const_cast<cv::VideoCapture&>(video_stream_).get(CV_CAP_PROP_FRAME_HEIGHT);
+			image_size_.reset((int)video_stream_.get(CV_CAP_PROP_FRAME_WIDTH),
+					(int)video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
 
 			vbo_.bind(1);
 			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = w;
-			*(ptr + 9) = h;
-			*(ptr + 12) = w;
-			*(ptr + 13) = h;
+			*(ptr + 4) = image_size_.width();
+			*(ptr + 9) = image_size_.height();
+			*(ptr + 12) = image_size_.width();
+			*(ptr + 13) = image_size_.height();
 			vbo_.unmap();
 			vbo_.reset();
 
@@ -173,12 +168,14 @@ namespace BlendInt {
 
 		if(image_.data) {
 
+			image_size_.reset(image_.cols, image_.rows);
+
 			vbo_.bind(1);
 			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = image_.cols;
-			*(ptr + 9) = image_.rows;
-			*(ptr + 12) = image_.cols;
-			*(ptr + 13) = image_.rows;
+			*(ptr + 4) = image_size_.width();
+			*(ptr + 9) = image_size_.height();
+			*(ptr + 12) = image_size_.width();
+			*(ptr + 13) = image_size_.height();
 			vbo_.unmap();
 			vbo_.reset();
 
@@ -343,8 +340,8 @@ namespace BlendInt {
 
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
-					(size().width() - image_.cols)/2.f,
-					(size().height() - image_.rows) / 2.f);
+					(size().width() - image_size_.width())/2.f,
+					(size().height() - image_size_.height()) / 2.f);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_[1]);
@@ -383,6 +380,7 @@ namespace BlendInt {
 				off_screen_context_->MakeCurrent();
 
 				if(image_.data) {
+
 					ProcessImage(image_);
 				}
 
