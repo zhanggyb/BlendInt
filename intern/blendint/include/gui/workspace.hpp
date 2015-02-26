@@ -26,7 +26,7 @@
 #include <gui/abstract-button.hpp>
 
 #include <gui/abstract-frame.hpp>
-#include <gui/toolbox.hpp>
+#include <gui/frame.hpp>
 #include <gui/frame-splitter.hpp>
 
 namespace BlendInt {
@@ -83,13 +83,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (AbstractRoundFrame* viewport);
+		void SetViewport (AbstractFrame* viewport);
 
-		void SetLeftSideBar (ToolBox* leftbar);
+		void SetLeftSideBar (Frame* leftbar);
 
-		void SetRightSideBar (ToolBox* sidebar);
+		void SetRightSideBar (Frame* sidebar);
 
-		void SetHeader (ToolBox* header, bool append = true);
+		void SetHeader (Frame* header, bool append = true);
 
 		void SwitchHeaderPosition ();
 
@@ -141,13 +141,13 @@ namespace BlendInt {
 
 		void SetHoveredFrame (AbstractWindow* context);
 
-		ToolBox* left_sidebar_;
+		Frame* left_sidebar_;
 
-		ToolBox* right_sidebar_;
+		Frame* right_sidebar_;
 
-		ToolBox* header_;
+		Frame* header_;
 
-		AbstractRoundFrame* viewport_;
+		AbstractFrame* viewport_;
 
 		FrameSplitter* splitter_;
 

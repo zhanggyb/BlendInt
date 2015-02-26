@@ -27,21 +27,19 @@
 #include <opengl/gl-texture2d.hpp>
 
 #include <gui/abstract-layout.hpp>
-
-#include <gui/abstract-round-widget.hpp>
-#include <gui/abstract-round-frame.hpp>
+#include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public AbstractRoundFrame
+	class Frame: public AbstractFrame
 	{
 	public:
 
-		ToolBox (AbstractLayout* layout);
+		Frame (AbstractLayout* layout);
 
-		ToolBox (int width, int height, AbstractLayout* layout);
+		Frame (int width, int height, AbstractLayout* layout);
 
-		virtual ~ToolBox ();
+		virtual ~Frame ();
 
 		void AddWidget (AbstractWidget* widget);
 
@@ -85,7 +83,7 @@ namespace BlendInt {
 
 		virtual Response PerformMouseHover (AbstractWindow* context);
 
-		void InitializeToolBoxOnce ();
+		void InitializeFrameOnce ();
 
 		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 

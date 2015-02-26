@@ -47,7 +47,7 @@ namespace BlendInt {
 	{
 		LinearLayout* button_layout = CreateButtons();
 
-		//ToolBox* sidebar = CreateSideBarOnce();
+		//Frame* sidebar = CreateSideBarOnce();
 		LinearLayout* area = CreateBrowserAreaOnce();
 
 		LinearLayout* main_layout = new LinearLayout(Vertical);
@@ -400,9 +400,9 @@ namespace BlendInt {
 	}
 
 	/*
-	ToolBox* FileSelector::CreateSideBarOnce ()
+	Frame* FileSelector::CreateSideBarOnce ()
 	{
-		ToolBox* toolbox = Manage(new ToolBox);
+		Frame* toolbox = Manage(new Frame);
 		DBG_SET_NAME(toolbox, "SideBar");
 		toolbox->SetMargin(2, 2, 2, 2);
 

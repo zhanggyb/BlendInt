@@ -24,7 +24,7 @@
 #include <gui/dialog.hpp>
 
 #include <gui/abstract-round-frame.hpp>
-#include <gui/toolbox.hpp>
+#include <gui/frame.hpp>
 #include <gui/block.hpp>
 #include <gui/close-button.hpp>
 #include <gui/folder-list.hpp>

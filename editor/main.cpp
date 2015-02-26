@@ -61,7 +61,7 @@ int main (int argc, char* argv[])
 
 		//Dialog* dlg = new Dialog("Test TableLayout", 0, Dialog::DialogButtonOK);
 
-		ToolBox* frame = new ToolBox(new LinearLayout(Vertical));
+		Frame* frame = new Frame(new LinearLayout(Vertical));
 
 //		TextureView* b1 = new TextureView;
 //		b1->OpenFile("test.jpg");

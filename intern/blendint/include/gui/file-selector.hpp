@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		LinearLayout* CreateBrowserAreaOnce ();
 
-		//ToolBox* CreateSideBarOnce ();
+		//Frame* CreateSideBarOnce ();
 
 		Expander* CreateSystemDevicesOnce ();
 

@@ -168,7 +168,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Workspace::SetViewport (AbstractRoundFrame* viewport)
+	void Workspace::SetViewport (AbstractFrame* viewport)
 	{
 		if((viewport == nullptr) || (viewport == viewport_)) return;
 
@@ -184,7 +184,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Workspace::SetLeftSideBar (ToolBox* leftbar)
+	void Workspace::SetLeftSideBar (Frame* leftbar)
 	{
 		if((leftbar == nullptr) || (leftbar == left_sidebar_)) return;
 
@@ -198,7 +198,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Workspace::SetRightSideBar (ToolBox* rightbar)
+	void Workspace::SetRightSideBar (Frame* rightbar)
 	{
 		if((rightbar == nullptr) || (rightbar == right_sidebar_)) return;
 
@@ -213,7 +213,7 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Workspace::SetHeader (ToolBox* header, bool append)
+	void Workspace::SetHeader (Frame* header, bool append)
 	{
 		if((header == nullptr) || (header_ == header)) return;
 

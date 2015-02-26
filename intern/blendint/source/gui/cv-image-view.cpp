@@ -38,7 +38,7 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 24);	// default: 15 FPS
+		timer_->SetInterval(1000 / 15);	// default: 15 FPS
 
 		events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
