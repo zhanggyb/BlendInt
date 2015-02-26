@@ -59,6 +59,11 @@ namespace BlendInt {
 			return pthread_mutexattr_destroy(&attribute_) == 0 ? true : false;
 		}
 
+		inline bool set_type (int type)
+		{
+			return pthread_mutexattr_settype(&attribute_, type) == 0 ? true : false;
+		}
+
         inline bool set_protocol (int protocol)
         {
             return pthread_mutexattr_setprotocol(&attribute_, protocol) == 0 ? true : false;

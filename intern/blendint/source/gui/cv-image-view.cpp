@@ -42,6 +42,11 @@ namespace BlendInt {
 
 		events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
+		MutexAttrib attrib;
+		attrib.initialize();
+		mutex_.initialize(attrib);
+		attrib.destroy();
+
 		std::vector<GLfloat> inner_verts;
 		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
@@ -100,6 +105,8 @@ namespace BlendInt {
 		}
 
 		glDeleteVertexArrays(2, vao_);
+
+		mutex_.destroy();
 	}
 
 	bool CVImageView::IsExpandX() const
@@ -271,6 +278,11 @@ namespace BlendInt {
 	{
 	}
 
+	void CVImageView::ProcessImage(cv::Mat& image)
+	{
+		// override this
+	}
+
 	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -323,18 +335,26 @@ namespace BlendInt {
 
 	Response CVImageView::Draw (AbstractWindow* context)
 	{
-		texture_.bind();
+		if(mutex_.trylock()) {
 
-		AbstractWindow::shaders->widget_image_program()->use();
+			texture_.bind();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
-				(size().width() - image_.cols)/2.f,
-				(size().height() - image_.rows) / 2.f);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			AbstractWindow::shaders->widget_image_program()->use();
 
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+					(size().width() - image_.cols)/2.f,
+					(size().height() - image_.rows) / 2.f);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+
+			glBindVertexArray(vao_[1]);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			mutex_.unlock();
+
+		} else {
+			DBG_PRINT_MSG("%s", "Fail to lock mutex, writing texture in thread");
+		}
 
 		return Finish;
 	}
@@ -357,52 +377,64 @@ namespace BlendInt {
 	{
 		if(off_screen_context_ && (video_stream_.isOpened())) {
 
-			video_stream_ >> image_;
-			off_screen_context_->MakeCurrent();
+			if(mutex_.trylock()) {
 
-			if(image_.data) {
+				video_stream_ >> image_;
+				off_screen_context_->MakeCurrent();
 
-				texture_.bind();
-
-				switch (image_.channels()) {
-
-					case 1: {
-						glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-						texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
-								0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
-						break;
-					}
-
-					case 2: {
-						glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-						texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
-								0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
-						break;
-					}
-
-					case 3: {
-						glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-						texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
-								0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
-						break;
-					}
-
-					case 4:	{
-						// opencv does not support alpha-channel, only masking, these code will never be called
-						glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-						texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
-								0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
-						break;
-					}
-
-					default: {
-						break;
-					}
+				if(image_.data) {
+					ProcessImage(image_);
 				}
 
-			}
+				if(image_.data) {
 
-			RequestRedraw();
+					texture_.bind();
+
+					switch (image_.channels()) {
+
+						case 1: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+							texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
+									0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
+							break;
+						}
+
+						case 2: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+							texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
+									0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
+							break;
+						}
+
+						case 3: {
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+							texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
+							break;
+						}
+
+						case 4:	{
+							// opencv does not support alpha-channel, only masking, these code will never be called
+							glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+							texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
+							break;
+						}
+
+						default: {
+							break;
+						}
+					}
+
+				}
+
+				mutex_.unlock();
+
+				RequestRedraw();
+
+			} else {
+				DBG_PRINT_MSG("%s", "Fail to lock mutex, lost one frame");
+			}
 
 		}
 	}

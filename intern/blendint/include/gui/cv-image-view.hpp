@@ -30,6 +30,8 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <core/timer.hpp>
+#include <core/mutex.hpp>
+
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/abstract-scrollable.hpp>
@@ -66,6 +68,10 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void ProcessImage (cv::Mat& image);
+
+	private:
+
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual bool PreDraw (AbstractWindow* context);
@@ -73,8 +79,6 @@ namespace BlendInt {
 		virtual Response Draw (AbstractWindow* context);
 
 		virtual void PostDraw (AbstractWindow* context);
-
-	private:
 
 		void OnUpdateFrame (Timer* sender);
 
@@ -95,6 +99,8 @@ namespace BlendInt {
 		cv::Mat image_;
 
 		RefPtr<Timer> timer_;
+
+		Mutex mutex_;
 
 		AbstractWindow* off_screen_context_;
 
