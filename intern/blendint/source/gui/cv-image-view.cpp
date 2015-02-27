@@ -31,7 +31,7 @@ namespace BlendInt {
 
 	CVImageView::CVImageView()
 	: AbstractScrollable(),
-	  off_screen_context_(0),
+	  current_context_(0),
 	  playing_(false),
 	  count(0)
 	{
@@ -98,11 +98,6 @@ namespace BlendInt {
 		if(video_stream_.isOpened()) {
 			video_stream_.release();
 			image_.release();
-		}
-
-		if(off_screen_context_) {
-			delete off_screen_context_;
-			off_screen_context_ = 0;
 		}
 
 		glDeleteVertexArrays(2, vao_);
@@ -231,15 +226,12 @@ namespace BlendInt {
 
 	void CVImageView::Play ()
 	{
-		AbstractWindow* win = AbstractWindow::GetWindow(this);
-		if(win == nullptr) return;
+		current_context_ = AbstractWindow::GetWindow(this);
+		if(current_context_ == nullptr) return;
 
 		if(playing_) return;
 
 		if(video_stream_.isOpened()) {
-			assert(off_screen_context_ == 0);
-			off_screen_context_ = win->CreateSharedContext(win->size().width(), win->size().height(), false);
-
 			timer_->Start();
 			playing_ = true;
 		}
@@ -263,11 +255,7 @@ namespace BlendInt {
 			image_.release();
 		}
 
-		if(off_screen_context_) {
-			delete off_screen_context_;
-			off_screen_context_ = 0;
-		}
-
+		current_context_ = 0;
 		playing_ = false;
 	}
 
@@ -349,8 +337,6 @@ namespace BlendInt {
 
 			mutex_.unlock();
 
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to lock mutex, writing texture in thread");
 		}
 
 		return Finish;
@@ -372,17 +358,15 @@ namespace BlendInt {
 
 	void CVImageView::OnUpdateFrame (Timer* sender)
 	{
-		if(off_screen_context_ && (video_stream_.isOpened())) {
+		if(current_context_ && (video_stream_.isOpened())) {
+
+			video_stream_ >> image_;
 
 			if(mutex_.trylock()) {
 
-				video_stream_ >> image_;
-				off_screen_context_->MakeCurrent();
+				current_context_->MakeCurrent();
 
-				if(image_.data) {
-
-					ProcessImage(image_);
-				}
+				if(image_.data) ProcessImage(image_);
 
 				if(image_.data) {
 
@@ -426,9 +410,9 @@ namespace BlendInt {
 
 				}
 
-				mutex_.unlock();
-
 				RequestRedraw();
+
+				mutex_.unlock();
 
 			} else {
 				DBG_PRINT_MSG("%s", "Fail to lock mutex, lost one frame");

@@ -45,8 +45,8 @@ namespace BlendInt {
 	 *
 	 * A frame can only be added and removed in a window, and use
 	 * framebuffer object to render widgets into a texture in general.
-	 * This make sure the frame don\'t need to render every widget if
-	 * no one need to redraw.
+	 * This makes sure the widgets whithin the frame will be rendered
+	 * only when needed.
 	 *
 	 * Frame can be focused. A focused frame has the high priority to
 	 * accept HID events from window and display on other frames.

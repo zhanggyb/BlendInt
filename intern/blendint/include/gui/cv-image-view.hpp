@@ -103,7 +103,7 @@ namespace BlendInt {
 
 		Mutex mutex_;
 
-		AbstractWindow* off_screen_context_;
+		AbstractWindow* current_context_;
 
 		Size image_size_;
 

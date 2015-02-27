@@ -21,19 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include "editor-window.hpp"
+#pragma once
 
-int main (int argc, char* argv[])
-{
-	using namespace BlendInt;
+#include <gui/message-box.hpp>
+#include <gui/window.hpp>
 
-	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+namespace BlendInt {
 
-	if(Window::Initialize()) {
-		EditorWindow win(1280, 800, "UI Editor");
-		win.Exec();
-		Window::Terminate();
-	}
+	class EditorWindow: public Window
+	{
+	public:
 
-	return 0;
+		EditorWindow (int width, int height, const char* name);
+
+		virtual ~EditorWindow ();
+
+	private:
+
+		void OnResize (Window* window, const Size& size);
+
+		void OnMessageBoxDestroyed (AbstractFrame* sender);
+
+		MessageBox* msg_;
+	};
+
 }

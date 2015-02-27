@@ -23,17 +23,42 @@
 
 #include "editor-window.hpp"
 
-int main (int argc, char* argv[])
-{
-	using namespace BlendInt;
+namespace BlendInt {
 
-	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+	EditorWindow::EditorWindow(int width, int height, const char* name)
+	: Window(width, height, name),
+	  msg_(0)
+	{
 
-	if(Window::Initialize()) {
-		EditorWindow win(1280, 800, "UI Editor");
-		win.Exec();
-		Window::Terminate();
+		events()->connect(this->resized(), this, &EditorWindow::OnResize);
+
+		// show a message box
+		msg_ = new MessageBox("Note",
+                "This UI editor is still under development");
+		AddFrame(msg_);
+		msg_->MoveTo(
+				(size().width() - msg_->size().width()) / 2,
+				(size().height() - msg_->size().height()) / 2);
+		events()->connect(msg_->destroyed(), this, &EditorWindow::OnMessageBoxDestroyed);
 	}
 
-	return 0;
+	EditorWindow::~EditorWindow ()
+	{
+	}
+
+	void EditorWindow::OnResize (Window* window, const Size& size)
+	{
+		if(msg_) {
+			msg_->MoveTo(
+					(size.width() - msg_->size().width()) / 2,
+					(size.height() - msg_->size().height()) / 2);
+		}
+	}
+
+	void EditorWindow::OnMessageBoxDestroyed(AbstractFrame* sender)
+	{
+		assert(sender == msg_);
+		msg_ = 0;
+	}
+
 }
