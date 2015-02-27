@@ -168,7 +168,7 @@ namespace BlendInt {
 	
 	void ChessBoard::DrawInRect (const Rect& rect,
 			int align,
-			uint32_t color,
+			const float* color_ptr,
 			short gamma,
 			float rotate,
 			bool scale) const

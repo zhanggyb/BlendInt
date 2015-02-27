@@ -244,7 +244,7 @@ namespace BlendInt {
 
 		AbstractWindow::icons->menu()->DrawInRect(Rect(x, y, w, h),
 				AlignRight | AlignVerticalCenter,
-				0xEFEFEFFF);
+				Color(0xEFEFEFFF).data());
 
 		// draw model item
 		if(model_) {

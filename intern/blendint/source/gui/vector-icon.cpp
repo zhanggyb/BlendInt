@@ -176,7 +176,7 @@ namespace BlendInt {
 
 	void VectorIcon::DrawInRect (const Rect& rect,
 			int align,
-			uint32_t color,
+			const float* color_ptr,
 			short gamma,
 			float rotate,
 			bool scale) const
@@ -202,10 +202,19 @@ namespace BlendInt {
 
 		AbstractWindow::shaders->widget_triangle_program()->use();
 
-		glVertexAttrib4fv(AttributeColor, Color(color).data());
+		glVertexAttrib4fv(AttributeColor, color_ptr);
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), rotate);
+
+		if(scale) {
+			float scale_x = rect.width() * 1.f / size().width();
+			float scale_y = rect.height() * 1.f / size().height();
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale_x, scale_y);
+		} else {
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
+		}
 
 		glBindVertexArray(vao_);
 		glDrawElements(GL_TRIANGLES, elements_,

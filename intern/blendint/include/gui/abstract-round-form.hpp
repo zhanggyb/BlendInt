@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,
-				uint32_t color = 0xFFFFFFFF,
+				const float* color_ptr = Color(Color::White).data(),
 				short gamma = 0,
 				float rotate = 0.f,
 				bool scale = false) const

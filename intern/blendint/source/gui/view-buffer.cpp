@@ -117,7 +117,7 @@ namespace BlendInt {
 
 	}
 
-	void ViewBuffer::DrawInRect (const Rect& rect, int align, uint32_t color,
+	void ViewBuffer::DrawInRect (const Rect& rect, int align, const float* color_ptr,
 	        short gamma, float rotate, bool scale) const
 	{
 	}

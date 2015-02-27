@@ -82,16 +82,20 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Label::SetForeground(const Color& color)
+	void Label::SetForeground(uint32_t color)
 	{
-		foreground_ = color;
-		RequestRedraw();
+		if(foreground_ != color) {
+			foreground_ = color;
+			RequestRedraw();
+		}
 	}
 
-	void Label::SetBackground(const Color& color)
+	void Label::SetBackground(uint32_t color)
 	{
-		background_ = color;
-		RequestRedraw();
+		if(background_ != color) {
+			background_ = color;
+			RequestRedraw();
+		}
 	}
 
 	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -162,7 +166,7 @@ namespace BlendInt {
 		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, background_.data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1, Color(background_).data());
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -172,22 +176,10 @@ namespace BlendInt {
 			int w = size().width() - pixel_size(kPadding.hsum());
 			int h = size().height() - pixel_size(kPadding.vsum());
 			int x = pixel_size(kPadding.left());
-			int y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
-
-			// A workaround for Adobe Source Han Sans
-			int diff = text_->font().ascender() - text_->font().descender();
-			if(diff < text_->font().height()) {
-				y += (text_->font().height() - diff - 1) / 2;
-			}
-
-			if((alignment_ == AlignVerticalCenter) || (alignment_ == AlignCenter)) {
-				x += (w - text_->size().width()) / 2;
-			} else if (alignment_ == AlignRight) {
-				x = w - text_->size().width();
-			}
+			int y = pixel_size(kPadding.bottom());
 
 			if(text_->size().height() <= h) {
-				text_->DrawWithin(x, y, w, foreground_);
+				text_->DrawInRect(Rect(x, y, w, h), alignment_ | AlignJustify | AlignBaseline, Color(foreground_).data());
 			}
 
 		}

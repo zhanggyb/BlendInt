@@ -187,7 +187,7 @@ namespace BlendInt {
 
 	void PixelIcon::DrawInRect (const Rect& rect,
 			int align,
-			uint32_t color,
+			const float* color_ptr,
 			short gamma,
 			float rotate,
 			bool scale) const
@@ -216,7 +216,7 @@ namespace BlendInt {
 			AbstractWindow::shaders->widget_image_program()->use();
 
 			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);

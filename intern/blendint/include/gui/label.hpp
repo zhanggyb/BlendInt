@@ -63,9 +63,9 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
-		void SetForeground (const Color& color);
+		void SetForeground (uint32_t color);
 
-		void SetBackground (const Color& color);
+		void SetBackground (uint32_t color);
 
 		virtual Size GetPreferredSize () const;
 
@@ -98,9 +98,9 @@ namespace BlendInt {
         GLuint vao_;
         GLBuffer<> vbo_;
 
-        Color foreground_;
+        uint32_t foreground_;
 
-        Color background_;
+        uint32_t background_;
 
     };
 

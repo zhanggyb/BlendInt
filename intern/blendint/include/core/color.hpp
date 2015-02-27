@@ -92,7 +92,7 @@ namespace BlendInt {
 		~Color ()
 		{}
 
-		void set_value (float r, float g, float b, float a)
+		inline void set_value (float r, float g, float b, float a)
 		{
 			value_[0] = glm::clamp(r, 0.f, 1.f);
 			value_[1] = glm::clamp(g, 0.f, 1.f);
@@ -100,7 +100,7 @@ namespace BlendInt {
 			value_[3] = glm::clamp(a, 0.f, 1.f);
 		}
 
-		void set_value (unsigned char color[4])
+		inline void set_value (unsigned char color[4])
 		{
 			value_[0] = color[0] / 255.f;
 			value_[1] = color[1] / 255.f;
@@ -108,7 +108,7 @@ namespace BlendInt {
 			value_[3] = color[3] / 255.f;
 		}
 
-		void set_value (float color[4])
+		inline void set_value (float color[4])
 		{
 			value_[0] = glm::clamp(color[0], 0.f, 1.f);
 			value_[1] = glm::clamp(color[1], 0.f, 1.f);
@@ -116,7 +116,7 @@ namespace BlendInt {
 			value_[3] = glm::clamp(color[3], 0.f, 1.f);
 		}
 
-		void set_value (uint32_t color)
+		inline void set_value (uint32_t color)
 		{
 			if (color > 0xFFFFFF) {
 				value_[3] = (color & 0xFF) / 255.f;
@@ -141,7 +141,7 @@ namespace BlendInt {
 			}
 		}
 
-		void set_value (unsigned char r,
+		inline void set_value (unsigned char r,
 				unsigned char g,
 				unsigned char b,
 				unsigned char a = 0xFF)
@@ -152,7 +152,7 @@ namespace BlendInt {
 			value_[3] = a / 255.f;
 		}
 
-		uint32_t rgba () const
+		inline uint32_t rgba () const
 		{
 			return ((int)(value_[0] * 255) << 24) |
 					((int)(value_[1] * 255) << 16) |
@@ -160,107 +160,107 @@ namespace BlendInt {
 					(int)(value_[3] * 255);
 		}
 
-		unsigned char uchar_red () const
+		inline unsigned char uchar_red () const
 		{
 			return (unsigned char)(value_[0] * 255);
 		}
 
-		float red () const
+		inline float red () const
 		{
 			return value_[0];
 		}
 
-		float r () const
+		inline float r () const
 		{
 			return value_[0];
 		}
 
-		void set_red (float red)
+		inline void set_red (float red)
 		{
 			value_[0] = glm::clamp(red, 0.f, 1.f);
 		}
 
-		void set_red (unsigned char red)
+		inline void set_red (unsigned char red)
 		{
 			value_[0] = red / 255.f;
 		}
 
-		unsigned char uchar_green () const
+		inline unsigned char uchar_green () const
 		{
 			return (unsigned char)(value_[1] * 255);
 		}
 
-		float green () const
+		inline float green () const
 		{
 			return value_[1];
 		}
 
-		float g () const
+		inline float g () const
 		{
 			return value_[1];
 		}
 
-		void set_green (float green)
+		inline void set_green (float green)
 		{
 			value_[1] = glm::clamp(green, 0.f, 1.f);
 		}
 
-		void set_green (unsigned char green)
+		inline void set_green (unsigned char green)
 		{
 			value_[1] = green / 255.f;
 		}
 
-		unsigned char uchar_blue () const
+		inline unsigned char uchar_blue () const
 		{
 			return (unsigned char)(value_[2] * 255);
 		}
 
-		float blue () const
+		inline float blue () const
 		{
 			return value_[2];
 		}
 
-		float b () const
+		inline float b () const
 		{
 			return value_[2];
 		}
 
-		void set_blue (float blue)
+		inline void set_blue (float blue)
 		{
 			value_[2] = glm::clamp(blue, 0.f, 1.f);
 		}
 
-		void set_blue (unsigned char blue)
+		inline void set_blue (unsigned char blue)
 		{
 			value_[2] = blue / 255.f;
 		}
 
-		unsigned char uchar_alpha () const
+		inline unsigned char uchar_alpha () const
 		{
 			return (unsigned char)(value_[3] * 255);
 		}
 
-		float alpha () const
+		inline float alpha () const
 		{
 			return value_[3];
 		}
 
-		float a () const
+		inline float a () const
 		{
 			return value_[3];
 		}
 
-		void set_alpha (float alpha)
+		inline void set_alpha (float alpha)
 		{
 			value_[3] = glm::clamp(alpha, 0.f, 1.f);
 		}
 
-		void set_alpha (unsigned char alpha)
+		inline void set_alpha (unsigned char alpha)
 		{
 			value_[3] = alpha / 255.f;
 		}
 
-		const float* data () const {return value_;}
+		inline const float* data () const {return value_;}
 
 		// CSS Named Colors
 

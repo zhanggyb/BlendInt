@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,
-				uint32_t color = 0x1A1A1A20,
+				const float* color_ptr = Color(0x1A1A1A20).data(),
 				short gamma = 0,
 				float rotate = 0.f,
 				bool scale = false) const;

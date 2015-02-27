@@ -180,7 +180,7 @@ namespace BlendInt {
 
  	void Text::DrawInRect (const Rect& rect,
 			int align,
-			uint32_t color,
+			const float* color_ptr,
 			short gamma,
 			float rotate,
 			bool scale) const
@@ -223,7 +223,7 @@ namespace BlendInt {
 		font_.bind_texture();
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, Color(color).data());
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color_ptr);
 		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
 		glBindVertexArray(vao_);
