@@ -407,7 +407,7 @@ namespace BlendInt {
                 y += (text_->font().height() - diff - 1) / 2;
             }
             
-//            if((alignment_ == AlignHorizontalCenter) || (alignment_ == AlignCenter)) {
+//            if((alignment_ == AlignVerticalCenter) || (alignment_ == AlignCenter)) {
 //                x += (w - text_ext_->size().width()) / 2;
 //            } else if (alignment_ == AlignRight) {
 //                x = w - text_ext_->size().width();

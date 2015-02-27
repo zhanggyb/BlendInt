@@ -49,6 +49,12 @@ namespace BlendInt {
 
 		virtual void Draw (float x, float y) const;
 
+		virtual void DrawInRect (const Rect& rect,
+				int align,
+				uint32_t color = 0xFFFFFFFF,
+				short gamma = 0,
+				float rotate = 0.f,
+				bool scale = false) const;
 	protected:
 
 		virtual void PerformSizeUpdate (const Size& size);

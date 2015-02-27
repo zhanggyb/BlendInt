@@ -23,55 +23,28 @@
 
 #pragma once
 
-#include <gui/abstract-form.hpp>
-
-#include <opengl/gl-texture2d.hpp>
-#include <opengl/gl-buffer.hpp>
+#include <gui/abstract-adjustment.hpp>
 
 namespace BlendInt {
 
-	class ViewBuffer: public AbstractForm
+	class AdaptiveAdjustment: public AbstractAdjustment
 	{
 	public:
 
-		ViewBuffer ();
+		AdaptiveAdjustment (AbstractView* view, Orientation orient, int alignment, int space);
 
-		ViewBuffer (int width, int height);
+		virtual ~AdaptiveAdjustment();
 
-		virtual ~ViewBuffer ();
-
-		void Draw () const;
-
-		virtual void Draw (float x, float y) const;
-
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				uint32_t color = 0xFFFFFFFF,
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const;
-
-		inline GLTexture2D* texture ()
-		{
-			return &texture_;
-		}
-
-#ifdef DEBUG
-		void SaveToFile (const char* file);
-#endif
-
-	protected:
-
-		virtual void PerformSizeUpdate (const Size& size);
+		virtual void Adjust (int x, int y, int w, int h);
 
 	private:
 
-		GLuint vao_;
+		Orientation orientation_;
 
-		GLBuffer<> vbo_;
+		int alignment_;
 
-		GLTexture2D texture_;
-
+		int space_;
+		
 	};
-
+	
 }

@@ -268,7 +268,7 @@ namespace BlendInt {
 							 y + (height - p->size().height()));
 					} else if (alignment_ & AlignBottom) {
 						move(p, p->position().x(), y);
-					} else if (alignment_ & AlignHorizontalCenter) {
+					} else if (alignment_ & AlignVerticalCenter) {
 						move(p,
 							 p->position().x(),
 							 y + (height - p->size().height()) / 2);
@@ -510,7 +510,7 @@ namespace BlendInt {
 						move(p,
 						        x + (width - p->size().width()),
 						        p->position().y());
-					} else if (alignment_ & AlignVerticalCenter) {
+					} else if (alignment_ & AlignHorizontalCenter) {
 						move(p,
 						        x + (width - p->size().width()) / 2,
 						        p->position().y());

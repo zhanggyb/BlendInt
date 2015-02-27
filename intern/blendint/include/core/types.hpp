@@ -77,18 +77,29 @@ namespace BlendInt {
 
 	enum Alignment
 	{
-		AlignNone = 0x0,
-		AlignTop = (1 << 0),
-		AlignBottom = (1 << 1),
-		AlignHorizontalCenter = (1 << 2),
-		AlignLeft = (1 << 3),
-		AlignRight = (1 << 4),
-		AlignVerticalCenter = (1 << 5),
-		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter,
+		// horizontal flags:
+		AlignLeft = 0x0001,	/**< Aligns with the left edge */
+		AlignRight = 0x0002,	/**< Aligns with the right edge */
+		AlignHorizontalCenter = 0x0004,	/**< Centers horizontally in the available space */
+		AlignJustify = 0x0008,	/**< Justifies the text in the available space */
+
+		// vertical flags:
+		AlignTop = 0x0010,	/**< Aligns with the top */
+		AlignBottom = 0x0020,	/**< Aligns with the bottom */
+		AlignVerticalCenter = 0x0040,	/**< Centers vertically in the available space */
+		AlignBaseline = 0x0080,	/**< Aligns with the baseline */
+
+		AlignAbsolute = 0x0100,	/**< Not used yet */
+
+		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter,	/**< Centers along both horizontal and vertical */
+
 		AlignTopLeft = AlignTop | AlignLeft,
 		AlignTopRight = AlignTop | AlignRight,
 		AlignBottomLeft = AlignBottom | AlignLeft,
-		AlignBottomRight = AlignBottom | AlignRight
+		AlignBottomRight = AlignBottom | AlignRight,
+
+		AlignHorizontalMask = AlignLeft | AlignRight | AlignHorizontalCenter | AlignJustify | AlignAbsolute,
+		AlignVerticalMask = AlignTop | AlignBottom | AlignVerticalCenter | AlignBaseline
 	};
 
 	enum SizePolicy

@@ -117,6 +117,11 @@ namespace BlendInt {
 
 	}
 
+	void ViewBuffer::DrawInRect (const Rect& rect, int align, uint32_t color,
+	        short gamma, float rotate, bool scale) const
+	{
+	}
+
 #ifdef DEBUG
 
 	void ViewBuffer::SaveToFile(const char* name)

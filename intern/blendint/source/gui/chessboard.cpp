@@ -166,6 +166,15 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
+	void ChessBoard::DrawInRect (const Rect& rect,
+			int align,
+			uint32_t color,
+			short gamma,
+			float rotate,
+			bool scale) const
+	{
+	}
+
 	void ChessBoard::GenerateCheckerVertices (size_t num,
 					size_t cell_size,
 					std::vector<GLfloat>* vertices,

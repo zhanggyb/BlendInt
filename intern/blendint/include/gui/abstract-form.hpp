@@ -28,8 +28,8 @@
 #include <opengl/opengl.hpp>
 
 #include <core/types.hpp>
-#include <core/point.hpp>
-#include <core/size.hpp>
+#include <core/rect.hpp>
+#include <core/color.hpp>
 #include <core/object.hpp>
 
 namespace BlendInt {
@@ -86,6 +86,13 @@ namespace BlendInt {
 		}
 
 		virtual void Draw (float x, float y) const = 0;
+
+		virtual void DrawInRect (const Rect& rect,
+				int align,
+				uint32_t color = 0xFFFFFFFF,
+				short gamma = 0,
+				float rotate = 0.f,
+				bool scale = false) const = 0;
 
 		static void SetDefaultBorderWidth (int border);
 

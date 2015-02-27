@@ -43,6 +43,16 @@ namespace BlendInt {
 
 		float radius () const {return radius_;}
 
+		virtual void DrawInRect (const Rect& rect,
+				int align,
+				uint32_t color = 0xFFFFFFFF,
+				short gamma = 0,
+				float rotate = 0.f,
+				bool scale = false) const
+		{
+			// TODO: implement in sub classes.
+		}
+
 		static int GetOutlineVertices (int round_type);
 
 	protected:

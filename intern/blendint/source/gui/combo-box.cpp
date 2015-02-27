@@ -61,13 +61,25 @@ namespace BlendInt {
 		int w = 0;
 		int h = 0;
 
+		Font font;	// default font
+		w = font.height();
+		h = font.height();
+
 		if(model_) {
 
-		} else {
-			Font font;	// default font
-			w = font.height();
-			h = font.height();
+			ModelIndex root = model_->GetRootIndex();
+			ModelIndex index = model_->GetIndex(0, 0, root);
+
+			if(index.valid()) {
+
+				RefPtr<AbstractForm> data = index.GetData();
+				w = std::max(w, data->size().width());
+				h = std::max(h, data->size().height());
+
+			}
 		}
+
+		w += AbstractWindow::icons->menu()->size().width();
 
 		w += pixel_size(kPadding.hsum());
 		h += pixel_size(kPadding.vsum());
@@ -77,10 +89,13 @@ namespace BlendInt {
 
 	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
 	{
-		model_ = model;
-		//if(list_) {
-		//	list_->SetModel(model_);
-		//}
+		if(model_) {
+			model_ = model;
+			RequestRedraw();
+		} else if(model) {
+			model_ = model;
+			RequestRedraw();
+		}
 	}
 
 	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -170,6 +185,7 @@ namespace BlendInt {
 
 	Response ComboBox::Draw(AbstractWindow* context)
 	{
+		// draw inner
 		AbstractWindow::shaders->widget_inner_program()->use();
 
 		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
@@ -189,6 +205,8 @@ namespace BlendInt {
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+		// draw outer:
 
 		AbstractWindow::shaders->widget_outer_program()->use();
 
@@ -217,10 +235,31 @@ namespace BlendInt {
 
 		//icon->Draw(mvp * translate * rotate * scale);
 
-		float x = size().width() - AbstractWindow::icons->menu()->size().width()/2.f;
-		float y = size().height()/2.f;
+		// draw icon:
 
-		AbstractWindow::icons->menu()->Draw(x, y, Color(0xEFEFEFFF));
+		int x = pixel_size(kPadding.left());
+		int y = pixel_size(kPadding.bottom());
+		int w = size().width() - pixel_size(kPadding.hsum());
+		int h = size().height() - pixel_size(kPadding.vsum());
+
+		AbstractWindow::icons->menu()->DrawInRect(Rect(x, y, w, h),
+				AlignRight | AlignVerticalCenter,
+				0xEFEFEFFF);
+
+		// draw model item
+		if(model_) {
+
+			//int h = size().height() - pixel_size(kPadding.vsum());
+
+			ModelIndex root = model_->GetRootIndex();
+			ModelIndex index = model_->GetIndex(0, 0, root);
+
+			if(index.valid()) {
+				Point pos(pixel_size(kPadding.hsum()), pixel_size(kPadding.vsum()));
+				index.GetData()->Draw(pos.x(), pos.y());
+			}
+
+		}
 
 		return Finish;
 	}
@@ -273,58 +312,6 @@ namespace BlendInt {
            
             return Ignore;
 		}
-		
-		/*
-		if(popup_) {
-			delete popup_;
-			popup_ = 0;
-			SetRoundType(RoundAll);
-		} else {
-			ListView* list = Manage(new ListView);
-
-			if(model_) {
-				list->SetModel(model_);
-			}
-
-			list->Resize(200, list->size().height());
-
-			popup_ = Manage(new PopupFrame);
-			popup_->Resize(list->size());
-			popup_->AddWidget(list);
-
-			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
-
-			Point pos = context->active_frame()->GetAbsolutePosition(this);
-
-			int top = pos.y() + size().height() + popup_->size().height();
-			int bottom = pos.y() - popup_->size().height();
-
-			if(top <= context->size().height()) {
-				popup_->MoveTo(pos.x(), pos.y() + size().height());
-				SetRoundType(RoundBottomLeft | RoundBottomRight);
-			} else {
-
-				if(bottom >= 0) {
-					popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
-					SetRoundType(RoundTopLeft | RoundTopRight);
-				} else {
-
-					int diff = top - context->size().height() + bottom;
-					if(diff <= 0) {
-						popup_->MoveTo(pos.x(), pos.y() + size().height());
-						SetRoundType(RoundBottomLeft | RoundBottomRight);
-					} else {
-						popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
-						SetRoundType(RoundTopLeft | RoundTopRight);
-					}
-
-				}
-
-			}
-
-			context->AddFrame(popup_);
-		}
-		*/
 
 		RequestRedraw();
 

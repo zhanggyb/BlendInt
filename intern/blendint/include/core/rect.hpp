@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_RECT_HPP_
-#define _BLENDINT_RECT_HPP_
+#pragma once
 
 #include <cstdlib>
 #include <algorithm>
@@ -35,11 +34,12 @@ namespace BlendInt {
 	class Rect
 	{
 	public:
-		Rect ()
+
+		inline Rect ()
 		: x_(0), y_(0), width_(0), height_(0)
 		{}
 		
-		Rect (int x, int y, int width, int height)
+		inline Rect (int x, int y, int width, int height)
 		{
 			x_ = std::min(x, x + width);
 			y_ = std::min(y, y + height);
@@ -47,7 +47,7 @@ namespace BlendInt {
 			height_ = std::abs(height);
 		}
 
-		Rect (const Point& p1, const Point& p2)
+		inline Rect (const Point& p1, const Point& p2)
 		{
 			x_ = std::min(p1.x(), p2.x());
 			y_ = std::min(p1.y(), p2.y());
@@ -55,7 +55,7 @@ namespace BlendInt {
 			height_ = std::abs(p2.y() - p1.y());
 		}
 
-		Rect (const Point& pos, const Size& size)
+		inline Rect (const Point& pos, const Size& size)
 		{
 			x_ = std::min(pos.x(), pos.x() + size.width());
 			y_ = std::min(pos.y(), pos.y() + size.height());
@@ -63,12 +63,12 @@ namespace BlendInt {
 			height_ = std::abs(size.height());
 		}
 
-		Rect (const Rect& orig)
+		inline Rect (const Rect& orig)
 		: x_(orig.x_), y_(orig.y_), width_(orig.width_), height_(orig.height_)
 		{
 		}
 
-		Rect& operator = (const Rect& orig)
+		inline Rect& operator = (const Rect& orig)
 		{
 			x_ = orig.x_;
 			y_ = orig.y_;
@@ -78,7 +78,7 @@ namespace BlendInt {
 			return *this;
 		}
 
-		bool contains (const Point& point)
+		inline bool contains (const Point& point)
 		{
 			if (point.x() < x_ || point.y() < y_
 							|| point.x() > (x_ + width_)
@@ -88,7 +88,7 @@ namespace BlendInt {
 			return true;
 		}
 
-		bool contains (int x, int y)
+		inline bool contains (int x, int y)
 		{
 			if (x < x_ || y < y_ || x > (x_ + width_)
 							|| y > (y_ + height_)) {
@@ -98,77 +98,115 @@ namespace BlendInt {
 			return true;
 		}
 
-		void set_position (int x, int y)
+		inline void set_position (int x, int y)
 		{
 			x_ = x;
 			y_ = y;
 		}
 
-		void set_position (const Point& pos)
+		inline void set_position (const Point& pos)
 		{
 			x_ = pos.x();
 			y_ = pos.y();
 		}
 
-		void set_size (int width, int height)
+		inline void set_size (int width, int height)
 		{
 			set_width(width);
 			set_height(height);
 		}
 
-		void set_size (const Size& size)
+		inline void set_size (const Size& size)
 		{
 			set_width(size.width());
 			set_height(size.height());
 		}
 
-		int x (void) const {return x_;}
+		inline int x () const {return x_;}
 
-		void set_x (int x) {x_ = x;}
+		inline void set_x (int x) {x_ = x;}
 
-		int y (void) const {return y_;}
+		inline int y () const {return y_;}
 
-		void set_y (int y) {y_ = y;}
+		inline void set_y (int y) {y_ = y;}
 
-		int width (void) const {return width_;}
+		inline int width () const {return width_;}
 
-		void set_width (int width)
+		inline int hcenter () const {return x_ + width_ / 2;}
+
+		inline void set_width (int width)
 		{
 			x_ = width < 0 ? (x_ + width) : x_;
 			width_ = std::abs(width);
 		}
 
-		int height (void) const {return height_;}
+		inline int height () const {return height_;}
 
-		void set_height (int height)
+		inline int vcenter () const {return y_ + height_ / 2;}
+
+		inline void set_height (int height)
 		{
 			y_ = height < 0 ? (y_ + height) : y_;
 			height_ = std::abs(height);
 		}
 
-		int left () const
+		inline int left () const
 		{
 			return x_;
 		}
 
-		int right () const
+		inline int right () const
 		{
 			return x_ + width_;
 		}
 
-		int top () const
+		inline int top () const
 		{
 			return y_ + height_;
 		}
 
-		int bottom () const
+		inline int bottom () const
 		{
 			return y_;
 		}
 
-		bool is_zero (void) const
+		inline bool is_zero (void) const
 		{
 			return width_ == 0 || height_ == 0;
+		}
+
+		inline void cut_left (int left)
+		{
+			width_ -= left;
+			x_ += left;
+
+			x_ = width_ < 0 ? (x_ + width_) : x_;
+			width_ = std::abs(width_);
+		}
+
+		inline void cut_right (int right)
+		{
+			width_ -= right;
+
+			x_ = width_ < 0 ? (x_ + width_) : x_;
+			width_ = std::abs(width_);
+		}
+
+		inline void cut_bottom (int bottom)
+		{
+			height_ -= bottom;
+			y_ += bottom;
+
+			y_ = height_ < 0 ? (y_ + height_) : y_;
+			height_ = std::abs(height_);
+		}
+
+		inline void cut_top (int top)
+		{
+			height_ -= top;
+
+			y_ = height_ < 0 ? (y_ + height_) : y_;
+			height_ = std::abs(height_);
 		}
 
 	private:
@@ -180,5 +218,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif	// _BIL_RECT_HPP_

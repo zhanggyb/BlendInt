@@ -223,14 +223,14 @@ namespace BlendInt {
 		int w = size().width() - pixel_size(kPadding.hsum());
 		int h = size().height() - pixel_size(kPadding.vsum());
 		int x = pixel_size(kPadding.left());
-		int y = size().height() / 2;
+		int y = pixel_size(kPadding.bottom());
 
 		if(icon_) {
 			if(icon_->size().height() <= h) {
 
 				if(icon_->size().width() <= w) {
 
-					icon_->Draw(x + icon_->size().width() / 2, y);
+					icon_->DrawInRect(Rect(x, y, w, h), AlignLeft | AlignVerticalCenter);
 					x += icon_->size().width();
 					x += kIconTextSpace;
 					w -= icon_->size().width();

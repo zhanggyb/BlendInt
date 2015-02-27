@@ -178,6 +178,88 @@ namespace BlendInt {
  		Draw(x, y, (short)0);
  	}
 
+ 	void Text::DrawInRect (const Rect& rect,
+			int align,
+			uint32_t color,
+			short gamma,
+			float rotate,
+			bool scale) const
+ 	{
+		if(rect.is_zero()) return;
+
+		int x = 0;
+		int y = 0;
+
+		if(align & AlignLeft) {
+			x = rect.left();
+		} else if (align & AlignRight) {
+			x = rect.right() - size().width();
+		} else if (align & AlignHorizontalCenter) {
+			x = rect.hcenter() - size().width() / 2;
+		} else if (align & AlignJustify) {	// special flag for text
+			x = rect.left();
+		}
+
+		if(align & AlignTop) {
+			y = rect.top() - size().height();
+		} else if (align & AlignBottom) {
+			y = rect.bottom();
+		} else if (align & AlignVerticalCenter) {
+			y = rect.vcenter() - size().height() / 2;
+		} else if (align & AlignBaseline) {
+			 y = (rect.height() - font_.height()) / 2 - font_.descender();
+
+			 // A workaround for Adobe Source Han Sans
+			 int diff = font_.ascender() - font_.descender();
+			 if(diff < font_.height()) {
+				 y += (font_.height() - diff - 1) / 2;
+			 }
+		}
+
+		AbstractWindow::shaders->widget_text_program()->use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		font_.bind_texture();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, Color(color).data());
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+
+		glBindVertexArray(vao_);
+
+		const Glyph* g = 0;
+		int max = 0;
+		int count = 0;
+		String::const_iterator next_it;
+		Kerning kerning;
+
+		for(String::const_iterator it = text_.begin(); it != text_.end(); it++)
+		{
+			g = font_.glyph(*it);
+
+			if(font_.has_kerning()) {
+
+                next_it = it + 1;
+                if(next_it != text_.end()) {
+                	kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
+                	max += (g->advance_x + kerning.x);
+                } else {
+                	max += g->advance_x;
+                }
+
+			} else {
+				max += g->advance_x;
+			}
+
+			if ((align & AlignJustify) && (max > rect.width())) break;
+
+			glDrawArrays(GL_TRIANGLE_STRIP, count * 4, 4);
+
+			count++;
+		}
+ 	}
+
  	void Text::Draw (float x, float y, short gamma) const
  	{
  		Color color(0x000000FF);

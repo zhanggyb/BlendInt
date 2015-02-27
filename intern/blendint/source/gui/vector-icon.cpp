@@ -174,6 +174,44 @@ namespace BlendInt {
 		Draw(x, y, color, gamma);
 	}
 
+	void VectorIcon::DrawInRect (const Rect& rect,
+			int align,
+			uint32_t color,
+			short gamma,
+			float rotate,
+			bool scale) const
+	{
+		float x = 0.f;
+		float y = 0.f;
+
+		if(align & AlignLeft) {
+			x = rect.left() + size().width() / 2.f;
+		} else if (align & AlignRight) {
+			x = rect.right() - size().width() / 2.f;
+		} else if (align & AlignHorizontalCenter) {
+			x = rect.hcenter();
+		}
+
+		if(align & AlignTop) {
+			y = rect.top() - size().height() / 2.f;
+		} else if (align & AlignBottom) {
+			y = rect.bottom() + size().height() / 2.f;
+		} else if (align & AlignVerticalCenter) {
+			y = rect.vcenter();
+		}
+
+		AbstractWindow::shaders->widget_triangle_program()->use();
+
+		glVertexAttrib4fv(AttributeColor, Color(color).data());
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+
+		glBindVertexArray(vao_);
+		glDrawElements(GL_TRIANGLES, elements_,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+	}
+
 	void VectorIcon::Draw(float x, float y, const Color& color, short gamma) const
 	{
 		AbstractWindow::shaders->widget_triangle_program()->use();

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_POINT_HPP_
-#define _BLENDINT_POINT_HPP_
+#pragma once
 
 namespace BlendInt {
 
@@ -35,24 +34,19 @@ namespace BlendInt {
 	{
 	public:
 
-		Point ()
-				: x_(0), y_(0)
-		{
-		}
+		inline Point ()
+		: x_(0), y_(0)
+		{ }
 
-		Point (int x, int y)
-				: x_(x), y_(y)
-		{
+		inline Point (int x, int y)
+		: x_(x), y_(y)
+		{ }
 
-		}
-
-		Point (const Point& orig)
+		inline Point (const Point& orig)
 		: x_(orig.x_), y_(orig.y_)
-		{
+		{ }
 
-		}
-
-		Point& operator = (const Point& orig)
+		inline Point& operator = (const Point& orig)
 		{
 			x_ = orig.x_;
 			y_ = orig.y_;
@@ -60,28 +54,28 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void reset (int x = 0, int y = 0)
+		inline void reset (int x = 0, int y = 0)
 		{
 			x_ = x;
 			y_ = y;
 		}
 
-		int x (void) const
+		inline int x (void) const
 		{
 			return x_;
 		}
 
-		void set_x (int x)
+		inline void set_x (int x)
 		{
 			x_ = x;
 		}
 
-		int y (void) const
+		inline int y (void) const
 		{
 			return y_;
 		}
 
-		void set_y (int y)
+		inline void set_y (int y)
 		{
 			y_ = y;
 		}
@@ -118,5 +112,3 @@ namespace BlendInt {
 	}
 
 }
-
-#endif /* _BLENDINT_POINT_HPP_ */

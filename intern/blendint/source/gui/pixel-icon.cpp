@@ -185,6 +185,49 @@ namespace BlendInt {
 		}
 	}
 
+	void PixelIcon::DrawInRect (const Rect& rect,
+			int align,
+			uint32_t color,
+			short gamma,
+			float rotate,
+			bool scale) const
+	{
+		if(texture_) {
+
+			float x = 0.f;
+			float y = 0.f;
+
+			if(align & AlignLeft) {
+				x = rect.left() + size().width() / 2.f;
+			} else if (align & AlignRight) {
+				x = rect.right() - size().width() / 2.f;
+			} else if (align & AlignHorizontalCenter) {
+				x = rect.hcenter();
+			}
+
+			if(align & AlignTop) {
+				y = rect.top() - size().height() / 2.f;
+			} else if (align & AlignBottom) {
+				y = rect.bottom() + size().height() / 2.f;
+			} else if (align & AlignVerticalCenter) {
+				y = rect.vcenter();
+			}
+
+			AbstractWindow::shaders->widget_image_program()->use();
+
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+
+			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+
+			texture_->bind();
+			glBindVertexArray(vao_);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		}
+	}
+
 	void PixelIcon::PerformSizeUpdate(const Size& size)
 	{
 		// Pixel Icon cannot resized
