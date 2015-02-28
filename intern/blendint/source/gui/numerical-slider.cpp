@@ -262,13 +262,20 @@ namespace BlendInt {
 
 		GLSLProgram::reset();
 
-		float icon_x = AbstractWindow::icons->num()->size().width();
-
-		float icon_y = size().height() / 2.f;
-		AbstractWindow::icons->num()->Draw(icon_x, icon_y, 180.f, 1.f, Color(0x0F0F0FFF));
+		int icon_x = AbstractWindow::icons->num()->size().width();
+		int icon_y = size().height() / 2;
+		AbstractWindow::icons->num()->Draw(icon_x,
+				icon_y,
+				Color(0x0F0F0FFF).data(),
+				0,
+				180.f);
 
 		icon_x = size().width() - AbstractWindow::icons->num()->size().width();
-		AbstractWindow::icons->num()->Draw(icon_x, icon_y, 0.f, 1.f, Color(0x0F0F0FFF));
+		AbstractWindow::icons->num()->Draw(icon_x,
+				icon_y,
+				Color(0x0F0F0FFF).data(),
+				0,
+				0.f);
 
 		//int last_text = 0;
 		if(title_.size()) {

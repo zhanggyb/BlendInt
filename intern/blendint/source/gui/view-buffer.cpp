@@ -105,16 +105,12 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void ViewBuffer::Draw () const
+	void ViewBuffer::Draw (int x, int y, const float* color_ptr, short gamma,
+	        float rotate, float scale_x, float scale_y) const
 	{
 		texture_.bind();
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	}
-
-	void ViewBuffer::Draw (float x, float y) const
-	{
-
 	}
 
 	void ViewBuffer::DrawInRect (const Rect& rect, int align, const float* color_ptr,

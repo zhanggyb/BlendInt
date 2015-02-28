@@ -31,11 +31,12 @@ namespace BlendInt {
 	{
 	public:
 
-		AbstractIcon (int width, int height);
+		inline AbstractIcon (int width, int height)
+		: AbstractForm(width, height)
+		{}
 
-		virtual ~AbstractIcon ();
-
-		virtual void Draw (float x, float y, short gamma = 0) const = 0;
+		virtual ~AbstractIcon ()
+		{}
 
 	};
 

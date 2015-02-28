@@ -50,7 +50,6 @@ namespace BlendInt {
 		Orientation shadedir =
 						size.width() < size.height() ?
 										Horizontal : Vertical;
-		const Color& color = AbstractWindow::theme->scroll().item;
 		short shadetop = AbstractWindow::theme->scroll().shadetop;
 		short shadedown = AbstractWindow::theme->scroll().shadedown;
 
@@ -74,7 +73,6 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		const Color& color = AbstractWindow::theme->scroll().item;
 		short shadetop = AbstractWindow::theme->scroll().shadetop;
 		short shadedown = AbstractWindow::theme->scroll().shadedown;
 
@@ -114,12 +112,8 @@ namespace BlendInt {
 		buffer_.reset();
 	}
 
-	void SlideIcon::Draw (float x, float y) const
-	{
-		Draw (x, y, 0);
-	}
-
-	void SlideIcon::Draw (float x, float y, short gamma) const
+	void SlideIcon::Draw (int x, int y, const float* color_ptr, short gamma,
+	        float rotate, float scale_x, float scale_y) const
 	{
 		AbstractWindow::shaders->widget_simple_triangle_program()->use();
 
@@ -138,9 +132,6 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 	}
 
 	void SlideIcon::InitializeSliderIcon ()
@@ -150,7 +141,6 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		const Color& color = AbstractWindow::theme->scroll().item;
 		short shadetop = AbstractWindow::theme->scroll().shadetop;
 		short shadedown = AbstractWindow::theme->scroll().shadedown;
 

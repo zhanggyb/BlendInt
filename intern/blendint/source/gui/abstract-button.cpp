@@ -220,47 +220,24 @@ namespace BlendInt {
 	
 	void AbstractButton::DrawIconText()
 	{
-		int w = size().width() - pixel_size(kPadding.hsum());
-		int h = size().height() - pixel_size(kPadding.vsum());
-		int x = pixel_size(kPadding.left());
-		int y = pixel_size(kPadding.bottom());
+		Rect rect(pixel_size(kPadding.left()),
+				pixel_size(kPadding.bottom()),
+				size().width() - pixel_size(kPadding.hsum()),
+				size().height() - pixel_size(kPadding.vsum()));
 
 		if(icon_) {
-			if(icon_->size().height() <= h) {
-
-				if(icon_->size().width() <= w) {
-
-					icon_->DrawInRect(Rect(x, y, w, h), AlignLeft | AlignVerticalCenter);
-					x += icon_->size().width();
-					x += kIconTextSpace;
-					w -= icon_->size().width();
-					w -= kIconTextSpace;
+			if(icon_->size().height() <= rect.height()) {
+				if(icon_->size().width() <= rect.width()) {
+					icon_->DrawInRect(rect, AlignLeft | AlignVerticalCenter);
+					rect.cut_left(icon_->size().width() + kIconTextSpace);
 				}
-
 			}
 		}
 
 		if (text_) {
-
-			if(text_->size().height() <= h) {
-
-				y = (size().height() - text_->font().height()) / 2 - text_->font().descender();
-
-				// A workaround for Adobe Source Han Sans
-				int diff = text_->font().ascender() - text_->font().descender();
-				if(diff < text_->font().height()) {
-					y += (text_->font().height() - diff - 1) / 2;
-				}
-
-				if(text_->size().width() < w) {
-					x += (w - text_->size().width()) / 2;
-					text_->Draw(x, y);
-				} else {
-					text_->DrawWithin(x, y, w);
-				}
-
+			if(text_->size().height() <= rect.height()) {
+				text_->DrawInRect(rect, AlignHorizontalCenter | AlignJustify | AlignBaseline);
 			}
-
 		}
 	}
 

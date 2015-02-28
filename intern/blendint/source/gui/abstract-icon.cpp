@@ -25,14 +25,5 @@
 
 namespace BlendInt {
 
-	AbstractIcon::AbstractIcon (int width, int height)
-	: AbstractForm()
-	{
-		set_size(width, height);
-	}
-
-	AbstractIcon::~AbstractIcon ()
-	{
-	}
 
 }

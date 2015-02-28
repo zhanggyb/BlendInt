@@ -64,9 +64,13 @@ namespace BlendInt {
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
-		virtual void Draw (float x, float y) const;
-
-		virtual void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = Color(0x1A1A1A20).data(),
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,
@@ -74,10 +78,6 @@ namespace BlendInt {
 				short gamma = 0,
 				float rotate = 0.f,
 				bool scale = false) const;
-
-		void Draw (float x, float y, const Color& color, short gamma = 0) const;
-
-		void Draw (float x, float y, float angle, float scale, const Color& color, short gamma = 0) const;
 
 	protected:
 

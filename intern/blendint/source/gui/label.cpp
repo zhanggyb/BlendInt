@@ -173,13 +173,14 @@ namespace BlendInt {
 
 		if(text_) {
 
-			int w = size().width() - pixel_size(kPadding.hsum());
-			int h = size().height() - pixel_size(kPadding.vsum());
-			int x = pixel_size(kPadding.left());
-			int y = pixel_size(kPadding.bottom());
+			Rect rect(pixel_size(kPadding.left()),
+					pixel_size(kPadding.bottom()),
+					size().width() - pixel_size(kPadding.hsum()),
+					size().height() - pixel_size(kPadding.vsum()));
 
-			if(text_->size().height() <= h) {
-				text_->DrawInRect(Rect(x, y, w, h), alignment_ | AlignJustify | AlignBaseline, Color(foreground_).data());
+			if(text_->size().height() <= rect.height()) {
+				text_->DrawInRect(rect, alignment_ | AlignJustify | AlignBaseline,
+						Color(foreground_).data());
 			}
 
 		}

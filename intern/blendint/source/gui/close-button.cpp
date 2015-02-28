@@ -176,10 +176,10 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		float x = size().width() / 2.f;
-		float y = size().height() / 2.f;
+		int x = size().width() / 2;
+		int y = size().height() / 2;
 
-		AbstractWindow::icons->cross()->Draw(x, y, Color(0x0F0F0FFF));
+		AbstractWindow::icons->cross()->Draw(x, y, Color(0x0F0F0FFF).data());
 
 		return Finish;
 	}

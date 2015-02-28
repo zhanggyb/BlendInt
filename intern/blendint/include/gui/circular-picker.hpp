@@ -47,10 +47,13 @@ namespace BlendInt {
 
 		void Resize (unsigned int radius);
 
-		/**
-		 * @brief Draw the icon
-		 */
-		virtual void Draw (float x, float y) const;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = Color(Color::White).data(),
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 	protected:
 

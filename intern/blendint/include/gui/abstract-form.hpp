@@ -85,7 +85,13 @@ namespace BlendInt {
 			return size_;
 		}
 
-		virtual void Draw (float x, float y) const = 0;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = Color(Color::Black).data(),
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const = 0;
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,

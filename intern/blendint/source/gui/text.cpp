@@ -173,9 +173,24 @@ namespace BlendInt {
  		// Do nothing, this form does not allow resize
  	}
 
- 	void Text::Draw (float x, float y) const
+ 	void Text::Draw (int x, int y, const float* color_ptr, short gamma,
+ 	        float rotate, float scale_x, float scale_y) const
  	{
- 		Draw(x, y, (short)0);
+		AbstractWindow::shaders->widget_text_program()->use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		font_.bind_texture();
+
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color_ptr);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
+
+		glBindVertexArray(vao_);
+		size_t str_len = text_.length();
+		for(size_t i = 0; i < str_len; i++) {
+			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
+		}
  	}
 
  	void Text::DrawInRect (const Rect& rect,
@@ -187,8 +202,8 @@ namespace BlendInt {
  	{
 		if(rect.is_zero()) return;
 
-		int x = 0;
-		int y = 0;
+		int x = rect.left();
+		int y = rect.bottom();
 
 		if(align & AlignLeft) {
 			x = rect.left();
@@ -196,8 +211,6 @@ namespace BlendInt {
 			x = rect.right() - size().width();
 		} else if (align & AlignHorizontalCenter) {
 			x = rect.hcenter() - size().width() / 2;
-		} else if (align & AlignJustify) {	// special flag for text
-			x = rect.left();
 		}
 
 		if(align & AlignTop) {
@@ -207,13 +220,13 @@ namespace BlendInt {
 		} else if (align & AlignVerticalCenter) {
 			y = rect.vcenter() - size().height() / 2;
 		} else if (align & AlignBaseline) {
-			 y = (rect.height() - font_.height()) / 2 - font_.descender();
+			y = y + (rect.height() - font_.height()) / 2 - font_.descender();
 
-			 // A workaround for Adobe Source Han Sans
-			 int diff = font_.ascender() - font_.descender();
-			 if(diff < font_.height()) {
-				 y += (font_.height() - diff - 1) / 2;
-			 }
+			// A workaround for Adobe Source Han Sans
+			int diff = font_.ascender() - font_.descender();
+			if(diff < font_.height()) {
+				y += (font_.height() - diff - 1) / 2;
+			}
 		}
 
 		AbstractWindow::shaders->widget_text_program()->use();
@@ -260,40 +273,14 @@ namespace BlendInt {
 		}
  	}
 
- 	void Text::Draw (float x, float y, short gamma) const
- 	{
- 		Color color(0x000000FF);
-
- 		Draw(x, y, color, gamma);
- 	}
-
- 	void Text::Draw (float x, float y, const Color& color, short gamma) const
- 	{
-		AbstractWindow::shaders->widget_text_program()->use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		font_.bind_texture();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
-
-		glBindVertexArray(vao_);
-		size_t str_len = text_.length();
-		for(size_t i = 0; i < str_len; i++) {
-			glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
-		}
- 	}
-
- 	void Text::Draw (float x, float y, size_t length, size_t start,
+ 	void Text::Draw (int x, int y, size_t length, size_t start,
  	        short gamma) const
  	{
  		Color color(0x000000FF);
  		Draw(x, y, length, start, color, gamma);
  	}
 
- 	void Text::Draw (float x, float y, size_t length, size_t start,
+ 	void Text::Draw (int x, int y, size_t length, size_t start,
  	        const Color& color, short gamma) const
  	{
 		AbstractWindow::shaders->widget_text_program()->use();
@@ -314,13 +301,13 @@ namespace BlendInt {
 		}
  	}
 
-	void Text::DrawWithin (float x, float y, int width, short gamma) const
+	void Text::DrawWithin (int x, int y, int width, short gamma) const
 	{
  		Color color(0x000000FF);
  		DrawWithin(x, y, width, color, gamma);
 	}
 
-	void Text::DrawWithin (float x, float y, int width, const Color& color,
+	void Text::DrawWithin (int x, int y, int width, const Color& color,
 	        short gamma) const
 	{
 		if(width <= 0) return;
@@ -369,7 +356,7 @@ namespace BlendInt {
 		}
 	}
 
-    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, const Color &color, short gamma) const
+    int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, const Color &color, short gamma) const
     {
         int retval = 0;
         
@@ -451,7 +438,7 @@ namespace BlendInt {
         return retval;
     }
 
-    int Text::DrawWithCursor(float x, float y, size_t index, size_t start, int width, short gamma) const
+    int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, short gamma) const
     {
         Color color(0x000000FF);
 

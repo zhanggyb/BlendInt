@@ -51,12 +51,13 @@ namespace BlendInt {
 		 */
 		virtual ~SlideIcon ();
 
-		virtual void Draw (float x, float y) const;
-
-		/**
-		 * @brief Draw the icon
-		 */
-		void Draw (float x, float y, short gamma) const;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = Color(Color::Black).data(),
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 	protected:
 

@@ -40,9 +40,13 @@ namespace BlendInt {
 
 		virtual ~ViewBuffer ();
 
-		void Draw () const;
-
-		virtual void Draw (float x, float y) const;
+		virtual void Draw (int x = 0,
+				int y = 0,
+				const float* color_ptr = 0,
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,

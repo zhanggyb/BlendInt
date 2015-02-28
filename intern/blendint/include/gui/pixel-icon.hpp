@@ -48,9 +48,13 @@ namespace BlendInt {
 
 		void SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
-		virtual void Draw (float x, float y) const;
-
-		virtual void Draw (float x, float y, short gamma = 0) const;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = 0,
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,

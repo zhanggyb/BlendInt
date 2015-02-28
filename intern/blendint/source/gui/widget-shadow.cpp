@@ -53,7 +53,13 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void WidgetShadow::Draw(float x, float y) const
+	void WidgetShadow::Draw (int x,
+			int y,
+			const float* color_ptr,
+			short gamma,
+			float rotate,
+			float scale_x,
+			float scale_y) const
 	{
 		AbstractWindow::shaders->widget_shadow_program()->use();
 

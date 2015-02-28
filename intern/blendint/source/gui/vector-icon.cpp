@@ -162,16 +162,25 @@ namespace BlendInt {
 		elements_ = indeces_size * 3;
 	}
 
-	void VectorIcon::Draw (float x, float y) const
+	void VectorIcon::Draw (int x, int y, const float* color_ptr, short gamma,
+	        float rotate, float scale_x, float scale_y) const
 	{
-		Draw(x, y, 0);
-	}
+		AbstractWindow::shaders->widget_triangle_program()->use();
 
-	void VectorIcon::Draw(float x, float y, short gamma) const
-	{
-		Color color (0.1f, 0.1f, 0.1f, 0.125f);
+		glVertexAttrib4fv(AttributeColor, color_ptr);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
+		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		Draw(x, y, color, gamma);
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), rotate);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale_x, scale_y);
+
+		glBindVertexArray(vao_);
+		glDrawElements(GL_TRIANGLES, elements_,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
+		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 	}
 
 	void VectorIcon::DrawInRect (const Rect& rect,
@@ -181,21 +190,21 @@ namespace BlendInt {
 			float rotate,
 			bool scale) const
 	{
-		float x = 0.f;
-		float y = 0.f;
+		int x = rect.left();
+		int y = rect.bottom();
 
 		if(align & AlignLeft) {
-			x = rect.left() + size().width() / 2.f;
+			x = rect.left() + size().width() / 2;
 		} else if (align & AlignRight) {
-			x = rect.right() - size().width() / 2.f;
+			x = rect.right() - size().width() / 2;
 		} else if (align & AlignHorizontalCenter) {
 			x = rect.hcenter();
 		}
 
 		if(align & AlignTop) {
-			y = rect.top() - size().height() / 2.f;
+			y = rect.top() - size().height() / 2;
 		} else if (align & AlignBottom) {
-			y = rect.bottom() + size().height() / 2.f;
+			y = rect.bottom() + size().height() / 2;
 		} else if (align & AlignVerticalCenter) {
 			y = rect.vcenter();
 		}
@@ -219,41 +228,6 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawElements(GL_TRIANGLES, elements_,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-	}
-
-	void VectorIcon::Draw(float x, float y, const Color& color, short gamma) const
-	{
-		AbstractWindow::shaders->widget_triangle_program()->use();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		glVertexAttrib4fv(AttributeColor, color.data());
-
-		glBindVertexArray(vao_);
-		glDrawElements(GL_TRIANGLES, elements_,
-						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-	}
-
-	void VectorIcon::Draw(float x, float y, float angle, float scale, const Color& color, short gamma) const
-	{
-		AbstractWindow::shaders->widget_triangle_program()->use();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), gamma);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-
-		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), angle);
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), scale, scale);
-		glVertexAttrib4fv(AttributeColor, color.data());
-
-		glBindVertexArray(vao_);
-		glDrawElements(GL_TRIANGLES, elements_,
-						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-		glUniform1f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f, 1.f);
 	}
 
 	void VectorIcon::PerformSizeUpdate(const Size& size)

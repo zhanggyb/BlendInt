@@ -163,22 +163,19 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void PixelIcon::Draw (float x, float y) const
+	void PixelIcon::Draw (int x, int y, const float* color_ptr, short gamma,
+	        float rotate, float scale_x, float scale_y) const
 	{
-		Draw (x, y, 0);
-	}
-
-	void PixelIcon::Draw (float x, float y, short gamma) const
-	{
-		AbstractWindow::shaders->widget_image_program()->use();
-
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
-
-		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-
 		if(texture_) {
+
+			AbstractWindow::shaders->widget_image_program()->use();
+
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+
+			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+
 			texture_->bind();
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -194,21 +191,21 @@ namespace BlendInt {
 	{
 		if(texture_) {
 
-			float x = 0.f;
-			float y = 0.f;
+			int x = rect.left();
+			int y = rect.bottom();
 
 			if(align & AlignLeft) {
-				x = rect.left() + size().width() / 2.f;
+				x = rect.left() + size().width() / 2;
 			} else if (align & AlignRight) {
-				x = rect.right() - size().width() / 2.f;
+				x = rect.right() - size().width() / 2;
 			} else if (align & AlignHorizontalCenter) {
 				x = rect.hcenter();
 			}
 
 			if(align & AlignTop) {
-				y = rect.top() - size().height() / 2.f;
+				y = rect.top() - size().height() / 2;
 			} else if (align & AlignBottom) {
-				y = rect.bottom() + size().height() / 2.f;
+				y = rect.bottom() + size().height() / 2;
 			} else if (align & AlignVerticalCenter) {
 				y = rect.vcenter();
 			}

@@ -122,7 +122,14 @@ namespace BlendInt {
 
 				if(icon()->size().width() <= w) {
 
-					AbstractWindow::icons->num()->Draw(x + icon()->size().width() / 2, y, rotate, 1.5f, Color(0x0F0F0FFF));
+					AbstractWindow::icons->num()->Draw(x + icon()->size().width() / 2,
+							y,
+							Color(0x0F0F0FFF).data(),
+							0,
+							rotate,
+							1.5f,
+							1.5f
+							);
 
 					x += icon()->size().width();
 					x += kIconTextSpace;

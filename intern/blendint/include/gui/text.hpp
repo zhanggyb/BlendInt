@@ -69,7 +69,13 @@ namespace BlendInt {
 		 */
 		size_t GetTextWidth (size_t length, size_t start, bool count_kerning) const;
 
-		virtual void Draw (float x, float y) const;
+		virtual void Draw (int x,
+				int y,
+				const float* color_ptr = Color(Color::Black).data(),
+				short gamma = 0,
+				float rotate = 0.f,
+				float scale_x = 1.f,
+				float scale_y = 1.f) const;
 
 		virtual void DrawInRect (const Rect& rect,
 				int align,
@@ -78,21 +84,17 @@ namespace BlendInt {
 				float rotate = 0.f,
 				bool scale = false) const;
 
-		void Draw (float x, float y, short gamma) const;
+		void Draw (int x, int y, size_t length, size_t start = 0, short gamma = 0) const;
 
-		void Draw (float x, float y, const Color& color, short gamma = 0) const;
+		void Draw (int x, int y, size_t length, size_t start, const Color& color, short gamma = 0) const;
 
-		void Draw (float x, float y, size_t length, size_t start = 0, short gamma = 0) const;
+		void DrawWithin (int x, int y, int width, short gamma = 0) const;
 
-		void Draw (float x, float y, size_t length, size_t start, const Color& color, short gamma = 0) const;
-
-		void DrawWithin (float x, float y, int width, short gamma = 0) const;
-
-		void DrawWithin (float x, float y, int width, const Color& color, short gamma = 0) const;
+		void DrawWithin (int x, int y, int width, const Color& color, short gamma = 0) const;
         
-        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, const Color& color, short gamma = 0) const;
+        int DrawWithCursor (int x, int y, size_t cursor_index, size_t start, int width, const Color& color, short gamma = 0) const;
         
-        int DrawWithCursor (float x, float y, size_t cursor_index, size_t start, int width, short gamma = 0) const;
+        int DrawWithCursor (int x, int y, size_t cursor_index, size_t start, int width, short gamma = 0) const;
 
 		/**
 		 * @brief Ascender in this text
