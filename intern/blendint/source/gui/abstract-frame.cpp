@@ -254,14 +254,14 @@ namespace BlendInt {
 				rect.set_size(size());
 			}
 
-			bool hovered = rect.contains(context->GetCursorPosition());
+			bool hovered = rect.contains(context->GetGlobalCursorPosition());
 
 			if(hovered) {
 
 				offset = superview->GetOffset();
 				local.reset(
-						context->GetCursorPosition().x() - rect.x() - offset.x(),
-						context->GetCursorPosition().y() - rect.y() - offset.y());
+						context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
+						context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
 
 				if(hovered_widget->Contain(local)) {
 					hovered_widget = DispatchHoverEventDeeper(
@@ -321,10 +321,10 @@ namespace BlendInt {
 
 					offset = superview->GetOffset();
 					local.reset(
-							context->GetCursorPosition().x() - rect.x() - offset.x(),
-							context->GetCursorPosition().y() - rect.y() - offset.y());
+							context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
+							context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
 
-					if(rect.contains(context->GetCursorPosition())) break;
+					if(rect.contains(context->GetGlobalCursorPosition())) break;
 
 					superview = superview->superview();
 				}
@@ -357,8 +357,8 @@ namespace BlendInt {
 
 			offset = GetOffset();
 			local.reset(
-					context->GetCursorPosition().x() - position().x() - offset.x(),
-					context->GetCursorPosition().y() - position().y() - offset.y());
+					context->GetGlobalCursorPosition().x() - position().x() - offset.x(),
+					context->GetGlobalCursorPosition().y() - position().y() - offset.y());
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view())
 			{

@@ -21,10 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LISTVIEW_HPP_
-#define _BLENDINT_GUI_LISTVIEW_HPP_
+#pragma once
 
-#include <opengl/glarraybuffer.hpp>
+#include <opengl/gl-buffer.hpp>
 #include <gui/abstract-scrollable.hpp>
 #include <gui/abstract-item-view.hpp>
 
@@ -82,11 +81,9 @@ namespace BlendInt {
 
 		// 0 for inner buffer
 		// 1 for row_ background
-		GLuint vaos_[2];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<GLArrayBuffer> row_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 		RefPtr<AbstractItemModel> model_;
 
@@ -94,5 +91,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_LISTVIEW_HPP_ */

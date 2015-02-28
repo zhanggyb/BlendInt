@@ -227,24 +227,10 @@ namespace BlendInt {
 //			        GetHalfOutlineVertices(round_type()) * 2);
 //		}
 
-		//RefPtr<VertexIcon> icon = Icons::instance->icon_menu();
-
-		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
-		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
-		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
-
-		//icon->Draw(mvp * translate * rotate * scale);
-
-		// draw icon:
-
-		int x = pixel_size(kPadding.left());
-		int y = pixel_size(kPadding.bottom());
-		int w = size().width() - pixel_size(kPadding.hsum());
-		int h = size().height() - pixel_size(kPadding.vsum());
-
-		AbstractWindow::icons->menu()->DrawInRect(Rect(x, y, w, h),
-				AlignRight | AlignVerticalCenter,
-				Color(0xEFEFEFFF).data());
+		Rect rect(pixel_size(kPadding.left()),
+				pixel_size(kPadding.bottom()),
+				size().width() - pixel_size(kPadding.hsum()),
+				size().height() - pixel_size(kPadding.vsum()));
 
 		// draw model item
 		if(model_) {
@@ -255,11 +241,16 @@ namespace BlendInt {
 			ModelIndex index = model_->GetIndex(0, 0, root);
 
 			if(index.valid()) {
-				Point pos(pixel_size(kPadding.hsum()), pixel_size(kPadding.vsum()));
-				index.GetData()->Draw(pos.x(), pos.y());
+				index.GetData()->DrawInRect(rect,
+						AlignLeft | AlignJustify | AlignBaseline,
+						AbstractWindow::theme->menu().text_sel.data());
 			}
 
 		}
+
+		AbstractWindow::icons->menu()->DrawInRect(rect,
+				AlignRight | AlignVerticalCenter,
+				Color(0xEFEFEFFF).data());
 
 		return Finish;
 	}

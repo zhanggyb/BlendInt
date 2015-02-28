@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		virtual const String& GetTextInput () const;
 
-		virtual const Point& GetCursorPosition () const;
+		virtual const Point& GetGlobalCursorPosition () const;
 
 		Cpp::EventRef<Window*, const Size&> resized ()
 		{

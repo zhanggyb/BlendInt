@@ -119,7 +119,7 @@ namespace BlendInt {
 
 		virtual const String& GetTextInput () const = 0;
 
-		virtual const Point& GetCursorPosition () const = 0;
+		virtual const Point& GetGlobalCursorPosition () const = 0;
 
 		Point GetAbsolutePosition (const AbstractWidget* widget);
 

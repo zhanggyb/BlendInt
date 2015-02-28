@@ -182,7 +182,7 @@ namespace BlendInt {
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if(GetNewValue(context->GetCursorPosition(), &new_value)) {
+			if(GetNewValue(context->GetGlobalCursorPosition(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				RequestRedraw();
@@ -191,7 +191,7 @@ namespace BlendInt {
 			return Finish;
 
 		} else {
-			if(CursorOnSlideIcon(context->GetCursorPosition())) {
+			if(CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
 
 				//m_slide_icon.set_highlight(true);
 
@@ -209,10 +209,10 @@ namespace BlendInt {
 
 	Response Slider::PerformMousePress (AbstractWindow* context)
 	{
-		if(CursorOnSlideIcon(context->GetCursorPosition())) {
+		if(CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
 			m_pressed = true;
 			m_last_value = value();
-			m_last_cursor = context->GetCursorPosition();
+			m_last_cursor = context->GetGlobalCursorPosition();
 			fire_slider_pressed();
 
 			return Finish;
@@ -226,7 +226,7 @@ namespace BlendInt {
 		if(m_pressed) {
 			m_pressed = false;
 
-			if(CursorOnSlideIcon(context->GetCursorPosition())) {
+			if(CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
 				fire_slider_released();
 			}
 

@@ -43,15 +43,227 @@ namespace BlendInt {
 	}
 
 	bool AbstractListModel::InsertColumns (int column, int count,
-			const ModelIndex& parent)
+	        const ModelIndex& parent)
 	{
-		return false;
+		if(!parent.valid()) return false;
+
+		assert(count > 0);
+		assert(column >= 0);
+
+		ModelNode* node = get_index_node(parent);
+
+		ModelNode* first = 0;
+		ModelNode* last = 0;
+
+		if(node->child == 0) {	// if the node has no child, create and append 1 row with count columns
+
+			first = new ModelNode;
+			last = first;
+			for(int i = 1; i < count; i++) {
+				last->right = new ModelNode;
+				last->right->left = last;
+				last = last->right;
+			}
+			node->child = first;
+			first->parent = node;
+
+		} else {
+
+			node = node->child;
+			ModelNode* next = 0;
+
+			while(node) {
+
+				next = node->down;
+
+				ModelNode* tmp = node;
+
+				// find where to insert the new columns
+				while(tmp->right && (column > 0)) {
+					tmp = tmp->right;
+					column--;
+				}
+
+				first = new ModelNode;
+				last = first;
+				for(int i = 1; i < count; i++) {
+					last->right = new ModelNode;
+					last->right->left = last;
+					last = last->right;
+				}
+
+				if(column == 0) {	// insert
+
+					if(tmp->left == 0) {	// insert 0
+
+						if(tmp->parent) {
+							tmp->parent->child = first;
+							first->parent = tmp->parent;
+							tmp->parent = 0;
+						}
+
+						if(tmp->up) {
+							tmp->up->down = first;
+							first->up = tmp->up;
+							tmp->up = 0;
+						}
+
+						if(tmp->down) {
+							tmp->down->up = first;
+							first->down = tmp->down;
+							tmp->down = 0;
+						}
+
+						last->right = tmp;
+						tmp->left = last;
+
+					} else {
+
+						assert(tmp->up == 0);
+						assert(tmp->down == 0);
+
+						tmp->left->right = first;
+						first->left = tmp->left;
+						last->right = tmp;
+						tmp->left = last;
+
+					}
+
+				} else {	// append
+
+					tmp->right = first;
+					first->left = tmp;
+
+				}
+
+				node = next;
+			}
+
+		}
+
+		return true;
 	}
 
 	bool AbstractListModel::RemoveColumns (int column, int count,
-			const ModelIndex& parent)
+	        const ModelIndex& parent)
 	{
-		return false;
+		if(!parent.valid()) return false;
+
+		assert(count > 0);
+		assert(column >= 0);
+
+		ModelNode* node = get_index_node(parent);
+		if(node->child == 0) return false;
+
+		node = node->child;
+
+		ModelNode* up_record = 0;
+		ModelNode* down_record = 0;
+
+		while(node) {
+
+			ModelNode* tmp = node;	// the tmp node iterate in this row
+			up_record = node->up;
+			down_record = node->down;
+
+			while (tmp->right && (column > 0)) {
+				tmp = tmp->right;
+				column--;
+			}
+
+			if(column == 0) {
+
+				ModelNode* first = tmp->left;
+				ModelNode* last = tmp;
+
+				for(int i = 0; i < count; i++) {
+					last = tmp->right;
+
+					// destroy tmp:
+
+					if(tmp->up) {
+						tmp->up->down = 0;
+					}
+					if(tmp->left) {
+						tmp->left->right = 0;
+					}
+					if(tmp->right) {
+						tmp->right->left = 0;
+					}
+					if(tmp->down) {
+						tmp->down->up = 0;
+					}
+
+					delete tmp;
+
+					tmp = last;
+					if(tmp == 0) break;
+				}
+
+				tmp = get_index_node(parent);
+
+				if(up_record == 0) {	// the first child
+
+					if(first == 0) {
+
+						if(last == 0) {
+							tmp->child = 0;
+						} else {
+							tmp->child = last;
+							last->parent = tmp;
+							last->left = 0;
+							last->up = 0;
+						}
+
+						up_record = last;
+
+					} else {
+
+						first->right = last;
+						if(last) {
+							last->left = first;
+						}
+
+						up_record = first;
+					}
+
+				} else {
+
+					if(first == 0) {
+
+						if(last == 0) {
+							// never reach this
+						} else {
+							up_record->down = last;
+							last->up = up_record;
+							last->left = 0;
+						}
+
+						up_record = last;
+
+					} else {
+
+						first->right = last;
+						if(last) {
+							last->left = first;
+						}
+						up_record->down = first;
+						first->up = up_record;
+
+						up_record = first;
+
+					}
+
+				}
+
+			} else {	// no column in this model
+				return false;
+			}
+
+			node = down_record;
+		}
+
+		return true;
 	}
 
 	bool AbstractListModel::InsertRows (int row, int count,
@@ -76,13 +288,12 @@ namespace BlendInt {
 			last = last->down;
 		}
 
-		// if the node has no child, create and append count rows
-		if(node->child == 0) {
+		if(node->child == 0) {	// if the node has no child, create and append 1 column with count rows
 			node->child = first;
 			first->parent = node;
 		} else {
 			node = node->child;
-			// find wher to insert the new list
+			// find where to insert the new rows
 			while(node->down && (row > 0)) {
 				node = node->down;
 				row--;
@@ -256,41 +467,17 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractListModel::DestroyColumn (ModelNode* node)
-	{
-		assert(node);
-		assert(node->up == 0);
-
-		// TODO: check the child node and delete the column if the child exists
-
-		ModelNode* tmp = 0;
-		while (node) {
-
-			if(node->left) {
-				node->left->right = node->right;
-			}
-			if(node->right) {
-				node->right->left = node->left;
-			}
-
-			tmp = node->down;
-			delete node;
-			node = tmp;
-
-		}
-	}
-
 	void AbstractListModel::ClearAllChildNodes()
 	{
 		ModelNode* node = root_->child;
 
 		if(node) {
 
-			ModelNode* next_view = 0;
+			ModelNode* next = 0;
 			while(node){
-				next_view = node->down;
+				next = node->down;
 				DestroyRow(node);
-				node = next_view;
+				node = next;
 			}
 
 			root_->child = 0;

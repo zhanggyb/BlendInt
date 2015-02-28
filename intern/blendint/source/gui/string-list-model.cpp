@@ -42,15 +42,9 @@ namespace BlendInt {
 	{
 		ModelIndex root = GetRootIndex();
 		if(InsertRow(rows_, root)) {
-
 			RefPtr<Text> data(new Text(string));
 			ModelIndex index = GetIndex(rows_ - 1, 0, root);
-			if(index.valid()) {
-				index.SetData(data);
-			} else {
-				DBG_PRINT_MSG("Error: %s", "cannot set string data, invalid index returned");
-			}
-
+			set_index_data(index, data);
 		}
 	}
 
@@ -58,16 +52,10 @@ namespace BlendInt {
 	{
 		ModelIndex root = GetRootIndex();
 		if(InsertRow(row, root)) {
-
 			RefPtr<Text> data(new Text(string));
 			int valid_row = std::min(row, rows_ - 1);
 			ModelIndex index = GetIndex(valid_row, 0, root);
-			if(index.valid()) {
-				index.SetData(data);
-			} else {
-				DBG_PRINT_MSG("Error: %s", "cannot set string data, invalid index returned");
-			}
-
+			set_index_data(index, data);
 		}
 	}
 
@@ -79,6 +67,18 @@ namespace BlendInt {
 	int StringListModel::GetColumnCount (const ModelIndex& parent) const
 	{
 		return 1;
+	}
+
+	bool StringListModel::InsertColumns (int column, int count,
+	        const ModelIndex& parent)
+	{
+		return false;
+	}
+
+	bool StringListModel::RemoveColumns (int column, int count,
+	        const ModelIndex& parent)
+	{
+		return false;
 	}
 
 	bool StringListModel::InsertRows (int row, int count,

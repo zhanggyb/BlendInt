@@ -453,7 +453,7 @@ namespace BlendInt {
 
 	Response Workspace::PerformMouseHover(AbstractWindow* context)
 	{
-		if(Contain(context->GetCursorPosition())) {
+		if(Contain(context->GetGlobalCursorPosition())) {
 
 			Response response = Finish;
 			SetHoveredFrame(context);
@@ -525,11 +525,11 @@ namespace BlendInt {
 		AbstractFrame* original = hover_frame_;
 
 		if(hover_frame_ != nullptr) {
-			if(!hover_frame_->Contain(context->GetCursorPosition())) {
+			if(!hover_frame_->Contain(context->GetGlobalCursorPosition())) {
 
 				hover_frame_ = nullptr;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(context->GetCursorPosition())) {
+					if(p->Contain(context->GetGlobalCursorPosition())) {
 						hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -539,7 +539,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(context->GetCursorPosition())) {
+				if(p->Contain(context->GetGlobalCursorPosition())) {
 					hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}

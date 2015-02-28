@@ -35,10 +35,6 @@ namespace BlendInt {
 
 		virtual ~AbstractListModel ();
 
-		//virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
-
-		//virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
-
 		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
 
 		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
@@ -76,7 +72,7 @@ namespace BlendInt {
 
 	protected:
 
-		const ModelNode* root () const
+		inline const ModelNode* root () const
 		{
 			return root_;
 		}
@@ -86,8 +82,6 @@ namespace BlendInt {
 		static void DestroyChildNode (ModelNode* node);
 
 		static void DestroyRow (ModelNode * node);
-
-		static void DestroyColumn (ModelNode* node);
 
 		/**
 		 * @brief Clear and delete all child node from m_root->child

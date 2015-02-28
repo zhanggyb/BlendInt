@@ -70,6 +70,10 @@ namespace BlendInt {
         
 		virtual Response Draw (AbstractWindow* context) = 0;
 
+		virtual void PerformFocusOn (AbstractWindow* context);
+
+		virtual void PerformFocusOff (AbstractWindow* context);
+
 		virtual Response PerformKeyPress (AbstractWindow* context);
 
 		virtual Response PerformMousePress (AbstractWindow* context);
@@ -166,6 +170,8 @@ namespace BlendInt {
         int cursor_position_;
 
         unsigned int dialog_flags_;
+
+        bool focused_;
 
         boost::scoped_ptr<Cpp::Event<AbstractDialog*> > applied_;
         

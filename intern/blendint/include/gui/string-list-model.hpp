@@ -51,6 +51,10 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
 		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
 
 		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());

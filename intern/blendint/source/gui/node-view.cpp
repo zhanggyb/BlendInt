@@ -76,8 +76,7 @@ namespace BlendInt {
 
 	Size NodeView::GetPreferredSize () const
 	{
-		// if subs_count == 0
-		return Size(400, 300);
+		return Size(500, 400);
 	}
 
 	bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)

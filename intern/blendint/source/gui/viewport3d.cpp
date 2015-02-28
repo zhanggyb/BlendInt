@@ -110,8 +110,8 @@ namespace BlendInt {
 	{
 		m_button_down = context->GetMouseButton();
 
-		m_last_x = context->GetCursorPosition().x();
-		m_last_y = context->GetCursorPosition().y();
+		m_last_x = context->GetGlobalCursorPosition().x();
+		m_last_y = context->GetGlobalCursorPosition().y();
 
 		if (m_button_down == MouseButtonMiddle) {
 
@@ -171,20 +171,20 @@ namespace BlendInt {
 				if (context->GetModifiers() == ModifierShift) {
 
 					float dx = static_cast<float>(m_last_x
-					        - context->GetCursorPosition().x());
+					        - context->GetGlobalCursorPosition().x());
 					float dy = static_cast<float>(m_last_y
-					        - context->GetCursorPosition().y());
+					        - context->GetGlobalCursorPosition().y());
 					default_camera_->Pan(dx, dy);
 
 				} else if (context->GetModifiers() == ModifierControl) {
 
-					default_camera_->Zoom(m_last_y - context->GetCursorPosition().y());
+					default_camera_->Zoom(m_last_y - context->GetGlobalCursorPosition().y());
 
 				} else if (context->GetModifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
-					        - context->GetCursorPosition().x());
+					        - context->GetGlobalCursorPosition().x());
 					float dy = static_cast<float>(m_last_y
-					        - context->GetCursorPosition().y());
+					        - context->GetGlobalCursorPosition().y());
 					default_camera_->Orbit(dx, dy);
 				}
 

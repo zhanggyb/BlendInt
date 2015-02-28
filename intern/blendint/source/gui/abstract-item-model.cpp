@@ -93,16 +93,6 @@ namespace BlendInt {
 		}
 	}
 
-	bool ModelIndex::SetData (const RefPtr<AbstractForm>& data)
-	{
-		if(node_) {
-			node_->data = data;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	ModelIndex ModelIndex::GetRootIndex () const
 	{
 		ModelIndex retval;
@@ -303,12 +293,11 @@ namespace BlendInt {
 	bool AbstractItemModel::SetData (const ModelIndex& index,
 			const RefPtr<AbstractForm>& data)
 	{
-		if(index.valid()) {
-			index.node_->data = data;
-			return true;
-		} else {
-			return false;
-		}
+		return set_index_data(index, data);
 	}
 
+	BlendInt::Font AbstractItemModel::GetFont(const ModelIndex& parent) const
+	{
+		return BlendInt::Font();
+	}
 }

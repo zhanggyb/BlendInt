@@ -111,7 +111,6 @@ namespace BlendInt {
 			rotate = -90.f;
 		}
 
-
 		int w = size().width() - pixel_size(kPadding.hsum());
 		int h = size().height() - pixel_size(kPadding.vsum());
 		int x = pixel_size(kPadding.left());

@@ -291,7 +291,7 @@ namespace BlendInt {
 	{
 		if (context->GetMouseButton() == MouseButtonMiddle) {
 			moving_ = true;
-			cursor_point_ = context->GetCursorPosition();
+			cursor_point_ = context->GetGlobalCursorPosition();
 			last_offset_ = GetOffset();
 
 			return Finish;
@@ -314,8 +314,8 @@ namespace BlendInt {
 	{
 		if(moving_) {
 
-			int ox = context->GetCursorPosition().x() - cursor_point_.x();
-			int oy = context->GetCursorPosition().y() - cursor_point_.y();
+			int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
 
 			set_offset(last_offset_.x() + ox, last_offset_.y() + oy);
 

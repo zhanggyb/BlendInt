@@ -453,7 +453,7 @@ namespace BlendInt {
 	{
 		if(pressed_) return Finish;
 
-		if(Contain(context->GetCursorPosition())) {
+		if(Contain(context->GetGlobalCursorPosition())) {
 
 			cursor_range_ = InsideRectangle;
 

@@ -26,6 +26,7 @@
 #include <core/object.hpp>
 #include <core/string.hpp>
 
+#include <gui/font.hpp>
 #include <gui/abstract-form.hpp>
 
 namespace BlendInt {
@@ -85,8 +86,6 @@ namespace BlendInt {
 		RefPtr<AbstractForm> GetData () const;
 
 		const AbstractForm* GetRawData () const;
-
-		bool SetData (const RefPtr<AbstractForm>& data);
 
 		ModelIndex GetRootIndex () const;
 
@@ -189,7 +188,22 @@ namespace BlendInt {
 
 		virtual bool SetData (const ModelIndex& index, const RefPtr<AbstractForm>& data);
 
+		/**
+		 * @brief Get the font used to show string in this model
+		 */
+		virtual BlendInt::Font GetFont (const ModelIndex& parent = ModelIndex()) const;
+
 	protected:
+
+		static inline bool set_index_data (const ModelIndex& index, const RefPtr<AbstractForm>& data)
+		{
+			if(index.node_) {
+				index.node_->data = data;
+				return true;
+			} else {
+				return false;
+			}
+		}
 
 		static inline void set_index_node (ModelIndex& index, ModelNode* node)
 		{

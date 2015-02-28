@@ -578,7 +578,7 @@ namespace BlendInt {
 		if (text_->empty())
 			return 0;
 
-		Point local_position = context->GetCursorPosition()
+		Point local_position = context->GetGlobalCursorPosition()
 		        - context->active_frame()->GetAbsolutePosition(this);
 
 		int x = local_position.x() - pixel_size(kPadding.left());

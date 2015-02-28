@@ -272,11 +272,11 @@ namespace BlendInt {
 
 	Response ScrollBar::PerformMousePress (AbstractWindow* context)
 	{
-		Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
+		Point local_position = context->GetGlobalCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 
 		if (CursorOnSlideIcon(local_position)) {
 
-			m_cursor_origin = context->GetCursorPosition();
+			m_cursor_origin = context->GetGlobalCursorPosition();
 			m_last_value = value();
 			pressed_ = true;
 			fire_slider_pressed();
@@ -294,7 +294,7 @@ namespace BlendInt {
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if (GetNewValue(context->GetCursorPosition(), &new_value)) {
+			if (GetNewValue(context->GetGlobalCursorPosition(), &new_value)) {
 				set_value(new_value);
 				RequestRedraw();
 				fire_slider_moved_event(value());
@@ -302,7 +302,7 @@ namespace BlendInt {
 
 		} else {
 
-			//Point local_position = context->GetCursorPosition() - event.frame()->GetAbsolutePosition(this);
+			//Point local_position = context->GetGlobalCursorPosition() - event.frame()->GetAbsolutePosition(this);
 
 			/*
 			if (CursorOnSlideIcon(local_position)) {
@@ -325,7 +325,7 @@ namespace BlendInt {
 
 			pressed_ = false;
 
-			Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
+			Point local_position = context->GetGlobalCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 
 			RequestRedraw();
 

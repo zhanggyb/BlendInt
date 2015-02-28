@@ -220,7 +220,7 @@ namespace BlendInt {
 	Response SplitterHandle::PerformMousePress (AbstractWindow* context)
 	{
 		last_ = position();
-		cursor_ = context->GetCursorPosition();
+		cursor_ = context->GetGlobalCursorPosition();
 		pressed_ = true;
 
 		if(orientation_ == Horizontal) {
@@ -253,7 +253,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = context->GetCursorPosition().y() - cursor_.y();
+				int offset = context->GetGlobalCursorPosition().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -269,7 +269,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = context->GetCursorPosition().x() - cursor_.x();
+				int offset = context->GetGlobalCursorPosition().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 

@@ -33,7 +33,8 @@ namespace BlendInt {
       focused_widget_(0),
       hovered_widget_(0),
       cursor_position_(InsideRectangle),
-      dialog_flags_(flags & 0x0F)
+      dialog_flags_(flags & 0x0F),
+      focused_(false)
     {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
@@ -44,7 +45,8 @@ namespace BlendInt {
     focused_widget_(0),
     hovered_widget_(0),
     cursor_position_(InsideRectangle),
-    dialog_flags_(flags & 0x0F)
+    dialog_flags_(flags & 0x0F),
+    focused_(false)
     {
         applied_.reset(new Cpp::Event<AbstractDialog*>);
         canceled_.reset(new Cpp::Event<AbstractDialog*>);
@@ -61,6 +63,16 @@ namespace BlendInt {
 			hovered_widget_->destroyed().disconnectOne(this, &AbstractDialog::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
 		}
+    }
+
+    void AbstractDialog::PerformFocusOn (AbstractWindow* context)
+    {
+    	focused_ = true;
+    }
+
+    void AbstractDialog::PerformFocusOff (AbstractWindow* context)
+    {
+    	focused_ = false;
     }
 
 	Response AbstractDialog::PerformKeyPress (
@@ -89,10 +101,12 @@ namespace BlendInt {
 
 		if(cursor_position_ == InsideRectangle) {
 
+			bool focus_status = focused_;
 			last_position_ = position();
-			cursor_point_ = context->GetCursorPosition();
+			cursor_point_ = context->GetGlobalCursorPosition();
 
 			if(hovered_widget_) {
+
 
 				AbstractView* widget = 0;	// widget may be focused
 
@@ -110,7 +124,9 @@ namespace BlendInt {
 			}
 
 			if(!modal()) {
-				context->SetFocusedFrame(this);
+				if(focused_ == focus_status) {
+					context->SetFocusedFrame(this);
+				}
 			}
 
 			return Finish;
@@ -121,7 +137,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = context->GetCursorPosition();
+			cursor_point_ = context->GetGlobalCursorPosition();
 
 			context->SetFocusedFrame(this);
 
@@ -162,8 +178,8 @@ namespace BlendInt {
 
 		if(mouse_button_pressed()) {
 
-			int ox = context->GetCursorPosition().x() - cursor_point_.x();
-			int oy = context->GetCursorPosition().y() - cursor_point_.y();
+			int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -253,13 +269,13 @@ namespace BlendInt {
 		Rect valid_rect(position().x() - border, position().y() - border,
 			size().width() + 2 * border, size().height() + 2 * border);
 
-		if(valid_rect.contains(context->GetCursorPosition())) {
+		if(valid_rect.contains(context->GetGlobalCursorPosition())) {
 
-			if(Contain(context->GetCursorPosition())) {
+			if(Contain(context->GetGlobalCursorPosition())) {
 
 				cursor_position_ = InsideRectangle;
 
-				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetCursorPosition().x(), context->GetCursorPosition().y());
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetGlobalCursorPosition().x(), context->GetGlobalCursorPosition().y());
 
 				AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
 
@@ -293,15 +309,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(context->GetCursorPosition().x() <= position().x()) {
+				if(context->GetGlobalCursorPosition().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (context->GetCursorPosition().x() >= (position().x() + size().width())) {
+				} else if (context->GetGlobalCursorPosition().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (context->GetCursorPosition().y() >= (position().y() + size().height())) {
+				if (context->GetGlobalCursorPosition().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (context->GetCursorPosition().y () <= position().y()) {
+				} else if (context->GetGlobalCursorPosition().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 

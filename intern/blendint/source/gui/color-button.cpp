@@ -228,7 +228,7 @@ namespace BlendInt {
 			AbstractWindow* win = AbstractWindow::GetWindow(this);
 			win->AddFrame(selector_);
 
-			Point pos = win->GetCursorPosition();
+			Point pos = win->GetGlobalCursorPosition();
 
 			if((pos.y() + selector_->size().height()) > win->size().height()) {
 				pos.set_y(win->size().height() - selector_->size().height());

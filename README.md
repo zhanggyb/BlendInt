@@ -18,23 +18,27 @@ Public License (LGPL) v3.
 
 ## Features
 
-Like Blender, all widgets in BlendInt are drawn in OpenGL context and
-use the same color schemes. Application built with BlendInt has the
-similar look and feel of Blender, but BlendInt is totally rewritten
-and only focused on user interface with some new technologies:
+Like [Blender](http://www.blender.org), all widgets in BlendInt are
+drawn in OpenGL context and use the same color schemes. Application
+built with BlendInt has the similar look and feel of
+[Blender](http://www.blender.org), but this project is totally
+rewritten and only focused on user interface with some new
+technologies:
 
 - It's based on new OpenGL API (3.3 and later), all widgets are drawn
   through vertex/fragment/geometry shaders. (Legacy OpenGL APIs which
-  are being used in Blender were removed since GL 3.3)
+  are being used in [Blender](http://www.blender.org) were removed
+  since GL 3.3)
 - It's OOP designed and written by C++, every widget is now a C++
-  object, you can use the pre-defined UI classes such as Button,
-  Slider, Menu etc, or subclass one of them and customize it easily.
+  object, you can use the pre-defined UI classes (from a simple button
+  to a MVC based item view), or subclass one of them and customize it
+  easily.
 - It uses [CppEvent](http://code.google.com/p/cpp-events/) to provide
   a fast Event/Delegate (signal/slot) mechanism.
 - It just needs an OpenGL Context, so theoretically you can integrate
-  it in any other OpenGL Window or GUI toolkit, for example, Glut,
-  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 to display
-  and manage OpenGL context for some demos and unit tests.
+  it in any other GUI framework or toolkit, for example, Glut, GLFW,
+  Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 to display and
+  manage OpenGL context for some demos and unit tests.
 
 ## Usage
 
@@ -137,9 +141,8 @@ page.
 
 ## License
 
-* Most BlendInt (Blender Interface Library in OpenGL) source code is
-  released under the LGPL v3 License. See the bundled LICENSE file for
-  details.
+* Most source code in this project is released under the LGPL v3
+  License. See the bundled LICENSE file for details.
 * BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
   sending/receiving events between objects, it's released under MIT
   License, developed by Nickolas V. Pohilets (pohil...@gmail.com).

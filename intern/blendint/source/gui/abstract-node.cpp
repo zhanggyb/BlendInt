@@ -131,7 +131,7 @@ namespace BlendInt {
 		if(cursor_position_ == InsideRectangle) {
 
 			last_position_ = position();
-			cursor_point_ = context->GetCursorPosition();
+			cursor_point_ = context->GetGlobalCursorPosition();
 
 			/*
 			if(hovered_widget_) {
@@ -161,7 +161,7 @@ namespace BlendInt {
 
 			last_position_ = position();
 			last_size_ = size();
-			cursor_point_ = context->GetCursorPosition();
+			cursor_point_ = context->GetGlobalCursorPosition();
 
 			return Finish;
 		}
@@ -188,8 +188,8 @@ namespace BlendInt {
 
 		if(mouse_button_pressed()) {
 
-			int ox = context->GetCursorPosition().x() - cursor_point_.x();
-			int oy = context->GetCursorPosition().y() - cursor_point_.y();
+			int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
+			int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
 
 			switch(cursor_position_) {
 
@@ -308,13 +308,13 @@ namespace BlendInt {
 				size().width() + 2 * border,
 				size().height() + 2 * border);
 
-		if(valid_rect.contains(context->GetCursorPosition())) {
+		if(valid_rect.contains(context->GetGlobalCursorPosition())) {
 
-			if(Contain(context->GetCursorPosition())) {
+			if(Contain(context->GetGlobalCursorPosition())) {
 
 				cursor_position_ = InsideRectangle;
 
-				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetCursorPosition().x(), context->GetCursorPosition().y());
+				// DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetGlobalCursorPosition().x(), context->GetGlobalCursorPosition().y());
 
 				/*
 				AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
@@ -350,15 +350,15 @@ namespace BlendInt {
 				set_cursor_on_border(true);
 				cursor_position_ = InsideRectangle;
 
-				if(context->GetCursorPosition().x() <= position().x()) {
+				if(context->GetGlobalCursorPosition().x() <= position().x()) {
 					cursor_position_ |= OnLeftBorder;
-				} else if (context->GetCursorPosition().x() >= (position().x() + size().width())) {
+				} else if (context->GetGlobalCursorPosition().x() >= (position().x() + size().width())) {
 					cursor_position_ |= OnRightBorder;
 				}
 
-				if (context->GetCursorPosition().y() >= (position().y() + size().height())) {
+				if (context->GetGlobalCursorPosition().y() >= (position().y() + size().height())) {
 					cursor_position_ |= OnTopBorder;
-				} else if (context->GetCursorPosition().y () <= position().y()) {
+				} else if (context->GetGlobalCursorPosition().y () <= position().y()) {
 					cursor_position_ |= OnBottomBorder;
 				}
 

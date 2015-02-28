@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	Response Viewport::PerformMouseHover(AbstractWindow* context)
 	{
-		if(Contain(context->GetCursorPosition())) {
+		if(Contain(context->GetGlobalCursorPosition())) {
 			return Finish;
 		} else {
 			return Ignore;

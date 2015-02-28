@@ -145,7 +145,7 @@ namespace BlendInt {
 			AbstractWindow* context)
 	{
 		last_ = position();
-		cursor_ = context->GetCursorPosition();
+		cursor_ = context->GetGlobalCursorPosition();
 
 		if(orientation_ == Horizontal) {
 			prev_size_ = previous_view()->size().height();
@@ -199,7 +199,7 @@ namespace BlendInt {
 
 	Response FrameSplitterHandle::PerformMouseHover(AbstractWindow* context)
 	{
-		if(Contain(context->GetCursorPosition())) {
+		if(Contain(context->GetGlobalCursorPosition())) {
 			return Finish;
 		} else {
 			return Ignore;
@@ -215,7 +215,7 @@ namespace BlendInt {
 
 			if(orientation_ == Horizontal) {
 
-				int offset = context->GetCursorPosition().y() - cursor_.y();
+				int offset = context->GetGlobalCursorPosition().y() - cursor_.y();
 				int oy1 = prev_size_ - offset;
 				int oy2 = next_size_ + offset;
 
@@ -231,7 +231,7 @@ namespace BlendInt {
 
 			} else {
 
-				int offset = context->GetCursorPosition().x() - cursor_.x();
+				int offset = context->GetGlobalCursorPosition().x() - cursor_.x();
 				int oy1 = prev_size_ + offset;
 				int oy2 = next_size_ - offset;
 
@@ -620,7 +620,7 @@ namespace BlendInt {
 
 	Response FrameSplitter::PerformMouseHover(AbstractWindow* context)
 	{
-		if(Contain(context->GetCursorPosition())) {
+		if(Contain(context->GetGlobalCursorPosition())) {
 
 			Response response = Finish;
 			SetHoveredFrame(context);
@@ -1391,11 +1391,11 @@ namespace BlendInt {
 		AbstractFrame* original = hover_frame_;
 
 		if(hover_frame_ != nullptr) {
-			if(!hover_frame_->Contain(context->GetCursorPosition())) {
+			if(!hover_frame_->Contain(context->GetGlobalCursorPosition())) {
 
 				hover_frame_ = nullptr;
 				for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-					if(p->Contain(context->GetCursorPosition())) {
+					if(p->Contain(context->GetGlobalCursorPosition())) {
 						hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 						break;
 					}
@@ -1405,7 +1405,7 @@ namespace BlendInt {
 		} else {
 
 			for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
-				if(p->Contain(context->GetCursorPosition())) {
+				if(p->Contain(context->GetGlobalCursorPosition())) {
 					hover_frame_ = dynamic_cast<AbstractFrame*>(p);
 					break;
 				}

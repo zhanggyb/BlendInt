@@ -256,7 +256,7 @@ namespace BlendInt {
 		return kText;
 	}
 
-	const Point& Window::GetCursorPosition () const
+	const Point& Window::GetGlobalCursorPosition () const
 	{
 		return kCursor;
 	}

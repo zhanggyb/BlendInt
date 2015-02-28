@@ -238,12 +238,12 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 
 		int y = size().height();
-		int h = font_.height();
+		const int h = font_.height();
 		int i = 0;
+
 		while(y > 0) {
 			y -= h;
-
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, (float)y);
+			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, y);
 
 			if(i == highlight_index_) {
 				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
@@ -264,24 +264,13 @@ namespace BlendInt {
 			ModelIndex index = GetModel()->GetRootIndex();
 			index = index.GetChildIndex(0, 0);
 
-			y = size().height();
-
-			int calib = 0;
-			float ty = 0.f;
-
-			// A workaround for Adobe Source Han Sans
-			calib = font_.ascender() - font_.descender();
-			if(calib < font_.height()) {
-				calib = (font_.height() - calib - 1) / 2;
-			} else {
-				calib = 0;
-			}
-
+			Rect rect(0, size().height() - h, size().width(), h);
 			while(index.valid()) {
-				y -= h;
-				ty = y - font_.descender() + calib;
-				index.GetRawData()->Draw(0.f, ty);
+				index.GetRawData()->DrawInRect(rect,
+						AlignLeft | AlignVerticalCenter | AlignBaseline | AlignJustify,
+						AbstractWindow::theme->regular().text.data());
 				index = index.GetDownIndex();
+				rect.set_y(rect.y() - h);
 			}
 
 		}
@@ -361,7 +350,7 @@ namespace BlendInt {
 			int h = font_.height();	// the row height
 
 			int i = 0;
-			Point local_position = context->GetCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
+			Point local_position = context->GetGlobalCursorPosition() - context->active_frame()->GetAbsolutePosition(this);
 			// TODO: count offset
 
 			i = size().height() - local_position.y();
