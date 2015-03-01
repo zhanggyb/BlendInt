@@ -50,6 +50,7 @@ namespace BlendInt {
 
 		inline ~ModelNode ()
 		{
+            DBG_PRINT_MSG("%s", "model node destroyed");
 		}
 
 		ModelNode* parent;

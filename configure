@@ -49,11 +49,11 @@ then
 elif [ "$SYSTEM"x = "Darwin"x ]
 then
     #echo "OS is Mac OS X"
-    #cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
+    cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
     #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" $CMAKE_OPTIONS
     #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
     #    -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
-    cmake $SOURCE_DIR $CMAKE_OPTIONS
+    #cmake $SOURCE_DIR $CMAKE_OPTIONS
     #cmake $SOURCE_DIR -G"Sublime Text 2 - Unix Makefiles" $CMAKE_OPTIONS
 fi
 

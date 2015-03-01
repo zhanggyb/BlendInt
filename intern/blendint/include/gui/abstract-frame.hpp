@@ -27,8 +27,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <opengl/gl-texture2d.hpp>
-
+#include <gui/view-buffer.hpp>
 #include <gui/abstract-view.hpp>
 #include <gui/abstract-widget.hpp>
 
@@ -67,6 +66,10 @@ namespace BlendInt {
 
 		Point GetRelativePosition (const AbstractWidget* widget);
 
+        bool EnableViewBuffer ();
+        
+        void DisableViewBuffer ();
+        
 		inline bool focusable () const
 		{
 			return frame_flag_ & FrameFocusable;
@@ -106,6 +109,16 @@ namespace BlendInt {
 
 		void ClearHoverWidgets (AbstractView* hovered_widget, AbstractWindow* context);
 
+        inline const RefPtr<ViewBuffer>& view_buffer() const
+        {
+            return view_buffer_;
+        }
+        
+        inline void set_view_buffer (const RefPtr<ViewBuffer>& buffer)
+        {
+            view_buffer_ = buffer;
+        }
+        
 		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
 		{
 			if(!events_) {
@@ -195,6 +208,8 @@ namespace BlendInt {
 
 		uint32_t frame_flag_;
 
+        RefPtr<ViewBuffer> view_buffer_;
+        
 		boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
 		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;

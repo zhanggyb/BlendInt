@@ -103,13 +103,11 @@ namespace BlendInt {
 
 		Mutex mutex_;
 
-		AbstractWindow* current_context_;
+		AbstractWindow* off_screen_context_;
 
 		Size image_size_;
 
 		bool playing_;
-
-		int count;
 	};
 
 }

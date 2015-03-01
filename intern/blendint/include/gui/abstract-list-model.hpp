@@ -27,6 +27,27 @@
 
 namespace BlendInt {
 
+    /**
+     * @brief Abstract class for list model
+     *
+     * A list model stores data with the following order:
+     *
+     * O                    root node, the child node is (row 0, column 0)
+     *  \
+     *   O - O - O          row 0
+     *   |
+     *   O - O - O          row 1
+     *   |
+     *   O - O - O          row 2
+     *   |
+     *   .
+     *   .
+     *   ^   ^   ^
+     *   |   |   |
+     *   |   |   `------    column 2
+     *   |   `----------    column 1
+     *   `--------------    column 0
+     */
 	class AbstractListModel: public AbstractItemModel
 	{
 	public:

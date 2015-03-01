@@ -300,22 +300,102 @@ namespace BlendInt {
 			}
 
 			if(row == 0) {	// Insert
-				if(node->up == 0) {	// Insert 0
-					node->parent->child = first;
+
+                if(node->up == 0) {	// Insert 0
+				
+                    node->parent->child = first;
 					first->parent = node->parent;
 					node->parent = 0;
 					last->down = node;
 					node->up = last;
-				} else {
-					node->up->down = first;
+
+                    ModelNode* row_iter = first;
+                    ModelNode* ref_iter = node;
+                    ModelNode* tmp1 = 0;
+                    ModelNode* tmp2 = 0;
+                    
+                    while(row_iter) {
+                        
+                        tmp1 = row_iter;
+                        
+                        while(ref_iter->right) {   // add one row
+                            
+                            tmp2 = new ModelNode;
+                            tmp1->right = tmp2;
+                            tmp2->left = tmp1;
+                            tmp1 = tmp2;
+                            
+                            ref_iter = ref_iter->right;
+                        }
+                        
+                        ref_iter = node;
+                        row_iter = row_iter->down;
+                    }
+                    
+                } else {
+
+                    node->up->down = first;
 					first->up = node->up;
 					last->down = node;
 					node->up = last;
-				}
-			} else {	// too large row given, append to tail
-				node->down = first;
+
+                    ModelNode* row_iter = first;
+                    ModelNode* ref_iter = node;
+                    ModelNode* tmp1 = 0;
+                    ModelNode* tmp2 = 0;
+                    
+                    while(row_iter) {
+                        
+                        tmp1 = row_iter;
+                        
+                        while(ref_iter->right) {   // add one row
+                            
+                            tmp2 = new ModelNode;
+                            tmp1->right = tmp2;
+                            tmp2->left = tmp1;
+                            tmp1 = tmp2;
+                            
+                            ref_iter = ref_iter->right;
+                        }
+                        
+                        ref_iter = node;
+                        row_iter = row_iter->down;
+                    }
+                    
+                }
+
+            } else {	// too large row given, append to tail
+
+                assert(node);
+                assert(node->down == 0);
+                
+                node->down = first;
 				first->up = node;
-			}
+
+                ModelNode* row_iter = first;
+                ModelNode* ref_iter = node;
+                ModelNode* tmp1 = 0;
+                ModelNode* tmp2 = 0;
+
+                while(row_iter) {
+                    
+                    tmp1 = row_iter;
+
+                    while(ref_iter->right) {   // add one row
+                        
+                        tmp2 = new ModelNode;
+                        tmp1->right = tmp2;
+                        tmp2->left = tmp1;
+                        tmp1 = tmp2;
+                        
+                        ref_iter = ref_iter->right;
+                    }
+                
+                    ref_iter = node;
+                    row_iter = row_iter->down;
+                }
+                
+            }
 		}
 
 		return true;

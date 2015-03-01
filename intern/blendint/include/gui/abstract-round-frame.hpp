@@ -24,7 +24,6 @@
 #pragma once
 
 #include <gui/abstract-frame.hpp>
-#include <gui/view-buffer.hpp>
 
 namespace BlendInt {
 
@@ -84,10 +83,6 @@ namespace BlendInt {
 
 		virtual Response PerformMouseHover (AbstractWindow* context);
 
-        void EnableViewBuffer ();
-        
-        void DisableViewBuffer ();
-
         void GenerateRoundedVertices(std::vector<GLfloat> *inner,
                 std::vector<GLfloat> *outer);
         
@@ -112,16 +107,6 @@ namespace BlendInt {
             round_radius_ = radius;
         }
 
-        inline const RefPtr<ViewBuffer>& buffer () const
-        {
-            return buffer_;
-        }
-        
-        inline void set_buffer (const RefPtr<ViewBuffer>& buffer)
-        {
-            buffer_ = buffer;
-        }
-        
     private:
         
         enum RoundFrameFlagIndex {
@@ -139,8 +124,6 @@ namespace BlendInt {
         uint32_t round_frame_flag_;
         
         float round_radius_;
-        
-        RefPtr<ViewBuffer> buffer_;
 
 	};
 

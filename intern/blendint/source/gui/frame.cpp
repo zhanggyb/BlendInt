@@ -37,8 +37,6 @@ namespace BlendInt {
 	: AbstractFrame(),
 	  focused_widget_(0),
 	  hovered_widget_(0),
-	  space_(1),
-	  margin_(2, 2, 2, 2),
 	  cursor_position_(0),
 	  layout_(0),
 	  hover_(false),
@@ -52,6 +50,8 @@ namespace BlendInt {
 
 		PushBackSubView(layout_);
 		set_size(layout_->size());
+        set_refresh(true);
+        EnableViewBuffer();
 
 		InitializeFrameOnce();
 	}
@@ -60,7 +60,6 @@ namespace BlendInt {
 	: AbstractFrame(width, height),
 	  focused_widget_(0),
 	  hovered_widget_(0),
-	  space_(1),
 	  cursor_position_(0),
 	  layout_(0),
 	  hover_(false),
@@ -72,6 +71,9 @@ namespace BlendInt {
 			layout_ = layout;
 		}
 
+        set_refresh(true);
+        EnableViewBuffer();
+        
 		PushBackSubView(layout_);
 		ResizeSubView(layout_, size());
 
@@ -80,7 +82,7 @@ namespace BlendInt {
 
 	Frame::~Frame()
 	{
-		glDeleteVertexArrays(3, vao_);
+		glDeleteVertexArrays(2, vao_);
 
 		if(focused_widget_) {
 			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
@@ -136,6 +138,10 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
+            if(view_buffer()) {
+                view_buffer()->Resize(size());
+            }
+            
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 			GenerateVertices(size(), 1.f * AbstractWindow::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
@@ -144,16 +150,6 @@ namespace BlendInt {
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			buffer_.bind(1);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-			vbo_.bind(0);
-			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = (float)size().width();
-			*(ptr + 9) = (float)size().height();
-			*(ptr + 12) = (float)size().width();
-			*(ptr + 13) = (float)size().height();
-			vbo_.unmap();
-
-			vbo_.reset();
 
 			ResizeSubView(layout_, size());
 
@@ -172,13 +168,13 @@ namespace BlendInt {
 
 		context->register_active_frame(this);
 
-		if(refresh()) {
-			RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_, &texture_buffer_);
+		if(refresh() && view_buffer()) {
+			RenderSubFramesToTexture(this,
+                                     context,
+                                     projection_matrix_,
+                                     model_matrix_,
+                                     view_buffer()->texture());
 		}
-
-		//texture_buffer_.bind();
-		//texture_buffer_.WriteToFile("file.png");
-		//texture_buffer_.reset();
 
 		return true;
 	}
@@ -194,6 +190,19 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
+        if(view_buffer()) {
+
+            AbstractWindow::shaders->frame_image_program()->use();
+            
+            glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+            glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+            glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            view_buffer()->Draw(0, 0);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
+        }
+        
 		AbstractWindow::shaders->frame_outer_program()->use();
 
 		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
@@ -205,21 +214,7 @@ namespace BlendInt {
 		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-        AbstractWindow::shaders->frame_image_program()->use();
-        
-        texture_buffer_.bind();
-        glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-        glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
-        
-        glBindVertexArray(vao_[2]);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		return Finish;
+        return view_buffer() ? Finish : Ignore;
 	}
 
 	void Frame::PostDraw (AbstractWindow* context)
@@ -381,7 +376,7 @@ namespace BlendInt {
 		GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 		buffer_.generate();
-		glGenVertexArrays(3, vao_);
+		glGenVertexArrays(2, vao_);
 
 		glBindVertexArray(vao_[0]);
 		buffer_.bind(0);
@@ -395,34 +390,8 @@ namespace BlendInt {
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(vao_[2]);
-
-		GLfloat vertices[] = {
-				// coord											uv
-				0.f, 0.f,											0.f, 0.f,
-				(float)size().width(), 0.f,							1.f, 0.f,
-				0.f, (float)size().height(),						0.f, 1.f,
-				(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
-
-		vbo_.generate();
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray (
-				AttributeCoord);
-		glEnableVertexAttribArray (
-				AttributeUV);
-		glVertexAttribPointer (AttributeCoord,
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (AttributeUV, 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
 		glBindVertexArray(0);
-		vbo_.reset();
-
-		set_refresh(true);
+		buffer_.reset();
 	}
 
 	void Frame::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)

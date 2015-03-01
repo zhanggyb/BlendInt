@@ -31,9 +31,8 @@ namespace BlendInt {
 
 	CVImageView::CVImageView()
 	: AbstractScrollable(),
-	  current_context_(0),
-	  playing_(false),
-	  count(0)
+	  off_screen_context_(0),
+	  playing_(false)
 	{
 		set_size(400, 300);
 		image_size_.reset(400, 300);
@@ -101,6 +100,10 @@ namespace BlendInt {
 		}
 
 		glDeleteVertexArrays(2, vao_);
+        
+        if(off_screen_context_) {
+            delete off_screen_context_;
+        }
 
 		mutex_.destroy();
 	}
@@ -226,10 +229,14 @@ namespace BlendInt {
 
 	void CVImageView::Play ()
 	{
-		current_context_ = AbstractWindow::GetWindow(this);
-		if(current_context_ == nullptr) return;
+        if(playing_) return;
 
-		if(playing_) return;
+        assert(off_screen_context_ == 0);
+        
+        AbstractWindow* win = AbstractWindow::GetWindow(this);
+        off_screen_context_ = win->CreateSharedContext(win->size().width(), win->size().height(), false);
+
+        if(off_screen_context_ == nullptr) return;
 
 		if(video_stream_.isOpened()) {
 			timer_->Start();
@@ -255,7 +262,10 @@ namespace BlendInt {
 			image_.release();
 		}
 
-		current_context_ = 0;
+        if(off_screen_context_) {
+            delete off_screen_context_;
+            off_screen_context_ = 0;
+        }
 		playing_ = false;
 	}
 
@@ -358,67 +368,63 @@ namespace BlendInt {
 
 	void CVImageView::OnUpdateFrame (Timer* sender)
 	{
-		if(current_context_ && (video_stream_.isOpened())) {
+        video_stream_ >> image_;
 
-			video_stream_ >> image_;
+        if(mutex_.trylock()) {
 
-			if(mutex_.trylock()) {
+            off_screen_context_->MakeCurrent();
 
-				current_context_->MakeCurrent();
+            if(image_.data) ProcessImage(image_);
 
-				if(image_.data) ProcessImage(image_);
+            if(image_.data) {
 
-				if(image_.data) {
+                texture_.bind();
 
-					texture_.bind();
+                switch (image_.channels()) {
 
-					switch (image_.channels()) {
+                    case 1: {
+                        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+                        texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
+                                          0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
+                        break;
+                    }
 
-						case 1: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-							texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
-									0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
-							break;
-						}
+                    case 2: {
+                        glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+                        texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
+                                          0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
+                        break;
+                    }
 
-						case 2: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-							texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
-									0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
-							break;
-						}
+                    case 3: {
+                        glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+                        texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
+                                          0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
+                        break;
+                    }
 
-						case 3: {
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-							texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
-									0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
-							break;
-						}
+                    case 4:	{
+                        // opencv does not support alpha-channel, only masking, these code will never be called
+                        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                        texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
+                                          0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
+                        break;
+                    }
 
-						case 4:	{
-							// opencv does not support alpha-channel, only masking, these code will never be called
-							glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-							texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
-									0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
-							break;
-						}
+                    default: {
+                        break;
+                    }
+                }
 
-						default: {
-							break;
-						}
-					}
+            }
 
-				}
+            RequestRedraw();
 
-				RequestRedraw();
+            mutex_.unlock();
 
-				mutex_.unlock();
-
-			} else {
-				DBG_PRINT_MSG("%s", "Fail to lock mutex, lost one frame");
-			}
-
-		}
+        } else {
+            DBG_PRINT_MSG("%s", "Fail to lock mutex, lost one frame");
+        }
 	}
 
 }

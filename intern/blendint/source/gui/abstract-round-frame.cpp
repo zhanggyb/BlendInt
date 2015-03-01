@@ -160,20 +160,6 @@ namespace BlendInt {
                          outer);
     }
     
-    void AbstractRoundFrame::EnableViewBuffer()
-    {
-        set_buffered(true);
-        if(!buffer_) {
-            buffer_.reset(new ViewBuffer(size().width(), size().height()));
-        }
-    }
-    
-    void AbstractRoundFrame::DisableViewBuffer()
-    {
-        set_buffered(false);
-        buffer_.destroy();
-    }
-    
     void AbstractRoundFrame::PerformRoundTypeUpdate (int round_type)
     {
         set_round_type(round_type);

@@ -314,11 +314,6 @@ namespace BlendInt {
 			return view_flag_ & ViewRefresh;
 		}
 
-		inline bool buffered () const
-		{
-			return view_flag_ & ViewBuffered;
-		}
-
 		inline int subs_count () const
 		{
 			return subs_count_;
@@ -450,15 +445,6 @@ namespace BlendInt {
 			}
 		}
 
-		inline void set_buffered (bool buffered)
-		{
-			if(buffered) {
-				SETBIT(view_flag_, ViewBuffered);
-			} else {
-				CLRBIT(view_flag_, ViewBuffered);
-			}
-		}
-
 		virtual bool PreDraw (AbstractWindow* context) = 0;
 
 		virtual Response Draw (AbstractWindow* context) = 0;
@@ -580,9 +566,6 @@ namespace BlendInt {
 
 			// only valid when use off-screen render in container
 			ViewRefresh = (1 << 2),
-
-			// A satic view use 2D texture as a buffer, redraw only when there's update
-			ViewBuffered = (1 << 3),
 
 		};
 

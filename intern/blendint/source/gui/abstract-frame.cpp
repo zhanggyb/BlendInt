@@ -104,6 +104,29 @@ namespace BlendInt {
 		return pos;
 	}
 
+    bool AbstractFrame::EnableViewBuffer()
+    {
+        if(!view_buffer_) {
+            
+#ifdef DEBUG
+            if((size().width() == 0) || (size().height() == 0)) {
+                DBG_PRINT_MSG("WARNING: %s", "size invalid");
+            }
+#endif
+            
+            view_buffer_.reset(new ViewBuffer(size().width(), size().height()));
+            
+            // TODO: check view buffer and return false if it's not valid
+        }
+        
+        return true;
+    }
+
+    void AbstractFrame::DisableViewBuffer()
+    {
+        view_buffer_.destroy();
+    }
+    
 	AbstractFrame* AbstractFrame::GetFrame(AbstractView* widget)
 	{
 		AbstractView* container = widget->superview ();

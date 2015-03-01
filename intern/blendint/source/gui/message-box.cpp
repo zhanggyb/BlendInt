@@ -61,8 +61,8 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_round_radius(5.f);
 		set_size(vlayout->size());
-		EnableViewBuffer();
 		set_refresh(true);
+		EnableViewBuffer();
 
 		PushBackSubView(vlayout);
 
@@ -135,8 +135,8 @@ namespace BlendInt {
     				0.f + (float)size().height(),
     				100.f, -100.f);
 
-    		if(buffer()) {
-    			buffer()->Resize(size());
+    		if(view_buffer()) {
+    			view_buffer()->Resize(size());
     		}
 
     		shadow_->Resize(size());
@@ -177,12 +177,12 @@ namespace BlendInt {
 
 		context->register_active_frame(this);
 
-		if(refresh() && buffer()) {
+		if(refresh() && view_buffer()) {
 			RenderSubFramesToTexture(this,
 					context,
 					projection_matrix_,
 					model_matrix_,
-					buffer()->texture());
+					view_buffer()->texture());
 		}
 
 		return true;
@@ -201,7 +201,7 @@ namespace BlendInt {
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		if(buffer()) {
+		if(view_buffer()) {
 
 			AbstractWindow::shaders->frame_image_program()->use();
 
@@ -209,7 +209,7 @@ namespace BlendInt {
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
 			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			buffer()->Draw(0, 0);
+			view_buffer()->Draw(0, 0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
@@ -221,7 +221,7 @@ namespace BlendInt {
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-		return Finish;
+        return view_buffer() ? Finish : Ignore;
     }
 
 	void MessageBox::OnClose (AbstractButton* btn)
