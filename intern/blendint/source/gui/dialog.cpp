@@ -276,7 +276,7 @@ namespace BlendInt {
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
-        return view_buffer() ? Finish : Ignore;
+        return Finish;
 	}
 
 	void Dialog::OnCloseButtonClicked(AbstractButton* sender)

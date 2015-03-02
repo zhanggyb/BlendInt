@@ -54,9 +54,11 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
-		bool OpenCamera (int n, const Size& resolution = Size(640, 480));
+		bool OpenCamera (int n, int fps, const Size& resolution = Size(640, 480));
 
-		bool OpenFile (const std::string& filename);
+		bool OpenImageFile (const std::string& filename);
+
+		bool OpenVideoFile (const std::string& filename, int fps);
 
 		void Play ();
 

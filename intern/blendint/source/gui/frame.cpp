@@ -192,7 +192,7 @@ namespace BlendInt {
 
         if(view_buffer()) {
 
-            AbstractWindow::shaders->frame_image_program()->use();
+        	AbstractWindow::shaders->frame_image_program()->use();
             
             glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
             glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
@@ -225,7 +225,7 @@ namespace BlendInt {
 		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
-        return view_buffer() ? Finish : Ignore;
+        return Finish;
 	}
 
 	void Frame::PostDraw (AbstractWindow* context)
@@ -385,7 +385,9 @@ namespace BlendInt {
 
 	void Frame::InitializeFrameOnce()
 	{
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
+		projection_matrix_  = glm::ortho(0.f, (float)size().width(),
+				0.f, (float)size().height(),
+				100.f, -100.f);
 		model_matrix_ = glm::mat3(1.f);
 
 		std::vector<GLfloat> inner_verts;

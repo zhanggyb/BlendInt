@@ -38,7 +38,6 @@ namespace BlendInt {
 		image_size_.reset(400, 300);
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 15);	// default: 15 FPS
 
 		events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
@@ -123,7 +122,7 @@ namespace BlendInt {
 		return image_size_;
 	}
 
-	bool CVImageView::OpenCamera (int n, const Size& resolution)
+	bool CVImageView::OpenCamera (int n, int fps, const Size& resolution)
 	{
 		bool retval = false;
 
@@ -149,6 +148,9 @@ namespace BlendInt {
 			vbo_.unmap();
 			vbo_.reset();
 
+			fps = fps <= 0 ? 15 : (fps > 60 ? 60 : fps);
+			timer_->SetInterval(1000 / fps);
+
 			retval = true;
 
 		} else {
@@ -158,7 +160,7 @@ namespace BlendInt {
 		return retval;
 	}
 
-	bool CVImageView::OpenFile(const std::string& filename)
+	bool CVImageView::OpenImageFile(const std::string& filename)
 	{
 		bool status_before = (image_.data != 0);
 
@@ -225,6 +227,42 @@ namespace BlendInt {
 
 		RequestRedraw();
 		return image_.data ? true : false;
+	}
+
+	bool CVImageView::OpenVideoFile(const std::string& filename, int fps)
+	{
+		bool retval = false;
+
+		if(video_stream_.isOpened()) {
+			video_stream_.release();
+		}
+
+		video_stream_.open(filename);
+		if(video_stream_.isOpened()) {
+
+			image_size_.reset(
+					(int)video_stream_.get(CV_CAP_PROP_FRAME_WIDTH),
+					(int)video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
+
+			vbo_.bind(1);
+			float* ptr = (float*)vbo_.map();
+			*(ptr + 4) = image_size_.width();
+			*(ptr + 9) = image_size_.height();
+			*(ptr + 12) = image_size_.width();
+			*(ptr + 13) = image_size_.height();
+			vbo_.unmap();
+			vbo_.reset();
+
+			fps = fps <= 0 ? 15 : (fps > 60 ? 60 : fps);
+			timer_->SetInterval(1000 / fps);
+
+			retval = true;
+
+		} else {
+			DBG_PRINT_MSG("Error: %s", "Could not acess the camera or video!");
+		}
+
+		return retval;
 	}
 
 	void CVImageView::Play ()
