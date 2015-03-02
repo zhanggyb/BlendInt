@@ -110,6 +110,10 @@ namespace BlendInt {
 		Size image_size_;
 
 		bool playing_;
+
+#ifdef DEBUG
+		bool stuck_;
+#endif
 	};
 
 }

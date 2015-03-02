@@ -21,7 +21,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <gui/adaptive-adjustment.hpp>
 #include <gui/adaptive-layout.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
@@ -44,23 +46,145 @@ namespace BlendInt {
 	{
 	}
 
-	AdaptiveLayout::~AdaptiveLayout () {
+	AdaptiveLayout::~AdaptiveLayout ()
+	{
 	}
 
 	bool AdaptiveLayout::AddWidget (AbstractWidget* widget)
 	{
-		return true;
+		if(PushBackSubView(widget)) {
+			Adjust();
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
 	}
 
 	bool AdaptiveLayout::InsertWidget (int index, AbstractWidget* widget)
 	{
-		return true;
+		if(InsertSubView(index, widget)) {
+			Adjust();
+			RequestRedraw();
+			return true;
+		}
+
+		return false;
 	}
 
 	bool AdaptiveLayout::InsertWidget (int row, int column,
 	        AbstractWidget* widget)
 	{
-		return true;
+		if(orientation_ == Horizontal) {
+			if(row != 0) {
+				DBG_PRINT_MSG("Error: %s", "LinearLayout contains only 1 row, and the 1st parameter will be ignored");
+			}
+
+			if(InsertSubView(column, widget)) {
+				Adjust();
+				RequestRedraw();
+				return true;
+			}
+
+		} else {
+			if(column != 0) {
+				DBG_PRINT_MSG("Error: %s", "LinearLayout contains only 1 column, and the 2nd parameter will be ignored");
+			}
+
+			if(InsertSubView(row, widget)) {
+				Adjust();
+				RequestRedraw();
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+
+	void AdaptiveLayout::Adjust ()
+	{
+		int x = margin().left();
+		int y = margin().bottom();
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
+
+		AdaptiveAdjustment adjustment(this, orientation_, alignment_, space_);
+		adjustment.Adjust(x, y, width, height);
+	}
+
+	Size AdaptiveLayout::GetPreferredSize () const
+	{
+		if(subs_count() == 0) {
+			return Size(200, 200);
+		}
+
+		int w = 0;
+		int h = 0;
+
+		Size tmp;
+
+		if(orientation_ == Horizontal) {
+			w = -space_;
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			{
+				if(p->visiable()) {
+					tmp = p->GetPreferredSize();
+
+					w += (tmp.width() + space_);
+					h = std::max(h, tmp.height());
+				}
+			}
+
+			w += pixel_size(margin().hsum());
+			h += pixel_size(margin().vsum());
+		} else {
+			h = -space_;
+			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			{
+				if(p->visiable()) {
+					tmp = p->GetPreferredSize();
+
+					w = std::max(w, tmp.width());
+					h += (tmp.height() + space_);
+				}
+			}
+
+			w += pixel_size(margin().hsum());
+			h += pixel_size(margin().vsum());
+		}
+
+		return Size(w, h);
+	}
+
+	bool AdaptiveLayout::IsExpandX () const
+	{
+		bool expand = false;
+
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		{
+			if(p->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool AdaptiveLayout::IsExpandY () const
+	{
+		bool expand = false;
+
+		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		{
+			if(p->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
 	}
 
 	void AdaptiveLayout::PerformMarginUpdate (const Margin& margin)
@@ -80,6 +204,14 @@ namespace BlendInt {
 
 	void AdaptiveLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			Adjust();
+		}
+
+		if(request.source() == this) {
+			ReportSizeUpdate(request);
+		}
 	}
 
 }

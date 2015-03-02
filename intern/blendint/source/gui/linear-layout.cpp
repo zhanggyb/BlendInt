@@ -73,18 +73,44 @@ namespace BlendInt {
 	bool LinearLayout::InsertWidget(int row, int column,
 			AbstractWidget* widget)
 	{
-		if(row != 0) {
-			DBG_PRINT_MSG("Error: %s", "LinearLayout contains only 1 row, and the 1st parameter will be ignored");
-		}
+		if(orientation_ == Horizontal) {
 
-		if(InsertSubView(column, widget)) {
-			Adjust();
-			RequestRedraw();
+			if(row != 0) {
+				DBG_PRINT_MSG("Error: %s", "LinearLayout contains only 1 row, and the 1st parameter will be ignored");
+			}
 
-			return true;
+			if(InsertSubView(column, widget)) {
+				Adjust();
+				RequestRedraw();
+				return true;
+			}
+
+		} else {
+
+			if(column != 0) {
+				DBG_PRINT_MSG("Error: %s", "LinearLayout contains only 1 column, and the 2nd parameter will be ignored");
+			}
+
+			if(InsertSubView(row, widget)) {
+				Adjust();
+				RequestRedraw();
+				return true;
+			}
+
 		}
 
 		return false;
+	}
+
+	void LinearLayout::Adjust ()
+	{
+		int x = margin().left();
+		int y = margin().bottom();
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
+
+		LinearAdjustment adjustment(this, orientation_, alignment_, space_);
+		adjustment.Adjust(x, y, width, height);
 	}
 
 	bool LinearLayout::Remove (AbstractWidget* widget)
@@ -199,17 +225,6 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void LinearLayout::Adjust ()
-	{
-		int x = margin().left();
-		int y = margin().bottom();
-		int width = size().width() - margin().hsum();
-		int height = size().height() - margin().vsum();
-
-		LinearAdjustment adjustment(this, orientation_, alignment_, space_);
-		adjustment.Adjust(x, y, width, height);
-	}
-
 	void LinearLayout::PerformMarginUpdate(const Margin& request)
 	{
 		set_margin(request);
@@ -245,7 +260,6 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 			Adjust();
-			RequestRedraw();
 		}
 
 		if(request.source() == this) {

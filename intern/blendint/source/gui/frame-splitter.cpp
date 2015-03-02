@@ -485,7 +485,7 @@ namespace BlendInt {
 	{
 		DrawSubViewsOnce(context);
 
-		return subs_count() ? Ignore : Finish;
+		return Finish;
 	}
 
 	void FrameSplitter::PostDraw(AbstractWindow* context)

@@ -33,6 +33,9 @@ namespace BlendInt {
 	: AbstractScrollable(),
 	  off_screen_context_(0),
 	  playing_(false)
+#ifdef DEBUG
+	, stuck_(false)
+#endif
 	{
 		set_size(400, 300);
 		image_size_.reset(400, 300);
@@ -385,6 +388,11 @@ namespace BlendInt {
 
 			mutex_.unlock();
 
+		} else {
+			DBG_PRINT_MSG("%s", "fail to lock");
+#ifdef DEBUG
+			stuck_ = true;
+#endif
 		}
 
 		return Finish;
@@ -407,6 +415,18 @@ namespace BlendInt {
 	void CVImageView::OnUpdateFrame (Timer* sender)
 	{
         video_stream_ >> image_;
+
+#ifdef DEBUG
+        if(stuck_) {
+
+        	AbstractView* p = superview();
+        	while(p) {
+        		DBG_PRINT_MSG("status: %d", p->refresh() ? 1 : 0);
+        		p = p->superview();
+        	}
+
+        }
+#endif
 
         if(mutex_.trylock()) {
 
@@ -457,6 +477,20 @@ namespace BlendInt {
             }
 
             RequestRedraw();
+
+#ifdef DEBUG
+        if(stuck_) {
+
+        	DBG_PRINT_MSG("%s", "check refresh status after request");
+        	AbstractView* p = superview();
+        	while(p) {
+        		DBG_PRINT_MSG("status: %d", p->refresh() ? 1 : 0);
+        		p = p->superview();
+        	}
+
+        	stuck_ = false;
+        }
+#endif
 
             mutex_.unlock();
 

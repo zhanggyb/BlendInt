@@ -433,7 +433,7 @@ namespace BlendInt {
 
 	void AbstractView::DrawSubViewsOnce(AbstractWindow* context)
 	{
-		bool refresh_record = false;
+		//bool refresh_record = false;
 
 		for(AbstractView* p = first_subview(); p; p = p->next_view())
 		{
@@ -453,10 +453,12 @@ namespace BlendInt {
 				p->PostDraw(context);
 			}
 
-			if(refresh()) refresh_record = true;
+			//if(refresh()) refresh_record = true;
 		}
 
-		set_refresh(refresh_record);
+		//set_refresh(refresh_record);
+		if(superview_) set_refresh(superview_->refresh());
+		else set_refresh(false);
 	}
 
 	bool AbstractView::SwapIndex(AbstractView *view1, AbstractView *view2)

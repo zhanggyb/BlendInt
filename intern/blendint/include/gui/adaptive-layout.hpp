@@ -50,6 +50,14 @@ namespace BlendInt {
 
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
+		virtual void Adjust ();
+
+		virtual Size GetPreferredSize () const;
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual void PerformMarginUpdate (const Margin& margin);

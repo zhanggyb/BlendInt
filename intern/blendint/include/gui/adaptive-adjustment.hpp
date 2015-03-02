@@ -39,6 +39,10 @@ namespace BlendInt {
 
 	private:
 
+		void AdjustHorizontally (int x, int y, int w, int h);
+
+		void AdjustVertically (int x, int y, int w, int h);
+
 		Orientation orientation_;
 
 		int alignment_;

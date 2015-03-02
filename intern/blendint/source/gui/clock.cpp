@@ -247,7 +247,7 @@ namespace BlendInt {
 		buffer_.reset();
 
 		timer_.reset(new Timer);
-		timer_->SetInterval(1000);
+		timer_->SetInterval(1000 / 30);
 
 		events()->connect(timer_->timeout(), this, &Clock::OnUpdateClockHands);
 	}
