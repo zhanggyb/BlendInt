@@ -45,6 +45,8 @@ namespace BlendInt {
 
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget) = 0;
 
+		virtual void Adjust () = 0;
+
 		const Margin& margin () const {return margin_;}
 
 		void SetMargin (const Margin& margin);

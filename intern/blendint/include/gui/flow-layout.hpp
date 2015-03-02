@@ -43,6 +43,8 @@ namespace BlendInt {
 
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
+		virtual void Adjust ();
+
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

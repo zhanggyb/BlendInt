@@ -211,6 +211,18 @@ namespace BlendInt {
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			view_buffer()->Draw(0, 0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		} else {
+
+            glViewport(position().x(), position().y(), size().width(), size().height());
+
+            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+            AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+
+			DrawSubViewsOnce(context);
+
+			glViewport(0, 0, context->size().width(), context->size().height());
+
 		}
 
 		AbstractWindow::shaders->frame_outer_program()->use();

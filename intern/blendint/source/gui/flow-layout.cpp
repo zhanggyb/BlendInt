@@ -80,6 +80,10 @@ namespace BlendInt {
 		return true;
 	}
 
+	void FlowLayout::Adjust ()
+	{
+	}
+
 	bool FlowLayout::PositionUpdateTest(const PositionUpdateRequest& request)
 	{
 		return true;

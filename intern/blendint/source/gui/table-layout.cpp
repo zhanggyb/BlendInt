@@ -182,7 +182,7 @@ namespace BlendInt {
 				Cell* cell = dynamic_cast<Cell*>(p);
 				assert(cell);
 				cell->SetWidget(widget);
-				UpdateLayout();
+				Adjust();
 				retval = true;
 				break;
 			}
@@ -201,7 +201,7 @@ namespace BlendInt {
 			Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
 			assert(cell);
 			cell->SetWidget(widget);
-			UpdateLayout();
+			Adjust();
 			return true;
 		} else {
 			DBG_PRINT_MSG("Error: %s", "index out of range");
@@ -219,8 +219,19 @@ namespace BlendInt {
 		assert(cell);
 		cell->SetWidget(widget);
 
-		UpdateLayout();
+		Adjust();
 		return true;
+	}
+
+	void TableLayout::Adjust ()
+	{
+		int x = pixel_size(margin().left());
+		int y = pixel_size(margin().bottom());
+		int w = size().width() - pixel_size(margin().hsum());
+		int h = size().height() - pixel_size(margin().vsum());
+
+		TableAdjustment adjust(this, row_, column_, space_);
+		adjust.Adjust(x, y, w, h);
 	}
 
 	void TableLayout::SetSpace (int space)
@@ -228,7 +239,7 @@ namespace BlendInt {
 		if(space_ == space) return;
 
 		space_ = space;
-		UpdateLayout();
+		Adjust();
 		RequestRedraw();
 	}
 
@@ -252,23 +263,12 @@ namespace BlendInt {
 		return false;
 	}
 
-	void TableLayout::UpdateLayout ()
-	{
-		int x = pixel_size(margin().left());
-		int y = pixel_size(margin().bottom());
-		int w = size().width() - pixel_size(margin().hsum());
-		int h = size().height() - pixel_size(margin().vsum());
-
-		TableAdjustment adjust(this, row_, column_, space_);
-		adjust.Adjust(x, y, w, h);
-	}
-
 	void TableLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
 			set_size(*request.size());
-			UpdateLayout();
+			Adjust();
 		}
 
 		if(request.source() == this) {
@@ -280,7 +280,7 @@ namespace BlendInt {
 	{
 		set_margin(margin);
 
-		UpdateLayout();
+		Adjust();
 		RequestRedraw();
 	}
 

@@ -144,7 +144,7 @@ namespace BlendInt {
 	bool Dialog::AddWidget(AbstractWidget* widget)
 	{
 		if(content_layout_->AddWidget(widget)) {
-			main_layout_->UpdateLayout();
+			main_layout_->Adjust();
 			return true;
 		}
 
@@ -154,7 +154,7 @@ namespace BlendInt {
 	bool Dialog::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(content_layout_->InsertWidget(index, widget)) {
-			main_layout_->UpdateLayout();
+			main_layout_->Adjust();
 			return true;
 		}
 
@@ -254,6 +254,17 @@ namespace BlendInt {
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			view_buffer()->Draw(0, 0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        } else {
+
+        	glViewport(position().x(), position().y(), size().width(), size().height());
+
+            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+            AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+
+			DrawSubViewsOnce(context);
+
+			glViewport(0, 0, context->size().width(), context->size().height());
 
         }
 

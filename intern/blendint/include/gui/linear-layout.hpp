@@ -48,6 +48,8 @@ namespace BlendInt {
 		// row must be 0
 		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
+		virtual void Adjust ();
+
 		bool Remove (AbstractWidget* widget);
 
 		void SetOrientation (Orientation orient);
@@ -71,8 +73,6 @@ namespace BlendInt {
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
-
-		void UpdateLayout ();
 
 	protected:
 

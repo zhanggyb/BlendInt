@@ -51,7 +51,7 @@ namespace BlendInt {
 	bool LinearLayout::AddWidget(AbstractWidget* widget)
 	{
 		if(PushBackSubView(widget)) {
-			UpdateLayout();
+			Adjust();
 			RequestRedraw();
 			return true;
 		}
@@ -62,7 +62,7 @@ namespace BlendInt {
 	bool LinearLayout::InsertWidget(int index, AbstractWidget* widget)
 	{
 		if(InsertSubView(index, widget)) {
-			UpdateLayout();
+			Adjust();
 			RequestRedraw();
 			return true;
 		}
@@ -78,7 +78,7 @@ namespace BlendInt {
 		}
 
 		if(InsertSubView(column, widget)) {
-			UpdateLayout();
+			Adjust();
 			RequestRedraw();
 
 			return true;
@@ -90,7 +90,7 @@ namespace BlendInt {
 	bool LinearLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubView(widget)) {
-			UpdateLayout();
+			Adjust();
 			return true;
 		}
 
@@ -103,7 +103,7 @@ namespace BlendInt {
 			return;
 
 		orientation_ = orient;
-		UpdateLayout();
+		Adjust();
 		RequestRedraw();
 	}
 
@@ -112,7 +112,7 @@ namespace BlendInt {
 		if(alignment_ == align) return;
 
 		alignment_ = align;
-		UpdateLayout();
+		Adjust();
 		RequestRedraw();
 	}
 
@@ -121,7 +121,7 @@ namespace BlendInt {
 		if(space_ == space) return;
 
 		space_ = space;
-		UpdateLayout();
+		Adjust();
 		RequestRedraw();
 	}
 
@@ -199,7 +199,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void LinearLayout::UpdateLayout ()
+	void LinearLayout::Adjust ()
 	{
 		int x = margin().left();
 		int y = margin().bottom();
@@ -215,7 +215,7 @@ namespace BlendInt {
 		set_margin(request);
 
 		if(subs_count()) {
-			UpdateLayout();
+			Adjust();
 			RequestRedraw();
 		}
 	}
@@ -244,7 +244,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
-			UpdateLayout();
+			Adjust();
 			RequestRedraw();
 		}
 

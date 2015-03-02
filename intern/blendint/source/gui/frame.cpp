@@ -50,8 +50,8 @@ namespace BlendInt {
 
 		PushBackSubView(layout_);
 		set_size(layout_->size());
-        set_refresh(true);
-        EnableViewBuffer();
+//        set_refresh(true);
+//        EnableViewBuffer();
 
 		InitializeFrameOnce();
 	}
@@ -71,8 +71,8 @@ namespace BlendInt {
 			layout_ = layout;
 		}
 
-        set_refresh(true);
-        EnableViewBuffer();
+//        set_refresh(true);
+//        EnableViewBuffer();
         
 		PushBackSubView(layout_);
 		ResizeSubView(layout_, size());
@@ -201,6 +201,17 @@ namespace BlendInt {
             view_buffer()->Draw(0, 0);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             
+        } else {
+
+            glViewport(position().x(), position().y(), size().width(), size().height());
+
+            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
+            AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+
+			DrawSubViewsOnce(context);
+
+			glViewport(0, 0, context->size().width(), context->size().height());
+
         }
         
 		AbstractWindow::shaders->frame_outer_program()->use();
@@ -234,6 +245,12 @@ namespace BlendInt {
 			hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
 			ClearHoverWidgets(hovered_widget_);
 			hovered_widget_ = 0;
+		}
+
+		if(focused_widget_) {
+			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
+			delegate_focus_off(focused_widget_, context);
+			focused_widget_ = 0;
 		}
 	}
 

@@ -97,6 +97,11 @@ namespace BlendInt {
 		return false;
 	}
 
+	void StackLayout::Adjust() const
+	{
+
+	}
+
 	void StackLayout::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubView(widget)) {

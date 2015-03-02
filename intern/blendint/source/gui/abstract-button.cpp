@@ -228,7 +228,15 @@ namespace BlendInt {
 		if(icon_) {
 			if(icon_->size().height() <= rect.height()) {
 				if(icon_->size().width() <= rect.width()) {
-					icon_->DrawInRect(rect, AlignLeft | AlignVerticalCenter);
+
+					int align = AlignVerticalCenter;
+					if(text_) {
+						align |= AlignLeft;
+					} else {
+						align |= AlignHorizontalCenter;
+					}
+
+					icon_->DrawInRect(rect, align);
 					rect.cut_left(icon_->size().width() + kIconTextSpace);
 				}
 			}
