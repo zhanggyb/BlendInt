@@ -94,23 +94,23 @@ namespace BlendInt {
 
 		void SetOrientation (Orientation orientation);
 
-		T minimum () const {return m_minimum;}
+		T minimum () const {return minimum_;}
 
-		T maximum () const {return m_maximum;}
+		T maximum () const {return maximum_;}
 
-		T value () const {return m_value;}
+		T value () const {return value_;}
 
-		T step () const {return m_step;}
+		T step () const {return step_;}
 
-		Orientation orientation () const {return m_orientation;}
+		Orientation orientation () const {return orientation_;}
 
-		Cpp::EventRef<T> slider_moved () {return m_slider_moved;}
+		Cpp::EventRef<T> slider_moved () {return slider_moved_;}
 
-		Cpp::EventRef<> slider_pressed () {return m_slider_pressed;}
+		Cpp::EventRef<> slider_pressed () {return slider_pressed_;}
 
-		Cpp::EventRef<> slider_released () {return m_slider_released;}
+		Cpp::EventRef<> slider_released () {return slider_released_;}
 
-		Cpp::EventRef<T> value_changed () {return m_value_changed;}
+		Cpp::EventRef<T> value_changed () {return value_changed_;}
 
 	protected:
 
@@ -126,67 +126,67 @@ namespace BlendInt {
 
 		void set_value (T value)
 		{
-			m_value = value;
+			value_ = value;
 		}
 
 		void set_step (T step)
 		{
-			m_step = step;
+			step_ = step;
 		}
 
 		void set_orientation (Orientation orientation)
 		{
-			m_orientation = orientation;
+			orientation_ = orientation;
 		}
 
 		void fire_slider_moved_event (T value)
 		{
-			m_slider_moved.fire(value);
+			slider_moved_.fire(value);
 		}
 
 		void fire_slider_pressed ()
 		{
-			m_slider_pressed.fire();
+			slider_pressed_.fire();
 		}
 
 		void fire_slider_released ()
 		{
-			m_slider_released.fire();
+			slider_released_.fire();
 		}
 
 		void fire_value_changed_event (T value)
 		{
-			m_value_changed.fire(value);
+			value_changed_.fire(value);
 		}
 
 	private:
 
-		Orientation m_orientation;
+		Orientation orientation_;
 
-		T m_value;
+		T value_;
 
-		T m_minimum;
-		T m_maximum;
-		T m_step;
+		T minimum_;
+		T maximum_;
+		T step_;
 
-		Cpp::Event<T> m_slider_moved;
+		Cpp::Event<T> slider_moved_;
 
-		Cpp::Event<> m_slider_pressed;
+		Cpp::Event<> slider_pressed_;
 
-		Cpp::Event<> m_slider_released;
+		Cpp::Event<> slider_released_;
 
-		Cpp::Event<T> m_value_changed;
+		Cpp::Event<T> value_changed_;
 
 	};
 
 	template <typename T>
 	AbstractSlider<T>::AbstractSlider (Orientation orientation)
 	: AbstractRoundWidget(),
-	  m_orientation(orientation),
-	  m_value(T(0)),
-	  m_minimum(T(0)),
-	  m_maximum(T(100)),
-	  m_step(T(5))
+	  orientation_(orientation),
+	  value_(T(0)),
+	  minimum_(T(0)),
+	  maximum_(T(100)),
+	  step_(T(5))
 	{
 	}
 
@@ -198,16 +198,16 @@ namespace BlendInt {
 	template <typename T>
 	void AbstractSlider<T>::SetValue (T value)
 	{
-		if (value == m_value) {
+		if (value == value_) {
 			return;
 		}
 
-		if (value < m_minimum || value > m_maximum)
+		if (value < minimum_ || value > maximum_)
 			return;
 
 		PerformValueUpdate(value);
-		m_value = value;
-		m_value_changed.fire(m_value);
+		value_ = value;
+		value_changed_.fire(value_);
 	}
 
 	template <typename T>
@@ -227,43 +227,43 @@ namespace BlendInt {
 			PerformMinimumUpdate(minimum);
 		}
 
-		m_minimum = minimum;
-		m_maximum = maximum;
+		minimum_ = minimum;
+		maximum_ = maximum;
 	}
 
 	template <typename T>
 	void AbstractSlider<T>::SetMinimum (T minimum)
 	{
-		if (m_minimum == minimum)
+		if (minimum_ == minimum)
 			return;
 
-		if (minimum >= m_maximum)
+		if (minimum >= maximum_)
 			return;
 
 		PerformMinimumUpdate(minimum);
-		m_minimum = minimum;
+		minimum_ = minimum;
 	}
 
 	template <typename T>
 	void AbstractSlider<T>::SetMaximum (T maximum)
 	{
-		if (m_maximum == maximum)
+		if (maximum_ == maximum)
 			return;
 
-		if (maximum <= m_minimum)
+		if (maximum <= minimum_)
 			return;
 
 		PerformMaximumUpdate(maximum);
-		m_maximum = maximum;
+		maximum_ = maximum;
 	}
 
 	template <typename T>
 	void AbstractSlider<T>::SetOrientation (Orientation orientation)
 	{
-		if(m_orientation == orientation) return;
+		if(orientation_ == orientation) return;
 
 		PerformOrientationUpdate(orientation);
-		m_orientation = orientation;
+		orientation_ = orientation;
 	}
 
 	template <typename T>

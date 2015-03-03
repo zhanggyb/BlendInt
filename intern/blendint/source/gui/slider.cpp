@@ -202,7 +202,7 @@ namespace BlendInt {
 
 				//m_slide_icon.set_highlight(false);
 				RequestRedraw();
-				return Ignore;
+				return Finish;
 			}
 		}
 	}
@@ -215,10 +215,9 @@ namespace BlendInt {
 			m_last_cursor = context->GetGlobalCursorPosition();
 			fire_slider_pressed();
 
-			return Finish;
-		} else {
-			return Ignore;
 		}
+
+		return Finish;
 	}
 
 	Response Slider::PerformMouseRelease (AbstractWindow* context)

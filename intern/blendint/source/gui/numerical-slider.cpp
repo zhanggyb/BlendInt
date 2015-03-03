@@ -28,20 +28,25 @@
 
 namespace BlendInt {
 
-	Margin NumericalSlider::default_numberslider_padding(2, 2, 2, 2);
+	Margin NumericalSlider::kPadding(2, 2, 2, 2);
 
 	NumericalSlider::NumericalSlider (Orientation orientation)
 	: AbstractSlider<double>(orientation),
-	  hover_(false)
+	  title_(""),
+	  value_(""),
+	  hover_(false),
+	  pressed_(false),
+	  moved_(false)
 	{
 		set_round_type(RoundAll);
-		int h = font_.height();
-		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
-						h + default_numberslider_padding.vsum());
-		set_round_radius(size().height() / 2);
 
-//		font_.set_pen(AbstractWindow::icons->num()->size().width() * 1.5f, (size().height() - font_.height()) / 2
-//				+ std::abs(font_.descender()));
+		int h = title_.font().height();
+		int w = h;
+		w += h;
+
+		set_size(w + pixel_size(kPadding.hsum()),
+				h + pixel_size(kPadding.vsum()));
+		set_round_radius(size().height() / 2);
 
 		InitializeNumericalSlider ();
 	}
@@ -49,16 +54,20 @@ namespace BlendInt {
 	NumericalSlider::NumericalSlider (const String& title, Orientation orientation)
 	: AbstractSlider<double>(orientation),
 	  title_(title),
-	  hover_(false)
+	  value_(""),
+	  hover_(false),
+	  pressed_(false),
+	  moved_(false)
 	{
 		set_round_type(RoundAll);
-		int h = font_.height();
-		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
-						h + default_numberslider_padding.vsum());
-		set_round_radius(size().height() / 2);
 
-//		font_.set_pen(AbstractWindow::icons->num()->size().width() * 1.5f, (size().height() - font_.height()) / 2
-//				+ std::abs(font_.descender()));
+		int h = title_.font().height();
+		int w = std::max(title_.size().width(), h);
+		w += h;
+
+		set_size(w + pixel_size(kPadding.hsum()),
+				h + pixel_size(kPadding.vsum()));
+		set_round_radius(size().height() / 2);
 
 		InitializeNumericalSlider ();
 	}
@@ -70,10 +79,7 @@ namespace BlendInt {
 
 	void NumericalSlider::SetTitle (const String& title)
 	{
-		if(title_ == title) return;
-
-		title_ = title;
-		//Rect text_outline = m_font.GetTextOutline(m_title);
+		title_.SetText(title);
 
 		RequestRedraw();
 	}
@@ -90,25 +96,25 @@ namespace BlendInt {
 		int radius_plus = 0;
 
 		if ((round_type() & RoundTopLeft) ||
-						(round_type() & RoundBottomLeft))
+				(round_type() & RoundBottomLeft))
 		{
 			radius_plus += round_radius();
 		}
 
 		if((round_type() & RoundTopRight) ||
-						(round_type() & RoundBottomRight))
+				(round_type() & RoundBottomRight))
 		{
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = font_.height();
+		int max_font_height = title_.font().height();
 
 		preferred_size.set_height(
-		        max_font_height + default_numberslider_padding.vsum());	// top padding: 2, bottom padding: 2
+		        max_font_height + pixel_size(kPadding.vsum()));
 
 		preferred_size.set_width(
-		        max_font_height + default_numberslider_padding.hsum()
-		                + radius_plus + 100);
+				max_font_height + pixel_size(kPadding.hsum())
+				+ radius_plus + title_.size().width());
 
 		return preferred_size;
 	}
@@ -127,6 +133,11 @@ namespace BlendInt {
 
 	void NumericalSlider::PerformValueUpdate (double value)
 	{
+		char buf[32];
+		snprintf(buf, 32, "%.1f", value);
+
+		value_.SetText(buf);
+		RequestRedraw();
 	}
 
 	void NumericalSlider::PerformStepUpdate (double step)
@@ -258,34 +269,27 @@ namespace BlendInt {
 							GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		glBindVertexArray(0);
+		Rect rect(0, 0, AbstractWindow::icons->num()->size().width() * 2, size().height());
 
-		GLSLProgram::reset();
+		AbstractWindow::icons->num()->DrawInRect(rect,
+				AlignCenter, Color(0x0F0F0FFF).data(), 0, 180.f);
 
-		int icon_x = AbstractWindow::icons->num()->size().width();
-		int icon_y = size().height() / 2;
-		AbstractWindow::icons->num()->Draw(icon_x,
-				icon_y,
-				Color(0x0F0F0FFF).data(),
-				0,
-				180.f);
+		rect.set_x(rect.width() + pixel_size(kPadding.left()));
+		rect.set_width(size().width() - pixel_size(kPadding.hsum()) - 4 * AbstractWindow::icons->num()->size().width() - value_.size().width());
+		title_.DrawInRect(rect, AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline);
 
-		icon_x = size().width() - AbstractWindow::icons->num()->size().width();
-		AbstractWindow::icons->num()->Draw(icon_x,
-				icon_y,
+		rect.set_x(rect.x() + title_.size().width());
+		rect.set_width(size().width() - pixel_size(kPadding.hsum()) - 4 * AbstractWindow::icons->num()->size().width() - title_.size().width());
+		value_.DrawInRect(rect, AlignCenter | AlignJustify | AlignBaseline);
+
+		rect.set_x(size().width() - AbstractWindow::icons->num()->size().width() * 2);
+		rect.set_width(AbstractWindow::icons->num()->size().width());
+
+		AbstractWindow::icons->num()->DrawInRect(rect,
+				AlignCenter,
 				Color(0x0F0F0FFF).data(),
 				0,
 				0.f);
-
-		//int last_text = 0;
-		if(title_.size()) {
-			//last_text = font_.Print(0.f, 0.f, title_);
-		}
-
-		char buf[32];
-		snprintf(buf, 32, "%.1f", value());
-
-		// font_.Print(last_text + 1, 0.f, buf);
 
 		return Finish;
 	}

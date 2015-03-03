@@ -28,7 +28,7 @@
 #include <opengl/gl-vertexarrays.hpp>
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/font.hpp>
+#include <gui/text.hpp>
 #include <gui/abstract-slider.hpp>
 
 namespace BlendInt {
@@ -91,13 +91,17 @@ namespace BlendInt {
 
 		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		Font font_;
+		Text title_;
 
-		String title_;
+		Text value_;
 
 		bool hover_;
 
-		static Margin default_numberslider_padding;
+		bool pressed_;
+
+		bool moved_;
+
+		static Margin kPadding;
 	};
 
 }
