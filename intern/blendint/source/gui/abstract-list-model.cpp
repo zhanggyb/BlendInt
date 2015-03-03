@@ -159,10 +159,12 @@ namespace BlendInt {
 
 		ModelNode* up_record = 0;
 		ModelNode* down_record = 0;
+		ModelNode* tmp = 0;
+		ModelNode* parent_node = get_index_node(parent);
 
 		while(node) {
 
-			ModelNode* tmp = node;	// the tmp node iterate in this row
+			tmp = node;	// the tmp node iterate in this row
 			up_record = node->up;
 			down_record = node->down;
 
@@ -181,18 +183,10 @@ namespace BlendInt {
 
 					// destroy tmp:
 
-					if(tmp->up) {
-						tmp->up->down = 0;
-					}
-					if(tmp->left) {
-						tmp->left->right = 0;
-					}
-					if(tmp->right) {
-						tmp->right->left = 0;
-					}
-					if(tmp->down) {
-						tmp->down->up = 0;
-					}
+					if(tmp->up) tmp->up->down = 0;
+					if(tmp->left) tmp->left->right = 0;
+					if(tmp->right) tmp->right->left = 0;
+					if(tmp->down) tmp->down->up = 0;
 
 					delete tmp;
 
@@ -200,31 +194,32 @@ namespace BlendInt {
 					if(tmp == 0) break;
 				}
 
-				tmp = get_index_node(parent);
+				if(first) first->right = last;
+				if(last) last->left = first;
 
 				if(up_record == 0) {	// the first child
 
 					if(first == 0) {
 
-						if(last == 0) {
-							tmp->child = 0;
+						if(last == 0) {	// more all column
+							parent_node->child = down_record;
+							if(down_record) {
+								down_record->up = 0;
+								down_record->parent = parent_node;
+							}
 						} else {
-							tmp->child = last;
-							last->parent = tmp;
-							last->left = 0;
-							last->up = 0;
-						}
+							parent_node->child = last;
+							last->parent = parent_node;
 
-						up_record = last;
+							assert(last->up == 0);
+							assert(last->down == 0);
+
+							if(down_record) down_record->up = last;
+							last->down = down_record;
+						}
 
 					} else {
-
-						first->right = last;
-						if(last) {
-							last->left = first;
-						}
-
-						up_record = first;
+						assert(first->up == 0);
 					}
 
 				} else {
@@ -232,25 +227,14 @@ namespace BlendInt {
 					if(first == 0) {
 
 						if(last == 0) {
-							// never reach this
+							DBG_PRINT_MSG("%s", "never reach this line");
 						} else {
 							up_record->down = last;
 							last->up = up_record;
-							last->left = 0;
+
+							if(down_record) down_record->up = last;
+							last->down = down_record;
 						}
-
-						up_record = last;
-
-					} else {
-
-						first->right = last;
-						if(last) {
-							last->left = first;
-						}
-						up_record->down = first;
-						first->up = up_record;
-
-						up_record = first;
 
 					}
 
@@ -314,7 +298,7 @@ namespace BlendInt {
                     ModelNode* tmp1 = 0;
                     ModelNode* tmp2 = 0;
                     
-                    while(row_iter) {
+                    while(row_iter && (row_iter != node)) {
                         
                         tmp1 = row_iter;
                         
@@ -344,7 +328,7 @@ namespace BlendInt {
                     ModelNode* tmp1 = 0;
                     ModelNode* tmp2 = 0;
                     
-                    while(row_iter) {
+                    while(row_iter && (row_iter != node)) {
                         
                         tmp1 = row_iter;
                         
