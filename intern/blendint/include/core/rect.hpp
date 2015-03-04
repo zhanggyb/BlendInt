@@ -41,26 +41,31 @@ namespace BlendInt {
 		
 		inline Rect (int x, int y, int width, int height)
 		{
-			x_ = std::min(x, x + width);
-			y_ = std::min(y, y + height);
-			width_ = std::abs(width);
-			height_ = std::abs(height);
+			x_ = x;
+			y_ = y;
+
+			width_ = width < 0 ? 0 : width;
+			height_ = height < 0 ? 0 : height;
 		}
 
 		inline Rect (const Point& p1, const Point& p2)
 		{
-			x_ = std::min(p1.x(), p2.x());
-			y_ = std::min(p1.y(), p2.y());
-			width_ = std::abs(p2.x() - p1.x());
-			height_ = std::abs(p2.y() - p1.y());
+			x_ = p1.x();
+			y_ = p1.y();
+
+			int width = p2.x() - p1.x();
+			int height = p2.y() - p1.y();
+
+			width_ = width < 0 ? 0 : width;
+      height_ = height < 0 ? 0 : height;
 		}
 
 		inline Rect (const Point& pos, const Size& size)
 		{
-			x_ = std::min(pos.x(), pos.x() + size.width());
-			y_ = std::min(pos.y(), pos.y() + size.height());
-			width_ = std::abs(size.width());
-			height_ = std::abs(size.height());
+			x_ = pos.x();
+			y_ = pos.y();
+			width_ = size.width() < 0 ? 0 : size.width();
+			height_ = size.height() < 0 ? 0 : size.height();
 		}
 
 		inline Rect (const Rect& orig)
