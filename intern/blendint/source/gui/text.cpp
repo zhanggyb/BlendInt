@@ -200,7 +200,7 @@ namespace BlendInt {
 			float rotate,
 			bool scale) const
  	{
-		if(rect.is_zero()) return;
+		if(rect.zero()) return;
 
 		int x = rect.left();
 		int y = rect.bottom();

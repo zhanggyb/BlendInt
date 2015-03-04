@@ -176,7 +176,7 @@ namespace BlendInt {
 
 //		if(focused_widget_) {
 //			context->register_active_frame(this);
-//			return delegate_mouse_release_event(focused_widget_, context);
+//			return dispatch_mouse_release(focused_widget_, context);
 //		}
 
 		return Ignore;
@@ -260,7 +260,7 @@ namespace BlendInt {
 //			if(focused_widget_) {
 //
 //				context->register_active_frame(this);
-//				retval = delegate_mouse_move_event(focused_widget_, context);
+//				retval = dispatch_mouse_move(focused_widget_, context);
 //
 //			}
 		}

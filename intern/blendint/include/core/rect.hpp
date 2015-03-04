@@ -170,13 +170,15 @@ namespace BlendInt {
 			return y_;
 		}
 
-		inline bool is_zero (void) const
+		inline bool zero (void) const
 		{
 			return width_ == 0 || height_ == 0;
 		}
 
 		inline void cut_left (int left)
 		{
+		  if(left > width_) left = width_;
+
 			width_ -= left;
 			x_ += left;
 
@@ -186,6 +188,8 @@ namespace BlendInt {
 
 		inline void cut_right (int right)
 		{
+		  if(right > width_) right = width_;
+
 			width_ -= right;
 
 			x_ = width_ < 0 ? (x_ + width_) : x_;
@@ -194,7 +198,9 @@ namespace BlendInt {
 
 		inline void cut_bottom (int bottom)
 		{
-			height_ -= bottom;
+		  if(bottom > height_) bottom = height_;
+
+		  height_ -= bottom;
 			y_ += bottom;
 
 			y_ = height_ < 0 ? (y_ + height_) : y_;
@@ -203,6 +209,8 @@ namespace BlendInt {
 
 		inline void cut_top (int top)
 		{
+		  if(top > height_) top = height_;
+
 			height_ -= top;
 
 			y_ = height_ < 0 ? (y_ + height_) : y_;

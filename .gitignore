@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# ctag file
+TAGS
+
 # temp files in Linux
 *~
 

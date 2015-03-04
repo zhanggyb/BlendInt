@@ -31,76 +31,74 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A Normal widget
-	 *
-	 * @ingroup widgets
-	 */
-	class AbstractWidget: public AbstractView
-	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
+  /**
+   * @brief A Normal widget
+   *
+   * @ingroup widgets
+   */
+  class AbstractWidget: public AbstractView
+  {
+  DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
-	public:
+  public:
 
-		AbstractWidget ();
+    AbstractWidget ();
 
-		AbstractWidget (int width, int height);
+    AbstractWidget (int width, int height);
 
-		virtual ~AbstractWidget();
+    virtual ~AbstractWidget ();
 
-		Cpp::EventRef<AbstractWidget*> destroyed ()
-		{
-			return *destroyed_;
-		}
+    Cpp::EventRef<AbstractWidget*> destroyed ()
+    {
+      return *destroyed_;
+    }
 
-	protected:
+  protected:
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		// virtual Response Draw (Profile& profile);
+    // virtual Response Draw (Profile& profile);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual Response PerformContextMenuPress (AbstractWindow* context);
+    virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		virtual Response PerformContextMenuRelease (AbstractWindow* context);
+    virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
-		{
-			if(!events_) {
-				events_.reset(new Cpp::ConnectionScope);
-			}
+    const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
+    {
+      if (!events_) {
+        events_.reset(new Cpp::ConnectionScope);
+      }
 
-			return events_;
-		}
+      return events_;
+    }
 
-		static bool RenderSubWidgetsToTexture (
-			AbstractWidget* widget,
-			AbstractWindow* context,
-			GLTexture2D* texture);
+    static bool RenderSubWidgetsToTexture (AbstractWidget* widget,
+        AbstractWindow* context, GLTexture2D* texture);
 
-	private:
+  private:
 
-		boost::scoped_ptr<Cpp::ConnectionScope> events_;
+    boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
-		boost::scoped_ptr<Cpp::Event<AbstractWidget*> > destroyed_;
+    boost::scoped_ptr<Cpp::Event<AbstractWidget*> > destroyed_;
 
-	};
+  };
 
 }

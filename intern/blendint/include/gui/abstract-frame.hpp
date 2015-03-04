@@ -33,188 +33,200 @@
 
 namespace BlendInt {
 
-	class FrameSplitter;
+  class FrameSplitter;
 
-	/**
-	 * @brief The abstract class of all frames
-	 *
-	 * In BlendInt, frame is used to divide the window (or GL context)
-	 * into different regions, hold and manage widgets inside and
-	 * process the HID events get from window.
-	 *
-	 * A frame can only be added and removed in a window, and use
-	 * framebuffer object to render widgets into a texture in general.
-	 * This makes sure the widgets whithin the frame will be rendered
-	 * only when needed.
-	 *
-	 * Frame can be focused. A focused frame has the high priority to
-	 * accept HID events from window and display on other frames.
-	 */
-	class AbstractFrame: public AbstractView
-	{
-	public:
+  /**
+   * @brief The abstract class of all frames
+   *
+   * In BlendInt, frame is used to divide the window (or GL context)
+   * into different regions, hold and manage widgets inside and
+   * process the HID events get from window.
+   *
+   * A frame can only be added and removed in a window, and use
+   * framebuffer object to render widgets into a texture in general.
+   * This makes sure the widgets whithin the frame will be rendered
+   * only when needed.
+   *
+   * Frame can be focused. A focused frame has the high priority to
+   * accept HID events from window and display on other frames.
+   */
+  class AbstractFrame: public AbstractView
+  {
+  public:
 
-		friend class AbstractWindow;
+    friend class AbstractWindow;
 
-		AbstractFrame (int flag = FrameFocusable);
+    AbstractFrame (int flag = FrameFocusable);
 
-		AbstractFrame (int width, int height, int flag = FrameFocusable);
+    AbstractFrame (int width, int height, int flag = FrameFocusable);
 
-		virtual ~AbstractFrame ();
+    virtual ~AbstractFrame ();
 
-		Point GetAbsolutePosition (const AbstractWidget* widget);
+    Point GetAbsolutePosition (const AbstractWidget* widget);
 
-		Point GetRelativePosition (const AbstractWidget* widget);
+    Point GetRelativePosition (const AbstractWidget* widget);
 
-        bool EnableViewBuffer ();
-        
-        void DisableViewBuffer ();
-        
-		inline bool focusable () const
-		{
-			return frame_flag_ & FrameFocusable;
-		}
+    bool EnableViewBuffer ();
 
-		inline bool floating () const
-		{
-			return frame_flag_ & FrameFloating;
-		}
+    void DisableViewBuffer ();
 
-		Cpp::EventRef<AbstractFrame*> destroyed ()
-		{
-			return *destroyed_;
-		}
+    inline bool focusable () const
+    {
+      return frame_flag_ & FrameFocusable;
+    }
 
-		static AbstractFrame* GetFrame (AbstractView* view);
+    inline bool floating () const
+    {
+      return frame_flag_ & FrameFloating;
+    }
 
-	protected:
+    Cpp::EventRef<AbstractFrame*> destroyed ()
+    {
+      return *destroyed_;
+    }
 
-		virtual Response PerformContextMenuPress (AbstractWindow* context);
+    static AbstractFrame* GetFrame (AbstractView* view);
 
-		virtual Response PerformContextMenuRelease (AbstractWindow* context);
+  protected:
 
-		virtual Response PerformMouseHover (AbstractWindow* context) = 0;
+    virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		Response DispatchKeyEvent (AbstractView* view, AbstractWindow* context);
+    virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		AbstractView* DispatchMousePressEvent (AbstractView* view, AbstractWindow* context);
+    virtual Response PerformMouseHover (AbstractWindow* context) = 0;
 
-		Response DispatchMouseMoveEvent (AbstractView* view, AbstractWindow* context);
+    Response RecursiveDispatchKeyEvent (AbstractView* view,
+        AbstractWindow* context);
 
-		Response DispatchMouseReleaseEvent (AbstractView* view, AbstractWindow* context);
+    AbstractView* RecursiveDispatchMousePress (AbstractView* view,
+        AbstractWindow* context);
 
-		AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig, AbstractWindow* context);
+    Response RecursiveDispatchMouseMoveEvent (AbstractView* view,
+        AbstractWindow* context);
 
-		void ClearHoverWidgets (AbstractView* hovered_widget);
+    Response RecursiveDispatchMouseReleaseEvent (AbstractView* view,
+        AbstractWindow* context);
 
-		void ClearHoverWidgets (AbstractView* hovered_widget, AbstractWindow* context);
+    AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig,
+        AbstractWindow* context);
 
-        inline const RefPtr<ViewBuffer>& view_buffer() const
-        {
-            return view_buffer_;
-        }
-        
-        inline void set_view_buffer (const RefPtr<ViewBuffer>& buffer)
-        {
-            view_buffer_ = buffer;
-        }
-        
-		const boost::scoped_ptr<Cpp::ConnectionScope>& events()
-		{
-			if(!events_) {
-				events_.reset(new Cpp::ConnectionScope);
-			}
+    void ClearHoverWidgets (AbstractView* hovered_widget);
 
-			return events_;
-		}
+    void ClearHoverWidgets (AbstractView* hovered_widget,
+        AbstractWindow* context);
 
-		static inline Response delegate_key_press_event (AbstractView* view, AbstractWindow* context)
-		{
-			return view->PerformKeyPress(context);
-		}
+    inline const RefPtr<ViewBuffer>& view_buffer () const
+    {
+      return view_buffer_;
+    }
 
-		static inline Response delegate_mouse_press_event (AbstractView* view, AbstractWindow* context)
-		{
-			return view->PerformMousePress(context);
-		}
+    inline void set_view_buffer (const RefPtr<ViewBuffer>& buffer)
+    {
+      view_buffer_ = buffer;
+    }
 
-		static inline Response delegate_mouse_release_event(AbstractView* view, AbstractWindow* context)
-		{
-			return view->PerformMouseRelease(context);
-		}
+    const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
+    {
+      if (!events_) {
+        events_.reset(new Cpp::ConnectionScope);
+      }
 
-		static inline Response delegate_mouse_move_event(AbstractView* view, AbstractWindow* context)
-		{
-			return view->PerformMouseMove(context);
-		}
+      return events_;
+    }
 
-		static void delegate_focus_on (AbstractView* view, AbstractWindow* context)
-		{
-			view->PerformFocusOn(context);
-		}
+    static inline Response dispatch_key_press (AbstractView* view,
+        AbstractWindow* context)
+    {
+      return view->PerformKeyPress(context);
+    }
 
-		static void delegate_focus_off (AbstractView* view, AbstractWindow* context)
-		{
-			view->PerformFocusOff(context);
-		}
+    static inline Response dispatch_mouse_press (AbstractView* view,
+        AbstractWindow* context)
+    {
+      return view->PerformMousePress(context);
+    }
 
-		static inline void delegate_mouse_hover_in_event (AbstractView* view, AbstractWindow* context)
-		{
-			view->PerformHoverIn(context);
-		}
+    static inline Response dispatch_mouse_release (AbstractView* view,
+        AbstractWindow* context)
+    {
+      return view->PerformMouseRelease(context);
+    }
 
-		static inline void delegate_mouse_hover_out_event (AbstractView* view, AbstractWindow* context)
-		{
-			view->PerformHoverOut(context);
-		}
+    static inline Response dispatch_mouse_move (AbstractView* view,
+        AbstractWindow* context)
+    {
+      return view->PerformMouseMove(context);
+    }
 
-		static inline Response delegate_dispatch_hover_event(AbstractFrame* frame, AbstractWindow* context)
-		{
-			return frame->PerformMouseHover(context);
-		}
+    static void dispatch_focus_on (AbstractView* view, AbstractWindow* context)
+    {
+      view->PerformFocusOn(context);
+    }
 
-		/**
-		 * @brief Render to texture
-		 * @param[in] frame
-		 * @param[in] context
-		 * @param[out] texture
-		 */
-		static bool RenderSubFramesToTexture (
-			AbstractFrame* frame,
-			AbstractWindow* context,
-			const glm::mat4& projection,
-			const glm::mat3& model,
-			GLTexture2D* texture);
+    static void dispatch_focus_off (AbstractView* view, AbstractWindow* context)
+    {
+      view->PerformFocusOff(context);
+    }
 
-	private:
+    static inline void dispatch_mouse_hover_in (AbstractView* view,
+        AbstractWindow* context)
+    {
+      view->PerformHoverIn(context);
+    }
 
-		friend class FrameSplitter;
+    static inline void dispatch_mouse_hover_out (AbstractView* view,
+        AbstractWindow* context)
+    {
+      view->PerformHoverOut(context);
+    }
 
-		enum FrameFlagIndex {
+    static inline Response dispatch_mouse_hover (AbstractFrame* frame,
+        AbstractWindow* context)
+    {
+      return frame->PerformMouseHover(context);
+    }
 
-			/**
-			 * whether the frame can be focused
-			 */
-			FrameFocusable = (1 << 0),
+    /**
+     * @brief Render to texture
+     * @param[in] frame
+     * @param[in] context
+     * @param[out] texture
+     */
+    static bool RenderSubFramesToTexture (AbstractFrame* frame,
+        AbstractWindow* context, const glm::mat4& projection,
+        const glm::mat3& model, GLTexture2D* texture);
 
-			/**
-			 * whether the frame is floating above other regular frames, also called always-on-top.
-			 */
-			FrameFloating = (1 << 1)
+  private:
 
-		};
+    friend class FrameSplitter;
 
-		AbstractWidget* DispatchHoverEventDeeper (AbstractWidget* view, AbstractWindow* context, Point& local_position);
+    enum FrameFlagIndex
+    {
 
-		uint32_t frame_flag_;
+      /**
+       * whether the frame can be focused
+       */
+      FrameFocusable = (1 << 0),
 
-        RefPtr<ViewBuffer> view_buffer_;
-        
-		boost::scoped_ptr<Cpp::ConnectionScope> events_;
+      /**
+       * whether the frame is floating above other regular frames, also called always-on-top.
+       */
+      FrameFloating = (1 << 1)
 
-		boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
+    };
 
-		static glm::mat4 kViewMatrix;
-	};
+    AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* view,
+        AbstractWindow* context);
+
+    uint32_t frame_flag_;
+
+    RefPtr<ViewBuffer> view_buffer_;
+
+    boost::scoped_ptr<Cpp::ConnectionScope> events_;
+
+    boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
+
+    static glm::mat4 kViewMatrix;
+  };
 
 }

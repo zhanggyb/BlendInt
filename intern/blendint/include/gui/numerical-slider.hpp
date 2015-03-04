@@ -33,75 +33,120 @@
 
 namespace BlendInt {
 
-	class NumericalSlider: public AbstractSlider<double>
-	{
-	DISALLOW_COPY_AND_ASSIGN(NumericalSlider);
+  class NumericalSlider: public AbstractSlider<double>
+  {
+  DISALLOW_COPY_AND_ASSIGN(NumericalSlider);
 
-	public:
+  public:
 
-		NumericalSlider (Orientation orientation = Horizontal);
+    NumericalSlider (Orientation orientation = Horizontal);
 
-		NumericalSlider (const String& title, Orientation orientation = Horizontal);
+    NumericalSlider (const String& title, Orientation orientation = Horizontal);
 
-		virtual ~NumericalSlider ();
+    virtual ~NumericalSlider ();
 
-		void SetTitle (const String& title);
+    void SetTitle (const String& title);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformOrientationUpdate (Orientation orientation);
+    virtual void PerformOrientationUpdate (Orientation orientation);
 
-		virtual void PerformMinimumUpdate (double minimum);
+    virtual void PerformMinimumUpdate (double minimum);
 
-		virtual void PerformMaximumUpdate (double maximum);
+    virtual void PerformMaximumUpdate (double maximum);
 
-		virtual void PerformValueUpdate (double value);
+    virtual void PerformValueUpdate (double value);
 
-		virtual void PerformStepUpdate (double step);
+    virtual void PerformStepUpdate (double step);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-	private:
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		void InitializeNumericalSlider ();
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		float GetSlidePosition (float border, double value);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		/**
-		 * @brief VertexArray objects used in this widget
-		 *
-		 * [0] - inner buffer
-		 * [1] - outer buffer
-		 */
-		GLVertexArrays<2> vao_;
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		Text title_;
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		Text value_;
+  private:
 
-		bool hover_;
+    void InitializeNumericalSlider ();
 
-		bool pressed_;
+    Response KeyPressInEditMode (AbstractWindow* context);
 
-		bool moved_;
+    void DisposeBackspacePress ();
 
-		static Margin kPadding;
-	};
+    void DisposeDeletePress ();
+
+    void DisposeLeftPress ();
+
+    void DisposeRightPress ();
+
+    float GetSlidePosition (float border, double value);
+
+    bool GetNewValue (const Point& cursor, double* out_v);
+
+    void DrawSlideMode (AbstractWindow* context);
+
+    void DrawEditMode (AbstractWindow* context);
+
+    /**
+     * @brief VertexArray objects used in this widget
+     *
+     * [0] - inner buffer
+     * [1] - outer buffer
+     */
+    GLVertexArrays<3> vao_;
+
+    GLBuffer<ARRAY_BUFFER, 3> vbo_;
+
+    RefPtr<Text> title_text_;
+
+    RefPtr<Text> value_text_;
+
+    Point last_cursor_position_;
+
+    Font font_;
+
+    size_t text_start_; // where start print the text
+
+    /**
+     * @brief Where display the cursor and insert new text
+     */
+    size_t cursor_index_;
+
+    double last_value_;
+
+    bool hover_;
+
+    bool pressed_;
+
+    bool moved_;
+
+    bool edit_mode_;
+
+    static const int vertical_space = 2;
+
+    static Margin kPadding;
+  };
 
 }

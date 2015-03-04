@@ -395,7 +395,7 @@ namespace BlendInt {
 	void Workspace::PerformHoverOut(AbstractWindow* context)
 	{
 		if(hover_frame_) {
-			delegate_mouse_hover_out_event(hover_frame_, context);
+			dispatch_mouse_hover_out(hover_frame_, context);
 			hover_frame_ = nullptr;
 		}
 	}
@@ -403,7 +403,7 @@ namespace BlendInt {
 	Response Workspace::PerformKeyPress(AbstractWindow* context)
 	{
 		if(focused_frame_) {
-			return delegate_key_press_event(focused_frame_, context);
+			return dispatch_key_press(focused_frame_, context);
 		}
 		return Ignore;
 	}
@@ -415,7 +415,7 @@ namespace BlendInt {
 		pressed_ = true;
 
 		if(hover_frame_ != nullptr) {
-			response = delegate_mouse_press_event(hover_frame_, context);
+			response = dispatch_mouse_press(hover_frame_, context);
 
 			if(response == Finish) {
 				SetFocusedFrame(hover_frame_, context);
@@ -434,7 +434,7 @@ namespace BlendInt {
 		pressed_ = false;
 
 		if(focused_frame_ != nullptr) {
-			response = delegate_mouse_release_event(focused_frame_, context);
+			response = dispatch_mouse_release(focused_frame_, context);
 		}
 
 		return response;
@@ -445,7 +445,7 @@ namespace BlendInt {
 		Response response = Ignore;
 
 		if(pressed_ && focused_frame_) {
-			response = delegate_mouse_move_event(focused_frame_, context);
+			response = dispatch_mouse_move(focused_frame_, context);
 		}
 
 		return response;
@@ -458,7 +458,7 @@ namespace BlendInt {
 			Response response = Finish;
 			SetHoveredFrame(context);
 			if(hover_frame_ != nullptr) {
-				response = delegate_dispatch_hover_event(hover_frame_, context);
+				response = dispatch_mouse_hover(hover_frame_, context);
 			}
 
 			return response;
@@ -488,12 +488,12 @@ namespace BlendInt {
     	if(focused_frame_ == frame) return;
 
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_off(focused_frame_, context);
+    		dispatch_focus_off(focused_frame_, context);
     	}
 
     	focused_frame_ = frame;
     	if(focused_frame_ != nullptr) {
-    		delegate_focus_on(focused_frame_, context);
+    		dispatch_focus_on(focused_frame_, context);
     	}
 	}
 
@@ -550,11 +550,11 @@ namespace BlendInt {
 		if (original != hover_frame_) {
 
 			if (original != nullptr) {
-				delegate_mouse_hover_out_event(original, context);
+				dispatch_mouse_hover_out(original, context);
 			}
 
 			if (hover_frame_ != nullptr) {
-				delegate_mouse_hover_in_event(hover_frame_, context);
+				dispatch_mouse_hover_in(hover_frame_, context);
 			}
 
 		}

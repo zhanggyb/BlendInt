@@ -249,7 +249,7 @@ namespace BlendInt {
 
 		if(focused_widget_) {
 			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-			delegate_focus_off(focused_widget_, context);
+			dispatch_focus_off(focused_widget_, context);
 			focused_widget_ = 0;
 		}
 	}
@@ -277,7 +277,7 @@ namespace BlendInt {
 		Response response = Ignore;
 
 		if(focused_widget_) {
-			delegate_key_press_event(focused_widget_, context);
+			dispatch_key_press(focused_widget_, context);
 		}
 
 		return response;
@@ -293,7 +293,7 @@ namespace BlendInt {
 
 				AbstractView* widget = 0;	// widget may be focused
 
-				widget = DispatchMousePressEvent(hovered_widget_, context);
+				widget = RecursiveDispatchMousePress(hovered_widget_, context);
 
 				if(widget == 0) {
 					DBG_PRINT_MSG("%s", "widget 0");
@@ -322,7 +322,7 @@ namespace BlendInt {
 
 		if(focused_widget_) {
 			context->register_active_frame(this);
-			return delegate_mouse_release_event(focused_widget_, context);
+			return dispatch_mouse_release(focused_widget_, context);
 		}
 
 		return Ignore;
@@ -334,7 +334,7 @@ namespace BlendInt {
 
 		if(focused_widget_) {
 			context->register_active_frame(this);
-			retval = delegate_mouse_move_event(focused_widget_, context);
+			retval = dispatch_mouse_move(focused_widget_, context);
 		}
 
 		return retval;
@@ -419,13 +419,13 @@ namespace BlendInt {
 			return;
 
 		if (focused_widget_) {
-			delegate_focus_off(focused_widget_, context);
+			dispatch_focus_off(focused_widget_, context);
 			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
 		}
 
 		focused_widget_ = widget;
 		if (focused_widget_) {
-			delegate_focus_on(focused_widget_, context);
+			dispatch_focus_on(focused_widget_, context);
 			events()->connect(focused_widget_->destroyed(), this, &Frame::OnFocusedWidgetDestroyed);
 		}
 	}

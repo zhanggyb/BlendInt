@@ -35,102 +35,104 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A one-line text editor
-	 */
-	class TextEntry: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(TextEntry);
+  /**
+   * @brief A one-line text editor
+   */
+  class TextEntry: public AbstractRoundWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(TextEntry);
 
-	public:
+  public:
 
-		TextEntry ();
+    TextEntry ();
 
-		TextEntry (const String& text);
+    TextEntry (const String& text);
 
-		virtual ~TextEntry();
+    virtual ~TextEntry ();
 
-		void SetText (const String& text);
+    void SetText (const String& text);
 
-        /**
-         * @brief Clear the text
-         */
-        void ClearText ();
-        
-		void SetFont (const Font& font);
+    /**
+     * @brief Clear the text
+     */
+    void ClearText ();
 
-		virtual Size GetPreferredSize () const;
+    void SetFont (const Font& font);
 
-		virtual bool IsExpandX () const;
+    virtual Size GetPreferredSize () const;
 
-		static inline const Margin& padding ()
-		{
-			return kPadding;
-		}
+    virtual bool IsExpandX () const;
 
-	protected:
+    static inline const Margin& padding ()
+    {
+      return kPadding;
+    }
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+  protected:
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-        virtual void PerformFocusOn (AbstractWindow* context);
-        
-        virtual void PerformFocusOff (AbstractWindow* context);
-        
-        virtual void PerformHoverIn (AbstractWindow* context);
-        
-        virtual void PerformHoverOut (AbstractWindow* context);
-        
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-        virtual Response Draw (AbstractWindow* context);
-        
-	private:
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		void InitializeTextEntry ();
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		void DisposeBackspacePress ();
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		void DisposeDeletePress ();
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		void DisposeLeftPress ();
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		void DisposeRightPress ();
+    virtual Response Draw (AbstractWindow* context);
 
-		size_t GetTextCursorIndex (AbstractWindow* context);
+  private:
 
-		/**
-		 * @brief Vertex array objects
-		 *
-		 * 	- 0: for inner buffer
-		 * 	- 1: for outline buffer
-		 * 	- 2: for cursor buffer
-		 */
-		GLuint vao_[3];
+    void InitializeTextEntry ();
 
-        GLBuffer<ARRAY_BUFFER, 3> vbo_;
+    void DisposeBackspacePress ();
 
-        RefPtr<Text> text_;
-        
-		size_t text_start_;	// where start print the text
+    void DisposeDeletePress ();
 
-		/**
-		 * @brief Where display the cursor and insert new text
-		 */
-		size_t cursor_index_;
+    void DisposeLeftPress ();
 
-		bool focused_;
+    void DisposeRightPress ();
 
-		// the space between the text and the top
-		// o the text and the bottom
-		static const int vertical_space = 2;
+    size_t GetTextCursorIndex (AbstractWindow* context);
 
-		static Margin kPadding;
-	};
+    /**
+     * @brief Vertex array objects
+     *
+     * 	- 0: for inner buffer
+     * 	- 1: for outline buffer
+     * 	- 2: for cursor buffer
+     */
+    GLuint vao_[3];
+
+    GLBuffer<ARRAY_BUFFER, 3> vbo_;
+
+    RefPtr<Text> text_;
+
+    size_t text_start_;	// where start print the text
+
+    /**
+     * @brief Where display the cursor and insert new text
+     */
+    size_t cursor_index_;
+
+    bool focused_;
+
+    bool hovered_;
+
+    // the space between the text and the top
+    // o the text and the bottom
+    static const int vertical_space = 2;
+
+    static Margin kPadding;
+  };
 
 }
