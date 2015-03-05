@@ -450,19 +450,18 @@ namespace BlendInt {
 
   Response CVImageView::Draw (AbstractWindow* context)
   {
-    if (mutex_.trylock()) {
+    AbstractWindow::shaders->widget_image_program()->use();
+
+    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+        (size().width() - image_size_.width())/2.f,
+        (size().height() - image_size_.height()) / 2.f);
+    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+
+    glBindVertexArray(vao_[1]);
+    if (mutex_.lock()) {  // TODO: looks there's no need to lock when writting texture in thread
 
       texture_.bind();
-
-      AbstractWindow::shaders->widget_image_program()->use();
-
-      glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-      glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
-                  (size().width() - image_size_.width())/2.f,
-                  (size().height() - image_size_.height()) / 2.f);
-      glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
-
-      glBindVertexArray(vao_[1]);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       mutex_.unlock();
