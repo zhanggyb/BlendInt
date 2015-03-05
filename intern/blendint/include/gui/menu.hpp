@@ -35,131 +35,126 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A widget contains and handles a menu
-	 */
-	class Menu: public AbstractRoundFrame
-	{
-		DISALLOW_COPY_AND_ASSIGN(Menu);
+  /**
+   * @brief A widget contains and handles a menu
+   */
+  class Menu: public AbstractRoundFrame
+  {
+  DISALLOW_COPY_AND_ASSIGN(Menu);
 
-	public:
+  public:
 
-		Menu ();
+    Menu ();
 
-		virtual ~Menu();
+    virtual ~Menu ();
 
-		void SetTitle (const String& title);
+    void SetTitle (const String& title);
 
-		void AddAction (const String& text);
+    void AddAction (const String& text);
 
-		void AddAction (const String& text, const String& shortcut);
+    void AddAction (const String& text, const String& shortcut);
 
-		void AddAction (const RefPtr<AbstractIcon>& icon, const String& text);
+    void AddAction (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		void AddAction (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
+    void AddAction (const RefPtr<AbstractIcon>& icon, const String& text,
+        const String& shortcut);
 
-		void AddAction (const RefPtr<Action>& item);
+    void AddAction (const RefPtr<Action>& item);
 
-		bool AddMenuItem (MenuItem* item);
+    bool AddWidget (AbstractWidget* item);
 
-		bool InsertMenuItem (int index, MenuItem* item);
+    bool InsertWidget (int index, AbstractWidget* item);
 
-		bool AddButton (Button* btn);
+    const String& title () const
+    {
+      return title_;
+    }
 
-		const String& title () const
-		{
-			return title_;
-		}
+    Cpp::EventRef<Action*> triggered ()
+    {
+      return m_triggered;
+    }
 
-		Cpp::EventRef<Action*> triggered() {return m_triggered;}
+    virtual Size GetPreferredSize () const;
 
-		const Font& font () const
-		{
-			return font_;
-		}
+  protected:
 
-	protected:
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		virtual Response PerformContextMenuPress (AbstractWindow* context);
+    virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual Response PerformContextMenuRelease (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+  private:
 
-	private:
+    virtual Response PerformMouseHover (AbstractWindow* context);
 
-		virtual Response PerformMouseHover (AbstractWindow* context);
+    void InitializeMenu ();
 
-		void InitializeMenu ();
+    void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		void ResetHighlightBuffer (int width);
+    void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+    void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+    String title_;
 
-		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
+    GLuint vao_[2];
 
-		String title_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		Font font_;
+    Cpp::Event<Action*> m_hovered;
 
-		GLuint vao_[3];
+    Cpp::Event<Action*> m_triggered;
 
-		GLBuffer<ARRAY_BUFFER, 3> buffer_;
+    glm::mat4 projection_matrix_;
 
-		Cpp::Event<Action*> m_hovered;
+    glm::mat3 model_matrix_;
 
-		Cpp::Event<Action*> m_triggered;
+    AbstractWidget* focused_widget_;
 
-		glm::mat4 projection_matrix_;
+    AbstractWidget* hovered_widget_;
 
-		glm::mat3 model_matrix_;
+    RefPtr<FrameShadow> shadow_;
 
-		AbstractWidget* focused_widget_;
+    int cursor_range_;
 
-		AbstractWidget* hovered_widget_;
+    int space_;
 
-		RefPtr<FrameShadow> shadow_;
+    bool hover_;
 
-        GLTexture2D texture_buffer_;
+    bool pressed_;
 
-		int cursor_range_;
+    static int kDefaultIconSpace;
 
-		bool hover_;
+    static int kDefaultShortcutSpace;
 
-		bool pressed_;
-
-		static int kDefaultIconSpace;
-
-		static int kDefaultShortcutSpace;
-
-	};
+  };
 
 }

@@ -21,11 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#pragma once
+
+#include <core/margin.hpp>
+
 #include <gui/abstract-menu-item.hpp>
 #include <gui/action.hpp>
-
-#ifndef _BLENDINT_GUI_MENUITEM_HPP_
-#define _BLENDINT_GUI_MENUITEM_HPP_
 
 namespace BlendInt {
 
@@ -43,13 +44,15 @@ namespace BlendInt {
 
 		MenuItem (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
 
-		bool AddSubMenuItem (MenuItem* menuitem);
-
-		bool InsertSubMenuItem (int index, MenuItem* menuitem);
-
 		virtual ~MenuItem();
 
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
+
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformHoverIn (AbstractWindow* context);
 
@@ -61,10 +64,18 @@ namespace BlendInt {
 
 		void InitializeMenuItem ();
 
+    GLuint vao_;
+
+    GLBuffer<> vbo_;
+
+    bool hovered_;
+
 		RefPtr<Action> action_;
+
+		static Margin kPadding;
+
+		static int kSpace;  // space between icon and text, or text and shortcut
 
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_MENUITEM_HPP_ */

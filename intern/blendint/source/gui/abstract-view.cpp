@@ -51,6 +51,8 @@ namespace BlendInt {
 
 	float AbstractView::kBorderWidth = 1.f;
 
+	boost::mutex AbstractView::kRefreshMutex;
+
 	const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = {
         { 0.0, 0.0 },
         { 0.195, 0.02 },
@@ -236,38 +238,56 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractView::RequestRedraw()
-	{
-		if(!refresh()) {
+  void AbstractView::RequestRedraw ()
+  {
+    if (!refresh()) {
 
-			AbstractView* root = this;
-			AbstractView* p = superview();
+      AbstractView* root = this;
+      AbstractView* p = superview();
+      boost::thread::id id = boost::this_thread::get_id();
 
-			/*
-			while(p) {
-				DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-				p = p->superview();
-			}
-			p = superview();
-			*/
+      /*
+       while(p) {
+       DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
+       p = p->superview();
+       }
+       p = superview();
+       */
 
-			while(p && (!p->refresh()) && (p->visiable())) {
-				root = p;
-				p->set_refresh(true);
-				p = p->superview();
-			}
+      if (id == AbstractWindow::main_thread_id()) {
 
-			if(root->superview() == 0) {
-				AbstractWindow* window = dynamic_cast<AbstractWindow*>(root);
-				if(window) {
-					//DBG_PRINT_MSG("Call %s", "virtual AbstractWindow::SynchronizeWindow()");
-					window->Synchronize();
-				}
-			}
+        set_refresh(true);
+        while (p && (!p->refresh()) && (p->visiable())) {
+          root = p;
+          p->set_refresh(true);
+          p = p->superview();
+        }
 
-			set_refresh(true);
-		}
-	}
+      } else {
+
+        kRefreshMutex.lock();
+        set_refresh(true);
+        kRefreshMutex.unlock();
+
+        while (p && (!p->refresh()) && (p->visiable())) {
+          root = p;
+          kRefreshMutex.lock();
+          p->set_refresh(true);
+          kRefreshMutex.unlock();
+          p = p->superview();
+        }
+
+      }
+
+      if (root->superview() == 0) {
+        AbstractWindow* window = dynamic_cast<AbstractWindow*>(root);
+        if (window) {
+          window->Synchronize();
+        }
+      }
+
+    }
+  }
 
 	void AbstractView::SetDefaultBorderWidth(float border)
 	{
@@ -441,7 +461,9 @@ namespace BlendInt {
 			if (p->PreDraw(context)) {
 
 				Response response = p->Draw(context);
+				kRefreshMutex.lock();
 				p->set_refresh(refresh());
+				kRefreshMutex.unlock();
 
 				if(response == Ignore) {
 					for(AbstractView* sub = p->first_subview(); sub; sub = sub->next_view())
@@ -457,8 +479,15 @@ namespace BlendInt {
 		}
 
 		//set_refresh(refresh_record);
-		if(superview_) set_refresh(superview_->refresh());
-		else set_refresh(false);
+		if(superview_) {
+		  kRefreshMutex.lock();
+		  set_refresh(superview_->refresh());
+		  kRefreshMutex.unlock();
+		}	else {
+		  kRefreshMutex.lock();
+		  set_refresh(false);
+		  kRefreshMutex.unlock();
+		}
 	}
 
 	bool AbstractView::SwapIndex(AbstractView *view1, AbstractView *view2)
@@ -712,7 +741,10 @@ namespace BlendInt {
 		if (widget->PreDraw(context)) {
 
 			Response response = widget->Draw(context);
+
+			kRefreshMutex.lock();
 			widget->set_refresh(widget->superview_->refresh());
+			kRefreshMutex.unlock();
 
 			if(response == Ignore) {
 				for(AbstractView* sub = widget->first_subview(); sub; sub = sub->next_view())

@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <boost/smart_ptr.hpp>
 
 #include <core/input.hpp>
@@ -173,6 +172,11 @@ namespace BlendInt {
 
     static void ReleaseGLContext ();
 
+    static inline boost::thread::id& main_thread_id ()
+    {
+      return kMainThreadID;
+    }
+
     static Theme* theme;
 
     static Icons* icons;
@@ -236,6 +240,8 @@ namespace BlendInt {
     }
 
     static glm::mat4 default_view_matrix;
+
+    static boost::thread::id kMainThreadID;
 
   private:
 

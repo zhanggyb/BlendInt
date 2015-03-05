@@ -32,191 +32,185 @@
 
 namespace BlendInt {
 
-	Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
+  Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
 
-	ComboBox::ComboBox ()
-	: AbstractRoundWidget(),
-	  status_down_(false),
-	  hover_(false),
-	  popup_(0)
-	{
-		set_round_type(RoundAll);
+  ComboBox::ComboBox ()
+      : AbstractRoundWidget(), status_down_(false), hover_(false), popup_(0)
+  {
+    set_round_type(RoundAll);
 
-		Font font;	// default font
-		int h = font.height();
+    Font font;	// default font
+    int h = font.height();
 
-		set_size(h + pixel_size(kPadding.hsum()),
-		        h + pixel_size(kPadding.vsum()));
+    set_size(h + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
 
-		InitializeComboBox();
-	}
+    InitializeComboBox();
+  }
 
-	ComboBox::~ComboBox ()
-	{
-		glDeleteVertexArrays(2, vaos_);
-	}
+  ComboBox::~ComboBox ()
+  {
+    glDeleteVertexArrays(2, vaos_);
+  }
 
-	Size ComboBox::GetPreferredSize () const
-	{
-		int w = 0;
-		int h = 0;
+  Size ComboBox::GetPreferredSize () const
+  {
+    int w = 0;
+    int h = 0;
 
-		Font font;	// default font
-		w = font.height();
-		h = font.height();
+    Font font;	// default font
+    w = font.height();
+    h = font.height();
 
-		if(model_) {
+    if (model_) {
 
-			ModelIndex root = model_->GetRootIndex();
-			ModelIndex index = model_->GetIndex(0, 0, root);
+      ModelIndex root = model_->GetRootIndex();
+      ModelIndex index = model_->GetIndex(0, 0, root);
 
-			if(index.valid()) {
+      if (index.valid()) {
 
-				RefPtr<AbstractForm> data = index.GetData();
-				w = std::max(w, data->size().width());
-				h = std::max(h, data->size().height());
+        RefPtr<AbstractForm> data = index.GetData();
+        w = std::max(w, data->size().width());
+        h = std::max(h, data->size().height());
 
-			}
-		}
+      }
+    }
 
-		w += AbstractWindow::icons->menu()->size().width();
+    w += AbstractWindow::icons->menu()->size().width();
 
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
 
-		return Size(w, h);
-	}
+    return Size(w, h);
+  }
 
-	void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
-	{
-		if(model_) {
-			model_ = model;
-			RequestRedraw();
-		} else if(model) {
-			model_ = model;
-			RequestRedraw();
-		}
-	}
+  void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
+  {
+    if (model_) {
+      model_ = model;
+      RequestRedraw();
+    } else if (model) {
+      model_ = model;
+      RequestRedraw();
+    }
+  }
 
-	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
+  void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-			set_size(*request.size());
+      set_size(*request.size());
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+      std::vector<GLfloat> inner_verts;
+      std::vector<GLfloat> outer_verts;
 
-			if (AbstractWindow::theme->menu().shaded) {
-				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->menu().shadetop,
-						AbstractWindow::theme->menu().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateRoundedVertices(&inner_verts, &outer_verts);
-			}
+      if (AbstractWindow::theme->menu().shaded) {
+        GenerateRoundedVertices(Vertical,
+            AbstractWindow::theme->menu().shadetop,
+            AbstractWindow::theme->menu().shadedown, &inner_verts,
+            &outer_verts);
+      } else {
+        GenerateRoundedVertices(&inner_verts, &outer_verts);
+      }
 
-			vbo_.bind(0);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.bind(1);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			vbo_.reset();
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+          &inner_verts[0]);
+      vbo_.bind(1);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
+          &outer_verts[0]);
+      vbo_.reset();
 
-			RequestRedraw();
-		}
+      RequestRedraw();
+    }
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	void ComboBox::PerformRoundTypeUpdate (int round_type)
-	{
-		set_round_type(round_type);
+  void ComboBox::PerformRoundTypeUpdate (int round_type)
+  {
+    set_round_type(round_type);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme->menu().shaded) {
-			GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->menu().shadetop,
-						AbstractWindow::theme->menu().shadedown,
-						&inner_verts,
-						&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+    if (AbstractWindow::theme->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
+          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		vbo_.reset();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	void ComboBox::PerformRoundRadiusUpdate (float radius)
-	{
-		set_round_radius(radius);
+  void ComboBox::PerformRoundRadiusUpdate (float radius)
+  {
+    set_round_radius(radius);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme->menu().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->menu().shadetop,
-					AbstractWindow::theme->menu().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+    if (AbstractWindow::theme->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
+          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		vbo_.reset();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	Response ComboBox::Draw(AbstractWindow* context)
-	{
-		// draw inner
-		AbstractWindow::shaders->widget_inner_program()->use();
+  Response ComboBox::Draw (AbstractWindow* context)
+  {
+    // draw inner
+    AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				AbstractWindow::theme->menu().inner.data());
+    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+        1, AbstractWindow::theme->menu().inner.data());
 
-		if (status_down_) {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
-		} else {
-			if (hover_) {
-				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
-						15);
-			} else {
-				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
-						0);
-			}
-		}
+    if (status_down_) {
+      glUniform1i(
+          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
+    } else {
+      if (hover_) {
+        glUniform1i(
+            AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 15);
+      } else {
+        glUniform1i(
+            AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      }
+    }
 
-		glBindVertexArray(vaos_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glBindVertexArray(vaos_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		// draw outer:
+    // draw outer:
 
-		AbstractWindow::shaders->widget_outer_program()->use();
+    AbstractWindow::shaders->widget_outer_program()->use();
 
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-				AbstractWindow::theme->menu().outline.data());
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR),
+        1, AbstractWindow::theme->menu().outline.data());
+    glUniform2f(
+        AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        0.f);
 
-		glBindVertexArray(vaos_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-				GetOutlineVertices(round_type()) * 2 + 2);
+    glBindVertexArray(vaos_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+        GetOutlineVertices(round_type()) * 2 + 2);
 
 //		if (emboss()) {
 //			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
@@ -227,153 +221,152 @@ namespace BlendInt {
 //			        GetHalfOutlineVertices(round_type()) * 2);
 //		}
 
-		Rect rect(pixel_size(kPadding.left()),
-				pixel_size(kPadding.bottom()),
-				size().width() - pixel_size(kPadding.hsum()),
-				size().height() - pixel_size(kPadding.vsum()));
+    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
+        size().width() - pixel_size(kPadding.hsum()),
+        size().height() - pixel_size(kPadding.vsum()));
 
-		// draw model item
-		if(model_) {
+    // draw model item
+    if (model_) {
 
-			//int h = size().height() - pixel_size(kPadding.vsum());
+      //int h = size().height() - pixel_size(kPadding.vsum());
 
-			ModelIndex root = model_->GetRootIndex();
-			ModelIndex index = model_->GetIndex(0, 0, root);
+      ModelIndex root = model_->GetRootIndex();
+      ModelIndex index = model_->GetIndex(0, 0, root);
 
-			if(index.valid()) {
-				index.GetData()->DrawInRect(rect,
-						AlignLeft | AlignJustify | AlignBaseline,
-						AbstractWindow::theme->menu().text_sel.data());
-			}
+      if (index.valid()) {
+        index.GetData()->DrawInRect(rect,
+            AlignLeft | AlignJustify | AlignBaseline,
+            AbstractWindow::theme->menu().text_sel.data());
+      }
 
-		}
+    }
 
-		AbstractWindow::icons->menu()->DrawInRect(rect,
-				AlignRight | AlignVerticalCenter,
-				Color(0xEFEFEFFF).data());
+    AbstractWindow::icons->menu()->DrawInRect(rect,
+        AlignRight | AlignVerticalCenter, Color(0xEFEFEFFF).data());
 
-		return Finish;
-	}
-	
-	Response ComboBox::PerformMousePress (AbstractWindow* context)
-	{
-		status_down_ = true;
+    return Finish;
+  }
 
-		if(popup_) {
-			delete popup_;
-			popup_ = 0;
-			SetRoundType(RoundAll);
-            RequestRedraw();
-            return Finish;
-		} else {
-			popup_ = Manage(new Menu);
-			popup_->Resize(160, 240);
+  Response ComboBox::PerformMousePress (AbstractWindow* context)
+  {
+    status_down_ = true;
 
-			events()->connect(popup_->destroyed(), this, &ComboBox::OnPopupListDestroyed);
+    if (popup_) {
+      delete popup_;
+      popup_ = 0;
+      SetRoundType(RoundAll);
+      RequestRedraw();
+      return Finish;
+    } else {
+      Menu* menu = new Menu;
+      menu->AddAction(context->icons->icon_16x16(Icons::IMAGEFILE), "Menu Item 1");
+      menu->AddAction(context->icons->icon_16x16(Icons::IMAGE_RGB), "Menu Item 2");
+      menu->AddAction(context->icons->icon_16x16(Icons::IMAGE_ZDEPTH), "Menu Item 3");
 
-            Point pos = context->GetAbsolutePosition(this);
+      popup_ = menu;
+      popup_->Resize(popup_->GetPreferredSize());
 
-            int top = pos.y() + size().height() + popup_->size().height();
-            int bottom = pos.y() - popup_->size().height();
-            
-            if(top <= context->size().height()) {
-                popup_->MoveTo(pos.x(), pos.y() + size().height());
-                SetRoundType(RoundBottomLeft | RoundBottomRight);
-            } else {
-                
-                if(bottom >= 0) {
-                    popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
-                    SetRoundType(RoundTopLeft | RoundTopRight);
-                } else {
-                    
-                    int diff = top - context->size().height() + bottom;
-                    if(diff <= 0) {
-                        popup_->MoveTo(pos.x(), pos.y() + size().height());
-                        SetRoundType(RoundBottomLeft | RoundBottomRight);
-                    } else {
-                        popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
-                        SetRoundType(RoundTopLeft | RoundTopRight);
-                    }
-                    
-                }
-                
-            }
+      events()->connect(popup_->destroyed(), this,
+          &ComboBox::OnPopupListDestroyed);
 
-            context->AddFrame(popup_);
-           
-            return Ignore;
-		}
+      Point pos = context->GetAbsolutePosition(this);
 
-		RequestRedraw();
+      int top = pos.y() + size().height() + popup_->size().height();
+      int bottom = pos.y() - popup_->size().height();
 
-		return Finish;
-	}
-	
-	Response ComboBox::PerformMouseRelease (AbstractWindow* context)
-	{
-		status_down_ = false;
+      if (top <= context->size().height()) {
+        popup_->MoveTo(pos.x(), pos.y() + size().height());
+        SetRoundType(RoundBottomLeft | RoundBottomRight);
+      } else {
 
-		RequestRedraw();
-		return Finish;
-	}
-	
-	void ComboBox::PerformHoverIn(AbstractWindow* context)
-	{
-		hover_ = true;
-		RequestRedraw();
-	}
+        if (bottom >= 0) {
+          popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+          SetRoundType(RoundTopLeft | RoundTopRight);
+        } else {
 
-	void ComboBox::PerformHoverOut(AbstractWindow* context)
-	{
-		hover_ = false;
-		RequestRedraw();
-	}
+          int diff = top - context->size().height() + bottom;
+          if (diff <= 0) {
+            popup_->MoveTo(pos.x(), pos.y() + size().height());
+            SetRoundType(RoundBottomLeft | RoundBottomRight);
+          } else {
+            popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
+            SetRoundType(RoundTopLeft | RoundTopRight);
+          }
 
-	void ComboBox::InitializeComboBox()
-	{
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+        }
 
-		if (AbstractWindow::theme->menu().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->menu().shadetop,
-					AbstractWindow::theme->menu().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+      }
 
-		vbo_.generate();
+      context->AddFrame(popup_);
 
-		glGenVertexArrays(2, vaos_);
+      return Ignore;
+    }
 
-		glBindVertexArray(vaos_[0]);
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    RequestRedraw();
 
-		glEnableVertexAttribArray(
-				AttributeCoord);
-		glVertexAttribPointer(AttributeCoord,
-				3, GL_FLOAT, GL_FALSE, 0, 0);
+    return Finish;
+  }
 
-		glBindVertexArray(vaos_[1]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  Response ComboBox::PerformMouseRelease (AbstractWindow* context)
+  {
+    status_down_ = false;
 
-		glEnableVertexAttribArray (AttributeCoord);
-		glVertexAttribPointer (AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    RequestRedraw();
+    return Finish;
+  }
 
-		glBindVertexArray(0);
-		vbo_.reset();
-	}
+  void ComboBox::PerformHoverIn (AbstractWindow* context)
+  {
+    hover_ = true;
+    RequestRedraw();
+  }
 
-	void ComboBox::OnPopupListDestroyed(AbstractFrame* frame)
-	{
-		//assert(frame == popup_);
-		popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
-		popup_ = 0;
-		SetRoundType(RoundAll);
-	}
+  void ComboBox::PerformHoverOut (AbstractWindow* context)
+  {
+    hover_ = false;
+    RequestRedraw();
+  }
+
+  void ComboBox::InitializeComboBox ()
+  {
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
+
+    if (AbstractWindow::theme->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
+          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
+
+    vbo_.generate();
+
+    glGenVertexArrays(2, vaos_);
+
+    glBindVertexArray(vaos_[0]);
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(vaos_[1]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
+
+  void ComboBox::OnPopupListDestroyed (AbstractFrame* frame)
+  {
+    //assert(frame == popup_);
+    popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
+    popup_ = 0;
+    SetRoundType(RoundAll);
+  }
 
 }

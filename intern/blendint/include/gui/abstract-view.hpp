@@ -23,9 +23,8 @@
 
 #pragma once
 
-
 #include <vector>
-#include <pthread.h>
+#include <boost/thread.hpp>
 
 #include <opengl/opengl.hpp>
 
@@ -620,6 +619,8 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::string name_;
 #endif
+
+		static boost::mutex kRefreshMutex;
 
 		static float kBorderWidth;
 

@@ -21,96 +21,93 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ACTIONITEM_HPP_
-#define _BLENDINT_GUI_ACTIONITEM_HPP_
-
-#include <list>
+#pragma once
 
 #include <core/object.hpp>
-#include <core/size.hpp>
-#include <core/margin.hpp>
-#include <core/string.hpp>
 
 #include <gui/font.hpp>
 #include <gui/abstract-icon.hpp>
+#include <gui/text.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Items used in Menu, List, Toolbox
-	 */
-	class Action: public Object
-	{
-	public:
+  /**
+   * @brief Items used in Menu, List, Toolbox
+   */
+  class Action: public Object
+  {
+  public:
 
-		static RefPtr<Action> Create ();
+    static RefPtr<Action> Create ();
 
-		static RefPtr<Action> Create (const String& text);
+    static RefPtr<Action> Create (const String& text);
 
-		static RefPtr<Action> Create (const String& text, const String& shortcut);
+    static RefPtr<Action> Create (const String& text, const String& shortcut);
 
-		static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon, const String& text);
+    static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon,
+        const String& text);
 
-		static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
+    static RefPtr<Action> Create (const RefPtr<AbstractIcon>& icon,
+        const String& text, const String& shortcut);
 
-		Action ();
+    Action ();
 
-		Action (const String& text);
+    Action (const String& text);
 
-		Action (const String& text, const String& shortcut);
+    Action (const String& text, const String& shortcut);
 
-		Action (const RefPtr<AbstractIcon>& icon, const String& text);
+    Action (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		Action (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut);
+    Action (const RefPtr<AbstractIcon>& icon, const String& text,
+        const String& shortcut);
 
-		virtual ~Action ();
+    virtual ~Action ();
 
-		const RefPtr<AbstractIcon>& icon () const
-		{
-			return icon_;
-		}
-		
-		/**
-		 * @brief Get size if icon and text alighed horizontally
-		 */
-		Size GetHSize (const Font& font, const Margin& margin, int space);
+    const RefPtr<AbstractIcon>& icon () const
+    {
+      return icon_;
+    }
 
-		unsigned int GetTextLength (const Font& font);
+    void set_icon (const RefPtr<AbstractIcon>& icon)
+    {
+      icon_ = icon;
+    }
 
-		void set_icon (const RefPtr<AbstractIcon>& icon)
-		{
-			icon_ = icon;
-		}
-		
-		const String& text () const
-		{
-			return text_;
-		}
-		
-		void set_text (const String& text)
-		{
-			text_ = text;
-		}
+    const RefPtr<Text>& text () const
+    {
+      return text_;
+    }
 
-		const String& shortcut () const
-		{
-			return shortcut_;
-		}
+    void set_text (const String& text)
+    {
+      if(text_) {
+        text_->SetText(text);
+      } else {
+        text_.reset(new Text(text));
+      }
+    }
 
-		void set_shortcut (const String& shortcut)
-		{
-			shortcut_ = shortcut;
-		}
+    const RefPtr<Text>& shortcut () const
+    {
+      return shortcut_;
+    }
 
-	private:
+    void set_shortcut (const String& shortcut)
+    {
+      if(shortcut_) {
+        shortcut_->SetText(shortcut);
+      } else {
+        shortcut_.reset(new Text(shortcut));
+      }
+    }
 
-		RefPtr<AbstractIcon> icon_;
+  private:
 
-		String text_;
+    RefPtr<AbstractIcon> icon_;
 
-		String shortcut_;
-	};
+    RefPtr<Text> text_;
+
+    RefPtr<Text> shortcut_;
+  };
 
 }
-
-#endif /* _BLENDINT_GUI_ACTIONITEM_HPP_ */

@@ -27,117 +27,75 @@
 
 namespace BlendInt {
 
-	RefPtr<Action> Action::Create ()
-	{
-		RefPtr<Action> item(new Action);
+  RefPtr<Action> Action::Create ()
+  {
+    RefPtr<Action> item(new Action);
 
-		return item;
-	}
-	
-	RefPtr<Action> Action::Create (const String& text)
-	{
-		RefPtr<Action> item(new Action(text));
+    return item;
+  }
 
-		return item;
-	}
+  RefPtr<Action> Action::Create (const String& text)
+  {
+    RefPtr<Action> item(new Action(text));
 
-	RefPtr<Action> Action::Create (const String& text, const String& shortcut)
-	{
-		RefPtr<Action> item(new Action(text, shortcut));
+    return item;
+  }
 
-		return item;
-	}
+  RefPtr<Action> Action::Create (const String& text, const String& shortcut)
+  {
+    RefPtr<Action> item(new Action(text, shortcut));
 
-	RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
-					const String& text)
-	{
-		RefPtr<Action> item(new Action(icon, text));
+    return item;
+  }
 
-		return item;
-	}
+  RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
+      const String& text)
+  {
+    RefPtr<Action> item(new Action(icon, text));
 
-	RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
-					const String& text, const String& shortcut)
-	{
-		RefPtr<Action> item(new Action(icon, text, shortcut));
+    return item;
+  }
 
-		return item;
-	}
-	
-	Action::Action ()
-	{
-	}
+  RefPtr<Action> Action::Create (const RefPtr<AbstractIcon>& icon,
+      const String& text, const String& shortcut)
+  {
+    RefPtr<Action> item(new Action(icon, text, shortcut));
 
-	Action::Action (const String& text)
-	: text_(text)
-	{
-	}
+    return item;
+  }
 
-	Action::Action (const String& text, const String& shortcut)
-	: text_(text), shortcut_(shortcut)
-	{
-	}
+  Action::Action ()
+  {
+  }
 
-	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text)
-	: icon_(icon), text_(text)
-	{
-	}
+  Action::Action (const String& text)
+  {
+    text_.reset(new Text(text));
+  }
 
-	Action::Action (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
-	: icon_(icon), text_(text), shortcut_(shortcut)
-	{
-	}
+  Action::Action (const String& text, const String& shortcut)
+  {
+    text_.reset(new Text(text));
+    shortcut_.reset(new Text(shortcut));
+  }
 
-	Action::~Action ()
-	{
-	}
-	
-	Size Action::GetHSize (const Font& font, const Margin& margin, int space)
-	{
-		Size size;
+  Action::Action (const RefPtr<AbstractIcon>& icon, const String& text)
+  {
+    icon_ = icon;
+    text_.reset(new Text(text));
+  }
 
-		Rect text_outline; // = font.GetTextOutline(text_);
+  Action::Action (const RefPtr<AbstractIcon>& icon, const String& text,
+      const String& shortcut)
+  {
+    icon_ = icon;
+    text_.reset(new Text(text));
+    shortcut_.reset(new Text(shortcut));
+  }
 
-		size.add_width(margin.left() + margin.right());
-		if(icon_) {
-			size.add_width(icon_->size().width());
-			size.set_height(icon_->size().height());
-		}
-		size.add_width(space);
-		size.add_width(text_outline.width());
-
-		size.set_height(std::max(size.height(), text_outline.height()));
-
-		text_outline; // = font.GetTextOutline(shortcut_);
-
-		size.add_width(space);
-		size.add_width(text_outline.width());
-
-		size.set_height(std::max(size.height(), text_outline.height()));
-
-		size.add_height(margin.top() + margin.bottom());
-
-		return size;
-	}
-
-	unsigned int Action::GetTextLength (const Font& font)
-	{
-		unsigned int length = 0;
-
-		Rect text_outline; // = font.GetTextOutline(text_);
-
-		if(icon_) {
-			length += icon_->size().width();
-		}
-
-		length += text_outline.width();
-
-		text_outline;	// = font.GetTextOutline(shortcut_);
-
-		length += text_outline.width();
-
-		return length;
-	}
+  Action::~Action ()
+  {
+  }
 
 }
 

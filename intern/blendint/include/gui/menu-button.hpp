@@ -26,44 +26,36 @@
 #include <opengl/gl-buffer.hpp>
 #include <gui/abstract-button.hpp>
 
-#include <gui/menu.hpp>
-
 namespace BlendInt {
 
-	/**
-	 * @brief A special button used in MenuBar only
-	 */
-	class MenuButton: public AbstractButton
-	{
-	public:
+  /**
+   * @brief A special button used in MenuBar only
+   */
+  class MenuButton: public AbstractButton
+  {
+  public:
 
-		MenuButton (const String& text);
+    MenuButton (const String& text);
 
-		virtual ~MenuButton ();
+    virtual ~MenuButton ();
 
-		void SetMenu (const RefPtr<Menu>& menu);
+  protected:
 
-		RefPtr<Menu> menu () const {return m_menu;}
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-	protected:
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+  private:
 
-		virtual Response Draw (AbstractWindow* context);
+    void InitializeMenuButton ();
 
-	private:
+    GLuint vao_;
 
-		void InitializeMenuButton ();
-
-		GLuint vao_;
-
-		GLBuffer<> vbo_;
-
-		RefPtr<Menu> m_menu;
-	};
+    GLBuffer<> vbo_;
+  };
 
 } /* namespace BlendInt */

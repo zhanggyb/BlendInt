@@ -219,8 +219,10 @@ namespace BlendInt {
 			y = rect.bottom();
 		} else if (align & AlignVerticalCenter) {
 			y = rect.vcenter() - size().height() / 2;
-		} else if (align & AlignBaseline) {
-			y = y + (rect.height() - font_.height()) / 2 - font_.descender();
+		}
+
+		if (align & AlignBaseline) {  // AlignBaseLine will override VerticalCenter
+			y = rect.bottom() + (rect.height() - font_.height()) / 2 - font_.descender();
 
 			// A workaround for Adobe Source Han Sans
 			int diff = font_.ascender() - font_.descender();

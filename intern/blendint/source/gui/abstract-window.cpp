@@ -35,6 +35,8 @@
 
 namespace BlendInt {
 
+  boost::thread::id AbstractWindow::kMainThreadID;
+
 	Theme* AbstractWindow::theme = 0;
 	Icons* AbstractWindow::icons = 0;
 	Shaders* AbstractWindow::shaders = 0;

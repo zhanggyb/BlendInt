@@ -22,19 +22,26 @@
  */
 
 #include <gui/menu-item.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
+  Margin MenuItem::kPadding = Margin(2, 2, 2, 2);
+
+  int MenuItem::kSpace = 2;
+
 	MenuItem::MenuItem (const String& text)
-	: AbstractMenuItem()
+	: AbstractMenuItem(),
+	  hovered_(false)
 	{
-		action_.reset(new Action(text));
+	  action_ = Action::Create(text);
 
 		InitializeMenuItem();
 	}
 
 	MenuItem::MenuItem(const RefPtr<Action>& action)
-	: AbstractMenuItem()
+	: AbstractMenuItem(),
+    hovered_(false)
 	{
 #ifdef DEBUG
 		assert(action);
@@ -45,87 +52,217 @@ namespace BlendInt {
 	}
 
 	MenuItem::MenuItem (const String& text, const String& shortcut)
-	: AbstractMenuItem()
+	: AbstractMenuItem(),
+    hovered_(false)
 	{
 		action_.reset(new Action(text, shortcut));
 		InitializeMenuItem();
 	}
 
 	MenuItem::MenuItem (const RefPtr<AbstractIcon>& icon, const String& text)
-	: AbstractMenuItem()
+	: AbstractMenuItem(),
+    hovered_(false)
 	{
 		action_.reset(new Action(icon, text));
 		InitializeMenuItem();
 	}
 
 	MenuItem::MenuItem (const RefPtr<AbstractIcon>& icon, const String& text, const String& shortcut)
-	: AbstractMenuItem()
+	: AbstractMenuItem(),
+    hovered_(false)
 	{
-		action_.reset(new Action(icon, text, shortcut));
+	  action_ = Action::Create(icon, text, shortcut);
 		InitializeMenuItem();
 	}
 
 	MenuItem::~MenuItem()
 	{
-		// nothing to do here
+    glDeleteVertexArrays(1, &vao_);
 	}
 
-	bool MenuItem::AddSubMenuItem(MenuItem* menuitem)
-	{
-		if(PushBackSubView(menuitem)) {
-			RequestRedraw();
-			return true;
-		}
+  bool MenuItem::IsExpandX () const
+  {
+    return true;
+  }
 
-		return false;
-	}
+  Size MenuItem::GetPreferredSize () const
+  {
+    Font font;
 
-	bool MenuItem::InsertSubMenuItem(int index, MenuItem* menuitem)
-	{
-		if(InsertSubView(index, menuitem)) {
-			RequestRedraw();
-			return true;
-		}
+    int w = kSpace * 2;
+    int h = font.height();
 
-		return false;
-	}
+    if(action_->icon()) {
+      w += std::max(action_->icon()->size().width(), h);
+      h = std::max(h, action_->icon()->size().height());
+    } else {
+      w += h;
+    }
+
+    if(action_->text()) {
+      w += action_->text()->size().width();
+      h = std::max(h, action_->text()->size().height());
+    }
+
+    if(action_->shortcut()) {
+      w += action_->shortcut()->size().width();
+      h = std::max(h, action_->shortcut()->size().height());
+    }
+
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
+
+    return Size(w, h);
+  }
 
 	void MenuItem::PerformHoverIn(AbstractWindow* context)
 	{
+	  hovered_ = true;
 		RequestRedraw();
 	}
 
 	void MenuItem::PerformHoverOut(AbstractWindow* context)
 	{
+	  hovered_ = false;
 		RequestRedraw();
 	}
 
 	Response MenuItem::Draw(AbstractWindow* context)
 	{
-		// Menu Icon only show itself
-		if(action_->icon()) {
-			action_->icon()->Draw(0.f, 0.f, 0);
-		}
+    if (hovered_) {
 
-//		Font font;
+      AbstractWindow::shaders->widget_inner_program()->use();
 
-//		if(hover()) {
-//			font.set_color(Color(1.f, 0.f, 0.f, 1.f));
-//		} else {
-//			font.set_color(Color(1.f, 1.f, 1.f, 1.f));
-//		}
-//
-//		int x = 16 + 2;
-//		int y = (size().height() - font.GetHeight()) / 2 + std::abs(font.descender());
-//		font.set_pen(x, y);
-//
-//		font.Print(0.f, 0.f, action_->text());
+      glUniform1i(
+          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      glUniform4fv(
+          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
+          AbstractWindow::theme->menu_item().inner_sel.data());
+
+      glBindVertexArray(vao_);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+    }
+
+	  Rect rect(pixel_size(kPadding.left()),
+	      pixel_size(kPadding.bottom()),
+	      size().width() - pixel_size(kPadding.hsum()),
+	      size().height() - pixel_size(kPadding.vsum()));
+
+	  if(action_->icon()) {
+	    action_->icon()->DrawInRect(rect, AlignLeft | AlignVerticalCenter);
+	    rect.cut_left(std::max(action_->icon()->size().width(), rect.height()));
+	  } else {
+	    rect.cut_left(rect.height());
+	  }
+
+	  rect.cut_left(kSpace);
+
+	  const float* color_v = 0;
+	  if(hovered_) {
+	    color_v = AbstractWindow::theme->menu_item().text_sel.data();
+	  } else {
+      color_v = AbstractWindow::theme->menu_item().text.data();
+	  }
+
+	  if(action_->text()) {
+	    action_->text()->DrawInRect(rect,
+	        AlignLeft | AlignJustify | AlignBaseline,
+	        color_v);
+	  }
+
+	  if(action_->shortcut()) {
+      action_->shortcut()->DrawInRect(rect,
+          AlignRight | AlignJustify | AlignBaseline,
+          color_v);
+	  }
 
 		return Finish;
 	}
 
+  void MenuItem::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+
+      set_size(*request.size());
+
+      std::vector<GLfloat> inner_verts;
+      if (AbstractWindow::theme->menu_item().shaded) {
+        GenerateVertices(size(), 0.f, RoundNone, 0.f,
+            Vertical,
+            AbstractWindow::theme->menu_item().shadetop,
+            AbstractWindow::theme->menu_item().shadedown,
+            &inner_verts, 0);
+      } else {
+        GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+      }
+
+      vbo_.bind();
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+          &inner_verts[0]);
+      vbo_.reset();
+
+      RequestRedraw();
+    }
+
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
+
 	void MenuItem::InitializeMenuItem()
 	{
-		set_size(240, 20);
+    Font font;
+
+    int w = kSpace * 2;
+    int h = font.height();
+
+    if(action_->icon()) {
+      w += std::max(action_->icon()->size().width(), h);
+      h = std::max(h, action_->icon()->size().height());
+    } else {
+      w += h;
+    }
+
+    if(action_->text()) {
+      w += action_->text()->size().width();
+      h = std::max(h, action_->text()->size().height());
+    }
+
+    if(action_->shortcut()) {
+      w += action_->shortcut()->size().width();
+      h = std::max(h, action_->shortcut()->size().height());
+    }
+
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
+
+    set_size(w, h);
+
+    glGenVertexArrays(1, &vao_);
+
+    std::vector<GLfloat> inner_verts;
+
+    if (AbstractWindow::theme->menu_item().shaded) {
+      GenerateVertices(size(), 0.f, RoundNone, 0.f,
+          Vertical,
+          AbstractWindow::theme->menu_item().shadetop,
+          AbstractWindow::theme->menu_item().shadedown,
+          &inner_verts, 0);
+    } else {
+      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+    }
+
+    glBindVertexArray(vao_);
+    vbo_.generate();
+    vbo_.bind();
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
 	}
+
 }
