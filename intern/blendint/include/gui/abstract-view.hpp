@@ -300,17 +300,17 @@ namespace BlendInt {
 
 		inline bool visiable () const
 		{
-			return view_flag_ & ViewVisible;
+		  return visible_;
 		}
 
 		inline bool managed () const
 		{
-			return view_flag_ & ViewManaged;
+		  return managed_;
 		}
 
 		inline bool refresh () const
 		{
-			return view_flag_ & ViewRefresh;
+		  return refresh_;
 		}
 
 		inline int subs_count () const
@@ -428,20 +428,12 @@ namespace BlendInt {
 
 		inline void set_visible (bool visiable)
 		{
-			if(visiable) {
-				SETBIT(view_flag_, ViewVisible);
-			} else {
-				CLRBIT(view_flag_, ViewVisible);
-			}
+		  visible_ = visiable;
 		}
 
 		inline void set_refresh (bool refresh)
 		{
-			if(refresh) {
-				SETBIT(view_flag_, ViewRefresh);
-			} else {
-				CLRBIT(view_flag_, ViewRefresh);
-			}
+		  refresh_ = refresh;
 		}
 
 		virtual bool PreDraw (AbstractWindow* context) = 0;
@@ -586,22 +578,18 @@ namespace BlendInt {
 
 		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
 
-		void set_manage (bool val)
+		inline void set_manage (bool value)
 		{
-			if(val) {
-				SETBIT(view_flag_, ViewManaged);
-			} else {
-				CLRBIT(view_flag_, ViewManaged);
-			}
+		  managed_ = value;
 		}
 
-		Point position_;
+		bool managed_;
 
-		Size size_;
+		bool visible_;
 
-		uint32_t view_flag_;
+		bool refresh_;
 
-		int subs_count_;	// count of sub widgets
+    int subs_count_;  // count of sub widgets
 
 		AbstractView* superview_;
 
@@ -615,6 +603,10 @@ namespace BlendInt {
 		AbstractView* first_subview_;
 
 		AbstractView* last_subview_;
+
+    Point position_;
+
+    Size size_;
 
 #ifdef DEBUG
 		std::string name_;

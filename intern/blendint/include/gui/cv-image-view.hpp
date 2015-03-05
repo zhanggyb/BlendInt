@@ -89,6 +89,8 @@ namespace BlendInt {
 
     virtual void ProcessImage (cv::Mat& image);
 
+    void DrawTexture ();
+
   private:
 
     enum CVImageFlagMasks {
@@ -173,10 +175,6 @@ namespace BlendInt {
      *    5 - if video is stop
      */
     int flags_;
-
-#ifdef DEBUG
-    bool stuck_;
-#endif
   };
 
 }

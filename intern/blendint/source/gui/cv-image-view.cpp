@@ -30,12 +30,9 @@
 namespace BlendInt {
 
   CVImageView::CVImageView()
-    : AbstractScrollable(),
-      off_screen_context_(0),
-      flags_(0)
-#ifdef DEBUG
-    , stuck_(false)
-#endif
+  : AbstractScrollable(),
+    off_screen_context_(0),
+    flags_(0)
   {
     set_size(400, 300);
     image_size_.reset(400, 300);
@@ -44,10 +41,10 @@ namespace BlendInt {
 
     events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
 
-		MutexAttrib attrib;
-		attrib.initialize();
-		mutex_.initialize(attrib);
-		attrib.destroy();
+    MutexAttrib attrib;
+    attrib.initialize();
+    mutex_.initialize(attrib);
+    attrib.destroy();
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -62,15 +59,16 @@ namespace BlendInt {
 
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT,
-                          GL_FALSE, 0, BUFFER_OFFSET(0));
+    GL_FALSE,
+                          0, BUFFER_OFFSET(0));
 
     glBindVertexArray(vao_[1]);
 
     GLfloat vertices[] = {
-      0.f, 0.f, 		0.f, 1.f,
-      400.f, 0.f, 	1.f, 1.f,
-      0.f, 300.f,		0.f, 0.f,
-      400.f, 300.f,	1.f, 0.f
+        0.f, 0.f,       0.f, 1.f,
+        400.f, 0.f,     1.f, 1.f,
+        0.f, 300.f,     0.f, 0.f,
+        400.f, 300.f,   1.f, 0.f
     };
 
     vbo_.bind(1);
@@ -87,7 +85,7 @@ namespace BlendInt {
     glBindVertexArray(0);
     vbo_.reset();
 
-    std::vector<unsigned char> buf(4*4*4, 255);
+    std::vector<unsigned char> buf(4 * 4 * 4, 255);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     texture_.generate();
@@ -96,7 +94,8 @@ namespace BlendInt {
     texture_.SetMinFilter(GL_LINEAR);
     texture_.SetMagFilter(GL_LINEAR);
     texture_.SetImage(0, GL_RGBA, 4, 4, 0,
-                      GL_RGBA, GL_UNSIGNED_BYTE, &buf[0]);
+    GL_RGBA,
+                      GL_UNSIGNED_BYTE, &buf[0]);
     texture_.reset();
   }
 
@@ -133,7 +132,7 @@ namespace BlendInt {
   {
     bool retval = false;
 
-    if(flags_ & DisplayModeMask) {
+    if (flags_ & DisplayModeMask) {
       DBG_PRINT_MSG("%s", "Playing video, call Stop() and Release() first");
       return retval;
     }
@@ -141,16 +140,16 @@ namespace BlendInt {
     assert(!video_stream_.isOpened());
 
     video_stream_.open(n);
-    if(video_stream_.isOpened()) {
+    if (video_stream_.isOpened()) {
 
       video_stream_.set(CV_CAP_PROP_FRAME_WIDTH, resolution.width());
       video_stream_.set(CV_CAP_PROP_FRAME_HEIGHT, resolution.height());
 
-      image_size_.reset((int)video_stream_.get(CV_CAP_PROP_FRAME_WIDTH),
-                        (int)video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
+      image_size_.reset((int) video_stream_.get(CV_CAP_PROP_FRAME_WIDTH),
+                        (int) video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
 
       vbo_.bind(1);
-      float* ptr = (float*)vbo_.map();
+      float* ptr = (float*) vbo_.map();
       *(ptr + 4) = image_size_.width();
       *(ptr + 9) = image_size_.height();
       *(ptr + 12) = image_size_.width();
@@ -166,10 +165,12 @@ namespace BlendInt {
       CLRBIT(flags_, StreamingMask);
       CLRBIT(flags_, PlaybackMask);
 
-      if(off_screen_context_ == 0) {
+      if (off_screen_context_ == 0) {
 
         AbstractWindow* win = AbstractWindow::GetWindow(this);
-        off_screen_context_ = win->CreateSharedContext(win->size().width(), win->size().height(), false);
+        off_screen_context_ = win->CreateSharedContext(win->size().width(),
+                                                       win->size().height(),
+                                                       false);
 
       }
 
@@ -185,7 +186,7 @@ namespace BlendInt {
     return retval;
   }
 
-  bool CVImageView::OpenImageFile(const std::string& filename)
+  bool CVImageView::OpenImageFile (const std::string& filename)
   {
     if (flags_ & DisplayModeMask) {
       DBG_PRINT_MSG("%s", "Playing video, call Stop() and Release() first");
@@ -214,21 +215,24 @@ namespace BlendInt {
         case 1: {
           glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
           texture_.SetImage(0, GL_RED, image_.cols, image_.rows, 0, GL_RED,
-              GL_UNSIGNED_BYTE, image_.data);
+          GL_UNSIGNED_BYTE,
+                            image_.data);
           break;
         }
 
         case 2: {
           glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
           texture_.SetImage(0, GL_RG, image_.cols, image_.rows, 0, GL_RG,
-              GL_UNSIGNED_BYTE, image_.data);
+          GL_UNSIGNED_BYTE,
+                            image_.data);
           break;
         }
 
         case 3: {
           glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
           texture_.SetImage(0, GL_RGB, image_.cols, image_.rows, 0, GL_BGR,
-              GL_UNSIGNED_BYTE, image_.data);
+          GL_UNSIGNED_BYTE,
+                            image_.data);
           break;
         }
 
@@ -237,7 +241,8 @@ namespace BlendInt {
           // called
           glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
           texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows, 0, GL_BGRA,
-              GL_UNSIGNED_BYTE, image_.data);
+          GL_UNSIGNED_BYTE,
+                            image_.data);
           break;
         }
 
@@ -273,7 +278,7 @@ namespace BlendInt {
     if (video_stream_.isOpened()) {
 
       image_size_.reset((int) video_stream_.get(CV_CAP_PROP_FRAME_WIDTH),
-          (int) video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
+                        (int) video_stream_.get(CV_CAP_PROP_FRAME_HEIGHT));
 
       vbo_.bind(1);
       float* ptr = (float*) vbo_.map();
@@ -292,10 +297,12 @@ namespace BlendInt {
       CLRBIT(flags_, StreamingMask);
       CLRBIT(flags_, PlaybackMask);
 
-      if(off_screen_context_ == 0) {
+      if (off_screen_context_ == 0) {
 
         AbstractWindow* win = AbstractWindow::GetWindow(this);
-        off_screen_context_ = win->CreateSharedContext(win->size().width(), win->size().height(), false);
+        off_screen_context_ = win->CreateSharedContext(win->size().width(),
+                                                       win->size().height(),
+                                                       false);
 
       }
 
@@ -312,9 +319,9 @@ namespace BlendInt {
 
   void CVImageView::Play ()
   {
-    if(!(flags_ & DisplayModeMask)) return;
+    if (!(flags_ & DisplayModeMask)) return;
 
-    if(!(flags_ & StreamingMask)) {
+    if (!(flags_ & StreamingMask)) {
 
       assert((flags_ & PlaybackMask) == 0);
       assert(video_stream_.isOpened());
@@ -326,7 +333,7 @@ namespace BlendInt {
 
     } else {
 
-      if((flags_ & VideoPauseMask) || (flags_ & VideoStopMask)) {
+      if ((flags_ & VideoPauseMask) || (flags_ & VideoStopMask)) {
 
         CLRBIT(flags_, PlaybackMask);
         SETBIT(flags_, VideoPlayMask);
@@ -419,14 +426,14 @@ namespace BlendInt {
     }
   }
 
-  bool CVImageView::PreDraw(AbstractWindow* context)
+  bool CVImageView::PreDraw (AbstractWindow* context)
   {
-    if(!visiable()) return false;
+    if (!visiable()) return false;
 
     Point offset = GetOffset();
-    glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
-                                      glm::vec2(position().x() + offset.x(),
-                                                position().y() + offset.y()));
+    glm::mat3 matrix = glm::translate(
+        AbstractWindow::shaders->widget_model_matrix(),
+        glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
     AbstractWindow::shaders->PushWidgetModelMatrix();
     AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
@@ -435,9 +442,10 @@ namespace BlendInt {
 
     AbstractWindow::shaders->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
-
+    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+                0);
+    glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+                0.208f, 0.208f, 0.208f, 1.0f);
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
@@ -458,20 +466,7 @@ namespace BlendInt {
         (size().height() - image_size_.height()) / 2.f);
     glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
-    glBindVertexArray(vao_[1]);
-    if (mutex_.lock()) {  // TODO: looks there's no need to lock when writting texture in thread
-
-      texture_.bind();
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      mutex_.unlock();
-
-    } else {
-      DBG_PRINT_MSG("%s", "fail to lock");
-#ifdef DEBUG
-      stuck_ = true;
-#endif
-    }
+    DrawTexture();
 
     return Finish;
   }
@@ -490,87 +485,75 @@ namespace BlendInt {
     AbstractWindow::shaders->PopWidgetModelMatrix();
   }
 
+  void CVImageView::DrawTexture ()
+  {
+    glBindVertexArray(vao_[1]);
+
+    //if (mutex_.lock()) {  // TODO: looks there's no need to lock when writting texture in thread
+
+    texture_.bind();
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //  mutex_.unlock();
+    //} else {
+    //  DBG_PRINT_MSG("%s", "fail to lock");
+    //}
+  }
+
   void CVImageView::OnUpdateFrame (Timer* sender)
   {
     video_stream_ >> image_;
-
-#ifdef DEBUG
-    if (stuck_) {
-
-      AbstractView* p = superview();
-      while (p) {
-        DBG_PRINT_MSG("status: %d", p->refresh() ? 1 : 0);
-        p = p->superview();
-      }
-
-    }
-#endif
 
     if (mutex_.trylock()) {
 
       off_screen_context_->MakeCurrent();
 
-      if (image_.data)
-        ProcessImage(image_);
+      if (image_.data) ProcessImage(image_);
 
-      if(image_.data) {
+      if (image_.data) {
 
         texture_.bind();
 
         switch (image_.channels()) {
 
-        case 1: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-          texture_.SetImage(0, GL_RED, image_.cols, image_.rows,
-                            0, GL_RED, GL_UNSIGNED_BYTE, image_.data);
-          break;
-        }
+          case 1: {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            texture_.SetImage(0, GL_RED, image_.cols, image_.rows, 0, GL_RED,
+                              GL_UNSIGNED_BYTE, image_.data);
+            break;
+          }
 
-        case 2: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-          texture_.SetImage(0, GL_RG, image_.cols, image_.rows,
-                            0, GL_RG, GL_UNSIGNED_BYTE, image_.data);
-          break;
-        }
+          case 2: {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+            texture_.SetImage(0, GL_RG, image_.cols, image_.rows, 0, GL_RG,
+                              GL_UNSIGNED_BYTE, image_.data);
+            break;
+          }
 
-        case 3: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-          texture_.SetImage(0, GL_RGB, image_.cols, image_.rows,
-                            0, GL_BGR, GL_UNSIGNED_BYTE, image_.data);
-          break;
-        }
+          case 3: {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+            texture_.SetImage(0, GL_RGB, image_.cols, image_.rows, 0, GL_BGR,
+                              GL_UNSIGNED_BYTE, image_.data);
+            break;
+          }
 
-        case 4:	{
-          // opencv does not support alpha-channel, only masking, these code will never be called
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-          texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows,
-                            0, GL_BGRA, GL_UNSIGNED_BYTE, image_.data);
-          break;
-        }
+          case 4: {
+            // opencv does not support alpha-channel, only masking, these code will never be called
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+            texture_.SetImage(0, GL_RGBA, image_.cols, image_.rows, 0, GL_BGRA,
+                              GL_UNSIGNED_BYTE, image_.data);
+            break;
+          }
 
-        default: {
-          break;
-        }
+          default: {
+            break;
+          }
+
         }
 
       }
 
       RequestRedraw();
-
-#ifdef DEBUG
-      if(stuck_) {
-
-        DBG_PRINT_MSG("%s", "check refresh status after request");
-        AbstractView* p = superview();
-        while(p) {
-          DBG_PRINT_MSG("status: %d", p->refresh() ? 1 : 0);
-          p = p->superview();
-        }
-
-        stuck_ = false;
-      }
-#endif
-
       mutex_.unlock();
 
     } else {
