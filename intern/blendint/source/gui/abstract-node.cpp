@@ -46,7 +46,7 @@ namespace BlendInt {
                                               std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * AbstractWindow::theme->pixel(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
                      round_type(), round_radius_, inner, outer);
   }
 
@@ -57,7 +57,7 @@ namespace BlendInt {
                                               std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * AbstractWindow::theme->pixel(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
                      round_type(), round_radius_, shadedir, shadetop, shadedown,
                      inner, outer);
   }
@@ -74,18 +74,18 @@ namespace BlendInt {
     Point offset = GetOffset();
 
     glm::mat3 matrix = glm::translate(
-        AbstractWindow::shaders->widget_model_matrix(),
+        AbstractWindow::shaders()->widget_model_matrix(),
         glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-    AbstractWindow::shaders->PushWidgetModelMatrix();
-    AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+    AbstractWindow::shaders()->PushWidgetModelMatrix();
+    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
     return true;
   }
 
   void AbstractNode::PostDraw (AbstractWindow* context)
   {
-    AbstractWindow::shaders->PopWidgetModelMatrix();
+    AbstractWindow::shaders()->PopWidgetModelMatrix();
   }
 
   void AbstractNode::PerformFocusOn (AbstractWindow* context)

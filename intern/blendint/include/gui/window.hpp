@@ -33,124 +33,134 @@
 
 namespace BlendInt {
 
-	class Window: public AbstractWindow
-	{
-	public:
+  class Window: public AbstractWindow
+  {
+  public:
 
-		Window (int width, int height, const char* title, Window* share = 0, bool visible = true);
+    Window (int width,
+            int height,
+            const char* title,
+            int flags = WindowVisibleMask);
 
-		virtual ~Window ();
+    virtual ~Window ();
 
-		virtual AbstractWindow* CreateSharedContext (int width, int height, bool visiable);
+    virtual AbstractWindow* CreateSharedContext (int width,
+                                                 int height,
+                                                 int flags = WindowVisibleMask);
 
-		virtual void MakeCurrent ();
+    virtual void MakeCurrent ();
 
-		virtual void Synchronize ();
+    virtual void Synchronize ();
 
-		virtual void Exec ();
+    virtual void Exec ();
 
-		virtual void SetCursor (CursorShape cursor_type);
+    virtual void SetCursor (CursorShape cursor_type);
 
-		virtual int GetKeyInput () const;
+    virtual int GetKeyInput () const;
 
-		virtual int GetScancode () const;
+    virtual int GetScancode () const;
 
-		virtual MouseAction GetMouseAction () const;
+    virtual MouseAction GetMouseAction () const;
 
-		virtual KeyAction GetKeyAction () const;
+    virtual KeyAction GetKeyAction () const;
 
-		virtual int GetModifiers () const;
+    virtual int GetModifiers () const;
 
-		virtual MouseButton GetMouseButton () const;
+    virtual MouseButton GetMouseButton () const;
 
-		virtual const String& GetTextInput () const;
+    virtual const String& GetTextInput () const;
 
-		virtual const Point& GetGlobalCursorPosition () const;
+    virtual const Point& GetGlobalCursorPosition () const;
 
-		Cpp::EventRef<Window*, const Size&> resized ()
-		{
-			return resized_;
-		}
+    Cpp::EventRef<Window*, const Size&> resized ()
+    {
+      return resized_;
+    }
 
-		static bool Initialize ();
+    static bool Initialize ();
 
-		static void Terminate ();
+    static void Terminate ();
 
-	protected:
+  protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-        virtual bool PreDraw (AbstractWindow* context);
-        
-	private:
+    virtual bool PreDraw (AbstractWindow* context);
 
-        void Close ();
+  private:
 
-		GLFWwindow* window_;
+    void Close ();
 
-		Cpp::Event<Window*, const Size&> resized_;
+    GLFWwindow* window_;
 
-		static GLFWcursor* kArrowCursor;
+    Cpp::Event<Window*, const Size&> resized_;
 
-		static GLFWcursor* kCrossCursor;
+    static GLFWcursor* kArrowCursor;
 
-		static GLFWcursor* kSplitVCursor;
+    static GLFWcursor* kCrossCursor;
 
-		static GLFWcursor* kSplitHCursor;
+    static GLFWcursor* kSplitVCursor;
 
-		static GLFWcursor* kTopLeftCornerCursor;
+    static GLFWcursor* kSplitHCursor;
 
-		static GLFWcursor* kTopRightCornerCursor;
-        
-        static GLFWcursor* kIBeamCursor;
+    static GLFWcursor* kTopLeftCornerCursor;
 
-		static std::map<GLFWwindow*, Window*> kWindowMap;
+    static GLFWcursor* kTopRightCornerCursor;
 
-		static KeyAction kKeyAction;
+    static GLFWcursor* kIBeamCursor;
 
-		static int kKey;
+    static std::map<GLFWwindow*, Window*> kSharedWindowMap;
 
-		static int kModifiers;
+    static KeyAction kKeyAction;
 
-		static int kScancode;
+    static int kKey;
 
-		static String kText;
+    static int kModifiers;
 
-		static MouseAction kMouseAction;
+    static int kScancode;
 
-		static MouseButton kMouseButton;
+    static String kText;
 
-		static Point kCursor;
+    static MouseAction kMouseAction;
 
-		static void CbError (int error, const char* description);
+    static MouseButton kMouseButton;
 
-		static void CbWindowSize(GLFWwindow* window, int w, int h);
+    static Point kCursor;
 
-		static void CbWindowPosition (GLFWwindow* window, int x, int y);
+    static void CbError (int error, const char* description);
 
-		static void CbKey(GLFWwindow* window, int key, int scancode, int action,
-							  int mods);
+    static void CbWindowSize (GLFWwindow* window, int w, int h);
 
-		static void CbChar(GLFWwindow* window, unsigned int character);
+    static void CbWindowPosition (GLFWwindow* window, int x, int y);
 
-		static void CbMouseButton(GLFWwindow* window, int button, int action,
-								  int mods);
+    static void CbKey (GLFWwindow* window,
+                       int key,
+                       int scancode,
+                       int action,
+                       int mods);
 
-		static void CbCursorPos(GLFWwindow* window, double xpos, double ypos);
+    static void CbChar (GLFWwindow* window, unsigned int character);
 
-		static void CbClose (GLFWwindow* window);
+    static void CbMouseButton (GLFWwindow* window,
+                               int button,
+                               int action,
+                               int mods);
+
+    static void CbCursorPos (GLFWwindow* window, double xpos, double ypos);
+
+    static void CbClose (GLFWwindow* window);
 
 #ifdef __APPLE__
 
-		// MUST set this callback to render the context when resizing in OSX
-		static void CbWindowRefresh (GLFWwindow* window);
+    // MUST set this callback to render the context when resizing in OSX
+    static void CbWindowRefresh (GLFWwindow* window);
 
 #endif
 
-		static void CreateCursors ();
+    static void CreateCursors ();
 
-	};
+  };
 
 }

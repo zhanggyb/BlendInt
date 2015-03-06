@@ -135,7 +135,7 @@ namespace BlendInt {
 
 		/*
 		glBindVertexArray(vao_);
-		RefPtr<GLSLProgram> program = AbstractWindow::shaders->line_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders()->line_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -143,7 +143,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_AA", 0);
 
 		program->SetVertexAttrib4fv("a_color",
-		        AbstractWindow::theme->scroll().outline.data());
+		        AbstractWindow::theme()->scroll().outline.data());
 
 		glEnableVertexAttribArray(0);
 		m_line->bind();

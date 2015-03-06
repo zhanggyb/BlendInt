@@ -65,18 +65,18 @@ namespace BlendInt {
 
 	Response CheckButton::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1.f, 219 / 255.f, 97 / 255.f, 1.f);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1.f, 219 / 255.f, 97 / 255.f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		AbstractWindow::shaders->widget_outer_program()->use();
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		AbstractWindow::shaders()->widget_outer_program()->use();
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 0.f, 0.f, 0.f, 1.f);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

@@ -178,20 +178,20 @@ namespace BlendInt {
 
 	Response SplitterHandle::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_triangle_program()->use();
+		AbstractWindow::shaders()->widget_triangle_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
 		if(highlight_) {
-			//glUniform1i(AbstractWindow::shaders->location(Shaders::TRIANGLE_GAMMA), 50);
+			//glUniform1i(AbstractWindow::shaders()->location(Shaders::TRIANGLE_GAMMA), 50);
 			glVertexAttrib4f(AttributeColor, 0.85f, 0.15f, 0.15f, 0.6f);
 		} else {
-			//glUniform1i(AbstractWindow::shaders->location(Shaders::TRIANGLE_GAMMA), 0);
+			//glUniform1i(AbstractWindow::shaders()->location(Shaders::TRIANGLE_GAMMA), 0);
 			glVertexAttrib4f(AttributeColor, 0.15f, 0.15f, 0.15f, 0.6f);
 		}
-		//glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+		//glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
 
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

@@ -131,13 +131,13 @@ namespace BlendInt {
 	{
     if (hovered_) {
 
-      AbstractWindow::shaders->widget_inner_program()->use();
+      AbstractWindow::shaders()->widget_inner_program()->use();
 
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
       glUniform4fv(
-          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme->menu_item().inner_sel.data());
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+          AbstractWindow::theme()->menu_item().inner_sel.data());
 
       glBindVertexArray(vao_);
       glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -160,9 +160,9 @@ namespace BlendInt {
 
 	  const float* color_v = 0;
 	  if(hovered_) {
-	    color_v = AbstractWindow::theme->menu_item().text_sel.data();
+	    color_v = AbstractWindow::theme()->menu_item().text_sel.data();
 	  } else {
-      color_v = AbstractWindow::theme->menu_item().text.data();
+      color_v = AbstractWindow::theme()->menu_item().text.data();
 	  }
 
 	  if(action_->text()) {
@@ -187,11 +187,11 @@ namespace BlendInt {
       set_size(*request.size());
 
       std::vector<GLfloat> inner_verts;
-      if (AbstractWindow::theme->menu_item().shaded) {
+      if (AbstractWindow::theme()->menu_item().shaded) {
         GenerateVertices(size(), 0.f, RoundNone, 0.f,
             Vertical,
-            AbstractWindow::theme->menu_item().shadetop,
-            AbstractWindow::theme->menu_item().shadedown,
+            AbstractWindow::theme()->menu_item().shadetop,
+            AbstractWindow::theme()->menu_item().shadedown,
             &inner_verts, 0);
       } else {
         GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -243,11 +243,11 @@ namespace BlendInt {
 
     std::vector<GLfloat> inner_verts;
 
-    if (AbstractWindow::theme->menu_item().shaded) {
+    if (AbstractWindow::theme()->menu_item().shaded) {
       GenerateVertices(size(), 0.f, RoundNone, 0.f,
           Vertical,
-          AbstractWindow::theme->menu_item().shadetop,
-          AbstractWindow::theme->menu_item().shadedown,
+          AbstractWindow::theme()->menu_item().shadetop,
+          AbstractWindow::theme()->menu_item().shadedown,
           &inner_verts, 0);
     } else {
       GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);

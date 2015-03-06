@@ -61,11 +61,11 @@ namespace BlendInt {
 			float scale_x,
 			float scale_y) const
 	{
-		AbstractWindow::shaders->widget_shadow_program()->use();
+		AbstractWindow::shaders()->widget_shadow_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_POSITION),
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_POSITION),
 		        x, y);
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_SIZE),
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
 		        size().width(), size().height());
 
 		glBindVertexArray(vao_);
@@ -73,19 +73,19 @@ namespace BlendInt {
 		int count = GetOutlineVertexCount(round_type());
 
 		int i = 0;
-		if (i < AbstractWindow::theme->shadow_width()) {
+		if (i < AbstractWindow::theme()->shadow_width()) {
 			glUniform1i(
-			        AbstractWindow::shaders->location(
+			        AbstractWindow::shaders()->location(
 			                Shaders::WIDGET_SHADOW_ANTI_ALIAS), 1);
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}
 
 		glUniform1i(
-		        AbstractWindow::shaders->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
+		        AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
 		        0);
 		i++;
-		for (; i < AbstractWindow::theme->shadow_width(); i++) {
+		for (; i < AbstractWindow::theme()->shadow_width(); i++) {
 			glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
 			        BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
 		}

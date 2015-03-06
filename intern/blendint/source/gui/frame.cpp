@@ -144,7 +144,7 @@ namespace BlendInt {
             
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
-			GenerateVertices(size(), 1.f * AbstractWindow::theme->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+			GenerateVertices(size(), 1.f * AbstractWindow::theme()->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
 
 			buffer_.bind(0);
 			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -181,22 +181,22 @@ namespace BlendInt {
 
 	Response Frame::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders()->frame_inner_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
         if(view_buffer()) {
 
-        	AbstractWindow::shaders->frame_image_program()->use();
+        	AbstractWindow::shaders()->frame_image_program()->use();
             
-            glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-            glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-            glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+            glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+            glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+            glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             view_buffer()->Draw(0, 0);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -205,8 +205,8 @@ namespace BlendInt {
 
             glViewport(position().x(), position().y(), size().width(), size().height());
 
-            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-            AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+            AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+            AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
 			DrawSubViewsOnce(context);
 
@@ -214,15 +214,15 @@ namespace BlendInt {
 
         }
         
-		AbstractWindow::shaders->frame_outer_program()->use();
+		AbstractWindow::shaders()->frame_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
 		glBindVertexArray(vao_[1]);
 
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
 
-		glUniform4f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
         return Finish;

@@ -145,13 +145,13 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (AbstractWindow::theme->scroll().shaded) {
+      if (AbstractWindow::theme()->scroll().shaded) {
 
-        short shadetop = AbstractWindow::theme->scroll().shadetop;
-        short shadedown = AbstractWindow::theme->scroll().shadedown;
+        short shadetop = AbstractWindow::theme()->scroll().shadetop;
+        short shadedown = AbstractWindow::theme()->scroll().shadedown;
         if (orientation() == Vertical) {
-          shadetop = AbstractWindow::theme->scroll().shadedown;
-          shadedown = AbstractWindow::theme->scroll().shadetop;
+          shadetop = AbstractWindow::theme()->scroll().shadedown;
+          shadedown = AbstractWindow::theme()->scroll().shadetop;
         }
 
         GenerateVertices(size(), default_border_width(), round_type(), radius,
@@ -206,24 +206,24 @@ namespace BlendInt {
 
   Response ScrollBar::Draw (AbstractWindow* context)
   {
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
         0);
 
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
-        1, AbstractWindow::theme->scroll().inner.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+        1, AbstractWindow::theme()->scroll().inner.data());
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-    AbstractWindow::shaders->widget_outer_program()->use();
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
         0.f);
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR),
-        1, AbstractWindow::theme->scroll().outline.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+        1, AbstractWindow::theme()->scroll().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -231,10 +231,10 @@ namespace BlendInt {
 
     if (emboss()) {
       glUniform4f(
-          AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
           1.f, 1.f, 0.16f);
       glUniform2f(
-          AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
           0.f, 0.f - 1.f);
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
           GetHalfOutlineVertices(round_type()) * 2);
@@ -348,13 +348,13 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme->scroll().shaded) {
+    if (AbstractWindow::theme()->scroll().shaded) {
 
-      short shadetop = AbstractWindow::theme->scroll().shadetop;
-      short shadedown = AbstractWindow::theme->scroll().shadedown;
+      short shadetop = AbstractWindow::theme()->scroll().shadetop;
+      short shadedown = AbstractWindow::theme()->scroll().shadedown;
       if (orientation() == Vertical) {
-        shadetop = AbstractWindow::theme->scroll().shadedown;
-        shadedown = AbstractWindow::theme->scroll().shadetop;
+        shadetop = AbstractWindow::theme()->scroll().shadedown;
+        shadedown = AbstractWindow::theme()->scroll().shadetop;
       }
 
       GenerateVertices(slot_size, default_border_width(), round_type(),

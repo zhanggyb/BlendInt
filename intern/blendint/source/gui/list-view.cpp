@@ -84,13 +84,13 @@ namespace BlendInt {
     int y = size().height();
     const int h = font_.height();
 
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
                 0);
 
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
-                 1, AbstractWindow::theme->regular().inner.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+                 1, AbstractWindow::theme()->regular().inner.data());
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -99,12 +99,12 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
     context->EndPushStencil();
 
-    AbstractWindow::shaders->widget_triangle_program()->use();
+    AbstractWindow::shaders()->widget_triangle_program()->use();
 
     glUniform1i(
-        AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
     glUniform1i(
-        AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
         0);
     glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
 
@@ -115,21 +115,21 @@ namespace BlendInt {
       y -= h;
 
       glUniform2f(
-          AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
           0, y);
 
       if (i == highlight_index_) {// TODO: use different functions for performance
         glUniform1i(
-            AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
             -35);
       } else {
         if (i % 2 == 0) {
           glUniform1i(
-              AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
               0);
         } else {
           glUniform1i(
-              AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
               15);
         }
       }
@@ -150,14 +150,14 @@ namespace BlendInt {
         index.GetData()->DrawInRect(
             rect,
             AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-            AbstractWindow::theme->regular().text.data());
+            AbstractWindow::theme()->regular().text.data());
         index = index.GetDownIndex();
         rect.set_y(rect.y() - h);
       }
 
     }
 
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
     context->BeginPopStencil();	// pop inner stencil
     glBindVertexArray(vao_[0]);

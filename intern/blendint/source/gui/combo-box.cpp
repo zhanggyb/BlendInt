@@ -75,7 +75,7 @@ namespace BlendInt {
       }
     }
 
-    w += AbstractWindow::icons->menu()->size().width();
+    w += AbstractWindow::icons()->menu()->size().width();
 
     w += pixel_size(kPadding.hsum());
     h += pixel_size(kPadding.vsum());
@@ -103,10 +103,10 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (AbstractWindow::theme->menu().shaded) {
+      if (AbstractWindow::theme()->menu().shaded) {
         GenerateRoundedVertices(Vertical,
-            AbstractWindow::theme->menu().shadetop,
-            AbstractWindow::theme->menu().shadedown, &inner_verts,
+            AbstractWindow::theme()->menu().shadetop,
+            AbstractWindow::theme()->menu().shadedown, &inner_verts,
             &outer_verts);
       } else {
         GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -135,9 +135,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme->menu().shaded) {
-      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
-          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    if (AbstractWindow::theme()->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
+          AbstractWindow::theme()->menu().shadedown, &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
     }
@@ -158,9 +158,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme->menu().shaded) {
-      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
-          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    if (AbstractWindow::theme()->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
+          AbstractWindow::theme()->menu().shadedown, &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
     }
@@ -177,21 +177,21 @@ namespace BlendInt {
   Response ComboBox::Draw (AbstractWindow* context)
   {
     // draw inner
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
-        1, AbstractWindow::theme->menu().inner.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+        1, AbstractWindow::theme()->menu().inner.data());
 
     if (status_down_) {
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 20);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 20);
     } else {
       if (hover_) {
         glUniform1i(
-            AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 15);
+            AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
       } else {
         glUniform1i(
-            AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+            AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
       }
     }
 
@@ -200,12 +200,12 @@ namespace BlendInt {
 
     // draw outer:
 
-    AbstractWindow::shaders->widget_outer_program()->use();
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR),
-        1, AbstractWindow::theme->menu().outline.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+        1, AbstractWindow::theme()->menu().outline.data());
     glUniform2f(
-        AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
         0.f);
 
     glBindVertexArray(vaos_[1]);
@@ -213,9 +213,9 @@ namespace BlendInt {
         GetOutlineVertices(round_type()) * 2 + 2);
 
 //		if (emboss()) {
-//			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+//			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 //			        1.0f, 1.0f, 0.16f);
-//			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+//			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
 //			        0.f, - 1.f);
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 //			        GetHalfOutlineVertices(round_type()) * 2);
@@ -236,12 +236,12 @@ namespace BlendInt {
       if (index.valid()) {
         index.GetData()->DrawInRect(rect,
             AlignLeft | AlignJustify | AlignBaseline,
-            AbstractWindow::theme->menu().text_sel.data());
+            AbstractWindow::theme()->menu().text_sel.data());
       }
 
     }
 
-    AbstractWindow::icons->menu()->DrawInRect(rect,
+    AbstractWindow::icons()->menu()->DrawInRect(rect,
         AlignRight | AlignVerticalCenter, Color(0xEFEFEFFF).data());
 
     return Finish;
@@ -259,9 +259,9 @@ namespace BlendInt {
       return Finish;
     } else {
       Menu* menu = new Menu;
-      menu->AddAction(context->icons->icon_16x16(Icons::IMAGEFILE), "Menu Item 1");
-      menu->AddAction(context->icons->icon_16x16(Icons::IMAGE_RGB), "Menu Item 2");
-      menu->AddAction(context->icons->icon_16x16(Icons::IMAGE_ZDEPTH), "Menu Item 3");
+      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGEFILE), "Menu Item 1");
+      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGE_RGB), "Menu Item 2");
+      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGE_ZDEPTH), "Menu Item 3");
 
       popup_ = menu;
       popup_->Resize(popup_->GetPreferredSize());
@@ -332,9 +332,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme->menu().shaded) {
-      GenerateRoundedVertices(Vertical, AbstractWindow::theme->menu().shadetop,
-          AbstractWindow::theme->menu().shadedown, &inner_verts, &outer_verts);
+    if (AbstractWindow::theme()->menu().shaded) {
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
+          AbstractWindow::theme()->menu().shadedown, &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
     }

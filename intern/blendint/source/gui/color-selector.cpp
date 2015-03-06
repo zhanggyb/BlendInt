@@ -79,7 +79,7 @@ namespace BlendInt {
     color_box->AddWidget(alpha_slider);
 
     Button* pick_btn = Manage(
-        new Button(AbstractWindow::icons->icon_16x16(Icons::EYEDROPPER)));
+        new Button(AbstractWindow::icons()->icon_16x16(Icons::EYEDROPPER)));
     pick_btn->SetEmboss(true);
 
     LinearLayout* hbox2 = Manage(new LinearLayout(Horizontal, AlignTop));
@@ -110,10 +110,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme->menu_back().shaded) {
+    if (AbstractWindow::theme()->menu_back().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme->menu_back().shadetop,
-                              AbstractWindow::theme->menu_back().shadedown,
+                              AbstractWindow::theme()->menu_back().shadetop,
+                              AbstractWindow::theme()->menu_back().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -166,10 +166,10 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (AbstractWindow::theme->menu_back().shaded) {
+      if (AbstractWindow::theme()->menu_back().shaded) {
         GenerateRoundedVertices(Vertical,
-                                AbstractWindow::theme->menu_back().shadetop,
-                                AbstractWindow::theme->menu_back().shadedown,
+                                AbstractWindow::theme()->menu_back().shadetop,
+                                AbstractWindow::theme()->menu_back().shadedown,
                                 &inner_verts, &outer_verts);
       } else {
         GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -210,29 +210,29 @@ namespace BlendInt {
   {
     shadow_->Draw(position().x(), position().y());
 
-    AbstractWindow::shaders->frame_inner_program()->use();
+    AbstractWindow::shaders()->frame_inner_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION),
+        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
         position().x(), position().y());
-    glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
                 0);
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR),
-                 1, AbstractWindow::theme->menu_back().inner.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
+                 1, AbstractWindow::theme()->menu_back().inner.data());
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
     if (view_buffer()) {
 
-      AbstractWindow::shaders->frame_image_program()->use();
+      AbstractWindow::shaders()->frame_image_program()->use();
 
       glUniform2f(
-          AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION),
+          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
           position().x(), position().y());
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-      glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA),
+          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+      glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
                   0);
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
       view_buffer()->Draw(0, 0);
@@ -243,8 +243,8 @@ namespace BlendInt {
       glViewport(position().x(), position().y(), size().width(),
                  size().height());
 
-      AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-      AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+      AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+      AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
       DrawSubViewsOnce(context);
 
@@ -252,13 +252,13 @@ namespace BlendInt {
 
     }
 
-    AbstractWindow::shaders->frame_outer_program()->use();
+    AbstractWindow::shaders()->frame_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION),
+        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
         position().x(), position().y());
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR),
-                 1, AbstractWindow::theme->menu_back().outline.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+                 1, AbstractWindow::theme()->menu_back().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,

@@ -82,20 +82,20 @@ namespace BlendInt {
 	Response ColorWheel::Draw (AbstractWindow* context)
 	{
 		RefPtr<GLSLProgram> program =
-						AbstractWindow::shaders->widget_triangle_program();
+						AbstractWindow::shaders()->widget_triangle_program();
 		program->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION),
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
 		        (float) (0.f + size().width() / 2.f),
 		        (float) (0.f + size().height() / 2.f));
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->regular().outline.data());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+		glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->regular().outline.data());
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 

@@ -75,25 +75,25 @@ namespace BlendInt {
 		if(!visiable()) return false;
 
 		//glm::mat4 model;
-		//AbstractWindow::shaders->GetUIModelMatrix(model);
+		//AbstractWindow::shaders()->GetUIModelMatrix(model);
 
 //		Point pos = GetGlobalPosition();
 
 		Point offset = GetOffset();
 
-		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
-		AbstractWindow::shaders->PushWidgetModelMatrix();
-		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders()->PushWidgetModelMatrix();
+		AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
 		return true;
 	}
 
 	void AbstractWidget::PostDraw(AbstractWindow* context)
 	{
-		AbstractWindow::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders()->PopWidgetModelMatrix();
 	}
 
 	void AbstractWidget::PerformFocusOn (AbstractWindow* context)
@@ -200,21 +200,21 @@ namespace BlendInt {
 			glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
 			AbstractWindow* c = context;
-            glm::vec3 pos = AbstractWindow::shaders->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
+            glm::vec3 pos = AbstractWindow::shaders()->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
             Point original = context->viewport_origin();
             c->viewport_origin_.reset(original.x() + pos.x, original.y() + pos.y);
 
-			AbstractWindow::shaders->PushWidgetModelMatrix();
-			AbstractWindow::shaders->PushWidgetProjectionMatrix();
+			AbstractWindow::shaders()->PushWidgetModelMatrix();
+			AbstractWindow::shaders()->PushWidgetProjectionMatrix();
 
 			glm::mat3 identity(1.f);
-			AbstractWindow::shaders->SetWidgetModelMatrix(identity);
+			AbstractWindow::shaders()->SetWidgetModelMatrix(identity);
 
 			glm::mat4 projection = glm::ortho(
 				0.f, (float)widget->size().width(),
 				0.f, (float)widget->size().height(),
 				100.f, -100.f);
-			AbstractWindow::shaders->SetWidgetProjectionMatrix(projection);
+			AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -247,8 +247,8 @@ namespace BlendInt {
 
             // restore viewport and framebuffer
 
-			AbstractWindow::shaders->PopWidgetProjectionMatrix();
-			AbstractWindow::shaders->PopWidgetModelMatrix();
+			AbstractWindow::shaders()->PopWidgetProjectionMatrix();
+			AbstractWindow::shaders()->PopWidgetModelMatrix();
 
 			if(scissor_test) {
 				glEnable(GL_SCISSOR_TEST);

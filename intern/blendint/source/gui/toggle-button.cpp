@@ -133,10 +133,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if(AbstractWindow::theme->toggle().shaded) {
+			if(AbstractWindow::theme()->toggle().shaded) {
 				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->toggle().shadetop,
-						AbstractWindow::theme->toggle().shadedown,
+						AbstractWindow::theme()->toggle().shadetop,
+						AbstractWindow::theme()->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -164,10 +164,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if(AbstractWindow::theme->toggle().shaded) {
+		if(AbstractWindow::theme()->toggle().shaded) {
 			GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->toggle().shadetop,
-						AbstractWindow::theme->toggle().shadedown,
+						AbstractWindow::theme()->toggle().shadetop,
+						AbstractWindow::theme()->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
 		} else {
@@ -190,10 +190,10 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
 
-			if(AbstractWindow::theme->toggle().shaded) {
+			if(AbstractWindow::theme()->toggle().shaded) {
 				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme->toggle().shadetop,
-						AbstractWindow::theme->toggle().shadedown,
+						AbstractWindow::theme()->toggle().shadetop,
+						AbstractWindow::theme()->toggle().shadedown,
 						&inner_verts,
 						&outer_verts);
 			} else {
@@ -211,47 +211,47 @@ namespace BlendInt {
 
 	Response ToggleButton::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		if (hover()) {
 
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 15);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
 			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme->toggle().inner_sel.data());
+				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme()->toggle().inner_sel.data());
 			} else {
-				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme->toggle().inner.data());
+				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme()->toggle().inner.data());
 			}
 
 		} else {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
 			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme->toggle().inner_sel.data());
+				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme()->toggle().inner_sel.data());
 			} else {
-				glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme->toggle().inner.data());
+				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+				        AbstractWindow::theme()->toggle().inner.data());
 			}
 		}
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		AbstractWindow::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1,
-		        AbstractWindow::theme->toggle().outline.data());
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+		        AbstractWindow::theme()->toggle().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
 			        0.f, 0.f - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -267,10 +267,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if(AbstractWindow::theme->toggle().shaded) {
+		if(AbstractWindow::theme()->toggle().shaded) {
 			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->toggle().shadetop,
-					AbstractWindow::theme->toggle().shadedown,
+					AbstractWindow::theme()->toggle().shadetop,
+					AbstractWindow::theme()->toggle().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {

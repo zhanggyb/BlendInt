@@ -53,8 +53,8 @@ namespace BlendInt {
 		buffer_.generate();
 		buffer_.bind(0);
 		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
 				GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
@@ -145,19 +145,19 @@ namespace BlendInt {
 	void CircularPicker::Draw (int x, int y, const float* color_ptr, short gamma,
 	        float rotate, float scale_x, float scale_y) const
 	{
-		AbstractWindow::shaders->widget_simple_triangle_program()->use();
+		AbstractWindow::shaders()->widget_simple_triangle_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1, color_ptr);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1, color_ptr);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		AbstractWindow::shaders->widget_outer_program()->use();
+		AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme->scroll().outline.data());
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), x, y);
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme()->scroll().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);

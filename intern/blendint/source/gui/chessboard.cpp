@@ -114,12 +114,12 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = AbstractWindow::shaders->widget_triangle_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders()->widget_triangle_program();
 		program->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x, y);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 		Color color(0x999999FF);
 		glVertexAttrib4fv(AttributeColor, color.data());

@@ -89,29 +89,29 @@ namespace BlendInt {
 
 	Response TabButton::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_triangle_program()->use();
+		AbstractWindow::shaders()->widget_triangle_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
 		// draw inner, simple fill
 		if (is_checked()) {
 			glVertexAttrib4f(AttributeColor, 0.447f, 0.447f, 0.447f, 1.0f);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
 			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
 		} else {
-			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->tab().item.data());
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->tab().item.data());
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
 			glBindVertexArray(vao_[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
 		if (is_checked()) {
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme->tab().outline.data());
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->tab().outline.data());
 
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
@@ -159,7 +159,7 @@ namespace BlendInt {
 	{
 		int amp = size.height() / 2;
 		int shift_x = 5;
-		border = AbstractWindow::theme->pixel() * border;
+		border = AbstractWindow::theme()->pixel() * border;
 
 		if (inner.size() != 2 * 11 * 2)
 			inner.resize(2 * 11 * 2);

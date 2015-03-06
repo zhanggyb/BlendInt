@@ -185,22 +185,22 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-		AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+		AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+		AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
 
 	Response Viewport::Draw(AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
 
 		if(hover_) {
-			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
+			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.275f, 0.275f, 0.275f, 1.f);
 		} else {
-			glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
+			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.25f, 0.25f, 0.25f, 1.f);
 		}
 
 		glBindVertexArray(vao_);

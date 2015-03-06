@@ -74,10 +74,10 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme->dialog().shaded) {
+		if (AbstractWindow::theme()->dialog().shaded) {
 			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme->dialog().shadetop,
-					AbstractWindow::theme->dialog().shadedown,
+					AbstractWindow::theme()->dialog().shadetop,
+					AbstractWindow::theme()->dialog().shadedown,
 					&inner_verts,
 					&outer_verts);
 		} else {
@@ -151,10 +151,10 @@ namespace BlendInt {
     		std::vector<GLfloat> inner_verts;
     		std::vector<GLfloat> outer_verts;
 
-    		if (AbstractWindow::theme->dialog().shaded) {
+    		if (AbstractWindow::theme()->dialog().shaded) {
     			GenerateRoundedVertices(Vertical,
-    					AbstractWindow::theme->dialog().shadetop,
-    					AbstractWindow::theme->dialog().shadedown,
+    					AbstractWindow::theme()->dialog().shadetop,
+    					AbstractWindow::theme()->dialog().shadedown,
     					&inner_verts,
     					&outer_verts);
     		} else {
@@ -199,22 +199,22 @@ namespace BlendInt {
 	{
     	shadow_->Draw(position().x(), position().y());
 
-		AbstractWindow::shaders->frame_inner_program()->use();
+		AbstractWindow::shaders()->frame_inner_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme->dialog().inner.data());
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme()->dialog().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
 		if(view_buffer()) {
 
-			AbstractWindow::shaders->frame_image_program()->use();
+			AbstractWindow::shaders()->frame_image_program()->use();
 
-			glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			view_buffer()->Draw(0, 0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -223,8 +223,8 @@ namespace BlendInt {
 
             glViewport(position().x(), position().y(), size().width(), size().height());
 
-            AbstractWindow::shaders->SetWidgetProjectionMatrix(projection_matrix_);
-            AbstractWindow::shaders->SetWidgetModelMatrix(model_matrix_);
+            AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+            AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
 			DrawSubViewsOnce(context);
 
@@ -232,10 +232,10 @@ namespace BlendInt {
 
 		}
 
-		AbstractWindow::shaders->frame_outer_program()->use();
+		AbstractWindow::shaders()->frame_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme->dialog().outline.data());
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme()->dialog().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -319,10 +319,10 @@ namespace BlendInt {
 		// directory control group
 		Block* block1 = Manage(new Block);
 
-		Button* btn_back = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::BACK)));
-		Button* btn_forward = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FORWARD)));
-		Button* btn_up = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FILE_PARENT)));
-		Button* btn_reload = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::FILE_REFRESH)));
+		Button* btn_back = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::BACK)));
+		Button* btn_forward = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FORWARD)));
+		Button* btn_up = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT)));
+		Button* btn_reload = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH)));
 
 		block1->AddWidget(btn_back);
 		block1->AddWidget(btn_forward);
@@ -332,14 +332,14 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		Button* btn_new = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
+		Button* btn_new = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
 
 		// display mode
 		Block* block2 = Manage(new Block);
 
-		Button* btn_short_list = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SHORTDISPLAY)));
-		Button* btn_detail_list = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::LONGDISPLAY)));
-		Button* btn_thumbnail = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::IMGDISPLAY)));
+		Button* btn_short_list = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY)));
+		Button* btn_detail_list = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY)));
+		Button* btn_thumbnail = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY)));
 
 		block2->AddWidget(btn_short_list);
 		block2->AddWidget(btn_detail_list);
@@ -347,10 +347,10 @@ namespace BlendInt {
 
 		Block* block3 = Manage(new Block);
 
-		Button* btn_sort_alpha = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTALPHA)));
-		Button* btn_sort_ext = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTBYEXT)));
-		Button* btn_sort_time = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTTIME)));
-		Button* btn_sort_size = Manage(new Button(AbstractWindow::icons->icon_16x16(Icons::SORTSIZE)));
+		Button* btn_sort_alpha = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA)));
+		Button* btn_sort_ext = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT)));
+		Button* btn_sort_time = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME)));
+		Button* btn_sort_size = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE)));
 
 		block3->AddWidget(btn_sort_alpha);
 		block3->AddWidget(btn_sort_ext);

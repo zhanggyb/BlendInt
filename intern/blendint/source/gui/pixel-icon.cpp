@@ -168,13 +168,13 @@ namespace BlendInt {
 	{
 		if(texture_) {
 
-			AbstractWindow::shaders->widget_image_program()->use();
+			AbstractWindow::shaders()->widget_image_program()->use();
 
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 
 			texture_->bind();
 			glBindVertexArray(vao_);
@@ -210,13 +210,13 @@ namespace BlendInt {
 				y = rect.vcenter();
 			}
 
-			AbstractWindow::shaders->widget_image_program()->use();
+			AbstractWindow::shaders()->widget_image_program()->use();
 
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
 			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 
 			texture_->bind();
 			glBindVertexArray(vao_);
@@ -288,14 +288,14 @@ namespace BlendInt {
 		vbo_->set_data(sizeof(GLfloat) * v.size(), &v[0]);
 
 		glEnableVertexAttribArray(
-		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
+		        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
 		glEnableVertexAttribArray(
-		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+		        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
 		glVertexAttribPointer(
-		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
 		        GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
 		glVertexAttribPointer(
-		        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_UV), 2,
+		        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV), 2,
 		        GL_FLOAT,
 		        GL_FALSE, 4 * sizeof(GLfloat),
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));

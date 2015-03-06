@@ -170,7 +170,7 @@ namespace BlendInt {
         AbstractWindow* win = AbstractWindow::GetWindow(this);
         off_screen_context_ = win->CreateSharedContext(win->size().width(),
                                                        win->size().height(),
-                                                       false);
+                                                       0);
 
       }
 
@@ -302,7 +302,7 @@ namespace BlendInt {
         AbstractWindow* win = AbstractWindow::GetWindow(this);
         off_screen_context_ = win->CreateSharedContext(win->size().width(),
                                                        win->size().height(),
-                                                       false);
+                                                       0);
 
       }
 
@@ -444,19 +444,19 @@ namespace BlendInt {
 
     Point offset = GetOffset();
     glm::mat3 matrix = glm::translate(
-        AbstractWindow::shaders->widget_model_matrix(),
+        AbstractWindow::shaders()->widget_model_matrix(),
         glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-    AbstractWindow::shaders->PushWidgetModelMatrix();
-    AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+    AbstractWindow::shaders()->PushWidgetModelMatrix();
+    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
     // draw background and stencil mask
 
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
                 0);
-    glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
                 0.208f, 0.208f, 0.208f, 1.0f);
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -470,13 +470,13 @@ namespace BlendInt {
 
   Response CVImageView::Draw (AbstractWindow* context)
   {
-    AbstractWindow::shaders->widget_image_program()->use();
+    AbstractWindow::shaders()->widget_image_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-    glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
         (size().width() - image_size_.width())/2.f,
         (size().height() - image_size_.height()) / 2.f);
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
     DrawTexture();
 
@@ -486,7 +486,7 @@ namespace BlendInt {
   void CVImageView::PostDraw (AbstractWindow* context)
   {
     // draw background again to unmask stencil
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
     glBindVertexArray(vao_[0]);
 
@@ -494,7 +494,7 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
     context->EndPopStencil();
 
-    AbstractWindow::shaders->PopWidgetModelMatrix();
+    AbstractWindow::shaders()->PopWidgetModelMatrix();
   }
 
   void CVImageView::OnUpdateFrame (Timer* sender)

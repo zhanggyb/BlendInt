@@ -129,49 +129,49 @@ namespace BlendInt {
 
     int outline_vertices = GetOutlineVertices(round_type());
 
-    AbstractWindow::shaders->widget_split_inner_program()->use();
+    AbstractWindow::shaders()->widget_split_inner_program()->use();
 
     glUniform1f(
-        AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_PARTING),
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_PARTING),
         x + size().width() / 2.f);
     glUniform4fv(
-        AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
         1, color0_.data());
     glUniform4fv(
-        AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
         1, color1_.data());
 
     if (hover()) {
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
           15);
     } else {
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
           0);
     }
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-    AbstractWindow::shaders->widget_outer_program()->use();
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
         0.f);
-    glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR),
-                 1, AbstractWindow::theme->regular().outline.data());
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                 1, AbstractWindow::theme()->regular().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
     if (emboss()) {
       glUniform4f(
-          AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
           1.0f, 1.0f, 0.16f);
 
       glUniform2f(
-          AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
           0.f, -1.f);
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0,

@@ -40,272 +40,285 @@
 
 namespace BlendInt {
 
-	GLFWcursor* Window::kArrowCursor = NULL;
-	GLFWcursor* Window::kCrossCursor = NULL;
-	GLFWcursor* Window::kSplitVCursor = NULL;
-	GLFWcursor* Window::kSplitHCursor = NULL;
-	GLFWcursor* Window::kTopLeftCornerCursor = NULL;
-	GLFWcursor* Window::kTopRightCornerCursor = NULL;
-    GLFWcursor* Window::kIBeamCursor = NULL;
+  GLFWcursor* Window::kArrowCursor = NULL;
+  GLFWcursor* Window::kCrossCursor = NULL;
+  GLFWcursor* Window::kSplitVCursor = NULL;
+  GLFWcursor* Window::kSplitHCursor = NULL;
+  GLFWcursor* Window::kTopLeftCornerCursor = NULL;
+  GLFWcursor* Window::kTopRightCornerCursor = NULL;
+  GLFWcursor* Window::kIBeamCursor = NULL;
 
-	std::map<GLFWwindow*, Window*> Window::kWindowMap;
+  std::map<GLFWwindow*, Window*> Window::kSharedWindowMap;
 
-	KeyAction Window::kKeyAction = KeyNone;
+  KeyAction Window::kKeyAction = KeyNone;
 
-	int Window::kKey = 0;
+  int Window::kKey = 0;
 
-	int Window::kModifiers = 0;
+  int Window::kModifiers = 0;
 
-	int Window::kScancode = 0;
+  int Window::kScancode = 0;
 
-	String Window::kText;
+  String Window::kText;
 
-	MouseAction Window::kMouseAction = MouseNone;
+  MouseAction Window::kMouseAction = MouseNone;
 
-	MouseButton Window::kMouseButton = MouseButtonLeft;
+  MouseButton Window::kMouseButton = MouseButtonLeft;
 
-	Point Window::kCursor;
+  Point Window::kCursor;
 
-	Window::Window (int width, int height, const char* title, Window* share, bool visible)
-	: AbstractWindow(width, height, visible),
-	  window_(0)
-	{
-		glfwWindowHint(GLFW_VISIBLE, visible ? GL_TRUE : GL_FALSE);
+  Window::Window (int width,
+                  int height,
+                  const char* title,
+                  int flags)
+  : AbstractWindow(width, height, flags), window_(0)
+  {
+    // TODO: support fullscreen mode
+    glfwWindowHint(GLFW_VISIBLE, (flags & WindowVisibleMask) ? GL_TRUE : GL_FALSE);
 
-		if(share)
-			window_ = glfwCreateWindow(width, height, title, NULL, share->window_);
-		else
-			window_ = glfwCreateWindow(width, height, title, NULL, NULL);
+    if(main_window() == this) {
+      window_ = glfwCreateWindow(width, height, title, NULL, NULL);
+    } else {
+      Window* win = dynamic_cast<Window*>(main_window());
+      assert(win);
+      window_ = glfwCreateWindow(width, height, title, NULL, win->window_);
+    }
 
-		if(!window_) {
-			glfwTerminate();
-			exit(EXIT_FAILURE);
-		}
+    if (window_ == NULL) {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+    }
 
-		if(visible) {
-			glfwSetWindowSizeCallback(window_, &CbWindowSize);
-			glfwSetWindowPosCallback(window_, &CbWindowPosition);
-			glfwSetKeyCallback(window_, &CbKey);
-			glfwSetCharCallback(window_, &CbChar);
-			glfwSetMouseButtonCallback(window_, &CbMouseButton);
-			glfwSetCursorPosCallback(window_, &CbCursorPos);
-			glfwSetWindowCloseCallback(window_, &CbClose);
-	#ifdef __APPLE__
-			glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
-	#endif
-		}
+    if (main_window() == this) {
 
-		if(share == 0) {
+      /* Make the window's context current */
+      glfwMakeContextCurrent(window_);
 
-			/* Make the window's context current */
-			glfwMakeContextCurrent(window_);
+      if (!InitializeGLContext()) {
+        DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
+        exit(EXIT_FAILURE);
+      }
 
-			if(!InitializeGLContext()) {
-				DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
-				exit(EXIT_FAILURE);
-			}
+      glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
+                                        (float) size().height(), 100.f, -100.f);
+      kShaders->SetFrameProjectionMatrix(projection);
+      kShaders->SetFrameViewMatrix(default_view_matrix);
+      kShaders->SetFrameModelMatrix(glm::mat3(1.f));
 
-			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-			shaders->SetFrameProjectionMatrix(projection);
-			shaders->SetFrameViewMatrix(default_view_matrix);
-			shaders->SetFrameModelMatrix(glm::mat3(1.f));
+      kShaders->SetWidgetViewMatrix(default_view_matrix);
+      kShaders->SetWidgetModelMatrix(glm::mat3(1.f));
 
-			shaders->SetWidgetViewMatrix(default_view_matrix);
-			shaders->SetWidgetModelMatrix(glm::mat3(1.f));
+      Timer::SaveProgramTime();
 
-			Timer::SaveProgramTime();
+    } else {
 
-		}
+      kSharedWindowMap[window_] = this;
 
-		kWindowMap[window_] = this;
-	}
+    }
 
-	Window::~Window ()
-	{
-		kWindowMap.erase(window_);
-		//glfwDestroyWindow(window_);
-		window_ = 0;
-	}
+    if (flags & WindowVisibleMask) {
+      glfwSetWindowSizeCallback(window_, &CbWindowSize);
+      glfwSetWindowPosCallback(window_, &CbWindowPosition);
+      glfwSetKeyCallback(window_, &CbKey);
+      glfwSetCharCallback(window_, &CbChar);
+      glfwSetMouseButtonCallback(window_, &CbMouseButton);
+      glfwSetCursorPosCallback(window_, &CbCursorPos);
+      glfwSetWindowCloseCallback(window_, &CbClose);
+#ifdef __APPLE__
+      glfwSetWindowRefreshCallback(window_, &CbWindowRefresh);
+#endif
+    }
+  }
 
-	AbstractWindow* Window::CreateSharedContext(int width, int height, bool visiable)
-	{
-		Window* shared = Manage(new Window(width, height, "", this, visiable));
+  Window::~Window ()
+  {
+    if(main_window() != this)
+      kSharedWindowMap.erase(window_);
 
-		return shared;
-	}
+    //glfwDestroyWindow(window_);
+    window_ = NULL;
+  }
 
-	void Window::MakeCurrent ()
-	{
-		glfwMakeContextCurrent(window_);
-	}
+  AbstractWindow* Window::CreateSharedContext (int width,
+                                               int height,
+                                               int flags)
+  {
+    Window* shared = Manage(new Window(width, height, "", flags));
 
-	void Window::Synchronize ()
-	{
-		glfwPostEmptyEvent();
-	}
+    return shared;
+  }
 
-	void Window::Exec ()
-	{
-		/* Loop until the user closes the window */
-		while (!glfwWindowShouldClose(window_)) {
+  void Window::MakeCurrent ()
+  {
+    glfwMakeContextCurrent(window_);
+  }
 
-			if(refresh()) {
+  void Window::Synchronize ()
+  {
+    glfwPostEmptyEvent();
+  }
+
+  void Window::Exec ()
+  {
+    /* Loop until the user closes the window */
+    while (!glfwWindowShouldClose(window_)) {
+
+      if (refresh()) {
 
 #ifdef DEBUG
-				//Timer::SaveCurrentTime();
+        //Timer::SaveCurrentTime();
 #endif
 
-				set_refresh(false);
-				if(PreDraw(this)) {
-					Draw(this);
-					PostDraw(this);
-				}
+        set_refresh(false);
+        if (PreDraw(this)) {
+          Draw(this);
+          PostDraw(this);
+        }
 
-				//DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
+        //DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
 
-    			glfwSwapBuffers(window_);
-			}
+        glfwSwapBuffers(window_);
+      }
 
-			/* Poll for and process events */
+      /* Poll for and process events */
 #ifdef __APPLE__
-            glfwWaitEvents();
+      glfwWaitEvents();
 #else
-            glfwWaitEvents();
+      glfwWaitEvents();
 #endif  // __APPLE__
-		}
-	}
+    }
+  }
 
-	void Window::SetCursor(CursorShape cursor_type)
-	{
-		switch (cursor_type) {
+  void Window::SetCursor (CursorShape cursor_type)
+  {
+    switch (cursor_type) {
 
-			case ArrowCursor: {
-				glfwSetCursor(window_, kArrowCursor);
-				break;
-			}
+      case ArrowCursor: {
+        glfwSetCursor(window_, kArrowCursor);
+        break;
+      }
 
-			case CrossCursor: {
-				glfwSetCursor(window_, kCrossCursor);
-				break;
-			}
+      case CrossCursor: {
+        glfwSetCursor(window_, kCrossCursor);
+        break;
+      }
 
-			case SplitVCursor: {
-				glfwSetCursor(window_, kSplitVCursor);
-				break;
-			}
+      case SplitVCursor: {
+        glfwSetCursor(window_, kSplitVCursor);
+        break;
+      }
 
-			case SplitHCursor: {
-				glfwSetCursor(window_, kSplitHCursor);
-				break;
-			}
+      case SplitHCursor: {
+        glfwSetCursor(window_, kSplitHCursor);
+        break;
+      }
 
-			case SizeFDiagCursor: {
-				glfwSetCursor(window_, kTopLeftCornerCursor);
-				break;
-			}
+      case SizeFDiagCursor: {
+        glfwSetCursor(window_, kTopLeftCornerCursor);
+        break;
+      }
 
-			case SizeBDiagCursor: {
-				glfwSetCursor(window_, kTopRightCornerCursor);
-				break;
-			}
+      case SizeBDiagCursor: {
+        glfwSetCursor(window_, kTopRightCornerCursor);
+        break;
+      }
 
-            case IBeamCursor: {
-                glfwSetCursor(window_, kIBeamCursor);
-                break;
-            }
-                
-			default: {
-				glfwSetCursor(window_, kArrowCursor);
-				break;
-			}
-		}
-	}
+      case IBeamCursor: {
+        glfwSetCursor(window_, kIBeamCursor);
+        break;
+      }
 
-	int Window::GetKeyInput () const
-	{
-		return kKey;
-	}
+      default: {
+        glfwSetCursor(window_, kArrowCursor);
+        break;
+      }
+    }
+  }
 
-	int Window::GetScancode () const
-	{
-		return kScancode;
-	}
+  int Window::GetKeyInput () const
+  {
+    return kKey;
+  }
 
-	MouseAction Window::GetMouseAction () const
-	{
-		return kMouseAction;
-	}
+  int Window::GetScancode () const
+  {
+    return kScancode;
+  }
 
-	KeyAction Window::GetKeyAction () const
-	{
-		return kKeyAction;
-	}
+  MouseAction Window::GetMouseAction () const
+  {
+    return kMouseAction;
+  }
 
-	int Window::GetModifiers () const
-	{
-		return kModifiers;
-	}
+  KeyAction Window::GetKeyAction () const
+  {
+    return kKeyAction;
+  }
 
-	MouseButton Window::GetMouseButton () const
-	{
-		return kMouseButton;
-	}
+  int Window::GetModifiers () const
+  {
+    return kModifiers;
+  }
 
-	const String& Window::GetTextInput () const
-	{
-		return kText;
-	}
+  MouseButton Window::GetMouseButton () const
+  {
+    return kMouseButton;
+  }
 
-	const Point& Window::GetGlobalCursorPosition () const
-	{
-		return kCursor;
-	}
+  const String& Window::GetTextInput () const
+  {
+    return kText;
+  }
 
-	bool Window::Initialize ()
-	{
-		if (!Fc::Config::init()) {
-			DBG_PRINT_MSG("Critical: %s", "Cannot initialize Fontconfig");
-			return false;
-		}
+  const Point& Window::GetGlobalCursorPosition () const
+  {
+    return kCursor;
+  }
 
-		/* Initialize the library */
-		if (!glfwInit()) {
-			DBG_PRINT_MSG("Critical: %s", "Cannot initialize GLFW");
-			return false;
-		}
+  bool Window::Initialize ()
+  {
+    if (!Fc::Config::init()) {
+      DBG_PRINT_MSG("Critical: %s", "Cannot initialize Fontconfig");
+      return false;
+    }
 
-		CreateCursors();
+    /* Initialize the library */
+    if (!glfwInit()) {
+      DBG_PRINT_MSG("Critical: %s", "Cannot initialize GLFW");
+      return false;
+    }
 
-		glfwSetErrorCallback(&CbError);
+    CreateCursors();
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwSetErrorCallback(&CbError);
 
-		kMainThreadID = boost::this_thread::get_id();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-		return true;
-	}
+    kMainThreadID = boost::this_thread::get_id();
 
-	void Window::Terminate ()
-	{
-		glfwDestroyCursor(kArrowCursor);
-		glfwDestroyCursor(kCrossCursor);
-		glfwDestroyCursor(kSplitVCursor);
-		glfwDestroyCursor(kSplitHCursor);
-		glfwDestroyCursor(kTopLeftCornerCursor);
-		glfwDestroyCursor(kTopRightCornerCursor);
-        glfwDestroyCursor(kIBeamCursor);
+    return true;
+  }
 
-		glfwTerminate();
-		Fc::Config::fini();
-	}
+  void Window::Terminate ()
+  {
+    glfwDestroyCursor(kArrowCursor);
+    glfwDestroyCursor(kCrossCursor);
+    glfwDestroyCursor(kSplitVCursor);
+    glfwDestroyCursor(kSplitHCursor);
+    glfwDestroyCursor(kTopLeftCornerCursor);
+    glfwDestroyCursor(kTopRightCornerCursor);
+    glfwDestroyCursor(kIBeamCursor);
 
-	void Window::PerformPositionUpdate(const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			set_position(*request.position());
+    glfwTerminate();
+    Fc::Config::fini();
+  }
+
+  void Window::PerformPositionUpdate (const PositionUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_position(*request.position());
 
 //			GLFWmonitor* monitor = glfwGetWindowMonitor(window_);
 //
@@ -314,408 +327,480 @@ namespace BlendInt {
 
 //			DBG_PRINT_MSG("monitor size: %d, %d", monitor_width, monitor_height);
 
-			if(request.source() == this) {
-				glfwSetWindowPosCallback(window_, NULL);
-				glfwSetWindowPos(window_, position().x(), position().y());
-				glfwSetWindowPosCallback(window_, &CbWindowPosition);
-			}
-		}
-	}
-
-	void Window::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			set_size(*request.size());
-
-			glm::mat4 projection = glm::ortho(0.f, (float)size().width(), 0.f, (float)size().height(), 100.f, -100.f);
-			shaders->SetFrameProjectionMatrix(projection);
-
-			set_refresh(true);
-
-			if(request.source() == this) {
-				glfwSetWindowSizeCallback(window_, NULL);
-				glfwSetWindowSize(window_, size().width(), size().height());
-				glfwSetWindowSizeCallback(window_, &CbWindowSize);
-			}
-
-			resized_.fire(this, size());
-		}
-	}
-
-    bool Window::PreDraw (AbstractWindow* context)
-    {
-        glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-    	//glClearColor(0.105f, 0.105f, 0.105f, 0.75f);
-        //glClearColor(1.f, 1.f, 1.f, 1.f);
-        glClearStencil(0);
-        glClearDepth(1.0);
-        
-        glClear(GL_COLOR_BUFFER_BIT |
-                GL_DEPTH_BUFFER_BIT |
-                GL_STENCIL_BUFFER_BIT);
-        
-        // Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-        
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        
-        set_viewport_origin(0, 0);
-        if(stencil_count() != 0) {
-            DBG_PRINT_MSG("Warning: %s, stencil_count_: %u", "stencil used but not released", stencil_count());
-        }
-        set_stencil_count(0);
-        
-        glViewport(0, 0, size().width(), size().height());
-
-        return true;
+      if (request.source() == this) {
+        glfwSetWindowPosCallback(window_, NULL);
+        glfwSetWindowPos(window_, position().x(), position().y());
+        glfwSetWindowPosCallback(window_, &CbWindowPosition);
+      }
     }
-    
-	void Window::Close()
-	{
-		// MUST clear sub views before releasing gl context, unload all fonts to make sure Fc::Fini success.
-		ClearSubViews();
-		ReleaseGLContext();
-	}
+  }
 
-	void Window::CbError (int error, const char* description)
-	{
-		DBG_PRINT_MSG("Error: %s (error code: %d)", description, error);
-	}
+  void Window::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_size(*request.size());
 
-	void Window::CbWindowSize(GLFWwindow* window, int w, int h)
-	{
-		Window* win = kWindowMap[window];
+      glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
+                                        (float) size().height(), 100.f, -100.f);
+      kShaders->SetFrameProjectionMatrix(projection);
 
-		Size size(w, h);
-		SizeUpdateRequest request(0, win, &size);
+      set_refresh(true);
 
-		win->PerformSizeUpdate(request);
-	}
+      if (request.source() == this) {
+        glfwSetWindowSizeCallback(window_, NULL);
+        glfwSetWindowSize(window_, size().width(), size().height());
+        glfwSetWindowSizeCallback(window_, &CbWindowSize);
+      }
 
-	void Window::CbWindowPosition(GLFWwindow* window, int x, int y)
-	{
-		Window* win = kWindowMap[window];
+      resized_.fire(this, size());
+    }
+  }
 
-		Point pos(x, y);
-		PositionUpdateRequest request(0, win, &pos);
+  bool Window::PreDraw (AbstractWindow* context)
+  {
+    glClearColor(0.208f, 0.208f, 0.208f, 1.f);
+    //glClearColor(0.105f, 0.105f, 0.105f, 0.75f);
+    //glClearColor(1.f, 1.f, 1.f, 1.f);
+    glClearStencil(0);
+    glClearDepth(1.0);
 
-		win->PerformPositionUpdate(request);
-	}
+    glClear(GL_COLOR_BUFFER_BIT |
+    GL_DEPTH_BUFFER_BIT |
+    GL_STENCIL_BUFFER_BIT);
 
-	void Window::CbKey (GLFWwindow* window, int key, int scancode, int action,
-	        int mods)
-	{
-		Window* win = kWindowMap[window];
+    // Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
-		switch (action) {
-			case GLFW_PRESS:
-				kKeyAction = KeyPress;
-				break;
-			case GLFW_RELEASE:
-				kKeyAction = KeyRelease;
-				break;
-			case GLFW_REPEAT:
-				kKeyAction = KeyRepeat;
-				break;
-			default:
-				kKeyAction = KeyNone;
-				break;
-		}
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 
-		kKey = key;
-		kModifiers = mods;
-		kScancode = scancode;
-		kText.clear();
+    set_viewport_origin(0, 0);
+    if (stencil_count() != 0) {
+      DBG_PRINT_MSG("Warning: %s, stencil_count_: %u",
+                    "stencil used but not released", stencil_count());
+    }
+    set_stencil_count(0);
 
-		win->register_active_frame(0);
+    glViewport(0, 0, size().width(), size().height());
 
-		switch (kKeyAction) {
+    return true;
+  }
 
-			case KeyPress: {
-				win->PerformKeyPress(win);
-				break;
-			}
+  void Window::Close ()
+  {
+    // MUST clear sub views before releasing gl context, unload all fonts to make sure Fc::Fini success.
+    ClearSubViews();
+    ReleaseGLContext();
+  }
 
-			case KeyRelease: {
-				break;
-			}
+  void Window::CbError (int error, const char* description)
+  {
+    DBG_PRINT_MSG("Error: %s (error code: %d)", description, error);
+  }
 
-			case KeyRepeat: {
-				break;
-			}
+  void Window::CbWindowSize (GLFWwindow* window, int w, int h)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
 
-			default:
-				break;
-		}
-	}
+    assert(win);
 
-	void Window::CbChar (GLFWwindow* window, unsigned int character)
-	{
-		Window* win = kWindowMap[window];
+    Size size(w, h);
+    SizeUpdateRequest request(0, win, &size);
 
-#ifdef __APPLE__
-		// glfw3 in Mac OS will call this function if press some unprintalbe keys such as Left, Right, Up, Down
-		if(character > 255) {
-			DBG_PRINT_MSG("unprintable character in Mac: %u", character);
-			return;
-		}
-#endif
+    win->PerformSizeUpdate(request);
+  }
 
-		kText.clear();
-		kText.push_back(character);
+  void Window::CbWindowPosition (GLFWwindow* window, int x, int y)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
 
-		win->register_active_frame(0);
+    assert(win);
 
-		switch (kKeyAction) {
+    Point pos(x, y);
+    PositionUpdateRequest request(0, win, &pos);
 
-			case KeyPress: {
-				win->PerformKeyPress(win);
-				break;
-			}
+    win->PerformPositionUpdate(request);
+  }
 
-			case KeyRelease: {
-				break;
-			}
+  void Window::CbKey (GLFWwindow* window,
+                      int key,
+                      int scancode,
+                      int action,
+                      int mods)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
 
-			case KeyRepeat: {
-				break;
-			}
+    assert(win);
 
-			default:
-				break;
-		}
+    switch (action) {
+      case GLFW_PRESS:
+        kKeyAction = KeyPress;
+        break;
+      case GLFW_RELEASE:
+        kKeyAction = KeyRelease;
+        break;
+      case GLFW_REPEAT:
+        kKeyAction = KeyRepeat;
+        break;
+      default:
+        kKeyAction = KeyNone;
+        break;
+    }
 
-	}
+    kKey = key;
+    kModifiers = mods;
+    kScancode = scancode;
+    kText.clear();
 
-	void Window::CbMouseButton (GLFWwindow* window, int button, int action,
-	        int mods)
-	{
-		Window* win = kWindowMap[window];
+    win->register_active_frame(0);
 
-		switch (action) {
-			case GLFW_RELEASE:
-				kMouseAction = MouseRelease;
-				break;
-			case GLFW_PRESS:
-				kMouseAction = MousePress;
-				break;
-			case GLFW_REPEAT:
-				kMouseAction = MouseNone;
-				break;
-			default:
-				break;
-		}
+    switch (kKeyAction) {
 
-		kMouseButton = MouseButtonNone;
+      case KeyPress: {
+        win->PerformKeyPress(win);
+        break;
+      }
 
-		switch(button) {
-			case GLFW_MOUSE_BUTTON_1:
-				kMouseButton = MouseButtonLeft;
-				break;
-			case GLFW_MOUSE_BUTTON_2:
-				kMouseButton = MouseButtonRight;
-				break;
-			case GLFW_MOUSE_BUTTON_3:
-				kMouseButton = MouseButtonMiddle;
-				break;
-			default:
-				break;
-		}
+      case KeyRelease: {
+        break;
+      }
 
-		kModifiers = mods;
+      case KeyRepeat: {
+        break;
+      }
 
-		win->register_active_frame(0);
+      default:
+        break;
+    }
+  }
 
-		switch (kMouseAction) {
+  void Window::CbChar (GLFWwindow* window, unsigned int character)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
 
-			case MouseMove: {
-				win->PerformMouseHover();
-				win->PerformMouseMove(win);
-				break;
-			}
-
-			case MousePress: {
-				win->PerformMouseHover();
-				win->PerformMousePress(win);
-				break;
-			}
-
-			case MouseRelease: {
-				win->PerformMouseRelease(win);
-				win->PerformMouseHover();
-				break;
-			}
-
-			default:
-				break;
-		}
-
-	}
-
-	void Window::CbCursorPos (GLFWwindow* window, double xpos, double ypos)
-	{
-		Window* win = kWindowMap[window];
-
-		kCursor.reset((int)xpos, win->size().height() - (int)ypos);
-
-		kMouseAction = MouseMove;
-		kMouseButton = MouseButtonNone;
-
-		win->register_active_frame(0);
-
-		switch (kMouseAction) {
-
-			case MouseMove: {
-				win->PerformMouseHover();
-				win->PerformMouseMove(win);
-				break;
-			}
-
-			case MousePress: {
-				win->PerformMouseHover();
-				win->PerformMousePress(win);
-				break;
-			}
-
-			case MouseRelease: {
-				win->PerformMouseRelease(win);
-				win->PerformMouseHover();
-				break;
-			}
-
-			default:
-				break;
-		}
-
-	}
+    assert(win);
 
 #ifdef __APPLE__
+    // glfw3 in Mac OS will call this function if press some unprintalbe keys such as Left, Right, Up, Down
+    if (character > 255) {
+      DBG_PRINT_MSG("unprintable character in Mac: %u", character);
+      return;
+    }
+#endif
 
-	// MUST set this callback to render the context when resizing in OSX
-	void Window::CbWindowRefresh (GLFWwindow* window)
-	{
-		Window* win = kWindowMap[window];
+    kText.clear();
+    kText.push_back(character);
 
-        win->set_refresh(false);
-        if(win->PreDraw(win)) {
-            win->Draw(win);
-            win->PostDraw(win);
-        }
+    win->register_active_frame(0);
 
-		glfwSwapBuffers(win->window_);
-	}
+    switch (kKeyAction) {
+
+      case KeyPress: {
+        win->PerformKeyPress(win);
+        break;
+      }
+
+      case KeyRelease: {
+        break;
+      }
+
+      case KeyRepeat: {
+        break;
+      }
+
+      default:
+        break;
+    }
+
+  }
+
+  void Window::CbMouseButton (GLFWwindow* window,
+                              int button,
+                              int action,
+                              int mods)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
+
+    assert(win);
+
+    switch (action) {
+      case GLFW_RELEASE:
+        kMouseAction = MouseRelease;
+        break;
+      case GLFW_PRESS:
+        kMouseAction = MousePress;
+        break;
+      case GLFW_REPEAT:
+        kMouseAction = MouseNone;
+        break;
+      default:
+        break;
+    }
+
+    kMouseButton = MouseButtonNone;
+
+    switch (button) {
+      case GLFW_MOUSE_BUTTON_1:
+        kMouseButton = MouseButtonLeft;
+        break;
+      case GLFW_MOUSE_BUTTON_2:
+        kMouseButton = MouseButtonRight;
+        break;
+      case GLFW_MOUSE_BUTTON_3:
+        kMouseButton = MouseButtonMiddle;
+        break;
+      default:
+        break;
+    }
+
+    kModifiers = mods;
+
+    win->register_active_frame(0);
+
+    switch (kMouseAction) {
+
+      case MouseMove: {
+        win->PerformMouseHover();
+        win->PerformMouseMove(win);
+        break;
+      }
+
+      case MousePress: {
+        win->PerformMouseHover();
+        win->PerformMousePress(win);
+        break;
+      }
+
+      case MouseRelease: {
+        win->PerformMouseRelease(win);
+        win->PerformMouseHover();
+        break;
+      }
+
+      default:
+        break;
+    }
+
+  }
+
+  void Window::CbCursorPos (GLFWwindow* window, double xpos, double ypos)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
+
+    assert(win);
+
+    kCursor.reset((int) xpos, win->size().height() - (int) ypos);
+
+    kMouseAction = MouseMove;
+    kMouseButton = MouseButtonNone;
+
+    win->register_active_frame(0);
+
+    switch (kMouseAction) {
+
+      case MouseMove: {
+        win->PerformMouseHover();
+        win->PerformMouseMove(win);
+        break;
+      }
+
+      case MousePress: {
+        win->PerformMouseHover();
+        win->PerformMousePress(win);
+        break;
+      }
+
+      case MouseRelease: {
+        win->PerformMouseRelease(win);
+        win->PerformMouseHover();
+        break;
+      }
+
+      default:
+        break;
+    }
+
+  }
+
+#ifdef __APPLE__
+
+  // MUST set this callback to render the context when resizing in OSX
+  void Window::CbWindowRefresh (GLFWwindow* window)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
+
+    assert(win);
+
+    win->set_refresh(false);
+    if (win->PreDraw(win)) {
+      win->Draw(win);
+      win->PostDraw(win);
+    }
+
+    glfwSwapBuffers(win->window_);
+  }
 
 #endif
 
-	void Window::CbClose (GLFWwindow* window)
-	{
-		Window* win = kWindowMap[window];
+  void Window::CbClose (GLFWwindow* window)
+  {
+    Window* win = 0;
+    std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+    if(it != kSharedWindowMap.end()) {
+      win = it->second;
+    } else {
+      win = dynamic_cast<Window*>(main_window());
+    }
 
-		win->Close();
-	}
+    assert(win);
 
-	void Window::CreateCursors()
-	{
-		namespace fs = boost::filesystem;
+    win->Close();
+  }
 
-		fs::path cursors_path(BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/cursors");
+  void Window::CreateCursors ()
+  {
+    namespace fs = boost::filesystem;
 
-		if(!fs::exists(cursors_path)) {
-			cursors_path = fs::path(BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/cursors");
-		}
+    fs::path cursors_path(
+        BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/cursors");
 
-		if(!fs::exists(cursors_path))
-			return;
+    if (!fs::exists(cursors_path)) {
+      cursors_path = fs::path(
+          BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/cursors");
+    }
 
-		GLFWimage cursor;
-		Image img;
+    if (!fs::exists(cursors_path)) return;
 
-		std::string filepath;
+    GLFWimage cursor;
+    Image img;
 
-		filepath = cursors_path.string() + "/" + "left_ptr.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+    std::string filepath;
 
-			kArrowCursor = glfwCreateCursor(&cursor, 9, 5);
-			assert(kArrowCursor != nullptr);
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "left_ptr.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-		filepath = cursors_path.string() + "/" + "hand2.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+      kArrowCursor = glfwCreateCursor(&cursor, 9, 5);
+      assert(kArrowCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
 
-			kCrossCursor = glfwCreateCursor(&cursor, 9, 4);
-			assert(kCrossCursor != nullptr);
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "hand2.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-		filepath = cursors_path.string() + "/" + "sb_v_double_arrow.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+      kCrossCursor = glfwCreateCursor(&cursor, 9, 4);
+      assert(kCrossCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
 
-			kSplitVCursor = glfwCreateCursor(&cursor, 11, 10);
-			assert(kSplitVCursor != nullptr);
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "sb_v_double_arrow.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-		filepath = cursors_path.string() + "/" + "sb_h_double_arrow.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+      kSplitVCursor = glfwCreateCursor(&cursor, 11, 10);
+      assert(kSplitVCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
 
-			kSplitHCursor = glfwCreateCursor(&cursor, 11, 11);
-			assert(kSplitHCursor != nullptr);
-		} else {
-		DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "sb_h_double_arrow.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-		filepath = cursors_path.string() + "/" + "top_left_corner.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+      kSplitHCursor = glfwCreateCursor(&cursor, 11, 11);
+      assert(kSplitHCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
 
-			kTopLeftCornerCursor = glfwCreateCursor(&cursor, 11, 11);
-			assert(kTopLeftCornerCursor != nullptr);
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "top_left_corner.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-		filepath = cursors_path.string() + "/" + "top_right_corner.png";
-		if(img.Read(filepath)) {
-			cursor.width = img.width();
-			cursor.height = img.height();
-			cursor.pixels = const_cast<unsigned char*>(img.pixels());
+      kTopLeftCornerCursor = glfwCreateCursor(&cursor, 11, 11);
+      assert(kTopLeftCornerCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
 
-			kTopRightCornerCursor = glfwCreateCursor(&cursor, 12, 11);
-			assert(kTopRightCornerCursor != nullptr);
-		} else {
-			DBG_PRINT_MSG("%s", "Fail to load cursor");
-		}
+    filepath = cursors_path.string() + "/" + "top_right_corner.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
-        filepath = cursors_path.string() + "/" + "xterm.png";
-        if(img.Read(filepath)) {
-            cursor.width = img.width();
-            cursor.height = img.height();
-            cursor.pixels = const_cast<unsigned char*>(img.pixels());
-            
-            kIBeamCursor = glfwCreateCursor(&cursor, 12, 11);
-            assert(kIBeamCursor != nullptr);
-        } else {
-            DBG_PRINT_MSG("%s", "Fail to load cursor");
-        }
-        
-	}
+      kTopRightCornerCursor = glfwCreateCursor(&cursor, 12, 11);
+      assert(kTopRightCornerCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
+
+    filepath = cursors_path.string() + "/" + "xterm.png";
+    if (img.Read(filepath)) {
+      cursor.width = img.width();
+      cursor.height = img.height();
+      cursor.pixels = const_cast<unsigned char*>(img.pixels());
+
+      kIBeamCursor = glfwCreateCursor(&cursor, 12, 11);
+      assert(kIBeamCursor != nullptr);
+    } else {
+      DBG_PRINT_MSG("%s", "Fail to load cursor");
+    }
+
+  }
 
 }

@@ -220,19 +220,19 @@ namespace BlendInt {
 		if(!visiable()) return false;
 
 		Point offset = GetOffset();
-		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
+		glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
 				glm::vec2(position().x() + offset.x(),
 						position().y() + offset.y()));
 
-		AbstractWindow::shaders->PushWidgetModelMatrix();
-		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+		AbstractWindow::shaders()->PushWidgetModelMatrix();
+		AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
 		// draw background and stencil mask
 
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -259,12 +259,12 @@ namespace BlendInt {
 
 			texture_->bind();
 
-			AbstractWindow::shaders->widget_image_program()->use();
+			AbstractWindow::shaders()->widget_image_program()->use();
 			glUniform2f(
-			        AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_POSITION),
+			        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
 			        x, y);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -279,7 +279,7 @@ namespace BlendInt {
 	void TextureView::PostDraw (AbstractWindow* context)
 	{
 		// draw background again to unmask stencil
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		glBindVertexArray(vao_[0]);
 
@@ -287,7 +287,7 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		context->EndPopStencil();
 
-		AbstractWindow::shaders->PopWidgetModelMatrix();
+		AbstractWindow::shaders()->PopWidgetModelMatrix();
 	}
 
 	void TextureView::InitializeImageView ()

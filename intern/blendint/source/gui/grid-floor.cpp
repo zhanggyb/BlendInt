@@ -136,33 +136,33 @@ namespace BlendInt {
 		int max = lines_ / 2;
 		int total_count = max * 2 * 2 * 2;
 
-		RefPtr<GLSLProgram> program = AbstractWindow::shaders->primitive_program();
+		RefPtr<GLSLProgram> program = AbstractWindow::shaders()->primitive_program();
 		program->use();
 
-		glUniformMatrix4fv(AbstractWindow::shaders->location(Shaders::PRIMITIVE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection_matrix));
-		glUniformMatrix4fv(AbstractWindow::shaders->location(Shaders::PRIMITIVE_VIEW), 1, GL_FALSE, glm::value_ptr(view_matrix));
-		glUniformMatrix4fv(AbstractWindow::shaders->location(Shaders::PRIMITIVE_MODEL), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
+		glUniformMatrix4fv(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_PROJECTION), 1, GL_FALSE, glm::value_ptr(projection_matrix));
+		glUniformMatrix4fv(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_VIEW), 1, GL_FALSE, glm::value_ptr(view_matrix));
+		glUniformMatrix4fv(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_MODEL), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
 		if(vaos_[0] != 0) {
-			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COLOR), 0.35f, 0.35f, 0.35f, 1.f);
+			glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COLOR), 0.35f, 0.35f, 0.35f, 1.f);
 			glBindVertexArray(vaos_[0]);
 			glDrawArrays(GL_LINES, 0, total_count);
 		}
 
 		if(vaos_[1] != 0) {	// show x axis
-			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COLOR), 1.f, 0.f, 0.f, 0.5f);
+			glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COLOR), 1.f, 0.f, 0.f, 0.5f);
 			glBindVertexArray(vaos_[1]);
 			glDrawArrays(GL_LINES, 0, 2);
 		}
 
 		if(vaos_[2] != 0) {	// show y axis
-			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COLOR), 0.f, 1.f, 0.f, 0.5f);
+			glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COLOR), 0.f, 1.f, 0.f, 0.5f);
 			glBindVertexArray(vaos_[2]);
 			glDrawArrays(GL_LINES, 0, 2);
 		}
 
 		if(vaos_[3] != 0) {	// show z axis
-			glVertexAttrib4f(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COLOR), 0.f, 0.f, 1.f, 0.5f);
+			glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COLOR), 0.f, 0.f, 1.f, 0.5f);
 			glBindVertexArray(vaos_[3]);
 			glDrawArrays(GL_LINES, 0, 2);
 		}
@@ -193,8 +193,8 @@ namespace BlendInt {
 
 		buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[1]);
 
@@ -208,8 +208,8 @@ namespace BlendInt {
 		axis_x_->bind();
 		axis_x_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vaos_[2]);
 
@@ -223,8 +223,8 @@ namespace BlendInt {
 		axis_y_->bind();
 		axis_y_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		/*
 		glBindVertexArray(vaos_[3]);
@@ -239,8 +239,8 @@ namespace BlendInt {
 		axis_y_->bind();
 		axis_y_->set_data(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 		*/
 
 		glBindVertexArray(0);
@@ -300,8 +300,8 @@ namespace BlendInt {
 			}
 			axis_x_->bind();
 			axis_x_->set_data(sizeof(verts), verts);
-			glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-			glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+			glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+			glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		} else {
 			glDeleteVertexArrays(1, &vaos_[1]);
@@ -326,8 +326,8 @@ namespace BlendInt {
 			}
 			axis_y_->bind();
 			axis_y_->set_data(sizeof(verts), verts);
-			glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-			glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+			glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+			glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		} else {
 			glDeleteVertexArrays(1, &vaos_[2]);
@@ -355,8 +355,8 @@ namespace BlendInt {
 
 			axis_z_->bind();
 			axis_z_->set_data(sizeof(verts), verts);
-			glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD));
-			glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+			glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD));
+			glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::PRIMITIVE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		} else {
 			glDeleteVertexArrays(1, &vaos_[3]);

@@ -215,11 +215,11 @@ namespace BlendInt {
 
 	Response FileBrowser::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
-				1, AbstractWindow::theme->box().inner.data());
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+				1, AbstractWindow::theme()->box().inner.data());
 
 		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -230,10 +230,10 @@ namespace BlendInt {
 							GetOutlineVertices(round_type()) + 2);
 		context->EndPushStencil();
 
-		AbstractWindow::shaders->widget_simple_triangle_program()->use();
+		AbstractWindow::shaders()->widget_simple_triangle_program()->use();
 
-		glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				AbstractWindow::theme->box().inner_sel.data());
+		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
+				AbstractWindow::theme()->box().inner_sel.data());
 
 		glBindVertexArray(vaos_[1]);
 
@@ -243,15 +243,15 @@ namespace BlendInt {
 
 		while(y > 0) {
 			y -= h;
-			glUniform2f(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, y);
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), 0.f, y);
 
 			if(i == highlight_index_) {
-				glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
+				glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), -35);
 			} else {
 				if(i % 2 == 0) {
-					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
+					glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 0);
 				} else {
-					glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
+					glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), 15);
 				}
 			}
 
@@ -268,14 +268,14 @@ namespace BlendInt {
 			while(index.valid()) {
 				index.GetRawData()->DrawInRect(rect,
 						AlignLeft | AlignVerticalCenter | AlignBaseline | AlignJustify,
-						AbstractWindow::theme->regular().text.data());
+						AbstractWindow::theme()->regular().text.data());
 				index = index.GetDownIndex();
 				rect.set_y(rect.y() - h);
 			}
 
 		}
 
-		AbstractWindow::shaders->widget_inner_program()->use();
+		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		context->BeginPopStencil();	// pop inner stencil
 		glBindVertexArray(vaos_[0]);
@@ -297,14 +297,14 @@ namespace BlendInt {
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> row_verts;
 
-			if (AbstractWindow::theme->box().shaded) {
+			if (AbstractWindow::theme()->box().shaded) {
 				GenerateVertices(size(),
 						0.f,
 						round_type(),
 						round_radius(),
 						Vertical,
-						AbstractWindow::theme->box().shadetop,
-						AbstractWindow::theme->box().shadedown,
+						AbstractWindow::theme()->box().shadetop,
+						AbstractWindow::theme()->box().shadedown,
 						&inner_verts,
 						0);
 			} else {
@@ -395,14 +395,14 @@ namespace BlendInt {
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> row_verts;
 
-		if (AbstractWindow::theme->box().shaded) {
+		if (AbstractWindow::theme()->box().shaded) {
 			GenerateVertices(size(),
 					0.f,
 					round_type(),
 					round_radius(),
 					Vertical,
-					AbstractWindow::theme->box().shadetop,
-					AbstractWindow::theme->box().shadedown,
+					AbstractWindow::theme()->box().shadetop,
+					AbstractWindow::theme()->box().shadedown,
 					&inner_verts,
 					0);
 		} else {
@@ -438,8 +438,8 @@ namespace BlendInt {
 		buffer_.bind(1);
 		buffer_.set_data(sizeof(GLfloat) * row_verts.size(), &row_verts[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		buffer_.reset();

@@ -149,17 +149,17 @@ namespace BlendInt {
     if (!visiable()) return false;
 
     glm::mat3 matrix = glm::translate(
-        AbstractWindow::shaders->widget_model_matrix(),
+        AbstractWindow::shaders()->widget_model_matrix(),
         glm::vec2(position().x(), position().y()));
 
-    AbstractWindow::shaders->PushWidgetModelMatrix();
-    AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+    AbstractWindow::shaders()->PushWidgetModelMatrix();
+    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
                 0);
-    glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
                 0.208f, 0.208f, 0.208f, 1.f);
 
     glBindVertexArray(vao_);
@@ -181,11 +181,11 @@ namespace BlendInt {
       Point offset = GetOffset();
 
       glm::mat3 matrix = glm::translate(
-          AbstractWindow::shaders->widget_model_matrix(),
+          AbstractWindow::shaders()->widget_model_matrix(),
           glm::vec2(offset.x(), offset.y()));
 
-      AbstractWindow::shaders->PushWidgetModelMatrix();
-      AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+      AbstractWindow::shaders()->PushWidgetModelMatrix();
+      AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
       return Ignore;
 
@@ -197,11 +197,11 @@ namespace BlendInt {
   void NodeView::PostDraw (AbstractWindow* context)
   {
     if (subs_count()) {
-      AbstractWindow::shaders->PopWidgetModelMatrix();
+      AbstractWindow::shaders()->PopWidgetModelMatrix();
     }
 
     // draw mask
-    AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
     glBindVertexArray(vao_);
 
@@ -209,7 +209,7 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
     context->EndPopStencil();
 
-    AbstractWindow::shaders->PopWidgetModelMatrix();
+    AbstractWindow::shaders()->PopWidgetModelMatrix();
   }
 
   Response NodeView::PerformMousePress (AbstractWindow* context)

@@ -70,7 +70,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme->pixel(),
+				default_border_width() * AbstractWindow::theme()->pixel(),
 				round_type_,
 				radius_,
 				inner,
@@ -82,7 +82,7 @@ namespace BlendInt {
 			std::vector<GLfloat>* outer)
 	{
 		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme->pixel(),
+				default_border_width() * AbstractWindow::theme()->pixel(),
 				round_type_,
 				radius_,
 				shadedir,

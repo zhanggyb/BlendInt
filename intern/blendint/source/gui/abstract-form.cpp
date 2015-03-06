@@ -76,9 +76,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		border *= AbstractWindow::theme->pixel();
+		border *= AbstractWindow::theme()->pixel();
 
-		float rad = radius * AbstractWindow::theme->pixel();
+		float rad = radius * AbstractWindow::theme()->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -292,9 +292,9 @@ namespace BlendInt {
 			inner_ptr = inner;
 		}
 
-		border *= AbstractWindow::theme->pixel();
+		border *= AbstractWindow::theme()->pixel();
 
-		float rad = radius * AbstractWindow::theme->pixel();
+		float rad = radius * AbstractWindow::theme()->pixel();
 		float radi = rad - border;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -341,7 +341,7 @@ namespace BlendInt {
 			rad = 0.5f * minsize;
 
 		if (2.0f * (radi + border) > minsize)
-			radi = 0.5f * minsize - border * AbstractWindow::theme->pixel();	// U.pixelsize;
+			radi = 0.5f * minsize - border * AbstractWindow::theme()->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

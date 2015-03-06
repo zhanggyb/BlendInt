@@ -35,6 +35,29 @@
 
 namespace BlendInt {
 
+  enum WindowFlagMask
+  {
+
+    /**
+     * 0: invisible
+     * 1: visible
+     */
+    WindowVisibleMask = 0x1 << 0,
+
+    /**
+     * 0: regular window
+     * 1: floating window
+     */
+    WindowFloatingMask = 0x1 << 1,
+
+    /**
+     * 0: regular window
+     * 1: fullscreen
+     */
+    WindowFullscreenMask = 0x1 << 2
+
+  };
+
   /**
    * @brief Abstract class for window
    *
@@ -55,12 +78,12 @@ namespace BlendInt {
      *
      * Create a 640, 480 window
      */
-    AbstractWindow (bool visible = true);
+    AbstractWindow (int flag = WindowVisibleMask);
 
     /**
      * @brief Constructor with window size
      */
-    AbstractWindow (int width, int height, bool visible = true);
+    AbstractWindow (int width, int height, int flag = WindowVisibleMask);
 
     /**
      * @brief Destructor
@@ -76,8 +99,9 @@ namespace BlendInt {
 
     virtual bool Contain (const Point& point) const;
 
-    virtual AbstractWindow* CreateSharedContext (int width, int height,
-        bool visiable) = 0;
+    virtual AbstractWindow* CreateSharedContext (int width,
+                                                 int height,
+                                                 int flags) = 0;
 
     /**
      * @brief Make this window as the current OpenGL Context
@@ -177,11 +201,25 @@ namespace BlendInt {
       return kMainThreadID;
     }
 
-    static Theme* theme;
+    static inline AbstractWindow* main_window ()
+    {
+      return kMainWindow;
+    }
 
-    static Icons* icons;
+    static inline Theme* theme ()
+    {
+      return kTheme;
+    }
 
-    static Shaders* shaders;
+    static inline Icons* icons ()
+    {
+      return kIcons;
+    }
+
+    static inline Shaders* shaders ()
+    {
+      return kShaders;
+    }
 
   protected:
 
@@ -243,6 +281,12 @@ namespace BlendInt {
 
     static boost::thread::id kMainThreadID;
 
+    static Theme* kTheme;
+
+    static Icons* kIcons;
+
+    static Shaders* kShaders;
+
   private:
 
     friend class AbstractFrame;
@@ -288,16 +332,18 @@ namespace BlendInt {
     int floating_frame_count_;
 
     bool pressed_;
+
+    static AbstractWindow* kMainWindow;
   };
 
   inline int pixel_size (int a)
   {
-    return a * AbstractWindow::theme->pixel();
+    return a * AbstractWindow::theme()->pixel();
   }
 
   inline int pixel_size (unsigned int a)
   {
-    return a * AbstractWindow::theme->pixel();
+    return a * AbstractWindow::theme()->pixel();
   }
 
 }

@@ -104,13 +104,13 @@ namespace BlendInt {
   {
     if (hover()) {
 
-      AbstractWindow::shaders->widget_inner_program()->use();
+      AbstractWindow::shaders()->widget_inner_program()->use();
 
       glUniform1i(
-          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
       glUniform4fv(
-          AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme->menu_item().inner_sel.data());
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+          AbstractWindow::theme()->menu_item().inner_sel.data());
 
       glBindVertexArray(vao_);
       glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
