@@ -35,49 +35,49 @@
 
 namespace BlendInt {
 
-	class ColorSelector: public AbstractDialog
-	{
-		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
+  class ColorSelector: public AbstractDialog
+  {
+  DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
-	public:
+  public:
 
-		ColorSelector ();
+    ColorSelector ();
 
-		virtual ~ColorSelector();
+    virtual ~ColorSelector ();
 
-    protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void OnButtonToggled (int index, bool toggled);
+    void OnButtonToggled (int index, bool toggled);
 
-		Block* CreateRGBBlock ();
+    Block* CreateRGBBlock ();
 
-		Block* CreateHSVBlock ();
+    Block* CreateHSVBlock ();
 
-		LinearLayout* CreateHexBlock ();
+    LinearLayout* CreateHexBlock ();
 
-		Stack* CreateBlockStack ();
+    Stack* CreateBlockStack ();
 
-        GLuint vao_[2];
+    GLuint vao_[2];
 
-        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<FrameShadow> shadow_;
+    RefPtr<FrameShadow> shadow_;
 
-		ButtonGroup radio_group_;
+    ButtonGroup radio_group_;
 
-		Stack* stack_;
+    Stack* stack_;
 
-		glm::mat4 projection_matrix_;
+    glm::mat4 projection_matrix_;
 
-		glm::mat3 model_matrix_;
+    glm::mat3 model_matrix_;
 
-	};
+  };
 }

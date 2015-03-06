@@ -28,56 +28,56 @@
 #include <core/color.hpp>
 #include <gui/abstract-button.hpp>
 
-#include <gui/colorselector.hpp>
+#include <gui/color-selector.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup widgets
-	 */
-	class ColorButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(ColorButton);
+  /**
+   * @brief The most common button class
+   *
+   * @ingroup widgets
+   */
+  class ColorButton: public AbstractButton
+  {
+  DISALLOW_COPY_AND_ASSIGN(ColorButton);
 
-	public:
+  public:
 
-		ColorButton ();
+    ColorButton ();
 
-		virtual ~ColorButton ();
+    virtual ~ColorButton ();
 
-		void SetColor (const Color& color);
+    void SetColor (const Color& color);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void InitializeColorButton ();
+    void InitializeColorButton ();
 
-		void OnClick (AbstractButton* sender);
+    void OnClick (AbstractButton* sender);
 
-		void OnSelectorDestroyed (AbstractFrame* sender);
+    void OnSelectorDestroyed (AbstractFrame* sender);
 
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		Color color0_;
-		Color color1_;
+    Color color0_;
+    Color color1_;
 
-		ColorSelector* selector_;
-	};
+    ColorSelector* selector_;
+  };
 
 }

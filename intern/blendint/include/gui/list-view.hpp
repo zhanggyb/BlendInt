@@ -31,63 +31,63 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief ListView provides a list or icon view onto a model
-	 *
-	 * The ListView provides a list or icon view onto a model.
-	 *
-	 * A ListView presents items stored in a model, either as a simple
-	 * non-hierarchical list, or as a collection of icons.
-	 *
-	 * ListView is a subclass of AbstractScrollable, so it contains 2
-	 * native ScrollBar object and will be displayed automatically
-	 * when the widget cannot show all contents of the list.
-	 */
-	class ListView: public AbstractItemView
-	{
-		DISALLOW_COPY_AND_ASSIGN(ListView);
+  /**
+   * @brief ListView provides a list or icon view onto a model
+   *
+   * The ListView provides a list or icon view onto a model.
+   *
+   * A ListView presents items stored in a model, either as a simple
+   * non-hierarchical list, or as a collection of icons.
+   *
+   * ListView is a subclass of AbstractScrollable, so it contains 2
+   * native ScrollBar object and will be displayed automatically
+   * when the widget cannot show all contents of the list.
+   */
+  class ListView: public AbstractItemView
+  {
+  DISALLOW_COPY_AND_ASSIGN(ListView);
 
-	public:
+  public:
 
-		ListView ();
+    ListView ();
 
-		virtual ~ListView();
+    virtual ~ListView ();
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual const RefPtr<AbstractItemModel> GetModel () const;
+    virtual const RefPtr<AbstractItemModel> GetModel () const;
 
-		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+    virtual void SetModel (const RefPtr<AbstractItemModel>& model);
 
-		virtual ModelIndex GetIndexAt (const Point& point) const;
+    virtual ModelIndex GetIndexAt (const Point& point) const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-	private:
+  private:
 
-		void InitializeListView ();
+    void InitializeListView ();
 
-		Font font_;
+    Font font_;
 
-		// 0 for inner buffer
-		// 1 for row_ background
-		GLuint vao_[2];
+    // 0 for inner buffer
+    // 1 for row_ background
+    GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<AbstractItemModel> model_;
+    RefPtr<AbstractItemModel> model_;
 
-		int highlight_index_;
-	};
+    int highlight_index_;
+  };
 
 }

@@ -26,8 +26,8 @@
 
 namespace BlendInt {
 
-  ColorButton::ColorButton () :
-      AbstractButton(), selector_(0)
+  ColorButton::ColorButton ()
+      : AbstractButton(), selector_(0)
   {
     set_round_type(RoundAll);
 
@@ -160,7 +160,7 @@ namespace BlendInt {
         AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
         0.f);
     glUniform4fv(AbstractWindow::shaders->location(Shaders::WIDGET_OUTER_COLOR),
-        1, AbstractWindow::theme->regular().outline.data());
+                 1, AbstractWindow::theme->regular().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
@@ -175,7 +175,7 @@ namespace BlendInt {
           0.f, -1.f);
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
-          GetHalfOutlineVertices(round_type()) * 2);
+                   GetHalfOutlineVertices(round_type()) * 2);
     }
 
     DrawIconText();
@@ -186,12 +186,7 @@ namespace BlendInt {
   Size ColorButton::GetPreferredSize () const
   {
     Size s = AbstractButton::GetPreferredSize();
-
-    if (text()) {
-      if (s.width() < 80) {
-        s.set_width(80);
-      }
-    }
+    if (s.width() < 80) s.set_width(80);
 
     return s;
   }
@@ -235,7 +230,7 @@ namespace BlendInt {
     if (selector_ == 0) {
       selector_ = new ColorSelector;
       events()->connect(selector_->destroyed(), this,
-          &ColorButton::OnSelectorDestroyed);
+                        &ColorButton::OnSelectorDestroyed);
       AbstractWindow* win = AbstractWindow::GetWindow(this);
       win->AddFrame(selector_);
 
