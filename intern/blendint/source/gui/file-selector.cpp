@@ -436,7 +436,7 @@ namespace BlendInt {
 		FolderList* system_folders = Manage(new FolderList);
 		DBG_SET_NAME(system_folders, "System Folders");
 
-		expander->Setup(system_folders);
+		expander->AddWidget(system_folders);
 
 		return expander;
 	}
@@ -449,7 +449,7 @@ namespace BlendInt {
 		FolderList* system_bookmark = Manage(new FolderList);
 		DBG_SET_NAME(system_bookmark, "System Bookmarks");
 
-		expander->Setup(system_bookmark);
+		expander->AddWidget(system_bookmark);
 
 		return expander;
 	}

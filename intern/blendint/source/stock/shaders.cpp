@@ -488,7 +488,7 @@ namespace BlendInt {
 	const char* Shaders::widget_image_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec2 aCoord;"
-			"layout(location = 1) in vec2 a_uv;"
+			"layout(location = 1) in vec2 aUV;"
 			"out vec2 f_texcoord;"
 			""
 			//"uniform mat4 u_projection;"	// projection matrix
@@ -525,7 +525,7 @@ namespace BlendInt {
 			"void main(void) {"
 			"	vec3 point = model * translate(uPosition) * rotate(uRotation) * vec3(aCoord.xy, 1.f);"
 			"	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
-			"	f_texcoord = a_uv;"
+			"	f_texcoord = aUV;"
 			"}";
 
 	const char* Shaders::widget_image_fragment_shader =
@@ -1471,7 +1471,7 @@ namespace BlendInt {
 			}
 
 			locations_[WIDGET_IMAGE_COORD] = widget_image_program_->GetAttributeLocation("aCoord");
-			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("a_uv");
+			locations_[WIDGET_IMAGE_UV] = widget_image_program_->GetAttributeLocation("aUV");
 			locations_[WIDGET_IMAGE_POSITION] = widget_image_program_->GetUniformLocation("uPosition");
 			locations_[WIDGET_IMAGE_ROTATION] = widget_image_program_->GetUniformLocation("uRotation");
 			locations_[WIDGET_IMAGE_TEXTURE] = widget_image_program_->GetUniformLocation("uTexture");

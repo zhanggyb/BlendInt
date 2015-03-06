@@ -27,153 +27,152 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Base class of node and nodeset
-	 */
-	class AbstractNode: public AbstractView
-	{
-		friend class NodeView;
+  /**
+   * @brief Base class of node and nodeset
+   */
+  class AbstractNode: public AbstractView
+  {
+  public:
 
-	public:
+    AbstractNode (int flag = 0);
 
-		AbstractNode (int flag = 0);
+    AbstractNode (int width, int height, int flag = 0);
 
-		AbstractNode (int width, int height, int flag = 0);
+    virtual ~AbstractNode ();
 
-		virtual ~AbstractNode ();
+    void SetRoundRadius (float radius);
 
-		void SetRoundRadius (float radius);
+    void SetRoundType (int type);
 
-		void SetRoundType (int type);
+    inline uint32_t round_type () const
+    {
+      return node_flag_ & 0x0F;
+    }
 
-		inline uint32_t round_type () const
-		{
-			return node_flag_ & 0x0F;
-		}
+    inline float round_radius () const
+    {
+      return round_radius_;
+    }
 
-		inline float round_radius () const
-		{
-			return round_radius_;
-		}
+  protected:
 
-	protected:
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformContextMenuPress (AbstractWindow* context);
 
-		virtual Response PerformContextMenuPress (AbstractWindow* context);
+    virtual Response PerformContextMenuRelease (AbstractWindow* context);
 
-		virtual Response PerformContextMenuRelease (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+    /**
+     * @brief Perform mouse hover event from NodeView
+     */
+    virtual Response PerformMouseHover (AbstractWindow* context);
 
-		/**
-		 * @brief Perform mouse hover event from NodeView
-		 */
-		virtual Response PerformMouseHover (AbstractWindow* context);
+    void GenerateRoundedVertices (std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-		void GenerateRoundedVertices (
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    void GenerateRoundedVertices (Orientation shadedir,
+                                  short shadetop,
+                                  short shadedown,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-		void GenerateRoundedVertices (
-				Orientation shadedir,
-				short shadetop,
-				short shadedown,
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    virtual void PerformRoundTypeUpdate (int round);
 
-		virtual void PerformRoundTypeUpdate (int round);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    inline void set_round_type (int type)
+    {
+      node_flag_ = (node_flag_ & 0xFFF0) + (type & 0x0F);
+    }
 
-		inline void set_round_type (int type)
-		{
-			node_flag_ = (node_flag_ & 0xFFF0) + (type & 0x0F);
-		}
+    inline void set_round_radius (float radius)
+    {
+      round_radius_ = radius;
+    }
 
-		inline void set_round_radius (float radius)
-		{
-			round_radius_ = radius;
-		}
+  private:
 
-	private:
+    friend class NodeView;
 
-		enum NodeFlagIndex {
+    enum NodeFlagIndex
+    {
 
-			NodeRoundTopLeft = (1 << 0),
+      NodeRoundTopLeft = (1 << 0),
 
-			NodeRoundTopRight = (1 << 1),
+      NodeRoundTopRight = (1 << 1),
 
-			NodeRoundBottomRight = (1 << 2),
+      NodeRoundBottomRight = (1 << 2),
 
-			NodeRoundBottomLeft = (1 << 3),
+      NodeRoundBottomLeft = (1 << 3),
 
-			/**
-			 * @brief If the cursor is on border
-			 */
-			NodeCursorOnBorder = (1 << 4),
+      /**
+       * @brief If the cursor is on border
+       */
+      NodeCursorOnBorder = (1 << 4),
 
-			/**
-			 * @brief If mouse button pressed
-			 */
-			NodeMouseButtonPressed = (1 << 5)
-		};
+      /**
+       * @brief If mouse button pressed
+       */
+      NodeMouseButtonPressed = (1 << 5)
+    };
 
-		inline bool cursor_on_border () const
-		{
-			return node_flag_ & NodeCursorOnBorder;
-		}
+    inline bool cursor_on_border () const
+    {
+      return node_flag_ & NodeCursorOnBorder;
+    }
 
-		inline bool mouse_button_pressed () const
-		{
-			return node_flag_ & NodeMouseButtonPressed;
-		}
+    inline bool mouse_button_pressed () const
+    {
+      return node_flag_ & NodeMouseButtonPressed;
+    }
 
-		inline void set_cursor_on_border (bool cursor_on_border)
-		{
-			if(cursor_on_border) {
-				SETBIT(node_flag_, NodeCursorOnBorder);
-			} else {
-				CLRBIT(node_flag_, NodeCursorOnBorder);
-			}
-		}
+    inline void set_cursor_on_border (bool cursor_on_border)
+    {
+      if (cursor_on_border) {
+        SETBIT(node_flag_, NodeCursorOnBorder);
+      } else {
+        CLRBIT(node_flag_, NodeCursorOnBorder);
+      }
+    }
 
-		inline void set_mouse_button_pressed (bool pressed)
-		{
-			if(pressed) {
-				SETBIT(node_flag_, NodeMouseButtonPressed);
-			} else {
-				CLRBIT(node_flag_, NodeMouseButtonPressed);
-			}
-		}
+    inline void set_mouse_button_pressed (bool pressed)
+    {
+      if (pressed) {
+        SETBIT(node_flag_, NodeMouseButtonPressed);
+      } else {
+        CLRBIT(node_flag_, NodeMouseButtonPressed);
+      }
+    }
 
-		uint32_t node_flag_;
+    uint32_t node_flag_;
 
-		float round_radius_;
+    float round_radius_;
 
-		Point last_position_;
+    Point last_position_;
 
-		Size last_size_;
+    Size last_size_;
 
-		Point cursor_point_;
+    Point cursor_point_;
 
-		int cursor_position_;
-	};
+    int cursor_position_;
+  };
 
 }

@@ -136,8 +136,6 @@ namespace BlendInt {
 				}
 			}
 
-			w += pixel_size(margin().hsum());
-			h += pixel_size(margin().vsum());
 		} else {
 			h = -space_;
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
@@ -149,10 +147,10 @@ namespace BlendInt {
 					h += (tmp.height() + space_);
 				}
 			}
-
-			w += pixel_size(margin().hsum());
-			h += pixel_size(margin().vsum());
 		}
+
+		w += pixel_size(margin().hsum());
+    h += pixel_size(margin().vsum());
 
 		return Size(w, h);
 	}
@@ -189,6 +187,12 @@ namespace BlendInt {
 
 	void AdaptiveLayout::PerformMarginUpdate (const Margin& margin)
 	{
+    set_margin(margin);
+
+    if(subs_count()) {
+      Adjust();
+      RequestRedraw();
+    }
 	}
 
 	bool AdaptiveLayout::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -211,6 +215,9 @@ namespace BlendInt {
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
+		} else if(request.source()->superview() == this) {
+		  // a sub view resized
+		  Adjust();
 		}
 	}
 

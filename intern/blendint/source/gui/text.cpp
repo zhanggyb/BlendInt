@@ -213,22 +213,26 @@ namespace BlendInt {
 			x = rect.hcenter() - size().width() / 2;
 		}
 
-		if(align & AlignTop) {
-			y = rect.top() - size().height();
-		} else if (align & AlignBottom) {
-			y = rect.bottom();
-		} else if (align & AlignVerticalCenter) {
-			y = rect.vcenter() - size().height() / 2;
-		}
-
 		if (align & AlignBaseline) {  // AlignBaseLine will override VerticalCenter
-			y = rect.bottom() + (rect.height() - font_.height()) / 2 - font_.descender();
+
+		  y = rect.bottom() + (rect.height() - font_.height()) / 2 - font_.descender();
 
 			// A workaround for Adobe Source Han Sans
 			int diff = font_.ascender() - font_.descender();
 			if(diff < font_.height()) {
 				y += (font_.height() - diff - 1) / 2;
 			}
+
+		} else {
+
+		  if(align & AlignTop) {
+	      y = rect.top() - size().height();
+	    } else if (align & AlignBottom) {
+	      y = rect.bottom();
+	    } else if (align & AlignVerticalCenter) {
+	      y = (rect.y() + rect.height()) - size().height() / 2;
+	    }
+
 		}
 
 		AbstractWindow::shaders->widget_text_program()->use();

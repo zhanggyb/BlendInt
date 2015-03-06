@@ -24,85 +24,103 @@
 #pragma once
 
 #include <gui/abstract-button.hpp>
+#include <gui/abstract-layout.hpp>
 
 namespace BlendInt {
 
-	class ToggleButton;
+  class ToggleButton;
 
-	class ExpandButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(ExpandButton);
+  class ExpandButton: public AbstractButton
+  {
+  DISALLOW_COPY_AND_ASSIGN(ExpandButton);
 
-	public:
+  public:
 
-		ExpandButton ();
+    ExpandButton ();
 
-		ExpandButton (const String& text);
+    ExpandButton (const String& text);
 
-		virtual ~ExpandButton ();
+    virtual ~ExpandButton ();
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		void SetText (const String& text);
+    void SetText (const String& text);
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	};
+  };
 
+  // --------------------------
 
-	// --------------------------
+  /**
+   * @brief Expander
+   */
+  class Expander: public AbstractWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Expander);
 
-	/**
-	 * @brief Expander
-	 */
-	class Expander: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Expander);
+  public:
 
-	public:
+    Expander (const String& title,
+              AbstractLayout* layout = 0,
+              Orientation orient = Vertical,
+              int align = AlignCenter,
+              int space = 0);
 
-		Expander ();
+    virtual ~Expander ();
 
-		Expander (const String& title);
+    bool AddWidget (AbstractWidget* widget);
 
-		virtual ~Expander ();
+    bool InsertWidget (int index, AbstractWidget* widget);
 
-		bool Setup (AbstractWidget* widget);
+    bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-		void SetTitle (const String& text);
+    void SetTitle (const String& text);
 
-		const String& GetTitle () const;
+    const String& GetTitle () const;
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	protected:
+  protected:
 
-		void FillInExpander (const Size& out_size);
+    void FillWidgets ();
 
-		void FillInExpander (int x, int y, int width, int height);
+    void FillWidgets (const Size& out_size);
 
-		void OnToggled (AbstractButton* sender, bool toggle);
+    void FillWidgets (int x, int y, int width, int height);
 
-		int frame_height_;
+    void OnToggled (AbstractButton* sender, bool toggle);
 
-	};
+    ExpandButton* title_;
+
+    AbstractLayout* layout_;
+
+    int last_size_;
+
+    Orientation orientation_;
+
+    int alignment_;
+
+    int space_;
+
+  };
 
 }

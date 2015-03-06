@@ -54,8 +54,23 @@ namespace BlendInt {
 		for(AbstractView* p = view()->first_subview(); p; p = p->next_view()) {
 
 			tmp = p->GetPreferredSize();
-			resize(p, tmp);
-			move(p, x, y + h - p->size().height());
+
+			if(p->IsExpandY()) {
+			  resize(p, tmp.width(), h);
+			} else {
+	      resize(p, tmp.width(), std::min(h, tmp.height()));
+			}
+
+			if(alignment_ & AlignTop) {
+        move(p, x, y + h - p->size().height());
+			} else if (alignment_ & AlignBottom) {
+			  move(p, x, y);
+			} else if (alignment_ & AlignVerticalCenter) {
+			  move(p, x, y + (h - p->size().height()) / 2);
+			} else {
+			  DBG_PRINT_MSG("Warning: %s", "not alid alignment");
+        move(p, x, y);
+			}
 
 			x += p->size().width() + space_;
 		}
@@ -65,15 +80,31 @@ namespace BlendInt {
 	{
 		Size tmp;
 
-		int pos_y = y + h;
+		y += h;
 		for(AbstractView* p = view()->first_subview(); p; p = p->next_view()) {
 
 			tmp = p->GetPreferredSize();
-			resize(p, tmp);
-			pos_y = pos_y - p->size().height();
 
-			resize(p, x, pos_y);
-			pos_y -= space_;
+			if(p->IsExpandX()) {
+			  resize(p, w, tmp.height());
+			} else {
+			  resize(p, std::min(w, tmp.width()), tmp.height());
+			}
+
+			y = y - p->size().height();
+
+			if(alignment_ & AlignLeft) {
+			  move(p, x, y);
+			} else if (alignment_ & AlignRight) {
+			  move(p, x + w - p->size().width(), y);
+			} else if (alignment_ & AlignHorizontalCenter) {
+			  move(p, x + (w - p->size().width()) / 2, y);
+			} else {
+        DBG_PRINT_MSG("Warning: %s", "not alid alignment");
+        move(p, x, y);
+			}
+
+			y -= space_;
 
 		}
 	}

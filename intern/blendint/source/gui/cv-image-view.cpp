@@ -405,7 +405,19 @@ namespace BlendInt {
     // override this
   }
 
-  void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
+  void CVImageView::DrawTexture ()
+  {
+    glBindVertexArray(vao_[1]);
+    if (mutex_.lock()) {
+      texture_.bind();
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      mutex_.unlock();
+    } else {
+      DBG_PRINT_MSG("%s", "fail to lock");
+    }
+  }
+
+  void CVImageView::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
     if (request.target() == this) {
 
@@ -421,7 +433,7 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if(request.source() == this) {
+    if (request.source() == this) {
       ReportSizeUpdate(request);
     }
   }
@@ -471,7 +483,7 @@ namespace BlendInt {
     return Finish;
   }
 
-  void CVImageView::PostDraw(AbstractWindow* context)
+  void CVImageView::PostDraw (AbstractWindow* context)
   {
     // draw background again to unmask stencil
     AbstractWindow::shaders->widget_inner_program()->use();
@@ -483,21 +495,6 @@ namespace BlendInt {
     context->EndPopStencil();
 
     AbstractWindow::shaders->PopWidgetModelMatrix();
-  }
-
-  void CVImageView::DrawTexture ()
-  {
-    glBindVertexArray(vao_[1]);
-
-    //if (mutex_.lock()) {  // TODO: looks there's no need to lock when writting texture in thread
-
-    texture_.bind();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    //  mutex_.unlock();
-    //} else {
-    //  DBG_PRINT_MSG("%s", "fail to lock");
-    //}
   }
 
   void CVImageView::OnUpdateFrame (Timer* sender)

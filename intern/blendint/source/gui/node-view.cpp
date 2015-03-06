@@ -28,205 +28,272 @@
 
 namespace BlendInt {
 
-	NodeView::NodeView()
-	: AbstractScrollable(),
-	  vao_(0)
-	{
-		set_size (400, 300);
+  NodeView::NodeView ()
+  : AbstractScrollable(),
+    vao_(0),
+    pressed_(false)
+  {
+    set_size(400, 300);
 
-		InitializeNodeView();
+    InitializeNodeView();
 //		curve_ = new CubicBezierCurve;
 //		curve_->Unpack();
-	}
+  }
 
-	NodeView::NodeView(int width, int height)
-	: AbstractScrollable(width, height)
-	{
+  NodeView::NodeView (int width, int height)
+  : AbstractScrollable(width, height),
+    vao_(0),
+    pressed_(false)
+  {
 
-		InitializeNodeView();
+    InitializeNodeView();
 //		curve_ = new CubicBezierCurve;
 //		curve_->Unpack();
-	}
+  }
 
-	NodeView::~NodeView ()
-	{
+  NodeView::~NodeView ()
+  {
 //		delete curve_;
-		glDeleteVertexArrays(1, &vao_);
-	}
+    glDeleteVertexArrays(1, &vao_);
+  }
 
-	bool NodeView::AddNode (AbstractNode* node)
-	{
-		if(PushBackSubView(node)) {
-			RequestRedraw();
-			return true;
-		}
+  bool NodeView::AddNode (AbstractNode* node)
+  {
+    if (PushBackSubView(node)) {
+      RequestRedraw();
+      return true;
+    }
 
-		return false;
-	}
+    return false;
+  }
 
-	bool NodeView::IsExpandX () const
-	{
-		return true;
-	}
+  bool NodeView::IsExpandX () const
+  {
+    return true;
+  }
 
-	bool NodeView::IsExpandY () const
-	{
-		return true;
-	}
+  bool NodeView::IsExpandY () const
+  {
+    return true;
+  }
 
-	Size NodeView::GetPreferredSize () const
-	{
-		return Size(500, 400);
-	}
+  Size NodeView::GetPreferredSize () const
+  {
+    return Size(500, 400);
+  }
 
-	bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		return true;
-	}
+  bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)
+  {
+    return true;
+  }
 
-	bool NodeView::PositionUpdateTest (
-	        const PositionUpdateRequest& request)
-	{
-		return true;
-	}
+  bool NodeView::PositionUpdateTest (const PositionUpdateRequest& request)
+  {
+    return true;
+  }
 
-	void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			set_size(*request.size());
+  void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_size(*request.size());
 
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+      std::vector<GLfloat> inner_verts;
+      GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                       0);
 
-			vbo_.bind();
-			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.reset();
+      vbo_.bind();
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                        &inner_verts[0]);
+      vbo_.reset();
 
-			RequestRedraw();
-		}
+      RequestRedraw();
+    }
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	void NodeView::PerformRoundTypeUpdate (int type)
-	{
-		set_round_type(type);
+  void NodeView::PerformRoundTypeUpdate (int type)
+  {
+    set_round_type(type);
 
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                     0);
 
-		vbo_.bind();
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.reset();
+    vbo_.bind();
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	void NodeView::PerformRoundRadiusUpdate (float radius)
-	{
-		set_round_radius(radius);
+  void NodeView::PerformRoundRadiusUpdate (float radius)
+  {
+    set_round_radius(radius);
 
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                     0);
 
-		vbo_.bind();
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.reset();
+    vbo_.bind();
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	bool NodeView::PreDraw (AbstractWindow* context)
-	{
-		if(!visiable()) return false;
+  bool NodeView::PreDraw (AbstractWindow* context)
+  {
+    if (!visiable()) return false;
 
-		glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
-				glm::vec2(position().x(), position().y()));
+    glm::mat3 matrix = glm::translate(
+        AbstractWindow::shaders->widget_model_matrix(),
+        glm::vec2(position().x(), position().y()));
 
-		AbstractWindow::shaders->PushWidgetModelMatrix();
-		AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+    AbstractWindow::shaders->PushWidgetModelMatrix();
+    AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
-		AbstractWindow::shaders->widget_inner_program()->use();
+    AbstractWindow::shaders->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.f);
+    glUniform1i(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_GAMMA),
+                0);
+    glUniform4f(AbstractWindow::shaders->location(Shaders::WIDGET_INNER_COLOR),
+                0.208f, 0.208f, 0.208f, 1.f);
 
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		context->BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		context->EndPushStencil();
+    context->BeginPushStencil();	// inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    context->EndPushStencil();
 
-		return true;
-	}
+    return true;
+  }
 
-	Response NodeView::Draw(AbstractWindow* context)
-	{
+  Response NodeView::Draw (AbstractWindow* context)
+  {
 //		curve_->Draw();
 
-		if(subs_count()) {
+    if (subs_count()) {
 
-			Point offset = GetOffset();
+      Point offset = GetOffset();
 
-			glm::mat3 matrix = glm::translate(AbstractWindow::shaders->widget_model_matrix(),
-					glm::vec2(offset.x(), offset.y()));
+      glm::mat3 matrix = glm::translate(
+          AbstractWindow::shaders->widget_model_matrix(),
+          glm::vec2(offset.x(), offset.y()));
 
-			AbstractWindow::shaders->PushWidgetModelMatrix();
-			AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
+      AbstractWindow::shaders->PushWidgetModelMatrix();
+      AbstractWindow::shaders->SetWidgetModelMatrix(matrix);
 
-			return Ignore;
+      return Ignore;
 
-		} else {
-			return Finish;
-		}
-	}
+    } else {
+      return Finish;
+    }
+  }
 
-	void NodeView::PostDraw (AbstractWindow* context)
-	{
-		if(subs_count()) {
-			AbstractWindow::shaders->PopWidgetModelMatrix();
-		}
+  void NodeView::PostDraw (AbstractWindow* context)
+  {
+    if (subs_count()) {
+      AbstractWindow::shaders->PopWidgetModelMatrix();
+    }
 
-		// draw mask
-		AbstractWindow::shaders->widget_inner_program()->use();
+    // draw mask
+    AbstractWindow::shaders->widget_inner_program()->use();
 
-		glBindVertexArray(vao_);
+    glBindVertexArray(vao_);
 
-		context->BeginPopStencil();	// pop inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		context->EndPopStencil();
+    context->BeginPopStencil();	// pop inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    context->EndPopStencil();
 
-		AbstractWindow::shaders->PopWidgetModelMatrix();
-	}
+    AbstractWindow::shaders->PopWidgetModelMatrix();
+  }
 
-	Response NodeView::PerformMousePress (AbstractWindow* context)
-	{
-		return Finish;
-	}
+  Response NodeView::PerformMousePress (AbstractWindow* context)
+  {
+    pressed_ = true;
 
-	void BlendInt::NodeView::InitializeNodeView ()
-	{
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts, 0);
+    Response response = Ignore;
+    AbstractNode* node = 0;
 
-		vbo_.generate();
-		glGenVertexArrays(1, &vao_);
+    for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
-		glBindVertexArray(vao_);
+      node = dynamic_cast<AbstractNode*>(p);
+      response = node->PerformMousePress(context);
 
-		vbo_.bind();
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+      if(response == Finish) {
+        break;
+      }
+    }
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
+    return Finish;
+  }
 
-		glBindVertexArray(0);
-		vbo_.reset();
+  Response NodeView::PerformMouseRelease (AbstractWindow* context)
+  {
+    Response response = Ignore;
 
-	}
+    pressed_ = false;
+    AbstractNode* node = 0;
+
+    for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+    {
+      node = dynamic_cast<AbstractNode*>(p);
+      response = node->PerformMouseRelease(context);
+      if(response == Finish) {
+        break;
+      }
+    }
+
+    return Finish;
+  }
+
+  Response NodeView::PerformMouseMove (AbstractWindow* context)
+  {
+    if(pressed_) {
+
+      Response response = Ignore;
+      AbstractNode* node = 0;
+
+      for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
+      {
+        node = dynamic_cast<AbstractNode*>(p);
+        response = node->PerformMouseMove(context);
+        if(response == Finish) {
+          break;
+        }
+      }
+
+    }
+
+    return Finish;
+  }
+
+  void BlendInt::NodeView::InitializeNodeView ()
+  {
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                     0);
+
+    vbo_.generate();
+    glGenVertexArrays(1, &vao_);
+
+    glBindVertexArray(vao_);
+
+    vbo_.bind();
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3,
+    GL_FLOAT,
+                          GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
+
+  }
 
 }

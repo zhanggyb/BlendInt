@@ -104,62 +104,24 @@ namespace BlendInt {
 
 	Response ExpandButton::Draw (AbstractWindow* context)
 	{
-		float rotate = 0.f;
-		if(is_checked()) {
-			rotate = 0.f;
-		} else {
-			rotate = -90.f;
-		}
+		float rotate = is_checked() ? 0.f : -90.f;
+		short gamma = hover() ? 25 : 0;
 
-		int w = size().width() - pixel_size(kPadding.hsum());
-		int h = size().height() - pixel_size(kPadding.vsum());
-		int x = pixel_size(kPadding.left());
-		int y = size().height() / 2;
+		Rect rect(pixel_size(kPadding.left()),
+		          pixel_size(kPadding.bottom()),
+		          size().height() - pixel_size(kPadding.vsum()),
+		          size().height() - pixel_size(kPadding.vsum()));
 
 		if(icon()) {
-			if(icon()->size().height() <= h) {
-
-				if(icon()->size().width() <= w) {
-
-					AbstractWindow::icons->num()->Draw(x + icon()->size().width() / 2,
-							y,
-							Color(0x0F0F0FFF).data(),
-							0,
-							rotate,
-							1.5f,
-							1.5f
-							);
-
-					x += icon()->size().width();
-					x += kIconTextSpace;
-					w -= icon()->size().width();
-					w -= kIconTextSpace;
-				}
-
-			}
+		  icon()->DrawInRect(rect, AlignCenter, Color(0x0F0F0FFF).data(), gamma, rotate, true);
+		  rect.set_x(rect.width() + kIconTextSpace);
+		  rect.set_width(size().width() - pixel_size(kPadding.hsum()) - kIconTextSpace - icon()->size().width());
+		} else {
+      rect.set_width(size().width() - pixel_size(kPadding.hsum()));
 		}
 
-		if (text()) {
-
-			if(text()->size().height() <= h) {
-
-				y = (size().height() - text()->font().height()) / 2 - text()->font().descender();
-
-				// A workaround for Adobe Source Han Sans
-				int diff = text()->font().ascender() - text()->font().descender();
-				if(diff < text()->font().height()) {
-					y += (text()->font().height() - diff - 1) / 2;
-				}
-
-				if(text()->size().width() < w) {
-					x += (w - text()->size().width()) / 2;
-					text()->Draw(x, y);
-				} else {
-					text()->DrawWithin(x, y, w);
-				}
-
-			}
-
+		if(text()) {
+		  text()->DrawInRect(rect, AlignHorizontalCenter | AlignJustify | AlignBaseline, Color(Color::Black).data(), gamma);
 		}
 
 		return Finish;
@@ -167,86 +129,139 @@ namespace BlendInt {
 
 	// ----------------------
 
-	Expander::Expander ()
-	: AbstractRoundWidget(), frame_height_(0)
+	Expander::Expander (const String& title,
+	                    AbstractLayout* layout,
+	                    Orientation orient,
+	                    int align,
+	                    int space)
+	: AbstractWidget(),
+	  title_(0),
+	  layout_(0),
+	  last_size_(0),
+	  orientation_(orient),
+	  alignment_(align),
+	  space_(space)
 	{
-		ExpandButton* title_button = Manage(new ExpandButton);
-		LinearLayout* frame = Manage(new LinearLayout(Vertical));
+	  title_ = Manage(new ExpandButton(title));
 
-		PushBackSubView(title_button);	// 0
-		PushBackSubView(frame);	// 1
+		if(layout) {
+		  layout_ = layout;
+		} else {
+		  layout_ = Manage(new LinearLayout(orient));
+		}
+
+		PushBackSubView(title_);	// 0
+		PushBackSubView(layout_);	// 1
 
 		int width = 0;
 		int height = 0;
 
-		Size tmp = title_button->GetPreferredSize();
+		Size tmp = title_->GetPreferredSize();
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		tmp = frame->GetPreferredSize();
-		width = std::max(width, tmp.width());
-		height += tmp.height();
+		height += space_;
+
+    tmp = layout_->GetPreferredSize();
+    width = std::max(width, tmp.width());
+    height += tmp.height();
 
 		set_size(width, height);
 
-		FillInExpander(size());
-		frame_height_ = frame->size().height();
+		FillWidgets(size());
 
-		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
-	}
+    if (orientation_ == Horizontal) {
+      last_size_ = layout_->size().width();
+    } else {
+      last_size_ = layout_->size().height();
+    }
 
-	Expander::Expander (const String& title)
-	: AbstractRoundWidget(), frame_height_(0)
-	{
-		ExpandButton* title_button = Manage(new ExpandButton(title));
-		LinearLayout* frame = Manage(new LinearLayout(Vertical));
-
-		PushBackSubView(title_button);	// 0
-		PushBackSubView(frame);	// 1
-
-		int width = 0;
-		int height = 0;
-
-		Size tmp = title_button->GetPreferredSize();
-		width = std::max(width, tmp.width());
-		height += tmp.height();
-
-		tmp = frame->GetPreferredSize();
-		width = std::max(width, tmp.width());
-		height += tmp.height();
-
-		set_size(width, height);
-
-		FillInExpander(size());
-		frame_height_ = frame->size().height();
-
-		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
+		events()->connect(title_->toggled(), this, &Expander::OnToggled);
 	}
 
 	Expander::~Expander ()
 	{
 	}
 
-	bool Expander::Setup (AbstractWidget* widget)
+	bool Expander::AddWidget (AbstractWidget* widget)
 	{
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
-		frame->AddWidget(widget);
-		return true;
+	  if(layout_->AddWidget(widget)) {
+
+	    // TODO: change size
+
+	    layout_->Adjust();
+
+	    return true;
+	  }
+
+	  return false;
 	}
+
+  bool Expander::InsertWidget (int index, AbstractWidget* widget)
+  {
+    if(layout_->InsertWidget(index, widget)) {
+
+      // TODO: change size
+      layout_->Adjust();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  bool Expander::InsertWidget (int row, int column, AbstractWidget* widget)
+  {
+    if(layout_->InsertWidget(row, column, widget)) {
+
+      // TODO: change size
+      layout_->Adjust();
+
+      return true;
+    }
+
+    return false;
+  }
 
 	Size Expander::GetPreferredSize() const
 	{
-		Size prefer;
-
+		int w = 0;
+		int h = 0;
 		Size tmp;
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			tmp = p->GetPreferredSize();
-			prefer.set_width(std::max(prefer.width(), tmp.width()));
-			prefer.add_height(tmp.height());
+
+		int count = 0;
+
+		if(orientation_ == Horizontal) {
+
+      for(AbstractView* p = first_subview(); p; p = p->next_view())
+      {
+        if(p->visiable()) {
+          tmp = p->GetPreferredSize();
+          w += tmp.width();
+          h = std::max(h, tmp.height());
+          count++;
+        }
+      }
+
+      h += (count * space_);
+
+		} else {
+
+	    for(AbstractView* p = first_subview(); p; p = p->next_view())
+	    {
+	      if(p->visiable()) {
+	        tmp = p->GetPreferredSize();
+	        w = std::max(w, tmp.width());
+	        h += tmp.height();
+	        count++;
+	      }
+	    }
+
+	    h += (count * space_);
+
 		}
 
-		return prefer;
+		return Size(w, h);
 	}
 
 	bool Expander::IsExpandX () const
@@ -282,9 +297,10 @@ namespace BlendInt {
 	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			FillInExpander(*request.size());
-
 			set_size(*request.size());
+
+			FillWidgets();
+
 			RequestRedraw();
 		}
 
@@ -293,10 +309,89 @@ namespace BlendInt {
 
 	Response Expander::Draw (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return Ignore;
 	}
 
-	void Expander::FillInExpander (const Size& out_size)
+	void Expander::FillWidgets()
+	{
+	  if(size().width() <= 0 || size().height() <= 0) {
+	    SetSubViewVisibility(title_, false);
+	    SetSubViewVisibility(layout_, false);
+	    return;
+	  }
+
+    int title_size_hint = 0;
+    int x = 0;
+    int y = 0;
+    int width = size().width();
+    int height = size().height();
+
+    if(orientation_ == Horizontal) {
+
+      title_size_hint = title_->GetPreferredSize().width();
+
+      if (layout_->visiable()) {
+
+        if (title_size_hint < width) {
+
+          ResizeSubView(title_, title_size_hint, height);
+          MoveSubViewTo(title_, x, y);
+
+          x += title_size_hint;
+          x += space_;
+
+          ResizeSubView(layout_, width - title_size_hint, height);
+          MoveSubViewTo(layout_, x, y);
+
+        } else {
+
+          ResizeSubView(title_, width, height);
+          MoveSubViewTo(title_, x, y);
+          ResizeSubView(layout_, 0, height);
+          MoveSubViewTo(layout_, x, y);
+        }
+
+      } else {
+        ResizeSubView(title_, width, height);
+        MoveSubViewTo(title_, x, y);
+      }
+
+    } else {
+
+      title_size_hint = title_->GetPreferredSize().height();
+
+      if (layout_->visiable()) {
+
+        if (title_size_hint < height) {
+
+          y = y + height;
+          ResizeSubView(title_, width, title_size_hint);
+          y -= title_size_hint;
+          MoveSubViewTo(title_, x, y);
+
+          ResizeSubView(layout_, width, height - title_size_hint);
+          y -= layout_->size().height();
+          y -= space_;
+
+          MoveSubViewTo(layout_, x, y);
+
+        } else {
+
+          ResizeSubView(title_, width, height);
+          MoveSubViewTo(title_, x, y);
+          ResizeSubView(layout_, width, 0);
+          MoveSubViewTo(layout_, x, y);
+        }
+
+      } else {
+        ResizeSubView(title_, width, height);
+        MoveSubViewTo(title_, x, y);
+      }
+
+    }
+	}
+
+	void Expander::FillWidgets (const Size& out_size)
 	{
 		int x = 0;
 		int y = 0;
@@ -304,84 +399,70 @@ namespace BlendInt {
 		int h = out_size.height();
 
 		if(w >= 0 && h >= 0)
-			FillInExpander(x, y, w, h);
+			FillWidgets(x, y, w, h);
 	}
-	
-	void Expander::FillInExpander (int x, int y, int width,
-					int height)
-	{
-		int button_preferred_height = 0;
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
 
-		button_preferred_height = button->GetPreferredSize().height();
+  void Expander::FillWidgets (int x, int y, int width, int height)
+  {
+    int button_preferred_height = 0;
 
-		if(frame->visiable()) {
+    button_preferred_height = title_->GetPreferredSize().height();
 
-			if(button_preferred_height < height) {
+    if (layout_->visiable()) {
 
-				y = y + height;
-				ResizeSubView(button, width, button_preferred_height);
-				y -= button_preferred_height;
-				MoveSubViewTo(button, x, y);
+      if (button_preferred_height < height) {
 
-				ResizeSubView(frame, width, height - button_preferred_height);
-				y -= frame->size().height();
+        y = y + height;
+        ResizeSubView(title_, width, button_preferred_height);
+        y -= button_preferred_height;
+        MoveSubViewTo(title_, x, y);
 
-				MoveSubViewTo(frame, x, y);
+        ResizeSubView(layout_, width, height - button_preferred_height);
+        y -= layout_->size().height();
+        y -= space_;
 
-			} else {
+        MoveSubViewTo(layout_, x, y);
 
-				ResizeSubView(button, width, height);
-				MoveSubViewTo(button, x, y);
-				ResizeSubView(frame, width, 0);
-				MoveSubViewTo(frame, x, y);
-			}
+      } else {
 
-		} else {
-			ResizeSubView(button, width, height);
-			MoveSubViewTo(button, x, y);
-		}
-	}
+        ResizeSubView(title_, width, height);
+        MoveSubViewTo(title_, x, y);
+        ResizeSubView(layout_, width, 0);
+        MoveSubViewTo(layout_, x, y);
+      }
+
+    } else {
+      ResizeSubView(title_, width, height);
+      MoveSubViewTo(title_, x, y);
+    }
+  }
 	
 	void Expander::SetTitle (const String& text)
 	{
-		dynamic_cast<ExpandButton*>(GetSubViewAt(0))->SetText(text);
+	  title_->SetText(text);
 	}
 
 	const String& Expander::GetTitle () const
 	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
-
-		return button->text()->text();
+		return title_->text()->text();
 	}
-	
+
 	void Expander::OnToggled (AbstractButton* sender, bool toggle)
-	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(GetSubViewAt(0));
-		LinearLayout* frame = dynamic_cast<LinearLayout*>(GetSubViewAt(1));
+  {
+    if (toggle) {
 
-		if(toggle) {
-			int x = position().x();
-			int y = position().y() + size().height();
-			frame->SetVisible(false);
-			frame_height_ = frame->size().height();
-			Resize(size().width(), button->size().height());
-			y = y - size().height();
-			MoveTo(x, y);
-		} else {
-			int x = position().x();
-			int y = position().y() + size().height();
+      last_size_ = layout_->size().height();
+      SetSubViewVisibility(layout_, false);
+      Resize(size().width(), title_->size().height());
 
-			frame->SetVisible(true);
+    } else {
 
-			Resize(size().width(),
-							button->size().height() + frame_height_);
-			y = y - size().height();
-			MoveTo(x, y);
-		}
+      SetSubViewVisibility(layout_, true);
+      Resize(size().width(), title_->size().height() + space_ + last_size_);
 
-		RequestRedraw();
-	}
+    }
+
+    RequestRedraw();
+  }
 
 }

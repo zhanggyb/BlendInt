@@ -31,56 +31,61 @@
 
 namespace BlendInt {
 
-	class NodeView: public AbstractScrollable
-	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
+  class NodeView: public AbstractScrollable
+  {
+  DISALLOW_COPY_AND_ASSIGN(NodeView);
 
-	public:
+  public:
 
-		NodeView ();
+    NodeView ();
 
-		NodeView (int width, int height);
+    NodeView (int width, int height);
 
-		virtual ~NodeView ();
+    virtual ~NodeView ();
 
-		bool AddNode (AbstractNode* node);
+    bool AddNode (AbstractNode* node);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+    virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+    virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-	private:
+    virtual Response Draw (AbstractWindow* context);
 
-		void InitializeNodeView ();
+    virtual void PostDraw (AbstractWindow* context);
 
-		//CubicBezierCurve* curve_;
+  private:
 
-		GLuint vao_;
+    void InitializeNodeView ();
 
-		GLBuffer<> vbo_;
+    //CubicBezierCurve* curve_;
 
-	};
+    GLuint vao_;
+
+    GLBuffer<> vbo_;
+
+    bool pressed_;
+  };
 
 }
