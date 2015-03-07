@@ -170,7 +170,7 @@ namespace BlendInt {
         AbstractWindow* win = AbstractWindow::GetWindow(this);
         off_screen_context_ = win->CreateSharedContext(win->size().width(),
                                                        win->size().height(),
-                                                       0);
+                                                       WindowInvisible);
 
       }
 
@@ -302,7 +302,7 @@ namespace BlendInt {
         AbstractWindow* win = AbstractWindow::GetWindow(this);
         off_screen_context_ = win->CreateSharedContext(win->size().width(),
                                                        win->size().height(),
-                                                       0);
+                                                       WindowInvisible);
 
       }
 

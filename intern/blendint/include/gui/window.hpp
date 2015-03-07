@@ -46,7 +46,7 @@ namespace BlendInt {
 
     virtual AbstractWindow* CreateSharedContext (int width,
                                                  int height,
-                                                 int flags = WindowVisibleMask);
+                                                 int flags = WindowRegular);
 
     virtual void MakeCurrent ();
 

@@ -38,23 +38,45 @@ namespace BlendInt {
   enum WindowFlagMask
   {
 
+    WindowFocusedMask = 0x1 << 0,
+
+    WindowIconifiedMask = 0x1 << 1,
+
+    WindowResizableMask = 0x1 << 2,
+
     /**
      * 0: invisible
      * 1: visible
      */
-    WindowVisibleMask = 0x1 << 0,
+    WindowVisibleMask = 0x1 << 3,
+
+    WindowDecoratedMask = 0x1 << 4,
+
+    WindowAutoIconifyMask = 0x1 << 5,
 
     /**
      * 0: regular window
      * 1: floating window
      */
-    WindowFloatingMask = 0x1 << 1,
+    WindowFloatingMask = 0x1 << 6,
 
     /**
      * 0: regular window
      * 1: fullscreen
      */
-    WindowFullscreenMask = 0x1 << 2
+    WindowFullscreenMask = 0x1 << 7
+
+  };
+
+  enum WindowFlags {
+
+    WindowRegular = WindowFocusedMask | WindowResizableMask | WindowDecoratedMask | WindowVisibleMask,
+
+    WindowInvisible = 0,
+
+    WindowFloating = WindowRegular | WindowFloatingMask,
+
+    WindowFullscreen = WindowRegular | WindowFullscreenMask
 
   };
 
@@ -78,12 +100,12 @@ namespace BlendInt {
      *
      * Create a 640, 480 window
      */
-    AbstractWindow (int flag = WindowVisibleMask);
+    AbstractWindow (int flag = WindowRegular);
 
     /**
      * @brief Constructor with window size
      */
-    AbstractWindow (int width, int height, int flag = WindowVisibleMask);
+    AbstractWindow (int width, int height, int flag = WindowRegular);
 
     /**
      * @brief Destructor
