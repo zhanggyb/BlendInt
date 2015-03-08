@@ -38,586 +38,598 @@
 
 namespace BlendInt {
 
-	class AbstractWindow;
-	class AbstractView;
-
-	/**
-	 * @brief Set/reset the managed flag of a View
-	 *
-	 * A managed View will be deleted when the superview is destroyed.
-	 */
-	template<typename T>
-	T* Manage (T* obj, bool val = true)
-	{
-		obj->set_manage(val);
-		return obj;
-	}
-
-	/**
-	 * @brief Check if a view is contained in a container
-	 */
-	extern bool IsContained (AbstractView* container, AbstractView* view);
-
-	class GeometryUpdateRequest
-	{
-	public:
-
-		GeometryUpdateRequest (AbstractView* source, AbstractView* target)
-		: m_source(source),
-		  m_target(target)
-		{
+  class AbstractWindow;
+  class AbstractView;
+
+  /**
+   * @brief Set/reset the managed flag of a View
+   *
+   * A managed View will be deleted when the superview is destroyed.
+   */
+  template<typename T>
+  T* Manage (T* obj, bool val = true)
+  {
+    obj->set_manage(val);
+    return obj;
+  }
+
+  /**
+   * @brief Check if a view is contained in a container
+   */
+  extern bool IsContained (AbstractView* container, AbstractView* view);
+
+  class GeometryUpdateRequest
+  {
+  public:
+
+    GeometryUpdateRequest (AbstractView* source, AbstractView* target)
+        : m_source(source), m_target(target)
+    {
+
+    }
+
+    ~GeometryUpdateRequest ()
+    {
+
+    }
+
+    AbstractView* source () const
+    {
+      return m_source;
+    }
+
+    AbstractView* target () const
+    {
+      return m_target;
+    }
+
+  private:
+
+    /**
+     * Disabled
+     */
+    GeometryUpdateRequest ();
+
+    AbstractView* m_source;
+    AbstractView* m_target;
+  };
 
-		}
-
-		~GeometryUpdateRequest ()
-		{
-
-		}
-
-		AbstractView* source () const
-		{
-			return m_source;
-		}
-
-		AbstractView* target () const
-		{
-			return m_target;
-		}
-
-	private:
-
-		/**
-		 * Disabled
-		 */
-		GeometryUpdateRequest();
-
-		AbstractView* m_source;
-		AbstractView* m_target;
-	};
-
-	class SizeUpdateRequest: public GeometryUpdateRequest
-	{
-	public:
-
-		SizeUpdateRequest (AbstractView* source, AbstractView* target)
-		: GeometryUpdateRequest(source, target), m_size(0)
-		{
-		}
-
-		SizeUpdateRequest (AbstractView* source, AbstractView* target, const Size* size)
-		: GeometryUpdateRequest(source, target), m_size(size)
-		{
-
-		}
-
-		const Size* size() const
-		{
-			return m_size;
-		}
-
-		void set_size (const Size* size)
-		{
-			m_size = size;
-		}
-
-	private:
-
-		const Size* m_size;
-	};
-
-	class PositionUpdateRequest: public GeometryUpdateRequest
-	{
-	public:
-
-		PositionUpdateRequest (AbstractView* source, AbstractView* target)
-		: GeometryUpdateRequest(source, target), m_position(0)
-		{
-		}
-
-		PositionUpdateRequest (AbstractView* source, AbstractView* target, const Point* pos)
-		: GeometryUpdateRequest(source, target), m_position(pos)
-		{
-
-		}
-
-		const Point* position() const
-		{
-			return m_position;
-		}
-
-		void set_position (const Point* pos)
-		{
-			m_position = pos;
-		}
-
-	private:
-
-		const Point* m_position;
-	};
-
-	class VisibilityUpdateRequest: public GeometryUpdateRequest
-	{
-	public:
-
-		VisibilityUpdateRequest (AbstractView* source, AbstractView* target)
-		: GeometryUpdateRequest(source, target), m_visibility(0)
-		{
-
-		}
-
-		VisibilityUpdateRequest (AbstractView* source, AbstractView* target, const bool* visibility)
-		: GeometryUpdateRequest(source, target), m_visibility (visibility)
-		{
-
-		}
-
-		const bool* visibility () const
-		{
-			return m_visibility;
-		}
-
-		void set_visibility (const bool* visibility)
-		{
-			m_visibility = visibility;
-		}
-
-	private:
-
-		const bool* m_visibility;
-	};
-
-	// ----------------------------------------------------
-
-	/**
-	 * @brief Abstract class for all views
-	 *
-	 * AbstractView is the base class of all user interface objects in
-	 * BlendInt, it receives mouse, keyboard and other events from the
-	 * window system, and draw a representation of itself with OpenGL
-	 * APIs in the OpenGL Context.
-	 *
-	 * There're 2 main different groups of the sub classes of
-	 * AbstractView:
-	 *
-	 *	- frames
-	 *	- widgets
-	 *
-	 * A Frame inherit from AbstractFrame and works like a window in
-	 * the desktop, it's used to contains other widgets or other
-	 * frames, dispatch render or input events, and usually manages
-	 * its own projection/view/model matrix to display its sub views.
-	 *
-	 * The other group is called widget. All widgets inherit from
-	 * AbstractWidget. A widget must be contained in a frame for
-	 * display and interact with the user.
-	 *
-	 * @see AbstractFrame
-	 * @see AbstractWidget
-	 * @see Context
-	 *
-	 * @ingroup gui
-	 */
-	class AbstractView: public Object
-	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractView);
-
-	public:
-
-		/**
-		 * @brief The default constructor
-		 */
-		AbstractView ();
-
-		AbstractView (int width, int height);
-
-		/**
-		 * @brief Destructor
-		 */
-		virtual ~AbstractView ();
-
-		Point GetGlobalPosition () const;
-
-		virtual Size GetPreferredSize () const;
-
-		/**
-		 * @brief Resize the view
-		 * @param[in] width The new width of the view
-		 * @param[in] height The new height of the view
-		 *
-		 * Call Update() to check the parameters, if valid, resize the
-		 * view.
-		 */
-		void Resize (int width, int height);
-
-		/**
-		 * @brief Resize the view
-		 * @param[in] size The new size of the view
-		 *
-		 * Call Update() to check the parameters, if valid, resize the
-		 * view.
-		 */
-		void Resize (const Size& size);
-
-		void MoveTo (int x, int y);
-
-		void MoveTo (const Point& pos);
-
-		void SetVisible (bool visible);
-
-		void RequestRedraw ();
-
-		AbstractView* operator [] (int i) const;
-
-		AbstractView* GetSubViewAt (int i) const;
-
-		const Point& position () const
-		{
-			return position_;
-		}
-
-		virtual bool IsExpandX () const
-		{
-			return false;
-		}
-
-		virtual bool IsExpandY () const
-		{
-			return false;
-		}
-
-		virtual bool Contain (const Point& point) const;
-
-		// always return (0, 0) except AbstractScrollable
-		virtual Point GetOffset () const
-		{
-			return Point(0, 0);
-		}
-
-		const Size& size () const
-		{
-			return size_;
-		}
-
-		inline bool visiable () const
-		{
-		  return visible_;
-		}
-
-		inline bool managed () const
-		{
-		  return managed_;
-		}
-
-		inline bool refresh () const
-		{
-		  return refresh_;
-		}
-
-		inline int subs_count () const
-		{
-			return subs_count_;
-		}
-
-		inline AbstractView* superview() const
-		{
-			return superview_;
-		}
-
-		inline AbstractView* previous_view () const
-		{
-			return previous_view_;
-		}
-
-		inline AbstractView* next_view () const
-		{
-			return next_view_;
-		}
-
-		inline AbstractView* first_subview () const
-		{
-			return first_subview_;
-		}
-
-		inline AbstractView* last_subview () const
-		{
-			return last_subview_;
-		}
-
-		static void MoveToFirst (AbstractView* view);
-
-		static void MoveToLast (AbstractView* view);
-
-		static void MoveForward (AbstractView* view);
-
-		static void MoveBackward (AbstractView* view);
-
-		static void SetDefaultBorderWidth (float border);
-
-		static inline float default_border_width ()
-		{
-			return kBorderWidth;
-		}
+  class SizeUpdateRequest: public GeometryUpdateRequest
+  {
+  public:
+
+    SizeUpdateRequest (AbstractView* source, AbstractView* target)
+        : GeometryUpdateRequest(source, target), m_size(0)
+    {
+    }
+
+    SizeUpdateRequest (AbstractView* source,
+                       AbstractView* target,
+                       const Size* size)
+        : GeometryUpdateRequest(source, target), m_size(size)
+    {
+
+    }
+
+    const Size* size () const
+    {
+      return m_size;
+    }
+
+    void set_size (const Size* size)
+    {
+      m_size = size;
+    }
+
+  private:
+
+    const Size* m_size;
+  };
+
+  class PositionUpdateRequest: public GeometryUpdateRequest
+  {
+  public:
+
+    PositionUpdateRequest (AbstractView* source, AbstractView* target)
+        : GeometryUpdateRequest(source, target), m_position(0)
+    {
+    }
+
+    PositionUpdateRequest (AbstractView* source,
+                           AbstractView* target,
+                           const Point* pos)
+        : GeometryUpdateRequest(source, target), m_position(pos)
+    {
+
+    }
+
+    const Point* position () const
+    {
+      return m_position;
+    }
+
+    void set_position (const Point* pos)
+    {
+      m_position = pos;
+    }
+
+  private:
+
+    const Point* m_position;
+  };
+
+  class VisibilityUpdateRequest: public GeometryUpdateRequest
+  {
+  public:
+
+    VisibilityUpdateRequest (AbstractView* source, AbstractView* target)
+        : GeometryUpdateRequest(source, target), m_visibility(0)
+    {
+
+    }
+
+    VisibilityUpdateRequest (AbstractView* source,
+                             AbstractView* target,
+                             const bool* visibility)
+        : GeometryUpdateRequest(source, target), m_visibility(visibility)
+    {
+
+    }
+
+    const bool* visibility () const
+    {
+      return m_visibility;
+    }
+
+    void set_visibility (const bool* visibility)
+    {
+      m_visibility = visibility;
+    }
+
+  private:
+
+    const bool* m_visibility;
+  };
+
+  // ----------------------------------------------------
+
+  /**
+   * @brief Abstract class for all views
+   *
+   * AbstractView is the base class of all user interface objects in
+   * BlendInt, it receives mouse, keyboard and other events from the
+   * window system, and draw a representation of itself with OpenGL
+   * APIs in the OpenGL Context.
+   *
+   * There're 2 main different groups of the sub classes of
+   * AbstractView:
+   *
+   *	- frames
+   *	- widgets
+   *
+   * A Frame inherit from AbstractFrame and works like a window in
+   * the desktop, it's used to contains other widgets or other
+   * frames, dispatch render or input events, and usually manages
+   * its own projection/view/model matrix to display its sub views.
+   *
+   * The other group is called widget. All widgets inherit from
+   * AbstractWidget. A widget must be contained in a frame for
+   * display and interact with the user.
+   *
+   * @see AbstractFrame
+   * @see AbstractWidget
+   * @see Context
+   *
+   * @ingroup gui
+   */
+  class AbstractView: public Object
+  {
+  DISALLOW_COPY_AND_ASSIGN(AbstractView);
+
+  public:
+
+    /**
+     * @brief The default constructor
+     */
+    AbstractView ();
+
+    AbstractView (int width, int height);
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~AbstractView ();
+
+    Point GetGlobalPosition () const;
+
+    virtual Size GetPreferredSize () const;
+
+    /**
+     * @brief Resize the view
+     * @param[in] width The new width of the view
+     * @param[in] height The new height of the view
+     *
+     * Call Update() to check the parameters, if valid, resize the
+     * view.
+     */
+    void Resize (int width, int height);
+
+    /**
+     * @brief Resize the view
+     * @param[in] size The new size of the view
+     *
+     * Call Update() to check the parameters, if valid, resize the
+     * view.
+     */
+    void Resize (const Size& size);
+
+    void MoveTo (int x, int y);
+
+    void MoveTo (const Point& pos);
+
+    void SetVisible (bool visible);
+
+    void RequestRedraw ();
+
+    AbstractView* operator [] (int i) const;
+
+    AbstractView* GetSubViewAt (int i) const;
+
+    const Point& position () const
+    {
+      return position_;
+    }
+
+    virtual bool IsExpandX () const
+    {
+      return false;
+    }
+
+    virtual bool IsExpandY () const
+    {
+      return false;
+    }
+
+    virtual bool Contain (const Point& point) const;
+
+    // always return (0, 0) except AbstractScrollable
+    virtual Point GetOffset () const
+    {
+      return Point(0, 0);
+    }
+
+    const Size& size () const
+    {
+      return size_;
+    }
+
+    inline bool visiable () const
+    {
+      return visible_;
+    }
+
+    inline bool managed () const
+    {
+      return managed_;
+    }
+
+    inline bool refresh () const
+    {
+      return refresh_;
+    }
+
+    inline int subs_count () const
+    {
+      return subs_count_;
+    }
+
+    inline AbstractView* superview () const
+    {
+      return superview_;
+    }
+
+    inline AbstractView* previous_view () const
+    {
+      return previous_view_;
+    }
+
+    inline AbstractView* next_view () const
+    {
+      return next_view_;
+    }
+
+    inline AbstractView* first_subview () const
+    {
+      return first_subview_;
+    }
+
+    inline AbstractView* last_subview () const
+    {
+      return last_subview_;
+    }
+
+    static void MoveToFirst (AbstractView* view);
+
+    static void MoveToLast (AbstractView* view);
+
+    static void MoveForward (AbstractView* view);
+
+    static void MoveBackward (AbstractView* view);
+
+    static void SetDefaultBorderWidth (float border);
+
+    static inline float default_border_width ()
+    {
+      return kBorderWidth;
+    }
 
 #ifdef DEBUG
 
-		inline void set_name (const char* name)
-		{
-			name_ = name;
-		}
+    inline void set_name (const char* name)
+    {
+      name_ = name;
+    }
 
-		inline void set_name (const std::string& name)
-		{
-			name_ = name;
-		}
+    inline void set_name (const std::string& name)
+    {
+      name_ = name;
+    }
 
-		const std::string& name () const {return name_;}
+    const std::string& name () const
+    {
+      return name_;
+    }
 
 #endif
 
-	protected:
+  protected:
 
-		/**
-		 * @brief preset the position of this view
-		 * @param x
-		 * @param y
-		 *
-		 * @note this function should be called only in the constructor of subclass
-		 * to set the position without through Update() for performance.
-		 */
-		void set_position (int x, int y)
-		{
-			position_.reset(x, y);
-		}
+    /**
+     * @brief preset the position of this view
+     * @param x
+     * @param y
+     *
+     * @note this function should be called only in the constructor of subclass
+     * to set the position without through Update() for performance.
+     */
+    void set_position (int x, int y)
+    {
+      position_.reset(x, y);
+    }
 
-		/**
-		 * @brief preset the position of this view
-		 * @param pos
-		 *
-		 * @note this function should be called only in the constructor of subclass
-		 * to set the position without through Update() for performance.
-		 */
-		void set_position (const Point& pos)
-		{
-			position_ = pos;
-		}
+    /**
+     * @brief preset the position of this view
+     * @param pos
+     *
+     * @note this function should be called only in the constructor of subclass
+     * to set the position without through Update() for performance.
+     */
+    void set_position (const Point& pos)
+    {
+      position_ = pos;
+    }
 
-		/**
-		 * @brief preset the size of the form
-		 * @param width
-		 * @param height
-		 *
-		 * @note this function should be called only in the constructor of subclass to set
-		 * the size without through Update() for performance.
-		 */
-		inline void set_size (int width, int height)
-		{
-			size_.reset(width, height);
-		}
+    /**
+     * @brief preset the size of the form
+     * @param width
+     * @param height
+     *
+     * @note this function should be called only in the constructor of subclass to set
+     * the size without through Update() for performance.
+     */
+    inline void set_size (int width, int height)
+    {
+      size_.reset(width, height);
+    }
 
-		/**
-		 * @brief preset the size of the form
-		 * @param size
-		 *
-		 * @note this function should be called only in the constructor of subclass to set
-		 * the size without through Update() for performance.
-		 */
-		inline void set_size (const Size& size)
-		{
-			size_ = size;
-		}
+    /**
+     * @brief preset the size of the form
+     * @param size
+     *
+     * @note this function should be called only in the constructor of subclass to set
+     * the size without through Update() for performance.
+     */
+    inline void set_size (const Size& size)
+    {
+      size_ = size;
+    }
 
-		inline void set_visible (bool visiable)
-		{
-		  visible_ = visiable;
-		}
+    inline void set_visible (bool visiable)
+    {
+      visible_ = visiable;
+    }
 
-		inline void set_refresh (bool refresh)
-		{
-		  refresh_ = refresh;
-		}
+    inline void set_refresh (bool refresh)
+    {
+      refresh_ = refresh;
+    }
 
-		virtual bool PreDraw (AbstractWindow* context) = 0;
+    virtual bool PreDraw (AbstractWindow* context) = 0;
 
-		virtual Response Draw (AbstractWindow* context) = 0;
+    virtual Response Draw (AbstractWindow* context) = 0;
 
-		virtual void PostDraw (AbstractWindow* context) = 0;
+    virtual void PostDraw (AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOn (AbstractWindow* context) = 0;
+    virtual void PerformFocusOn (AbstractWindow* context) = 0;
 
-		virtual void PerformFocusOff (AbstractWindow* context) = 0;
+    virtual void PerformFocusOff (AbstractWindow* context) = 0;
 
-		virtual void PerformHoverIn (AbstractWindow* context) = 0;
+    virtual void PerformHoverIn (AbstractWindow* context) = 0;
 
-		virtual void PerformHoverOut (AbstractWindow* context) = 0;
+    virtual void PerformHoverOut (AbstractWindow* context) = 0;
 
-		virtual Response PerformKeyPress (AbstractWindow* context) = 0;
+    virtual Response PerformKeyPress (AbstractWindow* context) = 0;
 
-		virtual Response PerformContextMenuPress (AbstractWindow* context) = 0;
+    virtual Response PerformContextMenuPress (AbstractWindow* context) = 0;
 
-		virtual Response PerformContextMenuRelease (AbstractWindow* context) = 0;
+    virtual Response PerformContextMenuRelease (AbstractWindow* context) = 0;
 
-		virtual Response PerformMousePress (AbstractWindow* context) = 0;
+    virtual Response PerformMousePress (AbstractWindow* context) = 0;
 
-		virtual Response PerformMouseRelease (AbstractWindow* context) = 0;
+    virtual Response PerformMouseRelease (AbstractWindow* context) = 0;
 
-		virtual Response PerformMouseMove (AbstractWindow* context) = 0;
+    virtual Response PerformMouseMove (AbstractWindow* context) = 0;
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+    virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+    virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
+    virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
+    virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
-		void ReportSizeUpdate (const SizeUpdateRequest& request);
+    bool PushFrontSubView (AbstractView* view);
 
-		void ReportPositionUpdate (const PositionUpdateRequest& request);
+    bool InsertSubView (int index, AbstractView* view);
 
-		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
+    bool PushBackSubView (AbstractView* view);
 
-		bool PushFrontSubView (AbstractView* view);
+    virtual bool RemoveSubView (AbstractView* view);
 
-		bool InsertSubView (int index, AbstractView* view);
+    virtual void PerformAfterAdded ();
 
-		bool PushBackSubView (AbstractView* view);
+    virtual void PerformBeforeRemoved ();
 
-		virtual bool RemoveSubView (AbstractView* view);
+    void ClearSubViews ();
 
-		void ClearSubViews ();
+    void ReportSizeUpdate (const SizeUpdateRequest& request);
 
-		void ResizeSubView (AbstractView* sub, int width, int height);
+    void ReportPositionUpdate (const PositionUpdateRequest& request);
 
-		void ResizeSubView (AbstractView* sub, const Size& size);
+    void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
 
-		void MoveSubViewTo (AbstractView* sub, int x, int y);
+    void ResizeSubView (AbstractView* sub, int width, int height);
 
-		void MoveSubViewTo (AbstractView* sub, const Point& pos);
+    void ResizeSubView (AbstractView* sub, const Size& size);
 
-		void SetSubViewVisibility (AbstractView* sub, bool visible);
+    void MoveSubViewTo (AbstractView* sub, int x, int y);
 
-		void DrawSubViewsOnce (AbstractWindow* context);
+    void MoveSubViewTo (AbstractView* sub, const Point& pos);
 
-		/**
-		* @brief Swap 2 views' position in their superview
-		*
-		* The 2 views must have the same superview, otherwise, this function just retern false and do nothing.
-		*/
-		static bool SwapIndex(AbstractView *view1, AbstractView *view2);
+    void SetSubViewVisibility (AbstractView* sub, bool visible);
 
-		static bool InsertSiblingBefore (AbstractView* src, AbstractView* dst);
+    void DrawSubViewsOnce (AbstractWindow* context);
 
-		static bool InsertSiblingAfter (AbstractView* src, AbstractView* dst);
+    /**
+     * @brief Swap 2 views' position in their superview
+     *
+     * The 2 views must have the same superview, otherwise, this function just retern false and do nothing.
+     */
+    static bool SwapIndex (AbstractView *view1, AbstractView *view2);
 
-		static void GenerateVertices (
-				const Size& size,
-				float border,
-				int round_type,
-				float radius,
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    static bool InsertSiblingBefore (AbstractView* src, AbstractView* dst);
 
-		static void GenerateVertices (
-				const Size& size,
-				float border,
-				int round_type,
-				float radius,
-				Orientation shadedir,
-				short shadetop,
-				short shadedown,
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    static bool InsertSiblingAfter (AbstractView* src, AbstractView* dst);
 
-		static int GetOutlineVertices (int round_type);
+    static void GenerateVertices (const Size& size,
+                                  float border,
+                                  int round_type,
+                                  float radius,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-		/**
-		 * @brief Used to get emboss vertices
-		 * @return
-		 */
-		static int GetHalfOutlineVertices (int round_type);
+    static void GenerateVertices (const Size& size,
+                                  float border,
+                                  int round_type,
+                                  float radius,
+                                  Orientation shadedir,
+                                  short shadetop,
+                                  short shadedown,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-	private:
+    static int GetOutlineVertices (int round_type);
 
-		friend class AbstractWindow;
-		friend class AbstractFrame;
-		friend class AbstractWidget;
-		friend class AbstractAdjustment;
+    /**
+     * @brief Used to get emboss vertices
+     * @return
+     */
+    static int GetHalfOutlineVertices (int round_type);
 
-		template <typename T> friend T* Manage (T* obj, bool val);
+  private:
 
-		enum ViewFlagIndex {
+    friend class AbstractWindow;
+    friend class AbstractFrame;
+    friend class AbstractWidget;
+    friend class AbstractAdjustment;
 
-			ViewManaged = (1 << 0),
+    template<typename T> friend T* Manage (T* obj, bool val);
 
-			ViewVisible = (1 << 1),
+    enum ViewFlagIndex
+    {
 
-			// only valid when use off-screen render in container
-			ViewRefresh = (1 << 2),
+      ViewManaged = (1 << 0),
 
-		};
+      ViewVisible = (1 << 1),
 
-		/**
-		 * @brief Dispatch draw
-		 * @param[in] view
-		 * @param[in] profile
-		 * @param[in] use_parent_status
-		 * 	- true: use superview refresh() status to set view's refresh flag
-		 * 	- false: set view's flag to false after Draw()
-		 */
-		static void DispatchDrawEvent (AbstractView* view, AbstractWindow* context);
+      // only valid when use off-screen render in container
+      ViewRefresh = (1 << 2),
 
-		static void GenerateTriangleStripVertices (
-						const std::vector<GLfloat>* inner,
-						const std::vector<GLfloat>* edge,
-						unsigned int num,
-						std::vector<GLfloat>* strip);
+    };
 
-		static inline float make_shaded_offset (short shadetop, short shadedown, float fact);
+    /**
+     * @brief Dispatch draw
+     * @param[in] view
+     * @param[in] profile
+     * @param[in] use_parent_status
+     * 	- true: use superview refresh() status to set view's refresh flag
+     * 	- false: set view's flag to false after Draw()
+     */
+    static void DispatchDrawEvent (AbstractView* view, AbstractWindow* context);
 
-		inline void set_manage (bool value)
-		{
-		  managed_ = value;
-		}
+    static void GenerateTriangleStripVertices (const std::vector<GLfloat>* inner,
+                                               const std::vector<GLfloat>* edge,
+                                               unsigned int num,
+                                               std::vector<GLfloat>* strip);
 
-		bool managed_;
+    static inline float make_shaded_offset (short shadetop,
+                                            short shadedown,
+                                            float fact);
 
-		bool visible_;
+    inline void set_manage (bool value)
+    {
+      managed_ = value;
+    }
 
-		bool refresh_;
+    bool managed_;
+
+    bool visible_;
+
+    bool refresh_;
 
     int subs_count_;  // count of sub widgets
 
-		AbstractView* superview_;
+    AbstractView* superview_;
 
-		AbstractView* previous_view_;
+    AbstractView* previous_view_;
 
-		AbstractView* next_view_;
+    AbstractView* next_view_;
 
-		/**
-		 * @brief The first sub view
-		 */
-		AbstractView* first_subview_;
+    /**
+     * @brief The first sub view
+     */
+    AbstractView* first_subview_;
 
-		AbstractView* last_subview_;
+    AbstractView* last_subview_;
 
     Point position_;
 
     Size size_;
 
 #ifdef DEBUG
-		std::string name_;
+    std::string name_;
 #endif
 
-		static boost::mutex kRefreshMutex;
+    static boost::mutex kRefreshMutex;
 
-		static float kBorderWidth;
+    static float kBorderWidth;
 
-		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+    static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
-	};
+  };
 
 } /* namespace BlendInt */

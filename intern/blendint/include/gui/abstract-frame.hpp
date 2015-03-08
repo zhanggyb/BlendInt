@@ -23,9 +23,8 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include <boost/smart_ptr.hpp>
+#include <glm/glm.hpp>
 
 #include <gui/view-buffer.hpp>
 #include <gui/abstract-view.hpp>
@@ -56,9 +55,9 @@ namespace BlendInt {
 
     friend class AbstractWindow;
 
-    AbstractFrame (int flag = FrameFocusable);
+    AbstractFrame (int flag = FrameFocusableMask);
 
-    AbstractFrame (int width, int height, int flag = FrameFocusable);
+    AbstractFrame (int width, int height, int flag = FrameFocusableMask);
 
     virtual ~AbstractFrame ();
 
@@ -72,12 +71,12 @@ namespace BlendInt {
 
     inline bool focusable () const
     {
-      return frame_flag_ & FrameFocusable;
+      return frame_flag_ & FrameFocusableMask;
     }
 
     inline bool floating () const
     {
-      return frame_flag_ & FrameFloating;
+      return frame_flag_ & FrameFloatingMask;
     }
 
     Cpp::EventRef<AbstractFrame*> destroyed ()
@@ -96,24 +95,24 @@ namespace BlendInt {
     virtual Response PerformMouseHover (AbstractWindow* context) = 0;
 
     Response RecursiveDispatchKeyEvent (AbstractView* view,
-        AbstractWindow* context);
+                                        AbstractWindow* context);
 
     AbstractView* RecursiveDispatchMousePress (AbstractView* view,
-        AbstractWindow* context);
+                                               AbstractWindow* context);
 
     Response RecursiveDispatchMouseMoveEvent (AbstractView* view,
-        AbstractWindow* context);
+                                              AbstractWindow* context);
 
     Response RecursiveDispatchMouseReleaseEvent (AbstractView* view,
-        AbstractWindow* context);
+                                                 AbstractWindow* context);
 
     AbstractWidget* DispatchHoverEventsInWidgets (AbstractWidget* orig,
-        AbstractWindow* context);
+                                                  AbstractWindow* context);
 
     void ClearHoverWidgets (AbstractView* hovered_widget);
 
     void ClearHoverWidgets (AbstractView* hovered_widget,
-        AbstractWindow* context);
+                            AbstractWindow* context);
 
     inline const RefPtr<ViewBuffer>& view_buffer () const
     {
@@ -135,25 +134,25 @@ namespace BlendInt {
     }
 
     static inline Response dispatch_key_press (AbstractView* view,
-        AbstractWindow* context)
+                                               AbstractWindow* context)
     {
       return view->PerformKeyPress(context);
     }
 
     static inline Response dispatch_mouse_press (AbstractView* view,
-        AbstractWindow* context)
+                                                 AbstractWindow* context)
     {
       return view->PerformMousePress(context);
     }
 
     static inline Response dispatch_mouse_release (AbstractView* view,
-        AbstractWindow* context)
+                                                   AbstractWindow* context)
     {
       return view->PerformMouseRelease(context);
     }
 
     static inline Response dispatch_mouse_move (AbstractView* view,
-        AbstractWindow* context)
+                                                AbstractWindow* context)
     {
       return view->PerformMouseMove(context);
     }
@@ -169,19 +168,19 @@ namespace BlendInt {
     }
 
     static inline void dispatch_mouse_hover_in (AbstractView* view,
-        AbstractWindow* context)
+                                                AbstractWindow* context)
     {
       view->PerformHoverIn(context);
     }
 
     static inline void dispatch_mouse_hover_out (AbstractView* view,
-        AbstractWindow* context)
+                                                 AbstractWindow* context)
     {
       view->PerformHoverOut(context);
     }
 
     static inline Response dispatch_mouse_hover (AbstractFrame* frame,
-        AbstractWindow* context)
+                                                 AbstractWindow* context)
     {
       return frame->PerformMouseHover(context);
     }
@@ -193,30 +192,42 @@ namespace BlendInt {
      * @param[out] texture
      */
     static bool RenderSubFramesToTexture (AbstractFrame* frame,
-        AbstractWindow* context, const glm::mat4& projection,
-        const glm::mat3& model, GLTexture2D* texture);
+                                          AbstractWindow* context,
+                                          const glm::mat4& projection,
+                                          const glm::mat3& model,
+                                          GLTexture2D* texture);
 
   private:
 
     friend class FrameSplitter;
 
-    enum FrameFlagIndex
+    enum FrameFlagMask
     {
 
       /**
        * whether the frame can be focused
        */
-      FrameFocusable = (1 << 0),
+      FrameFocusableMask = (1 << 0),
 
       /**
        * whether the frame is floating above other regular frames, also called always-on-top.
        */
-      FrameFloating = (1 << 1)
+      FrameFloatingMask = (1 << 1)
 
     };
 
+    /**
+     * this frame is the superview of orig
+     */
+    AbstractWidget* RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig, AbstractWindow* context);
+
+    AbstractWidget* RecheckAndDispatchTopHoveredWidget (Rect& rect, AbstractWidget* orig, AbstractWindow* context);
+
+    AbstractWidget* FindAndDispatchTopHoveredWidget (AbstractWindow* context);
+
+
     AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* view,
-        AbstractWindow* context);
+                                                 AbstractWindow* context);
 
     uint32_t frame_flag_;
 

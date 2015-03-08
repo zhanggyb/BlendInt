@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <stdexcept>
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -59,25 +61,31 @@ namespace BlendInt {
       assert(last_subview_ == 0);
     }
 
-    if (superview_)
-      superview_->RemoveSubView(this);
+    if (superview_) superview_->RemoveSubView(this);
 
     destroyed_->fire(this);
   }
 
   Point AbstractFrame::GetAbsolutePosition (const AbstractWidget* widget)
   {
-#ifdef DEBUG
-    assert(widget);
-#endif
+    if (widget == nullptr)
+      throw std::invalid_argument("Argument cannot be a nullptr!");
 
     Point pos = widget->position();
-
+    AbstractFrame* frame = 0;
     AbstractView* p = widget->superview();
-    while (p && (p != this)) {
+    while (p) {
+
+      frame = dynamic_cast<AbstractFrame*>(p);
+      if (frame) break;
+
       pos = pos + p->position() + p->GetOffset();
       p = p->superview();
+
     }
+
+    if (frame != this)
+      throw std::out_of_range("Widget is not contained in this frame!");
 
     pos = pos + position() + GetOffset();
     return pos;
@@ -85,17 +93,25 @@ namespace BlendInt {
 
   Point AbstractFrame::GetRelativePosition (const AbstractWidget* widget)
   {
-#ifdef DEBUG
-    assert(widget);
-#endif
+    if (widget == nullptr)
+      throw std::invalid_argument("Argument cannot be a nullptr!");
 
     Point pos = widget->position();
-
+    AbstractFrame* frame = 0;
     AbstractView* p = widget->superview();
-    while (p && (p != this)) {
+
+    while (p) {
+
+      frame = dynamic_cast<AbstractFrame*>(p);
+      if (frame) break;
+
       pos = pos + p->position() + p->GetOffset();
       p = p->superview();
+
     }
+
+    if (frame != this)
+      throw std::out_of_range("Widget is not contained in this frame!");
 
     return pos;
   }
@@ -133,8 +149,7 @@ namespace BlendInt {
     } else {
       while (container) {
         frame = dynamic_cast<AbstractFrame*>(container);
-        if (frame)
-          break;
+        if (frame) break;
         container = container->superview();
       }
     }
@@ -153,7 +168,7 @@ namespace BlendInt {
   }
 
   Response AbstractFrame::RecursiveDispatchKeyEvent (AbstractView* subview,
-      AbstractWindow* context)
+                                                     AbstractWindow* context)
   {
     if (subview == this) {
       return Ignore;
@@ -175,8 +190,8 @@ namespace BlendInt {
     }
   }
 
-  AbstractView* AbstractFrame::RecursiveDispatchMousePress (
-      AbstractView* subview, AbstractWindow* context)
+  AbstractView* AbstractFrame::RecursiveDispatchMousePress (AbstractView* subview,
+                                                            AbstractWindow* context)
   {
     if (subview == this) {
       return 0;
@@ -207,8 +222,8 @@ namespace BlendInt {
     }
   }
 
-  Response AbstractFrame::RecursiveDispatchMouseMoveEvent (
-      AbstractView* subview, AbstractWindow* context)
+  Response AbstractFrame::RecursiveDispatchMouseMoveEvent (AbstractView* subview,
+                                                           AbstractWindow* context)
   {
     if (subview == this) {
       return Ignore;
@@ -229,8 +244,8 @@ namespace BlendInt {
     }
   }
 
-  Response AbstractFrame::RecursiveDispatchMouseReleaseEvent (
-      AbstractView* subview, AbstractWindow* context)
+  Response AbstractFrame::RecursiveDispatchMouseReleaseEvent (AbstractView* subview,
+                                                              AbstractWindow* context)
   {
     if (subview == this) {
       return Ignore;
@@ -252,164 +267,240 @@ namespace BlendInt {
     }
   }
 
-  AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets (
-      AbstractWidget* orig, AbstractWindow* context)
+  AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets (AbstractWidget* orig,
+                                                               AbstractWindow* context)
   {
-    AbstractWidget* hovered_widget = orig;
-    AbstractWidget* tmp = 0;
-
     context->register_active_frame(this);
-    Point offset;
 
     // find the new top hovered widget
-    if (hovered_widget != nullptr) {
+    if (orig != nullptr) {
 
-      AbstractView* superview = hovered_widget->superview();
-      Rect rect;
-
-      AbstractWidget* widget = dynamic_cast<AbstractWidget*>(superview);
-      if (widget) {
-        rect.set_position(GetAbsolutePosition(widget));
-        rect.set_size(widget->size());
-      } else {
-        assert(superview == this);
-        rect.set_position(position());
-        rect.set_size(size());
+      if (orig->superview() == 0) { // the widget is just removed from this frame
+        return FindAndDispatchTopHoveredWidget(context);
       }
 
-      bool hovered = rect.contains(context->GetGlobalCursorPosition());
+      if (orig->superview() == this) {
+        return RecheckAndDispatchTopHoveredWidget(orig, context);
+      }
 
-      if (hovered) {
+      Rect rect;
+      try {
+        rect.set_position(
+            GetAbsolutePosition(
+                dynamic_cast<AbstractWidget*>(orig->superview())));
+        rect.set_size(orig->size());
+      }
 
-        offset = superview->GetOffset();
-        context->set_local_cursor_position(
-            context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
-            context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
+      catch (const std::bad_cast& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
 
-        if (hovered_widget->Contain(context->local_cursor_position())) {
-          hovered_widget = RecursiveDispatchHoverEvent(hovered_widget, context);
-        } else {
+      catch (const std::invalid_argument& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
 
-          dispatch_mouse_hover_out(hovered_widget, context);
+      catch (const std::out_of_range& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
 
-          // find which contianer contains cursor position
-          while (superview) {
+      return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
 
-            if (superview == this) {// FIXME: the widget may be mvoed to another context
-              superview = 0;
-              break;
-            }
+    } else {
 
-            offset = superview->GetOffset();
-            context->set_local_cursor_position(
-                context->local_cursor_position().x() + superview->position().x()
-                    + offset.x(),
-                context->local_cursor_position().y() + superview->position().y()
-                    + offset.y());
+      return FindAndDispatchTopHoveredWidget(context);
 
-            if (superview->Contain(context->local_cursor_position()))
-              break;
+    }
+  }
 
-            superview = superview->superview();
-          }
+  AbstractWidget* AbstractFrame::RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
+                                                                  AbstractWindow* context)
+  {
+    assert(orig->superview() == this);
 
-          hovered_widget = dynamic_cast<AbstractWidget*>(superview);
+    AbstractWidget* result = orig;
+    Point offset;
+    Rect rect;
 
-          if (hovered_widget) {
-            hovered_widget = RecursiveDispatchHoverEvent(hovered_widget,
-                context);
-          }
+    rect.set_position(position());
+    rect.set_size(size());
 
-        }
+    bool cursor_in_frame = rect.contains(context->GetGlobalCursorPosition());
 
+    if (cursor_in_frame) {
+
+      offset = GetOffset();
+      context->set_local_cursor_position(
+          context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
+          context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
+
+      if (result->Contain(context->local_cursor_position())) {
+        result = RecursiveDispatchHoverEvent(result, context);
+      } else {
+        dispatch_mouse_hover_out(result, context);
+        result = FindAndDispatchTopHoveredWidget(context);
+      }
+
+    } else {
+
+      dispatch_mouse_hover_out(result, context);
+      result = 0;
+
+    }
+
+    return result;
+  }
+
+  AbstractWidget* AbstractFrame::RecheckAndDispatchTopHoveredWidget (Rect& rect,
+                                                                  AbstractWidget* orig,
+                                                                  AbstractWindow* context)
+  {
+    assert(orig);
+    assert(orig->superview() && orig->superview() != this);
+
+    AbstractWidget* result = orig;
+    AbstractView* super_view = result->superview();
+    AbstractWidget* super_widget = dynamic_cast<AbstractWidget*>(super_view);
+    Point offset;
+
+    bool cursor_in_superview = rect.contains(
+        context->GetGlobalCursorPosition());
+
+    if (cursor_in_superview) {
+
+      offset = super_view->GetOffset();
+      context->set_local_cursor_position(
+          context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
+          context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
+
+      if (result->Contain(context->local_cursor_position())) {
+        result = RecursiveDispatchHoverEvent(result, context);
       } else {
 
-        dispatch_mouse_hover_out(hovered_widget, context);
+        dispatch_mouse_hover_out(result, context);
 
         // find which contianer contains cursor position
-        superview = superview->superview();
-        while (superview != nullptr) {
+        while (super_view) {
 
-          if (superview == this) {// FIXME: the widget may be mvoed to another context
-            superview = nullptr;
+          if (super_view == this) {
+            super_view = 0;
             break;
           }
 
-          widget = dynamic_cast<AbstractWidget*>(superview);
-          if (widget) {
-            rect.set_position(GetAbsolutePosition(widget));
-            rect.set_size(widget->size());
-          } else {
-            assert(superview == this);
-            rect.set_position(position());
-            rect.set_size(size());
-          }
-
-          offset = superview->GetOffset();
+          offset = super_view->GetOffset();
           context->set_local_cursor_position(
-              context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
-              context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
+              context->local_cursor_position().x() + super_view->position().x()
+                  + offset.x(),
+              context->local_cursor_position().y() + super_view->position().y()
+                  + offset.y());
 
-          if (rect.contains(context->GetGlobalCursorPosition()))
-            break;
+          if (super_view->Contain(context->local_cursor_position())) break;
 
-          superview = superview->superview();
+          super_view = super_view->superview();
         }
 
-        hovered_widget = dynamic_cast<AbstractWidget*>(superview);
-        if (hovered_widget) {
-          for (AbstractView* p = widget->last_subview(); p; p =
-              p->previous_view()) {
+        result = dynamic_cast<AbstractWidget*>(super_view);
 
-            tmp = dynamic_cast<AbstractWidget*>(p);
-
-            if (tmp) {
-              if (p->visiable()
-                  && p->Contain(context->local_cursor_position())) {
-                hovered_widget = tmp;
-
-                dispatch_mouse_hover_in(hovered_widget, context);
-                hovered_widget = RecursiveDispatchHoverEvent(hovered_widget,
-                    context);
-
-                break;
-              }
-            } else {
-              break;
-            }
-          }
+        if (result) {
+          result = RecursiveDispatchHoverEvent(result, context);
         }
 
       }
 
     } else {
 
-      offset = GetOffset();
-      context->set_local_cursor_position(
-          context->GetGlobalCursorPosition().x() - position().x() - offset.x(),
-          context->GetGlobalCursorPosition().y() - position().y() - offset.y());
+      dispatch_mouse_hover_out(result, context);
 
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
-        tmp = dynamic_cast<AbstractWidget*>(p);
+      // find which contianer contains cursor position
+      super_view = super_view->superview();
+      while (super_view != nullptr) {
 
-        if (tmp) {
-          if (p->visiable() && p->Contain(context->local_cursor_position())) {
-            hovered_widget = tmp;
-            dispatch_mouse_hover_in(hovered_widget, context);
-            break;
-          }
-        } else {
+        if (super_view == this) {
+          super_view = nullptr;
           break;
         }
+
+        super_widget = dynamic_cast<AbstractWidget*>(super_view);
+        if (super_widget) {
+          rect.set_position(GetAbsolutePosition(super_widget));
+          rect.set_size(super_widget->size());
+        } else {
+          assert(super_view == this);
+          rect.set_position(position());
+          rect.set_size(size());
+        }
+
+        offset = super_view->GetOffset();
+        context->set_local_cursor_position(
+            context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
+            context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
+
+        if (rect.contains(context->GetGlobalCursorPosition())) break;
+
+        super_view = super_view->superview();
       }
 
-      if (hovered_widget) {
-        hovered_widget = RecursiveDispatchHoverEvent(hovered_widget, context);
+      result = dynamic_cast<AbstractWidget*>(super_view);
+      if (result) {
+
+        AbstractWidget* tmp = 0;
+        for (AbstractView* p = super_widget->last_subview(); p;
+            p = p->previous_view()) {
+
+          tmp = dynamic_cast<AbstractWidget*>(p);
+          if (tmp) {
+            if (p->visiable() && p->Contain(context->local_cursor_position())) {
+              result = tmp;
+
+              dispatch_mouse_hover_in(result, context);
+              result = RecursiveDispatchHoverEvent(result, context);
+
+              break;
+            }
+          } else {
+            break;
+          }
+        }
       }
 
     }
 
-    return hovered_widget;
+    return result;
+  }
+
+  AbstractWidget* AbstractFrame::FindAndDispatchTopHoveredWidget (AbstractWindow* context)
+  {
+    AbstractWidget* result = 0;
+    Point offset;
+
+    offset = GetOffset();
+    context->set_local_cursor_position(
+        context->GetGlobalCursorPosition().x() - position().x() - offset.x(),
+        context->GetGlobalCursorPosition().y() - position().y() - offset.y());
+
+    AbstractWidget* tmp = 0;
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+
+      tmp = dynamic_cast<AbstractWidget*>(p);
+      if (tmp) {
+        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+          result = tmp;
+          dispatch_mouse_hover_in(result, context);
+          break;
+        }
+      } else {
+        break;
+      }
+
+    }
+
+    if (result) {
+      result = RecursiveDispatchHoverEvent(result, context);
+    }
+
+    return result;
   }
 
   void AbstractFrame::ClearHoverWidgets (AbstractView* hovered_widget)
@@ -424,7 +515,7 @@ namespace BlendInt {
   }
 
   void AbstractFrame::ClearHoverWidgets (AbstractView* hovered_widget,
-      AbstractWindow* context)
+                                         AbstractWindow* context)
   {
 #ifdef DEBUG
     assert(hovered_widget);
@@ -437,23 +528,25 @@ namespace BlendInt {
   }
 
   bool AbstractFrame::RenderSubFramesToTexture (AbstractFrame* frame,
-      AbstractWindow* context, const glm::mat4& projection,
-      const glm::mat3& model, GLTexture2D* texture)
+                                                AbstractWindow* context,
+                                                const glm::mat4& projection,
+                                                const glm::mat3& model,
+                                                GLTexture2D* texture)
   {
     bool retval = false;
 
     assert(texture != nullptr);
 
     GLTexture2D* tex = texture;
-    if (!tex->id())
-      tex->generate();
+    if (!tex->id()) tex->generate();
 
     tex->bind();
     tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
     tex->SetMinFilter(GL_NEAREST);
     tex->SetMagFilter(GL_NEAREST);
     tex->SetImage(0, GL_RGBA, frame->size().width(), frame->size().height(), 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    GL_RGBA,
+                  GL_UNSIGNED_BYTE, 0);
 
     // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
     GLFramebuffer* fb = new GLFramebuffer;
@@ -462,7 +555,8 @@ namespace BlendInt {
 
     // Set "renderedTexture" as our colour attachement #0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-    GL_TEXTURE_2D, tex->id(), 0);
+    GL_TEXTURE_2D,
+                           tex->id(), 0);
     //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
     // Critical: Create a Depth_STENCIL renderbuffer for this off-screen rendering
@@ -471,12 +565,14 @@ namespace BlendInt {
 
     glBindRenderbuffer(GL_RENDERBUFFER, rb);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-        frame->size().width(), frame->size().height());
+                          frame->size().width(), frame->size().height());
     //Attach depth buffer to FBO
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-    GL_RENDERBUFFER, rb);
+    GL_RENDERBUFFER,
+                              rb);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-    GL_RENDERBUFFER, rb);
+    GL_RENDERBUFFER,
+                              rb);
 
     if (GLFramebuffer::CheckStatus()) {
 
@@ -492,10 +588,10 @@ namespace BlendInt {
       glClearStencil(0);
 
       glClear(
-          GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
       glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
-          GL_ONE_MINUS_SRC_ALPHA);
+      GL_ONE_MINUS_SRC_ALPHA);
       //glEnable(GL_BLEND);
 
       glViewport(0, 0, frame->size().width(), frame->size().height());
@@ -528,8 +624,8 @@ namespace BlendInt {
     return retval;
   }
 
-  AbstractWidget* AbstractFrame::RecursiveDispatchHoverEvent (
-      AbstractWidget* widget, AbstractWindow* context)
+  AbstractWidget* AbstractFrame::RecursiveDispatchHoverEvent (AbstractWidget* widget,
+                                                              AbstractWindow* context)
   {
     AbstractWidget* retval = widget;
     AbstractWidget* tmp = 0;
