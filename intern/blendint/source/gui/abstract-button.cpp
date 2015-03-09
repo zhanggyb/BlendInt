@@ -29,279 +29,270 @@
 
 namespace BlendInt {
 
-	Margin AbstractButton::kPadding = Margin(2, 2, 2, 2);
+  Margin AbstractButton::kPadding = Margin(2, 2, 2, 2);
 
-	int AbstractButton::kIconTextSpace = 2;
+  int AbstractButton::kIconTextSpace = 2;
 
-	AbstractButton::AbstractButton ()
-	: AbstractRoundWidget(),
-	  group_(0)
-	{
+  AbstractButton::AbstractButton ()
+  : AbstractRoundWidget(), button_flags_(0), group_(0)
+  {
 
-	}
+  }
 
-	AbstractButton::AbstractButton(const String& text)
-	: AbstractRoundWidget(),
-	  group_(0)
-	{
-		text_.reset(new Text(text));
-	}
+  AbstractButton::AbstractButton (const String& text)
+  : AbstractRoundWidget(), button_flags_(0), group_(0)
+  {
+    text_.reset(new Text(text));
+  }
 
-	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon)
-	: AbstractRoundWidget(),
-	  group_(0)
-	{
-		icon_ = icon;
-	}
+  AbstractButton::AbstractButton (const RefPtr<AbstractIcon>& icon)
+  : AbstractRoundWidget(), button_flags_(0), group_(0)
+  {
+    icon_ = icon;
+  }
 
-	AbstractButton::AbstractButton(const RefPtr<AbstractIcon>& icon,
-			const String& text)
-	: AbstractRoundWidget(),
-	  group_(0)
-	{
-		icon_ = icon;
-		text_.reset(new Text(text));
-	}
+  AbstractButton::AbstractButton (const RefPtr<AbstractIcon>& icon,
+                                  const String& text)
+  : AbstractRoundWidget(), button_flags_(0), group_(0)
+  {
+    icon_ = icon;
+    text_.reset(new Text(text));
+  }
 
-	AbstractButton::~AbstractButton ()
-	{
+  AbstractButton::~AbstractButton ()
+  {
 
-	}
+  }
 
-	Size AbstractButton::GetPreferredSize () const
-	{
-		int w = 0;
-		int h = 0;
+  Size AbstractButton::GetPreferredSize () const
+  {
+    int w = 0;
+    int h = 0;
 
-		if(icon_) {
-			w = icon_->size().width();
-			h = icon_->size().height();
-		}
+    if (icon_) {
+      w = icon_->size().width();
+      h = icon_->size().height();
+    }
 
-		w += kIconTextSpace;
+    w += kIconTextSpace;
 
-		Font font;	// default font
-		if(text_) {
-			font = text_->font();
-			w += text_->size().width();
-		}
+    Font font;	// default font
+    if (text_) {
+      font = text_->font();
+      w += text_->size().width();
+    }
 
-		h = std::max(h, font.height());
+    h = std::max(h, font.height());
 
-		if (w == kIconTextSpace) {
-			w = h;
-		}
+    if (w == kIconTextSpace) {
+      w = h;
+    }
 
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
 
-		return Size(w, h);
-	}
+    return Size(w, h);
+  }
 
-	void AbstractButton::PerformHoverIn(AbstractWindow* context)
-	{
-		m_status[ButtonHover] = 1;
+  void AbstractButton::PerformHoverIn (AbstractWindow* context)
+  {
+    set_hover(true);
 
-		if(m_status[ButtonPressed]) {
-			m_status[ButtonDown] = 1;
+    if (is_pressed()) {
+      set_down(true);
 
-			if(m_status[ButtonCheckable]) {
-				m_status[ButtonChecked] = !m_status[ButtonChecked];
-			}
-		}
+      if (is_checkable()) {
+        set_checked(!is_checked());
+      }
+    }
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	void AbstractButton::PerformHoverOut(AbstractWindow* context)
-	{
-    m_status[ButtonHover] = 0;
+  void AbstractButton::PerformHoverOut (AbstractWindow* context)
+  {
+    set_hover(false);
 
-		if(m_status[ButtonPressed]) {
-			m_status[ButtonDown] = 0;
+    if (is_pressed()) {
+      set_down(false);
 
-			if(m_status[ButtonCheckable]) {
-				m_status[ButtonChecked] = !m_status[ButtonChecked];
-			}
+      if (is_checkable()) {
+        set_checked(!is_checked());
+      }
+    }
 
-		}
+    RequestRedraw();
+  }
 
-		RequestRedraw();
-	}
+  Response AbstractButton::PerformMousePress (AbstractWindow* context)
+  {
+    if (context->GetMouseButton() == MouseButtonLeft) {
+      set_pressed(true);
+      set_down(true);
 
-	Response AbstractButton::PerformMousePress (AbstractWindow* context)
-	{
-		if (context->GetMouseButton() == MouseButtonLeft) {
-			m_status.set(ButtonPressed);
-			m_status.set(ButtonDown);
+      if (is_checkable()) {
+        set_last_checked(is_checked());
+        set_checked(!is_checked());
+      }
 
-			if (m_status[ButtonCheckable]) {
-				m_status[ButtonLastChecked] = m_status[ButtonChecked];
-				m_status[ButtonChecked] = !m_status[ButtonChecked];
-			}
+      RequestRedraw();
 
-			RequestRedraw();
+      pressed_.fire(this);
+    }
 
-			pressed_.fire(this);
-		}
+    return Finish;
+  }
 
-		return Finish;
-	}
+  Response AbstractButton::PerformMouseRelease (AbstractWindow* context)
+  {
+    if (context->GetMouseButton() == MouseButtonLeft) {
+      int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
 
-	Response AbstractButton::PerformMouseRelease(AbstractWindow* context)
-	{
-		if (context->GetMouseButton() == MouseButtonLeft) {
-			int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
+      if (is_checkable()) {
+        if (is_pressed()) {
+          fire_event = 2;
+        }
+      } else {
+        if (is_pressed() && is_down()) {
+          fire_event = 1;
+        }
+      }
 
-			if (m_status[ButtonCheckable]) {
-				if (m_status[ButtonPressed]) {
-					fire_event = 2;
-				}
-			} else {
-				if (m_status[ButtonPressed] && m_status[ButtonDown]) {
-					fire_event = 1;
-				}
-			}
+      RequestRedraw();
 
-			RequestRedraw();
+      switch (fire_event) {
 
-			switch (fire_event) {
+        case 0:
+          break;
 
-				case 0:
-					break;
+        case 1: {
+          if (group_) {
+            group_->Click(this);
+          } else {
+            clicked_.fire(this);
+          }
+          break;
+        }
 
-				case 1: {
-					if(group_) {
-						group_->Click(this);
-					} else {
-						clicked_.fire(this);
-					}
-					break;
-				}
+        case 2: {
+          if (is_checked() != is_last_checked()) {
 
-				case 2: {
-					if (m_status[ButtonChecked]
-									!= m_status[ButtonLastChecked]) {
+            if (group_) {
+              group_->Toggle(this, is_checked());
+            } else {
+              toggled_.fire(this, is_checked());
+            }
+          }
+          break;
+        }
 
-						if(group_) {
-							group_->Toggle(this, m_status[ButtonChecked]);
-						} else {
-							toggled_.fire(this, m_status[ButtonChecked]);
-						}
-					}
-					break;
-				}
+        default:
+          break;
+      }
 
-				default:
-					break;
-			}
+      set_pressed(false);
+      set_down(false);
 
-			m_status.reset(ButtonPressed);
-			m_status.reset(ButtonDown);
+      released_.fire(this);
 
-			released_.fire(this);
+      return Finish;
+    }
 
-			return Finish;
-		}
+    return Ignore;
+  }
 
-		return Ignore;
-	}
+  Response AbstractButton::PerformMouseMove (AbstractWindow* context)
+  {
+    /*
+     if (m_status[ButtonDown]) {
+     event->accept(this);
+     return;
+     }
+     */
+    return Finish;
+  }
 
-	Response AbstractButton::PerformMouseMove (AbstractWindow* context)
-	{
-		/*
-		if (m_status[ButtonDown]) {
-			event->accept(this);
-			return;
-		}
-		*/
-		return Finish;
-	}
-	
-	void AbstractButton::DrawIconText()
-	{
-		Rect rect(pixel_size(kPadding.left()),
-				pixel_size(kPadding.bottom()),
-				size().width() - pixel_size(kPadding.hsum()),
-				size().height() - pixel_size(kPadding.vsum()));
+  void AbstractButton::DrawIconText ()
+  {
+    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
+              size().width() - pixel_size(kPadding.hsum()),
+              size().height() - pixel_size(kPadding.vsum()));
 
-		if(icon_) {
-			if(icon_->size().height() <= rect.height()) {
-				if(icon_->size().width() <= rect.width()) {
+    if (icon_) {
+      if (icon_->size().height() <= rect.height()) {
+        if (icon_->size().width() <= rect.width()) {
 
-					int align = AlignVerticalCenter;
-					if(text_) {
-						align |= AlignLeft;
-					} else {
-						align |= AlignHorizontalCenter;
-					}
+          int align = AlignVerticalCenter;
+          if (text_) {
+            align |= AlignLeft;
+          } else {
+            align |= AlignHorizontalCenter;
+          }
 
-					icon_->DrawInRect(rect, align);
-					rect.cut_left(icon_->size().width() + kIconTextSpace);
-				}
-			}
-		}
+          icon_->DrawInRect(rect, align);
+          rect.cut_left(icon_->size().width() + kIconTextSpace);
+        }
+      }
+    }
 
-		if (text_) {
-			if(text_->size().height() <= rect.height()) {
-				text_->DrawInRect(rect, AlignHorizontalCenter | AlignJustify | AlignBaseline);
-			}
-		}
-	}
+    if (text_) {
+      if (text_->size().height() <= rect.height()) {
+        text_->DrawInRect(rect,
+                          AlignHorizontalCenter | AlignJustify | AlignBaseline);
+      }
+    }
+  }
 
-	void AbstractButton::SetDown (bool down)
-	{
-		if(m_status[ButtonCheckable]) {
-			if(m_status[ButtonChecked] != down)
-				RequestRedraw();
+  void AbstractButton::SetDown (bool down)
+  {
+    if (is_checkable()) {
+      if (is_checked() != down) RequestRedraw();
 
-			m_status[ButtonChecked] = down ? 1 : 0;
+      set_checked(down);
 
-			if(group_) {
-				group_->Toggle(this, m_status[ButtonChecked]);
-			} else {
-				toggled_.fire(this, m_status[ButtonChecked]);
-			}
+      if (group_) {
+        group_->Toggle(this, is_checked());
+      } else {
+        toggled_.fire(this, is_checked());
+      }
 
-		} else {
+    } else {
 
-			if(m_status[ButtonDown] != down)
-				RequestRedraw();
+      if (is_down() != down) RequestRedraw();
 
-			m_status[ButtonDown] = down ? 1 : 0;
-			if(group_) {
-				group_->Click(this);
-			} else {
-				clicked_.fire(this);
-			}
-		}
-	}
+      set_down(down);
+      if (group_) {
+        group_->Click(this);
+      } else {
+        clicked_.fire(this);
+      }
+    }
+  }
 
-	void AbstractButton::SetCheckable (bool checkable)
-	{
-		if(!checkable) {
-			m_status[ButtonChecked] = false;
-		}
+  void AbstractButton::SetCheckable (bool checkable)
+  {
+    if (!checkable) {
+      set_checked(false);
+    }
 
-		m_status[ButtonCheckable] = checkable ? 1 : 0;
-	}
+    set_checkable(checkable);
+  }
 
-	void AbstractButton::SetChecked (bool checked)
-	{
-		if(m_status[ButtonCheckable]) {
+  void AbstractButton::SetChecked (bool checked)
+  {
+    if (is_checkable()) {
 
-			if(m_status[ButtonChecked] == checked)
-				return;
+      if (is_checked() == checked) return;
 
-			m_status[ButtonChecked] = checked ? 1 : 0;
-			RequestRedraw();
+      set_checked(checked);
+      RequestRedraw();
 
-			if(group_) {
-				group_->Toggle(this, m_status[ButtonChecked]);
-			} else {
-				toggled_.fire(this, m_status[ButtonChecked]);
-			}
-		}
-	}
+      if (group_) {
+        group_->Toggle(this, is_checked());
+      } else {
+        toggled_.fire(this, is_checked());
+      }
+    }
+  }
 
 } /* namespace BlendInt */
