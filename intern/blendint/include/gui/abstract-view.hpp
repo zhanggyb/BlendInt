@@ -556,6 +556,7 @@ namespace BlendInt {
     friend class AbstractFrame;
     friend class AbstractWidget;
     friend class AbstractAdjustment;
+    friend class AbstractNode;
 
     template<typename T> friend T* Manage (T* obj, bool val);
 

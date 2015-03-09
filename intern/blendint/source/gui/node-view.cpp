@@ -41,9 +41,7 @@ namespace BlendInt {
   }
 
   NodeView::NodeView (int width, int height)
-  : AbstractScrollable(width, height),
-    vao_(0),
-    pressed_(false)
+      : AbstractScrollable(width, height), vao_(0), pressed_(false)
   {
 
     InitializeNodeView();
@@ -60,6 +58,16 @@ namespace BlendInt {
   bool NodeView::AddNode (AbstractNode* node)
   {
     if (PushBackSubView(node)) {
+      RequestRedraw();
+      return true;
+    }
+
+    return false;
+  }
+
+  bool NodeView::InsertNode (int index, AbstractNode* node)
+  {
+    if (InsertSubView(index, node)) {
       RequestRedraw();
       return true;
     }
@@ -157,10 +165,11 @@ namespace BlendInt {
 
     AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-                0);
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-                0.208f, 0.208f, 0.208f, 1.f);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+        0.208f, 0.208f, 0.208f, 1.f);
 
     glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -217,16 +226,12 @@ namespace BlendInt {
     pressed_ = true;
 
     Response response = Ignore;
-    AbstractNode* node = 0;
 
-    for(AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    PerformMouseHover(context);
 
-      node = dynamic_cast<AbstractNode*>(p);
-      response = node->PerformMousePress(context);
-
-      if(response == Finish) {
-        break;
-      }
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
+      if (response == Finish) break;
     }
 
     return Finish;
@@ -239,11 +244,11 @@ namespace BlendInt {
     pressed_ = false;
     AbstractNode* node = 0;
 
-    for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
-    {
+    for (AbstractView* p = last_subview(); p != nullptr; p =
+        p->previous_view()) {
       node = dynamic_cast<AbstractNode*>(p);
       response = node->PerformMouseRelease(context);
-      if(response == Finish) {
+      if (response == Finish) {
         break;
       }
     }
@@ -253,16 +258,16 @@ namespace BlendInt {
 
   Response NodeView::PerformMouseMove (AbstractWindow* context)
   {
-    if(pressed_) {
+    if (pressed_) {
 
       Response response = Ignore;
       AbstractNode* node = 0;
 
-      for(AbstractView* p = last_subview(); p != nullptr; p = p->previous_view())
-      {
+      for (AbstractView* p = last_subview(); p != nullptr; p =
+          p->previous_view()) {
         node = dynamic_cast<AbstractNode*>(p);
         response = node->PerformMouseMove(context);
-        if(response == Finish) {
+        if (response == Finish) {
           break;
         }
       }
@@ -272,7 +277,25 @@ namespace BlendInt {
     return Finish;
   }
 
-  void BlendInt::NodeView::InitializeNodeView ()
+  void NodeView::PerformMouseHover (AbstractWindow* context)
+  {
+    try {
+
+      Response response = Ignore;
+      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        response = dynamic_cast<AbstractNode*>(p)->PerformMouseHover(context);
+        if (response == Finish) break;
+      }
+
+    } catch (std::bad_cast& e) {
+
+      DBG_PRINT_MSG("Error: %s", "Only AbstractNode should be added in NodeView");
+      exit(EXIT_FAILURE);
+
+    }
+  }
+
+  void NodeView::InitializeNodeView ()
   {
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,

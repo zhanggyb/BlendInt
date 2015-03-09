@@ -115,7 +115,7 @@ namespace BlendInt {
 
 	void AbstractButton::PerformHoverOut(AbstractWindow* context)
 	{
-		m_status[ButtonHover] = 0;
+    m_status[ButtonHover] = 0;
 
 		if(m_status[ButtonPressed]) {
 			m_status[ButtonDown] = 0;

@@ -24,40 +24,54 @@
 #pragma once
 
 #include <opengl/gl-buffer.hpp>
+
+#include <gui/abstract-layout.hpp>
 #include <gui/abstract-node.hpp>
 #include <gui/widget-shadow.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special view used to display and manage a node in NodeView
-	 */
-	class Node: public AbstractNode
-	{
-	public:
+  /**
+   * @brief A special view used to display and manage a node in NodeView
+   */
+  class Node: public AbstractNode
+  {
+  public:
 
-		Node ();
+    Node (AbstractLayout* layout);
 
-		virtual ~Node();
+    virtual ~Node ();
 
-	protected:
+    bool AddWidget (AbstractWidget* widget);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    bool InsertWidget (int index, AbstractWidget* widget);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual bool IsExpandX () const;
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual bool IsExpandY () const;
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Size GetPreferredSize () const;
 
-	private:
+  protected:
 
-		GLuint vao_[2];
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		RefPtr<WidgetShadow> shadow_;
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-	};
+    virtual Response Draw (AbstractWindow* context);
+
+  private:
+
+    GLuint vao_[2];
+
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+    AbstractLayout* layout_;
+
+    RefPtr<WidgetShadow> shadow_;
+
+  };
 
 }

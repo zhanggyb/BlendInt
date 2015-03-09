@@ -35,60 +35,60 @@
 
 namespace BlendInt {
 
-	class Dialog: public AbstractDialog
-	{
+  class Dialog: public AbstractDialog
+  {
 
-	public:
+  public:
 
-		/**
-		 * @brief Constructor of Dialog
-		 * @param[in] title The title of this dialog
-		 * @param[in] layout The layout used for content
-		 * @param[in] flags Flag for this dialog
-		 *
-		 * @note Destroy the layout will destoy this dialog too.
-		 */
-		Dialog (const String& title, AbstractLayout* layout = 0, int flags = 0);
+    /**
+     * @brief Constructor of Dialog
+     * @param[in] title The title of this dialog
+     * @param[in] layout The layout used for content
+     * @param[in] flags Flag for this dialog
+     *
+     * @note Destroy the layout will destoy this dialog too.
+     */
+    Dialog (const String& title, AbstractLayout* layout = 0, int flags = 0);
 
-		virtual ~Dialog();
+    virtual ~Dialog ();
 
-		bool AddWidget (AbstractWidget* widget);
+    bool AddWidget (AbstractWidget* widget);
 
-		bool InsertWidget (int index, AbstractWidget* widget);
+    bool InsertWidget (int index, AbstractWidget* widget);
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void OnCloseButtonClicked (AbstractButton* sender);
+    void OnCloseButtonClicked (AbstractButton* sender);
 
-		void OnApplyButtonClicked (AbstractButton* sender);
+    void OnApplyButtonClicked (AbstractButton* sender);
 
-		void OnOKButtonClicked (AbstractButton* sender);
+    void OnOKButtonClicked (AbstractButton* sender);
 
-		// 0: inner
-		// 1: outer
-		GLuint vao_[2];
+    // 0: inner
+    // 1: outer
+    GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		glm::mat4 projection_matrix_;
+    glm::mat4 projection_matrix_;
 
-		glm::mat3 model_matrix_;
+    glm::mat3 model_matrix_;
 
-		RefPtr<FrameShadow> shadow_;
+    RefPtr<FrameShadow> shadow_;
 
-		AbstractLayout* content_layout_;
+    AbstractLayout* content_layout_;
 
-		LinearLayout* main_layout_;
-	};
+    LinearLayout* main_layout_;
+  };
 
 }

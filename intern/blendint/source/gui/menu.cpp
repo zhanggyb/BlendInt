@@ -476,7 +476,7 @@ namespace BlendInt {
         PerformHoverIn(context);
       }
 
-      AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(
+      AbstractWidget* new_hovered_widget = DispatchMouseHover(
           hovered_widget_, context);
 
       if (new_hovered_widget != hovered_widget_) {

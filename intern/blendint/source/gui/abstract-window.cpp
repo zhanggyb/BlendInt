@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <stdexcept>
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -686,13 +688,19 @@ namespace BlendInt {
 
   void AbstractWindow::PerformMouseHover ()
   {
-    Response response = Ignore;
-    AbstractFrame* frame = 0;
+    try {
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
-      frame = dynamic_cast<AbstractFrame*>(p);
-      response = frame->PerformMouseHover(this);
-      if (response == Finish) break;
+      Response response = Ignore;
+      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        response = dynamic_cast<AbstractFrame*>(p)->PerformMouseHover(this);
+        if (response == Finish) break;
+      }
+
+    } catch (std::bad_cast& e) {
+
+      DBG_PRINT_MSG("Error: %s", "Only AbstractFrame should be added in window");
+      exit(EXIT_FAILURE);
+
     }
   }
 

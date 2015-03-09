@@ -45,6 +45,8 @@ namespace BlendInt {
 
     bool AddNode (AbstractNode* node);
 
+    bool InsertNode (int index, AbstractNode* node);
+
     virtual bool IsExpandX () const;
 
     virtual bool IsExpandY () const;
@@ -76,6 +78,8 @@ namespace BlendInt {
     virtual void PostDraw (AbstractWindow* context);
 
   private:
+
+    void PerformMouseHover (AbstractWindow* context);
 
     void InitializeNodeView ();
 

@@ -84,6 +84,9 @@ namespace BlendInt {
 
     }
 
+    if (frame == 0)
+      throw std::domain_error("The widget is not added in the context");
+
     if (frame != this)
       throw std::out_of_range("Widget is not contained in this frame!");
 
@@ -109,6 +112,9 @@ namespace BlendInt {
       p = p->superview();
 
     }
+
+    if (frame == 0)
+      throw std::domain_error("The widget is not added in the context");
 
     if (frame != this)
       throw std::out_of_range("Widget is not contained in this frame!");
@@ -267,8 +273,8 @@ namespace BlendInt {
     }
   }
 
-  AbstractWidget* AbstractFrame::DispatchHoverEventsInWidgets (AbstractWidget* orig,
-                                                               AbstractWindow* context)
+  AbstractWidget* AbstractFrame::DispatchMouseHover (AbstractWidget* orig,
+                                                     AbstractWindow* context)
   {
     context->register_active_frame(this);
 
@@ -288,7 +294,8 @@ namespace BlendInt {
         rect.set_position(
             GetAbsolutePosition(
                 dynamic_cast<AbstractWidget*>(orig->superview())));
-        rect.set_size(orig->size());
+        rect.set_size(orig->superview()->size());
+        return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
       }
 
       catch (const std::bad_cast& e) {
@@ -301,12 +308,19 @@ namespace BlendInt {
         return FindAndDispatchTopHoveredWidget(context);
       }
 
+      catch (const std::domain_error& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
+
       catch (const std::out_of_range& e) {
         DBG_PRINT_MSG("Error: %s", e.what());
         return FindAndDispatchTopHoveredWidget(context);
       }
 
-      return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
+      catch (...) {
+        return FindAndDispatchTopHoveredWidget(context);
+      }
 
     } else {
 
@@ -316,12 +330,11 @@ namespace BlendInt {
   }
 
   AbstractWidget* AbstractFrame::RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
-                                                                  AbstractWindow* context)
+                                                                     AbstractWindow* context)
   {
     assert(orig->superview() == this);
 
     AbstractWidget* result = orig;
-    Point offset;
     Rect rect;
 
     rect.set_position(position());
@@ -331,7 +344,7 @@ namespace BlendInt {
 
     if (cursor_in_frame) {
 
-      offset = GetOffset();
+      Point offset = GetOffset();
       context->set_local_cursor_position(
           context->GetGlobalCursorPosition().x() - rect.x() - offset.x(),
           context->GetGlobalCursorPosition().y() - rect.y() - offset.y());
@@ -354,8 +367,8 @@ namespace BlendInt {
   }
 
   AbstractWidget* AbstractFrame::RecheckAndDispatchTopHoveredWidget (Rect& rect,
-                                                                  AbstractWidget* orig,
-                                                                  AbstractWindow* context)
+                                                                     AbstractWidget* orig,
+                                                                     AbstractWindow* context)
   {
     assert(orig);
     assert(orig->superview() && orig->superview() != this);
@@ -480,13 +493,11 @@ namespace BlendInt {
         context->GetGlobalCursorPosition().x() - position().x() - offset.x(),
         context->GetGlobalCursorPosition().y() - position().y() - offset.y());
 
-    AbstractWidget* tmp = 0;
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
-      tmp = dynamic_cast<AbstractWidget*>(p);
-      if (tmp) {
+      result = dynamic_cast<AbstractWidget*>(p);
+      if (result) {
         if (p->visiable() && p->Contain(context->local_cursor_position())) {
-          result = tmp;
           dispatch_mouse_hover_in(result, context);
           break;
         }

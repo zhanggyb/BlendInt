@@ -42,6 +42,31 @@ namespace BlendInt {
     PerformRoundTypeUpdate(type & 0x0F);
   }
 
+  Point AbstractNode::GetRelativePosition (const AbstractWidget* widget)
+  {
+    if (widget == nullptr)
+      throw std::invalid_argument("Argument cannot be a nullptr!");
+
+    Point pos = widget->position();
+    AbstractNode* node = 0;
+    AbstractView* p = widget->superview();
+
+    while (p) {
+
+      node = dynamic_cast<AbstractNode*>(p);
+      if (node) break;
+
+      pos = pos + p->position() + p->GetOffset();
+      p = p->superview();
+
+    }
+
+    if (node != this)
+      throw std::out_of_range("Widget is not contained in this node!");
+
+    return pos;
+  }
+
   void AbstractNode::GenerateRoundedVertices (std::vector<GLfloat>* inner,
                                               std::vector<GLfloat>* outer)
   {
@@ -124,7 +149,7 @@ namespace BlendInt {
     if (cursor_position_ == InsideRectangle) {
 
       last_position_ = position();
-      cursor_point_ = context->GetGlobalCursorPosition();
+      cursor_point_ = context->local_cursor_position();
 
       /*
        if(hovered_widget_) {
@@ -154,7 +179,7 @@ namespace BlendInt {
 
       last_position_ = position();
       last_size_ = size();
-      cursor_point_ = context->GetGlobalCursorPosition();
+      cursor_point_ = context->local_cursor_position();
 
       return Finish;
     }
@@ -181,8 +206,8 @@ namespace BlendInt {
 
     if (mouse_button_pressed()) {
 
-      int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
-      int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
+      int ox = context->local_cursor_position().x() - cursor_point_.x();
+      int oy = context->local_cursor_position().y() - cursor_point_.y();
 
       switch (cursor_position_) {
 
@@ -284,6 +309,52 @@ namespace BlendInt {
   {
   }
 
+  AbstractWidget* AbstractNode::DispatchMouseHover (AbstractWidget* orig,
+                                                    AbstractWindow* context)
+  {
+    // find the new top hovered widget
+    if (orig != nullptr) {
+
+      if (orig->superview() == 0) { // the widget is just removed from this frame
+        return FindAndDispatchTopHoveredWidget(context);
+      }
+
+      if (orig->superview() == this) {
+        return RecheckAndDispatchTopHoveredWidget(orig, context);
+      }
+
+      Rect rect;
+      try {
+        rect.set_position(
+            GetRelativePosition(
+                dynamic_cast<AbstractWidget*>(orig->superview())));
+        rect.set_size(orig->superview()->size());
+        return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
+
+      }
+
+      catch (const std::bad_cast& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
+
+      catch (const std::invalid_argument& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
+
+      catch (const std::out_of_range& e) {
+        DBG_PRINT_MSG("Error: %s", e.what());
+        return FindAndDispatchTopHoveredWidget(context);
+      }
+
+    } else {
+
+      return FindAndDispatchTopHoveredWidget(context);
+
+    }
+  }
+
   void AbstractNode::PerformRoundRadiusUpdate (float radius)
   {
     round_radius_ = radius;
@@ -301,9 +372,9 @@ namespace BlendInt {
     Rect valid_rect(position().x() - border, position().y() - border,
                     size().width() + 2 * border, size().height() + 2 * border);
 
-    if (valid_rect.contains(context->GetGlobalCursorPosition())) {
+    if (valid_rect.contains(context->local_cursor_position())) {
 
-      if (Contain(context->GetGlobalCursorPosition())) {
+      if (Contain(context->local_cursor_position())) {
 
         cursor_position_ = InsideRectangle;
 
@@ -342,17 +413,17 @@ namespace BlendInt {
         set_cursor_on_border(true);
         cursor_position_ = InsideRectangle;
 
-        if (context->GetGlobalCursorPosition().x() <= position().x()) {
+        if (context->local_cursor_position().x() <= position().x()) {
           cursor_position_ |= OnLeftBorder;
-        } else if (context->GetGlobalCursorPosition().x()
+        } else if (context->local_cursor_position().x()
             >= (position().x() + size().width())) {
           cursor_position_ |= OnRightBorder;
         }
 
-        if (context->GetGlobalCursorPosition().y()
+        if (context->local_cursor_position().y()
             >= (position().y() + size().height())) {
           cursor_position_ |= OnTopBorder;
-        } else if (context->GetGlobalCursorPosition().y() <= position().y()) {
+        } else if (context->local_cursor_position().y() <= position().y()) {
           cursor_position_ |= OnBottomBorder;
         }
 
@@ -404,6 +475,225 @@ namespace BlendInt {
       }
 
       retval = Ignore;
+    }
+
+    return retval;
+  }
+
+  AbstractWidget* AbstractNode::RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
+                                                                    AbstractWindow* context)
+  {
+    assert(orig->superview() == this);
+
+    AbstractWidget* result = orig;
+    Point offset;
+    Rect rect;
+
+    rect.set_position(position());
+    rect.set_size(size());
+
+    bool cursor_in_node = rect.contains(context->local_cursor_position());
+
+    if (cursor_in_node) {
+
+      offset = GetOffset();
+      context->set_local_cursor_position(
+          context->local_cursor_position().x() - rect.x() - offset.x(),
+          context->local_cursor_position().y() - rect.y() - offset.y());
+
+      if (result->Contain(context->local_cursor_position())) {
+        result = RecursiveDispatchHoverEvent(result, context);
+      } else {
+        dispatch_mouse_hover_out(result, context);
+        result = FindAndDispatchTopHoveredWidget(context);
+      }
+
+    } else {
+
+      dispatch_mouse_hover_out(result, context);
+      result = 0;
+
+    }
+
+    return result;
+  }
+
+  AbstractWidget* AbstractNode::RecheckAndDispatchTopHoveredWidget (Rect& rect,
+                                                                    AbstractWidget* orig,
+                                                                    AbstractWindow* context)
+  {
+    assert(orig);
+    assert(orig->superview() && orig->superview() != this);
+
+    AbstractWidget* result = orig;
+    AbstractView* super_view = result->superview();
+    AbstractWidget* super_widget = dynamic_cast<AbstractWidget*>(super_view);
+    Point offset;
+
+    bool cursor_in_superview = rect.contains(
+        context->local_cursor_position());
+
+    if (cursor_in_superview) {
+
+      offset = super_view->GetOffset();
+      context->set_local_cursor_position(
+          context->local_cursor_position().x() - rect.x() - offset.x(),
+          context->local_cursor_position().y() - rect.y() - offset.y());
+
+      if (result->Contain(context->local_cursor_position())) {
+        result = RecursiveDispatchHoverEvent(result, context);
+      } else {
+
+        dispatch_mouse_hover_out(result, context);
+
+        // find which contianer contains cursor position
+        while (super_view) {
+
+          if (super_view == this) {
+            super_view = 0;
+            break;
+          }
+
+          offset = super_view->GetOffset();
+          context->set_local_cursor_position(
+              context->local_cursor_position().x() + super_view->position().x()
+                  + offset.x(),
+              context->local_cursor_position().y() + super_view->position().y()
+                  + offset.y());
+
+          if (super_view->Contain(context->local_cursor_position())) break;
+
+          super_view = super_view->superview();
+        }
+
+        result = dynamic_cast<AbstractWidget*>(super_view);
+
+        if (result) {
+          result = RecursiveDispatchHoverEvent(result, context);
+        }
+
+      }
+
+    } else {
+
+      dispatch_mouse_hover_out(result, context);
+
+      // find which contianer contains cursor position
+      super_view = super_view->superview();
+      while (super_view != nullptr) {
+
+        if (super_view == this) {
+          super_view = nullptr;
+          break;
+        }
+
+        super_widget = dynamic_cast<AbstractWidget*>(super_view);
+        if (super_widget) {
+          rect.set_position(GetRelativePosition(super_widget));
+          rect.set_size(super_widget->size());
+        } else {
+          assert(super_view == this);
+          rect.set_position(position());
+          rect.set_size(size());
+        }
+
+        offset = super_view->GetOffset();
+        context->set_local_cursor_position(
+            context->local_cursor_position().x() - rect.x() - offset.x(),
+            context->local_cursor_position().y() - rect.y() - offset.y());
+
+        if (rect.contains(context->local_cursor_position())) break;
+
+        super_view = super_view->superview();
+      }
+
+      result = dynamic_cast<AbstractWidget*>(super_view);
+      if (result) {
+
+        AbstractWidget* tmp = 0;
+        for (AbstractView* p = super_widget->last_subview(); p;
+            p = p->previous_view()) {
+
+          tmp = dynamic_cast<AbstractWidget*>(p);
+          if (tmp) {
+            if (p->visiable() && p->Contain(context->local_cursor_position())) {
+              result = tmp;
+
+              dispatch_mouse_hover_in(result, context);
+              result = RecursiveDispatchHoverEvent(result, context);
+
+              break;
+            }
+          } else {
+            break;
+          }
+        }
+      }
+
+    }
+
+    return result;
+  }
+
+  AbstractWidget* AbstractNode::FindAndDispatchTopHoveredWidget (AbstractWindow* context)
+  {
+    AbstractWidget* result = 0;
+    Point offset = GetOffset();
+
+    context->set_local_cursor_position(
+        context->local_cursor_position().x() - position().x() - offset.x(),
+        context->local_cursor_position().y() - position().y() - offset.y());
+
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+
+      result = dynamic_cast<AbstractWidget*>(p);
+      if (result) {
+        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+          dispatch_mouse_hover_in(result, context);
+          break;
+        }
+      } else {
+        break;
+      }
+
+    }
+
+    if (result) {
+      result = RecursiveDispatchHoverEvent(result, context);
+    }
+
+    return result;
+  }
+
+  AbstractWidget* AbstractNode::RecursiveDispatchHoverEvent (AbstractWidget* widget,
+                                                             AbstractWindow* context)
+  {
+    AbstractWidget* retval = widget;
+    AbstractWidget* tmp = 0;
+
+    Point offset = widget->GetOffset();
+    context->set_local_cursor_position(
+        context->local_cursor_position().x() - widget->position().x()
+            - offset.x(),
+        context->local_cursor_position().y() - widget->position().y()
+            - offset.y());
+
+    for (AbstractView* p = widget->last_subview(); p; p = p->previous_view()) {
+
+      tmp = dynamic_cast<AbstractWidget*>(p);
+
+      if (tmp) {
+        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+          retval = tmp;
+          dispatch_mouse_hover_in(retval, context);
+          retval = RecursiveDispatchHoverEvent(retval, context);
+
+          break;
+        }
+      } else {
+        break;
+      }
+
     }
 
     return retval;

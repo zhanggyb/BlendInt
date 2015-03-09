@@ -23,9 +23,14 @@
 
 #pragma once
 
+#include <core/rect.hpp>
+
 #include <gui/abstract-view.hpp>
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
+
+  class NodeView;
 
   /**
    * @brief Base class of node and nodeset
@@ -43,6 +48,8 @@ namespace BlendInt {
     void SetRoundRadius (float radius);
 
     void SetRoundType (int type);
+
+    Point GetRelativePosition (const AbstractWidget* widget);
 
     inline uint32_t round_type () const
     {
@@ -85,6 +92,9 @@ namespace BlendInt {
      */
     virtual Response PerformMouseHover (AbstractWindow* context);
 
+    AbstractWidget* DispatchMouseHover (AbstractWidget* orig,
+                                        AbstractWindow* context);
+
     void GenerateRoundedVertices (std::vector<GLfloat>* inner,
                                   std::vector<GLfloat>* outer);
 
@@ -106,6 +116,58 @@ namespace BlendInt {
     inline void set_round_radius (float radius)
     {
       round_radius_ = radius;
+    }
+
+    static inline Response dispatch_key_press (AbstractView* view,
+                                               AbstractWindow* context)
+    {
+      return view->PerformKeyPress(context);
+    }
+
+    static inline Response dispatch_mouse_press (AbstractView* view,
+                                                 AbstractWindow* context)
+    {
+      return view->PerformMousePress(context);
+    }
+
+    static inline Response dispatch_mouse_release (AbstractView* view,
+                                                   AbstractWindow* context)
+    {
+      return view->PerformMouseRelease(context);
+    }
+
+    static inline Response dispatch_mouse_move (AbstractView* view,
+                                                AbstractWindow* context)
+    {
+      return view->PerformMouseMove(context);
+    }
+
+    static void dispatch_focus_on (AbstractView* view, AbstractWindow* context)
+    {
+      view->PerformFocusOn(context);
+    }
+
+    static void dispatch_focus_off (AbstractView* view, AbstractWindow* context)
+    {
+      view->PerformFocusOff(context);
+    }
+
+    static inline void dispatch_mouse_hover_in (AbstractView* view,
+                                                AbstractWindow* context)
+    {
+      view->PerformHoverIn(context);
+    }
+
+    static inline void dispatch_mouse_hover_out (AbstractView* view,
+                                                 AbstractWindow* context)
+    {
+      view->PerformHoverOut(context);
+    }
+
+    static inline Response dispatch_mouse_hover (AbstractNode* node,
+                                                 AbstractWindow* context)
+    {
+      return node->PerformMouseHover(context);
     }
 
   private:
@@ -133,6 +195,21 @@ namespace BlendInt {
        */
       NodeMouseButtonPressed = (1 << 5)
     };
+
+    /**
+     * this frame is the superview of orig
+     */
+    AbstractWidget* RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
+                                                        AbstractWindow* context);
+
+    AbstractWidget* RecheckAndDispatchTopHoveredWidget (Rect& rect,
+                                                        AbstractWidget* orig,
+                                                        AbstractWindow* context);
+
+    AbstractWidget* FindAndDispatchTopHoveredWidget (AbstractWindow* context);
+
+    AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* widget,
+                                                 AbstractWindow* context);
 
     inline bool cursor_on_border () const
     {

@@ -31,87 +31,85 @@
 
 namespace BlendInt {
 
-	class Frame: public AbstractFrame
-	{
-	public:
+  class Frame: public AbstractFrame
+  {
+  public:
 
-		Frame (AbstractLayout* layout);
+    Frame (AbstractLayout* layout);
 
-		Frame (int width, int height, AbstractLayout* layout);
+    Frame (int width, int height, AbstractLayout* layout);
 
-		virtual ~Frame ();
+    virtual ~Frame ();
 
-		void AddWidget (AbstractWidget* widget);
+    void AddWidget (AbstractWidget* widget);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual AbstractView* GetFocusedView () const;
+  protected:
 
-	protected:
+    virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+  private:
 
-	private:
+    virtual Response PerformMouseHover (AbstractWindow* context);
 
-		virtual Response PerformMouseHover (AbstractWindow* context);
+    void InitializeFrameOnce ();
 
-		void InitializeFrameOnce ();
+    void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
-		void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
+    void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+    void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+    glm::mat4 projection_matrix_;
 
-		glm::mat4 projection_matrix_;
+    glm::mat3 model_matrix_;
 
-		glm::mat3 model_matrix_;
+    AbstractWidget* focused_widget_;
 
-		AbstractWidget* focused_widget_;
+    AbstractWidget* hovered_widget_;
 
-		AbstractWidget* hovered_widget_;
+    // 0 - for inner
+    // 1 - for outer
+    // 2 - for texture buffer
+    GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		// 0 - for inner
-		// 1 - for outer
-		// 2 - for texture buffer
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+    int cursor_position_;
 
-        int cursor_position_;
+    AbstractLayout* layout_;
 
-		AbstractLayout* layout_;
+    bool hover_;
 
-		bool hover_;
-
-		bool pressed_;
-	};
+    bool pressed_;
+  };
 
 }

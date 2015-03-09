@@ -33,422 +33,432 @@
 
 namespace BlendInt {
 
-	Frame::Frame (AbstractLayout* layout)
-	: AbstractFrame(),
-	  focused_widget_(0),
-	  hovered_widget_(0),
-	  cursor_position_(0),
-	  layout_(0),
-	  hover_(false),
-	  pressed_(false)
-	{
-		if(layout == nullptr) {
-			layout_ = Manage(new FlowLayout);
-		} else {
-			layout_ = layout;
-		}
+  Frame::Frame (AbstractLayout* layout)
+  : AbstractFrame(),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(0),
+    layout_(0),
+    hover_(false),
+    pressed_(false)
+  {
+    if (layout == nullptr) {
+      layout_ = Manage(new FlowLayout);
+    } else {
+      layout_ = layout;
+    }
 
-		PushBackSubView(layout_);
-		set_size(layout_->size());
-//        set_refresh(true);
-//        EnableViewBuffer();
+    PushBackSubView(layout_);
+    set_size(layout_->size());
 
-		InitializeFrameOnce();
-	}
+    InitializeFrameOnce();
+  }
 
-	Frame::Frame (int width, int height, AbstractLayout* layout)
-	: AbstractFrame(width, height),
-	  focused_widget_(0),
-	  hovered_widget_(0),
-	  cursor_position_(0),
-	  layout_(0),
-	  hover_(false),
-	  pressed_(false)
-	{
-		if(layout == nullptr) {
-			layout_ = Manage(new FlowLayout);
-		} else {
-			layout_ = layout;
-		}
+  Frame::Frame (int width, int height, AbstractLayout* layout)
+  : AbstractFrame(width, height),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(0),
+    layout_(0),
+    hover_(false),
+    pressed_(false)
+  {
+    if (layout == nullptr) {
+      layout_ = Manage(new FlowLayout);
+    } else {
+      layout_ = layout;
+    }
 
-//        set_refresh(true);
-//        EnableViewBuffer();
-        
-		PushBackSubView(layout_);
-		ResizeSubView(layout_, size());
+    PushBackSubView(layout_);
+    ResizeSubView(layout_, size());
 
-		InitializeFrameOnce();
-	}
+    InitializeFrameOnce();
+  }
 
-	Frame::~Frame()
-	{
-		glDeleteVertexArrays(2, vao_);
+  Frame::~Frame ()
+  {
+    glDeleteVertexArrays(2, vao_);
 
-		if(focused_widget_) {
-			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-			focused_widget_ = 0;
-		}
+    if (focused_widget_) {
+      focused_widget_->destroyed().disconnectOne(
+          this, &Frame::OnFocusedWidgetDestroyed);
+      focused_widget_ = 0;
+    }
 
-		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_);
-		}
-	}
+    if (hovered_widget_) {
+      hovered_widget_->destroyed().disconnectOne(
+          this, &Frame::OnHoverWidgetDestroyed);
+      ClearHoverWidgets(hovered_widget_);
+    }
+  }
 
-	void Frame::AddWidget (AbstractWidget* widget)
-	{
-		layout_->AddWidget(widget);
-	}
+  void Frame::AddWidget (AbstractWidget* widget)
+  {
+    layout_->AddWidget(widget);
+  }
 
-	bool Frame::IsExpandX () const
-	{
-		return layout_->IsExpandX();
-	}
+  bool Frame::IsExpandX () const
+  {
+    return layout_->IsExpandX();
+  }
 
-	bool Frame::IsExpandY () const
-	{
-		return layout_->IsExpandY();
-	}
+  bool Frame::IsExpandY () const
+  {
+    return layout_->IsExpandY();
+  }
 
-	Size Frame::GetPreferredSize () const
-	{
-		return layout_->GetPreferredSize();
-	}
+  Size Frame::GetPreferredSize () const
+  {
+    return layout_->GetPreferredSize();
+  }
 
-	AbstractView* Frame::GetFocusedView() const
-	{
-		return focused_widget_;
-	}
+  bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
+  {
+    return true;
+  }
 
-	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
-	{
-		return true;
-	}
+  void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
+      projection_matrix_ = glm::ortho(0.f,
+                                      0.f + (float) request.size()->width(),
+                                      0.f,
+                                      0.f + (float) request.size()->height(),
+                                      100.f, -100.f);
 
-			projection_matrix_  = glm::ortho(
-				0.f,
-				0.f + (float)request.size()->width(),
-				0.f,
-				0.f + (float)request.size()->height(),
-				100.f, -100.f);
+      set_size(*request.size());
 
-			set_size(*request.size());
+      if (view_buffer()) {
+        view_buffer()->Resize(size());
+      }
 
-            if(view_buffer()) {
-                view_buffer()->Resize(size());
-            }
-            
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-			GenerateVertices(size(), 1.f * AbstractWindow::theme()->pixel(), RoundNone, 0.f, &inner_verts, &outer_verts);
+      std::vector<GLfloat> inner_verts;
+      std::vector<GLfloat> outer_verts;
+      GenerateVertices(size(), 1.f * AbstractWindow::theme()->pixel(),
+                       RoundNone, 0.f, &inner_verts, &outer_verts);
 
-			buffer_.bind(0);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                           &inner_verts[0]);
+      vbo_.bind(1);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
+                           &outer_verts[0]);
+      vbo_.reset();
 
-			ResizeSubView(layout_, size());
+      ResizeSubView(layout_, size());
 
-			RequestRedraw();
+      RequestRedraw();
 
-		}
+    }
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	bool Frame::PreDraw (AbstractWindow* context)
-	{
-		if(!visiable()) return false;
+  bool Frame::PreDraw (AbstractWindow* context)
+  {
+    if (!visiable()) return false;
 
-		context->register_active_frame(this);
+    context->register_active_frame(this);
 
-		if(refresh() && view_buffer()) {
-			RenderSubFramesToTexture(this,
-                                     context,
-                                     projection_matrix_,
-                                     model_matrix_,
-                                     view_buffer()->texture());
-		}
+    if (refresh() && view_buffer()) {
+      RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
+                               view_buffer()->texture());
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	Response Frame::Draw (AbstractWindow* context)
-	{
-		AbstractWindow::shaders()->frame_inner_program()->use();
+  Response Frame::Draw (AbstractWindow* context)
+  {
+    AbstractWindow::shaders()->frame_inner_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 0.447f, 0.447f, 0.447f, 1.f);
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+        position().x(), position().y());
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+                0);
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
+                0.447f, 0.447f, 0.447f, 1.f);
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-        if(view_buffer()) {
+    if (view_buffer()) {
 
-        	AbstractWindow::shaders()->frame_image_program()->use();
-            
-            glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-            glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-            glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            view_buffer()->Draw(0, 0);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            
+      AbstractWindow::shaders()->frame_image_program()->use();
+
+      glUniform2f(
+          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+          position().x(), position().y());
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+      glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+      view_buffer()->Draw(0, 0);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    } else {
+
+      glViewport(position().x(), position().y(), size().width(),
+                 size().height());
+
+      AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+      AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+
+      DrawSubViewsOnce(context);
+
+      glViewport(0, 0, context->size().width(), context->size().height());
+
+    }
+
+    AbstractWindow::shaders()->frame_outer_program()->use();
+
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+        position().x(), position().y());
+    glBindVertexArray(vao_[1]);
+
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+                0.576f, 0.576f, 0.576f, 1.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
+
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+                0.4f, 0.4f, 0.4f, 1.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+
+    return Finish;
+  }
+
+  void Frame::PostDraw (AbstractWindow* context)
+  {
+  }
+
+  void Frame::PerformFocusOn (AbstractWindow* context)
+  {
+    DBG_PRINT_MSG("%s", "focus in");
+  }
+
+  void Frame::PerformFocusOff (AbstractWindow* context)
+  {
+    DBG_PRINT_MSG("%s", "focus out");
+
+    if (hovered_widget_) {
+      hovered_widget_->destroyed().disconnectOne(
+          this, &Frame::OnHoverWidgetDestroyed);
+      ClearHoverWidgets(hovered_widget_);
+      hovered_widget_ = 0;
+    }
+
+    if (focused_widget_) {
+      focused_widget_->destroyed().disconnectOne(
+          this, &Frame::OnFocusedWidgetDestroyed);
+      dispatch_focus_off(focused_widget_, context);
+      focused_widget_ = 0;
+    }
+  }
+
+  void Frame::PerformHoverIn (AbstractWindow* context)
+  {
+    hover_ = true;
+  }
+
+  void Frame::PerformHoverOut (AbstractWindow* context)
+  {
+    hover_ = false;
+
+    if (hovered_widget_) {
+      hovered_widget_->destroyed().disconnectOne(
+          this, &Frame::OnHoverWidgetDestroyed);
+      ClearHoverWidgets(hovered_widget_, context);
+      hovered_widget_ = 0;
+    }
+  }
+
+  Response Frame::PerformKeyPress (AbstractWindow* context)
+  {
+    context->register_active_frame(this);
+
+    Response response = Ignore;
+
+    if (focused_widget_) {
+      dispatch_key_press(focused_widget_, context);
+    }
+
+    return response;
+  }
+
+  Response Frame::PerformMousePress (AbstractWindow* context)
+  {
+    context->register_active_frame(this);
+
+    if (cursor_position_ == InsideRectangle) {
+
+      if (hovered_widget_) {
+
+        AbstractView* widget = 0;	// widget may be focused
+
+        widget = RecursiveDispatchMousePress(hovered_widget_, context);
+
+        if (widget == 0) {
+          DBG_PRINT_MSG("%s", "widget 0");
+          pressed_ = true;
         } else {
-
-            glViewport(position().x(), position().y(), size().width(), size().height());
-
-            AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-            AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
-
-			DrawSubViewsOnce(context);
-
-			glViewport(0, 0, context->size().width(), context->size().height());
-
+          SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
         }
-        
-		AbstractWindow::shaders()->frame_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-		glBindVertexArray(vao_[1]);
+      } else {
+        pressed_ = true;
+        // SetFocusedWidget(0);
+      }
 
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 0.576f, 0.576f, 0.576f, 1.f);
-		glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
+    } else {
+      pressed_ = false;
+    }
 
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 0.4f, 0.4f, 0.4f, 1.f);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+    return Finish;
+  }
 
-        return Finish;
-	}
+  Response Frame::PerformMouseRelease (AbstractWindow* context)
+  {
+    cursor_position_ = InsideRectangle;
 
-	void Frame::PostDraw (AbstractWindow* context)
-	{
-	}
+    pressed_ = false;
 
-	void Frame::PerformFocusOn (AbstractWindow* context)
-	{
-		DBG_PRINT_MSG("%s", "focus in");
-	}
+    if (focused_widget_) {
+      context->register_active_frame(this);
+      return dispatch_mouse_release(focused_widget_, context);
+    }
 
-	void Frame::PerformFocusOff (AbstractWindow* context)
-	{
-		DBG_PRINT_MSG("%s", "focus out");
+    return Ignore;
+  }
 
-		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_);
-			hovered_widget_ = 0;
-		}
+  Response Frame::PerformMouseMove (AbstractWindow* context)
+  {
+    Response retval = Ignore;
 
-		if(focused_widget_) {
-			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-			dispatch_focus_off(focused_widget_, context);
-			focused_widget_ = 0;
-		}
-	}
+    if (focused_widget_) {
+      context->register_active_frame(this);
+      retval = dispatch_mouse_move(focused_widget_, context);
+    }
 
-	void Frame::PerformHoverIn (AbstractWindow* context)
-	{
-		hover_ = true;
-	}
+    return retval;
+  }
 
-	void Frame::PerformHoverOut (AbstractWindow* context)
-	{
-		hover_ = false;
+  Response Frame::PerformMouseHover (AbstractWindow* context)
+  {
+    if (pressed_) return Finish;
 
-		if(hovered_widget_) {
-			hovered_widget_->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
-			ClearHoverWidgets(hovered_widget_, context);
-			hovered_widget_ = 0;
-		}
-	}
+    if (Contain(context->GetGlobalCursorPosition())) {
 
-	Response Frame::PerformKeyPress (AbstractWindow* context)
-	{
-		context->register_active_frame(this);
+      cursor_position_ = InsideRectangle;
 
-		Response response = Ignore;
+      if (!hover_) {
+        PerformHoverIn(context);
+      }
 
-		if(focused_widget_) {
-			dispatch_key_press(focused_widget_, context);
-		}
+      AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
+                                                              context);
 
-		return response;
-	}
+      if (new_hovered_widget != hovered_widget_) {
 
-	Response Frame::PerformMousePress (AbstractWindow* context)
-	{
-		context->register_active_frame(this);
+        if (hovered_widget_) {
+          hovered_widget_->destroyed().disconnectOne(
+              this, &Frame::OnHoverWidgetDestroyed);
+        }
 
-		if(cursor_position_ == InsideRectangle) {
+        hovered_widget_ = new_hovered_widget;
+        if (hovered_widget_) {
+          events()->connect(hovered_widget_->destroyed(), this,
+                            &Frame::OnHoverWidgetDestroyed);
+        }
 
-			if(hovered_widget_) {
+      }
 
-				AbstractView* widget = 0;	// widget may be focused
+      return Finish;
 
-				widget = RecursiveDispatchMousePress(hovered_widget_, context);
+    } else {
 
-				if(widget == 0) {
-					DBG_PRINT_MSG("%s", "widget 0");
-					pressed_ = true;
-				} else {
-					SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
-				}
+      cursor_position_ = OutsideRectangle;
 
-			} else {
-				pressed_ = true;
-				// SetFocusedWidget(0);
-			}
+      if (hover_) {
+        PerformHoverOut(context);
+      }
 
-		} else {
-			pressed_ = false;
-		}
+      return Ignore;
+    }
+  }
 
-		return Finish;
-	}
+  void Frame::InitializeFrameOnce ()
+  {
+    projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
+                                    (float) size().height(), 100.f, -100.f);
+    model_matrix_ = glm::mat3(1.f);
 
-	Response Frame::PerformMouseRelease (AbstractWindow* context)
-	{
-		cursor_position_ = InsideRectangle;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
+    GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, &inner_verts,
+                     &outer_verts);
 
-		pressed_ = false;
+    vbo_.generate();
+    glGenVertexArrays(2, vao_);
 
-		if(focused_widget_) {
-			context->register_active_frame(this);
-			return dispatch_mouse_release(focused_widget_, context);
-		}
+    glBindVertexArray(vao_[0]);
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		return Ignore;
-	}
+    glBindVertexArray(vao_[1]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	Response Frame::PerformMouseMove (AbstractWindow* context)
-	{
-		Response retval = Ignore;
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
 
-		if(focused_widget_) {
-			context->register_active_frame(this);
-			retval = dispatch_mouse_move(focused_widget_, context);
-		}
+  void Frame::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)
+  {
+    if (focused_widget_ == widget) return;
 
-		return retval;
-	}
+    if (focused_widget_) {
+      dispatch_focus_off(focused_widget_, context);
+      focused_widget_->destroyed().disconnectOne(
+          this, &Frame::OnFocusedWidgetDestroyed);
+    }
 
-	Response Frame::PerformMouseHover (AbstractWindow* context)
-	{
-		if(pressed_) return Finish;
+    focused_widget_ = widget;
+    if (focused_widget_) {
+      dispatch_focus_on(focused_widget_, context);
+      events()->connect(focused_widget_->destroyed(), this,
+                        &Frame::OnFocusedWidgetDestroyed);
+    }
+  }
 
-		if(Contain(context->GetGlobalCursorPosition())) {
+  void Frame::OnFocusedWidgetDestroyed (AbstractWidget* widget)
+  {
+    assert(focused_widget_ == widget);
 
-			cursor_position_ = InsideRectangle;
+    //set_widget_focus_status(widget, false);
+    DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+    widget->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
 
-			if(!hover_) {
-				PerformHoverIn(context);
-			}
+    focused_widget_ = 0;
+  }
 
-			AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
+  void Frame::OnHoverWidgetDestroyed (AbstractWidget* widget)
+  {
+    assert(hovered_widget_ == widget);
 
-			if(new_hovered_widget != hovered_widget_) {
+    DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+    widget->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
 
-				if(hovered_widget_) {
-					hovered_widget_->destroyed().disconnectOne(this,
-							&Frame::OnHoverWidgetDestroyed);
-				}
-
-				hovered_widget_ = new_hovered_widget;
-				if(hovered_widget_) {
-					events()->connect(hovered_widget_->destroyed(), this,
-							&Frame::OnHoverWidgetDestroyed);
-				}
-
-			}
-
-			return Finish;
-
-		} else {
-
-			cursor_position_ = OutsideRectangle;
-
-			if(hover_) {
-				PerformHoverOut(context);
-			}
-
-			return Ignore;
-		}
-	}
-
-	void Frame::InitializeFrameOnce()
-	{
-		projection_matrix_  = glm::ortho(0.f, (float)size().width(),
-				0.f, (float)size().height(),
-				100.f, -100.f);
-		model_matrix_ = glm::mat3(1.f);
-
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
-		GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, &inner_verts, &outer_verts);
-
-		buffer_.generate();
-		glGenVertexArrays(2, vao_);
-
-		glBindVertexArray(vao_[0]);
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		buffer_.reset();
-	}
-
-	void Frame::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)
-	{
-		if(focused_widget_ == widget)
-			return;
-
-		if (focused_widget_) {
-			dispatch_focus_off(focused_widget_, context);
-			focused_widget_->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-		}
-
-		focused_widget_ = widget;
-		if (focused_widget_) {
-			dispatch_focus_on(focused_widget_, context);
-			events()->connect(focused_widget_->destroyed(), this, &Frame::OnFocusedWidgetDestroyed);
-		}
-	}
-
-	void Frame::OnFocusedWidgetDestroyed (AbstractWidget* widget)
-	{
-		assert(focused_widget_ == widget);
-
-		//set_widget_focus_status(widget, false);
-		DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
-
-		focused_widget_ = 0;
-	}
-
-	void Frame::OnHoverWidgetDestroyed (AbstractWidget* widget)
-	{
-		assert(hovered_widget_ == widget);
-
-		DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-		widget->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
-
-		hovered_widget_ = 0;
-	}
+    hovered_widget_ = 0;
+  }
 
 }
