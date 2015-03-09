@@ -78,6 +78,8 @@ namespace BlendInt {
 
     bool hover_;
 
+    int last_round_status_;
+
     RefPtr<AbstractItemModel> model_;
 
     AbstractFrame* popup_;

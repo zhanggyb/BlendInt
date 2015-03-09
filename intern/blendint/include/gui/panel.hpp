@@ -21,76 +21,63 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_PANEL_HPP_
-#define _BLENDINT_GUI_PANEL_HPP_
+#pragma once
 
-/**
- * @defgroup widgets Widgets
- *
- * @ingroup gui
- */
-
-#include <opengl/gl-buffer.hpp>
-#include <opengl/gl-texture2d.hpp>
-
+#include <gui/view-buffer.hpp>
 #include <gui/abstract-round-widget.hpp>
 #include <gui/abstract-layout.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A widget usually contains other Form or widget in a box with padding
-	 *
-	 * @ingroup widgets
-	 */
-	class Panel: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Panel);
+  /**
+   * @brief A widget usually contains other Form or widget in a box with padding
+   *
+   * @ingroup widgets
+   */
+  class Panel: public AbstractRoundWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Panel);
 
-	public:
+  public:
 
-		Panel ();
+    Panel (AbstractLayout* layout);
 
-		virtual ~Panel ();
+    virtual ~Panel ();
 
-		void SetLayout (AbstractLayout* layout);
+    void AddWidget (AbstractWidget* widget);
 
-		void AddWidget (AbstractWidget* widget);
+    void InsertWidget (int index, AbstractWidget* widget);
 
-		void InsertWidget (int index, AbstractWidget* widget);
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandY () const;
 
-		virtual bool IsExpandY () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual Size GetPreferredSize () const;
+  protected:
 
-	protected:
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual bool RemoveSubView (AbstractView* view);
 
-	private:
+  private:
 
-		void InitializePanelOnce ();
+    void InitializePanelOnce ();
 
-		void OnLayoutDestroyed (AbstractWidget* layout);
+    AbstractLayout* layout_;
 
-		AbstractLayout* layout_;
+    GLuint vao_[2];
 
-		GLuint vao_[3];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		GLBuffer<ARRAY_BUFFER, 3> buffer_;
+    RefPtr<ViewBuffer> view_buffer_;
 
-        GLTexture2D texture_buffer_;
-
-	};
+  };
 
 } /* namespace BlendInt */
-
-#endif /* _BLENDINT_GUI_PANEL_HPP_ */

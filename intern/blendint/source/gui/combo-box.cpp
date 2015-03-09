@@ -35,9 +35,14 @@ namespace BlendInt {
   Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
 
   ComboBox::ComboBox ()
-      : AbstractRoundWidget(), status_down_(false), hover_(false), popup_(0)
+  : AbstractRoundWidget(),
+    status_down_(false),
+    hover_(false),
+    last_round_status_(0),
+    popup_(0)
   {
     set_round_type(RoundAll);
+    last_round_status_ = round_type();
 
     Font font;	// default font
     int h = font.height();
@@ -252,12 +257,16 @@ namespace BlendInt {
     status_down_ = true;
 
     if (popup_) {
+
       delete popup_;
       popup_ = 0;
-      SetRoundType(RoundAll);
+      SetRoundType(last_round_status_);
       RequestRedraw();
       return Finish;
+
     } else {
+
+      last_round_status_ = round_type();
       Menu* menu = new Menu;
       menu->AddAction(context->icons()->icon_16x16(Icons::IMAGEFILE), "Menu Item 1");
       menu->AddAction(context->icons()->icon_16x16(Icons::IMAGE_RGB), "Menu Item 2");
@@ -274,14 +283,28 @@ namespace BlendInt {
       int top = pos.y() + size().height() + popup_->size().height();
       int bottom = pos.y() - popup_->size().height();
 
-      if (top <= context->size().height()) {
+      if (top <= context->size().height()) {  // pop up above this widget
+
         popup_->MoveTo(pos.x(), pos.y() + size().height());
-        SetRoundType(RoundBottomLeft | RoundBottomRight);
+
+        int round = round_type();
+        CLRBIT(round, RoundTopLeft);
+        CLRBIT(round, RoundTopRight);
+
+        SetRoundType(round);
+
       } else {
 
-        if (bottom >= 0) {
+        if (bottom >= 0) {  // pop up below this widget
+
           popup_->MoveTo(pos.x(), pos.y() - popup_->size().height());
-          SetRoundType(RoundTopLeft | RoundTopRight);
+
+          int round = round_type();
+          CLRBIT(round, RoundBottomLeft);
+          CLRBIT(round, RoundBottomRight);
+
+          SetRoundType(round);
+
         } else {
 
           int diff = top - context->size().height() + bottom;
@@ -298,13 +321,9 @@ namespace BlendInt {
       }
 
       context->AddFrame(popup_);
-
       return Ignore;
+
     }
-
-    RequestRedraw();
-
-    return Finish;
   }
 
   Response ComboBox::PerformMouseRelease (AbstractWindow* context)
@@ -366,7 +385,7 @@ namespace BlendInt {
     //assert(frame == popup_);
     popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
     popup_ = 0;
-    SetRoundType(RoundAll);
+    SetRoundType(last_round_status_);
   }
 
 }
