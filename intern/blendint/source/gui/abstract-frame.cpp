@@ -37,16 +37,17 @@
 namespace BlendInt {
 
   glm::mat4 AbstractFrame::kViewMatrix = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-      glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+                                                     glm::vec3(0.f, 0.f, 0.f),
+                                                     glm::vec3(0.f, 1.f, 0.f));
 
-  AbstractFrame::AbstractFrame (int flag) :
-      AbstractView(), frame_flag_(flag)
+  AbstractFrame::AbstractFrame (int frame_flag)
+  : AbstractView(), frame_flag_(frame_flag)
   {
     destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }
 
-  AbstractFrame::AbstractFrame (int width, int height, int flag) :
-      AbstractView(width, height), frame_flag_(flag)
+  AbstractFrame::AbstractFrame (int width, int height, int frame_flag)
+  : AbstractView(width, height), frame_flag_(frame_flag)
   {
     destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }

@@ -56,8 +56,9 @@ namespace BlendInt {
 
     void AddAction (const RefPtr<AbstractIcon>& icon, const String& text);
 
-    void AddAction (const RefPtr<AbstractIcon>& icon, const String& text,
-        const String& shortcut);
+    void AddAction (const RefPtr<AbstractIcon>& icon,
+                    const String& text,
+                    const String& shortcut);
 
     void AddAction (const RefPtr<Action>& item);
 

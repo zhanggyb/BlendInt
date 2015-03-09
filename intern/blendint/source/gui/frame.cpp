@@ -297,6 +297,8 @@ namespace BlendInt {
 
     if (cursor_position_ == InsideRectangle) {
 
+      context->SetFocusedFrame(this);
+
       if (hovered_widget_) {
 
         AbstractView* widget = 0;	// widget may be focused
@@ -315,16 +317,17 @@ namespace BlendInt {
         // SetFocusedWidget(0);
       }
 
+      return Finish;
+
     } else {
       pressed_ = false;
+      return Ignore;
     }
-
-    return Finish;
   }
 
   Response Frame::PerformMouseRelease (AbstractWindow* context)
   {
-    cursor_position_ = InsideRectangle;
+    // cursor_position_ = InsideRectangle;
 
     pressed_ = false;
 

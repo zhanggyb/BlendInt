@@ -31,9 +31,9 @@ namespace BlendInt {
   {
   public:
 
-    AbstractRoundFrame ();
+    AbstractRoundFrame (int frame_flag = FrameRegular);
 
-    AbstractRoundFrame (int width, int height);
+    AbstractRoundFrame (int width, int height, int frame_regular = FrameRegular);
 
     virtual ~AbstractRoundFrame ();
 

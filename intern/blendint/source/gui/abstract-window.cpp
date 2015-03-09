@@ -206,12 +206,30 @@ namespace BlendInt {
 
     AbstractFrame* top_regular_frame =
         dynamic_cast<AbstractFrame*>(GetSubViewAt(index));
-    // move the frame to the top
-    if (InsertSiblingAfter(top_regular_frame, frame)) {
-      if (focused_frame_ != nullptr) focused_frame_->PerformFocusOff(this);
+
+    if(top_regular_frame == frame) {
+
+      if (focused_frame_ != nullptr) {
+        assert(focused_frame_->focusable());
+        focused_frame_->PerformFocusOff(this);
+      }
+
       focused_frame_ = frame;
       focused_frame_->PerformFocusOn(this);
-      RequestRedraw();
+
+    } else {
+
+      // move the frame to the top
+      if (InsertSiblingAfter(top_regular_frame, frame)) {
+        if (focused_frame_ != nullptr) {
+          assert(focused_frame_->focusable());
+          focused_frame_->PerformFocusOff(this);
+        }
+        focused_frame_ = frame;
+        focused_frame_->PerformFocusOn(this);
+        RequestRedraw();
+      }
+
     }
 
     return true;

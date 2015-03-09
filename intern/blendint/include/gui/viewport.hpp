@@ -31,69 +31,63 @@
 
 namespace BlendInt {
 
-	class Viewport: public AbstractFrame
-	{
-		DISALLOW_COPY_AND_ASSIGN(Viewport);
+  class Viewport: public AbstractFrame
+  {
+  DISALLOW_COPY_AND_ASSIGN(Viewport);
 
-	public:
+  public:
 
-		Viewport ();
+    Viewport ();
 
-		virtual ~Viewport ();
+    virtual ~Viewport ();
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize() const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context);
 
-		virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context);
 
-		virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context);
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context);
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMouseHover (AbstractWindow* context);
+    virtual Response PerformMouseHover (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void InitializeViewport ();
+    RefPtr<GridFloor> gridfloor_;
 
-		GLuint vao_;
+    RefPtr<PerspectiveCamera> default_camera_;
 
-		GLBuffer<> buffer_;
+    glm::mat4 projection_matrix_;
 
-		RefPtr<GridFloor> gridfloor_;
+    glm::mat3 model_matrix_;
 
-		RefPtr<PerspectiveCamera> default_camera_;
-
-		glm::mat4 projection_matrix_;
-
-		glm::mat3 model_matrix_;
-
-		bool hover_;
-	};
+    bool hover_;
+  };
 
 }

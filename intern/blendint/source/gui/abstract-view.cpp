@@ -592,6 +592,7 @@ namespace BlendInt {
   bool AbstractView::InsertSiblingBefore (AbstractView *src, AbstractView *dst)
   {
     if (src == nullptr || dst == nullptr) return false;
+    if (src == dst) return false;
 
     if (dst->superview_ != nullptr) {
 
@@ -661,6 +662,7 @@ namespace BlendInt {
   bool AbstractView::InsertSiblingAfter (AbstractView *src, AbstractView *dst)
   {
     if (src == nullptr || dst == nullptr) return false;
+    if (src == dst) return false;
 
     if (dst->superview_ != nullptr) {
 

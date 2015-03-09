@@ -26,148 +26,140 @@
 
 namespace BlendInt {
 
-	AbstractRoundFrame::AbstractRoundFrame ()
-	: AbstractFrame(),
-	  round_frame_flag_(0),
-	  round_radius_(5.f)
-	{
-	}
+  AbstractRoundFrame::AbstractRoundFrame (int frame_flag)
+  : AbstractFrame(frame_flag),
+    round_frame_flag_(0),
+    round_radius_(5.f)
+  {
+  }
 
-	AbstractRoundFrame::AbstractRoundFrame (int width, int height)
-	: AbstractFrame(width, height),
-	  round_frame_flag_(0),
-	  round_radius_(5.f)
-	{
-	}
+  AbstractRoundFrame::AbstractRoundFrame (int width, int height, int frame_flag)
+  : AbstractFrame(width, height, frame_flag),
+    round_frame_flag_(0),
+    round_radius_(5.f)
+  {
+  }
 
-	AbstractRoundFrame::~AbstractRoundFrame()
-	{
-	}
+  AbstractRoundFrame::~AbstractRoundFrame ()
+  {
+  }
 
-	AbstractView* AbstractRoundFrame::GetFocusedView () const
-	{
-		return nullptr;
-	}
+  AbstractView* AbstractRoundFrame::GetFocusedView () const
+  {
+    return nullptr;
+  }
 
-    void AbstractRoundFrame::SetRoundType (int type)
-    {
-        if((round_frame_flag_ & 0x0F) == (type & 0x0F)) return;
-        
-        PerformRoundTypeUpdate(type & 0x0F);
-    }
-    
-    void AbstractRoundFrame::SetRoundRadius(float radius)
-    {
-        if(round_radius_ == radius) return;
-        
-        PerformRoundRadiusUpdate(radius);
-    }
-    
-	bool AbstractRoundFrame::PreDraw(AbstractWindow* context)
-	{
-		return visiable();
-	}
+  void AbstractRoundFrame::SetRoundType (int type)
+  {
+    if ((round_frame_flag_ & 0x0F) == (type & 0x0F)) return;
 
-	Response AbstractRoundFrame::Draw (AbstractWindow* context)
-	{
-		DrawSubViewsOnce(context);
+    PerformRoundTypeUpdate(type & 0x0F);
+  }
 
-		return subs_count() ? Ignore : Finish;
-	}
+  void AbstractRoundFrame::SetRoundRadius (float radius)
+  {
+    if (round_radius_ == radius) return;
 
-	void AbstractRoundFrame::PostDraw(AbstractWindow* context)
-	{
+    PerformRoundRadiusUpdate(radius);
+  }
 
-	}
+  bool AbstractRoundFrame::PreDraw (AbstractWindow* context)
+  {
+    return visiable();
+  }
 
-	void AbstractRoundFrame::PerformFocusOn(AbstractWindow* context)
-	{
-	}
+  Response AbstractRoundFrame::Draw (AbstractWindow* context)
+  {
+    DrawSubViewsOnce(context);
 
-	void AbstractRoundFrame::PerformFocusOff (AbstractWindow* context)
-	{
+    return subs_count() ? Ignore : Finish;
+  }
 
-	}
+  void AbstractRoundFrame::PostDraw (AbstractWindow* context)
+  {
 
-	void AbstractRoundFrame::PerformHoverIn(AbstractWindow* context)
-	{
-	}
+  }
 
-	void AbstractRoundFrame::PerformHoverOut(AbstractWindow* context)
-	{
-	}
+  void AbstractRoundFrame::PerformFocusOn (AbstractWindow* context)
+  {
+  }
 
-    Response AbstractRoundFrame::PerformContextMenuPress (AbstractWindow* context)
-    {
-        return Ignore;
-    }
-    
-    Response AbstractRoundFrame::PerformContextMenuRelease (AbstractWindow* context)
-    {
-        return Ignore;
-    }
+  void AbstractRoundFrame::PerformFocusOff (AbstractWindow* context)
+  {
 
-	Response AbstractRoundFrame::PerformKeyPress(AbstractWindow* context)
-	{
-		return Ignore;
-	}
+  }
 
-	Response AbstractRoundFrame::PerformMousePress(AbstractWindow* context)
-	{
-		return Ignore;
-	}
+  void AbstractRoundFrame::PerformHoverIn (AbstractWindow* context)
+  {
+  }
 
-	Response AbstractRoundFrame::PerformMouseRelease(AbstractWindow* context)
-	{
-		return Ignore;
-	}
+  void AbstractRoundFrame::PerformHoverOut (AbstractWindow* context)
+  {
+  }
 
-	Response AbstractRoundFrame::PerformMouseMove(AbstractWindow* context)
-	{
-		return Ignore;
-	}
+  Response AbstractRoundFrame::PerformContextMenuPress (AbstractWindow* context)
+  {
+    return Ignore;
+  }
 
-	Response AbstractRoundFrame::PerformMouseHover(AbstractWindow* context)
-	{
-		return Ignore;
-	}
+  Response AbstractRoundFrame::PerformContextMenuRelease (AbstractWindow* context)
+  {
+    return Ignore;
+  }
 
-    void AbstractRoundFrame::GenerateRoundedVertices(std::vector<GLfloat>* inner,
-                                        std::vector<GLfloat>* outer)
-    {
-        GenerateVertices(size(),
-                         default_border_width() * AbstractWindow::theme()->pixel(),
-                         round_type(),
-                         round_radius_,
-                         inner,
-                         outer);
-    }
-    
-    void AbstractRoundFrame::GenerateRoundedVertices(Orientation shadedir,
-                                        short shadetop,
-                                        short shadedown,
-                                        std::vector<GLfloat>* inner,
-                                        std::vector<GLfloat>* outer)
-    {
-        GenerateVertices(size(),
-                         default_border_width() * AbstractWindow::theme()->pixel(),
-                         round_type(),
-                         round_radius_,
-                         shadedir,
-                         shadetop,
-                         shadedown,
-                         inner,
-                         outer);
-    }
-    
-    void AbstractRoundFrame::PerformRoundTypeUpdate (int round_type)
-    {
-        set_round_type(round_type);
-    }
-    
-    void AbstractRoundFrame::PerformRoundRadiusUpdate(float radius)
-    {
-        round_radius_ = radius;
-    }
+  Response AbstractRoundFrame::PerformKeyPress (AbstractWindow* context)
+  {
+    return Ignore;
+  }
+
+  Response AbstractRoundFrame::PerformMousePress (AbstractWindow* context)
+  {
+    return Ignore;
+  }
+
+  Response AbstractRoundFrame::PerformMouseRelease (AbstractWindow* context)
+  {
+    return Ignore;
+  }
+
+  Response AbstractRoundFrame::PerformMouseMove (AbstractWindow* context)
+  {
+    return Ignore;
+  }
+
+  Response AbstractRoundFrame::PerformMouseHover (AbstractWindow* context)
+  {
+    return Ignore;
+  }
+
+  void AbstractRoundFrame::GenerateRoundedVertices (std::vector<GLfloat>* inner,
+                                                    std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(size(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
+                     round_type(), round_radius_, inner, outer);
+  }
+
+  void AbstractRoundFrame::GenerateRoundedVertices (Orientation shadedir,
+                                                    short shadetop,
+                                                    short shadedown,
+                                                    std::vector<GLfloat>* inner,
+                                                    std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(size(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
+                     round_type(), round_radius_, shadedir, shadetop, shadedown,
+                     inner, outer);
+  }
+
+  void AbstractRoundFrame::PerformRoundTypeUpdate (int round_type)
+  {
+    set_round_type(round_type);
+  }
+
+  void AbstractRoundFrame::PerformRoundRadiusUpdate (float radius)
+  {
+    round_radius_ = radius;
+  }
 
 }

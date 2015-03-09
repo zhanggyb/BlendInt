@@ -32,6 +32,31 @@
 
 namespace BlendInt {
 
+  enum FrameFlagMask
+  {
+
+    /**
+     * whether the frame can be focused
+     */
+    FrameFocusableMask = (1 << 0),
+
+    /**
+     * whether the frame is floating above other regular frames, also called always-on-top.
+     */
+    FrameFloatingMask = (1 << 1)
+
+  };
+
+  enum FrameFlags {
+
+    FrameRegular = FrameFocusableMask,
+
+    FrameTopmost = FrameFocusableMask | FrameFloatingMask,
+
+    FramePopup = FrameFloatingMask
+
+  };
+
   class FrameSplitter;
 
   /**
@@ -55,9 +80,9 @@ namespace BlendInt {
 
     friend class AbstractWindow;
 
-    AbstractFrame (int flag = FrameFocusableMask);
+    AbstractFrame (int frame_flag = FrameRegular);
 
-    AbstractFrame (int width, int height, int flag = FrameFocusableMask);
+    AbstractFrame (int width, int height, int frame_flag = FrameRegular);
 
     virtual ~AbstractFrame ();
 
@@ -200,21 +225,6 @@ namespace BlendInt {
   private:
 
     friend class FrameSplitter;
-
-    enum FrameFlagMask
-    {
-
-      /**
-       * whether the frame can be focused
-       */
-      FrameFocusableMask = (1 << 0),
-
-      /**
-       * whether the frame is floating above other regular frames, also called always-on-top.
-       */
-      FrameFloatingMask = (1 << 1)
-
-    };
 
     /**
      * this frame is the superview of orig

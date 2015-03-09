@@ -225,10 +225,9 @@ namespace BlendInt {
   {
     pressed_ = true;
 
-    Response response = Ignore;
-
     PerformMouseHover(context);
 
+    Response response = Ignore;
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
       response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
       if (response == Finish) break;
@@ -239,15 +238,14 @@ namespace BlendInt {
 
   Response NodeView::PerformMouseRelease (AbstractWindow* context)
   {
-    Response response = Ignore;
-
     pressed_ = false;
-    AbstractNode* node = 0;
 
+    PerformMouseHover(context);
+
+    Response response = Ignore;
     for (AbstractView* p = last_subview(); p != nullptr; p =
         p->previous_view()) {
-      node = dynamic_cast<AbstractNode*>(p);
-      response = node->PerformMouseRelease(context);
+      response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
       if (response == Finish) {
         break;
       }
@@ -258,6 +256,8 @@ namespace BlendInt {
 
   Response NodeView::PerformMouseMove (AbstractWindow* context)
   {
+    PerformMouseHover(context);
+
     if (pressed_) {
 
       Response response = Ignore;

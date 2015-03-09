@@ -31,6 +31,7 @@ namespace BlendInt {
   : AbstractNode(), layout_(0)
   {
     set_round_type(RoundAll);
+    set_round_radius(10.f);
 
     if (layout == nullptr) {
       layout_ = Manage(new FlowLayout);

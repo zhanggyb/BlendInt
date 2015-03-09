@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <core/types.hpp>
+
 #include <gui/abstract-round-frame.hpp>
 #include <gui/view-buffer.hpp>
 
@@ -51,9 +53,9 @@ namespace BlendInt {
 
     };
 
-    AbstractDialog (int flags = 0);
+    AbstractDialog (int dialog_flag = 0);
 
-    AbstractDialog (int width, int height, int flags = 0);
+    AbstractDialog (int width, int height, int dialog_flag = 0);
 
     virtual ~AbstractDialog ();
 
@@ -159,11 +161,11 @@ namespace BlendInt {
       }
     }
 
-    Point last_position_;
+    Point last_position_; // used when dragging dialog
 
-    Size last_size_;
+    Size last_size_;  // used when dragging dialog
 
-    Point cursor_point_;
+    Point cursor_point_;  // used when dragging dialog
 
     AbstractWidget* focused_widget_;
 

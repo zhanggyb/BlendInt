@@ -28,27 +28,25 @@
 
 namespace BlendInt {
 
-  AbstractDialog::AbstractDialog (int flags)
-      :
-        AbstractRoundFrame(),
-        focused_widget_(0),
-        hovered_widget_(0),
-        cursor_position_(InsideRectangle),
-        dialog_flags_(flags & 0x0F),
-        focused_(false)
+  AbstractDialog::AbstractDialog (int dialog_flag)
+  : AbstractRoundFrame(FrameTopmost),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(InsideRectangle),
+    dialog_flags_(dialog_flag & 0x0F),
+    focused_(false)
   {
     applied_.reset(new Cpp::Event<AbstractDialog*>);
     canceled_.reset(new Cpp::Event<AbstractDialog*>);
   }
 
-  AbstractDialog::AbstractDialog (int width, int height, int flags)
-      :
-        AbstractRoundFrame(width, height),
-        focused_widget_(0),
-        hovered_widget_(0),
-        cursor_position_(InsideRectangle),
-        dialog_flags_(flags & 0x0F),
-        focused_(false)
+  AbstractDialog::AbstractDialog (int width, int height, int dialog_flag)
+  : AbstractRoundFrame(width, height, FrameTopmost),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(InsideRectangle),
+    dialog_flags_(dialog_flag & 0x0F),
+    focused_(false)
   {
     applied_.reset(new Cpp::Event<AbstractDialog*>);
     canceled_.reset(new Cpp::Event<AbstractDialog*>);
@@ -103,7 +101,9 @@ namespace BlendInt {
 
     if (cursor_position_ == InsideRectangle) {
 
-      bool focus_status = focused_;
+      context->SetFocusedFrame(this);
+
+//      bool focus_status = focused_;
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
@@ -124,23 +124,23 @@ namespace BlendInt {
         set_mouse_button_pressed(true);
       }
 
-      if (!modal()) {
-        if (focused_ == focus_status) {
-          context->SetFocusedFrame(this);
-        }
-      }
+//      if (!modal()) {
+//        if (focused_ == focus_status) {
+//          context->SetFocusedFrame(this);
+//        }
+//      }
 
       return Finish;
 
     } else if (cursor_position_ != OutsideRectangle) {
+
+      context->SetFocusedFrame(this);
 
       set_mouse_button_pressed(true);
 
       last_position_ = position();
       last_size_ = size();
       cursor_point_ = context->GetGlobalCursorPosition();
-
-      context->SetFocusedFrame(this);
 
       return Finish;
     }
@@ -252,6 +252,7 @@ namespace BlendInt {
         retval = dispatch_mouse_move(focused_widget_, context);
 
       }
+
     }
 
     return retval;
