@@ -187,7 +187,7 @@ namespace BlendInt {
       pressed_ = true;
 
       last_position_ = position();
-      cursor_point_ = context->local_cursor_position();
+      cursor_point_ = context->GetGlobalCursorPosition();
 
       if (hovered_widget_) {
 
@@ -212,7 +212,7 @@ namespace BlendInt {
 
       last_position_ = position();
       last_size_ = size();
-      cursor_point_ = context->local_cursor_position();
+      cursor_point_ = context->GetGlobalCursorPosition();
 
       return Finish;
     }
@@ -244,8 +244,8 @@ namespace BlendInt {
 
     if (pressed_) {
 
-      int ox = context->local_cursor_position().x() - cursor_point_.x();
-      int oy = context->local_cursor_position().y() - cursor_point_.y();
+      int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
+      int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
 
       switch (cursor_position_) {
 
@@ -325,45 +325,41 @@ namespace BlendInt {
                                                     AbstractWindow* context)
   {
     // find the new top hovered widget
-    if (orig != nullptr) {
 
-      if (orig->superview() == 0) { // the widget is just removed from this frame
-        return FindAndDispatchTopHoveredWidget(context);
-      }
+    if (orig == 0) return FindAndDispatchTopHoveredWidget(context);
 
-      if (orig->superview() == this) {
-        return RecheckAndDispatchTopHoveredWidget(orig, context);
-      }
-
-      Rect rect;
-      try {
-        rect.set_position(
-            GetRelativePosition(
-                dynamic_cast<AbstractWidget*>(orig->superview())));
-        rect.set_size(orig->superview()->size());
-        return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
-
-      }
-
-      catch (const std::bad_cast& e) {
-        DBG_PRINT_MSG("Error: %s", e.what());
-        return FindAndDispatchTopHoveredWidget(context);
-      }
-
-      catch (const std::invalid_argument& e) {
-        DBG_PRINT_MSG("Error: %s", e.what());
-        return FindAndDispatchTopHoveredWidget(context);
-      }
-
-      catch (const std::out_of_range& e) {
-        DBG_PRINT_MSG("Error: %s", e.what());
-        return FindAndDispatchTopHoveredWidget(context);
-      }
-
-    } else {
-
+    if (orig->superview() == 0) { // the widget is just removed from this frame
       return FindAndDispatchTopHoveredWidget(context);
+    }
 
+    if (orig->superview() == this) {
+      return RecheckAndDispatchTopHoveredWidget(orig, context);
+    }
+
+    Rect rect;
+    try {
+
+      rect.set_position(
+          GetRelativePosition(
+              dynamic_cast<AbstractWidget*>(orig->superview())));
+      rect.set_size(orig->superview()->size());
+      return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
+
+    }
+
+    catch (const std::bad_cast& e) {
+      DBG_PRINT_MSG("Error: %s", e.what());
+      return FindAndDispatchTopHoveredWidget(context);
+    }
+
+    catch (const std::invalid_argument& e) {
+      DBG_PRINT_MSG("Error: %s", e.what());
+      return FindAndDispatchTopHoveredWidget(context);
+    }
+
+    catch (const std::out_of_range& e) {
+      DBG_PRINT_MSG("Error: %s", e.what());
+      return FindAndDispatchTopHoveredWidget(context);
     }
   }
 

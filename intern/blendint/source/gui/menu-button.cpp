@@ -28,7 +28,9 @@
 namespace BlendInt {
 
   MenuButton::MenuButton (const String& text)
-      : AbstractButton(text), vao_(0)
+  : AbstractButton(text),
+    vao_(0),
+    hover_(false)
   {
     set_round_type(RoundAll);
 

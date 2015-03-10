@@ -270,8 +270,10 @@ namespace BlendInt {
     PerformMouseHover(context);
 
     Response response = Ignore;
+    Point local_position = context->local_cursor_position();
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
       response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
+      context->set_local_cursor_position(local_position);
       if (response == Finish) break;
     }
 
@@ -285,9 +287,10 @@ namespace BlendInt {
     PerformMouseHover(context);
 
     Response response = Ignore;
-    for (AbstractView* p = last_subview(); p != nullptr; p =
-        p->previous_view()) {
+    Point local_position = context->local_cursor_position();
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
       response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
+      context->set_local_cursor_position(local_position);
       if (response == Finish) {
         break;
       }
@@ -304,11 +307,12 @@ namespace BlendInt {
 
       Response response = Ignore;
       AbstractNode* node = 0;
+      Point local_position = context->local_cursor_position();
 
-      for (AbstractView* p = last_subview(); p != nullptr; p =
-          p->previous_view()) {
+      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
         node = dynamic_cast<AbstractNode*>(p);
         response = node->PerformMouseMove(context);
+        context->set_local_cursor_position(local_position);
         if (response == Finish) {
           break;
         }
@@ -324,8 +328,10 @@ namespace BlendInt {
     try {
 
       Response response = Ignore;
+      Point local_position = context->local_cursor_position();
       for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
         response = dynamic_cast<AbstractNode*>(p)->PerformMouseHover(context);
+        context->set_local_cursor_position(local_position);
         if (response == Finish) break;
       }
 
