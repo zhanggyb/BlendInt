@@ -28,245 +28,251 @@
 
 namespace BlendInt {
 
-	ToolButton::ToolButton ()
-	: AbstractButton()
-	{
-		set_round_type(RoundAll);
-		set_size(24, 24);
+  ToolButton::ToolButton ()
+      : AbstractButton()
+  {
+    set_round_type(RoundAll);
+    set_size(24, 24);
 
-		InitializeToolButton();
-	}
+    InitializeToolButton();
+  }
 
-	ToolButton::~ToolButton ()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
+  ToolButton::~ToolButton ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
 
-	void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
+  void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-			set_size(*request.size());
+      set_size(*request.size());
 
-            std::vector<GLfloat> inner_verts;
-            std::vector<GLfloat> outer_verts;
+      std::vector<GLfloat> inner_verts;
+      std::vector<GLfloat> outer_verts;
 
-            if (AbstractWindow::theme()->regular().shaded) {
-            	GenerateRoundedVertices(Vertical,
-                        AbstractWindow::theme()->regular().shadetop,
-                        AbstractWindow::theme()->regular().shadedown,
-                        &inner_verts,
-                        &outer_verts);
-            } else {
-            	GenerateRoundedVertices(&inner_verts, &outer_verts);
-            }
+      if (AbstractWindow::theme()->regular().shaded) {
+        GenerateRoundedVertices(Vertical,
+                                AbstractWindow::theme()->regular().shadetop,
+                                AbstractWindow::theme()->regular().shadedown,
+                                &inner_verts, &outer_verts);
+      } else {
+        GenerateRoundedVertices(&inner_verts, &outer_verts);
+      }
 
-            vbo_.bind(0);
-            vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-            vbo_.bind(1);
-            vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-            GLArrayBuffer::reset();
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                        &inner_verts[0]);
+      vbo_.bind(1);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
+                        &outer_verts[0]);
+      GLArrayBuffer::reset();
 
-            RequestRedraw();
-		}
+      RequestRedraw();
+    }
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	void ToolButton::PerformRoundTypeUpdate(int round_type)
-	{
-		set_round_type(round_type);
+  void ToolButton::PerformRoundTypeUpdate (int round_type)
+  {
+    set_round_type(round_type);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme()->regular().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme()->regular().shadetop,
-					AbstractWindow::theme()->regular().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+    if (AbstractWindow::theme()->regular().shaded) {
+      GenerateRoundedVertices(Vertical,
+                              AbstractWindow::theme()->regular().shadetop,
+                              AbstractWindow::theme()->regular().shadedown,
+                              &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		GLArrayBuffer::reset();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    GLArrayBuffer::reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	void ToolButton::PerformRoundRadiusUpdate(float radius)
-	{
-		set_round_radius(radius);
+  void ToolButton::PerformRoundRadiusUpdate (float radius)
+  {
+    set_round_radius(radius);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme()->regular().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme()->regular().shadetop,
-					AbstractWindow::theme()->regular().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+    if (AbstractWindow::theme()->regular().shaded) {
+      GenerateRoundedVertices(Vertical,
+                              AbstractWindow::theme()->regular().shadetop,
+                              AbstractWindow::theme()->regular().shadedown,
+                              &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		GLArrayBuffer::reset();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    GLArrayBuffer::reset();
 
-		RequestRedraw();
-	}
+    RequestRedraw();
+  }
 
-	void ToolButton::PerformHoverIn(AbstractWindow* context)
-	{
-		RequestRedraw();
-	}
+  void ToolButton::PerformHoverIn (AbstractWindow* context)
+  {
+    RequestRedraw();
+  }
 
-	void ToolButton::PerformHoverOut(AbstractWindow* context)
-	{
-		RequestRedraw();
-	}
+  void ToolButton::PerformHoverOut (AbstractWindow* context)
+  {
+    RequestRedraw();
+  }
 
-	Response ToolButton::Draw (AbstractWindow* context)
-	{
-		AbstractWindow::shaders()->widget_inner_program()->use();
+  Response ToolButton::Draw (AbstractWindow* context)
+  {
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-		if (is_down()) {
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-			        AbstractWindow::theme()->regular().inner_sel.data());
-		} else {
-			if (hover()) {
-				glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 15);
-			} else {
-				glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-			}
+    if (is_down()) {
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      glUniform4fv(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+          AbstractWindow::theme()->regular().inner_sel.data());
+    } else {
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      glUniform4fv(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+          AbstractWindow::theme()->regular().inner.data());
+    }
 
-            glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-					AbstractWindow::theme()->regular().inner.data());
-		}
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
-        AbstractWindow::shaders()->widget_outer_program()->use();
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+        0.f, 0.f);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        AbstractWindow::theme()->regular().outline.data());
 
-        glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
-        glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-                AbstractWindow::theme()->regular().outline.data());
+    glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                 GetOutlineVertices(round_type()) * 2 + 2);
 
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        GetOutlineVertices(round_type()) * 2 + 2);
+    if (emboss()) {
+      glUniform4f(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+          1.0f, 1.0f, 1.0f, 0.16f);
+      glUniform2f(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+          0.f, -1.f);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                   GetHalfOutlineVertices(round_type()) * 2);
+    }
 
-		if (emboss()) {
-            glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-                    1.0f, 1.0f, 0.16f);
-            glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
-                    0.f, - 1.f);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-			        GetHalfOutlineVertices(round_type()) * 2);
-		}
+    DrawIconText();
 
-		DrawIconText();
+    return Finish;
+  }
 
-		return Finish;
-	}
+  void ToolButton::SetAction (const String& text)
+  {
+    RefPtr<Action> action(new Action(text));
 
-	void ToolButton::SetAction (const String& text)
-	{
-		RefPtr<Action> action(new Action(text));
+    action_ = action;
+  }
 
-		action_ = action;
-	}
+  void ToolButton::SetAction (const String& text, const String& shortcut)
+  {
+    RefPtr<Action> action(new Action(text, shortcut));
 
-	void ToolButton::SetAction (const String& text, const String& shortcut)
-	{
-		RefPtr<Action> action(new Action(text, shortcut));
+    action_ = action;
+  }
 
-		action_ = action;
-	}
+  void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon,
+                              const String& text)
+  {
+    RefPtr<Action> action(new Action(icon, text));
 
-	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text)
-	{
-		RefPtr<Action> action(new Action(icon, text));
+    action_ = action;
 
-		action_ = action;
+    set_icon(icon);
+    set_text(text);
+  }
 
-		set_icon(icon);
-		set_text(text);
-	}
+  void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon,
+                              const String& text,
+                              const String& shortcut)
+  {
+    RefPtr<Action> action(new Action(icon, text, shortcut));
 
-	void ToolButton::SetAction (const RefPtr<AbstractIcon>& icon, const String& text,
-	        const String& shortcut)
-	{
-		RefPtr<Action> action(new Action(icon, text, shortcut));
+    action_ = action;
 
-		action_ = action;
+    set_icon(icon);
+    set_text(text);
+  }
 
-		set_icon(icon);
-		set_text(text);
-	}
+  void ToolButton::SetAction (const RefPtr<Action>& item)
+  {
+    action_ = item;
+  }
 
-	void ToolButton::SetAction (const RefPtr<Action>& item)
-	{
-		action_ = item;
-	}
+  Size ToolButton::GetPreferredSize () const
+  {
+    if (!text()) {
+      return Size(24, 24);
+    } else {
+      return Size(24, 24);
+    }
+  }
 
-	Size ToolButton::GetPreferredSize() const
-	{
-		if(!text()) {
-			return Size(24, 24);
-		} else {
-			return Size(24, 24);
-		}
-	}
+  void ToolButton::InitializeToolButton ()
+  {
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-	void ToolButton::InitializeToolButton ()
-	{
-        std::vector<GLfloat> inner_verts;
-        std::vector<GLfloat> outer_verts;
+    if (AbstractWindow::theme()->regular().shaded) {
+      GenerateRoundedVertices(Vertical,
+                              AbstractWindow::theme()->regular().shadetop,
+                              AbstractWindow::theme()->regular().shadedown,
+                              &inner_verts, &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-        if (AbstractWindow::theme()->regular().shaded) {
-        	GenerateRoundedVertices(Vertical,
-                    AbstractWindow::theme()->regular().shadetop,
-                    AbstractWindow::theme()->regular().shadedown,
-                    &inner_verts,
-                    &outer_verts);
-        } else {
-        	GenerateRoundedVertices(&inner_verts, &outer_verts);
-        }
+    glGenVertexArrays(2, vao_);
+    vbo_.generate();
 
-        glGenVertexArrays(2, vao_);
-        vbo_.generate ();
+    glBindVertexArray(vao_[0]);
 
-        glBindVertexArray(vao_[0]);
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3,
+    GL_FLOAT,
+                          GL_FALSE, 0, 0);
 
-        vbo_.bind(0);
-        vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-        glEnableVertexAttribArray(AttributeCoord);
-        glVertexAttribPointer(AttributeCoord, 3,
-                GL_FLOAT, GL_FALSE, 0, 0);
+    glBindVertexArray(vao_[1]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2,
+    GL_FLOAT,
+                          GL_FALSE, 0, 0);
 
-        glBindVertexArray(vao_[1]);
-        vbo_.bind(1);
-        vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-        glEnableVertexAttribArray(AttributeCoord);
-        glVertexAttribPointer(AttributeCoord, 2,
-                GL_FLOAT, GL_FALSE, 0, 0);
-
-        glBindVertexArray(0);
-        vbo_.reset();
-	}
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
 
 }

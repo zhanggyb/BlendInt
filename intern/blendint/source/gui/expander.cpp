@@ -102,30 +102,33 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	Response ExpandButton::Draw (AbstractWindow* context)
-	{
-		float rotate = is_checked() ? 0.f : -90.f;
-		short gamma = hover() ? 25 : 0;
+  Response ExpandButton::Draw (AbstractWindow* context)
+  {
+    float rotate = is_checked() ? 0.f : -90.f;
 
-		Rect rect(pixel_size(kPadding.left()),
-		          pixel_size(kPadding.bottom()),
-		          size().height() - pixel_size(kPadding.vsum()),
-		          size().height() - pixel_size(kPadding.vsum()));
+    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
+              size().height() - pixel_size(kPadding.vsum()),
+              size().height() - pixel_size(kPadding.vsum()));
 
-		if(icon()) {
-		  icon()->DrawInRect(rect, AlignCenter, Color(0x0F0F0FFF).data(), gamma, rotate, true);
-		  rect.set_x(rect.width() + kIconTextSpace);
-		  rect.set_width(size().width() - pixel_size(kPadding.hsum()) - kIconTextSpace - icon()->size().width());
-		} else {
+    if (icon()) {
+      icon()->DrawInRect(rect, AlignCenter, Color(0x0F0F0FFF).data(), 0, rotate,
+                         true);
+      rect.set_x(rect.width() + kIconTextSpace);
+      rect.set_width(
+          size().width() - pixel_size(kPadding.hsum()) - kIconTextSpace
+              - icon()->size().width());
+    } else {
       rect.set_width(size().width() - pixel_size(kPadding.hsum()));
-		}
+    }
 
-		if(text()) {
-		  text()->DrawInRect(rect, AlignHorizontalCenter | AlignJustify | AlignBaseline, Color(Color::Black).data(), gamma);
-		}
+    if (text()) {
+      text()->DrawInRect(rect,
+                         AlignHorizontalCenter | AlignJustify | AlignBaseline,
+                         Color(Color::Black).data(), 0);
+    }
 
-		return Finish;
-	}
+    return Finish;
+  }
 
 	// ----------------------
 

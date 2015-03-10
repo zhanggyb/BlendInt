@@ -141,15 +141,9 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
         1, color1_.data());
 
-    if (hover()) {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          15);
-    } else {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          0);
-    }
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        0);
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);

@@ -57,7 +57,8 @@ namespace BlendInt {
     stencil_count_(0),
     current_cursor_shape_(ArrowCursor),
     floating_frame_count_(0),
-    pressed_(false)
+    pressed_(false),
+    mouse_tracking_(false)
   {
     set_size(640, 480);
     set_refresh(true);
@@ -75,7 +76,8 @@ namespace BlendInt {
     stencil_count_(0),
     current_cursor_shape_(ArrowCursor),
     floating_frame_count_(0),
-    pressed_(false)
+    pressed_(false),
+    mouse_tracking_(false)
   {
     set_refresh(true);
     set_visible (flags & WindowVisibleMask);
@@ -521,8 +523,7 @@ namespace BlendInt {
 
     pressed_ = false;
 
-    for (AbstractView* p = last_subview(); p != nullptr; p =
-        p->previous_view()) {
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
       response = p->PerformMouseRelease(context);
       if (response == Finish) {
         break;
@@ -536,10 +537,9 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    if (pressed_) {
+    if (pressed_ || mouse_tracking_) {
 
-      for (AbstractView* p = last_subview(); p != nullptr; p =
-          p->previous_view()) {
+      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
         response = p->PerformMouseMove(context);
         if (response == Finish) {
           break;

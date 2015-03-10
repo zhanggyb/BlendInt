@@ -171,6 +171,11 @@ namespace BlendInt {
 
     Point GetRelativePosition (const AbstractWidget* widget);
 
+    inline void set_mouse_tracking (bool tracking)
+    {
+      mouse_tracking_ = tracking;
+    }
+
     inline void set_local_cursor_position (int x, int y)
     {
       local_cursor_position_.reset(x, y);
@@ -181,12 +186,12 @@ namespace BlendInt {
       return local_cursor_position_;
     }
 
-    void register_active_frame (AbstractFrame* frame)
+    inline void register_active_frame (AbstractFrame* frame)
     {
       active_frame_ = frame;
     }
 
-    AbstractFrame* active_frame () const
+    inline AbstractFrame* active_frame () const
     {
 #ifdef DEBUG
       assert(active_frame_ != nullptr);
@@ -194,7 +199,7 @@ namespace BlendInt {
       return active_frame_;
     }
 
-    const Point& viewport_origin () const
+    inline const Point& viewport_origin () const
     {
       return viewport_origin_;
     }
@@ -354,6 +359,8 @@ namespace BlendInt {
     int floating_frame_count_;
 
     bool pressed_;
+
+    bool mouse_tracking_;
 
     static AbstractWindow* kMainWindow;
   };

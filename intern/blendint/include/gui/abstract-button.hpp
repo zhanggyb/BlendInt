@@ -108,17 +108,11 @@ namespace BlendInt {
 
   protected:
 
-    virtual Response Draw (AbstractWindow* context) = 0;
-
     virtual void PerformHoverIn (AbstractWindow* context);
 
     virtual void PerformHoverOut (AbstractWindow* context);
 
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
-    virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) = 0;
 
     inline void set_icon (const RefPtr<AbstractIcon>& icon)
     {
@@ -141,26 +135,12 @@ namespace BlendInt {
 
     void DrawIconText ();
 
-    inline bool hover () const
-    {
-      return button_flags_ & ButtonHoverMask;
-    }
-
     inline void set_pressed (bool press)
     {
       if(press) {
         SETBIT(button_flags_, ButtonPressedMask);
       } else {
         CLRBIT(button_flags_, ButtonPressedMask);
-      }
-    }
-
-    inline void set_hover (bool hover)
-    {
-      if(hover) {
-        SETBIT(button_flags_, ButtonHoverMask);
-      } else {
-        CLRBIT(button_flags_, ButtonHoverMask);
       }
     }
 
@@ -225,8 +205,13 @@ namespace BlendInt {
       ButtonCheckableMask = 0x1 << 2,
       ButtonCheckedMask = 0x1 << 3,
       ButtonLastCheckedMask = 0x1 << 4,
-      ButtonHoverMask = 0x1 << 5
     };
+
+    virtual Response PerformMousePress (AbstractWindow* context);
+
+    virtual Response PerformMouseRelease (AbstractWindow* context);
+
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
     RefPtr<AbstractIcon> icon_;
 

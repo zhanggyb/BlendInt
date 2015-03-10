@@ -146,10 +146,6 @@ namespace BlendInt {
 			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 			        AbstractWindow::theme()->regular().inner_sel.data());
 		} else {
-			if (hover()) {
-				glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
-			}
-
 			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 					AbstractWindow::theme()->regular().inner.data());
 		}

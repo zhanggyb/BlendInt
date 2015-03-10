@@ -47,6 +47,10 @@ namespace BlendInt {
 
     virtual void PerformRoundRadiusUpdate (float radius);
 
+    virtual void PerformHoverIn (AbstractWindow* context);
+
+    virtual void PerformHoverOut (AbstractWindow* context);
+
     virtual Response Draw (AbstractWindow* context);
 
   private:
@@ -56,6 +60,8 @@ namespace BlendInt {
     GLuint vao_;
 
     GLBuffer<> vbo_;
+
+    bool hover_;
   };
 
 } /* namespace BlendInt */

@@ -209,30 +209,35 @@ namespace BlendInt {
 			RequestRedraw();
 	}
 
+  void ToggleButton::PerformHoverIn (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(true);
+      set_checked(!is_checked());
+      RequestRedraw();
+    }
+  }
+
+  void ToggleButton::PerformHoverOut (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(false);
+      set_checked(!is_checked());
+      RequestRedraw();
+    }
+  }
+
 	Response ToggleButton::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		if (hover()) {
-
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
-			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->toggle().inner_sel.data());
-			} else {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->toggle().inner.data());
-			}
-
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		if (is_checked()) {
+		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+		               AbstractWindow::theme()->toggle().inner_sel.data());
 		} else {
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->toggle().inner_sel.data());
-			} else {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->toggle().inner.data());
-			}
+		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+		               AbstractWindow::theme()->toggle().inner.data());
 		}
 
 		glBindVertexArray(vao_[0]);

@@ -96,32 +96,28 @@ namespace BlendInt {
 
   void AbstractButton::PerformHoverIn (AbstractWindow* context)
   {
-    set_hover(true);
-
     if (is_pressed()) {
       set_down(true);
 
       if (is_checkable()) {
         set_checked(!is_checked());
       }
-    }
 
-    RequestRedraw();
+      RequestRedraw();
+    }
   }
 
   void AbstractButton::PerformHoverOut (AbstractWindow* context)
   {
-    set_hover(false);
-
     if (is_pressed()) {
       set_down(false);
 
       if (is_checkable()) {
         set_checked(!is_checked());
       }
-    }
 
-    RequestRedraw();
+      RequestRedraw();
+    }
   }
 
   Response AbstractButton::PerformMousePress (AbstractWindow* context)
@@ -203,12 +199,6 @@ namespace BlendInt {
 
   Response AbstractButton::PerformMouseMove (AbstractWindow* context)
   {
-    /*
-     if (m_status[ButtonDown]) {
-     event->accept(this);
-     return;
-     }
-     */
     return Finish;
   }
 

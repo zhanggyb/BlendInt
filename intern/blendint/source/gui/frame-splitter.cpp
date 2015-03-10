@@ -577,7 +577,7 @@ namespace BlendInt {
 
     if(cursor_position_ == InsideRectangle) {
 
-      context->SetFocusedFrame(this);
+      if (context == superview()) context->SetFocusedFrame(this);
 
       pressed_ = true;
 

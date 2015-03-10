@@ -200,26 +200,13 @@ namespace BlendInt {
 	{
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		if (hover()) {
-
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
-			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->radio_button().inner_sel.data());
-			} else {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->radio_button().inner.data());
-			}
-
+		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		if (is_checked()) {
+		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+		               AbstractWindow::theme()->radio_button().inner_sel.data());
 		} else {
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-			if (is_checked()) {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->radio_button().inner_sel.data());
-			} else {
-				glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				        AbstractWindow::theme()->radio_button().inner.data());
-			}
+		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+		               AbstractWindow::theme()->radio_button().inner.data());
 		}
 
 		glBindVertexArray(vao_[0]);

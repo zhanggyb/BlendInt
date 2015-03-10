@@ -211,6 +211,22 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
+  void Button::PerformHoverIn (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(true);
+      RequestRedraw();
+    }
+  }
+
+  void Button::PerformHoverOut (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(false);
+      RequestRedraw();
+    }
+  }
+
 	Response Button::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders()->widget_inner_program()->use();
@@ -221,10 +237,6 @@ namespace BlendInt {
 			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 			        AbstractWindow::theme()->regular().inner_sel.data());
 		} else {
-			if (hover()) {
-				glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
-			}
-
 			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 					AbstractWindow::theme()->regular().inner.data());
 		}

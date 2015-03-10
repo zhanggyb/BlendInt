@@ -56,11 +56,11 @@ namespace BlendInt {
 
       std::vector<GLfloat> inner_verts;
       AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(),
-          &inner_verts, 0);
+                                     &inner_verts, 0);
 
       vbo_.bind();
       vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-          &inner_verts[0]);
+                        &inner_verts[0]);
       vbo_.reset();
 
       RequestRedraw();
@@ -91,7 +91,7 @@ namespace BlendInt {
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-        0);
+                     0);
 
     vbo_.bind();
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -102,7 +102,7 @@ namespace BlendInt {
 
   Response MenuButton::Draw (AbstractWindow* context)
   {
-    if (hover()) {
+    if (hover_) {
 
       AbstractWindow::shaders()->widget_inner_program()->use();
 
@@ -122,13 +122,33 @@ namespace BlendInt {
     return Finish;
   }
 
+  void MenuButton::PerformHoverIn (AbstractWindow* context)
+  {
+    if (!hover_) {
+      hover_ = true;
+      RequestRedraw();
+    }
+
+    return AbstractButton::PerformHoverIn(context);
+  }
+
+  void MenuButton::PerformHoverOut (AbstractWindow* context)
+  {
+    if (hover_) {
+      hover_ = false;
+      RequestRedraw();
+    }
+
+    return AbstractButton::PerformHoverOut(context);
+  }
+
   void MenuButton::InitializeMenuButton ()
   {
     glGenVertexArrays(1, &vao_);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-        0);
+                     0);
 
     glBindVertexArray(vao_);
     vbo_.generate();
