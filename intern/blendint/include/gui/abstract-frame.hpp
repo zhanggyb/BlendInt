@@ -119,20 +119,8 @@ namespace BlendInt {
 
     virtual Response PerformMouseHover (AbstractWindow* context) = 0;
 
-    Response RecursiveDispatchKeyEvent (AbstractView* view,
-                                        AbstractWindow* context);
-
-    AbstractView* RecursiveDispatchMousePress (AbstractView* view,
-                                               AbstractWindow* context);
-
-    Response RecursiveDispatchMouseMoveEvent (AbstractView* view,
-                                              AbstractWindow* context);
-
-    Response RecursiveDispatchMouseReleaseEvent (AbstractView* view,
-                                                 AbstractWindow* context);
-
     AbstractWidget* DispatchMouseHover (AbstractWidget* orig,
-                                                  AbstractWindow* context);
+                                        AbstractWindow* context);
 
     void ClearHoverWidgets (AbstractView* hovered_widget);
 

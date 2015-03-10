@@ -257,6 +257,7 @@ namespace BlendInt {
     orientation_(orientation),
     hover_frame_(0),
     focused_frame_(0),
+    focused_(false),
     pressed_(false),
     hover_(false),
     cursor_position_(0)
@@ -536,15 +537,21 @@ namespace BlendInt {
       }
 
     }
-
   }
 
   void FrameSplitter::PerformFocusOn (AbstractWindow* context)
   {
+    focused_ = true;
   }
 
   void FrameSplitter::PerformFocusOff (AbstractWindow* context)
   {
+    focused_ = false;
+
+    if (focused_frame_) {
+      dispatch_focus_off(focused_frame_, context);
+      focused_frame_ = 0;
+    }
   }
 
   void FrameSplitter::PerformHoverIn (AbstractWindow* context)
@@ -615,8 +622,15 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    if (pressed_ && focused_frame_) {
-      response = dispatch_mouse_move(focused_frame_, context);
+    if (pressed_) {
+      if (focused_frame_)
+        response = dispatch_mouse_move(focused_frame_, context);
+    } else {
+
+      if (context->mouse_tracking() && focused_frame_) {
+        response = dispatch_mouse_move(focused_frame_, context);
+      }
+
     }
 
     return response;

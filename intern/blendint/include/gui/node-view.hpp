@@ -65,6 +65,14 @@ namespace BlendInt {
 
     virtual void PerformRoundRadiusUpdate (float radius);
 
+    virtual void PerformFocusOn (AbstractWindow* context);
+
+    virtual void PerformFocusOff (AbstractWindow* context);
+
+    virtual void PerformHoverIn (AbstractWindow* context);
+
+    virtual void PerformHoverOut (AbstractWindow* context);
+
     virtual Response PerformMousePress (AbstractWindow* context);
 
     virtual Response PerformMouseRelease (AbstractWindow* context);
@@ -90,6 +98,12 @@ namespace BlendInt {
     GLBuffer<> vbo_;
 
     bool pressed_;
+
+    bool focused_;
+
+    bool hover_;
+
+    bool mouse_tracking_record_;
   };
 
 }

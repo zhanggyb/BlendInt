@@ -2287,6 +2287,107 @@ namespace BlendInt {
     }
   }
 
+
+  Response AbstractView::RecursiveDispatchKeyEvent (AbstractView* subview,
+                                                     AbstractWindow* context)
+  {
+    if (subview == this) {
+      return Ignore;
+    } else {
+
+      Response response = Ignore;
+
+      if (subview->superview()) {
+        response = RecursiveDispatchKeyEvent(subview->superview(), context);
+        if (response == Finish) {
+          return response;
+        } else {
+          return subview->PerformKeyPress(context);
+        }
+      } else {
+        return subview->PerformKeyPress(context);
+      }
+
+    }
+  }
+
+  AbstractView* AbstractView::RecursiveDispatchMousePress (AbstractView* subview,
+                                                            AbstractWindow* context)
+  {
+    if (subview == this) {
+      return 0;
+    } else {
+
+      Response response = Ignore;
+      AbstractView* ret_val = 0;
+
+      if (subview->superview()) {
+
+        ret_val = RecursiveDispatchMousePress(subview->superview(), context);
+
+        if (ret_val == 0) {
+
+          response = subview->PerformMousePress(context);
+
+          return response == Finish ? subview : 0;
+
+        } else {
+          return ret_val;
+        }
+
+      } else {
+        response = subview->PerformMousePress(context);
+        return response == Finish ? subview : 0;
+      }
+
+    }
+  }
+
+  Response AbstractView::RecursiveDispatchMouseMoveEvent (AbstractView* subview,
+                                                           AbstractWindow* context)
+  {
+    if (subview == this) {
+      return Ignore;
+    } else {
+
+      if (subview->superview()) {
+        if (RecursiveDispatchMouseMoveEvent(subview->superview(), context)
+            == Ignore) {
+          return subview->PerformMouseMove(context);
+        } else {
+          return Finish;
+        }
+
+      } else {
+        return subview->PerformMouseMove(context);
+      }
+
+    }
+  }
+
+  Response AbstractView::RecursiveDispatchMouseReleaseEvent (AbstractView* subview,
+                                                              AbstractWindow* context)
+  {
+    if (subview == this) {
+      return Ignore;
+    } else {
+
+      if (subview->superview()) {
+        if (RecursiveDispatchMouseReleaseEvent(subview->superview(), context)
+            == Ignore) {
+          return subview->PerformMouseRelease(context);
+        } else {
+          return Finish;
+        }
+
+      } else {
+        DBG_PRINT_MSG("mouse press in %s", subview->name().c_str());
+        return subview->PerformMouseRelease(context);
+      }
+
+    }
+  }
+
   float AbstractView::make_shaded_offset (short shadetop,
                                           short shadedown,
                                           float fact)

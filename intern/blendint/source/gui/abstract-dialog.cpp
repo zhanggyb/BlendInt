@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <cassert>
 #include <opengl/opengl.hpp>
 #include <gui/abstract-window.hpp>
 

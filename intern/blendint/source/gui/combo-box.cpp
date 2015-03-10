@@ -37,7 +37,6 @@ namespace BlendInt {
   ComboBox::ComboBox ()
   : AbstractRoundWidget(),
     status_down_(false),
-    hover_(false),
     last_round_status_(0),
     popup_(0)
   {
@@ -191,13 +190,8 @@ namespace BlendInt {
       glUniform1i(
           AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 20);
     } else {
-      if (hover_) {
-        glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 15);
-      } else {
-        glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-      }
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     }
 
     glBindVertexArray(vaos_[0]);
@@ -332,18 +326,6 @@ namespace BlendInt {
 
     RequestRedraw();
     return Finish;
-  }
-
-  void ComboBox::PerformHoverIn (AbstractWindow* context)
-  {
-    hover_ = true;
-    RequestRedraw();
-  }
-
-  void ComboBox::PerformHoverOut (AbstractWindow* context)
-  {
-    hover_ = false;
-    RequestRedraw();
   }
 
   void ComboBox::InitializeComboBox ()

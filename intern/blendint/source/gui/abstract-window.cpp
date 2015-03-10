@@ -537,13 +537,19 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    if (pressed_ || mouse_tracking_) {
+    if (pressed_) {
 
       for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
         response = p->PerformMouseMove(context);
         if (response == Finish) {
           break;
         }
+      }
+
+    } else {
+
+      if (mouse_tracking_ && focused_frame_) {
+        response = focused_frame_->PerformMouseMove(context);
       }
 
     }

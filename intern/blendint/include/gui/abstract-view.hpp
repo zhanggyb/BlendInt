@@ -512,6 +512,18 @@ namespace BlendInt {
 
     void SetSubViewVisibility (AbstractView* sub, bool visible);
 
+    Response RecursiveDispatchKeyEvent (AbstractView* view,
+                                        AbstractWindow* context);
+
+    AbstractView* RecursiveDispatchMousePress (AbstractView* view,
+                                               AbstractWindow* context);
+
+    Response RecursiveDispatchMouseMoveEvent (AbstractView* view,
+                                              AbstractWindow* context);
+
+    Response RecursiveDispatchMouseReleaseEvent (AbstractView* view,
+                                                 AbstractWindow* context);
+
     void DrawSubViewsOnce (AbstractWindow* context);
 
     /**

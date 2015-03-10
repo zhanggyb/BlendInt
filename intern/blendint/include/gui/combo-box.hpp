@@ -56,10 +56,6 @@ namespace BlendInt {
 
     virtual Response Draw (AbstractWindow* context);
 
-    virtual void PerformHoverIn (AbstractWindow* context);
-
-    virtual void PerformHoverOut (AbstractWindow* context);
-
     virtual Response PerformMousePress (AbstractWindow* context);
 
     virtual Response PerformMouseRelease (AbstractWindow* context);
@@ -75,8 +71,6 @@ namespace BlendInt {
     GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
     bool status_down_;
-
-    bool hover_;
 
     int last_round_status_;
 

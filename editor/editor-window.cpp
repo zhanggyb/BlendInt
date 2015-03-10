@@ -25,40 +25,37 @@
 
 namespace BlendInt {
 
-	EditorWindow::EditorWindow(int width, int height, const char* name)
-	: Window(width, height, name),
-	  msg_(0)
-	{
+  EditorWindow::EditorWindow (int width, int height, const char* name)
+  : Window(width, height, name), dev_msg_(0)
+  {
 
-		events()->connect(this->resized(), this, &EditorWindow::OnResize);
+    events()->connect(this->resized(), this, &EditorWindow::OnResize);
 
-		// show a message box
-		msg_ = new MessageBox("Note",
-                "This UI editor is still under development");
-		AddFrame(msg_);
-		msg_->MoveTo(
-				(size().width() - msg_->size().width()) / 2,
-				(size().height() - msg_->size().height()) / 2);
-		events()->connect(msg_->destroyed(), this, &EditorWindow::OnMessageBoxDestroyed);
-	}
+    // show a message box
+    dev_msg_ = new MessageBox("Note", "This UI editor is still under development");
+    AddFrame(dev_msg_);
+    dev_msg_->MoveTo((size().width() - dev_msg_->size().width()) / 2,
+                 (size().height() - dev_msg_->size().height()) / 2);
+    events()->connect(dev_msg_->destroyed(), this,
+                      &EditorWindow::OnMessageBoxDestroyed);
+  }
 
-	EditorWindow::~EditorWindow ()
-	{
-	}
+  EditorWindow::~EditorWindow ()
+  {
+  }
 
-	void EditorWindow::OnResize (Window* window, const Size& size)
-	{
-		if(msg_) {
-			msg_->MoveTo(
-					(size.width() - msg_->size().width()) / 2,
-					(size.height() - msg_->size().height()) / 2);
-		}
-	}
+  void EditorWindow::OnResize (Window* window, const Size& size)
+  {
+    if (dev_msg_) {
+      dev_msg_->MoveTo((size.width() - dev_msg_->size().width()) / 2,
+                   (size.height() - dev_msg_->size().height()) / 2);
+    }
+  }
 
-	void EditorWindow::OnMessageBoxDestroyed(AbstractFrame* sender)
-	{
-		assert(sender == msg_);
-		msg_ = 0;
-	}
+  void EditorWindow::OnMessageBoxDestroyed (AbstractFrame* sender)
+  {
+    assert(sender == dev_msg_);
+    dev_msg_ = 0;
+  }
 
 }

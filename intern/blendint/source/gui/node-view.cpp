@@ -31,7 +31,10 @@ namespace BlendInt {
   NodeView::NodeView ()
   : AbstractScrollable(),
     vao_(0),
-    pressed_(false)
+    pressed_(false),
+    focused_(false),
+    hover_(false),
+    mouse_tracking_record_(false)
   {
     set_size(400, 300);
 
@@ -150,6 +153,45 @@ namespace BlendInt {
     vbo_.reset();
 
     RequestRedraw();
+  }
+
+  void NodeView::PerformFocusOn (AbstractWindow* context)
+  {
+    DBG_PRINT_MSG("%s", "Focused");
+    focused_ = true;
+
+    if(hover_) {
+      mouse_tracking_record_ = context->mouse_tracking();
+      context->set_mouse_tracking(true);
+    }
+  }
+
+  void NodeView::PerformFocusOff (AbstractWindow* context)
+  {
+    DBG_PRINT_MSG("%s", "UnFocused");
+    focused_ = false;
+
+    if(hover_) {
+      context->set_mouse_tracking(mouse_tracking_record_);
+    }
+  }
+
+  void NodeView::PerformHoverIn (AbstractWindow* context)
+  {
+    hover_ = true;
+
+    if(focused_) {
+      mouse_tracking_record_ = context->mouse_tracking();
+      context->set_mouse_tracking(true);
+    }
+  }
+
+  void NodeView::PerformHoverOut (AbstractWindow* context)
+  {
+    hover_ = false;
+
+    if(focused_)
+      context->set_mouse_tracking(mouse_tracking_record_);
   }
 
   bool NodeView::PreDraw (AbstractWindow* context)

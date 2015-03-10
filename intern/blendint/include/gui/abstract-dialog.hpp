@@ -173,7 +173,7 @@ namespace BlendInt {
 
     int cursor_position_;
 
-    unsigned int dialog_flags_;
+    int dialog_flags_;
 
     bool focused_;
 

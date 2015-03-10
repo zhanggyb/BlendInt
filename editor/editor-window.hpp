@@ -28,21 +28,21 @@
 
 namespace BlendInt {
 
-	class EditorWindow: public Window
-	{
-	public:
+  class EditorWindow: public Window
+  {
+  public:
 
-		EditorWindow (int width, int height, const char* name);
+    EditorWindow (int width, int height, const char* name);
 
-		virtual ~EditorWindow ();
+    virtual ~EditorWindow ();
 
-	private:
+  private:
 
-		void OnResize (Window* window, const Size& size);
+    void OnResize (Window* window, const Size& size);
 
-		void OnMessageBoxDestroyed (AbstractFrame* sender);
+    void OnMessageBoxDestroyed (AbstractFrame* sender);
 
-		MessageBox* msg_;
-	};
+    MessageBox* dev_msg_;
+  };
 
 }

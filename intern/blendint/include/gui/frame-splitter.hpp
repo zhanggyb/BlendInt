@@ -236,6 +236,8 @@ namespace BlendInt {
 
     AbstractFrame* focused_frame_;
 
+    bool focused_;
+
     bool pressed_;
 
     bool hover_;

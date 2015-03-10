@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <boost/smart_ptr.hpp>
+
 #include <core/rect.hpp>
 
 #include <gui/abstract-view.hpp>
@@ -59,6 +61,15 @@ namespace BlendInt {
     inline float round_radius () const
     {
       return round_radius_;
+    }
+
+    const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
+    {
+      if (!events_) {
+        events_.reset(new Cpp::ConnectionScope);
+      }
+
+      return events_;
     }
 
   protected:
@@ -107,6 +118,8 @@ namespace BlendInt {
     virtual void PerformRoundTypeUpdate (int round);
 
     virtual void PerformRoundRadiusUpdate (float radius);
+
+    void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
     inline void set_round_type (int type)
     {
@@ -190,10 +203,6 @@ namespace BlendInt {
        */
       NodeCursorOnBorder = (1 << 4),
 
-      /**
-       * @brief If mouse button pressed
-       */
-      NodeMouseButtonPressed = (1 << 5)
     };
 
     /**
@@ -211,14 +220,13 @@ namespace BlendInt {
     AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* widget,
                                                  AbstractWindow* context);
 
+    void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+
+    void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
     inline bool cursor_on_border () const
     {
       return node_flag_ & NodeCursorOnBorder;
-    }
-
-    inline bool mouse_button_pressed () const
-    {
-      return node_flag_ & NodeMouseButtonPressed;
     }
 
     inline void set_cursor_on_border (bool cursor_on_border)
@@ -227,15 +235,6 @@ namespace BlendInt {
         SETBIT(node_flag_, NodeCursorOnBorder);
       } else {
         CLRBIT(node_flag_, NodeCursorOnBorder);
-      }
-    }
-
-    inline void set_mouse_button_pressed (bool pressed)
-    {
-      if (pressed) {
-        SETBIT(node_flag_, NodeMouseButtonPressed);
-      } else {
-        CLRBIT(node_flag_, NodeMouseButtonPressed);
       }
     }
 
@@ -249,7 +248,20 @@ namespace BlendInt {
 
     Point cursor_point_;
 
+    AbstractWidget* focused_widget_;
+
+    AbstractWidget* hovered_widget_;
+
     int cursor_position_;
+
+    bool focused_;
+
+    bool pressed_;
+
+    boost::scoped_ptr<Cpp::ConnectionScope> events_;
+
+    boost::scoped_ptr<Cpp::Event<AbstractNode*> > destroyed_;
+
   };
 
 }

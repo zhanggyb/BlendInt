@@ -290,7 +290,6 @@ namespace BlendInt {
     }
 
     hover_ = true;
-    RequestRedraw();
   }
 
   void NumericalSlider::PerformHoverOut (AbstractWindow* context)
@@ -300,7 +299,6 @@ namespace BlendInt {
     }
 
     hover_ = false;
-    RequestRedraw();
   }
 
   Response NumericalSlider::PerformKeyPress (AbstractWindow* context)
@@ -676,18 +674,13 @@ namespace BlendInt {
 
     AbstractWindow::shaders()->widget_split_inner_program()->use();
 
-    if (hover_) {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          15);
-    } else {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          0);
-    }
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        0);
 
     glUniform1f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_PARTING),
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SPLIT_INNER_PARTING),
         x + len);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),

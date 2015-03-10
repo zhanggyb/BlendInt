@@ -176,6 +176,11 @@ namespace BlendInt {
       mouse_tracking_ = tracking;
     }
 
+    inline bool mouse_tracking () const
+    {
+      return mouse_tracking_;
+    }
+
     inline void set_local_cursor_position (int x, int y)
     {
       local_cursor_position_.reset(x, y);

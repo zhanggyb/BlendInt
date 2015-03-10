@@ -39,6 +39,7 @@ namespace BlendInt {
     hovered_widget_(0),
     cursor_position_(0),
     layout_(0),
+    focused_(false),
     hover_(false),
     pressed_(false)
   {
@@ -60,6 +61,7 @@ namespace BlendInt {
     hovered_widget_(0),
     cursor_position_(0),
     layout_(0),
+    focused_(false),
     hover_(false),
     pressed_(false)
   {
@@ -239,12 +241,12 @@ namespace BlendInt {
 
   void Frame::PerformFocusOn (AbstractWindow* context)
   {
-    DBG_PRINT_MSG("%s", "focus in");
+    focused_ = true;
   }
 
   void Frame::PerformFocusOff (AbstractWindow* context)
   {
-    DBG_PRINT_MSG("%s", "focus out");
+    focused_ = false;
 
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(

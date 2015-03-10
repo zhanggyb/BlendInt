@@ -101,11 +101,14 @@ namespace BlendInt {
     // 1 - for outer
     // 2 - for texture buffer
     GLuint vao_[2];
+
     GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
     int cursor_position_;
 
     AbstractLayout* layout_;
+
+    bool focused_;
 
     bool hover_;
 

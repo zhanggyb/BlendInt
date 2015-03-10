@@ -25,15 +25,15 @@
 
 int main (int argc, char* argv[])
 {
-	using namespace BlendInt;
+  using namespace BlendInt;
 
-	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+  BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	if(Window::Initialize()) {
-		EditorWindow win(1280, 800, "UI Editor");
-		win.Exec();
-		Window::Terminate();
-	}
+  if (Window::Initialize()) {
+    EditorWindow win(1280, 800, "UI Editor");
+    win.Exec();
+    Window::Terminate();
+  }
 
-	return 0;
+  return 0;
 }

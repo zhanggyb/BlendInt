@@ -147,16 +147,16 @@ namespace BlendInt {
   // -------------------------------
 
   Workspace::Workspace ()
-      :
-        AbstractFrame(),
-        left_sidebar_(0),
-        right_sidebar_(0),
-        header_(0),
-        viewport_(0),
-        splitter_(0),
-        hover_frame_(0),
-        focused_frame_(0),
-        pressed_(false)
+  : AbstractFrame(),
+    left_sidebar_(0),
+    right_sidebar_(0),
+    header_(0),
+    viewport_(0),
+    splitter_(0),
+    hover_frame_(0),
+    focused_frame_(0),
+    focused_(false),
+    pressed_(false)
   {
     set_size(800, 600);
 
@@ -388,10 +388,17 @@ namespace BlendInt {
 
   void Workspace::PerformFocusOn (AbstractWindow* context)
   {
+    focused_ = true;
   }
 
   void Workspace::PerformFocusOff (AbstractWindow* context)
   {
+    focused_ = false;
+
+    if (focused_frame_) {
+      dispatch_focus_off(focused_frame_, context);
+      focused_frame_ = 0;
+    }
   }
 
   void Workspace::PerformHoverIn (AbstractWindow* context)
@@ -419,6 +426,8 @@ namespace BlendInt {
     Response response = Ignore;
 
     pressed_ = true;
+
+    if(context == superview()) context->SetFocusedFrame(this);
 
     if (hover_frame_ != nullptr) {
       response = dispatch_mouse_press(hover_frame_, context);
@@ -450,8 +459,12 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    if (pressed_ && focused_frame_) {
-      response = dispatch_mouse_move(focused_frame_, context);
+    if (pressed_) {
+      if (focused_frame_)
+        response = dispatch_mouse_move(focused_frame_, context);
+    } else {
+      if (context->mouse_tracking() && focused_frame_) response =
+          dispatch_mouse_move(focused_frame_, context);
     }
 
     return response;

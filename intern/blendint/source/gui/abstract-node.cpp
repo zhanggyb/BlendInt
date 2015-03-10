@@ -28,6 +28,34 @@
 
 namespace BlendInt {
 
+  AbstractNode::AbstractNode (int flag)
+  : AbstractView(),
+    node_flag_(flag),
+    round_radius_(5.f),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(InsideRectangle),
+    focused_(false),
+    pressed_(false)
+  {
+  }
+
+  AbstractNode::AbstractNode (int width, int height, int flag)
+  : AbstractView(width, height),
+    node_flag_(flag),
+    round_radius_(5.f),
+    focused_widget_(0),
+    hovered_widget_(0),
+    cursor_position_(InsideRectangle),
+    focused_(false),
+    pressed_(false)
+  {
+  }
+
+  AbstractNode::~AbstractNode ()
+  {
+  }
+
   void AbstractNode::SetRoundRadius (float radius)
   {
     if (round_radius_ == radius) return;
@@ -115,10 +143,12 @@ namespace BlendInt {
 
   void AbstractNode::PerformFocusOn (AbstractWindow* context)
   {
+    focused_ = true;
   }
 
   void AbstractNode::PerformFocusOff (AbstractWindow* context)
   {
+    focused_ = false;
   }
 
   void AbstractNode::PerformHoverIn (AbstractWindow* context)
@@ -131,7 +161,13 @@ namespace BlendInt {
 
   Response AbstractNode::PerformKeyPress (AbstractWindow* context)
   {
-    return Ignore;
+    Response response = Ignore;
+
+    if (focused_widget_) {
+      response = RecursiveDispatchKeyEvent(focused_widget_, context);
+    }
+
+    return response;
   }
 
   Response AbstractNode::PerformContextMenuPress (AbstractWindow* context)
@@ -148,34 +184,31 @@ namespace BlendInt {
   {
     if (cursor_position_ == InsideRectangle) {
 
+      pressed_ = true;
+
       last_position_ = position();
       cursor_point_ = context->local_cursor_position();
 
-      /*
-       if(hovered_widget_) {
+      if (hovered_widget_) {
 
-       AbstractView* widget = 0;	// widget may be focused
+        AbstractView* widget = 0;	// widget may be focused
 
-       widget = DispatchMousePressEvent(hovered_widget_, context);
+        widget = RecursiveDispatchMousePress(hovered_widget_, context);
 
-       if(widget == 0) {
-       //DBG_PRINT_MSG("%s", "widget 0");
-       set_mouse_button_pressed(true);
-       } else {
-       SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
-       }
+        if (widget == 0) {
+          pressed_ = true;
+        } else {
+          SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
+        }
 
-       } else {
-       set_mouse_button_pressed(true);
-       }
-       */
-      set_mouse_button_pressed(true);
+      } else {
+        pressed_ = true;
+      }
 
-      return Finish;
+       return Finish;
 
     } else if (cursor_position_ != OutsideRectangle) {
-
-      set_mouse_button_pressed(true);
+      pressed_ = true;
 
       last_position_ = position();
       last_size_ = size();
@@ -189,22 +222,27 @@ namespace BlendInt {
 
   Response AbstractNode::PerformMouseRelease (AbstractWindow* context)
   {
+    Response result = Ignore;
+
+    if (pressed_) {
+      pressed_ = false;
+      result = Finish;
+    }
+
     cursor_position_ = InsideRectangle;
-    set_mouse_button_pressed(false);
 
-//		if(focused_widget_) {
-//			context->register_active_frame(this);
-//			return dispatch_mouse_release(focused_widget_, context);
-//		}
+    if (focused_widget_) {
+      return dispatch_mouse_release(focused_widget_, context);
+    }
 
-    return Ignore;
+    return result;
   }
 
   Response AbstractNode::PerformMouseMove (AbstractWindow* context)
   {
     Response retval = Ignore;
 
-    if (mouse_button_pressed()) {
+    if (pressed_) {
 
       int ox = context->local_cursor_position().x() - cursor_point_.x();
       int oy = context->local_cursor_position().y() - cursor_point_.y();
@@ -275,38 +313,12 @@ namespace BlendInt {
 
     } else {
 
-//			if(focused_widget_) {
-//
-//				context->register_active_frame(this);
-//				retval = dispatch_mouse_move(focused_widget_, context);
-//
-//			}
+      if (focused_widget_)
+        retval = dispatch_mouse_move(focused_widget_, context);
+
     }
 
     return retval;
-  }
-
-  AbstractNode::AbstractNode (int flag)
-      :
-        AbstractView(),
-        node_flag_(flag),
-        round_radius_(5.f),
-        cursor_position_(InsideRectangle)
-  {
-  }
-
-  AbstractNode::AbstractNode (int width, int height, int flag)
-      :
-        AbstractView(width, height),
-        node_flag_(flag),
-        round_radius_(5.f),
-        cursor_position_(InsideRectangle)
-  {
-
-  }
-
-  AbstractNode::~AbstractNode ()
-  {
   }
 
   AbstractWidget* AbstractNode::DispatchMouseHover (AbstractWidget* orig,
@@ -362,7 +374,7 @@ namespace BlendInt {
 
   Response AbstractNode::PerformMouseHover (AbstractWindow* context)
   {
-    if (mouse_button_pressed()) return Finish;
+    if (pressed_) return Finish;
 
     Response retval = Finish;
     int border = 4;
@@ -378,31 +390,28 @@ namespace BlendInt {
 
         cursor_position_ = InsideRectangle;
 
-        // DBG_PRINT_MSG("Cursor position: (%d, %d)", context->GetGlobalCursorPosition().x(), context->GetGlobalCursorPosition().y());
+        AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
+                                                                context);
 
-        /*
-         AbstractWidget* new_hovered_widget = DispatchHoverEventsInWidgets(hovered_widget_, context);
+        if (new_hovered_widget != hovered_widget_) {
 
-         if(new_hovered_widget != hovered_widget_) {
+          if (hovered_widget_) {
+            hovered_widget_->destroyed().disconnectOne(
+                this, &AbstractNode::OnHoverWidgetDestroyed);
+          }
 
-         if(hovered_widget_) {
-         hovered_widget_->destroyed().disconnectOne(this,
-         &AbstractDialog::OnHoverWidgetDestroyed);
-         }
+          hovered_widget_ = new_hovered_widget;
+          if (hovered_widget_) {
+            events()->connect(hovered_widget_->destroyed(), this,
+                              &AbstractNode::OnHoverWidgetDestroyed);
+          }
 
-         hovered_widget_ = new_hovered_widget;
-         if(hovered_widget_) {
-         events()->connect(hovered_widget_->destroyed(), this,
-         &AbstractDialog::OnHoverWidgetDestroyed);
-         }
-
-         }
-         */
+        }
 
 //				if(hovered_widget_) {
 //					 DBG_PRINT_MSG("hovered widget: %s", hovered_widget_->name().c_str());
 //				}
-// set cursor shape
+
         if (cursor_on_border()) {
           set_cursor_on_border(false);
           context->PopCursor();
@@ -478,6 +487,25 @@ namespace BlendInt {
     }
 
     return retval;
+  }
+
+  void AbstractNode::SetFocusedWidget (AbstractWidget* widget,
+                                       AbstractWindow* context)
+  {
+    if (focused_widget_ == widget) return;
+
+    if (focused_widget_) {
+      dispatch_focus_off(focused_widget_, context);
+      focused_widget_->destroyed().disconnectOne(
+          this, &AbstractNode::OnFocusedWidgetDestroyed);
+    }
+
+    focused_widget_ = widget;
+    if (focused_widget_) {
+      dispatch_focus_on(focused_widget_, context);
+      events()->connect(focused_widget_->destroyed(), this,
+                        &AbstractNode::OnFocusedWidgetDestroyed);
+    }
   }
 
   AbstractWidget* AbstractNode::RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
@@ -697,6 +725,29 @@ namespace BlendInt {
     }
 
     return retval;
+  }
+
+  void AbstractNode::OnFocusedWidgetDestroyed (AbstractWidget* widget)
+  {
+    assert(focused_widget_ == widget);
+
+    //set_widget_focus_status(widget, false);
+    DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+    widget->destroyed().disconnectOne(
+        this, &AbstractNode::OnFocusedWidgetDestroyed);
+
+    focused_widget_ = 0;
+  }
+
+  void AbstractNode::OnHoverWidgetDestroyed (AbstractWidget* widget)
+  {
+    assert(hovered_widget_ == widget);
+
+    DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+    widget->destroyed().disconnectOne(this,
+                                      &AbstractNode::OnHoverWidgetDestroyed);
+
+    hovered_widget_ = 0;
   }
 
 }
