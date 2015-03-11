@@ -60,6 +60,8 @@ namespace BlendInt {
     pressed_(false),
     mouse_tracking_(false)
   {
+    set_view_type(ViewTypeWindow);
+
     set_size(640, 480);
     set_refresh(true);
     set_visible (flags & WindowVisibleMask);
@@ -79,6 +81,8 @@ namespace BlendInt {
     pressed_(false),
     mouse_tracking_(false)
   {
+    set_view_type(ViewTypeWindow);
+
     set_refresh(true);
     set_visible (flags & WindowVisibleMask);
 
@@ -354,21 +358,18 @@ namespace BlendInt {
     return pos;
   }
 
-  AbstractWindow* AbstractWindow::GetWindow (AbstractView* widget)
+  AbstractWindow* AbstractWindow::GetWindow (AbstractView* view)
   {
-    AbstractView* superview = widget->superview();
+    AbstractView* parent = view->superview();
 
-    if (superview == 0) {
-      return dynamic_cast<AbstractWindow*>(widget);
-    } else {
+    if (parent == 0)
+      return dynamic_cast<AbstractWindow*>(view);
 
-      while (superview->superview()) {
-        superview = superview->superview();
-      }
-
+    while (parent->superview()) {
+      parent = parent->superview();
     }
 
-    return dynamic_cast<AbstractWindow*>(superview);
+    return dynamic_cast<AbstractWindow*>(parent);
   }
 
   bool AbstractWindow::InitializeGLContext ()

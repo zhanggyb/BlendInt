@@ -28,42 +28,41 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup widgets
-	 */
-	class CloseButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(CloseButton);
+  /**
+   * @brief The most common button class
+   *
+   * @ingroup widgets
+   */
+  class CloseButton: public AbstractButton
+  {
+  DISALLOW_COPY_AND_ASSIGN(CloseButton);
 
-	public:
+  public:
 
-		CloseButton ();
+    CloseButton ();
 
-		virtual ~CloseButton ();
+    virtual ~CloseButton ();
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
+  private:
 
-	private:
+    void InitializeCloseButtonOnce ();
 
-		void InitializeCloseButtonOnce ();
+    GLuint vao_[2];
 
-		GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> buffer_;
 
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
-
-	};
+  };
 
 }

@@ -60,7 +60,18 @@ namespace BlendInt {
 
   bool NodeView::AddNode (AbstractNode* node)
   {
+    AbstractWindow* win = AbstractWindow::GetWindow(this);
+
     if (PushBackSubView(node)) {
+
+      if (win) {
+        if (node->previous_view()) {
+          dynamic_cast<AbstractNode*>(node->previous_view())->PerformFocusOff(
+              win);
+        }
+        node->PerformFocusOn(win);
+      }
+
       RequestRedraw();
       return true;
     }
@@ -70,7 +81,22 @@ namespace BlendInt {
 
   bool NodeView::InsertNode (int index, AbstractNode* node)
   {
+    AbstractWindow* win = AbstractWindow::GetWindow(this);
+
     if (InsertSubView(index, node)) {
+
+      if (win) {
+
+        if (node->next_view() == 0) { // push back
+          if (node->previous_view()) {
+            dynamic_cast<AbstractNode*>(node->previous_view())->PerformFocusOff(
+                win);
+          }
+          node->PerformFocusOn(win);
+        }
+
+      }
+
       RequestRedraw();
       return true;
     }
@@ -91,6 +117,65 @@ namespace BlendInt {
   Size NodeView::GetPreferredSize () const
   {
     return Size(500, 400);
+  }
+
+  void NodeView::SetFocusedNode (AbstractNode* node)
+  {
+    if (node == 0) return;
+
+    if (last_subview() == node) return;
+
+    if (node->superview() == 0) {
+      DBG_PRINT_MSG("%s", "the node is not in this view");
+      return;
+    }
+
+    AbstractWindow* win = AbstractWindow::GetWindow(this);
+
+    // if node is not the root node in this view, find and switch to it
+    if (node->superview() != this) {
+
+      AbstractView* tmp = node;
+      NodeView* node_view = 0;
+
+      while (tmp->superview()) {
+        node_view = dynamic_cast<NodeView*>(tmp->superview());
+        if (node_view) break;
+        tmp = tmp->superview();
+      }
+
+      if (node_view == 0) {
+        DBG_PRINT_MSG("%s", "the node is not in this view");
+        return;
+      }
+
+      if (node_view != this) {
+        DBG_PRINT_MSG("%s", "the node is not in this view");
+        return;
+      }
+
+      node = dynamic_cast<AbstractNode*>(tmp);
+      if (node == 0) return;
+    }
+
+    if (last_subview()) {
+      dynamic_cast<AbstractNode*>(last_subview())->PerformFocusOff(win);
+    }
+
+    MoveToLast(node);
+    node->PerformFocusOn(win);
+
+    RequestRedraw();
+  }
+
+  NodeView* NodeView::GetNodeView (AbstractNode* node)
+  {
+    AbstractView* parent = node->superview();
+    while (parent && is_node(parent)) {
+      parent = parent->superview();
+    }
+
+    return dynamic_cast<NodeView*>(parent);
   }
 
   bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)

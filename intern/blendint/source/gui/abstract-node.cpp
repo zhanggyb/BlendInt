@@ -24,6 +24,7 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include <gui/abstract-node.hpp>
+#include <gui/node-view.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
@@ -38,6 +39,7 @@ namespace BlendInt {
     focused_(false),
     pressed_(false)
   {
+    set_view_type(ViewTypeNode);
   }
 
   AbstractNode::AbstractNode (int width, int height, int flag)
@@ -50,6 +52,7 @@ namespace BlendInt {
     focused_(false),
     pressed_(false)
   {
+    set_view_type(ViewTypeNode);
   }
 
   AbstractNode::~AbstractNode ()
@@ -182,7 +185,11 @@ namespace BlendInt {
 
   Response AbstractNode::PerformMousePress (AbstractWindow* context)
   {
+    NodeView* node_view = dynamic_cast<NodeView*>(superview());
+
     if (cursor_position_ == InsideRectangle) {
+
+      if (node_view) node_view->SetFocusedNode(this);
 
       pressed_ = true;
 
@@ -205,9 +212,12 @@ namespace BlendInt {
         pressed_ = true;
       }
 
-       return Finish;
+      return Finish;
 
     } else if (cursor_position_ != OutsideRectangle) {
+
+      if (node_view) node_view->SetFocusedNode(this);
+
       pressed_ = true;
 
       last_position_ = position();

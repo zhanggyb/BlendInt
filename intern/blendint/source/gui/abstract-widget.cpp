@@ -45,12 +45,16 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget()
 	: AbstractView()
 	{
+    set_view_type(ViewTypeWidget);
+
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 	}
 
 	AbstractWidget::AbstractWidget(int width, int height)
 	: AbstractView(width, height)
 	{
+    set_view_type(ViewTypeWidget);
+
 		destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 	}
 

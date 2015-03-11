@@ -53,6 +53,10 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const;
 
+    void SetFocusedNode (AbstractNode* node);
+
+    static NodeView* GetNodeView (AbstractNode* node);
+
   protected:
 
     virtual bool SizeUpdateTest (const SizeUpdateRequest& request);

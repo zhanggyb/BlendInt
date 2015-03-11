@@ -59,9 +59,7 @@ namespace BlendInt {
 
   AbstractView::AbstractView ()
   : Object(),
-    managed_(true),
-    visible_(true),
-    refresh_(false),
+    view_flag_(ViewManageMask | ViewVisibleMask),
     subs_count_(0),
     superview_(0),
     previous_view_(0),
@@ -73,9 +71,7 @@ namespace BlendInt {
 
   AbstractView::AbstractView (int width, int height)
   : Object(),
-    managed_(true),
-    visible_(true),
-    refresh_(false),
+    view_flag_(ViewManageMask | ViewVisibleMask),
     subs_count_(0),
     superview_(0),
     previous_view_(0),

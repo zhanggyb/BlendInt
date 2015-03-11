@@ -41,6 +41,32 @@ namespace BlendInt {
   class AbstractWindow;
   class AbstractView;
 
+  enum ViewFlagsMask {
+
+    ViewManageMask = 0x1 << 0,
+
+    ViewVisibleMask = 0x1 << 1,
+
+    ViewRefreshMask = 0x1 << 2,
+
+    ViewTypeMask = 0x07 << 3
+
+  };
+
+  enum ViewType {
+
+    ViewTypeUndefined = 0x0,
+
+    ViewTypeWindow = (ViewTypeUndefined + 1) << 3,  // 0x08
+
+    ViewTypeFrame = (ViewTypeUndefined + 2) << 3,   // 0x10
+
+    ViewTypeWidget = (ViewTypeUndefined + 3) << 3,  // 0x18
+
+    ViewTypeNode = (ViewTypeUndefined + 4) << 3     // 0x20
+
+  };
+
   /**
    * @brief Set/reset the managed flag of a View
    *
@@ -305,17 +331,17 @@ namespace BlendInt {
 
     inline bool visiable () const
     {
-      return visible_;
+      return view_flag_ & ViewVisibleMask;
     }
 
     inline bool managed () const
     {
-      return managed_;
+      return view_flag_ & ViewManageMask;
     }
 
     inline bool refresh () const
     {
-      return refresh_;
+      return view_flag_ & ViewRefreshMask;
     }
 
     inline int subs_count () const
@@ -357,6 +383,31 @@ namespace BlendInt {
     static void MoveBackward (AbstractView* view);
 
     static void SetDefaultBorderWidth (float border);
+
+    static inline bool is_window (AbstractView* view)
+    {
+      return (view->view_flag_ & ViewTypeMask) == ViewTypeWindow;
+    }
+
+    static inline bool is_frame (AbstractView* view)
+    {
+      return (view->view_flag_ & ViewTypeMask) == ViewTypeFrame;
+    }
+
+    static inline bool is_widget (AbstractView* view)
+    {
+      return (view->view_flag_ & ViewTypeMask) == ViewTypeWidget;
+    }
+
+    static inline bool is_node (AbstractView* view)
+    {
+      return (view->view_flag_ & ViewTypeMask) == ViewTypeNode;
+    }
+
+    static inline bool is_undefined_type (AbstractView* view)
+    {
+      return (view->view_flag_ & ViewTypeMask) == ViewTypeUndefined;
+    }
 
     static inline float default_border_width ()
     {
@@ -436,12 +487,18 @@ namespace BlendInt {
 
     inline void set_visible (bool visiable)
     {
-      visible_ = visiable;
+      if (visiable)
+        SETBIT(view_flag_, ViewVisibleMask);
+      else
+        CLRBIT(view_flag_, ViewVisibleMask);
     }
 
     inline void set_refresh (bool refresh)
     {
-      refresh_ = refresh;
+      if (refresh)
+        SETBIT(view_flag_, ViewRefreshMask);
+      else
+        CLRBIT(view_flag_, ViewRefreshMask);
     }
 
     virtual bool PreDraw (AbstractWindow* context) = 0;
@@ -567,22 +624,10 @@ namespace BlendInt {
     friend class AbstractWindow;
     friend class AbstractFrame;
     friend class AbstractWidget;
-    friend class AbstractAdjustment;
     friend class AbstractNode;
+    friend class AbstractAdjustment;
 
     template<typename T> friend T* Manage (T* obj, bool val);
-
-    enum ViewFlagIndex
-    {
-
-      ViewManaged = (1 << 0),
-
-      ViewVisible = (1 << 1),
-
-      // only valid when use off-screen render in container
-      ViewRefresh = (1 << 2),
-
-    };
 
     /**
      * @brief Dispatch draw
@@ -605,14 +650,18 @@ namespace BlendInt {
 
     inline void set_manage (bool value)
     {
-      managed_ = value;
+      if (value)
+        SETBIT(view_flag_, ViewManageMask);
+      else
+        CLRBIT(view_flag_, ViewManageMask);
     }
 
-    bool managed_;
+    inline void set_view_type (ViewType type)
+    {
+      view_flag_ = (view_flag_ & (~ViewTypeMask)) | (type & ViewTypeMask);
+    }
 
-    bool visible_;
-
-    bool refresh_;
+    int view_flag_;
 
     int subs_count_;  // count of sub widgets
 

@@ -43,12 +43,16 @@ namespace BlendInt {
   AbstractFrame::AbstractFrame (int frame_flag)
   : AbstractView(), frame_flag_(frame_flag)
   {
+    set_view_type(ViewTypeFrame);
+
     destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }
 
   AbstractFrame::AbstractFrame (int width, int height, int frame_flag)
   : AbstractView(width, height), frame_flag_(frame_flag)
   {
+    set_view_type(ViewTypeFrame);
+
     destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }
 
@@ -146,22 +150,20 @@ namespace BlendInt {
     view_buffer_.destroy();
   }
 
-  AbstractFrame* AbstractFrame::GetFrame (AbstractView* widget)
+  AbstractFrame* AbstractFrame::GetFrame (AbstractView* view)
   {
-    AbstractView* container = widget->superview();
-    AbstractFrame* frame = 0;
+    if (is_frame(view)) return dynamic_cast<AbstractFrame*>(view);
 
-    if (container == 0) {
-      return dynamic_cast<AbstractFrame*>(widget);
-    } else {
-      while (container) {
-        frame = dynamic_cast<AbstractFrame*>(container);
-        if (frame) break;
-        container = container->superview();
-      }
+    AbstractView* parent = view->superview();
+
+    if (parent == 0)
+      return is_frame(view) ? dynamic_cast<AbstractFrame*>(view) : 0;
+
+    while (parent && (!is_frame(parent))) {
+      parent = parent->superview();
     }
 
-    return frame;
+    return dynamic_cast<AbstractFrame*>(parent);
   }
 
   Response AbstractFrame::PerformContextMenuPress (AbstractWindow* context)
