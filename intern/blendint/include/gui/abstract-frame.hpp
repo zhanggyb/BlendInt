@@ -217,14 +217,13 @@ namespace BlendInt {
     /**
      * this frame is the superview of orig
      */
-    AbstractWidget* RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
-                                                        AbstractWindow* context);
+    AbstractWidget* RecheckSubWidgetUnderCursor (AbstractWidget* orig,
+                                                 AbstractWindow* context);
 
-    AbstractWidget* RecheckAndDispatchTopHoveredWidget (Rect& rect,
-                                                        AbstractWidget* orig,
-                                                        AbstractWindow* context);
+    AbstractWidget* RecheckWidgetUnderCursor (AbstractWidget* orig,
+                                              AbstractWindow* context);
 
-    AbstractWidget* FindAndDispatchTopHoveredWidget (AbstractWindow* context);
+    AbstractWidget* FindWidgetUnderCursor (AbstractWindow* context);
 
     AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* view,
                                                  AbstractWindow* context);

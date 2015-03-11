@@ -326,40 +326,33 @@ namespace BlendInt {
   {
     // find the new top hovered widget
 
-    if (orig == 0) return FindAndDispatchTopHoveredWidget(context);
+    if (orig == 0) return FindWidgetUnderCursor(context);
 
     if (orig->superview() == 0) { // the widget is just removed from this frame
-      return FindAndDispatchTopHoveredWidget(context);
+      return FindWidgetUnderCursor(context);
     }
 
     if (orig->superview() == this) {
-      return RecheckAndDispatchTopHoveredWidget(orig, context);
+      return RecheckSubWidgetUnderCursor(orig, context);
     }
 
-    Rect rect;
     try {
-
-      rect.set_position(
-          GetRelativePosition(
-              dynamic_cast<AbstractWidget*>(orig->superview())));
-      rect.set_size(orig->superview()->size());
-      return RecheckAndDispatchTopHoveredWidget(rect, orig, context);
-
+      return RecheckWidgetUnderCursor(orig, context);
     }
 
     catch (const std::bad_cast& e) {
       DBG_PRINT_MSG("Error: %s", e.what());
-      return FindAndDispatchTopHoveredWidget(context);
+      return FindWidgetUnderCursor(context);
     }
 
     catch (const std::invalid_argument& e) {
       DBG_PRINT_MSG("Error: %s", e.what());
-      return FindAndDispatchTopHoveredWidget(context);
+      return FindWidgetUnderCursor(context);
     }
 
     catch (const std::out_of_range& e) {
       DBG_PRINT_MSG("Error: %s", e.what());
-      return FindAndDispatchTopHoveredWidget(context);
+      return FindWidgetUnderCursor(context);
     }
   }
 
@@ -504,8 +497,8 @@ namespace BlendInt {
     }
   }
 
-  AbstractWidget* AbstractNode::RecheckAndDispatchTopHoveredWidget (AbstractWidget* orig,
-                                                                    AbstractWindow* context)
+  AbstractWidget* AbstractNode::RecheckSubWidgetUnderCursor (AbstractWidget* orig,
+                                                             AbstractWindow* context)
   {
     assert(orig->superview() == this);
 
@@ -529,7 +522,7 @@ namespace BlendInt {
         result = RecursiveDispatchHoverEvent(result, context);
       } else {
         dispatch_mouse_hover_out(result, context);
-        result = FindAndDispatchTopHoveredWidget(context);
+        result = FindWidgetUnderCursor(context);
       }
 
     } else {
@@ -542,9 +535,8 @@ namespace BlendInt {
     return result;
   }
 
-  AbstractWidget* AbstractNode::RecheckAndDispatchTopHoveredWidget (Rect& rect,
-                                                                    AbstractWidget* orig,
-                                                                    AbstractWindow* context)
+  AbstractWidget* AbstractNode::RecheckWidgetUnderCursor (AbstractWidget* orig,
+                                                          AbstractWindow* context)
   {
     assert(orig);
     assert(orig->superview() && orig->superview() != this);
@@ -554,8 +546,13 @@ namespace BlendInt {
     AbstractWidget* super_widget = dynamic_cast<AbstractWidget*>(super_view);
     Point offset;
 
-    bool cursor_in_superview = rect.contains(
-        context->local_cursor_position());
+    Rect rect;
+    rect.set_position(
+        GetRelativePosition(dynamic_cast<AbstractWidget*>(orig->superview()))
+            + position() + GetOffset());
+    rect.set_size(orig->superview()->size());
+
+    bool cursor_in_superview = rect.contains(context->local_cursor_position());
 
     if (cursor_in_superview) {
 
@@ -659,7 +656,7 @@ namespace BlendInt {
     return result;
   }
 
-  AbstractWidget* AbstractNode::FindAndDispatchTopHoveredWidget (AbstractWindow* context)
+  AbstractWidget* AbstractNode::FindWidgetUnderCursor (AbstractWindow* context)
   {
     AbstractWidget* result = 0;
     Point offset = GetOffset();
