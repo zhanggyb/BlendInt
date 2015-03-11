@@ -110,9 +110,8 @@ namespace BlendInt {
 
       if (hovered_widget_) {
 
-        AbstractView* widget = 0;	// widget may be focused
-
-        widget = RecursiveDispatchMousePress(hovered_widget_, context);
+        AbstractView* widget = RecursiveDispatchMousePress(hovered_widget_,
+                                                           context);
 
         if (widget == 0) {
           //DBG_PRINT_MSG("%s", "widget 0");

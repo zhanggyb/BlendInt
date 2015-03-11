@@ -191,16 +191,13 @@ namespace BlendInt {
 
       if (node_view) node_view->SetFocusedNode(this);
 
-      pressed_ = true;
-
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
       if (hovered_widget_) {
 
-        AbstractView* widget = 0;	// widget may be focused
-
-        widget = RecursiveDispatchMousePress(hovered_widget_, context);
+        AbstractView* widget = RecursiveDispatchMousePress(hovered_widget_,
+                                                           context);
 
         if (widget == 0) {
           pressed_ = true;
@@ -377,8 +374,6 @@ namespace BlendInt {
 
     Response retval = Finish;
     int border = 4;
-
-    // Point global_position = context->GetAbsolutePosition(this);
 
     Rect valid_rect(position().x() - border, position().y() - border,
                     size().width() + 2 * border, size().height() + 2 * border);

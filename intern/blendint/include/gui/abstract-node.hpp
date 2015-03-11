@@ -53,7 +53,7 @@ namespace BlendInt {
 
     Point GetRelativePosition (const AbstractWidget* widget);
 
-    inline uint32_t round_type () const
+    inline int round_type () const
     {
       return node_flag_ & 0x0F;
     }
@@ -237,7 +237,7 @@ namespace BlendInt {
       }
     }
 
-    uint32_t node_flag_;
+    int node_flag_;
 
     float round_radius_;
 

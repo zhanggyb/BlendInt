@@ -666,8 +666,9 @@ namespace BlendInt {
 
   void NumericalSlider::DrawSlideMode (AbstractWindow* context)
   {
-    float x = context->active_frame()->GetRelativePosition(this).x()
-        - context->viewport_origin().x();
+    glm::vec3 v = context->shaders()->widget_model_matrix()
+        * glm::vec3(0.f, 0.f, 1.f);
+    v.x = v.x - context->viewport_origin().x();
 
     int outline_vertices = GetOutlineVertices(round_type());
     float len = GetSlidePosition(default_border_width(), value());
@@ -681,7 +682,7 @@ namespace BlendInt {
     glUniform1f(
         AbstractWindow::shaders()->location(
             Shaders::WIDGET_SPLIT_INNER_PARTING),
-        x + len);
+        v.x + len);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
         1, AbstractWindow::theme()->number_slider().inner_sel.data());

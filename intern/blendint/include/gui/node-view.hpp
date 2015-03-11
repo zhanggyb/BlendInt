@@ -77,6 +77,8 @@ namespace BlendInt {
 
     virtual void PerformHoverOut (AbstractWindow* context);
 
+    virtual Response PerformKeyPress (AbstractWindow* context);
+
     virtual Response PerformMousePress (AbstractWindow* context);
 
     virtual Response PerformMouseRelease (AbstractWindow* context);

@@ -211,7 +211,6 @@ namespace BlendInt {
 	bool ScrollView::PreDraw(AbstractWindow* context)
 	{
 		if(!visiable()) return false;
-		AbstractWindow* c = context;
 
 		glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
 				glm::vec2(position().x(), position().y()));
@@ -232,13 +231,9 @@ namespace BlendInt {
 		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		c->BeginPushStencil();	// inner stencil
+		context->BeginPushStencil();	// inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		c->EndPushStencil();
-
-		glBindVertexArray(0);
-
-		GLSLProgram::reset();
+		context->EndPushStencil();
 
 		return true;
 	}
@@ -281,8 +276,6 @@ namespace BlendInt {
 		context->BeginPopStencil();	// pop inner stencil
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		context->EndPopStencil();
-		glBindVertexArray(0);
-		GLSLProgram::reset();
 
 		AbstractWindow::shaders()->PopWidgetModelMatrix();
 	}

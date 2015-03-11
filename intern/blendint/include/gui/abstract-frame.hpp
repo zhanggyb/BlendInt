@@ -86,9 +86,9 @@ namespace BlendInt {
 
     virtual ~AbstractFrame ();
 
-    Point GetAbsolutePosition (const AbstractWidget* widget);
+    Point GetAbsolutePosition (const AbstractView* widget);
 
-    Point GetRelativePosition (const AbstractWidget* widget);
+    Point GetRelativePosition (const AbstractView* widget);
 
     bool EnableViewBuffer ();
 

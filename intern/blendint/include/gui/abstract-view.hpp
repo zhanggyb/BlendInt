@@ -384,27 +384,27 @@ namespace BlendInt {
 
     static void SetDefaultBorderWidth (float border);
 
-    static inline bool is_window (AbstractView* view)
+    static inline bool is_window (const AbstractView* view)
     {
       return (view->view_flag_ & ViewTypeMask) == ViewTypeWindow;
     }
 
-    static inline bool is_frame (AbstractView* view)
+    static inline bool is_frame (const AbstractView* view)
     {
       return (view->view_flag_ & ViewTypeMask) == ViewTypeFrame;
     }
 
-    static inline bool is_widget (AbstractView* view)
+    static inline bool is_widget (const AbstractView* view)
     {
       return (view->view_flag_ & ViewTypeMask) == ViewTypeWidget;
     }
 
-    static inline bool is_node (AbstractView* view)
+    static inline bool is_node (const AbstractView* view)
     {
       return (view->view_flag_ & ViewTypeMask) == ViewTypeNode;
     }
 
-    static inline bool is_undefined_type (AbstractView* view)
+    static inline bool is_undefined_type (const AbstractView* view)
     {
       return (view->view_flag_ & ViewTypeMask) == ViewTypeUndefined;
     }

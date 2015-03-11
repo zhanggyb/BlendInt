@@ -279,6 +279,78 @@ namespace BlendInt {
       context->set_mouse_tracking(mouse_tracking_record_);
   }
 
+  Response NodeView::PerformKeyPress (AbstractWindow* context)
+  {
+    Response response = Ignore;
+
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      response = dynamic_cast<AbstractNode*>(p)->PerformKeyPress(context);
+       if (response == Finish) break;
+    }
+
+    return response;
+  }
+
+  Response NodeView::PerformMousePress (AbstractWindow* context)
+  {
+    pressed_ = true;
+
+    PerformMouseHover(context);
+
+    Response response = Ignore;
+    Point local_position = context->local_cursor_position();
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
+      context->set_local_cursor_position(local_position);
+      if (response == Finish) break;
+    }
+
+    return Finish;
+  }
+
+  Response NodeView::PerformMouseRelease (AbstractWindow* context)
+  {
+    pressed_ = false;
+
+    PerformMouseHover(context);
+
+    Response response = Ignore;
+    Point local_position = context->local_cursor_position();
+    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
+      context->set_local_cursor_position(local_position);
+      if (response == Finish) {
+        break;
+      }
+    }
+
+    return Finish;
+  }
+
+  Response NodeView::PerformMouseMove (AbstractWindow* context)
+  {
+    PerformMouseHover(context);
+
+    if (pressed_) {
+
+      Response response = Ignore;
+      AbstractNode* node = 0;
+      Point local_position = context->local_cursor_position();
+
+      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        node = dynamic_cast<AbstractNode*>(p);
+        response = node->PerformMouseMove(context);
+        context->set_local_cursor_position(local_position);
+        if (response == Finish) {
+          break;
+        }
+      }
+
+    }
+
+    return Finish;
+  }
+
   bool NodeView::PreDraw (AbstractWindow* context)
   {
     if (!visiable()) return false;
@@ -346,66 +418,6 @@ namespace BlendInt {
     context->EndPopStencil();
 
     AbstractWindow::shaders()->PopWidgetModelMatrix();
-  }
-
-  Response NodeView::PerformMousePress (AbstractWindow* context)
-  {
-    pressed_ = true;
-
-    PerformMouseHover(context);
-
-    Response response = Ignore;
-    Point local_position = context->local_cursor_position();
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
-      response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
-      context->set_local_cursor_position(local_position);
-      if (response == Finish) break;
-    }
-
-    return Finish;
-  }
-
-  Response NodeView::PerformMouseRelease (AbstractWindow* context)
-  {
-    pressed_ = false;
-
-    PerformMouseHover(context);
-
-    Response response = Ignore;
-    Point local_position = context->local_cursor_position();
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
-      response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
-      context->set_local_cursor_position(local_position);
-      if (response == Finish) {
-        break;
-      }
-    }
-
-    return Finish;
-  }
-
-  Response NodeView::PerformMouseMove (AbstractWindow* context)
-  {
-    PerformMouseHover(context);
-
-    if (pressed_) {
-
-      Response response = Ignore;
-      AbstractNode* node = 0;
-      Point local_position = context->local_cursor_position();
-
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
-        node = dynamic_cast<AbstractNode*>(p);
-        response = node->PerformMouseMove(context);
-        context->set_local_cursor_position(local_position);
-        if (response == Finish) {
-          break;
-        }
-      }
-
-    }
-
-    return Finish;
   }
 
   void NodeView::PerformMouseHover (AbstractWindow* context)

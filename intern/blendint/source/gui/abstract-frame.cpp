@@ -71,58 +71,57 @@ namespace BlendInt {
     destroyed_->fire(this);
   }
 
-  Point AbstractFrame::GetAbsolutePosition (const AbstractWidget* widget)
+  Point AbstractFrame::GetAbsolutePosition (const AbstractView* view)
   {
-    if (widget == nullptr)
+    if (view == nullptr)
       throw std::invalid_argument("Argument cannot be a nullptr!");
 
-    Point pos = widget->position();
+    if (is_frame(view)) return view->position();
+
+    Point pos = view->position();
     AbstractFrame* frame = 0;
-    AbstractView* p = widget->superview();
-    while (p) {
+    AbstractView* parent = view->superview();
 
-      frame = dynamic_cast<AbstractFrame*>(p);
-      if (frame) break;
-
-      pos = pos + p->position() + p->GetOffset();
-      p = p->superview();
-
+    while (parent && (!is_frame(parent))) {
+      pos = pos + parent->position() + parent->GetOffset();
+      parent = parent->superview();
     }
 
+    frame = dynamic_cast<AbstractFrame*>(parent);
+
     if (frame == 0)
-      throw std::domain_error("The widget is not added in the context");
+      throw std::domain_error("The view is not added in the context");
 
     if (frame != this)
-      throw std::out_of_range("Widget is not contained in this frame!");
+      throw std::out_of_range("View is not contained in this frame!");
 
     pos = pos + position() + GetOffset();
     return pos;
   }
 
-  Point AbstractFrame::GetRelativePosition (const AbstractWidget* widget)
+  Point AbstractFrame::GetRelativePosition (const AbstractView* view)
   {
-    if (widget == nullptr)
+    if (view == nullptr)
       throw std::invalid_argument("Argument cannot be a nullptr!");
 
-    Point pos = widget->position();
+    if (is_frame(view)) return Point(0, 0);
+
+    Point pos = view->position();
     AbstractFrame* frame = 0;
-    AbstractView* p = widget->superview();
+    AbstractView* parent = view->superview();
 
-    while (p) {
-
-      frame = dynamic_cast<AbstractFrame*>(p);
-      if (frame) break;
-
-      pos = pos + p->position() + p->GetOffset();
-      p = p->superview();
-
+    while (parent && (!is_frame(parent))) {
+      pos = pos + parent->position() + parent->GetOffset();
+      parent = parent->superview();
     }
 
+    frame = dynamic_cast<AbstractFrame*>(parent);
+
     if (frame == 0)
-      throw std::domain_error("The widget is not added in the context");
+      throw std::domain_error("The view is not added in the context");
 
     if (frame != this)
-      throw std::out_of_range("Widget is not contained in this frame!");
+      throw std::out_of_range("View is not contained in this frame!");
 
     return pos;
   }

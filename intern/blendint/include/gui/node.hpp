@@ -38,7 +38,12 @@ namespace BlendInt {
   {
   public:
 
-    Node (AbstractLayout* layout);
+    Node (AbstractLayout* layout,
+          unsigned int inner_color = 0x999999FF,
+          unsigned int outer_color = 0x191919FF,
+          bool shaded = false,
+          short shadetop = 0,
+          short shadedown = 0);
 
     virtual ~Node ();
 
@@ -52,6 +57,10 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const;
 
+    void SetInnerColor (unsigned int color);
+
+    void SetOuterColor (unsigned int color);
+
   protected:
 
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -63,6 +72,16 @@ namespace BlendInt {
     virtual Response Draw (AbstractWindow* context);
 
   private:
+
+    unsigned int inner_color_;
+
+    unsigned int outer_color_;
+
+    bool shaded_;
+
+    short shadetop_;
+
+    short shadedown_;
 
     GLuint vao_[2];
 

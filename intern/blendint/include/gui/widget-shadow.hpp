@@ -28,40 +28,46 @@
 
 namespace BlendInt {
 
-	class WidgetShadow: public AbstractShadow
-	{
-	public:
+  class WidgetShadow: public AbstractShadow
+  {
+  public:
 
-		WidgetShadow(const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
+    WidgetShadow (const Size& size = Size(100, 100),
+                  int round_type = RoundNone,
+                  float round_radius = 5.f);
 
-		virtual ~WidgetShadow();
+    virtual ~WidgetShadow ();
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(Color::Black).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(Color::Black).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-	protected:
+    void Draw (int x, int y, int mask_x, int mask_y, const float* color_ptr =
+                   Color(Color::Black).data(),
+               short gamma = 0);
 
-		virtual void PerformSizeUpdate (const Size& size);
+  protected:
 
-		virtual void PerformRoundTypeUpdate (int type);
+    virtual void PerformSizeUpdate (const Size& size);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundTypeUpdate (int type);
 
-	private:
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-		void InitializeWidgetShadowOnce ();
+  private:
 
-		GLuint vao_;
+    void InitializeWidgetShadowOnce ();
 
-		GLBuffer<ARRAY_BUFFER> vertex_buffer_;
+    GLuint vao_;
 
-		GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
+    GLBuffer<ARRAY_BUFFER> vertex_buffer_;
 
-	};
+    GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
+
+  };
 
 }
