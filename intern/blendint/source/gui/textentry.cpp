@@ -80,13 +80,6 @@ namespace BlendInt {
   TextEntry::~TextEntry ()
   {
     glDeleteVertexArrays(3, vao_);
-
-    if(hovered_) {
-      AbstractWindow* win = AbstractWindow::GetWindow(this);
-      if(win) {
-        win->PopCursor();
-      }
-    }
   }
 
   void TextEntry::SetText (const String& text)

@@ -90,7 +90,7 @@ namespace BlendInt {
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(
           this, &Frame::OnHoverWidgetDestroyed);
-      ClearHoverWidgets(hovered_widget_);
+      ClearHoverWidgets(hovered_widget_, AbstractWindow::GetWindow(this));
     }
   }
 
@@ -251,7 +251,7 @@ namespace BlendInt {
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(
           this, &Frame::OnHoverWidgetDestroyed);
-      ClearHoverWidgets(hovered_widget_);
+      ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
     }
 

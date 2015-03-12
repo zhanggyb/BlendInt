@@ -73,7 +73,7 @@ namespace BlendInt {
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(this,
                                                  &Menu::OnHoverWidgetDestroyed);
-      ClearHoverWidgets(hovered_widget_);
+      ClearHoverWidgets(hovered_widget_, AbstractWindow::GetWindow(this));
     }
 
   }

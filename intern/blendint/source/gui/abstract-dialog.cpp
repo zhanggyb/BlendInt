@@ -62,9 +62,10 @@ namespace BlendInt {
     }
 
     if (hovered_widget_) {
+      AbstractWindow* win = AbstractWindow::GetWindow(this);
       hovered_widget_->destroyed().disconnectOne(
           this, &AbstractDialog::OnHoverWidgetDestroyed);
-      ClearHoverWidgets(hovered_widget_);
+      ClearHoverWidgets(hovered_widget_, win);
     }
   }
 
@@ -83,8 +84,12 @@ namespace BlendInt {
     Response response = Ignore;
 
     if (context->GetKeyInput() == Key_Escape) {
-      RequestRedraw();
+
+      if (context == superview())
+        context->RequestRedraw();
+
       delete this;
+
       return Finish;
     }
 

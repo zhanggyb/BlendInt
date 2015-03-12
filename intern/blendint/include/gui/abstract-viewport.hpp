@@ -32,31 +32,25 @@
 namespace BlendInt {
 
   /**
-   * @brief A viewport for 3D scene
+   * @brief Abstract class for 3D scene
    *
    * @ingroup blendint_gui_frames
    */
-  class Viewport: public AbstractFrame
+  class AbstractViewport: public AbstractFrame
   {
-  DISALLOW_COPY_AND_ASSIGN(Viewport);
+  DISALLOW_COPY_AND_ASSIGN(AbstractViewport);
 
   public:
 
-    Viewport ();
+    AbstractViewport (int width, int height);
 
-    virtual ~Viewport ();
+    virtual ~AbstractViewport ();
 
     virtual bool IsExpandX () const;
 
     virtual bool IsExpandY () const;
 
-    virtual Size GetPreferredSize () const;
-
   protected:
-
-    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
     virtual Response PerformKeyPress (AbstractWindow* context);
 
@@ -76,23 +70,15 @@ namespace BlendInt {
 
     virtual Response PerformMouseHover (AbstractWindow* context);
 
+    virtual void RenderScene () = 0;
+
+  private:
+
     virtual bool PreDraw (AbstractWindow* context);
 
     virtual Response Draw (AbstractWindow* context);
 
     virtual void PostDraw (AbstractWindow* context);
-
-  private:
-
-    RefPtr<GridFloor> gridfloor_;
-
-    RefPtr<PerspectiveCamera> default_camera_;
-
-    glm::mat4 projection_matrix_;
-
-    glm::mat3 model_matrix_;
-
-    bool hover_;
   };
 
 }

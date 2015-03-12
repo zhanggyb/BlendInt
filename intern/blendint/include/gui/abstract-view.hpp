@@ -301,7 +301,7 @@ namespace BlendInt {
 
     AbstractView* GetSubViewAt (int i) const;
 
-    const Point& position () const
+    inline const Point& position () const
     {
       return position_;
     }
@@ -324,7 +324,7 @@ namespace BlendInt {
       return Point(0, 0);
     }
 
-    const Size& size () const
+    inline const Size& size () const
     {
       return size_;
     }
@@ -386,27 +386,27 @@ namespace BlendInt {
 
     static inline bool is_window (const AbstractView* view)
     {
-      return (view->view_flag_ & ViewTypeMask) == ViewTypeWindow;
+      return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeWindow : false;
     }
 
     static inline bool is_frame (const AbstractView* view)
     {
-      return (view->view_flag_ & ViewTypeMask) == ViewTypeFrame;
+      return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeFrame : false;
     }
 
     static inline bool is_widget (const AbstractView* view)
     {
-      return (view->view_flag_ & ViewTypeMask) == ViewTypeWidget;
+      return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeWidget : false;
     }
 
     static inline bool is_node (const AbstractView* view)
     {
-      return (view->view_flag_ & ViewTypeMask) == ViewTypeNode;
+      return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeNode : false;
     }
 
     static inline bool is_undefined_type (const AbstractView* view)
     {
-      return (view->view_flag_ & ViewTypeMask) == ViewTypeUndefined;
+      return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeUndefined : false;
     }
 
     static inline float default_border_width ()
@@ -426,7 +426,7 @@ namespace BlendInt {
       name_ = name;
     }
 
-    const std::string& name () const
+    inline const std::string& name () const
     {
       return name_;
     }

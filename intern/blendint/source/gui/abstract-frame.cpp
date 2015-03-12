@@ -407,17 +407,6 @@ namespace BlendInt {
     return result;
   }
 
-  void AbstractFrame::ClearHoverWidgets (AbstractView* hovered_widget)
-  {
-#ifdef DEBUG
-    assert(hovered_widget);
-#endif
-
-    while (hovered_widget && (hovered_widget != this)) {
-      hovered_widget = hovered_widget->superview();
-    }
-  }
-
   void AbstractFrame::ClearHoverWidgets (AbstractView* hovered_widget,
                                          AbstractWindow* context)
   {

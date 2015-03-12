@@ -66,16 +66,14 @@ namespace BlendInt {
 
   Point Window::kCursor;
 
-  Window::Window (int width,
-                  int height,
-                  const char* title,
-                  int flags)
+  Window::Window (int width, int height, const char* title, int flags)
   : AbstractWindow(width, height, flags), window_(0)
   {
     // TODO: support fullscreen mode
-    glfwWindowHint(GLFW_VISIBLE, (flags & WindowVisibleMask) ? GL_TRUE : GL_FALSE);
+    glfwWindowHint(GLFW_VISIBLE,
+                   (flags & WindowVisibleMask) ? GL_TRUE : GL_FALSE);
 
-    if(main_window() == this) {
+    if (main_window() == this) {
       window_ = glfwCreateWindow(width, height, title, NULL, NULL);
     } else {
       Window* win = dynamic_cast<Window*>(main_window());
@@ -131,16 +129,13 @@ namespace BlendInt {
 
   Window::~Window ()
   {
-    if(main_window() != this)
-      kSharedWindowMap.erase(window_);
+    if (main_window() != this) kSharedWindowMap.erase(window_);
 
     //glfwDestroyWindow(window_);
     window_ = NULL;
   }
 
-  AbstractWindow* Window::CreateSharedContext (int width,
-                                               int height,
-                                               int flags)
+  AbstractWindow* Window::CreateSharedContext (int width, int height, int flags)
   {
     Window* shared = Manage(new Window(width, height, "", flags));
 
@@ -168,6 +163,18 @@ namespace BlendInt {
         //Timer::SaveCurrentTime();
 #endif
 
+#ifdef __APPLE__
+
+        // TODO: test these lines to make sure the ubo is correct in each frame in OS X
+
+        glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
+                                          (float) size().height(), 100.f, -100.f);
+        kShaders->SetFrameProjectionMatrix(projection);
+        kShaders->SetFrameViewMatrix(default_view_matrix);
+        kShaders->SetFrameModelMatrix(glm::mat3(1.f));
+
+#endif
+
         set_refresh(false);
         if (PreDraw(this)) {
           Draw(this);
@@ -179,12 +186,7 @@ namespace BlendInt {
         glfwSwapBuffers(window_);
       }
 
-      /* Poll for and process events */
-#ifdef __APPLE__
       glfwWaitEvents();
-#else
-      glfwWaitEvents();
-#endif  // __APPLE__
     }
   }
 
@@ -401,7 +403,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -419,7 +421,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -441,7 +443,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -495,7 +497,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -544,7 +546,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -616,7 +618,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -687,7 +689,7 @@ namespace BlendInt {
   {
     Window* win = 0;
     std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
-    if(it != kSharedWindowMap.end()) {
+    if (it != kSharedWindowMap.end()) {
       win = it->second;
     } else {
       win = dynamic_cast<Window*>(main_window());
@@ -703,11 +705,11 @@ namespace BlendInt {
     namespace fs = boost::filesystem;
 
     fs::path cursors_path(
-        BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/cursors");
+    BLENDINT_INSTALL_PREFIX"/share/BlendInt/datafiles/cursors");
 
     if (!fs::exists(cursors_path)) {
       cursors_path = fs::path(
-          BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/cursors");
+      BLENDINT_PROJECT_SOURCE_DIR"/release/datafiles/cursors");
     }
 
     if (!fs::exists(cursors_path)) return;

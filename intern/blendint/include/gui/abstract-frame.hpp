@@ -129,8 +129,6 @@ namespace BlendInt {
     AbstractWidget* DispatchMouseHover (AbstractWidget* orig,
                                         AbstractWindow* context);
 
-    void ClearHoverWidgets (AbstractView* hovered_widget);
-
     void ClearHoverWidgets (AbstractView* hovered_widget,
                             AbstractWindow* context);
 
