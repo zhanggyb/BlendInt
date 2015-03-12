@@ -1437,23 +1437,62 @@ namespace BlendInt {
     AbstractFrame* original = hover_frame_;
 
     if (hover_frame_ != nullptr) {
+
       if (!hover_frame_->Contain(context->GetGlobalCursorPosition())) {
 
         hover_frame_ = nullptr;
+
+        // FrameSplitterHandle first:
         for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+
+          if(!p->previous_view()) break;
+          p = p->previous_view();
+
           if (p->Contain(context->GetGlobalCursorPosition())) {
             hover_frame_ = dynamic_cast<AbstractFrame*>(p);
             break;
           }
         }
 
+        // Then content frames:
+
+        if (!hover_frame_) {
+          for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+            if (p->Contain(context->GetGlobalCursorPosition())) {
+              hover_frame_ = dynamic_cast<AbstractFrame*>(p);
+              break;
+            }
+
+            p = p->previous_view();
+          }
+        }
+
       }
+
     } else {
 
+      // FrameSplitterHandle first:
       for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+
+        if(!p->previous_view()) break;
+        p = p->previous_view();
+
         if (p->Contain(context->GetGlobalCursorPosition())) {
           hover_frame_ = dynamic_cast<AbstractFrame*>(p);
           break;
+        }
+      }
+
+      // Then content frames:
+
+      if (!hover_frame_) {
+        for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+          if (p->Contain(context->GetGlobalCursorPosition())) {
+            hover_frame_ = dynamic_cast<AbstractFrame*>(p);
+            break;
+          }
+
+          p = p->previous_view();
         }
       }
 

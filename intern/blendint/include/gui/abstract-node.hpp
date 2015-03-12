@@ -51,7 +51,7 @@ namespace BlendInt {
 
     void SetRoundType (int type);
 
-    Point GetRelativePosition (const AbstractWidget* widget);
+    Point GetRelativePosition (const AbstractView* widget);
 
     inline int round_type () const
     {

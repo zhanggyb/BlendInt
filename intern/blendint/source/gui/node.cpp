@@ -232,8 +232,19 @@ namespace BlendInt {
   {
     glm::vec3 v = context->shaders()->widget_model_matrix()
         * glm::vec3(0.f, 0.f, 1.f);
-    shadow_->Draw(0, 0, v.x - context->viewport_origin().x(),
-                  v.y - context->viewport_origin().y());
+
+    if (context->active_frame()->has_view_buffer()) {
+      shadow_->Draw(0, 0, v.x - context->viewport_origin().x(),
+                    v.y - context->viewport_origin().y());
+    } else {
+      shadow_->Draw(
+          0,
+          0,
+          context->active_frame()->position().x() + v.x
+              - context->viewport_origin().x(),
+          context->active_frame()->position().y() + v.y
+              - context->viewport_origin().y());
+    }
 
     AbstractWindow::shaders()->widget_inner_program()->use();
 

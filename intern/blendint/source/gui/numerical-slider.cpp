@@ -666,9 +666,15 @@ namespace BlendInt {
 
   void NumericalSlider::DrawSlideMode (AbstractWindow* context)
   {
-    glm::vec3 v = context->shaders()->widget_model_matrix()
-        * glm::vec3(0.f, 0.f, 1.f);
-    v.x = v.x - context->viewport_origin().x();
+    float x = (context->shaders()->widget_model_matrix()
+        * glm::vec3(0.f, 0.f, 1.f)).x;
+
+    if (context->active_frame()->has_view_buffer()) {
+      x = x - context->viewport_origin().x();
+    } else {
+      x = context->active_frame()->position().x() + x
+          - context->viewport_origin().x();
+    }
 
     int outline_vertices = GetOutlineVertices(round_type());
     float len = GetSlidePosition(default_border_width(), value());
@@ -682,7 +688,7 @@ namespace BlendInt {
     glUniform1f(
         AbstractWindow::shaders()->location(
             Shaders::WIDGET_SPLIT_INNER_PARTING),
-        v.x + len);
+        x + len);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
         1, AbstractWindow::theme()->number_slider().inner_sel.data());
@@ -696,50 +702,54 @@ namespace BlendInt {
     AbstractWindow::shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
-        0.f);
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-        1, AbstractWindow::theme()->number_slider().outline.data());
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+        0.f, 0.f);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        AbstractWindow::theme()->number_slider().outline.data());
 
     vao_.bind(1);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
     if (emboss()) {
       glUniform4f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-          1.0f, 1.0f, 0.16f);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+          1.0f, 1.0f, 1.0f, 0.16f);
 
       glUniform2f(
           AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
           0.f, -1.f);
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
-          GetHalfOutlineVertices(round_type()) * 2);
+                   GetHalfOutlineVertices(round_type()) * 2);
     }
 
     Rect rect(0, 0, AbstractWindow::icons()->num()->size().width() * 2,
-        size().height());
+              size().height());
 
     AbstractWindow::icons()->num()->DrawInRect(rect, AlignCenter,
-        Color(0x0F0F0FFF).data(), 0, 180.f);
+                                               Color(0x0F0F0FFF).data(), 0,
+                                               180.f);
 
     rect.set_x(rect.width() + pixel_size(kPadding.left()));
     rect.set_width(
         size().width() - pixel_size(kPadding.hsum())
             - 4 * AbstractWindow::icons()->num()->size().width());
 
-    if(title_text_) {
-      title_text_->DrawInRect(rect,
-          AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline);
+    if (title_text_) {
+      title_text_->DrawInRect(
+          rect, AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline);
     }
-    value_text_->DrawInRect(rect, AlignRight | AlignVerticalCenter | AlignJustify | AlignBaseline);
+    value_text_->DrawInRect(
+        rect, AlignRight | AlignVerticalCenter | AlignJustify | AlignBaseline);
 
     rect.set_x(
         size().width() - AbstractWindow::icons()->num()->size().width() * 2);
     rect.set_width(AbstractWindow::icons()->num()->size().width());
 
     AbstractWindow::icons()->num()->DrawInRect(rect, AlignCenter,
-        Color(0x0F0F0FFF).data(), 0, 0.f);
+                                               Color(0x0F0F0FFF).data(), 0,
+                                               0.f);
   }
 
   void NumericalSlider::DrawEditMode (AbstractWindow* context)

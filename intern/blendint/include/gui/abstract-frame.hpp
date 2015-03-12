@@ -94,6 +94,11 @@ namespace BlendInt {
 
     void DisableViewBuffer ();
 
+    inline bool has_view_buffer () const
+    {
+      return view_buffer_;
+    }
+
     inline bool focusable () const
     {
       return frame_flag_ & FrameFocusableMask;

@@ -73,22 +73,24 @@ namespace BlendInt {
     PerformRoundTypeUpdate(type & 0x0F);
   }
 
-  Point AbstractNode::GetRelativePosition (const AbstractWidget* widget)
+  Point AbstractNode::GetRelativePosition (const AbstractView* widget)
   {
     if (widget == nullptr)
       throw std::invalid_argument("Argument cannot be a nullptr!");
 
     Point pos = widget->position();
     AbstractNode* node = 0;
-    AbstractView* p = widget->superview();
+    AbstractView* parent = widget->superview();
 
-    while (p) {
+    while (parent) {
 
-      node = dynamic_cast<AbstractNode*>(p);
-      if (node) break;
+      if (is_node(parent)) {
+        node = dynamic_cast<AbstractNode*>(parent);
+        break;
+      }
 
-      pos = pos + p->position() + p->GetOffset();
-      p = p->superview();
+      pos = pos + parent->position() + parent->GetOffset();
+      parent = parent->superview();
 
     }
 
@@ -547,21 +549,17 @@ namespace BlendInt {
     assert(orig->superview() && orig->superview() != this);
 
     AbstractWidget* result = orig;
-    AbstractView* super_view = result->superview();
-    AbstractWidget* super_widget = dynamic_cast<AbstractWidget*>(super_view);
+    AbstractView* parent = result->superview();
     Point offset;
 
-    Rect rect;
-    rect.set_position(
-        GetRelativePosition(dynamic_cast<AbstractWidget*>(orig->superview()))
-            + position() + GetOffset());
-    rect.set_size(orig->superview()->size());
+    Rect rect(GetRelativePosition(parent) + position() + GetOffset(),
+              parent->size());
 
     bool cursor_in_superview = rect.contains(context->local_cursor_position());
 
     if (cursor_in_superview) {
 
-      offset = super_view->GetOffset();
+      offset = parent->GetOffset();
       context->set_local_cursor_position(
           context->local_cursor_position().x() - rect.x() - offset.x(),
           context->local_cursor_position().y() - rect.y() - offset.y());
@@ -573,26 +571,26 @@ namespace BlendInt {
         dispatch_mouse_hover_out(result, context);
 
         // find which contianer contains cursor position
-        while (super_view) {
+        while (parent) {
 
-          if (super_view == this) {
-            super_view = 0;
+          if (parent == this) {
+            parent = 0;
             break;
           }
 
-          offset = super_view->GetOffset();
+          offset = parent->GetOffset();
           context->set_local_cursor_position(
-              context->local_cursor_position().x() + super_view->position().x()
+              context->local_cursor_position().x() + parent->position().x()
                   + offset.x(),
-              context->local_cursor_position().y() + super_view->position().y()
+              context->local_cursor_position().y() + parent->position().y()
                   + offset.y());
 
-          if (super_view->Contain(context->local_cursor_position())) break;
+          if (parent->Contain(context->local_cursor_position())) break;
 
-          super_view = super_view->superview();
+          parent = parent->superview();
         }
 
-        result = dynamic_cast<AbstractWidget*>(super_view);
+        result = dynamic_cast<AbstractWidget*>(parent);
 
         if (result) {
           result = RecursiveDispatchHoverEvent(result, context);
@@ -605,45 +603,42 @@ namespace BlendInt {
       dispatch_mouse_hover_out(result, context);
 
       // find which contianer contains cursor position
-      super_view = super_view->superview();
-      while (super_view != nullptr) {
+      parent = parent->superview();
+      while (parent != nullptr) {
 
-        if (super_view == this) {
-          super_view = nullptr;
+        if (parent == this) {
+          parent = nullptr;
           break;
         }
 
-        super_widget = dynamic_cast<AbstractWidget*>(super_view);
-        if (super_widget) {
-          rect.set_position(GetRelativePosition(super_widget));
-          rect.set_size(super_widget->size());
+        if (is_widget(parent)) {
+          rect.set_position(GetRelativePosition(parent));
+          rect.set_size(parent->size());
         } else {
-          assert(super_view == this);
+          assert(parent == this);
           rect.set_position(position());
           rect.set_size(size());
         }
 
-        offset = super_view->GetOffset();
+        offset = parent->GetOffset();
         context->set_local_cursor_position(
             context->local_cursor_position().x() - rect.x() - offset.x(),
             context->local_cursor_position().y() - rect.y() - offset.y());
 
         if (rect.contains(context->local_cursor_position())) break;
 
-        super_view = super_view->superview();
+        parent = parent->superview();
       }
 
-      result = dynamic_cast<AbstractWidget*>(super_view);
+      result = dynamic_cast<AbstractWidget*>(parent);
       if (result) {
 
-        AbstractWidget* tmp = 0;
-        for (AbstractView* p = super_widget->last_subview(); p;
-            p = p->previous_view()) {
+        for (AbstractView* p = parent->last_subview(); p; p =
+            p->previous_view()) {
 
-          tmp = dynamic_cast<AbstractWidget*>(p);
-          if (tmp) {
+          if (is_widget(p)) {
             if (p->visiable() && p->Contain(context->local_cursor_position())) {
-              result = tmp;
+              result = dynamic_cast<AbstractWidget*>(p);
 
               dispatch_mouse_hover_in(result, context);
               result = RecursiveDispatchHoverEvent(result, context);
@@ -672,8 +667,8 @@ namespace BlendInt {
 
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
-      result = dynamic_cast<AbstractWidget*>(p);
-      if (result) {
+      if (is_widget(p)) {
+        result = dynamic_cast<AbstractWidget*>(p);
         if (p->visiable() && p->Contain(context->local_cursor_position())) {
           dispatch_mouse_hover_in(result, context);
           break;
@@ -695,8 +690,6 @@ namespace BlendInt {
                                                              AbstractWindow* context)
   {
     AbstractWidget* retval = widget;
-    AbstractWidget* tmp = 0;
-
     Point offset = widget->GetOffset();
     context->set_local_cursor_position(
         context->local_cursor_position().x() - widget->position().x()
@@ -706,11 +699,9 @@ namespace BlendInt {
 
     for (AbstractView* p = widget->last_subview(); p; p = p->previous_view()) {
 
-      tmp = dynamic_cast<AbstractWidget*>(p);
-
-      if (tmp) {
+      if (is_widget(p)) {
         if (p->visiable() && p->Contain(context->local_cursor_position())) {
-          retval = tmp;
+          retval = dynamic_cast<AbstractWidget*>(p);
           dispatch_mouse_hover_in(retval, context);
           retval = RecursiveDispatchHoverEvent(retval, context);
 
