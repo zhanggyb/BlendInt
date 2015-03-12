@@ -1,0 +1,72 @@
+// Doxygen documentation
+
+/**
+ * @defgroup blendint_core The Core module
+ *
+ * Some core data structures and classes.
+ */
+
+/**
+ * @defgroup blendint_font The Font module
+ *
+ * C++ wrapper of Fontconfig and Freetype
+ */
+
+/**
+ * @defgroup blendint_cppevents CppEvents module
+ *
+ * CppEvents module
+ */
+
+/**
+ * @defgroup blendint_opengl C++ OpenGL warpper
+ *
+ * Some simple C++ warpper of OpenGL C APIs
+ */
+
+/**
+ * @defgroup blendint_gui The GUI module
+ *
+ * The main module of this project, provides different types of gui classes
+ */
+
+/**
+ * @defgroup blendint_gui_windows Windows
+ * @ingroup blendint_gui
+ *
+ * Windows
+ */
+
+/**
+ * @defgroup blendint_gui_frames Frames
+ * @ingroup blendint_gui
+ *
+ * Frames
+ */
+
+/**
+ * @defgroup blendint_gui_widgets Widgets
+ * @ingroup blendint_gui
+ *
+ * Widgets
+ */
+
+/**
+ * @defgroup blendint_gui_forms Forms
+ * @ingroup blendint_gui
+ *
+ * 2D forms rendered with OpenGL API
+ */
+
+/**
+ * @defgroup blendint_gui_nodes Nodes
+ * @ingroup blendint_gui
+ *
+ * Nodes
+ */
+
+/**
+ * @defgroup stock Stock resources for common usage
+ *
+ * Pre-defined icons, shaders, theme used in this project
+ */

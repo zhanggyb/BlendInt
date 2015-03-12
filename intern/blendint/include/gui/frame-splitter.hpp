@@ -33,6 +33,11 @@ namespace BlendInt {
 
   class FrameSplitter;
 
+  /**
+   * @brief A special frame used in FrameSplitter only
+   *
+   * @ingroup blendint_gui_frames
+   */
   class FrameSplitterHandle: public AbstractFrame
   {
   public:
@@ -99,6 +104,11 @@ namespace BlendInt {
 
   // -------------------------------
 
+  /**
+   * @brief Frame splitter
+   *
+   * @ingroup blendint_gui_frames
+   */
   class FrameSplitter: public AbstractFrame
   {
   public:

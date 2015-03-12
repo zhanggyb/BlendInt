@@ -29,6 +29,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Tab button
+   *
+   * @ingroup blendint_gui_widgets_buttons
+   */
 	class TabButton: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabButton);

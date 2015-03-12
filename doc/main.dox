@@ -1,55 +1,23 @@
 /**
 
-@mainpage BlendInt -- a Blender-like Interface Library in OpenGL
-@tableofcontents
+@mainpage BlendInt -- a lightweight C++ GUI toolkit inspired by
+Blender @tableofcontents
 
 @section sect_intro Introduction
- 
-BlendInt (Blender Interface Library in OpenGL) is a C++ library for
-building application with Blender-like style.
 
-This project is for anyone who like Blender and want to build a
-similar GUI application.
+BlendInt is a lightweight C++ GUI toolkit for building cross-platform
+application with Blender-like style, originally written for my own
+use.
 
-Features of vertion 0.1 (developing):
-	- Event system
-	- Widgets:
-		- Buttons:
-		- Push Button
-		- Toggle Button
-		- Checkable Button
-	- Scroll Widget
-	- Label
-	- Slider
-	- Tab Widget
-	- Layout
-	- Horizontal Layout
-	- Vertical Layout
- 
+Please be noted that this project is under heavy development. Support
+cannot be guaranteed and it may not function as you expect. Besides,
+the Wiki page is under construction and the API may also change at any
+time.
+
+BlendInt currently lives on <a
+href="https://github.com/zhanggyb/BlendInt">GitHub</a>.
+
 @section usage_sec Usage
- 
-Use BlendInt is as simple as any C++ object-oriented GUI toolkit
-like Qt, gtkmm.  For example, create a button with BlendInt:
-
-@code
-#include <BlendInt/Interface.hpp> // The main header to start
-#include <BlendInt/Button.hpp>
-
-int main (int argc, char* argv[])
-{
-	// initialize opengl context
-	BlendInt::Interface::initialize();
-
-	Button* my_button = new Button;
-	my_button.SetPosition(200, 200);
-
-	// in the event-Render loop
-	app->Render();
-
-	// ready to close application
-	BlendInt::Interface::release();
-}
-@endcode
  
 @section sect_compile Compile
 

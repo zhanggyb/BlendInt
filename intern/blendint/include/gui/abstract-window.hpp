@@ -88,6 +88,7 @@ namespace BlendInt {
    * A sub class should override the virual functions and make sure
    * an OpenGL context is created.
    *
+   * @ingroup blendint_gui_windows
    * @see Window
    */
   class AbstractWindow: public AbstractView

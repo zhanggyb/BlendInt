@@ -30,6 +30,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Abstract class for dialogs
+   *
+   * @ingroup blendint_gui_frames
+   */
   class AbstractDialog: public AbstractRoundFrame
   {
   public:

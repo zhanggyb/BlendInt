@@ -30,6 +30,11 @@
  */
 namespace BlendInt {
 
+  /**
+   * @brief Margin
+   *
+   * @ingroup blendint_core
+   */
   class Margin
   {
   public:

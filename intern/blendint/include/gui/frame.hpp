@@ -31,6 +31,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief A common frame with customized layout
+   *
+   * @ingroup blendint_gui_frames
+   */
   class Frame: public AbstractFrame
   {
   public:

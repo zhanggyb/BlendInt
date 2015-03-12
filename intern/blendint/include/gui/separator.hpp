@@ -21,55 +21,57 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SEPARATOR_HPP_
-#define _BLENDINT_GUI_SEPARATOR_HPP_
+#pragma once
 
 #include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-	class Separator: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Separator);
+  /**
+   * @brief A separator widget
+   *
+   * @ingroup blendint_gui_widgets
+   */
+  class Separator: public AbstractWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Separator);
 
-	public:
+  public:
 
-		Separator (bool expand_x = false, bool expand_y = false);
+    Separator (bool expand_x = false, bool expand_y = false);
 
-		virtual ~Separator ();
+    virtual ~Separator ();
 
-		void SetExpandX (bool expand);
+    void SetExpandX (bool expand);
 
-		void SetExpandY (bool expand);
+    void SetExpandY (bool expand);
 
-		void SetExpand (bool expand_x, bool expand_y);
+    void SetExpand (bool expand_x, bool expand_y);
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-	protected:
+  protected:
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-	private:
+  private:
 
-		bool expand_x_;
-		bool expand_y_;
+    bool expand_x_;
+    bool expand_y_;
 
-		Size preferred_size_;
-	};
+    Size preferred_size_;
+  };
 
 }
-
-#endif /* _BLENDINT_GUI_SEPARATOR_HPP_ */

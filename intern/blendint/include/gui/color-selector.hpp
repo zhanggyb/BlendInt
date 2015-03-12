@@ -35,6 +35,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief A dialog to pick color
+   *
+   * @ingroup blendint_gui_frames
+   */
   class ColorSelector: public AbstractDialog
   {
   DISALLOW_COPY_AND_ASSIGN(ColorSelector);

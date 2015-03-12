@@ -33,6 +33,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief A pre-defined GLFW window
+   *
+   * @ingroup blendint_gui_windows
+   */
   class Window: public AbstractWindow
   {
   public:

@@ -31,6 +31,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief A viewport for 3D scene
+   *
+   * @ingroup blendint_gui_frames
+   */
   class Viewport: public AbstractFrame
   {
   DISALLOW_COPY_AND_ASSIGN(Viewport);

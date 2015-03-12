@@ -33,6 +33,8 @@ namespace BlendInt {
 
   /**
    * @brief A special view used to display and manage a node in NodeView
+   *
+   * @ingroup blendint_gui_nodes
    */
   class Node: public AbstractNode
   {

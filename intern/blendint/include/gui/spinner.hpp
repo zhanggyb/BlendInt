@@ -23,49 +23,29 @@
 
 #pragma once
 
-#include <opengl/gl-buffer.hpp>
-
-#include <gui/abstract-button.hpp>
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
   /**
-   * @brief Check button
+   * @brief A widget show a spinner animation
    *
-   * @ingroup blendint_gui_widgets_buttons
+   * @ingroup blendint_gui_widgets
    */
-	class CheckButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(CheckButton);
+  class Spinner: public AbstractWidget
+  {
+  public:
 
-	public:
+    Spinner ();
 
-		CheckButton ();
+    virtual ~Spinner ();
 
-		CheckButton (const String& text);
+    void Start ();
 
-		virtual ~CheckButton ();
+    void Stop ();
 
-		virtual bool IsExpandX () const;
+  private:
 
-		virtual Size GetPreferredSize () const;
+  };
 
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual Response Draw (AbstractWindow* context);
-
-	private:
-
-		void InitializeCheckButton ();
-
-		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
-	};
 }

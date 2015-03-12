@@ -15,7 +15,7 @@ into Eclipse:
 
 assume checkout BlendInt source code to ~/BlendInt
 
-	$ cd ~	# change current directory to HOME
+       	$ cd ~	# change current directory to HOME
 	$ mkdir build # make a new directory to generate cmake build files
 	$ cd build
 	$ cmake ../BlendInt -DCMAKE_BUILD_TYPE=Debug	# Add Debug definition if needed

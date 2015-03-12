@@ -73,6 +73,8 @@ namespace BlendInt {
    *
    * Frame can be focused. A focused frame has the high priority to
    * accept HID events from window and display on other frames.
+   *
+   * @ingroup blendint_gui_frames
    */
   class AbstractFrame: public AbstractView
   {

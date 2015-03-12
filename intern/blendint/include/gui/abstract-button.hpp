@@ -37,6 +37,17 @@ namespace BlendInt {
 
   class ButtonGroup;
 
+  /**
+   * @defgroup blendint_gui_widgets_buttons Buttons
+   *
+   * @ingroup blendint_gui_widgets
+   */
+
+  /**
+   * @brief Abstract class for buttons
+   *
+   * @ingroup blendint_gui_widgets_buttons
+   */
   class AbstractButton: public AbstractRoundWidget
   {
   DISALLOW_COPY_AND_ASSIGN(AbstractButton);

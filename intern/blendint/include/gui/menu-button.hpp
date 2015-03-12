@@ -30,6 +30,8 @@ namespace BlendInt {
 
   /**
    * @brief A special button used in MenuBar only
+   *
+   * @ingroup blendint_gui_widgets_buttons
    */
   class MenuButton: public AbstractButton
   {

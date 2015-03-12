@@ -30,47 +30,52 @@
 #include <gui/label.hpp>
 
 namespace BlendInt {
-    
-    class MessageBox: public AbstractDialog
-    {
-    public:
-        
-        MessageBox (const String& title, const String& description);
-        
-        virtual ~MessageBox ();
-        
-        void SetTitleFont (const Font& font);
 
-        void SetTextFont (const Font& font);
+  /**
+   * @brief A message dialog
+   *
+   * @ingroup blendint_gui_frames
+   */
+  class MessageBox: public AbstractDialog
+  {
+  public:
 
-    protected:
+    MessageBox (const String& title, const String& description);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual ~MessageBox ();
 
-		virtual bool PreDraw (AbstractWindow* context);
+    void SetTitleFont (const Font& font);
 
-		virtual Response Draw (AbstractWindow* context);
+    void SetTextFont (const Font& font);
 
-    private:
+  protected:
 
-        void OnClose (AbstractButton* btn);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-        GLuint vao_[2];
+    virtual bool PreDraw (AbstractWindow* context);
 
-        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    virtual Response Draw (AbstractWindow* context);
 
-		RefPtr<FrameShadow> shadow_;
+  private:
 
-		Label* title_;
+    void OnClose (AbstractButton* btn);
 
-		Label* text_;
+    GLuint vao_[2];
 
-		CloseButton* close_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		glm::mat4 projection_matrix_;
+    RefPtr<FrameShadow> shadow_;
 
-		glm::mat3 model_matrix_;
+    Label* title_;
 
-    };
-    
+    Label* text_;
+
+    CloseButton* close_;
+
+    glm::mat4 projection_matrix_;
+
+    glm::mat3 model_matrix_;
+
+  };
+
 }

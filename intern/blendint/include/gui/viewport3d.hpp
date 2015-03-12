@@ -40,7 +40,7 @@ namespace BlendInt {
 	/**
 	 * @brief A simple 3D viewport
 	 *
-	 * @ingroup widgets
+	 * @ingroup blendint_gui_widgets
 	 */
 	class Viewport3D: public AbstractRoundWidget
 	{

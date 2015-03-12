@@ -34,6 +34,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A special button usually used in ToolBar
+	 *
+	 * @ingroup blendint_gui_widgets_buttons
 	 */
 	class ToolButton: public AbstractButton
 	{

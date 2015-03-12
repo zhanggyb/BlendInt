@@ -27,16 +27,21 @@
 
 namespace BlendInt {
 
-	class FontSelector: public AbstractDialog
-	{
-	public:
+  /**
+   * @brief A dialog to select and show fonts
+   *
+   * @ingroup blendint_gui_frames
+   */
+  class FontSelector: public AbstractDialog
+  {
+  public:
 
-		FontSelector ();
+    FontSelector ();
 
-		virtual ~FontSelector ();
+    virtual ~FontSelector ();
 
-	private:
+  private:
 
-	};
+  };
 
 }

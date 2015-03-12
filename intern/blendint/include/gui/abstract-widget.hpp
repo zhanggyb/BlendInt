@@ -34,7 +34,7 @@ namespace BlendInt {
   /**
    * @brief A Normal widget
    *
-   * @ingroup widgets
+   * @ingroup blendint_gui_widgets
    */
   class AbstractWidget: public AbstractView
   {

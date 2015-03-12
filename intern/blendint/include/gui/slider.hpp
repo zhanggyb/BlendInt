@@ -21,101 +21,97 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_SLIDER_HPP_
-#define _BLENDINT_SLIDER_HPP_
+#pragma once
 
 #include <opengl/glarraybuffer.hpp>
 #include <gui/abstract-slider.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Slider widget
-	 */
-	class Slider: public AbstractSlider<int>
-	{
-	public:
+  /**
+   * @brief Slider widget
+   */
+  class Slider: public AbstractSlider<int>
+  {
+  public:
 
-		Slider (Orientation orientation = Horizontal);
+    Slider (Orientation orientation = Horizontal);
 
-		virtual ~Slider ();
+    virtual ~Slider ();
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformOrientationUpdate (Orientation orientation);
+    virtual void PerformOrientationUpdate (Orientation orientation);
 
-		virtual void PerformMinimumUpdate (int minimum);
+    virtual void PerformMinimumUpdate (int minimum);
 
-		virtual void PerformMaximumUpdate (int maximum);
+    virtual void PerformMaximumUpdate (int maximum);
 
-		virtual void PerformValueUpdate (int value);
+    virtual void PerformValueUpdate (int value);
 
-		virtual void PerformStepUpdate (int step);
+    virtual void PerformStepUpdate (int step);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		/**
-		 * @brief calculate the space width in which slider can move
-		 * @return
-		 */
-		int GetSpace ();
+    /**
+     * @brief calculate the space width in which slider can move
+     * @return
+     */
+    int GetSpace ();
 
-	private:
+  private:
 
-		void InitOnce ();
+    void InitOnce ();
 
-		/**
-		 * @brief Check if cursor is on the slide icon
-		 */
-		bool CursorOnSlideIcon (const Point& cursor);
+    /**
+     * @brief Check if cursor is on the slide icon
+     */
+    bool CursorOnSlideIcon (const Point& cursor);
 
-		/**
-		 * @brief Get the new value at the cursor position
-		 * @param[in] cursor The cursor position
-		 * @param[out] vout The new value
-		 * @return
-		 * 	- true if the cursor is in range
-		 * 	- false if the cursor is out of range
-		 */
-		bool GetNewValue (const Point& cursor, int* vout);
+    /**
+     * @brief Get the new value at the cursor position
+     * @param[in] cursor The cursor position
+     * @param[out] vout The new value
+     * @return
+     * 	- true if the cursor is in range
+     * 	- false if the cursor is out of range
+     */
+    bool GetNewValue (const Point& cursor, int* vout);
 
-		/**
-		 * @brief
-		 */
-		inline float get_position ()
-		{
-			return value() * GetSpace()
-			                / ((float) maximum() - (float) minimum());
-		}
+    /**
+     * @brief
+     */
+    inline float get_position ()
+    {
+      return value() * GetSpace() / ((float) maximum() - (float) minimum());
+    }
 
-		//GLuint m_vao;
+    //GLuint m_vao;
 
-		//RefPtr<GLArrayBuffer> m_line;
+    //RefPtr<GLArrayBuffer> m_line;
 
-		SlideIcon m_slide_icon;
+    SlideIcon m_slide_icon;
 
-		Point m_last_cursor;	// used for mouse move
+    Point m_last_cursor;	// used for mouse move
 
-		int m_last_value;
+    int m_last_value;
 
-		/**
-		 * @brief If the slide switch is pressed
-		 */
-		bool m_pressed;
-	};
+    /**
+     * @brief If the slide switch is pressed
+     */
+    bool m_pressed;
+  };
 
 }
-
-#endif // _BLENDINT_SLIDER_HPP_

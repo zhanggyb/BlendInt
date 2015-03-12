@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TYPES_HPP_
-#define _BLENDINT_TYPES_HPP_
+#pragma once
 
 #include <string>	// typedef String
 
@@ -202,5 +201,3 @@ namespace BlendInt {
   };
 
 }
-
-#endif	/* _BIL_TYPES_H_ */

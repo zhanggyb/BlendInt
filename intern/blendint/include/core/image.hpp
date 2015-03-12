@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CORE_IMAGE_HPP_
-#define _BLENDINT_CORE_IMAGE_HPP_
+#pragma once
 
 #include <core/object.hpp>
 #include <core/string.hpp>
@@ -30,52 +29,55 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Image class focused on I/O and direct pixel access and manipulation
-	 */
-	class Image: public Object
-	{
-	public:
+  /**
+   * @brief Image class focused on I/O and direct pixel access and manipulation
+   *
+   * @ingroup blendint_core
+   */
+  class Image: public Object
+  {
+  public:
 
-		Image ();
+    Image ();
 
-		~Image ();
+    ~Image ();
 
-		bool Read (const char* filename);
+    bool Read (const char* filename);
 
-		bool Read (const String& filename);
+    bool Read (const String& filename);
 
-		bool Save ();
+    bool Save ();
 
-		void Clear ();
+    void Clear ();
 
-		const unsigned char* pixels () const {return &m_pixels[0];}
-		
-		int height () const
-		{
-			return m_height;
-		}
-		
-		int width () const
-		{
-			return m_width;
-		}
+    const unsigned char* pixels () const
+    {
+      return &m_pixels[0];
+    }
 
-		int channels () const
-		{
-			return m_channels;
-		}
+    int height () const
+    {
+      return m_height;
+    }
 
-	private:
+    int width () const
+    {
+      return m_width;
+    }
 
-		String m_filename;
+    int channels () const
+    {
+      return m_channels;
+    }
 
-		int m_width;
-		int m_height;
-		int m_channels;
+  private:
 
-		std::vector<unsigned char> m_pixels;
-	};
+    String m_filename;
+
+    int m_width;
+    int m_height;
+    int m_channels;
+
+    std::vector<unsigned char> m_pixels;
+  };
 }
-
-#endif /* IMAGE_HPP_ */

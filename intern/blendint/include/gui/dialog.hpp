@@ -35,6 +35,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Common dialog with a customized layout
+   *
+   * @ingroup blendint_gui_frames
+   */
   class Dialog: public AbstractDialog
   {
 

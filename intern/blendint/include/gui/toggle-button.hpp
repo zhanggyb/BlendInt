@@ -31,7 +31,7 @@ namespace BlendInt {
 	/**
 	 * @brief Toggle Button
 	 *
-	 * @ingroup widgets
+	 * @ingroup blendint_gui_widgets_buttons
 	 */
 	class ToggleButton: public AbstractButton
 	{

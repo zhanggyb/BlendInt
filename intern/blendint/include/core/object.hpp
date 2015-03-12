@@ -34,37 +34,39 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief The base class with reference count
-	 */
-	class Object
-	{
-	public:
+  /**
+   * @brief The base class with reference count
+   *
+   * @ingroup blendint_core
+   */
+  class Object
+  {
+  public:
 
-		inline Object ()
-		: reference_count_(0)
-		{
-		}
+    inline Object ()
+    : reference_count_(0)
+    {
+    }
 
-		virtual ~Object ()
-		{
-		}
+    virtual ~Object ()
+    {
+    }
 
-		inline size_t reference_count ()
-		{
-			return reference_count_;
-		}
+    inline size_t reference_count ()
+    {
+      return reference_count_;
+    }
 
-	private:
+  private:
 
-		// disallow copy and assignment:
-		Object (const Object& orig);
-		Object& operator = (const Object& orig);
+    // disallow copy and assignment:
+    Object (const Object& orig);
+    Object& operator = (const Object& orig);
 
-		template <typename T> friend class RefPtr;
+    template<typename T> friend class RefPtr;
 
-		size_t reference_count_;
+    size_t reference_count_;
 
-	};
+  };
 
 }

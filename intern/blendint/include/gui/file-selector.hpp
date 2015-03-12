@@ -39,6 +39,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A widget to browse and select local directories/files.
+	 *
+	 * @ingroup blendint_gui_frames
 	 */
 	class FileSelector: public AbstractDialog
 	{

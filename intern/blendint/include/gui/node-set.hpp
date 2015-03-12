@@ -25,20 +25,25 @@
 
 namespace BlendInt {
 
-	class NodeSet: public AbstractNode
-	{
-	public:
+  /**
+   * @brief A special node which contains sub nodes only
+   *
+   * @ingroup blendint_gui_nodes
+   */
+  class NodeSet: public AbstractNode
+  {
+  public:
 
-		NodeSet ()
-		{
+    NodeSet ()
+    {
 
-		}
+    }
 
-		virtual ~NodeSet ()
-		{
+    virtual ~NodeSet ()
+    {
 
-		}
+    }
 
-	};
+  };
 
 }

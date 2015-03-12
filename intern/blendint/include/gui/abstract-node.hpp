@@ -36,6 +36,8 @@ namespace BlendInt {
 
   /**
    * @brief Base class of node and nodeset
+   *
+   * @ingroup blendint_gui_nodes
    */
   class AbstractNode: public AbstractView
   {

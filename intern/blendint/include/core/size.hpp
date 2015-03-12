@@ -21,104 +21,114 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_SIZE_HPP_
-#define _BLENDINT_SIZE_HPP_
+#pragma once
 
 #include <core/point.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Size
-	 *
-	 * only used in widgets/windows to define its size
-	 */
-	class Size
-	{
-	public:
+  /**
+   * @brief Size
+   *
+   * only used in widgets/windows to define its size
+   *
+   * @ingroup blendint_core
+   */
+  class Size
+  {
+  public:
 
-		Size ()
-		: m_width(0), m_height(0)
-		{
+    Size ()
+    : width_(0), height_(0)
+    {
 
-		}
+    }
 
-		Size (int width, int height)
-		: m_width(width), m_height(height)
-		{
+    Size (int width, int height)
+    : width_(width), height_(height)
+    {
 
-		}
+    }
 
-		Size (const Size& orig)
-		: m_width(orig.m_width), m_height(orig.m_height)
-		{
+    Size (const Size& orig)
+    : width_(orig.width_), height_(orig.height_)
+    {
 
-		}
+    }
 
-		Size& operator = (const Size& orig)
-		{
-			m_width = orig.m_width;
-			m_height = orig.m_height;
-			return *this;
-		}
+    Size& operator = (const Size& orig)
+    {
+      width_ = orig.width_;
+      height_ = orig.height_;
+      return *this;
+    }
 
-		bool is_valid () const
-		{
-			return (m_width >= 0) && (m_height >= 0);
-		}
+    bool is_valid () const
+    {
+      return (width_ >= 0) && (height_ >= 0);
+    }
 
-		inline bool equal (const Size& size)
-		{
-			return (m_width == size.width()) && (m_height == size.height());
-		}
+    inline bool equal (const Size& size)
+    {
+      return (width_ == size.width()) && (height_ == size.height());
+    }
 
-		inline bool equal (int width, int height)
-		{
-			return (m_width == width && m_height == height);
-		}
+    inline bool equal (int width, int height)
+    {
+      return (width_ == width && height_ == height);
+    }
 
-		void reset (int width, int height)
-		{
-			m_width = width;
-			m_height = height;
-		}
+    void reset (int width, int height)
+    {
+      width_ = width;
+      height_ = height;
+    }
 
-		int width () const {return m_width;}
+    int width () const
+    {
+      return width_;
+    }
 
-		void set_width (int width) {m_width = width;}
+    void set_width (int width)
+    {
+      width_ = width;
+    }
 
-		int height () const {return m_height;}
+    int height () const
+    {
+      return height_;
+    }
 
-		void set_height (int height) {m_height = height;}
+    void set_height (int height)
+    {
+      height_ = height;
+    }
 
-		void add_width (int width)
-		{
-			m_width = m_width + width;
-		}
+    void add_width (int width)
+    {
+      width_ = width_ + width;
+    }
 
-		void add_height (int height)
-		{
-			m_height = m_height + height;
-		}
+    void add_height (int height)
+    {
+      height_ = height_ + height;
+    }
 
-	private:
+  private:
 
-		int m_width;
-		int m_height;
-	};
+    int width_;
+    int height_;
+  };
 
-
-	/**
-	 * @brief compare two size object and return true if they are equal
-	 * @param size1
-	 * @param size2
-	 * @return
-	 */
-	extern inline bool operator == (const Size& size1, const Size& size2)
-	{
-		return ((size1.width() == size2.width())
-		        && (size1.height() == size2.height()));
-	}
+  /**
+   * @brief compare two size object and return true if they are equal
+   * @param size1
+   * @param size2
+   * @return
+   */
+  extern inline bool operator == (const Size& size1, const Size& size2)
+  {
+    return ((size1.width() == size2.width())
+        && (size1.height() == size2.height()));
+  }
 }
-
-#endif /* SIZE_HPP_ */

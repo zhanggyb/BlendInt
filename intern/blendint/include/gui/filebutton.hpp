@@ -34,6 +34,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A button used to call FileSelector
+	 *
+	 * @ingroup blendint_gui_widgets_buttons
 	 */
 	class FileButton: public AbstractButton
 	{

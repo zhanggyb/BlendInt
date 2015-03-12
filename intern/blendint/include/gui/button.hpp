@@ -31,7 +31,7 @@ namespace BlendInt {
 	/**
 	 * @brief The most common button class
 	 *
-	 * @ingroup widgets
+	 * @ingroup blendint_gui_widgets_buttons
 	 */
 	class Button: public AbstractButton
 	{

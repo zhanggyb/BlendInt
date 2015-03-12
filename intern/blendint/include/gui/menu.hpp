@@ -37,6 +37,8 @@ namespace BlendInt {
 
   /**
    * @brief A widget contains and handles a menu
+   *
+   * @ingroup blendint_gui_frames
    */
   class Menu: public AbstractRoundFrame
   {

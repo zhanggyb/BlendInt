@@ -27,6 +27,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Frames with round corners
+   *
+   * @ingroup blendint_gui_frames
+   */
   class AbstractRoundFrame: public AbstractFrame
   {
   public:

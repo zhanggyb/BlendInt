@@ -32,7 +32,7 @@ namespace BlendInt {
   /**
    * @brief A widget usually contains other Form or widget in a box with padding
    *
-   * @ingroup widgets
+   * @ingroup blendint_gui_widgets
    */
   class Panel: public AbstractRoundWidget
   {
