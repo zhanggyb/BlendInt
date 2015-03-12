@@ -87,16 +87,16 @@ namespace BlendInt {
     if (subs_count() > 0) {
       ClearSubViews();
     } else {
-      assert(subs_count_ == 0);
-      assert(first_subview_ == 0);
-      assert(last_subview_ == 0);
+      DBG_ASSERT(subs_count_ == 0);
+      DBG_ASSERT(first_subview_ == 0);
+      DBG_ASSERT(last_subview_ == 0);
     }
 
     if (superview_) {
       superview_->RemoveSubView(this);
     } else {
-      assert(previous_view_ == 0);
-      assert(next_view_ == 0);
+      DBG_ASSERT(previous_view_ == 0);
+      DBG_ASSERT(next_view_ == 0);
     }
   }
 
@@ -291,7 +291,7 @@ namespace BlendInt {
     if (view->superview_) {
 
       if (view->superview_->first_subview_ == view) {
-        assert(view->previous_view_ == 0);
+        DBG_ASSERT(view->previous_view_ == 0);
         return;	// already at first
       }
 
@@ -299,7 +299,7 @@ namespace BlendInt {
       if (view->next_view_) {
         view->next_view_->previous_view_ = view->previous_view_;
       } else {
-        assert(view->superview_->last_subview_ == view);
+        DBG_ASSERT(view->superview_->last_subview_ == view);
         view->superview_->last_subview_ = view->previous_view_;
       }
 
@@ -317,7 +317,7 @@ namespace BlendInt {
     if (view->superview_) {
 
       if (view->superview_->last_subview_ == view) {
-        assert(view->next_view_ == 0);
+        DBG_ASSERT(view->next_view_ == 0);
         return;	// already at last
       }
 
@@ -326,7 +326,7 @@ namespace BlendInt {
       if (view->previous_view_) {
         view->previous_view_->next_view_ = view->next_view_;
       } else {
-        assert(view->superview_->first_subview_ == view);
+        DBG_ASSERT(view->superview_->first_subview_ == view);
         view->superview_->first_subview_ = view->next_view_;
       }
 
@@ -351,7 +351,7 @@ namespace BlendInt {
         if (view->previous_view_) {
           view->previous_view_->next_view_ = tmp;
         } else {
-          assert(view->superview_->first_subview_ == view);
+          DBG_ASSERT(view->superview_->first_subview_ == view);
           view->superview_->first_subview_ = tmp;
         }
 
@@ -363,21 +363,21 @@ namespace BlendInt {
         tmp->next_view_ = view;
 
         if (view->next_view_ == 0) {
-          assert(view->superview_->last_subview_ == tmp);
+          DBG_ASSERT(view->superview_->last_subview_ == tmp);
           view->superview_->last_subview_ = view;
         }
 
         if (view->previous_view_) {
-          assert(view->previous_view_->next_view_ == view);
+          DBG_ASSERT(view->previous_view_->next_view_ == view);
         }
         if (view->next_view_) {
-          assert(view->next_view_->previous_view_ == view);
+          DBG_ASSERT(view->next_view_->previous_view_ == view);
         }
 
         view->superview_->RequestRedraw();
 
       } else {
-        assert(view->superview_->last_subview_ == view);
+        DBG_ASSERT(view->superview_->last_subview_ == view);
       }
 
     }
@@ -395,7 +395,7 @@ namespace BlendInt {
         if (view->next_view_) {
           view->next_view_->previous_view_ = tmp;
         } else {
-          assert(view->superview_->last_subview_ == view);
+          DBG_ASSERT(view->superview_->last_subview_ == view);
           view->superview_->last_subview_ = tmp;
         }
 
@@ -407,7 +407,7 @@ namespace BlendInt {
         tmp->previous_view_ = view;
 
         if (view->previous_view_ == 0) {
-          assert(view->superview_->first_subview_ == tmp);
+          DBG_ASSERT(view->superview_->first_subview_ == tmp);
           view->superview_->first_subview_ = view;
         }
 
@@ -415,17 +415,17 @@ namespace BlendInt {
         if (view->previous_view_) {
           DBG_PRINT_MSG("previous_view: %s",
                         view->previous_view_->name_.c_str());
-          assert(view->previous_view_->next_view_ == view);
+          DBG_ASSERT(view->previous_view_->next_view_ == view);
         }
         if (view->next_view_) {
           DBG_PRINT_MSG("next_view: %s", view->next_view_->name_.c_str());
-          assert(view->next_view_->previous_view_ == view);
+          DBG_ASSERT(view->next_view_->previous_view_ == view);
         }
 
         view->superview_->RequestRedraw();
 
       } else {
-        assert(view->superview_->first_subview_ == view);
+        DBG_ASSERT(view->superview_->first_subview_ == view);
       }
 
     }
@@ -494,7 +494,7 @@ namespace BlendInt {
 
     if (view1->next_view_ == view2) {	// view1 is just the previous sibling of view2
 
-      assert(view2->previous_view_ == view1);
+      DBG_ASSERT(view2->previous_view_ == view1);
 
       tmp1 = view1->previous_view_;
       tmp2 = view2->next_view_;
@@ -519,7 +519,7 @@ namespace BlendInt {
 
     } else if (view1->previous_view_ == view2) {
 
-      assert(view2->next_view_ == view1);
+      DBG_ASSERT(view2->next_view_ == view1);
 
       tmp1 = view2->previous_view_;
       tmp2 = view1->next_view_;
@@ -601,14 +601,14 @@ namespace BlendInt {
         if (dst->previous_view_) {
           dst->previous_view_->next_view_ = dst->next_view_;
         } else {
-          assert(dst->superview_->first_subview_ == dst);
+          DBG_ASSERT(dst->superview_->first_subview_ == dst);
           dst->superview_->first_subview_ = dst->next_view_;
         }
 
         if (dst->next_view_) {
           dst->next_view_->previous_view_ = dst->previous_view_;
         } else {
-          assert(dst->superview_->last_subview_ == dst);
+          DBG_ASSERT(dst->superview_->last_subview_ == dst);
           dst->superview_->last_subview_ = dst->previous_view_;
         }
 
@@ -621,7 +621,7 @@ namespace BlendInt {
         if (tmp) {
           tmp->next_view_ = dst;
         } else {
-          assert(src->superview_->first_subview_ == src);
+          DBG_ASSERT(src->superview_->first_subview_ == src);
           dst->superview_->first_subview_ = dst;
         }
 
@@ -633,9 +633,9 @@ namespace BlendInt {
 
     }
 
-    assert(dst->superview_ == nullptr);
-    assert(dst->next_view_ == nullptr);
-    assert(dst->previous_view_ == nullptr);
+    DBG_ASSERT(dst->superview_ == nullptr);
+    DBG_ASSERT(dst->next_view_ == nullptr);
+    DBG_ASSERT(dst->previous_view_ == nullptr);
 
     AbstractView* tmp = src->previous_view_;
 
@@ -645,7 +645,7 @@ namespace BlendInt {
     if (tmp) {
       tmp->next_view_ = dst;
     } else {
-      assert(src->superview_->first_subview_ == src);
+      DBG_ASSERT(src->superview_->first_subview_ == src);
       src->superview_->first_subview_ = dst;
     }
 
@@ -671,14 +671,14 @@ namespace BlendInt {
         if (dst->previous_view_) {
           dst->previous_view_->next_view_ = dst->next_view_;
         } else {
-          assert(dst->superview_->first_subview_ == dst);
+          DBG_ASSERT(dst->superview_->first_subview_ == dst);
           dst->superview_->first_subview_ = dst->next_view_;
         }
 
         if (dst->next_view_) {
           dst->next_view_->previous_view_ = dst->previous_view_;
         } else {
-          assert(dst->superview_->last_subview_ == dst);
+          DBG_ASSERT(dst->superview_->last_subview_ == dst);
           dst->superview_->last_subview_ = dst->previous_view_;
         }
 
@@ -691,7 +691,7 @@ namespace BlendInt {
         if (tmp) {
           tmp->previous_view_ = dst;
         } else {
-          assert(src->superview_->last_subview_ == src);
+          DBG_ASSERT(src->superview_->last_subview_ == src);
           dst->superview_->last_subview_ = dst;
         }
 
@@ -703,9 +703,9 @@ namespace BlendInt {
 
     }
 
-    assert(dst->superview_ == nullptr);
-    assert(dst->next_view_ == nullptr);
-    assert(dst->previous_view_ == nullptr);
+    DBG_ASSERT(dst->superview_ == nullptr);
+    DBG_ASSERT(dst->next_view_ == nullptr);
+    DBG_ASSERT(dst->previous_view_ == nullptr);
 
     AbstractView* tmp = src->next_view_;
 
@@ -715,7 +715,7 @@ namespace BlendInt {
     if (tmp) {
       tmp->previous_view_ = dst;
     } else {
-      assert(src->superview_->last_subview_ == src);
+      DBG_ASSERT(src->superview_->last_subview_ == src);
       src->superview_->last_subview_ = dst;
     }
 
@@ -729,7 +729,7 @@ namespace BlendInt {
                                         AbstractWindow* context)
   {
 #ifdef DEBUG
-    assert(widget != 0);
+    DBG_ASSERT(widget != 0);
 #endif
 
     if (widget->PreDraw(context)) {
@@ -1959,7 +1959,7 @@ namespace BlendInt {
 
     }
 
-    //assert(widget != 0);
+    //DBG_ASSERT(widget != 0);
 
     return widget;
   }
@@ -1981,15 +1981,15 @@ namespace BlendInt {
 
     }
 
-    assert(view->previous_view_ == 0);
-    assert(view->next_view_ == 0);
-    assert(view->superview_ == 0);
+    DBG_ASSERT(view->previous_view_ == 0);
+    DBG_ASSERT(view->next_view_ == 0);
+    DBG_ASSERT(view->superview_ == 0);
 
     if (first_subview_) {
       first_subview_->previous_view_ = view;
       view->next_view_ = first_subview_;
     } else {
-      assert(last_subview_ == 0);
+      DBG_ASSERT(last_subview_ == 0);
       view->next_view_ = 0;
       last_subview_ = view;
     }
@@ -2021,12 +2021,12 @@ namespace BlendInt {
 
     }
 
-    assert(view->previous_view_ == 0);
-    assert(view->next_view_ == 0);
-    assert(view->superview_ == 0);
+    DBG_ASSERT(view->previous_view_ == 0);
+    DBG_ASSERT(view->next_view_ == 0);
+    DBG_ASSERT(view->superview_ == 0);
 
     if (first_subview_ == 0) {
-      assert(last_subview_ == 0);
+      DBG_ASSERT(last_subview_ == 0);
 
       view->next_view_ = 0;
       last_subview_ = view;
@@ -2055,7 +2055,7 @@ namespace BlendInt {
 
         } else {	// same as push back
 
-          assert(p == last_subview_);
+          DBG_ASSERT(p == last_subview_);
           last_subview_->next_view_ = view;
           view->previous_view_ = last_subview_;
           last_subview_ = view;
@@ -2099,15 +2099,15 @@ namespace BlendInt {
 
     }
 
-    assert(view->previous_view_ == 0);
-    assert(view->next_view_ == 0);
-    assert(view->superview_ == 0);
+    DBG_ASSERT(view->previous_view_ == 0);
+    DBG_ASSERT(view->next_view_ == 0);
+    DBG_ASSERT(view->superview_ == 0);
 
     if (last_subview_) {
       last_subview_->next_view_ = view;
       view->previous_view_ = last_subview_;
     } else {
-      assert(first_subview_ == 0);
+      DBG_ASSERT(first_subview_ == 0);
       view->previous_view_ = 0;
       first_subview_ = view;
     }
@@ -2118,7 +2118,7 @@ namespace BlendInt {
     subs_count_++;
 
     view->PerformAfterAdded();
-    assert(view->superview_ == this);
+    DBG_ASSERT(view->superview_ == this);
 
     return true;
   }
@@ -2127,26 +2127,26 @@ namespace BlendInt {
   {
     if (!view) return false;
 
-    assert(view->superview_ == this);
+    DBG_ASSERT(view->superview_ == this);
     view->PerformBeforeRemoved();
-    assert(view->superview_ == this);
+    DBG_ASSERT(view->superview_ == this);
 
     if (view->previous_view_) {
       view->previous_view_->next_view_ = view->next_view_;
     } else {
-      assert(first_subview_ == view);
+      DBG_ASSERT(first_subview_ == view);
       first_subview_ = view->next_view_;
     }
 
     if (view->next_view_) {
       view->next_view_->previous_view_ = view->previous_view_;
     } else {
-      assert(last_subview_ == view);
+      DBG_ASSERT(last_subview_ == view);
       last_subview_ = view->previous_view_;
     }
 
     subs_count_--;
-    assert(subs_count_ >= 0);
+    DBG_ASSERT(subs_count_ >= 0);
 
     view->previous_view_ = 0;
     view->next_view_ = 0;

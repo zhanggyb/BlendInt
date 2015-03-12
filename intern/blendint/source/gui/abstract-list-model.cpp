@@ -47,8 +47,8 @@ namespace BlendInt {
 	{
 		if(!parent.valid()) return false;
 
-		assert(count > 0);
-		assert(column >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(column >= 0);
 
 		ModelNode* node = get_index_node(parent);
 
@@ -119,8 +119,8 @@ namespace BlendInt {
 
 					} else {
 
-						assert(tmp->up == 0);
-						assert(tmp->down == 0);
+						DBG_ASSERT(tmp->up == 0);
+						DBG_ASSERT(tmp->down == 0);
 
 						tmp->left->right = first;
 						first->left = tmp->left;
@@ -149,8 +149,8 @@ namespace BlendInt {
 	{
 		if(!parent.valid()) return false;
 
-		assert(count > 0);
-		assert(column >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(column >= 0);
 
 		ModelNode* node = get_index_node(parent);
 		if(node->child == 0) return false;
@@ -211,15 +211,15 @@ namespace BlendInt {
 							parent_node->child = last;
 							last->parent = parent_node;
 
-							assert(last->up == 0);
-							assert(last->down == 0);
+							DBG_ASSERT(last->up == 0);
+							DBG_ASSERT(last->down == 0);
 
 							if(down_record) down_record->up = last;
 							last->down = down_record;
 						}
 
 					} else {
-						assert(first->up == 0);
+						DBG_ASSERT(first->up == 0);
 					}
 
 				} else {
@@ -255,8 +255,8 @@ namespace BlendInt {
 	{
 		if(!parent.valid()) return false;
 
-		assert(count > 0);
-		assert(row >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(row >= 0);
 
 		ModelNode* node = get_index_node(parent);
 
@@ -350,8 +350,8 @@ namespace BlendInt {
 
             } else {	// too large row given, append to tail
 
-                assert(node);
-                assert(node->down == 0);
+                DBG_ASSERT(node);
+                DBG_ASSERT(node->down == 0);
                 
                 node->down = first;
 				first->up = node;
@@ -391,8 +391,8 @@ namespace BlendInt {
 		if (!parent.valid())
 			return false;
 
-		assert(count > 0);
-		assert(row >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(row >= 0);
 
 		ModelNode* node = get_index_node(parent);
 		if(node->child == 0)
@@ -487,8 +487,8 @@ namespace BlendInt {
 
 	void AbstractListModel::DestroyChildNode (ModelNode* node)
 	{
-		assert(node);
-		assert(node->left == 0);	// only the first left node has child
+		DBG_ASSERT(node);
+		DBG_ASSERT(node->left == 0);	// only the first left node has child
 
 		if(node->child) {
 			DestroyChildNode(node->child);
@@ -511,9 +511,9 @@ namespace BlendInt {
 
 	void AbstractListModel::DestroyRow (ModelNode* node)
 	{
-		assert(node);
-		assert(node->child == 0);
-		assert(node->left == 0);
+		DBG_ASSERT(node);
+		DBG_ASSERT(node->child == 0);
+		DBG_ASSERT(node->left == 0);
 
 		ModelNode* tmp = 0;
 		while (node) {

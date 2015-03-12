@@ -61,9 +61,9 @@ namespace BlendInt {
     if (subs_count() > 0) {
       ClearSubViews();
     } else {
-      assert(subs_count_ == 0);
-      assert(first_subview_ == 0);
-      assert(last_subview_ == 0);
+      DBG_ASSERT(subs_count_ == 0);
+      DBG_ASSERT(first_subview_ == 0);
+      DBG_ASSERT(last_subview_ == 0);
     }
 
     if (superview_) superview_->RemoveSubView(this);
@@ -229,7 +229,7 @@ namespace BlendInt {
   AbstractWidget* AbstractFrame::RecheckSubWidgetUnderCursor (AbstractWidget* orig,
                                                                      AbstractWindow* context)
   {
-    assert(orig->superview() == this);
+    DBG_ASSERT(orig->superview() == this);
 
     AbstractWidget* result = orig;
     Rect rect(position(), size());
@@ -263,8 +263,8 @@ namespace BlendInt {
   AbstractWidget* AbstractFrame::RecheckWidgetUnderCursor (AbstractWidget* orig,
                                                            AbstractWindow* context)
   {
-    assert(orig);
-    assert(orig->superview() && orig->superview() != this);
+    DBG_ASSERT(orig);
+    DBG_ASSERT(orig->superview() && orig->superview() != this);
 
     AbstractWidget* result = orig;
     AbstractView* parent = result->superview();
@@ -335,7 +335,7 @@ namespace BlendInt {
           rect.set_position(GetAbsolutePosition(parent));
           rect.set_size(parent->size());
         } else {
-          assert(parent == this);
+          DBG_ASSERT(parent == this);
           rect.set_position(position());
           rect.set_size(size());
         }
@@ -411,7 +411,7 @@ namespace BlendInt {
                                          AbstractWindow* context)
   {
 #ifdef DEBUG
-    assert(hovered_widget);
+    DBG_ASSERT(hovered_widget);
 #endif
 
     while (hovered_widget && (hovered_widget != this)) {
@@ -428,7 +428,7 @@ namespace BlendInt {
   {
     bool retval = false;
 
-    assert(texture != nullptr);
+    DBG_ASSERT(texture != nullptr);
 
     GLTexture2D* tex = texture;
     if (!tex->id()) tex->generate();
@@ -496,7 +496,7 @@ namespace BlendInt {
 
       glViewport(0, 0, context->size().width(), context->size().height());
 #ifdef DEBUG
-      assert(context->stencil_count_ == 0);
+      DBG_ASSERT(context->stencil_count_ == 0);
 #endif
       context->stencil_count_ = original_stencil_count;
 

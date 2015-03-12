@@ -149,7 +149,7 @@ namespace BlendInt {
     }
 
 #ifdef DEBUG
-    assert(count == (int )verts_num);
+    DBG_ASSERT(count == (int )verts_num);
 #endif
 
     unsigned int elements_num = outline_vertex_count * 2 * width;
@@ -168,7 +168,7 @@ namespace BlendInt {
     }
 
 #ifdef DEBUG
-    assert(count == (int )elements_num);
+    DBG_ASSERT(count == (int )elements_num);
 #endif
   }
 

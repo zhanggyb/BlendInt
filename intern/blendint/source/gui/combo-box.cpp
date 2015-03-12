@@ -364,7 +364,7 @@ namespace BlendInt {
 
   void ComboBox::OnPopupListDestroyed (AbstractFrame* frame)
   {
-    //assert(frame == popup_);
+    //DBG_ASSERT(frame == popup_);
     popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
     popup_ = 0;
     SetRoundType(last_round_status_);

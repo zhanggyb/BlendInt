@@ -52,7 +52,7 @@ namespace BlendInt {
 
   bool FileBrowser::Open (const std::string& pathname)
   {
-    assert(model_);
+    DBG_ASSERT(model_);
 
     bool retval = model_->Load(pathname);
 

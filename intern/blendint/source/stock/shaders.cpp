@@ -1642,7 +1642,7 @@ namespace BlendInt {
 
     locations_[FRAME_INNER_COORD] = frame_inner_program_->GetAttributeLocation(
         "aCoord");
-    assert(locations_[FRAME_INNER_COORD] == AttributeCoord);
+    DBG_ASSERT(locations_[FRAME_INNER_COORD] == AttributeCoord);
     locations_[FRAME_INNER_COLOR] = frame_inner_program_->GetUniformLocation(
         "uColor");
     locations_[FRAME_INNER_POSITION] = frame_inner_program_->GetUniformLocation(

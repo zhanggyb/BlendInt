@@ -137,7 +137,7 @@ namespace BlendInt {
       return retval;
     }
 
-    assert(!video_stream_.isOpened());
+    DBG_ASSERT(!video_stream_.isOpened());
 
     video_stream_.open(n);
     if (video_stream_.isOpened()) {
@@ -174,7 +174,7 @@ namespace BlendInt {
 
       }
 
-      assert(off_screen_context_);
+      DBG_ASSERT(off_screen_context_);
 
       retval = true;
 
@@ -252,7 +252,7 @@ namespace BlendInt {
       }
 
       flags_ = 0;
-      assert(off_screen_context_ == 0);
+      DBG_ASSERT(off_screen_context_ == 0);
 
       RequestRedraw();
       return true;
@@ -272,7 +272,7 @@ namespace BlendInt {
       return false;
     }
 
-    assert(!video_stream_.isOpened());
+    DBG_ASSERT(!video_stream_.isOpened());
 
     video_stream_.open(filename);
     if (video_stream_.isOpened()) {
@@ -306,7 +306,7 @@ namespace BlendInt {
 
       }
 
-      assert(off_screen_context_);
+      DBG_ASSERT(off_screen_context_);
 
       retval = true;
 
@@ -323,8 +323,8 @@ namespace BlendInt {
 
     if (!(flags_ & StreamingMask)) {
 
-      assert((flags_ & PlaybackMask) == 0);
-      assert(video_stream_.isOpened());
+      DBG_ASSERT((flags_ & PlaybackMask) == 0);
+      DBG_ASSERT(video_stream_.isOpened());
 
       SETBIT(flags_, StreamingMask);
       SETBIT(flags_, VideoPlayMask);
@@ -357,7 +357,7 @@ namespace BlendInt {
       }
 
     } else {
-      assert((flags_ & PlaybackMask) == 0);
+      DBG_ASSERT((flags_ & PlaybackMask) == 0);
     }
   }
 
@@ -374,7 +374,7 @@ namespace BlendInt {
       }
 
     } else {
-      assert((flags_ & PlaybackMask) == 0);
+      DBG_ASSERT((flags_ & PlaybackMask) == 0);
     }
   }
 
@@ -389,7 +389,7 @@ namespace BlendInt {
       }
     }
 
-    assert(off_screen_context_ == 0);
+    DBG_ASSERT(off_screen_context_ == 0);
 
     image_.release();
     flags_ = 0;

@@ -240,7 +240,7 @@ namespace BlendInt {
 
   void ColorButton::OnSelectorDestroyed (AbstractFrame* sender)
   {
-    assert(sender == selector_);
+    DBG_ASSERT(sender == selector_);
     selector_ = 0;
   }
 

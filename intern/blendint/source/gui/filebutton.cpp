@@ -230,7 +230,7 @@ namespace BlendInt {
 	void FileButton::OnClicked (AbstractButton* sender)
 	{
 		AbstractWindow* context = AbstractWindow::GetWindow(this);
-		assert(dialog_ == 0);
+		DBG_ASSERT(dialog_ == 0);
 
 		if(context) {
 
@@ -274,7 +274,7 @@ namespace BlendInt {
 
 	void FileButton::OnDialogDestroyed(AbstractFrame* dialog)
 	{
-		assert(dialog == dialog_);
+		DBG_ASSERT(dialog == dialog_);
 
 		dialog_->destroyed().disconnectOne(this, &FileButton::OnDialogDestroyed);
 		dialog_ = 0;

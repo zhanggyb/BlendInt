@@ -77,7 +77,7 @@ namespace BlendInt {
       window_ = glfwCreateWindow(width, height, title, NULL, NULL);
     } else {
       Window* win = dynamic_cast<Window*>(main_window());
-      assert(win);
+      DBG_ASSERT(win);
       window_ = glfwCreateWindow(width, height, title, NULL, win->window_);
     }
 
@@ -397,7 +397,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     Size size(w, h);
     SizeUpdateRequest request(0, win, &size);
@@ -415,7 +415,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     Point pos(x, y);
     PositionUpdateRequest request(0, win, &pos);
@@ -437,7 +437,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     switch (action) {
       case GLFW_PRESS:
@@ -491,7 +491,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
 #ifdef __APPLE__
     // glfw3 in Mac OS will call this function if press some unprintalbe keys such as Left, Right, Up, Down
@@ -540,7 +540,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     switch (action) {
       case GLFW_RELEASE:
@@ -612,7 +612,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     kCursor.reset((int) xpos, win->size().height() - (int) ypos);
 
@@ -660,7 +660,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     win->set_refresh(false);
     if (win->PreDraw(win)) {
@@ -683,7 +683,7 @@ namespace BlendInt {
       win = dynamic_cast<Window*>(main_window());
     }
 
-    assert(win);
+    DBG_ASSERT(win);
 
     win->Close();
   }
@@ -714,7 +714,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kArrowCursor = glfwCreateCursor(&cursor, 9, 5);
-      assert(kArrowCursor != nullptr);
+      DBG_ASSERT(kArrowCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -726,7 +726,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kCrossCursor = glfwCreateCursor(&cursor, 9, 4);
-      assert(kCrossCursor != nullptr);
+      DBG_ASSERT(kCrossCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -738,7 +738,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kSplitVCursor = glfwCreateCursor(&cursor, 11, 10);
-      assert(kSplitVCursor != nullptr);
+      DBG_ASSERT(kSplitVCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -750,7 +750,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kSplitHCursor = glfwCreateCursor(&cursor, 11, 11);
-      assert(kSplitHCursor != nullptr);
+      DBG_ASSERT(kSplitHCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -762,7 +762,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kTopLeftCornerCursor = glfwCreateCursor(&cursor, 11, 11);
-      assert(kTopLeftCornerCursor != nullptr);
+      DBG_ASSERT(kTopLeftCornerCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -774,7 +774,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kTopRightCornerCursor = glfwCreateCursor(&cursor, 12, 11);
-      assert(kTopRightCornerCursor != nullptr);
+      DBG_ASSERT(kTopRightCornerCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }
@@ -786,7 +786,7 @@ namespace BlendInt {
       cursor.pixels = const_cast<unsigned char*>(img.pixels());
 
       kIBeamCursor = glfwCreateCursor(&cursor, 12, 11);
-      assert(kIBeamCursor != nullptr);
+      DBG_ASSERT(kIBeamCursor != nullptr);
     } else {
       DBG_PRINT_MSG("%s", "Fail to load cursor");
     }

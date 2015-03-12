@@ -50,7 +50,7 @@ namespace BlendInt {
         Fc::Pattern match = Fc::Config::match(0, p, &result);
         
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
         
         if(result != FcResultMatch) {
@@ -77,7 +77,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-		assert(match);
+		DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {
@@ -108,7 +108,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {
@@ -143,7 +143,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {
@@ -170,7 +170,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {
@@ -197,7 +197,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {
@@ -224,7 +224,7 @@ namespace BlendInt {
 		Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-        assert(match);
+        DBG_ASSERT(match);
 #endif
 
 		if(result != FcResultMatch) {

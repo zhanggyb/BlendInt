@@ -180,7 +180,7 @@ namespace BlendInt {
 		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
 			if(p->subs_count() == 0) {
 				Cell* cell = dynamic_cast<Cell*>(p);
-				assert(cell);
+				DBG_ASSERT(cell);
 				cell->SetWidget(widget);
 				Adjust();
 				retval = true;
@@ -199,7 +199,7 @@ namespace BlendInt {
 	{
 		if(index < subs_count()) {
 			Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
-			assert(cell);
+			DBG_ASSERT(cell);
 			cell->SetWidget(widget);
 			Adjust();
 			return true;
@@ -216,7 +216,7 @@ namespace BlendInt {
 
 		Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
 
-		assert(cell);
+		DBG_ASSERT(cell);
 		cell->SetWidget(widget);
 
 		Adjust();

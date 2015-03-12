@@ -285,7 +285,7 @@ namespace BlendInt {
         } else {
 
           int diff = new_width - prev_width;
-          assert(diff > 0);
+          DBG_ASSERT(diff > 0);
 
           size_t visible_width = text_->GetTextWidth(
               cursor_index_ - text_start_ + 1, text_start_, false);

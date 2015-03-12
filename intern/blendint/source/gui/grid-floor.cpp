@@ -454,7 +454,7 @@ namespace BlendInt {
 			count += 6;
 		}
 
-		assert(count == total_count);
+		DBG_ASSERT(count == total_count);
 	}
 
 }

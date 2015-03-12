@@ -507,7 +507,7 @@ namespace BlendInt {
   AbstractWidget* AbstractNode::RecheckSubWidgetUnderCursor (AbstractWidget* orig,
                                                              AbstractWindow* context)
   {
-    assert(orig->superview() == this);
+    DBG_ASSERT(orig->superview() == this);
 
     AbstractWidget* result = orig;
     Point offset;
@@ -545,8 +545,8 @@ namespace BlendInt {
   AbstractWidget* AbstractNode::RecheckWidgetUnderCursor (AbstractWidget* orig,
                                                           AbstractWindow* context)
   {
-    assert(orig);
-    assert(orig->superview() && orig->superview() != this);
+    DBG_ASSERT(orig);
+    DBG_ASSERT(orig->superview() && orig->superview() != this);
 
     AbstractWidget* result = orig;
     AbstractView* parent = result->superview();
@@ -615,7 +615,7 @@ namespace BlendInt {
           rect.set_position(GetRelativePosition(parent));
           rect.set_size(parent->size());
         } else {
-          assert(parent == this);
+          DBG_ASSERT(parent == this);
           rect.set_position(position());
           rect.set_size(size());
         }
@@ -718,7 +718,7 @@ namespace BlendInt {
 
   void AbstractNode::OnFocusedWidgetDestroyed (AbstractWidget* widget)
   {
-    assert(focused_widget_ == widget);
+    DBG_ASSERT(focused_widget_ == widget);
 
     //set_widget_focus_status(widget, false);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
@@ -730,7 +730,7 @@ namespace BlendInt {
 
   void AbstractNode::OnHoverWidgetDestroyed (AbstractWidget* widget)
   {
-    assert(hovered_widget_ == widget);
+    DBG_ASSERT(hovered_widget_ == widget);
 
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
     widget->destroyed().disconnectOne(this,

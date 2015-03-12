@@ -21,8 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <assert.h>
-
 #include <gui/abstract-form.hpp>
 #include <gui/abstract-window.hpp>
 

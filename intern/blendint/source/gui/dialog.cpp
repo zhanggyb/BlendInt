@@ -287,7 +287,7 @@ namespace BlendInt {
   void Dialog::OnCloseButtonClicked (AbstractButton* sender)
   {
     AbstractView* super = superview();
-    //assert(button == decoration_->close_button());
+    //DBG_ASSERT(button == decoration_->close_button());
     delete this;
 
     super->RequestRedraw();

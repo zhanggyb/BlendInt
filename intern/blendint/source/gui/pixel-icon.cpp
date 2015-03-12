@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv)
 	{
-		assert(pixels);
+		DBG_ASSERT(pixels);
 
 		RefPtr<GLTexture2D> texture(new GLTexture2D);
 		texture->generate();

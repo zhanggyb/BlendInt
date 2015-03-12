@@ -52,7 +52,7 @@ namespace BlendInt {
 			}
 		}
 
-		assert(button->group_ == 0);
+		DBG_ASSERT(button->group_ == 0);
 
 		buttons_.push_back(button);
 		button->group_ = this;
@@ -77,7 +77,7 @@ namespace BlendInt {
 			return;
 		}
 
-		assert(button->group_ == this);
+		DBG_ASSERT(button->group_ == this);
 
 		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
 		if(it == buttons_.end()) {

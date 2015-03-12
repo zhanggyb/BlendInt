@@ -23,7 +23,6 @@
 
 #include <opengl/opengl.hpp>
 
-#include <assert.h>
 #include <algorithm>
 
 #include <iostream>
@@ -64,9 +63,9 @@ namespace BlendInt {
 			ClearSubViews();
 		}
 		else {
-			assert(subs_count_ == 0);
-			assert(first_subview_ == 0);
-			assert(last_subview_ == 0);
+			DBG_ASSERT(subs_count_ == 0);
+			DBG_ASSERT(first_subview_ == 0);
+			DBG_ASSERT(last_subview_ == 0);
 		}
 
 		if(superview_) superview_->RemoveSubView(this);
@@ -156,7 +155,7 @@ namespace BlendInt {
 			GLTexture2D* texture)
 	{
 		bool retval = false;
-		assert(texture != nullptr);
+		DBG_ASSERT(texture != nullptr);
 
         // Create and set texture to render to.
         GLTexture2D* tex = texture;
@@ -262,7 +261,7 @@ namespace BlendInt {
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
 			#ifdef DEBUG
-			assert(c->stencil_count_ == 0);
+			DBG_ASSERT(c->stencil_count_ == 0);
 			#endif
 			c->stencil_count_ = original_stencil_count;
 

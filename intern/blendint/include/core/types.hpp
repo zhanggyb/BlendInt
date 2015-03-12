@@ -63,6 +63,16 @@
 #define DBG_SET_NAME(obj, str) ((void)0)
 #endif
 
+#ifdef DEBUG
+#include <cassert>
+#define DBG_ASSERT(expr) \
+  do { \
+    assert(expr); \
+  } while (0)
+#else
+#define DBG_ASSERT(expr) ((void)0)
+#endif
+
 #define SETBIT(x,y) (x |= y)
 #define CLRBIT(x,y) (x &= ~y)
 

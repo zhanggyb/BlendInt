@@ -44,7 +44,7 @@ namespace BlendInt {
     hovered_(false)
 	{
 #ifdef DEBUG
-		assert(action);
+		DBG_ASSERT(action);
 #endif
 
 		action_ = action;

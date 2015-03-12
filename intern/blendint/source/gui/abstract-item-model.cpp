@@ -129,8 +129,8 @@ namespace BlendInt {
 
 			ModelNode* node = node_->child;
 
-			assert(node->up == 0);
-			assert(node->left == 0);
+			DBG_ASSERT(node->up == 0);
+			DBG_ASSERT(node->left == 0);
 
 			while ((row > 0) && node->down) {
 				node = node->down;
@@ -150,7 +150,7 @@ namespace BlendInt {
 				return retval;
 			}
 
-			assert(node != 0);
+			DBG_ASSERT(node != 0);
 
 			retval.node_ = node;
 		}

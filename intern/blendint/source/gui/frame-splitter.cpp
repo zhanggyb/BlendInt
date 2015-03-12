@@ -201,7 +201,7 @@ namespace BlendInt {
     if (pressed_) {
 
       FrameSplitter* splitter = dynamic_cast<FrameSplitter*>(superview());
-      assert(splitter);
+      DBG_ASSERT(splitter);
 
       if (orientation_ == Horizontal) {
 
@@ -720,7 +720,7 @@ namespace BlendInt {
   void FrameSplitter::AddColumn (AbstractFrame* frame, SizePolicy policy)
   {
 #ifdef DEBUG
-    assert(orientation_ == Horizontal);
+    DBG_ASSERT(orientation_ == Horizontal);
 #endif
 
     Size squeezed_size = size();
@@ -778,7 +778,7 @@ namespace BlendInt {
   void FrameSplitter::AddRow (AbstractFrame* frame, SizePolicy policy)
   {
 #ifdef DEBUG
-    assert(orientation_ == Vertical);
+    DBG_ASSERT(orientation_ == Vertical);
 #endif
 
     Size squeezed_size = size();
@@ -839,7 +839,7 @@ namespace BlendInt {
                                     SizePolicy policy)
   {
 #ifdef DEBUG
-    assert(orientation_ == Horizontal);
+    DBG_ASSERT(orientation_ == Horizontal);
 #endif
 
     Size squeezed_size = size();
@@ -911,7 +911,7 @@ namespace BlendInt {
                                  SizePolicy policy)
   {
 #ifdef DEBUG
-    assert(orientation_ == Vertical);
+    DBG_ASSERT(orientation_ == Vertical);
 #endif
 
     Size squeezed_size = size();

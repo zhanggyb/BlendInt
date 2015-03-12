@@ -61,7 +61,7 @@ namespace BlendInt {
 			if (fs::exists(path) && fs::is_directory(path)) {
 
 				Clear();
-				assert(root_->child == 0);
+				DBG_ASSERT(root_->child == 0);
 
 				ModelNode* first = 0;
 				ModelNode* tmp = 0;
@@ -79,14 +79,14 @@ namespace BlendInt {
 						first = new ModelNode;
 						first->parent = root_;
 						root_->child = first;
-						assert(first->up == 0);
+						DBG_ASSERT(first->up == 0);
 					} else {
 						first->down = new ModelNode;
 						first->down->up = first;
 						first = first->down;
 					}
 
-					assert(first->left == 0);
+					DBG_ASSERT(first->left == 0);
 
 					first->data = RefPtr<Text>(new Text(it->path().filename().native()));
 
@@ -131,7 +131,7 @@ namespace BlendInt {
 				}
 
 //				DBG_PRINT_MSG("ROWS: %d", i);
-				assert(j == DefaultColumns);
+				DBG_ASSERT(j == DefaultColumns);
 
 				rows_ = i;
 				columns_ = DefaultColumns;
@@ -190,10 +190,10 @@ namespace BlendInt {
 		ModelNode* node = get_index_node(parent);
 		if(node->child == 0) return false;
 
-		assert(node == root_);
+		DBG_ASSERT(node == root_);
 		node = node->child;
 
-		assert(node->up == 0);
+		DBG_ASSERT(node->up == 0);
 
 		ModelNode* next_view = 0;
 		while(node) {
@@ -216,10 +216,10 @@ namespace BlendInt {
 		if (node->child == 0)
 			return false;
 
-		assert(node == root_);
+		DBG_ASSERT(node == root_);
 		node = node->child;
 
-		assert(node->up == 0);
+		DBG_ASSERT(node->up == 0);
 
 		ModelNode* next_view = 0;
 		while (node) {
@@ -250,8 +250,8 @@ namespace BlendInt {
 	{
 		if(!parent.valid()) return false;
 
-		assert(count > 0);
-		assert(row >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(row >= 0);
 
 		if(columns_ == 0) {
 			columns_ = DefaultColumns;
@@ -339,8 +339,8 @@ namespace BlendInt {
 		if (!parent.valid())
 			return false;
 
-		assert(count > 0);
-		assert(row >= 0);
+		DBG_ASSERT(count > 0);
+		DBG_ASSERT(row >= 0);
 
 		ModelNode* node = get_index_node(parent);
 		if(node->child == 0)
@@ -449,15 +449,15 @@ namespace BlendInt {
 			i++;
 		}
 
-		//assert(i == rows_);
+		//DBG_ASSERT(i == rows_);
 		DBG_PRINT_MSG("print rows: %d", i);
 		DBG_PRINT_MSG("rows recorded: %d", rows_);
 	}
 
 	void FileSystemModel::PrintRow(ModelNode* first)
 	{
-		assert(first);
-		assert(first->left == 0);
+		DBG_ASSERT(first);
+		DBG_ASSERT(first->left == 0);
 
 		if(first->child) {
 			PrintRow(first->child);
@@ -468,10 +468,10 @@ namespace BlendInt {
 		int i = 0;
 		while (tmp) {
 			if(i == 0) {
-				assert(tmp->left == 0);
+				DBG_ASSERT(tmp->left == 0);
 			} else {
-				assert(tmp->up == 0);
-				assert(tmp->down == 0);
+				DBG_ASSERT(tmp->up == 0);
+				DBG_ASSERT(tmp->down == 0);
 			}
 
 			//std::cout << ConvertFromString(tmp->data).c_str() << " ";
@@ -486,8 +486,8 @@ namespace BlendInt {
 
 	void FileSystemModel::DestroyRow (ModelNode* node)
 	{
-		assert(node);
-		assert(node->left == 0);
+		DBG_ASSERT(node);
+		DBG_ASSERT(node->left == 0);
 
 		if (node->child) {
 			DestroyRow(node->child);
@@ -504,8 +504,8 @@ namespace BlendInt {
 
 	void FileSystemModel::InsertColumns (int column, int count, ModelNode* node)
 	{
-		assert(node);
-		assert(node->left == 0);
+		DBG_ASSERT(node);
+		DBG_ASSERT(node->left == 0);
 
 		// create count nodes
 		ModelNode* first = 0;
@@ -556,7 +556,7 @@ namespace BlendInt {
 				tmp->up = 0;
 				tmp->down = 0;
 
-				assert(first->left == 0);
+				DBG_ASSERT(first->left == 0);
 			} else {
 
 				tmp->left->right = first;
@@ -574,8 +574,8 @@ namespace BlendInt {
 	void FileSystemModel::DestroyColumnsInRow (int column, int count,
 	        ModelNode* node)
 	{
-		assert(node);
-		assert(node->left == 0);
+		DBG_ASSERT(node);
+		DBG_ASSERT(node->left == 0);
 
 		if(node->child) {
 			DestroyColumnsInRow(column, count, node->child);
@@ -597,7 +597,7 @@ namespace BlendInt {
 			if (node->left == 0) {	// the first column in this model
 
 				if (parent) {	// debug
-					assert(up == 0);
+					DBG_ASSERT(up == 0);
 				}
 
 				for (int i = 0; i < count; i++) {

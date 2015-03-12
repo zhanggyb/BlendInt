@@ -40,7 +40,7 @@ namespace BlendInt {
 	  expand_x_(false),
 	  expand_y_(false)
 	{
-		assert(view->subs_count() == (int)(row * column));
+		DBG_ASSERT(view->subs_count() == (int)(row * column));
 	}
 
 	TableAdjustment::~TableAdjustment ()
@@ -179,7 +179,7 @@ namespace BlendInt {
 
 		if(expand_x_) {
 
-			assert(fixed_column_num_ != (int)column_);
+			DBG_ASSERT(fixed_column_num_ != (int)column_);
 
 			int average_expandable_width = (valid_width - total_fixed_column_width_) / (column_ - fixed_column_num_);
 
@@ -334,7 +334,7 @@ namespace BlendInt {
 
 		if(expand_y_) {
 
-			assert(fixed_row_num_ != (int)row_);
+			DBG_ASSERT(fixed_row_num_ != (int)row_);
 
 			int average_expandable_height = (valid_height - total_fixed_row_height_) / (row_ - fixed_row_num_);
 

@@ -158,7 +158,7 @@ namespace BlendInt {
     if (frame == nullptr) {
 
       if (focused_frame_ != nullptr) {
-        assert(focused_frame_->focusable());
+        DBG_ASSERT(focused_frame_->focusable());
         focused_frame_->PerformFocusOff(this);
       }
 
@@ -193,7 +193,7 @@ namespace BlendInt {
     if (frame->floating()) {
 
       if (focused_frame_ != nullptr) {
-        assert(focused_frame_->focusable());
+        DBG_ASSERT(focused_frame_->focusable());
         focused_frame_->PerformFocusOff(this);
       }
 
@@ -216,7 +216,7 @@ namespace BlendInt {
     if(top_regular_frame == frame) {
 
       if (focused_frame_ != nullptr) {
-        assert(focused_frame_->focusable());
+        DBG_ASSERT(focused_frame_->focusable());
         focused_frame_->PerformFocusOff(this);
       }
 
@@ -228,7 +228,7 @@ namespace BlendInt {
       // move the frame to the top
       if (InsertSiblingAfter(top_regular_frame, frame)) {
         if (focused_frame_ != nullptr) {
-          assert(focused_frame_->focusable());
+          DBG_ASSERT(focused_frame_->focusable());
           focused_frame_->PerformFocusOff(this);
         }
         focused_frame_ = frame;
@@ -317,7 +317,7 @@ namespace BlendInt {
   Point AbstractWindow::GetAbsolutePosition (const AbstractWidget* widget)
   {
 #ifdef DEBUG
-    assert(widget);
+    DBG_ASSERT(widget);
 #endif
 
     AbstractFrame* frame = 0;
@@ -339,7 +339,7 @@ namespace BlendInt {
   Point AbstractWindow::GetRelativePosition (const AbstractWidget* widget)
   {
 #ifdef DEBUG
-    assert(widget);
+    DBG_ASSERT(widget);
 #endif
 
     AbstractFrame* frame = 0;
@@ -563,7 +563,7 @@ namespace BlendInt {
     AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
     if (frame->floating()) {
       floating_frame_count_--;
-      assert(floating_frame_count_ >= 0);
+      DBG_ASSERT(floating_frame_count_ >= 0);
     }
 
     if (frame == focused_frame_) {

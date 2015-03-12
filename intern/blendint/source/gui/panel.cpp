@@ -115,7 +115,7 @@ namespace BlendInt {
     } else {
 
       if (layout_) {
-        assert(subs_count() == 1);
+        DBG_ASSERT(subs_count() == 1);
         prefer_size = layout_->GetPreferredSize();
       } else {
 
@@ -302,7 +302,7 @@ namespace BlendInt {
   {
     DBG_PRINT_MSG("%s", "Remove layout");
 
-    assert(view == layout_);
+    DBG_ASSERT(view == layout_);
     layout_ = 0;
 
     return AbstractRoundWidget::RemoveSubView(view);
