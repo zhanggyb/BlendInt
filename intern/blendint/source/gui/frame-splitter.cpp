@@ -113,12 +113,10 @@ namespace BlendInt {
 
   void FrameSplitterHandle::PerformFocusOn (AbstractWindow* context)
   {
-
   }
 
   void FrameSplitterHandle::PerformFocusOff (AbstractWindow* context)
   {
-
   }
 
   Response FrameSplitterHandle::PerformKeyPress (AbstractWindow* context)

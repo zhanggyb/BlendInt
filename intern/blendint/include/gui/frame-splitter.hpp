@@ -52,7 +52,7 @@ namespace BlendInt {
 
     virtual ~FrameSplitterHandle ();
 
-  protected:
+  private:
 
     friend class FrameSplitter;
 
@@ -85,8 +85,6 @@ namespace BlendInt {
     virtual Response PerformMouseMove (AbstractWindow* context);
 
     virtual Response PerformMouseHover (AbstractWindow* context);
-
-  private:
 
     Orientation orientation_;
 

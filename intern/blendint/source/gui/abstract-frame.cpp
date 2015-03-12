@@ -41,7 +41,7 @@ namespace BlendInt {
                                                      glm::vec3(0.f, 1.f, 0.f));
 
   AbstractFrame::AbstractFrame (int frame_flag)
-  : AbstractView(), frame_flag_(frame_flag)
+  : AbstractView(), frame_flags_(frame_flag)
   {
     set_view_type(ViewTypeFrame);
 
@@ -49,7 +49,7 @@ namespace BlendInt {
   }
 
   AbstractFrame::AbstractFrame (int width, int height, int frame_flag)
-  : AbstractView(width, height), frame_flag_(frame_flag)
+  : AbstractView(width, height), frame_flags_(frame_flag)
   {
     set_view_type(ViewTypeFrame);
 

@@ -48,6 +48,8 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const;
 
+    bool LoadPrimitive (const RefPtr<AbstractPrimitive>& primitive);
+
   protected:
 
     virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
@@ -61,6 +63,8 @@ namespace BlendInt {
     RefPtr<GridFloor> gridfloor_;
 
     RefPtr<PerspectiveCamera> default_camera_;
+
+    RefPtr<AbstractPrimitive> primitive_;
 
     glm::mat4 projection_matrix_;
 

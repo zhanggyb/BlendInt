@@ -106,8 +106,9 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_POSITION), x,
         y);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_VIEWPORT_POSITION), mask_x,
-        mask_y);
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SHADOW_VIEWPORT_POSITION),
+        mask_x, mask_y);
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
         size().width(), size().height());

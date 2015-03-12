@@ -103,12 +103,12 @@ namespace BlendInt {
 
     inline bool focusable () const
     {
-      return frame_flag_ & FrameFocusableMask;
+      return frame_flags_ & FrameFocusableMask;
     }
 
     inline bool floating () const
     {
-      return frame_flag_ & FrameFloatingMask;
+      return frame_flags_ & FrameFloatingMask;
     }
 
     Cpp::EventRef<AbstractFrame*> destroyed ()
@@ -233,7 +233,7 @@ namespace BlendInt {
     AbstractWidget* RecursiveDispatchHoverEvent (AbstractWidget* view,
                                                  AbstractWindow* context);
 
-    uint32_t frame_flag_;
+    int frame_flags_;
 
     RefPtr<ViewBuffer> view_buffer_;
 

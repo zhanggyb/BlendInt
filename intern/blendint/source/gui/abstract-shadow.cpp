@@ -30,148 +30,146 @@
 
 namespace BlendInt {
 
-	AbstractShadow::AbstractShadow(short shadow_width)
-	:AbstractRoundForm(),
-	 shadow_width_(shadow_width)
-	{
+  AbstractShadow::AbstractShadow (short shadow_width)
+  : AbstractRoundForm(), shadow_width_(shadow_width)
+  {
 
-	}
+  }
 
-	AbstractShadow::~AbstractShadow ()
-	{
-	}
+  AbstractShadow::~AbstractShadow ()
+  {
+  }
 
-	void AbstractShadow::GenerateShadowVertices (std::vector<GLfloat>& vertices,
-	        std::vector<GLuint>& elements)
-	{
-		int width = shadow_width_;
+  void AbstractShadow::GenerateShadowVertices (std::vector<GLfloat>& vertices,
+                                               std::vector<GLuint>& elements)
+  {
+    int width = shadow_width_;
 
-		float rad = radius() * AbstractWindow::theme()->pixel();
+    float rad = radius() * AbstractWindow::theme()->pixel();
 
-		float minx = 0.0f;
-		float miny = 0.0f;
-		float maxx = size().width();
-		float maxy = size().height();
+    float minx = 0.0f;
+    float miny = 0.0f;
+    float maxx = size().width();
+    float maxy = size().height();
 
-		if(2.0f * rad > maxy)
-			rad = 0.5f * maxy;
+    if (2.0f * rad > maxy) rad = 0.5f * maxy;
 
-		maxy -= 2 * rad;
+    maxy -= 2 * rad;
 
-		float vec[WIDGET_CURVE_RESOLU][2];
+    float vec[WIDGET_CURVE_RESOLU][2];
 
-		width *= AbstractWindow::theme()->pixel();
+    width *= AbstractWindow::theme()->pixel();
 
-		int outline_vertex_count = GetOutlineVertexCount(round_type());
-		unsigned int verts_num = (width + 1) * outline_vertex_count * 3;	// 3 float for one vertex: 0, 1: coord, 2: shade
+    int outline_vertex_count = GetOutlineVertexCount(round_type());
+    unsigned int verts_num = (width + 1) * outline_vertex_count * 3;// 3 float for one vertex: 0, 1: coord, 2: shade
 
-		if(vertices.size() != verts_num) {
-			vertices.resize(verts_num);
-		}
+    if (vertices.size() != verts_num) {
+      vertices.resize(verts_num);
+    }
 
-		float alpha = 1.f;
-		int count = 0;
-		for(int i = 0; i <= width; i++) {
+    float alpha = 1.f;
+    int count = 0;
+    for (int i = 0; i <= width; i++) {
 
-			for(int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-				vec[j][0] = rad * cornervec[j][0];
-				vec[j][1] = rad * cornervec[j][1];
-			}
+      for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+        vec[j][0] = rad * cornervec[j][0];
+        vec[j][1] = rad * cornervec[j][1];
+      }
 
-			//shade = 1.0 - std::sqrt(i * (1.0 / width));
-			alpha = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
+      //shade = 1.0 - std::sqrt(i * (1.0 / width));
+      alpha = 1.0 - std::pow(i * (1.0 / width), 1.0 / 3);
 
-			// for shadow, start from left-top
+      // for shadow, start from left-top
 
-			// corner left-top
-			if (round_type() & RoundTopLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = minx + rad - vec[j][0];
-					vertices[count + 1] = maxy - vec[j][1];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = minx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
+      // corner left-top
+      if (round_type() & RoundTopLeft) {
+        for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+          vertices[count + 0] = minx + rad - vec[j][0];
+          vertices[count + 1] = maxy - vec[j][1];
+          vertices[count + 2] = alpha;
+          count += 3;
+        }
+      } else {
+        vertices[count + 0] = minx;
+        vertices[count + 1] = maxy;
+        vertices[count + 2] = alpha;
+        count += 3;
+      }
 
-			// corner left-bottom
-			if (round_type() & RoundBottomLeft) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = minx + vec[j][1];
-					vertices[count + 1] = miny + rad - vec[j][0];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = minx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
+      // corner left-bottom
+      if (round_type() & RoundBottomLeft) {
+        for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+          vertices[count + 0] = minx + vec[j][1];
+          vertices[count + 1] = miny + rad - vec[j][0];
+          vertices[count + 2] = alpha;
+          count += 3;
+        }
+      } else {
+        vertices[count + 0] = minx;
+        vertices[count + 1] = miny;
+        vertices[count + 2] = alpha;
+        count += 3;
+      }
 
-			// corner right-bottom
-			if (round_type() & RoundBottomRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = maxx - rad + vec[j][0];
-					vertices[count + 1] = miny + vec[j][1];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = miny;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
+      // corner right-bottom
+      if (round_type() & RoundBottomRight) {
+        for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+          vertices[count + 0] = maxx - rad + vec[j][0];
+          vertices[count + 1] = miny + vec[j][1];
+          vertices[count + 2] = alpha;
+          count += 3;
+        }
+      } else {
+        vertices[count + 0] = maxx;
+        vertices[count + 1] = miny;
+        vertices[count + 2] = alpha;
+        count += 3;
+      }
 
-			// corner right-top
-			if (round_type() & RoundTopRight) {
-				for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
-					vertices[count + 0] = maxx - vec[j][1];
-					vertices[count + 1] = maxy - rad + vec[j][0];
-					vertices[count + 2] = alpha;
-					count += 3;
-				}
-			} else {
-				vertices[count + 0] = maxx;
-				vertices[count + 1] = maxy;
-				vertices[count + 2] = alpha;
-				count += 3;
-			}
+      // corner right-top
+      if (round_type() & RoundTopRight) {
+        for (int j = 0; j < WIDGET_CURVE_RESOLU; j++) {
+          vertices[count + 0] = maxx - vec[j][1];
+          vertices[count + 1] = maxy - rad + vec[j][0];
+          vertices[count + 2] = alpha;
+          count += 3;
+        }
+      } else {
+        vertices[count + 0] = maxx;
+        vertices[count + 1] = maxy;
+        vertices[count + 2] = alpha;
+        count += 3;
+      }
 
-			rad += 1.f;
-			minx -= 1.f;
-			miny -= 1.f;
-			maxx += 1.f;
-			maxy += 1.f;
-		}
+      rad += 1.f;
+      minx -= 1.f;
+      miny -= 1.f;
+      maxx += 1.f;
+      maxy += 1.f;
+    }
 
 #ifdef DEBUG
-		assert(count == (int)verts_num);
+    assert(count == (int )verts_num);
 #endif
 
-		unsigned int elements_num = outline_vertex_count * 2 * width;
+    unsigned int elements_num = outline_vertex_count * 2 * width;
 
-		if(elements.size() != elements_num) {
-			elements.resize(elements_num);
-		}
+    if (elements.size() != elements_num) {
+      elements.resize(elements_num);
+    }
 
-		count = 0;
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < (int)outline_vertex_count; j++) {
-				elements[count + 0] = i * outline_vertex_count + j;
-				elements[count + 1] = (i + 1) * outline_vertex_count + j;
-				count += 2;
-			}
-		}
+    count = 0;
+    for (int i = 0; i < width; i++) {
+      for (int j = 0; j < (int) outline_vertex_count; j++) {
+        elements[count + 0] = i * outline_vertex_count + j;
+        elements[count + 1] = (i + 1) * outline_vertex_count + j;
+        count += 2;
+      }
+    }
 
 #ifdef DEBUG
-		assert(count == (int)elements_num);
+    assert(count == (int )elements_num);
 #endif
-	}
+  }
 
 }

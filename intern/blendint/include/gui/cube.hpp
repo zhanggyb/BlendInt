@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CUBE_HPP_
-#define _BLENDINT_CUBE_HPP_
+#pragma once
 
 #include <gui/abstract-primitive.hpp>
 
@@ -30,30 +29,28 @@
 
 namespace BlendInt {
 
-	class Cube: public AbstractPrimitive
-	{
-	public:
+  class Cube: public AbstractPrimitive
+  {
+  public:
 
-		Cube ();
+    Cube ();
 
-		virtual ~Cube ();
+    virtual ~Cube ();
 
-		virtual void Render (const glm::mat4& projection_matrix,
-				const glm::mat4& view_matrix);
+    virtual void Render (const glm::mat4& projection_matrix,
+                         const glm::mat4& view_matrix);
 
-	private:
+  private:
 
-		void InitializeCube ();
+    void InitializeCube ();
 
-		GLuint m_vao;
+    GLuint m_vao;
 
-		GLuint m_vbo_cube_vertices;
-		GLuint m_vbo_cube_colors;
-		GLuint m_ibo_cube_elements;
+    GLuint m_vbo_cube_vertices;
+    GLuint m_vbo_cube_colors;
+    GLuint m_ibo_cube_elements;
 
-		glm::mat4 mvp;
-	};
+    glm::mat4 mvp;
+  };
 
 }
-
-#endif /* _BLENDINT_CUBE_HPP_ */

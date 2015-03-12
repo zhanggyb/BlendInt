@@ -27,32 +27,38 @@
 
 namespace BlendInt {
 
-	class AbstractShadow: public AbstractRoundForm
-	{
-	public:
+  /**
+   * @brief Abstract class for soft shadows
+   *
+   * @ingroup blendint_gui
+   */
+  class AbstractShadow: public AbstractRoundForm
+  {
+  public:
 
-		AbstractShadow (short shadow_width = 9);
+    AbstractShadow (short shadow_width = 9);
 
-		virtual ~AbstractShadow ();
+    virtual ~AbstractShadow ();
 
-		inline short shadow_width () const
-		{
-			return shadow_width_;
-		}
+    inline short shadow_width () const
+    {
+      return shadow_width_;
+    }
 
-	protected:
+  protected:
 
-		inline void set_shadow_width (short width)
-		{
-			shadow_width_ = width;
-		}
+    inline void set_shadow_width (short width)
+    {
+      shadow_width_ = width;
+    }
 
-		void GenerateShadowVertices (std::vector<GLfloat>& vertices, std::vector<GLuint>& elements);
+    void GenerateShadowVertices (std::vector<GLfloat>& vertices,
+                                 std::vector<GLuint>& elements);
 
-	private:
+  private:
 
-		short shadow_width_;
+    short shadow_width_;
 
-	};
+  };
 
 }

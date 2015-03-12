@@ -57,6 +57,15 @@ namespace BlendInt {
   {
   }
 
+  bool ModelViewport::LoadPrimitive (const RefPtr<AbstractPrimitive>& primitive)
+  {
+    if (!primitive) return false;
+
+    primitive_ = primitive;
+    RequestRedraw();
+    return true;
+  }
+
   Size ModelViewport::GetPreferredSize () const
   {
     return Size(640, 480);
@@ -112,6 +121,11 @@ namespace BlendInt {
   void ModelViewport::RenderScene ()
   {
     gridfloor_->Render(default_camera_->projection(), default_camera_->view());
+
+    if (primitive_) {
+      primitive_->Render(default_camera_->projection(),
+                         default_camera_->view());
+    }
   }
 
 }

@@ -160,19 +160,7 @@ namespace BlendInt {
       if (refresh()) {
 
 #ifdef DEBUG
-        //Timer::SaveCurrentTime();
-#endif
-
-#ifdef __APPLE__
-
-        // TODO: test these lines to make sure the ubo is correct in each frame in OS X
-
-        glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
-                                          (float) size().height(), 100.f, -100.f);
-        kShaders->SetFrameProjectionMatrix(projection);
-        kShaders->SetFrameViewMatrix(default_view_matrix);
-        kShaders->SetFrameModelMatrix(glm::mat3(1.f));
-
+        // Timer::SaveCurrentTime();
 #endif
 
         set_refresh(false);
@@ -181,7 +169,7 @@ namespace BlendInt {
           PostDraw(this);
         }
 
-        //DBG_PRINT_MSG("Timer to one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
+        // DBG_PRINT_MSG("Time of one render cycle: %g (ms)", Timer::GetIntervalOfMilliseconds());
 
         glfwSwapBuffers(window_);
       }

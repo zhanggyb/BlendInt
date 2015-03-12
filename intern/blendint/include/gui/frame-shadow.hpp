@@ -31,41 +31,48 @@
 
 namespace BlendInt {
 
-	class FrameShadow: public AbstractShadow
-	{
+  /**
+   * @brief Soft shadow for frames
+   *
+   * @ingroup blendint_gui_frames
+   */
+  class FrameShadow: public AbstractShadow
+  {
 
-	public:
+  public:
 
-		FrameShadow (const Size& size = Size(100, 100), int round_type = RoundNone, float round_radius = 5.f);
+    FrameShadow (const Size& size = Size(100, 100),
+                 int round_type = RoundNone,
+                 float round_radius = 5.f);
 
-		virtual ~FrameShadow ();
+    virtual ~FrameShadow ();
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(Color::Black).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(Color::Black).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (const Size& size);
 
-		virtual void PerformRoundTypeUpdate (int type);
+    virtual void PerformRoundTypeUpdate (int type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-	private:
+  private:
 
-		void InitializeFrameShadowOnce ();
+    void InitializeFrameShadowOnce ();
 
-		GLuint vao_;
+    GLuint vao_;
 
-		GLBuffer<ARRAY_BUFFER> vertex_buffer_;
+    GLBuffer<ARRAY_BUFFER> vertex_buffer_;
 
-		GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
+    GLBuffer<ELEMENT_ARRAY_BUFFER> element_buffer_;
 
-	};
+  };
 
 }

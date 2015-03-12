@@ -28,6 +28,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Soft shadow for widgets
+   *
+   * @ingroup blendint_gui_widgets
+   */
   class WidgetShadow: public AbstractShadow
   {
   public:

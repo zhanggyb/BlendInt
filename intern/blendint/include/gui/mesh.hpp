@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
+#pragma once
 
 #include <vector>
 
@@ -34,43 +33,41 @@
 
 namespace BlendInt {
 
-	class Mesh: public AbstractPrimitive
-	{
-	public:
+  class Mesh: public AbstractPrimitive
+  {
+  public:
 
-		Mesh ();
+    Mesh ();
 
-		virtual ~Mesh();
+    virtual ~Mesh ();
 
-		bool Load (const char* filename);
+    bool Load (const char* filename);
 
-		virtual void Render (const glm::mat4& projection_matrix,
-				const glm::mat4& view_matrix);
+    virtual void Render (const glm::mat4& projection_matrix,
+                         const glm::mat4& view_matrix);
 
-		static bool LoadObj (const char* filename,
-				std::vector<glm::vec4>& vertices,
-				std::vector<glm::vec3>& normals,
-				std::vector<GLushort>& elements);
+    static bool LoadObj (const char* filename,
+                         std::vector<glm::vec4>& vertices,
+                         std::vector<glm::vec3>& normals,
+                         std::vector<GLushort>& elements);
 
-	private:
+  private:
 
-		void InitializeMesh ();
+    void InitializeMesh ();
 
-		GLuint vao_;
+    GLuint vao_;
 
-		RefPtr<GLArrayBuffer> vertex_buffer_;
-		RefPtr<GLArrayBuffer> normal_buffer_;
+    RefPtr<GLArrayBuffer> vertex_buffer_;
+    RefPtr<GLArrayBuffer> normal_buffer_;
 
-		RefPtr<GLElementArrayBuffer> index_buffer_;
+    RefPtr<GLElementArrayBuffer> index_buffer_;
 
-		RefPtr<GLSLProgram> program_;
+    RefPtr<GLSLProgram> program_;
 
-		glm::mat4 model_matrix_;
+    glm::mat4 model_matrix_;
 
-		static const char* vertex_shader;
-		static const char* fragment_shader;
-	};
+    static const char* vertex_shader;
+    static const char* fragment_shader;
+  };
 
 }
-
-#endif /* _BLENDINT_MESH_HPP_ */
