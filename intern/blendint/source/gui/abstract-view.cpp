@@ -51,7 +51,7 @@ namespace BlendInt {
 
   float AbstractView::kBorderWidth = 1.f;
 
-  boost::mutex AbstractView::kRefreshMutex;
+  Mutex AbstractView::kRefreshMutex;
 
   const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = { { 0.0, 0.0 },
       { 0.195, 0.02 }, { 0.383, 0.067 }, { 0.55, 0.169 }, { 0.707, 0.293 }, {
