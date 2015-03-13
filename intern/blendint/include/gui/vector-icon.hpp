@@ -30,66 +30,68 @@
 
 namespace BlendInt {
 
-	/**
-	 * Icon displayed with vertexes
-	 */
-	class VectorIcon: public AbstractIcon
-	{
-	public:
+  /**
+   * Icon displayed with vertexes
+   */
+  class VectorIcon: public AbstractIcon
+  {
+  public:
 
-		static const float num_tria_vert[3][2];
+    static const float num_tria_vert[3][2];
 
-		static const unsigned int num_tria_face[1][3];
+    static const unsigned int num_tria_face[1][3];
 
-		static const float scroll_circle_vert[16][2];
+    static const float scroll_circle_vert[16][2];
 
-		static const unsigned int scroll_circle_face[14][3];
+    static const unsigned int scroll_circle_face[14][3];
 
-		static const float menu_tria_vert[6][2];
+    static const float menu_tria_vert[6][2];
 
-		static const unsigned int menu_tria_face[2][3];
+    static const unsigned int menu_tria_face[2][3];
 
-		static const float check_tria_vert[6][2];
+    static const float check_tria_vert[6][2];
 
-		static const unsigned int check_tria_face[4][3];
+    static const unsigned int check_tria_face[4][3];
 
-		static const float cross_tria_vert[12][2];
+    static const float cross_tria_vert[12][2];
 
-		static const unsigned int cross_tria_face[10][3];
+    static const unsigned int cross_tria_face[10][3];
 
-		VectorIcon (int width, int height);
+    VectorIcon (int width, int height);
 
-		virtual ~VectorIcon ();
+    virtual ~VectorIcon ();
 
-		void Load (const float (*vertex_array)[2], size_t array_size,
-				const unsigned int (*vertex_indices)[3], size_t indeces_size);
+    void Load (const float (*vertex_array)[2],
+               size_t array_size,
+               const unsigned int (*vertex_indices)[3],
+               size_t indeces_size);
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(0x1A1A1A20).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(0x1A1A1A20).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				const float* color_ptr = Color(0x1A1A1A20).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const;
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr = Color(0x1A1A1A20).data(),
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (const Size& size);
 
-	private:
+  private:
 
-		GLBuffer<ARRAY_BUFFER, 1> vertex_buffer_;
-		GLBuffer<ELEMENT_ARRAY_BUFFER, 1> element_buffer_;
+    GLBuffer<ARRAY_BUFFER, 1> vertex_buffer_;
+    GLBuffer<ELEMENT_ARRAY_BUFFER, 1> element_buffer_;
 
-		GLuint vao_;
+    GLuint vao_;
 
-		int elements_;
-	};
+    int elements_;
+  };
 }

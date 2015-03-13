@@ -31,77 +31,79 @@
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/text.hpp>
-#include <gui/abstract-round-widget.hpp>
+#include <gui/abstract-widget.hpp>
 
 using namespace std;
 
 namespace BlendInt {
 
-	class Label: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Label);
+  /**
+   * @brief A widget that displays text
+   *
+   * @ingroup blendint_gui_widgets
+   */
+  class Label: public AbstractWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Label);
 
-	public:
+  public:
 
-		Label (const String& label, Alignment alignment = AlignLeft);
+    Label (const String& label, Alignment alignment = AlignLeft);
 
-		virtual ~Label ();
+    virtual ~Label ();
 
-		/**
-		 * @brief set the label text
-		 * @param label
-		 *
-		 * call this function will reset the size and preferred size of this object
-		 */
-		void SetText (const String& text);
+    /**
+     * @brief set the label text
+     * @param label
+     *
+     * call this function will reset the size and preferred size of this object
+     */
+    void SetText (const String& text);
 
-		/**
-		 * @brief set the text font
-		 * @param font
-		 *
-		 * call this function will reset the preferred size of this object
-		 */
-		void SetFont (const Font& font);
+    /**
+     * @brief set the text font
+     * @param font
+     *
+     * call this function will reset the preferred size of this object
+     */
+    void SetFont (const Font& font);
 
-		void SetForeground (uint32_t color);
+    void SetForeground (const Color& color);
 
-		void SetBackground (uint32_t color);
+    void SetBackground (const Color& color);
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-        static Margin kPadding;
+    static Margin kPadding;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual Response PerformMousePress (AbstractWindow* context);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
-		virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context);
 
-		virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual Response PerformMouseMove (AbstractWindow* context);
+  private:
 
-		virtual Response Draw (AbstractWindow* context);
+    RefPtr<Text> text_;
 
-	private:
+    Alignment alignment_;
 
-		RefPtr<Text> text_;
+    GLuint vao_;
 
-        Alignment alignment_;
+    GLBuffer<> vbo_;
 
-        GLuint vao_;
-        GLBuffer<> vbo_;
+    Color foreground_;
 
-        uint32_t foreground_;
+    Color background_;
 
-        uint32_t background_;
-
-    };
+  };
 
 } /* namespace BlendInt */

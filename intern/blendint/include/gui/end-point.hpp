@@ -21,42 +21,51 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <string.h>
+#pragma once
 
+#include <core/object.hpp>
+#include <core/point.hpp>
+#include <core/size.hpp>
 #include <core/color.hpp>
+
+#include <gui/abstract-node.hpp>
 
 namespace BlendInt {
 
-	Color operator + (const Color& orig, short shade)
-	{
-		Color color;
-		color.set_red(orig.r() + shade / 255.f);
-		color.set_green(orig.g() + shade / 255.f);
-		color.set_blue(orig.b() + shade / 255.f);
-		color.set_alpha(orig.a());
-
-		return color;
-	}
-
-	Color operator + (const Color& color1, const Color& color2)
-	{
-		Color color;
-		color.set_red(color1.r() + color2.r());
-		color.set_green(color1.g() + color2.g());
-		color.set_blue(color1.b() + color2.b());
-		color.set_alpha(color1.a() + color2.a());
-
-		return color;
-	}
-
-  extern bool operator == (const Color& src, const Color& dst)
+  /**
+   * @brief The end point of node
+   *
+   * @ingroup blendint_gui_nodes
+   */
+  class EndPoint: public Object
   {
-    return memcmp(src.data(), dst.data(), sizeof(float) * 4) == 0;
-  }
 
-  extern bool operator != (const Color& src, const Color& dst)
-  {
-    return memcmp(src.data(), dst.data(), sizeof(float) * 4) != 0;
-  }
+  public:
+
+    EndPoint ();
+
+    virtual EndPoint ();
+
+    void Draw ();
+
+  private:
+
+    AbstractNode* node_;
+
+    EndPoint* upstream_;
+
+    EndPoint* downstream_;
+
+    EndPoint* previous_;
+
+    EndPoint* next_;
+
+    Point position_;
+
+    Color color_;
+
+    static Size kSize;
+
+  };
 
 }

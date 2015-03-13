@@ -41,8 +41,8 @@ namespace BlendInt {
 		text_ = new Label(description, AlignCenter);
 		close_ = new CloseButton;
 
-		title_->SetForeground(AbstractWindow::theme()->menu_back().text_sel.rgba());
-		text_->SetForeground(AbstractWindow::theme()->menu_back().text.rgba());
+		title_->SetForeground(AbstractWindow::theme()->menu_back().text_sel);
+		text_->SetForeground(AbstractWindow::theme()->menu_back().text);
 
 		events()->connect(close_->clicked(), this, &MessageBox::OnClose);
 

@@ -101,12 +101,14 @@ namespace BlendInt {
 
   bool Frame::IsExpandX () const
   {
-    return layout_->IsExpandX();
+    return false;
+    //return layout_->IsExpandX();
   }
 
   bool Frame::IsExpandY () const
   {
-    return layout_->IsExpandY();
+    return false;
+    //return layout_->IsExpandY();
   }
 
   Size Frame::GetPreferredSize () const

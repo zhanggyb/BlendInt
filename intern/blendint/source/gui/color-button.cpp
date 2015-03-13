@@ -124,8 +124,15 @@ namespace BlendInt {
 
   Response ColorButton::Draw (AbstractWindow* context)
   {
-    float x = context->active_frame()->GetRelativePosition(this).x()
-        - context->viewport_origin().x();
+    float x = (context->shaders()->widget_model_matrix()
+        * glm::vec3(0.f, 0.f, 1.f)).x;
+
+    if (context->active_frame()->has_view_buffer()) {
+      x = x - context->viewport_origin().x();
+    } else {
+      x = context->active_frame()->position().x() + x
+          - context->viewport_origin().x();
+    }
 
     int outline_vertices = GetOutlineVertices(round_type());
 
@@ -141,9 +148,15 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
         1, color1_.data());
 
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-        0);
+    if (context->GetMouseAction() == MousePress) {
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+          -25);
+    } else {
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+          0);
+    }
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);

@@ -34,11 +34,9 @@ namespace BlendInt {
 
   extern Color operator + (const Color& color1, const Color& color2);
 
-  extern Color MakeShadedColor (const Color& color1,
-                                const Color& color2,
-                                float fact);
+  extern bool operator == (const Color& src, const Color& dst);
 
-  extern bool operator == (const Color& src, const Color& dist);
+  extern bool operator != (const Color& src, const Color& dst);
 
   /**
    * @brief 32-bit color
@@ -422,17 +420,4 @@ namespace BlendInt {
     float value_[4];
   };
 
-/*
- Color operator + (const Color& color1, const Color& color2)
- {
- Color color;
-
- color.set_red (correct_in_scope(color1.r() + color2.r(), 0, 255));
- color.set_green (correct_in_scope(color1.g() + color2.g(), 0, 255));
- color.set_blue (correct_in_scope(color1.b() + color2.b(), 0, 255));
- color.set_alpha (correct_in_scope(color1.a() + color2.a(), 0, 255));
-
- return color;
- }
- */
 }

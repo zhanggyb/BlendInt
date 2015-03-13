@@ -82,6 +82,11 @@ namespace BlendInt {
 
     virtual Response PerformMouseMove (AbstractWindow* context);
 
+    inline AbstractLayout* layout () const
+    {
+      return layout_;
+    }
+
   private:
 
     virtual Response PerformMouseHover (AbstractWindow* context);

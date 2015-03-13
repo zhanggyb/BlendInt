@@ -72,6 +72,7 @@ namespace BlendInt {
     void OnSelectorDestroyed (AbstractFrame* sender);
 
     GLuint vao_[2];
+
     GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
     Color color0_;
