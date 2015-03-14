@@ -32,55 +32,60 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special button usually used in ToolBar
-	 *
-	 * @ingroup blendint_gui_widgets_buttons
-	 */
-	class ToolButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(ToolButton);
+  /**
+   * @brief A special button usually used in ToolBar
+   *
+   * @ingroup blendint_gui_widgets_buttons
+   */
+  class ToolButton: public AbstractButton
+  {
+  DISALLOW_COPY_AND_ASSIGN(ToolButton);
 
-	public:
+  public:
 
-		ToolButton ();
+    ToolButton ();
 
-		virtual ~ToolButton();
+    virtual ~ToolButton ();
 
-		void SetAction (const String& text);
+    void SetAction (const String& text);
 
-		void SetAction (const String& text, const String& shortcut);
+    void SetAction (const String& text, const String& shortcut);
 
-		void SetAction (const RefPtr<AbstractIcon>& AbstractIcon, const String& text);
+    void SetAction (const RefPtr<AbstractIcon>& AbstractIcon,
+                    const String& text);
 
-		void SetAction (const RefPtr<AbstractIcon>& AbstractIcon, const String& text, const String& shortcut);
+    void SetAction (const RefPtr<AbstractIcon>& AbstractIcon,
+                    const String& text,
+                    const String& shortcut);
 
-		void SetAction (const RefPtr<Action>& item);
+    void SetAction (const RefPtr<Action>& item);
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type) final;
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius) final;
 
-		virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context) override;
 
-		virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context) override;
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) override;
 
-	private:
+  private:
 
-		void InitializeToolButton ();
+    void InitializeToolButton ();
 
-		GLuint vao_[2];
+    void DrawAction ();
 
-        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLuint vao_[2];
 
-		RefPtr<Action> action_;
-	};
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+    RefPtr<Action> action_;
+  };
 }

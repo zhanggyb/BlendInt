@@ -83,13 +83,13 @@ namespace BlendInt {
 
 		virtual ~Workspace ();
 
-		void SetViewport (AbstractFrame* viewport);
+		void SetMainFrame (AbstractFrame* viewport);
 
-		void SetLeftSideBar (Frame* leftbar);
+		void SetLeftFrame (Frame* leftbar);
 
-		void SetRightSideBar (Frame* sidebar);
+		void SetRightFrame (Frame* sidebar);
 
-		void SetHeader (Frame* header, bool append = true);
+		void SetHeaderFrame (Frame* header, bool append = true);
 
 		void SwitchHeaderPosition ();
 
@@ -98,8 +98,6 @@ namespace BlendInt {
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
-
-		virtual AbstractView* GetFocusedView () const;
 
 	protected:
 
@@ -141,13 +139,13 @@ namespace BlendInt {
 
 		void SetHoveredFrame (AbstractWindow* context);
 
-		Frame* left_sidebar_;
+		Frame* left_frame_;
 
-		Frame* right_sidebar_;
+		Frame* right_frame_;
 
-		Frame* header_;
+		Frame* header_frame_;
 
-		AbstractFrame* viewport_;
+		AbstractFrame* main_frame_;
 
 		FrameSplitter* splitter_;
 

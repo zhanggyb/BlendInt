@@ -25,31 +25,22 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/abstract-layout.hpp>
+#include <gui/linear-layout.hpp>
 #include <gui/abstract-frame.hpp>
+#include <gui/frame-shadow.hpp>
 
 namespace BlendInt {
 
-  /**
-   * @brief A common frame with customized layout
-   *
-   * @ingroup blendint_gui_frames
-   */
-  class Frame: public AbstractFrame
+  class ToolBar: public AbstractFrame
   {
   public:
 
-    Frame (AbstractLayout* layout);
+    ToolBar (unsigned int color = 0x999999FF,
+             bool shaded = false,
+             short shadetop = 15,
+             short shadedown = 0);
 
-    Frame (int width, int height, AbstractLayout* layout);
-
-    virtual ~Frame ();
-
-    void AddWidget (AbstractWidget* widget);
-
-    virtual bool IsExpandX () const;
-
-    virtual bool IsExpandY () const;
+    virtual ~ToolBar ();
 
     virtual Size GetPreferredSize () const;
 
@@ -65,6 +56,8 @@ namespace BlendInt {
 
     virtual void PostDraw (AbstractWindow* context) final;
 
+    virtual Response PerformMouseHover (AbstractWindow* context) final;
+
     virtual void PerformFocusOn (AbstractWindow* context);
 
     virtual void PerformFocusOff (AbstractWindow* context);
@@ -77,20 +70,13 @@ namespace BlendInt {
 
     virtual Response PerformMousePress (AbstractWindow* context);
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
     virtual Response PerformMouseMove (AbstractWindow* context);
 
-    virtual Response PerformMouseHover (AbstractWindow* context) final;
-
-    inline AbstractLayout* layout () const
-    {
-      return layout_;
-    }
+    virtual Response PerformMouseRelease (AbstractWindow* context);
 
   private:
 
-    void InitializeFrameOnce ();
+    void InitializeToolBar ();
 
     void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
@@ -102,25 +88,34 @@ namespace BlendInt {
 
     glm::mat3 model_matrix_;
 
+    RefPtr<FrameShadow> shadow_;
+
+    LinearLayout* layout_;
+
     AbstractWidget* focused_widget_;
 
     AbstractWidget* hovered_widget_;
 
     // 0 - for inner
-    // 1 - for outer
-    GLuint vao_[2];
+    GLuint vao_;
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 1> vbo_;
 
-    int cursor_position_;
+    Color color_;
 
-    AbstractLayout* layout_;
+    bool shaded_;
+
+    short shadetop_;
+
+    short shadedown_;
 
     bool focused_;
 
     bool hover_;
 
     bool pressed_;
+
+    int cursor_position_;
   };
 
 }

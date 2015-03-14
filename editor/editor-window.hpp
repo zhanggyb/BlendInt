@@ -26,6 +26,8 @@
 #include <gui/message-box.hpp>
 #include <gui/window.hpp>
 
+#include "tool-bar.hpp"
+
 namespace BlendInt {
 
   class EditorWindow: public Window
@@ -41,6 +43,8 @@ namespace BlendInt {
     void OnResize (Window* window, const Size& size);
 
     void OnMessageBoxDestroyed (AbstractFrame* sender);
+
+    ToolBar* toolbar_;
 
     MessageBox* dev_msg_;
   };

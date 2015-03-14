@@ -49,17 +49,15 @@ namespace BlendInt {
 
 		virtual ~RadioButton ();
 
-		virtual bool IsExpandX () const;
-
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-		virtual void PerformRoundTypeUpdate (int round_type);
+		virtual void PerformRoundTypeUpdate (int round_type) final;
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+		virtual void PerformRoundRadiusUpdate (float radius) final;
 
-		virtual Response Draw (AbstractWindow* context);
+		virtual Response Draw (AbstractWindow* context) override;
 
 	private:
 

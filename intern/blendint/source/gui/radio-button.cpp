@@ -106,11 +106,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, vao_);
 	}
 
-	bool RadioButton::IsExpandX () const
-	{
-		return true;
-	}
-
 	void RadioButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -231,10 +226,11 @@ namespace BlendInt {
 			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
-		glBindVertexArray(0);
-		GLSLProgram::reset();
-
-		DrawIconText();
+		if (is_down()) {
+	    DrawIconText(context->theme()->radio_button().text_sel.data(), 0);
+		} else {
+	    DrawIconText(context->theme()->radio_button().text.data(), 0);
+		}
 
 		return Finish;
 	}

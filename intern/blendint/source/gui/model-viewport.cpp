@@ -111,6 +111,8 @@ namespace BlendInt {
       default_camera_->SetPerspective(
           default_camera_->fovy(),
           1.f * request.size()->width() / request.size()->height());
+
+      RequestRedraw();
     }
 
     if (request.source() == this) {
@@ -122,10 +124,9 @@ namespace BlendInt {
   {
     gridfloor_->Render(default_camera_->projection(), default_camera_->view());
 
-    if (primitive_) {
+    if (primitive_)
       primitive_->Render(default_camera_->projection(),
                          default_camera_->view());
-    }
   }
 
 }

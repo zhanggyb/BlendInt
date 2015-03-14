@@ -25,103 +25,93 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/matrix_transform_2d.hpp>
 
-#include <opengl/gl-framebuffer.hpp>
-
-#include <gui/flow-layout.hpp>
-#include <gui/frame.hpp>
+#include <gui/radio-button.hpp>
+#include <gui/block.hpp>
 #include <gui/abstract-window.hpp>
+
+#include <gui/linear-layout.hpp>
+#include <gui/separator.hpp>
+
+#include "tool-bar.hpp"
 
 namespace BlendInt {
 
-  Frame::Frame (AbstractLayout* layout)
-  : AbstractFrame(),
+  ToolBar::ToolBar(unsigned int color,
+                   bool shaded,
+                   short shadetop,
+                   short shadedown)
+  : AbstractFrame(FrameTopmost),
+    layout_(0),
     focused_widget_(0),
     hovered_widget_(0),
-    cursor_position_(0),
-    layout_(0),
+    vao_(0),
+    color_(color),
+    shaded_(shaded),
+    shadetop_(shadetop),
+    shadedown_(shadedown),
     focused_(false),
     hover_(false),
-    pressed_(false)
+    pressed_(false),
+    cursor_position_(InsideRectangle)
   {
-    if (layout == nullptr) {
-      layout_ = Manage(new FlowLayout);
-    } else {
-      layout_ = layout;
-    }
+    layout_ = new LinearLayout(Vertical);
+
+    // Add widgets
+    RadioButton* b1 = new RadioButton("Home");
+    RadioButton* b2 = new RadioButton("Interface");
+    RadioButton* b3 = new RadioButton("Theme");
+    RadioButton* b4 = new RadioButton("Setting");
+    RadioButton* b5 = new RadioButton("Help");
+
+    Block* block = new Block(Horizontal);
+    block->AddWidget(b1);
+    block->AddWidget(b2);
+    block->AddWidget(b3);
+    block->AddWidget(b4);
+    block->AddWidget(b5);
+
+    LinearLayout* hlayout = new LinearLayout(Horizontal);
+    hlayout->SetMargin(Margin(0, 0, 0, 0));
+    Separator* sp1 = new Separator(true);
+    Separator* sp2 = new Separator(true);
+
+    hlayout->AddWidget(sp1);
+    hlayout->AddWidget(block);
+    hlayout->AddWidget(sp2);
+
+    layout_->AddWidget(hlayout);
+
+    layout_->Resize(layout_->GetPreferredSize());
 
     PushBackSubView(layout_);
+    RequestRedraw();
+
     set_size(layout_->size());
 
-    InitializeFrameOnce();
+    InitializeToolBar();
+    shadow_.reset(new FrameShadow(size(), RoundNone, 5.f));
   }
 
-  Frame::Frame (int width, int height, AbstractLayout* layout)
-  : AbstractFrame(width, height),
-    focused_widget_(0),
-    hovered_widget_(0),
-    cursor_position_(0),
-    layout_(0),
-    focused_(false),
-    hover_(false),
-    pressed_(false)
+  ToolBar::~ToolBar ()
   {
-    if (layout == nullptr) {
-      layout_ = Manage(new FlowLayout);
-    } else {
-      layout_ = layout;
-    }
-
-    PushBackSubView(layout_);
-    ResizeSubView(layout_, size());
-
-    InitializeFrameOnce();
+    glDeleteVertexArrays(1, &vao_);
   }
 
-  Frame::~Frame ()
-  {
-    glDeleteVertexArrays(2, vao_);
-
-    if (focused_widget_) {
-      focused_widget_->destroyed().disconnectOne(
-          this, &Frame::OnFocusedWidgetDestroyed);
-      focused_widget_ = 0;
-    }
-
-    if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
-          this, &Frame::OnHoverWidgetDestroyed);
-      ClearHoverWidgets(hovered_widget_, AbstractWindow::GetWindow(this));
-    }
-  }
-
-  void Frame::AddWidget (AbstractWidget* widget)
-  {
-    layout_->AddWidget(widget);
-  }
-
-  bool Frame::IsExpandX () const
-  {
-    return false;
-    //return layout_->IsExpandX();
-  }
-
-  bool Frame::IsExpandY () const
-  {
-    return false;
-    //return layout_->IsExpandY();
-  }
-
-  Size Frame::GetPreferredSize () const
+  Size ToolBar::GetPreferredSize () const
   {
     return layout_->GetPreferredSize();
   }
 
-  bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
+  bool ToolBar::SizeUpdateTest (const SizeUpdateRequest& request)
   {
-    return true;
+    if (request.target() == this) {
+      return true;
+    }
+
+    return false;
   }
 
-  void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
     if (request.target() == this) {
 
@@ -133,22 +123,24 @@ namespace BlendInt {
 
       set_size(*request.size());
 
-      if (view_buffer()) {
-        view_buffer()->Resize(size());
-      }
+      if (view_buffer()) view_buffer()->Resize(size());
 
       std::vector<GLfloat> inner_verts;
-      std::vector<GLfloat> outer_verts;
-      GenerateVertices(size(), 1.f * AbstractWindow::theme()->pixel(),
-                       RoundNone, 0.f, &inner_verts, &outer_verts);
+
+      if (shaded_) {
+        GenerateVertices(size(), 0, RoundNone, 0.f, Vertical,
+                         shadetop_, shadedown_, &inner_verts, 0);
+      } else {
+        GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts,
+                         0);
+      }
 
       vbo_.bind(0);
       vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                           &inner_verts[0]);
-      vbo_.bind(1);
-      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
-                           &outer_verts[0]);
+                        &inner_verts[0]);
       vbo_.reset();
+
+      shadow_->Resize(size());
 
       ResizeSubView(layout_, size());
       RequestRedraw();
@@ -159,7 +151,7 @@ namespace BlendInt {
     }
   }
 
-  bool Frame::PreDraw (AbstractWindow* context)
+  bool ToolBar::PreDraw (AbstractWindow* context)
   {
     if (!visiable()) return false;
 
@@ -173,8 +165,10 @@ namespace BlendInt {
     return true;
   }
 
-  Response Frame::Draw (AbstractWindow* context)
+  Response ToolBar::Draw (AbstractWindow* context)
   {
+    shadow_->Draw(position().x(), position().y());
+
     AbstractWindow::shaders()->frame_inner_program()->use();
 
     glUniform2f(
@@ -182,10 +176,11 @@ namespace BlendInt {
         position().x(), position().y());
     glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
                 0);
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
-                0.447f, 0.447f, 0.447f, 1.f);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1,
+        color_.data());
 
-    glBindVertexArray(vao_[0]);
+    glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
     if (view_buffer()) {
@@ -199,6 +194,7 @@ namespace BlendInt {
           AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
       glUniform1i(
           AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
       view_buffer()->Draw(0, 0);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -217,70 +213,99 @@ namespace BlendInt {
 
     }
 
-    AbstractWindow::shaders()->frame_outer_program()->use();
-
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
-        position().x(), position().y());
-    glBindVertexArray(vao_[1]);
-
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
-                0.576f, 0.576f, 0.576f, 1.f);
-    glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
-
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
-                0.4f, 0.4f, 0.4f, 1.f);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
-
     return Finish;
   }
 
-  void Frame::PostDraw (AbstractWindow* context)
+  void ToolBar::PostDraw (AbstractWindow* context)
   {
   }
 
-  void Frame::PerformFocusOn (AbstractWindow* context)
+  Response ToolBar::PerformMouseHover (AbstractWindow* context)
+  {
+    if (pressed_) return Finish;
+
+    if (Contain(context->GetGlobalCursorPosition())) {
+
+      cursor_position_ = InsideRectangle;
+
+      if (!hover_) {
+        PerformHoverIn(context);
+      }
+
+      AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
+                                                              context);
+
+      if (new_hovered_widget != hovered_widget_) {
+
+        if (hovered_widget_) {
+          hovered_widget_->destroyed().disconnectOne(
+              this, &ToolBar::OnHoverWidgetDestroyed);
+        }
+
+        hovered_widget_ = new_hovered_widget;
+        if (hovered_widget_) {
+          events()->connect(hovered_widget_->destroyed(), this,
+                            &ToolBar::OnHoverWidgetDestroyed);
+        }
+
+      }
+
+      return Finish;
+
+    } else {
+
+      cursor_position_ = OutsideRectangle;
+
+      if (hover_) {
+        PerformHoverOut(context);
+      }
+
+      return Ignore;
+    }
+  }
+
+  void ToolBar::PerformFocusOn (AbstractWindow* context)
   {
     focused_ = true;
   }
 
-  void Frame::PerformFocusOff (AbstractWindow* context)
+  void ToolBar::PerformFocusOff (AbstractWindow* context)
   {
     focused_ = false;
 
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(
-          this, &Frame::OnHoverWidgetDestroyed);
+          this, &ToolBar::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
     }
 
     if (focused_widget_) {
       focused_widget_->destroyed().disconnectOne(
-          this, &Frame::OnFocusedWidgetDestroyed);
+          this, &ToolBar::OnFocusedWidgetDestroyed);
       dispatch_focus_off(focused_widget_, context);
       focused_widget_ = 0;
     }
   }
 
-  void Frame::PerformHoverIn (AbstractWindow* context)
+  void ToolBar::PerformHoverIn (AbstractWindow* context)
   {
     hover_ = true;
   }
 
-  void Frame::PerformHoverOut (AbstractWindow* context)
+  void ToolBar::PerformHoverOut (AbstractWindow* context)
   {
     hover_ = false;
 
     if (hovered_widget_) {
       hovered_widget_->destroyed().disconnectOne(
-          this, &Frame::OnHoverWidgetDestroyed);
+          this, &ToolBar::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
     }
   }
 
-  Response Frame::PerformKeyPress (AbstractWindow* context)
+  Response ToolBar::PerformKeyPress (AbstractWindow* context)
   {
     context->register_active_frame(this);
 
@@ -290,10 +315,9 @@ namespace BlendInt {
       dispatch_key_press(focused_widget_, context);
     }
 
-    return response;
-  }
+    return response;  }
 
-  Response Frame::PerformMousePress (AbstractWindow* context)
+  Response ToolBar::PerformMousePress (AbstractWindow* context)
   {
     context->register_active_frame(this);
 
@@ -303,18 +327,22 @@ namespace BlendInt {
 
       if (hovered_widget_) {
 
-        AbstractView* widget = 0;	// widget may be focused
+        AbstractView* widget = 0; // widget may be focused
 
         widget = RecursiveDispatchMousePress(hovered_widget_, context);
 
-        if (widget)
+        if (widget == 0) {
+          DBG_PRINT_MSG("%s", "widget 0");
+          pressed_ = true;
+        } else {
           SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
+        }
 
       } else {
+        pressed_ = true;
         // SetFocusedWidget(0);
       }
 
-      pressed_ = true;
       return Finish;
 
     } else {
@@ -323,21 +351,7 @@ namespace BlendInt {
     }
   }
 
-  Response Frame::PerformMouseRelease (AbstractWindow* context)
-  {
-    // cursor_position_ = InsideRectangle;
-
-    pressed_ = false;
-
-    if (focused_widget_) {
-      context->register_active_frame(this);
-      return dispatch_mouse_release(focused_widget_, context);
-    }
-
-    return Ignore;
-  }
-
-  Response Frame::PerformMouseMove (AbstractWindow* context)
+  Response ToolBar::PerformMouseMove (AbstractWindow* context)
   {
     context->register_active_frame(this);
 
@@ -357,115 +371,83 @@ namespace BlendInt {
     return retval;
   }
 
-  Response Frame::PerformMouseHover (AbstractWindow* context)
+  Response ToolBar::PerformMouseRelease (AbstractWindow* context)
   {
-    if (pressed_) return Finish;
+    pressed_ = false;
 
-    if (Contain(context->GetGlobalCursorPosition())) {
-
-      cursor_position_ = InsideRectangle;
-
-      if (!hover_) {
-        PerformHoverIn(context);
-      }
-
-      AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
-                                                              context);
-
-      if (new_hovered_widget != hovered_widget_) {
-
-        if (hovered_widget_) {
-          hovered_widget_->destroyed().disconnectOne(
-              this, &Frame::OnHoverWidgetDestroyed);
-        }
-
-        hovered_widget_ = new_hovered_widget;
-        if (hovered_widget_) {
-          events()->connect(hovered_widget_->destroyed(), this,
-                            &Frame::OnHoverWidgetDestroyed);
-        }
-
-      }
-
-      return Finish;
-
-    } else {
-
-      cursor_position_ = OutsideRectangle;
-
-      if (hover_) {
-        PerformHoverOut(context);
-      }
-
-      return Ignore;
+    if (focused_widget_) {
+      context->register_active_frame(this);
+      return dispatch_mouse_release(focused_widget_, context);
     }
+
+    return Ignore;
   }
 
-  void Frame::InitializeFrameOnce ()
+  void ToolBar::InitializeToolBar ()
   {
     projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
                                     (float) size().height(), 100.f, -100.f);
     model_matrix_ = glm::mat3(1.f);
 
     std::vector<GLfloat> inner_verts;
-    std::vector<GLfloat> outer_verts;
-    GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, &inner_verts,
-                     &outer_verts);
+
+    if (shaded_) {
+      GenerateVertices(size(), 0, RoundNone, 0.f, Vertical,
+                       shadetop_, shadedown_, &inner_verts, 0);
+    } else {
+      GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts,
+                       0);
+    }
 
     vbo_.generate();
-    glGenVertexArrays(2, vao_);
+    glGenVertexArrays(1, &vao_);
 
-    glBindVertexArray(vao_[0]);
+    glBindVertexArray(vao_);
     vbo_.bind(0);
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glBindVertexArray(vao_[1]);
-    vbo_.bind(1);
-    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
     glBindVertexArray(0);
     vbo_.reset();
   }
 
-  void Frame::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)
+  void ToolBar::SetFocusedWidget (AbstractWidget* widget,
+                                  AbstractWindow* context)
   {
     if (focused_widget_ == widget) return;
 
     if (focused_widget_) {
       dispatch_focus_off(focused_widget_, context);
       focused_widget_->destroyed().disconnectOne(
-          this, &Frame::OnFocusedWidgetDestroyed);
+          this, &ToolBar::OnFocusedWidgetDestroyed);
     }
 
     focused_widget_ = widget;
     if (focused_widget_) {
       dispatch_focus_on(focused_widget_, context);
       events()->connect(focused_widget_->destroyed(), this,
-                        &Frame::OnFocusedWidgetDestroyed);
+                        &ToolBar::OnFocusedWidgetDestroyed);
     }
   }
 
-  void Frame::OnFocusedWidgetDestroyed (AbstractWidget* widget)
+  void ToolBar::OnFocusedWidgetDestroyed (AbstractWidget* widget)
   {
     DBG_ASSERT(focused_widget_ == widget);
 
     //set_widget_focus_status(widget, false);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
+    widget->destroyed().disconnectOne(this, &ToolBar::OnFocusedWidgetDestroyed);
 
     focused_widget_ = 0;
   }
 
-  void Frame::OnHoverWidgetDestroyed (AbstractWidget* widget)
+  void ToolBar::OnHoverWidgetDestroyed (AbstractWidget* widget)
   {
     DBG_ASSERT(hovered_widget_ == widget);
 
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
+    widget->destroyed().disconnectOne(this, &ToolBar::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;
   }

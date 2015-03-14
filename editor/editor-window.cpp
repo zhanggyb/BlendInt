@@ -26,16 +26,22 @@
 namespace BlendInt {
 
   EditorWindow::EditorWindow (int width, int height, const char* name)
-  : Window(width, height, name), dev_msg_(0)
+  : Window(width, height, name),
+    toolbar_(0),
+    dev_msg_(0)
   {
+    toolbar_ = new ToolBar (0x808080FF, true, 20, 0);
+    toolbar_->Resize(size().width(), toolbar_->GetPreferredSize().height());
+    toolbar_->MoveTo(0, size().height() - toolbar_->size().height());
+    AddFrame(toolbar_);
 
     events()->connect(this->resized(), this, &EditorWindow::OnResize);
 
     // show a message box
     dev_msg_ = new MessageBox("Note", "This UI editor is still under development");
-    AddFrame(dev_msg_);
     dev_msg_->MoveTo((size().width() - dev_msg_->size().width()) / 2,
                  (size().height() - dev_msg_->size().height()) / 2);
+    AddFrame(dev_msg_);
     events()->connect(dev_msg_->destroyed(), this,
                       &EditorWindow::OnMessageBoxDestroyed);
   }
@@ -46,6 +52,9 @@ namespace BlendInt {
 
   void EditorWindow::OnResize (Window* window, const Size& size)
   {
+    toolbar_->Resize(size.width(), toolbar_->size().height());
+    toolbar_->MoveTo(0, size.height() - toolbar_->size().height());
+
     if (dev_msg_) {
       dev_msg_->MoveTo((size.width() - dev_msg_->size().width()) / 2,
                    (size.height() - dev_msg_->size().height()) / 2);

@@ -233,6 +233,41 @@ namespace BlendInt {
     }
   }
 
+  void AbstractButton::DrawIconText (const float* text_color_v,
+                                     short text_gamma,
+                                     const float* icon_color_v,
+                                     short icon_gamma)
+  {
+    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
+              size().width() - pixel_size(kPadding.hsum()),
+              size().height() - pixel_size(kPadding.vsum()));
+
+    if (icon_) {
+      if (icon_->size().height() <= rect.height()) {
+        if (icon_->size().width() <= rect.width()) {
+
+          int align = AlignVerticalCenter;
+          if (text_) {
+            align |= AlignLeft;
+          } else {
+            align |= AlignHorizontalCenter;
+          }
+
+          icon_->DrawInRect(rect, align, icon_color_v, icon_gamma);
+          rect.cut_left(icon_->size().width() + kIconTextSpace);
+        }
+      }
+    }
+
+    if (text_) {
+      if (text_->size().height() <= rect.height()) {
+        text_->DrawInRect(rect,
+                          AlignHorizontalCenter | AlignJustify | AlignBaseline,
+                          text_color_v, text_gamma);
+      }
+    }
+  }
+
   void AbstractButton::SetDown (bool down)
   {
     if (is_checkable()) {

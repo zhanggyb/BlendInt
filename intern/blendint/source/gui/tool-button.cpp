@@ -32,7 +32,7 @@ namespace BlendInt {
       : AbstractButton()
   {
     set_round_type(RoundAll);
-    set_size(24, 24);
+    set_size(48, 48);
 
     InitializeToolButton();
   }
@@ -51,10 +51,10 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (AbstractWindow::theme()->regular().shaded) {
+      if (AbstractWindow::theme()->tool().shaded) {
         GenerateRoundedVertices(Vertical,
-                                AbstractWindow::theme()->regular().shadetop,
-                                AbstractWindow::theme()->regular().shadedown,
+                                AbstractWindow::theme()->tool().shadedown,
+                                AbstractWindow::theme()->tool().shadetop,
                                 &inner_verts, &outer_verts);
       } else {
         GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -83,10 +83,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->regular().shaded) {
+    if (AbstractWindow::theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->regular().shadetop,
-                              AbstractWindow::theme()->regular().shadedown,
+                              AbstractWindow::theme()->tool().shadedown,
+                              AbstractWindow::theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -108,10 +108,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->regular().shaded) {
+    if (AbstractWindow::theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->regular().shadetop,
-                              AbstractWindow::theme()->regular().shadedown,
+                              AbstractWindow::theme()->tool().shadedown,
+                              AbstractWindow::theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -141,47 +141,43 @@ namespace BlendInt {
     AbstractWindow::shaders()->widget_inner_program()->use();
 
     if (is_down()) {
+
       glUniform1i(
           AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
       glUniform4fv(
           AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme()->regular().inner_sel.data());
-    } else {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-      glUniform4fv(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme()->regular().inner.data());
-    }
+          AbstractWindow::theme()->tool().inner_sel.data());
 
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+      glBindVertexArray(vao_[0]);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-    AbstractWindow::shaders()->widget_outer_program()->use();
+      AbstractWindow::shaders()->widget_outer_program()->use();
 
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
-        0.f, 0.f);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        AbstractWindow::theme()->regular().outline.data());
-
-    glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                 GetOutlineVertices(round_type()) * 2 + 2);
-
-    if (emboss()) {
-      glUniform4f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-          1.0f, 1.0f, 1.0f, 0.16f);
       glUniform2f(
           AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
-          0.f, -1.f);
+          0.f, 0.f);
+      glUniform4fv(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+          AbstractWindow::theme()->tool().outline.data());
+
+      glBindVertexArray(vao_[1]);
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                   GetHalfOutlineVertices(round_type()) * 2);
+                   GetOutlineVertices(round_type()) * 2 + 2);
+
+      if (emboss()) {
+        glUniform4f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+            1.0f, 1.0f, 1.0f, 0.16f);
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+            0.f, -1.f);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                     GetHalfOutlineVertices(round_type()) * 2);
+      }
+
     }
 
-    DrawIconText();
+    DrawAction();
 
     return Finish;
   }
@@ -230,11 +226,7 @@ namespace BlendInt {
 
   Size ToolButton::GetPreferredSize () const
   {
-    if (!text()) {
-      return Size(24, 24);
-    } else {
-      return Size(24, 24);
-    }
+    return Size(48, 48);
   }
 
   void ToolButton::InitializeToolButton ()
@@ -242,10 +234,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->regular().shaded) {
+    if (AbstractWindow::theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->regular().shadetop,
-                              AbstractWindow::theme()->regular().shadedown,
+                              AbstractWindow::theme()->tool().shadedown,
+                              AbstractWindow::theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -273,6 +265,38 @@ namespace BlendInt {
 
     glBindVertexArray(0);
     vbo_.reset();
+  }
+
+  void ToolButton::DrawAction ()
+  {
+    Rect rect(pixel_size(kPadding.left()),
+              pixel_size(kPadding.bottom()),
+              size().width() - pixel_size(kPadding.hsum()),
+              size().height() - pixel_size(kPadding.vsum()));
+
+    if (action_->icon()) {
+      if (action_->icon()->size().height() <= rect.height()) {
+        if (action_->icon()->size().width() <= rect.width()) {
+
+          int align = AlignCenter;
+//          if (action_->text()) {
+//            align |= AlignLeft;
+//          } else {
+//            align |= AlignHorizontalCenter;
+//          }
+
+          action_->icon()->DrawInRect(rect, align);
+          rect.cut_left(action_->icon()->size().width() + kIconTextSpace);
+        }
+      }
+    }
+
+//    if (action_->text()) {
+//      if (action_->text()->size().height() <= rect.height()) {
+//        action_->text()->DrawInRect(
+//            rect, AlignHorizontalCenter | AlignJustify | AlignBaseline);
+//      }
+//    }
   }
 
 }

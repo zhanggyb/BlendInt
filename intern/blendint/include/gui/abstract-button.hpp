@@ -146,6 +146,11 @@ namespace BlendInt {
 
     void DrawIconText ();
 
+    void DrawIconText (const float* text_color_v,
+                       short text_gamma,
+                       const float* icon_color_v = Color(0x1A1A1A20).data(),
+                       short icon_gamma = 0);
+
     inline void set_pressed (bool press)
     {
       if(press) {

@@ -28,178 +28,209 @@
 
 namespace BlendInt {
 
-	TabButton::TabButton ()
-	: AbstractButton()
-	{
-		set_size(80, 14);
-		set_checkable(true);
+  TabButton::TabButton ()
+  : AbstractButton()
+  {
+    set_checkable(true);
 
-		InitializeTabButton();
-	}
+    Font font;  // default font
+    int w = 80;
+    int h = font.height();
 
-	TabButton::TabButton (const String& text)
-	: AbstractButton()
-	{
-		set_size(80, 14);
-		set_checkable(true);
+    set_size(w + pixel_size(kPadding.hsum()),
+            h + pixel_size(kPadding.vsum()));
 
-		RefPtr<Text> t(new Text(text));
-		set_text(t);
+    InitializeTabButton();
+  }
 
-		InitializeTabButton();
-	}
+  TabButton::TabButton (const String& text)
+  : AbstractButton(text)
+  {
+    set_checkable(true);
 
-	BlendInt::TabButton::~TabButton ()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
+    int w = this->text()->size().width();
+    int h = this->text()->font().height();
+    if(w < 80) w = 80;
 
-	void TabButton::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			std::vector<GLfloat> inner;
-			std::vector<GLfloat> outer;
-			GenerateTabButtonVertices(*request.size(), default_border_width(),
-			        inner, outer);
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
 
-			vbo_.bind(0);
-			vbo_.set_data(sizeof(GLfloat) * inner.size(),
-			        &inner[0]);
+    set_size(w, h);
 
-			vbo_.bind(1);
-			vbo_.set_data(sizeof(GLfloat) * outer.size(),
-			        &outer[0]);
+    InitializeTabButton();
+  }
 
-			GLArrayBuffer::reset();
+  BlendInt::TabButton::~TabButton ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
 
-			set_size(*request.size());
-			RequestRedraw();
-		}
+  Size TabButton::GetPreferredSize () const
+  {
+    Size s = AbstractButton::GetPreferredSize();
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if(text()) {
+      if(s.width() < 80) {
+        s.set_width(80);
+      }
+    }
 
-	void TabButton::SetText (const String& text)
-	{
-		set_text(text);
-		RequestRedraw();
-	}
+    return s;
+  }
 
-	Response TabButton::Draw (AbstractWindow* context)
-	{
-		AbstractWindow::shaders()->widget_triangle_program()->use();
+  void TabButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      std::vector<GLfloat> inner;
+      std::vector<GLfloat> outer;
+      GenerateTabButtonVertices(*request.size(), default_border_width(), inner,
+                                outer);
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), 0.f, 0.f);
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+      vbo_.bind(0);
+      vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
-		// draw inner, simple fill
-		if (is_checked()) {
-			glVertexAttrib4f(AttributeColor, 0.447f, 0.447f, 0.447f, 1.0f);
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+      vbo_.bind(1);
+      vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
-			glBindVertexArray(vao_[0]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
-		} else {
-			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->tab().item.data());
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+      GLArrayBuffer::reset();
 
-			glBindVertexArray(vao_[0]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
-		}
+      set_size(*request.size());
+      RequestRedraw();
+    }
 
-		if (is_checked()) {
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
-			glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->tab().outline.data());
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-			glBindVertexArray(vao_[1]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
-		}
+  void TabButton::SetText (const String& text)
+  {
+    set_text(text);
+    RequestRedraw();
+  }
 
-		if(text()) {
-			// font().Print(0.f, 0.f, text(), text_length(), 0);
-		}
+  Response TabButton::Draw (AbstractWindow* context)
+  {
+    AbstractWindow::shaders()->widget_triangle_program()->use();
 
-		return Finish;
-	}
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+        0.f, 0.f);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
-	void TabButton::InitializeTabButton()
-	{
-		std::vector<GLfloat> inner;
-		std::vector<GLfloat> outer;
+    // draw inner, simple fill
+    if (is_checked()) {
+      glVertexAttrib4f(AttributeColor, 0.447f, 0.447f, 0.447f, 1.0f);
+      glUniform1i(
+          AbstractWindow::shaders()->location(
+              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+          0);
 
-		GenerateTabButtonVertices(size(), default_border_width(), inner, outer);
+      glBindVertexArray(vao_[0]);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
+    } else {
+      glVertexAttrib4fv(AttributeColor,
+                        AbstractWindow::theme()->tab().item.data());
+      glUniform1i(
+          AbstractWindow::shaders()->location(
+              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+          1);
 
-		glGenVertexArrays(2, vao_);
+      glBindVertexArray(vao_[0]);
+      glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
+    }
 
-		glBindVertexArray(vao_[0]);
+    if (is_checked()) {
+      glUniform1i(
+          AbstractWindow::shaders()->location(
+              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+          1);
+      glVertexAttrib4fv(AttributeColor,
+                        AbstractWindow::theme()->tab().outline.data());
 
-		vbo_.generate();
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
+      glBindVertexArray(vao_[1]);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
+    }
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    DrawIconText();
 
-		glBindVertexArray(vao_[1]);
+    return Finish;
+  }
 
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
+  void TabButton::InitializeTabButton ()
+  {
+    std::vector<GLfloat> inner;
+    std::vector<GLfloat> outer;
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    GenerateTabButtonVertices(size(), default_border_width(), inner, outer);
 
-		glBindVertexArray(0);
-		GLArrayBuffer::reset();
-	}
+    glGenVertexArrays(2, vao_);
 
-	void TabButton::GenerateTabButtonVertices (const Size& size, float border,
-					std::vector<GLfloat>& inner, std::vector<GLfloat>& outer)
-	{
-		int amp = size.height() / 2;
-		int shift_x = 5;
-		border = AbstractWindow::theme()->pixel() * border;
+    glBindVertexArray(vao_[0]);
 
-		if (inner.size() != 2 * 11 * 2)
-			inner.resize(2 * 11 * 2);
+    vbo_.generate();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
 
-		size_t count = 0;
-		for (int i = 0; i <= 10; i++, count += 4) {
-			inner[count + 0] = i;
-			inner[count + 1] = sin_curve(i, amp, -shift_x, -border);
-			inner[count + 2] = size.width() - i;
-			inner[count + 3] = inner[count + 1];
-		}
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		if (outer.size() != 2 * 11 * 2 * 2)
-			outer.resize(2 * 11 * 2 * 2);
+    glBindVertexArray(vao_[1]);
 
-		count = 0;
-		for (int i = 0; i <= 10; i++, count += 4) {
-			outer[count + 0] = i;
-			outer[count + 1] = sin_curve(i, amp, -shift_x, 0.0);
-			outer[count + 2] = i;
-			outer[count + 3] = outer[count + 1] - border;
-		}
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
 
-		for (int i = 0; i <= 10; i++, count += 4) {
-			outer[count + 0] = size.width() - outer[4 * (10 - i) + 0];
-			outer[count + 1] = outer[4 * (10 - i) + 1];
-			outer[count + 2] = size.width() - outer[4 * (10 - i) + 2];
-			outer[count + 3] = outer[4 * (10 - i) + 3];
-		}
-	}
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	inline double TabButton::sin_curve (double x, double amplitude,
-					double shift_x, double shift_y)
-	{
-		return amplitude * sin((x + shift_x) / M_PI) + amplitude + shift_y;
-	}
-	
-	Size TabButton::GetPreferredSize () const
-	{
-		return Size(80, 14);
-	}
+    glBindVertexArray(0);
+    GLArrayBuffer::reset();
+  }
+
+  void TabButton::GenerateTabButtonVertices (const Size& size,
+                                             float border,
+                                             std::vector<GLfloat>& inner,
+                                             std::vector<GLfloat>& outer)
+  {
+    int amp = size.height() / 2;
+    int shift_x = 5;
+    border = AbstractWindow::theme()->pixel() * border;
+
+    if (inner.size() != 2 * 11 * 2) inner.resize(2 * 11 * 2);
+
+    size_t count = 0;
+    for (int i = 0; i <= 10; i++, count += 4) {
+      inner[count + 0] = i;
+      inner[count + 1] = sin_curve(i, amp, -shift_x, -border);
+      inner[count + 2] = size.width() - i;
+      inner[count + 3] = inner[count + 1];
+    }
+
+    if (outer.size() != 2 * 11 * 2 * 2) outer.resize(2 * 11 * 2 * 2);
+
+    count = 0;
+    for (int i = 0; i <= 10; i++, count += 4) {
+      outer[count + 0] = i;
+      outer[count + 1] = sin_curve(i, amp, -shift_x, 0.0);
+      outer[count + 2] = i;
+      outer[count + 3] = outer[count + 1] - border;
+    }
+
+    for (int i = 0; i <= 10; i++, count += 4) {
+      outer[count + 0] = size.width() - outer[4 * (10 - i) + 0];
+      outer[count + 1] = outer[4 * (10 - i) + 1];
+      outer[count + 2] = size.width() - outer[4 * (10 - i) + 2];
+      outer[count + 3] = outer[4 * (10 - i) + 3];
+    }
+  }
+
+  inline double TabButton::sin_curve (double x,
+                                      double amplitude,
+                                      double shift_x,
+                                      double shift_y)
+  {
+    return amplitude * sin((x + shift_x) / M_PI) + amplitude + shift_y;
+  }
 
 }

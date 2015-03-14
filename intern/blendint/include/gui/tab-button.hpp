@@ -34,59 +34,63 @@ namespace BlendInt {
    *
    * @ingroup blendint_gui_widgets_buttons
    */
-	class TabButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(TabButton);
+  class TabButton: public AbstractButton
+  {
+  DISALLOW_COPY_AND_ASSIGN(TabButton);
 
-	public:
+  public:
 
-		TabButton ();
+    TabButton ();
 
-		TabButton (const String& text);
+    TabButton (const String& text);
 
-		virtual ~TabButton ();
+    virtual ~TabButton ();
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
 #ifdef DEBUG
 
-		void GenerateTabButtonVertices (const Size& size, float border,
-						std::vector<GLfloat>& inner,
-						std::vector<GLfloat>& outer);
+    void GenerateTabButtonVertices (const Size& size,
+                                    float border,
+                                    std::vector<GLfloat>& inner,
+                                    std::vector<GLfloat>& outer);
 
 #endif
 
-		void SetText (const String& text);
+    void SetText (const String& text);
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) override;
 
 #ifndef DEBUG
 
-		void GenerateTabButtonVertices (const Size& size, float border,
-						std::vector<GLfloat>& inner,
-						std::vector<GLfloat>& outer);
+    void GenerateTabButtonVertices (const Size& size, float border,
+        std::vector<GLfloat>& inner,
+        std::vector<GLfloat>& outer);
 
 #endif
 
-		inline double sin_curve (double x, double amplitude, double shift_x, double shift_y);
+    inline double sin_curve (double x,
+                             double amplitude,
+                             double shift_x,
+                             double shift_y);
 
-	private:
+  private:
 
-		void InitializeTabButton ();
+    void InitializeTabButton ();
 
-		/**
-		 * @brief Vertex Arrays for widget
-		 *
-		 * [0] - for inner buffer
-		 * [1] - for outline buffer
-		 */
-		GLuint vao_[2];
+    /**
+     * @brief Vertex Arrays for widget
+     *
+     * [0] - for inner buffer
+     * [1] - for outline buffer
+     */
+    GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
-	};
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  };
 
 }

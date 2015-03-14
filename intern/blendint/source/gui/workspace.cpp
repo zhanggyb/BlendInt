@@ -148,10 +148,10 @@ namespace BlendInt {
 
   Workspace::Workspace ()
   : AbstractFrame(),
-    left_sidebar_(0),
-    right_sidebar_(0),
-    header_(0),
-    viewport_(0),
+    left_frame_(0),
+    right_frame_(0),
+    header_frame_(0),
+    main_frame_(0),
     splitter_(0),
     hover_frame_(0),
     focused_frame_(0),
@@ -167,83 +167,88 @@ namespace BlendInt {
   {
   }
 
-  void Workspace::SetViewport (AbstractFrame* viewport)
+  void Workspace::SetMainFrame (AbstractFrame* frame)
   {
-    if ((viewport == nullptr) || (viewport == viewport_)) return;
+    if ((frame == nullptr) || (frame == main_frame_)) return;
 
-    /*
-     if(viewport_)
-     splitter_->Remove(viewport_);
-     */
+    if (main_frame_) {
+      delete main_frame_;
+    }
 
-    splitter_->AddFrame(viewport);
-    viewport_ = viewport;
+    if (left_frame_) {
+      splitter_->InsertFrame(1, frame);
+    } else {
+      splitter_->InsertFrame(0, frame);
+    }
 
-    DBG_PRINT_MSG("viewport size: %d %d", viewport_->size().width(),
-                  viewport_->size().height());
+    main_frame_ = frame;
+
+    DBG_PRINT_MSG("viewport size: %d %d", main_frame_->size().width(),
+                  main_frame_->size().height());
     RequestRedraw();
   }
 
-  void Workspace::SetLeftSideBar (Frame* leftbar)
+  void Workspace::SetLeftFrame (Frame* frame)
   {
-    if ((leftbar == nullptr) || (leftbar == left_sidebar_)) return;
+    if ((frame == nullptr) || (frame == left_frame_)) return;
 
-    /*
-     if(left_sidebar_)
-     splitter_->Remove(left_sidebar_);
-     */
+    if (left_frame_) {
+      delete left_frame_;
+    }
 
-    splitter_->AddFrame(leftbar);
-    left_sidebar_ = leftbar;
+    splitter_->InsertFrame(0, frame);
+    left_frame_ = frame;
     RequestRedraw();
   }
 
-  void Workspace::SetRightSideBar (Frame* rightbar)
+  void Workspace::SetRightFrame (Frame* rightbar)
   {
-    if ((rightbar == nullptr) || (rightbar == right_sidebar_)) return;
+    if ((rightbar == nullptr) || (rightbar == right_frame_)) return;
 
-    /*
-     if(right_sidebar_)
-     splitter_->Remove(right_sidebar_);
-     */
+    if (right_frame_) {
+      delete right_frame_;
+    }
 
     splitter_->AddFrame(rightbar);
-    right_sidebar_ = rightbar;
-
+    right_frame_ = rightbar;
     RequestRedraw();
   }
 
-  void Workspace::SetHeader (Frame* header, bool append)
+  void Workspace::SetHeaderFrame (Frame* header, bool append)
   {
-    if ((header == nullptr) || (header_ == header)) return;
+    if ((header == nullptr) || (header_frame_ == header)) return;
 
-    header_ = header;
+    if (header_frame_) {
+      delete header_frame_;
+    }
+
+    header_frame_ = header;
 
     if (append) {
 
-      if (PushBackSubView(header_)) {
-        Size prefer = header_->GetPreferredSize();
-        ResizeSubView(header_, size().width(), prefer.height());
+      if (PushBackSubView(header_frame_)) {
+        Size prefer = header_frame_->GetPreferredSize();
+        ResizeSubView(header_frame_, size().width(), prefer.height());
         ResizeSubView(splitter_, size().width(),
                       size().height() - prefer.height());
 
-        MoveSubViewTo(header_, position());
+        MoveSubViewTo(header_frame_, position());
         MoveSubViewTo(splitter_, position().x(),
-                      position().y() + header_->size().height());
+                      position().y() + header_frame_->size().height());
       } else {
         DBG_PRINT_MSG("Error: %s", "cannot add header frame");
       }
 
     } else {
 
-      if (PushFrontSubView(header_)) {
-        Size prefer = header_->GetPreferredSize();
-        ResizeSubView(header_, size().width(), prefer.height());
+      if (PushFrontSubView(header_frame_)) {
+        Size prefer = header_frame_->GetPreferredSize();
+        ResizeSubView(header_frame_, size().width(), prefer.height());
         ResizeSubView(splitter_, size().width(),
                       size().height() - prefer.height());
 
         MoveSubViewTo(splitter_, position());
-        MoveSubViewTo(header_, position().x(),
+        MoveSubViewTo(header_frame_, position().x(),
                       position().y() + splitter_->size().height());
       } else {
         DBG_PRINT_MSG("Error: %s", "cannot add header frame");
@@ -256,22 +261,22 @@ namespace BlendInt {
 
   void Workspace::SwitchHeaderPosition ()
   {
-    if (header_) {
+    if (header_frame_) {
 
-      if (first_subview() == header_) {
+      if (first_subview() == header_frame_) {
 
-        MoveToLast(header_);
+        MoveToLast(header_frame_);
 
-        MoveSubViewTo(header_, position());
+        MoveSubViewTo(header_frame_, position());
         MoveSubViewTo(splitter_, position().x(),
-                      position().y() + header_->size().height());
+                      position().y() + header_frame_->size().height());
 
       } else {
 
-        MoveToFirst(header_);
+        MoveToFirst(header_frame_);
 
         MoveSubViewTo(splitter_, position());
-        MoveSubViewTo(header_, position().x(),
+        MoveSubViewTo(header_frame_, position().x(),
                       position().y() + splitter_->size().height());
 
       }
@@ -341,22 +346,22 @@ namespace BlendInt {
     if (request.target() == this) {
       set_size(*request.size());
 
-      if (header_) {
+      if (header_frame_) {
 
-        Size prefer = header_->GetPreferredSize();
+        Size prefer = header_frame_->GetPreferredSize();
 
-        ResizeSubView(header_, size().width(), prefer.height());
+        ResizeSubView(header_frame_, size().width(), prefer.height());
         ResizeSubView(splitter_, size().width(),
-                      size().height() - header_->size().height());
+                      size().height() - header_frame_->size().height());
 
-        if (first_subview() == header_) {
+        if (first_subview() == header_frame_) {
           MoveSubViewTo(splitter_, position());
-          MoveSubViewTo(header_, position().x(),
+          MoveSubViewTo(header_frame_, position().x(),
                         position().y() + splitter_->size().height());
         } else {
-          MoveSubViewTo(header_, position());
+          MoveSubViewTo(header_frame_, position());
           MoveSubViewTo(splitter_, position().x(),
-                        position().y() + header_->size().height());
+                        position().y() + header_frame_->size().height());
         }
 
       } else {
@@ -497,11 +502,6 @@ namespace BlendInt {
     MoveSubViewTo(splitter_, position());
   }
 
-  AbstractView* Workspace::GetFocusedView () const
-  {
-    return focused_frame_;
-  }
-
   void Workspace::SetFocusedFrame (AbstractFrame* frame,
                                    AbstractWindow* context)
   {
@@ -519,14 +519,14 @@ namespace BlendInt {
 
   bool Workspace::RemoveSubView (AbstractView* view)
   {
-    if (view == left_sidebar_) {
-      left_sidebar_ = nullptr;
-    } else if (view == right_sidebar_) {
-      right_sidebar_ = nullptr;
-    } else if (view == header_) {
-      header_ = nullptr;
-    } else if (view == viewport_) {
-      viewport_ = nullptr;
+    if (view == left_frame_) {
+      left_frame_ = nullptr;
+    } else if (view == right_frame_) {
+      right_frame_ = nullptr;
+    } else if (view == header_frame_) {
+      header_frame_ = nullptr;
+    } else if (view == main_frame_) {
+      main_frame_ = nullptr;
     }
 
     if (view == hover_frame_) {
