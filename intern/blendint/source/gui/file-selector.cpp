@@ -243,7 +243,7 @@ namespace BlendInt {
         return Finish;
 	}
 
-	void FileSelector::OnClose(AbstractButton* sender)
+	void FileSelector::OnClose()
 	{
 		AbstractView* super = superview();
 		delete this;
@@ -251,33 +251,33 @@ namespace BlendInt {
 		super->RequestRedraw();
 	}
 
-	void FileSelector::OnOpenParent (AbstractButton* sender)
+	void FileSelector::OnOpenParent ()
 	{
 		if(browser_->OpenParent()) {
 			path_entry_->SetText(browser_->pathname());
 		}
 	}
 
-	void FileSelector::OnGoBackward (AbstractButton* sender)
+	void FileSelector::OnGoBackward ()
 	{
 		if(browser_->GoBackward()) {
 			path_entry_->SetText(browser_->pathname());
 		}
 	}
 
-	void FileSelector::OnGoForward (AbstractButton* sender)
+	void FileSelector::OnGoForward ()
 	{
 		if(browser_->GoForward()) {
 			path_entry_->SetText(browser_->pathname());
 		}
 	}
 
-	void FileSelector::OnReload (AbstractButton* sender)
+	void FileSelector::OnReload ()
 	{
 		browser_->Open(browser_->pathname());
 	}
 
-	void FileSelector::OnOpen(AbstractButton* sender)
+	void FileSelector::OnOpen()
 	{
 		// TODO: check directory mode or file mode
 		if(!browser_->file_selected().empty()) {

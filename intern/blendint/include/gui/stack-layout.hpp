@@ -21,62 +21,59 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
-#define _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_
+#pragma once
 
 #include <gui/abstract-layout.hpp>
 
 namespace BlendInt {
 
-	class StackLayout: public AbstractLayout
-	{
-		DISALLOW_COPY_AND_ASSIGN(StackLayout);
+  class StackLayout: public AbstractLayout
+  {
+  DISALLOW_COPY_AND_ASSIGN(StackLayout);
 
-	public:
+  public:
 
-		StackLayout ();
+    StackLayout ();
 
-		virtual ~StackLayout ();
+    virtual ~StackLayout ();
 
-		virtual bool AddWidget (AbstractWidget* widget);
+    virtual bool AddWidget (AbstractWidget* widget);
 
-		virtual bool InsertWidget (int index, AbstractWidget* widget);
+    virtual bool InsertWidget (int index, AbstractWidget* widget);
 
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-		virtual void Adjust () const;
+    virtual void Adjust () const;
 
-		void Remove (AbstractWidget* widget);
+    void Remove (AbstractWidget* widget);
 
-		int GetIndex () const;
+    int GetIndex () const;
 
-		void SetIndex (int index);
+    void SetIndex (int index);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		inline AbstractWidget* active_widget () const
-		{
-			return active_widget_;
-		}
+    inline AbstractWidget* active_widget () const
+    {
+      return active_widget_;
+    }
 
-	protected:
+  protected:
 
-		virtual void PerformMarginUpdate (const Margin& request);
+    virtual void PerformMarginUpdate (const Margin& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void HideSubWidget (int index);
+    void HideSubWidget (int index);
 
-	private:
+  private:
 
-		AbstractWidget* active_widget_;
+    AbstractWidget* active_widget_;
 
-	};
+  };
 
 }
-
-#endif /* _BLENDINT_GUI_SINGLESTACKLAYOUT_HPP_ */

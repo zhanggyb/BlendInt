@@ -40,7 +40,7 @@ namespace BlendInt {
 
   private:
 
-    void OnResize (Window* window, const Size& size);
+    void OnResize (const Size& size);
 
     void OnMessageBoxDestroyed (AbstractFrame* sender);
 

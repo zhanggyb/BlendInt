@@ -25,229 +25,223 @@
 
 namespace BlendInt {
 
+  StackLayout::StackLayout ()
+  : AbstractLayout(), active_widget_(0)
+  {
+  }
 
-	StackLayout::StackLayout ()
-	: AbstractLayout(),
-	  active_widget_(0)
-	{
-	}
+  StackLayout::~StackLayout ()
+  {
+  }
 
-	StackLayout::~StackLayout ()
-	{
-	}
+  bool StackLayout::AddWidget (AbstractWidget* widget)
+  {
+    if (PushBackSubView(widget)) {
+      int w = size().width() - margin().hsum();
+      int h = size().height() - margin().vsum();
 
-	bool StackLayout::AddWidget (AbstractWidget* widget)
-	{
-		if(PushBackSubView(widget)) {
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
+      ResizeSubView(widget, w, h);
+      MoveSubViewTo(widget, margin().left(), margin().bottom());
 
-			ResizeSubView(widget, w, h);
-			MoveSubViewTo(widget, margin().left(), margin().bottom());
+      if (subs_count() == 1) {
+        active_widget_ = widget;
+        active_widget_->SetVisible(true);
+      } else {
+        widget->SetVisible(false);
+      }
 
-			if(subs_count() == 1) {
-				active_widget_ = widget;
-				active_widget_->SetVisible(true);
-			} else {
-				widget->SetVisible(false);
-			}
+      return true;
+    }
 
-			return true;
-		}
+    return false;
+  }
 
-		return false;
-	}
+  bool StackLayout::InsertWidget (int index, AbstractWidget* widget)
+  {
+    if (InsertSubView(index, widget)) {
+      int w = size().width() - margin().hsum();
+      int h = size().height() - margin().vsum();
 
-	bool StackLayout::InsertWidget (int index, AbstractWidget* widget)
-	{
-		if(InsertSubView(index, widget)) {
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
+      ResizeSubView(widget, w, h);
+      MoveSubViewTo(widget, margin().left(), margin().bottom());
 
-			ResizeSubView(widget, w, h);
-			MoveSubViewTo(widget, margin().left(), margin().bottom());
+      widget->SetVisible(false);
 
-			widget->SetVisible(false);
+      RequestRedraw();
+      return true;
+    }
 
-			return true;
-		}
+    return false;
+  }
 
-		return false;
-	}
+  bool StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
+  {
+    if (PushFrontSubView(widget)) {
+      int w = size().width() - margin().hsum();
+      int h = size().height() - margin().vsum();
 
-	bool StackLayout::InsertWidget (int row, int column, AbstractWidget* widget)
-	{
-		if(PushFrontSubView(widget)) {
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
+      ResizeSubView(widget, w, h);
+      MoveSubViewTo(widget, margin().left(), margin().bottom());
 
-			ResizeSubView(widget, w, h);
-			MoveSubViewTo(widget, margin().left(), margin().bottom());
+      if (subs_count() == 1) {
+        active_widget_ = widget;
+        active_widget_->SetVisible(true);
+      } else {
+        widget->SetVisible(false);
+      }
 
-			if(subs_count() == 1) {
-				active_widget_ = widget;
-				active_widget_->SetVisible(true);
-			} else {
-				widget->SetVisible(false);
-			}
+      RequestRedraw();
+      return true;
+    }
 
-			return true;
-		}
+    return false;
+  }
 
-		return false;
-	}
+  void StackLayout::Adjust () const
+  {
 
-	void StackLayout::Adjust() const
-	{
+  }
 
-	}
+  void StackLayout::Remove (AbstractWidget* widget)
+  {
+    if (RemoveSubView(widget)) {
 
-	void StackLayout::Remove (AbstractWidget* widget)
-	{
-		if(RemoveSubView(widget)) {
+      if (active_widget_ == widget) {
 
-			if(active_widget_ == widget) {
+        if (subs_count() == 0) {
+          active_widget_ = 0;
+        } else {
+          active_widget_ = dynamic_cast<AbstractWidget*>(first_subview());
+          active_widget_->SetVisible(true);
+        }
 
-				if(subs_count() == 0) {
-					active_widget_ = 0;
-				} else {
-					active_widget_ = dynamic_cast<AbstractWidget*>(first_subview());
-					active_widget_->SetVisible(true);
-				}
+      }
 
-			}
-		}
-	}
+      RequestRedraw();
+    }
+  }
 
-	int StackLayout::GetIndex () const
-	{
-		int index = 0;
+  int StackLayout::GetIndex () const
+  {
+    int index = 0;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p == active_widget_) {
-				break;
-			}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      if (p == active_widget_) {
+        break;
+      }
 
-			index++;
-		}
+      index++;
+    }
 
-		if(index >= subs_count()) index = -1;
+    if (index >= subs_count()) index = -1;
 
-		return index;
-	}
+    return index;
+  }
 
-	void StackLayout::SetIndex (int index)
-	{
-		int count = subs_count();
+  void StackLayout::SetIndex (int index)
+  {
+    int count = subs_count();
 
-		if(index > (count - 1)) return;
+    if (index > (count - 1)) return;
 
-		if(count) {
+    if (count) {
 
-			AbstractView* widget = GetSubViewAt(index);
-			if(active_widget_ == widget) {
-				return;
-			}
+      AbstractView* widget = GetSubViewAt(index);
+      if (active_widget_ == widget) {
+        return;
+      }
 
-			active_widget_->SetVisible(false);
-			active_widget_ = dynamic_cast<AbstractWidget*>(widget);
-			active_widget_->SetVisible(true);
-		}
-	}
+      active_widget_->SetVisible(false);
+      active_widget_ = dynamic_cast<AbstractWidget*>(widget);
+      active_widget_->SetVisible(true);
+    }
+  }
 
-	bool StackLayout::IsExpandX () const
-	{
-		bool ret = false;
+  bool StackLayout::IsExpandX () const
+  {
+    bool ret = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandX()) {
-				ret = true;
-				break;
-			}
-		}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      if (p->IsExpandX()) {
+        ret = true;
+        break;
+      }
+    }
 
-		return ret;
-	}
+    return ret;
+  }
 
-	bool StackLayout::IsExpandY () const
-	{
-		bool ret = false;
+  bool StackLayout::IsExpandY () const
+  {
+    bool ret = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandY()) {
-				ret = true;
-				break;
-			}
-		}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      if (p->IsExpandY()) {
+        ret = true;
+        break;
+      }
+    }
 
-		return ret;
-	}
+    return ret;
+  }
 
-	Size StackLayout::GetPreferredSize () const
-	{
-		Size prefer(400, 300);
+  Size StackLayout::GetPreferredSize () const
+  {
+    if (subs_count()) {
 
-		if(first_subview()) {
+      int w = 0;
+      int h = 0;
 
-			prefer.set_width(0);
-			prefer.set_height(0);
+      Size tmp;
+      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        tmp = p->GetPreferredSize();
+        w = std::max(w, tmp.width());
+        h = std::max(h, tmp.height());
+      }
 
-			Size tmp;
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
-			{
-				tmp = p->GetPreferredSize();
-				prefer.set_width(std::max(prefer.width(), tmp.width()));
-				prefer.set_height(std::max(prefer.height(), tmp.height()));
-			}
+      return Size(w, h);
 
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
+    } else {
+      return Size(400, 300);
+    }
+  }
 
-		}
+  void StackLayout::PerformMarginUpdate (const Margin& request)
+  {
+    int w = size().width() - request.hsum();
+    int h = size().height() - request.vsum();
 
-		return prefer;
-	}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      ResizeSubView(p, w, h);
+    }
+  }
 
-	void StackLayout::PerformMarginUpdate (const Margin& request)
-	{
-		int w = size().width() - request.hsum();
-		int h = size().height() - request.vsum();
+  void StackLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-		for (AbstractView* p = first_subview(); p; p = p->next_view()) {
-			ResizeSubView(p, w, h);
-		}
-	}
+      int w = request.size()->width() - margin().hsum();
+      int h = request.size()->height() - margin().vsum();
 
-	void StackLayout::PerformSizeUpdate (
-			const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
+      set_size(*request.size());
 
-			int w = request.size()->width() - margin().hsum();
-			int h = request.size()->height() - margin().vsum();
+      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        ResizeSubView(p, w, h);
+      }
 
-			set_size(*request.size());
+    }
 
-			for (AbstractView* p = first_subview(); p; p = p->next_view()) {
-				ResizeSubView(p, w, h);
-			}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-		}
-
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
-
-	void BlendInt::StackLayout::HideSubWidget (int index)
-	{
-		if(subs_count() && index < (subs_count() - 1)) {
-			AbstractView* p = GetSubViewAt(index);
-			p->SetVisible(false);
-		}
-	}
+  void BlendInt::StackLayout::HideSubWidget (int index)
+  {
+    if (subs_count() && index < (subs_count() - 1)) {
+      AbstractView* p = GetSubViewAt(index);
+      p->SetVisible(false);
+    }
+  }
 
 }

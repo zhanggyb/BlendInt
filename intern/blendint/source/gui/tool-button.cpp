@@ -29,7 +29,8 @@
 namespace BlendInt {
 
   ToolButton::ToolButton ()
-      : AbstractButton()
+  : AbstractButton(),
+    hover_(false)
   {
     set_round_type(RoundAll);
     set_size(48, 48);
@@ -128,12 +129,21 @@ namespace BlendInt {
 
   void ToolButton::PerformHoverIn (AbstractWindow* context)
   {
-    RequestRedraw();
+    if (!hover_) {
+      hover_ = true;
+      RequestRedraw();
+    }
+    return AbstractButton::PerformHoverIn(context);
   }
 
   void ToolButton::PerformHoverOut (AbstractWindow* context)
   {
-    RequestRedraw();
+    if (hover_) {
+      hover_ = false;
+      RequestRedraw();
+    }
+
+    return AbstractButton::PerformHoverOut(context);
   }
 
   Response ToolButton::Draw (AbstractWindow* context)
@@ -173,6 +183,36 @@ namespace BlendInt {
             0.f, -1.f);
         glDrawArrays(GL_TRIANGLE_STRIP, 0,
                      GetHalfOutlineVertices(round_type()) * 2);
+      }
+
+    } else {
+
+      if (hover_) {
+
+        AbstractWindow::shaders()->widget_outer_program()->use();
+
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+            0.f, 0.f);
+        glUniform4fv(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+            AbstractWindow::theme()->tool().outline.data());
+
+        glBindVertexArray(vao_[1]);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                     GetOutlineVertices(round_type()) * 2 + 2);
+
+        if (emboss()) {
+          glUniform4f(
+              AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+              1.0f, 1.0f, 1.0f, 0.16f);
+          glUniform2f(
+              AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+              0.f, -1.f);
+          glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                       GetHalfOutlineVertices(round_type()) * 2);
+        }
+
       }
 
     }
@@ -269,6 +309,8 @@ namespace BlendInt {
 
   void ToolButton::DrawAction ()
   {
+    if (!action_) return;
+
     Rect rect(pixel_size(kPadding.left()),
               pixel_size(kPadding.bottom()),
               size().width() - pixel_size(kPadding.hsum()),

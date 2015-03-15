@@ -67,7 +67,7 @@ namespace BlendInt {
 
     void InitializeColorButton ();
 
-    void OnClick (AbstractButton* sender);
+    void OnClick ();
 
     void OnSelectorDestroyed (AbstractFrame* sender);
 

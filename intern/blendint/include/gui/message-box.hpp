@@ -58,7 +58,7 @@ namespace BlendInt {
 
   private:
 
-    void OnClose (AbstractButton* btn);
+    void OnClose ();
 
     GLuint vao_[2];
 

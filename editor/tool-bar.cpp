@@ -27,10 +27,10 @@
 
 #include <gui/radio-button.hpp>
 #include <gui/block.hpp>
-#include <gui/abstract-window.hpp>
-
+#include <gui/tool-button.hpp>
 #include <gui/linear-layout.hpp>
 #include <gui/separator.hpp>
+#include <gui/abstract-window.hpp>
 
 #include "tool-bar.hpp"
 
@@ -52,36 +52,10 @@ namespace BlendInt {
     focused_(false),
     hover_(false),
     pressed_(false),
-    cursor_position_(InsideRectangle)
+    cursor_position_(InsideRectangle),
+    stack_(0)
   {
     layout_ = new LinearLayout(Vertical);
-
-    // Add widgets
-    RadioButton* b1 = new RadioButton("Home");
-    RadioButton* b2 = new RadioButton("Interface");
-    RadioButton* b3 = new RadioButton("Theme");
-    RadioButton* b4 = new RadioButton("Setting");
-    RadioButton* b5 = new RadioButton("Help");
-
-    Block* block = new Block(Horizontal);
-    block->AddWidget(b1);
-    block->AddWidget(b2);
-    block->AddWidget(b3);
-    block->AddWidget(b4);
-    block->AddWidget(b5);
-
-    LinearLayout* hlayout = new LinearLayout(Horizontal);
-    hlayout->SetMargin(Margin(0, 0, 0, 0));
-    Separator* sp1 = new Separator(true);
-    Separator* sp2 = new Separator(true);
-
-    hlayout->AddWidget(sp1);
-    hlayout->AddWidget(block);
-    hlayout->AddWidget(sp2);
-
-    layout_->AddWidget(hlayout);
-
-    layout_->Resize(layout_->GetPreferredSize());
 
     PushBackSubView(layout_);
     RequestRedraw();
@@ -90,6 +64,8 @@ namespace BlendInt {
 
     InitializeToolBar();
     shadow_.reset(new FrameShadow(size(), RoundNone, 5.f));
+
+    events()->connect(radio_group_.button_index_toggled(), this, &ToolBar::OnToggleStack);
   }
 
   ToolBar::~ToolBar ()
@@ -100,6 +76,16 @@ namespace BlendInt {
   Size ToolBar::GetPreferredSize () const
   {
     return layout_->GetPreferredSize();
+  }
+
+  void ToolBar::LoadTools ()
+  {
+    layout_->AddWidget(CreateRadioLayout());
+
+    stack_ = CreateStack();
+    layout_->AddWidget(stack_);
+
+    Resize(layout_->GetPreferredSize());
   }
 
   bool ToolBar::SizeUpdateTest (const SizeUpdateRequest& request)
@@ -412,6 +398,72 @@ namespace BlendInt {
     vbo_.reset();
   }
 
+  LinearLayout* ToolBar::CreateRadioLayout ()
+  {
+    // Add widgets
+    RadioButton* b1 = new RadioButton("Home");
+    RadioButton* b2 = new RadioButton("Interface");
+    RadioButton* b3 = new RadioButton("Theme");
+    RadioButton* b4 = new RadioButton("Setting");
+    RadioButton* b5 = new RadioButton("Help");
+
+    radio_group_.AddButton(b1);
+    radio_group_.AddButton(b2);
+    radio_group_.AddButton(b3);
+    radio_group_.AddButton(b4);
+    radio_group_.AddButton(b5);
+
+    Block* block = new Block(Horizontal);
+    block->AddWidget(b1);
+    block->AddWidget(b2);
+    block->AddWidget(b3);
+    block->AddWidget(b4);
+    block->AddWidget(b5);
+
+    LinearLayout* hlayout = new LinearLayout(Horizontal);
+    hlayout->SetMargin(Margin(0, 0, 0, 0));
+    Separator* sp1 = new Separator(true);
+    Separator* sp2 = new Separator(true);
+
+    hlayout->AddWidget(sp1);
+    hlayout->AddWidget(block);
+    hlayout->AddWidget(sp2);
+
+    b1->SetChecked(true);
+
+    return hlayout;
+  }
+
+  Stack* ToolBar::CreateStack()
+  {
+    Stack* stack = new Stack;
+
+    LinearLayout* l1 = new LinearLayout(Horizontal, AlignLeft);
+    ToolButton* btn1 = new ToolButton;
+    btn1->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CIRCLE), "Circle");
+    ToolButton* btn2 = new ToolButton;
+    btn2->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CONE), "Cone");
+
+    l1->AddWidget(btn1);
+    l1->AddWidget(btn2);
+    l1->AddWidget(new Separator(true));
+
+    LinearLayout* l2 = new LinearLayout(Horizontal, AlignLeft);
+    ToolButton* btn3 = new ToolButton;
+    btn3->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CUBE), "Cube");
+    ToolButton* btn4 = new ToolButton;
+    btn4->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CYLINDER), "Cylinder");
+
+    l2->AddWidget(btn3);
+    l2->AddWidget(btn4);
+    l2->AddWidget(new Separator(true));
+
+    stack->AddWidget(l1);
+    stack->AddWidget(l2);
+
+    return stack;
+  }
+
   void ToolBar::SetFocusedWidget (AbstractWidget* widget,
                                   AbstractWindow* context)
   {
@@ -450,6 +502,12 @@ namespace BlendInt {
     widget->destroyed().disconnectOne(this, &ToolBar::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;
+  }
+
+  void ToolBar::OnToggleStack (int index, bool toggled)
+  {
+    DBG_PRINT_MSG("switch widget in stack: %d", index);
+    if(stack_) stack_->SetIndex(index);
   }
 
 }

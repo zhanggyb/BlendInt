@@ -342,7 +342,7 @@ namespace BlendInt {
         glfwSetWindowSizeCallback(window_, &CbWindowSize);
       }
 
-      resized_.fire(this, size());
+      resized_.fire(size());
     }
   }
 

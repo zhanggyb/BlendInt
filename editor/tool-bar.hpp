@@ -26,6 +26,8 @@
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/linear-layout.hpp>
+#include <gui/button-group.hpp>
+#include <gui/stack.hpp>
 #include <gui/abstract-frame.hpp>
 #include <gui/frame-shadow.hpp>
 
@@ -42,7 +44,9 @@ namespace BlendInt {
 
     virtual ~ToolBar ();
 
-    virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const override;
+
+    void LoadTools ();
 
   protected:
 
@@ -78,11 +82,17 @@ namespace BlendInt {
 
     void InitializeToolBar ();
 
+    LinearLayout* CreateRadioLayout ();
+
+    Stack* CreateStack ();
+
     void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
     void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
     void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
+    void OnToggleStack (int index, bool toggled);
 
     glm::mat4 projection_matrix_;
 
@@ -116,6 +126,10 @@ namespace BlendInt {
     bool pressed_;
 
     int cursor_position_;
+
+    ButtonGroup radio_group_;
+
+    Stack* stack_;
   };
 
 }

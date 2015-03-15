@@ -133,7 +133,7 @@ namespace BlendInt {
 
       RequestRedraw();
 
-      pressed_.fire(this);
+      pressed_.fire();
     }
 
     return Finish;
@@ -165,7 +165,7 @@ namespace BlendInt {
           if (group_) {
             group_->Click(this);
           } else {
-            clicked_.fire(this);
+            clicked_.fire();
           }
           break;
         }
@@ -176,7 +176,7 @@ namespace BlendInt {
             if (group_) {
               group_->Toggle(this, is_checked());
             } else {
-              toggled_.fire(this, is_checked());
+              toggled_.fire(is_checked());
             }
           }
           break;
@@ -189,7 +189,7 @@ namespace BlendInt {
       set_pressed(false);
       set_down(false);
 
-      released_.fire(this);
+      released_.fire();
 
       return Finish;
     }
@@ -278,7 +278,7 @@ namespace BlendInt {
       if (group_) {
         group_->Toggle(this, is_checked());
       } else {
-        toggled_.fire(this, is_checked());
+        toggled_.fire(is_checked());
       }
 
     } else {
@@ -289,7 +289,7 @@ namespace BlendInt {
       if (group_) {
         group_->Click(this);
       } else {
-        clicked_.fire(this);
+        clicked_.fire();
       }
     }
   }
@@ -315,7 +315,7 @@ namespace BlendInt {
       if (group_) {
         group_->Toggle(this, is_checked());
       } else {
-        toggled_.fire(this, is_checked());
+        toggled_.fire(is_checked());
       }
     }
   }

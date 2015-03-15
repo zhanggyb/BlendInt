@@ -27,49 +27,49 @@
 
 namespace BlendInt {
 
-	class Stack: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Stack);
+  class Stack: public AbstractWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Stack);
 
-	public:
+  public:
 
-		Stack ();
+    Stack ();
 
-		virtual ~Stack ();
+    virtual ~Stack ();
 
-		void AddWidget (AbstractWidget* widget);
+    void AddWidget (AbstractWidget* widget);
 
-		void InsertWidget (int index, AbstractWidget* widget);
+    void InsertWidget (int index, AbstractWidget* widget);
 
-		void Remove (AbstractWidget* widget);
+    void Remove (AbstractWidget* widget);
 
-		int GetIndex () const;
+    int GetIndex () const;
 
-		void SetIndex (int index);
+    void SetIndex (int index);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const override;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const override;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const override;
 
-		inline AbstractWidget* active_widget () const
-		{
-			return active_widget_;
-		}
+    inline AbstractWidget* active_widget () const
+    {
+      return active_widget_;
+    }
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) override;
 
-		void HideSubWidget (int index);
+    void HideSubWidget (int index);
 
-	private:
+  private:
 
-		AbstractWidget* active_widget_;
+    AbstractWidget* active_widget_;
 
-	};
+  };
 
 }

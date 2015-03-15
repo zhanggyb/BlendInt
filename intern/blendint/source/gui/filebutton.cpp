@@ -227,7 +227,7 @@ namespace BlendInt {
 
 	}
 
-	void FileButton::OnClicked (AbstractButton* sender)
+	void FileButton::OnClicked ()
 	{
 		AbstractWindow* context = AbstractWindow::GetWindow(this);
 		DBG_ASSERT(dialog_ == 0);
@@ -265,7 +265,7 @@ namespace BlendInt {
 		}
 	}
 
-	void FileButton::OnOpened (AbstractDialog* sender)
+	void FileButton::OnOpened ()
 	{
 		DBG_PRINT_MSG("file selected: %s", ConvertFromString(dialog_->file_selected()).c_str());
 		// TODO:

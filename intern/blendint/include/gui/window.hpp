@@ -77,7 +77,7 @@ namespace BlendInt {
 
     virtual const Point& GetGlobalCursorPosition () const;
 
-    Cpp::EventRef<Window*, const Size&> resized ()
+    Cpp::EventRef<const Size&> resized ()
     {
       return resized_;
     }
@@ -100,7 +100,7 @@ namespace BlendInt {
 
     GLFWwindow* window_;
 
-    Cpp::Event<Window*, const Size&> resized_;
+    Cpp::Event<const Size&> resized_;
 
     static GLFWcursor* kArrowCursor;
 

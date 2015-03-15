@@ -196,7 +196,7 @@ namespace BlendInt {
       delete left_frame_;
     }
 
-    splitter_->InsertFrame(0, frame);
+    splitter_->InsertFrame(0, frame, PreferredWidth);
     left_frame_ = frame;
     RequestRedraw();
   }
@@ -209,7 +209,7 @@ namespace BlendInt {
       delete right_frame_;
     }
 
-    splitter_->AddFrame(rightbar);
+    splitter_->AddFrame(rightbar, PreferredWidth);
     right_frame_ = rightbar;
     RequestRedraw();
   }

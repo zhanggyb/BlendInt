@@ -284,7 +284,7 @@ namespace BlendInt {
     return Finish;
   }
 
-  void Dialog::OnCloseButtonClicked (AbstractButton* sender)
+  void Dialog::OnCloseButtonClicked ()
   {
     AbstractView* super = superview();
     //DBG_ASSERT(button == decoration_->close_button());
@@ -293,12 +293,12 @@ namespace BlendInt {
     super->RequestRedraw();
   }
 
-  void Dialog::OnApplyButtonClicked (AbstractButton* sender)
+  void Dialog::OnApplyButtonClicked ()
   {
     fire_applied_event();
   }
 
-  void Dialog::OnOKButtonClicked (AbstractButton* sender)
+  void Dialog::OnOKButtonClicked ()
   {
     AbstractView* super = superview();
     fire_applied_event();

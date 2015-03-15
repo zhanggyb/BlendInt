@@ -232,7 +232,7 @@ namespace BlendInt {
     vbo_.reset();
   }
 
-  void ColorButton::OnClick (AbstractButton* sender)
+  void ColorButton::OnClick ()
   {
     if (selector_ == 0) {
       selector_ = new ColorSelector;

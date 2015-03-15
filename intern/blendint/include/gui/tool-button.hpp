@@ -87,5 +87,7 @@ namespace BlendInt {
     GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
     RefPtr<Action> action_;
+
+    bool hover_;
   };
 }

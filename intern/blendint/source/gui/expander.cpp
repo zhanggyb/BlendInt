@@ -450,7 +450,7 @@ namespace BlendInt {
 		return title_->text()->text();
 	}
 
-	void Expander::OnToggled (AbstractButton* sender, bool toggle)
+	void Expander::OnToggled (bool toggle)
   {
     if (toggle) {
 

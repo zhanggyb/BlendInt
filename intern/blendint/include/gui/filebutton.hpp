@@ -70,9 +70,9 @@ namespace BlendInt {
 
 		void InitializeFileButtonOnce ();
 
-		void OnClicked(AbstractButton* sender);
+		void OnClicked();
 
-		void OnOpened (AbstractDialog* sender);
+		void OnOpened ();
 
 		void OnDialogDestroyed (AbstractFrame* dialog);
 

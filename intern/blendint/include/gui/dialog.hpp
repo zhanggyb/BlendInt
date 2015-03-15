@@ -73,11 +73,11 @@ namespace BlendInt {
 
   private:
 
-    void OnCloseButtonClicked (AbstractButton* sender);
+    void OnCloseButtonClicked ();
 
-    void OnApplyButtonClicked (AbstractButton* sender);
+    void OnApplyButtonClicked ();
 
-    void OnOKButtonClicked (AbstractButton* sender);
+    void OnOKButtonClicked ();
 
     // 0: inner
     // 1: outer

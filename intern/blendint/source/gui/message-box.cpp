@@ -236,7 +236,7 @@ namespace BlendInt {
         return Finish;
     }
 
-	void MessageBox::OnClose (AbstractButton* btn)
+	void MessageBox::OnClose ()
 	{
 		AbstractView* super = superview();
 		delete this;

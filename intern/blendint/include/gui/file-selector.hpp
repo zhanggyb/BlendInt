@@ -37,75 +37,75 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A widget to browse and select local directories/files.
-	 *
-	 * @ingroup blendint_gui_frames
-	 */
-	class FileSelector: public AbstractDialog
-	{
-		DISALLOW_COPY_AND_ASSIGN(FileSelector);
+  /**
+   * @brief A widget to browse and select local directories/files.
+   *
+   * @ingroup blendint_gui_frames
+   */
+  class FileSelector: public AbstractDialog
+  {
+  DISALLOW_COPY_AND_ASSIGN(FileSelector);
 
-	public:
+  public:
 
-		FileSelector ();
+    FileSelector ();
 
-		virtual ~FileSelector ();
+    virtual ~FileSelector ();
 
-		const String& file_selected () const
-		{
-			return browser_->file_selected();
-		}
+    const String& file_selected () const
+    {
+      return browser_->file_selected();
+    }
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-		LinearLayout* CreateButtons ();
+    LinearLayout* CreateButtons ();
 
-		LinearLayout* CreateBrowserAreaOnce ();
+    LinearLayout* CreateBrowserAreaOnce ();
 
-		//Frame* CreateSideBarOnce ();
+    //Frame* CreateSideBarOnce ();
 
-		Expander* CreateSystemDevicesOnce ();
+    Expander* CreateSystemDevicesOnce ();
 
-		Expander* CreateSystemBookmarksOnce ();
+    Expander* CreateSystemBookmarksOnce ();
 
-		void OnFileSelect ();
+    void OnFileSelect ();
 
-		void OnClose (AbstractButton* sender);
+    void OnClose ();
 
-		void OnOpenParent (AbstractButton* sender);
+    void OnOpenParent ();
 
-		void OnGoBackward (AbstractButton* sender);
+    void OnGoBackward ();
 
-		void OnGoForward (AbstractButton* sender);
+    void OnGoForward ();
 
-		void OnReload (AbstractButton* sender);
+    void OnReload ();
 
-		void OnOpen (AbstractButton* sender);
+    void OnOpen ();
 
-        GLuint vao_[2];
+    GLuint vao_[2];
 
-        GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<FrameShadow> shadow_;
+    RefPtr<FrameShadow> shadow_;
 
-		TextEntry* path_entry_;
-		TextEntry* file_entry_;
+    TextEntry* path_entry_;
+    TextEntry* file_entry_;
 
-		FileBrowser* browser_;
+    FileBrowser* browser_;
 
-		glm::mat4 projection_matrix_;
+    glm::mat4 projection_matrix_;
 
-		glm::mat3 model_matrix_;
+    glm::mat3 model_matrix_;
 
-	};
+  };
 
 }

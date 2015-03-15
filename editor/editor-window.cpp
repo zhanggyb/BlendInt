@@ -30,7 +30,8 @@ namespace BlendInt {
     toolbar_(0),
     dev_msg_(0)
   {
-    toolbar_ = new ToolBar (0x808080FF, true, 20, 0);
+    toolbar_ = new ToolBar (0x808080FF, true, 20, -20);
+    toolbar_->LoadTools();
     toolbar_->Resize(size().width(), toolbar_->GetPreferredSize().height());
     toolbar_->MoveTo(0, size().height() - toolbar_->size().height());
     AddFrame(toolbar_);
@@ -50,7 +51,7 @@ namespace BlendInt {
   {
   }
 
-  void EditorWindow::OnResize (Window* window, const Size& size)
+  void EditorWindow::OnResize (const Size& size)
   {
     toolbar_->Resize(size.width(), toolbar_->size().height());
     toolbar_->MoveTo(0, size.height() - toolbar_->size().height());

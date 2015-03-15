@@ -27,39 +27,39 @@
 
 namespace BlendInt {
 
-	class Tab: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Tab);
+  class Tab: public AbstractWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(Tab);
 
-	public:
+  public:
 
-		Tab ();
+    Tab ();
 
-		virtual ~Tab ();
+    virtual ~Tab ();
 
-		void AddWidget (const String& title, AbstractWidget* widget);
+    void AddWidget (const String& title, AbstractWidget* widget);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsEXpandY () const;
+    virtual bool IsEXpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		int GetIndex () const;
+    int GetIndex () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void OnButtonToggled (int index, bool toggled);
+    void OnButtonToggled (int index, bool toggled);
 
-		void FillSubWidgetsInTab (const Size& out_size);
+    void FillSubWidgetsInTab (const Size& out_size);
 
-		void FillSubWidgetsInTab (int x, int y, int w, int h);
-	};
+    void FillSubWidgetsInTab (int x, int y, int w, int h);
+  };
 
 }

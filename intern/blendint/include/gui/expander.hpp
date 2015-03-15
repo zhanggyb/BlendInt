@@ -107,7 +107,7 @@ namespace BlendInt {
 
     void FillWidgets (int x, int y, int width, int height);
 
-    void OnToggled (AbstractButton* sender, bool toggle);
+    void OnToggled (bool toggle);
 
     ExpandButton* title_;
 
