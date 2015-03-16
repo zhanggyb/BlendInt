@@ -29,17 +29,17 @@ namespace BlendInt {
 
   EndPointIcon::EndPointIcon ()
   {
-    int diameter = 16;
+    int radius = pixel_size(7);
 
-    set_size(diameter, diameter);
+    set_size(2 * radius, 2 * radius);
 
     glGenVertexArrays(2, vao_);
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    GenerateVertices(size(), pixel_size(1), RoundAll, size().width() / 2, &inner_verts,
-                     &outer_verts);
+    GenerateVertices(-radius, -radius, radius, radius, pixel_size(1), RoundAll,
+                     size().width() / 2, &inner_verts, &outer_verts);
 
     vbo_.generate();
 
