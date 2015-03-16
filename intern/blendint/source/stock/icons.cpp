@@ -55,6 +55,9 @@ namespace BlendInt {
 			CreateVectorIcons();
 			CreatePixelIcons16x16();
 			CreatePixelIcons32x32();
+
+			end_point_.reset(new EndPointIcon);
+			check_.reset(new CheckIcon);
 		}
 
 		void Icons::CreateVectorIcons()
@@ -75,12 +78,12 @@ namespace BlendInt {
 			}
 			circle_->Load(vec, 16, VectorIcon::scroll_circle_face, 14);
 
-			check_.reset(new VectorIcon(14, 14));
+			hook_.reset(new VectorIcon(14, 14));
 			for (int i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 14 * VectorIcon::check_tria_vert[i][0];
 				vec[i][1] = 0.5 * 14 * VectorIcon::check_tria_vert[i][1];
 			}
-			check_->Load(vec, 6, VectorIcon::check_tria_face, 4);
+			hook_->Load(vec, 6, VectorIcon::check_tria_face, 4);
 
 			num_.reset(new VectorIcon(10, 10));
 			for (int i = 0; i < 3; i++) {

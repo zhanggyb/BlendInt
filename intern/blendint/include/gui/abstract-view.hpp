@@ -50,7 +50,9 @@ namespace BlendInt {
 
     ViewRefreshMask = 0x1 << 2,
 
-    ViewTypeMask = 0x07 << 3
+    ViewDestroyingMask = 0x1 << 3,
+
+    ViewTypeMask = 0x07 << 4
 
   };
 
@@ -58,13 +60,13 @@ namespace BlendInt {
 
     ViewTypeUndefined = 0x0,
 
-    ViewTypeWindow = (ViewTypeUndefined + 1) << 3,  // 0x08
+    ViewTypeWindow = (ViewTypeUndefined + 1) << 4,  // 0x10
 
-    ViewTypeFrame = (ViewTypeUndefined + 2) << 3,   // 0x10
+    ViewTypeFrame = (ViewTypeUndefined + 2) << 4,   // 0x11
 
-    ViewTypeWidget = (ViewTypeUndefined + 3) << 3,  // 0x18
+    ViewTypeWidget = (ViewTypeUndefined + 3) << 4,  // 0x12
 
-    ViewTypeNode = (ViewTypeUndefined + 4) << 3     // 0x20
+    ViewTypeNode = (ViewTypeUndefined + 4) << 4     // 0x13
 
   };
 
@@ -343,6 +345,11 @@ namespace BlendInt {
     inline bool refresh () const
     {
       return view_flag_ & ViewRefreshMask;
+    }
+
+    inline bool destroying () const
+    {
+      return view_flag_ & ViewDestroyingMask;
     }
 
     inline int subs_count () const

@@ -27,68 +27,71 @@
 
 namespace BlendInt {
 
-	class AbstractRoundForm: public AbstractForm
-	{
-	public:
+  class AbstractRoundForm: public AbstractForm
+  {
+  public:
 
-		AbstractRoundForm();
+    AbstractRoundForm ();
 
-		virtual ~AbstractRoundForm();
+    virtual ~AbstractRoundForm ();
 
-		void SetRoundType (int type);
+    void SetRoundType (int type);
 
-		void SetRadius (float radius);
+    void SetRadius (float radius);
 
-		int round_type () const {return round_type_;}
+    int round_type () const
+    {
+      return round_type_;
+    }
 
-		float radius () const {return radius_;}
+    float radius () const
+    {
+      return radius_;
+    }
 
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				const float* color_ptr = Color(Color::White).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const
-		{
-			// TODO: implement in sub classes.
-		}
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr =
+                                 Color(Color::White).data(),
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const
+    {
+      // TODO: implement in sub classes.
+    }
 
-		static int GetOutlineVertices (int round_type);
+  protected:
 
-	protected:
+    virtual void PerformRoundTypeUpdate (int round_type) = 0;
 
-		virtual void PerformRoundTypeUpdate (int round_type) = 0;
+    virtual void PerformRoundRadiusUpdate (float radius) = 0;
 
-		virtual void PerformRoundRadiusUpdate (float radius) = 0;
+    void set_round_type (int type)
+    {
+      round_type_ = type;
+    }
 
-		void set_round_type (int type)
-		{
-			round_type_ = type;
-		}
+    void set_radius (float radius)
+    {
+      radius_ = radius;
+    }
 
-		void set_radius (float radius)
-		{
-			radius_ = radius;
-		}
+    void GenerateRoundedVertices (std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-		void GenerateRoundedVertices (
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    void GenerateRoundedVertices (Orientation shadedir,
+                                  short shadetop,
+                                  short shadedown,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
-		void GenerateRoundedVertices (
-				Orientation shadedir,
-				short shadetop,
-				short shadedown,
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+    static int GetOutlineVertexCount (int round_type);
 
-		static int GetOutlineVertexCount (int round_type);
+  private:
 
-	private:
+    int round_type_;
 
-		int round_type_;
-
-		float radius_;
-	};
+    float radius_;
+  };
 
 }

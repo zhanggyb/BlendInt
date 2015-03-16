@@ -30,14 +30,14 @@
 
 namespace BlendInt {
 
-	PixelIcon::PixelIcon (unsigned int width, unsigned int height)
+	PixelIcon::PixelIcon (int width, int height)
 	: AbstractIcon(width, height),
 	  vao_(0)
 	{
 		CreateVertexArray(width, height);
 	}
 
-	PixelIcon::PixelIcon (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv)
+	PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
 	: AbstractIcon(width, height),
 	  vao_(0)
 	{
@@ -54,7 +54,7 @@ namespace BlendInt {
 		texture_->reset();
 	}
 
-	PixelIcon::PixelIcon (unsigned int width, unsigned int height,
+	PixelIcon::PixelIcon (int width, int height,
 					const RefPtr<GLTexture2D>& texture, const GLfloat* uv)
 	: AbstractIcon(width, height),
 	  vao_(0)

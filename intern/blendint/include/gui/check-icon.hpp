@@ -23,25 +23,40 @@
 
 #pragma once
 
-#include <gui/abstract-form.hpp>
+#include <opengl/gl-buffer.hpp>
+#include <gui/abstract-round-form.hpp>
 
 namespace BlendInt {
 
-	class AbstractIcon: public AbstractForm
-	{
-	public:
+  class CheckIcon: public AbstractRoundForm
+  {
+  public:
 
-	  inline AbstractIcon ()
-	  : AbstractForm()
-	  {}
+    CheckIcon ();
 
-		inline AbstractIcon (int width, int height)
-		: AbstractForm(width, height)
-		{}
+    virtual ~CheckIcon ();
 
-		virtual ~AbstractIcon ()
-		{}
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(Color::Black).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-	};
+  protected:
+
+    virtual void PerformSizeUpdate (const Size& size) final;
+
+    virtual void PerformRoundTypeUpdate (int type) final;
+
+    virtual void PerformRoundRadiusUpdate (float radius) final;
+
+  private:
+
+    GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+  };
 
 }

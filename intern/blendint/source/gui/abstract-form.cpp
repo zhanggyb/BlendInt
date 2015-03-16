@@ -41,9 +41,7 @@ namespace BlendInt {
   {
     if (size_.width() == width && size_.height() == height) return;
 
-    Size new_size(width, height);
-
-    PerformSizeUpdate(new_size);
+    PerformSizeUpdate(Size(width, height));
   }
 
   void AbstractForm::Resize (const Size& size)
@@ -51,6 +49,19 @@ namespace BlendInt {
     if (size_ == size) return;
 
     PerformSizeUpdate(size);
+  }
+
+  int AbstractForm::GetOutlineVertices (int round_type)
+  {
+    round_type = round_type & RoundAll;
+    int count = 0;
+
+    while (round_type != 0) {
+      count += round_type & 0x1;
+      round_type = round_type >> 1;
+    }
+
+    return 4 - count + count * WIDGET_CURVE_RESOLU;
   }
 
   void AbstractForm::GenerateVertices (const Size& size,

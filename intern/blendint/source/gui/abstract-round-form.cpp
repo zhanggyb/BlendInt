@@ -26,84 +26,62 @@
 
 namespace BlendInt {
 
-	AbstractRoundForm::AbstractRoundForm()
-	: AbstractForm(),
-	  round_type_(RoundNone),
-	  radius_(5.f)
-	{
+  AbstractRoundForm::AbstractRoundForm ()
+      : AbstractForm(), round_type_(RoundNone), radius_(5.f)
+  {
 
-	}
+  }
 
-	AbstractRoundForm::~AbstractRoundForm()
-	{
+  AbstractRoundForm::~AbstractRoundForm ()
+  {
 
-	}
+  }
 
-	void AbstractRoundForm::SetRoundType(int type)
-	{
-		if(round_type_ == (type & RoundAll)) return;
+  void AbstractRoundForm::SetRoundType (int type)
+  {
+    if (round_type_ == (type & RoundAll)) return;
 
-		PerformRoundTypeUpdate(type);
-	}
+    PerformRoundTypeUpdate(type);
+  }
 
-	void AbstractRoundForm::SetRadius(float rad)
-	{
-		if(radius_ == rad) return;
+  void AbstractRoundForm::SetRadius (float rad)
+  {
+    if (radius_ == rad) return;
 
-		PerformRoundRadiusUpdate(rad);
-	}
+    PerformRoundRadiusUpdate(rad);
+  }
 
-	int AbstractRoundForm::GetOutlineVertices (int round_type)
-	{
-		round_type = round_type & RoundAll;
-		int count = 0;
+  void AbstractRoundForm::GenerateRoundedVertices (std::vector<GLfloat>* inner,
+                                                   std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(size(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
+                     round_type_, radius_, inner, outer);
+  }
 
-		while (round_type != 0) {
-			count += round_type & 0x1;
-			round_type = round_type >> 1;
-		}
+  void AbstractRoundForm::GenerateRoundedVertices (Orientation shadedir,
+                                                   short shadetop,
+                                                   short shadedown,
+                                                   std::vector<GLfloat>* inner,
+                                                   std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(size(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
+                     round_type_, radius_, shadedir, shadetop, shadedown, inner,
+                     outer);
+  }
 
-		return 4 - count + count * WIDGET_CURVE_RESOLU;
-	}
+  int AbstractRoundForm::GetOutlineVertexCount (int round_type)
+  {
+    round_type = round_type & RoundAll;
+    int count = 0;
 
-	void AbstractRoundForm::GenerateRoundedVertices(std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
-	{
-		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme()->pixel(),
-				round_type_,
-				radius_,
-				inner,
-				outer);
-	}
+    while (round_type != 0) {
+      count += round_type & 0x1;
+      round_type = round_type >> 1;
+    }
 
-	void AbstractRoundForm::GenerateRoundedVertices(Orientation shadedir,
-			short shadetop, short shadedown, std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
-	{
-		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme()->pixel(),
-				round_type_,
-				radius_,
-				shadedir,
-				shadetop,
-				shadedown,
-				inner,
-				outer);
-	}
-
-
-	int AbstractRoundForm::GetOutlineVertexCount (int round_type)
-	{
-		round_type = round_type & RoundAll;
-		int count = 0;
-
-		while (round_type != 0) {
-			count += round_type & 0x1;
-			round_type = round_type >> 1;
-		}
-
-		return (4 - count) + count * WIDGET_CURVE_RESOLU;
-	}
+    return (4 - count) + count * WIDGET_CURVE_RESOLU;
+  }
 
 }

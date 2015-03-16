@@ -275,7 +275,7 @@ namespace BlendInt {
   {
     hover_ = false;
 
-    if(focused_)
+    if(focused_ && context)
       context->set_mouse_tracking(mouse_tracking_record_);
   }
 

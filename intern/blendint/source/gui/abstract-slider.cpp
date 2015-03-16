@@ -28,149 +28,169 @@
 
 namespace BlendInt {
 
-	SlideIcon::SlideIcon ()
-	: AbstractRoundForm()
-	{
-		set_size(14, 14);
-		set_round_type(RoundAll);
-		set_radius(7.0);
+  SlideIcon::SlideIcon ()
+      : AbstractRoundForm()
+  {
+    set_size(14, 14);
+    set_round_type(RoundAll);
+    set_radius(7.0);
 
-		InitializeSliderIcon();
-	}
+    InitializeSliderIcon();
+  }
 
-	SlideIcon::~SlideIcon ()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
+  SlideIcon::~SlideIcon ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
 
-	void SlideIcon::PerformSizeUpdate(const Size& size)
-	{
-		set_size(size);
+  void SlideIcon::PerformSizeUpdate (const Size& size)
+  {
+    set_size(size);
 
-		Orientation shadedir =
-						size.width() < size.height() ?
-										Horizontal : Vertical;
-		short shadetop = AbstractWindow::theme()->scroll().shadetop;
-		short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    Orientation shadedir = size.width() < size.height() ? Horizontal : Vertical;
+    short shadetop = AbstractWindow::theme()->scroll().shadetop;
+    short shadedown = AbstractWindow::theme()->scroll().shadedown;
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
-				&outer_verts);
+    GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
+                            &outer_verts);
 
-		buffer_.bind(0);
-		buffer_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
-	}
+    vbo_.bind(0);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
+  }
 
-	void SlideIcon::PerformRoundTypeUpdate(int type)
-	{
-		set_round_type(type);
+  void SlideIcon::PerformRoundTypeUpdate (int type)
+  {
+    set_round_type(type);
 
-		Orientation shadedir =
-						size().width() < size().height() ?
-										Horizontal : Vertical;
-		short shadetop = AbstractWindow::theme()->scroll().shadetop;
-		short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    Orientation shadedir =
+        size().width() < size().height() ? Horizontal : Vertical;
+    short shadetop = AbstractWindow::theme()->scroll().shadetop;
+    short shadedown = AbstractWindow::theme()->scroll().shadedown;
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
-				&outer_verts);
+    GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
+                            &outer_verts);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
-	}
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
+  }
 
-	void SlideIcon::PerformRoundRadiusUpdate(float radius)
-	{
-		set_radius(radius);
+  void SlideIcon::PerformRoundRadiusUpdate (float radius)
+  {
+    set_radius(radius);
 
-		Orientation shadedir =
-						size().width() < size().height() ?
-										Horizontal : Vertical;
-		short shadetop = AbstractWindow::theme()->scroll().shadetop;
-		short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    Orientation shadedir =
+        size().width() < size().height() ? Horizontal : Vertical;
+    short shadetop = AbstractWindow::theme()->scroll().shadetop;
+    short shadedown = AbstractWindow::theme()->scroll().shadedown;
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
-				&outer_verts);
+    GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
+                            &outer_verts);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		buffer_.reset();
-	}
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
+  }
 
-	void SlideIcon::Draw (int x, int y, const float* color_ptr, short gamma,
-	        float rotate, float scale_x, float scale_y) const
-	{
-		AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+  void SlideIcon::Draw (int x,
+                        int y,
+                        const float* color_ptr,
+                        short gamma,
+                        float rotate,
+                        float scale_x,
+                        float scale_y) const
+  {
+    AbstractWindow::shaders()->widget_simple_triangle_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR), 1,
-				AbstractWindow::theme()->scroll().item.data());
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA), gamma);
+    glUniform2f(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+        x, y);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+        1, AbstractWindow::theme()->scroll().item.data());
+    glUniform1i(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+        gamma);
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		AbstractWindow::shaders()->widget_outer_program()->use();
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), x, y);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme()->scroll().outline.data());
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), x,
+        y);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        AbstractWindow::theme()->scroll().outline.data());
 
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
-	}
+    glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                 GetOutlineVertices(round_type()) * 2 + 2);
+  }
 
-	void SlideIcon::InitializeSliderIcon ()
-	{
-		glGenVertexArrays(2, vao_);
+  void SlideIcon::InitializeSliderIcon ()
+  {
+    glGenVertexArrays(2, vao_);
 
-		Orientation shadedir =
-						size().width() < size().height() ?
-										Horizontal : Vertical;
-		short shadetop = AbstractWindow::theme()->scroll().shadetop;
-		short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    Orientation shadedir =
+        size().width() < size().height() ? Horizontal : Vertical;
+    short shadetop = AbstractWindow::theme()->scroll().shadetop;
+    short shadedown = AbstractWindow::theme()->scroll().shadedown;
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-		GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
-				&outer_verts);
+    GenerateRoundedVertices(shadedir, shadetop, shadedown, &inner_verts,
+                            &outer_verts);
 
-		buffer_.generate();
+    vbo_.generate();
 
-		glBindVertexArray(vao_[0]);
+    glBindVertexArray(vao_[0]);
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD), 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+    glVertexAttribPointer(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
+        3,
+        GL_FLOAT,
+        GL_FALSE, 0, 0);
 
-		glBindVertexArray(vao_[1]);
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    glBindVertexArray(vao_[1]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2,
-				GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2,
+    GL_FLOAT,
+                          GL_FALSE, 0, 0);
 
-		glBindVertexArray(0);
-		buffer_.reset();
-	}
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
 
 }

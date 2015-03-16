@@ -105,6 +105,8 @@ namespace BlendInt {
       return kBorderWidth;
     }
 
+    static int GetOutlineVertices (int round_type);
+
   protected:
 
     virtual void PerformSizeUpdate (const Size& size) = 0;

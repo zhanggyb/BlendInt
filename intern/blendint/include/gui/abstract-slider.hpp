@@ -34,266 +34,288 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Slide Icon used in Slider or ScrollBar
-	 */
-	class SlideIcon: public AbstractRoundForm
-	{
-	public:
+  /**
+   * @brief Slide Icon used in Slider or ScrollBar
+   */
+  class SlideIcon: public AbstractRoundForm
+  {
+  public:
 
-		/**
-		 * @brief Default constructor
-		 */
-		SlideIcon ();
+    /**
+     * @brief Default constructor
+     */
+    SlideIcon ();
 
-		/**
-		 * @brief Constructor
-		 */
-		virtual ~SlideIcon ();
+    /**
+     * @brief Constructor
+     */
+    virtual ~SlideIcon ();
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(Color::Black).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(Color::Black).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (const Size& size);
 
-		virtual void PerformRoundTypeUpdate (int type);
+    virtual void PerformRoundTypeUpdate (int type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius);
 
-	private:
+  private:
 
-		void InitializeSliderIcon ();
+    void InitializeSliderIcon ();
 
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
-	};
+    GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  };
 
-	template<typename T>
-	class AbstractSlider: public AbstractRoundWidget
-	{
-	public:
+  template<typename T>
+  class AbstractSlider: public AbstractRoundWidget
+  {
+  public:
 
-		AbstractSlider (Orientation orientation = Horizontal);
+    AbstractSlider (Orientation orientation = Horizontal);
 
-		virtual ~AbstractSlider ();
+    virtual ~AbstractSlider ();
 
-		void SetValue (T value);
+    void SetValue (T value);
 
-		void SetRange (T value1, T value2);
+    void SetRange (T value1, T value2);
 
-		void SetMinimum (T minimum);
+    void SetMinimum (T minimum);
 
-		void SetMaximum (T maximum);
+    void SetMaximum (T maximum);
 
-		void SetOrientation (Orientation orientation);
+    void SetOrientation (Orientation orientation);
 
-		T minimum () const {return minimum_;}
+    T minimum () const
+    {
+      return minimum_;
+    }
 
-		T maximum () const {return maximum_;}
+    T maximum () const
+    {
+      return maximum_;
+    }
 
-		T value () const {return value_;}
+    T value () const
+    {
+      return value_;
+    }
 
-		T step () const {return step_;}
+    T step () const
+    {
+      return step_;
+    }
 
-		Orientation orientation () const {return orientation_;}
+    Orientation orientation () const
+    {
+      return orientation_;
+    }
 
-		Cpp::EventRef<T> slider_moved () {return slider_moved_;}
+    Cpp::EventRef<T> slider_moved ()
+    {
+      return slider_moved_;
+    }
 
-		Cpp::EventRef<> slider_pressed () {return slider_pressed_;}
+    Cpp::EventRef<> slider_pressed ()
+    {
+      return slider_pressed_;
+    }
 
-		Cpp::EventRef<> slider_released () {return slider_released_;}
+    Cpp::EventRef<> slider_released ()
+    {
+      return slider_released_;
+    }
 
-		Cpp::EventRef<T> value_changed () {return value_changed_;}
+    Cpp::EventRef<T> value_changed ()
+    {
+      return value_changed_;
+    }
 
-	protected:
+  protected:
 
-		virtual void PerformOrientationUpdate (Orientation orientation);
+    virtual void PerformOrientationUpdate (Orientation orientation);
 
-		virtual void PerformMinimumUpdate (T minimum);
+    virtual void PerformMinimumUpdate (T minimum);
 
-		virtual void PerformMaximumUpdate (T maximum);
+    virtual void PerformMaximumUpdate (T maximum);
 
-		virtual void PerformValueUpdate (T value);
+    virtual void PerformValueUpdate (T value);
 
-		virtual void PerformStepUpdate (T step);
+    virtual void PerformStepUpdate (T step);
 
-		void set_value (T value)
-		{
-			value_ = value;
-		}
+    void set_value (T value)
+    {
+      value_ = value;
+    }
 
-		void set_step (T step)
-		{
-			step_ = step;
-		}
+    void set_step (T step)
+    {
+      step_ = step;
+    }
 
-		void set_orientation (Orientation orientation)
-		{
-			orientation_ = orientation;
-		}
-
-		void fire_slider_moved_event (T value)
-		{
-			slider_moved_.fire(value);
-		}
-
-		void fire_slider_pressed ()
-		{
-			slider_pressed_.fire();
-		}
-
-		void fire_slider_released ()
-		{
-			slider_released_.fire();
-		}
-
-		void fire_value_changed_event (T value)
-		{
-			value_changed_.fire(value);
-		}
-
-	private:
-
-		Orientation orientation_;
-
-		T value_;
-
-		T minimum_;
-		T maximum_;
-		T step_;
-
-		Cpp::Event<T> slider_moved_;
-
-		Cpp::Event<> slider_pressed_;
-
-		Cpp::Event<> slider_released_;
-
-		Cpp::Event<T> value_changed_;
-
-	};
-
-	template <typename T>
-	AbstractSlider<T>::AbstractSlider (Orientation orientation)
-	: AbstractRoundWidget(),
-	  orientation_(orientation),
-	  value_(T(0)),
-	  minimum_(T(0)),
-	  maximum_(T(100)),
-	  step_(T(5))
-	{
-	}
-
-	template <typename T>
-	AbstractSlider<T>::~AbstractSlider ()
-	{
-	}
+    void set_orientation (Orientation orientation)
+    {
+      orientation_ = orientation;
+    }
 
-	template <typename T>
-	void AbstractSlider<T>::SetValue (T value)
-	{
-		if (value == value_) {
-			return;
-		}
-
-		if (value < minimum_ || value > maximum_)
-			return;
-
-		PerformValueUpdate(value);
-		value_ = value;
-		value_changed_.fire(value_);
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::SetRange (T value1, T value2)
-	{
-		T minimum = std::min(value1, value2);
-		T maximum = std::max(value1, value2);
-
-		if(minimum == maximum)
-			return;
-
-		if(value1 == minimum) {
-			PerformMinimumUpdate(minimum);
-			PerformMaximumUpdate(maximum);
-		} else {
-			PerformMaximumUpdate(maximum);
-			PerformMinimumUpdate(minimum);
-		}
-
-		minimum_ = minimum;
-		maximum_ = maximum;
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::SetMinimum (T minimum)
-	{
-		if (minimum_ == minimum)
-			return;
-
-		if (minimum >= maximum_)
-			return;
-
-		PerformMinimumUpdate(minimum);
-		minimum_ = minimum;
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::SetMaximum (T maximum)
-	{
-		if (maximum_ == maximum)
-			return;
-
-		if (maximum <= minimum_)
-			return;
-
-		PerformMaximumUpdate(maximum);
-		maximum_ = maximum;
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::SetOrientation (Orientation orientation)
-	{
-		if(orientation_ == orientation) return;
-
-		PerformOrientationUpdate(orientation);
-		orientation_ = orientation;
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::PerformOrientationUpdate(Orientation orientation)
-	{
-
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::PerformMinimumUpdate(T minimum)
-	{
-
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::PerformMaximumUpdate(T maximum)
-	{
-
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::PerformValueUpdate(T value)
-	{
-
-	}
-
-	template <typename T>
-	void AbstractSlider<T>::PerformStepUpdate(T step)
-	{
-
-	}
+    void fire_slider_moved_event (T value)
+    {
+      slider_moved_.fire(value);
+    }
+
+    void fire_slider_pressed ()
+    {
+      slider_pressed_.fire();
+    }
+
+    void fire_slider_released ()
+    {
+      slider_released_.fire();
+    }
+
+    void fire_value_changed_event (T value)
+    {
+      value_changed_.fire(value);
+    }
+
+  private:
+
+    Orientation orientation_;
+
+    T value_;
+
+    T minimum_;
+    T maximum_;
+    T step_;
+
+    Cpp::Event<T> slider_moved_;
+
+    Cpp::Event<> slider_pressed_;
+
+    Cpp::Event<> slider_released_;
+
+    Cpp::Event<T> value_changed_;
+
+  };
+
+  template<typename T>
+  AbstractSlider<T>::AbstractSlider (Orientation orientation)
+      :
+        AbstractRoundWidget(),
+        orientation_(orientation),
+        value_(T(0)),
+        minimum_(T(0)),
+        maximum_(T(100)),
+        step_(T(5))
+  {
+  }
+
+  template<typename T>
+  AbstractSlider<T>::~AbstractSlider ()
+  {
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::SetValue (T value)
+  {
+    if (value == value_) {
+      return;
+    }
+
+    if (value < minimum_ || value > maximum_) return;
+
+    PerformValueUpdate(value);
+    value_ = value;
+    value_changed_.fire(value_);
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::SetRange (T value1, T value2)
+  {
+    T minimum = std::min(value1, value2);
+    T maximum = std::max(value1, value2);
+
+    if (minimum == maximum) return;
+
+    if (value1 == minimum) {
+      PerformMinimumUpdate(minimum);
+      PerformMaximumUpdate(maximum);
+    } else {
+      PerformMaximumUpdate(maximum);
+      PerformMinimumUpdate(minimum);
+    }
+
+    minimum_ = minimum;
+    maximum_ = maximum;
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::SetMinimum (T minimum)
+  {
+    if (minimum_ == minimum) return;
+
+    if (minimum >= maximum_) return;
+
+    PerformMinimumUpdate(minimum);
+    minimum_ = minimum;
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::SetMaximum (T maximum)
+  {
+    if (maximum_ == maximum) return;
+
+    if (maximum <= minimum_) return;
+
+    PerformMaximumUpdate(maximum);
+    maximum_ = maximum;
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::SetOrientation (Orientation orientation)
+  {
+    if (orientation_ == orientation) return;
+
+    PerformOrientationUpdate(orientation);
+    orientation_ = orientation;
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::PerformOrientationUpdate (Orientation orientation)
+  {
+
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::PerformMinimumUpdate (T minimum)
+  {
+
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::PerformMaximumUpdate (T maximum)
+  {
+
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::PerformValueUpdate (T value)
+  {
+
+  }
+
+  template<typename T>
+  void AbstractSlider<T>::PerformStepUpdate (T step)
+  {
+
+  }
 
 }

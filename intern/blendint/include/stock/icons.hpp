@@ -21,11 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCK_ICONS_HPP_
-#define _BLENDINT_STOCK_ICONS_HPP_
+#pragma once
 
 #include <core/refptr.hpp>
 #include <gui/vector-icon.hpp>
+#include <gui/end-point-icon.hpp>
+#include <gui/check-icon.hpp>
 #include <gui/pixel-icon.hpp>
 
 namespace BlendInt {
@@ -1060,9 +1061,9 @@ namespace BlendInt {
 			return circle_;
 		}
 
-		const RefPtr<VectorIcon>& check () const
+		const RefPtr<VectorIcon>& hook () const
 		{
-			return check_;
+			return hook_;
 		}
 
 		const RefPtr<VectorIcon>& num () const
@@ -1074,6 +1075,16 @@ namespace BlendInt {
 		{
 			return cross_;
 		}
+
+		const RefPtr<EndPointIcon>& end_point () const
+    {
+		  return end_point_;
+    }
+
+		const RefPtr<CheckIcon>& check () const
+    {
+		  return check_;
+    }
 
 		const RefPtr<PixelIcon>& icon_16x16 (int index) const
 		{
@@ -1114,9 +1125,11 @@ namespace BlendInt {
 
 		RefPtr<VectorIcon> menu_;
 		RefPtr<VectorIcon> circle_;
-		RefPtr<VectorIcon> check_;
+		RefPtr<VectorIcon> hook_;
 		RefPtr<VectorIcon> num_;
 		RefPtr<VectorIcon> cross_;
+		RefPtr<EndPointIcon> end_point_;
+		RefPtr<CheckIcon> check_;
 
 		std::vector<RefPtr<PixelIcon> > icons_16x16_;
 
@@ -1124,5 +1137,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_STOCK_ICONS_HPP_ */

@@ -36,11 +36,11 @@ namespace BlendInt {
 	{
 	public:
 
-		PixelIcon (unsigned int width, unsigned int height);
+		PixelIcon (int width, int height);
 
-		PixelIcon (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv = 0);
+		PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
 
-		PixelIcon (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
+		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
 
 		virtual ~PixelIcon ();
 
