@@ -25,208 +25,204 @@
 
 namespace BlendInt {
 
-	Block::Block(Orientation orienatiaon)
-	: AbstractRoundWidget (),
-	  orientation_(orienatiaon)
-	{
-		if(orienatiaon == Horizontal) {
-			set_size(100, 20);
-		} else {
-			set_size(80, 60);
-		}
-	}
+  Block::Block (Orientation orienatiaon)
+  : AbstractRoundWidget(),
+    orientation_(orienatiaon)
+  {
+    if (orienatiaon == Horizontal) {
+      set_size(100, 20);
+    } else {
+      set_size(80, 60);
+    }
+  }
 
-	Block::~Block()
-	{
-	}
+  Block::~Block ()
+  {
+  }
 
-	void Block::AddWidget(AbstractRoundWidget* widget)
-	{
-		AbstractRoundWidget* orig_last = dynamic_cast<AbstractRoundWidget*>(last_subview());
+  void Block::AddWidget (AbstractRoundWidget* widget)
+  {
+    AbstractRoundWidget* orig_last =
+        dynamic_cast<AbstractRoundWidget*>(last_subview());
 
-		if(PushBackSubView(widget)) {
+    if (PushBackSubView(widget)) {
 
-			widget->SetEmboss(true);
+      widget->SetEmboss(true);
 
-			if(orientation_ == Horizontal) {
+      if (orientation_ == Horizontal) {
 
-				if(orig_last) {
-					orig_last->SetRoundType(orig_last->round_type() &
-											~(RoundTopRight | RoundBottomRight));
-					widget->SetRoundType(RoundTopRight | RoundBottomRight);
-				} else {
-					widget->SetRoundType(RoundAll);
-				}
+        if (orig_last) {
+          orig_last->SetRoundType(
+              orig_last->round_type() & ~(RoundTopRight | RoundBottomRight));
+          widget->SetRoundType(RoundTopRight | RoundBottomRight);
+        } else {
+          widget->SetRoundType(RoundAll);
+        }
 
-				FillInHBlock(size());
+        FillInHBlock(size());
 
-			} else {
+      } else {
 
-				if(orig_last) {
-					orig_last->SetEmboss(false);
-					orig_last->SetRoundType(orig_last->round_type() &
-											~(RoundBottomLeft | RoundBottomRight));
-					widget->SetRoundType(RoundBottomLeft | RoundBottomRight);
-				} else {
-					widget->SetRoundType(RoundAll);
-				}
+        if (orig_last) {
+          orig_last->SetEmboss(false);
+          orig_last->SetRoundType(
+              orig_last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
+          widget->SetRoundType(RoundBottomLeft | RoundBottomRight);
+        } else {
+          widget->SetRoundType(RoundAll);
+        }
 
-				FillInVBlock(size());
-			}
+        FillInVBlock(size());
+      }
 
-		}
-	}
+    }
+  }
 
-	void Block::InsertWidget(int index, AbstractRoundWidget* widget)
-	{
-		// TODO: implement
-	}
+  void Block::InsertWidget (int index, AbstractRoundWidget* widget)
+  {
+    // TODO: implement
+  }
 
-	bool Block::IsExpandX() const
-	{
-		bool expand = false;
+  bool Block::IsExpandX () const
+  {
+    bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandX()) {
-				expand = true;
-				break;
-			}
-		}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      if (p->IsExpandX()) {
+        expand = true;
+        break;
+      }
+    }
 
-		return expand;
-	}
+    return expand;
+  }
 
-	bool Block::IsExpandY() const
-	{
-		bool expand = false;
+  bool Block::IsExpandY () const
+  {
+    bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			if(p->IsExpandY()) {
-				expand = true;
-				break;
-			}
-		}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      if (p->IsExpandY()) {
+        expand = true;
+        break;
+      }
+    }
 
-		return expand;
-	}
+    return expand;
+  }
 
-	Size Block::GetPreferredSize() const
-	{
-		Size preferred_size;
+  Size Block::GetPreferredSize () const
+  {
+    Size preferred_size;
 
-		if(subs_count() == 0) {
+    if (subs_count() == 0) {
 
-			if(orientation_ == Horizontal) {
-				preferred_size.reset(100, 20);
-			} else {
-				preferred_size.reset(80, 60);
-			}
+      if (orientation_ == Horizontal) {
+        preferred_size.reset(100, 20);
+      } else {
+        preferred_size.reset(80, 60);
+      }
 
-		} else {
+    } else {
 
-			Size tmp;
-			int max_width = 0;
-			int max_height = 0;
-			int sum = 0;
+      Size tmp;
+      int max_width = 0;
+      int max_height = 0;
+      int sum = 0;
 
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
-			{
-				if(p->visiable()) {
-					sum++;
-					tmp = p->GetPreferredSize();
+      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        if (p->visiable()) {
+          sum++;
+          tmp = p->GetPreferredSize();
 
-					max_width = std::max(max_width, tmp.width());
-					max_height = std::max(max_height, tmp.height());
-				}
-			}
+          max_width = std::max(max_width, tmp.width());
+          max_height = std::max(max_height, tmp.height());
+        }
+      }
 
-			if(orientation_ == Horizontal) {
-				preferred_size.set_width(sum * (max_width - 1));
-				preferred_size.set_height(max_height);
-			} else {
-				preferred_size.set_width(max_width);
-				preferred_size.set_height(sum * (max_height - 1));
-			}
+      if (orientation_ == Horizontal) {
+        preferred_size.set_width(sum * (max_width - 1));
+        preferred_size.set_height(max_height);
+      } else {
+        preferred_size.set_width(max_width);
+        preferred_size.set_height(sum * (max_height - 1));
+      }
 
-		}
+    }
 
-		return preferred_size;
-	}
+    return preferred_size;
+  }
 
-	void Block::PerformSizeUpdate(const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
+  void Block::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-			set_size(*request.size());
+      set_size(*request.size());
 
-			if(orientation_ == Horizontal) {
-				FillInHBlock(*request.size());
-			} else {
-				FillInVBlock(*request.size());
-			}
+      if (orientation_ == Horizontal) {
+        FillInHBlock(*request.size());
+      } else {
+        FillInVBlock(*request.size());
+      }
 
-			RequestRedraw();
-		}
+      RequestRedraw();
+    }
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	void Block::FillInHBlock(const Size& out_size)
-	{
-		int x = 0;
-		int y = 0;
-		int w = out_size.width();
-		int h = out_size.height();
+  void Block::FillInHBlock (const Size& out_size)
+  {
+    int x = 0;
+    int y = 0;
+    int w = out_size.width();
+    int h = out_size.height();
 
-		FillInHBlock(x, y, w, h);
-	}
+    FillInHBlock(x, y, w, h);
+  }
 
-	void Block::FillInHBlock(int x, int y, int w, int h)
-	{
-		int count = subs_count();
-		if(count == 0) return;
-		int average_width = w / count + 1;
+  void Block::FillInHBlock (int x, int y, int w, int h)
+  {
+    int count = subs_count();
+    if (count == 0) return;
+    int average_width = w / count + 1;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			ResizeSubView(p, average_width, h);
-			MoveSubViewTo(p, x, y);
-			x = x + average_width - 1;
-		}
-	}
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      ResizeSubView(p, average_width, h);
+      MoveSubViewTo(p, x, y);
+      x = x + average_width - 1;
+    }
+  }
 
-	void Block::FillInVBlock(const Size& out_size)
-	{
-		int x = 0;
-		int y = 0;
-		int w = out_size.width();
-		int h = out_size.height();
+  void Block::FillInVBlock (const Size& out_size)
+  {
+    int x = 0;
+    int y = 0;
+    int w = out_size.width();
+    int h = out_size.height();
 
-		FillInVBlock(x, y, w, h);
-	}
+    FillInVBlock(x, y, w, h);
+  }
 
-	Response Block::Draw (AbstractWindow* context)
-	{
-		return subs_count() ? Ignore : Finish;
-	}
+  Response Block::Draw (AbstractWindow* context)
+  {
+    return subs_count() ? Ignore : Finish;
+  }
 
-	void Block::FillInVBlock(int x, int y, int w, int h)
-	{
-		int count = subs_count();
-		if(count == 0) return;
-		int average_height = h / count + 1;
+  void Block::FillInVBlock (int x, int y, int w, int h)
+  {
+    int count = subs_count();
+    if (count == 0) return;
+    int average_height = h / count + 1;
 
-		y = y + h;
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
-		{
-			ResizeSubView(p, w, average_height);
-			y = y - average_height + 1;
-			MoveSubViewTo(p, x, y);
-		}
-	}
+    y = y + h;
+    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      ResizeSubView(p, w, average_height);
+      y = y - average_height + 1;
+      MoveSubViewTo(p, x, y);
+    }
+  }
 
 }

@@ -27,6 +27,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Tab
+   *
+   * @ingroup blendint_gui_widgets
+   */
   class Tab: public AbstractWidget
   {
   DISALLOW_COPY_AND_ASSIGN(Tab);

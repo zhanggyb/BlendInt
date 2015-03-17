@@ -32,6 +32,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief A container which manage tab buttons, used in Tab only
+   *
+   * @ingroup blendint_gui_widgets
+   */
 	class TabHeader: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabHeader);

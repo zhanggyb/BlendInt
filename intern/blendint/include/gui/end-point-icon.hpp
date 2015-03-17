@@ -28,6 +28,11 @@
 
 namespace BlendInt {
 
+  /**
+   * @brief Icon used in node
+   *
+   * @ingroup blendint_gui_forms
+   */
   class EndPointIcon: public AbstractIcon
   {
   public:
