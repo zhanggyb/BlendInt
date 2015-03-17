@@ -148,7 +148,7 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
         1, color1_.data());
 
-    if (context->GetMouseAction() == MousePress) {
+    if (is_down()) {
       glUniform1i(
           AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
           -25);
@@ -248,6 +248,22 @@ namespace BlendInt {
       }
 
       selector_->MoveTo(pos);
+    }
+  }
+
+  void ColorButton::PerformHoverIn (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(true);
+      RequestRedraw();
+    }
+  }
+
+  void ColorButton::PerformHoverOut (AbstractWindow* context)
+  {
+    if (is_pressed()) {
+      set_down(false);
+      RequestRedraw();
     }
   }
 

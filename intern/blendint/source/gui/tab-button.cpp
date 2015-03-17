@@ -31,6 +31,7 @@ namespace BlendInt {
   TabButton::TabButton ()
   : AbstractButton()
   {
+    set_round_type(RoundAll);
     set_checkable(true);
 
     Font font;  // default font
@@ -40,12 +41,13 @@ namespace BlendInt {
     set_size(w + pixel_size(kPadding.hsum()),
             h + pixel_size(kPadding.vsum()));
 
-    InitializeTabButton();
+    InitializeTabButtonOnce();
   }
 
   TabButton::TabButton (const String& text)
   : AbstractButton(text)
   {
+    set_round_type(RoundAll);
     set_checkable(true);
 
     int w = this->text()->size().width();
@@ -57,180 +59,219 @@ namespace BlendInt {
 
     set_size(w, h);
 
-    InitializeTabButton();
+    InitializeTabButtonOnce();
   }
 
-  BlendInt::TabButton::~TabButton ()
+  TabButton::TabButton (const RefPtr<AbstractIcon>& icon)
+  : AbstractButton(icon)
+  {
+    set_round_type(RoundAll);
+    set_checkable(true);
+
+    int w = this->icon()->size().width();
+    int h = this->icon()->size().height();
+
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
+
+    set_size(w, h);
+
+    InitializeTabButtonOnce();
+  }
+
+  TabButton::TabButton (const RefPtr<AbstractIcon>& icon,
+          const String& text)
+  : AbstractButton(icon, text)
+  {
+    set_round_type(RoundAll);
+    set_checkable(true);
+
+    int w = this->icon()->size().width();
+    int h = this->icon()->size().height();
+
+    w += kIconTextSpace;
+
+    w += this->text()->size().width();
+    h = std::max(h, this->text()->font().height());
+
+    if(w < 80) w = 80;
+    w += pixel_size(kPadding.hsum());
+    h += pixel_size(kPadding.vsum());
+
+    set_size(w, h);
+
+    InitializeTabButtonOnce();
+  }
+
+  TabButton::~TabButton ()
   {
     glDeleteVertexArrays(2, vao_);
   }
 
-  Size TabButton::GetPreferredSize () const
-  {
-    Size s = AbstractButton::GetPreferredSize();
-
-    if(text()) {
-      if(s.width() < 80) {
-        s.set_width(80);
-      }
-    }
-
-    return s;
-  }
-
   void TabButton::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
-    if (request.target() == this) {
-      std::vector<GLfloat> inner;
-      std::vector<GLfloat> outer;
-      GenerateTabButtonVertices(*request.size(), default_border_width(), inner,
-                                outer);
-
-      vbo_.bind(0);
-      vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
-
-      vbo_.bind(1);
-      vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
-
-      GLArrayBuffer::reset();
+    if(request.target() == this) {
 
       set_size(*request.size());
+
+      std::vector<GLfloat> inner_verts;
+      std::vector<GLfloat> outer_verts;
+
+      if (AbstractWindow::theme()->tab().shaded) {
+        GenerateRoundedVertices(Vertical,
+            AbstractWindow::theme()->tab().shadetop,
+            AbstractWindow::theme()->tab().shadedown,
+            &inner_verts,
+            &outer_verts);
+      } else {
+        GenerateRoundedVertices(&inner_verts, &outer_verts);
+      }
+
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+      vbo_.bind(1);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+      vbo_.reset();
+
       RequestRedraw();
     }
 
-    if (request.source() == this) {
+    if(request.source() == this) {
       ReportSizeUpdate(request);
     }
   }
 
-  void TabButton::SetText (const String& text)
+  void TabButton::PerformRoundTypeUpdate (int round_type)
   {
-    set_text(text);
+    set_round_type(round_type);
+
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
+
+    if (AbstractWindow::theme()->tab().shaded) {
+      GenerateRoundedVertices(Vertical,
+          AbstractWindow::theme()->tab().shadetop,
+          AbstractWindow::theme()->tab().shadedown,
+          &inner_verts,
+          &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
+
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
+
+    RequestRedraw();
+  }
+
+  void TabButton::PerformRoundRadiusUpdate (float radius)
+  {
+    set_round_radius(radius);
+
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
+
+    if (AbstractWindow::theme()->tab().shaded) {
+      GenerateRoundedVertices(Vertical,
+          AbstractWindow::theme()->tab().shadetop,
+          AbstractWindow::theme()->tab().shadedown,
+          &inner_verts,
+          &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
+
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
+
     RequestRedraw();
   }
 
   Response TabButton::Draw (AbstractWindow* context)
   {
-    AbstractWindow::shaders()->widget_triangle_program()->use();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-        0.f, 0.f);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-
-    // draw inner, simple fill
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     if (is_checked()) {
-      glVertexAttrib4f(AttributeColor, 0.447f, 0.447f, 0.447f, 1.0f);
-      glUniform1i(
-          AbstractWindow::shaders()->location(
-              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-          0);
-
-      glBindVertexArray(vao_[0]);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
+      glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                   AbstractWindow::theme()->tab().inner_sel.data());
     } else {
-      glVertexAttrib4fv(AttributeColor,
-                        AbstractWindow::theme()->tab().item.data());
-      glUniform1i(
-          AbstractWindow::shaders()->location(
-              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-          1);
-
-      glBindVertexArray(vao_[0]);
-      glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
+      glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                   AbstractWindow::theme()->tab().inner.data());
     }
 
-    if (is_checked()) {
-      glUniform1i(
-          AbstractWindow::shaders()->location(
-              Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-          1);
-      glVertexAttrib4fv(AttributeColor,
-                        AbstractWindow::theme()->tab().outline.data());
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-      glBindVertexArray(vao_[1]);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
+    AbstractWindow::shaders()->widget_outer_program()->use();
+
+    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+            AbstractWindow::theme()->tab().outline.data());
+
+    glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+            GetOutlineVertices(round_type()) * 2 + 2);
+
+    if (emboss()) {
+      glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+              1.0f, 1.0f, 0.16f);
+      glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+              0.f, 0.f - 1.f);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0,
+              GetHalfOutlineVertices(round_type()) * 2);
     }
 
-    DrawIconText();
+    if (is_down()) {
+      DrawIconText(context->theme()->tab().text_sel.data(), 0);
+    } else {
+      DrawIconText(context->theme()->tab().text.data(), 0);
+    }
 
     return Finish;
   }
 
-  void TabButton::InitializeTabButton ()
+  void TabButton::InitializeTabButtonOnce ()
   {
-    std::vector<GLfloat> inner;
-    std::vector<GLfloat> outer;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-    GenerateTabButtonVertices(size(), default_border_width(), inner, outer);
+    if (AbstractWindow::theme()->tab().shaded) {
+      GenerateRoundedVertices(Vertical,
+          AbstractWindow::theme()->tab().shadetop,
+          AbstractWindow::theme()->tab().shadedown,
+          &inner_verts,
+          &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
     glGenVertexArrays(2, vao_);
+    vbo_.generate();
 
     glBindVertexArray(vao_[0]);
 
-    vbo_.generate();
     vbo_.bind(0);
-    vbo_.set_data(sizeof(GLfloat) * inner.size(), &inner[0]);
-
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(AttributeCoord, 3,
+        GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindVertexArray(vao_[1]);
-
     vbo_.bind(1);
-    vbo_.set_data(sizeof(GLfloat) * outer.size(), &outer[0]);
-
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(AttributeCoord, 2,
+        GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindVertexArray(0);
-    GLArrayBuffer::reset();
-  }
-
-  void TabButton::GenerateTabButtonVertices (const Size& size,
-                                             float border,
-                                             std::vector<GLfloat>& inner,
-                                             std::vector<GLfloat>& outer)
-  {
-    int amp = size.height() / 2;
-    int shift_x = 5;
-    border = AbstractWindow::theme()->pixel() * border;
-
-    if (inner.size() != 2 * 11 * 2) inner.resize(2 * 11 * 2);
-
-    size_t count = 0;
-    for (int i = 0; i <= 10; i++, count += 4) {
-      inner[count + 0] = i;
-      inner[count + 1] = sin_curve(i, amp, -shift_x, -border);
-      inner[count + 2] = size.width() - i;
-      inner[count + 3] = inner[count + 1];
-    }
-
-    if (outer.size() != 2 * 11 * 2 * 2) outer.resize(2 * 11 * 2 * 2);
-
-    count = 0;
-    for (int i = 0; i <= 10; i++, count += 4) {
-      outer[count + 0] = i;
-      outer[count + 1] = sin_curve(i, amp, -shift_x, 0.0);
-      outer[count + 2] = i;
-      outer[count + 3] = outer[count + 1] - border;
-    }
-
-    for (int i = 0; i <= 10; i++, count += 4) {
-      outer[count + 0] = size.width() - outer[4 * (10 - i) + 0];
-      outer[count + 1] = outer[4 * (10 - i) + 1];
-      outer[count + 2] = size.width() - outer[4 * (10 - i) + 2];
-      outer[count + 3] = outer[4 * (10 - i) + 3];
-    }
-  }
-
-  inline double TabButton::sin_curve (double x,
-                                      double amplitude,
-                                      double shift_x,
-                                      double shift_y)
-  {
-    return amplitude * sin((x + shift_x) / M_PI) + amplitude + shift_y;
+    vbo_.reset();
   }
 
 }

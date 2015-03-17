@@ -44,53 +44,30 @@ namespace BlendInt {
 
     TabButton (const String& text);
 
+    TabButton (const RefPtr<AbstractIcon>& icon);
+
+    TabButton (const RefPtr<AbstractIcon>& icon, const String& text);
+
     virtual ~TabButton ();
-
-    virtual Size GetPreferredSize () const;
-
-#ifdef DEBUG
-
-    void GenerateTabButtonVertices (const Size& size,
-                                    float border,
-                                    std::vector<GLfloat>& inner,
-                                    std::vector<GLfloat>& outer);
-
-#endif
-
-    void SetText (const String& text);
 
   protected:
 
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-    virtual Response Draw (AbstractWindow* context) override;
+    virtual void PerformRoundTypeUpdate (int round_type) final;
 
-#ifndef DEBUG
+    virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    void GenerateTabButtonVertices (const Size& size, float border,
-        std::vector<GLfloat>& inner,
-        std::vector<GLfloat>& outer);
-
-#endif
-
-    inline double sin_curve (double x,
-                             double amplitude,
-                             double shift_x,
-                             double shift_y);
+    virtual Response Draw (AbstractWindow* context) final;
 
   private:
 
-    void InitializeTabButton ();
+    void InitializeTabButtonOnce ();
 
-    /**
-     * @brief Vertex Arrays for widget
-     *
-     * [0] - for inner buffer
-     * [1] - for outline buffer
-     */
     GLuint vao_[2];
 
     GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
   };
 
 }

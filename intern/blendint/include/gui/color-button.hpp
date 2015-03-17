@@ -49,19 +49,23 @@ namespace BlendInt {
 
     void SetColor (const Color& color);
 
-    virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const override;
 
-    virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const override;
 
   protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-    virtual void PerformRoundTypeUpdate (int round_type);
+    virtual void PerformRoundTypeUpdate (int round_type) final;
 
-    virtual void PerformRoundRadiusUpdate (float radius);
+    virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    virtual Response Draw (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context) final;
+
+    virtual void PerformHoverOut (AbstractWindow* context) final;
+
+    virtual Response Draw (AbstractWindow* context) final;
 
   private:
 

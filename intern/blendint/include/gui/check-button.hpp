@@ -46,26 +46,11 @@ namespace BlendInt {
 
 		virtual ~CheckButton ();
 
-		virtual bool IsExpandX () const;
-
-		virtual Size GetPreferredSize () const;
+		virtual Size GetPreferredSize () const override;
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+		virtual Response Draw (AbstractWindow* context) final;
 
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual Response Draw (AbstractWindow* context);
-
-	private:
-
-		void InitializeCheckButton ();
-
-		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 }

@@ -24,11 +24,11 @@
 #pragma once
 
 #include <opengl/gl-buffer.hpp>
-#include <gui/abstract-round-form.hpp>
+#include <gui/abstract-icon.hpp>
 
 namespace BlendInt {
 
-  class CheckIcon: public AbstractRoundForm
+  class CheckIcon: public AbstractIcon
   {
   public:
 
@@ -43,6 +43,14 @@ namespace BlendInt {
                        float rotate = 0.f,
                        float scale_x = 1.f,
                        float scale_y = 1.f) const;
+
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr =
+                                 Color(Color::Black).data(),
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const final;
 
   protected:
 

@@ -27,21 +27,18 @@
 namespace BlendInt {
 
   CheckIcon::CheckIcon ()
+  : AbstractIcon()
   {
-    set_size(18, 18);
-    set_round_type(RoundAll);
-    set_radius(5.0);
+    int rad = pixel_size(7);
+    set_size(rad * 2, rad * 2);
 
     glGenVertexArrays(2, vao_);
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    GenerateRoundedVertices(Vertical,
-                            15,
-                            -10,
-                            &inner_verts,
-                            &outer_verts);
+    GenerateVertices(-rad, -rad, rad, rad, pixel_size(1), RoundAll, 5.f,
+                     Vertical, 15, -10, &inner_verts, &outer_verts);
 
     vbo_.generate();
 
@@ -102,7 +99,7 @@ namespace BlendInt {
         gamma);
 
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
 
     AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -115,8 +112,64 @@ namespace BlendInt {
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                 GetOutlineVertices(round_type()) * 2 + 2);
+                 GetOutlineVertices(RoundAll) * 2 + 2);
+  }
 
+  void CheckIcon::DrawInRect (const Rect& rect,
+                              int align,
+                              const float* color_ptr,
+                              short gamma,
+                              float rotate,
+                              bool scale) const
+  {
+    int x = rect.left();
+    int y = rect.bottom();
+
+    if(align & AlignLeft) {
+      x = rect.left() + size().width() / 2;
+    } else if (align & AlignRight) {
+      x = rect.right() - size().width() / 2;
+    } else if (align & AlignHorizontalCenter) {
+      x = rect.hcenter();
+    }
+
+    if(align & AlignTop) {
+      y = rect.top() - size().height() / 2;
+    } else if (align & AlignBottom) {
+      y = rect.bottom() + size().height() / 2;
+    } else if (align & AlignVerticalCenter) {
+      y = rect.vcenter();
+    }
+
+    AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+
+    glUniform2f(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+        x, y);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+        1, AbstractWindow::theme()->menu().inner.data());
+    glUniform1i(
+        AbstractWindow::shaders()->location(
+            Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+        gamma);
+
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
+
+    AbstractWindow::shaders()->widget_outer_program()->use();
+
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), x,
+        y);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        AbstractWindow::theme()->menu().outline.data());
+
+    glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(RoundAll) * 2 + 2);
   }
 
   void CheckIcon::PerformSizeUpdate (const Size& size)
@@ -135,4 +188,3 @@ namespace BlendInt {
   }
 
 }
-

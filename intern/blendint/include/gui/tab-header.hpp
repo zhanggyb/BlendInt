@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <opengl/gl-buffer.hpp>
+
 #include <gui/abstract-widget.hpp>
 #include <gui/button-group.hpp>
 
@@ -42,9 +44,9 @@ namespace BlendInt {
 
 		void AddButton (TabButton* button);
 
-		virtual bool IsExpandX () const;
+		virtual bool IsExpandX () const override;
 
-		virtual Size GetPreferredSize () const;
+		virtual Size GetPreferredSize () const override;
 
 		Cpp::EventRef<int> button_clicked ()
 		{
@@ -58,7 +60,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+
+		virtual Response Draw (AbstractWindow* context) final;
 
 	private:
 
@@ -66,11 +70,17 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
+		GLuint vao_;
+
+		GLBuffer<ARRAY_BUFFER, 1> vbo_;
+
 		ButtonGroup group_;
 
 		Cpp::Event<int> m_button_index_clicked;
 
 		Cpp::Event<int, bool> m_button_index_toggled;
+
+		static const int kBaseLine = 2;
 	};
 
 }

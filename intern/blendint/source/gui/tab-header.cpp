@@ -21,13 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <gui/tabheader.hpp>
+#include <gui/tab-header.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 
 	TabHeader::TabHeader()
-	: AbstractWidget()
+	: AbstractWidget(),
+	  vao_(0)
 	{
 		set_size(320, 20);
 
@@ -37,16 +38,39 @@ namespace BlendInt {
 
 		// FIXME: cannot use the following line
 		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
+
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
+                     &inner_verts, 0);
+
+    glGenVertexArrays(1, &vao_);
+    glBindVertexArray(vao_);
+
+    vbo_.generate();
+    vbo_.bind();
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
+
 	}
 
 	TabHeader::~TabHeader()
 	{
+	  glDeleteVertexArrays(1, &vao_);
 	}
 
 	void TabHeader::AddButton (TabButton* button)
 	{
 		int x = GetLastPosition ();
-		int y = 0;
+		int y = kBaseLine;
 		int h = size().height();
 
 		if (PushBackSubView(button)) {
@@ -103,6 +127,17 @@ namespace BlendInt {
 
 	Response TabHeader::Draw (AbstractWindow* context)
 	{
+    AbstractWindow::shaders()->widget_inner_program()->use();
+
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        context->theme()->tab().inner_sel.data());
+
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
 		return subs_count() ? Ignore : Finish;
 	}
 
@@ -110,6 +145,28 @@ namespace BlendInt {
 	{
 		m_button_index_toggled.fire(index, toggled);
 	}
+
+  void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_size(*request.size());
+
+      std::vector<GLfloat> inner_verts;
+      GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
+                       &inner_verts, 0);
+
+      vbo_.bind();
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                        &inner_verts[0]);
+      vbo_.reset();
+
+      RequestRedraw();
+    }
+
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
 	int TabHeader::GetLastPosition() const
 	{

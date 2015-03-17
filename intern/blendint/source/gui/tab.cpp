@@ -24,7 +24,7 @@
 #include <gui/tab-button.hpp>
 
 #include <gui/tab.hpp>
-#include <gui/tabheader.hpp>
+#include <gui/tab-header.hpp>
 #include <stock/shaders.hpp>
 #include <gui/stack.hpp>
 
@@ -54,9 +54,8 @@ namespace BlendInt {
 
 	void Tab::AddWidget (const String& title, AbstractWidget* widget)
 	{
-		TabButton* btn = Manage(new TabButton);
+		TabButton* btn = Manage(new TabButton(title));
 		DBG_SET_NAME(btn, ConvertFromString(title).c_str());
-		btn->SetText(title);
 
 		TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
 		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));

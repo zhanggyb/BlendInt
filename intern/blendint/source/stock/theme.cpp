@@ -47,7 +47,10 @@ namespace BlendInt {
   }
 
   Theme::Theme ()
-      : dpi_(72), pixel_(1), shadow_fac_(0.5), shadow_width_(12)
+  : dpi_(72),
+    pixel_(1),
+    shadow_fac_(0.5),
+    shadow_width_(12)
   {
   }
 
@@ -391,13 +394,16 @@ namespace BlendInt {
     menu_item_.shadetop = 38;
     menu_item_.shadedown = 0;
 
-    // Tab
-    tab_.outline = 0xBFBFBFFF;
-    tab_.item = 0x4F4F4FFF;
-    tab_.inner = 0x999999FF;
-    tab_.inner_sel = 0x999999FF;
-    tab_.text = 0x000000FF;
-    tab_.text_sel = 0xFFFFFFFF;
+    // Tab, this influence TabButton, TabHeader
+    tab_.outline = 0x000000FF;
+    tab_.item = 0xFFFFFFFF;
+    tab_.inner = 0x464646FF;
+    tab_.inner_sel = 0x5680C2FF;
+    tab_.text = 0xFFFFFFFF;
+    tab_.text_sel = 0x000000FF;
+    tab_.shaded = true;
+    tab_.shadetop = 15;
+    tab_.shadedown = -15;
 
     // Tooltip
     tooltip_.outline = 0x000000FF;

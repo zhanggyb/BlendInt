@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		virtual void PerformRoundRadiusUpdate (float radius) final;
 
-		virtual Response Draw (AbstractWindow* context) override;
+		virtual Response Draw (AbstractWindow* context) final;
 
 	private:
 

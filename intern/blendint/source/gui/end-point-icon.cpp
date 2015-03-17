@@ -28,6 +28,7 @@
 namespace BlendInt {
 
   EndPointIcon::EndPointIcon ()
+  : AbstractIcon()
   {
     int radius = pixel_size(7);
 
@@ -39,7 +40,7 @@ namespace BlendInt {
     std::vector<GLfloat> outer_verts;
 
     GenerateVertices(-radius, -radius, radius, radius, pixel_size(1), RoundAll,
-                     size().width() / 2, &inner_verts, &outer_verts);
+                     radius, &inner_verts, &outer_verts);
 
     vbo_.generate();
 

@@ -103,6 +103,7 @@ libraries are installed:
 
 Required:
 
+* C++11 compiler
 * [cmake](http://www.cmake.org) 2.8.11 or newer
 * [OpenGL](http://www.khronos.org) header and libraries, in Linux,
   Mesa 9.2 or newer
