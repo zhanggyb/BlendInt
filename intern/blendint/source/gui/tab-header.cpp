@@ -67,15 +67,14 @@ namespace BlendInt {
 	  glDeleteVertexArrays(1, &vao_);
 	}
 
-	void TabHeader::AddButton (TabButton* button)
+	bool TabHeader::AddButton (TabButton* button)
 	{
 		int x = GetLastPosition ();
-		int y = kBaseLine;
+		int y = kBaseLine - 1;
 		int h = size().height();
 
 		if (PushBackSubView(button)) {
 
-			MoveSubViewTo(button, x, y);
 			if (button->IsExpandY()) {
 				ResizeSubView(button, button->size().width(), h);
 			} else {
@@ -86,13 +85,34 @@ namespace BlendInt {
 
 			}
 
+      if (subs_count() == 1) {
+        MoveSubViewTo(button, x, y);
+        button->SetRoundType(RoundTopLeft | RoundTopRight);
+      } else {
+        MoveSubViewTo(button, x - 1, y);
+        TabButton* orig_last = dynamic_cast<TabButton*>(button->previous_view());
+        orig_last->SetRoundType(orig_last->round_type() & ~RoundTopRight);
+        button->SetRoundType(RoundTopRight);
+      }
+
 			group_.AddButton(button);
 
 			if(group_.button_count() == 1) {
 				button->SetChecked(true);
 			}
+
+			return true;
 		}
+
+		return false;
 	}
+
+  bool TabHeader::InsertButton (int index, TabButton* button)
+  {
+
+
+    return false;
+  }
 
 	bool TabHeader::IsExpandX () const
 	{
@@ -127,17 +147,6 @@ namespace BlendInt {
 
 	Response TabHeader::Draw (AbstractWindow* context)
 	{
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        context->theme()->tab().inner_sel.data());
-
-    glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
 		return subs_count() ? Ignore : Finish;
 	}
 
@@ -168,9 +177,30 @@ namespace BlendInt {
     }
   }
 
+  void TabHeader::PostDraw (AbstractWindow* context)
+  {
+    Color baseline_color = context->theme()->tab().inner_sel;
+
+    if (context->theme()->tab().shaded)
+      baseline_color = baseline_color + context->theme()->tab().shadedown;
+
+    AbstractWindow::shaders()->widget_inner_program()->use();
+
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        baseline_color.data());
+
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+    return AbstractWidget::PostDraw(context);
+  }
+
 	int TabHeader::GetLastPosition() const
 	{
-		int x = 0;
+		int x = kLeftPadding;
 
 		if(subs_count()) {
 			x = last_subview()->position().x()+ last_subview()->size().width();

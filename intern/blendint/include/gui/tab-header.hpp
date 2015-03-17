@@ -47,7 +47,9 @@ namespace BlendInt {
 
 		virtual ~TabHeader ();
 
-		void AddButton (TabButton* button);
+		bool AddButton (TabButton* button);
+
+		bool InsertButton (int index, TabButton* button);
 
 		virtual bool IsExpandX () const override;
 
@@ -69,6 +71,8 @@ namespace BlendInt {
 
 		virtual Response Draw (AbstractWindow* context) final;
 
+		virtual void PostDraw (AbstractWindow* context) final;
+
 	private:
 
 		void OnButtonIndexToggled (int index, bool toggled);
@@ -86,6 +90,10 @@ namespace BlendInt {
 		Cpp::Event<int, bool> m_button_index_toggled;
 
 		static const int kBaseLine = 2;
+
+		static const int kLeftPadding = 2;
+
+		static const int kRightPadding = 2;
 	};
 
 }

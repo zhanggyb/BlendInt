@@ -711,7 +711,7 @@ namespace BlendInt {
     }
   }
 
-  void AbstractWindow::PerformMouseHover ()
+  void AbstractWindow::DispatchMouseHover ()
   {
     try {
 

@@ -293,7 +293,7 @@ namespace BlendInt {
 
     virtual bool RemoveSubView (AbstractView* view);
 
-    void PerformMouseHover ();
+    void DispatchMouseHover ();
 
     inline void set_viewport_origin (int x, int y)
     {

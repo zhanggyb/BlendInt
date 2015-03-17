@@ -574,25 +574,29 @@ namespace BlendInt {
 
     kModifiers = mods;
 
-    win->register_active_frame(0);
-
     switch (kMouseAction) {
 
       case MouseMove: {
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
+        win->register_active_frame(0);
         win->PerformMouseMove(win);
         break;
       }
 
       case MousePress: {
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
+        win->register_active_frame(0);
         win->PerformMousePress(win);
         break;
       }
 
       case MouseRelease: {
+        win->register_active_frame(0);
         win->PerformMouseRelease(win);
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
         break;
       }
 
@@ -619,25 +623,29 @@ namespace BlendInt {
     kMouseAction = MouseMove;
     kMouseButton = MouseButtonNone;
 
-    win->register_active_frame(0);
-
     switch (kMouseAction) {
 
       case MouseMove: {
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
+        win->register_active_frame(0);
         win->PerformMouseMove(win);
         break;
       }
 
       case MousePress: {
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
+        win->register_active_frame(0);
         win->PerformMousePress(win);
         break;
       }
 
       case MouseRelease: {
+        win->register_active_frame(0);
         win->PerformMouseRelease(win);
-        win->PerformMouseHover();
+        win->register_active_frame(0);
+        win->DispatchMouseHover();
         break;
       }
 
