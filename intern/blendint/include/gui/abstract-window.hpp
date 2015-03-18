@@ -197,11 +197,6 @@ namespace BlendInt {
       return local_cursor_position_;
     }
 
-    inline void register_active_frame (AbstractFrame* frame)
-    {
-      active_frame_ = frame;
-    }
-
     inline AbstractFrame* active_frame () const
     {
       return active_frame_;
@@ -346,6 +341,11 @@ namespace BlendInt {
     static void GetGLVersion (int *major, int *minor);
 
     static void GetGLSLVersion (int *major, int *minor);
+
+    inline void set_active_frame (AbstractFrame* frame)
+    {
+      active_frame_ = frame;
+    }
 
     boost::scoped_ptr<Cpp::ConnectionScope> events_;
 

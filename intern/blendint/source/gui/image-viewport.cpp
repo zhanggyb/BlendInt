@@ -294,7 +294,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		context->register_active_frame(this);
+		DeclareActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

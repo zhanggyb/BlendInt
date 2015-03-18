@@ -163,7 +163,7 @@ namespace BlendInt {
   {
     if (!visiable()) return false;
 
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     if (refresh() && view_buffer()) {
       RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
@@ -282,7 +282,7 @@ namespace BlendInt {
 
   Response Frame::PerformKeyPress (AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     Response response = Ignore;
 
@@ -299,7 +299,7 @@ namespace BlendInt {
 
       if (context == superview()) context->SetFocusedFrame(this);
 
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       if (hovered_widget_) {
 
         AbstractView* widget = 0;	// widget may be focused
@@ -329,7 +329,7 @@ namespace BlendInt {
     pressed_ = false;
 
     if (focused_widget_) {
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       return dispatch_mouse_release(focused_widget_, context);
     }
 
@@ -338,7 +338,7 @@ namespace BlendInt {
 
   Response Frame::PerformMouseMove (AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     Response retval = Ignore;
     if (pressed_) {
@@ -373,7 +373,7 @@ namespace BlendInt {
         DBG_ASSERT(current != this);
 
         if (hover_) {
-          context->register_active_frame(this);
+          DeclareActiveFrame(context, this);
           hover_ = false;
           if (hovered_widget_) {
             hovered_widget_->destroyed().disconnectOne(
@@ -387,7 +387,7 @@ namespace BlendInt {
 
       } else {
 
-        context->register_active_frame(this);
+        DeclareActiveFrame(context, this);
 
         if (!hover_) {
           PerformHoverIn(context);
@@ -411,7 +411,7 @@ namespace BlendInt {
 
         }
 
-        context->register_active_frame(this);
+        DeclareActiveFrame(context, this);
         retval = Ignore;
       }
 
@@ -420,11 +420,11 @@ namespace BlendInt {
       cursor_position_ = OutsideRectangle;
 
       if (hover_) {
-        context->register_active_frame(this);
+        DeclareActiveFrame(context, this);
         PerformHoverOut(context);
       }
 
-      context->register_active_frame(current);
+      DeclareActiveFrame(context, current);
 
       retval = Ignore;
     }

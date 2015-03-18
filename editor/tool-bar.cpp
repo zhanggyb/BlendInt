@@ -141,7 +141,7 @@ namespace BlendInt {
   {
     if (!visiable()) return false;
 
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     if (refresh() && view_buffer()) {
       RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
@@ -293,7 +293,7 @@ namespace BlendInt {
 
   Response ToolBar::PerformKeyPress (AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     Response response = Ignore;
 
@@ -305,7 +305,7 @@ namespace BlendInt {
 
   Response ToolBar::PerformMousePress (AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     if (cursor_position_ == InsideRectangle) {
 
@@ -339,7 +339,7 @@ namespace BlendInt {
 
   Response ToolBar::PerformMouseMove (AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     Response retval = Ignore;
     if (pressed_) {
@@ -362,7 +362,7 @@ namespace BlendInt {
     pressed_ = false;
 
     if (focused_widget_) {
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       return dispatch_mouse_release(focused_widget_, context);
     }
 

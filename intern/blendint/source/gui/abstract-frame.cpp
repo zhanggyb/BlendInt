@@ -178,7 +178,7 @@ namespace BlendInt {
   AbstractWidget* AbstractFrame::DispatchMouseHover (AbstractWidget* orig,
                                                      AbstractWindow* context)
   {
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     // find the new top hovered widget
     if (orig != nullptr) {
@@ -418,6 +418,12 @@ namespace BlendInt {
       hovered_widget->PerformHoverOut(context);
       hovered_widget = hovered_widget->superview();
     }
+  }
+
+  void AbstractFrame::DeclareActiveFrame (AbstractWindow* context,
+                                          AbstractFrame* frame)
+  {
+    context->set_active_frame(frame);
   }
 
   bool AbstractFrame::RenderSubFramesToTexture (AbstractFrame* frame,

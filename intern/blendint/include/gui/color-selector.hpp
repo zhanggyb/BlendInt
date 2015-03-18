@@ -23,17 +23,37 @@
 
 #pragma once
 
+#include <gui/radio-button.hpp>
 #include <gui/block.hpp>
-#include <gui/stack-layout.hpp>
 #include <gui/linear-layout.hpp>
 #include <gui/frame-shadow.hpp>
-
-#include <gui/button-group.hpp>
-
-#include <gui/abstract-dialog.hpp>
 #include <gui/stack.hpp>
+#include <gui/button-group.hpp>
+#include <gui/abstract-dialog.hpp>
 
 namespace BlendInt {
+
+  /// @cond redundant
+  /**
+   * @brief A special radio button expands along x
+   */
+  class ColorModeButton: public RadioButton
+  {
+  public:
+
+    using RadioButton::RadioButton;
+
+    virtual ~ColorModeButton ()
+    {
+    }
+
+    virtual bool IsExpandX () const override
+    {
+      return true;
+    }
+
+  };
+  /// @endcond
 
   /**
    * @brief A dialog to pick color

@@ -182,7 +182,7 @@ namespace BlendInt {
 	{
 		if(!visiable()) return false;
 
-		context->register_active_frame(this);
+		DeclareActiveFrame(context, this);
 
 		if(refresh() && view_buffer()) {
 			RenderSubFramesToTexture(this,

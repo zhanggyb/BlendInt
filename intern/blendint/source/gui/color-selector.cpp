@@ -51,9 +51,9 @@ namespace BlendInt {
     hbox1->AddWidget(colorwheel);
     hbox1->AddWidget(br_slider);
 
-    RadioButton* btn1 = Manage(new RadioButton("RGB"));
-    RadioButton* btn2 = Manage(new RadioButton("HSV"));
-    RadioButton* btn3 = Manage(new RadioButton("Hex"));
+    ColorModeButton* btn1 = Manage(new ColorModeButton("RGB"));
+    ColorModeButton* btn2 = Manage(new ColorModeButton("HSV"));
+    ColorModeButton* btn3 = Manage(new ColorModeButton("Hex"));
 
     radio_group_.AddButton(btn1);
     radio_group_.AddButton(btn2);
@@ -196,7 +196,7 @@ namespace BlendInt {
   {
     if (!visiable()) return false;
 
-    context->register_active_frame(this);
+    DeclareActiveFrame(context, this);
 
     if (refresh() && view_buffer()) {
       RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,

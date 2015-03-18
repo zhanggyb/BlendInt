@@ -203,6 +203,9 @@ namespace BlendInt {
       return frame->PerformMouseHover(context);
     }
 
+    static void DeclareActiveFrame (AbstractWindow* context,
+                                    AbstractFrame* frame);
+
     /**
      * @brief Render to texture
      * @param[in] frame

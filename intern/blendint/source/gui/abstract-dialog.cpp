@@ -94,7 +94,7 @@ namespace BlendInt {
     }
 
     if (focused_widget_) {
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       response = RecursiveDispatchKeyEvent(focused_widget_, context);
     }
 
@@ -111,7 +111,7 @@ namespace BlendInt {
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       if (hovered_widget_) {
 
         AbstractView* widget = RecursiveDispatchMousePress(hovered_widget_,
@@ -162,7 +162,7 @@ namespace BlendInt {
     cursor_position_ = InsideRectangle;
 
     if (focused_widget_) {
-      context->register_active_frame(this);
+      DeclareActiveFrame(context, this);
       dispatch_mouse_release(focused_widget_, context);
     }
 
@@ -246,7 +246,7 @@ namespace BlendInt {
 
       if (focused_widget_) {
 
-        context->register_active_frame(this);
+        DeclareActiveFrame(context, this);
         retval = dispatch_mouse_move(focused_widget_, context);
 
       }
@@ -278,7 +278,7 @@ namespace BlendInt {
 
           // if there's frame above this position, dispatch hover out
           if (hovered_widget_) {
-            context->register_active_frame(this);
+            DeclareActiveFrame(context, this);
             AbstractWindow* win = AbstractWindow::GetWindow(this);
             hovered_widget_->destroyed().disconnectOne(
                 this, &AbstractDialog::OnHoverWidgetDestroyed);
@@ -314,7 +314,7 @@ namespace BlendInt {
             context->PopCursor();
           }
 
-          context->register_active_frame(this);
+          DeclareActiveFrame(context, this);
 
           retval = Ignore;
         }
@@ -326,7 +326,7 @@ namespace BlendInt {
 
         if (context->active_frame() == 0) {
           SetCursorShapeOnBorder(context);
-          context->register_active_frame(this);
+          DeclareActiveFrame(context, this);
           retval = Ignore;
         } else {
           DBG_ASSERT(context->active_frame() != this);
