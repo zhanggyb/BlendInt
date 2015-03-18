@@ -103,8 +103,6 @@ namespace BlendInt {
 
   Response AbstractDialog::PerformMousePress (AbstractWindow* context)
   {
-    context->register_active_frame(this);
-
     if (cursor_position_ == InsideRectangle) {
 
       context->SetFocusedFrame(this);
@@ -113,6 +111,7 @@ namespace BlendInt {
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
+      context->register_active_frame(this);
       if (hovered_widget_) {
 
         AbstractView* widget = RecursiveDispatchMousePress(hovered_widget_,
@@ -128,12 +127,6 @@ namespace BlendInt {
       } else {
         set_mouse_button_pressed(true);
       }
-
-//      if (!modal()) {
-//        if (focused_ == focus_status) {
-//          context->SetFocusedFrame(this);
-//        }
-//      }
 
       return Finish;
 
@@ -170,7 +163,7 @@ namespace BlendInt {
 
     if (focused_widget_) {
       context->register_active_frame(this);
-      return dispatch_mouse_release(focused_widget_, context);
+      dispatch_mouse_release(focused_widget_, context);
     }
 
     return result;
@@ -279,28 +272,51 @@ namespace BlendInt {
 
         cursor_position_ = InsideRectangle;
 
-        AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
-                                                                context);
+        if (context->active_frame()) {
 
-        if (new_hovered_widget != hovered_widget_) {
+          DBG_ASSERT(context->active_frame() != this);
 
+          // if there's frame above this position, dispatch hover out
           if (hovered_widget_) {
+            context->register_active_frame(this);
+            AbstractWindow* win = AbstractWindow::GetWindow(this);
             hovered_widget_->destroyed().disconnectOne(
                 this, &AbstractDialog::OnHoverWidgetDestroyed);
+            ClearHoverWidgets(hovered_widget_, win);
+            hovered_widget_ = 0;
           }
 
-          hovered_widget_ = new_hovered_widget;
-          if (hovered_widget_) {
-            events()->connect(hovered_widget_->destroyed(), this,
-                              &AbstractDialog::OnHoverWidgetDestroyed);
+          retval = Finish;
+
+        } else {
+
+          AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
+                                                                  context);
+
+          if (new_hovered_widget != hovered_widget_) {
+
+            if (hovered_widget_) {
+              hovered_widget_->destroyed().disconnectOne(
+                  this, &AbstractDialog::OnHoverWidgetDestroyed);
+            }
+
+            hovered_widget_ = new_hovered_widget;
+            if (hovered_widget_) {
+              events()->connect(hovered_widget_->destroyed(), this,
+                                &AbstractDialog::OnHoverWidgetDestroyed);
+            }
+
           }
 
-        }
+          // set cursor shape
+          if (cursor_on_border()) {
+            set_cursor_on_border(false);
+            context->PopCursor();
+          }
 
-        // set cursor shape
-        if (cursor_on_border()) {
-          set_cursor_on_border(false);
-          context->PopCursor();
+          context->register_active_frame(this);
+
+          retval = Ignore;
         }
 
       } else {
@@ -308,54 +324,13 @@ namespace BlendInt {
         set_cursor_on_border(true);
         cursor_position_ = InsideRectangle;
 
-        if (context->GetGlobalCursorPosition().x() <= position().x()) {
-          cursor_position_ |= OnLeftBorder;
-        } else if (context->GetGlobalCursorPosition().x()
-            >= (position().x() + size().width())) {
-          cursor_position_ |= OnRightBorder;
-        }
-
-        if (context->GetGlobalCursorPosition().y()
-            >= (position().y() + size().height())) {
-          cursor_position_ |= OnTopBorder;
-        } else if (context->GetGlobalCursorPosition().y() <= position().y()) {
-          cursor_position_ |= OnBottomBorder;
-        }
-
-        // set cursor shape
-        switch (cursor_position_) {
-
-          case OnLeftBorder:
-          case OnRightBorder: {
-            context->PushCursor();
-            context->SetCursor(SplitHCursor);
-
-            break;
-          }
-
-          case OnTopBorder:
-          case OnBottomBorder: {
-            context->PushCursor();
-            context->SetCursor(SplitVCursor);
-            break;
-          }
-
-          case OnTopLeftCorner:
-          case OnBottomRightCorner: {
-            context->PushCursor();
-            context->SetCursor(SizeFDiagCursor);
-            break;
-          }
-
-          case OnTopRightCorner:
-          case OnBottomLeftCorner: {
-            context->PushCursor();
-            context->SetCursor(SizeBDiagCursor);
-            break;
-          }
-
-          default:
-            break;
+        if (context->active_frame() == 0) {
+          SetCursorShapeOnBorder(context);
+          context->register_active_frame(this);
+          retval = Ignore;
+        } else {
+          DBG_ASSERT(context->active_frame() != this);
+          retval = Finish;
         }
 
       }
@@ -420,6 +395,59 @@ namespace BlendInt {
                                       &AbstractDialog::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;
+  }
+
+  void AbstractDialog::SetCursorShapeOnBorder(AbstractWindow* context)
+  {
+    if (context->GetGlobalCursorPosition().x() <= position().x()) {
+      cursor_position_ |= OnLeftBorder;
+    } else if (context->GetGlobalCursorPosition().x()
+        >= (position().x() + size().width())) {
+      cursor_position_ |= OnRightBorder;
+    }
+
+    if (context->GetGlobalCursorPosition().y()
+        >= (position().y() + size().height())) {
+      cursor_position_ |= OnTopBorder;
+    } else if (context->GetGlobalCursorPosition().y() <= position().y()) {
+      cursor_position_ |= OnBottomBorder;
+    }
+
+    // set cursor shape
+    switch (cursor_position_) {
+
+      case OnLeftBorder:
+      case OnRightBorder: {
+        context->PushCursor();
+        context->SetCursor(SplitHCursor);
+
+        break;
+      }
+
+      case OnTopBorder:
+      case OnBottomBorder: {
+        context->PushCursor();
+        context->SetCursor(SplitVCursor);
+        break;
+      }
+
+      case OnTopLeftCorner:
+      case OnBottomRightCorner: {
+        context->PushCursor();
+        context->SetCursor(SizeFDiagCursor);
+        break;
+      }
+
+      case OnTopRightCorner:
+      case OnBottomLeftCorner: {
+        context->PushCursor();
+        context->SetCursor(SizeBDiagCursor);
+        break;
+      }
+
+      default:
+        break;
+    }
   }
 
 }

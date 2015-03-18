@@ -138,6 +138,8 @@ namespace BlendInt {
 
     void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
+    void SetCursorShapeOnBorder (AbstractWindow* context);
+
     inline bool cursor_on_border () const
     {
       return dialog_flags_ & DialogCursorOnBorder;

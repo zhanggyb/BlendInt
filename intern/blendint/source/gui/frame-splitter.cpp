@@ -434,11 +434,6 @@ namespace BlendInt {
     return preferred_size;
   }
 
-  AbstractView* FrameSplitter::GetFocusedView () const
-  {
-    return focused_frame_;
-  }
-
   void FrameSplitter::PerformPositionUpdate (const PositionUpdateRequest& request)
   {
     if (request.target() == this) {

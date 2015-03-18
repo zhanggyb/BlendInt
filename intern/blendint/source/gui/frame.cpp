@@ -295,12 +295,11 @@ namespace BlendInt {
 
   Response Frame::PerformMousePress (AbstractWindow* context)
   {
-    context->register_active_frame(this);
-
     if (cursor_position_ == InsideRectangle) {
 
       if (context == superview()) context->SetFocusedFrame(this);
 
+      context->register_active_frame(this);
       if (hovered_widget_) {
 
         AbstractView* widget = 0;	// widget may be focused
@@ -361,44 +360,76 @@ namespace BlendInt {
   {
     if (pressed_) return Finish;
 
+    Response retval = Finish;
+
+    AbstractFrame* current = context->active_frame();
+
     if (Contain(context->GetGlobalCursorPosition())) {
 
       cursor_position_ = InsideRectangle;
 
-      if (!hover_) {
-        PerformHoverIn(context);
-      }
+      if (current != 0) {
 
-      AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
-                                                              context);
+        DBG_ASSERT(current != this);
 
-      if (new_hovered_widget != hovered_widget_) {
-
-        if (hovered_widget_) {
-          hovered_widget_->destroyed().disconnectOne(
-              this, &Frame::OnHoverWidgetDestroyed);
+        if (hover_) {
+          context->register_active_frame(this);
+          hover_ = false;
+          if (hovered_widget_) {
+            hovered_widget_->destroyed().disconnectOne(
+                this, &Frame::OnHoverWidgetDestroyed);
+            ClearHoverWidgets(hovered_widget_, context);
+            hovered_widget_ = 0;
+          }
         }
 
-        hovered_widget_ = new_hovered_widget;
-        if (hovered_widget_) {
-          events()->connect(hovered_widget_->destroyed(), this,
-                            &Frame::OnHoverWidgetDestroyed);
+        retval = Finish;
+
+      } else {
+
+        context->register_active_frame(this);
+
+        if (!hover_) {
+          PerformHoverIn(context);
         }
 
-      }
+        AbstractWidget* new_hovered_widget = DispatchMouseHover(hovered_widget_,
+                                                                context);
 
-      return Finish;
+        if (new_hovered_widget != hovered_widget_) {
+
+          if (hovered_widget_) {
+            hovered_widget_->destroyed().disconnectOne(
+                this, &Frame::OnHoverWidgetDestroyed);
+          }
+
+          hovered_widget_ = new_hovered_widget;
+          if (hovered_widget_) {
+            events()->connect(hovered_widget_->destroyed(), this,
+                              &Frame::OnHoverWidgetDestroyed);
+          }
+
+        }
+
+        context->register_active_frame(this);
+        retval = Ignore;
+      }
 
     } else {
 
       cursor_position_ = OutsideRectangle;
 
       if (hover_) {
+        context->register_active_frame(this);
         PerformHoverOut(context);
       }
 
-      return Ignore;
+      context->register_active_frame(current);
+
+      retval = Ignore;
     }
+
+    return retval;
   }
 
   void Frame::InitializeFrameOnce ()

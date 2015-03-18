@@ -26,6 +26,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <core/types.hpp>
 #include <core/timer.hpp>
 
 #include <opengl/opengl.hpp>
@@ -314,7 +315,7 @@ namespace BlendInt {
     }
   }
 
-  Point AbstractWindow::GetAbsolutePosition (const AbstractWidget* widget)
+  Point AbstractWindow::GetAbsolutePosition (const AbstractView* widget)
   {
 #ifdef DEBUG
     DBG_ASSERT(widget);
@@ -336,7 +337,7 @@ namespace BlendInt {
     return pos;
   }
 
-  Point AbstractWindow::GetRelativePosition (const AbstractWidget* widget)
+  Point AbstractWindow::GetRelativePosition (const AbstractView* widget)
   {
 #ifdef DEBUG
     DBG_ASSERT(widget);
@@ -483,6 +484,7 @@ namespace BlendInt {
   Response AbstractWindow::PerformKeyPress (AbstractWindow* context)
   {
     Response response = Ignore;
+    active_frame_ = 0;
 
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
       response = p->PerformKeyPress(context);
@@ -505,7 +507,7 @@ namespace BlendInt {
   Response AbstractWindow::PerformMousePress (AbstractWindow* context)
   {
     Response response = Ignore;
-
+    active_frame_ = 0;
     pressed_ = true;
 
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
@@ -521,7 +523,7 @@ namespace BlendInt {
   Response AbstractWindow::PerformMouseRelease (AbstractWindow* context)
   {
     Response response = Ignore;
-
+    active_frame_ = 0;
     pressed_ = false;
 
     for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
@@ -538,6 +540,7 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
+    active_frame_ = 0;
     if (pressed_) {
 
       for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
@@ -715,6 +718,7 @@ namespace BlendInt {
   {
     try {
 
+      active_frame_ = 0;
       Response response = Ignore;
       for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
         response = dynamic_cast<AbstractFrame*>(p)->PerformMouseHover(this);

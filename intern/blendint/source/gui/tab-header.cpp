@@ -121,28 +121,24 @@ namespace BlendInt {
 
 	Size TabHeader::GetPreferredSize () const
 	{
-		Size prefer(320, 20);
-
-		if(first_subview() == 0) {
-			BlendInt::Font font;
-			int max_font_height = font.height();
-			prefer.set_height(max_font_height);
+		if(subs_count() == 0) {
+		  return Size(320, Font::default_height());
 		} else {
-			Size tmp_size;
+			Size tmp;
+			int w = kLeftPadding + kRightPadding;
+			int h = 0;
 
 			for(AbstractView* p = first_subview(); p; p = p->next_view())
 			{
 				if(p->visiable()) {
-					tmp_size = p->GetPreferredSize();
-
-					prefer.add_width(tmp_size.width());
-					prefer.set_height(std::max(prefer.height(), tmp_size.height()));
+					tmp = p->GetPreferredSize();
+					w += tmp.width();
+					h = std::max(h, tmp.height());
 				}
 			}
 
+			return Size(w, h);
 		}
-
-		return prefer;
 	}
 
 	Response TabHeader::Draw (AbstractWindow* context)

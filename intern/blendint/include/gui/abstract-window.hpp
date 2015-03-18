@@ -168,9 +168,9 @@ namespace BlendInt {
 
     virtual const Point& GetGlobalCursorPosition () const = 0;
 
-    Point GetAbsolutePosition (const AbstractWidget* widget);
+    Point GetAbsolutePosition (const AbstractView* widget);
 
-    Point GetRelativePosition (const AbstractWidget* widget);
+    Point GetRelativePosition (const AbstractView* widget);
 
     inline void set_mouse_tracking (bool tracking)
     {
@@ -204,9 +204,6 @@ namespace BlendInt {
 
     inline AbstractFrame* active_frame () const
     {
-#ifdef DEBUG
-      assert(active_frame_ != nullptr);
-#endif
       return active_frame_;
     }
 

@@ -459,8 +459,6 @@ namespace BlendInt {
     kScancode = scancode;
     kText.clear();
 
-    win->register_active_frame(0);
-
     switch (kKeyAction) {
 
       case KeyPress: {
@@ -503,8 +501,6 @@ namespace BlendInt {
 
     kText.clear();
     kText.push_back(character);
-
-    win->register_active_frame(0);
 
     switch (kKeyAction) {
 
@@ -577,25 +573,19 @@ namespace BlendInt {
     switch (kMouseAction) {
 
       case MouseMove: {
-        win->register_active_frame(0);
         win->DispatchMouseHover();
-        win->register_active_frame(0);
         win->PerformMouseMove(win);
         break;
       }
 
       case MousePress: {
-        win->register_active_frame(0);
         win->DispatchMouseHover();
-        win->register_active_frame(0);
         win->PerformMousePress(win);
         break;
       }
 
       case MouseRelease: {
-        win->register_active_frame(0);
         win->PerformMouseRelease(win);
-        win->register_active_frame(0);
         win->DispatchMouseHover();
         break;
       }
@@ -626,25 +616,19 @@ namespace BlendInt {
     switch (kMouseAction) {
 
       case MouseMove: {
-        win->register_active_frame(0);
         win->DispatchMouseHover();
-        win->register_active_frame(0);
         win->PerformMouseMove(win);
         break;
       }
 
       case MousePress: {
-        win->register_active_frame(0);
         win->DispatchMouseHover();
-        win->register_active_frame(0);
         win->PerformMousePress(win);
         break;
       }
 
       case MouseRelease: {
-        win->register_active_frame(0);
         win->PerformMouseRelease(win);
-        win->register_active_frame(0);
         win->DispatchMouseHover();
         break;
       }

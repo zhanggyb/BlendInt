@@ -42,13 +42,13 @@ namespace BlendInt {
   {
   public:
 
-    virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const final;
 
-    virtual bool Contain (const Point& point) const;
+    virtual bool Contain (const Point& point) const final;
 
-    virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const final;
 
-    virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const final;
 
     virtual ~FrameSplitterHandle ();
 
@@ -58,33 +58,33 @@ namespace BlendInt {
 
     FrameSplitterHandle (Orientation orientation = Horizontal);
 
-    virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context) final;
 
-    virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) final;
 
-    virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context) final;
 
-    virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context) final;
 
-    virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context) final;
 
-    virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context) final;
 
-    virtual Response PerformContextMenuPress (AbstractWindow* context);
+    virtual Response PerformContextMenuPress (AbstractWindow* context) final;
 
-    virtual Response PerformContextMenuRelease (AbstractWindow* context);
+    virtual Response PerformContextMenuRelease (AbstractWindow* context) final;
 
-    virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context) final;
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context) final;
 
-    virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context) final;
 
-    virtual Response PerformMouseHover (AbstractWindow* context);
+    virtual Response PerformMouseHover (AbstractWindow* context) final;
 
     Orientation orientation_;
 
@@ -130,45 +130,43 @@ namespace BlendInt {
 
     int GetFramesCount () const;
 
-    virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const final;
 
-    virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const final;
 
-    virtual Size GetPreferredSize () const;
-
-    virtual AbstractView* GetFocusedView () const;
+    virtual Size GetPreferredSize () const final;
 
   protected:
 
-    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+    virtual void PerformPositionUpdate (const PositionUpdateRequest& request) final;
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
-    virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context) final;
 
-    virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context) final;
 
-    virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context) final;
 
-    virtual void PerformFocusOn (AbstractWindow* context);
+    virtual void PerformFocusOn (AbstractWindow* context) final;
 
-    virtual void PerformFocusOff (AbstractWindow* context);
+    virtual void PerformFocusOff (AbstractWindow* context) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context) final;
 
-    virtual Response PerformKeyPress (AbstractWindow* context);
+    virtual Response PerformKeyPress (AbstractWindow* context) final;
 
-    virtual Response PerformMousePress (AbstractWindow* context);
+    virtual Response PerformMousePress (AbstractWindow* context) final;
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
+    virtual Response PerformMouseRelease (AbstractWindow* context) final;
 
-    virtual Response PerformMouseMove (AbstractWindow* context);
+    virtual Response PerformMouseMove (AbstractWindow* context) final;
 
-    virtual Response PerformMouseHover (AbstractWindow* context);
+    virtual Response PerformMouseHover (AbstractWindow* context) final;
 
-    virtual bool RemoveSubView (AbstractView* view);
+    virtual bool RemoveSubView (AbstractView* view) final;
 
     void FillSubFrames ();
 
