@@ -31,6 +31,8 @@ namespace BlendInt {
 
   /**
    * @brief A combined button and popup list.
+   *
+   * @ingroup blendint_gui_widgets
    */
   class ComboBox: public AbstractRoundWidget
   {

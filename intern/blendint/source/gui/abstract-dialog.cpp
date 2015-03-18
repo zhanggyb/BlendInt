@@ -77,6 +77,13 @@ namespace BlendInt {
   void AbstractDialog::PerformFocusOff (AbstractWindow* context)
   {
     focused_ = false;
+
+    if (focused_widget_) {
+      focused_widget_->destroyed().disconnectOne(
+          this, &AbstractDialog::OnFocusedWidgetDestroyed);
+      dispatch_focus_off(focused_widget_, context);
+      focused_widget_ = 0;
+    }
   }
 
   Response AbstractDialog::PerformKeyPress (AbstractWindow* context)
@@ -107,7 +114,6 @@ namespace BlendInt {
 
       context->SetFocusedFrame(this);
 
-//      bool focus_status = focused_;
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
@@ -118,7 +124,6 @@ namespace BlendInt {
                                                            context);
 
         if (widget == 0) {
-          //DBG_PRINT_MSG("%s", "widget 0");
           set_mouse_button_pressed(true);
         } else {
           SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
@@ -245,10 +250,8 @@ namespace BlendInt {
     } else {
 
       if (focused_widget_) {
-
         DeclareActiveFrame(context, this);
         retval = dispatch_mouse_move(focused_widget_, context);
-
       }
 
     }
