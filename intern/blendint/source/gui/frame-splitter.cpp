@@ -635,13 +635,11 @@ namespace BlendInt {
 
       cursor_position_ = InsideRectangle;
 
-      if(!hover_) {
-        PerformHoverIn(context);
-      }
+      if (!hover_) PerformHoverIn(context);
 
       Response response = Finish;
       SetHoveredFrame(context);
-      if (hover_frame_ != nullptr) {
+      if (hover_frame_) {
         response = dispatch_mouse_hover(hover_frame_, context);
       }
 
@@ -651,9 +649,7 @@ namespace BlendInt {
 
       cursor_position_ = OutsideRectangle;
 
-      if(hover_) {
-        PerformHoverOut(context);
-      }
+      if (hover_) PerformHoverOut(context);
 
       return Ignore;
     }
@@ -1429,16 +1425,16 @@ namespace BlendInt {
   {
     AbstractFrame* original = hover_frame_;
 
-    if (hover_frame_ != nullptr) {
+    if (hover_frame_) {
 
       if (!hover_frame_->Contain(context->GetGlobalCursorPosition())) {
 
-        hover_frame_ = nullptr;
+        hover_frame_ = 0;
 
         // FrameSplitterHandle first:
         for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
 
-          if(!p->previous_view()) break;
+          if (!p->previous_view()) break;
           p = p->previous_view();
 
           if (p->Contain(context->GetGlobalCursorPosition())) {
@@ -1450,13 +1446,14 @@ namespace BlendInt {
         // Then content frames:
 
         if (!hover_frame_) {
-          for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+          for (AbstractView* p = last_subview(); p;  p = p->previous_view()) {
             if (p->Contain(context->GetGlobalCursorPosition())) {
               hover_frame_ = dynamic_cast<AbstractFrame*>(p);
               break;
             }
 
-            p = p->previous_view();
+            if (p->previous_view()) p = p->previous_view();
+            else break;
           }
         }
 
@@ -1485,7 +1482,8 @@ namespace BlendInt {
             break;
           }
 
-          p = p->previous_view();
+          if (p->previous_view()) p = p->previous_view();
+          else break;
         }
       }
 

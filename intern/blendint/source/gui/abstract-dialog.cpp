@@ -83,7 +83,7 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    if (context->GetKeyInput() == Key_Escape) {
+    if ((context->GetKeyInput() == Key_Escape) && focused_) {
 
       if (context == superview())
         context->RequestRedraw();
