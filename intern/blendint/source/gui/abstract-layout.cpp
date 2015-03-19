@@ -25,44 +25,43 @@
 
 namespace BlendInt {
 
-	AbstractLayout::AbstractLayout()
-	: AbstractWidget()
-	{
+  AbstractLayout::AbstractLayout ()
+  : AbstractWidget()
+  {
 
-	}
+  }
 
-	AbstractLayout::AbstractLayout (int width, int height)
-	: AbstractWidget(width, height)
-	{
+  AbstractLayout::AbstractLayout (int width, int height)
+  : AbstractWidget(width, height)
+  {
 
-	}
+  }
 
-	AbstractLayout::AbstractLayout (int width, int height, const Margin& margin)
-	: AbstractWidget(width, height),
-	  margin_(margin)
-	{
+  AbstractLayout::AbstractLayout (int width, int height, const Margin& margin)
+      : AbstractWidget(width, height), margin_(margin)
+  {
 
-	}
+  }
 
-	AbstractLayout::~AbstractLayout()
-	{
-	}
+  AbstractLayout::~AbstractLayout ()
+  {
+  }
 
-	void AbstractLayout::SetMargin(const Margin& margin)
-	{
-		if(margin_ == margin) return;
+  void AbstractLayout::SetMargin (const Margin& margin)
+  {
+    if (margin_ == margin) return;
 
-		PerformMarginUpdate(margin);
-	}
+    PerformMarginUpdate(margin);
+  }
 
-	Response BlendInt::AbstractLayout::Draw(AbstractWindow* context)
-	{
-		return subs_count() ? Ignore : Finish;
-	}
+  Response BlendInt::AbstractLayout::Draw (AbstractWindow* context)
+  {
+    return subs_count() ? Ignore : Finish;
+  }
 
-	void AbstractLayout::PerformMarginUpdate(const Margin& margin)
-	{
-		margin_ = margin;
-	}
+  void AbstractLayout::PerformMarginUpdate (const Margin& margin)
+  {
+    margin_ = margin;
+  }
 
 }

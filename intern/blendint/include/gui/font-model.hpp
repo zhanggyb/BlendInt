@@ -28,19 +28,18 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A data model to manage local font files
-	 */
-	class FontModel: public AbstractItemModel
-	{
-	public:
+  /**
+   * @brief A data model to manage local font files
+   */
+  class FontModel: public AbstractItemModel
+  {
+  public:
 
-		FontModel ();
+    FontModel ();
 
-		virtual ~FontModel ();
+    virtual ~FontModel ();
 
-
-	};
+  };
 
 }
 

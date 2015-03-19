@@ -25,15 +25,15 @@
 
 namespace BlendInt {
 
-	AbstractItemView::AbstractItemView ()
-		: AbstractScrollable()
-	{
-		
-	}
+  AbstractItemView::AbstractItemView ()
+  : AbstractScrollable()
+  {
 
-	AbstractItemView::~AbstractItemView ()
-	{
+  }
 
-	}
+  AbstractItemView::~AbstractItemView ()
+  {
+
+  }
 
 }

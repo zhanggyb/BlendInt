@@ -21,56 +21,64 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ORTHOCAMERA_HPP_
-#define _BLENDINT_GUI_ORTHOCAMERA_HPP_
+#pragma once
 
 #include <gui/abstract-camera.hpp>
 
 namespace BlendInt {
 
-	class OrthoCamera: public AbstractCamera
-	{
+  class OrthoCamera: public AbstractCamera
+  {
 
-	public:
+  public:
 
-		OrthoCamera();
+    OrthoCamera ();
 
-		virtual ~OrthoCamera ();
+    virtual ~OrthoCamera ();
 
-		void SetOrtho (float left, float right, float bottom, float top, float near = 100.f, float far = -100.f);
+    void SetOrtho (float left,
+                   float right,
+                   float bottom,
+                   float top,
+                   float near = 100.f,
+                   float far = -100.f);
 
-		float near () const	{return near_;}
+    float near () const
+    {
+      return near_;
+    }
 
-		float far () const {return far_;}
+    float far () const
+    {
+      return far_;
+    }
 
-	protected:
+  protected:
 
-		void set_near (float near)
-		{
-			near_ = near;
-		}
+    void set_near (float near)
+    {
+      near_ = near;
+    }
 
-		void set_far (float far)
-		{
-			far_ = far;
-		}
+    void set_far (float far)
+    {
+      far_ = far;
+    }
 
-	private:
+  private:
 
-		float left_;
+    float left_;
 
-		float right_;
+    float right_;
 
-		float bottom_;
+    float bottom_;
 
-		float top_;
+    float top_;
 
-		float near_;
+    float near_;
 
-		float far_;
+    float far_;
 
-	};
+  };
 
 }
-
-#endif /* _BLENDINT_GUI_ORTHOCAMERA_HPP_ */

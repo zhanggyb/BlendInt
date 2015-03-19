@@ -27,53 +27,55 @@
 
 namespace BlendInt {
 
- 	class AbstractCursorTheme
- 	{
- 	public:
+  class AbstractCursorTheme
+  {
+  public:
 
- 		AbstractCursorTheme ()
- 		: current_cursor_(ArrowCursor)
- 		{}
+    AbstractCursorTheme ()
+        : current_cursor_(ArrowCursor)
+    {
+    }
 
- 		virtual ~AbstractCursorTheme ()
- 		{}
+    virtual ~AbstractCursorTheme ()
+    {
+    }
 
-		/**
-		 * @brief Set the cursor
-		 *
-		 * Override this to set custom cursor
-		 */
-		virtual void SetCursor (int cursor_type) = 0;
+    /**
+     * @brief Set the cursor
+     *
+     * Override this to set custom cursor
+     */
+    virtual void SetCursor (int cursor_type) = 0;
 
-		inline int current_cursor () const
-		{
-			return current_cursor_;
-		}
+    inline int current_cursor () const
+    {
+      return current_cursor_;
+    }
 
- 	private:
+  private:
 
-		int current_cursor_;
+    int current_cursor_;
 
- 	};
+  };
 
- 	class BlankCursorTheme: public AbstractCursorTheme
- 	{
- 	public:
+  class BlankCursorTheme: public AbstractCursorTheme
+  {
+  public:
 
- 		BlankCursorTheme ()
- 		: AbstractCursorTheme()
- 		{
- 		}
+    BlankCursorTheme ()
+        : AbstractCursorTheme()
+    {
+    }
 
- 		virtual ~BlankCursorTheme()
- 		{
+    virtual ~BlankCursorTheme ()
+    {
 
- 		}
+    }
 
- 		virtual void SetCursor (int cursor_type)
- 		{
+    virtual void SetCursor (int cursor_type)
+    {
 
- 		}
- 	};
+    }
+  };
 
 }

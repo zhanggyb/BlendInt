@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTPRIMITIVE_HPP_
-#define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -30,30 +29,27 @@
 #include <opengl/glsl-program.hpp>
 #include <gui/abstract-camera.hpp>
 
-namespace BlendInt
-{
+namespace BlendInt {
 
-	class AbstractPrimitive: public Object
-	{
-	public:
+  class AbstractPrimitive: public Object
+  {
+  public:
 
-		AbstractPrimitive ();
+    AbstractPrimitive ();
 
-		virtual ~AbstractPrimitive ();
+    virtual ~AbstractPrimitive ();
 
-		/**
-		 * @brief Render the primitive in Viewport3D
-		 * @param MVP
-		 *
-		 * The following OpenGL APIs should not be used in this virtual function:
-		 * 	- glClearColor
-		 * 	- glClear
-		 */
-		virtual void Render (const glm::mat4& projection_matrix,
-		        const glm::mat4& view_matrix) = 0;
+    /**
+     * @brief Render the primitive in Viewport3D
+     * @param MVP
+     *
+     * The following OpenGL APIs should not be used in this virtual function:
+     * 	- glClearColor
+     * 	- glClear
+     */
+    virtual void Render (const glm::mat4& projection_matrix,
+                         const glm::mat4& view_matrix) = 0;
 
-	};
+  };
 
 }
-
-#endif /* _BLENDINT_ABSTRACTPRIMITIVE_HPP_ */

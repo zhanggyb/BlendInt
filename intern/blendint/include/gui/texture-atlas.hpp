@@ -28,84 +28,84 @@
 
 namespace BlendInt {
 
-	class TextureAtlas: public Object
-	{
+  class TextureAtlas: public Object
+  {
 
-	public:
+  public:
 
-		TextureAtlas()
-		: Object(),
-		id_(0),
-		width_(0),
-		height_(0),
-		last_x_(0),
-		last_y_(0),
-		last_row_height_(0)
-		{}
+    TextureAtlas ()
+    : Object(),
+      id_(0),
+      width_(0),
+      height_(0),
+      last_x_(0),
+      last_y_(0),
+      last_row_height_(0)
+    {
+    }
 
-		virtual ~TextureAtlas()
-		{
-			if(id_) glDeleteTextures(1, &id_);
-		}
+    virtual ~TextureAtlas ()
+    {
+      if (id_) glDeleteTextures(1, &id_);
+    }
 
-		void Generate (GLsizei width,
-				GLsizei height);
+    void Generate (GLsizei width, GLsizei height);
 
-		inline void bind () const
-		{
-			glBindTexture (GL_TEXTURE_2D, id_);
-		}
+    inline void bind () const
+    {
+      glBindTexture(GL_TEXTURE_2D, id_);
+    }
 
-		static inline void reset ()
-		{
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+    static inline void reset ()
+    {
+      glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
-		/**
-		 * @brief Upload glyph bitmap to the texture
-		 * @param[in] bitmap_width
-		 * @param[in] bitmap_rows
-		 * @param[in] bitmap
-		 * @param[out] x
-		 * @param[out] y
-		 *
-		 * Upload glyph bitmap to texture and get the position in the
-		 * texture for calculating UV.
-		 *
-		 * @note MUST call bind() before use this function
-		 */
-		bool Upload (int bitmap_width,
-					 int bitmap_rows,
-					 const unsigned char* bitmap,
-					 int* ox,
-					 int* oy);
+    /**
+     * @brief Upload glyph bitmap to the texture
+     * @param[in] bitmap_width
+     * @param[in] bitmap_rows
+     * @param[in] bitmap
+     * @param[out] x
+     * @param[out] y
+     *
+     * Upload glyph bitmap to texture and get the position in the
+     * texture for calculating UV.
+     *
+     * @note MUST call bind() before use this function
+     */
+    bool Upload (int bitmap_width,
+                 int bitmap_rows,
+                 const unsigned char* bitmap,
+                 int* ox,
+                 int* oy);
 
-	private:
+  private:
 
-		inline void clear()
-		{
-			glDeleteTextures(1, &id_);
-			id_ = 0;
+    inline void clear ()
+    {
+      glDeleteTextures(1, &id_);
+      id_ = 0;
 
-			width_ = 0;
-			height_ = 0;
-			last_x_ = 0;
-			last_y_ = 0;
-			last_row_height_ = 0;
-		}
+      width_ = 0;
+      height_ = 0;
+      last_x_ = 0;
+      last_y_ = 0;
+      last_row_height_ = 0;
+    }
 
-		GLuint id_;
+    GLuint id_;
 
-		GLsizei width_;
+    GLsizei width_;
 
-		GLsizei height_;
+    GLsizei height_;
 
-		GLsizei last_x_;
+    GLsizei last_x_;
 
-		GLsizei last_y_;
+    GLsizei last_y_;
 
-		GLsizei last_row_height_;
-		
-	};
+    GLsizei last_row_height_;
+
+  };
 
 }

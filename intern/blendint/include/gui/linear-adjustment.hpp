@@ -29,69 +29,70 @@
 
 namespace BlendInt {
 
-	class LinearAdjustment: public AbstractAdjustment
-	{
-	public:
+  class LinearAdjustment: public AbstractAdjustment
+  {
+  public:
 
-		LinearAdjustment (AbstractView* view, Orientation orient, int alignment, int space);
+    LinearAdjustment (AbstractView* view,
+                      Orientation orient,
+                      int alignment,
+                      int space);
 
-		virtual ~LinearAdjustment ();
+    virtual ~LinearAdjustment ();
 
-		virtual void Adjust (int x, int y, int w, int h);
+    virtual void Adjust (int x, int y, int w, int h);
 
-	private:
+  private:
 
-		void AdjustHorizontally (int x, int y, int w, int h);
+    void AdjustHorizontally (int x, int y, int w, int h);
 
-		/**
-		 * @brief distribute horizontally with preferred size
-		 */
-		void DistributeWithPreferredWidth (int x);
+    /**
+     * @brief distribute horizontally with preferred size
+     */
+    void DistributeWithPreferredWidth (int x);
 
-		void DistributeWithSmallWidth (int x,
-						int width,
-						int expandable_prefer_sum,
-						int unexpandable_prefer_sum);
+    void DistributeWithSmallWidth (int x,
+                                   int width,
+                                   int expandable_prefer_sum,
+                                   int unexpandable_prefer_sum);
 
-		void DistributeWithLargeWidth (int x,
-						int width,
-						int expandable_prefer_sum,
-						int unexpandable_prefer_sum);
+    void DistributeWithLargeWidth (int x,
+                                   int width,
+                                   int expandable_prefer_sum,
+                                   int unexpandable_prefer_sum);
 
-		void AlignHorizontally (int y, int height);
+    void AlignHorizontally (int y, int height);
 
-		void AdjustVertically (int x, int y, int w, int h);
+    void AdjustVertically (int x, int y, int w, int h);
 
-		/**
-		 * @brief distribute horizontally with preferred size
-		 */
-		void DistributeWithPreferredHeight (int y,
-						int height);
+    /**
+     * @brief distribute horizontally with preferred size
+     */
+    void DistributeWithPreferredHeight (int y, int height);
 
-		void DistributeWithSmallHeight (int y,
-						int height,
-						int expandable_prefer_sum,
-						int unexpandable_prefer_sum);
+    void DistributeWithSmallHeight (int y,
+                                    int height,
+                                    int expandable_prefer_sum,
+                                    int unexpandable_prefer_sum);
 
-		void DistributeWithLargeHeight (int y,
-						int height,
-						int expandable_prefer_sum,
-						int unexpandable_prefer_sum);
+    void DistributeWithLargeHeight (int y,
+                                    int height,
+                                    int expandable_prefer_sum,
+                                    int unexpandable_prefer_sum);
 
-		void AlignVertically (int x, int width);
+    void AlignVertically (int x, int width);
 
-		Orientation orientation_;
+    Orientation orientation_;
 
-		int alignment_;
+    int alignment_;
 
-		int space_;
+    int space_;
 
-		std::deque<int> expandable_preferred_width_list_;
-		std::deque<int> expandable_preferred_height_list_;
-		std::deque<int> unexpandable_preferred_width_list_;
-		std::deque<int> unexpandable_preferred_height_list_;
+    std::deque<int> expandable_preferred_width_list_;
+    std::deque<int> expandable_preferred_height_list_;
+    std::deque<int> unexpandable_preferred_width_list_;
+    std::deque<int> unexpandable_preferred_height_list_;
 
-
-	};
+  };
 
 }

@@ -28,82 +28,86 @@
 
 namespace BlendInt {
 
-	class LinearLayout: public AbstractLayout
-	{
-	public:
+  class LinearLayout: public AbstractLayout
+  {
+  public:
 
-		LinearLayout (Orientation orient = Horizontal, int align = AlignCenter,
-		        int space = 4);
+    LinearLayout (Orientation orient = Horizontal,
+                  int align = AlignCenter,
+                  int space = 4);
 
-		LinearLayout (int width, int height, const Margin& margin,
-		        Orientation orient = Horizontal, int align = AlignCenter,
-		        int space = 4);
+    LinearLayout (int width,
+                  int height,
+                  const Margin& margin,
+                  Orientation orient = Horizontal,
+                  int align = AlignCenter,
+                  int space = 4);
 
-		virtual ~LinearLayout ();
+    virtual ~LinearLayout ();
 
-		virtual bool AddWidget (AbstractWidget* widget);
+    virtual bool AddWidget (AbstractWidget* widget);
 
-		virtual bool InsertWidget (int index, AbstractWidget* widget);
+    virtual bool InsertWidget (int index, AbstractWidget* widget);
 
-		// row must be 0
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+    // row must be 0
+    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-		virtual void Adjust ();
+    virtual void Adjust ();
 
-		bool Remove (AbstractWidget* widget);
+    bool Remove (AbstractWidget* widget);
 
-		void SetOrientation (Orientation orient);
+    void SetOrientation (Orientation orient);
 
-		void SetAlignment (int align);
+    void SetAlignment (int align);
 
-		void SetSpace (int space);
+    void SetSpace (int space);
 
-		int alignment () const
-		{
-			return alignment_;
-		}
+    int alignment () const
+    {
+      return alignment_;
+    }
 
-		int space () const
-		{
-			return space_;
-		}
+    int space () const
+    {
+      return space_;
+    }
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-	protected:
+  protected:
 
-		virtual void PerformMarginUpdate (const Margin& margin);
+    virtual void PerformMarginUpdate (const Margin& margin);
 
-		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+    virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+    virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		void set_alignment (int align)
-		{
-			alignment_ = align;
-		}
+    void set_alignment (int align)
+    {
+      alignment_ = align;
+    }
 
-		void set_space (int space)
-		{
-			space_ = space;
-		}
+    void set_space (int space)
+    {
+      space_ = space;
+    }
 
-	private:
+  private:
 
-		Orientation orientation_;
+    Orientation orientation_;
 
-		int alignment_;
+    int alignment_;
 
-		int space_;
+    int space_;
 
-		DISALLOW_COPY_AND_ASSIGN(LinearLayout);
+  DISALLOW_COPY_AND_ASSIGN(LinearLayout);
 
-	};
+  };
 
 }

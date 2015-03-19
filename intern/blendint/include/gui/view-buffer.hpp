@@ -30,52 +30,52 @@
 
 namespace BlendInt {
 
-	class ViewBuffer: public AbstractForm
-	{
-	public:
+  class ViewBuffer: public AbstractForm
+  {
+  public:
 
-		ViewBuffer ();
+    ViewBuffer ();
 
-		ViewBuffer (int width, int height);
+    ViewBuffer (int width, int height);
 
-		virtual ~ViewBuffer ();
+    virtual ~ViewBuffer ();
 
-		virtual void Draw (int x = 0,
-				int y = 0,
-				const float* color_ptr = 0,
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    virtual void Draw (int x = 0,
+                       int y = 0,
+                       const float* color_ptr = 0,
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				const float* color_ptr = 0,
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const;
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr = 0,
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const;
 
-		inline GLTexture2D* texture ()
-		{
-			return &texture_;
-		}
+    inline GLTexture2D* texture ()
+    {
+      return &texture_;
+    }
 
 #ifdef DEBUG
-		void SaveToFile (const char* file);
+    void SaveToFile (const char* file);
 #endif
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (const Size& size);
 
-	private:
+  private:
 
-		GLuint vao_;
+    GLuint vao_;
 
-		GLBuffer<> vbo_;
+    GLBuffer<> vbo_;
 
-		GLTexture2D texture_;
+    GLTexture2D texture_;
 
-	};
+  };
 
 }

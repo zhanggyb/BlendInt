@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_GRID_HPP_
-#define _BLENDINT_GUI_GRID_HPP_
+#pragma once
 
 #include <vector>
 
@@ -32,52 +31,49 @@
 
 namespace BlendInt {
 
-	class GridFloor: public AbstractPrimitive
-	{
-	public:
+  class GridFloor: public AbstractPrimitive
+  {
+  public:
 
-		GridFloor ();
+    GridFloor ();
 
-		virtual ~GridFloor ();
+    virtual ~GridFloor ();
 
-		void SetLines (int lines);
+    void SetLines (int lines);
 
-		void SetScale (float scale);
+    void SetScale (float scale);
 
-		void SetAxis (const char* str);
+    void SetAxis (const char* str);
 
-		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
+    virtual void Render (const glm::mat4& projection_matrix,
+                         const glm::mat4& view_matrix);
 
-	private:
+  private:
 
-		void InitializeGrid ();
+    void InitializeGrid ();
 
-		void GenerateGripFloorVertices (std::vector<GLfloat>& vertices);
+    void GenerateGripFloorVertices (std::vector<GLfloat>& vertices);
 
-		/**
-		 * @brief Vertex array objects
-		 *
-		 * - 0: grid
-		 * - 1: x axis
-		 * - 2: y axis
-		 * - 3: z axis
-		 */
-		GLuint vaos_[4];
+    /**
+     * @brief Vertex array objects
+     *
+     * - 0: grid
+     * - 1: x axis
+     * - 2: y axis
+     * - 3: z axis
+     */
+    GLuint vaos_[4];
 
-		int lines_;
-		float scale_;
+    int lines_;
+    float scale_;
 
-		int subdivisions_;	// default is 10
+    int subdivisions_;	// default is 10
 
-		RefPtr<GLArrayBuffer> buffer_;
+    RefPtr<GLArrayBuffer> buffer_;
 
-		RefPtr<GLArrayBuffer> axis_x_;
-		RefPtr<GLArrayBuffer> axis_y_;
-		RefPtr<GLArrayBuffer> axis_z_;
-	};
+    RefPtr<GLArrayBuffer> axis_x_;
+    RefPtr<GLArrayBuffer> axis_y_;
+    RefPtr<GLArrayBuffer> axis_z_;
+  };
 
 }
-
-
-
-#endif /* _BLENDINT_GUI_GRID_HPP_ */

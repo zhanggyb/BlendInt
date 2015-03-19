@@ -91,7 +91,8 @@ namespace BlendInt {
     }
 
     static bool RenderSubWidgetsToTexture (AbstractWidget* widget,
-        AbstractWindow* context, GLTexture2D* texture);
+                                           AbstractWindow* context,
+                                           GLTexture2D* texture);
 
   private:
 

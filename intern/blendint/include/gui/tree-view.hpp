@@ -21,32 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TREEVIEW_HPP_
-#define _BLENDINT_GUI_TREEVIEW_HPP_
+#pragma once
 
 #include <gui/abstract-item-view.hpp>
 
 namespace BlendInt {
 
-	class TreeView: public AbstractItemView
-	{
-		DISALLOW_COPY_AND_ASSIGN(TreeView);
+  class TreeView: public AbstractItemView
+  {
+    DISALLOW_COPY_AND_ASSIGN (TreeView);
 
-	public:
+  public:
 
-		TreeView ();
+    TreeView ();
 
-		virtual ~TreeView ();
+    virtual ~TreeView ();
 
-		virtual ModelIndex GetIndexAt (const Point& point) const;
+    virtual ModelIndex GetIndexAt (const Point& point) const;
 
-	protected:
+  protected:
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-	private:
+  private:
 
-	};
+  };
 }
-
-#endif /* _BLENDINT_GUI_TREEVIEW_HPP_ */

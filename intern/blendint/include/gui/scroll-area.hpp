@@ -28,32 +28,32 @@
 
 namespace BlendInt {
 
-	class ScrollArea: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(ScrollArea);
+  class ScrollArea: public AbstractRoundWidget
+  {
+  DISALLOW_COPY_AND_ASSIGN(ScrollArea);
 
-	public:
+  public:
 
-		ScrollArea();
+    ScrollArea ();
 
-		ScrollArea (int width, int height, const Margin& margin, int space);
+    ScrollArea (int width, int height, const Margin& margin, int space);
 
-		virtual ~ScrollArea ();
+    virtual ~ScrollArea ();
 
-		void SetScrollableWidget (AbstractScrollable* scrollable);
+    void SetScrollableWidget (AbstractScrollable* scrollable);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-	private:
+  private:
 
-		TableLayout* layout_;
-	};
+    TableLayout* layout_;
+  };
 }

@@ -28,51 +28,53 @@
 
 namespace BlendInt {
 
-	AbstractCamera::AbstractCamera ()
-	: Object()
-	{
-	}
+  AbstractCamera::AbstractCamera ()
+  : Object()
+  {
+  }
 
-	AbstractCamera::~AbstractCamera ()
-	{
-	}
+  AbstractCamera::~AbstractCamera ()
+  {
+  }
 
-	void AbstractCamera::LookAt(const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up)
-	{
-		if(pos == center) {
-			DBG_PRINT_MSG("ERROR: %s", "position and center are the same");
-			return;
-		}
+  void AbstractCamera::LookAt (const glm::vec3& pos,
+                               const glm::vec3& center,
+                               const glm::vec3& up)
+  {
+    if (pos == center) {
+      DBG_PRINT_MSG("ERROR: %s", "position and center are the same");
+      return;
+    }
 
-		position_ = pos;
-		center_ = center;
-		up_ = up;
+    position_ = pos;
+    center_ = center;
+    up_ = up;
 
-		local_z_ = position_ - center_;
-		local_x_ = glm::cross(up_, local_z_);
-		local_y_ = glm::cross(local_z_, local_x_);
+    local_z_ = position_ - center_;
+    local_x_ = glm::cross(up_, local_z_);
+    local_y_ = glm::cross(local_z_, local_x_);
 
-		local_x_ = glm::normalize(local_x_);
-		local_y_ = glm::normalize(local_y_);
-		local_z_ = glm::normalize(local_z_);
+    local_x_ = glm::normalize(local_x_);
+    local_y_ = glm::normalize(local_y_);
+    local_z_ = glm::normalize(local_z_);
 
-		view_ = glm::lookAt(position_, center_, up_);
-	}
+    view_ = glm::lookAt(position_, center_, up_);
+  }
 
-	void AbstractCamera::Orbit (float dx, float dy)
-	{
-		// Nothing in base class
-	}
+  void AbstractCamera::Orbit (float dx, float dy)
+  {
+    // Nothing in base class
+  }
 
-	void AbstractCamera::Pan (float dx, float dy)
-	{
-		// Nothing in base class
-	}
+  void AbstractCamera::Pan (float dx, float dy)
+  {
+    // Nothing in base class
+  }
 
-	void AbstractCamera::Zoom (float fac)
-	{
-		// Nothing in base class
-	}
+  void AbstractCamera::Zoom (float fac)
+  {
+    // Nothing in base class
+  }
 
 }
 

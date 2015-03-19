@@ -32,347 +32,347 @@
 
 namespace BlendInt {
 
-	TextureView::TextureView ()
-	: AbstractScrollable()
-	{
-		set_size(400, 300);
-		image_size_ = size();
-
-		InitializeImageView();
-	}
-
-	TextureView::~TextureView ()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
-
-	bool TextureView::OpenFile (const char* filename)
-	{
-		bool retval = false;
-
-		Image image;
+  TextureView::TextureView ()
+  : AbstractScrollable()
+  {
+    set_size(400, 300);
+    image_size_ = size();
+
+    InitializeImageView();
+  }
 
-		if(image.Read(filename)) {
+  TextureView::~TextureView ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
+
+  bool TextureView::OpenFile (const char* filename)
+  {
+    bool retval = false;
 
-			if(!texture_) {
+    Image image;
 
-				texture_.reset(new GLTexture2D);
-				texture_->generate();
-				texture_->bind();
-				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-				texture_->SetMinFilter(GL_LINEAR);
-				texture_->SetMagFilter(GL_LINEAR);
-
-			} else if(!glIsTexture(texture_->id())){
+    if (image.Read(filename)) {
 
-				texture_->generate();
-				texture_->bind();
-				texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-				texture_->SetMinFilter(GL_LINEAR);
-				texture_->SetMagFilter(GL_LINEAR);
+      if (!texture_) {
 
-			} else {
+        texture_.reset(new GLTexture2D);
+        texture_->generate();
+        texture_->bind();
+        texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+        texture_->SetMinFilter(GL_LINEAR);
+        texture_->SetMagFilter(GL_LINEAR);
 
-				texture_->bind();
+      } else if (!glIsTexture(texture_->id())) {
 
-			}
+        texture_->generate();
+        texture_->bind();
+        texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+        texture_->SetMinFilter(GL_LINEAR);
+        texture_->SetMagFilter(GL_LINEAR);
 
-			switch(image.channels()) {
+      } else {
 
-				case 1: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-					texture_->SetImage(0, GL_RED, image.width(), image.height(),
-							0, GL_RED, GL_UNSIGNED_BYTE, image.pixels());
-					break;
-				}
+        texture_->bind();
 
-				case 2: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-					texture_->SetImage(0, GL_RG, image.width(), image.height(),
-							0, GL_RG, GL_UNSIGNED_BYTE, image.pixels());
-					break;
-				}
+      }
 
-				case 3: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					texture_->SetImage(0, GL_RGB, image.width(),
-							image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
-							image.pixels());
-					break;
-				}
+      switch (image.channels()) {
 
-				case 4: {
-					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					texture_->SetImage(0, GL_RGBA, image.width(),
-					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-					        image.pixels());
-					break;
-				}
+        case 1: {
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+          texture_->SetImage(0, GL_RED, image.width(), image.height(), 0,
+                             GL_RED, GL_UNSIGNED_BYTE, image.pixels());
+          break;
+        }
 
-				default:
-					break;
-			}
+        case 2: {
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+          texture_->SetImage(0, GL_RG, image.width(), image.height(), 0, GL_RG,
+                             GL_UNSIGNED_BYTE, image.pixels());
+          break;
+        }
 
-			texture_->reset();
+        case 3: {
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+          texture_->SetImage(0, GL_RGB, image.width(), image.height(), 0,
+                             GL_RGB, GL_UNSIGNED_BYTE, image.pixels());
+          break;
+        }
 
-			image_size_.set_width(image.width());
-			image_size_.set_height(image.height());
+        case 4: {
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+          texture_->SetImage(0, GL_RGBA, image.width(), image.height(), 0,
+                             GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
+          break;
+        }
 
-			//AdjustImageArea(size());
-			chessboard_->Resize(image_size_);
+        default:
+          break;
+      }
 
-			vbo_.bind(1);
-			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = image.width();
-			*(ptr + 9) = image.height();
-			*(ptr + 12) = image.width();
-			*(ptr + 13) = image.height();
-			vbo_.unmap();
-			vbo_.reset();
+      texture_->reset();
 
-			RequestRedraw();
+      image_size_.set_width(image.width());
+      image_size_.set_height(image.height());
 
-			retval = true;
-		}
+      //AdjustImageArea(size());
+      chessboard_->Resize(image_size_);
 
-		return retval;
-	}
+      vbo_.bind(1);
+      float* ptr = (float*) vbo_.map();
+      *(ptr + 4) = image.width();
+      *(ptr + 9) = image.height();
+      *(ptr + 12) = image.width();
+      *(ptr + 13) = image.height();
+      vbo_.unmap();
+      vbo_.reset();
 
-	void TextureView::LoadImage (const RefPtr<Image>& image)
-	{
-	}
+      RequestRedraw();
 
-	void TextureView::SetTexture (const RefPtr<GLTexture2D>& texture)
-	{
-		if(texture_ == texture) return;
+      retval = true;
+    }
 
-		texture_ = texture;
+    return retval;
+  }
 
-		if(texture_->id()) {
-			texture_->bind();
+  void TextureView::LoadImage (const RefPtr<Image>& image)
+  {
+  }
 
-			image_size_ = texture_->GetSize();
+  void TextureView::SetTexture (const RefPtr<GLTexture2D>& texture)
+  {
+    if (texture_ == texture) return;
 
-			chessboard_->Resize(image_size_);
+    texture_ = texture;
 
-			vbo_.bind(1);
-			float* ptr = (float*)vbo_.map();
-			*(ptr + 4) = image_size_.width();
-			*(ptr + 9) = image_size_.height();
-			*(ptr + 12) = image_size_.width();
-			*(ptr + 13) = image_size_.height();
-			vbo_.unmap();
-			vbo_.reset();
+    if (texture_->id()) {
+      texture_->bind();
 
-			texture_->reset();
-		}
+      image_size_ = texture_->GetSize();
 
-		///AdjustImageArea(size());
+      chessboard_->Resize(image_size_);
 
-		RequestRedraw();
-	}
+      vbo_.bind(1);
+      float* ptr = (float*) vbo_.map();
+      *(ptr + 4) = image_size_.width();
+      *(ptr + 9) = image_size_.height();
+      *(ptr + 12) = image_size_.width();
+      *(ptr + 13) = image_size_.height();
+      vbo_.unmap();
+      vbo_.reset();
 
-	void TextureView::Clear()
-	{
+      texture_->reset();
+    }
 
-	}
+    ///AdjustImageArea(size());
 
-	bool TextureView::IsExpandX () const
-	{
-		return true;
-	}
+    RequestRedraw();
+  }
 
-	bool TextureView::IsExpandY () const
-	{
-		return true;
-	}
+  void TextureView::Clear ()
+  {
 
-	Size TextureView::GetPreferredSize () const
-	{
-		return image_size_;
-	}
+  }
 
-	void TextureView::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if (request.target() == this) {
+  bool TextureView::IsExpandX () const
+  {
+    return true;
+  }
 
-			set_size(*request.size());
+  bool TextureView::IsExpandY () const
+  {
+    return true;
+  }
 
-			std::vector<GLfloat> inner_verts;
-			GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+  Size TextureView::GetPreferredSize () const
+  {
+    return image_size_;
+  }
 
-			vbo_.bind(0);
-			vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.reset();
+  void TextureView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
 
-			//AdjustImageArea (*request.size());
+      set_size(*request.size());
 
-			RequestRedraw();
-		}
+      std::vector<GLfloat> inner_verts;
+      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+      vbo_.bind(0);
+      vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+      vbo_.reset();
 
-	bool TextureView::PreDraw (AbstractWindow* context)
-	{
-		if(!visiable()) return false;
+      //AdjustImageArea (*request.size());
 
-		Point offset = GetOffset();
-		glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
-				glm::vec2(position().x() + offset.x(),
-						position().y() + offset.y()));
+      RequestRedraw();
+    }
 
-		AbstractWindow::shaders()->PushWidgetModelMatrix();
-		AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-		// draw background and stencil mask
+  bool TextureView::PreDraw (AbstractWindow* context)
+  {
+    if (!visiable()) return false;
 
-		AbstractWindow::shaders()->widget_inner_program()->use();
+    Point offset = GetOffset();
+    glm::mat3 matrix = glm::translate(
+        AbstractWindow::shaders()->widget_model_matrix(),
+        glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.208f, 0.208f, 0.208f, 1.0f);
+    AbstractWindow::shaders()->PushWidgetModelMatrix();
+    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    // draw background and stencil mask
 
-		context->BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		context->EndPushStencil();
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-		return true;
-	}
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+        0.208f, 0.208f, 0.208f, 1.0f);
 
-	Response TextureView::Draw (AbstractWindow* context)
-	{
-		float x = (size().width() - image_size_.width()) / 2.f;
-		float y = (size().height() - image_size_.height()) / 2.f;
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-		// draw checkerboard
-		chessboard_->Draw(x, y);
+    context->BeginPushStencil();	// inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    context->EndPushStencil();
 
-		if(texture_ && glIsTexture(texture_->id())) {
+    return true;
+  }
 
-			// draw texture
-			glActiveTexture(GL_TEXTURE0);
+  Response TextureView::Draw (AbstractWindow* context)
+  {
+    float x = (size().width() - image_size_.width()) / 2.f;
+    float y = (size().height() - image_size_.height()) / 2.f;
 
-			texture_->bind();
+    // draw checkerboard
+    chessboard_->Draw(x, y);
 
-			AbstractWindow::shaders()->widget_image_program()->use();
-			glUniform2f(
-			        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
-			        x, y);
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+    if (texture_ && glIsTexture(texture_->id())) {
 
-			glBindVertexArray(vao_[1]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      // draw texture
+      glActiveTexture(GL_TEXTURE0);
 
-			texture_->reset();
+      texture_->bind();
 
-		}
+      AbstractWindow::shaders()->widget_image_program()->use();
+      glUniform2f(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+          x, y);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE),
+          0);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
-		return Finish;
-	}
+      glBindVertexArray(vao_[1]);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	void TextureView::PostDraw (AbstractWindow* context)
-	{
-		// draw background again to unmask stencil
-		AbstractWindow::shaders()->widget_inner_program()->use();
+      texture_->reset();
 
-		glBindVertexArray(vao_[0]);
+    }
 
-		context->BeginPopStencil();	// pop inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		context->EndPopStencil();
+    return Finish;
+  }
 
-		AbstractWindow::shaders()->PopWidgetModelMatrix();
-	}
+  void TextureView::PostDraw (AbstractWindow* context)
+  {
+    // draw background again to unmask stencil
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-	void TextureView::InitializeImageView ()
-	{
-		chessboard_.reset(new ChessBoard(20));
-		chessboard_->Resize(size());
+    glBindVertexArray(vao_[0]);
 
-		std::vector<GLfloat> inner_verts;
-		GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+    context->BeginPopStencil();	// pop inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    context->EndPopStencil();
 
-		vbo_.generate();
+    AbstractWindow::shaders()->PopWidgetModelMatrix();
+  }
 
-		glGenVertexArrays(2, vao_);
-		glBindVertexArray(vao_[0]);
+  void TextureView::InitializeImageView ()
+  {
+    chessboard_.reset(new ChessBoard(20));
+    chessboard_->Resize(size());
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    vbo_.generate();
 
-		glBindVertexArray(vao_[1]);
+    glGenVertexArrays(2, vao_);
+    glBindVertexArray(vao_[0]);
 
-		GLfloat vertices[] = {
-			0.f, 0.f, 		0.f, 1.f,
-			400.f, 0.f, 	1.f, 1.f,
-			0.f, 300.f,		0.f, 0.f,
-			400.f, 300.f,	1.f, 0.f
-		};
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(vertices), vertices);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0,
+                          BUFFER_OFFSET(0));
 
-		glEnableVertexAttribArray (
-				AttributeCoord);
-		glEnableVertexAttribArray (
-				AttributeUV);
-		glVertexAttribPointer (AttributeCoord,
-				2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer (AttributeUV, 2,
-				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-				BUFFER_OFFSET(2 * sizeof(GLfloat)));
+    glBindVertexArray(vao_[1]);
 
-		glBindVertexArray(0);
-		vbo_.reset();
-	}
+    GLfloat vertices[] = { 0.f, 0.f, 0.f, 1.f, 400.f, 0.f, 1.f, 1.f, 0.f, 300.f,
+        0.f, 0.f, 400.f, 300.f, 1.f, 0.f };
 
-	/*
-	void TextureView::AdjustImageArea(const Size& size)
-	{
-		if(image_size_.width() == 0 || image_size_.height() == 0) {
-			//checkerboard_->Resize(size);
-			return;
-		}
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(vertices), vertices);
 
-		int w = std::min(size.width(), image_size_.width());
-		int h = std::min(size.height(), image_size_.height());
+    glEnableVertexAttribArray(AttributeCoord);
+    glEnableVertexAttribArray(AttributeUV);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+    glVertexAttribPointer(AttributeUV, 2,
+    GL_FLOAT,
+                          GL_FALSE, sizeof(GLfloat) * 4,
+                          BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		if(h == 0) {
-			w = 0;
-		} else {
-			float ratio = (float)w / h;
-			float ref_ratio = (float)image_size_.width() / image_size_.height();
-			if(ratio > ref_ratio) {
-				w = h * ref_ratio;
-			} else if (ratio < ref_ratio) {
-				h = w / ref_ratio;
-			}
-		}
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
 
-		checkerboard_->Resize(w, h);
+/*
+ void TextureView::AdjustImageArea(const Size& size)
+ {
+ if(image_size_.width() == 0 || image_size_.height() == 0) {
+ //checkerboard_->Resize(size);
+ return;
+ }
 
-		GLfloat x = (size.width() - w) / 2.f;
-		GLfloat y = (size.height() - h) / 2.f;
+ int w = std::min(size.width(), image_size_.width());
+ int h = std::min(size.height(), image_size_.height());
 
-		GLfloat vertices[] = {
-			x, y,	0.f, 1.f,
-			x + (GLfloat)w, y,		1.f, 1.f,
-			x, y + (GLfloat)h,		0.f, 0.f,
-			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
-		};
+ if(h == 0) {
+ w = 0;
+ } else {
+ float ratio = (float)w / h;
+ float ref_ratio = (float)image_size_.width() / image_size_.height();
+ if(ratio > ref_ratio) {
+ w = h * ref_ratio;
+ } else if (ratio < ref_ratio) {
+ h = w / ref_ratio;
+ }
+ }
 
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(vertices), vertices);
-		vbo_.reset();
-	}
-	*/
+ checkerboard_->Resize(w, h);
+
+ GLfloat x = (size.width() - w) / 2.f;
+ GLfloat y = (size.height() - h) / 2.f;
+
+ GLfloat vertices[] = {
+ x, y,	0.f, 1.f,
+ x + (GLfloat)w, y,		1.f, 1.f,
+ x, y + (GLfloat)h,		0.f, 0.f,
+ x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
+ };
+
+ vbo_.bind(1);
+ vbo_.set_data(sizeof(vertices), vertices);
+ vbo_.reset();
+ }
+ */
 }

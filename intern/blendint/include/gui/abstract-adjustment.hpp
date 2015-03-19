@@ -27,56 +27,58 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Used for layouts to adjust sub views' geometry
-	 */
-	class AbstractAdjustment
-	{
-	public:
+  /**
+   * @brief Used for layouts to adjust sub views' geometry
+   *
+   * @ingroup blendint_gui
+   */
+  class AbstractAdjustment
+  {
+  public:
 
-		AbstractAdjustment (AbstractView* view)
-		: view_(view)
-		{
+    AbstractAdjustment (AbstractView* view)
+        : view_(view)
+    {
 
-		}
+    }
 
-		virtual ~AbstractAdjustment ()
-		{
+    virtual ~AbstractAdjustment ()
+    {
 
-		}
+    }
 
-		virtual void Adjust (int x, int y, int w, int h) = 0;
+    virtual void Adjust (int x, int y, int w, int h) = 0;
 
-	protected:
+  protected:
 
-		inline void move (AbstractView* sub, int x, int y) const
-		{
-			view_->MoveSubViewTo(sub, x, y);
-		}
+    inline void move (AbstractView* sub, int x, int y) const
+    {
+      view_->MoveSubViewTo(sub, x, y);
+    }
 
-		inline void move (AbstractView* sub, const Point& point) const
-		{
-			view_->MoveSubViewTo(sub, point);
-		}
+    inline void move (AbstractView* sub, const Point& point) const
+    {
+      view_->MoveSubViewTo(sub, point);
+    }
 
-		inline void resize (AbstractView* sub, int width, int height) const
-		{
-			view_->ResizeSubView(sub, width, height);
-		}
+    inline void resize (AbstractView* sub, int width, int height) const
+    {
+      view_->ResizeSubView(sub, width, height);
+    }
 
-		inline void resize (AbstractView* sub, const Size& size) const
-		{
-			view_->ResizeSubView(sub, size);
-		}
+    inline void resize (AbstractView* sub, const Size& size) const
+    {
+      view_->ResizeSubView(sub, size);
+    }
 
-		AbstractView* view() const
-		{
-			return view_;
-		}
+    AbstractView* view () const
+    {
+      return view_;
+    }
 
-	private:
+  private:
 
-		AbstractView* view_;
-	};
+    AbstractView* view_;
+  };
 
 }

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTCAMERA_HPP_
-#define _BLENDINT_ABSTRACTCAMERA_HPP_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -30,146 +29,170 @@
 
 namespace BlendInt {
 
-	class AbstractCamera: public Object
-	{
-	public:
+  class AbstractCamera: public Object
+  {
+  public:
 
-		AbstractCamera ();
+    AbstractCamera ();
 
-		virtual ~AbstractCamera ();
+    virtual ~AbstractCamera ();
 
-		void LookAt (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up);
+    void LookAt (const glm::vec3& pos,
+                 const glm::vec3& center,
+                 const glm::vec3& up);
 
-		virtual void Orbit (float dx, float dy);
+    virtual void Orbit (float dx, float dy);
 
-		virtual void Pan (float dx, float dy);
+    virtual void Pan (float dx, float dy);
 
-		virtual void Zoom (float fac);
+    virtual void Zoom (float fac);
 
-		const glm::vec3& position () const {return position_;}
+    const glm::vec3& position () const
+    {
+      return position_;
+    }
 
-		const glm::vec3& center () const {return center_;}
+    const glm::vec3& center () const
+    {
+      return center_;
+    }
 
-		const glm::vec3& up () const {	return up_;}
+    const glm::vec3& up () const
+    {
+      return up_;
+    }
 
-		const glm::vec3& local_x () const {return local_x_;}
+    const glm::vec3& local_x () const
+    {
+      return local_x_;
+    }
 
-		const glm::vec3& local_y () const {return local_y_;}
+    const glm::vec3& local_y () const
+    {
+      return local_y_;
+    }
 
-        const glm::vec3& local_z () const {return local_z_;}
-        
-		const glm::mat4& projection () const	{return projection_;}
+    const glm::vec3& local_z () const
+    {
+      return local_z_;
+    }
 
-		const glm::mat4& view () const {return view_;}
+    const glm::mat4& projection () const
+    {
+      return projection_;
+    }
 
-	protected:
+    const glm::mat4& view () const
+    {
+      return view_;
+    }
 
-		void set_position (const glm::vec3& pos)
-		{
-			position_ = pos;
-		}
+  protected:
 
-		void set_position (float x, float y, float z)
-		{
-			position_.x = x;
-			position_.y = y;
-			position_.z = z;
-		}
+    void set_position (const glm::vec3& pos)
+    {
+      position_ = pos;
+    }
 
-		void set_center (const glm::vec3& center)
-		{
-			center_ = center;
-		}
+    void set_position (float x, float y, float z)
+    {
+      position_.x = x;
+      position_.y = y;
+      position_.z = z;
+    }
 
-		void set_center (float x, float y, float z)
-		{
-			center_ = glm::vec3(x, y, z);
-		}
+    void set_center (const glm::vec3& center)
+    {
+      center_ = center;
+    }
 
-		void set_up (const glm::vec3& up)
-		{
-			up_ = up;
-		}
+    void set_center (float x, float y, float z)
+    {
+      center_ = glm::vec3(x, y, z);
+    }
 
-		void set_up (float x, float y, float z)
-		{
-			up_ = glm::vec3(x, y, z);
-		}
+    void set_up (const glm::vec3& up)
+    {
+      up_ = up;
+    }
 
-		void set_local_x (const glm::vec3& x)
-		{
-			local_x_ = x;
-		}
+    void set_up (float x, float y, float z)
+    {
+      up_ = glm::vec3(x, y, z);
+    }
 
-		void set_local_x (float x, float y, float z)
-		{
-			local_x_.x = x;
-			local_x_.y = y;
-			local_x_.z = z;
-		}
+    void set_local_x (const glm::vec3& x)
+    {
+      local_x_ = x;
+    }
 
-		void set_local_y (const glm::vec3& y)
-		{
-			local_y_ = y;
-		}
+    void set_local_x (float x, float y, float z)
+    {
+      local_x_.x = x;
+      local_x_.y = y;
+      local_x_.z = z;
+    }
 
-		void set_local_y (float x, float y, float z)
-		{
-			local_y_.x = x;
-			local_y_.y = y;
-			local_y_.z = z;
-		}
+    void set_local_y (const glm::vec3& y)
+    {
+      local_y_ = y;
+    }
 
-        void set_local_z (const glm::vec3& z)
-		{
-			local_z_ = z;
-		}
-        
-		void set_local_z (float x, float y, float z)
-		{
-			local_z_.x = x;
-			local_z_.y = y;
-			local_z_.z = z;
-		}
+    void set_local_y (float x, float y, float z)
+    {
+      local_y_.x = x;
+      local_y_.y = y;
+      local_y_.z = z;
+    }
 
-		void set_projection (const glm::mat4& projection)
-		{
-			projection_ = projection;
-		}
+    void set_local_z (const glm::vec3& z)
+    {
+      local_z_ = z;
+    }
 
-		void set_view (const glm::mat4& view)
-		{
-			view_ = view;
-		}
+    void set_local_z (float x, float y, float z)
+    {
+      local_z_.x = x;
+      local_z_.y = y;
+      local_z_.z = z;
+    }
 
-	private:
+    void set_projection (const glm::mat4& projection)
+    {
+      projection_ = projection;
+    }
 
-		/** The eye position */
-		glm::vec3 position_;
+    void set_view (const glm::mat4& view)
+    {
+      view_ = view;
+    }
 
-		/** Position of the reference point */
-		glm::vec3 center_;
+  private:
 
-		/** Direction of the up vector */
-		glm::vec3 up_;
+    /** The eye position */
+    glm::vec3 position_;
 
-		/** Right direction of the camera */
-		glm::vec3 local_x_;
+    /** Position of the reference point */
+    glm::vec3 center_;
 
-		/** Up direction of the camera */
-		glm::vec3 local_y_;
-        
-        /** Look direction of the camera */
-		glm::vec3 local_z_;
-        
-		/** The view matrix */
-		glm::mat4 view_;
+    /** Direction of the up vector */
+    glm::vec3 up_;
 
-		/** The projection matrix */
-		glm::mat4 projection_;
+    /** Right direction of the camera */
+    glm::vec3 local_x_;
 
-	};
+    /** Up direction of the camera */
+    glm::vec3 local_y_;
+
+    /** Look direction of the camera */
+    glm::vec3 local_z_;
+
+    /** The view matrix */
+    glm::mat4 view_;
+
+    /** The projection matrix */
+    glm::mat4 projection_;
+
+  };
 
 }
-
-#endif /* _BLENDINT_ABSTRACTCAMERA_HPP_ */

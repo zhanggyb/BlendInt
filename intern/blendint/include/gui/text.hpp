@@ -32,139 +32,164 @@
 
 namespace BlendInt {
 
-	class Text: public AbstractForm
-	{
-	public:
+  class Text: public AbstractForm
+  {
+  public:
 
-		Text (const String& text);
+    Text (const String& text);
 
-		Text (const Text& orig);
+    Text (const Text& orig);
 
-		virtual ~Text ();
+    virtual ~Text ();
 
-		void Add (const String& text);
+    void Add (const String& text);
 
-		void Insert (size_t index, const String& text);
+    void Insert (size_t index, const String& text);
 
-		void SetText (const String& text);
-        
-        /**
-         * @brief Remove specified characters from text
-         * @param[in] index first character to remove
-         * @param[in] count number of characters to remove
-         */
-        void Erase (size_t index, size_t count = 1);
-        
-		void SetFont (const Font& font);
+    void SetText (const String& text);
 
-		Text& operator = (const Text& orig);
+    /**
+     * @brief Remove specified characters from text
+     * @param[in] index first character to remove
+     * @param[in] count number of characters to remove
+     */
+    void Erase (size_t index, size_t count = 1);
 
-		Text& operator = (const String& text);
+    void SetFont (const Font& font);
 
-		/**
-		 * @brief Get text width
-		 * @param[in] length the text length
-		 * @param[in] start the start character in the text
-		 * @param[in] count_kerning if count kerning before start or after (start + length)
-		 */
-		size_t GetTextWidth (size_t length, size_t start, bool count_kerning) const;
+    Text& operator = (const Text& orig);
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(Color::Black).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+    Text& operator = (const String& text);
 
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				const float* color_ptr = Color(Color::Black).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const;
+    /**
+     * @brief Get text width
+     * @param[in] length the text length
+     * @param[in] start the start character in the text
+     * @param[in] count_kerning if count kerning before start or after (start + length)
+     */
+    size_t GetTextWidth (size_t length, size_t start, bool count_kerning) const;
 
-		void Draw (int x, int y, size_t length, size_t start = 0, short gamma = 0) const;
+    virtual void Draw (int x,
+                       int y,
+                       const float* color_ptr = Color(Color::Black).data(),
+                       short gamma = 0,
+                       float rotate = 0.f,
+                       float scale_x = 1.f,
+                       float scale_y = 1.f) const;
 
-		void Draw (int x, int y, size_t length, size_t start, const Color& color, short gamma = 0) const;
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr =
+                                 Color(Color::Black).data(),
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const;
 
-		void DrawWithin (int x, int y, int width, short gamma = 0) const;
+    void Draw (int x,
+               int y,
+               size_t length,
+               size_t start = 0,
+               short gamma = 0) const;
 
-		void DrawWithin (int x, int y, int width, const Color& color, short gamma = 0) const;
-        
-        int DrawWithCursor (int x, int y, size_t cursor_index, size_t start, int width, const Color& color, short gamma = 0) const;
-        
-        int DrawWithCursor (int x, int y, size_t cursor_index, size_t start, int width, short gamma = 0) const;
+    void Draw (int x,
+               int y,
+               size_t length,
+               size_t start,
+               const Color& color,
+               short gamma = 0) const;
 
-		/**
-		 * @brief Ascender in this text
-		 *
-		 * @note This is not the same as Font::ascender ()
-		 */
-        inline int ascender () const
-		{
-			return ascender_;
-		}
+    void DrawWithin (int x, int y, int width, short gamma = 0) const;
 
-		/**
-		 * @brief Descender in this text
-		 *
-		 * @note This is not the same as Font::descender ()
-		 */
-        inline int descender () const
-		{
-			return descender_;
-		}
+    void DrawWithin (int x, int y, int width, const Color& color, short gamma =
+                         0) const;
 
-        inline const String& text () const
-		{
-			return text_;
-		}
+    int DrawWithCursor (int x,
+                        int y,
+                        size_t cursor_index,
+                        size_t start,
+                        int width,
+                        const Color& color,
+                        short gamma = 0) const;
 
-        inline const Font& font () const
-		{
-			return font_;
-		}
+    int DrawWithCursor (int x,
+                        int y,
+                        size_t cursor_index,
+                        size_t start,
+                        int width,
+                        short gamma = 0) const;
 
-        inline bool empty () const
-        {
-        	return text_.empty();
-        }
+    /**
+     * @brief Ascender in this text
+     *
+     * @note This is not the same as Font::ascender ()
+     */
+    inline int ascender () const
+    {
+      return ascender_;
+    }
 
-        inline size_t length () const
-        {
-        	return text_.length();
-        }
+    /**
+     * @brief Descender in this text
+     *
+     * @note This is not the same as Font::descender ()
+     */
+    inline int descender () const
+    {
+      return descender_;
+    }
 
-	protected:
+    inline const String& text () const
+    {
+      return text_;
+    }
 
-		virtual void PerformSizeUpdate (const Size& size);
+    inline const Font& font () const
+    {
+      return font_;
+    }
 
-	private:
+    inline bool empty () const
+    {
+      return text_.empty();
+    }
 
-        /**
-         * @brief Generate vertices to be used in VBO for this text
-         */
-        void GenerateTextVertices (std::vector<GLfloat>& verts, int* ptr_width, int* ptr_ascender, int* ptr_descender);
-        
-        /**
-         * @brief Re-calculate vertices and load to VBO
-         *
-         * Also reset the size of this form.
-         */
-        void ReloadBuffer ();
-        
-		// the ascender of this text
-		int ascender_;
+    inline size_t length () const
+    {
+      return text_.length();
+    }
 
-		// the descender of this text
-		int descender_;
+  protected:
 
-		GLuint vao_;
-		GLBuffer<> vbo_;
+    virtual void PerformSizeUpdate (const Size& size);
 
-		String text_;
-		Font font_;
-	};
+  private:
+
+    /**
+     * @brief Generate vertices to be used in VBO for this text
+     */
+    void GenerateTextVertices (std::vector<GLfloat>& verts,
+                               int* ptr_width,
+                               int* ptr_ascender,
+                               int* ptr_descender);
+
+    /**
+     * @brief Re-calculate vertices and load to VBO
+     *
+     * Also reset the size of this form.
+     */
+    void ReloadBuffer ();
+
+    // the ascender of this text
+    int ascender_;
+
+    // the descender of this text
+    int descender_;
+
+    GLuint vao_;
+    GLBuffer<> vbo_;
+
+    String text_;
+    Font font_;
+  };
 
 }

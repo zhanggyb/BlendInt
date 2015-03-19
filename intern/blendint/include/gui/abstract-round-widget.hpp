@@ -68,11 +68,13 @@ namespace BlendInt {
   protected:
 
     void GenerateRoundedVertices (std::vector<GLfloat>* inner,
-        std::vector<GLfloat>* outer);
+                                  std::vector<GLfloat>* outer);
 
-    void GenerateRoundedVertices (Orientation shadedir, short shadetop,
-        short shadedown, std::vector<GLfloat>* inner,
-        std::vector<GLfloat>* outer);
+    void GenerateRoundedVertices (Orientation shadedir,
+                                  short shadetop,
+                                  short shadedown,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
 
     virtual void PerformRoundTypeUpdate (int round_type);
 

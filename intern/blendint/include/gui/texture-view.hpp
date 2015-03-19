@@ -33,59 +33,59 @@
 
 namespace BlendInt {
 
-	class TextureView: public AbstractScrollable
-	{
-	public:
+  class TextureView: public AbstractScrollable
+  {
+  public:
 
-		TextureView ();
+    TextureView ();
 
-		virtual ~TextureView ();
+    virtual ~TextureView ();
 
-		bool OpenFile (const char* filename);
+    bool OpenFile (const char* filename);
 
-		void LoadImage (const RefPtr<Image>& image);
+    void LoadImage (const RefPtr<Image>& image);
 
-		void SetTexture (const RefPtr<GLTexture2D>& texture);
+    void SetTexture (const RefPtr<GLTexture2D>& texture);
 
-		void Clear ();
+    void Clear ();
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual bool PreDraw (AbstractWindow* context);
+    virtual bool PreDraw (AbstractWindow* context);
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PostDraw (AbstractWindow* context);
+    virtual void PostDraw (AbstractWindow* context);
 
-	private:
+  private:
 
-		void InitializeImageView ();
+    void InitializeImageView ();
 
-		// void AdjustImageArea (const Size& size);
+    // void AdjustImageArea (const Size& size);
 
-		Size image_size_;
+    Size image_size_;
 
-		/**
-		 * @brief Vertex Array Objects
-		 *
-		 * 0 - for background
-		 * 1 - for plane to display image texture
-		 */
+    /**
+     * @brief Vertex Array Objects
+     *
+     * 0 - for background
+     * 1 - for plane to display image texture
+     */
 
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLuint vao_[2];
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-		RefPtr<GLTexture2D> texture_;
+    RefPtr<GLTexture2D> texture_;
 
-		RefPtr<ChessBoard> chessboard_;
-	};
+    RefPtr<ChessBoard> chessboard_;
+  };
 
 }

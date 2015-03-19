@@ -37,61 +37,67 @@
 
 namespace BlendInt {
 
-	class FontCache: public Object
-	{
-	public:
+  class FontCache: public Object
+  {
+  public:
 
-		static RefPtr<FontCache> Create (const Fc::Pattern& pattern);
+    static RefPtr<FontCache> Create (const Fc::Pattern& pattern);
 
-		static bool Release (const Fc::Pattern& data);
+    static bool Release (const Fc::Pattern& data);
 
-        static inline size_t cache_size () {return kCacheDB.size();}
-        
-        static inline size_t max_cache_size () {return kMaxCacheSize;}
+    static inline size_t cache_size ()
+    {
+      return kCacheDB.size();
+    }
 
-		FontCache (const Fc::Pattern& pattern);
+    static inline size_t max_cache_size ()
+    {
+      return kMaxCacheSize;
+    }
 
-		virtual ~FontCache ();
+    FontCache (const Fc::Pattern& pattern);
 
-		const Glyph* Query (uint32_t charcode, bool create = true);
+    virtual ~FontCache ();
 
-		size_t glyph_count () const
-		{
-			return glyph_data_.size();
-		}
+    const Glyph* Query (uint32_t charcode, bool create = true);
 
-		const Fc::Pattern& pattern () const
-		{
-			return pattern_;
-		}
+    size_t glyph_count () const
+    {
+      return glyph_data_.size();
+    }
 
-		const RefPtr<TextureAtlas> texture_atlas () const
-		{
-			return texture_atlas_;
-		}
+    const Fc::Pattern& pattern () const
+    {
+      return pattern_;
+    }
 
-	private:
+    const RefPtr<TextureAtlas> texture_atlas () const
+    {
+      return texture_atlas_;
+    }
 
-		friend class Font;
-		friend class AbstractWindow;
+  private:
 
-        static void ReleaseAll ();
-        
-		Fc::Pattern pattern_;
+    friend class Font;
+    friend class AbstractWindow;
 
-		Ft::Library library_;
+    static void ReleaseAll ();
 
-		Ft::Face face_;
+    Fc::Pattern pattern_;
 
-		RefPtr<TextureAtlas> texture_atlas_;
+    Ft::Library library_;
 
-		std::map<uint32_t, Glyph> glyph_data_;
+    Ft::Face face_;
 
-		static std::map<FcChar32, RefPtr<FontCache> > kCacheDB;
+    RefPtr<TextureAtlas> texture_atlas_;
 
-		static FcChar32 kDefaultFontHash;
-        
-        static const unsigned int kMaxCacheSize = 16;
-	};
+    std::map<uint32_t, Glyph> glyph_data_;
+
+    static std::map<FcChar32, RefPtr<FontCache> > kCacheDB;
+
+    static FcChar32 kDefaultFontHash;
+
+    static const unsigned int kMaxCacheSize = 16;
+  };
 
 } /* namespace BlendInt */

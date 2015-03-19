@@ -27,45 +27,48 @@
 
 namespace BlendInt {
 
-	class AbstractLayout: public AbstractWidget
-	{
-	public:
+  class AbstractLayout: public AbstractWidget
+  {
+  public:
 
-		AbstractLayout ();
+    AbstractLayout ();
 
-		AbstractLayout (int width, int height);
+    AbstractLayout (int width, int height);
 
-		AbstractLayout (int width, int height, const Margin& margin);
+    AbstractLayout (int width, int height, const Margin& margin);
 
-		virtual ~AbstractLayout ();
+    virtual ~AbstractLayout ();
 
-		virtual bool AddWidget (AbstractWidget* widget) = 0;
+    virtual bool AddWidget (AbstractWidget* widget) = 0;
 
-		virtual bool InsertWidget (int index, AbstractWidget* widget) = 0;
+    virtual bool InsertWidget (int index, AbstractWidget* widget) = 0;
 
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget) = 0;
+    virtual bool InsertWidget (int row, int column, AbstractWidget* widget) = 0;
 
-		virtual void Adjust () = 0;
+    virtual void Adjust () = 0;
 
-		const Margin& margin () const {return margin_;}
+    const Margin& margin () const
+    {
+      return margin_;
+    }
 
-		void SetMargin (const Margin& margin);
+    void SetMargin (const Margin& margin);
 
-	protected:
+  protected:
 
-		virtual Response Draw (AbstractWindow* context);
+    virtual Response Draw (AbstractWindow* context);
 
-		virtual void PerformMarginUpdate (const Margin& margin);
+    virtual void PerformMarginUpdate (const Margin& margin);
 
-		inline void set_margin (const Margin& margin)
-		{
-			margin_ = margin;
-		}
+    inline void set_margin (const Margin& margin)
+    {
+      margin_ = margin;
+    }
 
-	private:
+  private:
 
-		Margin margin_;
+    Margin margin_;
 
-	};
+  };
 
 }

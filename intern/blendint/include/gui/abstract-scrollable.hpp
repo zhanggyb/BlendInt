@@ -27,51 +27,50 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Base class for widgets with native scroll bar
-	 */
-	class AbstractScrollable: public AbstractRoundWidget
-	{
-	public:
+  /**
+   * @brief Base class for widgets with native scroll bar
+   */
+  class AbstractScrollable: public AbstractRoundWidget
+  {
+  public:
 
-		AbstractScrollable ();
+    AbstractScrollable ();
 
-		AbstractScrollable (int width, int height);
+    AbstractScrollable (int width, int height);
 
-		virtual ~AbstractScrollable ();
+    virtual ~AbstractScrollable ();
 
-		Cpp::EventRef<int, int> scrolled ()
-		{
-			return *scrolled_;
-		}
+    Cpp::EventRef<int, int> scrolled ()
+    {
+      return *scrolled_;
+    }
 
-		// virtual Size GetContentSize () const;
-		virtual Point GetOffset () const;
+    // virtual Size GetContentSize () const;
+    virtual Point GetOffset () const;
 
-	protected:
+  protected:
 
-		inline void set_offset (int x, int y)
-		{
-			offset_.reset(x, y);
-		}
+    inline void set_offset (int x, int y)
+    {
+      offset_.reset(x, y);
+    }
 
-		inline void set_offset (const Point& offset)
-		{
-			offset_ = offset;
-		}
+    inline void set_offset (const Point& offset)
+    {
+      offset_ = offset;
+    }
 
-		inline void fire_scrolled_event (int x, int y)
-		{
-			scrolled_->fire(x, y);
-		}
+    inline void fire_scrolled_event (int x, int y)
+    {
+      scrolled_->fire(x, y);
+    }
 
+  private:
 
-	private:
+    Point offset_;
 
-		Point offset_;
+    boost::scoped_ptr<Cpp::Event<int, int> > scrolled_;
 
-		boost::scoped_ptr<Cpp::Event<int, int> > scrolled_;
-
-	};
+  };
 
 }

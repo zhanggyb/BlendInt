@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_ABSTRACTITEMVIEW_HPP_
-#define _BLENDINT_GUI_ABSTRACTITEMVIEW_HPP_
+#pragma once
 
 #include <Cpp/Events.hpp>
 
@@ -31,55 +30,53 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief The base class for item view classes.
-	 *
-	 * AbstractItemView class is the base class for every standard
-	 * view that uses a AbstractItemModel. It provides a standard
-	 * interface for interoperating with models.
-	 *
-	 * AbstractItemView is a subclass of AbstractScrollable, which
-	 * means it contains 2 native ScrollBars. The sub class of this
-	 * view should manage the display and behavior of these 2
-	 * ScrollBars by itself.
-	 *
-	 * Usually the sub class should use native widgets to display
-	 * the data in model.
-	 */
-	class AbstractItemView: public AbstractScrollable
-	{
-	public:
+  /**
+   * @brief The base class for item view classes.
+   *
+   * AbstractItemView class is the base class for every standard
+   * view that uses a AbstractItemModel. It provides a standard
+   * interface for interoperating with models.
+   *
+   * AbstractItemView is a subclass of AbstractScrollable, which
+   * means it contains 2 native ScrollBars. The sub class of this
+   * view should manage the display and behavior of these 2
+   * ScrollBars by itself.
+   *
+   * Usually the sub class should use native widgets to display
+   * the data in model.
+   */
+  class AbstractItemView: public AbstractScrollable
+  {
+  public:
 
-		AbstractItemView ();
+    AbstractItemView ();
 
-		virtual ~AbstractItemView ();
+    virtual ~AbstractItemView ();
 
-		virtual const RefPtr<AbstractItemModel> GetModel () const = 0;
+    virtual const RefPtr<AbstractItemModel> GetModel () const = 0;
 
-		virtual void SetModel (const RefPtr<AbstractItemModel>& model) = 0;
+    virtual void SetModel (const RefPtr<AbstractItemModel>& model) = 0;
 
-		virtual ModelIndex GetIndexAt (const Point& point) const = 0;
+    virtual ModelIndex GetIndexAt (const Point& point) const = 0;
 
-		Cpp::EventRef<> model_changed ()
-		{
-			return model_changed_;
-		}
+    Cpp::EventRef<> model_changed ()
+    {
+      return model_changed_;
+    }
 
-	protected:
+  protected:
 
-		void set_model (const RefPtr<AbstractItemModel>& model)
-		{
-			model_ = model;
-		}
+    void set_model (const RefPtr<AbstractItemModel>& model)
+    {
+      model_ = model;
+    }
 
-	private:
+  private:
 
-		RefPtr<AbstractItemModel> model_;
+    RefPtr<AbstractItemModel> model_;
 
-		Cpp::Event<> model_changed_;
+    Cpp::Event<> model_changed_;
 
-	};
+  };
 
 }
-
-#endif	// _BLENDINT_GUI_ABSTRACTITEMVIEW_HPP_

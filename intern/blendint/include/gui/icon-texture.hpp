@@ -27,89 +27,89 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special GLTexture2D class to store M x N sub images
-	 */
-	class IconTexture: public GLTexture2D
-	{
-	public:
+  /**
+   * @brief A special GLTexture2D class to store M x N sub images
+   */
+  class IconTexture: public GLTexture2D
+  {
+  public:
 
-		IconTexture ();
+    IconTexture ();
 
-		virtual ~IconTexture ();
+    virtual ~IconTexture ();
 
-		void Generate (int width,
-						int height,
-						short cell_x,
-						short cell_y,
-						short xoffset = 1,
-						short yoffset = 1,
-						short xspace = 1,
-						short yspace = 1);
+    void Generate (int width,
+                   int height,
+                   short cell_x,
+                   short cell_y,
+                   short xoffset = 1,
+                   short yoffset = 1,
+                   short xspace = 1,
+                   short yspace = 1);
 
-		bool SetSubImage (int index,
-						int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
+    bool SetSubImage (int index,
+                      int bitmap_width,
+                      int bitmap_rows,
+                      const unsigned char* bitmap_buffer,
+                      int* r_x,
+                      int* r_y,
+                      bool clear = false);
 
-		bool SetSubImage (int hindex,
-						int yindex,
-						int bitmap_width,
-						int bitmap_rows,
-						const unsigned char* bitmap_buffer,
-						int* r_x,
-						int* r_y,
-						bool clear = false);
+    bool SetSubImage (int hindex,
+                      int yindex,
+                      int bitmap_width,
+                      int bitmap_rows,
+                      const unsigned char* bitmap_buffer,
+                      int* r_x,
+                      int* r_y,
+                      bool clear = false);
 
-		int GetMaxNumber () const;
+    int GetMaxNumber () const;
 
-		int GetColumns () const;
+    int GetColumns () const;
 
-		int GetRows () const;
+    int GetRows () const;
 
-		short offset_x () const
-		{
-			return offset_x_;
-		}
+    short offset_x () const
+    {
+      return offset_x_;
+    }
 
-		short offset_y () const
-		{
-			return offset_y_;
-		}
+    short offset_y () const
+    {
+      return offset_y_;
+    }
 
-		short space_x () const
-		{
-			return space_x_;
-		}
+    short space_x () const
+    {
+      return space_x_;
+    }
 
-		short space_y () const
-		{
-			return space_y_;
-		}
+    short space_y () const
+    {
+      return space_y_;
+    }
 
-		short cell_width () const
-		{
-			return cell_width_;
-		}
+    short cell_width () const
+    {
+      return cell_width_;
+    }
 
-		short cell_height () const
-		{
-			return cell_height_;
-		}
+    short cell_height () const
+    {
+      return cell_height_;
+    }
 
-	private:
+  private:
 
-		short cell_width_;
-		short cell_height_;
+    short cell_width_;
+    short cell_height_;
 
-		short offset_x_;
-		short offset_y_;
+    short offset_x_;
+    short offset_y_;
 
-		short space_x_;
-		short space_y_;
-	};
+    short space_x_;
+    short space_y_;
+  };
 
 }
