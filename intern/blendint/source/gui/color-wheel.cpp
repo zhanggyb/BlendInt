@@ -101,7 +101,7 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		picker_.Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);
+		context->icons()->dot()->Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);
 
 		return Finish;
 	}
@@ -320,8 +320,6 @@ namespace BlendInt {
 
 	void ColorWheel::InitializeColorWheel ()
 	{
-		picker_.Resize(3);
-
 		std::vector<GLfloat> inner_vertices;
 		std::vector<GLfloat> outer_vertices;
 

@@ -23,29 +23,29 @@
 
 #pragma once
 
-#include <gui/abstract-round-form.hpp>
 #include <opengl/gl-buffer.hpp>
+#include <gui/abstract-icon.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief Dot icon used in ColorWheel or BrightnessSlider
+	 *
+	 * @ingroup blendint_gui_forms
 	 */
-	class CircularPicker: public AbstractRoundForm
+	class DotIcon: public AbstractIcon
 	{
 	public:
 
 		/**
 		 * @brief Default constructor
 		 */
-		explicit CircularPicker (unsigned int radius = 5);
+	  DotIcon ();
 
 		/**
 		 * @brief Constructor
 		 */
-		virtual ~CircularPicker ();
-
-		void Resize (unsigned int radius);
+		virtual ~DotIcon ();
 
 		virtual void Draw (int x,
 				int y,
@@ -53,7 +53,15 @@ namespace BlendInt {
 				short gamma = 0,
 				float rotate = 0.f,
 				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+				float scale_y = 1.f) const final;
+
+    virtual void DrawInRect (const Rect& rect,
+                             int align,
+                             const float* color_ptr =
+                                 Color(Color::Black).data(),
+                             short gamma = 0,
+                             float rotate = 0.f,
+                             bool scale = false) const final;
 
 	protected:
 
@@ -66,8 +74,7 @@ namespace BlendInt {
 	private:
 
 		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> buffer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 	};
 
 }

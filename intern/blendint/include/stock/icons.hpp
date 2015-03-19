@@ -26,6 +26,7 @@
 #include <core/refptr.hpp>
 #include <gui/vector-icon.hpp>
 #include <gui/end-point-icon.hpp>
+#include <gui/dot-icon.hpp>
 #include <gui/check-icon.hpp>
 #include <gui/pixel-icon.hpp>
 
@@ -1086,6 +1087,11 @@ namespace BlendInt {
 		  return check_;
     }
 
+		const RefPtr<DotIcon>& dot () const
+    {
+		  return dot_;
+    }
+
 		const RefPtr<PixelIcon>& icon_16x16 (int index) const
 		{
 			return icons_16x16_[index];
@@ -1130,6 +1136,7 @@ namespace BlendInt {
 		RefPtr<VectorIcon> cross_;
 		RefPtr<EndPointIcon> end_point_;
 		RefPtr<CheckIcon> check_;
+		RefPtr<DotIcon> dot_;
 
 		std::vector<RefPtr<PixelIcon> > icons_16x16_;
 

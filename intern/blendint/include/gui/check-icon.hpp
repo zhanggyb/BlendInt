@@ -47,7 +47,7 @@ namespace BlendInt {
                        short gamma = 0,
                        float rotate = 0.f,
                        float scale_x = 1.f,
-                       float scale_y = 1.f) const;
+                       float scale_y = 1.f) const final;
 
     virtual void DrawInRect (const Rect& rect,
                              int align,

@@ -21,13 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
-#define _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
+#pragma once
 
 #include <opengl/glarraybuffer.hpp>
  
 #include <gui/abstract-slider.hpp>
-#include <gui/circular-picker.hpp>
 
 namespace BlendInt {
 
@@ -66,10 +64,6 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> inner_;
 		RefPtr<GLArrayBuffer> outer_;
 
-		RefPtr<CircularPicker> picker_;
-
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_ */

@@ -96,8 +96,7 @@ namespace BlendInt {
 //				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
 //						12, 0.0));
 
-		picker_->Draw (0.f + size ().width () / 2 - picker_->size ().width () / 2,
-				0.f + 12.f);
+    context->icons()->dot()->Draw(size().width() / 2, 12.f);
 
 		return Finish;
 	}
@@ -163,8 +162,6 @@ namespace BlendInt {
 
 	void BrightnessSlider::InitializeBrightnessSlider()
 	{
-		picker_.reset(new CircularPicker(3));
-
 		glGenVertexArrays(2, vao_);
 
 		Color black(0x000000FF);

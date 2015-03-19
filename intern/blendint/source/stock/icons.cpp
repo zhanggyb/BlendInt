@@ -58,6 +58,7 @@ namespace BlendInt {
 
 			end_point_.reset(new EndPointIcon);
 			check_.reset(new CheckIcon);
+			dot_.reset(new DotIcon);
 		}
 
 		void Icons::CreateVectorIcons()

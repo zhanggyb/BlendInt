@@ -26,7 +26,6 @@
 #include <vector>
 
 #include <opengl/glarraybuffer.hpp>
-#include <gui/circular-picker.hpp>
 #include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
@@ -67,8 +66,6 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> outer_;
 		RefPtr<GLArrayBuffer> inner_;
-
-		CircularPicker picker_;
 
 	};
 
