@@ -32,6 +32,77 @@
 
 namespace BlendInt {
 
+  ComboBoxModel::ComboBoxModel()
+  : AbstractListModel(),
+    rows_(0),
+    columns_(0)
+  {
+
+  }
+
+  ComboBoxModel::~ComboBoxModel ()
+  {
+  }
+
+  bool ComboBoxModel::InsertColumns (int column,
+                                     int count,
+                                     const ModelIndex& parent)
+  {
+    if (AbstractListModel::InsertColumns(column, count, parent)) {
+      columns_ += count;
+      return true;
+    }
+
+    return false;
+  }
+
+  bool ComboBoxModel::RemoveColumns (int column,
+                                     int count,
+                                     const ModelIndex& parent)
+  {
+    if (AbstractListModel::RemoveColumns(column, count, parent)) {
+      columns_ -= count;
+      if (columns_ < 0) columns_ = 0;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  bool ComboBoxModel::InsertRows (int row, int count, const ModelIndex& parent)
+  {
+    if (AbstractListModel::InsertRows(row, count, parent)) {
+      rows_ += count;
+      return true;
+    }
+
+    return false;
+  }
+
+  bool ComboBoxModel::RemoveRows (int row, int count, const ModelIndex& parent)
+  {
+    if (AbstractListModel::RemoveRows(row, count, parent)) {
+      rows_ -= count;
+      if (rows_ < 0) rows_ = 0;
+      return true;
+    }
+
+    return false;
+  }
+
+  int ComboBoxModel::GetRowCount (const ModelIndex& parent) const
+  {
+    return rows_;
+  }
+
+  int ComboBoxModel::GetColumnCount (const ModelIndex& parent) const
+  {
+    return columns_;
+  }
+
+  // ----------------
+
   Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
 
   ComboBox::ComboBox ()

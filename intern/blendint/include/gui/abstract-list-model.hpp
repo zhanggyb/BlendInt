@@ -58,11 +58,11 @@ namespace BlendInt {
 
     virtual bool InsertColumns (int column,
                                 int count,
-                                const ModelIndex& parent = ModelIndex());
+                                const ModelIndex& parent = ModelIndex()) override;
 
     virtual bool RemoveColumns (int column,
                                 int count,
-                                const ModelIndex& parent = ModelIndex());
+                                const ModelIndex& parent = ModelIndex()) override;
 
     /**
      * @brief Insert count rows into the model before the given row.
@@ -81,7 +81,7 @@ namespace BlendInt {
      * If parent has no child node, a single column with count rows is inserted
      */
     virtual bool InsertRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex());
+                                 ModelIndex()) override;
 
     /**
      * @brief Removes count rows starting with the given row under parent parent from the model
@@ -91,12 +91,12 @@ namespace BlendInt {
      * @return
      */
     virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex());
+                                 ModelIndex()) override;
 
-    virtual ModelIndex GetRootIndex () const;
+    virtual ModelIndex GetRootIndex () const override;
 
     virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent =
-                                     ModelIndex()) const;
+                                     ModelIndex()) const override;
 
   protected:
 

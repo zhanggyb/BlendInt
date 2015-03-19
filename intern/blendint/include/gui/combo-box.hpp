@@ -23,11 +23,49 @@
 
 #pragma once
 
-#include <gui/abstract-item-model.hpp>
+#include <gui/abstract-list-model.hpp>
 #include <gui/abstract-round-widget.hpp>
 #include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
+
+  class ComboBoxModel: public AbstractListModel
+  {
+  public:
+
+    ComboBoxModel ();
+
+    virtual ~ComboBoxModel ();
+
+    virtual bool InsertColumns (int column,
+                                int count,
+                                const ModelIndex& parent = ModelIndex()) final;
+
+    virtual bool RemoveColumns (int column,
+                                int count,
+                                const ModelIndex& parent = ModelIndex()) final;
+
+    virtual bool InsertRows (int row, int count, const ModelIndex& parent =
+                                 ModelIndex());
+
+    virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
+                                 ModelIndex());
+
+    virtual int GetRowCount (const ModelIndex& parent =
+        ModelIndex()) const final;
+
+    virtual int GetColumnCount (const ModelIndex& parent =
+        ModelIndex()) const final;
+
+  private:
+
+    int rows_;
+
+    int columns_;
+
+  };
+
+  // ----------------
 
   /**
    * @brief A combined button and popup list.
