@@ -31,6 +31,7 @@
 #include <opengl/opengl.hpp>
 #include <opengl/gl-framebuffer.hpp>
 
+#include <gui/abstract-widget.hpp>
 #include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
 
@@ -423,7 +424,7 @@ namespace BlendInt {
   void AbstractFrame::DeclareActiveFrame (AbstractWindow* context,
                                           AbstractFrame* frame)
   {
-    context->set_active_frame(frame);
+    context->active_frame_ = frame;
   }
 
   bool AbstractFrame::RenderSubFramesToTexture (AbstractFrame* frame,

@@ -23,6 +23,7 @@
 
 #include <opengl/opengl.hpp>
 
+#include <gui/file-selector.hpp>
 #include <gui/filebutton.hpp>
 #include <gui/abstract-window.hpp>
 

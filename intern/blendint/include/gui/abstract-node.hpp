@@ -25,13 +25,11 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <core/rect.hpp>
-
 #include <gui/abstract-view.hpp>
-#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
+  class AbstractWidget;
   class NodeView;
 
   /**

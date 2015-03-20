@@ -33,8 +33,6 @@
 #include <gui/abstract-dialog.hpp>
 #include <gui/frame-shadow.hpp>
 
-#include <Cpp/Events.hpp>
-
 namespace BlendInt {
 
   /**

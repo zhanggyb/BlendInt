@@ -22,6 +22,7 @@
  */
 
 #include <gui/flow-layout.hpp>
+#include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
 #include <gui/node.hpp>
 

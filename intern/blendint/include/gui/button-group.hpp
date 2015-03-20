@@ -21,18 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_BUTTONGROUP_HPP_
-#define _BLENDINT_GUI_BUTTONGROUP_HPP_
+#pragma once
 
 #include <deque>
 #include <boost/smart_ptr.hpp>
 
 #include <core/object.hpp>
-#include <gui/abstract-button.hpp>
 
-#include <Cpp/Events.hpp>
+#include <cppevents/Cpp/Events.hpp>
 
 namespace BlendInt {
+
+  // forward declare
+  class AbstractWidget;
+  class AbstractButton;
 
 	enum ButtonGroupMode {
 		SingleSelection,
@@ -86,7 +88,7 @@ namespace BlendInt {
 
 		void Toggle (AbstractButton* button, bool toggled);
 
-		void OnButtonDestroyed (AbstractView* button);
+		void OnButtonDestroyed (AbstractWidget* button);
 
 		std::deque<AbstractButton*> buttons_;
 
@@ -115,5 +117,3 @@ namespace BlendInt {
 	};
 
 }
-
-#endif /* _BLENDINT_GUI_BUTTONGROUP_HPP_ */

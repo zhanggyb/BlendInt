@@ -24,6 +24,7 @@
 #include <opengl/opengl.hpp>
 
 #include <gui/numerical-slider.hpp>
+#include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {

@@ -33,7 +33,7 @@
 #include <pthread.h>
 #endif
 
-#include <Cpp/Events.hpp>
+#include <cppevents/Cpp/Events.hpp>
 
 #include <core/object.hpp>
 

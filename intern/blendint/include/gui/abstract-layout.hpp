@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <core/margin.hpp>
 #include <gui/abstract-widget.hpp>
 
 namespace BlendInt {

@@ -23,9 +23,10 @@
 
 #include <cassert>
 #include <opengl/opengl.hpp>
-#include <gui/abstract-window.hpp>
 
+#include <gui/abstract-widget.hpp>
 #include <gui/abstract-dialog.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 

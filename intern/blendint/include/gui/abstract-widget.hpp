@@ -23,13 +23,13 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
 #include <boost/smart_ptr.hpp>
 
-#include <opengl/gl-texture2d.hpp>
 #include <gui/abstract-view.hpp>
 
 namespace BlendInt {
+
+  class GLTexture2D;  // forward declare
 
   /**
    * @brief A Normal widget

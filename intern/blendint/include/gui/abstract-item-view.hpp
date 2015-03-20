@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <Cpp/Events.hpp>
-
 #include <gui/abstract-item-model.hpp>
 #include <gui/abstract-scrollable.hpp>
 

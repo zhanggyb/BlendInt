@@ -26,10 +26,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <gui/text.hpp>
 #include <gui/file-browser.hpp>
 
+#include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
-#include <gui/text.hpp>
 
 namespace BlendInt {
 

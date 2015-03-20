@@ -25,8 +25,6 @@
 
 #include <string>
 
-#include <Cpp/Events.hpp>
-
 #include <core/margin.hpp>
 
 #include <gui/abstract-icon.hpp>

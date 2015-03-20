@@ -31,8 +31,6 @@
 #include <gui/menu-item.hpp>
 #include <gui/button.hpp>
 
-#include <Cpp/Events.hpp>
-
 namespace BlendInt {
 
   /**

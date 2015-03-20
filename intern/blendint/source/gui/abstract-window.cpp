@@ -34,6 +34,7 @@
 #include <font/fc-pattern.hpp>
 #include <font/fc-config.hpp>
 
+#include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
 
 namespace BlendInt {

@@ -23,10 +23,6 @@
 
 #pragma once
 
-#include <core/types.hpp>
-
-#include <Cpp/Events.hpp>
-
 #include <opengl/gl-buffer.hpp>
 
 #include <gui/abstract-round-widget.hpp>

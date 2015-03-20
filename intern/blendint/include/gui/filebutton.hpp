@@ -24,13 +24,11 @@
 #pragma once
 
 #include <gui/abstract-button.hpp>
-#include <gui/file-selector.hpp>
-
-#include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
 	class AbstractFrame;
+	class FileSelector;
 
 	/**
 	 * @brief A button used to call FileSelector

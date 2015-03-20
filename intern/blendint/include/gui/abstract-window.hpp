@@ -27,7 +27,6 @@
 
 #include <core/input.hpp>
 #include <gui/abstract-view.hpp>
-#include <gui/abstract-frame.hpp>
 
 #include <stock/icons.hpp>
 #include <stock/theme.hpp>
@@ -79,6 +78,8 @@ namespace BlendInt {
     WindowFullscreen = WindowRegular | WindowFullscreenMask
 
   };
+
+  class AbstractFrame;
 
   /**
    * @brief Abstract class for window
@@ -341,11 +342,6 @@ namespace BlendInt {
     static void GetGLVersion (int *major, int *minor);
 
     static void GetGLSLVersion (int *major, int *minor);
-
-    inline void set_active_frame (AbstractFrame* frame)
-    {
-      active_frame_ = frame;
-    }
 
     boost::scoped_ptr<Cpp::ConnectionScope> events_;
 

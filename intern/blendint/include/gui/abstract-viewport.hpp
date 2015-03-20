@@ -23,10 +23,6 @@
 
 #pragma once
 
-#include <gui/grid-floor.hpp>
-#include <gui/perspective-camera.hpp>
-#include <opengl/gl-buffer.hpp>
-
 #include <gui/abstract-frame.hpp>
 
 namespace BlendInt {

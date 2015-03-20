@@ -23,6 +23,9 @@
 
 #include <algorithm>
 
+#include <gui/abstract-widget.hpp>
+#include <gui/abstract-button.hpp>
+
 #include <gui/button-group.hpp>
 
 namespace BlendInt {
@@ -154,7 +157,7 @@ namespace BlendInt {
 		button_index_toggled_.fire(i, toggled);
 	}
 
-	void ButtonGroup::OnButtonDestroyed (AbstractView* button)
+	void ButtonGroup::OnButtonDestroyed (AbstractWidget* button)
 	{
 		AbstractButton* p = dynamic_cast<AbstractButton*>(button);
 		RemoveButton(p);

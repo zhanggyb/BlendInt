@@ -32,7 +32,6 @@
 #include <core/object.hpp>
 #include <core/point.hpp>
 #include <core/size.hpp>
-#include <core/margin.hpp>
 #include <core/mutex.hpp>
 
 #include <cppevents/Cpp/Events.hpp>
@@ -40,6 +39,7 @@
 namespace BlendInt {
 
   class AbstractWindow;
+  class AbstractFrame;
   class AbstractView;
 
   enum ViewFlagsMask {

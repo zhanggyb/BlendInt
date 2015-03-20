@@ -28,7 +28,6 @@
 
 #include <gui/view-buffer.hpp>
 #include <gui/abstract-view.hpp>
-#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
@@ -58,6 +57,7 @@ namespace BlendInt {
   };
 
   class FrameSplitter;
+  class AbstractWidget;
 
   /**
    * @brief The abstract class of all frames
