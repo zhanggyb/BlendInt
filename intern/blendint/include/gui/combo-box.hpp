@@ -23,11 +23,18 @@
 
 #pragma once
 
+#include <core/margin.hpp>
+#include <opengl/gl-buffer.hpp>
+
+#include <gui/abstract-icon.hpp>
+#include <gui/text.hpp>
+
 #include <gui/abstract-list-model.hpp>
 #include <gui/abstract-round-widget.hpp>
-#include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
+
+  class AbstractFrame;  // forward declare
 
   class ComboBoxModel: public AbstractListModel
   {
@@ -57,11 +64,29 @@ namespace BlendInt {
     virtual int GetColumnCount (const ModelIndex& parent =
         ModelIndex()) const final;
 
+    void SetIcon (const ModelIndex& index, const RefPtr<AbstractIcon>& icon);
+
+    void SetText (const ModelIndex& index, const RefPtr<Text>& text);
+
+    const Size& max_icon_size () const
+    {
+      return max_icon_size_;
+    }
+
+    const Size& max_text_size () const
+    {
+      return max_text_size_;
+    }
+
   private:
 
     int rows_;
 
     int columns_;
+
+    Size max_icon_size_;  // preferred icon size
+
+    Size max_text_size_; // preferred text size
 
   };
 
@@ -78,13 +103,22 @@ namespace BlendInt {
 
   public:
 
-    ComboBox ();
+    enum DisplayMode {
+      IconMode,
+      TextMode,
+      IconTextMode,
+      TextIconMode
+    };
+
+    ComboBox (DisplayMode mode = IconTextMode);
 
     virtual ~ComboBox ();
 
     virtual Size GetPreferredSize () const;
 
-    void SetModel (const RefPtr<AbstractItemModel>& model);
+    void SetModel (const RefPtr<ComboBoxModel>& model);
+
+    void SetCurrentIndex (int index);
 
   protected:
 
@@ -112,9 +146,13 @@ namespace BlendInt {
 
     bool status_down_;
 
+    DisplayMode display_mode_;
+
     int last_round_status_;
 
-    RefPtr<AbstractItemModel> model_;
+    RefPtr<ComboBoxModel> model_;
+
+    ModelIndex current_index_;
 
     AbstractFrame* popup_;
 

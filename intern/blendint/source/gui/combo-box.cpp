@@ -25,6 +25,8 @@
 
 #include <gui/dialog.hpp>
 #include <gui/filesystem-model.hpp>
+
+#include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
 
 #include <gui/combo-box.hpp>
@@ -49,6 +51,8 @@ namespace BlendInt {
                                      const ModelIndex& parent)
   {
     if (AbstractListModel::InsertColumns(column, count, parent)) {
+      if(rows_ == 0) rows_++;
+
       columns_ += count;
       return true;
     }
@@ -62,7 +66,10 @@ namespace BlendInt {
   {
     if (AbstractListModel::RemoveColumns(column, count, parent)) {
       columns_ -= count;
-      if (columns_ < 0) columns_ = 0;
+      if (columns_ < 0) {
+        rows_ = 0;
+        columns_ = 0;
+      }
 
       return true;
     }
@@ -73,6 +80,7 @@ namespace BlendInt {
   bool ComboBoxModel::InsertRows (int row, int count, const ModelIndex& parent)
   {
     if (AbstractListModel::InsertRows(row, count, parent)) {
+      if (columns_ == 0) columns_++;
       rows_ += count;
       return true;
     }
@@ -84,7 +92,10 @@ namespace BlendInt {
   {
     if (AbstractListModel::RemoveRows(row, count, parent)) {
       rows_ -= count;
-      if (rows_ < 0) rows_ = 0;
+      if (rows_ < 0) {
+        rows_ = 0;
+        columns_ = 0;
+      }
       return true;
     }
 
@@ -101,13 +112,52 @@ namespace BlendInt {
     return columns_;
   }
 
+  void ComboBoxModel::SetIcon (const ModelIndex& index,
+                               const RefPtr<AbstractIcon>& icon)
+  {
+    if (index.valid()) {
+      if (index.GetLeftIndex().valid()) {
+        DBG_PRINT_MSG("Error: %s", "the icon should be the first column");
+      } else {
+        set_index_data(index, icon);
+
+        if (icon) {
+          max_icon_size_.set_width(
+              std::max(max_icon_size_.width(), icon->size().width()));
+          max_icon_size_.set_height(
+              std::max(max_icon_size_.height(), icon->size().height()));
+        }
+      }
+    }
+  }
+
+  void ComboBoxModel::SetText (const ModelIndex& index,
+                               const RefPtr<Text>& text)
+  {
+    if (index.valid()) {
+      if (index.GetRightIndex().valid()) {
+        DBG_PRINT_MSG("Error: %s", "the text should be the second column");
+      } else {
+        set_index_data(index, text);
+
+        if (text) {
+          max_text_size_.set_width(
+              std::max(max_text_size_.width(), text->size().width()));
+          max_text_size_.set_height(
+              std::max(max_text_size_.height(), text->size().height()));
+        }
+      }
+    }
+  }
+
   // ----------------
 
   Margin ComboBox::kPadding = Margin(2, 2, 2, 2);
 
-  ComboBox::ComboBox ()
+  ComboBox::ComboBox (DisplayMode display_mode)
   : AbstractRoundWidget(),
     status_down_(false),
+    display_mode_(display_mode),
     last_round_status_(0),
     popup_(0)
   {
@@ -132,22 +182,55 @@ namespace BlendInt {
     int w = 0;
     int h = 0;
 
-    Font font;	// default font
-    w = font.height();
-    h = font.height();
+    w = Font::default_height();
+    h = Font::default_height();
 
     if (model_) {
 
-      ModelIndex root = model_->GetRootIndex();
-      ModelIndex index = model_->GetIndex(0, 0, root);
+      h = model_->GetFont().height();
+      w = h;
 
-      if (index.valid()) {
+      switch (display_mode_) {
 
-        RefPtr<AbstractForm> data = index.GetData();
-        w = std::max(w, data->size().width());
-        h = std::max(h, data->size().height());
+        case IconMode: {
+
+          w = std::max(w, model_->max_icon_size().width());
+          h = std::max(h, model_->max_icon_size().height());
+
+          break;
+        }
+
+        case TextMode: {
+
+          w = model_->max_text_size().width();
+          h = std::max(model_->max_text_size().height(), h);
+
+          break;
+        }
+
+        case IconTextMode:
+        case TextIconMode: {
+
+          w = std::max(w, model_->max_icon_size().width()) + model_->max_text_size().width();
+          h = std::max(model_->max_icon_size().height(),
+                       model_->max_text_size().height());
+          h = std::max(h, Font::default_height());
+
+          break;
+        }
+
+        default: {
+
+          w = std::max(w, model_->max_icon_size().width()) + model_->max_text_size().width();
+          h = std::max(model_->max_icon_size().height(),
+                       model_->max_text_size().height());
+          h = std::max(h, Font::default_height());
+
+          break;
+        }
 
       }
+
     }
 
     w += AbstractWindow::icons()->menu()->size().width();
@@ -158,7 +241,7 @@ namespace BlendInt {
     return Size(w, h);
   }
 
-  void ComboBox::SetModel (const RefPtr<AbstractItemModel>& model)
+  void ComboBox::SetModel (const RefPtr<ComboBoxModel>& model)
   {
     if (model_) {
       model_ = model;
@@ -166,6 +249,39 @@ namespace BlendInt {
     } else if (model) {
       model_ = model;
       RequestRedraw();
+    }
+
+    if (model_) {
+      ModelIndex root = model_->GetRootIndex();
+      current_index_ = root.GetChildIndex(0, 0);
+    } else {
+      current_index_ = ModelIndex();
+    }
+  }
+
+  void ComboBox::SetCurrentIndex(int index)
+  {
+    if (model_ && index >= 0) {
+
+      ModelIndex root = model_->GetRootIndex();
+
+      if (index > (model_->GetRowCount(root) - 1)) {
+        DBG_PRINT_MSG("%s", "invalid index");
+        return;
+      }
+
+      ModelIndex tmp = root.GetChildIndex(0, 0);
+
+      while ((index > 0) && tmp.valid()) {
+        tmp = tmp.GetDownIndex();
+        index--;
+      }
+
+      if (current_index_ != tmp) {
+        current_index_ = tmp;
+        RequestRedraw();
+      }
+
     }
   }
 
@@ -291,25 +407,136 @@ namespace BlendInt {
 //			        GetHalfOutlineVertices(round_type()) * 2);
 //		}
 
-    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-        size().width() - pixel_size(kPadding.hsum()),
-        size().height() - pixel_size(kPadding.vsum()));
+    Rect rect(pixel_size(kPadding.left()),
+              pixel_size(kPadding.bottom()),
+              size().width() - pixel_size(kPadding.hsum()) - context->icons()->menu()->size().width(),
+              size().height() - pixel_size(kPadding.vsum()));
 
     // draw model item
-    if (model_) {
+    if (model_ && current_index_.valid()) {
 
-      //int h = size().height() - pixel_size(kPadding.vsum());
+      const AbstractForm* icon = 0;
+      const AbstractForm* text = 0;
 
-      ModelIndex root = model_->GetRootIndex();
-      ModelIndex index = model_->GetIndex(0, 0, root);
+      switch (display_mode_) {
 
-      if (index.valid()) {
-        index.GetData()->DrawInRect(rect,
-            AlignLeft | AlignJustify | AlignBaseline,
-            AbstractWindow::theme()->menu().text_sel.data());
+        case IconMode: {
+
+          icon = current_index_.GetRawData();
+          if (icon) {
+            icon->DrawInRect(rect, AlignCenter,
+                             AbstractWindow::theme()->menu().text_sel.data());
+          }
+
+          break;
+        }
+
+        case TextMode: {
+
+          ModelIndex next = current_index_.GetRightIndex();
+          if (next.valid()) {
+            text = next.GetRawData();
+            if(text) {
+              text->DrawInRect(
+                  rect,
+                  AlignCenter | AlignJustify | AlignBaseline,
+                  AbstractWindow::theme()->menu().text_sel.data());
+            }
+          }
+
+          break;
+        }
+
+        case IconTextMode: {
+
+          rect.set_width(std::min(rect.height(), rect.width()));
+
+          icon = current_index_.GetRawData();
+          if (icon) {
+            icon->DrawInRect(
+                rect, AlignCenter,
+                AbstractWindow::theme()->menu().text_sel.data());
+          }
+
+          rect.set_x(rect.x() + rect.width());
+          rect.set_width(
+              size().width() - pixel_size(kPadding.hsum())
+                  - context->icons()->menu()->size().width() - rect.width());
+
+          ModelIndex next = current_index_.GetRightIndex();
+          if (next.valid()) {
+            text = next.GetRawData();
+            if (text) {
+              text->DrawInRect(
+                  rect,
+                  AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
+                  AbstractWindow::theme()->menu().text_sel.data());
+            }
+          }
+
+          break;
+        }
+
+        case TextIconMode: {
+
+          ModelIndex next = current_index_.GetRightIndex();
+          if (next.valid()) {
+            text = next.GetRawData();
+            if (text) {
+              text->DrawInRect(
+                  rect,
+                  AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
+                  AbstractWindow::theme()->menu().text_sel.data());
+              rect.cut_left(text->size().width());
+            }
+
+          }
+
+          icon = current_index_.GetRawData();
+          if (icon) {
+            icon->DrawInRect(
+                rect, AlignCenter,
+                AbstractWindow::theme()->menu().text_sel.data());
+          }
+
+          break;
+        }
+
+        default: {
+
+          rect.set_width(std::min(rect.height(), rect.width()));
+
+          icon = current_index_.GetRawData();
+          if (icon) {
+            icon->DrawInRect(
+                rect, AlignCenter,
+                AbstractWindow::theme()->menu().text_sel.data());
+          }
+
+          rect.set_x(rect.x() + rect.width());
+          rect.set_width(
+              size().width() - pixel_size(kPadding.hsum())
+                  - context->icons()->menu()->size().width() - rect.width());
+
+          ModelIndex next = current_index_.GetRightIndex();
+          if (next.valid()) {
+            text = next.GetRawData();
+            if (text) {
+              text->DrawInRect(
+                  rect,
+                  AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
+                  AbstractWindow::theme()->menu().text_sel.data());
+            }
+          }
+
+          break;
+        }
+
       }
-
     }
+
+    rect.set_x(pixel_size(kPadding.left()));
+    rect.set_width(size().width() - pixel_size(kPadding.hsum()));
 
     AbstractWindow::icons()->menu()->DrawInRect(rect,
         AlignRight | AlignVerticalCenter, Color(0xEFEFEFFF).data());
@@ -439,6 +666,8 @@ namespace BlendInt {
     popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
     popup_ = 0;
     SetRoundType(last_round_status_);
+    status_down_ = false;
+    RequestRedraw();
   }
 
 }
