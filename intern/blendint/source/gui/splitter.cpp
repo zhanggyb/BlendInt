@@ -31,7 +31,7 @@
 namespace BlendInt {
 
   SplitterHandle::SplitterHandle (Orientation orientation)
-  : AbstractRoundWidget(),
+  : AbstractWidget(),
     orientation_(orientation),
     vao_(0),
     highlight_(false),
@@ -41,50 +41,49 @@ namespace BlendInt {
     nearby_pos_(0)
   {
     if (orientation == Horizontal) {
-      set_size(200, 1);
+      set_size(kHandleLength, kHandlwWidth);
     } else {
-      set_size(1, 200);
+      set_size(kHandlwWidth, kHandleLength);
     }
 
     glGenVertexArrays(1, &vao_);
-    buffer_.reset(new GLArrayBuffer);
 
     glBindVertexArray(vao_);
 
-    buffer_->generate();
-    buffer_->bind();
+    vbo_.generate();
+    vbo_.bind();
 
     std::vector<GLfloat> vertices(8, 0.f);
 
     if (orientation == Horizontal) {
-      vertices[2] = 200.f;
+      vertices[2] = kHandleLength;
       //vertices[3] = 0.f;
 
       //vertices[4] = 0.f;
       vertices[5] = 1.f;
 
-      vertices[6] = 200.f;
+      vertices[6] = kHandleLength;
       vertices[7] = 1.f;
     } else {
       vertices[2] = 1.f;
       //vertices[3] = 0.f;
 
       //vertices[4] = 0.f;
-      vertices[5] = 200.f;
+      vertices[5] = kHandleLength;
 
       vertices[6] = 1.f;
-      vertices[7] = 200.f;
+      vertices[7] = kHandleLength;
     }
 
-    buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+    vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 2,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, BUFFER_OFFSET(0));
 
     glBindVertexArray(0);
-    buffer_->reset();
+    vbo_.reset();
   }
 
   SplitterHandle::~SplitterHandle ()
@@ -94,33 +93,26 @@ namespace BlendInt {
 
   Size SplitterHandle::GetPreferredSize () const
   {
-    Size preferred_size(1, 1);
-
-    if (orientation_ == Horizontal) {
-      preferred_size.set_width(200);
-    } else {
-      preferred_size.set_height(200);
-    }
-
-    return preferred_size;
+    if (orientation_ == Horizontal)
+      return Size(kHandleLength, kHandlwWidth);
+    else
+      return Size(kHandlwWidth, kHandleLength);
   }
 
   bool SplitterHandle::IsExpandX () const
   {
-    if (orientation_ == Horizontal) {
+    if (orientation_ == Horizontal)
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   bool SplitterHandle::IsExpandY () const
   {
-    if (orientation_ == Vertical) {
+    if (orientation_ == Vertical)
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   bool SplitterHandle::Contain (const Point& point) const
@@ -150,23 +142,56 @@ namespace BlendInt {
   void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
     if (request.target() == this) {
-      std::vector<GLfloat> vertices(8, 0.f);
-
-      vertices[2] = (GLfloat) request.size()->width();
-      //vertices[3] = 0.f;
-
-      //vertices[4] = 0.f;
-      vertices[5] = (GLfloat) request.size()->height();
-
-      vertices[6] = (GLfloat) request.size()->width();
-      vertices[7] = (GLfloat) request.size()->height();
-
-      buffer_->bind();
-      buffer_->set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-      buffer_->reset();
 
       set_size(*request.size());
-      RequestRedraw();
+
+      if (orientation_ == Horizontal) {
+
+        if (size().width() <= kHandleLength) {
+
+          std::vector<GLfloat> vertices(8, 0.f);
+
+          vertices[2] = (GLfloat) size().width();
+          //vertices[3] = 0.f;
+
+          //vertices[4] = 0.f;
+          vertices[5] = 1.f;
+
+          vertices[6] = (GLfloat) size().width();
+          vertices[7] = 1.f;
+
+          vbo_.bind();
+          vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+          vbo_.reset();
+
+          RequestRedraw();
+
+        }
+
+      } else {
+
+        if (size().height() <= kHandleLength) {
+
+          std::vector<GLfloat> vertices(8, 0.f);
+
+           vertices[2] = 1.f;
+          //vertices[3] = 0.f;
+
+          //vertices[4] = 0.f;
+          vertices[5] = (GLfloat) size().height();
+
+          vertices[6] = 1.f;
+          vertices[7] = (GLfloat) size().height();
+
+          vbo_.bind();
+          vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+          vbo_.reset();
+
+          RequestRedraw();
+
+        }
+
+      }
     }
 
     if (request.source() == this) {
@@ -178,30 +203,83 @@ namespace BlendInt {
   {
     AbstractWindow::shaders()->widget_triangle_program()->use();
 
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-        0.f, 0.f);
     glUniform1i(
         AbstractWindow::shaders()->location(
             Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
         1);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
 
     if (highlight_) {
-      //glUniform1i(AbstractWindow::shaders()->location(Shaders::TRIANGLE_GAMMA), 50);
-      glVertexAttrib4f(AttributeColor, 0.85f, 0.15f, 0.15f, 0.6f);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 25);
     } else {
-      //glUniform1i(AbstractWindow::shaders()->location(Shaders::TRIANGLE_GAMMA), 0);
-      glVertexAttrib4f(AttributeColor, 0.15f, 0.15f, 0.15f, 0.6f);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
     }
-    //glVertexAttrib4f(AbstractWindow::shaders()->location(Shaders::TRIANGLE_COLOR), 0.15f, 0.15f, 0.15f, 0.6f);
+
+    float x = 0.f;
+    float y = 0.f;
 
     glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
 
-    GLSLProgram::reset();
+    if (orientation_ == Horizontal) {
+
+      if (size().width() > kHandleLength)
+        x = (size().width() - kHandleLength) / 2.f;
+
+      y = size().height() - 2.f;
+      glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+      while (y > 0.f) {
+
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            x, y);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        y -= 3.f;
+      }
+
+      y = size().height() - 3.f;
+      glVertexAttrib4f(AttributeColor, 1.f, 1.f, 1.f, 0.16f);
+      while (y > 0.f) {
+
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            x, y);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        y -= 3.f;
+      }
+
+    } else {
+
+      if (size().height() > kHandleLength)
+        y = (size().height() - kHandleLength) / 2.f;
+
+      x = 1.f;
+      glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+      while (x < (size().width())) {
+
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            x, y);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        x += 3.f;
+      }
+
+      x = 2.f;
+      glVertexAttrib4f(AttributeColor, 1.f, 1.f, 1.f, 0.16f);
+      while (x < (size().width())) {
+
+        glUniform2f(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            x, y);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        x += 3.f;
+      }
+
+    }
 
     return Finish;
   }
@@ -302,7 +380,7 @@ namespace BlendInt {
   }
 
   Splitter::Splitter (Orientation orientation)
-      : AbstractRoundWidget(), orientation_(orientation)
+  : AbstractWidget(), orientation_(orientation)
   {
     set_size(400, 400);
   }
@@ -413,6 +491,8 @@ namespace BlendInt {
 
   bool Splitter::IsExpandX () const
   {
+    return true;
+
     bool expand = false;
 
     for (AbstractView* p = first_subview(); p; p = p->next_view()) {
@@ -423,11 +503,12 @@ namespace BlendInt {
     }
 
     return expand;
-
   }
 
   bool Splitter::IsExpandY () const
   {
+    return true;
+
     bool expand = false;
 
     for (AbstractView* p = first_subview(); p; p = p->next_view()) {
@@ -521,6 +602,11 @@ namespace BlendInt {
     if (request.source() == this) {
       ReportSizeUpdate(request);
     }
+  }
+
+  Response Splitter::Draw(AbstractWindow* context)
+  {
+    return subs_count() ? Ignore : Finish;
   }
 
   void Splitter::AlignSubWidgets (Orientation orientation, const Size& out_size)

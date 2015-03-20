@@ -25,20 +25,19 @@
 
 #include <deque>
 
-#include <opengl/glarraybuffer.hpp>
-#include <gui/abstract-round-widget.hpp>
+#include <opengl/gl-buffer.hpp>
+
+#include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
   class Splitter;
 
-  class SplitterHandle: public AbstractRoundWidget
+  class SplitterHandle: public AbstractWidget
   {
   DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
   public:
-
-    friend class Splitter;
 
     SplitterHandle (Orientation orientation);
 
@@ -70,14 +69,16 @@ namespace BlendInt {
 
   private:
 
+    friend class Splitter;
+
     Orientation orientation_;
 
     GLuint vao_;
 
+    GLBuffer<ARRAY_BUFFER, 1> vbo_;
+
     bool highlight_;
     bool pressed_;
-
-    RefPtr<GLArrayBuffer> buffer_;
 
     Point last_;
     Point cursor_;
@@ -85,6 +86,9 @@ namespace BlendInt {
     int prev_size_;	// width or height of the previous_view widget
     int next_size_;	// width or height of the next_view widget
     int nearby_pos_;	// nearby widget position
+
+    static const int kHandleLength = 64;
+    static const int kHandlwWidth = 7;
   };
 
   /**
@@ -93,13 +97,11 @@ namespace BlendInt {
    * A Splitter lets the user control the size of the sub widgets by dragging
    * the splitter handler between them.
    */
-  class Splitter: public AbstractRoundWidget
+  class Splitter: public AbstractWidget
   {
   DISALLOW_COPY_AND_ASSIGN(Splitter);
 
   public:
-
-    friend class SplitterHandle;
 
     Splitter (Orientation orientation = Horizontal);
 
@@ -133,7 +135,9 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+
+    virtual Response Draw (AbstractWindow* context) final;
 
     void FillSubWidgetsInSplitter (const Size& out_size,
                                    Orientation orientation);
@@ -153,6 +157,8 @@ namespace BlendInt {
                                    Orientation orientation);
 
   private:
+
+    friend class SplitterHandle;
 
     void DistributeHorizontally (int x, int width);
 
