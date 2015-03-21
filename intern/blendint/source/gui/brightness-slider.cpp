@@ -28,67 +28,76 @@
 
 namespace BlendInt {
 
-	BrightnessSlider::BrightnessSlider(Orientation orientation)
-	: AbstractSlider<int>(orientation)
-	{
-		set_round_type(RoundAll);
-		set_round_radius(6);
-		set_size(90, 14);
+  BrightnessSlider::BrightnessSlider (Orientation orientation)
+  : AbstractSlider<int>(orientation)
+  {
+    set_round_type(RoundAll);
+    set_round_radius(6);
+    set_size(90, 14);
 
-		InitializeBrightnessSlider();
-	}
+    InitializeBrightnessSlider();
+  }
 
-	BrightnessSlider::~BrightnessSlider()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
+  BrightnessSlider::~BrightnessSlider ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
 
-	bool BrightnessSlider::IsExpandX() const
-	{
-		if(orientation() == Horizontal) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+  bool BrightnessSlider::IsExpandX () const
+  {
+    if (orientation() == Horizontal) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-	bool BrightnessSlider::IsExpandY() const
-	{
-		if(orientation() == Vertical) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+  bool BrightnessSlider::IsExpandY () const
+  {
+    if (orientation() == Vertical) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-	Size BrightnessSlider::GetPreferredSize() const
-	{
-		// Same size in ColorWheel
-		if(orientation() == Horizontal) {
-			return Size(160, 14);
-		} else {
-			return Size(14, 160);
-		}
-	}
+  Size BrightnessSlider::GetPreferredSize () const
+  {
+    // Same size in ColorWheel
+    if (orientation() == Horizontal) {
+      return Size(160, 14);
+    } else {
+      return Size(14, 160);
+    }
+  }
 
 	Response BrightnessSlider::Draw (AbstractWindow* context)
 	{
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.f, 0.f, 0.f, 1.f);
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.f,
+        0.f, 0.f, 1.f);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 1);
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		AbstractWindow::shaders()->widget_outer_program()->use();
+    AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-		        AbstractWindow::theme()->regular().outline.data());
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        0.f);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        AbstractWindow::theme()->regular().outline.data());
+    glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                 GetOutlineVertices(round_type()) * 2 + 2);
 
 		glm::mat4 icon_mvp;
 
@@ -112,11 +121,11 @@ namespace BlendInt {
 
 			GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
 
-			inner_->bind();
-			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			outer_->bind();
-			outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			outer_->reset();
+	    vbo_.bind(0);
+	    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+	    vbo_.bind(1);
+	    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+	    vbo_.reset();
 
 			RequestRedraw();
 		}
@@ -133,11 +142,11 @@ namespace BlendInt {
 
 		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		outer_->reset();
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -151,11 +160,11 @@ namespace BlendInt {
 
 		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
 
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		outer_->reset();
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.reset();
 
 		RequestRedraw();
 	}
@@ -164,33 +173,29 @@ namespace BlendInt {
 	{
 		glGenVertexArrays(2, vao_);
 
-		Color black(0x000000FF);
-
 		std::vector<GLfloat> inner_verts;
 		std::vector<GLfloat> outer_verts;
 
 		GenerateRoundedVertices(Vertical, 255, 0, &inner_verts, &outer_verts);
 
+		vbo_.generate();
+
 		glBindVertexArray(vao_[0]);
 
-		inner_.reset(new GLArrayBuffer);
-		inner_->generate();
-		inner_->bind();
-		inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		vbo_.bind(0);
+		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(vao_[1]);
-		outer_.reset(new GLArrayBuffer);
-		outer_->generate();
-		outer_->bind();
-		outer_->set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		vbo_.bind(1);
+		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(AttributeCoord);
 		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		GLArrayBuffer::reset();
+		vbo_.reset();
 		glBindVertexArray(0);
 	}
 

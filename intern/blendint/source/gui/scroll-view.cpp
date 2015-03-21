@@ -221,6 +221,9 @@ namespace BlendInt {
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        0);
 
 		if(subs_count()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
@@ -265,6 +268,9 @@ namespace BlendInt {
 		// draw mask
 		AbstractWindow::shaders()->widget_inner_program()->use();
 		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        0);
 
 		if(subs_count()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);

@@ -88,62 +88,69 @@ namespace BlendInt {
 		}
 	}
 
-	Response Viewport2D::Draw(AbstractWindow* context)
-	{
-		AbstractWindow* c = context;
-        GLint vp[4];	// Original viewport
-        int n = GetOutlineVertices(round_type()) + 2;
+  Response Viewport2D::Draw (AbstractWindow* context)
+  {
+    AbstractWindow* c = context;
+    GLint vp[4];	// Original viewport
+    int n = GetOutlineVertices(round_type()) + 2;
 
-        glGetIntegerv(GL_VIEWPORT, vp);
+    glGetIntegerv(GL_VIEWPORT, vp);
 
-		RefPtr<GLSLProgram> program = AbstractWindow::shaders()->widget_inner_program();
-		program->use();
+    RefPtr<GLSLProgram> program =
+        AbstractWindow::shaders()->widget_inner_program();
+    program->use();
 
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-				0.25f, 0.25f, 0.25f, 1.f);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.25f,
+        0.25f, 0.25f, 1.f);
 
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
-		c->BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		c->EndPushStencil();
+    c->BeginPushStencil();	// inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    c->EndPushStencil();
 
-		glBindVertexArray(0);
-		program->reset();
+    glBindVertexArray(0);
+    program->reset();
 
-        glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-        Point pos = GetGlobalPosition();
+    Point pos = GetGlobalPosition();
 
-		glViewport(pos.x() - context->viewport_origin().x(),
-		        pos.y() - context->viewport_origin().y(),
-		        size().width(),
-		        size().height());
+    glViewport(pos.x() - context->viewport_origin().x(),
+               pos.y() - context->viewport_origin().y(), size().width(),
+               size().height());
 
-        // --------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
 
-		gridfloor_->Render(camera_.projection(), camera_.view());
+    gridfloor_->Render(camera_.projection(), camera_.view());
 
-		//Render();
-        // --------------------------------------------------------------------------------
+    //Render();
+    // --------------------------------------------------------------------------------
 
-        glDisable(GL_DEPTH_TEST);
-        glViewport(vp[0], vp[1], vp[2], vp[3]);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-        program->use();
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    program->use();
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
 
-		c->BeginPopStencil();	// pop inner stencil
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		glBindVertexArray(0);
-		c->EndPopStencil();
-		program->reset();
+    c->BeginPopStencil();	// pop inner stencil
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    glBindVertexArray(0);
+    c->EndPopStencil();
+    program->reset();
 
-		return Finish;
-	}
+    return Finish;
+  }
 
 	void Viewport2D::InitializeViewport2D()
 	{

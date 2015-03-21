@@ -139,6 +139,8 @@ namespace BlendInt {
 
     glUniform1i(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
         Color(background_).data());

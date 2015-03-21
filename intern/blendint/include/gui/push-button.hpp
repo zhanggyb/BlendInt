@@ -33,21 +33,21 @@ namespace BlendInt {
 	 *
 	 * @ingroup blendint_gui_widgets_buttons
 	 */
-	class Button: public AbstractButton
+	class PushButton: public AbstractButton
 	{
-		DISALLOW_COPY_AND_ASSIGN(Button);
+		DISALLOW_COPY_AND_ASSIGN(PushButton);
 
 	public:
 
-		Button ();
+		PushButton ();
 
-		Button (const String& text);
+		PushButton (const String& text);
 
-		Button (const RefPtr<AbstractIcon>& icon);
+		PushButton (const RefPtr<AbstractIcon>& icon);
 
-		Button (const RefPtr<AbstractIcon>& icon, const String& text);
+		PushButton (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		virtual ~Button ();
+		virtual ~PushButton ();
 
 		virtual Size GetPreferredSize () const;
 

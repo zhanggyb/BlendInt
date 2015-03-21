@@ -137,7 +137,7 @@ namespace BlendInt {
     AbstractWindow::shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), x,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
         y);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,

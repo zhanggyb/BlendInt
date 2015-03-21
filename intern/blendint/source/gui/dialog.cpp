@@ -28,7 +28,7 @@
 #include <opengl/opengl.hpp>
 #include <opengl/gl-framebuffer.hpp>
 
-#include <gui/button.hpp>
+#include <gui/push-button.hpp>
 #include <gui/close-button.hpp>
 #include <gui/label.hpp>
 #include <gui/separator.hpp>
@@ -62,14 +62,14 @@ namespace BlendInt {
     }
 
     if (flags & DialogButtonApply) {
-      Button* apply_button = Manage(new Button("Apply"));
+      PushButton* apply_button = Manage(new PushButton("Apply"));
       bottom_layout->AddWidget(apply_button);
       events()->connect(apply_button->clicked(), this,
           &Dialog::OnApplyButtonClicked);
     }
 
     if (flags & DialogButtonOK) {
-      Button* ok_button = Manage(new Button("OK"));
+      PushButton* ok_button = Manage(new PushButton("OK"));
       bottom_layout->AddWidget(ok_button);
       events()->connect(ok_button->clicked(), this, &Dialog::OnOKButtonClicked);
     }

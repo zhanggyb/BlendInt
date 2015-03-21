@@ -29,7 +29,7 @@
 #include <gui/numerical-slider.hpp>
 #include <gui/brightness-slider.hpp>
 
-#include <gui/button.hpp>
+#include <gui/push-button.hpp>
 #include <gui/radio-button.hpp>
 #include <gui/tool-button.hpp>
 #include <gui/textentry.hpp>
@@ -78,8 +78,8 @@ namespace BlendInt {
     color_box->AddWidget(stack_);
     color_box->AddWidget(alpha_slider);
 
-    Button* pick_btn = Manage(
-        new Button(AbstractWindow::icons()->icon_16x16(Icons::EYEDROPPER)));
+    PushButton* pick_btn = Manage(
+        new PushButton(AbstractWindow::icons()->icon_16x16(Icons::EYEDROPPER)));
     pick_btn->SetEmboss(true);
 
     LinearLayout* hbox2 = Manage(new LinearLayout(Horizontal, AlignTop));

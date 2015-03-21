@@ -240,53 +240,57 @@ namespace BlendInt {
 		}
 	}
 
-	Response Viewport3D::Draw (AbstractWindow* context)
-	{
-		AbstractWindow* c = context;
-        GLint vp[4];	// Original viewport
-        //GLint sci[4];
-        //GLboolean scissor_status;
-        int n = GetOutlineVertices(round_type()) + 2;
+  Response Viewport3D::Draw (AbstractWindow* context)
+  {
+    AbstractWindow* c = context;
+    GLint vp[4];	// Original viewport
+    //GLint sci[4];
+    //GLboolean scissor_status;
+    int n = GetOutlineVertices(round_type()) + 2;
 
-        glGetIntegerv(GL_VIEWPORT, vp);
-        //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);
+    glGetIntegerv(GL_VIEWPORT, vp);
+    //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);
 
-        //if(scissor_status == GL_TRUE) {
-        //	glGetIntegerv(GL_SCISSOR_BOX, sci);
-        //}
+    //if(scissor_status == GL_TRUE) {
+    //	glGetIntegerv(GL_SCISSOR_BOX, sci);
+    //}
 
-		RefPtr<GLSLProgram> program = AbstractWindow::shaders()->widget_inner_program();
-		program->use();
+    RefPtr<GLSLProgram> program =
+        AbstractWindow::shaders()->widget_inner_program();
+    program->use();
 
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-		glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-				0.25f, 0.25f, 0.25f, 1.f);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.25f,
+        0.25f, 0.25f, 1.f);
 
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
 
-		c->BeginPushStencil();	// inner stencil
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		c->EndPushStencil();
+    c->BeginPushStencil();	// inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    c->EndPushStencil();
 
-		glBindVertexArray(0);
-		program->reset();
+    glBindVertexArray(0);
+    program->reset();
 
-        glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 //        glEnable(GL_SCISSOR_TEST);
 //        glScissor(position().x(), position().y(), size().width(),
 //                size().height());
 
-        Point pos = GetGlobalPosition();
+    Point pos = GetGlobalPosition();
 
-        glViewport(pos.x() - context->viewport_origin().x(),
-        		pos.y() - context->viewport_origin().y(),
-		        size().width(),
-		        size().height());
+    glViewport(pos.x() - context->viewport_origin().x(),
+               pos.y() - context->viewport_origin().y(), size().width(),
+               size().height());
 
-        // --------------------------------------------------------------------------------
-        Render();
-        // --------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
+    Render();
+    // --------------------------------------------------------------------------------
 
 //        if(scissor_status == GL_TRUE) {
 //        	glScissor(sci[0], sci[1], sci[2], sci[3]);
@@ -294,22 +298,25 @@ namespace BlendInt {
 //        	glDisable(GL_SCISSOR_TEST);
 //        }
 
-        glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 
-        glViewport(vp[0], vp[1], vp[2], vp[3]);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
 
-        program->use();
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    program->use();
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
 
-		c->BeginPopStencil();	// pop inner stencil
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, n);
-		glBindVertexArray(0);
-		c->EndPopStencil();
-		program->reset();
+    c->BeginPopStencil();	// pop inner stencil
+    glBindVertexArray(vao_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, n);
+    glBindVertexArray(0);
+    c->EndPopStencil();
+    program->reset();
 
-		return Finish;
-	}
+    return Finish;
+  }
 	
 	Size Viewport3D::GetPreferredSize () const
 	{

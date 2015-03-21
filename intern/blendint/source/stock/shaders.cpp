@@ -270,7 +270,8 @@ namespace BlendInt {
 
   // ---------------------------------------------------------------
 
-  const char* Shaders::widget_inner_vertex_shader = "#version 330\n"
+  const char* Shaders::widget_inner_vertex_shader =
+      "#version 330\n"
       ""
       "layout(location=0) in vec3 aCoord;"
       "layout (std140) uniform WidgetMatrices {"
@@ -289,16 +290,22 @@ namespace BlendInt {
 
   const char* Shaders::widget_inner_fragment_shader =
       "#version 330\n"
-          ""
-          "in float VertexShade;"
-          "uniform vec4 uColor;"
-          "uniform int uGamma = 0;"
-          "out vec4 FragmentColor;"
-          ""
-          "void main(void) {"
-          "	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-          "	FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
-          "}";
+      ""
+      "in float VertexShade;"
+      "uniform vec4 uColor;"
+      "uniform int uGamma = 0;"
+      "uniform bool uShaded = false;"
+      "out vec4 FragmentColor;"
+      ""
+      "void main(void) {"
+      " vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+      ""
+      " if(uShaded) {"
+      "   FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + uColor;"
+      " } else {"
+      "   FragmentColor = color_calib + uColor;"
+      " }"
+      "}";
 
   const char* Shaders::widget_split_inner_vertex_shader = "#version 330\n"
       ""
@@ -320,23 +327,32 @@ namespace BlendInt {
 
   const char* Shaders::widget_split_inner_fragment_shader =
       "#version 330\n"
-          ""
-          "in float VertexShade;"
-          "uniform vec4 u_color0;"
-          "uniform vec4 u_color1;"
-          "uniform int uGamma = 0;"
-          "uniform float u_parting = 10.f;"
-          "out vec4 FragmentColor;"
-          ""
-          "void main(void) {"
-          "	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
-          ""
-          "	if(gl_FragCoord.x <= u_parting) {"
-          "		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
-          "	} else {"
-          "		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color1;"
-          "	}"
-          "}";
+      ""
+      "in float VertexShade;"
+      "uniform vec4 u_color0;"
+      "uniform vec4 u_color1;"
+      "uniform float uMiddle = 10.f;"
+      "uniform int uGamma = 0;"
+      "uniform bool uShaded = false;"
+      "out vec4 FragmentColor;"
+      ""
+      "void main(void) {"
+      "	vec4 color_calib = vec4(vec3(clamp(uGamma/255.0, -1.0, 1.0)), 0.0);"
+      ""
+      "	if(gl_FragCoord.x <= uMiddle) {"
+      "   if(uShaded) {"
+      " 		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color0;"
+      "   } else {"
+      "     FragmentColor = color_calib + u_color0;"
+      "   }"
+      "	} else {"
+      "   if(uShaded) {"
+      " 		FragmentColor = vec4(VertexShade, VertexShade, VertexShade, 0.f) + color_calib + u_color1;"
+      "   } else {"
+      "     FragmentColor = color_calib + u_color1;"
+      "   }"
+      "	}"
+      "}";
 
   // ---------------------------------------------------------------
 
@@ -359,7 +375,7 @@ namespace BlendInt {
       "	mat3 model;"
       "};"
       ""
-      "uniform vec2 uPosition;" // position
+      "uniform vec2 uOffset;" // position
       ""
       "const vec2 AA_JITTER[8] = vec2[8]("
       "	vec2(0.468813, -0.481430),"
@@ -380,7 +396,7 @@ namespace BlendInt {
       ""
       "void main()"
       "{"
-      "	mat3 model_matrix_2d = model * translate(uPosition);"
+      "	mat3 model_matrix_2d = model * translate(uOffset);"
       "	mat3 aa_matrix = mat3(1.0);"
       "	vec3 point;"
       ""
@@ -1408,6 +1424,8 @@ namespace BlendInt {
         "uColor");
     locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation(
         "uGamma");
+    locations_[WIDGET_INNER_SHADED] = widget_inner_program_->GetUniformLocation(
+        "uShaded");
 
     return true;
   }
@@ -1434,10 +1452,12 @@ namespace BlendInt {
         widget_split_inner_program_->GetUniformLocation("u_color0");
     locations_[WIDGET_SPLIT_INNER_COLOR1] =
         widget_split_inner_program_->GetUniformLocation("u_color1");
-    locations_[WIDGET_SPLIT_INNER_PARTING] =
-        widget_split_inner_program_->GetUniformLocation("u_parting");
+    locations_[WIDGET_SPLIT_INNER_MIDDLE] =
+        widget_split_inner_program_->GetUniformLocation("uMiddle");
     locations_[WIDGET_SPLIT_INNER_GAMMA] =
         widget_split_inner_program_->GetUniformLocation("uGamma");
+    locations_[WIDGET_SPLIT_INNER_SHADED] =
+        widget_split_inner_program_->GetUniformLocation("uShaded");
 
     return true;
   }
@@ -1464,8 +1484,8 @@ namespace BlendInt {
         widget_outer_program_->GetAttributeLocation("aCoord");
     locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation(
         "uColor");
-    locations_[WIDGET_OUTER_POSITION] =
-        widget_outer_program_->GetUniformLocation("uPosition");
+    locations_[WIDGET_OUTER_OFFSET] =
+        widget_outer_program_->GetUniformLocation("uOffset");
 
     return true;
   }

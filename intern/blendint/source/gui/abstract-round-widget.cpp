@@ -106,10 +106,20 @@ namespace BlendInt {
 				outer);
 	}
 
+  void AbstractRoundWidget::GenerateRoundedVertices (Orientation shadedir,
+                                                     const ColorScheme& color_theme,
+                                                     std::vector<GLfloat>* inner,
+                                                     std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(size(),
+                     default_border_width() * AbstractWindow::theme()->pixel(),
+                     round_type(), round_radius_, shadedir,
+                     color_theme.shadetop, color_theme.shadedown, inner, outer);
+  }
+
 	Response AbstractRoundWidget::Draw(AbstractWindow* context)
 	{
 		return subs_count() ? Ignore : Finish;
 	}
 
 }
-

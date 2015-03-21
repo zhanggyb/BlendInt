@@ -182,6 +182,9 @@ namespace BlendInt {
       baseline_color = baseline_color + context->theme()->tab().shadedown;
 
     AbstractWindow::shaders()->widget_inner_program()->use();
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        0);
 
     glUniform1i(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);

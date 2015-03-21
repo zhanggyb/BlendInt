@@ -154,7 +154,9 @@ namespace BlendInt {
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        context->theme()->regular().shaded);
 		if (is_down()) {
 			glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 			        AbstractWindow::theme()->regular().inner_sel.data());
@@ -168,7 +170,7 @@ namespace BlendInt {
 
 		AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f, 0.f);
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f, 0.f);
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
 		        AbstractWindow::theme()->regular().outline.data());
 
@@ -179,7 +181,7 @@ namespace BlendInt {
 		if (emboss()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 			        0.f, - 1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);
@@ -236,7 +238,7 @@ namespace BlendInt {
 		if(context) {
 
 			dialog_ = Manage(new FileSelector);
-			DBG_SET_NAME(dialog_, "File Selector on File Button");
+			DBG_SET_NAME(dialog_, "File Selector on File PushButton");
 
 			int w = 800;
 			int h = 600;

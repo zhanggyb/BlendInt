@@ -57,6 +57,8 @@ namespace BlendInt {
 		AbstractWindow::shaders()->widget_inner_program()->use();
 
 		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
 				AbstractWindow::theme()->regular().inner.data());
 
@@ -65,7 +67,7 @@ namespace BlendInt {
 
 		AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 		        0.f, 0.f);
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
 				AbstractWindow::theme()->regular().outline.data());
@@ -77,7 +79,7 @@ namespace BlendInt {
 		if (emboss()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 			        0.f, -1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        GetHalfOutlineVertices(round_type()) * 2);

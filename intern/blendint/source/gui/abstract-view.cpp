@@ -1933,9 +1933,22 @@ namespace BlendInt {
                                        std::vector<GLfloat>* inner,
                                        std::vector<GLfloat>* outer)
   {
-    return GenerateVertices(0.f, 0.f, size.width(), size.height(), border,
+    GenerateVertices(0.f, 0.f, size.width(), size.height(), border,
                             round_type, radius, shadedir, shadetop, shadedown,
                             inner, outer);
+  }
+
+  void AbstractView::GenerateVertices (const Size& size,
+                                       float border,
+                                       int round_type,
+                                       float radius,
+                                       const ColorScheme& color_scheme,
+                                       std::vector<GLfloat>* inner,
+                                       std::vector<GLfloat>* outer)
+  {
+    GenerateVertices(0.f, 0.f, size.width(), size.height(), border, round_type,
+                     radius, Vertical, color_scheme.shadetop,
+                     color_scheme.shadedown, inner, outer);
   }
 
   AbstractView* AbstractView::operator [] (int i) const

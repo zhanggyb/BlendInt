@@ -193,6 +193,10 @@ namespace BlendInt {
     widget_color_node = AllocateThemeNode(doc, "color_scheme_text", text_);
     ui_node->append_node(widget_color_node);
 
+    widget_color_node = AllocateThemeNode(doc, "color_scheme_push_button",
+                                          push_button_);
+    ui_node->append_node(widget_color_node);
+
     widget_color_node = AllocateThemeNode(doc, "color_scheme_radio_button",
                                           radio_button_);
     ui_node->append_node(widget_color_node);
@@ -317,6 +321,18 @@ namespace BlendInt {
     option_.shaded = true;
     option_.shadetop = 15;
     option_.shadedown = -15;
+
+    // PushButton, same as regular
+    push_button_.outline = 0x191919FF;
+    push_button_.item = 0x191919FF;
+    push_button_.inner = 0x999999FF;
+    push_button_.inner_sel = 0x646464FF;
+    push_button_.text = 0x000000FF;
+    push_button_.text_sel = 0xFFFFFFFF;
+    push_button_.shaded = false;
+    push_button_.shadetop = 0;
+    push_button_.shadedown = 0;
+    push_button_.alpha_check = 0;
 
     // Toggle
     toggle_.outline = 0x191919FF;
@@ -555,6 +571,8 @@ namespace BlendInt {
       p = &tool_;
     } else if (strcmp("color_scheme_text", node->name()) == 0) {
       p = &text_;
+    } else if (strcmp("color_scheme_push_button", node->name()) == 0) {
+      p = &push_button_;
     } else if (strcmp("color_scheme_radio_button", node->name()) == 0) {
       p = &radio_button_;
     } else if (strcmp("color_scheme_option", node->name()) == 0) {

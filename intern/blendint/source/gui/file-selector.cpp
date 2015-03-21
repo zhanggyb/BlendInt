@@ -319,10 +319,10 @@ namespace BlendInt {
 		// directory control group
 		Block* block1 = Manage(new Block);
 
-		Button* btn_back = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::BACK)));
-		Button* btn_forward = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FORWARD)));
-		Button* btn_up = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT)));
-		Button* btn_reload = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH)));
+		PushButton* btn_back = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::BACK)));
+		PushButton* btn_forward = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FORWARD)));
+		PushButton* btn_up = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT)));
+		PushButton* btn_reload = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH)));
 
 		block1->AddWidget(btn_back);
 		block1->AddWidget(btn_forward);
@@ -332,14 +332,14 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		Button* btn_new = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
+		PushButton* btn_new = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
 
 		// display mode
 		Block* block2 = Manage(new Block);
 
-		Button* btn_short_list = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY)));
-		Button* btn_detail_list = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY)));
-		Button* btn_thumbnail = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY)));
+		PushButton* btn_short_list = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY)));
+		PushButton* btn_detail_list = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY)));
+		PushButton* btn_thumbnail = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY)));
 
 		block2->AddWidget(btn_short_list);
 		block2->AddWidget(btn_detail_list);
@@ -347,18 +347,18 @@ namespace BlendInt {
 
 		Block* block3 = Manage(new Block);
 
-		Button* btn_sort_alpha = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA)));
-		Button* btn_sort_ext = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT)));
-		Button* btn_sort_time = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME)));
-		Button* btn_sort_size = Manage(new Button(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE)));
+		PushButton* btn_sort_alpha = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA)));
+		PushButton* btn_sort_ext = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT)));
+		PushButton* btn_sort_time = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME)));
+		PushButton* btn_sort_size = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE)));
 
 		block3->AddWidget(btn_sort_alpha);
 		block3->AddWidget(btn_sort_ext);
 		block3->AddWidget(btn_sort_time);
 		block3->AddWidget(btn_sort_size);
 
-		Button* open = Manage(new Button(String("Open")));
-		DBG_SET_NAME(open, "Open Button");
+		PushButton* open = Manage(new PushButton(String("Open")));
+		DBG_SET_NAME(open, "Open PushButton");
 
 		Separator* separator1 = Manage(new Separator);
 		Separator* separator2 = Manage(new Separator);

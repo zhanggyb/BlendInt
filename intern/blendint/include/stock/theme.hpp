@@ -122,6 +122,11 @@ namespace BlendInt {
 			return pulldown_;
 		}
 
+		const ColorScheme& push_button () const
+		{
+		  return push_button_;
+		}
+
 		const ColorScheme& radio_button () const
 		{
 			return radio_button_;
@@ -234,6 +239,7 @@ namespace BlendInt {
 		ColorScheme regular_;
 		ColorScheme tool_;
 		ColorScheme text_;
+    ColorScheme push_button_;
 		ColorScheme radio_button_;
 		ColorScheme option_;
 		ColorScheme toggle_;

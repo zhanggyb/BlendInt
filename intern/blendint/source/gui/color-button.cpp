@@ -139,7 +139,7 @@ namespace BlendInt {
     AbstractWindow::shaders()->widget_split_inner_program()->use();
 
     glUniform1f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_PARTING),
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
         x + size().width() / 2.f);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
@@ -164,7 +164,7 @@ namespace BlendInt {
     AbstractWindow::shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         0.f);
     glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                  1, AbstractWindow::theme()->regular().outline.data());
@@ -178,7 +178,7 @@ namespace BlendInt {
           1.0f, 1.0f, 0.16f);
 
       glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
           0.f, -1.f);
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0,

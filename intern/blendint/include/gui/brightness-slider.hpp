@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <opengl/glarraybuffer.hpp>
+#include <opengl/gl-buffer.hpp>
  
 #include <gui/abstract-slider.hpp>
 
@@ -61,8 +61,7 @@ namespace BlendInt {
 
 		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
+		GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
 	};
 

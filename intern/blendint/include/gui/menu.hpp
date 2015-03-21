@@ -29,7 +29,7 @@
 #include <gui/frame-shadow.hpp>
 
 #include <gui/menu-item.hpp>
-#include <gui/button.hpp>
+#include <gui/push-button.hpp>
 
 namespace BlendInt {
 

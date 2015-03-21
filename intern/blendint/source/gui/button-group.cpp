@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		if(button->group_) {
 			if(button->group_ == this) {
-				DBG_PRINT_MSG("Button %s is already in this button group", button->name().c_str());
+				DBG_PRINT_MSG("PushButton %s is already in this button group", button->name().c_str());
 				return;
 			} else {
 				button->group_->RemoveButton(button);
@@ -73,7 +73,7 @@ namespace BlendInt {
 
 		if(button->group_) {
 			if(button->group_ != this) {
-				DBG_PRINT_MSG("Button %s is NOT in this button group", button->name().c_str());
+				DBG_PRINT_MSG("PushButton %s is NOT in this button group", button->name().c_str());
 				return;
 			}
 		} else {
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		std::deque<AbstractButton*>::iterator it = std::find(buttons_.begin(), buttons_.end(), button);
 		if(it == buttons_.end()) {
-			DBG_PRINT_MSG("Button %s is not in button group.", button->name().c_str());
+			DBG_PRINT_MSG("PushButton %s is not in button group.", button->name().c_str());
 			return;
 		}
 

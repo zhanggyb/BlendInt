@@ -173,7 +173,7 @@ namespace BlendInt {
 			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
 		//}
 
-		glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_PARTING), x + len);
+		glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE), x + len);
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, AbstractWindow::theme()->number_slider().inner_sel.data());
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, AbstractWindow::theme()->number_slider().inner.data());
 
@@ -182,7 +182,7 @@ namespace BlendInt {
 
 		AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 				0.f, 0.f);
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme()->number_slider().outline.data());
 
@@ -192,7 +192,7 @@ namespace BlendInt {
 		if (emboss()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,

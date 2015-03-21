@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 	/**
-	 * @brief Toggle Button
+	 * @brief Toggle PushButton
 	 *
 	 * @ingroup blendint_gui_widgets_buttons
 	 */

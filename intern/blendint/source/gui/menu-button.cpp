@@ -110,6 +110,9 @@ namespace BlendInt {
 
       glUniform1i(
           AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+          context->theme()->menu_item().shaded);
       glUniform4fv(
           AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
           AbstractWindow::theme()->menu_item().inner_sel.data());

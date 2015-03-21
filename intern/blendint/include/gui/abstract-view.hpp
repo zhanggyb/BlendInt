@@ -41,6 +41,7 @@ namespace BlendInt {
   class AbstractWindow;
   class AbstractFrame;
   class AbstractView;
+  struct ColorScheme;
 
   enum ViewFlagsMask {
 
@@ -639,6 +640,14 @@ namespace BlendInt {
                                   Orientation shadedir,
                                   short shadetop,
                                   short shadedown,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
+
+    static void GenerateVertices (const Size& size,
+                                  float border,
+                                  int round_type,
+                                  float radius,
+                                  const ColorScheme& color_scheme,
                                   std::vector<GLfloat>* inner,
                                   std::vector<GLfloat>* outer);
 

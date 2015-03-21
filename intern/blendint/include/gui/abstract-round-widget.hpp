@@ -76,6 +76,11 @@ namespace BlendInt {
                                   std::vector<GLfloat>* inner,
                                   std::vector<GLfloat>* outer);
 
+    void GenerateRoundedVertices (Orientation shadedir,
+                                  const ColorScheme& color_theme,
+                                  std::vector<GLfloat>* inner,
+                                  std::vector<GLfloat>* outer);
+
     virtual void PerformRoundTypeUpdate (int round_type);
 
     virtual void PerformRoundRadiusUpdate (float radius);

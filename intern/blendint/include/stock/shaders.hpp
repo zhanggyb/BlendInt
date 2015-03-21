@@ -71,16 +71,18 @@ namespace BlendInt {
       WIDGET_INNER_COORD,
       WIDGET_INNER_COLOR,
       WIDGET_INNER_GAMMA,
+      WIDGET_INNER_SHADED,
 
       WIDGET_SPLIT_INNER_COORD,
       WIDGET_SPLIT_INNER_COLOR0,	// The left or bottom color
       WIDGET_SPLIT_INNER_COLOR1,	// The right or top color
-      WIDGET_SPLIT_INNER_PARTING,
+      WIDGET_SPLIT_INNER_MIDDLE,
       WIDGET_SPLIT_INNER_GAMMA,
+      WIDGET_SPLIT_INNER_SHADED,
 
       WIDGET_OUTER_COORD,
       WIDGET_OUTER_COLOR,
-      WIDGET_OUTER_POSITION,	// vec2 of outline or emboss vertices
+      WIDGET_OUTER_OFFSET,	// for emboss
 
       // Text
       WIDGET_TEXT_COORD,

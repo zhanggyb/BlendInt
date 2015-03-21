@@ -374,6 +374,9 @@ namespace BlendInt {
         1, AbstractWindow::theme()->text().inner.data());
     glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
         0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        context->theme()->text().shaded);
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
@@ -383,7 +386,7 @@ namespace BlendInt {
     glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
         1, AbstractWindow::theme()->text().outline.data());
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION), 0.f,
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         0.f);
 
     glBindVertexArray(vao_[1]);
@@ -395,7 +398,7 @@ namespace BlendInt {
           AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
           1.0f, 1.0f, 0.16f);
       glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_POSITION),
+          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
           0.f, -1.f);
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
           GetHalfOutlineVertices(round_type()) * 2);
