@@ -25,10 +25,11 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/abstract-layout.hpp>
 #include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
+
+  class AbstractLayout; // forward declare
 
   /**
    * @brief A common frame with customized layout

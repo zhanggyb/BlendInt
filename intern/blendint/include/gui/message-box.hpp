@@ -26,10 +26,13 @@
 #include <core/string.hpp>
 #include <gui/abstract-dialog.hpp>
 #include <gui/frame-shadow.hpp>
-#include <gui/close-button.hpp>
-#include <gui/label.hpp>
 
 namespace BlendInt {
+
+  // forward declare
+  class Font;
+  class Label;
+  class CloseButton;
 
   /**
    * @brief A message dialog

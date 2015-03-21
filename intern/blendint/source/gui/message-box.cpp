@@ -23,11 +23,13 @@
 
 #include <glm/gtx/transform.hpp>
 
-#include <gui/message-box.hpp>
 #include <gui/linear-layout.hpp>
-
-#include <gui/abstract-window.hpp>
+#include <gui/close-button.hpp>
+#include <gui/label.hpp>
 #include <gui/font.hpp>
+
+#include <gui/message-box.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 

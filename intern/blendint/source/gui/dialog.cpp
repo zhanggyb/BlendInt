@@ -28,13 +28,14 @@
 #include <opengl/opengl.hpp>
 #include <opengl/gl-framebuffer.hpp>
 
-#include <gui/dialog.hpp>
-#include <gui/abstract-window.hpp>
-
 #include <gui/button.hpp>
 #include <gui/close-button.hpp>
 #include <gui/label.hpp>
 #include <gui/separator.hpp>
+#include <gui/linear-layout.hpp>
+
+#include <gui/dialog.hpp>
+#include <gui/abstract-window.hpp>
 
 namespace BlendInt {
 

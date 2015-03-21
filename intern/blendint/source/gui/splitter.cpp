@@ -227,7 +227,7 @@ namespace BlendInt {
         x = (size().width() - kHandleLength) / 2.f;
 
       y = size().height() - 2.f;
-      glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+      glVertexAttrib4f(AttributeColor, 0.16f, 0.16f, 0.16f, 1.f);
       while (y > 0.f) {
 
         glUniform2f(
@@ -256,7 +256,7 @@ namespace BlendInt {
         y = (size().height() - kHandleLength) / 2.f;
 
       x = 1.f;
-      glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
+      glVertexAttrib4f(AttributeColor, 0.16f, 0.16f, 0.16f, 1.f);
       while (x < (size().width())) {
 
         glUniform2f(
@@ -296,7 +296,7 @@ namespace BlendInt {
   void SplitterHandle::PerformHoverOut (AbstractWindow* context)
   {
     highlight_ = false;
-    context->PopCursor();
+    if (!pressed_) context->PopCursor();
     RequestRedraw();
   }
 
@@ -414,11 +414,11 @@ namespace BlendInt {
     }
   }
 
-  void Splitter::Append (AbstractWidget* widget)
+  bool Splitter::AddWidget (AbstractWidget* widget)
   {
     if (widget && widget->superview() != this) {
 
-      if (first_subview() == 0) {
+      if (subs_count() == 0) {
         PushBackSubView(widget);
       } else {
         SplitterHandle* handle = 0;
@@ -434,13 +434,38 @@ namespace BlendInt {
 
       AlignSubWidgets(orientation_, size());
 
-      // TODO: connect widget's destroyed event
+      RequestRedraw();
+      return true;
     }
+
+    return false;
   }
 
-  void Splitter::Insert (int index, AbstractWidget* widget)
+  bool Splitter::InsertWidget (int index, AbstractWidget* widget)
   {
-
+//    if (widget && widget->superview() != this) {
+//
+//      if (subs_count() == 0) {
+//        PushBackSubView(widget);
+//      } else {
+//        SplitterHandle* handle = 0;
+//        if (orientation_ == Horizontal) {
+//          handle = Manage(new SplitterHandle(Vertical));
+//        } else {
+//          handle = Manage(new SplitterHandle(Horizontal));
+//        }
+//
+//        PushBackSubView(handle);
+//        PushBackSubView(widget);
+//      }
+//
+//      AlignSubWidgets(orientation_, size());
+//
+//      RequestRedraw();
+//      return true;
+//    }
+//
+    return false;
   }
 
   void Splitter::Remove (AbstractWidget* widget)

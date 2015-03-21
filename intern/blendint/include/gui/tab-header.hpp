@@ -28,9 +28,9 @@
 #include <gui/abstract-widget.hpp>
 #include <gui/button-group.hpp>
 
-#include <gui/tab-button.hpp>
-
 namespace BlendInt {
+
+  class TabButton;
 
   /**
    * @brief A container which manage tab buttons, used in Tab only

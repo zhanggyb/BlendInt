@@ -109,9 +109,9 @@ namespace BlendInt {
 
     void Prepend (AbstractWidget* widget);
 
-    void Append (AbstractWidget* widget);
+    bool AddWidget (AbstractWidget* widget);
 
-    void Insert (int index, AbstractWidget* widget);
+    bool InsertWidget (int index, AbstractWidget* widget);
 
     void Remove (AbstractWidget* widget);
 

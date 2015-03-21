@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <gui/tab-button.hpp>
 #include <gui/tab-header.hpp>
 #include <gui/abstract-window.hpp>
 

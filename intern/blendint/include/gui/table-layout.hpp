@@ -24,7 +24,6 @@
 #pragma once
 
 #include <gui/abstract-layout.hpp>
-#include <opengl/gl-buffer.hpp>
 
 namespace BlendInt {
 
@@ -52,7 +51,6 @@ namespace BlendInt {
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual Response Draw (AbstractWindow* context);
-
 	};
 
 	// ------------------------------------

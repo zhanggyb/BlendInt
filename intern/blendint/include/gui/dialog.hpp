@@ -26,14 +26,15 @@
 #include <core/string.hpp>
 
 #include <opengl/gl-buffer.hpp>
-#include <opengl/gl-texture2d.hpp>
 
 #include <gui/abstract-dialog.hpp>
 #include <gui/frame-shadow.hpp>
-#include <gui/linear-layout.hpp>
-#include <gui/abstract-button.hpp>
 
 namespace BlendInt {
+
+  // forward declare
+  class AbstractLayout;
+  class LinearLayout;
 
   /**
    * @brief Common dialog with a customized layout

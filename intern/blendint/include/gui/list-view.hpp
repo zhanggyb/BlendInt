@@ -24,10 +24,9 @@
 #pragma once
 
 #include <opengl/gl-buffer.hpp>
-#include <gui/abstract-scrollable.hpp>
-#include <gui/abstract-item-view.hpp>
 
 #include <gui/font.hpp>
+#include <gui/abstract-item-view.hpp>
 
 namespace BlendInt {
 

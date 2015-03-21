@@ -169,22 +169,13 @@ namespace BlendInt {
     hover_ = true;
 
     context->PushCursor();
-    if (orientation_ == Horizontal) {
-      context->SetCursor(SplitVCursor);
-    } else {
-      context->SetCursor(SplitHCursor);
-    }
-
-    //RequestRedraw();
+    context->SetCursor(orientation_ == Horizontal ? SplitVCursor : SplitHCursor);
   }
 
   void FrameSplitterHandle::PerformHoverOut (AbstractWindow* context)
   {
     hover_ = false;
-
     if (!pressed_) context->PopCursor();
-
-    //RequestRedraw();
   }
 
   Response FrameSplitterHandle::PerformMouseHover (AbstractWindow* context)

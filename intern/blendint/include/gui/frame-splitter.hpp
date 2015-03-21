@@ -24,10 +24,8 @@
 #pragma once
 
 #include <deque>
-#include <core/types.hpp>
 
 #include <gui/abstract-frame.hpp>
-#include <opengl/gl-buffer.hpp>
 
 namespace BlendInt {
 

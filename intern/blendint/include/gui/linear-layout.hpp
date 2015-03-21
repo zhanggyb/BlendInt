@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <core/types.hpp>
 #include <gui/abstract-layout.hpp>
 
 namespace BlendInt {
@@ -106,7 +105,7 @@ namespace BlendInt {
 
     int space_;
 
-  DISALLOW_COPY_AND_ASSIGN(LinearLayout);
+    DISALLOW_COPY_AND_ASSIGN (LinearLayout);
 
   };
 
