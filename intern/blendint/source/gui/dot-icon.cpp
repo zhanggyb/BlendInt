@@ -98,12 +98,12 @@ namespace BlendInt {
   }
 
   void DotIcon::Draw (int x,
-                             int y,
-                             const float* color_ptr,
-                             short gamma,
-                             float rotate,
-                             float scale_x,
-                             float scale_y) const
+                      int y,
+                      const float* color_ptr,
+                      short gamma,
+                      float rotate,
+                      float scale_x,
+                      float scale_y) const
   {
     AbstractWindow::shaders()->widget_simple_triangle_program()->use();
 

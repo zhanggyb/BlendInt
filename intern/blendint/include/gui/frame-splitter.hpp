@@ -113,9 +113,13 @@ namespace BlendInt {
 
     virtual ~FrameSplitter ();
 
-    void AddFrame (AbstractFrame* frame, SizePolicy policy = DefaultSizePolicy);
+    bool AddFrame (AbstractFrame* frame, SizePolicy policy = DefaultSizePolicy);
 
-    void InsertFrame (int index, AbstractFrame* frame, SizePolicy policy =
+    /**
+     * @brief Insert a frame
+     * @param[in] index The index of content frame, not splitter handle
+     */
+    bool InsertFrame (int index, AbstractFrame* frame, SizePolicy policy =
                           DefaultSizePolicy);
 
     int GetFrameIndex (AbstractFrame* frame) const;

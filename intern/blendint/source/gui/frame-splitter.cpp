@@ -259,9 +259,9 @@ namespace BlendInt {
 
   }
 
-  void FrameSplitter::AddFrame (AbstractFrame* frame, SizePolicy policy)
+  bool FrameSplitter::AddFrame (AbstractFrame* frame, SizePolicy policy)
   {
-    if ((frame == 0) || (frame->superview() == this)) return;
+    if ((frame == 0) || (frame->superview() == this)) return false;
 
     if (subs_count() == 0) {
       PushBackSubView(frame);
@@ -277,13 +277,15 @@ namespace BlendInt {
     }
 
     RequestRedraw();
+
+    return true;
   }
 
-  void FrameSplitter::InsertFrame (int index,
+  bool FrameSplitter::InsertFrame (int index,
                                    AbstractFrame* frame,
                                    SizePolicy policy)
   {
-    if ((frame == 0) || (frame->superview() == this)) return;
+    if ((frame == 0) || (frame->superview() == this)) return false;
 
     if (subs_count() == 0) {
       PushBackSubView(frame);
@@ -299,6 +301,8 @@ namespace BlendInt {
     }
 
     RequestRedraw();
+
+    return true;
   }
 
   int FrameSplitter::GetFrameIndex (AbstractFrame* frame) const

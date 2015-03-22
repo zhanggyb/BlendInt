@@ -508,6 +508,8 @@ namespace BlendInt {
   {
     DBG_PRINT_MSG("switch widget in stack: %d", index);
     if(stack_) stack_->SetIndex(index);
+
+    toggled_.fire(index, toggled);
   }
 
 }

@@ -21,6 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <gui/stack.hpp>
+#include <gui/combo-box.hpp>
+#include <gui/panel.hpp>
+#include <gui/label.hpp>
+
 #include "editor-window.hpp"
 
 namespace BlendInt {
@@ -28,15 +33,18 @@ namespace BlendInt {
   EditorWindow::EditorWindow (int width, int height, const char* name)
   : Window(width, height, name),
     toolbar_(0),
+    workspace_(0),
     dev_msg_(0)
   {
     toolbar_ = new ToolBar (0x808080FF, true, 20, -20);
     toolbar_->LoadTools();
-    toolbar_->Resize(size().width(), toolbar_->GetPreferredSize().height());
-    toolbar_->MoveTo(0, size().height() - toolbar_->size().height());
     AddFrame(toolbar_);
 
+    workspace_ = new EditSpace;
+    AddFrame(workspace_);
+
     events()->connect(this->resized(), this, &EditorWindow::OnResize);
+    OnResize(size());
 
     // show a message box
     dev_msg_ = new MessageBox("Note", "This UI editor is still under development");
@@ -55,6 +63,9 @@ namespace BlendInt {
   {
     toolbar_->Resize(size.width(), toolbar_->size().height());
     toolbar_->MoveTo(0, size.height() - toolbar_->size().height());
+
+    workspace_->Resize(size.width(), size.height() - toolbar_->size().height());
+    workspace_->MoveTo(0, 0);
 
     if (dev_msg_) {
       dev_msg_->MoveTo((size.width() - dev_msg_->size().width()) / 2,

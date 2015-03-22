@@ -29,11 +29,16 @@
 namespace BlendInt {
 
   BrightnessSlider::BrightnessSlider (Orientation orientation)
-  : AbstractSlider<int>(orientation)
+  : AbstractSlider<float>(orientation)
   {
     set_round_type(RoundAll);
     set_round_radius(6);
     set_size(90, 14);
+
+    set_minimum(0.f);
+    set_maximum(1.f);
+    set_step(0.001f);
+    set_value(1.f);
 
     InitializeBrightnessSlider();
   }
@@ -99,13 +104,18 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  GetOutlineVertices(round_type()) * 2 + 2);
 
-		glm::mat4 icon_mvp;
-
-//		icon_mvp = glm::translate(mvp,
-//				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
-//						12, 0.0));
-
-    context->icons()->dot()->Draw(size().width() / 2, 12.f);
+    int pos = 0;
+    if (orientation() == Horizontal) {
+      pos = context->icons()->dot()->size().width() / 2
+          + (size().width() - context->icons()->dot()->size().width())
+              * (maximum() - minimum()) / value();
+      context->icons()->dot()->Draw(pos, size().height() / 2);
+    } else {
+      pos = context->icons()->dot()->size().height() / 2
+          + (size().height() - context->icons()->dot()->size().height())
+              * (maximum() - minimum()) / value();
+      context->icons()->dot()->Draw(size().width() / 2, pos);
+    }
 
 		return Finish;
 	}

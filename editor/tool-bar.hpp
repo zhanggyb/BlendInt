@@ -48,6 +48,11 @@ namespace BlendInt {
 
     void LoadTools ();
 
+    Cpp::EventRef<int, bool> toggled()
+    {
+      return toggled_;
+    }
+
   protected:
 
     virtual bool SizeUpdateTest (const SizeUpdateRequest& request) final;
@@ -130,6 +135,8 @@ namespace BlendInt {
     ButtonGroup radio_group_;
 
     Stack* stack_;
+
+    Cpp::Event<int, bool> toggled_;
   };
 
 }

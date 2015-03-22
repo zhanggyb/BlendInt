@@ -34,19 +34,18 @@
 
 namespace BlendInt {
 
-  ComboBoxModel::ComboBoxModel()
+  ComboListModel::ComboListModel()
   : AbstractListModel(),
     rows_(0),
     columns_(0)
   {
-
   }
 
-  ComboBoxModel::~ComboBoxModel ()
+  ComboListModel::~ComboListModel ()
   {
   }
 
-  bool ComboBoxModel::InsertColumns (int column,
+  bool ComboListModel::InsertColumns (int column,
                                      int count,
                                      const ModelIndex& parent)
   {
@@ -60,7 +59,7 @@ namespace BlendInt {
     return false;
   }
 
-  bool ComboBoxModel::RemoveColumns (int column,
+  bool ComboListModel::RemoveColumns (int column,
                                      int count,
                                      const ModelIndex& parent)
   {
@@ -77,7 +76,7 @@ namespace BlendInt {
     return false;
   }
 
-  bool ComboBoxModel::InsertRows (int row, int count, const ModelIndex& parent)
+  bool ComboListModel::InsertRows (int row, int count, const ModelIndex& parent)
   {
     if (AbstractListModel::InsertRows(row, count, parent)) {
       if (columns_ == 0) columns_++;
@@ -88,7 +87,7 @@ namespace BlendInt {
     return false;
   }
 
-  bool ComboBoxModel::RemoveRows (int row, int count, const ModelIndex& parent)
+  bool ComboListModel::RemoveRows (int row, int count, const ModelIndex& parent)
   {
     if (AbstractListModel::RemoveRows(row, count, parent)) {
       rows_ -= count;
@@ -102,17 +101,17 @@ namespace BlendInt {
     return false;
   }
 
-  int ComboBoxModel::GetRowCount (const ModelIndex& parent) const
+  int ComboListModel::GetRowCount (const ModelIndex& parent) const
   {
     return rows_;
   }
 
-  int ComboBoxModel::GetColumnCount (const ModelIndex& parent) const
+  int ComboListModel::GetColumnCount (const ModelIndex& parent) const
   {
     return columns_;
   }
 
-  void ComboBoxModel::SetIcon (const ModelIndex& index,
+  void ComboListModel::SetIcon (const ModelIndex& index,
                                const RefPtr<AbstractIcon>& icon)
   {
     if (index.valid()) {
@@ -131,7 +130,7 @@ namespace BlendInt {
     }
   }
 
-  void ComboBoxModel::SetText (const ModelIndex& index,
+  void ComboListModel::SetText (const ModelIndex& index,
                                const RefPtr<Text>& text)
   {
     if (index.valid()) {
@@ -148,6 +147,266 @@ namespace BlendInt {
         }
       }
     }
+  }
+
+  // ----------------
+
+  ComboListView::ComboListView ()
+  : AbstractItemView(),
+    highlight_index_(-1)
+  {
+    set_size(240, 320);
+
+    GLfloat h = (GLfloat) Font::default_height();
+    GLfloat verts[] = {
+        0.f, 0.f,
+        (GLfloat) size().width(), 0.f,
+        0.f, h,
+        (GLfloat) size().width(), h
+    };
+
+    std::vector<GLfloat> inner_verts;
+
+    GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+    vbo_.generate();
+
+    glGenVertexArrays(2, vao_);
+
+    glBindVertexArray(vao_[0]);
+
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(vao_[1]);
+
+    vbo_.bind(1);
+    vbo_.set_data(sizeof(verts), verts);
+
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
+  }
+
+  ComboListView::~ComboListView ()
+  {
+    glDeleteVertexArrays(2, vao_);
+  }
+
+  bool ComboListView::IsExpandX () const
+  {
+    return true;
+  }
+
+  bool ComboListView::IsExpandY () const
+  {
+    return true;
+  }
+
+  Size ComboListView::GetPreferredSize () const
+  {
+    if (model_) {
+      int width = model_->max_icon_size().width()
+          + model_->max_text_size().width();
+
+      int height = Font::default_height()
+          * model_->GetRowCount(model_->GetRootIndex());
+      return Size(width, height);
+    } else {
+      return Size(240, 320);
+    }
+  }
+
+  const RefPtr<AbstractItemModel> ComboListView::GetModel () const
+  {
+    return model_;
+  }
+
+  void ComboListView::SetModel (const RefPtr<AbstractItemModel>& model)
+  {
+    RefPtr<ComboListModel> combo_model = RefPtr<ComboListModel>::cast_dynamic(model);
+
+    if (model_) {
+      model_ = combo_model;
+      RequestRedraw();
+    } else if (combo_model) {
+      model_ = combo_model;
+      RequestRedraw();
+    }
+
+//    if (model_) {
+//      int h = font_.height();
+//      h = model_->GetRowCount() * h;  // total height
+//    }
+  }
+
+  ModelIndex ComboListView::GetIndexAt (const Point& point) const
+  {
+    return ModelIndex();
+  }
+
+  Response ComboListView::Draw (AbstractWindow* context)
+  {
+    int y = size().height();
+    const int h = Font::default_height();
+
+    AbstractWindow::shaders()->widget_inner_program()->use();
+
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+                0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        0);
+
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+                 1, AbstractWindow::theme()->regular().inner.data());
+
+    glBindVertexArray(vao_[0]);
+    // glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+
+    context->BeginPushStencil();  // inner stencil
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    context->EndPushStencil();
+
+    AbstractWindow::shaders()->widget_triangle_program()->use();
+
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+        0);
+    glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
+
+    glBindVertexArray(vao_[1]);
+
+    int i = 0;
+    while (y > 0) {
+      y -= h;
+
+      glUniform2f(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+          0, y);
+
+      if (i == highlight_index_) {// TODO: use different functions for performance
+        glUniform1i(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            -35);
+      } else {
+        if (i % 2 == 0) {
+          glUniform1i(
+              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              0);
+        } else {
+          glUniform1i(
+              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              15);
+        }
+      }
+
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      i++;
+    }
+
+    RefPtr<AbstractItemModel> model = GetModel();
+    if (model) {
+
+      ModelIndex index = model->GetRootIndex();
+      index = index.GetChildIndex(0, 0);
+
+      Rect rect(0, size().height() - h, size().width(), h);
+
+      while (index.valid()) {
+        index.GetData()->DrawInRect(
+            rect,
+            AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
+            AbstractWindow::theme()->regular().text.data());
+        index = index.GetDownIndex();
+        rect.set_y(rect.y() - h);
+      }
+
+    }
+
+    AbstractWindow::shaders()->widget_inner_program()->use();
+
+    context->BeginPopStencil(); // pop inner stencil
+    glBindVertexArray(vao_[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glBindVertexArray(0);
+    context->EndPopStencil();
+
+    return Finish;
+  }
+
+  void ComboListView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+
+      set_size(*request.size());
+
+      GLfloat h = Font::default_height();
+      GLfloat verts[] = { 0.f, 0.f, (GLfloat) request.size()->width(), 0.f, 0.f,
+          h, (GLfloat) request.size()->width(), h };
+
+      vbo_.bind(1);
+      vbo_.set_data(sizeof(verts), verts);
+
+      std::vector<GLfloat> inner_verts;
+      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                        &inner_verts[0]);
+      vbo_.reset();
+    }
+
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
+
+  Response ComboListView::PerformMousePress (AbstractWindow* context)
+  {
+    if (model_) {
+
+      ModelIndex index;
+
+      int rows = model_->GetRowCount();
+
+      if (rows > 0) {
+        int h = Font::default_height(); // the row height
+        int total = rows * h;
+
+        int i = 0;
+        if (total > size().height()) {
+          i = position().y() - context->GetGlobalCursorPosition().y();
+        } else {  // no vbar
+          i = position().y() + size().height()
+              - context->GetGlobalCursorPosition().y();
+        }
+
+        i = i / h;
+        highlight_index_ = i;
+
+        index = model_->GetRootIndex().GetChildIndex();
+        while ((i > 0) && index.valid()) {
+          index = index.GetDownIndex();
+          i--;
+        }
+
+        if (!index.valid()) {
+          highlight_index_ = -1;
+        }
+      }
+
+    } else {
+      highlight_index_ = -1;
+    }
+
+    return Finish;
   }
 
   // ----------------
@@ -241,7 +500,7 @@ namespace BlendInt {
     return Size(w, h);
   }
 
-  void ComboBox::SetModel (const RefPtr<ComboBoxModel>& model)
+  void ComboBox::SetModel (const RefPtr<ComboListModel>& model)
   {
     if (model_) {
       model_ = model;
@@ -563,9 +822,10 @@ namespace BlendInt {
 
       last_round_status_ = round_type();
       Menu* menu = new Menu;
-      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGEFILE), "Menu Item 1");
-      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGE_RGB), "Menu Item 2");
-      menu->AddAction(context->icons()->icon_16x16(Icons::IMAGE_ZDEPTH), "Menu Item 3");
+
+      ComboListView* list = new ComboListView;
+      list->SetModel(model_);
+      menu->AddWidget(list);
 
       popup_ = menu;
       popup_->Resize(popup_->GetPreferredSize());

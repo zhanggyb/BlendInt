@@ -147,37 +147,47 @@ namespace BlendInt {
 
     virtual void PerformStepUpdate (T step);
 
-    void set_value (T value)
+    inline void set_value (T value)
     {
       value_ = value;
     }
 
-    void set_step (T step)
+    inline void set_step (T step)
     {
       step_ = step;
     }
 
-    void set_orientation (Orientation orientation)
+    inline void set_minimum (T min)
+    {
+      minimum_ = min;
+    }
+
+    inline void set_maximum (T max)
+    {
+      maximum_ = max;
+    }
+
+    inline void set_orientation (Orientation orientation)
     {
       orientation_ = orientation;
     }
 
-    void fire_slider_moved_event (T value)
+    inline void fire_slider_moved_event (T value)
     {
       slider_moved_.fire(value);
     }
 
-    void fire_slider_pressed ()
+    inline void fire_slider_pressed ()
     {
       slider_pressed_.fire();
     }
 
-    void fire_slider_released ()
+    inline void fire_slider_released ()
     {
       slider_released_.fire();
     }
 
-    void fire_value_changed_event (T value)
+    inline void fire_value_changed_event (T value)
     {
       value_changed_.fire(value);
     }
@@ -204,13 +214,12 @@ namespace BlendInt {
 
   template<typename T>
   AbstractSlider<T>::AbstractSlider (Orientation orientation)
-      :
-        AbstractRoundWidget(),
-        orientation_(orientation),
-        value_(T(0)),
-        minimum_(T(0)),
-        maximum_(T(100)),
-        step_(T(5))
+  : AbstractRoundWidget(),
+    orientation_(orientation),
+    value_(T(0)),
+    minimum_(T(0)),
+    maximum_(T(100)),
+    step_(T(5))
   {
   }
 

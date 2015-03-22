@@ -416,56 +416,58 @@ namespace BlendInt {
 
   bool Splitter::AddWidget (AbstractWidget* widget)
   {
-    if (widget && widget->superview() != this) {
+    if ((widget == 0) || (widget->superview() == this)) return false;
 
-      if (subs_count() == 0) {
-        PushBackSubView(widget);
+    if (subs_count() == 0) {
+      PushBackSubView(widget);
+    } else {
+      SplitterHandle* handle = 0;
+      if (orientation_ == Horizontal) {
+        handle = Manage(new SplitterHandle(Vertical));
       } else {
-        SplitterHandle* handle = 0;
-        if (orientation_ == Horizontal) {
-          handle = Manage(new SplitterHandle(Vertical));
-        } else {
-          handle = Manage(new SplitterHandle(Horizontal));
-        }
-
-        PushBackSubView(handle);
-        PushBackSubView(widget);
+        handle = Manage(new SplitterHandle(Horizontal));
       }
 
-      AlignSubWidgets(orientation_, size());
-
-      RequestRedraw();
-      return true;
+      PushBackSubView(handle);
+      PushBackSubView(widget);
     }
 
-    return false;
+    AlignSubWidgets(orientation_, size());
+
+    RequestRedraw();
+    return true;
   }
 
   bool Splitter::InsertWidget (int index, AbstractWidget* widget)
   {
-//    if (widget && widget->superview() != this) {
-//
-//      if (subs_count() == 0) {
-//        PushBackSubView(widget);
-//      } else {
-//        SplitterHandle* handle = 0;
-//        if (orientation_ == Horizontal) {
-//          handle = Manage(new SplitterHandle(Vertical));
-//        } else {
-//          handle = Manage(new SplitterHandle(Horizontal));
-//        }
-//
-//        PushBackSubView(handle);
-//        PushBackSubView(widget);
-//      }
-//
-//      AlignSubWidgets(orientation_, size());
-//
-//      RequestRedraw();
-//      return true;
-//    }
-//
-    return false;
+    if ((widget == 0) || (widget->superview() == this)) return false;
+
+    if (subs_count() == 0) {
+      PushBackSubView(widget);
+    } else {
+      SplitterHandle* handle = 0;
+      if (orientation_ == Horizontal) {
+        handle = Manage(new SplitterHandle(Vertical));
+      } else {
+        handle = Manage(new SplitterHandle(Horizontal));
+      }
+
+      index = index * 2;
+
+      if (index > (subs_count() - 1)) {
+        // append
+        InsertSubView(index, handle);
+        InsertSubView(index + 1, widget);
+      } else {
+        InsertSubView(index, widget);
+        InsertSubView(index + 1, handle);
+      }
+    }
+
+    AlignSubWidgets(orientation_, size());
+
+    RequestRedraw();
+    return true;
   }
 
   void Splitter::Remove (AbstractWidget* widget)
@@ -603,12 +605,6 @@ namespace BlendInt {
     index = index * 2 + 1;
 
     return dynamic_cast<SplitterHandle*>(GetSubViewAt(index));
-  }
-
-  int Splitter::GetWidgetCount () const
-  {
-    int sum = subs_count();
-    return (sum / 2 + 1);
   }
 
   void Splitter::MoveHandle (int index, int x, int y)

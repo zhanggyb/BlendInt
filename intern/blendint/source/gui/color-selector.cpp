@@ -40,7 +40,7 @@
 namespace BlendInt {
 
   ColorSelector::ColorSelector ()
-      : AbstractDialog(), stack_(0)
+  : AbstractDialog(), stack_(0)
   {
     LinearLayout* main_layout = Manage(new LinearLayout(Vertical));
 
@@ -272,8 +272,19 @@ namespace BlendInt {
     Block* block = Manage(new Block(Vertical));
 
     NumericalSlider* red_slider = Manage(new NumericalSlider("R:"));
+    red_slider->SetMinimum(0.0);
+    red_slider->SetMaximum(1.0);
+    red_slider->SetValue(1.0);
+
     NumericalSlider* green_slider = Manage(new NumericalSlider("G:"));
+    green_slider->SetMinimum(0.0);
+    green_slider->SetMaximum(1.0);
+    green_slider->SetValue(1.0);
+
     NumericalSlider* blue_slider = Manage(new NumericalSlider("B:"));
+    blue_slider->SetMinimum(0.0);
+    blue_slider->SetMaximum(1.0);
+    blue_slider->SetValue(1.0);
 
     block->AddWidget(red_slider);
     block->AddWidget(green_slider);
@@ -287,8 +298,19 @@ namespace BlendInt {
     Block* block = Manage(new Block(Vertical));
 
     NumericalSlider* h_slider = Manage(new NumericalSlider("H:"));
+    h_slider->SetMinimum(0.0);
+    h_slider->SetMaximum(1.0);
+    h_slider->SetValue(1.0);
+
     NumericalSlider* s_slider = Manage(new NumericalSlider("S:"));
+    s_slider->SetMinimum(0.0);
+    s_slider->SetMaximum(1.0);
+    s_slider->SetValue(1.0);
+
     NumericalSlider* v_slider = Manage(new NumericalSlider("V:"));
+    v_slider->SetMinimum(0.0);
+    v_slider->SetMaximum(1.0);
+    v_slider->SetValue(1.0);
 
     block->AddWidget(h_slider);
     block->AddWidget(s_slider);

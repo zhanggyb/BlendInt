@@ -27,6 +27,7 @@
 #include <gui/window.hpp>
 
 #include "tool-bar.hpp"
+#include "edit-space.hpp"
 
 namespace BlendInt {
 
@@ -45,6 +46,8 @@ namespace BlendInt {
     void OnMessageBoxDestroyed (AbstractFrame* sender);
 
     ToolBar* toolbar_;
+
+    EditSpace* workspace_;
 
     MessageBox* dev_msg_;
   };

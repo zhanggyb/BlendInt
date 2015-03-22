@@ -30,19 +30,20 @@
 #include <gui/text.hpp>
 
 #include <gui/abstract-list-model.hpp>
+#include <gui/abstract-item-view.hpp>
 #include <gui/abstract-round-widget.hpp>
 
 namespace BlendInt {
 
   class AbstractFrame;  // forward declare
 
-  class ComboBoxModel: public AbstractListModel
+  class ComboListModel: public AbstractListModel
   {
   public:
 
-    ComboBoxModel ();
+    ComboListModel ();
 
-    virtual ~ComboBoxModel ();
+    virtual ~ComboListModel ();
 
     virtual bool InsertColumns (int column,
                                 int count,
@@ -92,6 +93,51 @@ namespace BlendInt {
 
   // ----------------
 
+  class ComboListView: public AbstractItemView
+  {
+  DISALLOW_COPY_AND_ASSIGN(ComboListView);
+
+  public:
+
+    ComboListView ();
+
+    virtual ~ComboListView ();
+
+    virtual bool IsExpandX () const;
+
+    virtual bool IsExpandY () const;
+
+    virtual Size GetPreferredSize () const final;
+
+    virtual const RefPtr<AbstractItemModel> GetModel () const final;
+
+    virtual void SetModel (const RefPtr<AbstractItemModel>& model) final;
+
+    virtual ModelIndex GetIndexAt (const Point& point) const;
+
+  protected:
+
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+    virtual Response Draw (AbstractWindow* context) final;
+
+    virtual Response PerformMousePress (AbstractWindow* context) final;
+
+  private:
+
+    // 0 for inner buffer
+    // 1 for row_ background
+    GLuint vao_[2];
+
+    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+    RefPtr<ComboListModel> model_;
+
+    int highlight_index_;
+  };
+
+  // ----------------
+
   /**
    * @brief A combined button and popup list.
    *
@@ -116,7 +162,7 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const;
 
-    void SetModel (const RefPtr<ComboBoxModel>& model);
+    void SetModel (const RefPtr<ComboListModel>& model);
 
     void SetCurrentIndex (int index);
 
@@ -150,7 +196,7 @@ namespace BlendInt {
 
     int last_round_status_;
 
-    RefPtr<ComboBoxModel> model_;
+    RefPtr<ComboListModel> model_;
 
     ModelIndex current_index_;
 

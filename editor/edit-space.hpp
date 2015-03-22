@@ -23,46 +23,18 @@
 
 #pragma once
 
-#include <opengl/gl-buffer.hpp>
- 
-#include <gui/abstract-slider.hpp>
+#include <gui/workspace.hpp>
 
 namespace BlendInt {
 
-	class BrightnessSlider: public AbstractSlider<float>
-	{
-		DISALLOW_COPY_AND_ASSIGN(BrightnessSlider);
+  class EditSpace: public Workspace
+  {
+  public:
 
-	public:
+    EditSpace ();
 
-		BrightnessSlider (Orientation orientation = Horizontal);
+    virtual ~EditSpace ();
 
-		virtual ~BrightnessSlider ();
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-	protected:
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
-		virtual void PerformRoundTypeUpdate (int round_type);
-
-		virtual void PerformRoundRadiusUpdate (float radius);
-
-		virtual Response Draw (AbstractWindow* context);
-
-	private:
-
-		void InitializeBrightnessSlider ();
-
-		GLuint vao_[2];
-
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
-
-	};
+  };
 
 }

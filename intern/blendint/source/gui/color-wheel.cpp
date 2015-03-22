@@ -99,9 +99,7 @@ namespace BlendInt {
 		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
-		//glm::mat4 icon_mvp;
-		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		context->icons()->dot()->Draw(0.f + size().width() / 2.f + 8.f, 0.f + 12.f);
+		context->icons()->dot()->Draw(size().width() / 2, size().height() / 2);
 
 		return Finish;
 	}

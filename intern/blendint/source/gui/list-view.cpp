@@ -29,7 +29,7 @@
 namespace BlendInt {
 
   ListView::ListView ()
-      : AbstractItemView(), highlight_index_(-1)
+  : AbstractItemView(), highlight_index_(-1)
   {
     set_size(400, 300);
 
@@ -74,9 +74,7 @@ namespace BlendInt {
 
   Size ListView::GetPreferredSize () const
   {
-    Size preferred_size(400, 300);
-
-    return preferred_size;
+    return Size(400, 300);
   }
 
   Response ListView::Draw (AbstractWindow* context)
@@ -236,11 +234,12 @@ namespace BlendInt {
       vbo_.bind(0);
       vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
                         &inner_verts[0]);
-
-      GLArrayBuffer::reset();
+      vbo_.reset();
     }
 
-    ReportSizeUpdate(request);
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
   }
 
   void ListView::InitializeListView ()

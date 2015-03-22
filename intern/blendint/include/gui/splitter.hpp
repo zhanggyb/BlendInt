@@ -111,6 +111,10 @@ namespace BlendInt {
 
     bool AddWidget (AbstractWidget* widget);
 
+    /**
+     * @brief Insert a widget
+     * @param[in] index The index of content widget, not splitter handle
+     */
     bool InsertWidget (int index, AbstractWidget* widget);
 
     void Remove (AbstractWidget* widget);
@@ -123,8 +127,6 @@ namespace BlendInt {
 
     SplitterHandle* GetHandle (int index) const;
 
-    int GetWidgetCount () const;
-
     void MoveHandle (int index, int x, int y);
 
     virtual Size GetPreferredSize () const;
@@ -132,6 +134,11 @@ namespace BlendInt {
     virtual bool IsExpandX () const;
 
     virtual bool IsExpandY () const;
+
+    inline int widget_count () const
+    {
+      return subs_count() / 2 + 1;
+    }
 
   protected:
 

@@ -23,16 +23,16 @@
 
 #pragma once
 
-#include <gui/abstract-widget.hpp>
+#include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
 
   /**
-   * @brief A widget show a spinner animation
+   * @brief A special topmost frame show a spinner animation
    *
-   * @ingroup blendint_gui_widgets
+   * @ingroup blendint_gui_frames
    */
-  class Spinner: public AbstractWidget
+  class Spinner: public AbstractFrame
   {
   public:
 
