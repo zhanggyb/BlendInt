@@ -227,10 +227,10 @@ namespace BlendInt {
         AbstractWindow::theme()->box().inner.data());
 
     glBindVertexArray(vaos_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
     context->BeginPushStencil();	// inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
     context->EndPushStencil();
 
     AbstractWindow::shaders()->widget_simple_triangle_program()->use();
@@ -297,7 +297,7 @@ namespace BlendInt {
 
     context->BeginPopStencil();	// pop inner stencil
     glBindVertexArray(vaos_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
     context->EndPopStencil();
 
     return Finish;

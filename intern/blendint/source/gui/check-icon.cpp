@@ -99,7 +99,7 @@ namespace BlendInt {
         gamma);
 
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
     AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -112,7 +112,7 @@ namespace BlendInt {
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                 GetOutlineVertices(RoundAll) * 2 + 2);
+                 outline_vertex_count(RoundAll) * 2 + 2);
   }
 
   void CheckIcon::DrawInRect (const Rect& rect,
@@ -157,7 +157,7 @@ namespace BlendInt {
         gamma);
 
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
     AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -169,7 +169,7 @@ namespace BlendInt {
         AbstractWindow::theme()->menu().outline.data());
 
     glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(RoundAll) * 2 + 2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
   }
 
   void CheckIcon::PerformSizeUpdate (const Size& size)

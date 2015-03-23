@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <vector>
-
 #include <opengl/opengl.hpp>
 
 #include <core/types.hpp>
@@ -106,6 +104,11 @@ namespace BlendInt {
     }
 
     static int GetOutlineVertices (int round_type);
+
+    static inline int outline_vertex_count(int round_type)
+    {
+      return kOutlineVertexTable[round_type & 0x0F];
+    }
 
   protected:
 
@@ -190,9 +193,11 @@ namespace BlendInt {
                                                unsigned int num,
                                                std::vector<GLfloat>* strip);
 
+    Size size_;
+
     static float kBorderWidth;
 
-    Size size_;
+    static const int kOutlineVertexTable[16];
 
   };
 

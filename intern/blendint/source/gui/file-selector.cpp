@@ -206,7 +206,7 @@ namespace BlendInt {
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme()->dialog().inner.data());
 
 		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
 		if(view_buffer()) {
 
@@ -238,7 +238,7 @@ namespace BlendInt {
 		glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme()->dialog().outline.data());
 
 		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(round_type()) * 2 + 2);
 
         return Finish;
 	}

@@ -65,6 +65,44 @@ namespace BlendInt {
       { 1.0, 1.0 }
   };
 
+  const int AbstractView::kOutlineVertexTable[16] = {
+      4,  // RoundNone
+      12, // RoundTopLeft
+      12, // RoundTopRight
+      20, // RoundTopLeft | RoundTopRight
+      12, // RoundBottomRight
+      20, // ...
+      20,
+      28,
+      12,
+      20,
+      20,
+      28,
+      20,
+      28,
+      28,
+      36  // RoundAll
+  };
+
+  const int AbstractView::kEmbossVertexTable[16] = {
+      2,
+      2,
+      2,
+      2,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      18,
+      18,
+      18,
+      18,
+  };
+
   AbstractView::AbstractView ()
   : Object(),
     view_flag_(ViewManageMask | ViewVisibleMask),
@@ -113,7 +151,6 @@ namespace BlendInt {
   Point AbstractView::GetGlobalPosition () const
   {
     Point retval = position_;
-    ;
 
     AbstractView* p = superview_;
     while (p) {
@@ -122,11 +159,6 @@ namespace BlendInt {
     }
 
     return retval;
-  }
-
-  Size AbstractView::GetPreferredSize () const
-  {
-    return Size(200, 200);
   }
 
   void AbstractView::Resize (int width, int height)
@@ -229,17 +261,6 @@ namespace BlendInt {
     }
   }
 
-  bool AbstractView::Contain (const Point& point) const
-  {
-    if (point.x() < position_.x() || point.y() < position_.y()
-        || point.x() > (position_.x() + size_.width())
-        || point.y() > (position_.y() + size_.height())) {
-      return false;
-    }
-
-    return true;
-  }
-
   void AbstractView::RequestRedraw ()
   {
     if (!refresh()) {
@@ -291,9 +312,126 @@ namespace BlendInt {
     }
   }
 
-  void AbstractView::SetDefaultBorderWidth (float border)
+  AbstractView* AbstractView::operator [] (int i) const
   {
-    kBorderWidth = border;
+    if ((i < 0) || (i >= subs_count_)) return 0;
+
+    AbstractView* widget = 0;
+
+    if (i < ((subs_count_ + 1) / 2)) {
+
+      widget = first_subview_;
+      while (i > 0) {
+        widget = widget->next_view_;
+        i--;
+      }
+
+    } else {
+
+      widget = last_subview_;
+      int max = subs_count_ - 1;
+      while (i < max) {
+        widget = widget->previous_view_;
+        i++;
+      }
+
+    }
+
+    return widget;
+  }
+
+  AbstractView* AbstractView::GetSubViewAt (int i) const
+  {
+    if ((i < 0) || (i >= subs_count_)) return 0;
+
+    AbstractView* widget = 0;
+
+    if (i < ((subs_count_ + 1) / 2)) {
+
+      widget = first_subview_;
+      while (i > 0) {
+        widget = widget->next_view_;
+        i--;
+      }
+
+    } else {
+
+      widget = last_subview_;
+      int max = subs_count_ - 1;
+      while (i < max) {
+        widget = widget->previous_view_;
+        i++;
+      }
+
+    }
+
+    //DBG_ASSERT(widget != 0);
+
+    return widget;
+  }
+
+  bool AbstractView::IsExpandX () const
+  {
+    return false;
+  }
+
+  bool AbstractView::IsExpandY () const
+  {
+    return false;
+  }
+
+  Size AbstractView::GetPreferredSize () const
+  {
+    return Size(200, 200);
+  }
+
+  bool AbstractView::Contain (const Point& point) const
+  {
+    if (point.x() < position_.x() || point.y() < position_.y()
+        || point.x() > (position_.x() + size_.width())
+        || point.y() > (position_.y() + size_.height())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Point AbstractView::GetOffset () const
+  {
+    return Point(0, 0);
+  }
+
+  AbstractView* AbstractView::GetFirstSubView ()
+  {
+    return first_subview_;
+  }
+
+  AbstractView* AbstractView::GetLastSubView ()
+  {
+    return last_subview_;
+  }
+
+  AbstractView* AbstractView::GetNextSubView (AbstractView* subview)
+  {
+    DBG_ASSERT(subview && subview->superview() == this);
+    return subview->next_view_;
+  }
+
+  AbstractView* AbstractView::GetPreviousSubView (AbstractView* subview)
+  {
+    DBG_ASSERT(subview && subview->superview() == this);
+    return subview->previous_view_;
+  }
+
+  int AbstractView::GetSubViewCount ()
+  {
+    return subs_count_;
+  }
+
+  bool AbstractView::IsSubViewVisible (AbstractView* subview)
+  {
+    DBG_ASSERT(subview && subview->superview() == this);
+    return true;
   }
 
   void AbstractView::MoveToFirst (AbstractView* view)
@@ -441,6 +579,11 @@ namespace BlendInt {
     }
   }
 
+  void AbstractView::SetDefaultBorderWidth (float border)
+  {
+    kBorderWidth = border;
+  }
+
   int AbstractView::GetOutlineVertices (int round_type)
   {
     round_type = round_type & RoundAll;
@@ -454,11 +597,23 @@ namespace BlendInt {
     return 4 - count + count * WIDGET_CURVE_RESOLU;
   }
 
+  int AbstractView::GetHalfOutlineVertices (int round_type)
+  {
+    round_type = round_type & (RoundBottomLeft | RoundBottomRight);
+    int count = 0;
+    while (round_type != 0) {
+      count += round_type & 0x1;
+      round_type = round_type >> 1;
+    }
+
+    return 2 - count + count * WIDGET_CURVE_RESOLU;
+  }
+
   void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
   {
     //bool refresh_record = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = GetFirstSubView(); p; p = GetNextSubView(p)) {
       set_refresh(false);	// allow pass to superview in RequestRedraw()
       if (p->PreDraw(context)) {
 
@@ -468,8 +623,8 @@ namespace BlendInt {
         kRefreshMutex.unlock();
 
         if (response == Ignore) {
-          for (AbstractView* sub = p->first_subview(); sub; sub =
-              sub->next_view()) {
+          for (AbstractView* sub = p->GetFirstSubView(); sub;
+              sub = p->GetNextSubView(sub)) {
             DispatchDrawEvent(sub, context);
           }
         }
@@ -751,8 +906,8 @@ namespace BlendInt {
       kRefreshMutex.unlock();
 
       if (response == Ignore) {
-        for (AbstractView* sub = widget->first_subview(); sub;
-            sub = sub->next_view()) {
+        for (AbstractView* sub = widget->GetFirstSubView(); sub;
+            sub = widget->GetNextSubView(sub)) {
           DispatchDrawEvent(sub, context);
         }
       }
@@ -837,18 +992,6 @@ namespace BlendInt {
     if (superview_) {
       superview_->PerformVisibilityUpdate(request);
     }
-  }
-
-  int AbstractView::GetHalfOutlineVertices (int round_type)
-  {
-    round_type = round_type & (RoundBottomLeft | RoundBottomRight);
-    int count = 0;
-    while (round_type != 0) {
-      count += round_type & 0x1;
-      round_type = round_type >> 1;
-    }
-
-    return 2 - count + count * WIDGET_CURVE_RESOLU;
   }
 
   /*
@@ -1949,64 +2092,6 @@ namespace BlendInt {
     GenerateVertices(0.f, 0.f, size.width(), size.height(), border, round_type,
                      radius, Vertical, color_scheme.shadetop,
                      color_scheme.shadedown, inner, outer);
-  }
-
-  AbstractView* AbstractView::operator [] (int i) const
-  {
-    if ((i < 0) || (i >= subs_count_)) return 0;
-
-    AbstractView* widget = 0;
-
-    if (i < ((subs_count_ + 1) / 2)) {
-
-      widget = first_subview_;
-      while (i > 0) {
-        widget = widget->next_view_;
-        i--;
-      }
-
-    } else {
-
-      widget = last_subview_;
-      int max = subs_count_ - 1;
-      while (i < max) {
-        widget = widget->previous_view_;
-        i++;
-      }
-
-    }
-
-    return widget;
-  }
-
-  AbstractView* AbstractView::GetSubViewAt (int i) const
-  {
-    if ((i < 0) || (i >= subs_count_)) return 0;
-
-    AbstractView* widget = 0;
-
-    if (i < ((subs_count_ + 1) / 2)) {
-
-      widget = first_subview_;
-      while (i > 0) {
-        widget = widget->next_view_;
-        i--;
-      }
-
-    } else {
-
-      widget = last_subview_;
-      int max = subs_count_ - 1;
-      while (i < max) {
-        widget = widget->previous_view_;
-        i++;
-      }
-
-    }
-
-    //DBG_ASSERT(widget != 0);
-
-    return widget;
   }
 
   bool AbstractView::PushFrontSubView (AbstractView* view)

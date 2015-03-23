@@ -21,7 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
 #include <string.h>
 #include <stdlib.h>
 
@@ -254,8 +253,8 @@ namespace BlendInt {
     widget_color_node = AllocateThemeNode(doc, "color_scheme_dialog", dialog_);
     ui_node->append_node(widget_color_node);
 
-    widget_color_node = AllocateThemeNode(doc, "color_scheme_decoration",
-                                          decoration_);
+    widget_color_node = AllocateThemeNode(doc, "color_scheme_node",
+                                          node_);
     ui_node->append_node(widget_color_node);
 
     std::ofstream out(filepath.c_str());
@@ -465,15 +464,15 @@ namespace BlendInt {
     dialog_.text_sel = 0xFFFFFFFF;
 
     // Decoration
-    decoration_.outline = 0x000000FF;
-    decoration_.item = 0x646464FF;
-    decoration_.inner = 0x191919E6;
-    decoration_.inner_sel = 0x2D2D2DE6;
-    decoration_.text = 0xA0A0A0FF;
-    decoration_.text_sel = 0xFFFFFFFF;
-    decoration_.shaded = true;
-    decoration_.shadetop = 15;
-    decoration_.shadedown = 0;
+    node_.outline = 0x000000FF;
+    node_.item = 0x646464FF;
+    node_.inner = 0x686868FF;
+    node_.inner_sel = 0x2D2D2DE6;
+    node_.text = 0xA0A0A0FF;
+    node_.text_sel = 0xFFFFFFFF;
+    node_.shaded = true;
+    node_.shadetop = 15;
+    node_.shadedown = 0;
 
 #ifdef DEBUG
     strncpy(default_font_, "Source Han Sans CN", 256);
@@ -605,8 +604,8 @@ namespace BlendInt {
       p = &list_item_;
     } else if (strcmp("color_scheme_dialog", node->name()) == 0) {
       p = &dialog_;
-    } else if (strcmp("color_scheme_decoration", node->name()) == 0) {
-      p = &decoration_;
+    } else if (strcmp("color_scheme_node", node->name()) == 0) {
+      p = &node_;
     }
 
     if (p == 0) return;

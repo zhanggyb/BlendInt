@@ -63,7 +63,7 @@ namespace BlendInt {
 				AbstractWindow::theme()->regular().inner.data());
 
 		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
 		AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        GetOutlineVertices(round_type()) * 2 + 2);
+		             outline_vertex_count(round_type()) * 2 + 2);
 
 		if (emboss()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
@@ -82,7 +82,7 @@ namespace BlendInt {
 			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 			        0.f, -1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-			        GetHalfOutlineVertices(round_type()) * 2);
+			        emboss_vertex_count(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);

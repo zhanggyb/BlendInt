@@ -246,7 +246,7 @@ namespace BlendInt {
     GLint vp[4];	// Original viewport
     //GLint sci[4];
     //GLboolean scissor_status;
-    int n = GetOutlineVertices(round_type()) + 2;
+    int n = outline_vertex_count(round_type()) + 2;
 
     glGetIntegerv(GL_VIEWPORT, vp);
     //glGetBooleanv(GL_SCISSOR_TEST, &scissor_status);

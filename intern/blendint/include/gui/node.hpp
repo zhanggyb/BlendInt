@@ -34,18 +34,15 @@ namespace BlendInt {
   /**
    * @brief A special view used to display and manage a node in NodeView
    *
+   * ColorScheme name in theme: "node"
+   *
    * @ingroup blendint_gui_nodes
    */
   class Node: public AbstractNode
   {
   public:
 
-    Node (AbstractLayout* layout,
-          unsigned int inner_color = 0x999999FF,
-          unsigned int outer_color = 0x191919FF,
-          bool shaded = false,
-          short shadetop = 0,
-          short shadedown = 0);
+    Node (AbstractLayout* layout);
 
     virtual ~Node ();
 
@@ -75,19 +72,14 @@ namespace BlendInt {
 
   private:
 
-    unsigned int inner_color_;
+    /**
+     * 0: inner
+     * 1: outer
+     * 2: header
+     */
+    GLuint vao_[3];
 
-    unsigned int outer_color_;
-
-    bool shaded_;
-
-    short shadetop_;
-
-    short shadedown_;
-
-    GLuint vao_[2];
-
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+    GLBuffer<ARRAY_BUFFER, 3> vbo_;
 
     AbstractLayout* layout_;
 

@@ -266,10 +266,10 @@ namespace BlendInt {
                  1, AbstractWindow::theme()->regular().inner.data());
 
     glBindVertexArray(vao_[0]);
-    // glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    // glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
     context->BeginPushStencil();  // inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
     context->EndPushStencil();
 
     AbstractWindow::shaders()->widget_triangle_program()->use();
@@ -334,7 +334,7 @@ namespace BlendInt {
 
     context->BeginPopStencil(); // pop inner stencil
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
     glBindVertexArray(0);
     context->EndPopStencil();
 
@@ -644,7 +644,7 @@ namespace BlendInt {
         context->theme()->menu().shaded);
 
     glBindVertexArray(vaos_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
     // draw outer:
 
@@ -658,7 +658,7 @@ namespace BlendInt {
 
     glBindVertexArray(vaos_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
-        GetOutlineVertices(round_type()) * 2 + 2);
+                 outline_vertex_count(round_type()) * 2 + 2);
 
 //		if (emboss()) {
 //			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
@@ -666,7 +666,7 @@ namespace BlendInt {
 //			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 //			        0.f, - 1.f);
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-//			        GetHalfOutlineVertices(round_type()) * 2);
+//			        emboss_vertex_count(round_type()) * 2);
 //		}
 
     Rect rect(pixel_size(kPadding.left()),

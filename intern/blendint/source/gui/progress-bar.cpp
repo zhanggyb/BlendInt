@@ -162,7 +162,7 @@ namespace BlendInt {
 		float x = context->active_frame()->GetRelativePosition(this).x()
 				- context->viewport_origin().x();
 
-		int outline_vertices = GetOutlineVertices(round_type());
+		int outline_vertices = outline_vertex_count(round_type());
 		float len = 20.f;
 
 		AbstractWindow::shaders()->widget_split_inner_program()->use();
@@ -196,7 +196,7 @@ namespace BlendInt {
 					0.f, - 1.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_type()) * 2);
+							emboss_vertex_count(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);

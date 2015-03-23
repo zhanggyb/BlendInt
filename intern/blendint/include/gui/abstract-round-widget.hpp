@@ -50,7 +50,7 @@ namespace BlendInt {
 
     void SetEmboss (bool emboss);
 
-    inline uint32_t round_type () const
+    inline int round_type () const
     {
       return widget_flag_ & 0x0F;
     }
@@ -125,7 +125,7 @@ namespace BlendInt {
 
     };
 
-    uint32_t widget_flag_;
+    int widget_flag_;
 
     float round_radius_;
 

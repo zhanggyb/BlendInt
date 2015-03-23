@@ -121,7 +121,7 @@ namespace BlendInt {
         0);
 
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
     AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -133,7 +133,7 @@ namespace BlendInt {
         AbstractWindow::theme()->scroll().outline.data());
 
     glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(RoundAll) * 2 + 2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
   }
 
   void DotIcon::DrawInRect (const Rect& rect,
@@ -178,7 +178,7 @@ namespace BlendInt {
         gamma);
 
     glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(RoundAll) + 2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
     AbstractWindow::shaders()->widget_outer_program()->use();
 
@@ -190,7 +190,7 @@ namespace BlendInt {
         AbstractWindow::theme()->menu().outline.data());
 
     glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(RoundAll) * 2 + 2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
   }
 
 }

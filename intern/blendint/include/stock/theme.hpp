@@ -170,9 +170,9 @@ namespace BlendInt {
 			return dialog_;
 		}
 
-		const ColorScheme& decoration () const
+		const ColorScheme& node () const
 		{
-			return decoration_;
+			return node_;
 		}
 
 		const char* default_font () const
@@ -254,7 +254,7 @@ namespace BlendInt {
 		ColorScheme progress_;
 		ColorScheme list_item_;
 		ColorScheme dialog_;
-		ColorScheme decoration_;
+		ColorScheme node_;
 
 		/** Default font */
 		char default_font_[256];

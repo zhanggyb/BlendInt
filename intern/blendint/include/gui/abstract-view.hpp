@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <vector>
 #include <boost/thread.hpp>
 
 #include <opengl/opengl.hpp>
@@ -272,8 +271,6 @@ namespace BlendInt {
 
     Point GetGlobalPosition () const;
 
-    virtual Size GetPreferredSize () const;
-
     /**
      * @brief Resize the view
      * @param[in] width The new width of the view
@@ -305,27 +302,32 @@ namespace BlendInt {
 
     AbstractView* GetSubViewAt (int i) const;
 
-    inline const Point& position () const
-    {
-      return position_;
-    }
+    virtual bool IsExpandX () const;
 
-    virtual bool IsExpandX () const
-    {
-      return false;
-    }
+    virtual bool IsExpandY () const;
 
-    virtual bool IsExpandY () const
-    {
-      return false;
-    }
+    virtual Size GetPreferredSize () const;
 
     virtual bool Contain (const Point& point) const;
 
     // always return (0, 0) except AbstractScrollable
-    virtual Point GetOffset () const
+    virtual Point GetOffset () const;
+
+    virtual AbstractView* GetFirstSubView ();
+
+    virtual AbstractView* GetLastSubView ();
+
+    virtual AbstractView* GetNextSubView (AbstractView* view);
+
+    virtual AbstractView* GetPreviousSubView (AbstractView* view);
+
+    virtual int GetSubViewCount ();
+
+    virtual bool IsSubViewVisible (AbstractView* subview);
+
+    inline const Point& position () const
     {
-      return Point(0, 0);
+      return position_;
     }
 
     inline const Size& size () const
@@ -659,6 +661,16 @@ namespace BlendInt {
      */
     static int GetHalfOutlineVertices (int round_type);
 
+    static inline int outline_vertex_count(int round_type)
+    {
+      return kOutlineVertexTable[round_type & 0x0F];
+    }
+
+    static inline int emboss_vertex_count (int round_type)
+    {
+      return kEmbossVertexTable[round_type & 0x0F];
+    }
+
   private:
 
     friend class AbstractWindow;
@@ -732,6 +744,9 @@ namespace BlendInt {
 
     static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
+    static const int kOutlineVertexTable[16];
+
+    static const int kEmbossVertexTable[16];
   };
 
 } /* namespace BlendInt */

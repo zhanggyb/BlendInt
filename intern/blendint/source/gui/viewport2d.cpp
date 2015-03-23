@@ -92,7 +92,7 @@ namespace BlendInt {
   {
     AbstractWindow* c = context;
     GLint vp[4];	// Original viewport
-    int n = GetOutlineVertices(round_type()) + 2;
+    int n = outline_vertex_count(round_type()) + 2;
 
     glGetIntegerv(GL_VIEWPORT, vp);
 

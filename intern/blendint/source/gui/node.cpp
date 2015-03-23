@@ -28,18 +28,8 @@
 
 namespace BlendInt {
 
-  Node::Node (AbstractLayout* layout,
-              unsigned int inner_color,
-              unsigned int outer_color,
-              bool shaded,
-              short shadetop,
-              short shadedown)
+  Node::Node (AbstractLayout* layout)
   : AbstractNode(),
-    inner_color_(inner_color),
-    outer_color_(outer_color),
-    shaded_(shaded),
-    shadetop_(shadetop),
-    shadedown_(shadedown),
     layout_(0)
   {
     set_round_type(RoundAll);
@@ -57,12 +47,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (shaded_) {
-      GenerateRoundedVertices(Vertical, shadetop_, shadedown_, &inner_verts,
-                              &outer_verts);
-    } else {
-      GenerateRoundedVertices(&inner_verts, &outer_verts);
-    }
+    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
+                            AbstractWindow::theme()->node().shadedown,
+                            &inner_verts, &outer_verts);
 
     glGenVertexArrays(2, vao_);
     vbo_.generate();
@@ -73,7 +60,7 @@ namespace BlendInt {
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 3,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, 0);
 
     glBindVertexArray(vao_[1]);
@@ -81,7 +68,7 @@ namespace BlendInt {
     vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 2,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, 0);
 
     glBindVertexArray(0);
@@ -122,20 +109,10 @@ namespace BlendInt {
 
   void Node::SetInnerColor (unsigned int color)
   {
-    if (inner_color_ == color) return;
-
-    inner_color_ = color;
-
-    RequestRedraw();
   }
 
   void Node::SetOuterColor (unsigned int color)
   {
-    if (outer_color_ == color) return;
-
-    outer_color_ = color;
-
-    RequestRedraw();
   }
 
   void Node::PerformSizeUpdate (const SizeUpdateRequest& request)
@@ -147,15 +124,9 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (shaded_) {
-        GenerateRoundedVertices (Vertical,
-                                 shadetop_,
-                                 shadedown_,
-                                 &inner_verts,
-                                 &outer_verts);
-      } else {
-        GenerateRoundedVertices(&inner_verts, &outer_verts);
-      }
+      GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
+                              AbstractWindow::theme()->node().shadedown,
+                              &inner_verts, &outer_verts);
 
       vbo_.bind(0);
       vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
@@ -184,15 +155,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (shaded_) {
-      GenerateRoundedVertices (Vertical,
-                               shadetop_,
-                               shadedown_,
-                               &inner_verts,
-                               &outer_verts);
-    } else {
-      GenerateRoundedVertices(&inner_verts, &outer_verts);
-    }
+    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
+                            AbstractWindow::theme()->node().shadedown,
+                            &inner_verts, &outer_verts);
 
     vbo_.bind(0);
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -210,15 +175,9 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (shaded_) {
-      GenerateRoundedVertices (Vertical,
-                               shadetop_,
-                               shadedown_,
-                               &inner_verts,
-                               &outer_verts);
-    } else {
-      GenerateRoundedVertices(&inner_verts, &outer_verts);
-    }
+    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
+                            AbstractWindow::theme()->node().shadedown,
+                            &inner_verts, &outer_verts);
 
     vbo_.bind(0);
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -253,12 +212,12 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     glUniform1i(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        0);
+        context->theme()->node().shaded);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        Color(inner_color_).data());
+        context->theme()->node().inner.data());
 
-    int vertices_count = GetOutlineVertices(round_type());
+    int vertices_count = outline_vertex_count(round_type());
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_count + 2);
@@ -270,7 +229,7 @@ namespace BlendInt {
         0.f, 0.f);
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        Color(outer_color_).data());
+        context->theme()->node().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,

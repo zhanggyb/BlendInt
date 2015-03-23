@@ -28,9 +28,36 @@ namespace BlendInt {
 
   float AbstractForm::kBorderWidth = 1.f;
 
-  const float AbstractForm::cornervec[WIDGET_CURVE_RESOLU][2] = { { 0.0, 0.0 },
-      { 0.195, 0.02 }, { 0.383, 0.067 }, { 0.55, 0.169 }, { 0.707, 0.293 }, {
-          0.831, 0.45 }, { 0.924, 0.617 }, { 0.98, 0.805 }, { 1.0, 1.0 } };
+  const float AbstractForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
+      { 0.0, 0.0 },
+      { 0.195, 0.02 },
+      { 0.383, 0.067 },
+      { 0.55, 0.169 },
+      { 0.707, 0.293 },
+      { 0.831, 0.45 },
+      { 0.924, 0.617 },
+      { 0.98, 0.805 },
+      { 1.0, 1.0 }
+  };
+
+  const int AbstractForm::kOutlineVertexTable[16] = {
+      4,  // RoundNone
+      12, // RoundTopLeft
+      12, // RoundTopRight
+      20, // RoundTopLeft | RoundTopRight
+      12, // RoundBottomRight
+      20, // ...
+      20,
+      28,
+      12,
+      20,
+      20,
+      28,
+      20,
+      28,
+      28,
+      36  // RoundAll
+  };
 
   void AbstractForm::SetDefaultBorderWidth (int border)
   {

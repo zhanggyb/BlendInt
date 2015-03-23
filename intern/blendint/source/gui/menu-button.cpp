@@ -118,7 +118,7 @@ namespace BlendInt {
           AbstractWindow::theme()->menu_item().inner_sel.data());
 
       glBindVertexArray(vao_);
-      glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
     }
 
