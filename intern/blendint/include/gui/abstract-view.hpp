@@ -671,6 +671,31 @@ namespace BlendInt {
       return kEmbossVertexTable[round_type & 0x0F];
     }
 
+    static inline AbstractView* first (const AbstractView* view)
+    {
+      return view->first_subview_;
+    }
+
+    static inline AbstractView* last (const AbstractView* view)
+    {
+      return view->last_subview_;
+    }
+
+    static inline AbstractView* previous (const AbstractView* view)
+    {
+      return view->previous_view_;
+    }
+
+    static inline AbstractView* next (const AbstractView* view)
+    {
+      return view->next_view_;
+    }
+
+    static inline int subview_count (const AbstractView* view)
+    {
+      return view->subs_count_;
+    }
+
   private:
 
     friend class AbstractWindow;

@@ -172,6 +172,31 @@ namespace BlendInt {
     }
   }
 
+  AbstractView* Stack::GetFirstSubView ()
+  {
+    return active_widget_;
+  }
+
+  AbstractView* Stack::GetLastSubView ()
+  {
+    return active_widget_;
+  }
+
+  AbstractView* Stack::GetNextSubView (AbstractView* view)
+  {
+    return 0;
+  }
+
+  AbstractView* Stack::GetPreviousSubView (AbstractView* view)
+  {
+    return 0;
+  }
+
+  int Stack::GetSubViewCount ()
+  {
+    return active_widget_ ? 1 : 0;
+  }
+
   void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
     if (request.target() == this) {

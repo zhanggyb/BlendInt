@@ -354,11 +354,11 @@ namespace BlendInt {
       result = dynamic_cast<AbstractWidget*>(parent);
       if (result) {
 
-        for (AbstractView* p = parent->last_subview(); p; p =
-            p->previous_view()) {
+        for (AbstractView* p = parent->GetLastSubView(); p; p =
+            parent->GetPreviousSubView(p)) {
 
           if (is_widget(p)) {
-            if (p->visiable() && p->Contain(context->local_cursor_position())) {
+            if (p->Contain(context->local_cursor_position())) {
               result = dynamic_cast<AbstractWidget*>(p);
 
               dispatch_mouse_hover_in(result, context);
@@ -387,11 +387,11 @@ namespace BlendInt {
         context->GetGlobalCursorPosition().x() - position().x() - offset.x(),
         context->GetGlobalCursorPosition().y() - position().y() - offset.y());
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = GetLastSubView(); p; p = GetPreviousSubView(p)) {
 
       if (is_widget(p)) {
         result = dynamic_cast<AbstractWidget*>(p);
-        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+        if (p->Contain(context->local_cursor_position())) {
           dispatch_mouse_hover_in(result, context);
           break;
         }
@@ -468,10 +468,10 @@ namespace BlendInt {
                           frame->size().width(), frame->size().height());
     //Attach depth buffer to FBO
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-    GL_RENDERBUFFER,
+                              GL_RENDERBUFFER,
                               rb);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-    GL_RENDERBUFFER,
+                              GL_RENDERBUFFER,
                               rb);
 
     if (GLFramebuffer::CheckStatus()) {
@@ -536,10 +536,10 @@ namespace BlendInt {
         context->local_cursor_position().y() - widget->position().y()
             - offset.y());
 
-    for (AbstractView* p = widget->last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = widget->GetLastSubView(); p; p = widget->GetPreviousSubView(p)) {
 
       if (is_widget(p)) {
-        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+        if (p->Contain(context->local_cursor_position())) {
           retval = dynamic_cast<AbstractWidget*>(p);
           dispatch_mouse_hover_in(retval, context);
           retval = RecursiveDispatchHoverEvent(retval, context);

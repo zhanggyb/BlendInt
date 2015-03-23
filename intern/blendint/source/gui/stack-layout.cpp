@@ -236,6 +236,31 @@ namespace BlendInt {
     }
   }
 
+  AbstractView* StackLayout::GetFirstSubView ()
+  {
+    return active_widget_;
+  }
+
+  AbstractView* StackLayout::GetLastSubView ()
+  {
+    return active_widget_;
+  }
+
+  AbstractView* StackLayout::GetNextSubView (AbstractView* view)
+  {
+    return 0;
+  }
+
+  AbstractView* StackLayout::GetPreviousSubView (AbstractView* view)
+  {
+    return 0;
+  }
+
+  int StackLayout::GetSubViewCount ()
+  {
+    return active_widget_ ? 1 : 0;
+  }
+
   void BlendInt::StackLayout::HideSubWidget (int index)
   {
     if (subs_count() && index < (subs_count() - 1)) {

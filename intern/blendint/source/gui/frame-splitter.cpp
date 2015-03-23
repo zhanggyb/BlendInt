@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <core/types.hpp>
+
 #include <gui/frame-splitter.hpp>
 #include <gui/abstract-window.hpp>
 
@@ -140,13 +142,13 @@ namespace BlendInt {
     cursor_ = context->GetGlobalCursorPosition();
 
     if (orientation_ == Horizontal) {
-      prev_size_ = previous_view()->size().height();
-      next_size_ = next_view()->size().height();
-      nearby_pos_ = previous_view()->position().y();
+      prev_size_ = previous(this)->size().height();
+      next_size_ = next(this)->size().height();
+      nearby_pos_ = previous(this)->position().y();
     } else {
-      prev_size_ = previous_view()->size().width();
-      next_size_ = next_view()->size().width();
-      nearby_pos_ = next_view()->position().x();
+      prev_size_ = previous(this)->size().width();
+      next_size_ = next(this)->size().width();
+      nearby_pos_ = next(this)->position().x();
     }
 
     pressed_ = true;
@@ -206,12 +208,12 @@ namespace BlendInt {
 
         splitter->MoveSubViewTo(this, last_.x(), last_.y() + offset);
 
-        splitter->ResizeSubView(previous_view(),
-                                previous_view()->size().width(), oy1);
-        splitter->MoveSubViewTo(previous_view(),
-                                previous_view()->position().x(),
+        splitter->ResizeSubView(previous(this),
+                                previous(this)->size().width(), oy1);
+        splitter->MoveSubViewTo(previous(this),
+                                previous(this)->position().x(),
                                 nearby_pos_ + offset);
-        splitter->ResizeSubView(next_view(), next_view()->size().width(), oy2);
+        splitter->ResizeSubView(next(this), next(this)->size().width(), oy2);
 
       } else {
 
@@ -225,11 +227,11 @@ namespace BlendInt {
 
         splitter->MoveSubViewTo(this, last_.x() + offset, last_.y());
 
-        splitter->ResizeSubView(previous_view(), oy1,
-                                previous_view()->size().height());
-        splitter->ResizeSubView(next_view(), oy2, next_view()->size().height());
-        splitter->MoveSubViewTo(next_view(), nearby_pos_ + offset,
-                                next_view()->position().y());
+        splitter->ResizeSubView(previous(this), oy1,
+                                previous(this)->size().height());
+        splitter->ResizeSubView(next(this), oy2, next(this)->size().height());
+        splitter->MoveSubViewTo(next(this), nearby_pos_ + offset,
+                                next(this)->position().y());
 
       }
 

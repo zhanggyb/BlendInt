@@ -62,14 +62,14 @@ namespace BlendInt {
 
     fs::path path(filepath);
     if (fs::is_directory(path)) {
-      std::cerr << "Error: " << filepath << " is a directory" << std::endl;
+      DBG_PRINT_MSG("ERROR: %s is a directory", filepath.c_str());
       return ret;
     }
 
     if (fs::exists(path) && fs::is_regular_file(path)) {
       fs::file_status s = fs::status(path);
       if (!(s.permissions() & fs::owner_read)) {
-        std::cerr << "Error: " << filepath << " is not readable" << std::endl;
+        DBG_PRINT_MSG("ERROR: %s is not readable", filepath.c_str());
         return ret;
       }
     }
@@ -89,11 +89,10 @@ namespace BlendInt {
         }
         ret = true;
       } else {
-        std::cerr << "<Theme> should be the only root node in theme file: "
-            << filepath << std::endl;
+        DBG_PRINT_MSG("ERROR: <Theme> should be the only root node in theme file: %s", filepath.c_str());
       }
     } catch (std::exception& ex) {
-      std::cerr << "Error: " << ex.what() << std::endl;
+      DBG_PRINT_MSG("ERROR: %s", ex.what());
     }
 
     return ret;
@@ -108,17 +107,14 @@ namespace BlendInt {
 
     boost::filesystem::path path(filepath);
     if (fs::is_directory(path)) {
-      std::cerr << "Error: " << filepath << " is a directory" << std::endl;
+      DBG_PRINT_MSG("ERROR: %s is a directory", filepath.c_str());
       return ret;
     }
 
     if (fs::exists(path) && fs::is_regular_file(path)) {
-      std::cerr << "Warning: " << filepath << " exists, overwrite it"
-          << std::endl;
-
       fs::file_status s = fs::status(path);
       if (!(s.permissions() & fs::owner_write)) {
-        std::cerr << "Error: " << filepath << " is not writable" << std::endl;
+        DBG_PRINT_MSG("ERROR: %s is not writable", filepath.c_str());
         return ret;
       }
     }
@@ -262,7 +258,7 @@ namespace BlendInt {
       out << doc;
       ret = true;
     } catch (const std::exception& ex) {
-      std::cerr << "Error: " << ex.what() << std::endl;
+      DBG_PRINT_MSG("ERROR: %s", ex.what());
     }
 
     return ret;

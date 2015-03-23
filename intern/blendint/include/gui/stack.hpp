@@ -53,6 +53,16 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const override;
 
+    virtual AbstractView* GetFirstSubView ();
+
+    virtual AbstractView* GetLastSubView ();
+
+    virtual AbstractView* GetNextSubView (AbstractView* view);
+
+    virtual AbstractView* GetPreviousSubView (AbstractView* view);
+
+    virtual int GetSubViewCount ();
+
     inline AbstractWidget* active_widget () const
     {
       return active_widget_;

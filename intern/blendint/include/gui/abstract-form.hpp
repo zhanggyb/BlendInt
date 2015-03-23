@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <opengl/opengl.hpp>
 
 #include <core/types.hpp>
