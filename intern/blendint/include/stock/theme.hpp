@@ -53,8 +53,6 @@ namespace BlendInt {
 
 	class Theme
 	{
-		DISALLOW_COPY_AND_ASSIGN(Theme);
-
 	public:
 
 		/**
@@ -280,6 +278,8 @@ namespace BlendInt {
 
 		/* Axis Colors */
 		Color xaxis_, yaxis_, zaxis_;
+
+    DISALLOW_COPY_AND_ASSIGN(Theme);
 	};
 
 } /* namespace BlendInt */

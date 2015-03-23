@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <opengl/gl-buffer.hpp>
 #include <gui/abstract-frame.hpp>
 
 namespace BlendInt {
@@ -48,6 +49,10 @@ namespace BlendInt {
 
   protected:
 
+    virtual void PerformPositionUpdate (const PositionUpdateRequest& request) final;
+
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+
     virtual Response PerformKeyPress (AbstractWindow* context);
 
     virtual void PerformFocusOn (AbstractWindow* context);
@@ -66,15 +71,24 @@ namespace BlendInt {
 
     virtual Response PerformMouseHover (AbstractWindow* context);
 
+    virtual bool PreDraw (AbstractWindow* context) final;
+
+    virtual Response Draw (AbstractWindow* context) final;
+
+    virtual void PostDraw (AbstractWindow* context) final;
+
+    virtual void PostPositionUpdate () = 0;
+
+    virtual void PostSizeUpdate () = 0;
+
     virtual void RenderScene () = 0;
 
   private:
 
-    virtual bool PreDraw (AbstractWindow* context);
+    GLuint vao_;
 
-    virtual Response Draw (AbstractWindow* context);
+    GLBuffer<ARRAY_BUFFER, 1> vbo_;
 
-    virtual void PostDraw (AbstractWindow* context);
   };
 
 }

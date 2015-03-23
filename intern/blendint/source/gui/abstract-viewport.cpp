@@ -33,12 +33,29 @@
 namespace BlendInt {
 
 	AbstractViewport::AbstractViewport(int width, int height)
-	: AbstractFrame(width, height)
+	: AbstractFrame(width, height),
+	  vao_(0)
 	{
+    std::vector<GLfloat> outer_verts;
+    GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, 0,
+                     &outer_verts);
+
+    vbo_.generate();
+    glGenVertexArrays(1, &vao_);
+
+    glBindVertexArray(vao_);
+    vbo_.bind(0);
+    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
 	}
 
 	AbstractViewport::~AbstractViewport()
 	{
+    glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool AbstractViewport::IsExpandX() const
@@ -50,6 +67,39 @@ namespace BlendInt {
 	{
 		return true;
 	}
+
+  void AbstractViewport::PerformPositionUpdate (const PositionUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_position(*request.position());
+      PostPositionUpdate();
+    }
+
+    if (request.source() == this) {
+      ReportPositionUpdate(request);
+    }
+  }
+
+  void AbstractViewport::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_size(*request.size());
+
+      std::vector<GLfloat> outer_verts;
+      GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, 0, &outer_verts);
+
+      vbo_.bind(0);
+      vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
+                        &outer_verts[0]);
+      vbo_.reset();
+
+      PostSizeUpdate();
+    }
+
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
 	Response AbstractViewport::PerformMouseHover(AbstractWindow* context)
 	{
@@ -96,22 +146,40 @@ namespace BlendInt {
 		return subs_count() ? Ignore : Finish;
 	}
 
-	bool AbstractViewport::PreDraw(AbstractWindow* context)
-	{
-		if(!visiable()) return false;
+  bool AbstractViewport::PreDraw (AbstractWindow* context)
+  {
+    if (!visiable()) return false;
 
-		DeclareActiveFrame(context, this);
+    DeclareActiveFrame(context, this);
 
-		glViewport(position().x(), position().y(), size().width(), size().height());
+    // draw outline
 
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(), position().y(), size().width(), size().height());
+    AbstractWindow::shaders()->frame_outer_program()->use();
 
-		return true;
-	}
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+        position().x(), position().y());
+    glBindVertexArray(vao_);
 
-	Response AbstractViewport::Draw(AbstractWindow* context)
-	{
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+                0.576f, 0.576f, 0.576f, 1.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
+
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+                0.4f, 0.4f, 0.4f, 1.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+
+    // now set viewport for 3D scene
+    glViewport(position().x(), position().y(), size().width(), size().height());
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(position().x(), position().y(), size().width(), size().height());
+
+    return true;
+  }
+
+  Response AbstractViewport::Draw (AbstractWindow* context)
+  {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -121,14 +189,14 @@ namespace BlendInt {
 
     // TODO: draw widgets
 
-		return Finish;
-	}
+    return Finish;
+  }
 
-	void AbstractViewport::PostDraw(AbstractWindow* context)
-	{
-		glDisable(GL_SCISSOR_TEST);
-		glViewport(0, 0, context->size().width(), context->size().height());
-	}
+  void AbstractViewport::PostDraw (AbstractWindow* context)
+  {
+    glDisable(GL_SCISSOR_TEST);
+    glViewport(0, 0, context->size().width(), context->size().height());
+  }
 
 }
 

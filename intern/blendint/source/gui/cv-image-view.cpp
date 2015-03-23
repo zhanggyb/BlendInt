@@ -407,8 +407,9 @@ namespace BlendInt {
 
   void CVImageView::DrawTexture ()
   {
+    // TODO: use double textures
     glBindVertexArray(vao_[1]);
-    if (mutex_.lock()) {
+    if (mutex_.trylock()) {
       texture_.bind();
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
       mutex_.unlock();

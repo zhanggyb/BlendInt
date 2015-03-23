@@ -33,7 +33,7 @@
 namespace BlendInt {
 
   ModelViewport::ModelViewport ()
-      : AbstractViewport(640, 480)
+  : AbstractViewport(640, 480)
   {
     projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
                                     (float) size().height(), 100.f, -100.f);
@@ -71,53 +71,33 @@ namespace BlendInt {
     return Size(640, 480);
   }
 
-  void ModelViewport::PerformPositionUpdate (const PositionUpdateRequest& request)
+  void ModelViewport::PostPositionUpdate ()
   {
-    if (request.target() == this) {
+    Point offset = GetOffset();
+    float x = static_cast<float>(position().x() + offset.x());
+    float y = static_cast<float>(position().y() + offset.y());
 
-      Point offset = GetOffset();
-      float x = static_cast<float>(request.position()->x() + offset.x());
-      float y = static_cast<float>(request.position()->y() + offset.y());
+    projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
+                                    y + (float) size().height(), 100.f, -100.f);
 
-      projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
-                                      y + (float) size().height(), 100.f,
-                                      -100.f);
+    model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
 
-      model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
-
-      set_position(*request.position());
-
-    }
-
-    if (request.source() == this) {
-      ReportPositionUpdate(request);
-    }
+    RequestRedraw();
   }
 
-  void ModelViewport::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ModelViewport::PostSizeUpdate ()
   {
-    if (request.target() == this) {
+    Point offset = GetOffset();
+    float x = static_cast<float>(position().x() + offset.x());
+    float y = static_cast<float>(position().y() + offset.y());
 
-      Point offset = GetOffset();
-      float x = static_cast<float>(position().x() + offset.x());
-      float y = static_cast<float>(position().y() + offset.y());
+    projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
+                                    y + (float) size().height(), 100.f, -100.f);
 
-      projection_matrix_ = glm::ortho(x, x + (float) request.size()->width(), y,
-                                      y + (float) request.size()->height(),
-                                      100.f, -100.f);
+    default_camera_->SetPerspective(default_camera_->fovy(),
+                                    1.f * size().width() / size().height());
 
-      set_size(*request.size());
-
-      default_camera_->SetPerspective(
-          default_camera_->fovy(),
-          1.f * request.size()->width() / request.size()->height());
-
-      RequestRedraw();
-    }
-
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
-    }
+    RequestRedraw();
   }
 
   void ModelViewport::RenderScene ()

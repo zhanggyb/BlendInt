@@ -25,7 +25,6 @@
 
 #include <gui/grid-floor.hpp>
 #include <gui/perspective-camera.hpp>
-#include <opengl/gl-buffer.hpp>
 
 #include <gui/abstract-viewport.hpp>
 
@@ -52,9 +51,9 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+    virtual void PostPositionUpdate ();
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PostSizeUpdate ();
 
     virtual void RenderScene ();
 
