@@ -236,29 +236,35 @@ namespace BlendInt {
     }
   }
 
-  AbstractView* StackLayout::GetFirstSubView ()
+  AbstractView* StackLayout::GetFirstSubView () const
   {
     return active_widget_;
   }
 
-  AbstractView* StackLayout::GetLastSubView ()
+  AbstractView* StackLayout::GetLastSubView () const
   {
     return active_widget_;
   }
 
-  AbstractView* StackLayout::GetNextSubView (AbstractView* view)
+  AbstractView* StackLayout::GetNextSubView (const AbstractView* view) const
   {
     return 0;
   }
 
-  AbstractView* StackLayout::GetPreviousSubView (AbstractView* view)
+  AbstractView* StackLayout::GetPreviousSubView (const AbstractView* view) const
   {
     return 0;
   }
 
-  int StackLayout::GetSubViewCount ()
+  int StackLayout::GetSubViewCount () const
   {
     return active_widget_ ? 1 : 0;
+  }
+
+  bool StackLayout::IsSubViewActive (const AbstractView* subview) const
+  {
+    DBG_ASSERT(subview && subview->superview() == this);
+    return subview == active_widget_ ? true : false;
   }
 
   void BlendInt::StackLayout::HideSubWidget (int index)

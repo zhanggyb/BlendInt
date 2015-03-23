@@ -38,10 +38,8 @@ namespace BlendInt {
   void Stack::AddWidget (AbstractWidget* widget)
   {
     if (PushBackSubView(widget)) {
-      int w = size().width();
-      int h = size().height();
 
-      ResizeSubView(widget, w, h);
+      ResizeSubView(widget, size());
       MoveSubViewTo(widget, 0, 0);
 
       if (subs_count() == 1) {
@@ -57,10 +55,8 @@ namespace BlendInt {
   void Stack::InsertWidget (int index, AbstractWidget* widget)
   {
     if (InsertSubView(index, widget)) {
-      int w = size().width();
-      int h = size().height();
 
-      ResizeSubView(widget, w, h);
+      ResizeSubView(widget, size());
       MoveSubViewTo(widget, 0, 0);
 
       widget->SetVisible(false);
@@ -108,7 +104,7 @@ namespace BlendInt {
   {
     int count = subs_count();
 
-    if (index > (count - 1)) return;
+    if ((index < 0) || (index > (count - 1))) return;
 
     if (count) {
 
@@ -172,29 +168,35 @@ namespace BlendInt {
     }
   }
 
-  AbstractView* Stack::GetFirstSubView ()
+  AbstractView* Stack::GetFirstSubView () const
   {
     return active_widget_;
   }
 
-  AbstractView* Stack::GetLastSubView ()
+  AbstractView* Stack::GetLastSubView () const
   {
     return active_widget_;
   }
 
-  AbstractView* Stack::GetNextSubView (AbstractView* view)
+  AbstractView* Stack::GetNextSubView (const AbstractView* view) const
   {
     return 0;
   }
 
-  AbstractView* Stack::GetPreviousSubView (AbstractView* view)
+  AbstractView* Stack::GetPreviousSubView (const AbstractView* view) const
   {
     return 0;
   }
 
-  int Stack::GetSubViewCount ()
+  int Stack::GetSubViewCount () const
   {
     return active_widget_ ? 1 : 0;
+  }
+
+  bool Stack::IsSubViewActive (const AbstractView* subview) const
+  {
+    DBG_ASSERT(subview && subview->superview() == this);
+    return subview == active_widget_ ? true : false;
   }
 
   void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)

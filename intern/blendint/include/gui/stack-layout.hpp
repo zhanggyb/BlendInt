@@ -57,15 +57,17 @@ namespace BlendInt {
 
     virtual Size GetPreferredSize () const;
 
-    virtual AbstractView* GetFirstSubView ();
+    virtual AbstractView* GetFirstSubView () const final;
 
-    virtual AbstractView* GetLastSubView ();
+    virtual AbstractView* GetLastSubView () const final;
 
-    virtual AbstractView* GetNextSubView (AbstractView* view);
+    virtual AbstractView* GetNextSubView (const AbstractView* view) const final;
 
-    virtual AbstractView* GetPreviousSubView (AbstractView* view);
+    virtual AbstractView* GetPreviousSubView (const AbstractView* view) const final;
 
-    virtual int GetSubViewCount ();
+    virtual int GetSubViewCount () const final;
+
+    virtual bool IsSubViewActive (const AbstractView* subview) const final;
 
     inline AbstractWidget* active_widget () const
     {

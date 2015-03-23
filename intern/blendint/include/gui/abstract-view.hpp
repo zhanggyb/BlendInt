@@ -313,17 +313,20 @@ namespace BlendInt {
     // always return (0, 0) except AbstractScrollable
     virtual Point GetOffset () const;
 
-    virtual AbstractView* GetFirstSubView ();
+    virtual AbstractView* GetFirstSubView () const;
 
-    virtual AbstractView* GetLastSubView ();
+    virtual AbstractView* GetLastSubView () const;
 
-    virtual AbstractView* GetNextSubView (AbstractView* view);
+    virtual AbstractView* GetNextSubView (const AbstractView* view) const;
 
-    virtual AbstractView* GetPreviousSubView (AbstractView* view);
+    virtual AbstractView* GetPreviousSubView (const AbstractView* view) const;
 
-    virtual int GetSubViewCount ();
+    virtual int GetSubViewCount () const;
 
-    virtual bool IsSubViewVisible (AbstractView* subview);
+    /**
+     * @brief Check if the given subview is visible in this view
+     */
+    virtual bool IsSubViewActive (const AbstractView* subview) const;
 
     inline const Point& position () const
     {
@@ -384,6 +387,11 @@ namespace BlendInt {
     {
       return last_subview_;
     }
+
+    /**
+     * @brief Check if the given view is visible and interactive in a window
+     */
+    static bool IsActive (const AbstractView* view);
 
     static void MoveToFirst (AbstractView* view);
 

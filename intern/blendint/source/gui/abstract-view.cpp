@@ -401,37 +401,60 @@ namespace BlendInt {
     return Point(0, 0);
   }
 
-  AbstractView* AbstractView::GetFirstSubView ()
+  AbstractView* AbstractView::GetFirstSubView () const
   {
     return first_subview_;
   }
 
-  AbstractView* AbstractView::GetLastSubView ()
+  AbstractView* AbstractView::GetLastSubView () const
   {
     return last_subview_;
   }
 
-  AbstractView* AbstractView::GetNextSubView (AbstractView* subview)
+  AbstractView* AbstractView::GetNextSubView (const AbstractView* subview) const
   {
     DBG_ASSERT(subview && subview->superview() == this);
     return subview->next_view_;
   }
 
-  AbstractView* AbstractView::GetPreviousSubView (AbstractView* subview)
+  AbstractView* AbstractView::GetPreviousSubView (const AbstractView* subview) const
   {
     DBG_ASSERT(subview && subview->superview() == this);
     return subview->previous_view_;
   }
 
-  int AbstractView::GetSubViewCount ()
+  int AbstractView::GetSubViewCount () const
   {
     return subs_count_;
   }
 
-  bool AbstractView::IsSubViewVisible (AbstractView* subview)
+  bool AbstractView::IsSubViewActive (const AbstractView* subview) const
   {
     DBG_ASSERT(subview && subview->superview() == this);
     return true;
+  }
+
+  bool AbstractView::IsActive(const AbstractView* view)
+  {
+    bool active = true;
+
+    AbstractView* parent = view->superview_;
+    while (parent) {
+
+      if (!parent->IsSubViewActive(view)) {
+        active = false;
+        break;
+      }
+
+      view = parent;
+      parent = parent->superview_;
+    }
+
+    if (active && (!is_window(view))) {
+      active = false;
+    }
+
+    return active;
   }
 
   void AbstractView::MoveToFirst (AbstractView* view)
