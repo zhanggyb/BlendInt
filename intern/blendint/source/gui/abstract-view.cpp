@@ -292,64 +292,6 @@ namespace BlendInt {
     }
   }
 
-  AbstractView* AbstractView::operator [] (int i) const
-  {
-    if ((i < 0) || (i >= subview_count_)) return 0;
-
-    AbstractView* widget = 0;
-
-    if (i < ((subview_count_ + 1) / 2)) {
-
-      widget = first_;
-      while (i > 0) {
-        widget = widget->next_;
-        i--;
-      }
-
-    } else {
-
-      widget = last_;
-      int max = subview_count_ - 1;
-      while (i < max) {
-        widget = widget->previous_;
-        i++;
-      }
-
-    }
-
-    return widget;
-  }
-
-  AbstractView* AbstractView::GetSubViewAt (int i) const
-  {
-    if ((i < 0) || (i >= subview_count_)) return 0;
-
-    AbstractView* widget = 0;
-
-    if (i < ((subview_count_ + 1) / 2)) {
-
-      widget = first_;
-      while (i > 0) {
-        widget = widget->next_;
-        i--;
-      }
-
-    } else {
-
-      widget = last_;
-      int max = subview_count_ - 1;
-      while (i < max) {
-        widget = widget->previous_;
-        i++;
-      }
-
-    }
-
-    //DBG_ASSERT(widget != 0);
-
-    return widget;
-  }
-
   bool AbstractView::IsExpandX () const
   {
     return false;
@@ -2071,6 +2013,34 @@ namespace BlendInt {
     GenerateVertices(0.f, 0.f, size.width(), size.height(), border, round_type,
                      radius, Vertical, color_scheme.shadetop,
                      color_scheme.shadedown, inner, outer);
+  }
+
+  AbstractView* AbstractView::GetSubViewAt (int i) const
+  {
+    if ((i < 0) || (i >= subview_count_)) return 0;
+
+    AbstractView* widget = 0;
+
+    if (i < ((subview_count_ + 1) / 2)) {
+
+      widget = first_;
+      while (i > 0) {
+        widget = widget->next_;
+        i--;
+      }
+
+    } else {
+
+      widget = last_;
+      int max = subview_count_ - 1;
+      while (i < max) {
+        widget = widget->previous_;
+        i++;
+      }
+
+    }
+
+    return widget;
   }
 
   AbstractView* AbstractView::PushFrontSubView (AbstractView* view)

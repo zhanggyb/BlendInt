@@ -27,73 +27,78 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special widget used in some layout. e.g. TableLayout
-	 */
-	class Cell: public AbstractWidget
-	{
-	public:
+  /**
+   * @brief A special widget used in some layout. e.g. TableLayout
+   */
+  class Cell: public AbstractWidget
+  {
+  public:
 
-		Cell ();
+    Cell ();
 
-		virtual ~Cell ();
+    virtual ~Cell ();
 
-		void SetWidget (AbstractWidget* widget);
+    void SetWidget (AbstractWidget* widget);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual Response Draw (AbstractWindow* context);
-	};
+    virtual Response Draw (AbstractWindow* context);
+  };
 
-	// ------------------------------------
+  // ------------------------------------
 
-	class TableLayout: public AbstractLayout
-	{
-	public:
+  class TableLayout: public AbstractLayout
+  {
+  public:
 
-		TableLayout (unsigned int row, unsigned int column, int space = 4);
+    TableLayout (unsigned int row, unsigned int column, int space = 4);
 
-		TableLayout (int width, int height, unsigned int row, unsigned int column, const Margin& margin, int space = 4);
+    TableLayout (int width,
+                 int height,
+                 unsigned int row,
+                 unsigned int column,
+                 const Margin& margin,
+                 int space = 4);
 
-		virtual ~TableLayout ();
+    virtual ~TableLayout ();
 
-		virtual bool AddWidget (AbstractWidget* widget);
+    virtual bool AddWidget (AbstractWidget* widget);
 
-		virtual bool InsertWidget (int index, AbstractWidget* widget);
+    virtual bool InsertWidget (int index, AbstractWidget* widget);
 
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-		virtual void Adjust ();
+    virtual void Adjust ();
 
-		void SetSpace (int space);
+    void SetSpace (int space);
 
-		virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+    virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const;
 
-	protected:
+  protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void PerformMarginUpdate (const Margin& margin);
-        
-	private:
+    virtual void PerformMarginUpdate (const Margin& margin);
 
-		unsigned int row_;
+  private:
 
-		unsigned int column_;
+    unsigned int row_;
 
-		int space_;
-	};
+    unsigned int column_;
+
+    int space_;
+  };
 
 }

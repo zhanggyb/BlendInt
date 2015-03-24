@@ -21,28 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <core/string.hpp>
+
 #include <gui/flow-layout.hpp>
 #include <gui/abstract-frame.hpp>
 #include <gui/abstract-window.hpp>
+#include <gui/label.hpp>
 #include <gui/node.hpp>
 
 namespace BlendInt {
 
-  Node::Node (AbstractLayout* layout)
+  Node::Node (const String& title)
   : AbstractNode(),
+    main_layout_(0),
     layout_(0)
   {
     set_round_type(RoundAll);
     set_round_radius(10.f);
 
-    if (layout == 0) {
-      layout_ = Manage(new FlowLayout);
-    } else {
-      layout_ = layout;
-    }
+    main_layout_ = new LinearLayout(Vertical);
+    main_layout_->SetMargin(Margin(5, 5, 5, 5));
 
-    PushBackSubView(layout_);
-    set_size(layout_->size());
+    layout_ = Manage(new LinearLayout(Vertical));
+
+    Label* label = Manage(new Label(title));
+    main_layout_->AddWidget(label);
+    main_layout_->AddWidget(layout_);
+
+    PushBackSubView(main_layout_);
+    set_size(main_layout_->size());
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -94,17 +101,17 @@ namespace BlendInt {
 
   bool Node::IsExpandX () const
   {
-    return layout_->IsExpandX();
+    return main_layout_->IsExpandX();
   }
 
   bool Node::IsExpandY () const
   {
-    return layout_->IsExpandY();
+    return main_layout_->IsExpandY();
   }
 
   Size Node::GetPreferredSize () const
   {
-    return layout_->GetPreferredSize();
+    return main_layout_->GetPreferredSize();
   }
 
   void Node::SetInnerColor (unsigned int color)
@@ -136,7 +143,7 @@ namespace BlendInt {
                         &outer_verts[0]);
       vbo_.reset();
 
-      ResizeSubView(layout_, size());
+      ResizeSubView(main_layout_, size());
 
       shadow_->Resize(size());
 

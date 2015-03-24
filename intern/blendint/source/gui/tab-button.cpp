@@ -35,8 +35,8 @@ namespace BlendInt {
     set_checkable(true);
 
     Font font;  // default font
-    int w = 80;
     int h = font.height();
+    int w = h;
 
     set_size(w + pixel_size(kPadding.hsum()),
             h + pixel_size(kPadding.vsum()));
@@ -52,7 +52,6 @@ namespace BlendInt {
 
     int w = this->text()->size().width();
     int h = this->text()->font().height();
-    if(w < 80) w = 80;
 
     w += pixel_size(kPadding.hsum());
     h += pixel_size(kPadding.vsum());
@@ -94,7 +93,6 @@ namespace BlendInt {
     w += this->text()->size().width();
     h = std::max(h, this->text()->font().height());
 
-    if(w < 80) w = 80;
     w += pixel_size(kPadding.hsum());
     h += pixel_size(kPadding.vsum());
 

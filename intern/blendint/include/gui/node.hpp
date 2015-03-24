@@ -25,11 +25,13 @@
 
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/abstract-layout.hpp>
+#include <gui/linear-layout.hpp>
 #include <gui/abstract-node.hpp>
 #include <gui/widget-shadow.hpp>
 
 namespace BlendInt {
+
+  class String;
 
   /**
    * @brief A special view used to display and manage a node in NodeView
@@ -42,7 +44,7 @@ namespace BlendInt {
   {
   public:
 
-    Node (AbstractLayout* layout);
+    Node (const String& title);
 
     virtual ~Node ();
 
@@ -81,7 +83,9 @@ namespace BlendInt {
 
     GLBuffer<ARRAY_BUFFER, 3> vbo_;
 
-    AbstractLayout* layout_;
+    LinearLayout* main_layout_;
+
+    LinearLayout* layout_;
 
     RefPtr<WidgetShadow> shadow_;
 

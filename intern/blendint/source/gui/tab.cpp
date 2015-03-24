@@ -30,147 +30,144 @@
 
 namespace BlendInt {
 
-	Tab::Tab ()
-	: AbstractWidget()
-	{
-		set_size(400, 300);
+  Tab::Tab ()
+    : AbstractWidget()
+  {
+    set_size(400, 300);
 
-		TabHeader* header = Manage(new TabHeader);
-		DBG_SET_NAME(header, "TabHeader");
-		Stack* stack = Manage(new Stack);
-		DBG_SET_NAME(stack, "Stack");
+    TabHeader* header = Manage(new TabHeader);
+    DBG_SET_NAME(header, "TabHeader");
+    Stack* stack = Manage(new Stack);
+    DBG_SET_NAME(stack, "Stack");
 
-		PushBackSubView(header);	// 0
-		PushBackSubView(stack);	// 1
+    PushBackSubView(header);	// 0
+    PushBackSubView(stack);	// 1
 
-		FillSubWidgetsInTab(size());
+    FillSubWidgetsInTab(size());
 
-		events()->connect(header->button_index_toggled(), this, &Tab::OnButtonToggled);
-	}
+    events()->connect(header->button_index_toggled(), this,
+                      &Tab::OnButtonToggled);
+  }
 
-	Tab::~Tab ()
-	{
-	}
+  Tab::~Tab ()
+  {
+  }
 
-	void Tab::AddWidget (const String& title, AbstractWidget* widget)
-	{
-		TabButton* btn = Manage(new TabButton(title));
-		DBG_SET_NAME(btn, ConvertFromString(title).c_str());
+  void Tab::AddWidget (const String& title, AbstractWidget* widget)
+  {
+    TabButton* btn = Manage(new TabButton(title));
+    DBG_SET_NAME(btn, ConvertFromString(title).c_str());
 
-		TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
-		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
+    TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
+    Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
-		header->AddButton(btn);
-		stack->AddWidget(widget);
+    header->AddButton(btn);
+    stack->AddWidget(widget);
 
-		if(header->GetSubViewCount() == 1) {
-			btn->SetChecked(true);
-		}
-	}
+    if(header->GetSubViewCount() == 1) {
+      btn->SetChecked(true);
+    }
+  }
 
-	bool Tab::IsExpandX () const
-	{
-		if(GetSubViewAt(0)->IsExpandX())
-			return true;
+  bool Tab::IsExpandX () const
+  {
+    for (AbstractView* p = first(); p; p = next(p)) {
+      if (p->IsExpandX()) return true;
+    }
 
-		if(GetSubViewAt(1)->IsExpandX())
-			return true;
+    return false;
+  }
 
-		return false;
-	}
+  bool Tab::IsExpandY () const
+  {
+    for (AbstractView* p = first(); p; p = next(p)) {
+      if (p->IsExpandY()) return true;
+    }
 
-	bool Tab::IsEXpandY () const
-	{
-		if(GetSubViewAt(0)->IsExpandY())
-			return true;
+    return false;
+  }
 
-		if(GetSubViewAt(1)->IsExpandY())
-			return true;
+  Size Tab::GetPreferredSize () const
+  {
+    int w = 0;
+    int h = 0;
+    Size tmp;
+    for (AbstractView* p = first(); p; p = next(p)) {
+      tmp = p->GetPreferredSize();
+      w = std::max(w, tmp.width());
+      h += tmp.height();
+    }
 
-		return false;
-	}
+    return Size(w, h);
+  }
 
-	Size Tab::GetPreferredSize () const
-	{
-		int w = 0;
-		int h = 0;
+  int Tab::GetIndex() const
+  {
+    Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
-		Size tmp1 = GetSubViewAt(0)->GetPreferredSize();
-		Size tmp2 = GetSubViewAt(1)->GetPreferredSize();
+    return stack->GetIndex();
+  }
 
-		w = std::max(tmp1.width(), tmp2.width());
-		h = tmp1.height() + tmp2.height();
+  void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if(request.target() == this) {
+      set_size(*request.size());
+      FillSubWidgetsInTab(*request.size());
+    }
 
-		return Size(w, h);
-	}
+    if(request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
 
-	int Tab::GetIndex() const
-	{
-		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
+  void Tab::OnButtonToggled (int index, bool toggled)
+  {
+    Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
-		return stack->GetIndex();
-	}
+    stack->SetIndex(index);
+    RequestRedraw();
+  }
 
-	void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			set_size(*request.size());
-			FillSubWidgetsInTab(*request.size());
-		}
+  void Tab::FillSubWidgetsInTab(const Size& out_size)
+  {
+    int x = 0;
+    int y = 0;
+    int w = out_size.width();
+    int h = out_size.height();
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		}
-	}
+    FillSubWidgetsInTab(x, y, w, h);
+  }
 
-	void Tab::OnButtonToggled (int index, bool toggled)
-	{
-		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
+  Response Tab::Draw (AbstractWindow* context)
+  {
+    return subview_count() ? Ignore : Finish;
+  }
 
-		stack->SetIndex(index);
-		RequestRedraw();
-	}
+  void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
+  {
+    int header_y = h;
 
-	void Tab::FillSubWidgetsInTab(const Size& out_size)
-	{
-		int x = 0;
-		int y = 0;
-		int w = out_size.width();
-		int h = out_size.height();
+    TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
+    Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
 
-		FillSubWidgetsInTab(x, y, w, h);
-	}
+    Size header_size = header->GetPreferredSize();
 
-	Response Tab::Draw (AbstractWindow* context)
-	{
-		return subview_count() ? Ignore : Finish;
-	}
+    if(header_size.height() > h) {
+      //header->SetVisible(false);
+      //stack->SetVisible(false);
 
-	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
-	{
-		int header_y = h;
+      return;
+    } else {
+      //header->SetVisible(true);
+      //stack->SetVisible(true);
+    }
 
-		TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));
-		Stack* stack = dynamic_cast<Stack*>(GetSubViewAt(1));
+    header_y = header_y - header_size.height();
+    MoveSubViewTo(header, x, header_y);
+    ResizeSubView(header, w, header_size.height());
 
-		Size header_size = header->GetPreferredSize();
-
-		if(header_size.height() > h) {
-		  //header->SetVisible(false);
-			//stack->SetVisible(false);
-
-			return;
-		} else {
-			//header->SetVisible(true);
-			//stack->SetVisible(true);
-		}
-
-		header_y = header_y - header_size.height();
-		MoveSubViewTo(header, x, header_y);
-		ResizeSubView(header, w, header_size.height());
-
-		MoveSubViewTo(stack, x, y);
-		ResizeSubView(stack, w, h - header_size.height());
-	}
+    MoveSubViewTo(stack, x, y);
+    ResizeSubView(stack, w, h - header_size.height());
+  }
 
 }

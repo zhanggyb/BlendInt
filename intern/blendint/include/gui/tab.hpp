@@ -44,11 +44,11 @@ namespace BlendInt {
 
     void AddWidget (const String& title, AbstractWidget* widget);
 
-    virtual bool IsExpandX () const;
+    virtual bool IsExpandX () const override;
 
-    virtual bool IsEXpandY () const;
+    virtual bool IsExpandY () const override;
 
-    virtual Size GetPreferredSize () const;
+    virtual Size GetPreferredSize () const override;
 
     int GetIndex () const;
 

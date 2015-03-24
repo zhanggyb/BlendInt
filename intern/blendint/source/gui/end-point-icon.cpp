@@ -31,7 +31,6 @@ namespace BlendInt {
   : AbstractIcon()
   {
     int radius = pixel_size(7);
-
     set_size(2 * radius, 2 * radius);
 
     glGenVertexArrays(2, vao_);

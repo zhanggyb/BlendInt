@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <opengl/glarraybuffer.hpp>
+#include <opengl/gl-buffer.hpp>
 #include <gui/abstract-slider.hpp>
 
 namespace BlendInt {
@@ -57,6 +57,8 @@ namespace BlendInt {
 
     virtual void PerformStepUpdate (int step);
 
+    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
     virtual Response Draw (AbstractWindow* context);
 
     virtual Response PerformMouseMove (AbstractWindow* context);
@@ -72,8 +74,6 @@ namespace BlendInt {
     int GetSpace ();
 
   private:
-
-    void InitOnce ();
 
     /**
      * @brief Check if cursor is on the slide icon
@@ -98,9 +98,9 @@ namespace BlendInt {
       return value() * GetSpace() / ((float) maximum() - (float) minimum());
     }
 
-    //GLuint m_vao;
+    GLuint vao_;
 
-    //RefPtr<GLArrayBuffer> m_line;
+    GLBuffer<ARRAY_BUFFER, 1> vbo_; // buffer for line
 
     SlideIcon m_slide_icon;
 

@@ -261,10 +261,6 @@ namespace BlendInt {
 
     void RequestRedraw ();
 
-    AbstractView* operator [] (int i) const;
-
-    AbstractView* GetSubViewAt (int i) const;
-
     virtual bool IsExpandX () const;
 
     virtual bool IsExpandY () const;
@@ -493,6 +489,8 @@ namespace BlendInt {
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
     virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+    AbstractView* GetSubViewAt (int i) const;
 
     AbstractView* PushFrontSubView (AbstractView* view);
 

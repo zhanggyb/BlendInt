@@ -30,7 +30,7 @@ namespace BlendInt {
 
   Slider::Slider (Orientation orientation)
   : AbstractSlider<int>(orientation),
-    //vao_(0),
+    vao_(0),
     m_last_value(0),
     m_pressed(false)
   {
@@ -42,45 +42,74 @@ namespace BlendInt {
       set_size(200, 18);
     }
 
-    InitOnce();
+    glGenVertexArrays(1, &vao_);
+    vbo_.generate();
+
+    glBindVertexArray(vao_);
+
+    vbo_.bind(0);
+
+    std::vector<GLfloat> line_verts(8, 0.f);
+
+    if(orientation == Horizontal) {
+
+      // line_verts[0] = 0.f;
+      // line_verts[1] = 0.f;
+
+      line_verts[2] = size().width();
+      // line_verts[3] = 0.f;
+
+      //line_verts[4] = 0.f;
+      line_verts[5] = pixel_size(1);
+
+      line_verts[6] = size().width();
+      line_verts[7] = pixel_size(1);
+
+    } else {
+
+      // line_verts[0] = 0.f;
+      // line_verts[1] = 0.f;
+
+      line_verts[2] = pixel_size(1);
+      // line_verts[3] = 0.f;
+
+      // line_verts[4] = 0.f;
+      line_verts[5] = size().height();
+
+      line_verts[6] = pixel_size(1);
+      line_verts[7] = size().height();
+
+    }
+
+    vbo_.set_data (sizeof(GLfloat) * line_verts.size(), &line_verts[0]);
+    glEnableVertexAttribArray(AttributeCoord);
+    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindVertexArray(0);
+    vbo_.reset();
   }
 
   Slider::~Slider ()
   {
-    //glDeleteVertexArrays(1, &vao_);
+    glDeleteVertexArrays(1, &vao_);
   }
 
   bool Slider::IsExpandX () const
   {
-    if (orientation() == Horizontal) {
-      return true;
-    } else {
-      return false;
-    }
+    return orientation() == Horizontal ? true : false;
   }
 
   bool Slider::IsExpandY () const
   {
-    if (orientation() == Vertical) {
-      return true;
-    } else {
-      return false;
-    }
+    return orientation() == Vertical ? true : false;
   }
 
   Size Slider::GetPreferredSize () const
   {
-    Size prefer;
-
-    if (orientation() == Horizontal) {
-      prefer.set_width(200);
-      prefer.set_height(18);
-    } else {
-      prefer.set_width(18);
-      prefer.set_height(200);
-    }
-
-    return prefer;
+    if (orientation() == Horizontal)
+      return Size(200, 18);
+    else
+      return Size(18, 200);
   }
 
   void Slider::PerformOrientationUpdate (Orientation orientation)
@@ -129,9 +158,72 @@ namespace BlendInt {
   {
   }
 
+  void Slider::PerformSizeUpdate (const SizeUpdateRequest& request)
+  {
+    if (request.target() == this) {
+      set_size(*request.size());
+
+      vbo_.bind(0);
+      GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
+      if (orientation() == Horizontal) {
+        *(buf_p + 2) = (GLfloat)size().width();
+        *(buf_p + 6) = (GLfloat)size().width();
+      } else {
+        *(buf_p + 5) = (GLfloat)size().height();
+        *(buf_p + 7) = (GLfloat)size().height();
+      }
+      vbo_.unmap();
+      vbo_.reset();
+
+      RequestRedraw();
+    }
+
+    if (request.source() == this) {
+      ReportSizeUpdate(request);
+    }
+  }
+
   Response Slider::Draw (AbstractWindow* context)
   {
     // ----- draw line
+
+    AbstractWindow::shaders()->widget_outer_program()->use();
+    glBindVertexArray(vao_);
+
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                 1, AbstractWindow::theme()->regular().outline.data());
+
+    if (orientation() == Horizontal) {
+      glUniform2f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_OFFSET),
+                  0.f,
+                  size().height() / 2);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      glUniform2f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_OFFSET),
+                  0.f,
+                  size().height() / 2 - 1.f);
+      glUniform4f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_COLOR),
+                  1.f, 1.f, 1.f, 0.16f);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    } else {
+      glUniform2f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_OFFSET),
+                  size().width() / 2,
+                  0.f);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      glUniform2f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_OFFSET),
+                  size().width() / 2 + 1.f,
+                  0.f);
+      glUniform4f(AbstractWindow::shaders()->
+                  location(Shaders::WIDGET_OUTER_COLOR),
+                  1.f, 1.f, 1.f, 0.16f);
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
 
     /*
      glBindVertexArray(vao_);
@@ -158,8 +250,8 @@ namespace BlendInt {
      */
 
     // ----- end of draw line
-    float x = position().x();
-    float y = position().y();
+    float x = 0.f;
+    float y = 0.f;
 
     if (orientation() == Horizontal) {
       x += get_position();
@@ -190,7 +282,7 @@ namespace BlendInt {
       return Finish;
 
     } else {
-      if (CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
+      if (CursorOnSlideIcon(context->local_cursor_position())) {
 
         //m_slide_icon.set_highlight(true);
 
@@ -208,7 +300,7 @@ namespace BlendInt {
 
   Response Slider::PerformMousePress (AbstractWindow* context)
   {
-    if (CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
+    if (CursorOnSlideIcon(context->local_cursor_position())) {
       m_pressed = true;
       m_last_value = value();
       m_last_cursor = context->GetGlobalCursorPosition();
@@ -224,7 +316,7 @@ namespace BlendInt {
     if (m_pressed) {
       m_pressed = false;
 
-      if (CursorOnSlideIcon(context->GetGlobalCursorPosition())) {
+      if (CursorOnSlideIcon(context->local_cursor_position())) {
         fire_slider_released();
       }
 
@@ -232,39 +324,6 @@ namespace BlendInt {
     }
 
     return Finish;
-  }
-
-  void Slider::InitOnce ()
-  {
-    /*
-     glGenVertexArrays(1, &vao_);
-
-     glBindVertexArray(vao_);
-
-     m_line.reset(new GLArrayBuffer);
-     m_line->generate();
-     m_line->bind();
-
-     GLfloat vertices[4];
-
-     if(orientation() == Horizontal) {
-     vertices[0] = m_slide_icon.size().width() / 2;
-     vertices[1] = size().height() / 2;
-     vertices[2] = size().width() - m_slide_icon.size().width() / 2;
-     vertices[3] = vertices[1];
-     } else {
-     vertices[0] = size().width() / 2;
-     vertices[1] = m_slide_icon.size().height() / 2;
-     vertices[2] = vertices[0];
-     vertices[3] = size().height() - m_slide_icon.size().height() / 2;
-     }
-
-     m_line->set_data (sizeof(vertices), vertices);
-
-     m_line->reset();
-
-     glBindVertexArray(0);
-     */
   }
 
   int Slider::GetSpace ()

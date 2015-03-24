@@ -27,18 +27,18 @@
 
 namespace BlendInt {
 
-	TabHeader::TabHeader()
-	: AbstractWidget(),
-	  vao_(0)
-	{
-		set_size(320, 20);
+  TabHeader::TabHeader()
+    : AbstractWidget(),
+      vao_(0)
+  {
+    set_size(320, 20);
 
-		events()->connect(group_.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
-		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
-		events()->connect(group_.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+    events()->connect(group_.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
+    //events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
+    events()->connect(group_.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
 
-		// FIXME: cannot use the following line
-		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
+    // FIXME: cannot use the following line
+    //events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
@@ -61,30 +61,30 @@ namespace BlendInt {
     glBindVertexArray(0);
     vbo_.reset();
 
-	}
+  }
 
-	TabHeader::~TabHeader()
-	{
-	  glDeleteVertexArrays(1, &vao_);
-	}
+  TabHeader::~TabHeader()
+  {
+    glDeleteVertexArrays(1, &vao_);
+  }
 
-	bool TabHeader::AddButton (TabButton* button)
-	{
-		int x = GetLastPosition ();
-		int y = kBaseLine - 1;
-		int h = size().height();
+  bool TabHeader::AddButton (TabButton* button)
+  {
+    int x = GetLastPosition ();
+    int y = kBaseLine - 1;
+    int h = size().height();
 
-		if (PushBackSubView(button)) {
+    if (PushBackSubView(button)) {
 
-			if (button->IsExpandY()) {
-				ResizeSubView(button, button->size().width(), h);
-			} else {
+      if (button->IsExpandY()) {
+        ResizeSubView(button, button->size().width(), h);
+      } else {
 
-				if (button->size().height() > h) {
-					ResizeSubView(button, button->size().width(), h);
-				}
+        if (button->size().height() > h) {
+          ResizeSubView(button, button->size().width(), h);
+        }
 
-			}
+      }
 
       if (subview_count() == 1) {
         MoveSubViewTo(button, x, y);
@@ -96,17 +96,17 @@ namespace BlendInt {
         button->SetRoundType(RoundTopRight);
       }
 
-			group_.AddButton(button);
+      group_.AddButton(button);
 
-			if(group_.button_count() == 1) {
-				button->SetChecked(true);
-			}
+      if(group_.button_count() == 1) {
+        button->SetChecked(true);
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		return false;
-	}
+    return false;
+  }
 
   bool TabHeader::InsertButton (int index, TabButton* button)
   {
@@ -115,19 +115,19 @@ namespace BlendInt {
     return false;
   }
 
-	bool TabHeader::IsExpandX () const
-	{
-		return true;
-	}
+  bool TabHeader::IsExpandX () const
+  {
+    return true;
+  }
 
-	Size TabHeader::GetPreferredSize () const
-	{
-		if(subview_count() == 0) {
-		  return Size(320, Font::default_height());
-		} else {
-			Size tmp;
-			int w = kLeftPadding + kRightPadding;
-			int h = 0;
+  Size TabHeader::GetPreferredSize () const
+  {
+    if(subview_count() == 0) {
+      return Size(320, Font::default_height());
+    } else {
+      Size tmp;
+      int w = kLeftPadding + kRightPadding;
+      int h = 0;
 
       for (AbstractView* p = first(); p; p = next(p)) {
         tmp = p->GetPreferredSize();
@@ -135,19 +135,19 @@ namespace BlendInt {
         h = std::max(h, tmp.height());
       }
 
-			return Size(w, h);
-		}
-	}
+      return Size(w, h);
+    }
+  }
 
-	Response TabHeader::Draw (AbstractWindow* context)
-	{
-		return subview_count() ? Ignore : Finish;
-	}
+  Response TabHeader::Draw (AbstractWindow* context)
+  {
+    return subview_count() ? Ignore : Finish;
+  }
 
-	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
-	{
-		m_button_index_toggled.fire(index, toggled);
-	}
+  void TabHeader::OnButtonIndexToggled(int index, bool toggled)
+  {
+    m_button_index_toggled.fire(index, toggled);
+  }
 
   void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
   {
@@ -180,14 +180,14 @@ namespace BlendInt {
 
     AbstractWindow::shaders()->widget_inner_program()->use();
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        0);
+                AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+                0);
 
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+                AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        baseline_color.data());
+                 AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                 baseline_color.data());
 
     glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -195,15 +195,15 @@ namespace BlendInt {
     return AbstractWidget::PostDraw(context);
   }
 
-	int TabHeader::GetLastPosition() const
-	{
-		int x = kLeftPadding;
+  int TabHeader::GetLastPosition() const
+  {
+    int x = kLeftPadding;
 
-		if(subview_count()) {
-			x = last()->position().x()+ last()->size().width();
-		}
+    if(subview_count()) {
+      x = last()->position().x()+ last()->size().width();
+    }
 
-		return x;
-	}
+    return x;
+  }
 
 }
