@@ -94,33 +94,17 @@ namespace BlendInt {
 
   bool ScrollBar::IsExpandX () const
   {
-    if (orientation() == Horizontal) {
-      return true;
-    } else {
-      return false;
-    }
-
+    return (orientation() == Horizontal) ? true : false;
   }
 
   bool ScrollBar::IsExpandY () const
   {
-    if (orientation() == Vertical) {
-      return true;
-    } else {
-      return false;
-    }
+    return (orientation() == Vertical) ? true : false;
   }
 
   Size ScrollBar::GetPreferredSize () const
   {
-    Size prefer(14, 14);
-    if (orientation() == Horizontal) {
-      prefer.set_width(200);
-    } else {
-      prefer.set_height(200);
-    }
-
-    return prefer;
+    return (orientation() == Horizontal) ? Size(200, 14) : Size(14, 200);
   }
 
   void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
