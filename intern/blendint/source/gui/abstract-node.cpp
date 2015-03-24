@@ -127,8 +127,6 @@ namespace BlendInt {
 
   bool AbstractNode::PreDraw (AbstractWindow* context)
   {
-    if (!visiable()) return false;
-
     Point offset = GetOffset();
 
     glm::mat3 matrix = glm::translate(
@@ -637,7 +635,7 @@ namespace BlendInt {
             p = parent->GetPreviousSubView(p)) {
 
           if (is_widget(p)) {
-            if (p->visiable() && p->Contain(context->local_cursor_position())) {
+            if (p->Contain(context->local_cursor_position())) {
               result = dynamic_cast<AbstractWidget*>(p);
 
               dispatch_mouse_hover_in(result, context);
@@ -665,11 +663,11 @@ namespace BlendInt {
         context->local_cursor_position().x() - position().x() - offset.x(),
         context->local_cursor_position().y() - position().y() - offset.y());
 
-    for (AbstractView* p = last(); p; p = previous(p)) {
+    for (AbstractView* p = GetLastSubView(); p; p = GetPreviousSubView(p)) {
 
       if (is_widget(p)) {
         result = dynamic_cast<AbstractWidget*>(p);
-        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+        if (p->Contain(context->local_cursor_position())) {
           dispatch_mouse_hover_in(result, context);
           break;
         }
@@ -697,10 +695,11 @@ namespace BlendInt {
         context->local_cursor_position().y() - widget->position().y()
             - offset.y());
 
-    for (AbstractView* p = widget->GetLastSubView(); p; p = widget->GetPreviousSubView(p)) {
+    for (AbstractView* p = widget->GetLastSubView(); p;
+        p = widget->GetPreviousSubView(p)) {
 
       if (is_widget(p)) {
-        if (p->visiable() && p->Contain(context->local_cursor_position())) {
+        if (p->Contain(context->local_cursor_position())) {
           retval = dynamic_cast<AbstractWidget*>(p);
           dispatch_mouse_hover_in(retval, context);
           retval = RecursiveDispatchHoverEvent(retval, context);
@@ -719,11 +718,9 @@ namespace BlendInt {
   void AbstractNode::OnFocusedWidgetDestroyed (AbstractWidget* widget)
   {
     DBG_ASSERT(focused_widget_ == widget);
-
-    //set_widget_focus_status(widget, false);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-    widget->destroyed().disconnectOne(
-        this, &AbstractNode::OnFocusedWidgetDestroyed);
+    widget->destroyed().disconnectOne(this,
+                                      &AbstractNode::OnFocusedWidgetDestroyed);
 
     focused_widget_ = 0;
   }
@@ -731,7 +728,6 @@ namespace BlendInt {
   void AbstractNode::OnHoverWidgetDestroyed (AbstractWidget* widget)
   {
     DBG_ASSERT(hovered_widget_ == widget);
-
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
     widget->destroyed().disconnectOne(this,
                                       &AbstractNode::OnHoverWidgetDestroyed);

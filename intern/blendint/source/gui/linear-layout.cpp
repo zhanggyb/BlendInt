@@ -153,44 +153,38 @@ namespace BlendInt {
 
 	Size BlendInt::LinearLayout::GetPreferredSize () const
 	{
-		if(subview_count() == 0) {
-			return Size(200, 200);
-		}
+    if (subview_count() == 0) {
+      return Size(200, 200);
+    }
 
-		int w = 0;
-		int h = 0;
+    int w = 0;
+    int h = 0;
 
-		Size tmp;
+    Size tmp;
 
-		if(orientation_ == Horizontal) {
-			w = -space_;
-			for(AbstractView* p = first(); p; p = next(p))
-			{
-				if(p->visiable()) {
-					tmp = p->GetPreferredSize();
+    if (orientation_ == Horizontal) {
+      w = -space_;
+      for (AbstractView* p = first(); p; p = next(p)) {
+        tmp = p->GetPreferredSize();
 
-					w += (tmp.width() + space_);
-					h = std::max(h, tmp.height());
-				}
-			}
+        w += (tmp.width() + space_);
+        h = std::max(h, tmp.height());
+      }
 
-			w += pixel_size(margin().hsum());
-			h += pixel_size(margin().vsum());
-		} else {
-			h = -space_;
-			for(AbstractView* p = first(); p; p = next(p))
-			{
-				if(p->visiable()) {
-					tmp = p->GetPreferredSize();
+      w += pixel_size(margin().hsum());
+      h += pixel_size(margin().vsum());
+    } else {
+      h = -space_;
+      for (AbstractView* p = first(); p; p = next(p)) {
+        tmp = p->GetPreferredSize();
 
-					w = std::max(w, tmp.width());
-					h += (tmp.height() + space_);
-				}
-			}
+        w = std::max(w, tmp.width());
+        h += (tmp.height() + space_);
+      }
 
-			w += pixel_size(margin().hsum());
-			h += pixel_size(margin().vsum());
-		}
+      w += pixel_size(margin().hsum());
+      h += pixel_size(margin().vsum());
+    }
 
 		return Size(w, h);
 	}

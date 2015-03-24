@@ -131,13 +131,11 @@ namespace BlendInt {
       int sum = 0;
 
       for (AbstractView* p = first(); p; p = next(p)) {
-        if (p->visiable()) {
-          sum++;
-          tmp = p->GetPreferredSize();
+        sum++;
+        tmp = p->GetPreferredSize();
 
-          max_width = std::max(max_width, tmp.width());
-          max_height = std::max(max_height, tmp.height());
-        }
+        max_width = std::max(max_width, tmp.width());
+        max_height = std::max(max_height, tmp.height());
       }
 
       if (orientation_ == Horizontal) {

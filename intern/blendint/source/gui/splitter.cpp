@@ -174,7 +174,7 @@ namespace BlendInt {
 
           std::vector<GLfloat> vertices(8, 0.f);
 
-           vertices[2] = 1.f;
+          vertices[2] = 1.f;
           //vertices[3] = 0.f;
 
           //vertices[4] = 0.f;
@@ -210,10 +210,12 @@ namespace BlendInt {
 
     if (highlight_) {
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 25);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+          25);
     } else {
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+          0);
     }
 
     float x = 0.f;
@@ -231,7 +233,8 @@ namespace BlendInt {
       while (y > 0.f) {
 
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            AbstractWindow::shaders()->location(
+                Shaders::WIDGET_TRIANGLE_POSITION),
             x, y);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -243,7 +246,8 @@ namespace BlendInt {
       while (y > 0.f) {
 
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            AbstractWindow::shaders()->location(
+                Shaders::WIDGET_TRIANGLE_POSITION),
             x, y);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -260,7 +264,8 @@ namespace BlendInt {
       while (x < (size().width())) {
 
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            AbstractWindow::shaders()->location(
+                Shaders::WIDGET_TRIANGLE_POSITION),
             x, y);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -272,7 +277,8 @@ namespace BlendInt {
       while (x < (size().width())) {
 
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+            AbstractWindow::shaders()->location(
+                Shaders::WIDGET_TRIANGLE_POSITION),
             x, y);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -346,10 +352,9 @@ namespace BlendInt {
 
         splitter->MoveSubViewTo(this, last_.x(), last_.y() + offset);
 
-        splitter->ResizeSubView(previous(this),
-                                previous(this)->size().width(), oy1);
-        splitter->MoveSubViewTo(previous(this),
-                                previous(this)->position().x(),
+        splitter->ResizeSubView(previous(this), previous(this)->size().width(),
+                                oy1);
+        splitter->MoveSubViewTo(previous(this), previous(this)->position().x(),
                                 nearby_pos_ + offset);
         splitter->ResizeSubView(next(this), next(this)->size().width(), oy2);
 
@@ -380,7 +385,7 @@ namespace BlendInt {
   }
 
   Splitter::Splitter (Orientation orientation)
-  : AbstractWidget(), orientation_(orientation)
+      : AbstractWidget(), orientation_(orientation)
   {
     set_size(400, 400);
   }
@@ -493,21 +498,17 @@ namespace BlendInt {
 
       if (orientation_ == Horizontal) {
         for (AbstractView* p = first(); p; p = next(p)) {
-          if (p->visiable()) {
-            tmp = p->GetPreferredSize();
-            preferred_size.add_width(tmp.width());
-            preferred_size.set_height(
-                std::max(preferred_size.height(), tmp.height()));
-          }
+          tmp = p->GetPreferredSize();
+          preferred_size.add_width(tmp.width());
+          preferred_size.set_height(
+              std::max(preferred_size.height(), tmp.height()));
         }
       } else {
         for (AbstractView* p = first(); p; p = next(p)) {
-          if (p->visiable()) {
-            tmp = p->GetPreferredSize();
-            preferred_size.add_height(tmp.height());
-            preferred_size.set_width(
-                std::max(preferred_size.width(), tmp.width()));
-          }
+          tmp = p->GetPreferredSize();
+          preferred_size.add_height(tmp.height());
+          preferred_size.set_width(
+              std::max(preferred_size.width(), tmp.width()));
         }
       }
 
@@ -624,7 +625,7 @@ namespace BlendInt {
     }
   }
 
-  Response Splitter::Draw(AbstractWindow* context)
+  Response Splitter::Draw (AbstractWindow* context)
   {
     return subview_count() ? Ignore : Finish;
   }
@@ -727,25 +728,19 @@ namespace BlendInt {
     for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
-        if (p->visiable()) {
-
-          if (p->IsExpandX()) {
-            expandable_width_sum += p->size().width();
-            expandable_widths->push_back(p->size().width());
-          } else {
-            unexpandable_width_sum += p->size().width();
-            unexpandable_widths->push_back(p->size().width());
-          }
-
+        if (p->IsExpandX()) {
+          expandable_width_sum += p->size().width();
+          expandable_widths->push_back(p->size().width());
+        } else {
+          unexpandable_width_sum += p->size().width();
+          unexpandable_widths->push_back(p->size().width());
         }
 
       } else {	// handlers
 
-        if (p->visiable()) {
-          prefer_width = p->GetPreferredSize().width();
-          handler_prefer_widths->push_back(prefer_width);
-          handlers_width_sum += prefer_width;
-        }
+        prefer_width = p->GetPreferredSize().width();
+        handler_prefer_widths->push_back(prefer_width);
+        handlers_width_sum += prefer_width;
 
       }
 
@@ -812,25 +807,19 @@ namespace BlendInt {
     for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
-        if (p->visiable()) {
-
-          if (p->IsExpandY()) {
-            expandable_height_sum += p->size().height();
-            expandable_heights->push_back(p->size().height());
-          } else {
-            unexpandable_height_sum += p->size().height();
-            unexpandable_heights->push_back(p->size().height());
-          }
-
+        if (p->IsExpandY()) {
+          expandable_height_sum += p->size().height();
+          expandable_heights->push_back(p->size().height());
+        } else {
+          unexpandable_height_sum += p->size().height();
+          unexpandable_heights->push_back(p->size().height());
         }
 
       } else {	// handlers
 
-        if (p->visiable()) {
-          prefer_height = p->GetPreferredSize().height();
-          handler_prefer_heights->push_back(prefer_height);
-          handlers_height_sum += prefer_height;
-        }
+        prefer_height = p->GetPreferredSize().height();
+        handler_prefer_heights->push_back(prefer_height);
+        handlers_height_sum += prefer_height;
 
       }
 

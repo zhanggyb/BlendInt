@@ -128,24 +128,20 @@ namespace BlendInt {
 			w = -space_;
 			for(AbstractView* p = first(); p; p = next(p))
 			{
-				if(p->visiable()) {
-					tmp = p->GetPreferredSize();
+			  tmp = p->GetPreferredSize();
 
-					w += (tmp.width() + space_);
-					h = std::max(h, tmp.height());
-				}
+			  w += (tmp.width() + space_);
+			  h = std::max(h, tmp.height());
 			}
 
 		} else {
 			h = -space_;
 			for(AbstractView* p = first(); p; p = next(p))
 			{
-				if(p->visiable()) {
-					tmp = p->GetPreferredSize();
+			  tmp = p->GetPreferredSize();
 
-					w = std::max(w, tmp.width());
-					h += (tmp.height() + space_);
-				}
+			  w = std::max(w, tmp.width());
+			  h += (tmp.height() + space_);
 			}
 		}
 

@@ -129,14 +129,11 @@ namespace BlendInt {
 			int w = kLeftPadding + kRightPadding;
 			int h = 0;
 
-			for(AbstractView* p = first(); p; p = next(p))
-			{
-				if(p->visiable()) {
-					tmp = p->GetPreferredSize();
-					w += tmp.width();
-					h = std::max(h, tmp.height());
-				}
-			}
+      for (AbstractView* p = first(); p; p = next(p)) {
+        tmp = p->GetPreferredSize();
+        w += tmp.width();
+        h = std::max(h, tmp.height());
+      }
 
 			return Size(w, h);
 		}

@@ -292,8 +292,6 @@ namespace BlendInt {
 
 	bool ImageViewport::PreDraw(AbstractWindow* context)
 	{
-		if(!visiable()) return false;
-
 		DeclareActiveFrame(context, this);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());

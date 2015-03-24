@@ -73,26 +73,25 @@ namespace BlendInt {
 		destroyed_->fire(this);
 	}
 
-	bool AbstractWidget::PreDraw(AbstractWindow* context)
-	{
-		if(!visiable()) return false;
-
-		//glm::mat4 model;
-		//AbstractWindow::shaders()->GetUIModelMatrix(model);
+  bool AbstractWidget::PreDraw (AbstractWindow* context)
+  {
+    //glm::mat4 model;
+    //AbstractWindow::shaders()->GetUIModelMatrix(model);
 
 //		Point pos = GetGlobalPosition();
 
-		Point offset = GetOffset();
+    Point offset = GetOffset();
 
-		glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
-				glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
+    glm::mat3 matrix = glm::translate(
+        AbstractWindow::shaders()->widget_model_matrix(),
+        glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 //		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
 
-		AbstractWindow::shaders()->PushWidgetModelMatrix();
-		AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+    AbstractWindow::shaders()->PushWidgetModelMatrix();
+    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
-		return true;
-	}
+    return true;
+  }
 
 	void AbstractWidget::PostDraw(AbstractWindow* context)
 	{

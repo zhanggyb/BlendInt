@@ -441,8 +441,6 @@ namespace BlendInt {
 
   bool CVImageView::PreDraw (AbstractWindow* context)
   {
-    if (!visiable()) return false;
-
     Point offset = GetOffset();
     glm::mat3 matrix = glm::translate(
         AbstractWindow::shaders()->widget_model_matrix(),

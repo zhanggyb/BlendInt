@@ -87,6 +87,18 @@ namespace BlendInt {
 
     const String& GetTitle () const;
 
+    virtual AbstractView* GetFirstSubView () const final;
+
+    virtual AbstractView* GetLastSubView () const final;
+
+    virtual AbstractView* GetNextSubView (const AbstractView* view) const final;
+
+    virtual AbstractView* GetPreviousSubView (const AbstractView* view) const final;
+
+    virtual int GetSubViewCount () const final;
+
+    virtual bool IsSubViewActive (const AbstractView* subview) const final;
+
     virtual bool IsExpandX () const;
 
     virtual bool IsExpandY () const;
@@ -120,6 +132,8 @@ namespace BlendInt {
     int alignment_;
 
     int space_;
+
+    bool expand_; // expand status
 
   };
 

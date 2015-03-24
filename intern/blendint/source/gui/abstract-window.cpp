@@ -66,7 +66,6 @@ namespace BlendInt {
 
     set_size(640, 480);
     set_refresh(true);
-    set_visible (flags & WindowVisibleMask);
 
     events_.reset(new Cpp::ConnectionScope);
 
@@ -86,7 +85,6 @@ namespace BlendInt {
     set_view_type(ViewTypeWindow);
 
     set_refresh(true);
-    set_visible (flags & WindowVisibleMask);
 
     events_.reset(new Cpp::ConnectionScope);
 

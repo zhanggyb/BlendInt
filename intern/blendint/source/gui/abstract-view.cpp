@@ -105,7 +105,7 @@ namespace BlendInt {
 
   AbstractView::AbstractView ()
   : Object(),
-    view_flag_(ViewManageMask | ViewVisibleMask),
+    view_flag_(ViewManageMask),
     subview_count_(0),
     super_(0),
     previous_(0),
@@ -117,7 +117,7 @@ namespace BlendInt {
 
   AbstractView::AbstractView (int width, int height)
   : Object(),
-    view_flag_(ViewManageMask | ViewVisibleMask),
+    view_flag_(ViewManageMask),
     subview_count_(0),
     super_(0),
     previous_(0),
@@ -241,26 +241,6 @@ namespace BlendInt {
     }
   }
 
-  void AbstractView::SetVisible (bool visible)
-  {
-    if (this->visiable() == visible) return;
-
-    VisibilityUpdateRequest request(this, this, &visible);
-
-    if (super_) {
-      if (super_->VisibilityUpdateTest(request)
-          && VisibilityUpdateTest(request)) {
-        PerformVisibilityUpdate(request);
-        set_visible(visible);
-      }
-    } else {
-      if (VisibilityUpdateTest(request)) {
-        PerformVisibilityUpdate(request);
-        set_visible(visible);
-      }
-    }
-  }
-
   void AbstractView::RequestRedraw ()
   {
     if (!refresh()) {
@@ -280,7 +260,7 @@ namespace BlendInt {
       if (id == AbstractWindow::main_thread_id()) {
 
         set_refresh(true);
-        while (p && (!p->refresh()) && (p->visiable())) {
+        while (p && (!p->refresh())) {
           root = p;
           p->set_refresh(true);
           p = p->super();
@@ -292,7 +272,7 @@ namespace BlendInt {
         set_refresh(true);
         kRefreshMutex.unlock();
 
-        while (p && (!p->refresh()) && (p->visiable())) {
+        while (p && (!p->refresh())) {
           root = p;
           kRefreshMutex.lock();
           p->set_refresh(true);
@@ -979,22 +959,6 @@ namespace BlendInt {
     }
   }
 
-  bool AbstractView::VisibilityUpdateTest (const VisibilityUpdateRequest& request)
-  {
-    return true;
-  }
-
-  void AbstractView::PerformVisibilityUpdate (const VisibilityUpdateRequest& request)
-  {
-    if (request.target() == this) {
-      set_visible(*request.visibility());
-    }
-
-    if (request.source() == this) {
-      ReportVisibilityRequest(request);
-    }
-  }
-
   void AbstractView::ReportSizeUpdate (const SizeUpdateRequest& request)
   {
     if (super_) {
@@ -1006,14 +970,6 @@ namespace BlendInt {
   {
     if (super_) {
       super_->PerformPositionUpdate(request);
-    }
-  }
-
-  void AbstractView::ReportVisibilityRequest (const VisibilityUpdateRequest& request)
-  {
-
-    if (super_) {
-      super_->PerformVisibilityUpdate(request);
     }
   }
 
@@ -2421,21 +2377,6 @@ namespace BlendInt {
       sub->set_position(pos);
     }
   }
-
-  void AbstractView::SetSubViewVisibility (AbstractView* sub, bool visible)
-  {
-    if (!sub || sub->super() != this) return;
-
-    if (sub->visiable() == visible) return;
-
-    VisibilityUpdateRequest request(this, sub, &visible);
-
-    if (sub->VisibilityUpdateTest(request)) {
-      sub->PerformVisibilityUpdate(request);
-      sub->set_visible(visible);
-    }
-  }
-
 
   Response AbstractView::RecursiveDispatchKeyEvent (AbstractView* subview,
                                                      AbstractWindow* context)

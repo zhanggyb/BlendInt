@@ -65,7 +65,7 @@ namespace BlendInt {
 
   bool AbstractRoundFrame::PreDraw (AbstractWindow* context)
   {
-    return visiable();
+    return true;
   }
 
   Response AbstractRoundFrame::Draw (AbstractWindow* context)

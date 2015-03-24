@@ -381,7 +381,7 @@ namespace BlendInt {
 
   bool Workspace::PreDraw (AbstractWindow* context)
   {
-    return visiable();
+    return true;
   }
 
   Response Workspace::Draw (AbstractWindow* context)

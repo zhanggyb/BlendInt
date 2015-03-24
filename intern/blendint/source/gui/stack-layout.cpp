@@ -45,9 +45,6 @@ namespace BlendInt {
 
       if (subview_count() == 1) {
         active_widget_ = widget;
-        active_widget_->SetVisible(true);
-      } else {
-        widget->SetVisible(false);
       }
 
       return true;
@@ -64,8 +61,6 @@ namespace BlendInt {
 
       ResizeSubView(widget, w, h);
       MoveSubViewTo(widget, margin().left(), margin().bottom());
-
-      widget->SetVisible(false);
 
       RequestRedraw();
       return true;
@@ -85,9 +80,6 @@ namespace BlendInt {
 
       if (subview_count() == 1) {
         active_widget_ = widget;
-        active_widget_->SetVisible(true);
-      } else {
-        widget->SetVisible(false);
       }
 
       RequestRedraw();
@@ -112,7 +104,6 @@ namespace BlendInt {
           active_widget_ = 0;
         } else {
           active_widget_ = dynamic_cast<AbstractWidget*>(first());
-          active_widget_->SetVisible(true);
         }
 
       }
@@ -151,9 +142,7 @@ namespace BlendInt {
         return;
       }
 
-      active_widget_->SetVisible(false);
       active_widget_ = dynamic_cast<AbstractWidget*>(widget);
-      active_widget_->SetVisible(true);
     }
   }
 
@@ -265,14 +254,6 @@ namespace BlendInt {
   {
     DBG_ASSERT(subview && subview->super() == this);
     return subview == active_widget_ ? true : false;
-  }
-
-  void BlendInt::StackLayout::HideSubWidget (int index)
-  {
-    if (subview_count() && index < (subview_count() - 1)) {
-      AbstractView* p = GetSubViewAt(index);
-      p->SetVisible(false);
-    }
   }
 
 }

@@ -353,8 +353,6 @@ namespace BlendInt {
 
   bool NodeView::PreDraw (AbstractWindow* context)
   {
-    if (!visiable()) return false;
-
     glm::mat3 matrix = glm::translate(
         AbstractWindow::shaders()->widget_model_matrix(),
         glm::vec2(position().x(), position().y()));

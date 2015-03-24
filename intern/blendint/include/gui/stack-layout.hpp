@@ -80,8 +80,6 @@ namespace BlendInt {
 
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-    void HideSubWidget (int index);
-
   private:
 
     AbstractWidget* active_widget_;

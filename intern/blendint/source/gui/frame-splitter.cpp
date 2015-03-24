@@ -407,21 +407,17 @@ namespace BlendInt {
 
       if (orientation_ == Horizontal) {
         for (AbstractView* p = first(); p; p = next(p)) {
-          if (p->visiable()) {
-            tmp = p->GetPreferredSize();
-            preferred_size.add_width(tmp.width());
-            preferred_size.set_height(
-                std::max(preferred_size.height(), tmp.height()));
-          }
+          tmp = p->GetPreferredSize();
+          preferred_size.add_width(tmp.width());
+          preferred_size.set_height(
+              std::max(preferred_size.height(), tmp.height()));
         }
       } else {
         for (AbstractView* p = first(); p; p = next(p)) {
-          if (p->visiable()) {
-            tmp = p->GetPreferredSize();
-            preferred_size.add_height(tmp.height());
-            preferred_size.set_width(
-                std::max(preferred_size.width(), tmp.width()));
-          }
+          tmp = p->GetPreferredSize();
+          preferred_size.add_height(tmp.height());
+          preferred_size.set_width(
+              std::max(preferred_size.width(), tmp.width()));
         }
       }
 
@@ -463,7 +459,7 @@ namespace BlendInt {
 
   bool FrameSplitter::PreDraw (AbstractWindow* context)
   {
-    return visiable();
+    return true;
   }
 
   Response FrameSplitter::Draw (AbstractWindow* context)
@@ -984,25 +980,19 @@ namespace BlendInt {
     for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
-        if (p->visiable()) {
-
-          if (p->IsExpandX()) {
-            expandable_width_sum += p->size().width();
-            expandable_widths->push_back(p->size().width());
-          } else {
-            unexpandable_width_sum += p->size().width();
-            unexpandable_widths->push_back(p->size().width());
-          }
-
+        if (p->IsExpandX()) {
+          expandable_width_sum += p->size().width();
+          expandable_widths->push_back(p->size().width());
+        } else {
+          unexpandable_width_sum += p->size().width();
+          unexpandable_widths->push_back(p->size().width());
         }
 
       } else {	// handlers
 
-        if (p->visiable()) {
-          prefer_width = p->GetPreferredSize().width();
-          handler_prefer_widths->push_back(prefer_width);
-          handlers_width_sum += prefer_width;
-        }
+        prefer_width = p->GetPreferredSize().width();
+        handler_prefer_widths->push_back(prefer_width);
+        handlers_width_sum += prefer_width;
 
       }
 
@@ -1169,25 +1159,19 @@ namespace BlendInt {
     for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
-        if (p->visiable()) {
-
-          if (p->IsExpandY()) {
-            expandable_height_sum += p->size().height();
-            expandable_heights->push_back(p->size().height());
-          } else {
-            unexpandable_height_sum += p->size().height();
-            unexpandable_heights->push_back(p->size().height());
-          }
-
+        if (p->IsExpandY()) {
+          expandable_height_sum += p->size().height();
+          expandable_heights->push_back(p->size().height());
+        } else {
+          unexpandable_height_sum += p->size().height();
+          unexpandable_heights->push_back(p->size().height());
         }
 
       } else {	// handlers
 
-        if (p->visiable()) {
-          prefer_height = p->GetPreferredSize().height();
-          handler_prefer_heights->push_back(prefer_height);
-          handlers_height_sum += prefer_height;
-        }
+        prefer_height = p->GetPreferredSize().height();
+        handler_prefer_heights->push_back(prefer_height);
+        handlers_height_sum += prefer_height;
 
       }
 

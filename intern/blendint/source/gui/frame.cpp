@@ -161,8 +161,6 @@ namespace BlendInt {
 
   bool Frame::PreDraw (AbstractWindow* context)
   {
-    if (!visiable()) return false;
-
     DeclareActiveFrame(context, this);
 
     if (refresh() && view_buffer()) {

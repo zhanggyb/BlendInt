@@ -156,13 +156,13 @@ namespace BlendInt {
 		Size header_size = header->GetPreferredSize();
 
 		if(header_size.height() > h) {
-			header->SetVisible(false);
-			stack->SetVisible(false);
+		  //header->SetVisible(false);
+			//stack->SetVisible(false);
 
 			return;
 		} else {
-			header->SetVisible(true);
-			stack->SetVisible(true);
+			//header->SetVisible(true);
+			//stack->SetVisible(true);
 		}
 
 		header_y = header_y - header_size.height();

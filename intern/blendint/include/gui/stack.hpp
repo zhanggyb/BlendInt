@@ -63,7 +63,7 @@ namespace BlendInt {
 
     virtual int GetSubViewCount () const final;
 
-    virtual bool IsSubViewActive (const AbstractView* subview) const;
+    virtual bool IsSubViewActive (const AbstractView* subview) const final;
 
     inline AbstractWidget* active_widget () const
     {
@@ -75,8 +75,6 @@ namespace BlendInt {
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
 
     virtual Response Draw (AbstractWindow* context) override;
-
-    void HideSubWidget (int index);
 
   private:
 

@@ -148,8 +148,6 @@ namespace BlendInt {
 
   bool AbstractViewport::PreDraw (AbstractWindow* context)
   {
-    if (!visiable()) return false;
-
     DeclareActiveFrame(context, this);
 
     // draw outline

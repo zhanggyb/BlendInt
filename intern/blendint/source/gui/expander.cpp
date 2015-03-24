@@ -143,7 +143,8 @@ namespace BlendInt {
 	  last_size_(0),
 	  orientation_(orient),
 	  alignment_(align),
-	  space_(space)
+	  space_(space),
+	  expand_(true)
 	{
 	  title_ = Manage(new ExpandButton(title));
 
@@ -226,6 +227,52 @@ namespace BlendInt {
     return false;
   }
 
+  AbstractView* Expander::GetFirstSubView () const
+  {
+    return title_;
+  }
+
+  AbstractView* Expander::GetLastSubView () const
+  {
+    if (expand_)
+      return layout_;
+    else
+      return title_;
+  }
+
+  AbstractView* Expander::GetNextSubView (const AbstractView* view) const
+  {
+    if (expand_) {
+      return next(view);
+    } else {
+      return 0;
+    }
+  }
+
+  AbstractView* Expander::GetPreviousSubView (const AbstractView* view) const
+  {
+    if (expand_) {
+      return previous(view);
+    } else {
+      return 0;
+    }
+  }
+
+  int Expander::GetSubViewCount () const
+  {
+    return expand_ ? subview_count() : 1; // 2 or 1
+  }
+
+  bool Expander::IsSubViewActive (const AbstractView* subview) const
+  {
+    DBG_ASSERT(subview && subview->super() == this);
+    if (expand_) {
+      return true;
+    } else {
+      return subview == title_ ? true : false;
+    }
+  }
+
 	Size Expander::GetPreferredSize() const
 	{
 		int w = 0;
@@ -236,29 +283,24 @@ namespace BlendInt {
 
 		if(orientation_ == Horizontal) {
 
-      for(AbstractView* p = first(); p; p = next(p))
+      for(AbstractView* p = GetFirstSubView(); p; p = GetNextSubView(p))
       {
-        if(p->visiable()) {
-          tmp = p->GetPreferredSize();
-          w += tmp.width();
-          h = std::max(h, tmp.height());
-          count++;
-        }
+        tmp = p->GetPreferredSize();
+        w += tmp.width();
+        h = std::max(h, tmp.height());
+        count++;
       }
 
       h += (count * space_);
 
 		} else {
 
-	    for(AbstractView* p = first(); p; p = next(p))
-	    {
-	      if(p->visiable()) {
-	        tmp = p->GetPreferredSize();
-	        w = std::max(w, tmp.width());
-	        h += tmp.height();
-	        count++;
-	      }
-	    }
+      for (AbstractView* p = GetFirstSubView(); p; p = GetNextSubView(p)) {
+        tmp = p->GetPreferredSize();
+        w = std::max(w, tmp.width());
+        h += tmp.height();
+        count++;
+      }
 
 	    h += (count * space_);
 
@@ -318,8 +360,6 @@ namespace BlendInt {
 	void Expander::FillWidgets()
 	{
 	  if(size().width() <= 0 || size().height() <= 0) {
-	    SetSubViewVisibility(title_, false);
-	    SetSubViewVisibility(layout_, false);
 	    return;
 	  }
 
@@ -333,7 +373,7 @@ namespace BlendInt {
 
       title_size_hint = title_->GetPreferredSize().width();
 
-      if (layout_->visiable()) {
+      if (expand_) {
 
         if (title_size_hint < width) {
 
@@ -363,7 +403,7 @@ namespace BlendInt {
 
       title_size_hint = title_->GetPreferredSize().height();
 
-      if (layout_->visiable()) {
+      if (expand_) {
 
         if (title_size_hint < height) {
 
@@ -411,7 +451,7 @@ namespace BlendInt {
 
     button_preferred_height = title_->GetPreferredSize().height();
 
-    if (layout_->visiable()) {
+    if (expand_) {
 
       if (button_preferred_height < height) {
 
@@ -454,13 +494,13 @@ namespace BlendInt {
   {
     if (toggle) {
 
+      expand_ = false;
       last_size_ = layout_->size().height();
-      SetSubViewVisibility(layout_, false);
       Resize(size().width(), title_->size().height());
 
     } else {
 
-      SetSubViewVisibility(layout_, true);
+      expand_ = true;
       Resize(size().width(), title_->size().height() + space_ + last_size_);
 
     }

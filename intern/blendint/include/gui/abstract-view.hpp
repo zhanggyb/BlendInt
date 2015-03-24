@@ -46,13 +46,11 @@ namespace BlendInt {
 
     ViewManageMask = 0x1 << 0,
 
-    ViewVisibleMask = 0x1 << 1,
+    ViewRefreshMask = 0x1 << 1,
 
-    ViewRefreshMask = 0x1 << 2,
+    ViewDestroyingMask = 0x1 << 2,
 
-    ViewDestroyingMask = 0x1 << 3,
-
-    ViewTypeMask = 0x07 << 4
+    ViewTypeMask = 0x07 << 3
 
   };
 
@@ -60,13 +58,13 @@ namespace BlendInt {
 
     ViewTypeUndefined = 0x0,
 
-    ViewTypeWindow = (ViewTypeUndefined + 1) << 4,  // 0x10
+    ViewTypeWindow = (ViewTypeUndefined + 1) << 3,  // 0x08
 
-    ViewTypeFrame = (ViewTypeUndefined + 2) << 4,   // 0x11
+    ViewTypeFrame = (ViewTypeUndefined + 2) << 3,   // 0x10
 
-    ViewTypeWidget = (ViewTypeUndefined + 3) << 4,  // 0x12
+    ViewTypeWidget = (ViewTypeUndefined + 3) << 3,  // 0x18
 
-    ViewTypeNode = (ViewTypeUndefined + 4) << 4     // 0x13
+    ViewTypeNode = (ViewTypeUndefined + 4) << 3     // 0x20
 
   };
 
@@ -187,39 +185,6 @@ namespace BlendInt {
     const Point* m_position;
   };
 
-  class VisibilityUpdateRequest: public GeometryUpdateRequest
-  {
-  public:
-
-    VisibilityUpdateRequest (AbstractView* source, AbstractView* target)
-        : GeometryUpdateRequest(source, target), m_visibility(0)
-    {
-
-    }
-
-    VisibilityUpdateRequest (AbstractView* source,
-                             AbstractView* target,
-                             const bool* visibility)
-        : GeometryUpdateRequest(source, target), m_visibility(visibility)
-    {
-
-    }
-
-    const bool* visibility () const
-    {
-      return m_visibility;
-    }
-
-    void set_visibility (const bool* visibility)
-    {
-      m_visibility = visibility;
-    }
-
-  private:
-
-    const bool* m_visibility;
-  };
-
   // ----------------------------------------------------
 
   /**
@@ -294,8 +259,6 @@ namespace BlendInt {
 
     void MoveTo (const Point& pos);
 
-    void SetVisible (bool visible);
-
     void RequestRedraw ();
 
     AbstractView* operator [] (int i) const;
@@ -336,11 +299,6 @@ namespace BlendInt {
     inline const Size& size () const
     {
       return size_;
-    }
-
-    inline bool visiable () const
-    {
-      return view_flag_ & ViewVisibleMask;
     }
 
     inline bool managed () const
@@ -494,14 +452,6 @@ namespace BlendInt {
       return subview_count_;
     }
 
-    inline void set_visible (bool visiable)
-    {
-      if (visiable)
-        SETBIT(view_flag_, ViewVisibleMask);
-      else
-        CLRBIT(view_flag_, ViewVisibleMask);
-    }
-
     inline void set_refresh (bool refresh)
     {
       if (refresh)
@@ -540,13 +490,9 @@ namespace BlendInt {
 
     virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-    virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
-
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
     virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-    virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
     bool PushFrontSubView (AbstractView* view);
 
@@ -566,8 +512,6 @@ namespace BlendInt {
 
     void ReportPositionUpdate (const PositionUpdateRequest& request);
 
-    void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
-
     void ResizeSubView (AbstractView* sub, int width, int height);
 
     void ResizeSubView (AbstractView* sub, const Size& size);
@@ -575,8 +519,6 @@ namespace BlendInt {
     void MoveSubViewTo (AbstractView* sub, int x, int y);
 
     void MoveSubViewTo (AbstractView* sub, const Point& pos);
-
-    void SetSubViewVisibility (AbstractView* sub, bool visible);
 
     Response RecursiveDispatchKeyEvent (AbstractView* view,
                                         AbstractWindow* context);
