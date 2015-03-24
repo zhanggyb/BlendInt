@@ -494,13 +494,13 @@ namespace BlendInt {
 
     virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-    bool PushFrontSubView (AbstractView* view);
+    AbstractView* PushFrontSubView (AbstractView* view);
 
-    bool InsertSubView (int index, AbstractView* view);
+    AbstractView* InsertSubView (int index, AbstractView* view);
 
-    bool PushBackSubView (AbstractView* view);
+    AbstractView* PushBackSubView (AbstractView* view);
 
-    virtual bool RemoveSubView (AbstractView* view);
+    virtual AbstractView* RemoveSubView (AbstractView* view);
 
     virtual void PerformAfterAdded ();
 

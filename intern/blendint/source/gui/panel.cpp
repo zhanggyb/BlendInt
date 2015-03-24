@@ -301,7 +301,7 @@ namespace BlendInt {
     return retval;
   }
 
-  bool Panel::RemoveSubView(AbstractView* view)
+  AbstractView* Panel::RemoveSubView(AbstractView* view)
   {
     DBG_PRINT_MSG("%s", "Remove layout");
 

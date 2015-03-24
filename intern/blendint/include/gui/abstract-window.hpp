@@ -284,7 +284,7 @@ namespace BlendInt {
 
     virtual Response PerformMouseMove (AbstractWindow* context);
 
-    virtual bool RemoveSubView (AbstractView* view);
+    virtual AbstractView* RemoveSubView (AbstractView* view);
 
     void DispatchMouseHover ();
 

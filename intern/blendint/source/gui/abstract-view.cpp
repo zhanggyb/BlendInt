@@ -2073,16 +2073,16 @@ namespace BlendInt {
                      color_scheme.shadedown, inner, outer);
   }
 
-  bool AbstractView::PushFrontSubView (AbstractView* view)
+  AbstractView* AbstractView::PushFrontSubView (AbstractView* view)
   {
-    if (!view) return false;
+    if (!view) return 0;
 
     if (view->super_) {
 
       if (view->super_ == this) {
         DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
                       view->name_.c_str(), view->super_->name().c_str());
-        return true;
+        return view;
       } else {
         // Set widget's container to 0
         view->super_->RemoveSubView(view);
@@ -2110,19 +2110,19 @@ namespace BlendInt {
 
     view->PerformAfterAdded();
 
-    return true;
+    return view;
   }
 
-  bool AbstractView::InsertSubView (int index, AbstractView* view)
+  AbstractView* AbstractView::InsertSubView (int index, AbstractView* view)
   {
-    if (!view) return false;
+    if (!view) return 0;
 
     if (view->super_) {
 
       if (view->super_ == this) {
         DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
                       view->name_.c_str(), view->super_->name().c_str());
-        return true;
+        return view;
       } else {
         // Set widget's container to 0
         view->super_->RemoveSubView(view);
@@ -2188,19 +2188,19 @@ namespace BlendInt {
 
     view->PerformAfterAdded();
 
-    return true;
+    return view;
   }
 
-  bool AbstractView::PushBackSubView (AbstractView* view)
+  AbstractView* AbstractView::PushBackSubView (AbstractView* view)
   {
-    if (!view) return false;
+    if (!view) return 0;
 
     if (view->super_) {
 
       if (view->super_ == this) {
         DBG_PRINT_MSG("AbstractRoundWidget %s is already in container %s",
                       view->name_.c_str(), view->super_->name().c_str());
-        return true;
+        return view;
       } else {
         // Set widget's container to 0
         view->super_->RemoveSubView(view);
@@ -2229,12 +2229,12 @@ namespace BlendInt {
     view->PerformAfterAdded();
     DBG_ASSERT(view->super_ == this);
 
-    return true;
+    return view;
   }
 
-  bool AbstractView::RemoveSubView (AbstractView* view)
+  AbstractView* AbstractView::RemoveSubView (AbstractView* view)
   {
-    if (!view) return false;
+    if (!view) return 0;
 
     DBG_ASSERT(view->super_ == this);
     view->PerformBeforeRemoved();
@@ -2261,7 +2261,7 @@ namespace BlendInt {
     view->next_ = 0;
     view->super_ = 0;
 
-    return true;
+    return view;
   }
 
   void AbstractView::PerformAfterAdded ()

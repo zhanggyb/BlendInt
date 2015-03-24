@@ -560,7 +560,7 @@ namespace BlendInt {
     return response;
   }
 
-  bool AbstractWindow::RemoveSubView (AbstractView* view)
+  AbstractView* AbstractWindow::RemoveSubView (AbstractView* view)
   {
     AbstractFrame* frame = dynamic_cast<AbstractFrame*>(view);
     if (frame->floating()) {

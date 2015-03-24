@@ -521,7 +521,7 @@ namespace BlendInt {
     }
   }
 
-  bool Workspace::RemoveSubView (AbstractView* view)
+  AbstractView* Workspace::RemoveSubView (AbstractView* view)
   {
     if (view == left_frame_) {
       left_frame_ = nullptr;

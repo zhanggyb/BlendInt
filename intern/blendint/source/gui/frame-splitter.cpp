@@ -1384,7 +1384,7 @@ namespace BlendInt {
     }
   }
 
-  bool FrameSplitter::RemoveSubView (AbstractView* view)
+  AbstractView* FrameSplitter::RemoveSubView (AbstractView* view)
   {
     DBG_PRINT_MSG("%s", "Remove sub frame");
 

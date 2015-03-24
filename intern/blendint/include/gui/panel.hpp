@@ -64,7 +64,7 @@ namespace BlendInt {
 
     virtual Response Draw (AbstractWindow* context);
 
-    virtual bool RemoveSubView (AbstractView* view);
+    virtual AbstractView* RemoveSubView (AbstractView* view);
 
   private:
 
