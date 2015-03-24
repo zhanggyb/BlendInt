@@ -42,7 +42,7 @@ namespace BlendInt {
       ResizeSubView(widget, size());
       MoveSubViewTo(widget, 0, 0);
 
-      if (subs_count() == 1) {
+      if (subview_count() == 1) {
         active_widget_ = widget;
         active_widget_->SetVisible(true);
       } else {
@@ -70,10 +70,10 @@ namespace BlendInt {
 
       if (active_widget_ == widget) {
 
-        if (subs_count() == 0) {
+        if (subview_count() == 0) {
           active_widget_ = 0;
         } else {
-          active_widget_ = dynamic_cast<AbstractWidget*>(first_subview());
+          active_widget_ = dynamic_cast<AbstractWidget*>(first());
           active_widget_->SetVisible(true);
         }
 
@@ -87,7 +87,7 @@ namespace BlendInt {
   {
     int index = 0;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p == active_widget_) {
         break;
       }
@@ -95,14 +95,14 @@ namespace BlendInt {
       index++;
     }
 
-    if (index >= subs_count()) index = -1;
+    if (index >= subview_count()) index = -1;
 
     return index;
   }
 
   void Stack::SetIndex (int index)
   {
-    int count = subs_count();
+    int count = subview_count();
 
     if ((index < 0) || (index > (count - 1))) return;
 
@@ -123,7 +123,7 @@ namespace BlendInt {
   {
     bool ret = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandX()) {
         ret = true;
         break;
@@ -137,7 +137,7 @@ namespace BlendInt {
   {
     bool ret = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandY()) {
         ret = true;
         break;
@@ -149,13 +149,13 @@ namespace BlendInt {
 
   Size Stack::GetPreferredSize () const
   {
-    if (subs_count()) {
+    if (subview_count()) {
 
       int w = 0;
       int h = 0;
 
       Size tmp;
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         tmp = p->GetPreferredSize();
         w = std::max(w, tmp.width());
         h = std::max(h, tmp.height());
@@ -195,7 +195,7 @@ namespace BlendInt {
 
   bool Stack::IsSubViewActive (const AbstractView* subview) const
   {
-    DBG_ASSERT(subview && subview->superview() == this);
+    DBG_ASSERT(subview && subview->super() == this);
     return subview == active_widget_ ? true : false;
   }
 
@@ -203,7 +203,7 @@ namespace BlendInt {
   {
     if (request.target() == this) {
       set_size(*request.size());
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         ResizeSubView(p, size());
       }
     }
@@ -215,12 +215,12 @@ namespace BlendInt {
 
   Response Stack::Draw (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   void BlendInt::Stack::HideSubWidget (int index)
   {
-    if (subs_count() && index < (subs_count() - 1)) {
+    if (subview_count() && index < (subview_count() - 1)) {
       AbstractView* p = GetSubViewAt(index);
       p->SetVisible(false);
     }

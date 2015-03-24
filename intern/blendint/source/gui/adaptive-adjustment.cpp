@@ -51,7 +51,7 @@ namespace BlendInt {
 	{
 		Size tmp;
 
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view()) {
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p)) {
 
 			tmp = p->GetPreferredSize();
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 		Size tmp;
 
 		y += h;
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view()) {
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p)) {
 
 			tmp = p->GetPreferredSize();
 

@@ -118,7 +118,7 @@ namespace BlendInt {
 
     } else {
 
-      int index = subs_count() - floating_frame_count_ - 1;
+      int index = subview_count() - floating_frame_count_ - 1;
 
       if (index < 0) {	// no normal frame
 
@@ -173,14 +173,14 @@ namespace BlendInt {
     }
 
     // if frame is not the root frame in this window, find and switch to it
-    if (frame->superview_ != this) {
+    if (frame->super_ != this) {
 
       AbstractView* root_frame = frame;
-      AbstractView* window = root_frame->superview_;
+      AbstractView* window = root_frame->super_;
 
-      while (window->superview_ != nullptr) {
-        root_frame = root_frame->superview_;
-        window = root_frame->superview_;
+      while (window->super_ != nullptr) {
+        root_frame = root_frame->super_;
+        window = root_frame->super_;
       }
 
       if (window != this) {
@@ -208,7 +208,7 @@ namespace BlendInt {
 
     }
 
-    int index = subs_count() - floating_frame_count_ - 1;
+    int index = subview_count() - floating_frame_count_ - 1;
 
     if (index < 0) return false;	// no normal frame
 
@@ -325,13 +325,13 @@ namespace BlendInt {
     AbstractFrame* frame = 0;
     Point pos = widget->position();
 
-    AbstractView* p = widget->superview();
+    AbstractView* p = widget->super();
     while (p && (p != this)) {
       frame = dynamic_cast<AbstractFrame*>(p);
       if (frame) break;
 
       pos = pos + p->position() + p->GetOffset();
-      p = p->superview();
+      p = p->super();
     }
 
     pos = pos + frame->position() + frame->GetOffset();
@@ -347,14 +347,14 @@ namespace BlendInt {
     AbstractFrame* frame = 0;
     Point pos = widget->position();
 
-    AbstractView* p = widget->superview();
+    AbstractView* p = widget->super();
     while (p && (p != this)) {
 
       frame = dynamic_cast<AbstractFrame*>(p);
       if (frame) break;
 
       pos = pos + p->position() + p->GetOffset();
-      p = p->superview();
+      p = p->super();
     }
 
     return pos;
@@ -362,13 +362,13 @@ namespace BlendInt {
 
   AbstractWindow* AbstractWindow::GetWindow (AbstractView* view)
   {
-    AbstractView* parent = view->superview();
+    AbstractView* parent = view->super();
 
     if (parent == 0)
       return dynamic_cast<AbstractWindow*>(view);
 
-    while (parent->superview()) {
-      parent = parent->superview();
+    while (parent->super()) {
+      parent = parent->super();
     }
 
     return dynamic_cast<AbstractWindow*>(parent);
@@ -452,7 +452,7 @@ namespace BlendInt {
 
   Response AbstractWindow::Draw (AbstractWindow* context)
   {
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       p->PreDraw(context);
       p->Draw(context);
       p->set_refresh(this->refresh());
@@ -487,7 +487,7 @@ namespace BlendInt {
     Response response = Ignore;
     active_frame_ = 0;
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = p->PerformKeyPress(context);
       if (response == Finish) break;
     }
@@ -497,12 +497,12 @@ namespace BlendInt {
 
   Response AbstractWindow::PerformContextMenuPress (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   Response AbstractWindow::PerformContextMenuRelease (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   Response AbstractWindow::PerformMousePress (AbstractWindow* context)
@@ -511,7 +511,7 @@ namespace BlendInt {
     active_frame_ = 0;
     pressed_ = true;
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = p->PerformMousePress(context);
       if (response == Finish) {
         break;
@@ -527,7 +527,7 @@ namespace BlendInt {
     active_frame_ = 0;
     pressed_ = false;
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = p->PerformMouseRelease(context);
       if (response == Finish) {
         break;
@@ -544,7 +544,7 @@ namespace BlendInt {
     active_frame_ = 0;
     if (pressed_) {
 
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
         response = p->PerformMouseMove(context);
         if (response == Finish) {
           break;
@@ -572,11 +572,11 @@ namespace BlendInt {
 
     if (frame == focused_frame_) {
 
-      AbstractView* prev = frame->previous_view_;
+      AbstractView* prev = frame->previous_;
       AbstractFrame* previous_frame = dynamic_cast<AbstractFrame*>(prev);
 
       while ((prev != nullptr) && (!previous_frame->focusable())) {
-        prev = prev->previous_view_;
+        prev = prev->previous_;
         previous_frame = dynamic_cast<AbstractFrame*>(prev);
       }
 
@@ -721,7 +721,7 @@ namespace BlendInt {
 
       active_frame_ = 0;
       Response response = Ignore;
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
         response = dynamic_cast<AbstractFrame*>(p)->PerformMouseHover(this);
         if (response == Finish) break;
       }

@@ -59,15 +59,15 @@ namespace BlendInt {
 
   AbstractFrame::~AbstractFrame ()
   {
-    if (subs_count() > 0) {
+    if (subview_count() > 0) {
       ClearSubViews();
     } else {
-      DBG_ASSERT(subs_count_ == 0);
-      DBG_ASSERT(first_subview_ == 0);
-      DBG_ASSERT(last_subview_ == 0);
+      DBG_ASSERT(subview_count_ == 0);
+      DBG_ASSERT(first_ == 0);
+      DBG_ASSERT(last_ == 0);
     }
 
-    if (superview_) superview_->RemoveSubView(this);
+    if (super_) super_->RemoveSubView(this);
 
     destroyed_->fire(this);
   }
@@ -81,11 +81,11 @@ namespace BlendInt {
 
     Point pos = view->position();
     AbstractFrame* frame = 0;
-    AbstractView* parent = view->superview();
+    AbstractView* parent = view->super();
 
     while (parent && (!is_frame(parent))) {
       pos = pos + parent->position() + parent->GetOffset();
-      parent = parent->superview();
+      parent = parent->super();
     }
 
     frame = dynamic_cast<AbstractFrame*>(parent);
@@ -109,11 +109,11 @@ namespace BlendInt {
 
     Point pos = view->position();
     AbstractFrame* frame = 0;
-    AbstractView* parent = view->superview();
+    AbstractView* parent = view->super();
 
     while (parent && (!is_frame(parent))) {
       pos = pos + parent->position() + parent->GetOffset();
-      parent = parent->superview();
+      parent = parent->super();
     }
 
     frame = dynamic_cast<AbstractFrame*>(parent);
@@ -154,13 +154,13 @@ namespace BlendInt {
   {
     if (is_frame(view)) return dynamic_cast<AbstractFrame*>(view);
 
-    AbstractView* parent = view->superview();
+    AbstractView* parent = view->super();
 
     if (parent == 0)
       return is_frame(view) ? dynamic_cast<AbstractFrame*>(view) : 0;
 
     while (parent && (!is_frame(parent))) {
-      parent = parent->superview();
+      parent = parent->super();
     }
 
     return dynamic_cast<AbstractFrame*>(parent);
@@ -168,12 +168,12 @@ namespace BlendInt {
 
   Response AbstractFrame::PerformContextMenuPress (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   Response AbstractFrame::PerformContextMenuRelease (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   AbstractWidget* AbstractFrame::DispatchMouseHover (AbstractWidget* orig,
@@ -184,11 +184,11 @@ namespace BlendInt {
     // find the new top hovered widget
     if (orig != nullptr) {
 
-      if (orig->superview() == 0) { // the widget is just removed from this frame
+      if (orig->super() == 0) { // the widget is just removed from this frame
         return FindWidgetUnderCursor(context);
       }
 
-      if (orig->superview() == this) {
+      if (orig->super() == this) {
         return RecheckSubWidgetUnderCursor(orig, context);
       }
 
@@ -230,7 +230,7 @@ namespace BlendInt {
   AbstractWidget* AbstractFrame::RecheckSubWidgetUnderCursor (AbstractWidget* orig,
                                                                      AbstractWindow* context)
   {
-    DBG_ASSERT(orig->superview() == this);
+    DBG_ASSERT(orig->super() == this);
 
     AbstractWidget* result = orig;
     Rect rect(position(), size());
@@ -265,15 +265,15 @@ namespace BlendInt {
                                                            AbstractWindow* context)
   {
     DBG_ASSERT(orig);
-    DBG_ASSERT(orig->superview() && orig->superview() != this);
+    DBG_ASSERT(orig->super() && orig->super() != this);
 
     AbstractWidget* result = orig;
-    AbstractView* parent = result->superview();
+    AbstractView* parent = result->super();
     Point offset;
 
     Rect rect(
-        GetAbsolutePosition(dynamic_cast<AbstractWidget*>(orig->superview())),
-        orig->superview()->size());
+        GetAbsolutePosition(dynamic_cast<AbstractWidget*>(orig->super())),
+        orig->super()->size());
 
     bool cursor_in_superview = rect.contains(
         context->GetGlobalCursorPosition());
@@ -308,7 +308,7 @@ namespace BlendInt {
 
           if (parent->Contain(context->local_cursor_position())) break;
 
-          parent = parent->superview();
+          parent = parent->super();
         }
 
         result = dynamic_cast<AbstractWidget*>(parent);
@@ -324,7 +324,7 @@ namespace BlendInt {
       dispatch_mouse_hover_out(result, context);
 
       // find which contianer contains cursor position
-      parent = parent->superview();
+      parent = parent->super();
       while (parent != nullptr) {
 
         if (parent == this) {
@@ -348,7 +348,7 @@ namespace BlendInt {
 
         if (rect.contains(context->GetGlobalCursorPosition())) break;
 
-        parent = parent->superview();
+        parent = parent->super();
       }
 
       result = dynamic_cast<AbstractWidget*>(parent);
@@ -417,7 +417,7 @@ namespace BlendInt {
 
     while (hovered_widget && (hovered_widget != this)) {
       hovered_widget->PerformHoverOut(context);
-      hovered_widget = hovered_widget->superview();
+      hovered_widget = hovered_widget->super();
     }
   }
 

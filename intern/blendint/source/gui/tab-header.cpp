@@ -86,12 +86,12 @@ namespace BlendInt {
 
 			}
 
-      if (subs_count() == 1) {
+      if (subview_count() == 1) {
         MoveSubViewTo(button, x, y);
         button->SetRoundType(RoundTopLeft | RoundTopRight);
       } else {
         MoveSubViewTo(button, x - 1, y);
-        TabButton* orig_last = dynamic_cast<TabButton*>(button->previous_view());
+        TabButton* orig_last = dynamic_cast<TabButton*>(previous(button));
         orig_last->SetRoundType(orig_last->round_type() & ~RoundTopRight);
         button->SetRoundType(RoundTopRight);
       }
@@ -122,14 +122,14 @@ namespace BlendInt {
 
 	Size TabHeader::GetPreferredSize () const
 	{
-		if(subs_count() == 0) {
+		if(subview_count() == 0) {
 		  return Size(320, Font::default_height());
 		} else {
 			Size tmp;
 			int w = kLeftPadding + kRightPadding;
 			int h = 0;
 
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			for(AbstractView* p = first(); p; p = next(p))
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -144,7 +144,7 @@ namespace BlendInt {
 
 	Response TabHeader::Draw (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
@@ -202,8 +202,8 @@ namespace BlendInt {
 	{
 		int x = kLeftPadding;
 
-		if(subs_count()) {
-			x = last_subview()->position().x()+ last_subview()->size().width();
+		if(subview_count()) {
+			x = last()->position().x()+ last()->size().width();
 		}
 
 		return x;

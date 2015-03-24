@@ -137,7 +137,7 @@ namespace BlendInt {
 
     inline int widget_count () const
     {
-      return subs_count() / 2 + 1;
+      return subview_count() / 2 + 1;
     }
 
   protected:

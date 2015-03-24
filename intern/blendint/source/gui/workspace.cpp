@@ -267,7 +267,7 @@ namespace BlendInt {
   {
     if (header_frame_) {
 
-      if (first_subview() == header_frame_) {
+      if (first() == header_frame_) {
 
         MoveToLast(header_frame_);
 
@@ -291,7 +291,7 @@ namespace BlendInt {
 
   bool Workspace::IsExpandX () const
   {
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandX()) return true;
     }
 
@@ -300,7 +300,7 @@ namespace BlendInt {
 
   bool Workspace::IsExpandY () const
   {
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandY()) return true;
     }
 
@@ -311,11 +311,11 @@ namespace BlendInt {
   {
     Size prefer;
 
-    if (subs_count() == 0) {
+    if (subview_count() == 0) {
       prefer.reset(500, 400);
     } else {
       Size tmp;
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         tmp = p->GetPreferredSize();
         prefer.set_width(std::max(prefer.width(), tmp.width()));
         prefer.set_height(prefer.height() + tmp.height());
@@ -333,7 +333,7 @@ namespace BlendInt {
 
       set_position(*request.position());
 
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         MoveSubViewTo(p, p->position().x() + ox, p->position().y() + oy);
       }
 
@@ -358,7 +358,7 @@ namespace BlendInt {
         ResizeSubView(splitter_, size().width(),
                       size().height() - header_frame_->size().height());
 
-        if (first_subview() == header_frame_) {
+        if (first() == header_frame_) {
           MoveSubViewTo(splitter_, position());
           MoveSubViewTo(header_frame_, position().x(),
                         position().y() + splitter_->size().height());
@@ -388,7 +388,7 @@ namespace BlendInt {
   {
     DrawSubViewsOnce(context);
 
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   void Workspace::PostDraw (AbstractWindow* context)
@@ -436,7 +436,7 @@ namespace BlendInt {
 
     pressed_ = true;
 
-    if(context == superview()) context->SetFocusedFrame(this);
+    if(context == super()) context->SetFocusedFrame(this);
 
     if (hover_frame_ != nullptr) {
       response = dispatch_mouse_press(hover_frame_, context);
@@ -552,7 +552,7 @@ namespace BlendInt {
       if (!hover_frame_->Contain(context->GetGlobalCursorPosition())) {
 
         hover_frame_ = nullptr;
-        for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        for (AbstractView* p = last(); p; p = previous(p)) {
           if (p->Contain(context->GetGlobalCursorPosition())) {
             hover_frame_ = dynamic_cast<AbstractFrame*>(p);
             break;
@@ -562,7 +562,7 @@ namespace BlendInt {
       }
     } else {
 
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
         if (p->Contain(context->GetGlobalCursorPosition())) {
           hover_frame_ = dynamic_cast<AbstractFrame*>(p);
           break;

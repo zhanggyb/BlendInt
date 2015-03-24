@@ -153,7 +153,7 @@ namespace BlendInt {
 
 	Size BlendInt::LinearLayout::GetPreferredSize () const
 	{
-		if(subs_count() == 0) {
+		if(subview_count() == 0) {
 			return Size(200, 200);
 		}
 
@@ -164,7 +164,7 @@ namespace BlendInt {
 
 		if(orientation_ == Horizontal) {
 			w = -space_;
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			for(AbstractView* p = first(); p; p = next(p))
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -178,7 +178,7 @@ namespace BlendInt {
 			h += pixel_size(margin().vsum());
 		} else {
 			h = -space_;
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			for(AbstractView* p = first(); p; p = next(p))
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -199,7 +199,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		for(AbstractView* p = first(); p; p = next(p))
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -214,7 +214,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		for(AbstractView* p = first(); p; p = next(p))
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -229,7 +229,7 @@ namespace BlendInt {
 	{
 		set_margin(request);
 
-		if(subs_count()) {
+		if(subview_count()) {
 			Adjust();
 			RequestRedraw();
 		}
@@ -238,7 +238,7 @@ namespace BlendInt {
 	bool LinearLayout::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->superview() == this) {
+		if(request.source()->super() == this) {
 			return false;
 		}
 
@@ -248,7 +248,7 @@ namespace BlendInt {
 	bool LinearLayout::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->superview() == this) {
+		if(request.source()->super() == this) {
 			return false;
 		}
 

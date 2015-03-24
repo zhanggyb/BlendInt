@@ -43,7 +43,7 @@ namespace BlendInt {
 
 	void Cell::SetWidget(AbstractWidget* widget)
 	{
-		if(subs_count()) {
+		if(subview_count()) {
 			ClearSubViews();
 			RequestRedraw();
 		}
@@ -55,20 +55,20 @@ namespace BlendInt {
 
 	bool Cell::IsExpandX () const
 	{
-		return subs_count() ? first_subview()->IsExpandX() : false;
+		return subview_count() ? first()->IsExpandX() : false;
 	}
 
 	bool Cell::IsExpandY () const
 	{
-		return subs_count() ? first_subview()->IsExpandY() : false;
+		return subview_count() ? first()->IsExpandY() : false;
 	}
 
 	Size Cell::GetPreferredSize () const
 	{
 		Size preferred_size(10, 10);
 
-		if(subs_count()) {
-			preferred_size = first_subview()->GetPreferredSize();
+		if(subview_count()) {
+			preferred_size = first()->GetPreferredSize();
 		}
 
 		return preferred_size;
@@ -80,8 +80,8 @@ namespace BlendInt {
 
 			set_size(*request.size());
 
-			if(subs_count()) {
-				ResizeSubView(first_subview(), size());
+			if(subview_count()) {
+				ResizeSubView(first(), size());
 				RequestRedraw();
 			}
 		}
@@ -93,7 +93,7 @@ namespace BlendInt {
 
 	Response Cell::Draw (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	// --------------------------------------
@@ -177,8 +177,8 @@ namespace BlendInt {
 	{
 		bool retval = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
-			if(p->subs_count() == 0) {
+		for(AbstractView* p = first(); p; p = next(p)) {
+			if(p->GetSubViewCount() == 0) {
 				Cell* cell = dynamic_cast<Cell*>(p);
 				DBG_ASSERT(cell);
 				cell->SetWidget(widget);
@@ -197,7 +197,7 @@ namespace BlendInt {
 
 	bool TableLayout::InsertWidget (int index, AbstractWidget* widget)
 	{
-		if(index < subs_count()) {
+		if(index < subview_count()) {
 			Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
 			DBG_ASSERT(cell);
 			cell->SetWidget(widget);
@@ -245,7 +245,7 @@ namespace BlendInt {
 
 	bool TableLayout::IsExpandX () const
 	{
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+		for(AbstractView* p = first(); p; p = next(p)) {
 			if(p->IsExpandX())
 				return true;
 		}
@@ -255,7 +255,7 @@ namespace BlendInt {
 
 	bool TableLayout::IsExpandY () const
 	{
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+		for(AbstractView* p = first(); p; p = next(p)) {
 			if(p->IsExpandY())
 				return true;
 		}
@@ -296,7 +296,7 @@ namespace BlendInt {
 		unsigned int j = 0;	// column
 		Size tmp;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view()) {
+		for(AbstractView* p = first(); p; p = next(p)) {
 
 			tmp = p->GetPreferredSize();
 			row_width += tmp.width();

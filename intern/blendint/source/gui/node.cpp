@@ -237,7 +237,7 @@ namespace BlendInt {
 
     context->icons()->end_point()->Draw(0, 20, Color(Color::Yellow).data());
 
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
 }

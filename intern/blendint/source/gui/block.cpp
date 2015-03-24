@@ -43,7 +43,7 @@ namespace BlendInt {
   void Block::AddWidget (AbstractRoundWidget* widget)
   {
     AbstractRoundWidget* orig_last =
-        dynamic_cast<AbstractRoundWidget*>(last_subview());
+        dynamic_cast<AbstractRoundWidget*>(last());
 
     if (PushBackSubView(widget)) {
 
@@ -87,7 +87,7 @@ namespace BlendInt {
   {
     bool expand = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandX()) {
         expand = true;
         break;
@@ -101,7 +101,7 @@ namespace BlendInt {
   {
     bool expand = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandY()) {
         expand = true;
         break;
@@ -115,7 +115,7 @@ namespace BlendInt {
   {
     Size preferred_size;
 
-    if (subs_count() == 0) {
+    if (subview_count() == 0) {
 
       if (orientation_ == Horizontal) {
         preferred_size.reset(100, 20);
@@ -130,7 +130,7 @@ namespace BlendInt {
       int max_height = 0;
       int sum = 0;
 
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         if (p->visiable()) {
           sum++;
           tmp = p->GetPreferredSize();
@@ -185,11 +185,11 @@ namespace BlendInt {
 
   void Block::FillInHBlock (int x, int y, int w, int h)
   {
-    int count = subs_count();
+    int count = subview_count();
     if (count == 0) return;
     int average_width = w / count + 1;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, average_width, h);
       MoveSubViewTo(p, x, y);
       x = x + average_width - 1;
@@ -208,17 +208,17 @@ namespace BlendInt {
 
   Response Block::Draw (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   void Block::FillInVBlock (int x, int y, int w, int h)
   {
-    int count = subs_count();
+    int count = subview_count();
     if (count == 0) return;
     int average_height = h / count + 1;
 
     y = y + h;
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, w, average_height);
       y = y - average_height + 1;
       MoveSubViewTo(p, x, y);

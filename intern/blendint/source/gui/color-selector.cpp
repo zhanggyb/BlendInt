@@ -181,7 +181,7 @@ namespace BlendInt {
       vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
       vbo_.reset();
 
-      ResizeSubView(first_subview(), size());
+      ResizeSubView(first(), size());
 
       RequestRedraw();
 

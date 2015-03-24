@@ -63,7 +63,7 @@ namespace BlendInt {
 		header->AddButton(btn);
 		stack->AddWidget(widget);
 
-		if(header->subs_count() == 1) {
+		if(header->GetSubViewCount() == 1) {
 			btn->SetChecked(true);
 		}
 	}
@@ -143,7 +143,7 @@ namespace BlendInt {
 
 	Response Tab::Draw (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)

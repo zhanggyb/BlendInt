@@ -297,7 +297,7 @@ namespace BlendInt {
   {
     if (cursor_position_ == InsideRectangle) {
 
-      if (context == superview()) context->SetFocusedFrame(this);
+      if (context == super()) context->SetFocusedFrame(this);
 
       DeclareActiveFrame(context, this);
       if (hovered_widget_) {

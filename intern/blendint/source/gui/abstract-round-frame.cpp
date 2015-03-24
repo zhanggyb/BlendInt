@@ -72,7 +72,7 @@ namespace BlendInt {
   {
     DrawSubViewsOnce(context);
 
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   void AbstractRoundFrame::PostDraw (AbstractWindow* context)

@@ -358,34 +358,9 @@ namespace BlendInt {
       return view_flag_ & ViewDestroyingMask;
     }
 
-    inline int subs_count () const
+    inline AbstractView* super () const
     {
-      return subs_count_;
-    }
-
-    inline AbstractView* superview () const
-    {
-      return superview_;
-    }
-
-    inline AbstractView* previous_view () const
-    {
-      return previous_view_;
-    }
-
-    inline AbstractView* next_view () const
-    {
-      return next_view_;
-    }
-
-    inline AbstractView* first_subview () const
-    {
-      return first_subview_;
-    }
-
-    inline AbstractView* last_subview () const
-    {
-      return last_subview_;
+      return super_;
     }
 
     /**
@@ -502,6 +477,21 @@ namespace BlendInt {
     inline void set_size (const Size& size)
     {
       size_ = size;
+    }
+
+    inline AbstractView* first () const
+    {
+      return first_;
+    }
+
+    inline AbstractView* last () const
+    {
+      return last_;
+    }
+
+    inline int subview_count () const
+    {
+      return subview_count_;
     }
 
     inline void set_visible (bool visiable)
@@ -679,29 +669,14 @@ namespace BlendInt {
       return kEmbossVertexTable[round_type & 0x0F];
     }
 
-    static inline AbstractView* first (const AbstractView* view)
-    {
-      return view->first_subview_;
-    }
-
-    static inline AbstractView* last (const AbstractView* view)
-    {
-      return view->last_subview_;
-    }
-
     static inline AbstractView* previous (const AbstractView* view)
     {
-      return view->previous_view_;
+      return view->previous_;
     }
 
     static inline AbstractView* next (const AbstractView* view)
     {
-      return view->next_view_;
-    }
-
-    static inline int subview_count (const AbstractView* view)
-    {
-      return view->subs_count_;
+      return view->next_;
     }
 
   private:
@@ -748,20 +723,20 @@ namespace BlendInt {
 
     int view_flag_;
 
-    int subs_count_;  // count of sub widgets
+    int subview_count_;  // count of sub views
 
-    AbstractView* superview_;
+    AbstractView* super_;
 
-    AbstractView* previous_view_;
+    AbstractView* previous_;
 
-    AbstractView* next_view_;
+    AbstractView* next_;
 
     /**
      * @brief The first sub view
      */
-    AbstractView* first_subview_;
+    AbstractView* first_;
 
-    AbstractView* last_subview_;
+    AbstractView* last_;
 
     Point position_;
 

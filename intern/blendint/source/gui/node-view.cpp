@@ -65,8 +65,8 @@ namespace BlendInt {
     if (PushBackSubView(node)) {
 
       if (win) {
-        if (node->previous_view()) {
-          dynamic_cast<AbstractNode*>(node->previous_view())->PerformFocusOff(
+        if (previous(node)) {
+          dynamic_cast<AbstractNode*>(previous(node))->PerformFocusOff(
               win);
         }
         node->PerformFocusOn(win);
@@ -87,9 +87,9 @@ namespace BlendInt {
 
       if (win) {
 
-        if (node->next_view() == 0) { // push back
-          if (node->previous_view()) {
-            dynamic_cast<AbstractNode*>(node->previous_view())->PerformFocusOff(
+        if (next(node) == 0) { // push back
+          if (previous(node)) {
+            dynamic_cast<AbstractNode*>(previous(node))->PerformFocusOff(
                 win);
           }
           node->PerformFocusOn(win);
@@ -123,9 +123,9 @@ namespace BlendInt {
   {
     if (node == 0) return;
 
-    if (last_subview() == node) return;
+    if (last() == node) return;
 
-    if (node->superview() == 0) {
+    if (node->super() == 0) {
       DBG_PRINT_MSG("%s", "the node is not in this view");
       return;
     }
@@ -133,15 +133,15 @@ namespace BlendInt {
     AbstractWindow* win = AbstractWindow::GetWindow(this);
 
     // if node is not the root node in this view, find and switch to it
-    if (node->superview() != this) {
+    if (node->super() != this) {
 
       AbstractView* tmp = node;
       NodeView* node_view = 0;
 
-      while (tmp->superview()) {
-        node_view = dynamic_cast<NodeView*>(tmp->superview());
+      while (tmp->super()) {
+        node_view = dynamic_cast<NodeView*>(tmp->super());
         if (node_view) break;
-        tmp = tmp->superview();
+        tmp = tmp->super();
       }
 
       if (node_view == 0) {
@@ -158,8 +158,8 @@ namespace BlendInt {
       if (node == 0) return;
     }
 
-    if (last_subview()) {
-      dynamic_cast<AbstractNode*>(last_subview())->PerformFocusOff(win);
+    if (last()) {
+      dynamic_cast<AbstractNode*>(last())->PerformFocusOff(win);
     }
 
     MoveToLast(node);
@@ -170,9 +170,9 @@ namespace BlendInt {
 
   NodeView* NodeView::GetNodeView (AbstractNode* node)
   {
-    AbstractView* parent = node->superview();
+    AbstractView* parent = node->super();
     while (parent && is_node(parent)) {
-      parent = parent->superview();
+      parent = parent->super();
     }
 
     return dynamic_cast<NodeView*>(parent);
@@ -283,7 +283,7 @@ namespace BlendInt {
   {
     Response response = Ignore;
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = dynamic_cast<AbstractNode*>(p)->PerformKeyPress(context);
        if (response == Finish) break;
     }
@@ -299,7 +299,7 @@ namespace BlendInt {
 
     Response response = Ignore;
     Point local_position = context->local_cursor_position();
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
       context->set_local_cursor_position(local_position);
       if (response == Finish) break;
@@ -316,7 +316,7 @@ namespace BlendInt {
 
     Response response = Ignore;
     Point local_position = context->local_cursor_position();
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
       response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
       context->set_local_cursor_position(local_position);
       if (response == Finish) {
@@ -337,7 +337,7 @@ namespace BlendInt {
       AbstractNode* node = 0;
       Point local_position = context->local_cursor_position();
 
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
         node = dynamic_cast<AbstractNode*>(p);
         response = node->PerformMouseMove(context);
         context->set_local_cursor_position(local_position);
@@ -387,7 +387,7 @@ namespace BlendInt {
   {
 //		curve_->Draw();
 
-    if (subs_count()) {
+    if (subview_count()) {
 
       Point offset = GetOffset();
 
@@ -407,7 +407,7 @@ namespace BlendInt {
 
   void NodeView::PostDraw (AbstractWindow* context)
   {
-    if (subs_count()) {
+    if (subview_count()) {
       AbstractWindow::shaders()->PopWidgetModelMatrix();
     }
 
@@ -429,7 +429,7 @@ namespace BlendInt {
 
       Response response = Ignore;
       Point local_position = context->local_cursor_position();
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
         response = dynamic_cast<AbstractNode*>(p)->PerformMouseHover(context);
         context->set_local_cursor_position(local_position);
         if (response == Finish) break;

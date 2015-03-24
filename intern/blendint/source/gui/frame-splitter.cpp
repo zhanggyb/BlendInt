@@ -193,7 +193,7 @@ namespace BlendInt {
   {
     if (pressed_) {
 
-      FrameSplitter* splitter = dynamic_cast<FrameSplitter*>(superview());
+      FrameSplitter* splitter = dynamic_cast<FrameSplitter*>(super());
       DBG_ASSERT(splitter);
 
       if (orientation_ == Horizontal) {
@@ -263,9 +263,9 @@ namespace BlendInt {
 
   bool FrameSplitter::AddFrame (AbstractFrame* frame, SizePolicy policy)
   {
-    if ((frame == 0) || (frame->superview() == this)) return false;
+    if ((frame == 0) || (frame->super() == this)) return false;
 
-    if (subs_count() == 0) {
+    if (subview_count() == 0) {
       PushBackSubView(frame);
       AlignSubFrames(orientation_, size());
     } else {
@@ -287,9 +287,9 @@ namespace BlendInt {
                                    AbstractFrame* frame,
                                    SizePolicy policy)
   {
-    if ((frame == 0) || (frame->superview() == this)) return false;
+    if ((frame == 0) || (frame->super() == this)) return false;
 
-    if (subs_count() == 0) {
+    if (subview_count() == 0) {
       PushBackSubView(frame);
       AlignSubFrames(orientation_, size());
     } else {
@@ -309,14 +309,14 @@ namespace BlendInt {
 
   int FrameSplitter::GetFrameIndex (AbstractFrame* frame) const
   {
-    if (frame->superview() != this) return -1;
+    if (frame->super() != this) return -1;
 
     int index = 0;
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p == frame) break;
 
       index++;
-      p = p->next_view()->next_view();
+      p = next(next(p));
     }
 
     return index;
@@ -324,15 +324,14 @@ namespace BlendInt {
 
   int FrameSplitter::GetHandleIndex (FrameSplitterHandle* handle) const
   {
-    if (handle->superview() != this) return -1;
+    if (handle->super() != this) return -1;
 
     int index = 0;
-    for (AbstractView* p = first_subview()->next_view(); p; p =
-        p->next_view()) {
+    for (AbstractView* p = next(first()); p; p = next(p)) {
       if (p == handle) break;
 
       index++;
-      p = p->next_view()->next_view();
+      p = next(next(p));
     }
 
     return index;
@@ -340,9 +339,9 @@ namespace BlendInt {
 
   AbstractFrame* FrameSplitter::GetFrame (int index) const
   {
-    if (subs_count() == 0) return 0;
+    if (subview_count() == 0) return 0;
 
-    int max = (subs_count() + 1) / 2;
+    int max = (subview_count() + 1) / 2;
     if (index > max) return 0;
 
     index = index * 2;
@@ -352,9 +351,9 @@ namespace BlendInt {
 
   FrameSplitterHandle* FrameSplitter::GetHandle (int index) const
   {
-    if (subs_count() <= 1) return 0;
+    if (subview_count() <= 1) return 0;
 
-    int max = (subs_count() - 1) / 2;
+    int max = (subview_count() - 1) / 2;
     if (index > max) return 0;
 
     index = index * 2 + 1;
@@ -364,7 +363,7 @@ namespace BlendInt {
 
   int FrameSplitter::GetFramesCount () const
   {
-    int sum = subs_count();
+    int sum = subview_count();
     return (sum / 2 + 1);
   }
 
@@ -372,7 +371,7 @@ namespace BlendInt {
   {
     bool expand = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandX()) {
         expand = true;
         break;
@@ -386,7 +385,7 @@ namespace BlendInt {
   {
     bool expand = false;
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandY()) {
         expand = true;
         break;
@@ -400,14 +399,14 @@ namespace BlendInt {
   {
     Size preferred_size;
 
-    if (first_subview() == 0) {
+    if (first() == 0) {
       preferred_size.set_width(400);
       preferred_size.set_height(400);
     } else {
       Size tmp;
 
       if (orientation_ == Horizontal) {
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           if (p->visiable()) {
             tmp = p->GetPreferredSize();
             preferred_size.add_width(tmp.width());
@@ -416,7 +415,7 @@ namespace BlendInt {
           }
         }
       } else {
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           if (p->visiable()) {
             tmp = p->GetPreferredSize();
             preferred_size.add_height(tmp.height());
@@ -439,7 +438,7 @@ namespace BlendInt {
 
       set_position(*request.position());
 
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         MoveSubViewTo(p, p->position().x() + ox, p->position().y() + oy);
       }
 
@@ -490,7 +489,7 @@ namespace BlendInt {
 
       int i = 0;
       int handler_width = 0;
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         if (i % 2 == 0) {
           ResizeSubView(p, room, h);
           MoveSubViewTo(p, x, y);
@@ -511,7 +510,7 @@ namespace BlendInt {
 
       int i = 0;
       int handler_height = 0;
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         if (i % 2 == 0) {
           y = y - room;
           ResizeSubView(p, w, room);
@@ -574,7 +573,7 @@ namespace BlendInt {
 
     if(cursor_position_ == InsideRectangle) {
 
-      if (context == superview()) context->SetFocusedFrame(this);
+      if (context == super()) context->SetFocusedFrame(this);
 
       pressed_ = true;
 
@@ -677,7 +676,7 @@ namespace BlendInt {
       retval = size.height();
     }
 
-    if (first_subview() == 0) {
+    if (first() == 0) {
       return retval;
     }
 
@@ -686,7 +685,7 @@ namespace BlendInt {
     int sum = 1;
 
     // get all the total width/height of splitter handlers
-    AbstractView* p = first_subview()->next_view();
+    AbstractView* p = next(first());
     while (p) {
       prefer = p->GetPreferredSize();
       if (orientation == Horizontal) {
@@ -695,7 +694,7 @@ namespace BlendInt {
         space = prefer.height();
       }
 
-      p = p->next_view()->next_view();
+      p = next(next(p));
       sum += 2;
     }
 
@@ -725,7 +724,7 @@ namespace BlendInt {
       }
       case ExpandX: {
         int w = 0;
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           w = p->GetPreferredSize().width();
         }
         frame_size.set_height(size().width() - handle->size().width() - w);
@@ -745,8 +744,8 @@ namespace BlendInt {
     } else {
       AlignSubFrames(orientation_, squeezed_size);
 
-      Point pos = last_subview()->position();
-      pos.set_x(pos.x() + last_subview()->size().width());
+      Point pos = last()->position();
+      pos.set_x(pos.x() + last()->size().width());
 
       PushBackSubView(handle);
       PushBackSubView(frame);
@@ -783,7 +782,7 @@ namespace BlendInt {
       }
       case ExpandY: {
         int h = 0;
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           h = p->GetPreferredSize().height();
         }
         frame_size.set_height(size().height() - handle->size().height() - h);
@@ -804,7 +803,7 @@ namespace BlendInt {
     } else {
       AlignSubFrames(orientation_, squeezed_size);
 
-      Point pos = last_subview()->position();
+      Point pos = last()->position();
 
       PushBackSubView(handle);
       PushBackSubView(frame);
@@ -844,7 +843,7 @@ namespace BlendInt {
       }
       case ExpandX: {
         int w = 0;
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           w = p->GetPreferredSize().width();
         }
         frame_size.set_height(size().width() - handle->size().width() - w);
@@ -861,7 +860,7 @@ namespace BlendInt {
 
       index = index * 2;
 
-      if (index > (subs_count() - 1)) {
+      if (index > (subview_count() - 1)) {
         // append
         InsertSubView(index, handle);
         InsertSubView(index + 1, frame);
@@ -876,7 +875,7 @@ namespace BlendInt {
 
       index = index * 2;
 
-      if (index > (subs_count() - 1)) {
+      if (index > (subview_count() - 1)) {
         // append
         InsertSubView(index, handle);
         InsertSubView(index + 1, frame);
@@ -916,7 +915,7 @@ namespace BlendInt {
       }
       case ExpandY: {
         int h = 0;
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           h = p->GetPreferredSize().height();
         }
         frame_size.set_height(size().height() - handle->size().height() - h);
@@ -934,7 +933,7 @@ namespace BlendInt {
 
       index = index * 2;
 
-      if (index > (subs_count() - 1)) {
+      if (index > (subview_count() - 1)) {
         // append
         InsertSubView(index, handle);
         InsertSubView(index + 1, frame);
@@ -949,7 +948,7 @@ namespace BlendInt {
 
       index = index * 2;
 
-      if (index > (subs_count() - 1)) {
+      if (index > (subview_count() - 1)) {
         // append
         InsertSubView(index, handle);
         InsertSubView(index + 1, frame);
@@ -982,7 +981,7 @@ namespace BlendInt {
 
     int prefer_width;
     int i = 0;
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
         if (p->visiable()) {
@@ -1061,7 +1060,7 @@ namespace BlendInt {
     int i = 0;
     std::deque<int>::iterator width_it = widget_deque->begin();
     std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         ResizeSubView(
@@ -1094,7 +1093,7 @@ namespace BlendInt {
     int i = 0;
     std::deque<int>::iterator exp_width_it = widget_deque->begin();
     std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         if (p->IsExpandX()) {
@@ -1127,7 +1126,7 @@ namespace BlendInt {
     int i = 0;
     std::deque<int>::iterator unexp_width_it = widget_deque->begin();
     std::deque<int>::iterator handler_width_it = prefer_deque->begin();
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         if (!p->IsExpandX()) {
@@ -1167,7 +1166,7 @@ namespace BlendInt {
 
     int prefer_height;
     int i = 0;
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {	// widgets
 
         if (p->visiable()) {
@@ -1249,7 +1248,7 @@ namespace BlendInt {
 
     y = y + size().height();
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         ResizeSubView(
@@ -1284,7 +1283,7 @@ namespace BlendInt {
     std::deque<int>::iterator handler_height_it = prefer_deque->begin();
     y = y + size().height();
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         if (p->IsExpandY()) {
@@ -1319,7 +1318,7 @@ namespace BlendInt {
     std::deque<int>::iterator handler_height_it = prefer_deque->begin();
     y = y + size().height();
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (i % 2 == 0) {
 
         if (!p->IsExpandY()) {
@@ -1347,7 +1346,7 @@ namespace BlendInt {
 
   void FrameSplitter::AlignHorizontally ()
   {
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, p->size().width(), size().height());
       MoveSubViewTo(p, p->position().x(), position().y());
     }
@@ -1358,7 +1357,7 @@ namespace BlendInt {
     int x = position().x();
     int y = position().y();
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, p->size().width(), size().height());
       MoveSubViewTo(p, x, y);
       x += p->size().width();
@@ -1367,7 +1366,7 @@ namespace BlendInt {
 
   void FrameSplitter::AlignVertically ()
   {
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, size().width(), p->size().height());
       MoveSubViewTo(p, position().x(), p->position().y());
     }
@@ -1378,7 +1377,7 @@ namespace BlendInt {
     int x = position().x();
     int y = position().y() + size().height();
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       ResizeSubView(p, size().width(), p->size().height());
 
       y = y - p->size().height();
@@ -1429,10 +1428,10 @@ namespace BlendInt {
         hover_frame_ = 0;
 
         // FrameSplitterHandle first:
-        for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        for (AbstractView* p = last(); p; p = previous(p)) {
 
-          if (!p->previous_view()) break;
-          p = p->previous_view();
+          if (!previous(p)) break;
+          p = previous(p);
 
           if (p->Contain(context->GetGlobalCursorPosition())) {
             hover_frame_ = dynamic_cast<AbstractFrame*>(p);
@@ -1443,13 +1442,13 @@ namespace BlendInt {
         // Then content frames:
 
         if (!hover_frame_) {
-          for (AbstractView* p = last_subview(); p;  p = p->previous_view()) {
+          for (AbstractView* p = last(); p;  p = previous(p)) {
             if (p->Contain(context->GetGlobalCursorPosition())) {
               hover_frame_ = dynamic_cast<AbstractFrame*>(p);
               break;
             }
 
-            if (p->previous_view()) p = p->previous_view();
+            if (previous(p)) p = previous(p);
             else break;
           }
         }
@@ -1459,10 +1458,10 @@ namespace BlendInt {
     } else {
 
       // FrameSplitterHandle first:
-      for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+      for (AbstractView* p = last(); p; p = previous(p)) {
 
-        if(!p->previous_view()) break;
-        p = p->previous_view();
+        if(!previous(p)) break;
+        p = previous(p);
 
         if (p->Contain(context->GetGlobalCursorPosition())) {
           hover_frame_ = dynamic_cast<AbstractFrame*>(p);
@@ -1473,13 +1472,13 @@ namespace BlendInt {
       // Then content frames:
 
       if (!hover_frame_) {
-        for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+        for (AbstractView* p = last(); p; p = previous(p)) {
           if (p->Contain(context->GetGlobalCursorPosition())) {
             hover_frame_ = dynamic_cast<AbstractFrame*>(p);
             break;
           }
 
-          if (p->previous_view()) p = p->previous_view();
+          if (previous(p)) p = previous(p);
           else break;
         }
       }

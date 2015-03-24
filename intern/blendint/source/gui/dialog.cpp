@@ -287,11 +287,11 @@ namespace BlendInt {
 
   void Dialog::OnCloseButtonClicked ()
   {
-    AbstractView* super = superview();
+    AbstractView* parent = super();
     //DBG_ASSERT(button == decoration_->close_button());
     delete this;
 
-    super->RequestRedraw();
+    parent->RequestRedraw();
   }
 
   void Dialog::OnApplyButtonClicked ()
@@ -301,11 +301,11 @@ namespace BlendInt {
 
   void Dialog::OnOKButtonClicked ()
   {
-    AbstractView* super = superview();
+    AbstractView* parent = super();
     fire_applied_event();
 
     delete this;
-    super->RequestRedraw();
+    parent->RequestRedraw();
   }
 
 }

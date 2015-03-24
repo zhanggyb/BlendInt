@@ -119,7 +119,7 @@ namespace BlendInt {
 
 	Response AbstractRoundWidget::Draw(AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 }

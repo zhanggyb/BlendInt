@@ -86,7 +86,7 @@ namespace BlendInt {
       return layout_->IsExpandX();
     }
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandX()) return true;
     }
 
@@ -99,7 +99,7 @@ namespace BlendInt {
       return layout_->IsExpandY();
     }
 
-    for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+    for (AbstractView* p = first(); p; p = next(p)) {
       if (p->IsExpandY()) return true;
     }
 
@@ -110,12 +110,12 @@ namespace BlendInt {
   {
     Size prefer_size;
 
-    if (subs_count() == 0) {
+    if (subview_count() == 0) {
       prefer_size.reset(400, 300);
     } else {
 
       if (layout_) {
-        DBG_ASSERT(subs_count() == 1);
+        DBG_ASSERT(subview_count() == 1);
         prefer_size = layout_->GetPreferredSize();
       } else {
 
@@ -124,7 +124,7 @@ namespace BlendInt {
         int maxx = 0;
         int maxy = 0;
 
-        for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+        for (AbstractView* p = first(); p; p = next(p)) {
           minx = std::min(minx, p->position().x());
           miny = std::min(miny, p->position().y());
           maxx = std::max(maxx, p->position().x() + p->size().width());

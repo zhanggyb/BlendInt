@@ -166,17 +166,17 @@ namespace BlendInt {
     int w = 0;
     int h = 0;
 
-    if (subs_count()) {
+    if (subview_count()) {
 
       Size tmp;
 
-      for (AbstractView* p = first_subview(); p; p = p->next_view()) {
+      for (AbstractView* p = first(); p; p = next(p)) {
         tmp = p->GetPreferredSize();
         w = std::max(w, tmp.width());
         h += tmp.height();
       }
 
-      h += (subs_count() - 1) * space_;
+      h += (subview_count() - 1) * space_;
 
     } else {
       w = 240;

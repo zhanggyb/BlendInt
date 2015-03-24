@@ -167,7 +167,7 @@ namespace BlendInt {
     		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
     		vbo_.reset();
 
-    		ResizeSubView(first_subview(), size());
+    		ResizeSubView(first(), size());
 
     		RequestRedraw();
 
@@ -245,10 +245,10 @@ namespace BlendInt {
 
 	void FileSelector::OnClose()
 	{
-		AbstractView* super = superview();
+		AbstractView* parent = super();
 		delete this;
 
-		super->RequestRedraw();
+		parent->RequestRedraw();
 	}
 
 	void FileSelector::OnOpenParent ()
@@ -300,11 +300,11 @@ namespace BlendInt {
 			}
 		}
 
-		AbstractView* super = superview();
+		AbstractView* parent = super();
 		fire_applied_event();
 
 		delete this;
-		super->RequestRedraw();
+		parent->RequestRedraw();
 	}
 
 	LinearLayout* FileSelector::CreateButtons()

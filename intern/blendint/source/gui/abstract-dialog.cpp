@@ -93,7 +93,7 @@ namespace BlendInt {
 
     if ((context->GetKeyInput() == Key_Escape) && focused_) {
 
-      if (context == superview())
+      if (context == super())
         context->RequestRedraw();
 
       delete this;
@@ -243,8 +243,8 @@ namespace BlendInt {
 
       }
 
-      if (superview()) {
-        superview()->RequestRedraw();
+      if (super()) {
+        super()->RequestRedraw();
       }
       retval = Finish;
 

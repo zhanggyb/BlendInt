@@ -133,17 +133,17 @@ namespace BlendInt {
 
 	Response AbstractViewport::PerformMousePress(AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractViewport::PerformMouseRelease(AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractViewport::PerformMouseMove(AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
   bool AbstractViewport::PreDraw (AbstractWindow* context)

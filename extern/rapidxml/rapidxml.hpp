@@ -642,7 +642,7 @@ namespace rapidxml
     // XML base
 
     //! Base class for xml_node and xml_attribute implementing common functions: 
-    //! name(), name_size(), value(), value_size() and superview().
+    //! name(), name_size(), value(), value_size() and super().
     //! \param Ch Character type to use
     template<class Ch = char>
     class xml_base
@@ -767,7 +767,7 @@ namespace rapidxml
     
         //! Gets node superview.
         //! \return Pointer to superview node, or 0 if there is no superview.
-        xml_node<Ch> *superview() const
+        xml_node<Ch> *super() const
         {
             return m_parent;
         }
@@ -818,10 +818,10 @@ namespace rapidxml
         //! \return Pointer to document that contains this attribute, or 0 if there is no superview document.
         xml_document<Ch> *document() const
         {
-            if (xml_node<Ch> *node = this->superview())
+            if (xml_node<Ch> *node = this->super())
             {
-                while (node->superview())
-                    node = node->superview();
+                while (node->super())
+                    node = node->super();
                 return node->type() == node_document ? static_cast<xml_document<Ch> *>(node) : 0;
             }
             else
@@ -923,8 +923,8 @@ namespace rapidxml
         xml_document<Ch> *document() const
         {
             xml_node<Ch> *node = const_cast<xml_node<Ch> *>(this);
-            while (node->superview())
-                node = node->superview();
+            while (node->super())
+                node = node->super();
             return node->type() == node_document ? static_cast<xml_document<Ch> *>(node) : 0;
         }
 
@@ -973,7 +973,7 @@ namespace rapidxml
 
         //! Gets previous_view sibling node, optionally matching node name. 
         //! Behaviour is undefined if node has no superview.
-        //! Use superview() to test if node has a superview.
+        //! Use super() to test if node has a superview.
         //! \param name Name of sibling to find, or 0 to return previous_view sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
@@ -996,7 +996,7 @@ namespace rapidxml
 
         //! Gets next_view sibling node, optionally matching node name. 
         //! Behaviour is undefined if node has no superview.
-        //! Use superview() to test if node has a superview.
+        //! Use super() to test if node has a superview.
         //! \param name Name of sibling to find, or 0 to return next_view sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
         //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
         //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
@@ -1075,7 +1075,7 @@ namespace rapidxml
         //! \param child Node to prepend.
         void prepend_node(xml_node<Ch> *child)
         {
-            assert(child && !child->superview() && child->type() != node_document);
+            assert(child && !child->super() && child->type() != node_document);
             if (first_node())
             {
                 child->m_next_sibling = m_first_node;
@@ -1096,7 +1096,7 @@ namespace rapidxml
         //! \param child Node to append.
         void append_node(xml_node<Ch> *child)
         {
-            assert(child && !child->superview() && child->type() != node_document);
+            assert(child && !child->super() && child->type() != node_document);
             if (first_node())
             {
                 child->m_prev_sibling = m_last_node;
@@ -1118,8 +1118,8 @@ namespace rapidxml
         //! \param child Node to insert.
         void insert_node(xml_node<Ch> *where, xml_node<Ch> *child)
         {
-            assert(!where || where->superview() == this);
-            assert(child && !child->superview() && child->type() != node_document);
+            assert(!where || where->super() == this);
+            assert(child && !child->super() && child->type() != node_document);
             if (where == m_first_node)
                 prepend_node(child);
             else if (where == 0)
@@ -1170,7 +1170,7 @@ namespace rapidxml
         // \param where Pointer to child to be removed.
         void remove_node(xml_node<Ch> *where)
         {
-            assert(where && where->superview() == this);
+            assert(where && where->super() == this);
             assert(first_node());
             if (where == m_first_node)
                 remove_first_node();
@@ -1196,7 +1196,7 @@ namespace rapidxml
         //! \param attribute Attribute to prepend.
         void prepend_attribute(xml_attribute<Ch> *attribute)
         {
-            assert(attribute && !attribute->superview());
+            assert(attribute && !attribute->super());
             if (first_attribute())
             {
                 attribute->m_next_attribute = m_first_attribute;
@@ -1216,7 +1216,7 @@ namespace rapidxml
         //! \param attribute Attribute to append.
         void append_attribute(xml_attribute<Ch> *attribute)
         {
-            assert(attribute && !attribute->superview());
+            assert(attribute && !attribute->super());
             if (first_attribute())
             {
                 attribute->m_prev_attribute = m_last_attribute;
@@ -1238,8 +1238,8 @@ namespace rapidxml
         //! \param attribute Attribute to insert.
         void insert_attribute(xml_attribute<Ch> *where, xml_attribute<Ch> *attribute)
         {
-            assert(!where || where->superview() == this);
-            assert(attribute && !attribute->superview());
+            assert(!where || where->super() == this);
+            assert(attribute && !attribute->super());
             if (where == m_first_attribute)
                 prepend_attribute(attribute);
             else if (where == 0)
@@ -1292,7 +1292,7 @@ namespace rapidxml
         //! \param where Pointer to attribute to be removed.
         void remove_attribute(xml_attribute<Ch> *where)
         {
-            assert(first_attribute() && where->superview() == this);
+            assert(first_attribute() && where->super() == this);
             if (where == m_first_attribute)
                 remove_first_attribute();
             else if (where == m_last_attribute)

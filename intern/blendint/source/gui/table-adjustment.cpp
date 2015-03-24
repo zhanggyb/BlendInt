@@ -40,7 +40,7 @@ namespace BlendInt {
 	  expand_x_(false),
 	  expand_y_(false)
 	{
-		DBG_ASSERT(view->subs_count() == (int)(row * column));
+		DBG_ASSERT(view->GetSubViewCount() == (int)(row * column));
 	}
 
 	TableAdjustment::~TableAdjustment ()
@@ -88,7 +88,7 @@ namespace BlendInt {
 		unsigned int j = 0;	// column
 		Size tmp;
 
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 		{
 			tmp = p->GetPreferredSize();
 
@@ -162,7 +162,7 @@ namespace BlendInt {
 
 		int xpos = x;
 		if(valid_width <= 0) {
-			for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 			{
 				resize(p, 0, p->size().height());
 				move(p, xpos, p->position().y());
@@ -185,7 +185,7 @@ namespace BlendInt {
 
 			if(average_expandable_width > 0) {
 
-				for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+				for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 				{
 					if(column_expand_status_[j]) {
 						resize(p, average_expandable_width, p->size().height());
@@ -206,7 +206,7 @@ namespace BlendInt {
 
 			} else {
 
-				for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+				for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 				{
 					if(column_expand_status_[j]) {
 						resize(p, 0, p->size().height());
@@ -229,7 +229,7 @@ namespace BlendInt {
 
 		} else {
 
-			for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 			{
 				if(column_expand_status_[j]) {
 					resize(p, 0, p->size().height());
@@ -257,7 +257,7 @@ namespace BlendInt {
 		unsigned int j = 0;	// column
 
 		int xpos = x;
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 		{
 			resize(p, column_width_list_[j], p->size().height());
 			move(p, xpos, p->position().y());
@@ -287,7 +287,7 @@ namespace BlendInt {
 		}
 
 		int xpos = x;
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 		{
 			if(column_expand_status_[j]) {
 				resize(p, average_expandable_column_width, p->size().height());
@@ -317,7 +317,7 @@ namespace BlendInt {
 		int ypos = y + height;
 
 		if(valid_height <= 0) {
-			for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 			{
 				resize(p, p->size().width(), 0);
 				move(p, p->position().x(), ypos);
@@ -340,7 +340,7 @@ namespace BlendInt {
 
 			if(average_expandable_height > 0) {
 
-				for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+				for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 				{
 					if(row_expand_status_[i]) {
 						resize(p, p->size().width(), average_expandable_height);
@@ -359,7 +359,7 @@ namespace BlendInt {
 
 			} else {
 
-				for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+				for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 				{
 					if(row_expand_status_[i]) {
 						resize(p, p->size().width(), 0);
@@ -380,7 +380,7 @@ namespace BlendInt {
 
 		} else {
 
-			for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 			{
 				if(row_expand_status_[i]) {
 					resize(p, p->size().width(), 0);
@@ -407,7 +407,7 @@ namespace BlendInt {
 		unsigned int j = 0;	// column
 
 		int ypos = y + height;
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 		{
 			resize(p, p->size().width(), row_height_list_[i]);
 			move(p, p->position().x(), ypos - p->size().height());
@@ -435,7 +435,7 @@ namespace BlendInt {
 		}
 
 		int ypos = y + height;
-		for(AbstractView* p = view()->first_subview(); p; p = p->next_view())
+		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
 		{
 			if(row_expand_status_[i]) {
 				resize(p, p->size().width(), average_expandable_row_height);

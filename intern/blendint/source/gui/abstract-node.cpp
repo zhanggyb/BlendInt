@@ -80,7 +80,7 @@ namespace BlendInt {
 
     Point pos = widget->position();
     AbstractNode* node = 0;
-    AbstractView* parent = widget->superview();
+    AbstractView* parent = widget->super();
 
     while (parent) {
 
@@ -90,7 +90,7 @@ namespace BlendInt {
       }
 
       pos = pos + parent->position() + parent->GetOffset();
-      parent = parent->superview();
+      parent = parent->super();
 
     }
 
@@ -187,7 +187,7 @@ namespace BlendInt {
 
   Response AbstractNode::PerformMousePress (AbstractWindow* context)
   {
-    NodeView* node_view = dynamic_cast<NodeView*>(superview());
+    NodeView* node_view = dynamic_cast<NodeView*>(super());
 
     if (cursor_position_ == InsideRectangle) {
 
@@ -315,8 +315,8 @@ namespace BlendInt {
 
       }
 
-      if (superview()) {
-        superview()->RequestRedraw();
+      if (super()) {
+        super()->RequestRedraw();
       }
       retval = Finish;
 
@@ -337,11 +337,11 @@ namespace BlendInt {
 
     if (orig == 0) return FindWidgetUnderCursor(context);
 
-    if (orig->superview() == 0) { // the widget is just removed from this frame
+    if (orig->super() == 0) { // the widget is just removed from this frame
       return FindWidgetUnderCursor(context);
     }
 
-    if (orig->superview() == this) {
+    if (orig->super() == this) {
       return RecheckSubWidgetUnderCursor(orig, context);
     }
 
@@ -507,7 +507,7 @@ namespace BlendInt {
   AbstractWidget* AbstractNode::RecheckSubWidgetUnderCursor (AbstractWidget* orig,
                                                              AbstractWindow* context)
   {
-    DBG_ASSERT(orig->superview() == this);
+    DBG_ASSERT(orig->super() == this);
 
     AbstractWidget* result = orig;
     Point offset;
@@ -546,10 +546,10 @@ namespace BlendInt {
                                                           AbstractWindow* context)
   {
     DBG_ASSERT(orig);
-    DBG_ASSERT(orig->superview() && orig->superview() != this);
+    DBG_ASSERT(orig->super() && orig->super() != this);
 
     AbstractWidget* result = orig;
-    AbstractView* parent = result->superview();
+    AbstractView* parent = result->super();
     Point offset;
 
     Rect rect(GetRelativePosition(parent) + position() + GetOffset(),
@@ -587,7 +587,7 @@ namespace BlendInt {
 
           if (parent->Contain(context->local_cursor_position())) break;
 
-          parent = parent->superview();
+          parent = parent->super();
         }
 
         result = dynamic_cast<AbstractWidget*>(parent);
@@ -603,7 +603,7 @@ namespace BlendInt {
       dispatch_mouse_hover_out(result, context);
 
       // find which contianer contains cursor position
-      parent = parent->superview();
+      parent = parent->super();
       while (parent != nullptr) {
 
         if (parent == this) {
@@ -627,14 +627,14 @@ namespace BlendInt {
 
         if (rect.contains(context->local_cursor_position())) break;
 
-        parent = parent->superview();
+        parent = parent->super();
       }
 
       result = dynamic_cast<AbstractWidget*>(parent);
       if (result) {
 
-        for (AbstractView* p = parent->last_subview(); p; p =
-            p->previous_view()) {
+        for (AbstractView* p = parent->GetLastSubView(); p;
+            p = parent->GetPreviousSubView(p)) {
 
           if (is_widget(p)) {
             if (p->visiable() && p->Contain(context->local_cursor_position())) {
@@ -665,7 +665,7 @@ namespace BlendInt {
         context->local_cursor_position().x() - position().x() - offset.x(),
         context->local_cursor_position().y() - position().y() - offset.y());
 
-    for (AbstractView* p = last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = last(); p; p = previous(p)) {
 
       if (is_widget(p)) {
         result = dynamic_cast<AbstractWidget*>(p);
@@ -697,7 +697,7 @@ namespace BlendInt {
         context->local_cursor_position().y() - widget->position().y()
             - offset.y());
 
-    for (AbstractView* p = widget->last_subview(); p; p = p->previous_view()) {
+    for (AbstractView* p = widget->GetLastSubView(); p; p = widget->GetPreviousSubView(p)) {
 
       if (is_widget(p)) {
         if (p->visiable() && p->Contain(context->local_cursor_position())) {

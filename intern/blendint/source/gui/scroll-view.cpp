@@ -69,9 +69,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(first_subview() == 0) return;
+		if(first() == 0) return;
 
-		AbstractView* p = first_subview();
+		AbstractView* p = first();
 
 		int w = size().width();
 		int h = size().height();
@@ -88,8 +88,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first_subview()) {
-			AbstractView* p = first_subview();
+		if(first()) {
+			AbstractView* p = first();
 
 			int w = size().width();
 
@@ -108,8 +108,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(first_subview()) {
-			AbstractView* p = first_subview();
+		if(first()) {
+			AbstractView* p = first();
 
 			int h = size().height();
 
@@ -126,10 +126,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(first_subview()) {
+		if(first()) {
 
 			if(x != 0 || y != 0) {
-				AbstractView* p = first_subview();
+				AbstractView* p = first();
 				MoveSubViewTo(p, p->position().x() + x, p->position().y() + y);
 
 				RequestRedraw();
@@ -139,8 +139,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(first_subview()) {
-			AbstractView* p = first_subview();
+		if(first()) {
+			AbstractView* p = first();
 
 			MoveSubViewTo(p, position().x() + x, position().y() + y);
 
@@ -150,8 +150,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(first_subview()) {
-			return first_subview()->IsExpandX();
+		if(first()) {
+			return first()->IsExpandX();
 		} else {
 			return false;
 		}
@@ -159,8 +159,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(first_subview()) {
-			return first_subview()->IsExpandY();
+		if(first()) {
+			return first()->IsExpandY();
 		} else {
 			return false;
 		}
@@ -170,7 +170,7 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		AbstractView* widget = first_subview();
+		AbstractView* widget = first();
 
 		if(widget) {
 			prefer = widget->GetPreferredSize();
@@ -193,12 +193,12 @@ namespace BlendInt {
 			inner_.reset();
 
 			// align the subwidget
-			if (first_subview()) {
+			if (first()) {
 
 				int dy = request.size()->height() - size().height();
 
-				first_subview()->MoveTo(first_subview()->position().x(),
-				        first_subview()->position().y() + dy);
+				first()->MoveTo(first()->position().x(),
+				        first()->position().y() + dy);
 			}
 
 		}
@@ -225,7 +225,7 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
         0);
 
-		if(subs_count()) {
+		if(subview_count()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
@@ -243,7 +243,7 @@ namespace BlendInt {
 
 	Response ScrollView::Draw (AbstractWindow* context)
 	{
-		if(subs_count()) {
+		if(subview_count()) {
 
 			Point offset = GetOffset();
 
@@ -262,7 +262,7 @@ namespace BlendInt {
 
 	void ScrollView::PostDraw(AbstractWindow* context)
 	{
-		if(subs_count())
+		if(subview_count())
 			AbstractWindow::shaders()->PopWidgetModelMatrix();
 
 		// draw mask
@@ -272,7 +272,7 @@ namespace BlendInt {
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
         0);
 
-		if(subs_count()) {
+		if(subview_count()) {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
 		} else {
 			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
@@ -296,7 +296,7 @@ namespace BlendInt {
 			return Finish;
 		}
 
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response ScrollView::PerformMouseRelease(AbstractWindow* context)
@@ -306,7 +306,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response ScrollView::PerformMouseMove(AbstractWindow* context)

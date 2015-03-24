@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		AbstractView* viewport () const
 		{
-			return first_subview();
+			return first();
 		}
 
 		virtual bool IsExpandX () const;

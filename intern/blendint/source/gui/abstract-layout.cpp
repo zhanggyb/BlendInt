@@ -56,7 +56,7 @@ namespace BlendInt {
 
   Response BlendInt::AbstractLayout::Draw (AbstractWindow* context)
   {
-    return subs_count() ? Ignore : Finish;
+    return subview_count() ? Ignore : Finish;
   }
 
   void AbstractLayout::PerformMarginUpdate (const Margin& margin)

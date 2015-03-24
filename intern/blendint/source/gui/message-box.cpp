@@ -153,7 +153,7 @@ namespace BlendInt {
       vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
       vbo_.reset();
 
-      ResizeSubView(first_subview(), size());
+      ResizeSubView(first(), size());
 
       RequestRedraw();
 
@@ -243,9 +243,9 @@ namespace BlendInt {
 
   void MessageBox::OnClose ()
   {
-    AbstractView* super = superview();
+    AbstractView* parent = super();
     delete this;
-    super->RequestRedraw();
+    parent->RequestRedraw();
   }
 
 }

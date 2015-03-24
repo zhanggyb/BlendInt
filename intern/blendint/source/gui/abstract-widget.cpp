@@ -59,16 +59,16 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget()
 	{
-		if(subs_count() > 0) {
+		if(subview_count() > 0) {
 			ClearSubViews();
 		}
 		else {
-			DBG_ASSERT(subs_count_ == 0);
-			DBG_ASSERT(first_subview_ == 0);
-			DBG_ASSERT(last_subview_ == 0);
+			DBG_ASSERT(subview_count_ == 0);
+			DBG_ASSERT(first_ == 0);
+			DBG_ASSERT(last_ == 0);
 		}
 
-		if(superview_) superview_->RemoveSubView(this);
+		if(super_) super_->RemoveSubView(this);
 
 		destroyed_->fire(this);
 	}
@@ -121,32 +121,32 @@ namespace BlendInt {
 
 	Response AbstractWidget::PerformKeyPress (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractWidget::PerformContextMenuPress (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractWidget::PerformContextMenuRelease (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractWidget::PerformMousePress (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractWidget::PerformMouseRelease (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	Response AbstractWidget::PerformMouseMove (AbstractWindow* context)
 	{
-		return subs_count() ? Ignore : Finish;
+		return subview_count() ? Ignore : Finish;
 	}
 
 	bool AbstractWidget::RenderSubWidgetsToTexture (

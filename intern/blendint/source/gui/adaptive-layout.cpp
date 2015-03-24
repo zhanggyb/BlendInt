@@ -115,7 +115,7 @@ namespace BlendInt {
 
 	Size AdaptiveLayout::GetPreferredSize () const
 	{
-		if(subs_count() == 0) {
+		if(subview_count() == 0) {
 			return Size(200, 200);
 		}
 
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		if(orientation_ == Horizontal) {
 			w = -space_;
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			for(AbstractView* p = first(); p; p = next(p))
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -138,7 +138,7 @@ namespace BlendInt {
 
 		} else {
 			h = -space_;
-			for(AbstractView* p = first_subview(); p; p = p->next_view())
+			for(AbstractView* p = first(); p; p = next(p))
 			{
 				if(p->visiable()) {
 					tmp = p->GetPreferredSize();
@@ -159,7 +159,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		for(AbstractView* p = first(); p; p = next(p))
 		{
 			if(p->IsExpandX()) {
 				expand = true;
@@ -174,7 +174,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractView* p = first_subview(); p; p = p->next_view())
+		for(AbstractView* p = first(); p; p = next(p))
 		{
 			if(p->IsExpandY()) {
 				expand = true;
@@ -189,7 +189,7 @@ namespace BlendInt {
 	{
     set_margin(margin);
 
-    if(subs_count()) {
+    if(subview_count()) {
       Adjust();
       RequestRedraw();
     }
@@ -215,7 +215,7 @@ namespace BlendInt {
 
 		if(request.source() == this) {
 			ReportSizeUpdate(request);
-		} else if(request.source()->superview() == this) {
+		} else if(request.source()->super() == this) {
 		  // a sub view resized
 		  Adjust();
 		}
