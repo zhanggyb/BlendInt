@@ -120,7 +120,7 @@ namespace BlendInt {
       chessboard_->Resize(image_size_);
 
       vbo_.bind(1);
-      float* ptr = (float*) vbo_.map();
+      float* ptr = (float*) vbo_.map(GL_READ_WRITE);
       *(ptr + 4) = image.width();
       *(ptr + 9) = image.height();
       *(ptr + 12) = image.width();
@@ -154,7 +154,7 @@ namespace BlendInt {
       chessboard_->Resize(image_size_);
 
       vbo_.bind(1);
-      float* ptr = (float*) vbo_.map();
+      float* ptr = (float*) vbo_.map(GL_READ_WRITE);
       *(ptr + 4) = image_size_.width();
       *(ptr + 9) = image_size_.height();
       *(ptr + 12) = image_size_.width();

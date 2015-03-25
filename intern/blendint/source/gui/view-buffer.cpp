@@ -132,16 +132,16 @@ namespace BlendInt {
 	{
 		set_size(size);
 
-		vbo_.bind();
+    vbo_.bind(0);
+    GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
+    *(buf_p + 4) = (float)size.width();
+    *(buf_p + 9) = (float)size.height();
+    *(buf_p + 12) = (float)size.width();
+    *(buf_p + 13) = (float)size.height();
+    vbo_.unmap();
+    vbo_.reset();
 
-		float* ptr = (float*)vbo_.map();
-		*(ptr + 4) = (float)this->size().width();
-		*(ptr + 9) = (float)this->size().height();
-		*(ptr + 12) = (float)this->size().width();
-		*(ptr + 13) = (float)this->size().height();
-		vbo_.unmap();
 
-		vbo_.reset();
 	}
 
 }

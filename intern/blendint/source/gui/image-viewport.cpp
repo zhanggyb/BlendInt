@@ -91,7 +91,7 @@ namespace BlendInt {
 		if(image.Read(filename)) {
 
 			image_plane_.bind();
-			float* ptr = (float*)image_plane_.map();
+			float* ptr = (float*)image_plane_.map(GL_READ_WRITE);
 			*(ptr + 4) = image.width();
 			*(ptr + 9) = image.height();
 			*(ptr + 12) = image.width();
@@ -157,7 +157,7 @@ namespace BlendInt {
 			texture_ = texture;
 			texture_->bind();
 			image_plane_.bind();
-			float* ptr = (float*)image_plane_.map();
+			float* ptr = (float*)image_plane_.map(GL_READ_WRITE);
 			*(ptr + 4) = texture_->GetWidth();
 			*(ptr + 9) = texture_->GetHeight();
 			*(ptr + 12) = texture_->GetWidth();
@@ -180,7 +180,7 @@ namespace BlendInt {
 		if(image.data) {
 
 			image_plane_.bind();
-			float* ptr = (float*)image_plane_.map();
+			float* ptr = (float*)image_plane_.map(GL_READ_WRITE);
 			*(ptr + 4) = image.cols;
 			*(ptr + 9) = image.rows;
 			*(ptr + 12) = image.cols;
