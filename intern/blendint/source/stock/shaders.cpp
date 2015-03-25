@@ -1161,7 +1161,7 @@ namespace BlendInt {
     widget_matrices_ubo_->generate();
     widget_matrices_ubo_->bind();
     widget_matrices_ubo_->set_data(widget_matrices_ubo_total_size_, buf_p,
-    GL_DYNAMIC_DRAW);
+                                   GL_STATIC_DRAW);
     widget_matrices_ubo_->reset();
 
     glBindBufferBase(GL_UNIFORM_BUFFER, widget_matrices_ubo_binding_point_,
@@ -1277,7 +1277,7 @@ namespace BlendInt {
     frame_matrices_ubo_->generate();
     frame_matrices_ubo_->bind();
     frame_matrices_ubo_->set_data(frame_matrices_ubo_total_size_, buf_p,
-    GL_DYNAMIC_DRAW);
+                                  GL_STATIC_DRAW);
     frame_matrices_ubo_->reset();
 
     glBindBufferBase(GL_UNIFORM_BUFFER, frame_matrices_ubo_binding_point_,

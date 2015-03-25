@@ -28,120 +28,134 @@
 
 namespace BlendInt {
 
-	// FIXME: the default constructor has no effect
-	ViewBuffer::ViewBuffer ()
-	: AbstractForm(),
-	  vao_(0)
-	{
-		glGenVertexArrays(1, &vao_);
-		vbo_.generate();
+// FIXME: the default constructor has no effect
+ViewBuffer::ViewBuffer ()
+    : AbstractForm(),
+      vao_(0)
+{
+  glGenVertexArrays(1, &vao_);
+  vbo_.generate();
 
-		GLfloat vertices[] = {
-			// coord											uv
-			0.f, 0.f,											0.f, 0.f,
-			(float)size().width(), 0.f,							1.f, 0.f,
-			0.f, (float)size().height(),						0.f, 1.f,
-			(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
+  GLfloat vertices[] = {
+    // coord						uv
+    0.f, 0.f,						0.f, 0.f,
+    (float)size().width(), 0.f,				1.f, 0.f,
+    0.f, (float)size().height(),			0.f, 1.f,
+    (float)size().width(), (float)size().height(),	1.f, 1.f
+  };
 
-		glBindVertexArray(vao_);
+  glBindVertexArray(vao_);
 
-		vbo_.bind();
-		vbo_.set_data(sizeof(vertices), vertices);
+  vbo_.bind();
+  vbo_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glEnableVertexAttribArray(AttributeUV);
-		glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+  glEnableVertexAttribArray(AttributeCoord);
+  glEnableVertexAttribArray(AttributeUV);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
 		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(AttributeUV, 2,
-		GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+  glVertexAttribPointer(AttributeUV, 2,
+                        GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(0);
-		vbo_.reset();
-	}
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
-	ViewBuffer::ViewBuffer (int width, int height)
-	: AbstractForm(width, height),
-	  vao_(0)
-	{
-		glGenVertexArrays(1, &vao_);
-		vbo_.generate();
+ViewBuffer::ViewBuffer (int width, int height)
+    : AbstractForm(width, height),
+      vao_(0)
+{
+  glGenVertexArrays(1, &vao_);
+  vbo_.generate();
 
-		GLfloat vertices[] = {
-			// coord											uv
-			0.f, 0.f,											0.f, 0.f,
-			(float)size().width(), 0.f,							1.f, 0.f,
-			0.f, (float)size().height(),						0.f, 1.f,
-			(float)size().width(), (float)size().height(),		1.f, 1.f
-		};
+  GLfloat vertices[] = {
+    // coord						uv
+    0.f, 0.f,						0.f, 0.f,
+    (float)size().width(), 0.f,				1.f, 0.f,
+    0.f, (float)size().height(),			0.f, 1.f,
+    (float)size().width(), (float)size().height(),	1.f, 1.f
+  };
 
-		glBindVertexArray(vao_);
+  glBindVertexArray(vao_);
 
-		vbo_.bind();
-		vbo_.set_data(sizeof(vertices), vertices);
+  vbo_.bind();
+  vbo_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glEnableVertexAttribArray(AttributeUV);
-		glVertexAttribPointer(AttributeCoord,
-							  2,
-							  GL_FLOAT,
-							  GL_FALSE,
-							  sizeof(GLfloat) * 4,
-							  BUFFER_OFFSET(0));
-		glVertexAttribPointer(AttributeUV,
-							  2,
-							  GL_FLOAT,
-							  GL_FALSE,
-							  sizeof(GLfloat) * 4,
-							  BUFFER_OFFSET(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(AttributeCoord);
+  glEnableVertexAttribArray(AttributeUV);
+  glVertexAttribPointer(AttributeCoord,
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        sizeof(GLfloat) * 4,
+                        BUFFER_OFFSET(0));
+  glVertexAttribPointer(AttributeUV,
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        sizeof(GLfloat) * 4,
+                        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(0);
-		vbo_.reset();
-	}
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
-	ViewBuffer::~ViewBuffer ()
-	{
-		glDeleteVertexArrays(1, &vao_);
-	}
+ViewBuffer::~ViewBuffer ()
+{
+  glDeleteVertexArrays(1, &vao_);
+}
 
-	void ViewBuffer::Draw (int x, int y, const float* color_ptr, short gamma,
-	        float rotate, float scale_x, float scale_y) const
-	{
-		texture_.bind();
-		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	}
+void ViewBuffer::Draw (int x, int y, const float* color_ptr, short gamma,
+                       float rotate, float scale_x, float scale_y) const
+{
+  texture_.bind();
+  glBindVertexArray(vao_);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
 
-	void ViewBuffer::DrawInRect (const Rect& rect, int align, const float* color_ptr,
-	        short gamma, float rotate, bool scale) const
-	{
-	}
+void ViewBuffer::DrawInRect (const Rect& rect, int align, const float* color_ptr,
+                             short gamma, float rotate, bool scale) const
+{
+}
 
 #ifdef DEBUG
 
-	void ViewBuffer::SaveToFile(const char* name)
-	{
-		texture_.bind();
-		texture_.WriteToFile(name);
-	}
+void ViewBuffer::SaveToFile(const char* name)
+{
+  texture_.bind();
+  texture_.WriteToFile(name);
+}
 
 #endif
 
-	void ViewBuffer::PerformSizeUpdate (const Size& size)
-	{
-		set_size(size);
+void ViewBuffer::PerformSizeUpdate (const Size& size)
+{
+  set_size(size);
 
+  GLfloat vertices[] = {
+    // coord                      		uv
+    0.f, 0.f,                     		0.f, 0.f,
+    (float)size.width(), 0.f,             	1.f, 0.f,
+    0.f, (float)size.height(),            	0.f, 1.f,
+    (float)size.width(), (float)size.height(),	1.f, 1.f
+  };
+
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(vertices), vertices);
+  vbo_.reset();
+
+  // FIXME: why the following code cause crash in OS X sometimes:
+  
+  /*
     vbo_.bind(0);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-    *(buf_p + 4) = (float)size.width();
-    *(buf_p + 9) = (float)size.height();
-    *(buf_p + 12) = (float)size.width();
-    *(buf_p + 13) = (float)size.height();
+    *(buf_p + 4) = (float) size.width();
+    *(buf_p + 9) = (float) size.height();
+    *(buf_p + 12) = (float) size.width();
+    *(buf_p + 13) = (float) size.height();
     vbo_.unmap();
     vbo_.reset();
-
-
-	}
+  */
+}
 
 }

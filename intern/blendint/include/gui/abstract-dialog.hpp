@@ -128,10 +128,6 @@ namespace BlendInt {
        */
       DialogCursorOnBorder = 0x1 << 4,
 
-      /**
-       * @brief If mouse button pressed
-       */
-      DialogMouseButtonPressed = 0x1 << 5
     };
 
     void OnFocusedWidgetDestroyed (AbstractWidget* widget);
@@ -145,26 +141,12 @@ namespace BlendInt {
       return dialog_flags_ & DialogCursorOnBorder;
     }
 
-    inline bool mouse_button_pressed () const
-    {
-      return dialog_flags_ & DialogMouseButtonPressed;
-    }
-
     inline void set_cursor_on_border (bool cursor_on_border)
     {
       if (cursor_on_border) {
         SETBIT(dialog_flags_, DialogCursorOnBorder);
       } else {
         CLRBIT(dialog_flags_, DialogCursorOnBorder);
-      }
-    }
-
-    inline void set_mouse_button_pressed (bool pressed)
-    {
-      if (pressed) {
-        SETBIT(dialog_flags_, DialogMouseButtonPressed);
-      } else {
-        CLRBIT(dialog_flags_, DialogMouseButtonPressed);
       }
     }
 
@@ -183,6 +165,10 @@ namespace BlendInt {
     int dialog_flags_;
 
     bool focused_;
+
+    bool dragging_;
+
+    bool pressed_;
 
     boost::scoped_ptr<Cpp::Event<AbstractDialog*> > applied_;
 

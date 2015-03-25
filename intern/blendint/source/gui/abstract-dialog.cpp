@@ -36,7 +36,9 @@ namespace BlendInt {
     hovered_widget_(0),
     cursor_position_(InsideRectangle),
     dialog_flags_(dialog_flag & 0x0F),
-    focused_(false)
+    focused_(false),
+    dragging_(false),
+    pressed_(false)
   {
     applied_.reset(new Cpp::Event<AbstractDialog*>);
     canceled_.reset(new Cpp::Event<AbstractDialog*>);
@@ -48,7 +50,9 @@ namespace BlendInt {
     hovered_widget_(0),
     cursor_position_(InsideRectangle),
     dialog_flags_(dialog_flag & 0x0F),
-    focused_(false)
+    focused_(false),
+    dragging_(false),
+    pressed_(false)
   {
     applied_.reset(new Cpp::Event<AbstractDialog*>);
     canceled_.reset(new Cpp::Event<AbstractDialog*>);
@@ -115,6 +119,7 @@ namespace BlendInt {
 
       context->SetFocusedFrame(this);
 
+      pressed_ = true;
       last_position_ = position();
       cursor_point_ = context->GetGlobalCursorPosition();
 
@@ -125,13 +130,13 @@ namespace BlendInt {
                                                            context);
 
         if (widget == 0) {
-          set_mouse_button_pressed(true);
+          dragging_ = true;
         } else {
           SetFocusedWidget(dynamic_cast<AbstractWidget*>(widget), context);
         }
 
       } else {
-        set_mouse_button_pressed(true);
+        dragging_ = true;
       }
 
       return Finish;
@@ -140,7 +145,8 @@ namespace BlendInt {
 
       context->SetFocusedFrame(this);
 
-      set_mouse_button_pressed(true);
+      pressed_ = true;
+      dragging_ = true;
 
       last_position_ = position();
       last_size_ = size();
@@ -149,6 +155,7 @@ namespace BlendInt {
       return Finish;
     }
 
+    pressed_ = false;
     if (modal()) {
       return Finish;
     }
@@ -158,10 +165,12 @@ namespace BlendInt {
 
   Response AbstractDialog::PerformMouseRelease (AbstractWindow* context)
   {
+    pressed_ = false;
+
     Response result = Ignore;
 
-    if (mouse_button_pressed()) {
-      set_mouse_button_pressed(false);
+    if (dragging_) {
+      dragging_ = false;
       result = Finish;
     }
 
@@ -179,7 +188,7 @@ namespace BlendInt {
   {
     Response retval = Ignore;
 
-    if (mouse_button_pressed()) {
+    if (dragging_) {
 
       int ox = context->GetGlobalCursorPosition().x() - cursor_point_.x();
       int oy = context->GetGlobalCursorPosition().y() - cursor_point_.y();
@@ -262,7 +271,7 @@ namespace BlendInt {
 
   Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
   {
-    if (mouse_button_pressed()) return Finish;
+    if (dragging_) return Finish;
 
     Response retval = Finish;
     int border = 4;
@@ -348,7 +357,11 @@ namespace BlendInt {
         context->PopCursor();
       }
 
-      retval = Ignore;
+      if (pressed_) {
+        retval = Finish;
+      } else {
+        retval = Ignore;
+      }
     }
 
     // a modal dialog always return Finish

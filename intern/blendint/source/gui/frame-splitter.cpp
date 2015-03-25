@@ -656,7 +656,8 @@ namespace BlendInt {
 
       if (hover_) PerformHoverOut(context);
 
-      return Ignore;
+      if (pressed_) return Finish;
+      else return Ignore;
     }
   }
 

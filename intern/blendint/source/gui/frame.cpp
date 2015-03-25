@@ -356,8 +356,6 @@ namespace BlendInt {
 
   Response Frame::PerformMouseHover (AbstractWindow* context)
   {
-    if (pressed_) return Finish;
-
     Response retval = Finish;
 
     AbstractFrame* current = context->active_frame();
@@ -424,7 +422,11 @@ namespace BlendInt {
 
       DeclareActiveFrame(context, current);
 
-      retval = Ignore;
+      if (pressed_) {
+        retval = Finish;
+      } else {
+        retval = Ignore;
+      }
     }
 
     return retval;
