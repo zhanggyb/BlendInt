@@ -21,45 +21,53 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#pragma once
+#include <core/margin.hpp>
 
-#include <core/types.hpp>
+#include <gui/text.hpp>
 #include <gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-  class Margin;
-  class AbstractScrollable;
-  class TableLayout;
-
-  class ScrollArea: public AbstractWidget
+  /**
+   * @brief A widget used in dialog/expander/node to show title text and fire toggle/check event
+   */
+  class OptionLabel: public AbstractWidget
   {
-  DISALLOW_COPY_AND_ASSIGN(ScrollArea);
-
   public:
 
-    ScrollArea ();
+    enum Options {
 
-    ScrollArea (int width, int height, const Margin& margin, int space);
+      Toggle = 0x1 << 0,
+      Check = 0x1 << 1,
 
-    virtual ~ScrollArea ();
+    };
 
-    void SetScrollableWidget (AbstractScrollable* scrollable);
+    OptionLabel (const String& text, int flags);
 
-    virtual bool IsExpandX () const;
+    virtual ~OptionLabel ();
 
-    virtual bool IsExpandY () const;
+    void SetText (const String& text);
+
+    void SetFont (const Font& font);
 
     virtual Size GetPreferredSize () const;
 
+    virtual bool IsExpandX () const;
+
   protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
-
-    virtual Response Draw(AbstractWindow* context) final;
+    virtual Response Draw (AbstractWindow* context) final;
 
   private:
 
-    TableLayout* layout_;
+    RefPtr<Text> text_;
+
+    bool toggle_;
+
+    bool check_;
+
+    static Margin kPadding;
+
   };
+
 }

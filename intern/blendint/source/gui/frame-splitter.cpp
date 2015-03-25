@@ -625,6 +625,18 @@ namespace BlendInt {
   {
     if (Contain(context->GetGlobalCursorPosition())) {
 
+      if(context->active_frame() && (context == super())) {
+        // a frame is hovered above this cursor position
+
+        if (hover_) {
+          DeclareActiveFrame(context, this);
+          PerformHoverOut(context);
+          hover_ = false;
+        }
+
+        return Finish;
+      }
+
       cursor_position_ = InsideRectangle;
 
       if (!hover_) PerformHoverIn(context);
@@ -635,7 +647,8 @@ namespace BlendInt {
         response = dispatch_mouse_hover(hover_frame_, context);
       }
 
-      return response;
+      //return response;
+      return Ignore;
 
     } else {
 

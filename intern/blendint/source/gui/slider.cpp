@@ -31,10 +31,10 @@ namespace BlendInt {
   Slider::Slider (Orientation orientation)
   : AbstractSlider<int>(orientation),
     vao_(0),
-    m_last_value(0),
-    m_pressed(false)
+    last_value_(0),
+    pressed_(false)
   {
-    m_slide_icon.Resize(14, 14);
+    slide_icon_.Resize(14, 14);
 
     if (orientation == Vertical) {
       set_size(18, 200);
@@ -185,7 +185,8 @@ namespace BlendInt {
 
   Response Slider::Draw (AbstractWindow* context)
   {
-    // ----- draw line
+    float x = 0.f;
+    float y = 0.f;
 
     AbstractWindow::shaders()->widget_outer_program()->use();
     glBindVertexArray(vao_);
@@ -194,6 +195,9 @@ namespace BlendInt {
                  1, AbstractWindow::theme()->regular().outline.data());
 
     if (orientation() == Horizontal) {
+
+      // ----- draw line
+
       glUniform2f(AbstractWindow::shaders()->
                   location(Shaders::WIDGET_OUTER_OFFSET),
                   0.f,
@@ -208,7 +212,14 @@ namespace BlendInt {
                   location(Shaders::WIDGET_OUTER_COLOR),
                   1.f, 1.f, 1.f, 0.16f);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      x += get_slider_position();
+      y += size().height() / 2.f - slide_icon_.size().height() / 2.f;
+
     } else {
+
+      // ----- draw line
+
       glUniform2f(AbstractWindow::shaders()->
                   location(Shaders::WIDGET_OUTER_OFFSET),
                   size().width() / 2,
@@ -223,52 +234,20 @@ namespace BlendInt {
                   location(Shaders::WIDGET_OUTER_COLOR),
                   1.f, 1.f, 1.f, 0.16f);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      x += size().width() / 2.f - slide_icon_.size().width() / 2.f;
+      y += get_slider_position();
+
     }
 
-    /*
-     glBindVertexArray(vao_);
-     RefPtr<GLSLProgram> program = AbstractWindow::shaders()->line_program();
-     program->Use();
-
-     program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-     program->SetUniform1i("u_gamma", 0);
-     program->SetUniform1i("u_AA", 0);
-
-     program->SetVertexAttrib4fv("a_color",
-     AbstractWindow::theme()->scroll().outline.data());
-
-     glEnableVertexAttribArray(0);
-     m_line->bind();
-     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,	0,	BUFFER_OFFSET(0));
-     glLineWidth(1.0);
-     glDrawArrays(GL_LINES, 0, 2);
-     m_line->reset();
-
-     glDisableVertexAttribArray(0);
-     program->reset();
-     glBindVertexArray(0);
-     */
-
-    // ----- end of draw line
-    float x = 0.f;
-    float y = 0.f;
-
-    if (orientation() == Horizontal) {
-      x += get_position();
-      y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
-    } else {
-      x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
-      y += get_position();
-    }
-
-    m_slide_icon.Draw(x, y);
+    slide_icon_.Draw(x, y);
 
     return Finish;
   }
 
   Response Slider::PerformMouseMove (AbstractWindow* context)
   {
-    if (m_pressed) {
+    if (pressed_) {
 
       int new_value = value();
 
@@ -301,9 +280,9 @@ namespace BlendInt {
   Response Slider::PerformMousePress (AbstractWindow* context)
   {
     if (CursorOnSlideIcon(context->local_cursor_position())) {
-      m_pressed = true;
-      m_last_value = value();
-      m_last_cursor = context->GetGlobalCursorPosition();
+      pressed_ = true;
+      last_value_ = value();
+      last_cursor_ = context->GetGlobalCursorPosition();
       fire_slider_pressed();
 
     }
@@ -313,14 +292,13 @@ namespace BlendInt {
 
   Response Slider::PerformMouseRelease (AbstractWindow* context)
   {
-    if (m_pressed) {
-      m_pressed = false;
+    if (pressed_) {
+      pressed_ = false;
 
       if (CursorOnSlideIcon(context->local_cursor_position())) {
         fire_slider_released();
       }
 
-      RequestRedraw();
     }
 
     return Finish;
@@ -331,9 +309,9 @@ namespace BlendInt {
     int space = 0;
 
     if (orientation() == Horizontal) {
-      space = size().width() - m_slide_icon.size().width();	// m_line_start.x() is the radius of m_switch
+      space = size().width() - slide_icon_.size().width();	// m_line_start.x() is the radius of m_switch
     } else {
-      space = size().height() - m_slide_icon.size().height();	// m_line_start.y() is the radius of m_switch
+      space = size().height() - slide_icon_.size().height();	// m_line_start.y() is the radius of m_switch
     }
 
     return space;
@@ -348,13 +326,13 @@ namespace BlendInt {
     int radius = 0;
 
     if (orientation() == Horizontal) {
-      radius = m_slide_icon.size().width() / 2;
-      icon_center.x = position().x() + radius + get_position();
-      icon_center.y = position().y() + size().height() / 2;
+      radius = slide_icon_.size().width() / 2;
+      icon_center.x = radius + get_slider_position();
+      icon_center.y = size().height() / 2;
     } else {
-      radius = m_slide_icon.size().height() / 2;
-      icon_center.x = position().x() + size().width() / 2;
-      icon_center.y = position().y() + radius + get_position();
+      radius = slide_icon_.size().height() / 2;
+      icon_center.x = size().width() / 2;
+      icon_center.y = radius + get_slider_position();
     }
 
     glm::vec2 cursor_pos(cursor.x(), cursor.y());
@@ -381,13 +359,13 @@ namespace BlendInt {
     if (move_space == 0) return false;
 
     if (orientation() == Horizontal) {
-      offset = cursor.x() - m_last_cursor.x();
+      offset = cursor.x() - last_cursor_.x();
 
     } else {
-      offset = cursor.y() - m_last_cursor.y();
+      offset = cursor.y() - last_cursor_.y();
     }
 
-    int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
+    int val = last_value_ + (offset * (maximum() - minimum())) / move_space;
 
     if (val > maximum()) {
       *vout = maximum();

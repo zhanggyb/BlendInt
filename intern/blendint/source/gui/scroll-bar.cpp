@@ -276,20 +276,6 @@ namespace BlendInt {
         fire_slider_moved_event(value());
       }
 
-    } else {
-
-      //Point local_position = context->GetGlobalCursorPosition() - event.frame()->GetAbsolutePosition(this);
-
-      /*
-       if (CursorOnSlideIcon(local_position)) {
-       m_slide.set_highlight(true);
-       RequestRedraw();
-       } else {
-       m_slide.set_highlight(false);
-       RequestRedraw();
-       }
-       */
-
     }
 
     return Finish;

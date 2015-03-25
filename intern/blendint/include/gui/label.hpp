@@ -76,8 +76,6 @@ namespace BlendInt {
 
     virtual bool IsExpandX () const;
 
-    static Margin kPadding;
-
   protected:
 
     virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
@@ -103,6 +101,8 @@ namespace BlendInt {
     Color foreground_;
 
     Color background_;
+
+    static Margin kPadding;
 
   };
 

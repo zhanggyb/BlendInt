@@ -93,7 +93,7 @@ namespace BlendInt {
     /**
      * @brief
      */
-    inline float get_position ()
+    inline float get_slider_position ()
     {
       return value() * GetSpace() / ((float) maximum() - (float) minimum());
     }
@@ -102,16 +102,16 @@ namespace BlendInt {
 
     GLBuffer<ARRAY_BUFFER, 1> vbo_; // buffer for line
 
-    SlideIcon m_slide_icon;
+    SlideIcon slide_icon_;
 
-    Point m_last_cursor;	// used for mouse move
+    Point last_cursor_;	// used for mouse move
 
-    int m_last_value;
+    int last_value_;
 
     /**
      * @brief If the slide switch is pressed
      */
-    bool m_pressed;
+    bool pressed_;
   };
 
 }

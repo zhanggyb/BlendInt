@@ -21,16 +21,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <opengl/opengl.hpp>
-
-#include <gui/scroll-bar.hpp>
 #include <gui/scroll-area.hpp>
+#include <gui/abstract-scrollable.hpp>
+#include <gui/table-layout.hpp>
 #include <gui/abstract-window.hpp>
+#include <gui/scroll-bar.hpp>
 
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractRoundWidget(),
+	: AbstractWidget(),
 	  layout_(nullptr)
 	{
 		set_size(360, 240);
@@ -48,7 +48,7 @@ namespace BlendInt {
 	}
 
 	ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
-	: AbstractRoundWidget(width, height),
+	: AbstractWidget(width, height),
 	  layout_(nullptr)
 	{
 		layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));
@@ -99,5 +99,10 @@ namespace BlendInt {
 			ReportSizeUpdate(request);
 		}
 	}
+
+  Response ScrollArea::Draw (AbstractWindow* context)
+  {
+    return Ignore;
+  }
 
 }
