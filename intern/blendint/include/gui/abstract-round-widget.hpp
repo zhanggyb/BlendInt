@@ -87,8 +87,6 @@ namespace BlendInt {
 
     virtual void PerformEmbossUpdate (bool emboss);
 
-    virtual Response Draw (AbstractWindow* context);
-
     inline void set_round_type (int type)
     {
       widget_flag_ = (widget_flag_ & 0xFFF0) + (type & 0x0F);

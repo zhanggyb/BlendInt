@@ -117,9 +117,4 @@ namespace BlendInt {
                      color_theme.shadetop, color_theme.shadedown, inner, outer);
   }
 
-	Response AbstractRoundWidget::Draw(AbstractWindow* context)
-	{
-		return subview_count() ? Ignore : Finish;
-	}
-
 }

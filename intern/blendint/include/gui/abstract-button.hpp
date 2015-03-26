@@ -117,9 +117,15 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformHoverIn (AbstractWindow* context);
+    virtual void PerformHoverIn (AbstractWindow* context) override;
 
-    virtual void PerformHoverOut (AbstractWindow* context);
+    virtual void PerformHoverOut (AbstractWindow* context) override;
+
+    virtual Response PerformMousePress (AbstractWindow* context) final;
+
+    virtual Response PerformMouseRelease (AbstractWindow* context) final;
+
+    virtual Response PerformMouseMove (AbstractWindow* context) final;
 
     virtual Response Draw (AbstractWindow* context) = 0;
 
@@ -220,12 +226,6 @@ namespace BlendInt {
       ButtonCheckedMask = 0x1 << 3,
       ButtonLastCheckedMask = 0x1 << 4,
     };
-
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
-    virtual Response PerformMouseMove (AbstractWindow* context);
 
     RefPtr<AbstractIcon> icon_;
 

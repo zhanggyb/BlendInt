@@ -32,309 +32,317 @@
 
 namespace BlendInt {
 
-  TextureView::TextureView ()
-  : AbstractScrollable()
-  {
-    set_size(400, 300);
-    image_size_ = size();
+TextureView::TextureView ()
+    : AbstractScrollable()
+{
+  set_size(400, 300);
+  image_size_ = size();
 
-    InitializeImageView();
-  }
+  InitializeImageView();
+}
 
-  TextureView::~TextureView ()
-  {
-    glDeleteVertexArrays(2, vao_);
-  }
+TextureView::~TextureView ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
 
-  bool TextureView::OpenFile (const char* filename)
-  {
-    bool retval = false;
+bool TextureView::OpenFile (const char* filename)
+{
+  bool retval = false;
 
-    Image image;
+  Image image;
 
-    if (image.Read(filename)) {
+  if (image.Read(filename)) {
 
-      if (!texture_) {
+    if (!texture_) {
 
-        texture_.reset(new GLTexture2D);
-        texture_->generate();
-        texture_->bind();
-        texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-        texture_->SetMinFilter(GL_LINEAR);
-        texture_->SetMagFilter(GL_LINEAR);
+      texture_.reset(new GLTexture2D);
+      texture_->generate();
+      texture_->bind();
+      texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+      texture_->SetMinFilter(GL_LINEAR);
+      texture_->SetMagFilter(GL_LINEAR);
 
-      } else if (!glIsTexture(texture_->id())) {
+    } else if (!glIsTexture(texture_->id())) {
 
-        texture_->generate();
-        texture_->bind();
-        texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-        texture_->SetMinFilter(GL_LINEAR);
-        texture_->SetMagFilter(GL_LINEAR);
+      texture_->generate();
+      texture_->bind();
+      texture_->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+      texture_->SetMinFilter(GL_LINEAR);
+      texture_->SetMagFilter(GL_LINEAR);
 
-      } else {
+    } else {
 
-        texture_->bind();
-
-      }
-
-      switch (image.channels()) {
-
-        case 1: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-          texture_->SetImage(0, GL_RED, image.width(), image.height(), 0,
-                             GL_RED, GL_UNSIGNED_BYTE, image.pixels());
-          break;
-        }
-
-        case 2: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-          texture_->SetImage(0, GL_RG, image.width(), image.height(), 0, GL_RG,
-                             GL_UNSIGNED_BYTE, image.pixels());
-          break;
-        }
-
-        case 3: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-          texture_->SetImage(0, GL_RGB, image.width(), image.height(), 0,
-                             GL_RGB, GL_UNSIGNED_BYTE, image.pixels());
-          break;
-        }
-
-        case 4: {
-          glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-          texture_->SetImage(0, GL_RGBA, image.width(), image.height(), 0,
-                             GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
-          break;
-        }
-
-        default:
-          break;
-      }
-
-      texture_->reset();
-
-      image_size_.set_width(image.width());
-      image_size_.set_height(image.height());
-
-      //AdjustImageArea(size());
-      chessboard_->Resize(image_size_);
-
-      vbo_.bind(1);
-      float* ptr = (float*) vbo_.map(GL_READ_WRITE);
-      *(ptr + 4) = image.width();
-      *(ptr + 9) = image.height();
-      *(ptr + 12) = image.width();
-      *(ptr + 13) = image.height();
-      vbo_.unmap();
-      vbo_.reset();
-
-      RequestRedraw();
-
-      retval = true;
-    }
-
-    return retval;
-  }
-
-  void TextureView::LoadImage (const RefPtr<Image>& image)
-  {
-  }
-
-  void TextureView::SetTexture (const RefPtr<GLTexture2D>& texture)
-  {
-    if (texture_ == texture) return;
-
-    texture_ = texture;
-
-    if (texture_->id()) {
       texture_->bind();
 
-      image_size_ = texture_->GetSize();
-
-      chessboard_->Resize(image_size_);
-
-      vbo_.bind(1);
-      float* ptr = (float*) vbo_.map(GL_READ_WRITE);
-      *(ptr + 4) = image_size_.width();
-      *(ptr + 9) = image_size_.height();
-      *(ptr + 12) = image_size_.width();
-      *(ptr + 13) = image_size_.height();
-      vbo_.unmap();
-      vbo_.reset();
-
-      texture_->reset();
     }
 
-    ///AdjustImageArea(size());
+    switch (image.channels()) {
+
+      case 1: {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        texture_->SetImage(0, GL_RED, image.width(), image.height(), 0,
+        GL_RED,
+                           GL_UNSIGNED_BYTE, image.pixels());
+        break;
+      }
+
+      case 2: {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+        texture_->SetImage(0, GL_RG, image.width(), image.height(), 0, GL_RG,
+        GL_UNSIGNED_BYTE,
+                           image.pixels());
+        break;
+      }
+
+      case 3: {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+        texture_->SetImage(0, GL_RGB, image.width(), image.height(), 0,
+        GL_RGB,
+                           GL_UNSIGNED_BYTE, image.pixels());
+        break;
+      }
+
+      case 4: {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        texture_->SetImage(0, GL_RGBA, image.width(), image.height(), 0,
+        GL_RGBA,
+                           GL_UNSIGNED_BYTE, image.pixels());
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    texture_->reset();
+
+    image_size_.set_width(image.width());
+    image_size_.set_height(image.height());
+
+    //AdjustImageArea(size());
+    chessboard_->Resize(image_size_);
+
+    vbo_.bind(1);
+    float* ptr = (float*) vbo_.map(GL_READ_WRITE);
+    *(ptr + 4) = image.width();
+    *(ptr + 9) = image.height();
+    *(ptr + 12) = image.width();
+    *(ptr + 13) = image.height();
+    vbo_.unmap();
+    vbo_.reset();
 
     RequestRedraw();
+
+    retval = true;
   }
 
-  void TextureView::Clear ()
-  {
+  return retval;
+}
 
+void TextureView::LoadImage (const RefPtr<Image>& image)
+{
+}
+
+void TextureView::SetTexture (const RefPtr<GLTexture2D>& texture)
+{
+  if (texture_ == texture) return;
+
+  texture_ = texture;
+
+  if (texture_->id()) {
+    texture_->bind();
+
+    image_size_ = texture_->GetSize();
+
+    chessboard_->Resize(image_size_);
+
+    vbo_.bind(1);
+    float* ptr = (float*) vbo_.map(GL_READ_WRITE);
+    *(ptr + 4) = image_size_.width();
+    *(ptr + 9) = image_size_.height();
+    *(ptr + 12) = image_size_.width();
+    *(ptr + 13) = image_size_.height();
+    vbo_.unmap();
+    vbo_.reset();
+
+    texture_->reset();
   }
 
-  bool TextureView::IsExpandX () const
-  {
-    return true;
-  }
+  ///AdjustImageArea(size());
 
-  bool TextureView::IsExpandY () const
-  {
-    return true;
-  }
+  RequestRedraw();
+}
 
-  Size TextureView::GetPreferredSize () const
-  {
-    return image_size_;
-  }
+void TextureView::Clear ()
+{
 
-  void TextureView::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
+}
 
-      set_size(width, height);
+bool TextureView::IsExpandX () const
+{
+  return true;
+}
 
-      std::vector<GLfloat> inner_verts;
-      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+bool TextureView::IsExpandY () const
+{
+  return true;
+}
 
-      vbo_.bind(0);
-      vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-      vbo_.reset();
+Size TextureView::GetPreferredSize () const
+{
+  return image_size_;
+}
 
-      //AdjustImageArea (*request.size());
+void TextureView::PerformSizeUpdate (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int width,
+                                     int height)
+{
+  if (target == this) {
 
-      RequestRedraw();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  bool TextureView::PreDraw (AbstractWindow* context)
-  {
-    Point offset = GetOffset();
-    glm::mat3 matrix = glm::translate(
-        AbstractWindow::shaders()->widget_model_matrix(),
-        glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
-
-    AbstractWindow::shaders()->PushWidgetModelMatrix();
-    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
-
-    // draw background and stencil mask
-
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        0);
-    glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-        0.208f, 0.208f, 0.208f, 1.0f);
-
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-    context->BeginPushStencil();	// inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-    context->EndPushStencil();
-
-    return true;
-  }
-
-  Response TextureView::Draw (AbstractWindow* context)
-  {
-    float x = (size().width() - image_size_.width()) / 2.f;
-    float y = (size().height() - image_size_.height()) / 2.f;
-
-    // draw checkerboard
-    chessboard_->Draw(x, y);
-
-    if (texture_ && glIsTexture(texture_->id())) {
-
-      // draw texture
-      glActiveTexture(GL_TEXTURE0);
-
-      texture_->bind();
-
-      AbstractWindow::shaders()->widget_image_program()->use();
-      glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
-          x, y);
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE),
-          0);
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
-
-      glBindVertexArray(vao_[1]);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      texture_->reset();
-
-    }
-
-    return Finish;
-  }
-
-  void TextureView::PostDraw (AbstractWindow* context)
-  {
-    // draw background again to unmask stencil
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    glBindVertexArray(vao_[0]);
-
-    context->BeginPopStencil();	// pop inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-    context->EndPopStencil();
-
-    AbstractWindow::shaders()->PopWidgetModelMatrix();
-  }
-
-  void TextureView::InitializeImageView ()
-  {
-    chessboard_.reset(new ChessBoard(20));
-    chessboard_->Resize(size());
+    set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-    vbo_.generate();
-
-    glGenVertexArrays(2, vao_);
-    glBindVertexArray(vao_[0]);
-
     vbo_.bind(0);
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.reset();
 
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0,
-                          BUFFER_OFFSET(0));
+    //AdjustImageArea (*request.size());
+
+    RequestRedraw();
+  }
+
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
+
+bool TextureView::PreDraw (AbstractWindow* context)
+{
+  Point offset = GetOffset();
+  glm::mat3 matrix = glm::translate(
+      AbstractWindow::shaders()->widget_model_matrix(),
+      glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
+
+  AbstractWindow::shaders()->PushWidgetModelMatrix();
+  AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+
+  // draw background and stencil mask
+
+  AbstractWindow::shaders()->widget_inner_program()->use();
+
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+              0);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              0);
+  glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+              0.208f, 0.208f, 0.208f, 1.0f);
+
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+  context->BeginPushStencil();	// inner stencil
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+  context->EndPushStencil();
+
+  return true;
+}
+
+Response TextureView::Draw (AbstractWindow* context)
+{
+  float x = (size().width() - image_size_.width()) / 2.f;
+  float y = (size().height() - image_size_.height()) / 2.f;
+
+  // draw checkerboard
+  chessboard_->Draw(x, y);
+
+  if (texture_ && glIsTexture(texture_->id())) {
+
+    // draw texture
+    glActiveTexture(GL_TEXTURE0);
+
+    texture_->bind();
+
+    AbstractWindow::shaders()->widget_image_program()->use();
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x,
+        y);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
     glBindVertexArray(vao_[1]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    GLfloat vertices[] = { 0.f, 0.f, 0.f, 1.f, 400.f, 0.f, 1.f, 1.f, 0.f, 300.f,
-        0.f, 0.f, 400.f, 300.f, 1.f, 0.f };
+    texture_->reset();
 
-    vbo_.bind(1);
-    vbo_.set_data(sizeof(vertices), vertices);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glEnableVertexAttribArray(AttributeUV);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-    glVertexAttribPointer(AttributeUV, 2,
-    GL_FLOAT,
-                          GL_FALSE, sizeof(GLfloat) * 4,
-                          BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-    glBindVertexArray(0);
-    vbo_.reset();
   }
+
+  return Finish;
+}
+
+void TextureView::PostDraw (AbstractWindow* context)
+{
+  // draw background again to unmask stencil
+  AbstractWindow::shaders()->widget_inner_program()->use();
+
+  glBindVertexArray(vao_[0]);
+
+  context->BeginPopStencil();	// pop inner stencil
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+  context->EndPopStencil();
+
+  AbstractWindow::shaders()->PopWidgetModelMatrix();
+}
+
+void TextureView::InitializeImageView ()
+{
+  chessboard_.reset(new ChessBoard(20));
+  chessboard_->Resize(size());
+
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+  vbo_.generate();
+
+  glGenVertexArrays(2, vao_);
+  glBindVertexArray(vao_[0]);
+
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0,
+                        BUFFER_OFFSET(0));
+
+  glBindVertexArray(vao_[1]);
+
+  GLfloat vertices[] = {
+      0.f, 0.f, 0.f, 1.f,     // left-bottom
+      400.f, 0.f, 1.f, 1.f,   // right-bottom
+      0.f, 300.f, 0.f, 0.f,   // left-top
+      400.f, 300.f, 1.f, 0.f  // right-top
+  };
+
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(vertices), vertices);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glEnableVertexAttribArray(AttributeUV);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
+                        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+  glVertexAttribPointer(AttributeUV, 2,
+                        GL_FLOAT,
+                        GL_FALSE, sizeof(GLfloat) * 4,
+                        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
 /*
  void TextureView::AdjustImageArea(const Size& size)

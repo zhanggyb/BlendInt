@@ -28,46 +28,68 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief A widget used in dialog/expander/node to show title text and fire toggle/check event
-   */
-  class OptionLabel: public AbstractWidget
-  {
-  public:
+/**
+ * @brief A widget used in dialog/expander/node to show title text and
+ * fire toggle/check event
+ */
+class OptionLabel: public AbstractWidget
+{
+public:
 
-    enum Options {
+  OptionLabel (const String& text, bool checkable = false);
 
-      Toggle = 0x1 << 0,
-      Check = 0x1 << 1,
+  OptionLabel (const String& text,
+               const RefPtr<AbstractIcon>& icon,
+               bool checkable = false);
 
-    };
+  virtual ~OptionLabel ();
 
-    OptionLabel (const String& text, int flags);
+  void SetText (const String& text);
 
-    virtual ~OptionLabel ();
+  void SetFont (const Font& font);
 
-    void SetText (const String& text);
+  virtual Size GetPreferredSize () const;
 
-    void SetFont (const Font& font);
+  virtual bool IsExpandX () const;
 
-    virtual Size GetPreferredSize () const;
+protected:
 
-    virtual bool IsExpandX () const;
+  virtual void PerformHoverIn (AbstractWindow* context) final;
 
-  protected:
+  virtual void PerformHoverOut (AbstractWindow* context) final;
 
-    virtual Response Draw (AbstractWindow* context) final;
+  virtual Response PerformMousePress (AbstractWindow* context) final;
 
-  private:
+  virtual Response PerformMouseRelease (AbstractWindow* context) final;
 
-    RefPtr<Text> text_;
+  virtual Response Draw (AbstractWindow* context) final;
 
-    bool toggle_;
+private:
 
-    bool check_;
+  enum OptionLabelFlagMask {
 
-    static Margin kPadding;
+    OptionLabelCheckableMask = 0x1 << 0,
 
+    OptionLabelToggleMask = 0x1 << 1,
+
+    OptionLabelCheckMask = 0x1 << 2,
+
+    OptionLabelPressMask = 0x1 << 3
   };
+
+  int flags_;
+
+  RefPtr<Text> text_;
+
+  RefPtr<AbstractIcon> display_icon_;
+
+  Cpp::Event<bool> toggled_;
+
+  Cpp::Event<bool> checked_;
+
+  static Margin kPadding;
+
+  static const int kSpace = 2;  // space between check icon and text
+};
 
 }

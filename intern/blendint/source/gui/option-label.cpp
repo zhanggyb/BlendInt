@@ -26,65 +26,188 @@
 
 namespace BlendInt {
 
-  OptionLabel::OptionLabel (const String& text, int flags)
-  : toggle_(false),
-    check_(false)
-  {
-    text_.reset(new Text(text));
+Margin OptionLabel::kPadding(2, 2, 2, 2);
 
-    int w = text_->size().width();
-    int h = text_->font().height();
+OptionLabel::OptionLabel (const String& text, bool checkable)
+    : AbstractWidget(),
+      flags_(OptionLabelToggleMask)
+{
+  if (checkable) SETBIT(flags_, OptionLabelCheckableMask);
 
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
+  text_.reset(new Text(text));
 
-    set_size(w, h);
+  int w = text_->size().width();
+  int h = text_->font().height();
+
+  w += h; // add space for num icon
+
+  if (checkable) w += h + kSpace;  // add space for check icon
+
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
+
+  set_size(w, h);
+}
+
+OptionLabel::OptionLabel (const String& text,
+                          const RefPtr<AbstractIcon>& icon,
+                          bool checkable)
+    : AbstractWidget(),
+      flags_(OptionLabelToggleMask),
+      display_icon_(icon)
+{
+  if (checkable) SETBIT(flags_, OptionLabelCheckableMask);
+
+  text_.reset(new Text(text));
+
+  int w = text_->size().width();
+  int h = text_->font().height();
+
+  w += h; // add space for num icon
+
+  if (checkable) w += h + kSpace;  // add space for check icon
+
+  if (icon) {
+    w += icon->size().width();
+    h = std::max (h, icon->size().height());
+  }
+  
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
+
+  set_size(w, h);
+}
+
+OptionLabel::~OptionLabel ()
+{
+}
+
+void OptionLabel::SetText (const String& text)
+{
+  text_->SetText(text);
+  RequestRedraw();
+}
+
+void OptionLabel::SetFont (const Font& font)
+{
+  text_->SetFont(font);
+  RequestRedraw();
+}
+
+Size OptionLabel::GetPreferredSize () const
+{
+  int w = text_->size().width();
+  int h = text_->font().height();
+
+  w += h;
+
+  if (flags_ & OptionLabelCheckableMask) {
+    w += h + kSpace;
   }
 
-  OptionLabel::~OptionLabel ()
-  {
+  if (display_icon_) {
+    w += display_icon_->size().width();
+    h = std::max (h, display_icon_->size().height());
   }
 
-  void OptionLabel::SetText (const String& text)
-  {
-    text_->SetText(text);
-    RequestRedraw();
-  }
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-  void OptionLabel::SetFont (const Font& font)
-  {
-    text_->SetFont(font);
-    RequestRedraw();
-  }
+  return Size(w, h);
+}
 
-  Size OptionLabel::GetPreferredSize () const
-  {
-    int h = text_->font().height();
-    int w = text_->size().width();
+bool OptionLabel::IsExpandX () const
+{
+  return true;
+}
 
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
+void OptionLabel::PerformHoverIn (AbstractWindow* context)
+{
+}
 
-    return Size(w, h);
-  }
+void OptionLabel::PerformHoverOut (AbstractWindow* context)
+{
+}
 
-  bool OptionLabel::IsExpandX () const
-  {
-    return true;
-  }
+Response OptionLabel::PerformMousePress (AbstractWindow* context)
+{
+  if (flags_ & OptionLabelCheckableMask) {
 
-  Response OptionLabel::Draw (AbstractWindow* context)
-  {
-    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-              size().width() - pixel_size(kPadding.hsum()),
+    Rect rect(pixel_size(kPadding.left()) + text_->font().height(),
+              pixel_size(kPadding.bottom()),
+              text_->font().height(),
               size().height() - pixel_size(kPadding.vsum()));
 
-    if (text_->size().height() <= rect.height()) {
-      text_->DrawInRect(rect, AlignCenter | AlignJustify | AlignBaseline,
-                        Color(Color::White).data());
+    if (rect.contains(context->local_cursor_position())) {
+      // if in check icon
+      return Finish;
     }
 
-    return Finish;
+    rect.set_x(pixel_size(kPadding.left()));
+    rect.set_width(rect.width() + text_->font().height() + text_->size().width());
+
+    if (rect.contains(context->local_cursor_position())) {
+      return Finish;
+    } else {
+      return Ignore;
+    }
+
+  } else {
+
+    Rect rect(pixel_size(kPadding.left()),
+              pixel_size(kPadding.bottom()),
+              text_->font().height() + text_->size().width(),
+              size().height() - pixel_size(kPadding.vsum()));
+
+    if (rect.contains(context->local_cursor_position())) {
+      return Finish;
+    } else {
+      return Ignore;
+    }
+
   }
 
+  return Ignore;
 }
+
+Response OptionLabel::PerformMouseRelease (AbstractWindow* context)
+{
+  return Ignore;
+}
+
+Response OptionLabel::Draw (AbstractWindow* context)
+{
+  Rect rect(pixel_size(kPadding.left()),
+            pixel_size(kPadding.bottom()),
+            size().height() - pixel_size(kPadding.vsum()),
+            size().height() - pixel_size(kPadding.vsum()));
+  int x = 0;
+  float rotate = 0.f;
+  if (flags_ & OptionLabelToggleMask) rotate = -90.f;
+  
+  context->icons()->num()->DrawInRect(rect, AlignCenter,
+                                      Color(0x0F0F0FFF).data(), 0, rotate, true);
+  x += rect.width();
+
+  if (flags_ & OptionLabelCheckableMask) {
+    rect.set_x(rect.x() + x);
+    context->icons()->check()->DrawInRect(rect, AlignCenter,
+                                          Color(0x0F0F0FFF).data(), 0, 0, true);
+    x += rect.width() + kSpace;
+  }
+
+  if (text_->size().height() <= rect.height()) {
+    rect.set_x(x);
+    rect.set_width(size().width() - pixel_size(kPadding.hsum()) - x);
+    text_->DrawInRect(
+        rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
+        context->theme()->regular().text.data());
+  }
+
+  if (display_icon_)
+    display_icon_->DrawInRect(rect, AlignRight | AlignVerticalCenter);
+  
+  return Finish;
+}
+
+}  // namespace BlendInt
