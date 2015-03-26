@@ -33,7 +33,7 @@
 #include <opengl/gl-texture2d.hpp>
 #include <opengl/gl-buffer.hpp>
 
-#include <gui/chessboard.hpp>
+#include <gui/chess-board.hpp>
 #include <gui/abstract-round-frame.hpp>
 
 namespace BlendInt {

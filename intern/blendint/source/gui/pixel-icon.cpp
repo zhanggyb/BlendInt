@@ -225,7 +225,7 @@ void PixelIcon::DrawInRect (const Rect& rect,
   }
 }
 
-void PixelIcon::PerformSizeUpdate(const Size& size)
+void PixelIcon::PerformSizeUpdate(int width, int height)
 {
   // Pixel Icon cannot resized
 }

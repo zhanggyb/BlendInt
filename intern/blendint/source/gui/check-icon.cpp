@@ -172,7 +172,7 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
   }
 
-  void CheckIcon::PerformSizeUpdate (const Size& size)
+  void CheckIcon::PerformSizeUpdate (int width, int height)
   {
     // does not allow size update
   }

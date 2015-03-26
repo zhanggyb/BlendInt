@@ -112,7 +112,7 @@ namespace BlendInt {
         icon->DrawInRect(rect, align);
         if(is_checked()) {
           context->icons()->hook()->DrawInRect(rect, align,
-                                         Color(Color::White).data());
+                                         Color(Palette::White).data());
         }
 
         rect.cut_left(icon->size().width() + kIconTextSpace);

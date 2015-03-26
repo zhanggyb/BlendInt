@@ -168,7 +168,7 @@ namespace BlendInt {
  		return *this;
  	}
 
- 	void Text::PerformSizeUpdate (const Size& size)
+ 	void Text::PerformSizeUpdate (int width, int height)
  	{
  		// Do nothing, this form does not allow resize
  	}

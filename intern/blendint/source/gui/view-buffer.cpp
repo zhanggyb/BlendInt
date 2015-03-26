@@ -128,16 +128,16 @@ void ViewBuffer::SaveToFile(const char* name)
 
 #endif
 
-void ViewBuffer::PerformSizeUpdate (const Size& size)
+void ViewBuffer::PerformSizeUpdate (int width, int height)
 {
-  set_size(size);
+  set_size(width, height);
 
   GLfloat vertices[] = {
-    // coord                      		uv
-    0.f, 0.f,                     		0.f, 0.f,
-    (float)size.width(), 0.f,             	1.f, 0.f,
-    0.f, (float)size.height(),            	0.f, 1.f,
-    (float)size.width(), (float)size.height(),	1.f, 1.f
+    // coord                      	uv
+    0.f, 0.f,                     	0.f, 0.f,
+    (float)width, 0.f,             	1.f, 0.f,
+    0.f, (float)height,            	0.f, 1.f,
+    (float)width, (float)height,	  1.f, 1.f
   };
 
   vbo_.bind(0);

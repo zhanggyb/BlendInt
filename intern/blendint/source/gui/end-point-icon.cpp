@@ -124,7 +124,7 @@ namespace BlendInt {
   {
   }
 
-  void EndPointIcon::PerformSizeUpdate (const Size& size)
+  void EndPointIcon::PerformSizeUpdate (int width, int height)
   {
     // does not allow size update
     return;

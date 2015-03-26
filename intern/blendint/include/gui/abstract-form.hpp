@@ -84,7 +84,7 @@ namespace BlendInt {
 
     virtual void Draw (int x,
                        int y,
-                       const float* color_ptr = Color(Color::Black).data(),
+                       const float* color_ptr = Color(Palette::Black).data(),
                        short gamma = 0,
                        float rotate = 0.f,
                        float scale_x = 1.f,
@@ -93,7 +93,7 @@ namespace BlendInt {
     virtual void DrawInRect (const Rect& rect,
                              int align,
                              const float* color_ptr =
-                                 Color(Color::White).data(),
+                                 Color(Palette::White).data(),
                              short gamma = 0,
                              float rotate = 0.f,
                              bool scale = false) const = 0;
@@ -114,7 +114,7 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformSizeUpdate (const Size& size) = 0;
+    virtual void PerformSizeUpdate (int width, int height) = 0;
 
     /**
      * @brief preset the size of the form

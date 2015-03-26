@@ -137,9 +137,9 @@ namespace BlendInt {
     }
   }
 
-  void WidgetShadow::PerformSizeUpdate (const Size& size)
+  void WidgetShadow::PerformSizeUpdate (int width, int height)
   {
-    set_size(size);
+    set_size(width, height);
 
     std::vector<GLfloat> vertices;
     std::vector<GLuint> elements;

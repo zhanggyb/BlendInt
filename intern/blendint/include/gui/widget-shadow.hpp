@@ -45,19 +45,19 @@ namespace BlendInt {
 
     virtual void Draw (int x,
                        int y,
-                       const float* color_ptr = Color(Color::Black).data(),
+                       const float* color_ptr = Color(Palette::Black).data(),
                        short gamma = 0,
                        float rotate = 0.f,
                        float scale_x = 1.f,
                        float scale_y = 1.f) const;
 
     void Draw (int x, int y, int mask_x, int mask_y, const float* color_ptr =
-                   Color(Color::Black).data(),
+                   Color(Palette::Black).data(),
                short gamma = 0);
 
   protected:
 
-    virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (int width, int height);
 
     virtual void PerformRoundTypeUpdate (int type);
 

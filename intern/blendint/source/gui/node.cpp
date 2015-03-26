@@ -242,7 +242,7 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  vertices_count * 2 + 2);
 
-    context->icons()->end_point()->Draw(0, 20, Color(Color::Yellow).data());
+    context->icons()->end_point()->Draw(0, 20, Color(Palette::Yellow).data());
 
     return subview_count() ? Ignore : Finish;
   }

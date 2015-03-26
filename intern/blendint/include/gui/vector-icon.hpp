@@ -83,7 +83,7 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformSizeUpdate (const Size& size);
+    virtual void PerformSizeUpdate (int width, int height);
 
   private:
 

@@ -29,60 +29,72 @@
 
 namespace BlendInt {
 
-	/**
-	 * Icon displayed with pixels
-	 */
-	class PixelIcon: public AbstractIcon
-	{
-	public:
+/**
+ * Icon displayed with pixels
+ */
+class PixelIcon: public AbstractIcon
+{
+public:
 
-		PixelIcon (int width, int height);
+  PixelIcon (int width, int height);
 
-		PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv = 0);
+  PixelIcon (int width,
+             int height,
+             const unsigned char* pixels,
+             const GLfloat* uv = 0);
 
-		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
+  PixelIcon (int width,
+             int height,
+             const RefPtr<GLTexture2D>& texture,
+             const GLfloat* uv = 0);
 
-		virtual ~PixelIcon ();
+  virtual ~PixelIcon ();
 
-		void SetPixels (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv = 0);
+  void SetPixels (unsigned int width,
+                  unsigned int height,
+                  const unsigned char* pixels,
+                  const GLfloat* uv = 0);
 
-		void SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv = 0);
+  void SetTexture (unsigned int width,
+                   unsigned int height,
+                   const RefPtr<GLTexture2D>& texture,
+                   const GLfloat* uv = 0);
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = 0,
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const;
+  virtual void Draw (int x,
+                     int y,
+                     const float* color_ptr = 0,
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const;
 
-		virtual void DrawInRect (const Rect& rect,
-				int align,
-				const float* color_ptr = 0,
-				short gamma = 0,
-				float rotate = 0.f,
-				bool scale = false) const;
-	protected:
+  virtual void DrawInRect (const Rect& rect, int align, const float* color_ptr =
+                               0,
+                           short gamma = 0, float rotate = 0.f, bool scale =
+                               false) const;
+protected:
 
-		virtual void PerformSizeUpdate (const Size& size);
+  virtual void PerformSizeUpdate (int width, int height);
 
-	private:
+private:
 
-		/**
-		 * @brief Create VBO, VAO and bind VBO to vao_
-		 */
-		void CreateVertexArray (unsigned int width, unsigned int height, const GLfloat* uv = 0);
+  /**
+   * @brief Create VBO, VAO and bind VBO to vao_
+   */
+  void CreateVertexArray (unsigned int width,
+                          unsigned int height,
+                          const GLfloat* uv = 0);
 
-		GLuint vao_;
+  GLuint vao_;
 
-		/**
-		 * @brief Coord and UV vertex buffer
-		 */
-		RefPtr<GLArrayBuffer> vbo_;
+  /**
+   * @brief Coord and UV vertex buffer
+   */
+  RefPtr<GLArrayBuffer> vbo_;
 
-		RefPtr<GLTexture2D> texture_;
+  RefPtr<GLTexture2D> texture_;
 
-		// disabled
-		PixelIcon& operator = (const PixelIcon& orig);
-	};
+  // disabled
+  PixelIcon& operator = (const PixelIcon& orig);
+};
 }

@@ -127,7 +127,7 @@ Response ExpandButton::Draw (AbstractWindow* context)
   if (text()) {
     text()->DrawInRect(rect,
                        AlignHorizontalCenter | AlignJustify | AlignBaseline,
-                       Color(Color::Black).data(), 0);
+                       Color(Palette::Black).data(), 0);
   }
 
   return Finish;

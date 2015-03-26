@@ -325,7 +325,7 @@ namespace BlendInt {
     TextEntry* hex_edit = Manage(new TextEntry);
     hex_edit->SetEmboss(true);
     Label* label = Manage(new Label("Gamma Corrected"));
-    label->SetForeground(Color(Color::Gray));
+    label->SetForeground(Color(Palette::Gray));
 
     box->AddWidget(hex_edit);
     box->AddWidget(label);

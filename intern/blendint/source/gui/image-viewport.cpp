@@ -39,7 +39,7 @@
 
 namespace BlendInt {
 
-	Color ImageViewport::background_color = Color(Color::Gray);
+	Color ImageViewport::background_color = Color(Palette::Gray);
 
 	ImageViewport::ImageViewport ()
 	: AbstractRoundFrame(),

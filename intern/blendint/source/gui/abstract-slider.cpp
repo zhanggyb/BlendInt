@@ -43,11 +43,11 @@ namespace BlendInt {
     glDeleteVertexArrays(2, vao_);
   }
 
-  void SlideIcon::PerformSizeUpdate (const Size& size)
+  void SlideIcon::PerformSizeUpdate (int width, int height)
   {
-    set_size(size);
+    set_size(width, height);
 
-    Orientation shadedir = size.width() < size.height() ? Horizontal : Vertical;
+    Orientation shadedir = width < height ? Horizontal : Vertical;
     short shadetop = AbstractWindow::theme()->scroll().shadetop;
     short shadedown = AbstractWindow::theme()->scroll().shadedown;
 

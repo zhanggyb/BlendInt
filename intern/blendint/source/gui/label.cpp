@@ -42,7 +42,7 @@ namespace BlendInt {
 
     set_size(w, h);
 
-    foreground_ = Color::Black;
+    foreground_ = Palette::Black;
     background_ = 0xFFFFFF00;
 
     std::vector<GLfloat> inner_verts;

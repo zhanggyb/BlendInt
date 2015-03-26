@@ -82,7 +82,7 @@ namespace BlendInt {
     glDeleteVertexArrays(2, vao_);
   }
 
-  void DotIcon::PerformSizeUpdate (const Size& size)
+  void DotIcon::PerformSizeUpdate (int width, int height)
   {
     // do not allow size changing
   }

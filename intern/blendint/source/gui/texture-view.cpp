@@ -301,8 +301,8 @@ void TextureView::PostDraw (AbstractWindow* context)
 
 void TextureView::InitializeImageView ()
 {
-  chessboard_.reset(new ChessBoard(20));
-  chessboard_->Resize(size());
+  chessboard_.reset(new ChessBoard(size().width(), size().height()));
+  //chessboard_->Resize(size());
 
   std::vector<GLfloat> inner_verts;
   GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
