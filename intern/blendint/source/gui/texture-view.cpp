@@ -190,11 +190,11 @@ namespace BlendInt {
     return image_size_;
   }
 
-  void TextureView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void TextureView::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -208,8 +208,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

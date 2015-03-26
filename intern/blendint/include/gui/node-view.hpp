@@ -59,11 +59,20 @@ namespace BlendInt {
 
   protected:
 
-    virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
+    virtual bool SizeUpdateTest (const AbstractView* source,
+                                 const AbstractView* target,
+                                 int width,
+                                 int height);
 
-    virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
+    virtual bool PositionUpdateTest (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int x,
+                                     int y);
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const AbstractView* source,
+                                    const AbstractView* target,
+                                    int width,
+                                    int height);
 
     virtual void PerformRoundTypeUpdate (int round_type);
 

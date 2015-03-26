@@ -204,24 +204,24 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void Viewport3D::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Viewport3D::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if (request.target() == this) {
-			set_size(*request.size());
+		if (target == this) {
+			set_size(width, height);
 
 			default_camera_->SetPerspective(default_camera_->fovy(),
-			        1.f * request.size()->width() / request.size()->height());
+			        1.f * width / height);
 
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(*request.size(), 0, RoundNone, 0.f, &inner_verts, 0);
+			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 			inner_->bind();
 			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			inner_->reset();
 
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

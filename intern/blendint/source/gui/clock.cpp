@@ -107,10 +107,10 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			int radius = std::min(request.size()->width(), request.size()->height());
+		if(target == this) {
+			int radius = std::min(width, height);
 			radius = radius / 2;
 
 			std::vector<GLfloat> inner_verts;
@@ -122,7 +122,7 @@ namespace BlendInt {
 			buffer_.bind(1);
 			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-			set_size(*request.size());
+			set_size(width, height);
 
 			GLfloat second_hand_vertices[] = {
 					-5.f, -1.f,
@@ -138,8 +138,8 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

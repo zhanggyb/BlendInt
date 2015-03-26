@@ -93,10 +93,10 @@ namespace BlendInt {
 		return Finish;
 	}
 
-	void FolderList::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void FolderList::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			set_size(*request.size());
+		if(target == this) {
+			set_size(width, height);
 
 			std::vector<GLfloat> inner_verts;
 			std::vector<GLfloat> outer_verts;
@@ -112,7 +112,7 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		ReportSizeUpdate(request);
+		report_size_update(source, target, width, height);
 	}
 
 	void FolderList::PerformRoundTypeUpdate (int round_type)

@@ -75,7 +75,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	bool FlowLayout::SizeUpdateTest(const SizeUpdateRequest& request)
+	bool FlowLayout::SizeUpdateTest(const AbstractView* source, const AbstractView* target, int width, int height)
 	{
 		return true;
 	}
@@ -84,7 +84,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool FlowLayout::PositionUpdateTest(const PositionUpdateRequest& request)
+	bool FlowLayout::PositionUpdateTest(const AbstractView* source, const AbstractView* target, int x, int y)
 	{
 		return true;
 	}

@@ -195,17 +195,17 @@ namespace BlendInt {
     return subview == active_widget_ ? true : false;
   }
 
-  void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Stack::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
       for (AbstractView* p = first(); p; p = next(p)) {
         ResizeSubView(p, size());
       }
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

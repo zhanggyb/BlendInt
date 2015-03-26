@@ -55,9 +55,9 @@ namespace BlendInt {
 
   protected:
 
-    virtual bool SizeUpdateTest (const SizeUpdateRequest& request) final;
+    virtual bool SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height) final;
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
 
     virtual bool PreDraw (AbstractWindow* context) final;
 

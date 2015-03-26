@@ -205,14 +205,14 @@ namespace BlendInt {
     }
   }
 
-  void StackLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void StackLayout::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      int w = request.size()->width() - margin().hsum();
-      int h = request.size()->height() - margin().vsum();
+      int w = width - margin().hsum();
+      int h = height - margin().vsum();
 
-      set_size(*request.size());
+      set_size(width, height);
 
       for (AbstractView* p = first(); p; p = next(p)) {
         ResizeSubView(p, w, h);
@@ -220,8 +220,8 @@ namespace BlendInt {
 
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

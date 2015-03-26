@@ -305,10 +305,10 @@ namespace BlendInt {
     Fc::Config::fini();
   }
 
-  void Window::PerformPositionUpdate (const PositionUpdateRequest& request)
+  void Window::PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y)
   {
-    if (request.target() == this) {
-      set_position(*request.position());
+    if (target == this) {
+      set_position(x, y);
 
 //			GLFWmonitor* monitor = glfwGetWindowMonitor(window_);
 //
@@ -317,7 +317,7 @@ namespace BlendInt {
 
 //			DBG_PRINT_MSG("monitor size: %d, %d", monitor_width, monitor_height);
 
-      if (request.source() == this) {
+      if (source == this) {
         glfwSetWindowPosCallback(window_, NULL);
         glfwSetWindowPos(window_, position().x(), position().y());
         glfwSetWindowPosCallback(window_, &CbWindowPosition);
@@ -325,10 +325,10 @@ namespace BlendInt {
     }
   }
 
-  void Window::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Window::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
                                         (float) size().height(), 100.f, -100.f);
@@ -336,7 +336,7 @@ namespace BlendInt {
 
       set_refresh(true);
 
-      if (request.source() == this) {
+      if (source == this) {
         glfwSetWindowSizeCallback(window_, NULL);
         glfwSetWindowSize(window_, size().width(), size().height());
         glfwSetWindowSizeCallback(window_, &CbWindowSize);
@@ -399,10 +399,7 @@ namespace BlendInt {
 
     DBG_ASSERT(win);
 
-    Size size(w, h);
-    SizeUpdateRequest request(0, win, &size);
-
-    win->PerformSizeUpdate(request);
+    win->PerformSizeUpdate(0, win, w, h);
   }
 
   void Window::CbWindowPosition (GLFWwindow* window, int x, int y)
@@ -417,10 +414,7 @@ namespace BlendInt {
 
     DBG_ASSERT(win);
 
-    Point pos(x, y);
-    PositionUpdateRequest request(0, win, &pos);
-
-    win->PerformPositionUpdate(request);
+    win->PerformPositionUpdate(0, win, x, y);
   }
 
   void Window::CbKey (GLFWwindow* window,

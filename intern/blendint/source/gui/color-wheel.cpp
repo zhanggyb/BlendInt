@@ -104,11 +104,11 @@ namespace BlendInt {
 		return Finish;
 	}
 	
-	void ColorWheel::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void ColorWheel::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if (request.target() == this) {
+		if (target == this) {
 
-			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
+			int radius = std::min(width, height) / 2;
 
 			inner_->bind();
 
@@ -179,11 +179,11 @@ namespace BlendInt {
 			outer_->unmap();
 			outer_->reset();
 
-			set_size(*request.size());
+			set_size(width, height);
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

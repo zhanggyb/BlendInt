@@ -117,7 +117,7 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
 
     virtual Response Draw (AbstractWindow* context) final;
 
@@ -168,7 +168,7 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
 
     virtual void PerformRoundTypeUpdate (int round_type);
 

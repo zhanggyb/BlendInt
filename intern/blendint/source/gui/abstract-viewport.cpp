@@ -68,22 +68,22 @@ namespace BlendInt {
 		return true;
 	}
 
-  void AbstractViewport::PerformPositionUpdate (const PositionUpdateRequest& request)
+  void AbstractViewport::PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y)
   {
-    if (request.target() == this) {
-      set_position(*request.position());
+    if (target == this) {
+      set_position(x, y);
       PostPositionUpdate();
     }
 
-    if (request.source() == this) {
-      ReportPositionUpdate(request);
+    if (source == this) {
+      report_position_update(source, target, x, y);
     }
   }
 
-  void AbstractViewport::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void AbstractViewport::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       std::vector<GLfloat> outer_verts;
       GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, 0, &outer_verts);
@@ -96,8 +96,8 @@ namespace BlendInt {
       PostSizeUpdate();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

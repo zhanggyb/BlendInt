@@ -178,20 +178,29 @@ namespace BlendInt {
     return dynamic_cast<NodeView*>(parent);
   }
 
-  bool NodeView::SizeUpdateTest (const SizeUpdateRequest& request)
+  bool NodeView::SizeUpdateTest (const AbstractView* source,
+                                 const AbstractView* target,
+                                 int width,
+                                 int height)
   {
     return true;
   }
 
-  bool NodeView::PositionUpdateTest (const PositionUpdateRequest& request)
+  bool NodeView::PositionUpdateTest (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int x,
+                                     int y)
   {
     return true;
   }
 
-  void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void NodeView::PerformSizeUpdate (const AbstractView* source,
+                                    const AbstractView* target,
+                                    int width,
+                                    int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
@@ -205,8 +214,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

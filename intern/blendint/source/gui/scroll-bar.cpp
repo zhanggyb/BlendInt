@@ -107,10 +107,10 @@ namespace BlendInt {
     return (orientation() == Horizontal) ? Size(200, 14) : Size(14, 200);
   }
 
-  void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ScrollBar::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      float radius = std::min(request.size()->width(), request.size()->height())
+    if (target == this) {
+      float radius = std::min(width, height)
           / 2.f;
 
       Orientation slot_orient;
@@ -124,7 +124,7 @@ namespace BlendInt {
         slide_.SetRadius(radius);
       }
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
@@ -157,8 +157,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

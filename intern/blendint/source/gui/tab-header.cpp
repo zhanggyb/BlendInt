@@ -149,10 +149,10 @@ namespace BlendInt {
     m_button_index_toggled.fire(index, toggled);
   }
 
-  void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void TabHeader::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
@@ -166,8 +166,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

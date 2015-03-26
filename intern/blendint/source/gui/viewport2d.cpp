@@ -63,14 +63,14 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Viewport2D::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void Viewport2D::PerformSizeUpdate(const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if (request.target() == this) {
+		if (target == this) {
 
-			set_size(*request.size());
+			set_size(width, height);
 
 			std::vector<GLfloat> inner_verts;
-			GenerateVertices(*request.size(), 0, RoundNone, 0.f, &inner_verts, 0);
+			GenerateVertices(size(), 0, RoundNone, 0.f, &inner_verts, 0);
 			inner_->bind();
 			inner_->set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 			inner_->reset();
@@ -83,8 +83,8 @@ namespace BlendInt {
 			camera_.SetOrtho(left, right, bottom, top);
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

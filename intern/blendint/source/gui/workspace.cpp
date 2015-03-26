@@ -68,9 +68,9 @@ namespace BlendInt {
     glDeleteVertexArrays(2, vao_);
   }
 
-  void EdgeButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void EdgeButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
@@ -85,13 +85,13 @@ namespace BlendInt {
                            &outer_verts[0]);
       buffer_.reset();
 
-      set_size(*request.size());
+      set_size(width, height);
 
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 
@@ -325,13 +325,13 @@ namespace BlendInt {
     return prefer;
   }
 
-  void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
+  void Workspace::PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y)
   {
-    if (request.target() == this) {
-      int ox = request.position()->x() - position().x();
-      int oy = request.position()->y() - position().y();
+    if (target == this) {
+      int ox = x - position().x();
+      int oy = y - position().y();
 
-      set_position(*request.position());
+      set_position(x, y);
 
       for (AbstractView* p = first(); p; p = next(p)) {
         MoveSubViewTo(p, p->position().x() + ox, p->position().y() + oy);
@@ -340,15 +340,15 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportPositionUpdate(request);
+    if (source == this) {
+      report_position_update(source, target, x, y);
     }
   }
 
-  void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Workspace::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       if (header_frame_) {
 
@@ -374,8 +374,8 @@ namespace BlendInt {
 
       RequestRedraw();
     }
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

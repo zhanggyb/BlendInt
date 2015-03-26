@@ -191,27 +191,27 @@ namespace BlendInt {
     }
 	}
 
-	bool AdaptiveLayout::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool AdaptiveLayout::SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
 		return true;
 	}
 
 	bool AdaptiveLayout::PositionUpdateTest (
-	        const PositionUpdateRequest& request)
+	        const AbstractView* source, const AbstractView* target, int x, int y)
 	{
 		return true;
 	}
 
-	void AdaptiveLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void AdaptiveLayout::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			set_size(*request.size());
+		if(target == this) {
+			set_size(width, height);
 			Adjust();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
-		} else if(request.source()->super() == this) {
+		if(source == this) {
+			report_size_update(source, target, width, height);
+		} else if(source->super() == this) {
 		  // a sub view resized
 		  Adjust();
 		}

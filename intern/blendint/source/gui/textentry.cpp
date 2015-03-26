@@ -148,11 +148,11 @@ namespace BlendInt {
     return true;
   }
 
-  void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void TextEntry::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
@@ -175,9 +175,9 @@ namespace BlendInt {
 
       vbo_.bind(2);
       GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-      *(buf_p + 5) = (GLfloat) (request.size()->height()
+      *(buf_p + 5) = (GLfloat) (height
           - vertical_space * 2 * AbstractWindow::theme()->pixel());
-      *(buf_p + 7) = (GLfloat) (request.size()->height()
+      *(buf_p + 7) = (GLfloat) (height
           - vertical_space * 2 * AbstractWindow::theme()->pixel());
       vbo_.unmap();
       vbo_.reset();
@@ -185,8 +185,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

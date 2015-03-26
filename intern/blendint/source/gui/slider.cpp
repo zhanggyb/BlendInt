@@ -158,10 +158,10 @@ namespace BlendInt {
   {
   }
 
-  void Slider::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Slider::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
 
       vbo_.bind(0);
       GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
@@ -178,8 +178,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

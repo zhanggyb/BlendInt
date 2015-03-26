@@ -164,11 +164,11 @@ namespace BlendInt {
     return main_layout_->GetPreferredSize();
   }
 
-  void Dialog::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Dialog::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       projection_matrix_ = glm::ortho(
           0.f, 0.f + (float) size().width(),
@@ -204,8 +204,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

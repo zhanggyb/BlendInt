@@ -51,11 +51,11 @@ namespace BlendInt {
     return Size(h, h);
   }
 
-  void CloseButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void CloseButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
@@ -80,8 +80,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

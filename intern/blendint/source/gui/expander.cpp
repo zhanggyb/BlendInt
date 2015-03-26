@@ -77,15 +77,15 @@ namespace BlendInt {
 		RequestRedraw();
 	}
 
-	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void ExpandButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			set_size(*request.size());
+		if(target == this) {
+			set_size(width, height);
 			RequestRedraw();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 
@@ -339,17 +339,17 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void Expander::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			set_size(*request.size());
+		if(target == this) {
+			set_size(width, height);
 
 			FillWidgets();
 
 			RequestRedraw();
 		}
 
-		ReportSizeUpdate(request);
+		report_size_update(source, target, width, height);
 	}
 
 	Response Expander::Draw (AbstractWindow* context)

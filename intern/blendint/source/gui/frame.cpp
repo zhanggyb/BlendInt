@@ -116,22 +116,22 @@ namespace BlendInt {
     return layout_->GetPreferredSize();
   }
 
-  bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
+  bool Frame::SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height)
   {
     return true;
   }
 
-  void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Frame::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
       projection_matrix_ = glm::ortho(0.f,
-                                      0.f + (float) request.size()->width(),
+                                      0.f + (float) width,
                                       0.f,
-                                      0.f + (float) request.size()->height(),
+                                      0.f + (float) height,
                                       100.f, -100.f);
 
-      set_size(*request.size());
+      set_size(width, height);
 
       if (view_buffer()) {
         view_buffer()->Resize(size());
@@ -154,8 +154,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

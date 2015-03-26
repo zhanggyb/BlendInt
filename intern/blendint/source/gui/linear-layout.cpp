@@ -229,35 +229,35 @@ namespace BlendInt {
 		}
 	}
 
-	bool LinearLayout::SizeUpdateTest (const SizeUpdateRequest& request)
+	bool LinearLayout::SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
 		// Do not allow sub widget changing its size
-		if(request.source()->super() == this) {
+		if(source->super() == this) {
 			return false;
 		}
 
 		return true;
 	}
 
-	bool LinearLayout::PositionUpdateTest (const PositionUpdateRequest& request)
+	bool LinearLayout::PositionUpdateTest (const AbstractView* source, const AbstractView* target, int x, int y)
 	{
 		// Do not allow sub widget changing its position
-		if(request.source()->super() == this) {
+		if(source->super() == this) {
 			return false;
 		}
 
 		return true;
 	}
 
-	void LinearLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void LinearLayout::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
-			set_size(*request.size());
+		if(target == this) {
+			set_size(width, height);
 			Adjust();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

@@ -303,11 +303,11 @@ namespace BlendInt {
     return Finish;
   }
 
-  void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void FileBrowser::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       GLfloat row_height = (GLfloat) font_.height();
 
@@ -339,8 +339,8 @@ namespace BlendInt {
       buffer_.reset();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

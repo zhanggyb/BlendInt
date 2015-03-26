@@ -27,49 +27,52 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Container which controls sub widget round corner.
-   *
-   * @ingroup blendint_gui_widgets
-   */
-  class Block: public AbstractRoundWidget
-  {
-  public:
+/**
+ * @brief Container which controls sub widget round corner.
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class Block: public AbstractRoundWidget
+{
+public:
 
-    Block (Orientation orienation = Horizontal);
+  Block (Orientation orienation = Horizontal);
 
-    virtual ~Block ();
+  virtual ~Block ();
 
-    void AddWidget (AbstractRoundWidget* widget);
+  void AddWidget (AbstractRoundWidget* widget);
 
-    void InsertWidget (int index, AbstractRoundWidget* widget);
+  void InsertWidget (int index, AbstractRoundWidget* widget);
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-    virtual bool IsExpandY () const;
+  virtual bool IsExpandY () const;
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-  private:
+private:
 
-    void FillInHBlock (const Size& out_size);
+  void FillInHBlock (const Size& out_size);
 
-    void FillInHBlock (int x, int y, int w, int h);
+  void FillInHBlock (int x, int y, int w, int h);
 
-    void FillInVBlock (const Size& out_size);
+  void FillInVBlock (const Size& out_size);
 
-    void FillInVBlock (int x, int y, int w, int h);
+  void FillInVBlock (int x, int y, int w, int h);
 
-  private:
+private:
 
-    Orientation orientation_;
+  Orientation orientation_;
 
-  };
+};
 
 }

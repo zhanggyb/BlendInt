@@ -426,13 +426,13 @@ namespace BlendInt {
     return preferred_size;
   }
 
-  void FrameSplitter::PerformPositionUpdate (const PositionUpdateRequest& request)
+  void FrameSplitter::PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y)
   {
-    if (request.target() == this) {
-      int ox = request.position()->x() - position().x();
-      int oy = request.position()->y() - position().y();
+    if (target == this) {
+      int ox = x - position().x();
+      int oy = y - position().y();
 
-      set_position(*request.position());
+      set_position(x, y);
 
       for (AbstractView* p = first(); p; p = next(p)) {
         MoveSubViewTo(p, p->position().x() + ox, p->position().y() + oy);
@@ -440,20 +440,20 @@ namespace BlendInt {
 
     }
 
-    if (request.source() == this) {
-      ReportPositionUpdate(request);
+    if (source == this) {
+      report_position_update(source, target, x, y);
     }
   }
 
-  void FrameSplitter::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void FrameSplitter::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
       FillSubFrames();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

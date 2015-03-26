@@ -129,11 +129,11 @@ namespace BlendInt {
 		file_entry_->SetText(browser_->file_selected());
 	}
 
-	void FileSelector::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void FileSelector::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-    	if(request.target() == this) {
+    	if(target == this) {
 
-    		set_size(*request.size());
+    		set_size(width, height);
 
     		projection_matrix_  = glm::ortho(
     				0.f,
@@ -173,8 +173,8 @@ namespace BlendInt {
 
     	}
 
-    	if(request.source() == this) {
-    		ReportSizeUpdate(request);
+    	if(source == this) {
+    		report_size_update(source, target, width, height);
     	}
 	}
 

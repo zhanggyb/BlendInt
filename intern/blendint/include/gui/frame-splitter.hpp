@@ -140,9 +140,9 @@ namespace BlendInt {
 
   protected:
 
-    virtual void PerformPositionUpdate (const PositionUpdateRequest& request) final;
+    virtual void PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y) final;
 
-    virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
 
     virtual bool PreDraw (AbstractWindow* context) final;
 

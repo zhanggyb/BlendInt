@@ -139,11 +139,11 @@ namespace BlendInt {
     return true;
   }
 
-  void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void SplitterHandle::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       if (orientation_ == Horizontal) {
 
@@ -194,8 +194,8 @@ namespace BlendInt {
       }
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 
@@ -611,17 +611,15 @@ namespace BlendInt {
   {
   }
 
-  void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Splitter::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
-
-      FillSubWidgetsInSplitter(*request.size(), orientation_);
-
-      set_size(*request.size());
+    if (target == this) {
+      set_size(width, height);
+      FillSubWidgetsInSplitter(size(), orientation_);
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

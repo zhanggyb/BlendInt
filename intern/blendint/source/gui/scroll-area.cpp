@@ -86,17 +86,17 @@ namespace BlendInt {
 		return layout_->GetPreferredSize();
 	}
 
-	void ScrollArea::PerformSizeUpdate (const SizeUpdateRequest& request)
+	void ScrollArea::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
+		if(target == this) {
 
-			set_size(*request.size());
+			set_size(width, height);
 			ResizeSubView(layout_, size());
 
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

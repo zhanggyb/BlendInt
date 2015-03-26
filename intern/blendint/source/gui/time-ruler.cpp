@@ -93,13 +93,13 @@ namespace BlendInt {
 		return Size(500, 14);
 	}
 
-	void TimeRuler::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void TimeRuler::PerformSizeUpdate(const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
+		if(target == this) {
 
-			float radius = std::min(request.size()->width(), request.size()->height()) / 2.f;
+			float radius = std::min(width, height) / 2.f;
 
-			set_size(*request.size());
+			set_size(width, height);
 			set_round_radius(radius);
 
 			std::vector<GLfloat> inner_verts;
@@ -133,8 +133,8 @@ namespace BlendInt {
 			RequestRedraw();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

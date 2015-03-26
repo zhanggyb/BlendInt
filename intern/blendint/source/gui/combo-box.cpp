@@ -341,15 +341,15 @@ namespace BlendInt {
     return Finish;
   }
 
-  void ComboListView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ComboListView::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       GLfloat h = Font::default_height();
-      GLfloat verts[] = { 0.f, 0.f, (GLfloat) request.size()->width(), 0.f, 0.f,
-          h, (GLfloat) request.size()->width(), h };
+      GLfloat verts[] = { 0.f, 0.f, (GLfloat) width, 0.f, 0.f,
+          h, (GLfloat) width, h };
 
       vbo_.bind(1);
       vbo_.set_data(sizeof(verts), verts);
@@ -363,8 +363,8 @@ namespace BlendInt {
       vbo_.reset();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 
@@ -544,11 +544,11 @@ namespace BlendInt {
     }
   }
 
-  void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ComboBox::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
@@ -573,8 +573,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

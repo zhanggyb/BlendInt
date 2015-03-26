@@ -74,11 +74,14 @@ namespace BlendInt {
     return preferred_size;
   }
 
-  void Cell::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void Cell::PerformSizeUpdate (const AbstractView* source,
+                                const AbstractView* target,
+                                int width,
+                                int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       if (subview_count()) {
         ResizeSubView(first(), size());
@@ -86,8 +89,8 @@ namespace BlendInt {
       }
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 
@@ -267,16 +270,19 @@ namespace BlendInt {
     return false;
   }
 
-  void TableLayout::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void TableLayout::PerformSizeUpdate (const AbstractView* source,
+                                       const AbstractView* target,
+                                       int width,
+                                       int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
       Adjust();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

@@ -183,11 +183,11 @@ namespace BlendInt {
 		return Finish;
 	}
 
-  void MenuItem::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void MenuItem::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       std::vector<GLfloat> inner_verts;
       if (AbstractWindow::theme()->menu_item().shaded) {
@@ -208,8 +208,8 @@ namespace BlendInt {
       RequestRedraw();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 

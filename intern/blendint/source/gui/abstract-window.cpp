@@ -433,12 +433,18 @@ namespace BlendInt {
     ReleaseTheme();
   }
 
-  bool AbstractWindow::SizeUpdateTest (const SizeUpdateRequest& request)
+  bool AbstractWindow::SizeUpdateTest (const AbstractView* source,
+                                       const AbstractView* target,
+                                       int width,
+                                       int height)
   {
     return true;
   }
 
-  bool AbstractWindow::PositionUpdateTest (const PositionUpdateRequest& request)
+  bool AbstractWindow::PositionUpdateTest (const AbstractView* source,
+                                           const AbstractView* target,
+                                           int x,
+                                           int y)
   {
     return true;
   }

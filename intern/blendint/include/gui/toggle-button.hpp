@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request) final;
+		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
 
 		virtual void PerformRoundTypeUpdate (int round_type) final;
 

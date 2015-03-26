@@ -239,13 +239,13 @@ namespace BlendInt {
 #endif
 
 
-	void ImageViewport::PerformPositionUpdate(const PositionUpdateRequest& request)
+	void ImageViewport::PerformPositionUpdate(const AbstractView* source, const AbstractView* target, int x, int y)
 	{
-		if(request.target() == this) {
+		if(target == this) {
 
 			Point offset = GetOffset();
-			float x = static_cast<float>(request.position()->x() + offset.x());
-			float y = static_cast<float>(request.position()->y() + offset.y());
+			float x = static_cast<float>(x + offset.x());
+			float y = static_cast<float>(y + offset.y());
 
 			projection_matrix_  = glm::ortho(
 				x,
@@ -256,37 +256,37 @@ namespace BlendInt {
 
 			model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
 
-			set_position(*request.position());
+			set_position(x, y);
 
 		}
 
-		if(request.source() == this) {
-			ReportPositionUpdate(request);
+		if(source == this) {
+			report_position_update(source, target, x, y);
 		}
 	}
 
-	void ImageViewport::PerformSizeUpdate(const SizeUpdateRequest& request)
+	void ImageViewport::PerformSizeUpdate(const AbstractView* source, const AbstractView* target, int width, int height)
 	{
-		if(request.target() == this) {
+		if(target == this) {
 			Point offset = GetOffset();
 			float x = static_cast<float>(position().x() + offset.x());
 			float y = static_cast<float>(position().y() + offset.y());
 
 			projection_matrix_  = glm::ortho(
 				x,
-				x + (float)request.size()->width(),
+				x + (float)width,
 				y,
-				y + (float)request.size()->height(),
+				y + (float)height,
 				100.f, -100.f);
 
-			set_size(*request.size());
+			set_size(width, height);
 			//AdjustImageArea(*request.size());
 
 			RequestRedraw();
 		}
 
-		if(request.source() == this) {
-			ReportSizeUpdate(request);
+		if(source == this) {
+			report_size_update(source, target, width, height);
 		}
 	}
 

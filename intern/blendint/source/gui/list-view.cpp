@@ -215,15 +215,15 @@ namespace BlendInt {
     return ModelIndex();
   }
 
-  void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)
+  void ListView::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
-    if (request.target() == this) {
+    if (target == this) {
 
-      set_size(*request.size());
+      set_size(width, height);
 
       GLfloat h = font_.height();
-      GLfloat verts[] = { 0.f, 0.f, (GLfloat) request.size()->width(), 0.f, 0.f,
-          h, (GLfloat) request.size()->width(), h };
+      GLfloat verts[] = { 0.f, 0.f, (GLfloat) width, 0.f, 0.f,
+          h, (GLfloat) width, h };
 
       vbo_.bind(1);
       vbo_.set_data(sizeof(verts), verts);
@@ -237,8 +237,8 @@ namespace BlendInt {
       vbo_.reset();
     }
 
-    if (request.source() == this) {
-      ReportSizeUpdate(request);
+    if (source == this) {
+      report_size_update(source, target, width, height);
     }
   }
 
