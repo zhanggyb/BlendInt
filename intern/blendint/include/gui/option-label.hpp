@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#pragma once
+
 #include <core/margin.hpp>
 
 #include <gui/text.hpp>

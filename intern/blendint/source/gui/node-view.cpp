@@ -41,6 +41,8 @@ namespace BlendInt {
     InitializeNodeView();
 //		curve_ = new CubicBezierCurve;
 //		curve_->Unpack();
+
+    guides_.reset(new GridGuides(size().width(), size().height()));
   }
 
   NodeView::NodeView (int width, int height)
@@ -50,6 +52,7 @@ namespace BlendInt {
     InitializeNodeView();
 //		curve_ = new CubicBezierCurve;
 //		curve_->Unpack();
+    guides_.reset(new GridGuides(width, height));
   }
 
   NodeView::~NodeView ()
@@ -211,6 +214,7 @@ namespace BlendInt {
                         &inner_verts[0]);
       vbo_.reset();
 
+      guides_->Resize(width, height);
       RequestRedraw();
     }
 
@@ -378,7 +382,7 @@ namespace BlendInt {
         0);
     glUniform4f(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-        0.208f, 0.208f, 0.208f, 1.f);
+        0.565f, 0.596f, 0.627f, 1.f);
 
     glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -393,6 +397,7 @@ namespace BlendInt {
   Response NodeView::Draw (AbstractWindow* context)
   {
 //		curve_->Draw();
+    guides_->Draw(0, 0);
 
     if (subview_count()) {
 

@@ -26,7 +26,7 @@
 #include <core/types.hpp>
 #include <gui/abstract-node.hpp>
 #include <gui/cubic-bezier-curve.hpp>
-
+#include <gui/grid-guides.hpp>
 #include <gui/abstract-scrollable.hpp>
 
 namespace BlendInt {
@@ -111,6 +111,8 @@ namespace BlendInt {
     GLuint vao_;
 
     GLBuffer<> vbo_;
+
+    RefPtr<GridGuides> guides_;
 
     bool pressed_;
 

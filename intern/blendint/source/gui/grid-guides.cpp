@@ -22,28 +22,21 @@
  */
 
 #include <gui/abstract-window.hpp>
-#include <gui/chess-board.hpp>
+#include <gui/grid-guides.hpp>
 
 namespace BlendInt {
 
-ChessBoard::ChessBoard (int w, int h)
-: vao_(0)
+GridGuides::GridGuides (int w, int h)
 {
   set_size(w, h);
 
   // fill texture
-  std::vector<unsigned int> pixels(kCellWidth * 2 * kCellHeight * 2,
-                                   0x66666666);
+  std::vector<unsigned int> pixels(kUnit * kUnit, 0);
 
-  int index = 0;
-  for (int i = 0; i < kCellHeight; i++) {
-    memset(&pixels[index], 0x99999999, sizeof(unsigned int) * kCellWidth);
-    index += kCellWidth * 2;
-  }
-  for (int i = 0; i < kCellHeight; i++) {
-    index += kCellWidth;
-    memset(&pixels[index], 0x99999999, sizeof(unsigned int) * kCellWidth);
-    index += kCellWidth;
+  memset(&pixels[kUnit / 2 * kUnit], 0x0F0F0F0F, sizeof(unsigned int) * kUnit);
+
+  for (int i = 0; i < kUnit; i++) {
+    pixels[kUnit * i + kUnit / 2] = 0x0F0F0F0F;
   }
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -54,7 +47,7 @@ ChessBoard::ChessBoard (int w, int h)
   texture_->SetWrapMode(GL_REPEAT, GL_REPEAT);
   texture_->SetMinFilter(GL_LINEAR);
   texture_->SetMagFilter(GL_LINEAR);
-  texture_->SetImage(0, GL_RGBA, kCellWidth * 2, kCellHeight * 2, 0, GL_RGBA,
+  texture_->SetImage(0, GL_RGBA, kUnit, kUnit, 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, &pixels[0]);
   texture_->reset();
 
@@ -62,9 +55,9 @@ ChessBoard::ChessBoard (int w, int h)
   vbo_.generate();
   GLfloat vertices[] = {
       0.f, 0.f,            0.f, 0.f,     // left-bottom
-      (float)w, 0.f,       w / (kCellWidth * 2.f), 0.f,   // right-bottom
-      0.f, (float)h,       0.f, h / (kCellHeight * 2.f),   // left-top
-      (float)w, (float)h,  w / (kCellWidth * 2.f), h / (kCellHeight * 2.f)  // right-top
+      (float)w, 0.f,       1.f * w / kUnit, 0.f,   // right-bottom
+      0.f, (float)h,       0.f, 1.f * h / kUnit,   // left-top
+      (float)w, (float)h,  1.f * w / kUnit, 1.f * h / kUnit  // right-top
   };
 
   glBindVertexArray(vao_);
@@ -85,18 +78,18 @@ ChessBoard::ChessBoard (int w, int h)
   vbo_.reset();
 }
 
-ChessBoard::~ChessBoard ()
+GridGuides::~GridGuides ()
 {
   glDeleteVertexArrays(1, &vao_);
 }
 
-void ChessBoard::Draw (int x, // x coord
-                          int y, // y coord
-                          const float* color_ptr, // color
-                          short gamma,
-                          float rotate,
-                          float scale_x,
-                          float scale_y) const
+void GridGuides::Draw (int x, // x coord
+                                 int y, // y coord
+                                 const float* color_ptr, // color
+                                 short gamma,
+                                 float rotate,
+                                 float scale_x,
+                                 float scale_y) const
 {
   // draw texture
   glActiveTexture(GL_TEXTURE0);
@@ -116,12 +109,12 @@ void ChessBoard::Draw (int x, // x coord
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void ChessBoard::DrawInRect (const Rect& rect, // rectangel to draw
-                                int align, // alignment
-                                const float* color_ptr, // color
-                                short gamma, // gamma
-                                float rotate, // rotate
-                                bool scale) const
+void GridGuides::DrawInRect (const Rect& rect, // rectangel to draw
+                                       int align, // alignment
+                                       const float* color_ptr, // color
+                                       short gamma, // gamma
+                                       float rotate, // rotate
+                                       bool scale) const
 {
   int x = rect.left();
   int y = rect.bottom();
@@ -160,15 +153,15 @@ void ChessBoard::DrawInRect (const Rect& rect, // rectangel to draw
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void ChessBoard::PerformSizeUpdate (int w, int h)
+void GridGuides::PerformSizeUpdate (int w, int h)
 {
   set_size(w, h);
 
   GLfloat vertices[] = {
-      0.f, 0.f,           0.f, 0.f,     // left-bottom
-      (float) w, 0.f,     w / (kCellWidth * 2.f), 0.f,   // right-bottom
-      0.f, (float) h,     0.f, h / (kCellHeight * 2.f),   // left-top
-      (float)w, (float)h, w / (kCellWidth * 2.f), h / (kCellHeight * 2.f) // right-top
+      0.f, 0.f,            0.f, 0.f,     // left-bottom
+      (float)w, 0.f,       1.f * w / kUnit, 0.f,   // right-bottom
+      0.f, (float)h,       0.f, 1.f * h / kUnit,   // left-top
+      (float)w, (float)h,  1.f * w / kUnit, 1.f * h / kUnit  // right-top
   };
 
   vbo_.bind(0);

@@ -31,19 +31,15 @@
 namespace BlendInt {
 
 /**
- * @brief Form to draw a chess board
- *
- * A chess board is composed with a simple vbo to draw repeated texture.
- *
- * @ingroup blendint_gui_forms
+ * @brief Grid guides for NodeView
  */
-class ChessBoard: public AbstractForm
+class GridGuides: public AbstractForm
 {
 public:
 
-  ChessBoard (int w = 20, int height = 20);
+  GridGuides (int width, int height);
 
-  virtual ~ChessBoard ();
+  virtual ~GridGuides ();
 
   virtual void Draw (int x, // x coord
                      int y, // y coord
@@ -74,9 +70,8 @@ private:
 
   RefPtr<GLTexture2D> texture_;
 
-  static const int kCellWidth = 20;
+  static const int kUnit = 20;
 
-  static const int kCellHeight = 20;
 };
 
 } // namespace BlendInt
