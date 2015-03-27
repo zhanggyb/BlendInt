@@ -70,7 +70,9 @@ private:
 
   RefPtr<GLTexture2D> texture_;
 
-  static const int kUnit = 20;
+  static const int kUnit = 100;
+
+  static const int kDivision = 5;
 
 };
 

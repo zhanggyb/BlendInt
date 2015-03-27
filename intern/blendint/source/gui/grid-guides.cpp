@@ -33,10 +33,31 @@ GridGuides::GridGuides (int w, int h)
   // fill texture
   std::vector<unsigned int> pixels(kUnit * kUnit, 0);
 
-  memset(&pixels[kUnit / 2 * kUnit], 0x0F0F0F0F, sizeof(unsigned int) * kUnit);
+  // sub-grid lines
+  int subdiv_unit = kUnit / kDivision;
+  for (int i = 1; i <= (kDivision / 2); i++) {
+    memset(&pixels[kUnit / 2 * kUnit + i * subdiv_unit * kUnit], 0x0F0F0F0F,
+           sizeof(unsigned int) * kUnit);
+    memset(&pixels[kUnit / 2 * kUnit - i * subdiv_unit * kUnit], 0x0F0F0F0F,
+           sizeof(unsigned int) * kUnit);
+  }
 
+  for (int j = 1; j <= (kDivision / 2); j++) {
+
+    for (int i = 0; i <= kUnit; i++) {
+      pixels[kUnit * i + kUnit / 2 + j * subdiv_unit] = 0x0F0F0F0F;
+    }
+
+    for (int i = 0; i <= kUnit; i++) {
+      pixels[kUnit * i + kUnit / 2 - j * subdiv_unit] = 0x0F0F0F0F;
+    }
+
+  }
+
+  // main grid line
+  memset(&pixels[kUnit / 2 * kUnit], 0x0000002F, sizeof(unsigned int) * kUnit);
   for (int i = 0; i < kUnit; i++) {
-    pixels[kUnit * i + kUnit / 2] = 0x0F0F0F0F;
+    pixels[kUnit * i + kUnit / 2] = 0x2F000000;
   }
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
