@@ -34,355 +34,357 @@
 
 namespace BlendInt {
 
-  enum WindowFlagMask
-  {
+enum WindowFlagMask
+{
 
-    WindowFocusedMask = 0x1 << 0,
+  WindowFocusedMask = 0x1 << 0,
 
-    WindowIconifiedMask = 0x1 << 1,
+  WindowIconifiedMask = 0x1 << 1,
 
-    WindowResizableMask = 0x1 << 2,
-
-    /**
-     * 0: invisible
-     * 1: visible
-     */
-    WindowVisibleMask = 0x1 << 3,
-
-    WindowDecoratedMask = 0x1 << 4,
-
-    WindowAutoIconifyMask = 0x1 << 5,
-
-    /**
-     * 0: regular window
-     * 1: floating window
-     */
-    WindowFloatingMask = 0x1 << 6,
-
-    /**
-     * 0: regular window
-     * 1: fullscreen
-     */
-    WindowFullscreenMask = 0x1 << 7
-
-  };
-
-  enum WindowFlags {
-
-    WindowRegular = WindowFocusedMask | WindowResizableMask | WindowDecoratedMask | WindowVisibleMask,
-
-    WindowInvisible = 0,
-
-    WindowFloating = WindowRegular | WindowFloatingMask,
-
-    WindowFullscreen = WindowRegular | WindowFullscreenMask
-
-  };
-
-  class AbstractFrame;
+  WindowResizableMask = 0x1 << 2,
 
   /**
-   * @brief Abstract class for window
-   *
-   * The AbstractWindow class represents a window in the desktop.
-   *
-   * A sub class should override the virual functions and make sure
-   * an OpenGL context is created.
-   *
-   * @ingroup blendint_gui_windows
-   * @see Window
+   * 0: invisible
+   * 1: visible
    */
-  class AbstractWindow: public AbstractView
+  WindowVisibleMask = 0x1 << 3,
+
+  WindowDecoratedMask = 0x1 << 4,
+
+  WindowAutoIconifyMask = 0x1 << 5,
+
+  /**
+   * 0: regular window
+   * 1: floating window
+   */
+  WindowFloatingMask = 0x1 << 6,
+
+  /**
+   * 0: regular window
+   * 1: fullscreen
+   */
+  WindowFullscreenMask = 0x1 << 7
+
+};
+
+enum WindowFlags
+{
+
+  WindowRegular = WindowFocusedMask | WindowResizableMask | WindowDecoratedMask
+      | WindowVisibleMask,
+
+  WindowInvisible = 0,
+
+  WindowFloating = WindowRegular | WindowFloatingMask,
+
+  WindowFullscreen = WindowRegular | WindowFullscreenMask
+
+};
+
+class AbstractFrame;
+
+/**
+ * @brief Abstract class for window
+ *
+ * The AbstractWindow class represents a window in the desktop.
+ *
+ * A sub class should override the virual functions and make sure
+ * an OpenGL context is created.
+ *
+ * @ingroup blendint_gui_windows
+ * @see Window
+ */
+class AbstractWindow: public AbstractView
+{
+
+public:
+
+  /**
+   * @brief Default constructor
+   *
+   * Create a 640, 480 window
+   */
+  AbstractWindow (int flag = WindowRegular);
+
+  /**
+   * @brief Constructor with window size
+   */
+  AbstractWindow (int width, int height, int flag = WindowRegular);
+
+  /**
+   * @brief Destructor
+   */
+  virtual ~AbstractWindow ();
+
+  /**
+   * @brief Add a frame in this window
+   */
+  AbstractFrame* AddFrame (AbstractFrame* frame);
+
+  bool SetFocusedFrame (AbstractFrame* frame);
+
+  virtual bool Contain (const Point& point) const;
+
+  virtual AbstractWindow* CreateSharedContext (int width,
+                                               int height,
+                                               int flags) = 0;
+
+  /**
+   * @brief Make this window as the current OpenGL Context
+   */
+  virtual void MakeCurrent () = 0;
+
+  /**
+   * @brief Synchronize this window to redraw contents
+   */
+  virtual void Synchronize () = 0;
+
+  virtual void Exec () = 0;
+
+  virtual void SetCursor (CursorShape cursor_type);
+
+  void PushCursor ();
+
+  void PopCursor ();
+
+  void BeginPushStencil ();
+
+  void EndPushStencil ();
+
+  void BeginPopStencil ();
+
+  void EndPopStencil ();
+
+  virtual int GetKeyInput () const = 0;
+
+  virtual int GetScancode () const = 0;
+
+  virtual MouseAction GetMouseAction () const = 0;
+
+  virtual KeyAction GetKeyAction () const = 0;
+
+  virtual int GetModifiers () const = 0;
+
+  virtual MouseButton GetMouseButton () const = 0;
+
+  virtual const String& GetTextInput () const = 0;
+
+  virtual const Point& GetGlobalCursorPosition () const = 0;
+
+  Point GetAbsolutePosition (const AbstractView* widget);
+
+  Point GetRelativePosition (const AbstractView* widget);
+
+  inline void set_mouse_tracking (bool tracking)
   {
-
-  public:
-
-    /**
-     * @brief Default constructor
-     *
-     * Create a 640, 480 window
-     */
-    AbstractWindow (int flag = WindowRegular);
-
-    /**
-     * @brief Constructor with window size
-     */
-    AbstractWindow (int width, int height, int flag = WindowRegular);
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~AbstractWindow ();
-
-    /**
-     * @brief Add a frame in this window
-     */
-    bool AddFrame (AbstractFrame* frame);
-
-    bool SetFocusedFrame (AbstractFrame* frame);
-
-    virtual bool Contain (const Point& point) const;
-
-    virtual AbstractWindow* CreateSharedContext (int width,
-                                                 int height,
-                                                 int flags) = 0;
-
-    /**
-     * @brief Make this window as the current OpenGL Context
-     */
-    virtual void MakeCurrent () = 0;
-
-    /**
-     * @brief Synchronize this window to redraw contents
-     */
-    virtual void Synchronize () = 0;
-
-    virtual void Exec () = 0;
-
-    virtual void SetCursor (CursorShape cursor_type);
-
-    void PushCursor ();
-
-    void PopCursor ();
-
-    void BeginPushStencil ();
-
-    void EndPushStencil ();
-
-    void BeginPopStencil ();
-
-    void EndPopStencil ();
-
-    virtual int GetKeyInput () const = 0;
-
-    virtual int GetScancode () const = 0;
-
-    virtual MouseAction GetMouseAction () const = 0;
-
-    virtual KeyAction GetKeyAction () const = 0;
-
-    virtual int GetModifiers () const = 0;
-
-    virtual MouseButton GetMouseButton () const = 0;
-
-    virtual const String& GetTextInput () const = 0;
-
-    virtual const Point& GetGlobalCursorPosition () const = 0;
-
-    Point GetAbsolutePosition (const AbstractView* widget);
-
-    Point GetRelativePosition (const AbstractView* widget);
-
-    inline void set_mouse_tracking (bool tracking)
-    {
-      mouse_tracking_ = tracking;
-    }
-
-    inline bool mouse_tracking () const
-    {
-      return mouse_tracking_;
-    }
-
-    inline void set_local_cursor_position (const Point& point)
-    {
-      local_cursor_position_ = point;
-    }
-
-    inline void set_local_cursor_position (int x, int y)
-    {
-      local_cursor_position_.reset(x, y);
-    }
-
-    inline const Point& local_cursor_position () const
-    {
-      return local_cursor_position_;
-    }
-
-    inline AbstractFrame* active_frame () const
-    {
-      return active_frame_;
-    }
-
-    inline const Point& viewport_origin () const
-    {
-      return viewport_origin_;
-    }
-
-    /**
-     * @brief Get the current cursor shape
-     */
-    inline CursorShape current_cursor_shape () const
-    {
-      return current_cursor_shape_;
-    }
-
-    Cpp::ConnectionScope* events () const
-    {
-      return events_.get();
-    }
-
-    static AbstractWindow* GetWindow (AbstractView* widget);
-
-    static bool InitializeGLContext ();
-
-    static void ReleaseGLContext ();
-
-    static inline boost::thread::id& main_thread_id ()
-    {
-      return kMainThreadID;
-    }
-
-    static inline AbstractWindow* main_window ()
-    {
-      return kMainWindow;
-    }
-
-    static inline Theme* theme ()
-    {
-      return kTheme;
-    }
-
-    static inline Icons* icons ()
-    {
-      return kIcons;
-    }
-
-    static inline Shaders* shaders ()
-    {
-      return kShaders;
-    }
-
-  protected:
-
-    virtual bool SizeUpdateTest (const AbstractView* source,
-                                 const AbstractView* target,
-                                 int width,
-                                 int height);
-
-    virtual bool PositionUpdateTest (const AbstractView* source,
-                                     const AbstractView* target,
-                                     int x,
-                                     int y);
-
-    virtual bool PreDraw (AbstractWindow* context);
-
-    virtual Response Draw (AbstractWindow* context);
-
-    virtual void PostDraw (AbstractWindow* context);
-
-    virtual void PerformFocusOn (AbstractWindow* context);
-
-    virtual void PerformFocusOff (AbstractWindow* context);
-
-    virtual void PerformHoverIn (AbstractWindow* context);
-
-    virtual void PerformHoverOut (AbstractWindow* context);
-
-    virtual Response PerformKeyPress (AbstractWindow* context);
-
-    virtual Response PerformContextMenuPress (AbstractWindow* context);
-
-    virtual Response PerformContextMenuRelease (AbstractWindow* context);
-
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
-    virtual Response PerformMouseMove (AbstractWindow* context);
-
-    virtual AbstractView* RemoveSubView (AbstractView* view);
-
-    void DispatchMouseHover ();
-
-    inline void set_viewport_origin (int x, int y)
-    {
-      viewport_origin_.reset(x, y);
-    }
-
-    inline void set_viewport_origin (const Point& point)
-    {
-      viewport_origin_ = point;
-    }
-
-    inline GLuint stencil_count () const
-    {
-      return stencil_count_;
-    }
-
-    inline void set_stencil_count (GLuint count)
-    {
-      stencil_count_ = count;
-    }
-
-    static glm::mat4 default_view_matrix;
-
-    static boost::thread::id kMainThreadID;
-
-    static Theme* kTheme;
-
-    static Icons* kIcons;
-
-    static Shaders* kShaders;
-
-  private:
-
-    friend class AbstractFrame;
-    friend class AbstractWidget;
-
-    static bool InitializeTheme ();
-
-    static bool InitializeIcons ();
-
-    static bool InitializeShaders ();
-
-    static bool InitializeFont ();
-
-    static void ReleaseTheme ();
-
-    static void ReleaseIcons ();
-
-    static void ReleaseShaders ();
-
-    static void ReleaseFont ();
-
-    static void GetGLVersion (int *major, int *minor);
-
-    static void GetGLSLVersion (int *major, int *minor);
-
-    boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-    AbstractFrame* active_frame_;
-
-    AbstractFrame* focused_frame_;
-
-    // the viewport offset
-    Point viewport_origin_;
-
-    Point local_cursor_position_;
-
-    GLuint stencil_count_;
-
-    CursorShape current_cursor_shape_;
-
-    std::stack<CursorShape> cursor_stack_;
-
-    int floating_frame_count_;
-
-    bool pressed_;
-
-    bool mouse_tracking_;
-
-    static AbstractWindow* kMainWindow;
-  };
-
-  inline int pixel_size (int a)
-  {
-    return a * AbstractWindow::theme()->pixel();
+    mouse_tracking_ = tracking;
   }
 
-  inline int pixel_size (unsigned int a)
+  inline bool mouse_tracking () const
   {
-    return a * AbstractWindow::theme()->pixel();
+    return mouse_tracking_;
   }
+
+  inline void set_local_cursor_position (const Point& point)
+  {
+    local_cursor_position_ = point;
+  }
+
+  inline void set_local_cursor_position (int x, int y)
+  {
+    local_cursor_position_.reset(x, y);
+  }
+
+  inline const Point& local_cursor_position () const
+  {
+    return local_cursor_position_;
+  }
+
+  inline AbstractFrame* active_frame () const
+  {
+    return active_frame_;
+  }
+
+  inline const Point& viewport_origin () const
+  {
+    return viewport_origin_;
+  }
+
+  /**
+   * @brief Get the current cursor shape
+   */
+  inline CursorShape current_cursor_shape () const
+  {
+    return current_cursor_shape_;
+  }
+
+  Cpp::ConnectionScope* events () const
+  {
+    return events_.get();
+  }
+
+  static AbstractWindow* GetWindow (AbstractView* widget);
+
+  static bool InitializeGLContext ();
+
+  static void ReleaseGLContext ();
+
+  static inline boost::thread::id& main_thread_id ()
+  {
+    return kMainThreadID;
+  }
+
+  static inline AbstractWindow* main_window ()
+  {
+    return kMainWindow;
+  }
+
+  static inline Theme* theme ()
+  {
+    return kTheme;
+  }
+
+  static inline Icons* icons ()
+  {
+    return kIcons;
+  }
+
+  static inline Shaders* shaders ()
+  {
+    return kShaders;
+  }
+
+protected:
+
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height);
+
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y);
+
+  virtual bool PreDraw (AbstractWindow* context);
+
+  virtual Response Draw (AbstractWindow* context);
+
+  virtual void PostDraw (AbstractWindow* context);
+
+  virtual void PerformFocusOn (AbstractWindow* context);
+
+  virtual void PerformFocusOff (AbstractWindow* context);
+
+  virtual void PerformHoverIn (AbstractWindow* context);
+
+  virtual void PerformHoverOut (AbstractWindow* context);
+
+  virtual Response PerformKeyPress (AbstractWindow* context);
+
+  virtual Response PerformContextMenuPress (AbstractWindow* context);
+
+  virtual Response PerformContextMenuRelease (AbstractWindow* context);
+
+  virtual Response PerformMousePress (AbstractWindow* context);
+
+  virtual Response PerformMouseRelease (AbstractWindow* context);
+
+  virtual Response PerformMouseMove (AbstractWindow* context);
+
+  virtual AbstractView* RemoveSubView (AbstractView* view);
+
+  void DispatchMouseHover ();
+
+  inline void set_viewport_origin (int x, int y)
+  {
+    viewport_origin_.reset(x, y);
+  }
+
+  inline void set_viewport_origin (const Point& point)
+  {
+    viewport_origin_ = point;
+  }
+
+  inline GLuint stencil_count () const
+  {
+    return stencil_count_;
+  }
+
+  inline void set_stencil_count (GLuint count)
+  {
+    stencil_count_ = count;
+  }
+
+  static glm::mat4 default_view_matrix;
+
+  static boost::thread::id kMainThreadID;
+
+  static Theme* kTheme;
+
+  static Icons* kIcons;
+
+  static Shaders* kShaders;
+
+private:
+
+  friend class AbstractFrame;
+  friend class AbstractWidget;
+
+  static bool InitializeTheme ();
+
+  static bool InitializeIcons ();
+
+  static bool InitializeShaders ();
+
+  static bool InitializeFont ();
+
+  static void ReleaseTheme ();
+
+  static void ReleaseIcons ();
+
+  static void ReleaseShaders ();
+
+  static void ReleaseFont ();
+
+  static void GetGLVersion (int *major, int *minor);
+
+  static void GetGLSLVersion (int *major, int *minor);
+
+  boost::scoped_ptr<Cpp::ConnectionScope> events_;
+
+  AbstractFrame* active_frame_;
+
+  AbstractFrame* focused_frame_;
+
+  // the viewport offset
+  Point viewport_origin_;
+
+  Point local_cursor_position_;
+
+  GLuint stencil_count_;
+
+  CursorShape current_cursor_shape_;
+
+  std::stack<CursorShape> cursor_stack_;
+
+  int floating_frame_count_;
+
+  bool pressed_;
+
+  bool mouse_tracking_;
+
+  static AbstractWindow* kMainWindow;
+};
+
+inline int pixel_size (int a)
+{
+  return a * AbstractWindow::theme()->pixel();
+}
+
+inline int pixel_size (unsigned int a)
+{
+  return a * AbstractWindow::theme()->pixel();
+}
 
 }

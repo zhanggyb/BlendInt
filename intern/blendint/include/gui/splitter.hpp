@@ -31,200 +31,203 @@
 
 namespace BlendInt {
 
-  class Splitter;
+class Splitter;
 
-  class SplitterHandle: public AbstractWidget
-  {
-  DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
+class SplitterHandle: public AbstractWidget
+{
+DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
-  public:
+public:
 
-    SplitterHandle (Orientation orientation);
+  SplitterHandle (Orientation orientation);
 
-    virtual ~SplitterHandle ();
+  virtual ~SplitterHandle ();
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-    virtual bool IsExpandY () const;
+  virtual bool IsExpandY () const;
 
-    virtual bool Contain (const Point& point) const;
+  virtual bool Contain (const Point& point) const;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual void PerformHoverIn (AbstractWindow* context);
+  virtual void PerformHoverIn (AbstractWindow* context);
 
-    virtual void PerformHoverOut (AbstractWindow* context);
+  virtual void PerformHoverOut (AbstractWindow* context);
 
-    virtual Response PerformMousePress (AbstractWindow* context);
+  virtual Response PerformMousePress (AbstractWindow* context);
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
+  virtual Response PerformMouseRelease (AbstractWindow* context);
 
-    virtual Response PerformMouseMove (AbstractWindow* context);
+  virtual Response PerformMouseMove (AbstractWindow* context);
 
-  private:
+private:
 
-    friend class Splitter;
+  friend class Splitter;
 
-    Orientation orientation_;
+  Orientation orientation_;
 
-    GLuint vao_;
+  GLuint vao_;
 
-    GLBuffer<ARRAY_BUFFER, 1> vbo_;
+  GLBuffer<ARRAY_BUFFER, 1> vbo_;
 
-    bool highlight_;
-    bool pressed_;
+  bool highlight_;
+  bool pressed_;
 
-    Point last_;
-    Point cursor_;
+  Point last_;
+  Point cursor_;
 
-    int prev_size_;	// width or height of the previous_view widget
-    int next_size_;	// width or height of the next_view widget
-    int nearby_pos_;	// nearby widget position
+  int prev_size_;	// width or height of the previous_view widget
+  int next_size_;	// width or height of the next_view widget
+  int nearby_pos_;	// nearby widget position
 
-    static const int kHandleLength = 64;
-    static const int kHandlwWidth = 7;
-  };
+  static const int kHandleLength = 64;
+  static const int kHandlwWidth = 7;
+};
+
+/**
+ * @brief Splitter container
+ *
+ * A Splitter lets the user control the size of the sub widgets by dragging
+ * the splitter handler between them.
+ */
+class Splitter: public AbstractWidget
+{
+DISALLOW_COPY_AND_ASSIGN(Splitter);
+
+public:
+
+  Splitter (Orientation orientation = Horizontal);
+
+  virtual ~Splitter ();
+
+  AbstractWidget* AddWidget (AbstractWidget* widget);
 
   /**
-   * @brief Splitter container
-   *
-   * A Splitter lets the user control the size of the sub widgets by dragging
-   * the splitter handler between them.
+   * @brief Insert a widget
+   * @param[in] index The index of content widget, not splitter handle
    */
-  class Splitter: public AbstractWidget
+  AbstractWidget* InsertWidget (int index, AbstractWidget* widget);
+
+  void Remove (AbstractWidget* widget);
+
+  int GetWidgetIndex (AbstractWidget* widget) const;
+
+  int GetHandleIndex (SplitterHandle* handle) const;
+
+  AbstractWidget* GetWidget (int index) const;
+
+  SplitterHandle* GetHandle (int index) const;
+
+  void MoveHandle (int index, int x, int y);
+
+  virtual Size GetPreferredSize () const;
+
+  virtual bool IsExpandX () const;
+
+  virtual bool IsExpandY () const;
+
+  inline int widget_count () const
   {
-  DISALLOW_COPY_AND_ASSIGN(Splitter);
+    return subview_count() / 2 + 1;
+  }
 
-  public:
+protected:
 
-    Splitter (Orientation orientation = Horizontal);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-    virtual ~Splitter ();
+  virtual Response Draw (AbstractWindow* context) final;
 
-    void Prepend (AbstractWidget* widget);
+  void FillSubWidgetsInSplitter (const Size& out_size, Orientation orientation);
 
-    bool AddWidget (AbstractWidget* widget);
+  /**
+   * @brief Fill the sub widgets in this container based on the current size
+   * @param x
+   * @param y
+   * @param width
+   * @param height
+   * @param orientation
+   */
+  void FillSubWidgetsInSplitter (int x,
+                                 int y,
+                                 int width,
+                                 int height,
+                                 Orientation orientation);
 
-    /**
-     * @brief Insert a widget
-     * @param[in] index The index of content widget, not splitter handle
-     */
-    bool InsertWidget (int index, AbstractWidget* widget);
+private:
 
-    void Remove (AbstractWidget* widget);
+  friend class SplitterHandle;
 
-    int GetWidgetIndex (AbstractWidget* widget) const;
+  void DistributeHorizontally (int x, int width);
 
-    int GetHandleIndex (SplitterHandle* handle) const;
+  void DistributeHorizontallyInProportion (int x,
+                                           int width,
+                                           std::deque<int>* widget_deque,
+                                           int widget_width_sum,
+                                           std::deque<int>* prefer_deque,
+                                           int prefer_width_sum);
 
-    AbstractWidget* GetWidget (int index) const;
+  void DistributeExpandableWidgetsHorizontally (int x,
+                                                int width,
+                                                int unexpandable_width_sum,
+                                                std::deque<int>* widget_deque,
+                                                int widget_width_sum,
+                                                std::deque<int>* prefer_deque,
+                                                int prefer_width_sum);
 
-    SplitterHandle* GetHandle (int index) const;
-
-    void MoveHandle (int index, int x, int y);
-
-    virtual Size GetPreferredSize () const;
-
-    virtual bool IsExpandX () const;
-
-    virtual bool IsExpandY () const;
-
-    inline int widget_count () const
-    {
-      return subview_count() / 2 + 1;
-    }
-
-  protected:
-
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
-
-    virtual Response Draw (AbstractWindow* context) final;
-
-    void FillSubWidgetsInSplitter (const Size& out_size,
-                                   Orientation orientation);
-
-    /**
-     * @brief Fill the sub widgets in this container based on the current size
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param orientation
-     */
-    void FillSubWidgetsInSplitter (int x,
-                                   int y,
-                                   int width,
-                                   int height,
-                                   Orientation orientation);
-
-  private:
-
-    friend class SplitterHandle;
-
-    void DistributeHorizontally (int x, int width);
-
-    void DistributeHorizontallyInProportion (int x,
-                                             int width,
-                                             std::deque<int>* widget_deque,
-                                             int widget_width_sum,
-                                             std::deque<int>* prefer_deque,
-                                             int prefer_width_sum);
-
-    void DistributeExpandableWidgetsHorizontally (int x,
+  void DistributeUnexpandableWidgetsHorizontally (int x,
                                                   int width,
-                                                  int unexpandable_width_sum,
                                                   std::deque<int>* widget_deque,
                                                   int widget_width_sum,
                                                   std::deque<int>* prefer_deque,
                                                   int prefer_width_sum);
 
-    void DistributeUnexpandableWidgetsHorizontally (int x,
-                                                    int width,
-                                                    std::deque<int>* widget_deque,
-                                                    int widget_width_sum,
-                                                    std::deque<int>* prefer_deque,
-                                                    int prefer_width_sum);
+  void DistributeVertically (int y, int height);
 
-    void DistributeVertically (int y, int height);
+  void DistributeVerticallyInProportion (int y,
+                                         int height,
+                                         std::deque<int>* widget_deque,
+                                         int widget_height_sum,
+                                         std::deque<int>* prefer_deque,
+                                         int prefer_height_sum);
 
-    void DistributeVerticallyInProportion (int y,
-                                           int height,
-                                           std::deque<int>* widget_deque,
-                                           int widget_height_sum,
-                                           std::deque<int>* prefer_deque,
-                                           int prefer_height_sum);
+  void DistributeExpandableWidgetsVertically (int y,
+                                              int height,
+                                              int unexpandable_height_sum,
+                                              std::deque<int>* widget_deque,
+                                              int widget_height_sum,
+                                              std::deque<int>* prefer_deque,
+                                              int prefer_height_sum);
 
-    void DistributeExpandableWidgetsVertically (int y,
+  void DistributeUnexpandableWidgetsVertically (int y,
                                                 int height,
-                                                int unexpandable_height_sum,
                                                 std::deque<int>* widget_deque,
                                                 int widget_height_sum,
                                                 std::deque<int>* prefer_deque,
                                                 int prefer_height_sum);
 
-    void DistributeUnexpandableWidgetsVertically (int y,
-                                                  int height,
-                                                  std::deque<int>* widget_deque,
-                                                  int widget_height_sum,
-                                                  std::deque<int>* prefer_deque,
-                                                  int prefer_height_sum);
+  void AlignHorizontally (int y, int height);
 
-    void AlignHorizontally (int y, int height);
+  void AlignVertically (int x, int width);
 
-    void AlignVertically (int x, int width);
+  void AlignSubWidgets (Orientation orientation, const Size& out_size);
 
-    void AlignSubWidgets (Orientation orientation, const Size& out_size);
+  int GetAverageRoom (Orientation orientation, const Size& out_size);
 
-    int GetAverageRoom (Orientation orientation, const Size& out_size);
+  int GetWidgetsRoom (Orientation orientation, const Size& out_size);
 
-    int GetWidgetsRoom (Orientation orientation, const Size& out_size);
-
-    Orientation orientation_;
-  };
+  Orientation orientation_;
+};
 }

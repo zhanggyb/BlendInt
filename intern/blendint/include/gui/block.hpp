@@ -40,9 +40,9 @@ public:
 
   virtual ~Block ();
 
-  void AddWidget (AbstractRoundWidget* widget);
+  AbstractWidget* AddWidget (AbstractRoundWidget* widget);
 
-  void InsertWidget (int index, AbstractRoundWidget* widget);
+  AbstractWidget* InsertWidget (int index, AbstractRoundWidget* widget);
 
   virtual bool IsExpandX () const;
 

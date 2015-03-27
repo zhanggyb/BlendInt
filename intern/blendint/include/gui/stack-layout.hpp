@@ -37,11 +37,11 @@ namespace BlendInt {
 
     virtual ~StackLayout ();
 
-    virtual bool AddWidget (AbstractWidget* widget);
+    virtual AbstractWidget* AddWidget (AbstractWidget* widget);
 
-    virtual bool InsertWidget (int index, AbstractWidget* widget);
+    virtual AbstractWidget* InsertWidget (int index, AbstractWidget* widget);
 
-    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+    virtual AbstractWidget* InsertWidget (int row, int column, AbstractWidget* widget);
 
     virtual void Adjust () const;
 

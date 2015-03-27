@@ -39,270 +39,272 @@
 
 namespace BlendInt {
 
-  Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
-  : AbstractDialog(flags), content_layout_(0), main_layout_(0)
-  {
-    LinearLayout* title_layout = new LinearLayout(Horizontal);
-    title_layout->SetMargin(Margin(0, 0, 0, 0));
+Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
+    : AbstractDialog(flags), content_layout_(0), main_layout_(0)
+{
+  LinearLayout* title_layout = new LinearLayout(Horizontal);
+  title_layout->SetMargin(Margin(0, 0, 0, 0));
 
-    CloseButton* close_button = Manage(new CloseButton);
-    events()->connect(close_button->clicked(), this,
-        &Dialog::OnCloseButtonClicked);
-    Label* title_label = Manage(new Label(title, AlignCenter));
+  CloseButton* close_button = Manage(new CloseButton);
+  events()->connect(close_button->clicked(), this,
+                    &Dialog::OnCloseButtonClicked);
+  Label* title_label = Manage(new Label(title, AlignCenter));
 
-    title_layout->AddWidget(close_button);
-    title_layout->AddWidget(title_label);
+  title_layout->AddWidget(close_button);
+  title_layout->AddWidget(title_label);
 
-    LinearLayout* bottom_layout = 0;
-    if (flags & (DialogButtonApply | DialogButtonOK)) {
-      bottom_layout = new LinearLayout(Horizontal);
-      bottom_layout->SetMargin(Margin(0, 0, 0, 0));
-      Separator* sp = new Separator(true);
-      bottom_layout->AddWidget(sp);
+  LinearLayout* bottom_layout = 0;
+  if (flags & (DialogButtonApply | DialogButtonOK)) {
+    bottom_layout = new LinearLayout(Horizontal);
+    bottom_layout->SetMargin(Margin(0, 0, 0, 0));
+    Separator* sp = new Separator(true);
+    bottom_layout->AddWidget(sp);
+  }
+
+  if (flags & DialogButtonApply) {
+    PushButton* apply_button = Manage(new PushButton("Apply"));
+    bottom_layout->AddWidget(apply_button);
+    events()->connect(apply_button->clicked(), this,
+                      &Dialog::OnApplyButtonClicked);
+  }
+
+  if (flags & DialogButtonOK) {
+    PushButton* ok_button = Manage(new PushButton("OK"));
+    bottom_layout->AddWidget(ok_button);
+    events()->connect(ok_button->clicked(), this, &Dialog::OnOKButtonClicked);
+  }
+
+  main_layout_ = Manage(new LinearLayout(Vertical));
+
+  if (layout == nullptr) {
+    content_layout_ = Manage(new LinearLayout(Vertical));
+  } else {
+    content_layout_ = layout;
+  }
+
+  main_layout_->AddWidget(title_layout);
+  main_layout_->AddWidget(content_layout_);
+  main_layout_->AddWidget(bottom_layout);
+
+  main_layout_->Resize(500, 400);
+
+  PushBackSubView(main_layout_);
+
+  set_round_type(RoundAll);
+  set_round_radius(5.f);
+  set_size(500, 400);
+  set_refresh(true);
+  EnableViewBuffer();
+
+  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
+                                  (float) size().height(), 100.f, -100.f);
+  model_matrix_ = glm::mat3(1.f);
+
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
+
+  if (AbstractWindow::theme()->dialog().shaded) {
+    GenerateRoundedVertices(Vertical,
+                            AbstractWindow::theme()->dialog().shadetop,
+                            AbstractWindow::theme()->dialog().shadedown,
+                            &inner_verts, &outer_verts);
+  } else {
+    GenerateRoundedVertices(&inner_verts, &outer_verts);
+  }
+
+  glGenVertexArrays(2, vao_);
+  vbo_.generate();
+
+  glBindVertexArray(vao_[0]);
+
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3,
+  GL_FLOAT,
+                        GL_FALSE, 0, 0);
+
+  glBindVertexArray(vao_[1]);
+
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+}
+
+Dialog::~Dialog ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
+
+AbstractWidget* Dialog::AddWidget (AbstractWidget* widget)
+{
+  if (content_layout_->AddWidget(widget)) {
+    main_layout_->Adjust();
+    return widget;
+  }
+
+  return 0;
+}
+
+AbstractWidget* Dialog::InsertWidget (int index, AbstractWidget* widget)
+{
+  if (content_layout_->InsertWidget(index, widget)) {
+    main_layout_->Adjust();
+    return widget;
+  }
+
+  return 0;
+}
+
+Size Dialog::GetPreferredSize () const
+{
+  return main_layout_->GetPreferredSize();
+}
+
+void Dialog::PerformSizeUpdate (const AbstractView* source,
+                                const AbstractView* target,
+                                int width,
+                                int height)
+{
+  if (target == this) {
+
+    set_size(width, height);
+
+    projection_matrix_ = glm::ortho(0.f, 0.f + (float) size().width(), 0.f,
+                                    0.f + (float) size().height(), 100.f,
+                                    -100.f);
+
+    if (view_buffer()) {
+      view_buffer()->Resize(size());
     }
 
-    if (flags & DialogButtonApply) {
-      PushButton* apply_button = Manage(new PushButton("Apply"));
-      bottom_layout->AddWidget(apply_button);
-      events()->connect(apply_button->clicked(), this,
-          &Dialog::OnApplyButtonClicked);
-    }
-
-    if (flags & DialogButtonOK) {
-      PushButton* ok_button = Manage(new PushButton("OK"));
-      bottom_layout->AddWidget(ok_button);
-      events()->connect(ok_button->clicked(), this, &Dialog::OnOKButtonClicked);
-    }
-
-    main_layout_ = Manage(new LinearLayout(Vertical));
-
-    if (layout == nullptr) {
-      content_layout_ = Manage(new LinearLayout(Vertical));
-    } else {
-      content_layout_ = layout;
-    }
-
-    main_layout_->AddWidget(title_layout);
-    main_layout_->AddWidget(content_layout_);
-    main_layout_->AddWidget(bottom_layout);
-
-    main_layout_->Resize(500, 400);
-
-    PushBackSubView(main_layout_);
-
-    set_round_type(RoundAll);
-    set_round_radius(5.f);
-    set_size(500, 400);
-    set_refresh(true);
-    EnableViewBuffer();
-
-    projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-        (float) size().height(), 100.f, -100.f);
-    model_matrix_ = glm::mat3(1.f);
+    shadow_->Resize(size());
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
     if (AbstractWindow::theme()->dialog().shaded) {
       GenerateRoundedVertices(Vertical,
-          AbstractWindow::theme()->dialog().shadetop,
-          AbstractWindow::theme()->dialog().shadedown, &inner_verts,
-          &outer_verts);
+                              AbstractWindow::theme()->dialog().shadetop,
+                              AbstractWindow::theme()->dialog().shadedown,
+                              &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
     }
 
-    glGenVertexArrays(2, vao_);
-    vbo_.generate();
-
-    glBindVertexArray(vao_[0]);
-
     vbo_.bind(0);
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3,
-    GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(vao_[1]);
-
     vbo_.bind(1);
     vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    vbo_.reset();
 
-    shadow_.reset(new FrameShadow(size(), round_type(), round_radius()));
+    ResizeSubView(main_layout_, size());
+
+    RequestRedraw();
   }
 
-  Dialog::~Dialog ()
-  {
-    glDeleteVertexArrays(2, vao_);
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
+
+bool Dialog::PreDraw (AbstractWindow* context)
+{
+  DeclareActiveFrame(context, this);
+
+  if (refresh() && view_buffer()) {
+    RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
+                             view_buffer()->texture());
   }
 
-  bool Dialog::AddWidget (AbstractWidget* widget)
-  {
-    if (content_layout_->AddWidget(widget)) {
-      main_layout_->Adjust();
-      return true;
-    }
+  return true;
+}
 
-    return false;
-  }
+Response Dialog::Draw (AbstractWindow* context)
+{
+  shadow_->Draw(position().x(), position().y());
 
-  bool Dialog::InsertWidget (int index, AbstractWidget* widget)
-  {
-    if (content_layout_->InsertWidget(index, widget)) {
-      main_layout_->Adjust();
-      return true;
-    }
+  AbstractWindow::shaders()->frame_inner_program()->use();
 
-    return false;
-  }
+  glUniform2f(
+      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+      position().x(), position().y());
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+              0);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
+               1, AbstractWindow::theme()->dialog().inner.data());
 
-  Size Dialog::GetPreferredSize () const
-  {
-    return main_layout_->GetPreferredSize();
-  }
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  void Dialog::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
+  if (view_buffer()) {
 
-      set_size(width, height);
-
-      projection_matrix_ = glm::ortho(
-          0.f, 0.f + (float) size().width(),
-          0.f, 0.f + (float) size().height(),
-          100.f, -100.f);
-
-      if (view_buffer()) {
-        view_buffer()->Resize(size());
-      }
-
-      shadow_->Resize(size());
-
-      std::vector<GLfloat> inner_verts;
-      std::vector<GLfloat> outer_verts;
-
-      if (AbstractWindow::theme()->dialog().shaded) {
-        GenerateRoundedVertices(Vertical,
-            AbstractWindow::theme()->dialog().shadetop,
-            AbstractWindow::theme()->dialog().shadedown, &inner_verts,
-            &outer_verts);
-      } else {
-        GenerateRoundedVertices(&inner_verts, &outer_verts);
-      }
-
-      vbo_.bind(0);
-      vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-      vbo_.bind(1);
-      vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-      vbo_.reset();
-
-      ResizeSubView(main_layout_, size());
-
-      RequestRedraw();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  bool Dialog::PreDraw (AbstractWindow* context)
-  {
-    DeclareActiveFrame(context, this);
-
-    if (refresh() && view_buffer()) {
-      RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
-          view_buffer()->texture());
-    }
-
-    return true;
-  }
-
-  Response Dialog::Draw (AbstractWindow* context)
-  {
-    shadow_->Draw(position().x(), position().y());
-
-    AbstractWindow::shaders()->frame_inner_program()->use();
+    AbstractWindow::shaders()->frame_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
         position().x(), position().y());
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
-        0);
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
-        1, AbstractWindow::theme()->dialog().inner.data());
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
+                0);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    view_buffer()->Draw(0, 0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  } else {
 
-    if (view_buffer()) {
+    glViewport(position().x(), position().y(), size().width(), size().height());
 
-      AbstractWindow::shaders()->frame_image_program()->use();
+    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
-      glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-          position().x(), position().y());
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-      glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
-          0);
-      glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      view_buffer()->Draw(0, 0);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    DrawSubViewsOnce(context);
 
-    } else {
+    glViewport(0, 0, context->size().width(), context->size().height());
 
-      glViewport(position().x(), position().y(), size().width(),
-          size().height());
-
-      AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-      AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
-
-      DrawSubViewsOnce(context);
-
-      glViewport(0, 0, context->size().width(), context->size().height());
-
-    }
-
-    AbstractWindow::shaders()->frame_outer_program()->use();
-
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
-        position().x(), position().y());
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
-        1, AbstractWindow::theme()->dialog().outline.data());
-
-    glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                 outline_vertex_count(round_type()) * 2 + 2);
-
-    return Finish;
   }
 
-  void Dialog::OnCloseButtonClicked ()
-  {
-    AbstractView* parent = super();
-    //DBG_ASSERT(button == decoration_->close_button());
-    delete this;
+  AbstractWindow::shaders()->frame_outer_program()->use();
 
-    parent->RequestRedraw();
-  }
+  glUniform2f(
+      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+      position().x(), position().y());
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+               1, AbstractWindow::theme()->dialog().outline.data());
 
-  void Dialog::OnApplyButtonClicked ()
-  {
-    fire_applied_event();
-  }
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0,
+               outline_vertex_count(round_type()) * 2 + 2);
 
-  void Dialog::OnOKButtonClicked ()
-  {
-    AbstractView* parent = super();
-    fire_applied_event();
+  return Finish;
+}
 
-    delete this;
-    parent->RequestRedraw();
-  }
+void Dialog::OnCloseButtonClicked ()
+{
+  AbstractView* parent = super();
+  //DBG_ASSERT(button == decoration_->close_button());
+  delete this;
+
+  parent->RequestRedraw();
+}
+
+void Dialog::OnApplyButtonClicked ()
+{
+  fire_applied_event();
+}
+
+void Dialog::OnOKButtonClicked ()
+{
+  AbstractView* parent = super();
+  fire_applied_event();
+
+  delete this;
+  parent->RequestRedraw();
+}
 
 }

@@ -39,7 +39,7 @@ Block::~Block ()
 {
 }
 
-void Block::AddWidget (AbstractRoundWidget* widget)
+AbstractWidget* Block::AddWidget (AbstractRoundWidget* widget)
 {
   AbstractRoundWidget* orig_last = dynamic_cast<AbstractRoundWidget*>(last());
 
@@ -73,12 +73,16 @@ void Block::AddWidget (AbstractRoundWidget* widget)
       FillInVBlock(size());
     }
 
+    return widget;
   }
+
+  return 0;
 }
 
-void Block::InsertWidget (int index, AbstractRoundWidget* widget)
+AbstractWidget* Block::InsertWidget (int index, AbstractRoundWidget* widget)
 {
   // TODO: implement
+  return 0;
 }
 
 bool Block::IsExpandX () const

@@ -28,55 +28,70 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief AdaptiveLayout tries to arrange sub widgets with their preferred size
-	 */
-	class AdaptiveLayout: public AbstractLayout
-	{
-	public:
+/**
+ * @brief AdaptiveLayout tries to arrange sub widgets with their preferred size
+ */
+class AdaptiveLayout: public AbstractLayout
+{
+public:
 
-		AdaptiveLayout (Orientation orient = Horizontal,
-		        int align = AlignCenter, int space = 4);
+  AdaptiveLayout (Orientation orient = Horizontal,
+                  int align = AlignCenter,
+                  int space = 4);
 
-		AdaptiveLayout (int width, int height, const Margin& margin,
-		        Orientation orient = Horizontal, int align = AlignCenter,
-		        int space = 4);
+  AdaptiveLayout (int width,
+                  int height,
+                  const Margin& margin,
+                  Orientation orient = Horizontal,
+                  int align = AlignCenter,
+                  int space = 4);
 
-		virtual ~AdaptiveLayout ();
+  virtual ~AdaptiveLayout ();
 
-		virtual bool AddWidget (AbstractWidget* widget);
+  virtual AbstractWidget* AddWidget (AbstractWidget* widget);
 
-		virtual bool InsertWidget (int index, AbstractWidget* widget);
+  virtual AbstractWidget* InsertWidget (int index, AbstractWidget* widget);
 
-		virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+  virtual AbstractWidget* InsertWidget (int row,
+                                        int column,
+                                        AbstractWidget* widget);
 
-		virtual void Adjust ();
+  virtual void Adjust ();
 
-		virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-		virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+  virtual bool IsExpandY () const;
 
-	protected:
+protected:
 
-		virtual void PerformMarginUpdate (const Margin& margin);
+  virtual void PerformMarginUpdate (const Margin& margin);
 
-		virtual bool SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height);
 
-		virtual bool PositionUpdateTest (const AbstractView* source, const AbstractView* target, int x, int y);
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y);
 
-		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-	private:
+private:
 
-		Orientation orientation_;
+  Orientation orientation_;
 
-		int alignment_;
+  int alignment_;
 
-		int space_;
+  int space_;
 
-		DISALLOW_COPY_AND_ASSIGN(AdaptiveLayout);
-	};
+DISALLOW_COPY_AND_ASSIGN(AdaptiveLayout);
+};
 
 }

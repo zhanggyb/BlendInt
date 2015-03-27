@@ -29,228 +29,236 @@
 
 namespace BlendInt {
 
-  class FrameSplitter;
+class FrameSplitter;
+
+/**
+ * @brief A special frame used in FrameSplitter only
+ *
+ * @ingroup blendint_gui_frames
+ */
+class FrameSplitterHandle: public AbstractFrame
+{
+public:
+
+  virtual Size GetPreferredSize () const final;
+
+  virtual bool Contain (const Point& point) const final;
+
+  virtual bool IsExpandX () const final;
+
+  virtual bool IsExpandY () const final;
+
+  virtual ~FrameSplitterHandle ();
+
+private:
+
+  friend class FrameSplitter;
+
+  FrameSplitterHandle (Orientation orientation = Horizontal);
+
+  virtual bool PreDraw (AbstractWindow* context) final;
+
+  virtual Response Draw (AbstractWindow* context) final;
+
+  virtual void PostDraw (AbstractWindow* context) final;
+
+  virtual void PerformFocusOn (AbstractWindow* context) final;
+
+  virtual void PerformFocusOff (AbstractWindow* context) final;
+
+  virtual void PerformHoverIn (AbstractWindow* context) final;
+
+  virtual void PerformHoverOut (AbstractWindow* context) final;
+
+  virtual Response PerformKeyPress (AbstractWindow* context) final;
+
+  virtual Response PerformContextMenuPress (AbstractWindow* context) final;
+
+  virtual Response PerformContextMenuRelease (AbstractWindow* context) final;
+
+  virtual Response PerformMousePress (AbstractWindow* context) final;
+
+  virtual Response PerformMouseRelease (AbstractWindow* context) final;
+
+  virtual Response PerformMouseMove (AbstractWindow* context) final;
+
+  virtual Response PerformMouseHover (AbstractWindow* context) final;
+
+  Orientation orientation_;
+
+  Point last_;
+  Point cursor_;
+
+  int prev_size_;
+  int next_size_;
+  int nearby_pos_;
+
+  bool hover_;
+
+  bool pressed_;
+};
+
+// -------------------------------
+
+/**
+ * @brief Frame splitter
+ *
+ * @ingroup blendint_gui_frames
+ */
+class FrameSplitter: public AbstractFrame
+{
+public:
+
+  FrameSplitter (Orientation orientation = Horizontal);
+
+  virtual ~FrameSplitter ();
+
+  AbstractFrame* AddFrame (AbstractFrame* frame, SizePolicy policy =
+                               DefaultSizePolicy);
 
   /**
-   * @brief A special frame used in FrameSplitter only
-   *
-   * @ingroup blendint_gui_frames
+   * @brief Insert a frame
+   * @param[in] index The index of content frame, not splitter handle
    */
-  class FrameSplitterHandle: public AbstractFrame
-  {
-  public:
+  AbstractFrame* InsertFrame (int index,
+                              AbstractFrame* frame,
+                              SizePolicy policy = DefaultSizePolicy);
 
-    virtual Size GetPreferredSize () const final;
+  int GetFrameIndex (AbstractFrame* frame) const;
 
-    virtual bool Contain (const Point& point) const final;
+  int GetHandleIndex (FrameSplitterHandle* handle) const;
 
-    virtual bool IsExpandX () const final;
+  AbstractFrame* GetFrame (int index) const;
 
-    virtual bool IsExpandY () const final;
+  FrameSplitterHandle* GetHandle (int index) const;
 
-    virtual ~FrameSplitterHandle ();
+  int GetFramesCount () const;
 
-  private:
+  virtual bool IsExpandX () const final;
 
-    friend class FrameSplitter;
+  virtual bool IsExpandY () const final;
 
-    FrameSplitterHandle (Orientation orientation = Horizontal);
+  virtual Size GetPreferredSize () const final;
 
-    virtual bool PreDraw (AbstractWindow* context) final;
+protected:
 
-    virtual Response Draw (AbstractWindow* context) final;
+  virtual void PerformPositionUpdate (const AbstractView* source,
+                                      const AbstractView* target,
+                                      int x,
+                                      int y) final;
 
-    virtual void PostDraw (AbstractWindow* context) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-    virtual void PerformFocusOn (AbstractWindow* context) final;
+  virtual bool PreDraw (AbstractWindow* context) final;
 
-    virtual void PerformFocusOff (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context) final;
+  virtual void PostDraw (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context) final;
+  virtual void PerformFocusOn (AbstractWindow* context) final;
 
-    virtual Response PerformKeyPress (AbstractWindow* context) final;
+  virtual void PerformFocusOff (AbstractWindow* context) final;
 
-    virtual Response PerformContextMenuPress (AbstractWindow* context) final;
+  virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual Response PerformContextMenuRelease (AbstractWindow* context) final;
+  virtual void PerformHoverOut (AbstractWindow* context) final;
 
-    virtual Response PerformMousePress (AbstractWindow* context) final;
+  virtual Response PerformKeyPress (AbstractWindow* context) final;
 
-    virtual Response PerformMouseRelease (AbstractWindow* context) final;
+  virtual Response PerformMousePress (AbstractWindow* context) final;
 
-    virtual Response PerformMouseMove (AbstractWindow* context) final;
+  virtual Response PerformMouseRelease (AbstractWindow* context) final;
 
-    virtual Response PerformMouseHover (AbstractWindow* context) final;
+  virtual Response PerformMouseMove (AbstractWindow* context) final;
 
-    Orientation orientation_;
+  virtual Response PerformMouseHover (AbstractWindow* context) final;
 
-    Point last_;
-    Point cursor_;
+  virtual AbstractView* RemoveSubView (AbstractView* view) final;
 
-    int prev_size_;
-    int next_size_;
-    int nearby_pos_;
+  void FillSubFrames ();
 
-    bool hover_;
+private:
 
-    bool pressed_;
-  };
+  friend class FrameSplitterHandle;
 
-  // -------------------------------
+  void AddColumn (AbstractFrame* frame, SizePolicy policy);
 
-  /**
-   * @brief Frame splitter
-   *
-   * @ingroup blendint_gui_frames
-   */
-  class FrameSplitter: public AbstractFrame
-  {
-  public:
+  void AddRow (AbstractFrame* frame, SizePolicy policy);
 
-    FrameSplitter (Orientation orientation = Horizontal);
+  void InsertColumn (int index, AbstractFrame* frame, SizePolicy policy);
 
-    virtual ~FrameSplitter ();
+  void InsertRow (int index, AbstractFrame* frame, SizePolicy policy);
 
-    bool AddFrame (AbstractFrame* frame, SizePolicy policy = DefaultSizePolicy);
+  void DistributeHorizontally ();
 
-    /**
-     * @brief Insert a frame
-     * @param[in] index The index of content frame, not splitter handle
-     */
-    bool InsertFrame (int index, AbstractFrame* frame, SizePolicy policy =
-                          DefaultSizePolicy);
+  void DistributeHorizontallyInProportion (std::deque<int>* widget_deque,
+                                           int widget_width_sum,
+                                           std::deque<int>* prefer_deque,
+                                           int prefer_width_sum);
 
-    int GetFrameIndex (AbstractFrame* frame) const;
+  void DistributeExpandableFramesHorizontally (int unexpandable_width_sum,
+                                               std::deque<int>* widget_deque,
+                                               int widget_width_sum,
+                                               std::deque<int>* prefer_deque,
+                                               int prefer_width_sum);
 
-    int GetHandleIndex (FrameSplitterHandle* handle) const;
-
-    AbstractFrame* GetFrame (int index) const;
-
-    FrameSplitterHandle* GetHandle (int index) const;
-
-    int GetFramesCount () const;
-
-    virtual bool IsExpandX () const final;
-
-    virtual bool IsExpandY () const final;
-
-    virtual Size GetPreferredSize () const final;
-
-  protected:
-
-    virtual void PerformPositionUpdate (const AbstractView* source, const AbstractView* target, int x, int y) final;
-
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
-
-    virtual bool PreDraw (AbstractWindow* context) final;
-
-    virtual Response Draw (AbstractWindow* context) final;
-
-    virtual void PostDraw (AbstractWindow* context) final;
-
-    virtual void PerformFocusOn (AbstractWindow* context) final;
-
-    virtual void PerformFocusOff (AbstractWindow* context) final;
-
-    virtual void PerformHoverIn (AbstractWindow* context) final;
-
-    virtual void PerformHoverOut (AbstractWindow* context) final;
-
-    virtual Response PerformKeyPress (AbstractWindow* context) final;
-
-    virtual Response PerformMousePress (AbstractWindow* context) final;
-
-    virtual Response PerformMouseRelease (AbstractWindow* context) final;
-
-    virtual Response PerformMouseMove (AbstractWindow* context) final;
-
-    virtual Response PerformMouseHover (AbstractWindow* context) final;
-
-    virtual AbstractView* RemoveSubView (AbstractView* view) final;
-
-    void FillSubFrames ();
-
-  private:
-
-    friend class FrameSplitterHandle;
-
-    void AddColumn (AbstractFrame* frame, SizePolicy policy);
-
-    void AddRow (AbstractFrame* frame, SizePolicy policy);
-
-    void InsertColumn (int index, AbstractFrame* frame, SizePolicy policy);
-
-    void InsertRow (int index, AbstractFrame* frame, SizePolicy policy);
-
-    void DistributeHorizontally ();
-
-    void DistributeHorizontallyInProportion (std::deque<int>* widget_deque,
-                                             int widget_width_sum,
-                                             std::deque<int>* prefer_deque,
-                                             int prefer_width_sum);
-
-    void DistributeExpandableFramesHorizontally (int unexpandable_width_sum,
-                                                 std::deque<int>* widget_deque,
+  void DistributeUnexpandableFramesHorizontally (std::deque<int>* widget_deque,
                                                  int widget_width_sum,
                                                  std::deque<int>* prefer_deque,
                                                  int prefer_width_sum);
 
-    void DistributeUnexpandableFramesHorizontally (std::deque<int>* widget_deque,
-                                                   int widget_width_sum,
-                                                   std::deque<int>* prefer_deque,
-                                                   int prefer_width_sum);
+  void DistributeVertically ();
 
-    void DistributeVertically ();
+  void DistributeVerticallyInProportion (std::deque<int>* widget_deque,
+                                         int widget_height_sum,
+                                         std::deque<int>* prefer_deque,
+                                         int prefer_height_sum);
 
-    void DistributeVerticallyInProportion (std::deque<int>* widget_deque,
-                                           int widget_height_sum,
-                                           std::deque<int>* prefer_deque,
-                                           int prefer_height_sum);
+  void DistributeExpandableFramesVertically (int unexpandable_height_sum,
+                                             std::deque<int>* widget_deque,
+                                             int widget_height_sum,
+                                             std::deque<int>* prefer_deque,
+                                             int prefer_height_sum);
 
-    void DistributeExpandableFramesVertically (int unexpandable_height_sum,
-                                               std::deque<int>* widget_deque,
+  void DistributeUnexpandableFramesVertically (std::deque<int>* widget_deque,
                                                int widget_height_sum,
                                                std::deque<int>* prefer_deque,
                                                int prefer_height_sum);
 
-    void DistributeUnexpandableFramesVertically (std::deque<int>* widget_deque,
-                                                 int widget_height_sum,
-                                                 std::deque<int>* prefer_deque,
-                                                 int prefer_height_sum);
+  void AlignHorizontally ();
 
-    void AlignHorizontally ();
+  // this will replace AlignHorizontally later
+  void AlignHorizontallyExt ();
 
-    // this will replace AlignHorizontally later
-    void AlignHorizontallyExt ();
+  void AlignVertically ();
 
-    void AlignVertically ();
+  // this will replace AlignVertically later
+  void AlignVerticallyExt ();
 
-    // this will replace AlignVertically later
-    void AlignVerticallyExt ();
+  void AlignSubFrames (Orientation orientation, const Size& size);
 
-    void AlignSubFrames (Orientation orientation, const Size& size);
+  int GetAverageRoom (Orientation orientation, const Size& size);
 
-    int GetAverageRoom (Orientation orientation, const Size& size);
+  void SetFocusedFrame (AbstractFrame* frame, AbstractWindow* context);
 
-    void SetFocusedFrame (AbstractFrame* frame, AbstractWindow* context);
+  void SetHoveredFrame (AbstractWindow* context);
 
-    void SetHoveredFrame (AbstractWindow* context);
+  Orientation orientation_;
 
-    Orientation orientation_;
+  AbstractFrame* hover_frame_;
 
-    AbstractFrame* hover_frame_;
+  AbstractFrame* focused_frame_;
 
-    AbstractFrame* focused_frame_;
+  bool focused_;
 
-    bool focused_;
+  bool pressed_;
 
-    bool pressed_;
+  bool hover_;
 
-    bool hover_;
+  int cursor_position_;
 
-    int cursor_position_;
-
-  };
+};
 }

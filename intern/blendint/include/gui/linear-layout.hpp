@@ -27,95 +27,95 @@
 
 namespace BlendInt {
 
-  class LinearLayout: public AbstractLayout
+class LinearLayout: public AbstractLayout
+{
+public:
+
+  LinearLayout (Orientation orient = Horizontal,
+                int align = AlignCenter,
+                int space = 4);
+
+  LinearLayout (int width,
+                int height,
+                const Margin& margin,
+                Orientation orient = Horizontal,
+                int align = AlignCenter,
+                int space = 4);
+
+  virtual ~LinearLayout ();
+
+  virtual AbstractWidget* AddWidget (AbstractWidget* widget);
+
+  virtual AbstractWidget* InsertWidget (int index, AbstractWidget* widget);
+
+  // row must be 0
+  virtual AbstractWidget* InsertWidget (int row, int column, AbstractWidget* widget);
+
+  virtual void Adjust ();
+
+  bool Remove (AbstractWidget* widget);
+
+  void SetOrientation (Orientation orient);
+
+  void SetAlignment (int align);
+
+  void SetSpace (int space);
+
+  int alignment () const
   {
-  public:
+    return alignment_;
+  }
 
-    LinearLayout (Orientation orient = Horizontal,
-                  int align = AlignCenter,
-                  int space = 4);
+  int space () const
+  {
+    return space_;
+  }
 
-    LinearLayout (int width,
-                  int height,
-                  const Margin& margin,
-                  Orientation orient = Horizontal,
-                  int align = AlignCenter,
-                  int space = 4);
+  virtual Size GetPreferredSize () const;
 
-    virtual ~LinearLayout ();
+  virtual bool IsExpandX () const;
 
-    virtual bool AddWidget (AbstractWidget* widget);
+  virtual bool IsExpandY () const;
 
-    virtual bool InsertWidget (int index, AbstractWidget* widget);
+protected:
 
-    // row must be 0
-    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+  virtual void PerformMarginUpdate (const Margin& margin);
 
-    virtual void Adjust ();
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height);
 
-    bool Remove (AbstractWidget* widget);
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y);
 
-    void SetOrientation (Orientation orient);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    void SetAlignment (int align);
+  void set_alignment (int align)
+  {
+    alignment_ = align;
+  }
 
-    void SetSpace (int space);
+  void set_space (int space)
+  {
+    space_ = space;
+  }
 
-    int alignment () const
-    {
-      return alignment_;
-    }
+private:
 
-    int space () const
-    {
-      return space_;
-    }
+  Orientation orientation_;
 
-    virtual Size GetPreferredSize () const;
+  int alignment_;
 
-    virtual bool IsExpandX () const;
+  int space_;
 
-    virtual bool IsExpandY () const;
+DISALLOW_COPY_AND_ASSIGN (LinearLayout);
 
-  protected:
-
-    virtual void PerformMarginUpdate (const Margin& margin);
-
-    virtual bool SizeUpdateTest (const AbstractView* source,
-                                 const AbstractView* target,
-                                 int width,
-                                 int height);
-
-    virtual bool PositionUpdateTest (const AbstractView* source,
-                                     const AbstractView* target,
-                                     int x,
-                                     int y);
-
-    virtual void PerformSizeUpdate (const AbstractView* source,
-                                    const AbstractView* target,
-                                    int width,
-                                    int height);
-
-    void set_alignment (int align)
-    {
-      alignment_ = align;
-    }
-
-    void set_space (int space)
-    {
-      space_ = space;
-    }
-
-  private:
-
-    Orientation orientation_;
-
-    int alignment_;
-
-    int space_;
-
-    DISALLOW_COPY_AND_ASSIGN (LinearLayout);
-
-  };
+};
 
 }

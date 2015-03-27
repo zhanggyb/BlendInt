@@ -31,313 +31,314 @@
 
 namespace BlendInt {
 
-  Cell::Cell ()
-  : AbstractWidget()
-  {
-    set_size(10, 10);
+Cell::Cell ()
+    : AbstractWidget()
+{
+  set_size(10, 10);
+}
+
+Cell::~Cell ()
+{
+}
+
+void Cell::SetWidget (AbstractWidget* widget)
+{
+  if (subview_count()) {
+    ClearSubViews();
+    RequestRedraw();
   }
 
-  Cell::~Cell ()
-  {
+  if (PushBackSubView(widget)) {
+    ResizeSubView(widget, size());
+  }
+}
+
+bool Cell::IsExpandX () const
+{
+  return subview_count() ? first()->IsExpandX() : false;
+}
+
+bool Cell::IsExpandY () const
+{
+  return subview_count() ? first()->IsExpandY() : false;
+}
+
+Size Cell::GetPreferredSize () const
+{
+  Size preferred_size(10, 10);
+
+  if (subview_count()) {
+    preferred_size = first()->GetPreferredSize();
   }
 
-  void Cell::SetWidget (AbstractWidget* widget)
-  {
-    if (subview_count()) {
-      ClearSubViews();
-      RequestRedraw();
-    }
+  return preferred_size;
+}
 
-    if (PushBackSubView(widget)) {
-      ResizeSubView(widget, size());
-    }
-  }
-
-  bool Cell::IsExpandX () const
-  {
-    return subview_count() ? first()->IsExpandX() : false;
-  }
-
-  bool Cell::IsExpandY () const
-  {
-    return subview_count() ? first()->IsExpandY() : false;
-  }
-
-  Size Cell::GetPreferredSize () const
-  {
-    Size preferred_size(10, 10);
-
-    if (subview_count()) {
-      preferred_size = first()->GetPreferredSize();
-    }
-
-    return preferred_size;
-  }
-
-  void Cell::PerformSizeUpdate (const AbstractView* source,
-                                const AbstractView* target,
-                                int width,
-                                int height)
-  {
-    if (target == this) {
-
-      set_size(width, height);
-
-      if (subview_count()) {
-        ResizeSubView(first(), size());
-        RequestRedraw();
-      }
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  Response Cell::Draw (AbstractWindow* context)
-  {
-    return subview_count() ? Ignore : Finish;
-  }
-
-  // --------------------------------------
-
-  TableLayout::TableLayout (unsigned int row, unsigned int column, int space)
-  : AbstractLayout(),
-    row_(row),
-    column_(column),
-    space_(space)
-  {
-    int width = 0;
-    int height = 0;
-
-    int row_width = 0;
-    int row_height = 0;
-
-    int x = pixel_size(margin().left());
-    int y = pixel_size(margin().bottom());
-
-    Cell* cell = 0;
-    for (unsigned int i = 0; i < row_; i++) {
-
-      row_width = 0;
-      row_height = 0;
-
-      for (unsigned int j = 0; j < column_; j++) {
-
-        cell = Manage(new Cell);
-        PushBackSubView(cell);
-
-        MoveSubViewTo(cell, j * cell->size().width() + x,
-                      (row_ - i - 1) * cell->size().height() + y);
-
-        row_width += cell->size().width();
-        height = std::max(height, cell->size().height());
-
-      }
-
-      width = std::max(width, row_width);
-      height += row_height;
-
-    }
-
-    width += pixel_size(margin().hsum());
-    height += pixel_size(margin().vsum());
+void Cell::PerformSizeUpdate (const AbstractView* source,
+                              const AbstractView* target,
+                              int width,
+                              int height)
+{
+  if (target == this) {
 
     set_size(width, height);
-  }
 
-  TableLayout::TableLayout (int width,
-                            int height,
-                            unsigned int row,
-                            unsigned int column,
-                            const Margin& margin,
-                            int space)
-      :
-        AbstractLayout(width, height, margin),
-        row_(row),
-        column_(column),
-        space_(space)
-  {
-    int cell_width = (size().width() - (column_ - 1) * space_) / column_;
-    int cell_height = (size().height() - (row_ - 1) * space_) / row_;
-
-    int x = pixel_size(this->margin().left());
-    int y = pixel_size(this->margin().bottom());
-
-    Cell* cell = 0;
-    for (unsigned int i = 0; i < row_; i++) {
-
-      for (unsigned int j = 0; j < column_; j++) {
-
-        cell = Manage(new Cell);
-        PushBackSubView(cell);
-
-        ResizeSubView(cell, cell_width, cell_height);
-        MoveSubViewTo(cell, j * cell->size().width() + x,
-                      (row_ - i - 1) * cell->size().height() + y);
-      }
+    if (subview_count()) {
+      ResizeSubView(first(), size());
+      RequestRedraw();
     }
   }
 
-  TableLayout::~TableLayout ()
-  {
+  if (source == this) {
+    report_size_update(source, target, width, height);
   }
+}
 
-  bool TableLayout::AddWidget (AbstractWidget* widget)
-  {
-    bool retval = false;
+Response Cell::Draw (AbstractWindow* context)
+{
+  return subview_count() ? Ignore : Finish;
+}
 
-    for (AbstractView* p = first(); p; p = next(p)) {
-      if (p->GetSubViewCount() == 0) {
-        Cell* cell = dynamic_cast<Cell*>(p);
-        DBG_ASSERT(cell);
-        cell->SetWidget(widget);
-        Adjust();
-        retval = true;
-        break;
-      }
+// --------------------------------------
+
+TableLayout::TableLayout (unsigned int row, unsigned int column, int space)
+    : AbstractLayout(), row_(row), column_(column), space_(space)
+{
+  int width = 0;
+  int height = 0;
+
+  int row_width = 0;
+  int row_height = 0;
+
+  int x = pixel_size(margin().left());
+  int y = pixel_size(margin().bottom());
+
+  Cell* cell = 0;
+  for (unsigned int i = 0; i < row_; i++) {
+
+    row_width = 0;
+    row_height = 0;
+
+    for (unsigned int j = 0; j < column_; j++) {
+
+      cell = Manage(new Cell);
+      PushBackSubView(cell);
+
+      MoveSubViewTo(cell, j * cell->size().width() + x,
+                    (row_ - i - 1) * cell->size().height() + y);
+
+      row_width += cell->size().width();
+      height = std::max(height, cell->size().height());
+
     }
 
-    if (!retval) {
-      DBG_PRINT_MSG("Error: %s", "layout is full");
-    }
+    width = std::max(width, row_width);
+    height += row_height;
 
-    return retval;
   }
 
-  bool TableLayout::InsertWidget (int index, AbstractWidget* widget)
-  {
-    if (index < subview_count()) {
-      Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
+  width += pixel_size(margin().hsum());
+  height += pixel_size(margin().vsum());
+
+  set_size(width, height);
+}
+
+TableLayout::TableLayout (int width,
+                          int height,
+                          unsigned int row,
+                          unsigned int column,
+                          const Margin& margin,
+                          int space)
+    :
+      AbstractLayout(width, height, margin),
+      row_(row),
+      column_(column),
+      space_(space)
+{
+  int cell_width = (size().width() - (column_ - 1) * space_) / column_;
+  int cell_height = (size().height() - (row_ - 1) * space_) / row_;
+
+  int x = pixel_size(this->margin().left());
+  int y = pixel_size(this->margin().bottom());
+
+  Cell* cell = 0;
+  for (unsigned int i = 0; i < row_; i++) {
+
+    for (unsigned int j = 0; j < column_; j++) {
+
+      cell = Manage(new Cell);
+      PushBackSubView(cell);
+
+      ResizeSubView(cell, cell_width, cell_height);
+      MoveSubViewTo(cell, j * cell->size().width() + x,
+                    (row_ - i - 1) * cell->size().height() + y);
+    }
+  }
+}
+
+TableLayout::~TableLayout ()
+{
+}
+
+AbstractWidget* TableLayout::AddWidget (AbstractWidget* widget)
+{
+  AbstractWidget* retval = 0;
+
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p->GetSubViewCount() == 0) {
+      Cell* cell = dynamic_cast<Cell*>(p);
       DBG_ASSERT(cell);
       cell->SetWidget(widget);
       Adjust();
-      return true;
-    } else {
-      DBG_PRINT_MSG("Error: %s", "index out of range");
-      return false;
+      retval = widget;
+      break;
     }
   }
 
-  bool TableLayout::InsertWidget (int row, int column, AbstractWidget* widget)
-  {
-    int index = column_ * row + column;
+  if (!retval) {
+    DBG_PRINT_MSG("Error: %s", "layout is full");
+  }
 
+  return retval;
+}
+
+AbstractWidget* TableLayout::InsertWidget (int index, AbstractWidget* widget)
+{
+  if (index < subview_count()) {
     Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
-
     DBG_ASSERT(cell);
     cell->SetWidget(widget);
-
     Adjust();
-    return true;
+    return widget;
+  } else {
+    DBG_PRINT_MSG("Error: %s", "index out of range");
+    return 0;
+  }
+}
+
+AbstractWidget* TableLayout::InsertWidget (int row,
+                                           int column,
+                                           AbstractWidget* widget)
+{
+  if (widget == 0) return 0;
+
+  int index = column_ * row + column;
+
+  Cell* cell = dynamic_cast<Cell*>(GetSubViewAt(index));
+
+  DBG_ASSERT(cell);
+  cell->SetWidget(widget);
+
+  Adjust();
+  return widget;
+}
+
+void TableLayout::Adjust ()
+{
+  int x = pixel_size(margin().left());
+  int y = pixel_size(margin().bottom());
+  int w = size().width() - pixel_size(margin().hsum());
+  int h = size().height() - pixel_size(margin().vsum());
+
+  TableAdjustment adjust(this, row_, column_, space_);
+  adjust.Adjust(x, y, w, h);
+}
+
+void TableLayout::SetSpace (int space)
+{
+  if (space_ == space) return;
+
+  space_ = space;
+  Adjust();
+  RequestRedraw();
+}
+
+bool TableLayout::IsExpandX () const
+{
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p->IsExpandX()) return true;
   }
 
-  void TableLayout::Adjust ()
-  {
-    int x = pixel_size(margin().left());
-    int y = pixel_size(margin().bottom());
-    int w = size().width() - pixel_size(margin().hsum());
-    int h = size().height() - pixel_size(margin().vsum());
+  return false;
+}
 
-    TableAdjustment adjust(this, row_, column_, space_);
-    adjust.Adjust(x, y, w, h);
+bool TableLayout::IsExpandY () const
+{
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p->IsExpandY()) return true;
   }
 
-  void TableLayout::SetSpace (int space)
-  {
-    if (space_ == space) return;
+  return false;
+}
 
-    space_ = space;
+void TableLayout::PerformSizeUpdate (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int width,
+                                     int height)
+{
+  if (target == this) {
+
+    set_size(width, height);
     Adjust();
-    RequestRedraw();
   }
 
-  bool TableLayout::IsExpandX () const
-  {
-    for (AbstractView* p = first(); p; p = next(p)) {
-      if (p->IsExpandX()) return true;
-    }
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
 
-    return false;
+void TableLayout::PerformMarginUpdate (const Margin& margin)
+{
+  set_margin(margin);
+
+  Adjust();
+  RequestRedraw();
+}
+
+Size TableLayout::GetPreferredSize () const
+{
+  int width = 0;
+  int height = 0;
+
+  int row_width = 0;
+  int row_height = 0;
+
+  unsigned int i = 0;	// row
+  unsigned int j = 0;	// column
+  Size tmp;
+
+  for (AbstractView* p = first(); p; p = next(p)) {
+
+    tmp = p->GetPreferredSize();
+
+    row_width += tmp.width();
+    row_height = std::max(row_height, tmp.height());
+
+    j++;
+    if (j == column_) {
+
+      width = std::max(width, row_width);
+      row_width = 0;
+      height += row_height;
+
+      j = 0;
+      i++;
+    }
   }
 
-  bool TableLayout::IsExpandY () const
-  {
-    for (AbstractView* p = first(); p; p = next(p)) {
-      if (p->IsExpandY()) return true;
-    }
-
-    return false;
+  if (column_ > 0) {
+    width += (column_ - 1) * space_;
   }
 
-  void TableLayout::PerformSizeUpdate (const AbstractView* source,
-                                       const AbstractView* target,
-                                       int width,
-                                       int height)
-  {
-    if (target == this) {
-
-      set_size(width, height);
-      Adjust();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
+  if (row_ > 0) {
+    height += (row_ - 1) * space_;
   }
 
-  void TableLayout::PerformMarginUpdate (const Margin& margin)
-  {
-    set_margin(margin);
+  width += pixel_size(margin().hsum());
+  height += pixel_size(margin().vsum());
 
-    Adjust();
-    RequestRedraw();
-  }
-
-  Size TableLayout::GetPreferredSize () const
-  {
-    int width = 0;
-    int height = 0;
-
-    int row_width = 0;
-    int row_height = 0;
-
-    unsigned int i = 0;	// row
-    unsigned int j = 0;	// column
-    Size tmp;
-
-    for (AbstractView* p = first(); p; p = next(p)) {
-
-      tmp = p->GetPreferredSize();
-
-      row_width += tmp.width();
-      row_height = std::max(row_height, tmp.height());
-
-      j++;
-      if (j == column_) {
-
-        width = std::max(width, row_width);
-        row_width = 0;
-        height += row_height;
-
-        j = 0;
-        i++;
-      }
-    }
-
-    if (column_ > 0) {
-      width += (column_ - 1) * space_;
-    }
-
-    if (row_ > 0) {
-      height += (row_ - 1) * space_;
-    }
-
-    width += pixel_size(margin().hsum());
-    height += pixel_size(margin().vsum());
-
-    return Size(width, height);
-  }
+  return Size(width, height);
+}
 
 }
 

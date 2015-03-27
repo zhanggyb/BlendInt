@@ -27,40 +27,48 @@
 
 namespace BlendInt {
 
-  class FlowLayout: public AbstractLayout
-  {
-  public:
+class FlowLayout: public AbstractLayout
+{
+public:
 
-    FlowLayout ();
+  FlowLayout ();
 
-    FlowLayout (int width,
-                int height,
-                const Margin& margin,
-                int space,
-                int align);
+  FlowLayout (int width,
+              int height,
+              const Margin& margin,
+              int space,
+              int align);
 
-    virtual ~FlowLayout ();
+  virtual ~FlowLayout ();
 
-    virtual bool AddWidget (AbstractWidget* widget);
+  virtual AbstractWidget* AddWidget (AbstractWidget* widget);
 
-    virtual bool InsertWidget (int index, AbstractWidget* widget);
+  virtual AbstractWidget* InsertWidget (int index, AbstractWidget* widget);
 
-    virtual bool InsertWidget (int row, int column, AbstractWidget* widget);
+  virtual AbstractWidget* InsertWidget (int row,
+                                        int column,
+                                        AbstractWidget* widget);
 
-    virtual void Adjust ();
+  virtual void Adjust ();
 
-  protected:
+protected:
 
-    virtual bool SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height);
 
-    virtual bool PositionUpdateTest (const AbstractView* source, const AbstractView* target, int x, int y);
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y);
 
-  private:
+private:
 
-    int space_;
+  int space_;
 
-    int align_;
+  int align_;
 
-  };
+};
 
 }

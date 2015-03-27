@@ -94,9 +94,9 @@ namespace BlendInt {
     }
   }
 
-  void Frame::AddWidget (AbstractWidget* widget)
+  AbstractWidget* Frame::AddWidget (AbstractWidget* widget)
   {
-    layout_->AddWidget(widget);
+    return layout_->AddWidget(widget);
   }
 
   bool Frame::IsExpandX () const

@@ -25,68 +25,76 @@
 
 namespace BlendInt {
 
-	FlowLayout::FlowLayout()
-	: AbstractLayout(),
-	  space_(2),
-	  align_(AlignLeft | AlignTop)
-	{
-		set_size(200, 200);
-	}
+FlowLayout::FlowLayout ()
+    : AbstractLayout(), space_(2), align_(AlignLeft | AlignTop)
+{
+  set_size(200, 200);
+}
 
-	FlowLayout::FlowLayout(int width, int height, const Margin& margin, int space, int align)
-	: AbstractLayout(width, height, margin),
-	  space_(2),
-	  align_(align)
-	{
+FlowLayout::FlowLayout (int width,
+                        int height,
+                        const Margin& margin,
+                        int space,
+                        int align)
+    : AbstractLayout(width, height, margin), space_(2), align_(align)
+{
 
-	}
+}
 
-	FlowLayout::~FlowLayout()
-	{
-	}
+FlowLayout::~FlowLayout ()
+{
+}
 
-	bool FlowLayout::AddWidget(AbstractWidget* widget)
-	{
-		if(PushBackSubView(widget)) {
-			RequestRedraw();
-			return true;
-		}
+AbstractWidget* FlowLayout::AddWidget (AbstractWidget* widget)
+{
+  if (PushBackSubView(widget)) {
+    RequestRedraw();
+    return widget;
+  }
 
-		return false;
-	}
+  return 0;
+}
 
-	bool FlowLayout::InsertWidget(int index, AbstractWidget* widget)
-	{
-		if(InsertSubView(index, widget)) {
-			RequestRedraw();
-			return true;
-		}
+AbstractWidget* FlowLayout::InsertWidget (int index, AbstractWidget* widget)
+{
+  if (InsertSubView(index, widget)) {
+    RequestRedraw();
+    return widget;
+  }
 
-		return false;
-	}
+  return 0;
+}
 
-	bool FlowLayout::InsertWidget(int row, int column, AbstractWidget* widget)
-	{
-		if(InsertSubView(column, widget)) {
-			RequestRedraw();
-			return true;
-		}
+AbstractWidget* FlowLayout::InsertWidget (int row,
+                                          int column,
+                                          AbstractWidget* widget)
+{
+  if (InsertSubView(column, widget)) {
+    RequestRedraw();
+    return widget;
+  }
 
-		return false;
-	}
+  return 0;
+}
 
-	bool FlowLayout::SizeUpdateTest(const AbstractView* source, const AbstractView* target, int width, int height)
-	{
-		return true;
-	}
+bool FlowLayout::SizeUpdateTest (const AbstractView* source,
+                                 const AbstractView* target,
+                                 int width,
+                                 int height)
+{
+  return true;
+}
 
-	void FlowLayout::Adjust ()
-	{
-	}
+void FlowLayout::Adjust ()
+{
+}
 
-	bool FlowLayout::PositionUpdateTest(const AbstractView* source, const AbstractView* target, int x, int y)
-	{
-		return true;
-	}
+bool FlowLayout::PositionUpdateTest (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int x,
+                                     int y)
+{
+  return true;
+}
 
 }

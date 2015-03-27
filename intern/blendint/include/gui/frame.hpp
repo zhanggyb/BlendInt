@@ -29,99 +29,106 @@
 
 namespace BlendInt {
 
-  class AbstractLayout; // forward declare
+class AbstractLayout;
+// forward declare
 
-  /**
-   * @brief A common frame with customized layout
-   *
-   * @ingroup blendint_gui_frames
-   */
-  class Frame: public AbstractFrame
+/**
+ * @brief A common frame with customized layout
+ *
+ * @ingroup blendint_gui_frames
+ */
+class Frame: public AbstractFrame
+{
+public:
+
+  Frame (AbstractLayout* layout);
+
+  Frame (int width, int height, AbstractLayout* layout);
+
+  virtual ~Frame ();
+
+  AbstractWidget* AddWidget (AbstractWidget* widget);
+
+  virtual bool IsExpandX () const;
+
+  virtual bool IsExpandY () const;
+
+  virtual Size GetPreferredSize () const;
+
+protected:
+
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height) final;
+
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
+
+  virtual bool PreDraw (AbstractWindow* context) final;
+
+  virtual Response Draw (AbstractWindow* context) final;
+
+  virtual void PostDraw (AbstractWindow* context) final;
+
+  virtual void PerformFocusOn (AbstractWindow* context);
+
+  virtual void PerformFocusOff (AbstractWindow* context);
+
+  virtual void PerformHoverIn (AbstractWindow* context);
+
+  virtual void PerformHoverOut (AbstractWindow* context);
+
+  virtual Response PerformKeyPress (AbstractWindow* context);
+
+  virtual Response PerformMousePress (AbstractWindow* context);
+
+  virtual Response PerformMouseRelease (AbstractWindow* context);
+
+  virtual Response PerformMouseMove (AbstractWindow* context);
+
+  virtual Response PerformMouseHover (AbstractWindow* context) final;
+
+  inline AbstractLayout* layout () const
   {
-  public:
+    return layout_;
+  }
 
-    Frame (AbstractLayout* layout);
+private:
 
-    Frame (int width, int height, AbstractLayout* layout);
+  void InitializeFrameOnce ();
 
-    virtual ~Frame ();
+  void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
 
-    void AddWidget (AbstractWidget* widget);
+  void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
-    virtual bool IsExpandX () const;
+  void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-    virtual bool IsExpandY () const;
+  glm::mat4 projection_matrix_;
 
-    virtual Size GetPreferredSize () const;
+  glm::mat3 model_matrix_;
 
-  protected:
+  AbstractWidget* focused_widget_;
 
-    virtual bool SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  AbstractWidget* hovered_widget_;
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  // 0 - for inner
+  // 1 - for outer
+  GLuint vao_[2];
 
-    virtual bool PreDraw (AbstractWindow* context) final;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-    virtual Response Draw (AbstractWindow* context) final;
+  int cursor_position_;
 
-    virtual void PostDraw (AbstractWindow* context) final;
+  AbstractLayout* layout_;
 
-    virtual void PerformFocusOn (AbstractWindow* context);
+  bool focused_;
 
-    virtual void PerformFocusOff (AbstractWindow* context);
+  bool hover_;
 
-    virtual void PerformHoverIn (AbstractWindow* context);
-
-    virtual void PerformHoverOut (AbstractWindow* context);
-
-    virtual Response PerformKeyPress (AbstractWindow* context);
-
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
-    virtual Response PerformMouseMove (AbstractWindow* context);
-
-    virtual Response PerformMouseHover (AbstractWindow* context) final;
-
-    inline AbstractLayout* layout () const
-    {
-      return layout_;
-    }
-
-  private:
-
-    void InitializeFrameOnce ();
-
-    void SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context);
-
-    void OnFocusedWidgetDestroyed (AbstractWidget* widget);
-
-    void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-    glm::mat4 projection_matrix_;
-
-    glm::mat3 model_matrix_;
-
-    AbstractWidget* focused_widget_;
-
-    AbstractWidget* hovered_widget_;
-
-    // 0 - for inner
-    // 1 - for outer
-    GLuint vao_[2];
-
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
-
-    int cursor_position_;
-
-    AbstractLayout* layout_;
-
-    bool focused_;
-
-    bool hover_;
-
-    bool pressed_;
-  };
+  bool pressed_;
+};
 
 }
