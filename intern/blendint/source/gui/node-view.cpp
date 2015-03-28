@@ -184,7 +184,7 @@ namespace BlendInt {
   bool NodeView::SizeUpdateTest (const AbstractView* source,
                                  const AbstractView* target,
                                  int width,
-                                 int height)
+                                 int height) const
   {
     return true;
   }
@@ -192,7 +192,7 @@ namespace BlendInt {
   bool NodeView::PositionUpdateTest (const AbstractView* source,
                                      const AbstractView* target,
                                      int x,
-                                     int y)
+                                     int y) const
   {
     return true;
   }

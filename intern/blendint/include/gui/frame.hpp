@@ -57,11 +57,6 @@ public:
 
 protected:
 
-  virtual bool SizeUpdateTest (const AbstractView* source,
-                               const AbstractView* target,
-                               int width,
-                               int height) final;
-
   virtual void PerformSizeUpdate (const AbstractView* source,
                                   const AbstractView* target,
                                   int width,

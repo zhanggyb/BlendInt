@@ -184,6 +184,22 @@ bool AdaptiveLayout::IsExpandY () const
   return expand;
 }
 
+bool AdaptiveLayout::SizeUpdateTest (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int width,
+                                     int height) const
+{
+  return true;
+}
+
+bool AdaptiveLayout::PositionUpdateTest (const AbstractView* source,
+                                         const AbstractView* target,
+                                         int x,
+                                         int y) const
+{
+  return true;
+}
+
 void AdaptiveLayout::PerformMarginUpdate (const Margin& margin)
 {
   set_margin(margin);
@@ -192,22 +208,6 @@ void AdaptiveLayout::PerformMarginUpdate (const Margin& margin)
     Adjust();
     RequestRedraw();
   }
-}
-
-bool AdaptiveLayout::SizeUpdateTest (const AbstractView* source,
-                                     const AbstractView* target,
-                                     int width,
-                                     int height)
-{
-  return true;
-}
-
-bool AdaptiveLayout::PositionUpdateTest (const AbstractView* source,
-                                         const AbstractView* target,
-                                         int x,
-                                         int y)
-{
-  return true;
 }
 
 void AdaptiveLayout::PerformSizeUpdate (const AbstractView* source,

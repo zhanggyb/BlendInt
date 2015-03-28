@@ -80,7 +80,7 @@ AbstractWidget* FlowLayout::InsertWidget (int row,
 bool FlowLayout::SizeUpdateTest (const AbstractView* source,
                                  const AbstractView* target,
                                  int width,
-                                 int height)
+                                 int height) const
 {
   return true;
 }
@@ -92,7 +92,7 @@ void FlowLayout::Adjust ()
 bool FlowLayout::PositionUpdateTest (const AbstractView* source,
                                      const AbstractView* target,
                                      int x,
-                                     int y)
+                                     int y) const
 {
   return true;
 }

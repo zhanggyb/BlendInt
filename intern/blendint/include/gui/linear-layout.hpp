@@ -77,19 +77,19 @@ public:
 
   virtual bool IsExpandY () const;
 
-protected:
-
-  virtual void PerformMarginUpdate (const Margin& margin);
-
   virtual bool SizeUpdateTest (const AbstractView* source,
                                const AbstractView* target,
                                int width,
-                               int height);
+                               int height) const;
 
   virtual bool PositionUpdateTest (const AbstractView* source,
                                    const AbstractView* target,
                                    int x,
-                                   int y);
+                                   int y) const;
+
+protected:
+
+  virtual void PerformMarginUpdate (const Margin& margin);
 
   virtual void PerformSizeUpdate (const AbstractView* source,
                                   const AbstractView* target,

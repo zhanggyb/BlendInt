@@ -502,9 +502,7 @@ namespace BlendInt {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       glViewport(0, 0, context->size().width(), context->size().height());
-#ifdef DEBUG
       DBG_ASSERT(context->stencil_count_ == 0);
-#endif
       context->stencil_count_ = original_stencil_count;
 
       retval = true;

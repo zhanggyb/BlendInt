@@ -175,6 +175,16 @@ public:
 
   Point GetRelativePosition (const AbstractView* widget);
 
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height) const;
+
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y) const;
+
   inline void set_mouse_tracking (bool tracking)
   {
     mouse_tracking_ = tracking;
@@ -255,16 +265,6 @@ public:
   }
 
 protected:
-
-  virtual bool SizeUpdateTest (const AbstractView* source,
-                               const AbstractView* target,
-                               int width,
-                               int height);
-
-  virtual bool PositionUpdateTest (const AbstractView* source,
-                                   const AbstractView* target,
-                                   int x,
-                                   int y);
 
   virtual bool PreDraw (AbstractWindow* context);
 

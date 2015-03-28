@@ -116,11 +116,6 @@ namespace BlendInt {
     return layout_->GetPreferredSize();
   }
 
-  bool Frame::SizeUpdateTest (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    return true;
-  }
-
   void Frame::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
   {
     if (target == this) {

@@ -51,17 +51,15 @@ public:
 
   virtual void Adjust ();
 
-protected:
-
   virtual bool SizeUpdateTest (const AbstractView* source,
                                const AbstractView* target,
                                int width,
-                               int height);
+                               int height) const;
 
   virtual bool PositionUpdateTest (const AbstractView* source,
                                    const AbstractView* target,
                                    int x,
-                                   int y);
+                                   int y) const;
 
 private:
 

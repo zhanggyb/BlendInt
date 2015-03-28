@@ -348,6 +348,30 @@ bool AbstractView::IsSubViewActive (const AbstractView* subview) const
   return true;
 }
 
+bool AbstractView::SizeUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int width,
+                                   int height) const
+{
+  if (source->super() == this) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+bool AbstractView::PositionUpdateTest (const AbstractView* source,
+                                       const AbstractView* target,
+                                       int x,
+                                       int y) const
+{
+  if (source->super() == this) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 bool AbstractView::IsActive (const AbstractView* view)
 {
   bool active = true;
@@ -849,30 +873,6 @@ void AbstractView::DispatchDrawEvent (AbstractView* widget,
     }
 
     widget->PostDraw(context);
-  }
-}
-
-bool AbstractView::SizeUpdateTest (const AbstractView* source,
-                                   const AbstractView* target,
-                                   int width,
-                                   int height)
-{
-  if (source->super() == this) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-bool AbstractView::PositionUpdateTest (const AbstractView* source,
-                                       const AbstractView* target,
-                                       int x,
-                                       int y)
-{
-  if (source->super() == this) {
-    return false;
-  } else {
-    return true;
   }
 }
 

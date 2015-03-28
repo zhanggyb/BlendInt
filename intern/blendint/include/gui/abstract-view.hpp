@@ -183,6 +183,16 @@ public:
    */
   virtual bool IsSubViewActive (const AbstractView* subview) const;
 
+  virtual bool SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height) const;
+
+  virtual bool PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y) const;
+
   inline const Point& position () const
   {
     return position_;
@@ -393,16 +403,6 @@ protected:
   virtual Response PerformMouseRelease (AbstractWindow* context) = 0;
 
   virtual Response PerformMouseMove (AbstractWindow* context) = 0;
-
-  virtual bool SizeUpdateTest (const AbstractView* source,
-                               const AbstractView* target,
-                               int width,
-                               int height);
-
-  virtual bool PositionUpdateTest (const AbstractView* source,
-                                   const AbstractView* target,
-                                   int x,
-                                   int y);
 
   virtual void PerformSizeUpdate (const AbstractView* source,
                                   const AbstractView* target,

@@ -237,7 +237,7 @@ void LinearLayout::PerformMarginUpdate (const Margin& request)
 bool LinearLayout::SizeUpdateTest (const AbstractView* source,
                                    const AbstractView* target,
                                    int width,
-                                   int height)
+                                   int height) const
 {
   // Do not allow sub widget changing its size
   if (source->super() == this) {
@@ -250,7 +250,7 @@ bool LinearLayout::SizeUpdateTest (const AbstractView* source,
 bool LinearLayout::PositionUpdateTest (const AbstractView* source,
                                        const AbstractView* target,
                                        int x,
-                                       int y)
+                                       int y) const
 {
   // Do not allow sub widget changing its position
   if (source->super() == this) {
