@@ -30,43 +30,46 @@
 
 namespace BlendInt {
 
-	class ColorWheel: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(ColorWheel);
+class ColorWheel: public AbstractWidget
+{
+DISALLOW_COPY_AND_ASSIGN(ColorWheel);
 
-	public:
+public:
 
-		ColorWheel ();
+  ColorWheel ();
 
-		virtual ~ColorWheel ();
+  virtual ~ColorWheel ();
 
-		virtual bool Contain (const Point& point) const;
+  virtual bool Contain (const Point& point) const;
 
-		virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-		virtual bool IsExpandY () const;
+  virtual bool IsExpandY () const;
 
-		virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-	protected:
+protected:
 
-		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-		virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-		void GenerateWheelVertices (int radius,
-						std::vector<GLfloat>& inner_vertices,
-						std::vector<GLfloat>& outer_vertices);
+  void GenerateWheelVertices (int radius,
+                              std::vector<GLfloat>& inner_vertices,
+                              std::vector<GLfloat>& outer_vertices);
 
-	private:
+private:
 
-		void InitializeColorWheel ();
+  void InitializeColorWheel ();
 
-		GLuint vaos_[2];
+  GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> outer_;
-		RefPtr<GLArrayBuffer> inner_;
+  RefPtr<GLArrayBuffer> outer_;
+  RefPtr<GLArrayBuffer> inner_;
 
-	};
+};
 
 }

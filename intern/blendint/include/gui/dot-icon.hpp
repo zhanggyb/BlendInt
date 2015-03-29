@@ -28,53 +28,50 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Dot icon used in ColorWheel or BrightnessSlider
-	 *
-	 * @ingroup blendint_gui_forms
-	 */
-	class DotIcon: public AbstractIcon
-	{
-	public:
+/**
+ * @brief Dot icon used in ColorWheel or BrightnessSlider
+ *
+ * @ingroup blendint_gui_forms
+ */
+class DotIcon: public AbstractIcon
+{
+public:
 
-		/**
-		 * @brief Default constructor
-		 */
-	  DotIcon ();
+  /**
+   * @brief Default constructor
+   */
+  DotIcon ();
 
-		/**
-		 * @brief Constructor
-		 */
-		virtual ~DotIcon ();
+  /**
+   * @brief Constructor
+   */
+  virtual ~DotIcon ();
 
-		virtual void Draw (int x,
-				int y,
-				const float* color_ptr = Color(Palette::White).data(),
-				short gamma = 0,
-				float rotate = 0.f,
-				float scale_x = 1.f,
-				float scale_y = 1.f) const final;
+  virtual void Draw (int x,
+                     int y,
+                     const float* color_ptr = Color(Palette::White).data(),
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const final;
 
-    virtual void DrawInRect (const Rect& rect,
-                             int align,
-                             const float* color_ptr =
-                                 Color(Palette::Black).data(),
-                             short gamma = 0,
-                             float rotate = 0.f,
-                             bool scale = false) const final;
+  virtual void DrawInRect (const Rect& rect, int align, const float* color_ptr =
+                               Color(Palette::Black).data(),
+                           short gamma = 0, float rotate = 0.f, bool scale =
+                               false) const final;
 
-	protected:
+protected:
 
-		virtual void PerformSizeUpdate (int width, int height);
+  virtual void PerformSizeUpdate (int width, int height);
 
-		virtual void PerformRoundTypeUpdate (int type);
+  virtual void PerformRoundTypeUpdate (int type);
 
-		virtual void PerformRoundRadiusUpdate (float radius);
+  virtual void PerformRoundRadiusUpdate (float radius);
 
-	private:
+private:
 
-		GLuint vao_[2];
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
-	};
+  GLuint vao_[2];
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
+};
 
 }

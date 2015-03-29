@@ -33,120 +33,123 @@
 
 namespace BlendInt {
 
-  class NumericalSlider: public AbstractSlider<double>
-  {
-  DISALLOW_COPY_AND_ASSIGN(NumericalSlider);
+class NumericalSlider: public AbstractSlider<double>
+{
+  DISALLOW_COPY_AND_ASSIGN (NumericalSlider);
 
-  public:
+public:
 
-    NumericalSlider (Orientation orientation = Horizontal);
+  NumericalSlider (Orientation orientation = Horizontal);
 
-    NumericalSlider (const String& title, Orientation orientation = Horizontal);
+  NumericalSlider (const String& title, Orientation orientation = Horizontal);
 
-    virtual ~NumericalSlider ();
+  virtual ~NumericalSlider ();
 
-    void SetTitle (const String& title);
+  void SetTitle (const String& title);
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-  protected:
+protected:
 
-    virtual void PerformOrientationUpdate (Orientation orientation);
+  virtual void PerformOrientationUpdate (Orientation orientation);
 
-    virtual void PerformMinimumUpdate (double minimum);
+  virtual void PerformMinimumUpdate (double minimum);
 
-    virtual void PerformMaximumUpdate (double maximum);
+  virtual void PerformMaximumUpdate (double maximum);
 
-    virtual void PerformValueUpdate (double value);
+  virtual void PerformValueUpdate (double value);
 
-    virtual void PerformStepUpdate (double step);
+  virtual void PerformStepUpdate (double step);
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual void PerformRoundTypeUpdate (int round_type);
+  virtual void PerformRoundTypeUpdate (int round_type);
 
-    virtual void PerformRoundRadiusUpdate (float radius);
+  virtual void PerformRoundRadiusUpdate (float radius);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual void PerformFocusOn (AbstractWindow* context);
+  virtual void PerformFocusOn (AbstractWindow* context);
 
-    virtual void PerformFocusOff (AbstractWindow* context);
+  virtual void PerformFocusOff (AbstractWindow* context);
 
-    virtual void PerformHoverIn (AbstractWindow* context);
+  virtual void PerformHoverIn (AbstractWindow* context);
 
-    virtual void PerformHoverOut (AbstractWindow* context);
+  virtual void PerformHoverOut (AbstractWindow* context);
 
-    virtual Response PerformKeyPress (AbstractWindow* context);
+  virtual Response PerformKeyPress (AbstractWindow* context);
 
-    virtual Response PerformMousePress (AbstractWindow* context);
+  virtual Response PerformMousePress (AbstractWindow* context);
 
-    virtual Response PerformMouseMove (AbstractWindow* context);
+  virtual Response PerformMouseMove (AbstractWindow* context);
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
+  virtual Response PerformMouseRelease (AbstractWindow* context);
 
-  private:
+private:
 
-    void InitializeNumericalSlider ();
+  void InitializeNumericalSlider ();
 
-    Response KeyPressInEditMode (AbstractWindow* context);
+  Response KeyPressInEditMode (AbstractWindow* context);
 
-    void DisposeBackspacePress ();
+  void DisposeBackspacePress ();
 
-    void DisposeDeletePress ();
+  void DisposeDeletePress ();
 
-    void DisposeLeftPress ();
+  void DisposeLeftPress ();
 
-    void DisposeRightPress ();
+  void DisposeRightPress ();
 
-    float GetSlidePosition (float border, double value);
+  float GetSlidePosition (float border, double value);
 
-    bool GetNewValue (const Point& cursor, double* out_v);
+  bool GetNewValue (const Point& cursor, double* out_v);
 
-    void DrawSlideMode (AbstractWindow* context);
+  void DrawSlideMode (AbstractWindow* context);
 
-    void DrawEditMode (AbstractWindow* context);
+  void DrawEditMode (AbstractWindow* context);
 
-    /**
-     * @brief VertexArray objects used in this widget
-     *
-     * [0] - inner buffer
-     * [1] - outer buffer
-     */
-    GLVertexArrays<3> vao_;
+  /**
+   * @brief VertexArray objects used in this widget
+   *
+   * [0] - inner buffer
+   * [1] - outer buffer
+   */
+  GLVertexArrays<3> vao_;
 
-    GLBuffer<ARRAY_BUFFER, 3> vbo_;
+  GLBuffer<ARRAY_BUFFER, 3> vbo_;
 
-    RefPtr<Text> title_text_;
+  RefPtr<Text> title_text_;
 
-    RefPtr<Text> value_text_;
+  RefPtr<Text> value_text_;
 
-    Point last_cursor_position_;
+  Point last_cursor_position_;
 
-    Font font_;
+  Font font_;
 
-    size_t text_start_; // where start print the text
+  size_t text_start_; // where start print the text
 
-    /**
-     * @brief Where display the cursor and insert new text
-     */
-    size_t cursor_index_;
+  /**
+   * @brief Where display the cursor and insert new text
+   */
+  size_t cursor_index_;
 
-    double last_value_;
+  double last_value_;
 
-    bool hover_;
+  bool hover_;
 
-    bool pressed_;
+  bool pressed_;
 
-    bool moved_;
+  bool moved_;
 
-    bool edit_mode_;
+  bool edit_mode_;
 
-    static const int vertical_space = 2;
+  static const int vertical_space = 2;
 
-    static Margin kPadding;
-  };
+  static Margin kPadding;
+};
 
 }

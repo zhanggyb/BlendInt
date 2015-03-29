@@ -28,113 +28,117 @@
 
 namespace BlendInt {
 
-  class ToggleButton;
+class ExpandButton: public AbstractButton
+{
+DISALLOW_COPY_AND_ASSIGN(ExpandButton);
 
-  class ExpandButton: public AbstractButton
-  {
-  DISALLOW_COPY_AND_ASSIGN(ExpandButton);
+public:
 
-  public:
+  ExpandButton ();
 
-    ExpandButton ();
+  ExpandButton (const String& text);
 
-    ExpandButton (const String& text);
+  virtual ~ExpandButton ();
 
-    virtual ~ExpandButton ();
+  virtual bool IsExpandX () const;
 
-    virtual bool IsExpandX () const;
+  void SetText (const String& text);
 
-    void SetText (const String& text);
+protected:
 
-  protected:
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformRoundTypeUpdate (int round_type);
 
-    virtual void PerformRoundTypeUpdate (int round_type);
+  virtual void PerformRoundRadiusUpdate (float radius);
 
-    virtual void PerformRoundRadiusUpdate (float radius);
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual Response Draw (AbstractWindow* context);
+};
 
-  };
+// --------------------------
 
-  // --------------------------
+/**
+ * @brief Expander
+ */
+class Expander: public AbstractWidget
+{
+DISALLOW_COPY_AND_ASSIGN(Expander);
 
-  /**
-   * @brief Expander
-   */
-  class Expander: public AbstractWidget
-  {
-  DISALLOW_COPY_AND_ASSIGN(Expander);
+public:
 
-  public:
+  Expander (const String& title,
+            AbstractLayout* layout = 0,
+            Orientation orient = Vertical,
+            int align = AlignCenter,
+            int space = 0);
 
-    Expander (const String& title,
-              AbstractLayout* layout = 0,
-              Orientation orient = Vertical,
-              int align = AlignCenter,
-              int space = 0);
+  virtual ~Expander ();
 
-    virtual ~Expander ();
+  bool AddWidget (AbstractWidget* widget);
 
-    bool AddWidget (AbstractWidget* widget);
+  bool InsertWidget (int index, AbstractWidget* widget);
 
-    bool InsertWidget (int index, AbstractWidget* widget);
+  bool InsertWidget (int row, int column, AbstractWidget* widget);
 
-    bool InsertWidget (int row, int column, AbstractWidget* widget);
+  void SetTitle (const String& text);
 
-    void SetTitle (const String& text);
+  const String& GetTitle () const;
 
-    const String& GetTitle () const;
+  virtual AbstractView* GetFirstSubView () const final;
 
-    virtual AbstractView* GetFirstSubView () const final;
+  virtual AbstractView* GetLastSubView () const final;
 
-    virtual AbstractView* GetLastSubView () const final;
+  virtual AbstractView* GetNextSubView (const AbstractView* view) const final;
 
-    virtual AbstractView* GetNextSubView (const AbstractView* view) const final;
+  virtual AbstractView* GetPreviousSubView (const AbstractView* view) const final;
 
-    virtual AbstractView* GetPreviousSubView (const AbstractView* view) const final;
+  virtual int GetSubViewCount () const final;
 
-    virtual int GetSubViewCount () const final;
+  virtual bool IsSubViewActive (const AbstractView* subview) const final;
 
-    virtual bool IsSubViewActive (const AbstractView* subview) const final;
+  virtual bool IsExpandX () const;
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandY () const;
 
-    virtual bool IsExpandY () const;
+  virtual Size GetPreferredSize () const;
 
-    virtual Size GetPreferredSize () const;
+protected:
 
-  protected:
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual Response Draw (AbstractWindow* context);
+protected:
 
-  protected:
+  void FillWidgets ();
 
-    void FillWidgets ();
+  void FillWidgets (const Size& out_size);
 
-    void FillWidgets (const Size& out_size);
+  void FillWidgets (int x, int y, int width, int height);
 
-    void FillWidgets (int x, int y, int width, int height);
+  void OnToggled (bool toggle);
 
-    void OnToggled (bool toggle);
+  ExpandButton* title_;
 
-    ExpandButton* title_;
+  AbstractLayout* layout_;
 
-    AbstractLayout* layout_;
+  int last_size_;
 
-    int last_size_;
+  Orientation orientation_;
 
-    Orientation orientation_;
+  int alignment_;
 
-    int alignment_;
+  int space_;
 
-    int space_;
+  bool expand_; // expand status
 
-    bool expand_; // expand status
-
-  };
+};
 
 }

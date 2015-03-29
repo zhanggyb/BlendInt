@@ -28,55 +28,58 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup blendint_gui_widgets_buttons
-	 */
-	class PushButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(PushButton);
+/**
+ * @brief The most common button class
+ *
+ * @ingroup blendint_gui_widgets_buttons
+ */
+class PushButton: public AbstractButton
+{
+DISALLOW_COPY_AND_ASSIGN(PushButton);
 
-	public:
+public:
 
-		PushButton ();
+  PushButton ();
 
-		PushButton (const String& text);
+  PushButton (const String& text);
 
-		PushButton (const RefPtr<AbstractIcon>& icon);
+  PushButton (const RefPtr<AbstractIcon>& icon);
 
-		PushButton (const RefPtr<AbstractIcon>& icon, const String& text);
+  PushButton (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		virtual ~PushButton ();
+  virtual ~PushButton ();
 
-		virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-		void SetText (const String& text);
+  void SetText (const String& text);
 
-		void SetIcon (const RefPtr<AbstractIcon>& icon);
+  void SetIcon (const RefPtr<AbstractIcon>& icon);
 
-	protected:
+protected:
 
-		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-		virtual void PerformRoundTypeUpdate (int round_type) final;
+  virtual void PerformRoundTypeUpdate (int round_type) final;
 
-		virtual void PerformRoundRadiusUpdate (float radius) final;
+  virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context) final;
+  virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context) final;
+  virtual void PerformHoverOut (AbstractWindow* context) final;
 
-		virtual Response Draw (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-	private:
+private:
 
-		void InitializeButtonOnce ();
+  void InitializeButtonOnce ();
 
-		GLuint vao_[2];
+  GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-	};
+};
 
 }

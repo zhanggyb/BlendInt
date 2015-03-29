@@ -29,45 +29,48 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Tab button
-   *
-   * @ingroup blendint_gui_widgets_buttons
-   */
-  class TabButton: public AbstractButton
-  {
-  DISALLOW_COPY_AND_ASSIGN(TabButton);
+/**
+ * @brief Tab button
+ *
+ * @ingroup blendint_gui_widgets_buttons
+ */
+class TabButton: public AbstractButton
+{
+DISALLOW_COPY_AND_ASSIGN(TabButton);
 
-  public:
+public:
 
-    TabButton ();
+  TabButton ();
 
-    TabButton (const String& text);
+  TabButton (const String& text);
 
-    TabButton (const RefPtr<AbstractIcon>& icon);
+  TabButton (const RefPtr<AbstractIcon>& icon);
 
-    TabButton (const RefPtr<AbstractIcon>& icon, const String& text);
+  TabButton (const RefPtr<AbstractIcon>& icon, const String& text);
 
-    virtual ~TabButton ();
+  virtual ~TabButton ();
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-    virtual void PerformRoundTypeUpdate (int round_type) final;
+  virtual void PerformRoundTypeUpdate (int round_type) final;
 
-    virtual void PerformRoundRadiusUpdate (float radius) final;
+  virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    virtual Response Draw (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-  private:
+private:
 
-    void InitializeTabButtonOnce ();
+  void InitializeTabButtonOnce ();
 
-    GLuint vao_[2];
+  GLuint vao_[2];
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-  };
+};
 
 }

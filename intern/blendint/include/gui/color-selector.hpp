@@ -33,76 +33,79 @@
 
 namespace BlendInt {
 
-  /// @cond redundant
-  /**
-   * @brief A special radio button expands along x
-   */
-  class ColorModeButton: public RadioButton
+/// @cond redundant
+/**
+ * @brief A special radio button expands along x
+ */
+class ColorModeButton: public RadioButton
+{
+public:
+
+  using RadioButton::RadioButton;
+
+  virtual ~ColorModeButton ()
   {
-  public:
+  }
 
-    using RadioButton::RadioButton;
-
-    virtual ~ColorModeButton ()
-    {
-    }
-
-    virtual bool IsExpandX () const override
-    {
-      return true;
-    }
-
-  };
-  /// @endcond
-
-  /**
-   * @brief A dialog to pick color
-   *
-   * @ingroup blendint_gui_frames
-   */
-  class ColorSelector: public AbstractDialog
+  virtual bool IsExpandX () const override
   {
-  DISALLOW_COPY_AND_ASSIGN(ColorSelector);
+    return true;
+  }
 
-  public:
+};
+/// @endcond
 
-    ColorSelector ();
+/**
+ * @brief A dialog to pick color
+ *
+ * @ingroup blendint_gui_frames
+ */
+class ColorSelector: public AbstractDialog
+{
+DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
-    virtual ~ColorSelector ();
+public:
 
-  protected:
+  ColorSelector ();
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual ~ColorSelector ();
 
-    virtual bool PreDraw (AbstractWindow* context);
+protected:
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-  private:
+  virtual bool PreDraw (AbstractWindow* context);
 
-    void OnButtonToggled (int index, bool toggled);
+  virtual Response Draw (AbstractWindow* context);
 
-    Block* CreateRGBBlock ();
+private:
 
-    Block* CreateHSVBlock ();
+  void OnButtonToggled (int index, bool toggled);
 
-    LinearLayout* CreateHexBlock ();
+  Block* CreateRGBBlock ();
 
-    Stack* CreateBlockStack ();
+  Block* CreateHSVBlock ();
 
-    GLuint vao_[2];
+  LinearLayout* CreateHexBlock ();
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  Stack* CreateBlockStack ();
 
-    RefPtr<FrameShadow> shadow_;
+  GLuint vao_[2];
 
-    ButtonGroup radio_group_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-    Stack* stack_;
+  RefPtr<FrameShadow> shadow_;
 
-    glm::mat4 projection_matrix_;
+  ButtonGroup radio_group_;
 
-    glm::mat3 model_matrix_;
+  Stack* stack_;
 
-  };
+  glm::mat4 projection_matrix_;
+
+  glm::mat3 model_matrix_;
+
+};
 }

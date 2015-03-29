@@ -35,8 +35,7 @@ PushButton::PushButton ()
   int w = 80;
   int h = font.height();
 
-  set_size(w + pixel_size(kPadding.hsum()),
-           h + pixel_size(kPadding.vsum()));
+  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
 
   InitializeButtonOnce();
 }
@@ -48,7 +47,7 @@ PushButton::PushButton (const String& text)
 
   int w = this->text()->size().width();
   int h = this->text()->font().height();
-  if(w < 80) w = 80;
+  if (w < 80) w = 80;
 
   w += pixel_size(kPadding.hsum());
   h += pixel_size(kPadding.vsum());
@@ -87,7 +86,7 @@ PushButton::PushButton (const RefPtr<AbstractIcon>& icon, const String& text)
   w += this->text()->size().width();
   h = std::max(h, this->text()->font().height());
 
-  if(w < 80) w = 80;
+  if (w < 80) w = 80;
   w += pixel_size(kPadding.hsum());
   h += pixel_size(kPadding.vsum());
 
@@ -126,7 +125,10 @@ void PushButton::SetIcon (const RefPtr<AbstractIcon>& icon)
   RequestRedraw();
 }
 
-void PushButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void PushButton::PerformSizeUpdate (const AbstractView* source,
+                                    const AbstractView* target,
+                                    int width,
+                                    int height)
 {
   if (target == this) {
 
@@ -139,11 +141,9 @@ void PushButton::PerformSizeUpdate (const AbstractView* source, const AbstractVi
                             &inner_verts, &outer_verts);
 
     vbo_.bind(0);
-    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                      &inner_verts[0]);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     vbo_.bind(1);
-    vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
-                      &outer_verts[0]);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
     vbo_.reset();
 
     RequestRedraw();
@@ -212,11 +212,10 @@ Response PushButton::Draw (AbstractWindow* context)
 {
   AbstractWindow::shaders()->widget_inner_program()->use();
 
-  glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-  glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-      context->theme()->push_button().shaded);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+              0);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              context->theme()->push_button().shaded);
   if (is_down()) {
     glUniform4fv(
         AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
@@ -232,12 +231,10 @@ Response PushButton::Draw (AbstractWindow* context)
 
   AbstractWindow::shaders()->widget_outer_program()->use();
 
-  glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-      0.f);
-  glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-      AbstractWindow::theme()->push_button().outline.data());
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+              0.f, 0.f);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, AbstractWindow::theme()->push_button().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -245,11 +242,11 @@ Response PushButton::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-        1.0f, 1.0f, 1.0f, 0.16f);
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-        0.f, -1.f);
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        -1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 
@@ -275,7 +272,7 @@ void PushButton::InitializeButtonOnce ()
   vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 3,
-                        GL_FLOAT,
+  GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
@@ -283,7 +280,7 @@ void PushButton::InitializeButtonOnce ()
   vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-                        GL_FLOAT,
+  GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);

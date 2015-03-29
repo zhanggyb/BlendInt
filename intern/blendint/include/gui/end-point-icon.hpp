@@ -28,45 +28,42 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Icon used in node
-   *
-   * @ingroup blendint_gui_forms
-   */
-  class EndPointIcon: public AbstractIcon
-  {
-  public:
+/**
+ * @brief Icon used in node
+ *
+ * @ingroup blendint_gui_forms
+ */
+class EndPointIcon: public AbstractIcon
+{
+public:
 
-    EndPointIcon ();
+  EndPointIcon ();
 
-    virtual ~EndPointIcon ();
+  virtual ~EndPointIcon ();
 
-    virtual void Draw (int x,
-                       int y,
-                       const float* color_ptr = Color(Palette::Black).data(),
-                       short gamma = 0,
-                       float rotate = 0.f,
-                       float scale_x = 1.f,
-                       float scale_y = 1.f) const final;
+  virtual void Draw (int x,
+                     int y,
+                     const float* color_ptr = Color(Palette::Black).data(),
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const final;
 
-    virtual void DrawInRect (const Rect& rect,
-                             int align,
-                             const float* color_ptr =
-                                 Color(Palette::Black).data(),
-                             short gamma = 0,
-                             float rotate = 0.f,
-                             bool scale = false) const final;
+  virtual void DrawInRect (const Rect& rect, int align, const float* color_ptr =
+                               Color(Palette::Black).data(),
+                           short gamma = 0, float rotate = 0.f, bool scale =
+                               false) const final;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (int width, int height);
+  virtual void PerformSizeUpdate (int width, int height);
 
-  private:
+private:
 
-    GLuint vao_[2];
+  GLuint vao_[2];
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-  };
+};
 
 }

@@ -28,255 +28,251 @@
 
 namespace BlendInt {
 
-  ListView::ListView ()
-  : AbstractItemView(), highlight_index_(-1)
-  {
-    set_size(400, 300);
+ListView::ListView ()
+    : AbstractItemView(), highlight_index_(-1)
+{
+  set_size(400, 300);
 
-    InitializeListView();
+  InitializeListView();
+}
+
+ListView::~ListView ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
+
+bool ListView::IsExpandX () const
+{
+  return true;
+}
+
+bool ListView::IsExpandY () const
+{
+  return true;
+}
+
+const RefPtr<AbstractItemModel> ListView::GetModel () const
+{
+  return model_;
+}
+
+void ListView::SetModel (const RefPtr<AbstractItemModel>& model)
+{
+  if (model_) {
+    model_ = model;
+    RequestRedraw();
+  } else if (model) {
+    model_ = model;
+    RequestRedraw();
   }
 
-  ListView::~ListView ()
-  {
-    glDeleteVertexArrays(2, vao_);
+  if (model_) {
+    int h = font_.height();
+    h = model_->GetRowCount() * h;	// total height
   }
+}
 
-  bool ListView::IsExpandX () const
-  {
-    return true;
-  }
+Size ListView::GetPreferredSize () const
+{
+  return Size(400, 300);
+}
 
-  bool ListView::IsExpandY () const
-  {
-    return true;
-  }
+Response ListView::Draw (AbstractWindow* context)
+{
+  int y = size().height();
+  const int h = font_.height();
 
-  const RefPtr<AbstractItemModel> ListView::GetModel () const
-  {
-    return model_;
-  }
+  AbstractWindow::shaders()->widget_inner_program()->use();
 
-  void ListView::SetModel (const RefPtr<AbstractItemModel>& model)
-  {
-    if (model_) {
-      model_ = model;
-      RequestRedraw();
-    } else if (model) {
-      model_ = model;
-      RequestRedraw();
-    }
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+              0);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              0);
 
-    if (model_) {
-      int h = font_.height();
-      h = model_->GetRowCount() * h;	// total height
-    }
-  }
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, AbstractWindow::theme()->regular().inner.data());
 
-  Size ListView::GetPreferredSize () const
-  {
-    return Size(400, 300);
-  }
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  Response ListView::Draw (AbstractWindow* context)
-  {
-    int y = size().height();
-    const int h = font_.height();
+  context->BeginPushStencil();	// inner stencil
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  context->EndPushStencil();
 
-    AbstractWindow::shaders()->widget_inner_program()->use();
+  AbstractWindow::shaders()->widget_triangle_program()->use();
 
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-                0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        0);
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      0);
+  glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
 
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-                 1, AbstractWindow::theme()->regular().inner.data());
+  glBindVertexArray(vao_[1]);
 
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  int i = 0;
+  while (y > 0) {
+    y -= h;
 
-    context->BeginPushStencil();	// inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
-    context->EndPushStencil();
+    glUniform2f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+        0, y);
 
-    AbstractWindow::shaders()->widget_triangle_program()->use();
-
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-        0);
-    glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
-
-    glBindVertexArray(vao_[1]);
-
-    int i = 0;
-    while (y > 0) {
-      y -= h;
-
-      glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-          0, y);
-
-      if (i == highlight_index_) {// TODO: use different functions for performance
+    if (i == highlight_index_) {// TODO: use different functions for performance
+      glUniform1i(
+          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+          -35);
+    } else {
+      if (i % 2 == 0) {
         glUniform1i(
             AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-            -35);
+            0);
       } else {
-        if (i % 2 == 0) {
-          glUniform1i(
-              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-              0);
-        } else {
-          glUniform1i(
-              AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-              15);
-        }
+        glUniform1i(
+            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            15);
       }
-
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      i++;
     }
 
-    RefPtr<AbstractItemModel> model = GetModel();
-    if (model) {
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    i++;
+  }
 
-      ModelIndex index = model->GetRootIndex();
-      index = index.GetChildIndex(0, 0);
+  RefPtr<AbstractItemModel> model = GetModel();
+  if (model) {
 
-      Rect rect(0, size().height() - h, size().width(), h);
+    ModelIndex index = model->GetRootIndex();
+    index = index.GetChildIndex(0, 0);
 
-      while (index.valid()) {
-        index.GetData()->DrawInRect(
-            rect,
-            AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-            AbstractWindow::theme()->regular().text.data());
+    Rect rect(0, size().height() - h, size().width(), h);
+
+    while (index.valid()) {
+      index.GetData()->DrawInRect(
+          rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
+          AbstractWindow::theme()->regular().text.data());
+      index = index.GetDownIndex();
+      rect.set_y(rect.y() - h);
+    }
+
+  }
+
+  AbstractWindow::shaders()->widget_inner_program()->use();
+
+  context->BeginPopStencil();	// pop inner stencil
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  glBindVertexArray(0);
+  context->EndPopStencil();
+
+  return Finish;
+}
+
+Response ListView::PerformMousePress (AbstractWindow* context)
+{
+  if (model_) {
+
+    ModelIndex index;
+
+    int rows = model_->GetRowCount();
+
+    if (rows > 0) {
+      int h = font_.height();	// the row height
+      int total = rows * h;
+
+      int i = 0;
+      if (total > size().height()) {
+        i = position().y() - context->GetGlobalCursorPosition().y();
+      } else {	// no vbar
+        i = position().y() + size().height()
+            - context->GetGlobalCursorPosition().y();
+      }
+
+      i = i / h;
+      highlight_index_ = i;
+
+      index = model_->GetRootIndex().GetChildIndex();
+      while ((i > 0) && index.valid()) {
         index = index.GetDownIndex();
-        rect.set_y(rect.y() - h);
+        i--;
       }
 
-    }
-
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    context->BeginPopStencil();	// pop inner stencil
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
-    glBindVertexArray(0);
-    context->EndPopStencil();
-
-    return Finish;
-  }
-
-  Response ListView::PerformMousePress (AbstractWindow* context)
-  {
-    if (model_) {
-
-      ModelIndex index;
-
-      int rows = model_->GetRowCount();
-
-      if (rows > 0) {
-        int h = font_.height();	// the row height
-        int total = rows * h;
-
-        int i = 0;
-        if (total > size().height()) {
-          i = position().y() - context->GetGlobalCursorPosition().y();
-        } else {	// no vbar
-          i = position().y() + size().height()
-              - context->GetGlobalCursorPosition().y();
-        }
-
-        i = i / h;
-        highlight_index_ = i;
-
-        index = model_->GetRootIndex().GetChildIndex();
-        while ((i > 0) && index.valid()) {
-          index = index.GetDownIndex();
-          i--;
-        }
-
-        if (!index.valid()) {
-          highlight_index_ = -1;
-        }
+      if (!index.valid()) {
+        highlight_index_ = -1;
       }
-
-    } else {
-      highlight_index_ = -1;
     }
 
-    return Finish;
+  } else {
+    highlight_index_ = -1;
   }
 
-  ModelIndex ListView::GetIndexAt (const Point& point) const
-  {
-    return ModelIndex();
-  }
+  return Finish;
+}
 
-  void ListView::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
+ModelIndex ListView::GetIndexAt (const Point& point) const
+{
+  return ModelIndex();
+}
 
-      set_size(width, height);
+void ListView::PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height)
+{
+  if (target == this) {
 
-      GLfloat h = font_.height();
-      GLfloat verts[] = { 0.f, 0.f, (GLfloat) width, 0.f, 0.f,
-          h, (GLfloat) width, h };
+    set_size(width, height);
 
-      vbo_.bind(1);
-      vbo_.set_data(sizeof(verts), verts);
-
-      std::vector<GLfloat> inner_verts;
-      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-
-      vbo_.bind(0);
-      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                        &inner_verts[0]);
-      vbo_.reset();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  void ListView::InitializeListView ()
-  {
-    GLfloat h = (GLfloat) font_.height();
-    GLfloat verts[] = {
-        0.f, 0.f,
-        (GLfloat) size().width(), 0.f,
-        0.f, h,
-        (GLfloat) size().width(), h
-    };
-
-    std::vector<GLfloat> inner_verts;
-
-    GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
-    vbo_.generate();
-
-    glGenVertexArrays(2, vao_);
-
-    glBindVertexArray(vao_[0]);
-
-    vbo_.bind(0);
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(vao_[1]);
+    GLfloat h = font_.height();
+    GLfloat verts[] = { 0.f, 0.f, (GLfloat) width, 0.f, 0.f, h, (GLfloat) width,
+        h };
 
     vbo_.bind(1);
     vbo_.set_data(sizeof(verts), verts);
 
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    std::vector<GLfloat> inner_verts;
+    GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-    glBindVertexArray(0);
+    vbo_.bind(0);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     vbo_.reset();
   }
+
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
+
+void ListView::InitializeListView ()
+{
+  GLfloat h = (GLfloat) font_.height();
+  GLfloat verts[] = { 0.f, 0.f, (GLfloat) size().width(), 0.f, 0.f, h,
+      (GLfloat) size().width(), h };
+
+  std::vector<GLfloat> inner_verts;
+
+  GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+  vbo_.generate();
+
+  glGenVertexArrays(2, vao_);
+
+  glBindVertexArray(vao_[0]);
+
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(vao_[1]);
+
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(verts), verts);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
 }

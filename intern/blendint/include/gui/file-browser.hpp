@@ -34,108 +34,111 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief A special item view to show files in a directory
-   */
-  class FileBrowser: public AbstractItemView
+/**
+ * @brief A special item view to show files in a directory
+ */
+class FileBrowser: public AbstractItemView
+{
+  DISALLOW_COPY_AND_ASSIGN (FileBrowser);
+
+public:
+
+  enum DisplayMode
   {
-  DISALLOW_COPY_AND_ASSIGN(FileBrowser);
-
-  public:
-
-    enum DisplayMode
-    {
-      ListMode, IconMode, TreeMode
-    };
-
-    FileBrowser ();
-
-    virtual ~FileBrowser ();
-
-    /**
-     * @brief Load and list all files in given pathname
-     */
-    bool Open (const std::string& pathname);
-
-    /**
-     * @brief Load and list the parent folder
-     */
-    bool OpenParent ();
-
-    /**
-     * @brief Go backward
-     */
-    bool GoBackward ();
-
-    /**
-     * @brief Go forward
-     */
-    bool GoForward ();
-
-    const String& file_selected () const
-    {
-      return file_selected_;
-    }
-
-    const std::string& pathname () const
-    {
-      return pathname_;
-    }
-
-    virtual bool IsExpandX () const;
-
-    virtual bool IsExpandY () const;
-
-    virtual const RefPtr<AbstractItemModel> GetModel () const;
-
-    /**
-     * @brief Set the model used in this item view
-     * @param model A RefPtr to a item model, must be FileSystemModel
-     */
-    virtual void SetModel (const RefPtr<AbstractItemModel>& model);
-
-    virtual ModelIndex GetIndexAt (const Point& point) const;
-
-    Cpp::EventRef<> selected ()
-    {
-      return selected_;
-    }
-
-  protected:
-
-    virtual Response Draw (AbstractWindow* context);
-
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
-
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-  private:
-
-    void InitializeFileBrowserOnce ();
-
-    GLuint vaos_[2];
-
-    Font font_;
-
-    /**
-     * 0 - for inner
-     * 1 - for row
-     */
-    GLBuffer<ARRAY_BUFFER, 2> buffer_;
-
-    String file_selected_;
-
-    std::string pathname_;
-
-    std::deque<std::string> history_;
-
-    size_t history_index_;
-
-    RefPtr<FileSystemModel> model_;
-
-    int highlight_index_;
-
-    Cpp::Event<> selected_;
+    ListMode, IconMode, TreeMode
   };
+
+  FileBrowser ();
+
+  virtual ~FileBrowser ();
+
+  /**
+   * @brief Load and list all files in given pathname
+   */
+  bool Open (const std::string& pathname);
+
+  /**
+   * @brief Load and list the parent folder
+   */
+  bool OpenParent ();
+
+  /**
+   * @brief Go backward
+   */
+  bool GoBackward ();
+
+  /**
+   * @brief Go forward
+   */
+  bool GoForward ();
+
+  const String& file_selected () const
+  {
+    return file_selected_;
+  }
+
+  const std::string& pathname () const
+  {
+    return pathname_;
+  }
+
+  virtual bool IsExpandX () const;
+
+  virtual bool IsExpandY () const;
+
+  virtual const RefPtr<AbstractItemModel> GetModel () const;
+
+  /**
+   * @brief Set the model used in this item view
+   * @param model A RefPtr to a item model, must be FileSystemModel
+   */
+  virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+
+  virtual ModelIndex GetIndexAt (const Point& point) const;
+
+  Cpp::EventRef<> selected ()
+  {
+    return selected_;
+  }
+
+protected:
+
+  virtual Response Draw (AbstractWindow* context);
+
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
+
+  virtual Response PerformMousePress (AbstractWindow* context);
+
+private:
+
+  void InitializeFileBrowserOnce ();
+
+  GLuint vaos_[2];
+
+  Font font_;
+
+  /**
+   * 0 - for inner
+   * 1 - for row
+   */
+  GLBuffer<ARRAY_BUFFER, 2> buffer_;
+
+  String file_selected_;
+
+  std::string pathname_;
+
+  std::deque<std::string> history_;
+
+  size_t history_index_;
+
+  RefPtr<FileSystemModel> model_;
+
+  int highlight_index_;
+
+  Cpp::Event<> selected_;
+};
 
 }

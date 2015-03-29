@@ -26,71 +26,52 @@
 
 namespace BlendInt {
 
-  ColorButton::ColorButton ()
-      : AbstractButton(), selector_(0)
-  {
-    set_round_type(RoundAll);
+ColorButton::ColorButton ()
+    : AbstractButton(), selector_(0)
+{
+  set_round_type(RoundAll);
 
-    Font font;	// default font
-    int w = 80;
-    int h = font.height();
+  Font font;	// default font
+  int w = 80;
+  int h = font.height();
 
-    set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
 
-    color0_.set_red(0.3f);
-    color0_.set_blue(0.8f);
-    color0_.set_green(0.2f);
+  color0_.set_red(0.3f);
+  color0_.set_blue(0.8f);
+  color0_.set_green(0.2f);
 
-    color1_.set_red(0.3f);
-    color1_.set_blue(0.8f);
-    color1_.set_green(0.2f);
-    color1_.set_alpha(0.5f);
+  color1_.set_red(0.3f);
+  color1_.set_blue(0.8f);
+  color1_.set_green(0.2f);
+  color1_.set_alpha(0.5f);
 
-    InitializeColorButton();
+  InitializeColorButton();
 
-    events()->connect(clicked(), this, &ColorButton::OnClick);
-  }
+  events()->connect(clicked(), this, &ColorButton::OnClick);
+}
 
-  ColorButton::~ColorButton ()
-  {
-    glDeleteVertexArrays(2, vao_);
-  }
+ColorButton::~ColorButton ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
 
-  void ColorButton::SetColor (const Color& color)
-  {
-    color0_ = color;
-    color0_.set_alpha(1.f);
-    color1_ = color;
-    RequestRedraw();
-  }
+void ColorButton::SetColor (const Color& color)
+{
+  color0_ = color;
+  color0_.set_alpha(1.f);
+  color1_ = color;
+  RequestRedraw();
+}
 
-  void ColorButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
+void ColorButton::PerformSizeUpdate (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int width,
+                                     int height)
+{
+  if (target == this) {
 
-      set_size(width, height);
-
-      std::vector<GLfloat> inner_verts;
-      std::vector<GLfloat> outer_verts;
-
-      GenerateRoundedVertices(&inner_verts, &outer_verts);
-      vbo_.bind(0);
-      vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-      vbo_.bind(1);
-      vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-      vbo_.reset();
-
-      RequestRedraw();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  void ColorButton::PerformRoundTypeUpdate (int round_type)
-  {
-    set_round_type(round_type);
+    set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -105,170 +86,191 @@ namespace BlendInt {
     RequestRedraw();
   }
 
-  void ColorButton::PerformRoundRadiusUpdate (float radius)
-  {
-    set_round_radius(radius);
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
 
-    std::vector<GLfloat> inner_verts;
-    std::vector<GLfloat> outer_verts;
+void ColorButton::PerformRoundTypeUpdate (int round_type)
+{
+  set_round_type(round_type);
 
-    GenerateRoundedVertices(&inner_verts, &outer_verts);
-    vbo_.bind(0);
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-    vbo_.bind(1);
-    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-    vbo_.reset();
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-    RequestRedraw();
+  GenerateRoundedVertices(&inner_verts, &outer_verts);
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  vbo_.reset();
+
+  RequestRedraw();
+}
+
+void ColorButton::PerformRoundRadiusUpdate (float radius)
+{
+  set_round_radius(radius);
+
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
+
+  GenerateRoundedVertices(&inner_verts, &outer_verts);
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  vbo_.reset();
+
+  RequestRedraw();
+}
+
+Response ColorButton::Draw (AbstractWindow* context)
+{
+  float x = (context->shaders()->widget_model_matrix()
+      * glm::vec3(0.f, 0.f, 1.f)).x;
+
+  if (context->active_frame()->has_view_buffer()) {
+    x = x - context->viewport_origin().x();
+  } else {
+    x = context->active_frame()->position().x() + x
+        - context->viewport_origin().x();
   }
 
-  Response ColorButton::Draw (AbstractWindow* context)
-  {
-    float x = (context->shaders()->widget_model_matrix()
-        * glm::vec3(0.f, 0.f, 1.f)).x;
+  AbstractWindow::shaders()->widget_split_inner_program()->use();
 
-    if (context->active_frame()->has_view_buffer()) {
-      x = x - context->viewport_origin().x();
-    } else {
-      x = context->active_frame()->position().x() + x
-          - context->viewport_origin().x();
-    }
+  glUniform1f(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
+      x + size().width() / 2.f);
+  glUniform4fv(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
+      1, color0_.data());
+  glUniform4fv(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
+      1, color1_.data());
 
-    AbstractWindow::shaders()->widget_split_inner_program()->use();
+  if (is_down()) {
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        -25);
+  } else {
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        0);
+  }
 
-    glUniform1f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
-        x + size().width() / 2.f);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
-        1, color0_.data());
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
-        1, color1_.data());
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-    if (is_down()) {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          -25);
-    } else {
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-          0);
-    }
+  AbstractWindow::shaders()->widget_outer_program()->use();
 
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+              0.f, 0.f);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, AbstractWindow::theme()->regular().outline.data());
 
-    AbstractWindow::shaders()->widget_outer_program()->use();
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0,
+               outline_vertex_count(round_type()) * 2 + 2);
+
+  if (emboss()) {
+    glUniform4f(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        1.0f, 1.0f, 0.16f);
 
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        0.f);
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-                 1, AbstractWindow::theme()->regular().outline.data());
+        -1.f);
 
-    glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(round_type()) * 2 + 2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
+  }
 
-    if (emboss()) {
-      glUniform4f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-          1.0f, 1.0f, 0.16f);
+  DrawIconText();
 
-      glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-          0.f, -1.f);
+  return Finish;
+}
 
-      glDrawArrays(GL_TRIANGLE_STRIP, 0,
-                   emboss_vertex_count(round_type()) * 2);
+Size ColorButton::GetPreferredSize () const
+{
+  Size s = AbstractButton::GetPreferredSize();
+  if (s.width() < 80) s.set_width(80);
+
+  return s;
+}
+
+bool ColorButton::IsExpandX () const
+{
+  return true;
+}
+
+void ColorButton::InitializeColorButton ()
+{
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
+
+  GenerateRoundedVertices(&inner_verts, &outer_verts);
+
+  vbo_.generate();
+
+  glGenVertexArrays(2, vao_);
+  glBindVertexArray(vao_[0]);
+
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(vao_[1]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
+
+void ColorButton::OnClick ()
+{
+  if (selector_ == 0) {
+    selector_ = new ColorSelector;
+    events()->connect(selector_->destroyed(), this,
+                      &ColorButton::OnSelectorDestroyed);
+    AbstractWindow* win = AbstractWindow::GetWindow(this);
+    win->AddFrame(selector_);
+
+    Point pos = win->GetGlobalCursorPosition();
+
+    if ((pos.y() + selector_->size().height()) > win->size().height()) {
+      pos.set_y(win->size().height() - selector_->size().height());
     }
 
-    DrawIconText();
-
-    return Finish;
+    selector_->MoveTo(pos);
   }
+}
 
-  Size ColorButton::GetPreferredSize () const
-  {
-    Size s = AbstractButton::GetPreferredSize();
-    if (s.width() < 80) s.set_width(80);
-
-    return s;
+void ColorButton::PerformHoverIn (AbstractWindow* context)
+{
+  if (is_pressed()) {
+    set_down(true);
+    RequestRedraw();
   }
+}
 
-  bool ColorButton::IsExpandX () const
-  {
-    return true;
+void ColorButton::PerformHoverOut (AbstractWindow* context)
+{
+  if (is_pressed()) {
+    set_down(false);
+    RequestRedraw();
   }
+}
 
-  void ColorButton::InitializeColorButton ()
-  {
-    std::vector<GLfloat> inner_verts;
-    std::vector<GLfloat> outer_verts;
-
-    GenerateRoundedVertices(&inner_verts, &outer_verts);
-
-    vbo_.generate();
-
-    glGenVertexArrays(2, vao_);
-    glBindVertexArray(vao_[0]);
-
-    vbo_.bind(0);
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(vao_[1]);
-    vbo_.bind(1);
-    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(0);
-    vbo_.reset();
-  }
-
-  void ColorButton::OnClick ()
-  {
-    if (selector_ == 0) {
-      selector_ = new ColorSelector;
-      events()->connect(selector_->destroyed(), this,
-                        &ColorButton::OnSelectorDestroyed);
-      AbstractWindow* win = AbstractWindow::GetWindow(this);
-      win->AddFrame(selector_);
-
-      Point pos = win->GetGlobalCursorPosition();
-
-      if ((pos.y() + selector_->size().height()) > win->size().height()) {
-        pos.set_y(win->size().height() - selector_->size().height());
-      }
-
-      selector_->MoveTo(pos);
-    }
-  }
-
-  void ColorButton::PerformHoverIn (AbstractWindow* context)
-  {
-    if (is_pressed()) {
-      set_down(true);
-      RequestRedraw();
-    }
-  }
-
-  void ColorButton::PerformHoverOut (AbstractWindow* context)
-  {
-    if (is_pressed()) {
-      set_down(false);
-      RequestRedraw();
-    }
-  }
-
-  void ColorButton::OnSelectorDestroyed (AbstractFrame* sender)
-  {
-    DBG_ASSERT(sender == selector_);
-    selector_ = 0;
-  }
+void ColorButton::OnSelectorDestroyed (AbstractFrame* sender)
+{
+  DBG_ASSERT(sender == selector_);
+  selector_ = 0;
+}
 
 }

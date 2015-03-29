@@ -32,40 +32,40 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief The end point of node
-   *
-   * @ingroup blendint_gui_nodes
-   */
-  class EndPoint: public Object
-  {
+/**
+ * @brief The end point of node
+ *
+ * @ingroup blendint_gui_nodes
+ */
+class EndPoint: public Object
+{
 
-  public:
+public:
 
-    EndPoint ();
+  EndPoint ();
 
-    virtual EndPoint ();
+  virtual EndPoint ();
 
-    void Draw ();
+  void Draw ();
 
-  private:
+private:
 
-    AbstractNode* node_;
+  AbstractNode* node_;
 
-    EndPoint* upstream_;
+  EndPoint* upstream_;
 
-    EndPoint* downstream_;
+  EndPoint* downstream_;
 
-    EndPoint* previous_;
+  EndPoint* previous_;
 
-    EndPoint* next_;
+  EndPoint* next_;
 
-    Point position_;
+  Point position_;
 
-    Color color_;
+  Color color_;
 
-    static Size kSize;
+  static Size kSize;
 
-  };
+};
 
 }

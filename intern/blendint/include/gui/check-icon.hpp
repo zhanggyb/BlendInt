@@ -28,48 +28,45 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Icon used in CheckButton
-   *
-   * @ingroup blendint_gui_forms
-   */
-  class CheckIcon: public AbstractIcon
-  {
-  public:
+/**
+ * @brief Icon used in CheckButton
+ *
+ * @ingroup blendint_gui_forms
+ */
+class CheckIcon: public AbstractIcon
+{
+public:
 
-    CheckIcon ();
+  CheckIcon ();
 
-    virtual ~CheckIcon ();
+  virtual ~CheckIcon ();
 
-    virtual void Draw (int x,
-                       int y,
-                       const float* color_ptr = Color(Palette::Black).data(),
-                       short gamma = 0,
-                       float rotate = 0.f,
-                       float scale_x = 1.f,
-                       float scale_y = 1.f) const final;
+  virtual void Draw (int x,
+                     int y,
+                     const float* color_ptr = Color(Palette::Black).data(),
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const final;
 
-    virtual void DrawInRect (const Rect& rect,
-                             int align,
-                             const float* color_ptr =
-                                 Color(Palette::Black).data(),
-                             short gamma = 0,
-                             float rotate = 0.f,
-                             bool scale = false) const final;
+  virtual void DrawInRect (const Rect& rect, int align, const float* color_ptr =
+                               Color(Palette::Black).data(),
+                           short gamma = 0, float rotate = 0.f, bool scale =
+                               false) const final;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (int width, int height) final;
+  virtual void PerformSizeUpdate (int width, int height) final;
 
-    virtual void PerformRoundTypeUpdate (int type) final;
+  virtual void PerformRoundTypeUpdate (int type) final;
 
-    virtual void PerformRoundRadiusUpdate (float radius) final;
+  virtual void PerformRoundRadiusUpdate (float radius) final;
 
-  private:
+private:
 
-    GLuint vao_[2];
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLuint vao_[2];
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-  };
+};
 
 }

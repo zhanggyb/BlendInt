@@ -33,164 +33,160 @@
 
 namespace BlendInt {
 
-  DotIcon::DotIcon ()
-  : AbstractIcon()
-  {
-    int radius = pixel_size(3);
+DotIcon::DotIcon ()
+    : AbstractIcon()
+{
+  int radius = pixel_size(3);
 
-    set_size(radius * 2, radius * 2);
+  set_size(radius * 2, radius * 2);
 
-    std::vector<GLfloat> inner_verts;
-    std::vector<GLfloat> outer_verts;
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-    GenerateVertices(-radius, -radius, radius, radius, pixel_size(1), RoundAll,
-                     radius, &inner_verts, &outer_verts);
+  GenerateVertices(-radius, -radius, radius, radius, pixel_size(1), RoundAll,
+                   radius, &inner_verts, &outer_verts);
 
-    glGenVertexArrays(2, vao_);
-    glBindVertexArray(vao_[0]);
+  glGenVertexArrays(2, vao_);
+  glBindVertexArray(vao_[0]);
 
-    vbo_.generate();
-    vbo_.bind(0);
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-    glEnableVertexAttribArray(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-    glVertexAttribPointer(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
-        3,
-        GL_FLOAT,
-        GL_FALSE, 0, 0);
+  vbo_.generate();
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  glEnableVertexAttribArray(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+  glVertexAttribPointer(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
+      3,
+      GL_FLOAT,
+      GL_FALSE, 0, 0);
 
-    glBindVertexArray(vao_[1]);
+  glBindVertexArray(vao_[1]);
 
-    vbo_.bind(1);
-    vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2,
-    GL_FLOAT,
-                          GL_FALSE, 0, 0);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2,
+  GL_FLOAT,
+                        GL_FALSE, 0, 0);
 
-    glBindVertexArray(0);
+  glBindVertexArray(0);
 
-    vbo_.reset();
+  vbo_.reset();
 
+}
+
+DotIcon::~DotIcon ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
+
+void DotIcon::PerformSizeUpdate (int width, int height)
+{
+  // do not allow size changing
+}
+
+void DotIcon::PerformRoundTypeUpdate (int type)
+{
+
+}
+
+void DotIcon::PerformRoundRadiusUpdate (float radius)
+{
+  // do not allow radius changing
+}
+
+void DotIcon::Draw (int x,
+                    int y,
+                    const float* color_ptr,
+                    short gamma,
+                    float rotate,
+                    float scale_x,
+                    float scale_y) const
+{
+  AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+
+  glUniform2f(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+      x, y);
+  glUniform4fv(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+      1, color_ptr);
+  glUniform1i(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+      0);
+
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
+
+  AbstractWindow::shaders()->widget_outer_program()->use();
+
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+              x, y);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, AbstractWindow::theme()->scroll().outline.data());
+
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
+}
+
+void DotIcon::DrawInRect (const Rect& rect,
+                          int align,
+                          const float* color_ptr,
+                          short gamma,
+                          float rotate,
+                          bool scale) const
+{
+  int x = rect.left();
+  int y = rect.bottom();
+
+  if (align & AlignLeft) {
+    x = rect.left() + size().width() / 2;
+  } else if (align & AlignRight) {
+    x = rect.right() - size().width() / 2;
+  } else if (align & AlignHorizontalCenter) {
+    x = rect.hcenter();
   }
 
-  DotIcon::~DotIcon ()
-  {
-    glDeleteVertexArrays(2, vao_);
+  if (align & AlignTop) {
+    y = rect.top() - size().height() / 2;
+  } else if (align & AlignBottom) {
+    y = rect.bottom() + size().height() / 2;
+  } else if (align & AlignVerticalCenter) {
+    y = rect.vcenter();
   }
 
-  void DotIcon::PerformSizeUpdate (int width, int height)
-  {
-    // do not allow size changing
-  }
+  AbstractWindow::shaders()->widget_simple_triangle_program()->use();
 
-  void DotIcon::PerformRoundTypeUpdate (int type)
-  {
+  glUniform2f(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+      x, y);
+  glUniform4fv(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+      1, AbstractWindow::theme()->menu().inner.data());
+  glUniform1i(
+      AbstractWindow::shaders()->location(
+          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+      gamma);
 
-  }
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
-  void DotIcon::PerformRoundRadiusUpdate (float radius)
-  {
-    // do not allow radius changing
-  }
+  AbstractWindow::shaders()->widget_outer_program()->use();
 
-  void DotIcon::Draw (int x,
-                      int y,
-                      const float* color_ptr,
-                      short gamma,
-                      float rotate,
-                      float scale_x,
-                      float scale_y) const
-  {
-    AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+              x, y);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, AbstractWindow::theme()->menu().outline.data());
 
-    glUniform2f(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-        x, y);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-        1, color_ptr);
-    glUniform1i(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-        0);
-
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
-
-    AbstractWindow::shaders()->widget_outer_program()->use();
-
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
-        y);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        AbstractWindow::theme()->scroll().outline.data());
-
-    glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
-  }
-
-  void DotIcon::DrawInRect (const Rect& rect,
-                                   int align,
-                                   const float* color_ptr,
-                                   short gamma,
-                                   float rotate,
-                                   bool scale) const
-  {
-    int x = rect.left();
-    int y = rect.bottom();
-
-    if(align & AlignLeft) {
-      x = rect.left() + size().width() / 2;
-    } else if (align & AlignRight) {
-      x = rect.right() - size().width() / 2;
-    } else if (align & AlignHorizontalCenter) {
-      x = rect.hcenter();
-    }
-
-    if(align & AlignTop) {
-      y = rect.top() - size().height() / 2;
-    } else if (align & AlignBottom) {
-      y = rect.bottom() + size().height() / 2;
-    } else if (align & AlignVerticalCenter) {
-      y = rect.vcenter();
-    }
-
-    AbstractWindow::shaders()->widget_simple_triangle_program()->use();
-
-    glUniform2f(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-        x, y);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-        1, AbstractWindow::theme()->menu().inner.data());
-    glUniform1i(
-        AbstractWindow::shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-        gamma);
-
-    glBindVertexArray(vao_[0]);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
-
-    AbstractWindow::shaders()->widget_outer_program()->use();
-
-    glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
-        y);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        AbstractWindow::theme()->menu().outline.data());
-
-    glBindVertexArray(vao_[1]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
-  }
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
+}
 
 }

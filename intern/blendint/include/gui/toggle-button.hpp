@@ -28,52 +28,55 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Toggle PushButton
-	 *
-	 * @ingroup blendint_gui_widgets_buttons
-	 */
-	class ToggleButton: public AbstractButton
-	{
-		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
+/**
+ * @brief Toggle PushButton
+ *
+ * @ingroup blendint_gui_widgets_buttons
+ */
+class ToggleButton: public AbstractButton
+{
+DISALLOW_COPY_AND_ASSIGN(ToggleButton);
 
-	public:
+public:
 
-		ToggleButton ();
+  ToggleButton ();
 
-		ToggleButton (const String& text);
+  ToggleButton (const String& text);
 
-		ToggleButton (const RefPtr<AbstractIcon>& icon);
+  ToggleButton (const RefPtr<AbstractIcon>& icon);
 
-		ToggleButton (const RefPtr<AbstractIcon>& icon, const String& text);
+  ToggleButton (const RefPtr<AbstractIcon>& icon, const String& text);
 
-		virtual ~ToggleButton ();
+  virtual ~ToggleButton ();
 
-		virtual bool IsExpandX () const override;
+  virtual bool IsExpandX () const override;
 
-		virtual Size GetPreferredSize () const override;
+  virtual Size GetPreferredSize () const override;
 
-	protected:
+protected:
 
-		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-		virtual void PerformRoundTypeUpdate (int round_type) final;
+  virtual void PerformRoundTypeUpdate (int round_type) final;
 
-		virtual void PerformRoundRadiusUpdate (float radius) final;
+  virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context) final;
+  virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context) final;
+  virtual void PerformHoverOut (AbstractWindow* context) final;
 
-		virtual Response Draw (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-	private:
+private:
 
-		void InitializeToggleButtonOnce ();
+  void InitializeToggleButtonOnce ();
 
-		GLuint vao_[2];
+  GLuint vao_[2];
 
-		GLBuffer<ARRAY_BUFFER, 2> vbo_;
-	};
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
+};
 
 }

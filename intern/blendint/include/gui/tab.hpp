@@ -27,44 +27,47 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Tab
-   *
-   * @ingroup blendint_gui_widgets
-   */
-  class Tab: public AbstractWidget
-  {
-  DISALLOW_COPY_AND_ASSIGN(Tab);
+/**
+ * @brief Tab
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class Tab: public AbstractWidget
+{
+DISALLOW_COPY_AND_ASSIGN(Tab);
 
-  public:
+public:
 
-    Tab ();
+  Tab ();
 
-    virtual ~Tab ();
+  virtual ~Tab ();
 
-    void AddWidget (const String& title, AbstractWidget* widget);
+  void AddWidget (const String& title, AbstractWidget* widget);
 
-    virtual bool IsExpandX () const override;
+  virtual bool IsExpandX () const override;
 
-    virtual bool IsExpandY () const override;
+  virtual bool IsExpandY () const override;
 
-    virtual Size GetPreferredSize () const override;
+  virtual Size GetPreferredSize () const override;
 
-    int GetIndex () const;
+  int GetIndex () const;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-  private:
+private:
 
-    void OnButtonToggled (int index, bool toggled);
+  void OnButtonToggled (int index, bool toggled);
 
-    void FillSubWidgetsInTab (const Size& out_size);
+  void FillSubWidgetsInTab (const Size& out_size);
 
-    void FillSubWidgetsInTab (int x, int y, int w, int h);
-  };
+  void FillSubWidgetsInTab (int x, int y, int w, int h);
+};
 
 }

@@ -29,55 +29,58 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief A widget usually contains other Form or widget in a box with padding
-   *
-   * @ingroup blendint_gui_widgets
-   */
-  class Panel: public AbstractRoundWidget
-  {
-  DISALLOW_COPY_AND_ASSIGN(Panel);
+/**
+ * @brief A widget usually contains other Form or widget in a box with padding
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class Panel: public AbstractRoundWidget
+{
+DISALLOW_COPY_AND_ASSIGN(Panel);
 
-  public:
+public:
 
-    Panel (AbstractLayout* layout);
+  Panel (AbstractLayout* layout);
 
-    virtual ~Panel ();
+  virtual ~Panel ();
 
-    void AddWidget (AbstractWidget* widget);
+  void AddWidget (AbstractWidget* widget);
 
-    void InsertWidget (int index, AbstractWidget* widget);
+  void InsertWidget (int index, AbstractWidget* widget);
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-    virtual bool IsExpandY () const;
+  virtual bool IsExpandY () const;
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual void PerformRoundTypeUpdate (int round_type);
+  virtual void PerformRoundTypeUpdate (int round_type);
 
-    virtual void PerformRoundRadiusUpdate (float radius);
+  virtual void PerformRoundRadiusUpdate (float radius);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual AbstractView* RemoveSubView (AbstractView* view);
+  virtual AbstractView* RemoveSubView (AbstractView* view);
 
-  private:
+private:
 
-    void InitializePanelOnce ();
+  void InitializePanelOnce ();
 
-    AbstractLayout* layout_;
+  AbstractLayout* layout_;
 
-    GLuint vao_[2];
+  GLuint vao_[2];
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-    RefPtr<ViewBuffer> view_buffer_;
+  RefPtr<ViewBuffer> view_buffer_;
 
-  };
+};
 
 } /* namespace BlendInt */

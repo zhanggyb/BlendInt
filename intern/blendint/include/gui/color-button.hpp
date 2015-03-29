@@ -32,57 +32,60 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief The most common button class
-   *
-   * @ingroup blendint_gui_widgets_buttons
-   */
-  class ColorButton: public AbstractButton
-  {
-  DISALLOW_COPY_AND_ASSIGN(ColorButton);
+/**
+ * @brief The most common button class
+ *
+ * @ingroup blendint_gui_widgets_buttons
+ */
+class ColorButton: public AbstractButton
+{
+DISALLOW_COPY_AND_ASSIGN(ColorButton);
 
-  public:
+public:
 
-    ColorButton ();
+  ColorButton ();
 
-    virtual ~ColorButton ();
+  virtual ~ColorButton ();
 
-    void SetColor (const Color& color);
+  void SetColor (const Color& color);
 
-    virtual bool IsExpandX () const override;
+  virtual bool IsExpandX () const override;
 
-    virtual Size GetPreferredSize () const override;
+  virtual Size GetPreferredSize () const override;
 
-  protected:
+protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-    virtual void PerformRoundTypeUpdate (int round_type) final;
+  virtual void PerformRoundTypeUpdate (int round_type) final;
 
-    virtual void PerformRoundRadiusUpdate (float radius) final;
+  virtual void PerformRoundRadiusUpdate (float radius) final;
 
-    virtual void PerformHoverIn (AbstractWindow* context) final;
+  virtual void PerformHoverIn (AbstractWindow* context) final;
 
-    virtual void PerformHoverOut (AbstractWindow* context) final;
+  virtual void PerformHoverOut (AbstractWindow* context) final;
 
-    virtual Response Draw (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-  private:
+private:
 
-    void InitializeColorButton ();
+  void InitializeColorButton ();
 
-    void OnClick ();
+  void OnClick ();
 
-    void OnSelectorDestroyed (AbstractFrame* sender);
+  void OnSelectorDestroyed (AbstractFrame* sender);
 
-    GLuint vao_[2];
+  GLuint vao_[2];
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-    Color color0_;
-    Color color1_;
+  Color color0_;
+  Color color1_;
 
-    ColorSelector* selector_;
-  };
+  ColorSelector* selector_;
+};
 
 }

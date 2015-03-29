@@ -39,143 +39,147 @@
 
 namespace BlendInt {
 
-  class CVImageView: public AbstractScrollable
+class CVImageView: public AbstractScrollable
+{
+
+public:
+
+  CVImageView ();
+
+  virtual ~CVImageView ();
+
+  virtual bool IsExpandX () const;
+
+  virtual bool IsExpandY () const;
+
+  virtual Size GetPreferredSize () const;
+
+  bool OpenCamera (int n, int fps, const Size& resolution = Size(640, 480));
+
+  bool OpenImageFile (const std::string& filename);
+
+  bool OpenVideoFile (const std::string& filename, int fps);
+
+  /**
+   * @brief Play the video stream
+   */
+  void Play ();
+
+  /**
+   * @brief Pause the video stream
+   *
+   * If the video stream is read from camera, this is the same as Stop()
+   */
+  void Pause ();
+
+  /**
+   * @brief Stop the video stream
+   *
+   * If the video stream is read from a file, call Play() after will read frames from beginning.
+   * If the video stream is read from camera, this is the same as Pause()
+   */
+  void Stop ();
+
+  /**
+   * @brief Release all OpenCV data
+   */
+  void Release ();
+
+protected:
+
+  virtual void ProcessImage (cv::Mat& image);
+
+  void DrawTexture ();
+
+private:
+
+  enum CVImageFlagMasks
   {
 
-  public:
-
-    CVImageView();
-
-    virtual ~CVImageView ();
-
-    virtual bool IsExpandX () const;
-
-    virtual bool IsExpandY () const;
-
-    virtual Size GetPreferredSize () const;
-
-    bool OpenCamera (int n, int fps, const Size& resolution = Size(640, 480));
-
-    bool OpenImageFile (const std::string& filename);
-
-    bool OpenVideoFile (const std::string& filename, int fps);
+    /**
+     * Use this bit to check image or stream
+     * 0 - image
+     * 1 - video
+     */
+    DisplayModeMask = 0x1 << 0,
 
     /**
-     * @brief Play the video stream
+     * if image or video opened
      */
-    void Play ();
+    StreamingMask = 0x1 << 1,
 
     /**
-     * @brief Pause the video stream
-     *
-     * If the video stream is read from camera, this is the same as Stop()
+     * Use this bit to check video device
+     * 0 - file
+     * 1 - camera
      */
-    void Pause ();
+    DeviceTypeMask = 0x1 << 2,
 
     /**
-     * @brief Stop the video stream
-     *
-     * If the video stream is read from a file, call Play() after will read frames from beginning.
-     * If the video stream is read from camera, this is the same as Pause()
+     * Use this bit to check playback status
+     * 1 - play
      */
-    void Stop ();
+    VideoPlayMask = 0x1 << 3,
 
-    /**
-     * @brief Release all OpenCV data
-     */
-    void Release ();
+    VideoPauseMask = 0x1 << 4,
 
-  protected:
+    VideoStopMask = 0x1 << 5,
 
-    virtual void ProcessImage (cv::Mat& image);
+    PlaybackMask = VideoPlayMask | VideoPauseMask | VideoStopMask
 
-    void DrawTexture ();
-
-  private:
-
-    enum CVImageFlagMasks {
-
-      /**
-       * Use this bit to check image or stream
-       * 0 - image
-       * 1 - video
-       */
-      DisplayModeMask = 0x1 << 0,
-
-      /**
-       * if image or video opened
-       */
-      StreamingMask = 0x1 << 1,
-
-      /**
-       * Use this bit to check video device
-       * 0 - file
-       * 1 - camera
-       */
-      DeviceTypeMask = 0x1 << 2,
-
-      /**
-       * Use this bit to check playback status
-       * 1 - play
-       */
-      VideoPlayMask = 0x1 << 3,
-
-      VideoPauseMask = 0x1 << 4,
-
-      VideoStopMask = 0x1 << 5,
-
-      PlaybackMask = VideoPlayMask | VideoPauseMask | VideoStopMask
-
-    };
-
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
-
-    virtual bool PreDraw (AbstractWindow* context);
-
-    virtual Response Draw (AbstractWindow* context);
-
-    virtual void PostDraw (AbstractWindow* context);
-
-    void OnUpdateFrame (Timer* sender);
-
-    /**
-     * @brief Vertex Array Objects
-     *
-     * 0 - for background
-     * 1 - for plane to display image texture
-     */
-
-    GLuint vao_[2];
-
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
-
-    GLTexture2D texture_;
-
-    cv::VideoCapture video_stream_;
-
-    cv::Mat image_;
-
-    RefPtr<Timer> timer_;
-
-		Mutex mutex_;
-
-    AbstractWindow* off_screen_context_;
-
-    Size image_size_;
-
-    /**
-     * @brief status of current image or video stream
-     *
-     * Bit:
-     *    0 - if image is loaded
-     *    1 - if current use image or video stream
-     *    2 - if video from file or camera
-     *    3 - if video is playing
-     *    4 - if video is paused
-     *    5 - if video is stop
-     */
-    int flags_;
   };
+
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
+
+  virtual bool PreDraw (AbstractWindow* context);
+
+  virtual Response Draw (AbstractWindow* context);
+
+  virtual void PostDraw (AbstractWindow* context);
+
+  void OnUpdateFrame (Timer* sender);
+
+  /**
+   * @brief Vertex Array Objects
+   *
+   * 0 - for background
+   * 1 - for plane to display image texture
+   */
+
+  GLuint vao_[2];
+
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+  GLTexture2D texture_;
+
+  cv::VideoCapture video_stream_;
+
+  cv::Mat image_;
+
+  RefPtr<Timer> timer_;
+
+  Mutex mutex_;
+
+  AbstractWindow* off_screen_context_;
+
+  Size image_size_;
+
+  /**
+   * @brief status of current image or video stream
+   *
+   * Bit:
+   *    0 - if image is loaded
+   *    1 - if current use image or video stream
+   *    2 - if video from file or camera
+   *    3 - if video is playing
+   *    4 - if video is paused
+   *    5 - if video is stop
+   */
+  int flags_;
+};
 
 }
 
