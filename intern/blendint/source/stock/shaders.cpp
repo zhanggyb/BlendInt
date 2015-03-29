@@ -986,8 +986,7 @@ void Shaders::SetWidgetProjectionMatrix (const glm::mat4& matrix)
   widget_matrices_ubo_->bind();
   widget_matrices_ubo_->set_sub_data(
       widget_matrices_ubo_offset_[ProjectionIndex],
-      widget_matrices_ubo_size_[ProjectionIndex]
-      * TypeSize(widget_matrices_ubo_type_[ProjectionIndex]),
+      sizeof(glm::mat4),
       glm::value_ptr(matrix));
   widget_matrices_ubo_->reset();
 
@@ -1024,8 +1023,7 @@ void Shaders::SetWidgetViewMatrix (const glm::mat4& matrix)
   widget_matrices_ubo_->bind();
   widget_matrices_ubo_->set_sub_data(
       widget_matrices_ubo_offset_[ViewIndex],
-      widget_matrices_ubo_size_[ViewIndex]
-      * TypeSize(widget_matrices_ubo_type_[ViewIndex]),
+      sizeof(glm::mat4),
       glm::value_ptr(matrix));
   widget_matrices_ubo_->reset();
 
@@ -1084,6 +1082,41 @@ void Shaders::PopWidgetModelMatrix ()
     SetWidgetModelMatrix(widget_model_matrix_stack.top());
     widget_model_matrix_stack.pop();
   }
+}
+
+void Shaders::SetFrameProjectionMatrix (const glm::mat4& matrix)
+{
+  frame_matrices_ubo_->bind();
+  frame_matrices_ubo_->set_sub_data(
+      frame_matrices_ubo_offset_[ProjectionIndex],
+      sizeof(glm::mat4),
+      glm::value_ptr(matrix));
+  frame_matrices_ubo_->reset();
+}
+
+void Shaders::SetFrameViewMatrix (const glm::mat4& matrix)
+{
+  frame_matrices_ubo_->bind();
+  frame_matrices_ubo_->set_sub_data(
+      frame_matrices_ubo_offset_[ViewIndex],
+      sizeof(glm::mat4),
+      glm::value_ptr(matrix));
+  frame_matrices_ubo_->reset();
+}
+
+void Shaders::SetFrameModelMatrix (const glm::mat3& matrix)
+{
+  frame_matrices_ubo_->bind();
+
+  int stride = 4 * sizeof(GLfloat);
+  int size = sizeof(glm::vec3);
+  for (int i = 0; i < 3; i++) {
+    frame_matrices_ubo_->set_sub_data(
+        frame_matrices_ubo_offset_[ModelIndex] + i * stride, size,
+        glm::value_ptr(matrix[i]));
+  }
+
+  frame_matrices_ubo_->reset();
 }
 
 bool Shaders::Setup ()
@@ -1146,7 +1179,7 @@ bool Shaders::Setup ()
                         GL_UNIFORM_TYPE,
                         widget_matrices_ubo_type_);
 
-  DBG_PRINT_MSG("P: offset: %d, size: %d, type: %d\n"
+  DBG_PRINT_MSG("\nP: offset: %d, size: %d, type: %d\n"
                 "V: offset: %d, size: %d, type: %d\n"
                 "M: offset: %d, size: %d, type: %d",
                 widget_matrices_ubo_offset_[0],
@@ -1162,13 +1195,11 @@ bool Shaders::Setup ()
   memcpy(
       buf_p + widget_matrices_ubo_offset_[ProjectionIndex],
       glm::value_ptr(projection),
-      widget_matrices_ubo_size_[ProjectionIndex]
-      * TypeSize(widget_matrices_ubo_type_[ProjectionIndex]));
+      sizeof(glm::mat4));
   memcpy(
       buf_p + widget_matrices_ubo_offset_[ViewIndex],
       glm::value_ptr(view),
-      widget_matrices_ubo_size_[ViewIndex]
-      * TypeSize(widget_matrices_ubo_type_[ViewIndex]));
+      sizeof(glm::mat4));
 
   // A mat3 should be packed to 3(row) x 4(columns) in uniform block:
   glm::vec4 line;
@@ -1278,13 +1309,11 @@ bool Shaders::Setup ()
   memcpy(
       buf_p + frame_matrices_ubo_offset_[ProjectionIndex],
       glm::value_ptr(projection),
-      frame_matrices_ubo_size_[ProjectionIndex]
-      * TypeSize(frame_matrices_ubo_type_[ProjectionIndex]));
+      sizeof(glm::mat4));
   memcpy(
       buf_p + frame_matrices_ubo_offset_[ViewIndex],
       glm::value_ptr(view),
-      frame_matrices_ubo_size_[ViewIndex]
-      * TypeSize(frame_matrices_ubo_type_[ViewIndex]));
+      sizeof(glm::mat4));
 
   // A mat3 should be padded to 3(row) x 4(columns) in uniform block:
   for (int i = 0; i < 3; i++) {
@@ -1328,6 +1357,94 @@ bool Shaders::Setup ()
                                        "FrameMatrices");
   glUniformBlockBinding(frame_shadow_program_->id(), block_index,
                         kFrameMatricesBindingPoint);
+
+  return true;
+}
+
+bool Shaders::SetupWidgetInnerProgram ()
+{
+  if (!widget_inner_program_->Create()) {
+    return false;
+  }
+
+  widget_inner_program_->AttachShader(widget_inner_vertex_shader,
+                                      GL_VERTEX_SHADER);
+  widget_inner_program_->AttachShader(widget_inner_fragment_shader,
+                                      GL_FRAGMENT_SHADER);
+  if (!widget_inner_program_->Link()) {
+    DBG_PRINT_MSG("Fail to link the widget inner program: %d",
+                  widget_inner_program_->id());
+    return false;
+  }
+
+  locations_[WIDGET_INNER_COORD] = widget_inner_program_->GetAttributeLocation(
+      "aCoord");
+  locations_[WIDGET_INNER_COLOR] = widget_inner_program_->GetUniformLocation(
+      "uColor");
+  locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation(
+      "uGamma");
+  locations_[WIDGET_INNER_SHADED] = widget_inner_program_->GetUniformLocation(
+      "uShaded");
+
+  return true;
+}
+
+bool Shaders::SetupWidgetSplitInnerProgram ()
+{
+  if (!widget_split_inner_program_->Create()) {
+    return false;
+  }
+
+  widget_split_inner_program_->AttachShader(widget_split_inner_vertex_shader,
+                                            GL_VERTEX_SHADER);
+  widget_split_inner_program_->AttachShader(widget_split_inner_fragment_shader,
+                                            GL_FRAGMENT_SHADER);
+  if (!widget_split_inner_program_->Link()) {
+    DBG_PRINT_MSG("Fail to link the widget split inner program: %d",
+                  widget_split_inner_program_->id());
+    return false;
+  }
+
+  locations_[WIDGET_SPLIT_INNER_COORD] =
+      widget_split_inner_program_->GetAttributeLocation("aCoord");
+  locations_[WIDGET_SPLIT_INNER_COLOR0] =
+      widget_split_inner_program_->GetUniformLocation("u_color0");
+  locations_[WIDGET_SPLIT_INNER_COLOR1] =
+      widget_split_inner_program_->GetUniformLocation("u_color1");
+  locations_[WIDGET_SPLIT_INNER_MIDDLE] =
+      widget_split_inner_program_->GetUniformLocation("uMiddle");
+  locations_[WIDGET_SPLIT_INNER_GAMMA] =
+      widget_split_inner_program_->GetUniformLocation("uGamma");
+  locations_[WIDGET_SPLIT_INNER_SHADED] =
+      widget_split_inner_program_->GetUniformLocation("uShaded");
+
+  return true;
+}
+
+bool Shaders::SetupWidgetOuterProgram ()
+{
+  if (!widget_outer_program_->Create()) {
+    return false;
+  }
+
+  widget_outer_program_->AttachShader(widget_outer_vertex_shader,
+                                      GL_VERTEX_SHADER);
+  widget_outer_program_->AttachShader(widget_outer_geometry_shader,
+                                      GL_GEOMETRY_SHADER);
+  widget_outer_program_->AttachShader(widget_outer_fragment_shader,
+                                      GL_FRAGMENT_SHADER);
+  if (!widget_outer_program_->Link()) {
+    DBG_PRINT_MSG("Fail to link the widget outer program: %d",
+                  widget_outer_program_->id());
+    return false;
+  }
+
+  locations_[WIDGET_OUTER_COORD] = widget_outer_program_->GetAttributeLocation(
+      "aCoord");
+  locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation(
+      "uColor");
+  locations_[WIDGET_OUTER_OFFSET] = widget_outer_program_->GetUniformLocation(
+      "uOffset");
 
   return true;
 }
@@ -1420,94 +1537,6 @@ bool Shaders::SetupWidgetSimpleTriangleProgram ()
       widget_simple_triangle_program_->GetUniformLocation("uColor");
   locations_[WIDGET_SIMPLE_TRIANGLE_GAMMA] =
       widget_simple_triangle_program_->GetUniformLocation("uGamma");
-
-  return true;
-}
-
-bool Shaders::SetupWidgetInnerProgram ()
-{
-  if (!widget_inner_program_->Create()) {
-    return false;
-  }
-
-  widget_inner_program_->AttachShader(widget_inner_vertex_shader,
-                                      GL_VERTEX_SHADER);
-  widget_inner_program_->AttachShader(widget_inner_fragment_shader,
-                                      GL_FRAGMENT_SHADER);
-  if (!widget_inner_program_->Link()) {
-    DBG_PRINT_MSG("Fail to link the widget inner program: %d",
-                  widget_inner_program_->id());
-    return false;
-  }
-
-  locations_[WIDGET_INNER_COORD] = widget_inner_program_->GetAttributeLocation(
-      "aCoord");
-  locations_[WIDGET_INNER_COLOR] = widget_inner_program_->GetUniformLocation(
-      "uColor");
-  locations_[WIDGET_INNER_GAMMA] = widget_inner_program_->GetUniformLocation(
-      "uGamma");
-  locations_[WIDGET_INNER_SHADED] = widget_inner_program_->GetUniformLocation(
-      "uShaded");
-
-  return true;
-}
-
-bool Shaders::SetupWidgetSplitInnerProgram ()
-{
-  if (!widget_split_inner_program_->Create()) {
-    return false;
-  }
-
-  widget_split_inner_program_->AttachShader(widget_split_inner_vertex_shader,
-                                            GL_VERTEX_SHADER);
-  widget_split_inner_program_->AttachShader(widget_split_inner_fragment_shader,
-                                            GL_FRAGMENT_SHADER);
-  if (!widget_split_inner_program_->Link()) {
-    DBG_PRINT_MSG("Fail to link the widget split inner program: %d",
-                  widget_split_inner_program_->id());
-    return false;
-  }
-
-  locations_[WIDGET_SPLIT_INNER_COORD] =
-      widget_split_inner_program_->GetAttributeLocation("aCoord");
-  locations_[WIDGET_SPLIT_INNER_COLOR0] =
-      widget_split_inner_program_->GetUniformLocation("u_color0");
-  locations_[WIDGET_SPLIT_INNER_COLOR1] =
-      widget_split_inner_program_->GetUniformLocation("u_color1");
-  locations_[WIDGET_SPLIT_INNER_MIDDLE] =
-      widget_split_inner_program_->GetUniformLocation("uMiddle");
-  locations_[WIDGET_SPLIT_INNER_GAMMA] =
-      widget_split_inner_program_->GetUniformLocation("uGamma");
-  locations_[WIDGET_SPLIT_INNER_SHADED] =
-      widget_split_inner_program_->GetUniformLocation("uShaded");
-
-  return true;
-}
-
-bool Shaders::SetupWidgetOuterProgram ()
-{
-  if (!widget_outer_program_->Create()) {
-    return false;
-  }
-
-  widget_outer_program_->AttachShader(widget_outer_vertex_shader,
-                                      GL_VERTEX_SHADER);
-  widget_outer_program_->AttachShader(widget_outer_geometry_shader,
-                                      GL_GEOMETRY_SHADER);
-  widget_outer_program_->AttachShader(widget_outer_fragment_shader,
-                                      GL_FRAGMENT_SHADER);
-  if (!widget_outer_program_->Link()) {
-    DBG_PRINT_MSG("Fail to link the widget outer program: %d",
-                  widget_outer_program_->id());
-    return false;
-  }
-
-  locations_[WIDGET_OUTER_COORD] = widget_outer_program_->GetAttributeLocation(
-      "aCoord");
-  locations_[WIDGET_OUTER_COLOR] = widget_outer_program_->GetUniformLocation(
-      "uColor");
-  locations_[WIDGET_OUTER_OFFSET] = widget_outer_program_->GetUniformLocation(
-      "uOffset");
 
   return true;
 }
@@ -1628,43 +1657,6 @@ bool Shaders::SetupPrimitiveProgram ()
   return true;
 }
 
-void Shaders::SetFrameProjectionMatrix (const glm::mat4& matrix)
-{
-  frame_matrices_ubo_->bind();
-  frame_matrices_ubo_->set_sub_data(
-      frame_matrices_ubo_offset_[ProjectionIndex],
-      frame_matrices_ubo_size_[ProjectionIndex]
-      * TypeSize(frame_matrices_ubo_type_[ProjectionIndex]),
-      glm::value_ptr(matrix));
-  frame_matrices_ubo_->reset();
-}
-
-void Shaders::SetFrameViewMatrix (const glm::mat4& matrix)
-{
-  frame_matrices_ubo_->bind();
-  frame_matrices_ubo_->set_sub_data(
-      frame_matrices_ubo_offset_[ViewIndex],
-      frame_matrices_ubo_size_[ViewIndex]
-      * TypeSize(frame_matrices_ubo_type_[ViewIndex]),
-      glm::value_ptr(matrix));
-  frame_matrices_ubo_->reset();
-}
-
-void Shaders::SetFrameModelMatrix (const glm::mat3& matrix)
-{
-  frame_matrices_ubo_->bind();
-
-  int stride = 4 * sizeof(GLfloat);
-  int size = sizeof(glm::vec3);
-  for (int i = 0; i < 3; i++) {
-    frame_matrices_ubo_->set_sub_data(
-        frame_matrices_ubo_offset_[ModelIndex] + i * stride, size,
-        glm::value_ptr(matrix[i]));
-  }
-
-  frame_matrices_ubo_->reset();
-}
-
 bool Shaders::SetupFrameInnerProgram ()
 {
   if (!frame_inner_program_->Create()) {
@@ -1773,10 +1765,6 @@ bool Shaders::SetupFrameShadowProgram ()
     return false;
   }
 
-  //locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation("aCoord");
-  //locations_[FRAME_SHADOW_COLOR] = frame_shadow_program_->GetUniformLocation("uColor");
-  //locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation("uPosition");
-
   locations_[FRAME_SHADOW_COORD] = frame_shadow_program_->GetAttributeLocation(
       "aCoord");
   locations_[FRAME_SHADOW_POSITION] = frame_shadow_program_->GetUniformLocation(
@@ -1787,52 +1775,6 @@ bool Shaders::SetupFrameShadowProgram ()
       "uSize");
 
   return true;
-}
-
-/* Helper function to convert GLSL types to storage sizes */
-size_t Shaders::TypeSize (GLenum type)
-{
-  size_t size;
-
-#define CASE(Enum, Count, Type)                 \
-  case Enum: size = Count * sizeof(Type); break
-
-  switch (type) {
-    CASE(GL_FLOAT, 1, GLfloat);
-    CASE(GL_FLOAT_VEC2, 2, GLfloat);
-    CASE(GL_FLOAT_VEC3, 3, GLfloat);
-    CASE(GL_FLOAT_VEC4, 4, GLfloat);
-    CASE(GL_INT, 1, GLint);
-    CASE(GL_INT_VEC2, 2, GLint);
-    CASE(GL_INT_VEC3, 3, GLint);
-    CASE(GL_INT_VEC4, 4, GLint);
-    CASE(GL_UNSIGNED_INT, 1, GLuint);
-    CASE(GL_UNSIGNED_INT_VEC2, 2, GLuint);
-    CASE(GL_UNSIGNED_INT_VEC3, 3, GLuint);
-    CASE(GL_UNSIGNED_INT_VEC4, 4, GLuint);
-    CASE(GL_BOOL, 1, GLboolean);
-    CASE(GL_BOOL_VEC2, 2, GLboolean);
-    CASE(GL_BOOL_VEC3, 3, GLboolean);
-    CASE(GL_BOOL_VEC4, 4, GLboolean);
-    CASE(GL_FLOAT_MAT2, 4, GLfloat);
-    CASE(GL_FLOAT_MAT2x3, 6, GLfloat);
-    CASE(GL_FLOAT_MAT2x4, 8, GLfloat);
-    CASE(GL_FLOAT_MAT3, 9, GLfloat);
-    CASE(GL_FLOAT_MAT3x2, 6, GLfloat);
-    CASE(GL_FLOAT_MAT3x4, 12, GLfloat);
-    CASE(GL_FLOAT_MAT4, 16, GLfloat);
-    CASE(GL_FLOAT_MAT4x2, 8, GLfloat);
-    CASE(GL_FLOAT_MAT4x3, 12, GLfloat);
-#undef CASE
-
-    default:
-      fprintf(stderr, "Unknown type:0x%x\n", type);
-      exit(EXIT_FAILURE);
-      break;
-  }
-
-  //DBG_PRINT_MSG("type size: %ld", size);
-  return size;
 }
 
 }  // namespace BlendInt

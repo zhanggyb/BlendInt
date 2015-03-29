@@ -278,12 +278,12 @@ private:
 
   enum
   {
-    ProjectionIndex, ViewIndex, ModelIndex
+    ProjectionIndex,  // 0
+    ViewIndex,        // 1
+    ModelIndex        // 2
   };
 
   friend class AbstractWindow;
-
-  static size_t TypeSize (GLenum type);
 
   Shaders ();
 

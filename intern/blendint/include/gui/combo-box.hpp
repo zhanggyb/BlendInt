@@ -35,175 +35,176 @@
 
 namespace BlendInt {
 
-  class AbstractFrame;  // forward declare
+class AbstractFrame;  // forward declare
 
-  class ComboListModel: public AbstractListModel
+class ComboListModel: public AbstractListModel
+{
+public:
+
+  ComboListModel ();
+
+  virtual ~ComboListModel ();
+
+  virtual bool InsertColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex()) final;
+
+  virtual bool RemoveColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex()) final;
+
+  virtual bool InsertRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex());
+
+  virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex());
+
+  virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const final;
+
+  virtual int GetColumnCount (const ModelIndex& parent =
+      ModelIndex()) const final;
+
+  void SetIcon (const ModelIndex& index, const RefPtr<AbstractIcon>& icon);
+
+  void SetText (const ModelIndex& index, const RefPtr<Text>& text);
+
+  const Size& max_icon_size () const
   {
-  public:
+    return max_icon_size_;
+  }
 
-    ComboListModel ();
+  const Size& max_text_size () const
+  {
+    return max_text_size_;
+  }
 
-    virtual ~ComboListModel ();
+private:
 
-    virtual bool InsertColumns (int column,
-                                int count,
-                                const ModelIndex& parent = ModelIndex()) final;
+  int rows_;
 
-    virtual bool RemoveColumns (int column,
-                                int count,
-                                const ModelIndex& parent = ModelIndex()) final;
+  int columns_;
 
-    virtual bool InsertRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex());
+  Size max_icon_size_;  // preferred icon size
 
-    virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex());
+  Size max_text_size_; // preferred text size
 
-    virtual int GetRowCount (const ModelIndex& parent =
-        ModelIndex()) const final;
+};
 
-    virtual int GetColumnCount (const ModelIndex& parent =
-        ModelIndex()) const final;
+// ----------------
 
-    void SetIcon (const ModelIndex& index, const RefPtr<AbstractIcon>& icon);
+class ComboListView: public AbstractItemView
+{
+DISALLOW_COPY_AND_ASSIGN(ComboListView);
 
-    void SetText (const ModelIndex& index, const RefPtr<Text>& text);
+public:
 
-    const Size& max_icon_size () const
-    {
-      return max_icon_size_;
-    }
+  ComboListView ();
 
-    const Size& max_text_size () const
-    {
-      return max_text_size_;
-    }
+  virtual ~ComboListView ();
 
-  private:
+  virtual bool IsExpandX () const;
 
-    int rows_;
+  virtual bool IsExpandY () const;
 
-    int columns_;
+  virtual Size GetPreferredSize () const final;
 
-    Size max_icon_size_;  // preferred icon size
+  virtual const RefPtr<AbstractItemModel> GetModel () const final;
 
-    Size max_text_size_; // preferred text size
+  virtual void SetModel (const RefPtr<AbstractItemModel>& model) final;
 
+  virtual ModelIndex GetIndexAt (const Point& point) const;
+
+protected:
+
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
+
+  virtual Response Draw (AbstractWindow* context) final;
+
+  virtual Response PerformMousePress (AbstractWindow* context) final;
+
+private:
+
+  // 0 for inner buffer
+  // 1 for row_ background
+  GLuint vao_[2];
+
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
+
+  RefPtr<ComboListModel> model_;
+
+  int highlight_index_;
+};
+
+// ----------------
+
+/**
+ * @brief A combined button and popup list.
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class ComboBox: public AbstractRoundWidget
+{
+DISALLOW_COPY_AND_ASSIGN(ComboBox);
+
+public:
+
+  enum DisplayMode
+  {
+    IconMode, TextMode, IconTextMode, TextIconMode
   };
 
-  // ----------------
+  ComboBox (DisplayMode mode = IconTextMode);
 
-  class ComboListView: public AbstractItemView
-  {
-  DISALLOW_COPY_AND_ASSIGN(ComboListView);
+  virtual ~ComboBox ();
 
-  public:
+  virtual Size GetPreferredSize () const;
 
-    ComboListView ();
+  void SetModel (const RefPtr<ComboListModel>& model);
 
-    virtual ~ComboListView ();
+  void SetCurrentIndex (int index);
 
-    virtual bool IsExpandX () const;
+protected:
 
-    virtual bool IsExpandY () const;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual Size GetPreferredSize () const final;
+  virtual void PerformRoundTypeUpdate (int round_type);
 
-    virtual const RefPtr<AbstractItemModel> GetModel () const final;
+  virtual void PerformRoundRadiusUpdate (float radius);
 
-    virtual void SetModel (const RefPtr<AbstractItemModel>& model) final;
+  virtual Response Draw (AbstractWindow* context);
 
-    virtual ModelIndex GetIndexAt (const Point& point) const;
+  virtual Response PerformMousePress (AbstractWindow* context);
 
-  protected:
+  virtual Response PerformMouseRelease (AbstractWindow* context);
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+private:
 
-    virtual Response Draw (AbstractWindow* context) final;
+  void InitializeComboBox ();
 
-    virtual Response PerformMousePress (AbstractWindow* context) final;
+  void OnPopupListDestroyed (AbstractFrame* frame);
 
-  private:
+  GLuint vaos_[2];
 
-    // 0 for inner buffer
-    // 1 for row_ background
-    GLuint vao_[2];
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  bool status_down_;
 
-    RefPtr<ComboListModel> model_;
+  DisplayMode display_mode_;
 
-    int highlight_index_;
-  };
+  int last_round_status_;
 
-  // ----------------
+  RefPtr<ComboListModel> model_;
 
-  /**
-   * @brief A combined button and popup list.
-   *
-   * @ingroup blendint_gui_widgets
-   */
-  class ComboBox: public AbstractRoundWidget
-  {
-  DISALLOW_COPY_AND_ASSIGN(ComboBox);
+  ModelIndex current_index_;
 
-  public:
+  AbstractFrame* popup_;
 
-    enum DisplayMode {
-      IconMode,
-      TextMode,
-      IconTextMode,
-      TextIconMode
-    };
+  static Margin kPadding;
 
-    ComboBox (DisplayMode mode = IconTextMode);
-
-    virtual ~ComboBox ();
-
-    virtual Size GetPreferredSize () const;
-
-    void SetModel (const RefPtr<ComboListModel>& model);
-
-    void SetCurrentIndex (int index);
-
-  protected:
-
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
-
-    virtual void PerformRoundTypeUpdate (int round_type);
-
-    virtual void PerformRoundRadiusUpdate (float radius);
-
-    virtual Response Draw (AbstractWindow* context);
-
-    virtual Response PerformMousePress (AbstractWindow* context);
-
-    virtual Response PerformMouseRelease (AbstractWindow* context);
-
-  private:
-
-    void InitializeComboBox ();
-
-    void OnPopupListDestroyed (AbstractFrame* frame);
-
-    GLuint vaos_[2];
-
-    GLBuffer<ARRAY_BUFFER, 2> vbo_;
-
-    bool status_down_;
-
-    DisplayMode display_mode_;
-
-    int last_round_status_;
-
-    RefPtr<ComboListModel> model_;
-
-    ModelIndex current_index_;
-
-    AbstractFrame* popup_;
-
-    static Margin kPadding;
-
-  };
+};
 
 }

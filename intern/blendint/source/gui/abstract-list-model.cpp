@@ -28,525 +28,525 @@
 
 namespace BlendInt {
 
-	AbstractListModel::AbstractListModel()
-	: AbstractItemModel(),
-	  root_(0)
-	{
-		root_ = new ModelNode;
-	}
+AbstractListModel::AbstractListModel ()
+    : AbstractItemModel(), root_(0)
+{
+  root_ = new ModelNode;
+}
 
-	AbstractListModel::~AbstractListModel ()
-	{
-		ClearAllChildNodes();
+AbstractListModel::~AbstractListModel ()
+{
+  ClearAllChildNodes();
 
-		delete root_;
-	}
+  delete root_;
+}
 
-	bool AbstractListModel::InsertColumns (int column, int count,
-	        const ModelIndex& parent)
-	{
-		if(!parent.valid()) return false;
+bool AbstractListModel::InsertColumns (int column,
+                                       int count,
+                                       const ModelIndex& parent)
+{
+  if (!parent.valid()) return false;
 
-		DBG_ASSERT(count > 0);
-		DBG_ASSERT(column >= 0);
+  DBG_ASSERT(count > 0);
+  DBG_ASSERT(column >= 0);
 
-		ModelNode* node = get_index_node(parent);
+  ModelNode* node = get_index_node(parent);
 
-		ModelNode* first = 0;
-		ModelNode* last = 0;
+  ModelNode* first = 0;
+  ModelNode* last = 0;
 
-		if(node->child == 0) {	// if the node has no child, create and append 1 row with count columns
+  if (node->child == 0) {	// if the node has no child, create and append 1 row with count columns
 
-			first = new ModelNode;
-			last = first;
-			for(int i = 1; i < count; i++) {
-				last->right = new ModelNode;
-				last->right->left = last;
-				last = last->right;
-			}
-			node->child = first;
-			first->parent = node;
+    first = new ModelNode;
+    last = first;
+    for (int i = 1; i < count; i++) {
+      last->right = new ModelNode;
+      last->right->left = last;
+      last = last->right;
+    }
+    node->child = first;
+    first->parent = node;
 
-		} else {
+  } else {
 
-			node = node->child;
-			ModelNode* next = 0;
+    node = node->child;
+    ModelNode* next = 0;
 
-			while(node) {
+    while (node) {
 
-				next = node->down;
+      next = node->down;
 
-				ModelNode* tmp = node;
+      ModelNode* tmp = node;
 
-				// find where to insert the new columns
-				while(tmp->right && (column > 0)) {
-					tmp = tmp->right;
-					column--;
-				}
+      // find where to insert the new columns
+      while (tmp->right && (column > 0)) {
+        tmp = tmp->right;
+        column--;
+      }
 
-				first = new ModelNode;
-				last = first;
-				for(int i = 1; i < count; i++) {
-					last->right = new ModelNode;
-					last->right->left = last;
-					last = last->right;
-				}
+      first = new ModelNode;
+      last = first;
+      for (int i = 1; i < count; i++) {
+        last->right = new ModelNode;
+        last->right->left = last;
+        last = last->right;
+      }
 
-				if(column == 0) {	// insert
+      if (column == 0) {	// insert
 
-					if(tmp->left == 0) {	// insert 0
+        if (tmp->left == 0) {	// insert 0
 
-						if(tmp->parent) {
-							tmp->parent->child = first;
-							first->parent = tmp->parent;
-							tmp->parent = 0;
-						}
+          if (tmp->parent) {
+            tmp->parent->child = first;
+            first->parent = tmp->parent;
+            tmp->parent = 0;
+          }
 
-						if(tmp->up) {
-							tmp->up->down = first;
-							first->up = tmp->up;
-							tmp->up = 0;
-						}
+          if (tmp->up) {
+            tmp->up->down = first;
+            first->up = tmp->up;
+            tmp->up = 0;
+          }
 
-						if(tmp->down) {
-							tmp->down->up = first;
-							first->down = tmp->down;
-							tmp->down = 0;
-						}
+          if (tmp->down) {
+            tmp->down->up = first;
+            first->down = tmp->down;
+            tmp->down = 0;
+          }
 
-						last->right = tmp;
-						tmp->left = last;
+          last->right = tmp;
+          tmp->left = last;
 
-					} else {
+        } else {
 
-						DBG_ASSERT(tmp->up == 0);
-						DBG_ASSERT(tmp->down == 0);
+          DBG_ASSERT(tmp->up == 0);
+          DBG_ASSERT(tmp->down == 0);
 
-						tmp->left->right = first;
-						first->left = tmp->left;
-						last->right = tmp;
-						tmp->left = last;
+          tmp->left->right = first;
+          first->left = tmp->left;
+          last->right = tmp;
+          tmp->left = last;
 
-					}
+        }
 
-				} else {	// append
+      } else {	// append
 
-					tmp->right = first;
-					first->left = tmp;
+        tmp->right = first;
+        first->left = tmp;
 
-				}
+      }
 
-				node = next;
-			}
+      node = next;
+    }
 
-		}
+  }
 
-		return true;
-	}
+  return true;
+}
 
-	bool AbstractListModel::RemoveColumns (int column, int count,
-	        const ModelIndex& parent)
-	{
-		if(!parent.valid()) return false;
+bool AbstractListModel::RemoveColumns (int column,
+                                       int count,
+                                       const ModelIndex& parent)
+{
+  if (!parent.valid()) return false;
 
-		DBG_ASSERT(count > 0);
-		DBG_ASSERT(column >= 0);
+  DBG_ASSERT(count > 0);
+  DBG_ASSERT(column >= 0);
 
-		ModelNode* node = get_index_node(parent);
-		if(node->child == 0) return false;
+  ModelNode* node = get_index_node(parent);
+  if (node->child == 0) return false;
 
-		node = node->child;
+  node = node->child;
 
-		ModelNode* up_record = 0;
-		ModelNode* down_record = 0;
-		ModelNode* tmp = 0;
-		ModelNode* parent_node = get_index_node(parent);
+  ModelNode* up_record = 0;
+  ModelNode* down_record = 0;
+  ModelNode* tmp = 0;
+  ModelNode* parent_node = get_index_node(parent);
 
-		while(node) {
+  while (node) {
 
-			tmp = node;	// the tmp node iterate in this row
-			up_record = node->up;
-			down_record = node->down;
+    tmp = node;	// the tmp node iterate in this row
+    up_record = node->up;
+    down_record = node->down;
 
-			while (tmp->right && (column > 0)) {
-				tmp = tmp->right;
-				column--;
-			}
+    while (tmp->right && (column > 0)) {
+      tmp = tmp->right;
+      column--;
+    }
 
-			if(column == 0) {
+    if (column == 0) {
 
-				ModelNode* first = tmp->left;
-				ModelNode* last = tmp;
+      ModelNode* first = tmp->left;
+      ModelNode* last = tmp;
 
-				for(int i = 0; i < count; i++) {
-					last = tmp->right;
+      for (int i = 0; i < count; i++) {
+        last = tmp->right;
 
-					// destroy tmp:
+        // destroy tmp:
 
-					if(tmp->up) tmp->up->down = 0;
-					if(tmp->left) tmp->left->right = 0;
-					if(tmp->right) tmp->right->left = 0;
-					if(tmp->down) tmp->down->up = 0;
+        if (tmp->up) tmp->up->down = 0;
+        if (tmp->left) tmp->left->right = 0;
+        if (tmp->right) tmp->right->left = 0;
+        if (tmp->down) tmp->down->up = 0;
 
-					delete tmp;
+        delete tmp;
 
-					tmp = last;
-					if(tmp == 0) break;
-				}
+        tmp = last;
+        if (tmp == 0) break;
+      }
 
-				if(first) first->right = last;
-				if(last) last->left = first;
+      if (first) first->right = last;
+      if (last) last->left = first;
 
-				if(up_record == 0) {	// the first child
+      if (up_record == 0) {	// the first child
 
-					if(first == 0) {
+        if (first == 0) {
 
-						if(last == 0) {	// more all column
-							parent_node->child = down_record;
-							if(down_record) {
-								down_record->up = 0;
-								down_record->parent = parent_node;
-							}
-						} else {
-							parent_node->child = last;
-							last->parent = parent_node;
-
-							DBG_ASSERT(last->up == 0);
-							DBG_ASSERT(last->down == 0);
-
-							if(down_record) down_record->up = last;
-							last->down = down_record;
-						}
-
-					} else {
-						DBG_ASSERT(first->up == 0);
-					}
-
-				} else {
-
-					if(first == 0) {
-
-						if(last == 0) {
-							DBG_PRINT_MSG("%s", "never reach this line");
-						} else {
-							up_record->down = last;
-							last->up = up_record;
-
-							if(down_record) down_record->up = last;
-							last->down = down_record;
-						}
-
-					}
-
-				}
-
-			} else {	// no column in this model
-				return false;
-			}
-
-			node = down_record;
-		}
-
-		return true;
-	}
-
-	bool AbstractListModel::InsertRows (int row, int count,
-			const ModelIndex& parent)
-	{
-		if(!parent.valid()) return false;
-
-		DBG_ASSERT(count > 0);
-		DBG_ASSERT(row >= 0);
-
-		ModelNode* node = get_index_node(parent);
-
-		ModelNode* first = 0;
-		ModelNode* last = 0;
-
-		first = new ModelNode;
-		last = first;
-
-		for(int i = 1; i < count; i++) {
-			last->down = new ModelNode;
-			last->down->up = last;
-			last = last->down;
-		}
-
-		if(node->child == 0) {	// if the node has no child, create and append 1 column with count rows
-			node->child = first;
-			first->parent = node;
-		} else {
-			node = node->child;
-			// find where to insert the new rows
-			while(node->down && (row > 0)) {
-				node = node->down;
-				row--;
-			}
-
-			if(row == 0) {	// Insert
-
-                if(node->up == 0) {	// Insert 0
-				
-                    node->parent->child = first;
-					first->parent = node->parent;
-					node->parent = 0;
-					last->down = node;
-					node->up = last;
-
-                    ModelNode* row_iter = first;
-                    ModelNode* ref_iter = node;
-                    ModelNode* tmp1 = 0;
-                    ModelNode* tmp2 = 0;
-                    
-                    while(row_iter && (row_iter != node)) {
-                        
-                        tmp1 = row_iter;
-                        
-                        while(ref_iter->right) {   // add one row
-                            
-                            tmp2 = new ModelNode;
-                            tmp1->right = tmp2;
-                            tmp2->left = tmp1;
-                            tmp1 = tmp2;
-                            
-                            ref_iter = ref_iter->right;
-                        }
-                        
-                        ref_iter = node;
-                        row_iter = row_iter->down;
-                    }
-                    
-                } else {
-
-                    node->up->down = first;
-					first->up = node->up;
-					last->down = node;
-					node->up = last;
-
-                    ModelNode* row_iter = first;
-                    ModelNode* ref_iter = node;
-                    ModelNode* tmp1 = 0;
-                    ModelNode* tmp2 = 0;
-                    
-                    while(row_iter && (row_iter != node)) {
-                        
-                        tmp1 = row_iter;
-                        
-                        while(ref_iter->right) {   // add one row
-                            
-                            tmp2 = new ModelNode;
-                            tmp1->right = tmp2;
-                            tmp2->left = tmp1;
-                            tmp1 = tmp2;
-                            
-                            ref_iter = ref_iter->right;
-                        }
-                        
-                        ref_iter = node;
-                        row_iter = row_iter->down;
-                    }
-                    
-                }
-
-            } else {	// too large row given, append to tail
-
-                DBG_ASSERT(node);
-                DBG_ASSERT(node->down == 0);
-                
-                node->down = first;
-				first->up = node;
-
-                ModelNode* row_iter = first;
-                ModelNode* ref_iter = node;
-                ModelNode* tmp1 = 0;
-                ModelNode* tmp2 = 0;
-
-                while(row_iter) {
-                    
-                    tmp1 = row_iter;
-
-                    while(ref_iter->right) {   // add one row
-                        
-                        tmp2 = new ModelNode;
-                        tmp1->right = tmp2;
-                        tmp2->left = tmp1;
-                        tmp1 = tmp2;
-                        
-                        ref_iter = ref_iter->right;
-                    }
-                
-                    ref_iter = node;
-                    row_iter = row_iter->down;
-                }
-                
+          if (last == 0) {	// more all column
+            parent_node->child = down_record;
+            if (down_record) {
+              down_record->up = 0;
+              down_record->parent = parent_node;
             }
-		}
+          } else {
+            parent_node->child = last;
+            last->parent = parent_node;
 
-		return true;
-	}
+            DBG_ASSERT(last->up == 0);
+            DBG_ASSERT(last->down == 0);
 
-	bool AbstractListModel::RemoveRows (int row, int count,
-			const ModelIndex& parent)
-	{
-		if (!parent.valid())
-			return false;
+            if (down_record) down_record->up = last;
+            last->down = down_record;
+          }
 
-		DBG_ASSERT(count > 0);
-		DBG_ASSERT(row >= 0);
+        } else {
+          DBG_ASSERT(first->up == 0);
+        }
 
-		ModelNode* node = get_index_node(parent);
-		if(node->child == 0)
-			return false;
+      } else {
 
-		node = node->child;
+        if (first == 0) {
 
-		while(node->down && (row > 0)) {
-			node = node->down;
-			row--;
-		}
+          if (last == 0) {
+            DBG_PRINT_MSG("%s", "never reach this line");
+          } else {
+            up_record->down = last;
+            last->up = up_record;
 
-		if(row == 0) {
+            if (down_record) down_record->up = last;
+            last->down = down_record;
+          }
 
-			ModelNode* first = node->up;
-			ModelNode* last = node;
+        }
 
-			for(int i = 0; i < count; i++)
-			{
-				last = node->down;
-				DestroyRow(node);
-				node = last;
+      }
 
-				if(node == 0)
-					break;
-			}
+    } else {	// no column in this model
+      return false;
+    }
 
-			node = get_index_node(parent);
-			if(first == 0) {
+    node = down_record;
+  }
 
-				if(last == 0) {	// clear the list
-					node->child = 0;
-				} else {	// remove the first count rows from the original list
-					node->child = last;
-					last->parent = node;
-					last->up = 0;
-				}
+  return true;
+}
 
-			} else {
-				first->down = last;
-				if(last) {
-					last->up = first;
-				}
-			}
+bool AbstractListModel::InsertRows (int row,
+                                    int count,
+                                    const ModelIndex& parent)
+{
+  if (!parent.valid()) return false;
 
-			return true;
-		}
+  DBG_ASSERT(count > 0);
+  DBG_ASSERT(row >= 0);
 
-		return false;
-	}
+  ModelNode* node = get_index_node(parent);
 
-	ModelIndex AbstractListModel::GetRootIndex () const
-	{
-		ModelIndex retval;
-		set_index_node(retval, root_);
+  ModelNode* first = 0;
+  ModelNode* last = 0;
 
-		return retval;
-	}
+  first = new ModelNode;
+  last = first;
 
-	ModelIndex AbstractListModel::GetIndex (int row, int column,
-			const ModelIndex& parent) const
-	{
-		ModelIndex index;
-		if(!parent.valid()) return index;
+  for (int i = 1; i < count; i++) {
+    last->down = new ModelNode;
+    last->down->up = last;
+    last = last->down;
+  }
 
-		ModelNode* parent_node = get_index_node(parent);
-		ModelNode* node = parent_node->child;
+  if (node->child == 0) {	// if the node has no child, create and append 1 column with count rows
+    node->child = first;
+    first->parent = node;
+  } else {
+    node = node->child;
+    // find where to insert the new rows
+    while (node->down && (row > 0)) {
+      node = node->down;
+      row--;
+    }
 
-		if(node == 0) return index;
+    if (row == 0) {	// Insert
 
-		// move row down
-		while(node->down && (row > 0)) {
-			node = node->down;
-			row--;
-		}
+      if (node->up == 0) {	// Insert 0
 
-		if(row == 0) {
+        node->parent->child = first;
+        first->parent = node->parent;
+        node->parent = 0;
+        last->down = node;
+        node->up = last;
 
-			while(node->right && (column > 0)) {
-				node = node->right;
-				column--;
-			}
+        ModelNode* row_iter = first;
+        ModelNode* ref_iter = node;
+        ModelNode* tmp1 = 0;
+        ModelNode* tmp2 = 0;
 
-			if(column == 0) {
-				set_index_node(index, node);
-			}
+        while (row_iter && (row_iter != node)) {
 
-		}
+          tmp1 = row_iter;
 
-		return index;
-	}
+          while (ref_iter->right) {   // add one row
 
-	void AbstractListModel::DestroyChildNode (ModelNode* node)
-	{
-		DBG_ASSERT(node);
-		DBG_ASSERT(node->left == 0);	// only the first left node has child
+            tmp2 = new ModelNode;
+            tmp1->right = tmp2;
+            tmp2->left = tmp1;
+            tmp1 = tmp2;
 
-		if(node->child) {
-			DestroyChildNode(node->child);
-			node->child = 0;
-		}
+            ref_iter = ref_iter->right;
+          }
 
-		ModelNode* parent = node->parent;
-		ModelNode* tmp = 0;
+          ref_iter = node;
+          row_iter = row_iter->down;
+        }
 
-		while(node) {
+      } else {
 
-			tmp = node->down;
+        node->up->down = first;
+        first->up = node->up;
+        last->down = node;
+        node->up = last;
 
-			DestroyRow(node);
-			node = tmp;
-			node->parent = parent;	// no needed but looks resonable
+        ModelNode* row_iter = first;
+        ModelNode* ref_iter = node;
+        ModelNode* tmp1 = 0;
+        ModelNode* tmp2 = 0;
 
-		}
-	}
+        while (row_iter && (row_iter != node)) {
 
-	void AbstractListModel::DestroyRow (ModelNode* node)
-	{
-		DBG_ASSERT(node);
-		DBG_ASSERT(node->child == 0);
-		DBG_ASSERT(node->left == 0);
+          tmp1 = row_iter;
 
-		ModelNode* tmp = 0;
-		while (node) {
+          while (ref_iter->right) {   // add one row
 
-			if(node->up) {
-				node->up->down = node->down;
-			}
-			if(node->down) {
-				node->down->up = node->up;
-			}
+            tmp2 = new ModelNode;
+            tmp1->right = tmp2;
+            tmp2->left = tmp1;
+            tmp1 = tmp2;
 
-			tmp = node->right;
-			delete node;
-			node = tmp;
-		}
-	}
+            ref_iter = ref_iter->right;
+          }
 
-	void AbstractListModel::ClearAllChildNodes()
-	{
-		ModelNode* node = root_->child;
+          ref_iter = node;
+          row_iter = row_iter->down;
+        }
 
-		if(node) {
+      }
 
-			ModelNode* next = 0;
-			while(node){
-				next = node->down;
-				DestroyRow(node);
-				node = next;
-			}
+    } else {	// too large row given, append to tail
 
-			root_->child = 0;
+      DBG_ASSERT(node);
+      DBG_ASSERT(node->down == 0);
 
-		}
-	}
+      node->down = first;
+      first->up = node;
+
+      ModelNode* row_iter = first;
+      ModelNode* ref_iter = node;
+      ModelNode* tmp1 = 0;
+      ModelNode* tmp2 = 0;
+
+      while (row_iter) {
+
+        tmp1 = row_iter;
+
+        while (ref_iter->right) {   // add one row
+
+          tmp2 = new ModelNode;
+          tmp1->right = tmp2;
+          tmp2->left = tmp1;
+          tmp1 = tmp2;
+
+          ref_iter = ref_iter->right;
+        }
+
+        ref_iter = node;
+        row_iter = row_iter->down;
+      }
+
+    }
+  }
+
+  return true;
+}
+
+bool AbstractListModel::RemoveRows (int row,
+                                    int count,
+                                    const ModelIndex& parent)
+{
+  if (!parent.valid()) return false;
+
+  DBG_ASSERT(count > 0);
+  DBG_ASSERT(row >= 0);
+
+  ModelNode* node = get_index_node(parent);
+  if (node->child == 0) return false;
+
+  node = node->child;
+
+  while (node->down && (row > 0)) {
+    node = node->down;
+    row--;
+  }
+
+  if (row == 0) {
+
+    ModelNode* first = node->up;
+    ModelNode* last = node;
+
+    for (int i = 0; i < count; i++) {
+      last = node->down;
+      DestroyRow(node);
+      node = last;
+
+      if (node == 0) break;
+    }
+
+    node = get_index_node(parent);
+    if (first == 0) {
+
+      if (last == 0) {	// clear the list
+        node->child = 0;
+      } else {	// remove the first count rows from the original list
+        node->child = last;
+        last->parent = node;
+        last->up = 0;
+      }
+
+    } else {
+      first->down = last;
+      if (last) {
+        last->up = first;
+      }
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+ModelIndex AbstractListModel::GetRootIndex () const
+{
+  ModelIndex retval;
+  set_index_node(retval, root_);
+
+  return retval;
+}
+
+ModelIndex AbstractListModel::GetIndex (int row,
+                                        int column,
+                                        const ModelIndex& parent) const
+{
+  ModelIndex index;
+  if (!parent.valid()) return index;
+
+  ModelNode* parent_node = get_index_node(parent);
+  ModelNode* node = parent_node->child;
+
+  if (node == 0) return index;
+
+  // move row down
+  while (node->down && (row > 0)) {
+    node = node->down;
+    row--;
+  }
+
+  if (row == 0) {
+
+    while (node->right && (column > 0)) {
+      node = node->right;
+      column--;
+    }
+
+    if (column == 0) {
+      set_index_node(index, node);
+    }
+
+  }
+
+  return index;
+}
+
+void AbstractListModel::DestroyChildNode (ModelNode* node)
+{
+  DBG_ASSERT(node);
+  DBG_ASSERT(node->left == 0);	// only the first left node has child
+
+  if (node->child) {
+    DestroyChildNode(node->child);
+    node->child = 0;
+  }
+
+  ModelNode* parent = node->parent;
+  ModelNode* tmp = 0;
+
+  while (node) {
+
+    tmp = node->down;
+
+    DestroyRow(node);
+    node = tmp;
+    node->parent = parent;	// no needed but looks resonable
+
+  }
+}
+
+void AbstractListModel::DestroyRow (ModelNode* node)
+{
+  DBG_ASSERT(node);
+  DBG_ASSERT(node->child == 0);
+  DBG_ASSERT(node->left == 0);
+
+  ModelNode* tmp = 0;
+  while (node) {
+
+    if (node->up) {
+      node->up->down = node->down;
+    }
+    if (node->down) {
+      node->down->up = node->up;
+    }
+
+    tmp = node->right;
+    delete node;
+    node = tmp;
+  }
+}
+
+void AbstractListModel::ClearAllChildNodes ()
+{
+  ModelNode* node = root_->child;
+
+  if (node) {
+
+    ModelNode* next = 0;
+    while (node) {
+      next = node->down;
+      DestroyRow(node);
+      node = next;
+    }
+
+    root_->child = 0;
+
+  }
+}
 
 }
