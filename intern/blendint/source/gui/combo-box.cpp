@@ -113,7 +113,7 @@ int ComboListModel::GetPreferredColumnWidth (int index,
                                              const ModelIndex& parent) const
 {
   if (index == 0) {
-    return max_icon_size_.width();
+    return std::max(Font::default_height(), max_icon_size_.width());
   }
 
   if (index == 1) {
@@ -235,9 +235,10 @@ Size ComboListView::GetPreferredSize () const
       height += model_->GetPreferredRowHeight(i, root);
     }
 
+    width += pixel_size(kPaddingLeft + kPaddingRight);
     return Size(width, height);
   } else {
-    return Size(240, 320);
+    return Size(200, Font::default_height());
   }
 }
 
@@ -272,7 +273,7 @@ ModelIndex ComboListView::GetIndexAt (const Point& point) const
 
 Response ComboListView::Draw (AbstractWindow* context)
 {
-  int y = size().height();
+  // int y = size().height();
   const int h = Font::default_height();
 
   AbstractWindow::shaders()->widget_inner_program()->use();
@@ -292,6 +293,7 @@ Response ComboListView::Draw (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
   context->EndPushStencil();
 
+  /*
   AbstractWindow::shaders()->widget_triangle_program()->use();
 
   glUniform1i(
@@ -330,21 +332,37 @@ Response ComboListView::Draw (AbstractWindow* context)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     i++;
   }
+  */
 
-  RefPtr<AbstractItemModel> model = GetModel();
-  if (model) {
+  if (model_) {
 
-    ModelIndex index = model->GetRootIndex();
+    ModelIndex index = model_->GetRootIndex();
     index = index.GetChildIndex(0, 0);
+    ModelIndex next;
 
-    Rect rect(0, size().height() - h, size().width(), h);
+    Rect rect(pixel_size(kPaddingLeft), size().height() - h, h, h);
 
     while (index.valid()) {
+
       index.GetData()->DrawInRect(
-          rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-          AbstractWindow::theme()->regular().text.data());
+          rect, AlignCenter | AlignJustify | AlignBaseline,
+          AbstractWindow::theme()->menu_back().text.data());
+
+      next = index.GetRightIndex();
+      while (next.valid()) {
+
+        rect.set_width(size().width() - pixel_size(kPaddingLeft + kPaddingRight) - h);
+        rect.set_x(rect.x() + h);
+        next.GetData()->DrawInRect(
+            rect, AlignRight | AlignJustify | AlignBaseline,
+            AbstractWindow::theme()->menu_back().text.data());
+        next = next.GetRightIndex();
+      }
+
       index = index.GetDownIndex();
+      rect.set_x(pixel_size(kPaddingLeft));
       rect.set_y(rect.y() - h);
+      rect.set_width(h);
     }
 
   }

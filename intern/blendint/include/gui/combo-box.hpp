@@ -140,6 +140,10 @@ private:
   RefPtr<AbstractItemModel> model_;
 
   int highlight_index_;
+
+  static const int kPaddingLeft = 5;
+
+  static const int kPaddingRight = 5;
 };
 
 // ----------------
