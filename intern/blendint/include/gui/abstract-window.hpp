@@ -134,6 +134,8 @@ public:
    */
   virtual void MakeCurrent () = 0;
 
+  virtual void SwapBuffer () = 0;
+
   /**
    * @brief Synchronize this window to redraw contents
    */
@@ -319,6 +321,26 @@ protected:
   static glm::mat4 default_view_matrix;
 
   static boost::thread::id kMainThreadID;
+
+  static inline void reset_refresh_status (AbstractWindow* window)
+  {
+    window->set_refresh(false);
+  }
+
+  static inline bool predraw_window (AbstractWindow* window)
+  {
+    return window->PreDraw(window);
+  }
+
+  static inline void draw_window (AbstractWindow* window)
+  {
+    window->Draw(window);
+  }
+
+  static inline void postdraw_window (AbstractWindow* window)
+  {
+    window->PostDraw(window);
+  }
 
   static Theme* kTheme;
 

@@ -31,201 +31,210 @@
 
 namespace BlendInt {
 
-  class AbstractItemModel;
-  class ModelIndex;
+class AbstractItemModel;
+class ModelIndex;
 
-  extern inline bool operator == (const ModelIndex& src, const ModelIndex& dst);
+extern inline bool operator == (const ModelIndex& src, const ModelIndex& dst);
 
-  struct ModelNode
+struct ModelNode
+{
+  inline ModelNode ()
+      : parent(0), child(0), up(0), down(0), left(0), right(0)
   {
-    inline ModelNode ()
-        : parent(0), child(0), up(0), down(0), left(0), right(0)
-    {
-    }
-
-    inline ~ModelNode ()
-    {
-      // DBG_PRINT_MSG("%s", "model node destroyed");
-    }
-
-    ModelNode* parent;
-    ModelNode* child;
-    ModelNode* up;
-    ModelNode* down;
-    ModelNode* left;
-    ModelNode* right;
-
-    RefPtr<AbstractForm> data;
-  };
-
-  class ModelIndex
-  {
-  public:
-
-    inline ModelIndex ()
-        : node_(0)
-    {
-    }
-
-    inline ModelIndex (const ModelIndex& orig)
-        : node_(orig.node_)
-    {
-    }
-
-    inline ~ModelIndex ()
-    {
-    }
-
-    ModelIndex& operator = (const ModelIndex& orig);
-
-    int GetRow () const;
-
-    int GetColumn () const;
-
-    RefPtr<AbstractForm> GetData () const;
-
-    const AbstractForm* GetRawData () const;
-
-    ModelIndex GetRootIndex () const;
-
-    ModelIndex GetParentIndex () const;
-
-    ModelIndex GetChildIndex (int row = 0, int column = 0) const;
-
-    ModelIndex GetLeftIndex () const;
-
-    ModelIndex GetRightIndex () const;
-
-    ModelIndex GetUpIndex () const;
-
-    ModelIndex GetDownIndex () const;
-
-    ModelIndex GetSibling (int row, int column) const;
-
-    inline bool valid () const
-    {
-      return node_ != 0;
-    }
-
-    inline bool operator != (const ModelIndex& other) const
-    {
-      return node_ != other.node_;
-    }
-
-    inline bool operator == (const ModelIndex& other) const
-    {
-      return node_ == other.node_;
-    }
-
-  private:
-
-    friend class AbstractItemModel;
-    friend inline bool operator == (const ModelIndex& src,
-                                    const ModelIndex& dst);
-
-    ModelNode* node_;
-  };
-
-  inline bool operator == (const ModelIndex& src, const ModelIndex& dst)
-  {
-    return src.node_ == dst.node_;
   }
 
-  /**
-   * @brief The abstract interface for item model classes.
-   *
-   * The AbstractItemModel class defines the standard interface that
-   * item models must use to be able to interoperate with other
-   * components in the model/view architecture. It is not supposed
-   * to be instantiated directly. Instead, you should subclass it to
-   * create new model.
-   *
-   * @note The MVC in BlendInt is implemented with reference to Qt's
-   * <a
-   * href="http://doc.qt.io/qt-5/model-view-programming.html">model/view
-   * framework</a>.
-   */
-  class AbstractItemModel: public Object
+  inline ~ModelNode ()
   {
+    // DBG_PRINT_MSG("%s", "model node destroyed");
+  }
 
-  public:
+  ModelNode* parent;
+  ModelNode* child;
+  ModelNode* up;
+  ModelNode* down;
+  ModelNode* left;
+  ModelNode* right;
 
-    AbstractItemModel ();
+  RefPtr<AbstractForm> data;
+};
 
-    virtual ~AbstractItemModel ();
+class ModelIndex
+{
+public:
 
-    /**
-     * @brief Get the row count
-     */
-    virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const = 0;
+  inline ModelIndex ()
+      : node_(0)
+  {
+  }
 
-    /**
-     * @brief Get the column count
-     */
-    virtual int GetColumnCount (const ModelIndex& parent =
-        ModelIndex()) const = 0;
+  inline ModelIndex (const ModelIndex& orig)
+      : node_(orig.node_)
+  {
+  }
 
-    virtual bool HasChild (const ModelIndex& parent = ModelIndex()) const;
+  inline ~ModelIndex ()
+  {
+  }
 
-    bool InsertColumn (int column, const ModelIndex& parent = ModelIndex());
+  ModelIndex& operator = (const ModelIndex& orig);
 
-    virtual bool InsertColumns (int column,
-                                int count,
-                                const ModelIndex& parent = ModelIndex()) = 0;
+  int GetRow () const;
 
-    bool RemoveColumn (int column, const ModelIndex& parent = ModelIndex());
+  int GetColumn () const;
 
-    virtual bool RemoveColumns (int column,
-                                int count,
-                                const ModelIndex& parent = ModelIndex()) = 0;
+  RefPtr<AbstractForm> GetData () const;
 
-    bool RemoveRow (int row, const ModelIndex& parent = ModelIndex());
+  const AbstractForm* GetRawData () const;
 
-    virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex()) = 0;
+  ModelIndex GetRootIndex () const;
 
-    bool InsertRow (int row, const ModelIndex& parent = ModelIndex());
+  ModelIndex GetParentIndex () const;
 
-    virtual bool InsertRows (int row, int count, const ModelIndex& parent =
-                                 ModelIndex()) = 0;
+  ModelIndex GetChildIndex (int row = 0, int column = 0) const;
 
-    virtual ModelIndex GetRootIndex () const = 0;
+  ModelIndex GetLeftIndex () const;
 
-    virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent =
-                                     ModelIndex()) const = 0;
+  ModelIndex GetRightIndex () const;
 
-    virtual bool SetData (const ModelIndex& index,
-                          const RefPtr<AbstractForm>& data);
+  ModelIndex GetUpIndex () const;
 
-    /**
-     * @brief Get the font used to show string in this model
-     */
-    virtual BlendInt::Font GetFont (const ModelIndex& parent =
-        ModelIndex()) const;
+  ModelIndex GetDownIndex () const;
 
-  protected:
+  ModelIndex GetSibling (int row, int column) const;
 
-    static inline bool set_index_data (const ModelIndex& index,
-                                       const RefPtr<AbstractForm>& data)
-    {
-      if (index.node_) {
-        index.node_->data = data;
-        return true;
-      } else {
-        return false;
-      }
+  inline bool valid () const
+  {
+    return node_ != 0;
+  }
+
+  inline bool operator != (const ModelIndex& other) const
+  {
+    return node_ != other.node_;
+  }
+
+  inline bool operator == (const ModelIndex& other) const
+  {
+    return node_ == other.node_;
+  }
+
+private:
+
+  friend class AbstractItemModel;
+  friend inline bool operator == (const ModelIndex& src, const ModelIndex& dst);
+
+  ModelNode* node_;
+};
+
+inline bool operator == (const ModelIndex& src, const ModelIndex& dst)
+{
+  return src.node_ == dst.node_;
+}
+
+/**
+ * @brief The abstract interface for item model classes.
+ *
+ * The AbstractItemModel class defines the standard interface that
+ * item models must use to be able to interoperate with other
+ * components in the model/view architecture. It is not supposed
+ * to be instantiated directly. Instead, you should subclass it to
+ * create new model.
+ *
+ * @note The MVC in BlendInt is implemented with reference to Qt's
+ * <a
+ * href="http://doc.qt.io/qt-5/model-view-programming.html">model/view
+ * framework</a>.
+ */
+class AbstractItemModel: public Object
+{
+
+public:
+
+  AbstractItemModel ();
+
+  virtual ~AbstractItemModel ();
+
+  /**
+   * @brief Get the row count
+   */
+  virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const = 0;
+
+  /**
+   * @brief Get the column count
+   */
+  virtual int GetColumnCount (const ModelIndex& parent =
+      ModelIndex()) const = 0;
+
+  /**
+   * @brief Get the preferred width for the column
+   * @param[in] index the column index
+   * @param[in] parent the parent model index
+   */
+  virtual int GetPreferredColumnWidth (int index, const ModelIndex& parent =
+                                           ModelIndex()) const = 0;
+
+  bool InsertColumn (int column, const ModelIndex& parent = ModelIndex());
+
+  virtual bool InsertColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex()) = 0;
+
+  /**
+   * @brief Get the preferred height for row
+   */
+  virtual int GetPreferredRowHeight (int index, const ModelIndex& parent =
+                                         ModelIndex()) const = 0;
+
+  bool RemoveColumn (int column, const ModelIndex& parent = ModelIndex());
+
+  virtual bool RemoveColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex()) = 0;
+
+  bool RemoveRow (int row, const ModelIndex& parent = ModelIndex());
+
+  virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex()) = 0;
+
+  bool InsertRow (int row, const ModelIndex& parent = ModelIndex());
+
+  virtual bool InsertRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex()) = 0;
+
+  virtual ModelIndex GetRootIndex () const = 0;
+
+  virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent =
+                                   ModelIndex()) const = 0;
+
+  virtual bool SetData (const ModelIndex& index,
+                        const RefPtr<AbstractForm>& data);
+
+  /**
+   * @brief Get the font used to show string in this model
+   */
+  virtual BlendInt::Font GetFont (const ModelIndex& parent =
+      ModelIndex()) const;
+
+protected:
+
+  static inline bool set_index_data (const ModelIndex& index,
+                                     const RefPtr<AbstractForm>& data)
+  {
+    if (index.node_) {
+      index.node_->data = data;
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    static inline void set_index_node (ModelIndex& index, ModelNode* node)
-    {
-      index.node_ = node;
-    }
+  static inline void set_index_node (ModelIndex& index, ModelNode* node)
+  {
+    index.node_ = node;
+  }
 
-    static inline ModelNode* get_index_node (const ModelIndex& index)
-    {
-      return index.node_;
-    }
+  static inline ModelNode* get_index_node (const ModelIndex& index)
+  {
+    return index.node_;
+  }
 
-  };
+};
 
 }

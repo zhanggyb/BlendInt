@@ -94,6 +94,19 @@ namespace BlendInt {
 		return retval;
 	}
 
+int StringListModel::GetPreferredColumnWidth (int index,
+                                              const ModelIndex& parent) const
+{
+  // TODO: return a correct width
+  return 80;
+}
+
+int StringListModel::GetPreferredRowHeight (int index,
+                                            const ModelIndex& parent) const
+{
+  return BlendInt::Font::default_height();
+}
+
 	bool StringListModel::RemoveRows (int row, int count,
 	        const ModelIndex& parent)
 	{

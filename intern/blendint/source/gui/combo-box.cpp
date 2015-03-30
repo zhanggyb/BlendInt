@@ -109,6 +109,26 @@ int ComboListModel::GetColumnCount (const ModelIndex& parent) const
   return columns_;
 }
 
+int ComboListModel::GetPreferredColumnWidth (int index,
+                                             const ModelIndex& parent) const
+{
+  if (index == 0) {
+    return max_icon_size_.width();
+  }
+
+  if (index == 1) {
+    return max_text_size_.width();
+  }
+
+  return 80;
+}
+
+int ComboListModel::GetPreferredRowHeight (int index,
+                                           const ModelIndex& parent) const
+{
+  return std::max(max_icon_size_.height(), Font::default_height());
+}
+
 void ComboListModel::SetIcon (const ModelIndex& index,
                               const RefPtr<AbstractIcon>& icon)
 {
@@ -202,11 +222,19 @@ bool ComboListView::IsExpandY () const
 Size ComboListView::GetPreferredSize () const
 {
   if (model_) {
-    int width = model_->max_icon_size().width()
-        + model_->max_text_size().width();
+    ModelIndex root = model_->GetRootIndex();
+    int columns = model_->GetColumnCount(root);
+    int width = 0;
+    for (int i = 0; i < columns; i++) {
+      width += model_->GetPreferredColumnWidth(i, root);
+    }
 
-    int height = Font::default_height()
-        * model_->GetRowCount(model_->GetRootIndex());
+    int rows = model_->GetRowCount(root);
+    int height = 0;
+    for (int i = 0; i < rows; i++) {
+      height += model_->GetPreferredRowHeight(i, root);
+    }
+
     return Size(width, height);
   } else {
     return Size(240, 320);

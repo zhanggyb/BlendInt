@@ -27,83 +27,99 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A data model based on boost::filesystem for the local file system
-	 *
-	 * This data model contains 6 columns by default:
-	 * <Name> - <Type> - <Owner> - <Group> - <Permissions> - <Last write time>
-	 *
-	 * The default constructor does nothing, use Load() to load and store a file
-	 * list in a path.
-	 */
-	class FileSystemModel: public AbstractItemModel
-	{
-	public:
+/**
+ * @brief A data model based on boost::filesystem for the local file system
+ *
+ * This data model contains 6 columns by default:
+ * <Name> - <Type> - <Owner> - <Group> - <Permissions> - <Last write time>
+ *
+ * The default constructor does nothing, use Load() to load and store a file
+ * list in a path.
+ */
+class FileSystemModel: public AbstractItemModel
+{
+public:
 
-		FileSystemModel ();
+  FileSystemModel ();
 
-		virtual ~FileSystemModel ();
+  virtual ~FileSystemModel ();
 
-		/**
-		 * @brief List files in a path
-		 * @param pathname The path name
-		 * @return
-		 * 	- true success
-		 * 	- false failure
-		 */
-		bool Load (const std::string& pathname);
+  /**
+   * @brief List files in a path
+   * @param pathname The path name
+   * @return
+   * 	- true success
+   * 	- false failure
+   */
+  bool Load (const std::string& pathname);
 
-		void Clear ();
+  void Clear ();
 
-		virtual int GetRowCount (const ModelIndex& superview = ModelIndex()) const;
+  virtual int GetRowCount (const ModelIndex& superview = ModelIndex()) const
+      override;
 
-		virtual int GetColumnCount (const ModelIndex& superview = ModelIndex()) const;
+  virtual int GetPreferredColumnWidth (int index, const ModelIndex& parent =
+                                           ModelIndex()) const override;
 
-		virtual bool InsertColumns (int column, int count, const ModelIndex& superview = ModelIndex());
+  virtual int GetColumnCount (const ModelIndex& superview = ModelIndex()) const;
 
-		virtual bool RemoveColumns (int column, int count, const ModelIndex& superview = ModelIndex());
+  virtual int GetPreferredRowHeight (int index, const ModelIndex& parent =
+                                         ModelIndex()) const override;
 
-		virtual bool InsertRows (int row, int count, const ModelIndex& superview = ModelIndex());
+  virtual bool InsertColumns (int column,
+                              int count,
+                              const ModelIndex& superview = ModelIndex());
 
-		virtual bool RemoveRows (int row, int count, const ModelIndex& superview = ModelIndex());
+  virtual bool RemoveColumns (int column,
+                              int count,
+                              const ModelIndex& superview = ModelIndex());
 
-		virtual ModelIndex GetRootIndex () const;
+  virtual bool InsertRows (int row, int count, const ModelIndex& superview =
+                               ModelIndex());
 
-		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& superview = ModelIndex()) const;
+  virtual bool RemoveRows (int row, int count, const ModelIndex& superview =
+                               ModelIndex());
+
+  virtual ModelIndex GetRootIndex () const;
+
+  virtual ModelIndex GetIndex (int row,
+                               int column,
+                               const ModelIndex& superview =
+                                   ModelIndex()) const;
 
 #ifdef DEBUG
 
-		void Print ();
+  void Print ();
 
-		void PrintRow (ModelNode* first);
+  void PrintRow (ModelNode* first);
 
 #endif	// DEBUG
 
-	protected:
+protected:
 
-		const ModelNode* root () const
-		{
-			return root_;
-		}
+  const ModelNode* root () const
+  {
+    return root_;
+  }
 
-	private:
+private:
 
-		void InsertColumns (int column, int count, ModelNode* left);
+  void InsertColumns (int column, int count, ModelNode* left);
 
-		void DestroyColumnsInRow (int column, int count, ModelNode* node);
+  void DestroyColumnsInRow (int column, int count, ModelNode* node);
 
-		static void DestroyRow (ModelNode* node);
+  static void DestroyRow (ModelNode* node);
 
-		static void DestroyColumn (ModelNode* node);
+  static void DestroyColumn (ModelNode* node);
 
-		int rows_;
+  int rows_;
 
-		int columns_;
+  int columns_;
 
-		ModelNode* root_;
+  ModelNode* root_;
 
-		static const int DefaultColumns = 5;
+  static const int DefaultColumns = 5;
 
-	};
+};
 
 }

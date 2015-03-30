@@ -28,275 +28,266 @@
 
 namespace BlendInt {
 
-  ModelIndex& ModelIndex::operator = (const ModelIndex& orig)
-  {
-    node_ = orig.node_;
-    return *this;
-  }
+ModelIndex& ModelIndex::operator = (const ModelIndex& orig)
+{
+  node_ = orig.node_;
+  return *this;
+}
 
-  int ModelIndex::GetRow () const
-  {
-    if (node_) {
-
-      ModelNode* node = node_;
-
-      // move to the first node of a column
-      while (node->left) {
-        node = node->left;
-      }
-
-      int count = 0;
-      while (node->up) {
-        node = node->up;
-        count++;
-      }
-
-      return count;
-    } else {
-      return 0;
-    }
-  }
-
-  int ModelIndex::GetColumn () const
-  {
-    if (node_) {
-
-      ModelNode* node = node_;
-      int count = 0;
-      while (node->left) {
-        node = node->left;
-        count++;
-      }
-
-      return count;
-
-    } else {
-      return 0;
-    }
-  }
-
-  RefPtr<AbstractForm> ModelIndex::GetData () const
-  {
-    if (node_) {
-      return node_->data;
-    } else {
-      return RefPtr<AbstractForm>(0);
-    }
-  }
-
-  const AbstractForm* ModelIndex::GetRawData () const
-  {
-    if (node_) {
-      return node_->data.get();
-    } else {
-      return 0;
-    }
-  }
-
-  ModelIndex ModelIndex::GetRootIndex () const
-  {
-    ModelIndex retval;
-
-    if (node_) {
-
-      ModelNode* node = node_->parent;
-
-      while (node->parent) {
-        node = node->parent;
-      }
-
-      retval.node_ = node;
-    }
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetParentIndex () const
-  {
-    ModelIndex retval;
-    if (node_) {
-      retval.node_ = node_->parent;
-    }
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetChildIndex (int row, int column) const
-  {
-    ModelIndex retval;
-
-    if (node_->child) {
-
-      ModelNode* node = node_->child;
-
-      DBG_ASSERT(node->up == 0);
-      DBG_ASSERT(node->left == 0);
-
-      while ((row > 0) && node->down) {
-        node = node->down;
-        row--;
-      }
-
-      if (row != 0) {	// did not get row
-        return retval;
-      }
-
-      while ((column > 0) && node->right) {
-        node = node->right;
-        column--;
-      }
-
-      if (column != 0) {	// did not get column
-        return retval;
-      }
-
-      DBG_ASSERT(node != 0);
-
-      retval.node_ = node;
-    }
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetLeftIndex () const
-  {
-    ModelIndex retval;
-    retval.node_ = node_->left;
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetRightIndex () const
-  {
-    ModelIndex retval;
-    retval.node_ = node_->right;
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetUpIndex () const
-  {
-    ModelIndex retval;
-    retval.node_ = node_->up;
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetDownIndex () const
-  {
-    ModelIndex retval;
-    retval.node_ = node_->down;
-
-    return retval;
-  }
-
-  ModelIndex ModelIndex::GetSibling (int row, int column) const
-  {
-    ModelIndex retval;
-
-    if (node_ == 0) return retval;
-
-    int row_offset = row;
-    int column_offset = column;
+int ModelIndex::GetRow () const
+{
+  if (node_) {
 
     ModelNode* node = node_;
 
-    while (node->up) {
-      node = node->up;
-      row_offset--;
-    }
+    // move to the first node of a column
     while (node->left) {
       node = node->left;
+    }
+
+    int count = 0;
+    while (node->up) {
+      node = node->up;
+      count++;
+    }
+
+    return count;
+  } else {
+    return 0;
+  }
+}
+
+int ModelIndex::GetColumn () const
+{
+  if (node_) {
+
+    ModelNode* node = node_;
+    int count = 0;
+    while (node->left) {
+      node = node->left;
+      count++;
+    }
+
+    return count;
+
+  } else {
+    return 0;
+  }
+}
+
+RefPtr<AbstractForm> ModelIndex::GetData () const
+{
+  if (node_) {
+    return node_->data;
+  } else {
+    return RefPtr<AbstractForm>(0);
+  }
+}
+
+const AbstractForm* ModelIndex::GetRawData () const
+{
+  if (node_) {
+    return node_->data.get();
+  } else {
+    return 0;
+  }
+}
+
+ModelIndex ModelIndex::GetRootIndex () const
+{
+  ModelIndex retval;
+
+  if (node_) {
+
+    ModelNode* node = node_->parent;
+
+    while (node->parent) {
+      node = node->parent;
+    }
+
+    retval.node_ = node;
+  }
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetParentIndex () const
+{
+  ModelIndex retval;
+  if (node_) {
+    retval.node_ = node_->parent;
+  }
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetChildIndex (int row, int column) const
+{
+  ModelIndex retval;
+
+  if (node_->child) {
+
+    ModelNode* node = node_->child;
+
+    DBG_ASSERT(node->up == 0);
+    DBG_ASSERT(node->left == 0);
+
+    while ((row > 0) && node->down) {
+      node = node->down;
+      row--;
+    }
+
+    if (row != 0) {	// did not get row
+      return retval;
+    }
+
+    while ((column > 0) && node->right) {
+      node = node->right;
+      column--;
+    }
+
+    if (column != 0) {	// did not get column
+      return retval;
+    }
+
+    DBG_ASSERT(node != 0);
+
+    retval.node_ = node;
+  }
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetLeftIndex () const
+{
+  ModelIndex retval;
+  retval.node_ = node_->left;
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetRightIndex () const
+{
+  ModelIndex retval;
+  retval.node_ = node_->right;
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetUpIndex () const
+{
+  ModelIndex retval;
+  retval.node_ = node_->up;
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetDownIndex () const
+{
+  ModelIndex retval;
+  retval.node_ = node_->down;
+
+  return retval;
+}
+
+ModelIndex ModelIndex::GetSibling (int row, int column) const
+{
+  ModelIndex retval;
+
+  if (node_ == 0) return retval;
+
+  int row_offset = row;
+  int column_offset = column;
+
+  ModelNode* node = node_;
+
+  while (node->up) {
+    node = node->up;
+    row_offset--;
+  }
+  while (node->left) {
+    node = node->left;
+    column_offset--;
+  }
+
+  node = node_;
+
+  if (row_offset < 0) {
+    while (node->up) {
+      node = node->up;
+      row_offset++;
+    }
+  } else if (row_offset > 0) {
+    while (node->down) {
+      node = node->down;
+      row_offset--;
+    }
+  }
+
+  if (column_offset < 0) {
+    while (node->left) {
+      node = node->left;
+      column_offset++;
+    }
+  } else if (column_offset > 0) {
+    while (node->right) {
+      node = node->right;
       column_offset--;
     }
-
-    node = node_;
-
-    if (row_offset < 0) {
-      while (node->up) {
-        node = node->up;
-        row_offset++;
-      }
-    } else if (row_offset > 0) {
-      while (node->down) {
-        node = node->down;
-        row_offset--;
-      }
-    }
-
-    if (column_offset < 0) {
-      while (node->left) {
-        node = node->left;
-        column_offset++;
-      }
-    } else if (column_offset > 0) {
-      while (node->right) {
-        node = node->right;
-        column_offset--;
-      }
-    }
-
-    if (row_offset == 0 && column_offset == 0) {
-      retval.node_ = node;
-    }
-
-    return retval;
   }
 
-  // -------------------------------
-
-  AbstractItemModel::AbstractItemModel ()
-      : Object()
-  {
-
+  if (row_offset == 0 && column_offset == 0) {
+    retval.node_ = node;
   }
 
-  AbstractItemModel::~AbstractItemModel ()
-  {
-  }
+  return retval;
+}
 
-  bool AbstractItemModel::HasChild (const ModelIndex& parent) const
-  {
-    if (parent.node_) {
-      return parent.node_->child != 0;
-    } else {
-      return false;
-    }
-  }
+// -------------------------------
 
-  bool AbstractItemModel::InsertColumn (int column, const ModelIndex& parent)
-  {
-    return InsertColumns(column, 1, parent);
-  }
+AbstractItemModel::AbstractItemModel ()
+    : Object()
+{
 
-  bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& parent)
-  {
-    return RemoveColumns(column, 1, parent);
-  }
+}
 
-  bool AbstractItemModel::RemoveRow (int row, const ModelIndex& parent)
-  {
-    return RemoveRows(row, 1, parent);
-  }
+AbstractItemModel::~AbstractItemModel ()
+{
+}
 
-  bool AbstractItemModel::InsertRow (int row, const ModelIndex& parent)
-  {
-    return InsertRows(row, 1, parent);
-  }
+bool AbstractItemModel::InsertColumn (int column, const ModelIndex& parent)
+{
+  return InsertColumns(column, 1, parent);
+}
 
-  ModelIndex AbstractItemModel::GetRootIndex () const
-  {
-    return ModelIndex();
-  }
+bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& parent)
+{
+  return RemoveColumns(column, 1, parent);
+}
 
-  bool AbstractItemModel::SetData (const ModelIndex& index,
-                                   const RefPtr<AbstractForm>& data)
-  {
-    return set_index_data(index, data);
-  }
+bool AbstractItemModel::RemoveRow (int row, const ModelIndex& parent)
+{
+  return RemoveRows(row, 1, parent);
+}
 
-  BlendInt::Font AbstractItemModel::GetFont (const ModelIndex& parent) const
-  {
-    return BlendInt::Font();
-  }
+bool AbstractItemModel::InsertRow (int row, const ModelIndex& parent)
+{
+  return InsertRows(row, 1, parent);
+}
+
+ModelIndex AbstractItemModel::GetRootIndex () const
+{
+  return ModelIndex();
+}
+
+bool AbstractItemModel::SetData (const ModelIndex& index,
+                                 const RefPtr<AbstractForm>& data)
+{
+  return set_index_data(index, data);
+}
+
+BlendInt::Font AbstractItemModel::GetFont (const ModelIndex& parent) const
+{
+  return BlendInt::Font();
+}
 }

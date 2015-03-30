@@ -62,6 +62,12 @@ public:
   virtual int GetColumnCount (const ModelIndex& parent =
       ModelIndex()) const final;
 
+  virtual int GetPreferredColumnWidth (int index, const ModelIndex& parent =
+                                           ModelIndex()) const override;
+
+  virtual int GetPreferredRowHeight (int index, const ModelIndex& parent =
+                                         ModelIndex()) const override;
+
   void SetIcon (const ModelIndex& index, const RefPtr<AbstractIcon>& icon);
 
   void SetText (const ModelIndex& index, const RefPtr<Text>& text);
@@ -131,7 +137,7 @@ private:
 
   GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-  RefPtr<ComboListModel> model_;
+  RefPtr<AbstractItemModel> model_;
 
   int highlight_index_;
 };

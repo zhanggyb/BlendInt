@@ -27,42 +27,52 @@
 
 namespace BlendInt {
 
-	class StringListModel: public AbstractListModel
-	{
-	public:
+class StringListModel: public AbstractListModel
+{
+public:
 
-		StringListModel();
+  StringListModel ();
 
-		virtual ~StringListModel ();
+  virtual ~StringListModel ();
 
-		void AddString (const String& string);
+  void AddString (const String& string);
 
-		void InsertString (int row, const String& string);
+  void InsertString (int row, const String& string);
 
-		virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const;
+  virtual int GetRowCount (const ModelIndex& parent = ModelIndex()) const;
 
-		virtual int GetColumnCount (const ModelIndex& parent = ModelIndex()) const;
+  virtual int GetColumnCount (const ModelIndex& parent = ModelIndex()) const;
+
+  virtual int GetPreferredColumnWidth (int index, const ModelIndex& parent =
+                                           ModelIndex()) const override;
+
+  virtual int GetPreferredRowHeight (int index, const ModelIndex& parent =
+                                         ModelIndex()) const override;
 
 #ifdef DEBUG
 
-		void Print ();
+  void Print ();
 
 #endif
 
-	protected:
+protected:
 
-		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+  virtual bool InsertColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex());
 
-		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+  virtual bool RemoveColumns (int column, int count, const ModelIndex& parent =
+                                  ModelIndex());
 
-		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
+  virtual bool InsertRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex());
 
-		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
+  virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
+                               ModelIndex());
 
-	private:
+private:
 
-		int rows_;
+  int rows_;
 
-	};
+};
 
 }
