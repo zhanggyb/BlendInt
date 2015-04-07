@@ -56,15 +56,10 @@ find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
     set(LIBS ${LIBS} ${OPENGL_LIBRARIES})
-    if(OS_APPLE)
-        FIND_PATH(GL_H_INCLUDE_DIR gl.h)
-        include_directories(${GL_H_INCLUDE_DIR})
-    endif()
 endif()
 
 find_package(Freetype REQUIRED)
 if(FREETYPE_FOUND)
-    include_directories(/usr/include/freetype2)
     include_directories(${FREETYPE_INCLUDE_DIRS})
     set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
 endif()
@@ -190,6 +185,11 @@ if(ENABLE_OPENCV)
     find_package(OpenCV REQUIRED)
     add_definitions(-D__USE_OPENCV__)
     set(LIBS ${LIBS} ${OpenCV_LIBS})
+endif()
+
+if(OS_APPLE)    # more settings for OS X
+    # OS X RPATH: http://www.cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
+    set(CMAKE_MACOSX_RPATH 1)
 endif()
 
 add_subdirectory(intern/blendint/source)
