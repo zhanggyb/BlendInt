@@ -231,7 +231,7 @@ namespace BlendInt {
 	void Timer::ThreadCallback(union sigval sigev_value)
 	{
 		Timer* timer = static_cast<Timer*>(sigev_value.sival_ptr);
-		timer->timeout_.fire(timer);
+		timer->timeout_.Invoke(timer);
 	}
 
 #else
