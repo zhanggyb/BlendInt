@@ -390,13 +390,13 @@ namespace BlendInt {
         if (new_hovered_widget != hovered_widget_) {
 
           if (hovered_widget_) {
-            hovered_widget_->destroyed().disconnectOne(
+            hovered_widget_->destroyed().disconnect1(
                 this, &AbstractNode::OnHoverWidgetDestroyed);
           }
 
           hovered_widget_ = new_hovered_widget;
           if (hovered_widget_) {
-            events()->connect(hovered_widget_->destroyed(), this,
+            hovered_widget_->destroyed().connect(this,
                               &AbstractNode::OnHoverWidgetDestroyed);
           }
 
@@ -490,14 +490,14 @@ namespace BlendInt {
 
     if (focused_widget_) {
       dispatch_focus_off(focused_widget_, context);
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &AbstractNode::OnFocusedWidgetDestroyed);
     }
 
     focused_widget_ = widget;
     if (focused_widget_) {
       dispatch_focus_on(focused_widget_, context);
-      events()->connect(focused_widget_->destroyed(), this,
+      focused_widget_->destroyed().connect(this,
                         &AbstractNode::OnFocusedWidgetDestroyed);
     }
   }
@@ -719,7 +719,7 @@ namespace BlendInt {
   {
     DBG_ASSERT(focused_widget_ == widget);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-    widget->destroyed().disconnectOne(this,
+    widget->destroyed().disconnect1(this,
                                       &AbstractNode::OnFocusedWidgetDestroyed);
 
     focused_widget_ = 0;
@@ -729,7 +729,7 @@ namespace BlendInt {
   {
     DBG_ASSERT(hovered_widget_ == widget);
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-    widget->destroyed().disconnectOne(this,
+    widget->destroyed().disconnect1(this,
                                       &AbstractNode::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;

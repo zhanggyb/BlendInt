@@ -77,7 +77,7 @@ public:
 
   virtual const Point& GetGlobalCursorPosition () const;
 
-  Cpp::EventRef<const Size&> resized ()
+  CppEvent::EventRef<const Size&> resized ()
   {
     return resized_;
   }
@@ -110,7 +110,7 @@ private:
 
   bool visible_;
 
-  Cpp::Event<const Size&> resized_;
+  CppEvent::Event<const Size&> resized_;
 
   static GLFWcursor* kArrowCursor;
 

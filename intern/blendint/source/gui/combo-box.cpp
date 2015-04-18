@@ -871,7 +871,7 @@ Response ComboBox::PerformMousePress (AbstractWindow* context)
     popup_ = menu;
     popup_->Resize(popup_->GetPreferredSize());
 
-    events()->connect(popup_->destroyed(), this,
+    popup_->destroyed().connect(this,
                       &ComboBox::OnPopupListDestroyed);
 
     Point pos = context->GetAbsolutePosition(this);
@@ -968,7 +968,7 @@ void ComboBox::InitializeComboBox ()
 void ComboBox::OnPopupListDestroyed (AbstractFrame* frame)
 {
   //DBG_ASSERT(frame == popup_);
-  popup_->destroyed().disconnectOne(this, &ComboBox::OnPopupListDestroyed);
+  popup_->destroyed().disconnect1(this, &ComboBox::OnPopupListDestroyed);
   popup_ = 0;
   SetRoundType(last_round_status_);
   status_down_ = false;

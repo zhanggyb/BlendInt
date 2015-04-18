@@ -23,9 +23,6 @@
 
 #pragma once
 
-#include <rapidxml.hpp>
-#include <rapidxml_utils.hpp>
-
 #include <core/types.hpp>
 #include <core/color.hpp>
 
@@ -37,8 +34,6 @@ class Theme;
 
 struct ColorScheme
 {
-  ColorScheme ();
-
   Color outline;		// Outline
   Color item;				// Item
   Color inner;			// Inner
@@ -49,6 +44,55 @@ struct ColorScheme
   short shadetop;			// Shade Top, -100 - 100
   short shadedown;	// Shade Down
   bool alpha_check;
+};
+
+struct ThemeData
+{
+  /* Interface Elements (buttons, menus, icons) */
+  ColorScheme regular;
+  ColorScheme tool;
+  ColorScheme text;
+  ColorScheme push_button;
+  ColorScheme radio_button;
+  ColorScheme option;
+  ColorScheme toggle;
+  ColorScheme number_field;
+  ColorScheme number_slider;
+  ColorScheme menu;
+  ColorScheme pulldown;
+  ColorScheme menu_back;
+  ColorScheme menu_item;
+  ColorScheme tab;
+  ColorScheme tooltip;
+  ColorScheme box;
+  ColorScheme scroll;
+  ColorScheme progress;
+  ColorScheme list_item;
+  ColorScheme dialog;
+  ColorScheme node;
+
+  /** Default font */
+  char default_font[256];
+
+  /** Font DPI */
+  unsigned int dpi;
+
+  /** How many pixels for 1 border */
+  short pixel;
+
+  /* fac: 0 - 1 for blend factor, width in pixels */
+  // NOT USED
+  float shadow_fac;
+
+  short shadow_width;
+
+  //short pad;
+
+  //char iconfile[256]; // FILE_MAXFILE length
+  //float icon_alpha;
+
+  /* Axis Colors */
+  Color xaxis, yaxis, zaxis;
 };
 
 class Theme
@@ -70,144 +114,144 @@ public:
    */
   void Reset ();
 
-  const ColorScheme& box () const
+  inline const ColorScheme& box () const
   {
-    return box_;
+    return data_.box;
   }
 
-  const ColorScheme& list_item () const
+  inline const ColorScheme& list_item () const
   {
-    return list_item_;
+    return data_.list_item;
   }
 
-  const ColorScheme& menu () const
+  inline const ColorScheme& menu () const
   {
-    return menu_;
+    return data_.menu;
   }
 
-  const ColorScheme& menu_back () const
+  inline const ColorScheme& menu_back () const
   {
-    return menu_back_;
+    return data_.menu_back;
   }
 
-  const ColorScheme& menu_item () const
+  inline const ColorScheme& menu_item () const
   {
-    return menu_item_;
+    return data_.menu_item;
   }
 
-  const ColorScheme& number_field () const
+  inline const ColorScheme& number_field () const
   {
-    return number_field_;
+    return data_.number_field;
   }
 
-  const ColorScheme& number_slider () const
+  inline const ColorScheme& number_slider () const
   {
-    return number_slider_;
+    return data_.number_slider;
   }
 
-  const ColorScheme& option () const
+  inline const ColorScheme& option () const
   {
-    return option_;
+    return data_.option;
   }
 
-  const ColorScheme& progress () const
+  inline const ColorScheme& progress () const
   {
-    return progress_;
+    return data_.progress;
   }
 
-  const ColorScheme& pulldown () const
+  inline const ColorScheme& pulldown () const
   {
-    return pulldown_;
+    return data_.pulldown;
   }
 
-  const ColorScheme& push_button () const
+  inline const ColorScheme& push_button () const
   {
-    return push_button_;
+    return data_.push_button;
   }
 
-  const ColorScheme& radio_button () const
+  inline const ColorScheme& radio_button () const
   {
-    return radio_button_;
+    return data_.radio_button;
   }
 
-  const ColorScheme& regular () const
+  inline const ColorScheme& regular () const
   {
-    return regular_;
+    return data_.regular;
   }
 
-  const ColorScheme& scroll () const
+  inline const ColorScheme& scroll () const
   {
-    return scroll_;
+    return data_.scroll;
   }
 
-  const ColorScheme& tab () const
+  inline const ColorScheme& tab () const
   {
-    return tab_;
+    return data_.tab;
   }
 
-  const ColorScheme& text () const
+  inline const ColorScheme& text () const
   {
-    return text_;
+    return data_.text;
   }
 
-  const ColorScheme& toggle () const
+  inline const ColorScheme& toggle () const
   {
-    return toggle_;
+    return data_.toggle;
   }
 
-  const ColorScheme& tool () const
+  inline const ColorScheme& tool () const
   {
-    return tool_;
+    return data_.tool;
   }
 
-  const ColorScheme& tooltip () const
+  inline const ColorScheme& tooltip () const
   {
-    return tooltip_;
+    return data_.tooltip;
   }
 
-  const ColorScheme& dialog () const
+  inline const ColorScheme& dialog () const
   {
-    return dialog_;
+    return data_.dialog;
   }
 
-  const ColorScheme& node () const
+  inline const ColorScheme& node () const
   {
-    return node_;
+    return data_.node;
   }
 
-  const char* default_font () const
+  inline const char* default_font () const
   {
-    return default_font_;
+    return data_.default_font;
   }
 
-  unsigned int dpi () const
+  inline unsigned int dpi () const
   {
-    return dpi_;
+    return data_.dpi;
   }
 
-  short pixel () const
+  inline short pixel () const
   {
-    return pixel_;
+    return data_.pixel;
   }
 
-  float menu_shadow_fac1 () const
+  inline float menu_shadow_fac1 () const
   {
-    return shadow_fac_;
+    return data_.shadow_fac;
   }
 
-  short menu_shadow_width1 () const
+  inline short menu_shadow_width1 () const
   {
-    return shadow_width_;
+    return data_.shadow_width;
   }
 
-  float shadow_fac () const
+  inline float shadow_fac () const
   {
-    return shadow_fac_;
+    return data_.shadow_fac;
   }
 
-  short shadow_width () const
+  inline short shadow_width () const
   {
-    return shadow_width_;
+    return data_.shadow_width;
   }
 
 private:
@@ -227,59 +271,7 @@ private:
    */
   ~Theme ();
 
-  void ParseUINode (const rapidxml::xml_node<>* node);
-
-  void ParseColorSchemeNode (const rapidxml::xml_node<>* node);
-
-  rapidxml::xml_node<>* AllocateThemeNode (rapidxml::xml_document<>& doc,
-                                           const char* name,
-                                           const ColorScheme& wtheme);
-
-  /* Interface Elements (buttons, menus, icons) */
-  ColorScheme regular_;
-  ColorScheme tool_;
-  ColorScheme text_;
-  ColorScheme push_button_;
-  ColorScheme radio_button_;
-  ColorScheme option_;
-  ColorScheme toggle_;
-  ColorScheme number_field_;
-  ColorScheme number_slider_;
-  ColorScheme menu_;
-  ColorScheme pulldown_;
-  ColorScheme menu_back_;
-  ColorScheme menu_item_;
-  ColorScheme tab_;
-  ColorScheme tooltip_;
-  ColorScheme box_;
-  ColorScheme scroll_;
-  ColorScheme progress_;
-  ColorScheme list_item_;
-  ColorScheme dialog_;
-  ColorScheme node_;
-
-  /** Default font */
-  char default_font_[256];
-
-  /** Font DPI */
-  unsigned int dpi_;
-
-  /** How many pixels for 1 border */
-  short pixel_;
-
-  /* fac: 0 - 1 for blend factor, width in pixels */
-  // NOT USED
-  float shadow_fac_;
-
-  short shadow_width_;
-
-  //short pad;
-
-  //char iconfile[256];	// FILE_MAXFILE length
-  //float icon_alpha;
-
-  /* Axis Colors */
-  Color xaxis_, yaxis_, zaxis_;
+  ThemeData data_;
 
 DISALLOW_COPY_AND_ASSIGN(Theme);
 };

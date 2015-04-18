@@ -45,16 +45,12 @@ AbstractWidget::AbstractWidget ()
     : AbstractView()
 {
   set_view_type(ViewTypeWidget);
-
-  destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 }
 
 AbstractWidget::AbstractWidget (int width, int height)
     : AbstractView(width, height)
 {
   set_view_type(ViewTypeWidget);
-
-  destroyed_.reset(new Cpp::Event<AbstractWidget*>);
 }
 
 AbstractWidget::~AbstractWidget ()
@@ -69,7 +65,7 @@ AbstractWidget::~AbstractWidget ()
 
   if (super_) super_->RemoveSubView(this);
 
-  destroyed_->fire(this);
+  destroyed_.Invoke(this);
 }
 
 bool AbstractWidget::PreDraw (AbstractWindow* context)

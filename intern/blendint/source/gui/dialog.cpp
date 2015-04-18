@@ -46,7 +46,7 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
   title_layout->SetMargin(Margin(0, 0, 0, 0));
 
   CloseButton* close_button = Manage(new CloseButton);
-  events()->connect(close_button->clicked(), this,
+  close_button->clicked().connect(this,
                     &Dialog::OnCloseButtonClicked);
   Label* title_label = Manage(new Label(title, AlignCenter));
 
@@ -64,14 +64,14 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
   if (flags & DialogButtonApply) {
     PushButton* apply_button = Manage(new PushButton("Apply"));
     bottom_layout->AddWidget(apply_button);
-    events()->connect(apply_button->clicked(), this,
+    apply_button->clicked().connect(this,
                       &Dialog::OnApplyButtonClicked);
   }
 
   if (flags & DialogButtonOK) {
     PushButton* ok_button = Manage(new PushButton("OK"));
     bottom_layout->AddWidget(ok_button);
-    events()->connect(ok_button->clicked(), this, &Dialog::OnOKButtonClicked);
+    ok_button->clicked().connect(this, &Dialog::OnOKButtonClicked);
   }
 
   main_layout_ = Manage(new LinearLayout(Vertical));

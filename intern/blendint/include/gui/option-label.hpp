@@ -85,9 +85,9 @@ private:
 
   RefPtr<AbstractIcon> display_icon_;
 
-  Cpp::Event<bool> toggled_;
+  CppEvent::Event<bool> toggled_;
 
-  Cpp::Event<bool> checked_;
+  CppEvent::Event<bool> checked_;
 
   static Margin kPadding;
 

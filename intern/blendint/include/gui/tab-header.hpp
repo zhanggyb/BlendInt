@@ -55,12 +55,12 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const override;
 
-		Cpp::EventRef<int> button_clicked ()
+		CppEvent::EventRef<int> button_clicked ()
 		{
 			return m_button_index_clicked;
 		}
 
-		Cpp::EventRef<int, bool> button_index_toggled ()
+		CppEvent::EventRef<int, bool> button_index_toggled ()
 		{
 			return m_button_index_toggled;
 		}
@@ -85,9 +85,9 @@ namespace BlendInt {
 
 		ButtonGroup group_;
 
-		Cpp::Event<int> m_button_index_clicked;
+		CppEvent::Event<int> m_button_index_clicked;
 
-		Cpp::Event<int, bool> m_button_index_toggled;
+		CppEvent::Event<int, bool> m_button_index_toggled;
 
 		static const int kBaseLine = 2;
 

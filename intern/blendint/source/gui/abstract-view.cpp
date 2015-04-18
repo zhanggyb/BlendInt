@@ -105,6 +105,7 @@ const int AbstractView::kEmbossVertexTable[16] = {
 
 AbstractView::AbstractView ()
 : Object(),
+  CppEvent::Trackable(),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
@@ -117,6 +118,7 @@ AbstractView::AbstractView ()
 
 AbstractView::AbstractView (int width, int height)
 : Object(),
+  CppEvent::Trackable(),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),

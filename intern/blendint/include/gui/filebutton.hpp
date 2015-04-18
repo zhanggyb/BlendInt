@@ -27,7 +27,8 @@
 
 namespace BlendInt {
 
-	class AbstractFrame;
+  class AbstractFrame;
+	class AbstractDialog;
 	class FileSelector;
 
 	/**
@@ -50,7 +51,7 @@ namespace BlendInt {
 			return file_;
 		}
 
-		Cpp::EventRef<> file_selected() {return file_selected_;}
+		CppEvent::EventRef<> file_selected() {return file_selected_;}
 
 		virtual Size GetPreferredSize () const;
 
@@ -70,7 +71,7 @@ namespace BlendInt {
 
 		void OnClicked();
 
-		void OnOpened ();
+		void OnOpened (AbstractDialog* dialog);
 
 		void OnDialogDestroyed (AbstractFrame* dialog);
 
@@ -82,7 +83,7 @@ namespace BlendInt {
 
 		String file_;
 
-		Cpp::Event<> file_selected_;
+		CppEvent::Event<> file_selected_;
 	};
 
 }

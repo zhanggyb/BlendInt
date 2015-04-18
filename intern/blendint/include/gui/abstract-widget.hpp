@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <boost/smart_ptr.hpp>
-
 #include <gui/abstract-view.hpp>
 
 namespace BlendInt {
@@ -49,9 +47,9 @@ public:
 
   virtual ~AbstractWidget ();
 
-  Cpp::EventRef<AbstractWidget*> destroyed ()
+  CppEvent::EventRef<AbstractWidget*> destroyed ()
   {
-    return *destroyed_;
+    return destroyed_;
   }
 
 protected:
@@ -82,24 +80,13 @@ protected:
 
   virtual Response PerformMouseMove (AbstractWindow* context);
 
-  const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
-  {
-    if (!events_) {
-      events_.reset(new Cpp::ConnectionScope);
-    }
-
-    return events_;
-  }
-
   static bool RenderSubWidgetsToTexture (AbstractWidget* widget,
                                          AbstractWindow* context,
                                          GLTexture2D* texture);
 
 private:
 
-  boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-  boost::scoped_ptr<Cpp::Event<AbstractWidget*> > destroyed_;
+  CppEvent::Event<AbstractWidget*> destroyed_;
 
 };
 

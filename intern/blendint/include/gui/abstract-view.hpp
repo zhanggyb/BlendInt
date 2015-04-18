@@ -25,6 +25,8 @@
 
 #include <boost/thread.hpp>
 
+#include <cppevent/event.hpp>
+
 #include <opengl/opengl.hpp>
 
 #include <core/types.hpp>
@@ -32,8 +34,6 @@
 #include <core/point.hpp>
 #include <core/size.hpp>
 #include <core/mutex.hpp>
-
-#include <cppevents/Cpp/Events.hpp>
 
 namespace BlendInt {
 
@@ -112,7 +112,7 @@ T* Manage (T* obj, bool val = true)
  *
  * @ingroup gui
  */
-class AbstractView: public Object
+class AbstractView: public Object, public CppEvent::Trackable
 {
 DISALLOW_COPY_AND_ASSIGN(AbstractView);
 

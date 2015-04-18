@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <boost/smart_ptr.hpp>
+
 #include <core/types.hpp>
 
 #include <gui/frame-splitter.hpp>

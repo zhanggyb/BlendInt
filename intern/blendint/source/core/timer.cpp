@@ -256,7 +256,7 @@ namespace BlendInt {
 			nanosleep (&ts, NULL);
 
 			if(timer->enabled()) {
-				timer->timeout_.fire(timer);
+				timer->timeout_.Invoke(timer);
 			} else {
 				break;
 			}

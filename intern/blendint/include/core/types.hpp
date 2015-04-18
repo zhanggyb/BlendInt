@@ -25,8 +25,6 @@
 
 #include <string>	// typedef String
 
-#define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
-
 /**
  * A macro to disallow the copy constructor and operator= functions
  * This should be used in the private: declarations for a class

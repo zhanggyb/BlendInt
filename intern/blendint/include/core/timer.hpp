@@ -33,7 +33,7 @@
 #include <pthread.h>
 #endif
 
-#include <cppevents/Cpp/Events.hpp>
+#include <cppevent/event.hpp>
 
 #include <core/object.hpp>
 
@@ -109,9 +109,9 @@ namespace BlendInt {
 
     /**
      * @brief The timeout event
-     * @return Reference to a Cpp::Event
+     * @return Reference to a CppEvent::Event
      */
-    Cpp::EventRef<Timer*> timeout ()
+    CppEvent::EventRef<Timer*> timeout ()
     {
       return timeout_;
     }
@@ -179,7 +179,7 @@ namespace BlendInt {
     /**
      * @brief the time out event
      */
-    Cpp::Event<Timer*> timeout_;
+    CppEvent::Event<Timer*> timeout_;
 
     static uint64_t kSavedTime;
 

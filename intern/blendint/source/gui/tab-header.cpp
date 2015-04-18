@@ -33,12 +33,12 @@ namespace BlendInt {
   {
     set_size(320, 20);
 
-    events()->connect(group_.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
+    group_.button_index_clicked().connect(m_button_index_clicked);
     //events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
-    events()->connect(group_.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+    group_.button_index_toggled().connect(this, &TabHeader::OnButtonIndexToggled);
 
     // FIXME: cannot use the following line
-    //events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
+    //events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &CppEvent::Event<int, bool>::fire);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
@@ -146,7 +146,7 @@ namespace BlendInt {
 
   void TabHeader::OnButtonIndexToggled(int index, bool toggled)
   {
-    m_button_index_toggled.fire(index, toggled);
+    m_button_index_toggled.Invoke(index, toggled);
   }
 
   void TabHeader::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)

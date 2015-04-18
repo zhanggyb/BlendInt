@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <boost/smart_ptr.hpp>
 #include <glm/glm.hpp>
 
 #include <gui/view-buffer.hpp>
@@ -111,9 +110,9 @@ namespace BlendInt {
       return frame_flags_ & FrameFloatingMask;
     }
 
-    Cpp::EventRef<AbstractFrame*> destroyed ()
+    CppEvent::EventRef<AbstractFrame*> destroyed ()
     {
-      return *destroyed_;
+      return destroyed_;
     }
 
     static AbstractFrame* GetFrame (AbstractView* view);
@@ -140,15 +139,6 @@ namespace BlendInt {
     inline void set_view_buffer (const RefPtr<ViewBuffer>& buffer)
     {
       view_buffer_ = buffer;
-    }
-
-    const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
-    {
-      if (!events_) {
-        events_.reset(new Cpp::ConnectionScope);
-      }
-
-      return events_;
     }
 
     static inline Response dispatch_key_press (AbstractView* view,
@@ -240,9 +230,7 @@ namespace BlendInt {
 
     RefPtr<ViewBuffer> view_buffer_;
 
-    boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-    boost::scoped_ptr<Cpp::Event<AbstractFrame*> > destroyed_;
+    CppEvent::Event<AbstractFrame*> destroyed_;
 
     static glm::mat4 kViewMatrix;
   };

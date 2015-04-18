@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		InitializeFileButtonOnce();
 
-		events()->connect(clicked(), this, &FileButton::OnClicked);
+		clicked().connect(this, &FileButton::OnClicked);
 	}
 
 	FileButton::~FileButton ()
@@ -259,8 +259,8 @@ namespace BlendInt {
 
 			context->AddFrame(dialog_);
 
-			events()->connect(dialog_->applied(), this, &FileButton::OnOpened);
-			events()->connect(dialog_->destroyed(), this, &FileButton::OnDialogDestroyed);
+			dialog_->applied().connect(this, &FileButton::OnOpened);
+			dialog_->destroyed().connect(this, &FileButton::OnDialogDestroyed);
 
 			//events()->connect(dialog_->opened(), this, &FileButton::OnOpened);
 			//events()->connect(dialog_->canceled(), this, &FileButton::OnCanceled);
@@ -268,7 +268,7 @@ namespace BlendInt {
 		}
 	}
 
-	void FileButton::OnOpened ()
+	void FileButton::OnOpened (AbstractDialog* dialog)
 	{
 		DBG_PRINT_MSG("file selected: %s", ConvertFromString(dialog_->file_selected()).c_str());
 		// TODO:
@@ -279,7 +279,7 @@ namespace BlendInt {
 	{
 		DBG_ASSERT(dialog == dialog_);
 
-		dialog_->destroyed().disconnectOne(this, &FileButton::OnDialogDestroyed);
+		//dialog_->destroyed().disconnect1(this, &FileButton::OnDialogDestroyed);
 		dialog_ = 0;
 	}
 

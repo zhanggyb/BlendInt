@@ -43,7 +43,7 @@ namespace BlendInt {
     workspace_ = new EditSpace;
     AddFrame(workspace_);
 
-    events()->connect(this->resized(), this, &EditorWindow::OnResize);
+    this->resized().connect(this, &EditorWindow::OnResize);
     OnResize(size());
 
     // show a message box
@@ -51,8 +51,7 @@ namespace BlendInt {
     dev_msg_->MoveTo((size().width() - dev_msg_->size().width()) / 2,
                  (size().height() - dev_msg_->size().height()) / 2);
     AddFrame(dev_msg_);
-    events()->connect(dev_msg_->destroyed(), this,
-                      &EditorWindow::OnMessageBoxDestroyed);
+    dev_msg_->destroyed().connect(this, &EditorWindow::OnMessageBoxDestroyed);
   }
 
   EditorWindow::~EditorWindow ()

@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <boost/smart_ptr.hpp>
-
 #include <gui/abstract-view.hpp>
 
 namespace BlendInt {
@@ -61,15 +59,6 @@ namespace BlendInt {
     inline float round_radius () const
     {
       return round_radius_;
-    }
-
-    const boost::scoped_ptr<Cpp::ConnectionScope>& events ()
-    {
-      if (!events_) {
-        events_.reset(new Cpp::ConnectionScope);
-      }
-
-      return events_;
     }
 
   protected:
@@ -257,9 +246,7 @@ namespace BlendInt {
 
     bool pressed_;
 
-    boost::scoped_ptr<Cpp::ConnectionScope> events_;
-
-    boost::scoped_ptr<Cpp::Event<AbstractNode*> > destroyed_;
+    CppEvent::Event<AbstractNode*> destroyed_;
 
   };
 

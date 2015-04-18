@@ -64,14 +64,14 @@ public:
 
   virtual ~AbstractDialog ();
 
-  Cpp::EventRef<AbstractDialog*> applied ()
+  CppEvent::EventRef<AbstractDialog*> applied ()
   {
-    return *applied_;
+    return applied_;
   }
 
-  Cpp::EventRef<AbstractDialog*> canceled ()
+  CppEvent::EventRef<AbstractDialog*> canceled ()
   {
-    return *canceled_;
+    return canceled_;
   }
 
 protected:
@@ -110,12 +110,12 @@ protected:
 
   inline void fire_applied_event ()
   {
-    applied_->fire(this);
+    applied_.Invoke(this);
   }
 
   inline void fire_canceled_event ()
   {
-    canceled_->fire(this);
+    canceled_.Invoke(this);
   }
 
 private:
@@ -170,9 +170,9 @@ private:
 
   bool pressed_;
 
-  boost::scoped_ptr<Cpp::Event<AbstractDialog*> > applied_;
+  CppEvent::Event<AbstractDialog*> applied_;
 
-  boost::scoped_ptr<Cpp::Event<AbstractDialog*> > canceled_;
+  CppEvent::Event<AbstractDialog*> canceled_;
 
 };
 

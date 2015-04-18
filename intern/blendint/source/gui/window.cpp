@@ -383,7 +383,7 @@ void Window::PerformSizeUpdate (const AbstractView* source,
       glfwSetWindowSizeCallback(window_, &CbWindowSize);
     }
 
-    resized_.fire(size());
+    resized_.Invoke(size());
   }
 }
 

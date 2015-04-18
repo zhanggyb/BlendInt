@@ -249,7 +249,7 @@ namespace BlendInt {
 		timer_.reset(new Timer);
 		timer_->SetInterval(1000 / 30);
 
-		events()->connect(timer_->timeout(), this, &Clock::OnUpdateClockHands);
+		timer_->timeout().connect(this, &Clock::OnUpdateClockHands);
 	}
 
 }

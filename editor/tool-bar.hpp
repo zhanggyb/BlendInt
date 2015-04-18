@@ -48,7 +48,7 @@ namespace BlendInt {
 
     void LoadTools ();
 
-    Cpp::EventRef<int, bool> toggled()
+    CppEvent::EventRef<int, bool> toggled()
     {
       return toggled_;
     }
@@ -136,7 +136,7 @@ namespace BlendInt {
 
     Stack* stack_;
 
-    Cpp::Event<int, bool> toggled_;
+    CppEvent::Event<int, bool> toggled_;
   };
 
 }

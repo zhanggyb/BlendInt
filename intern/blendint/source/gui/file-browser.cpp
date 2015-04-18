@@ -386,7 +386,7 @@ Response FileBrowser::PerformMousePress (AbstractWindow* context)
     }
   }
 
-  selected_.fire();
+  selected_.Invoke();
   return Finish;
 }
 

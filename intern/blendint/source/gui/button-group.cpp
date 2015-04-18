@@ -34,7 +34,6 @@ namespace BlendInt {
 	: last_active_(0),
 	  mode_(SingleSelection)
 	{
-		events_.reset(new Cpp::ConnectionScope);
 	}
 
 	ButtonGroup::~ButtonGroup ()
@@ -60,7 +59,7 @@ namespace BlendInt {
 		buttons_.push_back(button);
 		button->group_ = this;
 
-		events_->connect(button->destroyed(), this, &ButtonGroup::OnButtonDestroyed);
+		button->destroyed().connect(this, &ButtonGroup::OnButtonDestroyed);
 	}
 	
 	void ButtonGroup::InsertButton (int index, AbstractButton* button)
@@ -88,7 +87,7 @@ namespace BlendInt {
 			return;
 		}
 
-		button->destroyed().disconnectOne(this, &ButtonGroup::OnButtonDestroyed);
+		button->destroyed().disconnect1(this, &ButtonGroup::OnButtonDestroyed);
 
 		buttons_.erase(it);
 		button->group_ = 0;
@@ -98,7 +97,7 @@ namespace BlendInt {
 	{
 		for(std::deque<AbstractButton*>::iterator it = buttons_.begin(); it != buttons_.end();)
 		{
-			(*it)->destroyed().disconnectOne(this, &ButtonGroup::OnButtonDestroyed);
+			(*it)->destroyed().disconnect1(this, &ButtonGroup::OnButtonDestroyed);
 			(*it)->group_ = 0;
 
 			it = buttons_.erase(it);
@@ -122,8 +121,8 @@ namespace BlendInt {
 			i++;
 		}
 
-		button_clicked_.fire(last_active_);
-		button_index_clicked_.fire(i);
+		button_clicked_.Invoke(last_active_);
+		button_index_clicked_.Invoke(i);
 	}
 
 	void ButtonGroup::Toggle (AbstractButton* button, bool toggled)
@@ -153,8 +152,8 @@ namespace BlendInt {
 
 		if(original_active_button == last_active_) return;	// Do not fire events repeatedly
 
-		button_toggled_.fire(last_active_, toggled);
-		button_index_toggled_.fire(i, toggled);
+		button_toggled_.Invoke(last_active_, toggled);
+		button_index_toggled_.Invoke(i, toggled);
 	}
 
 	void ButtonGroup::OnButtonDestroyed (AbstractWidget* button)

@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <boost/smart_ptr.hpp>
-
 #include <core/input.hpp>
 #include <gui/abstract-view.hpp>
 
@@ -230,11 +228,6 @@ public:
     return current_cursor_shape_;
   }
 
-  Cpp::ConnectionScope* events () const
-  {
-    return events_.get();
-  }
-
   static AbstractWindow* GetWindow (AbstractView* widget);
 
   static bool InitializeGLContext ();
@@ -372,8 +365,6 @@ private:
   static void GetGLVersion (int *major, int *minor);
 
   static void GetGLSLVersion (int *major, int *minor);
-
-  boost::scoped_ptr<Cpp::ConnectionScope> events_;
 
   AbstractFrame* active_frame_;
 

@@ -115,22 +115,22 @@ namespace BlendInt {
       return orientation_;
     }
 
-    Cpp::EventRef<T> slider_moved ()
+    CppEvent::EventRef<T> slider_moved ()
     {
       return slider_moved_;
     }
 
-    Cpp::EventRef<> slider_pressed ()
+    CppEvent::EventRef<> slider_pressed ()
     {
       return slider_pressed_;
     }
 
-    Cpp::EventRef<> slider_released ()
+    CppEvent::EventRef<> slider_released ()
     {
       return slider_released_;
     }
 
-    Cpp::EventRef<T> value_changed ()
+    CppEvent::EventRef<T> value_changed ()
     {
       return value_changed_;
     }
@@ -174,22 +174,22 @@ namespace BlendInt {
 
     inline void fire_slider_moved_event (T value)
     {
-      slider_moved_.fire(value);
+      slider_moved_.Invoke(value);
     }
 
     inline void fire_slider_pressed ()
     {
-      slider_pressed_.fire();
+      slider_pressed_.Invoke();
     }
 
     inline void fire_slider_released ()
     {
-      slider_released_.fire();
+      slider_released_.Invoke();
     }
 
     inline void fire_value_changed_event (T value)
     {
-      value_changed_.fire(value);
+      value_changed_.Invoke(value);
     }
 
   private:
@@ -202,13 +202,13 @@ namespace BlendInt {
     T maximum_;
     T step_;
 
-    Cpp::Event<T> slider_moved_;
+    CppEvent::Event<T> slider_moved_;
 
-    Cpp::Event<> slider_pressed_;
+    CppEvent::Event<> slider_pressed_;
 
-    Cpp::Event<> slider_released_;
+    CppEvent::Event<> slider_released_;
 
-    Cpp::Event<T> value_changed_;
+    CppEvent::Event<T> value_changed_;
 
   };
 
@@ -239,7 +239,7 @@ namespace BlendInt {
 
     PerformValueUpdate(value);
     value_ = value;
-    value_changed_.fire(value_);
+    value_changed_.Invoke(value_);
   }
 
   template<typename T>

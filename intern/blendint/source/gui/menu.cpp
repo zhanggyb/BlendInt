@@ -66,13 +66,13 @@ Menu::~Menu ()
   glDeleteVertexArrays(2, vao_);
 
   if (focused_widget_) {
-    focused_widget_->destroyed().disconnectOne(this,
+    focused_widget_->destroyed().disconnect1(this,
                                                &Menu::OnFocusedWidgetDestroyed);
     focused_widget_ = 0;
   }
 
   if (hovered_widget_) {
-    hovered_widget_->destroyed().disconnectOne(this,
+    hovered_widget_->destroyed().disconnect1(this,
                                                &Menu::OnHoverWidgetDestroyed);
     ClearHoverWidgets(hovered_widget_, AbstractWindow::GetWindow(this));
   }
@@ -432,7 +432,7 @@ void Menu::PerformHoverOut (AbstractWindow* context)
   hover_ = false;
 
   if (hovered_widget_) {
-    hovered_widget_->destroyed().disconnectOne(this,
+    hovered_widget_->destroyed().disconnect1(this,
                                                &Menu::OnHoverWidgetDestroyed);
     ClearHoverWidgets(hovered_widget_, context);
     hovered_widget_ = 0;
@@ -478,13 +478,13 @@ Response Menu::PerformMouseHover (AbstractWindow* context)
     if (new_hovered_widget != hovered_widget_) {
 
       if (hovered_widget_) {
-        hovered_widget_->destroyed().disconnectOne(
+        hovered_widget_->destroyed().disconnect1(
             this, &Menu::OnHoverWidgetDestroyed);
       }
 
       hovered_widget_ = new_hovered_widget;
       if (hovered_widget_) {
-        events()->connect(hovered_widget_->destroyed(), this,
+        hovered_widget_->destroyed().connect(this,
                           &Menu::OnHoverWidgetDestroyed);
       }
 
@@ -540,7 +540,7 @@ void Menu::OnFocusedWidgetDestroyed (AbstractWidget* widget)
 
   //set_widget_focus_status(widget, false);
   DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-  widget->destroyed().disconnectOne(this, &Menu::OnFocusedWidgetDestroyed);
+  widget->destroyed().disconnect1(this, &Menu::OnFocusedWidgetDestroyed);
 
   focused_widget_ = nullptr;
 }
@@ -550,7 +550,7 @@ void Menu::OnHoverWidgetDestroyed (AbstractWidget* widget)
   DBG_ASSERT(hovered_widget_ == widget);
 
   DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-  widget->destroyed().disconnectOne(this, &Menu::OnHoverWidgetDestroyed);
+  widget->destroyed().disconnect1(this, &Menu::OnHoverWidgetDestroyed);
 
   hovered_widget_ = nullptr;
 }
@@ -561,14 +561,14 @@ void Menu::SetFocusedWidget (AbstractWidget* widget, AbstractWindow* context)
 
   if (focused_widget_) {
     dispatch_focus_off(focused_widget_, context);
-    focused_widget_->destroyed().disconnectOne(this,
+    focused_widget_->destroyed().disconnect1(this,
                                                &Menu::OnFocusedWidgetDestroyed);
   }
 
   focused_widget_ = widget;
   if (focused_widget_) {
     dispatch_focus_on(focused_widget_, context);
-    events()->connect(focused_widget_->destroyed(), this,
+    focused_widget_->destroyed().connect(this,
                       &Menu::OnFocusedWidgetDestroyed);
   }
 }

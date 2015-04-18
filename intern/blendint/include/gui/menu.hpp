@@ -71,7 +71,7 @@ public:
     return title_;
   }
 
-  Cpp::EventRef<Action*> triggered ()
+  CppEvent::EventRef<Action*> triggered ()
   {
     return m_triggered;
   }
@@ -133,9 +133,9 @@ private:
 
   GLBuffer<ARRAY_BUFFER, 2> vbo_;
 
-  Cpp::Event<Action*> m_hovered;
+  CppEvent::Event<Action*> m_hovered;
 
-  Cpp::Event<Action*> m_triggered;
+  CppEvent::Event<Action*> m_triggered;
 
   glm::mat4 projection_matrix_;
 

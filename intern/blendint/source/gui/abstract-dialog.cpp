@@ -40,8 +40,6 @@ AbstractDialog::AbstractDialog (int dialog_flag)
   dragging_(false),
   pressed_(false)
 {
-  applied_.reset(new Cpp::Event<AbstractDialog*>);
-  canceled_.reset(new Cpp::Event<AbstractDialog*>);
 }
 
 AbstractDialog::AbstractDialog (int width, int height, int dialog_flag)
@@ -54,21 +52,19 @@ AbstractDialog::AbstractDialog (int width, int height, int dialog_flag)
   dragging_(false),
   pressed_(false)
 {
-  applied_.reset(new Cpp::Event<AbstractDialog*>);
-  canceled_.reset(new Cpp::Event<AbstractDialog*>);
 }
 
 AbstractDialog::~AbstractDialog ()
 {
   if (focused_widget_) {
-    focused_widget_->destroyed().disconnectOne(
+    focused_widget_->destroyed().disconnect1(
         this, &AbstractDialog::OnFocusedWidgetDestroyed);
     focused_widget_ = 0;
   }
 
   if (hovered_widget_) {
     AbstractWindow* win = AbstractWindow::GetWindow(this);
-    hovered_widget_->destroyed().disconnectOne(
+    hovered_widget_->destroyed().disconnect1(
         this, &AbstractDialog::OnHoverWidgetDestroyed);
     ClearHoverWidgets(hovered_widget_, win);
   }
@@ -84,7 +80,7 @@ void AbstractDialog::PerformFocusOff (AbstractWindow* context)
   focused_ = false;
 
   if (focused_widget_) {
-    focused_widget_->destroyed().disconnectOne(
+    focused_widget_->destroyed().disconnect1(
         this, &AbstractDialog::OnFocusedWidgetDestroyed);
     dispatch_focus_off(focused_widget_, context);
     focused_widget_ = 0;
@@ -292,7 +288,7 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
         if (hovered_widget_) {
           DeclareActiveFrame(context, this);
           AbstractWindow* win = AbstractWindow::GetWindow(this);
-          hovered_widget_->destroyed().disconnectOne(
+          hovered_widget_->destroyed().disconnect1(
               this, &AbstractDialog::OnHoverWidgetDestroyed);
           ClearHoverWidgets(hovered_widget_, win);
           hovered_widget_ = 0;
@@ -308,14 +304,14 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
         if (new_hovered_widget != hovered_widget_) {
 
           if (hovered_widget_) {
-            hovered_widget_->destroyed().disconnectOne(
+            hovered_widget_->destroyed().disconnect1(
                 this, &AbstractDialog::OnHoverWidgetDestroyed);
           }
 
           hovered_widget_ = new_hovered_widget;
           if (hovered_widget_) {
-            events()->connect(hovered_widget_->destroyed(), this,
-                              &AbstractDialog::OnHoverWidgetDestroyed);
+            hovered_widget_->destroyed().connect(
+                this, &AbstractDialog::OnHoverWidgetDestroyed);
           }
 
         }
@@ -378,15 +374,15 @@ void AbstractDialog::SetFocusedWidget (AbstractWidget* widget,
 
   if (focused_widget_) {
     dispatch_focus_off(focused_widget_, context);
-    focused_widget_->destroyed().disconnectOne(
+    focused_widget_->destroyed().disconnect1(
         this, &AbstractDialog::OnFocusedWidgetDestroyed);
   }
 
   focused_widget_ = widget;
   if (focused_widget_) {
     dispatch_focus_on(focused_widget_, context);
-    events()->connect(focused_widget_->destroyed(), this,
-                      &AbstractDialog::OnFocusedWidgetDestroyed);
+    focused_widget_->destroyed().connect(
+        this, &AbstractDialog::OnFocusedWidgetDestroyed);
   }
 }
 
@@ -396,7 +392,7 @@ void AbstractDialog::OnFocusedWidgetDestroyed (AbstractWidget* widget)
 
   //set_widget_focus_status(widget, false);
   DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-  widget->destroyed().disconnectOne(this,
+  widget->destroyed().disconnect1(this,
                                     &AbstractDialog::OnFocusedWidgetDestroyed);
 
   focused_widget_ = 0;
@@ -407,7 +403,7 @@ void AbstractDialog::OnHoverWidgetDestroyed (AbstractWidget* widget)
   DBG_ASSERT(hovered_widget_ == widget);
 
   DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-  widget->destroyed().disconnectOne(this,
+  widget->destroyed().disconnect1(this,
                                     &AbstractDialog::OnHoverWidgetDestroyed);
 
   hovered_widget_ = 0;

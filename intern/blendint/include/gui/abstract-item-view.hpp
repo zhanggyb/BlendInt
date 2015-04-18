@@ -57,7 +57,7 @@ namespace BlendInt {
 
     virtual ModelIndex GetIndexAt (const Point& point) const = 0;
 
-    Cpp::EventRef<> model_changed ()
+    CppEvent::EventRef<> model_changed ()
     {
       return model_changed_;
     }
@@ -73,7 +73,7 @@ namespace BlendInt {
 
     RefPtr<AbstractItemModel> model_;
 
-    Cpp::Event<> model_changed_;
+    CppEvent::Event<> model_changed_;
 
   };
 

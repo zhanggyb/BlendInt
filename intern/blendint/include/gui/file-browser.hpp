@@ -96,7 +96,7 @@ public:
 
   virtual ModelIndex GetIndexAt (const Point& point) const;
 
-  Cpp::EventRef<> selected ()
+  CppEvent::EventRef<> selected ()
   {
     return selected_;
   }
@@ -138,7 +138,7 @@ private:
 
   int highlight_index_;
 
-  Cpp::Event<> selected_;
+  CppEvent::Event<> selected_;
 };
 
 }

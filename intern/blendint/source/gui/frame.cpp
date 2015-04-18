@@ -82,13 +82,13 @@ namespace BlendInt {
     glDeleteVertexArrays(2, vao_);
 
     if (focused_widget_) {
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &Frame::OnFocusedWidgetDestroyed);
       focused_widget_ = 0;
     }
 
     if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
+      hovered_widget_->destroyed().disconnect1(
           this, &Frame::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, AbstractWindow::GetWindow(this));
     }
@@ -242,14 +242,14 @@ namespace BlendInt {
     focused_ = false;
 
     if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
+      hovered_widget_->destroyed().disconnect1(
           this, &Frame::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
     }
 
     if (focused_widget_) {
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &Frame::OnFocusedWidgetDestroyed);
       dispatch_focus_off(focused_widget_, context);
       focused_widget_ = 0;
@@ -266,7 +266,7 @@ namespace BlendInt {
     hover_ = false;
 
     if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
+      hovered_widget_->destroyed().disconnect1(
           this, &Frame::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
@@ -367,7 +367,7 @@ namespace BlendInt {
           DeclareActiveFrame(context, this);
           hover_ = false;
           if (hovered_widget_) {
-            hovered_widget_->destroyed().disconnectOne(
+            hovered_widget_->destroyed().disconnect1(
                 this, &Frame::OnHoverWidgetDestroyed);
             ClearHoverWidgets(hovered_widget_, context);
             hovered_widget_ = 0;
@@ -390,13 +390,13 @@ namespace BlendInt {
         if (new_hovered_widget != hovered_widget_) {
 
           if (hovered_widget_) {
-            hovered_widget_->destroyed().disconnectOne(
+            hovered_widget_->destroyed().disconnect1(
                 this, &Frame::OnHoverWidgetDestroyed);
           }
 
           hovered_widget_ = new_hovered_widget;
           if (hovered_widget_) {
-            events()->connect(hovered_widget_->destroyed(), this,
+            hovered_widget_->destroyed().connect(this,
                               &Frame::OnHoverWidgetDestroyed);
           }
 
@@ -463,14 +463,14 @@ namespace BlendInt {
 
     if (focused_widget_) {
       dispatch_focus_off(focused_widget_, context);
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &Frame::OnFocusedWidgetDestroyed);
     }
 
     focused_widget_ = widget;
     if (focused_widget_) {
       dispatch_focus_on(focused_widget_, context);
-      events()->connect(focused_widget_->destroyed(), this,
+      focused_widget_->destroyed().connect(this,
                         &Frame::OnFocusedWidgetDestroyed);
     }
   }
@@ -481,7 +481,7 @@ namespace BlendInt {
 
     //set_widget_focus_status(widget, false);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &Frame::OnFocusedWidgetDestroyed);
+    widget->destroyed().disconnect1(this, &Frame::OnFocusedWidgetDestroyed);
 
     focused_widget_ = 0;
   }
@@ -491,7 +491,7 @@ namespace BlendInt {
     DBG_ASSERT(hovered_widget_ == widget);
 
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &Frame::OnHoverWidgetDestroyed);
+    widget->destroyed().disconnect1(this, &Frame::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;
   }

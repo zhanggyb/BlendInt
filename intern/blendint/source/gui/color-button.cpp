@@ -48,7 +48,7 @@ ColorButton::ColorButton ()
 
   InitializeColorButton();
 
-  events()->connect(clicked(), this, &ColorButton::OnClick);
+  clicked().connect(this, &ColorButton::OnClick);
 }
 
 ColorButton::~ColorButton ()
@@ -236,7 +236,7 @@ void ColorButton::OnClick ()
 {
   if (selector_ == 0) {
     selector_ = new ColorSelector;
-    events()->connect(selector_->destroyed(), this,
+    selector_->destroyed().connect(this,
                       &ColorButton::OnSelectorDestroyed);
     AbstractWindow* win = AbstractWindow::GetWindow(this);
     win->AddFrame(selector_);

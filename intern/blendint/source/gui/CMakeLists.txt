@@ -6,7 +6,8 @@ file(GLOB BlendIntGui_SRC "*.cpp")
 
 add_library (BlendIntGui ${BlendIntGui_HEADERS} ${BlendIntGui_SRC})
 
-target_link_libraries(BlendIntGui BlendIntCore BlendIntOpenGL BlendIntStock BlendIntFont ${LIBS})
+target_link_libraries(BlendIntGui BlendIntCore BlendIntOpenGL BlendIntStock
+    BlendIntFont cppevent ${LIBS})
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/intern/blendint/include/gui" DESTINATION
     "include/blendint")

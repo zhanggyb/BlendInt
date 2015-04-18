@@ -45,16 +45,12 @@ namespace BlendInt {
   : AbstractView(), frame_flags_(frame_flag)
   {
     set_view_type(ViewTypeFrame);
-
-    destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }
 
   AbstractFrame::AbstractFrame (int width, int height, int frame_flag)
   : AbstractView(width, height), frame_flags_(frame_flag)
   {
     set_view_type(ViewTypeFrame);
-
-    destroyed_.reset(new Cpp::Event<AbstractFrame*>);
   }
 
   AbstractFrame::~AbstractFrame ()
@@ -69,7 +65,7 @@ namespace BlendInt {
 
     if (super_) super_->RemoveSubView(this);
 
-    destroyed_->fire(this);
+    destroyed_.Invoke(this);
   }
 
   Point AbstractFrame::GetAbsolutePosition (const AbstractView* view)

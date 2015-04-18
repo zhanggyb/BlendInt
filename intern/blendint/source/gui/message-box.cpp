@@ -43,7 +43,7 @@ namespace BlendInt {
     title_->SetForeground(AbstractWindow::theme()->menu_back().text_sel);
     text_->SetForeground(AbstractWindow::theme()->menu_back().text);
 
-    events()->connect(close_->clicked(), this, &MessageBox::OnClose);
+    close_->clicked().connect(this, &MessageBox::OnClose);
 
     LinearLayout* hlayout = new LinearLayout(Horizontal);
     hlayout->SetMargin(Margin(0, 0, 0, 0));

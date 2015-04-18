@@ -33,8 +33,7 @@ technologies:
   object, you can use the pre-defined UI classes (from a simple button
   to a MVC based item view), or subclass one of them and customize it
   easily.
-- It uses [CppEvent](http://code.google.com/p/cpp-events/) to provide
-  a fast Event/Delegate (signal/slot) mechanism.
+- It uses a fast Event/Delegate (signal/slot) framework.
 - It just needs an OpenGL Context, so theoretically you can integrate
   it in any other GUI framework or toolkit, for example, Glut, GLFW,
   Qt, Gtk, Cocoa. Currently BlendInt uses GLFW 3.1 to display and
@@ -55,8 +54,6 @@ MessageBox within.
 int main(int argc, char* argv[])
 {
   using namespace BlendInt;
-
-  BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
   if(Window::Initialize()) {
 
@@ -144,9 +141,9 @@ page.
 
 * Most source code in this project is released under the LGPL v3
   License. See the bundled LICENSE file for details.
-* BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
-  sending/receiving events between objects, it's released under MIT
-  License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
+* BlendInt use [libCppEvents](http://github.com/zhanggyb/libCppEvents)
+  for sending/receiving events between objects, which is released
+  under MIT License.
 * [GLFW](http://www.glfw.org) 3.1+ - used in some demos and unit
   tests, released under zlib/libpng license.
 * [GLM](http://glm.g-truc.net) - a header only C++ mathematics library

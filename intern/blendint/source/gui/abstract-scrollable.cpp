@@ -28,13 +28,11 @@ namespace BlendInt {
 	AbstractScrollable::AbstractScrollable()
 	: AbstractRoundWidget()
 	{
-		scrolled_.reset(new Cpp::Event<int, int>);
 	}
 
 	AbstractScrollable::AbstractScrollable(int width, int height)
 	: AbstractRoundWidget (width, height)
 	{
-		scrolled_.reset(new Cpp::Event<int, int>);
 	}
 
 	AbstractScrollable::~AbstractScrollable ()

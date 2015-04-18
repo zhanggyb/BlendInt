@@ -65,7 +65,7 @@ namespace BlendInt {
     InitializeToolBar();
     shadow_.reset(new FrameShadow(size(), RoundNone, 5.f));
 
-    events()->connect(radio_group_.button_index_toggled(), this, &ToolBar::OnToggleStack);
+    radio_group_.button_index_toggled().connect(this, &ToolBar::OnToggleStack);
   }
 
   ToolBar::~ToolBar ()
@@ -222,13 +222,13 @@ namespace BlendInt {
       if (new_hovered_widget != hovered_widget_) {
 
         if (hovered_widget_) {
-          hovered_widget_->destroyed().disconnectOne(
+          hovered_widget_->destroyed().disconnect1(
               this, &ToolBar::OnHoverWidgetDestroyed);
         }
 
         hovered_widget_ = new_hovered_widget;
         if (hovered_widget_) {
-          events()->connect(hovered_widget_->destroyed(), this,
+          hovered_widget_->destroyed().connect(this,
                             &ToolBar::OnHoverWidgetDestroyed);
         }
 
@@ -258,14 +258,14 @@ namespace BlendInt {
     focused_ = false;
 
     if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
+      hovered_widget_->destroyed().disconnect1(
           this, &ToolBar::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
     }
 
     if (focused_widget_) {
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &ToolBar::OnFocusedWidgetDestroyed);
       dispatch_focus_off(focused_widget_, context);
       focused_widget_ = 0;
@@ -282,7 +282,7 @@ namespace BlendInt {
     hover_ = false;
 
     if (hovered_widget_) {
-      hovered_widget_->destroyed().disconnectOne(
+      hovered_widget_->destroyed().disconnect1(
           this, &ToolBar::OnHoverWidgetDestroyed);
       ClearHoverWidgets(hovered_widget_, context);
       hovered_widget_ = 0;
@@ -469,14 +469,14 @@ namespace BlendInt {
 
     if (focused_widget_) {
       dispatch_focus_off(focused_widget_, context);
-      focused_widget_->destroyed().disconnectOne(
+      focused_widget_->destroyed().disconnect1(
           this, &ToolBar::OnFocusedWidgetDestroyed);
     }
 
     focused_widget_ = widget;
     if (focused_widget_) {
       dispatch_focus_on(focused_widget_, context);
-      events()->connect(focused_widget_->destroyed(), this,
+      focused_widget_->destroyed().connect(this,
                         &ToolBar::OnFocusedWidgetDestroyed);
     }
   }
@@ -487,7 +487,7 @@ namespace BlendInt {
 
     //set_widget_focus_status(widget, false);
     DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &ToolBar::OnFocusedWidgetDestroyed);
+    widget->destroyed().disconnect1(this, &ToolBar::OnFocusedWidgetDestroyed);
 
     focused_widget_ = 0;
   }
@@ -497,7 +497,7 @@ namespace BlendInt {
     DBG_ASSERT(hovered_widget_ == widget);
 
     DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-    widget->destroyed().disconnectOne(this, &ToolBar::OnHoverWidgetDestroyed);
+    widget->destroyed().disconnect1(this, &ToolBar::OnHoverWidgetDestroyed);
 
     hovered_widget_ = 0;
   }
@@ -507,7 +507,7 @@ namespace BlendInt {
     DBG_PRINT_MSG("switch widget in stack: %d", index);
     if(stack_) stack_->SetIndex(index);
 
-    toggled_.fire(index, toggled);
+    toggled_.Invoke(index, toggled);
   }
 
 }

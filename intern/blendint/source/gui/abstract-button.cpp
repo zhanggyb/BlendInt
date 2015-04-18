@@ -133,7 +133,7 @@ Response AbstractButton::PerformMousePress (AbstractWindow* context)
 
     RequestRedraw();
 
-    pressed_.fire();
+    pressed_.Invoke();
   }
 
   return Finish;
@@ -165,7 +165,7 @@ Response AbstractButton::PerformMouseRelease (AbstractWindow* context)
         if (group_) {
           group_->Click(this);
         } else {
-          clicked_.fire();
+          clicked_.Invoke();
         }
         break;
       }
@@ -176,7 +176,7 @@ Response AbstractButton::PerformMouseRelease (AbstractWindow* context)
           if (group_) {
             group_->Toggle(this, is_checked());
           } else {
-            toggled_.fire(is_checked());
+            toggled_.Invoke(is_checked());
           }
         }
         break;
@@ -189,7 +189,7 @@ Response AbstractButton::PerformMouseRelease (AbstractWindow* context)
     set_pressed(false);
     set_down(false);
 
-    released_.fire();
+    released_.Invoke();
 
     return Finish;
   }
@@ -278,7 +278,7 @@ void AbstractButton::SetDown (bool down)
     if (group_) {
       group_->Toggle(this, is_checked());
     } else {
-      toggled_.fire(is_checked());
+      toggled_.Invoke(is_checked());
     }
 
   } else {
@@ -289,7 +289,7 @@ void AbstractButton::SetDown (bool down)
     if (group_) {
       group_->Click(this);
     } else {
-      clicked_.fire();
+      clicked_.Invoke();
     }
   }
 }
@@ -315,7 +315,7 @@ void AbstractButton::SetChecked (bool checked)
     if (group_) {
       group_->Toggle(this, is_checked());
     } else {
-      toggled_.fire(is_checked());
+      toggled_.Invoke(is_checked());
     }
   }
 }

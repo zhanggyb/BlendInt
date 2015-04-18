@@ -37,7 +37,7 @@ CVImageView::CVImageView ()
 
   timer_.reset(new Timer);
 
-  events()->connect(timer_->timeout(), this, &CVImageView::OnUpdateFrame);
+  timer_->timeout().connect(this, &CVImageView::OnUpdateFrame);
 
   MutexAttrib attrib;
   attrib.initialize();

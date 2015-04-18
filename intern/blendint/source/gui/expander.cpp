@@ -184,7 +184,7 @@ Expander::Expander (const String& title,
     last_size_ = layout_->size().height();
   }
 
-  events()->connect(title_->toggled(), this, &Expander::OnToggled);
+  title_->toggled().connect(this, &Expander::OnToggled);
 }
 
 Expander::~Expander ()

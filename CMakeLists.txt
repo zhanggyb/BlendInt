@@ -99,7 +99,7 @@ else()
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/cppevents)
+include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/cppevent)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

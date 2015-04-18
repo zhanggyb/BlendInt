@@ -90,7 +90,7 @@ ColorSelector::ColorSelector ()
   main_layout->AddWidget(btn_block);
   main_layout->AddWidget(hbox2);
 
-  events()->connect(radio_group_.button_index_toggled(), this,
+  radio_group_.button_index_toggled().connect(this,
                     &ColorSelector::OnButtonToggled);
 
   main_layout->Resize(main_layout->GetPreferredSize());

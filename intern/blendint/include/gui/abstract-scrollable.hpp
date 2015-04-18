@@ -40,9 +40,9 @@ namespace BlendInt {
 
     virtual ~AbstractScrollable ();
 
-    Cpp::EventRef<int, int> scrolled ()
+    CppEvent::EventRef<int, int> scrolled ()
     {
-      return *scrolled_;
+      return scrolled_;
     }
 
     // virtual Size GetContentSize () const;
@@ -62,14 +62,14 @@ namespace BlendInt {
 
     inline void fire_scrolled_event (int x, int y)
     {
-      scrolled_->fire(x, y);
+      scrolled_.Invoke(x, y);
     }
 
   private:
 
     Point offset_;
 
-    boost::scoped_ptr<Cpp::Event<int, int> > scrolled_;
+    CppEvent::Event<int, int> scrolled_;
 
   };
 

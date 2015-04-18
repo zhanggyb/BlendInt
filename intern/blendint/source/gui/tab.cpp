@@ -45,8 +45,7 @@ Tab::Tab ()
 
   FillSubWidgetsInTab(size());
 
-  events()->connect(header->button_index_toggled(), this,
-                    &Tab::OnButtonToggled);
+  header->button_index_toggled().connect(this, &Tab::OnButtonToggled);
 }
 
 Tab::~Tab ()

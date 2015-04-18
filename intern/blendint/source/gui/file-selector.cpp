@@ -112,9 +112,9 @@ namespace BlendInt {
 
 		//events()->connect(dec->close_triggered(), this, &FileSelector::OnCloseButtonClicked);
 
-		events()->connect(browser_->selected(), this, &FileSelector::OnFileSelect);
-		//events()->connect(open_->clicked(), &opened_, &Cpp::Event<>::fire);
-		//events()->connect(cancel_->clicked(), &canceled_, &Cpp::Event<>::fire);
+		browser_->selected().connect(this, &FileSelector::OnFileSelect);
+		//events()->connect(open_->clicked(), &opened_, &CppEvent::Event<>::fire);
+		//events()->connect(cancel_->clicked(), &canceled_, &CppEvent::Event<>::fire);
 
 		//events()->connect(cancel_->clicked(), this, &FileSelector::OnCancel);
 	}
@@ -374,12 +374,12 @@ namespace BlendInt {
 
 		hlayout->Resize(hlayout->GetPreferredSize());
 
-		events()->connect(close_button->clicked(), this, &FileSelector::OnClose);
-		events()->connect(btn_back->clicked(), this, &FileSelector::OnGoBackward);
-		events()->connect(btn_forward->clicked(), this, &FileSelector::OnGoForward);
-		events()->connect(btn_up->clicked(), this, &FileSelector::OnOpenParent);
-		events()->connect(btn_reload->clicked(), this, &FileSelector::OnReload);
-		events()->connect(open->clicked(), this, &FileSelector::OnOpen);
+		close_button->clicked().connect(this, &FileSelector::OnClose);
+		btn_back->clicked().connect(this, &FileSelector::OnGoBackward);
+		btn_forward->clicked().connect(this, &FileSelector::OnGoForward);
+		btn_up->clicked().connect(this, &FileSelector::OnOpenParent);
+		btn_reload->clicked().connect(this, &FileSelector::OnReload);
+		open->clicked().connect(this, &FileSelector::OnOpen);
 
 		return hlayout;
 	}

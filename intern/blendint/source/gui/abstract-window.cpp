@@ -68,8 +68,6 @@ AbstractWindow::AbstractWindow (int flags)
   set_size(640, 480);
   set_refresh(true);
 
-  events_.reset(new Cpp::ConnectionScope);
-
   if (kMainWindow == 0) kMainWindow = this;
 }
 
@@ -86,8 +84,6 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
   set_view_type(ViewTypeWindow);
 
   set_refresh(true);
-
-  events_.reset(new Cpp::ConnectionScope);
 
   if (kMainWindow == 0) kMainWindow = this;
 }
