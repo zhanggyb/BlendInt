@@ -29,8 +29,8 @@ endif()
 
 # start of options
 option(BUILD_STATIC_LIBRARY "Build static library instead of shared" OFF)
-option(WITH_BUILTIN_GLFW3 "Build with built-in GLFW3 source code" ON)
-option(WITH_BUILTIN_GLM "Build with built-in GLM headers" ON)
+option(WITH_BUILTIN_GLFW3 "Build with built-in GLFW3 source code" OFF)
+option(WITH_BUILTIN_GLM "Build with built-in GLM headers" OFF)
 option(ENABLE_OPENCV "Enable OpenCV Support" OFF)
 option(WITH_GPERFTOOLS "Build with Google perftools option" OFF)
 option(WITH_ALL_DEMOS "Build all demo programs" OFF)
@@ -42,11 +42,12 @@ option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentati
 # end of options
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/config.hpp.in"
-	"${PROJECT_BINARY_DIR}/config.hpp"
+	"${PROJECT_SOURCE_DIR}/intern/blendint/include/config.hpp.in"
+	"${PROJECT_BINARY_DIR}/intern/blendint/include/config.hpp"
 )
 
-include_directories("${PROJECT_BINARY_DIR}")	# so that we can find config header
+# to find the config header
+include_directories("${PROJECT_BINARY_DIR}/intern/blendint/include")
 
 if(OS_APPLE)
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local/lib)
@@ -145,16 +146,16 @@ endif()
 if(WITH_BUILTIN_GLFW3)
     add_subdirectory(extern/glfw)
     include_directories(extern/glfw/include)
-
+    set(LIBS ${LIBS} glfw ${GLFW_LIBRARIES})
     if(OS_LINUX)
       set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
     endif()
 else()
-    if(OS_APPLE)
-        set(LIBS ${LIBS} glfw3)
-    else()
-        set(LIBS ${LIBS} glfw)
-    endif()
+	find_package(GLFW REQUIRED)
+	if(GLFW_FOUND)
+		include_directories(${GLFW_INCLUDE_DIR})
+		set(LIBS ${LIBS} ${GLFW_LIBRARIES})
+	endif()
 endif()
 
 if(OS_APPLE)
@@ -220,5 +221,7 @@ if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
 	add_subdirectory(demo)
 endif()
 
+install(FILES "${PROJECT_BINARY_DIR}/intern/blendint/include/config.hpp"
+    DESTINATION "include/blendint")
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/blendint)
 

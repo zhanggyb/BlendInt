@@ -24,10 +24,6 @@ if(NOT DEFINED BUILD_STATIC_LIBRARY)
     set_target_properties(BlendInt PROPERTIES VERSION 1 SOVERSION 1)
 endif()
 
-if(WITH_BUILTIN_GLFW3)
-    set(LIBS ${LIBS} glfw ${GLFW_LIBRARIES})
-endif()
-
 set(MODULES BlendIntCore BlendIntFont BlendIntOpenGL BlendIntGui BlendIntStock
     cppevent)
 
