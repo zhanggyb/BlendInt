@@ -14,7 +14,7 @@ list(APPEND editor_SRC ${headerfiles})
 add_executable(editor ${editor_SRC})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(editor BlendInt ${LIBS})
+target_link_libraries(editor blendint ${LIBS})
 
 if(CMAKE_GENERATOR STREQUAL "Xcode")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")

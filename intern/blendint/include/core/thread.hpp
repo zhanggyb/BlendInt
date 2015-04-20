@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_CORE_THREAD_HPP_
 #define _BLENDINT_CORE_THREAD_HPP_
 
-#ifdef __UNIX__
+#ifdef __PLATFORM_APPLE__ || __PLATFORM_LINUX__
 #include <pthread.h>
 #endif
 

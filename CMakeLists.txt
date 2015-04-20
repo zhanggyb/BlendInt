@@ -14,17 +14,20 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-D__UNIX__)
     add_definitions(-D__LINUX__)
     add_definitions(-DGL_GLEXT_PROTOTYPES)
+    set(BLENDINT_BUILD_PLATFORM __PLATFORM_LINUX__)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(OS_WINDOWS TRUE)
     add_definitions(-D__WIN__)
+    set(BLENDINT_BUILD_PLATFORM __PLATFORM_WINDOWS__)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(OS_APPLE TRUE)
     add_definitions(-D__UNIX__)
     add_definitions(-D__APPLE__)
+    set(BLENDINT_BUILD_PLATFORM __PLATFORM_APPLE__)
 endif()
 
 # start of options
@@ -100,7 +103,6 @@ else()
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include/cppevent)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
