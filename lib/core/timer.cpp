@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <blendint/config.hpp>
+
 #ifdef __UNIX__
 #include <stddef.h>
 #include <sys/time.h>

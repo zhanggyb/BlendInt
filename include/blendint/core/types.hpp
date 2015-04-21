@@ -25,6 +25,8 @@
 
 #include <string>	// typedef String
 
+#include <blendint/config.hpp>
+
 /**
  * A macro to disallow the copy constructor and operator= functions
  * This should be used in the private: declarations for a class
@@ -43,33 +45,31 @@
 #endif
 
 #ifdef DEBUG
+
 #include <stdio.h>
-#define DBG_PRINT_MSG(fmt, args...) \
+#define DBG_PRINT_MSG(fmt, args...)             \
 	do { \
 		fprintf(stderr, "%s:%d:%s(): " fmt "\n", FILE_BASE_NAME, __LINE__, __FUNCTION__, args); \
 	} while (0)
-#else
-#define DBG_PRINT_MSG(fmt, args...) ((void)0)
-#endif
 
-#ifdef DEBUG
-#define DBG_SET_NAME(obj, str) \
-	do {\
-		obj->set_name(str); \
-	} while (0)
-#else
-#define DBG_SET_NAME(obj, str) ((void)0)
-#endif
+#define DBG_SET_NAME(obj, str)                  \
+    do {                                        \
+      obj->set_name(str);                       \
+    } while (0)
 
-#ifdef DEBUG
 #include <cassert>
-#define DBG_ASSERT(expr) \
-  do { \
-    assert(expr); \
+#define DBG_ASSERT(expr)                        \
+  do {                                          \
+    assert(expr);                               \
   } while (0)
+
 #else
+
+#define DBG_PRINT_MSG(fmt, args...) ((void)0)
+#define DBG_SET_NAME(obj, str) ((void)0)
 #define DBG_ASSERT(expr) ((void)0)
-#endif
+
+#endif  // DEBUG
 
 #define SETBIT(x,y) (x |= y)
 #define CLRBIT(x,y) (x &= ~y)

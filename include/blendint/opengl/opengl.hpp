@@ -29,6 +29,8 @@
 
 // TODO: add gl headers in Windows
 
+#include <blendint/config.hpp>
+
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
