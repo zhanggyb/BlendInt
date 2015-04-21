@@ -33,13 +33,29 @@
 #define BLENDINT_SYSTEM_NAME @BLENDINT_SYSTEM_NAME@
 
 #if BLENDINT_SYSTEM_NAME == BLENDINT_SYSTEM_LINUX
+// {
+#ifndef __UNIX__
 #define __UNIX__
+#endif
+#ifndef __LINUX__
 #define __LINUX__
+#endif
+// }
 #elif BLENDINT_SYSTEM_NAME == BLENDINT_SYSTEM_APPLE
+// {
+#ifndef __UNIX__
 #define __UNIX__
+#endif
+#ifndef __APPLE__
 #define __APPLE__
+#endif
+// }
 #elif BLENDINT_SYSTEM_NAME == BLENDINT_SYSTEM_WINDOWS
+// {
+#ifndef __WIN__
 #define __WIN__
+#endif
+// }
 #else
 #error "Host system is NOT supported!"
 #endif
