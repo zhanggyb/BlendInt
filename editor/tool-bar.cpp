@@ -25,12 +25,12 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/matrix_transform_2d.hpp>
 
-#include <gui/radio-button.hpp>
-#include <gui/block.hpp>
-#include <gui/tool-button.hpp>
-#include <gui/linear-layout.hpp>
-#include <gui/separator.hpp>
-#include <gui/abstract-window.hpp>
+#include <blendint/gui/radio-button.hpp>
+#include <blendint/gui/block.hpp>
+#include <blendint/gui/tool-button.hpp>
+#include <blendint/gui/linear-layout.hpp>
+#include <blendint/gui/separator.hpp>
+#include <blendint/gui/abstract-window.hpp>
 
 #include "tool-bar.hpp"
 

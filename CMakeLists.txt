@@ -32,8 +32,6 @@ endif()
 
 # start of options
 option(BUILD_STATIC_LIBRARY "Build static library instead of shared" OFF)
-option(WITH_BUILTIN_GLFW3 "Build with built-in GLFW3 source code" OFF)
-option(WITH_BUILTIN_GLM "Build with built-in GLM headers" OFF)
 option(ENABLE_OPENCV "Enable OpenCV Support" OFF)
 option(WITH_GPERFTOOLS "Build with Google perftools option" OFF)
 option(WITH_ALL_DEMOS "Build all demo programs" OFF)
@@ -45,12 +43,12 @@ option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentati
 # end of options
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/intern/blendint/include/config.hpp.in"
-	"${PROJECT_BINARY_DIR}/intern/blendint/include/config.hpp"
+	"${PROJECT_SOURCE_DIR}/include/blendint/config.hpp.in"
+	"${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
 )
 
 # to find the config header
-include_directories("${PROJECT_BINARY_DIR}/intern/blendint/include")
+include_directories("${PROJECT_BINARY_DIR}/include")
 
 if(OS_APPLE)
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local/lib)
@@ -102,7 +100,7 @@ else()
     set(LIBS ${LIBS} rt)
 endif()
 
-include_directories(${BlendInt_SOURCE_DIR}/intern/blendint/include)
+include_directories(${BlendInt_SOURCE_DIR}/include)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -145,19 +143,10 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 # configure glfw
-if(WITH_BUILTIN_GLFW3)
-    add_subdirectory(extern/glfw)
-    include_directories(extern/glfw/include)
-    set(LIBS ${LIBS} glfw ${GLFW_LIBRARIES})
-    if(OS_LINUX)
-      set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
-    endif()
-else()
-	find_package(GLFW REQUIRED)
-	if(GLFW_FOUND)
-		include_directories(${GLFW_INCLUDE_DIR})
-		set(LIBS ${LIBS} ${GLFW_LIBRARIES})
-	endif()
+find_package(GLFW REQUIRED)
+if(GLFW_FOUND)
+	include_directories(${GLFW_INCLUDE_DIR})
+	set(LIBS ${LIBS} ${GLFW_LIBRARIES})
 endif()
 
 if(OS_APPLE)
@@ -165,24 +154,20 @@ if(OS_APPLE)
     add_definitions(-DGLFW_INCLUDE_GLEXT)
 endif()
 
+if(OS_LINUX)
+	# add library dependences for glfw3.1, will use pkg-config later
+	set(LIBS ${LIBS} Xxf86vm pthread Xinerama Xi Xrandr Xcursor)
+endif()
+
 # add rapidxml header files
 include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
-# include GLM
-if(WITH_BUILTIN_GLM)
-	# glm header in extern/glm
-	include_directories(extern)
-else()
-  if(OS_APPLE)
-	#include_directories(/usr/local/include/glm)
-	else()
-		find_package(GLM REQUIRED)
-    		if(GLM_FOUND)
-        		include_directories(${GLM_INCLUDE_DIRS})
-    		endif()
-	endif()
-endif()
+# glm
+find_package(GLM REQUIRED)
+if(GLM_FOUND)
+include_directories(${GLM_INCLUDE_DIRS})
 add_definitions(-DGLM_FORCE_RADIANS)
+endif()
 
 if(ENABLE_OPENCV)
     find_package(OpenCV REQUIRED)
@@ -195,8 +180,9 @@ if(OS_APPLE)    # more settings for OS X
     set(CMAKE_MACOSX_RPATH 1)
 endif()
 
-add_subdirectory(intern/blendint/source)
+add_subdirectory(lib)
 add_subdirectory(editor)
+add_subdirectory(data)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
@@ -223,7 +209,6 @@ if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
 	add_subdirectory(demo)
 endif()
 
-install(FILES "${PROJECT_BINARY_DIR}/intern/blendint/include/config.hpp"
+install(FILES "${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
     DESTINATION "include/blendint")
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/release/datafiles" DESTINATION share/blendint)
 

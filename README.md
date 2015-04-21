@@ -107,7 +107,7 @@ Required:
 * [OpenImageIO](https://sites.google.com/site/openimageio/home) 1.1+
 * [boost](http://www.boost.org) (system, filesystem, thread)
 * [Freetype2](http://www.freetype.org)
-* [GLM](http://glm.g-truc.net)
+* [GLM](http://glm.g-truc.net) 0.9.6.0+
 * [Fontconfig](http://freedesktop.org/wiki/Software/fontconfig/)
 * [GLFW](http://www.glfw.org) 3.1+
 

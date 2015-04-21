@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include <gui/message-box.hpp>
-#include <gui/window.hpp>
+#include <blendint/gui/message-box.hpp>
+#include <blendint/gui/window.hpp>
 
 #include "tool-bar.hpp"
 #include "edit-space.hpp"

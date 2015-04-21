@@ -23,13 +23,13 @@
 
 #pragma once
 
-#include <opengl/gl-buffer.hpp>
+#include <blendint/opengl/gl-buffer.hpp>
 
-#include <gui/linear-layout.hpp>
-#include <gui/button-group.hpp>
-#include <gui/stack.hpp>
-#include <gui/abstract-frame.hpp>
-#include <gui/frame-shadow.hpp>
+#include <blendint/gui/linear-layout.hpp>
+#include <blendint/gui/button-group.hpp>
+#include <blendint/gui/stack.hpp>
+#include <blendint/gui/abstract-frame.hpp>
+#include <blendint/gui/frame-shadow.hpp>
 
 namespace BlendInt {
 

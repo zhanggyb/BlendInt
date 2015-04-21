@@ -1,6 +1,3 @@
-[submodule "extern/glfw"]
-	path = extern/glfw
-	url = https://github.com/glfw/glfw.git
 [submodule "demo"]
 	path = demo
 	url = https://github.com/zhanggyb/BlendInt_Demos.git

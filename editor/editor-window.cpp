@@ -21,10 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <gui/stack.hpp>
-#include <gui/combo-box.hpp>
-#include <gui/panel.hpp>
-#include <gui/label.hpp>
+#include <blendint/gui/stack.hpp>
+#include <blendint/gui/combo-box.hpp>
+#include <blendint/gui/panel.hpp>
+#include <blendint/gui/label.hpp>
 
 #include "editor-window.hpp"
 

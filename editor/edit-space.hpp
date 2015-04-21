@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gui/workspace.hpp>
+#include <blendint/gui/workspace.hpp>
 
 namespace BlendInt {
 
