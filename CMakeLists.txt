@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-project (BlendInt)
+project (BlendInt CXX)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
 
@@ -18,14 +18,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(OS_LINUX TRUE)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
   set(BLENDINT_SYSTEM_NAME 0)
-endif()
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(OS_APPLE TRUE)
   set(BLENDINT_SYSTEM_NAME 1)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  message(FATAL_ERROR "BlendInt does not support Windows yet!")
   set(OS_WINDOWS TRUE)
   set(BLENDINT_SYSTEM_NAME 2)
 endif()
@@ -107,7 +104,7 @@ CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 else()
-  message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no
     C++11 support. Please use a different C++ compiler.")
 endif()
 
@@ -208,4 +205,13 @@ endif()
 
 install(FILES "${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
   DESTINATION "include/blendint")
+
+# ----------------------------------------------------------------------------
+# Summary:
+# ----------------------------------------------------------------------------
+
+message(STATUS "")
+message(STATUS "  config.hpp is in: ${PROJECT_BINARY_DIR}/include/blendint")
+message(STATUS "  Install path: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "")
 
