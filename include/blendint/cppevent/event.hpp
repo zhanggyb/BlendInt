@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include <blendint/cppevent/abstract-trackable.hpp>
-#include <blendint/cppevent/delegate-token.hpp>
-#include <blendint/cppevent/event-token.hpp>
+#include <cppevent/abstract-trackable.hpp>
+#include <cppevent/delegate-token.hpp>
+#include <cppevent/event-token.hpp>
 
 namespace CppEvent {
 

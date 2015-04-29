@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-project (BlendInt CXX)
+project (BlendInt)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
 
@@ -46,6 +46,9 @@ configure_file(
 
 # to find the config header
 include_directories("${PROJECT_BINARY_DIR}/include")
+
+# for cppevent
+include_directories("${PROJECT_SOURCE_DIR}/include/blendint")
 
 if(OS_APPLE)
   set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/local/lib)

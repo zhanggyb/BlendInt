@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <blendint/cppevent/abstract-trackable.hpp>
+#include <cppevent/abstract-trackable.hpp>
 
 namespace CppEvent {
 

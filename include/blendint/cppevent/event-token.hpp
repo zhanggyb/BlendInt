@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <blendint/cppevent/invokable-token.hpp>
+#include <cppevent/invokable-token.hpp>
 
 namespace CppEvent {
 

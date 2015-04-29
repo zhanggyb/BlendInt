@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include <blendint/cppevent/delegate.hpp>
-#include <blendint/cppevent/invokable-token.hpp>
+#include <cppevent/delegate.hpp>
+#include <cppevent/invokable-token.hpp>
 
 namespace CppEvent {
 
