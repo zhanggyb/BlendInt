@@ -20,7 +20,7 @@ file(GLOB stock_headers "${PROJECT_SOURCE_DIR}/include/blendint/stock/*.hpp")
 file(GLOB stock_sources "stock/*.cpp")
 
 if(BUILD_STATIC_LIBRARY)
-  add_library (blendint
+  add_library (${BLENDINT_LIB_NAME}
     ${core_headers}
     ${core_sources}
     ${cppevent_headers}
@@ -35,7 +35,7 @@ if(BUILD_STATIC_LIBRARY)
     ${stock_sources}
     )
 else()
-  add_library (blendint SHARED
+  add_library (${BLENDINT_LIB_NAME} SHARED
     ${core_headers}
     ${core_sources}
     ${cppevent_headers}
@@ -54,12 +54,19 @@ endif()
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 if(NOT DEFINED BUILD_STATIC_LIBRARY)
-  set_target_properties(blendint PROPERTIES VERSION 1 SOVERSION 1)
+  set_target_properties(${BLENDINT_LIB_NAME} PROPERTIES VERSION 1 SOVERSION 1)
 endif()
 
-target_link_libraries(blendint ${LIBS})
+target_link_libraries(${BLENDINT_LIB_NAME} ${LIBS})
 
-install(TARGETS blendint DESTINATION lib)
+# Install library:
+
+install(TARGETS ${BLENDINT_LIB_NAME} DESTINATION lib)
+
+# Install headers:
+
+install(FILES "${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
+  DESTINATION "include/blendint")
 
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/blendint/core"
   DESTINATION "include/blendint")
@@ -79,3 +86,9 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/blendint/opengl"
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/blendint/stock"
   DESTINATION "include/blendint")
 
+# Install blendint.pc:
+
+if(PKG_CONFIG_FOUND)
+  install(FILES "${PROJECT_BINARY_DIR}/lib/pkgconfig/blendint.pc"
+    DESTINATION "lib/pkgconfig")
+endif()

@@ -6,8 +6,9 @@ cmake_minimum_required(VERSION 2.8.11)
 project (BlendInt)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(BLENDINT_VERSION_FULL "0.1")
+set(BLENDINT_LIB_NAME "blendint")
 
 # Check the system and define BLENDINT_SYSTEM_NAME to:
 #   0 - Linux
@@ -39,10 +40,8 @@ option(WITH_UNIT_TEST "Build unit test code" OFF)
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 # end of options
 
-configure_file(
-  "${PROJECT_SOURCE_DIR}/include/blendint/config.hpp.in"
-  "${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
-)
+configure_file("${PROJECT_SOURCE_DIR}/include/blendint/config.hpp.in"
+  "${PROJECT_BINARY_DIR}/include/blendint/config.hpp" @ONLY)
 
 # to find the config header
 include_directories("${PROJECT_BINARY_DIR}/include")
@@ -86,18 +85,43 @@ if(Boost_FOUND)
   #message(STATUS "Use the Boost libraries in: ${Boost_LIBRARY_DIRS}")
 endif()
 
-#add OpenImageIO link
+# add OpenImageIO link
 find_package(OpenImageIO REQUIRED)
 if(OPENIMAGEIO_FOUND)
   include_directories(${OPENIMAGEIO_INCLUDE_DIR})
   set(LIBS ${LIBS} ${OPENIMAGEIO_LIBRARY})
 endif()
 
+# search pkg-config
+find_package(PkgConfig)
+if(PKG_CONFIG_FOUND)
+  configure_file("${PROJECT_SOURCE_DIR}/lib/pkgconfig/blendint.pc.in"
+    "${PROJECT_BINARY_DIR}/lib/pkgconfig/blendint.pc" @ONLY)
+endif()
+
+# configure glfw
+find_package(GLFW REQUIRED)
+if(GLFW_FOUND)
+  include_directories(${GLFW_INCLUDE_DIR})
+  set(LIBS ${LIBS} ${GLFW_LIBRARIES})
+endif()
+
 if(OS_APPLE)
-  set(LIBS ${LIBS} pthread)
-else()
-  # add rt library
-  set(LIBS ${LIBS} rt)
+  add_definitions(-DGLFW_INCLUDE_GLCOREARB)
+  add_definitions(-DGLFW_INCLUDE_GLEXT)
+endif()
+
+# glm
+find_package(GLM REQUIRED)
+if(GLM_FOUND)
+include_directories(${GLM_INCLUDE_DIRS})
+add_definitions(-DGLM_FORCE_RADIANS)
+endif()
+
+if(ENABLE_OPENCV)
+  find_package(OpenCV REQUIRED)
+  add_definitions(-D__USE_OPENCV__)
+  set(LIBS ${LIBS} ${OpenCV_LIBS})
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
@@ -139,42 +163,14 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
 
-# configure glfw
-find_package(GLFW REQUIRED)
-if(GLFW_FOUND)
-  include_directories(${GLFW_INCLUDE_DIR})
-  set(LIBS ${LIBS} ${GLFW_LIBRARIES})
-endif()
-
-if(OS_APPLE)
-  add_definitions(-DGLFW_INCLUDE_GLCOREARB)
-  add_definitions(-DGLFW_INCLUDE_GLEXT)
-endif()
-
-if(OS_LINUX)
-  # add library dependences for glfw3.1, will use pkg-config later
-  set(LIBS ${LIBS} Xxf86vm pthread Xinerama Xi Xrandr Xcursor)
-endif()
-
 # add rapidxml header files
 include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
-# glm
-find_package(GLM REQUIRED)
-if(GLM_FOUND)
-include_directories(${GLM_INCLUDE_DIRS})
-add_definitions(-DGLM_FORCE_RADIANS)
-endif()
-
-if(ENABLE_OPENCV)
-  find_package(OpenCV REQUIRED)
-  add_definitions(-D__USE_OPENCV__)
-  set(LIBS ${LIBS} ${OpenCV_LIBS})
-endif()
-
-if(OS_APPLE)    # more settings for OS X
-  # OS X RPATH: http://www.cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
+if(OS_APPLE)
+  # more settings for OS X OS X RPATH:
+  # http://www.cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
   set(CMAKE_MACOSX_RPATH 1)
+  set(LIBS ${LIBS} pthread)
 endif()
 
 add_subdirectory(lib)
@@ -205,9 +201,6 @@ endif()
 if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
   add_subdirectory(demo)
 endif()
-
-install(FILES "${PROJECT_BINARY_DIR}/include/blendint/config.hpp"
-  DESTINATION "include/blendint")
 
 # ----------------------------------------------------------------------------
 # Summary:
