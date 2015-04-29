@@ -13,8 +13,8 @@ inheritance.
 BlendInt is free software and covered by the GNU Library General
 Public License (LGPL) v3.
 
-**Warning: BlendInt is under heavy development. Support cannot be
-  guaranteed and it may not function as you expect.**
+<font color="#FF1F1F">**Warning: BlendInt is under heavy development. Support
+cannot be guaranteed and it may not function as you expect.**</font>
 
 ## Features
 
@@ -48,8 +48,8 @@ Here is a simple example to create an 240x180 pixel window, and show a
 MessageBox within.
 
 ```cpp
-#include <gui/window.hpp>
-#include <gui/message-box.hpp>
+#include <blendint/gui/window.hpp>
+#include <blendint/gui/message-box.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -122,7 +122,7 @@ The source code is verified to be built and workable on:
 
 * Mac OS X 10.9 (Mavericks), 10.10 (Yosemite)
 * ArchLinux
-* Ubuntu 13.10, 14.04(LTS)
+* Ubuntu 13.10, 14.04(LTS), 15.04
 * Fedora 20, 21
 
 ## Build the Source Code
@@ -141,14 +141,9 @@ page.
 
 * Most source code in this project is released under the LGPL v3
   License. See the bundled LICENSE file for details.
-* BlendInt use [libCppEvents](http://github.com/zhanggyb/libCppEvents)
+* BlendInt use [libCppEvent](http://github.com/zhanggyb/libCppEvent)
   for sending/receiving events between objects, which is released
   under MIT License.
-* [GLFW](http://www.glfw.org) 3.1+ - used in some demos and unit
-  tests, released under zlib/libpng license.
-* [GLM](http://glm.g-truc.net) - a header only C++ mathematics library
-  for graphics software based on the OpenGL Shading Language (GLSL)
-  specification and released under the MIT license.
 * [RapidXml](http://rapidxml.sourceforge.net/) - The author of
   RapidXml is Marcin Kalicinski, use of this software is granted under
   one of the following two licenses: boost software license or MIT
