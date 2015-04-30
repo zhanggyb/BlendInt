@@ -97,7 +97,7 @@ Response Clock::Draw(AbstractWindow* context)
   return Finish;
 }
 
-void Clock::OnUpdateClockHands(Timer* t)
+void Clock::OnUpdateClockHands()
 {
   angle_ = angle_ + 6;
   if(angle_ < 360) {

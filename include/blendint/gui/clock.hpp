@@ -32,61 +32,61 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief A widget to show a clock
-	 *
-	 * This widget is used for demo or timer testing.
-	 */
-	class Clock: public AbstractRoundWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(Clock);
+/**
+ * @brief A widget to show a clock
+ *
+ * This widget is used for demo or timer testing.
+ */
+class Clock: public AbstractRoundWidget
+{
+  DISALLOW_COPY_AND_ASSIGN(Clock);
 
-	public:
+ public:
 
-		Clock();
+  Clock();
 
-		virtual ~Clock();
+  virtual ~Clock();
 
-		void Start ();
+  void Start ();
 
-		void Stop ();
+  void Stop ();
 
-		void set_background (const Color& color)
-		{
-			background_ = color;
-		}
+  void set_background (const Color& color)
+  {
+    background_ = color;
+  }
 
-		virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-	protected:
+ protected:
 
-		virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
 
-		virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-		void GenerateClockVertices (int radius, float border,
-		        std::vector<GLfloat>& inner_vertices,
-		        std::vector<GLfloat>& outer_vertices);
+  void GenerateClockVertices (int radius, float border,
+                              std::vector<GLfloat>& inner_vertices,
+                              std::vector<GLfloat>& outer_vertices);
 
-	private:
+ private:
 
-		void OnUpdateClockHands(Timer* t);
+  void OnUpdateClockHands();
 
-		void InitializeClock ();
+  void InitializeClock ();
 
-		// 0 - inner
-		// 1 - outer
-		// 2 - second hand
-		GLuint vao_[3];
+  // 0 - inner
+  // 1 - outer
+  // 2 - second hand
+  GLuint vao_[3];
 
-		GLBuffer<ARRAY_BUFFER, 3> buffer_;
+  GLBuffer<ARRAY_BUFFER, 3> buffer_;
 
-		int angle_;
+  int angle_;
 
-		RefPtr<Timer> timer_;
+  RefPtr<Timer> timer_;
 
-		Color background_;
-	};
+  Color background_;
+};
 
 }
 

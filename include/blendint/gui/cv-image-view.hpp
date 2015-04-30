@@ -140,7 +140,7 @@ private:
 
   virtual void PostDraw (AbstractWindow* context);
 
-  void OnUpdateFrame (Timer* sender);
+  void OnUpdateFrame ();
 
   /**
    * @brief Vertex Array Objects

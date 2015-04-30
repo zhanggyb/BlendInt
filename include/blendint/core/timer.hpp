@@ -111,7 +111,7 @@ class Timer: public Object
    * @brief The timeout event
    * @return Reference to a CppEvent::Event
    */
-  CppEvent::EventRef<Timer*> timeout ()
+  CppEvent::EventRef<> timeout ()
   {
     return timeout_;
   }
@@ -159,13 +159,17 @@ class Timer: public Object
 
  private:
 
+#if BLENDINT_USE_POSIX_TIMER
+
   void Create ();
 
-#if BLENDINT_USE_POSIX_TIMER
   timer_t m_id;
+
 #else
+
   pthread_t m_id;	// thread id
-#endif	// __APPLE__
+
+#endif  // BLENDINT_USE_POSIX_TIMER
 
   /**
    * @brief the interval time in millisecond
@@ -179,7 +183,7 @@ class Timer: public Object
   /**
    * @brief the time out event
    */
-  CppEvent::Event<Timer*> timeout_;
+  CppEvent::Event<> timeout_;
 
   static uint64_t kSavedTime;
 

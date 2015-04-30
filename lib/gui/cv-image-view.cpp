@@ -489,12 +489,12 @@ void CVImageView::PostDraw (AbstractWindow* context)
   AbstractWindow::shaders()->PopWidgetModelMatrix();
 }
 
-void CVImageView::OnUpdateFrame (Timer* sender)
+void CVImageView::OnUpdateFrame ()
 {
   video_stream_ >> image_;
 
   if (mutex_.trylock()) {
-
+    
     off_screen_context_->MakeCurrent();
 
     if (image_.data) ProcessImage(image_);
