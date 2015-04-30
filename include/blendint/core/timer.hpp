@@ -26,16 +26,21 @@
 #include <signal.h>
 #include <time.h>
 
-#ifdef __LINUX__
-#define BLENDINT_USE_POSIX_TIMER 1
-#else
-#define BLENDINT_USE_POSIX_TIMER 0
-#include <pthread.h>
-#endif
-
 #include <blendint/cppevent/event.hpp>
-
 #include <blendint/core/object.hpp>
+
+/*
+  #ifdef __LINUX__
+  #define BLENDINT_USE_POSIX_TIMER 1
+  #else
+  #define BLENDINT_USE_POSIX_TIMER 0
+  #include <pthread.h>
+  #endif
+*/
+
+// use posix timer cause segment fault in Linux, this is a temporary
+// workaround:
+#define BLENDINT_USE_POSIX_TIMER 0
 
 namespace BlendInt {
 
