@@ -26,77 +26,77 @@
 
 namespace BlendInt {
 
-	namespace Ft {
+namespace Ft {
 
-		Face::Face()
-		: face_(NULL)
-		{
+Face::Face()
+    : face_(NULL)
+{
 
-		}
+}
 
-		Face::~Face ()
-		{
-			if(face_) {
-				FT_Error err = FT_Done_Face(face_);
-				if(err) {
-					DBG_PRINT_MSG("Warning: %s", "Fail to destroy Freetype Face");
-				}
-			}
-		}
+Face::~Face ()
+{
+  if(face_) {
+    FT_Error err = FT_Done_Face(face_);
+    if(err) {
+      DBG_PRINT_MSG("Warning: %s", "Fail to destroy Freetype Face");
+    }
+  }
+}
 
-		bool Face::New (const Library& lib, const char* filepathname,
-		        FT_Long face_index)
-		{
-			FT_Error err = 0;
+bool Face::New (const Library& lib, const char* filepathname,
+                FT_Long face_index)
+{
+  FT_Error err = 0;
 
-			if(face_) {
-				err = FT_Done_Face(face_);
-				if(err) {
-					DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
-				}
-			}
+  if(face_) {
+    err = FT_Done_Face(face_);
+    if(err) {
+      DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+    }
+  }
 
-			err = FT_New_Face(lib.library(), filepathname, face_index, &face_);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to create FreeType face");
-			}
+  err = FT_New_Face(lib.library(), filepathname, face_index, &face_);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to create FreeType face");
+  }
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-		bool Face::New (const Library& lib, const FT_Byte* mem, FT_Long size,
-		        FT_Long face_index)
-		{
-			FT_Error err = 0;
+bool Face::New (const Library& lib, const FT_Byte* mem, FT_Long size,
+                FT_Long face_index)
+{
+  FT_Error err = 0;
 
-			if(face_) {
-				err = FT_Done_Face(face_);
-				if(err) {
-					DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
-				}
-			}
+  if(face_) {
+    err = FT_Done_Face(face_);
+    if(err) {
+      DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+    }
+  }
 
-			err = FT_New_Memory_Face(lib.library(), mem, size, face_index, &face_);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to create FreeType face");
-			}
+  err = FT_New_Memory_Face(lib.library(), mem, size, face_index, &face_);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to create FreeType face");
+  }
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-		bool Face::Done ()
-		{
-			FT_Error err = 0;
+bool Face::Done ()
+{
+  FT_Error err = 0;
 
-			err = FT_Done_Face(face_);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
-			}
-			face_ = 0;
+  err = FT_Done_Face(face_);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+  }
+  face_ = 0;
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-	}
+}
 
 }

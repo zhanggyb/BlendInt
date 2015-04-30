@@ -27,144 +27,144 @@
 
 namespace BlendInt {
 
-  MenuButton::MenuButton (const String& text)
-  : AbstractButton(text),
-    vao_(0),
-    hover_(false)
-  {
-    set_round_type(RoundAll);
+MenuButton::MenuButton (const String& text)
+    : AbstractButton(text),
+      vao_(0),
+      hover_(false)
+{
+  set_round_type(RoundAll);
 
-    int w = this->text()->size().width();
-    int h = this->text()->font().height();
+  int w = this->text()->size().width();
+  int h = this->text()->font().height();
 
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-    set_size(w, h);
+  set_size(w, h);
 
-    InitializeMenuButton();
-  }
+  InitializeMenuButton();
+}
 
-  MenuButton::~MenuButton ()
-  {
-    glDeleteVertexArrays(1, &vao_);
-  }
+MenuButton::~MenuButton ()
+{
+  glDeleteVertexArrays(1, &vao_);
+}
 
-  void MenuButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
+void MenuButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if (target == this) {
 
-      set_size(width, height);
-
-      std::vector<GLfloat> inner_verts;
-      AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(),
-                                     &inner_verts, 0);
-
-      vbo_.bind();
-      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                        &inner_verts[0]);
-      vbo_.reset();
-
-      RequestRedraw();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  void MenuButton::PerformRoundTypeUpdate (int round_type)
-  {
-    set_round_type(round_type);
+    set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
-    GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
+    AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(),
+                                   &inner_verts, 0);
 
     vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                      &inner_verts[0]);
     vbo_.reset();
 
     RequestRedraw();
   }
 
-  void MenuButton::PerformRoundRadiusUpdate (float radius)
-  {
-    set_round_radius(radius);
-
-    std::vector<GLfloat> inner_verts;
-    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-                     0);
-
-    vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-    vbo_.reset();
-
-    RequestRedraw();
+  if (source == this) {
+    report_size_update(source, target, width, height);
   }
+}
 
-  Response MenuButton::Draw (AbstractWindow* context)
-  {
-    if (hover_) {
+void MenuButton::PerformRoundTypeUpdate (int round_type)
+{
+  set_round_type(round_type);
 
-      AbstractWindow::shaders()->widget_inner_program()->use();
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type, round_radius(), &inner_verts, 0);
 
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-      glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-          context->theme()->menu_item().shaded);
-      glUniform4fv(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme()->menu_item().inner_sel.data());
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.reset();
 
-      glBindVertexArray(vao_);
-      glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  RequestRedraw();
+}
 
-    }
+void MenuButton::PerformRoundRadiusUpdate (float radius)
+{
+  set_round_radius(radius);
 
-    DrawIconText();
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                   0);
 
-    return Finish;
-  }
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.reset();
 
-  void MenuButton::PerformHoverIn (AbstractWindow* context)
-  {
-    if (!hover_) {
-      hover_ = true;
-      RequestRedraw();
-    }
+  RequestRedraw();
+}
 
-    return AbstractButton::PerformHoverIn(context);
-  }
+Response MenuButton::Draw (AbstractWindow* context)
+{
+  if (hover_) {
 
-  void MenuButton::PerformHoverOut (AbstractWindow* context)
-  {
-    if (hover_) {
-      hover_ = false;
-      RequestRedraw();
-    }
+    AbstractWindow::shaders()->widget_inner_program()->use();
 
-    return AbstractButton::PerformHoverOut(context);
-  }
-
-  void MenuButton::InitializeMenuButton ()
-  {
-    glGenVertexArrays(1, &vao_);
-
-    std::vector<GLfloat> inner_verts;
-    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-                     0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        context->theme()->menu_item().shaded);
+    glUniform4fv(
+        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        AbstractWindow::theme()->menu_item().inner_sel.data());
 
     glBindVertexArray(vao_);
-    vbo_.generate();
-    vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(0);
-    vbo_.reset();
   }
+
+  DrawIconText();
+
+  return Finish;
+}
+
+void MenuButton::PerformHoverIn (AbstractWindow* context)
+{
+  if (!hover_) {
+    hover_ = true;
+    RequestRedraw();
+  }
+
+  return AbstractButton::PerformHoverIn(context);
+}
+
+void MenuButton::PerformHoverOut (AbstractWindow* context)
+{
+  if (hover_) {
+    hover_ = false;
+    RequestRedraw();
+  }
+
+  return AbstractButton::PerformHoverOut(context);
+}
+
+void MenuButton::InitializeMenuButton ()
+{
+  glGenVertexArrays(1, &vao_);
+
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                   0);
+
+  glBindVertexArray(vao_);
+  vbo_.generate();
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
 } /* namespace BlendInt */

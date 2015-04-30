@@ -60,7 +60,7 @@ struct ModelNode
 
 class ModelIndex
 {
-public:
+ public:
 
   inline ModelIndex ()
       : node_(0)
@@ -117,7 +117,7 @@ public:
     return node_ == other.node_;
   }
 
-private:
+ private:
 
   friend class AbstractItemModel;
   friend inline bool operator == (const ModelIndex& src, const ModelIndex& dst);
@@ -147,7 +147,7 @@ inline bool operator == (const ModelIndex& src, const ModelIndex& dst)
 class AbstractItemModel: public Object
 {
 
-public:
+ public:
 
   AbstractItemModel ();
 
@@ -162,7 +162,7 @@ public:
    * @brief Get the column count
    */
   virtual int GetColumnCount (const ModelIndex& parent =
-      ModelIndex()) const = 0;
+                              ModelIndex()) const = 0;
 
   /**
    * @brief Get the preferred width for the column
@@ -170,38 +170,38 @@ public:
    * @param[in] parent the parent model index
    */
   virtual int GetPreferredColumnWidth (int index, const ModelIndex& parent =
-                                           ModelIndex()) const = 0;
+                                       ModelIndex()) const = 0;
 
   bool InsertColumn (int column, const ModelIndex& parent = ModelIndex());
 
   virtual bool InsertColumns (int column, int count, const ModelIndex& parent =
-                                  ModelIndex()) = 0;
+                              ModelIndex()) = 0;
 
   /**
    * @brief Get the preferred height for row
    */
   virtual int GetPreferredRowHeight (int index, const ModelIndex& parent =
-                                         ModelIndex()) const = 0;
+                                     ModelIndex()) const = 0;
 
   bool RemoveColumn (int column, const ModelIndex& parent = ModelIndex());
 
   virtual bool RemoveColumns (int column, int count, const ModelIndex& parent =
-                                  ModelIndex()) = 0;
+                              ModelIndex()) = 0;
 
   bool RemoveRow (int row, const ModelIndex& parent = ModelIndex());
 
   virtual bool RemoveRows (int row, int count, const ModelIndex& parent =
-                               ModelIndex()) = 0;
+                           ModelIndex()) = 0;
 
   bool InsertRow (int row, const ModelIndex& parent = ModelIndex());
 
   virtual bool InsertRows (int row, int count, const ModelIndex& parent =
-                               ModelIndex()) = 0;
+                           ModelIndex()) = 0;
 
   virtual ModelIndex GetRootIndex () const = 0;
 
   virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent =
-                                   ModelIndex()) const = 0;
+                               ModelIndex()) const = 0;
 
   virtual bool SetData (const ModelIndex& index,
                         const RefPtr<AbstractForm>& data);
@@ -210,9 +210,9 @@ public:
    * @brief Get the font used to show string in this model
    */
   virtual BlendInt::Font GetFont (const ModelIndex& parent =
-      ModelIndex()) const;
+                                  ModelIndex()) const;
 
-protected:
+ protected:
 
   static inline bool set_index_data (const ModelIndex& index,
                                      const RefPtr<AbstractForm>& data)

@@ -27,157 +27,157 @@
 
 namespace BlendInt {
 
-  Margin Label::kPadding(2, 2, 2, 2);
+Margin Label::kPadding(2, 2, 2, 2);
 
-  Label::Label (const String& text, Alignment alignment)
-  : AbstractWidget(), alignment_(alignment), vao_(0)
-  {
-    text_.reset(new Text(text));
+Label::Label (const String& text, Alignment alignment)
+    : AbstractWidget(), alignment_(alignment), vao_(0)
+{
+  text_.reset(new Text(text));
 
-    int w = text_->size().width();
-    int h = text_->font().height();
+  int w = text_->size().width();
+  int h = text_->font().height();
 
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-    set_size(w, h);
+  set_size(w, h);
 
-    foreground_ = Palette::Black;
-    background_ = 0xFFFFFF00;
+  foreground_ = Palette::Black;
+  background_ = 0xFFFFFF00;
+
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+
+  glGenVertexArrays(1, &vao_);
+  glBindVertexArray(vao_);
+
+  vbo_.generate();
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3,
+                        GL_FLOAT,
+                        GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
+
+Label::~Label ()
+{
+  glDeleteVertexArrays(1, &vao_);
+}
+
+void Label::SetText (const String& text)
+{
+  text_->SetText(text);
+  RequestRedraw();
+}
+
+void Label::SetFont (const Font& font)
+{
+  text_->SetFont(font);
+  RequestRedraw();
+}
+
+void Label::SetForeground (const Color& color)
+{
+  if (foreground_ != color) {
+    foreground_ = color;
+    RequestRedraw();
+  }
+}
+
+void Label::SetBackground (const Color& color)
+{
+  if (background_ != color) {
+    background_ = color;
+    RequestRedraw();
+  }
+}
+
+void Label::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if (target == this) {
+    set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
-    glGenVertexArrays(1, &vao_);
-    glBindVertexArray(vao_);
-
-    vbo_.generate();
     vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3,
-    GL_FLOAT,
-                          GL_FALSE, 0, 0);
-
-    glBindVertexArray(0);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                      &inner_verts[0]);
     vbo_.reset();
-  }
 
-  Label::~Label ()
-  {
-    glDeleteVertexArrays(1, &vao_);
-  }
-
-  void Label::SetText (const String& text)
-  {
-    text_->SetText(text);
     RequestRedraw();
   }
 
-  void Label::SetFont (const Font& font)
-  {
-    text_->SetFont(font);
-    RequestRedraw();
+  if (source == this) {
+    report_size_update(source, target, width, height);
   }
+}
 
-  void Label::SetForeground (const Color& color)
-  {
-    if (foreground_ != color) {
-      foreground_ = color;
-      RequestRedraw();
-    }
-  }
+Response Label::PerformMousePress (AbstractWindow* context)
+{
+  return Ignore;
+}
 
-  void Label::SetBackground (const Color& color)
-  {
-    if (background_ != color) {
-      background_ = color;
-      RequestRedraw();
-    }
-  }
+Response Label::PerformMouseRelease (AbstractWindow* context)
+{
+  return Ignore;
+}
 
-  void Label::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
-      set_size(width, height);
+Response Label::PerformMouseMove (AbstractWindow* context)
+{
+  return Ignore;
+}
 
-      std::vector<GLfloat> inner_verts;
-      GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
+Response Label::Draw (AbstractWindow* context)
+{
+  AbstractWindow::shaders()->widget_inner_program()->use();
 
-      vbo_.bind();
-      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                        &inner_verts[0]);
-      vbo_.reset();
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+  glUniform4fv(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+      Color(background_).data());
 
-      RequestRedraw();
-    }
+  glBindVertexArray(vao_);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
+  if (text_) {
 
-  Response Label::PerformMousePress (AbstractWindow* context)
-  {
-    return Ignore;
-  }
+    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
+              size().width() - pixel_size(kPadding.hsum()),
+              size().height() - pixel_size(kPadding.vsum()));
 
-  Response Label::PerformMouseRelease (AbstractWindow* context)
-  {
-    return Ignore;
-  }
-
-  Response Label::PerformMouseMove (AbstractWindow* context)
-  {
-    return Ignore;
-  }
-
-  Response Label::Draw (AbstractWindow* context)
-  {
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
-    glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        Color(background_).data());
-
-    glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-    if (text_) {
-
-      Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-                size().width() - pixel_size(kPadding.hsum()),
-                size().height() - pixel_size(kPadding.vsum()));
-
-      if (text_->size().height() <= rect.height()) {
-        text_->DrawInRect(rect, alignment_ | AlignJustify | AlignBaseline,
-                          Color(foreground_).data());
-      }
-
+    if (text_->size().height() <= rect.height()) {
+      text_->DrawInRect(rect, alignment_ | AlignJustify | AlignBaseline,
+                        Color(foreground_).data());
     }
 
-    return Finish;
   }
 
-  Size Label::GetPreferredSize () const
-  {
-    int h = text_->font().height();
-    int w = text_->size().width();
+  return Finish;
+}
 
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
+Size Label::GetPreferredSize () const
+{
+  int h = text_->font().height();
+  int w = text_->size().width();
 
-    return Size(w, h);
-  }
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-  bool Label::IsExpandX () const
-  {
-    return true;
-  }
+  return Size(w, h);
+}
+
+bool Label::IsExpandX () const
+{
+  return true;
+}
 
 } /* namespace BlendInt */
 

@@ -61,7 +61,8 @@ AbstractWindow::AbstractWindow (int flags)
   current_cursor_shape_(ArrowCursor),
   floating_frame_count_(0),
   pressed_(false),
-  mouse_tracking_(false)
+  mouse_tracking_(false),
+  z_overloap_(false)
 {
   set_view_type(ViewTypeWindow);
 
@@ -79,7 +80,8 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
   current_cursor_shape_(ArrowCursor),
   floating_frame_count_(0),
   pressed_(false),
-  mouse_tracking_(false)
+  mouse_tracking_(false),
+  z_overloap_(false)
 {
   set_view_type(ViewTypeWindow);
 

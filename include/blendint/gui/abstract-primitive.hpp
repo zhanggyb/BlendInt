@@ -31,25 +31,25 @@
 
 namespace BlendInt {
 
-  class AbstractPrimitive: public Object
-  {
-  public:
+class AbstractPrimitive: public Object
+{
+ public:
 
-    AbstractPrimitive ();
+  AbstractPrimitive ();
 
-    virtual ~AbstractPrimitive ();
+  virtual ~AbstractPrimitive ();
 
-    /**
-     * @brief Render the primitive in Viewport3D
-     * @param MVP
-     *
-     * The following OpenGL APIs should not be used in this virtual function:
-     * 	- glClearColor
-     * 	- glClear
-     */
-    virtual void Render (const glm::mat4& projection_matrix,
-                         const glm::mat4& view_matrix) = 0;
+  /**
+   * @brief Render the primitive in Viewport3D
+   * @param MVP
+   *
+   * The following OpenGL APIs should not be used in this virtual function:
+   * 	- glClearColor
+   * 	- glClear
+   */
+  virtual void Render (const glm::mat4& projection_matrix,
+                       const glm::mat4& view_matrix) = 0;
 
-  };
+};
 
 }

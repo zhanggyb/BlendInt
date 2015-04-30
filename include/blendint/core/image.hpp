@@ -29,55 +29,55 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Image class focused on I/O and direct pixel access and manipulation
-   *
-   * @ingroup blendint_core
-   */
-  class Image: public Object
+/**
+ * @brief Image class focused on I/O and direct pixel access and manipulation
+ *
+ * @ingroup blendint_core
+ */
+class Image: public Object
+{
+ public:
+
+  Image ();
+
+  ~Image ();
+
+  bool Read (const char* filename);
+
+  bool Read (const String& filename);
+
+  bool Save ();
+
+  void Clear ();
+
+  const unsigned char* pixels () const
   {
-  public:
+    return &m_pixels[0];
+  }
 
-    Image ();
+  int height () const
+  {
+    return m_height;
+  }
 
-    ~Image ();
+  int width () const
+  {
+    return m_width;
+  }
 
-    bool Read (const char* filename);
+  int channels () const
+  {
+    return m_channels;
+  }
 
-    bool Read (const String& filename);
+ private:
 
-    bool Save ();
+  String m_filename;
 
-    void Clear ();
+  int m_width;
+  int m_height;
+  int m_channels;
 
-    const unsigned char* pixels () const
-    {
-      return &m_pixels[0];
-    }
-
-    int height () const
-    {
-      return m_height;
-    }
-
-    int width () const
-    {
-      return m_width;
-    }
-
-    int channels () const
-    {
-      return m_channels;
-    }
-
-  private:
-
-    String m_filename;
-
-    int m_width;
-    int m_height;
-    int m_channels;
-
-    std::vector<unsigned char> m_pixels;
-  };
+  std::vector<unsigned char> m_pixels;
+};
 }

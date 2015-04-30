@@ -25,24 +25,24 @@
 
 namespace BlendInt {
 
-	TreeView::TreeView()
-	: AbstractItemView()
-	{
+TreeView::TreeView()
+    : AbstractItemView()
+{
 
-	}
+}
 
-	TreeView::~TreeView ()
-	{
-	}
+TreeView::~TreeView ()
+{
+}
 
-	ModelIndex TreeView::GetIndexAt (const Point& point) const
-	{
-		return ModelIndex();
-	}
+ModelIndex TreeView::GetIndexAt (const Point& point) const
+{
+  return ModelIndex();
+}
 
-	Response TreeView::Draw (AbstractWindow* context)
-	{
-		return Ignore;
-	}
+Response TreeView::Draw (AbstractWindow* context)
+{
+  return Ignore;
+}
 
 }

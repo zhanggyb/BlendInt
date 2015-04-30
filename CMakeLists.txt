@@ -43,10 +43,21 @@ option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentati
 configure_file("${PROJECT_SOURCE_DIR}/include/blendint/config.hpp.in"
   "${PROJECT_BINARY_DIR}/include/blendint/config.hpp" @ONLY)
 
-# to find the config header
+# Check if compiler support C++11:
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else()
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no
+    C++11 support. Please use a different C++ compiler.")
+endif()
+
+# to find the config header:
 include_directories("${PROJECT_BINARY_DIR}/include")
 
-# for cppevent
+# for cppevent:
 include_directories("${PROJECT_SOURCE_DIR}/include/blendint")
 
 if(OS_APPLE)
@@ -126,14 +137,6 @@ endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
 
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no
-    C++11 support. Please use a different C++ compiler.")
-endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
     CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")

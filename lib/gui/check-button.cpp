@@ -28,105 +28,105 @@
 
 namespace BlendInt {
 
-	CheckButton::CheckButton()
-	: AbstractButton()
-	{
-	  set_checkable(true);
+CheckButton::CheckButton()
+    : AbstractButton()
+{
+  set_checkable(true);
 
-		Font font;	// default font
-		int w = 80;
-		int h = font.height();
+  Font font;	// default font
+  int w = 80;
+  int h = font.height();
 
-		set_size(w + pixel_size(kPadding.hsum()),
-		        h + pixel_size(kPadding.vsum()));
-	}
+  set_size(w + pixel_size(kPadding.hsum()),
+           h + pixel_size(kPadding.vsum()));
+}
 
-	CheckButton::CheckButton (const String& text)
-	: AbstractButton(text)
-	{
-	  set_checkable(true);
+CheckButton::CheckButton (const String& text)
+    : AbstractButton(text)
+{
+  set_checkable(true);
 
-		int w = this->text()->size().width();
-		int h = this->text()->font().height();
-		if(w < 80) w = 80;
+  int w = this->text()->size().width();
+  int h = this->text()->font().height();
+  if(w < 80) w = 80;
 
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-		set_size(w, h);
-	}
+  set_size(w, h);
+}
 
-	CheckButton::~CheckButton ()
-	{
-	}
+CheckButton::~CheckButton ()
+{
+}
 
-  Size CheckButton::GetPreferredSize () const
-  {
-    int w = 0;
-    int h = 0;
+Size CheckButton::GetPreferredSize () const
+{
+  int w = 0;
+  int h = 0;
 
-    const RefPtr<CheckIcon>& icon = AbstractWindow::icons()->check();
+  const RefPtr<CheckIcon>& icon = AbstractWindow::icons()->check();
 
-    w = icon->size().width();
-    h = icon->size().height();
+  w = icon->size().width();
+  h = icon->size().height();
 
-    w += kIconTextSpace;
+  w += kIconTextSpace;
 
-    Font font;  // default font
-    if (text()) {
-      font = text()->font();
-      w += text()->size().width();
-    }
-
-    h = std::max(h, font.height());
-
-    if (w == kIconTextSpace) {
-      w = h;
-    }
-
-    w += pixel_size(kPadding.hsum());
-    h += pixel_size(kPadding.vsum());
-
-    return Size(w, h);
+  Font font;  // default font
+  if (text()) {
+    font = text()->font();
+    w += text()->size().width();
   }
 
-	Response CheckButton::Draw (AbstractWindow* context)
-	{
-    Rect rect(pixel_size(kPadding.left()),
-              pixel_size(kPadding.bottom()),
-              size().width() - pixel_size(kPadding.hsum()),
-              size().height() - pixel_size(kPadding.vsum()));
+  h = std::max(h, font.height());
 
-    const RefPtr<CheckIcon>& icon = context->icons()->check();
+  if (w == kIconTextSpace) {
+    w = h;
+  }
 
-    if (icon->size().height() <= rect.height()) {
-      if (icon->size().width() <= rect.width()) {
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-        int align = AlignVerticalCenter;
-        if (text()) {
-          align |= AlignLeft;
-        } else {
-          align |= AlignHorizontalCenter;
-        }
+  return Size(w, h);
+}
 
-        icon->DrawInRect(rect, align);
-        if(is_checked()) {
-          context->icons()->hook()->DrawInRect(rect, align,
-                                         Color(Palette::White).data());
-        }
+Response CheckButton::Draw (AbstractWindow* context)
+{
+  Rect rect(pixel_size(kPadding.left()),
+            pixel_size(kPadding.bottom()),
+            size().width() - pixel_size(kPadding.hsum()),
+            size().height() - pixel_size(kPadding.vsum()));
 
-        rect.cut_left(icon->size().width() + kIconTextSpace);
+  const RefPtr<CheckIcon>& icon = context->icons()->check();
+
+  if (icon->size().height() <= rect.height()) {
+    if (icon->size().width() <= rect.width()) {
+
+      int align = AlignVerticalCenter;
+      if (text()) {
+        align |= AlignLeft;
+      } else {
+        align |= AlignHorizontalCenter;
       }
-    }
 
-    if (text()) {
-      if (text()->size().height() <= rect.height()) {
-        text()->DrawInRect(rect,
-                          AlignHorizontalCenter | AlignJustify | AlignBaseline);
+      icon->DrawInRect(rect, align);
+      if(is_checked()) {
+        context->icons()->hook()->DrawInRect(rect, align,
+                                             Color(Palette::White).data());
       }
-    }
 
-		return Finish;
-	}
+      rect.cut_left(icon->size().width() + kIconTextSpace);
+    }
+  }
+
+  if (text()) {
+    if (text()->size().height() <= rect.height()) {
+      text()->DrawInRect(rect,
+                         AlignHorizontalCenter | AlignJustify | AlignBaseline);
+    }
+  }
+
+  return Finish;
+}
 
 }

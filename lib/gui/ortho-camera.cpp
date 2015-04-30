@@ -29,32 +29,32 @@
 
 namespace BlendInt {
 
-	OrthoCamera::OrthoCamera()
-	: AbstractCamera(),
-	  left_(0.f),
-	  right_(100.f),
-	  bottom_(0.f),
-	  top_(100.f),
-	  near_(100.f),
-	  far_(-100.f)
-	{
-	}
+OrthoCamera::OrthoCamera()
+    : AbstractCamera(),
+      left_(0.f),
+      right_(100.f),
+      bottom_(0.f),
+      top_(100.f),
+      near_(100.f),
+      far_(-100.f)
+{
+}
 
-	OrthoCamera::~OrthoCamera()
-	{
-	}
+OrthoCamera::~OrthoCamera()
+{
+}
 
-	void OrthoCamera::SetOrtho (float left, float right, float bottom,
-			float top, float near, float far)
-	{
-		left_ = left;
-		right_ = right;
-		bottom_ = bottom;
-		top_ = top;
-		near_ = near;
-		far_ = far;
+void OrthoCamera::SetOrtho (float left, float right, float bottom,
+                            float top, float near, float far)
+{
+  left_ = left;
+  right_ = right;
+  bottom_ = bottom;
+  top_ = top;
+  near_ = near;
+  far_ = far;
 
-		set_projection(glm::ortho(left_, right_, bottom_, top_, near_, far_));
-	}
+  set_projection(glm::ortho(left_, right_, bottom_, top_, near_, far_));
+}
 
 }

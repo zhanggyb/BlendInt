@@ -33,226 +33,226 @@
 
 namespace BlendInt {
 
-  class ButtonGroup;
+class ButtonGroup;
 
-  /**
-   * @defgroup blendint_gui_widgets_buttons Buttons
-   *
-   * @ingroup blendint_gui_widgets
-   */
+/**
+ * @defgroup blendint_gui_widgets_buttons Buttons
+ *
+ * @ingroup blendint_gui_widgets
+ */
 
-  /**
-   * @brief Abstract class for buttons
-   *
-   * @ingroup blendint_gui_widgets_buttons
-   */
-  class AbstractButton: public AbstractRoundWidget
-  {
+/**
+ * @brief Abstract class for buttons
+ *
+ * @ingroup blendint_gui_widgets_buttons
+ */
+class AbstractButton: public AbstractRoundWidget
+{
   DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
-  public:
+ public:
 
-    AbstractButton ();
+  AbstractButton ();
 
-    AbstractButton (const String& text);
+  AbstractButton (const String& text);
 
-    AbstractButton (const RefPtr<AbstractIcon>& icon);
+  AbstractButton (const RefPtr<AbstractIcon>& icon);
 
-    AbstractButton (const RefPtr<AbstractIcon>& icon, const String& text);
+  AbstractButton (const RefPtr<AbstractIcon>& icon, const String& text);
 
-    virtual ~AbstractButton ();
+  virtual ~AbstractButton ();
 
-    void SetDown (bool down);
+  void SetDown (bool down);
 
-    void SetCheckable (bool checkabel);
+  void SetCheckable (bool checkabel);
 
-    void SetChecked (bool checked);
+  void SetChecked (bool checked);
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-    const RefPtr<AbstractIcon>& icon () const
-    {
-      return icon_;
+  const RefPtr<AbstractIcon>& icon () const
+  {
+    return icon_;
+  }
+
+  const RefPtr<Text>& text () const
+  {
+    return text_;
+  }
+
+  bool is_down () const
+  {
+    return button_flags_ & ButtonDownMask;
+  }
+
+  bool is_checked () const
+  {
+    return button_flags_ & ButtonCheckedMask;
+  }
+
+  bool is_checkable () const
+  {
+    return button_flags_ & ButtonCheckableMask;
+  }
+
+  bool is_pressed () const
+  {
+    return button_flags_ & ButtonPressedMask;
+  }
+
+  CppEvent::EventRef<> clicked ()
+  {
+    return clicked_;
+  }
+
+  CppEvent::EventRef<bool> toggled ()
+  {
+    return toggled_;
+  }
+
+  CppEvent::EventRef<> pressed ()
+  {
+    return pressed_;
+  }
+
+ protected:
+
+  virtual void PerformHoverIn (AbstractWindow* context) override;
+
+  virtual void PerformHoverOut (AbstractWindow* context) override;
+
+  virtual Response PerformMousePress (AbstractWindow* context) final;
+
+  virtual Response PerformMouseRelease (AbstractWindow* context) final;
+
+  virtual Response PerformMouseMove (AbstractWindow* context) final;
+
+  virtual Response Draw (AbstractWindow* context) = 0;
+
+  inline void set_icon (const RefPtr<AbstractIcon>& icon)
+  {
+    icon_ = icon;
+  }
+
+  inline void set_text (const String& text)
+  {
+    if (text_) {
+      text_->SetText(text);
+    } else {
+      text_.reset(new Text(text));
     }
+  }
 
-    const RefPtr<Text>& text () const
-    {
-      return text_;
+  inline void set_font (const Font& font)
+  {
+    if (text_) text_->SetFont(font);
+  }
+
+  void DrawIconText ();
+
+  void DrawIconText (const float* text_color_v,
+                     short text_gamma,
+                     const float* icon_color_v = Color(0x1A1A1A20).data(),
+                     short icon_gamma = 0);
+
+  inline void set_pressed (bool press)
+  {
+    if(press) {
+      SETBIT(button_flags_, ButtonPressedMask);
+    } else {
+      CLRBIT(button_flags_, ButtonPressedMask);
     }
+  }
 
-    bool is_down () const
-    {
-      return button_flags_ & ButtonDownMask;
+  inline void set_down (bool down)
+  {
+    if (down) {
+      SETBIT(button_flags_, ButtonDownMask);
+    } else {
+      CLRBIT(button_flags_, ButtonDownMask);
     }
+  }
 
-    bool is_checked () const
-    {
-      return button_flags_ & ButtonCheckedMask;
+  inline void set_checkable (bool checkable)
+  {
+    if (checkable) {
+      SETBIT(button_flags_, ButtonCheckableMask);
+    } else {
+      CLRBIT(button_flags_, ButtonCheckableMask);
     }
+  }
 
-    bool is_checkable () const
-    {
-      return button_flags_ & ButtonCheckableMask;
+  inline void set_checked (bool checked)
+  {
+    if(checked) {
+      SETBIT(button_flags_, ButtonCheckedMask);
+    } else {
+      CLRBIT(button_flags_, ButtonCheckedMask);
     }
+  }
 
-    bool is_pressed () const
-    {
-      return button_flags_ & ButtonPressedMask;
+  inline bool is_last_checked () const
+  {
+    return button_flags_ & ButtonLastCheckedMask;
+  }
+
+  inline void set_last_checked (bool checked)
+  {
+    if(checked) {
+      SETBIT(button_flags_, ButtonLastCheckedMask);
+    } else {
+      CLRBIT(button_flags_, ButtonLastCheckedMask);
     }
+  }
 
-    CppEvent::EventRef<> clicked ()
-    {
-      return clicked_;
-    }
+  inline void set_text (const RefPtr<Text>& text)
+  {
+    text_ = text;
+  }
 
-    CppEvent::EventRef<bool> toggled ()
-    {
-      return toggled_;
-    }
+  static Margin kPadding;
 
-    CppEvent::EventRef<> pressed ()
-    {
-      return pressed_;
-    }
+  static int kIconTextSpace;  // the space between icon and text
 
-  protected:
+ private:
 
-    virtual void PerformHoverIn (AbstractWindow* context) override;
+  friend class ButtonGroup;
 
-    virtual void PerformHoverOut (AbstractWindow* context) override;
-
-    virtual Response PerformMousePress (AbstractWindow* context) final;
-
-    virtual Response PerformMouseRelease (AbstractWindow* context) final;
-
-    virtual Response PerformMouseMove (AbstractWindow* context) final;
-
-    virtual Response Draw (AbstractWindow* context) = 0;
-
-    inline void set_icon (const RefPtr<AbstractIcon>& icon)
-    {
-      icon_ = icon;
-    }
-
-    inline void set_text (const String& text)
-    {
-      if (text_) {
-        text_->SetText(text);
-      } else {
-        text_.reset(new Text(text));
-      }
-    }
-
-    inline void set_font (const Font& font)
-    {
-      if (text_) text_->SetFont(font);
-    }
-
-    void DrawIconText ();
-
-    void DrawIconText (const float* text_color_v,
-                       short text_gamma,
-                       const float* icon_color_v = Color(0x1A1A1A20).data(),
-                       short icon_gamma = 0);
-
-    inline void set_pressed (bool press)
-    {
-      if(press) {
-        SETBIT(button_flags_, ButtonPressedMask);
-      } else {
-        CLRBIT(button_flags_, ButtonPressedMask);
-      }
-    }
-
-    inline void set_down (bool down)
-    {
-      if (down) {
-        SETBIT(button_flags_, ButtonDownMask);
-      } else {
-        CLRBIT(button_flags_, ButtonDownMask);
-      }
-    }
-
-    inline void set_checkable (bool checkable)
-    {
-      if (checkable) {
-        SETBIT(button_flags_, ButtonCheckableMask);
-      } else {
-        CLRBIT(button_flags_, ButtonCheckableMask);
-      }
-    }
-
-    inline void set_checked (bool checked)
-    {
-      if(checked) {
-        SETBIT(button_flags_, ButtonCheckedMask);
-      } else {
-        CLRBIT(button_flags_, ButtonCheckedMask);
-      }
-    }
-
-    inline bool is_last_checked () const
-    {
-      return button_flags_ & ButtonLastCheckedMask;
-    }
-
-    inline void set_last_checked (bool checked)
-    {
-      if(checked) {
-        SETBIT(button_flags_, ButtonLastCheckedMask);
-      } else {
-        CLRBIT(button_flags_, ButtonLastCheckedMask);
-      }
-    }
-
-    inline void set_text (const RefPtr<Text>& text)
-    {
-      text_ = text;
-    }
-
-    static Margin kPadding;
-
-    static int kIconTextSpace;  // the space between icon and text
-
-  private:
-
-    friend class ButtonGroup;
-
-    enum ButtonFlagMask
-    {
-      ButtonPressedMask = 0x1 << 0,
-      ButtonDownMask = 0x1 << 1,
-      ButtonCheckableMask = 0x1 << 2,
-      ButtonCheckedMask = 0x1 << 3,
-      ButtonLastCheckedMask = 0x1 << 4,
-    };
-
-    RefPtr<AbstractIcon> icon_;
-
-    RefPtr<Text> text_;
-
-    int button_flags_;
-
-    /**
-     * @brief press event
-     */
-    CppEvent::Event<> pressed_;
-
-    /**
-     * @brief release event
-     */
-    CppEvent::Event<> released_;
-
-    /**
-     * @brief click event
-     *
-     * Mouse press and release in the button causes a clicked event.
-     */
-    CppEvent::Event<> clicked_;
-
-    CppEvent::Event<bool> toggled_;
-
-    ButtonGroup* group_;
+  enum ButtonFlagMask
+  {
+    ButtonPressedMask = 0x1 << 0,
+    ButtonDownMask = 0x1 << 1,
+    ButtonCheckableMask = 0x1 << 2,
+    ButtonCheckedMask = 0x1 << 3,
+    ButtonLastCheckedMask = 0x1 << 4,
   };
+
+  RefPtr<AbstractIcon> icon_;
+
+  RefPtr<Text> text_;
+
+  int button_flags_;
+
+  /**
+   * @brief press event
+   */
+  CppEvent::Event<> pressed_;
+
+  /**
+   * @brief release event
+   */
+  CppEvent::Event<> released_;
+
+  /**
+   * @brief click event
+   *
+   * Mouse press and release in the button causes a clicked event.
+   */
+  CppEvent::Event<> clicked_;
+
+  CppEvent::Event<bool> toggled_;
+
+  ButtonGroup* group_;
+};
 
 } /* namespace BIL */

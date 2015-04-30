@@ -39,152 +39,152 @@
 
 namespace BlendInt {
 
+/**
+ * @brief The timer class
+ *
+ * The Timer class provides timers which will fire event when time out.
+ *
+ * To use it, create a timer and connect the timeout() event to the appropriate event callee,
+ * and call Start() to enable the timer.
+ *
+ * Example code for usage:
+ * @code
+ Timer* timer = new Timer;
+ events()->connect(timer->timeout(), this, &Foo::do_sth);
+ timer->SetInterval(50);	// 50 ms
+ @endcode
+ *
+ * @ingroup blendint_core
+ */
+class Timer: public Object
+{
+ public:
+
   /**
-   * @brief The timer class
-   *
-   * The Timer class provides timers which will fire event when time out.
-   *
-   * To use it, create a timer and connect the timeout() event to the appropriate event callee,
-   * and call Start() to enable the timer.
-   *
-   * Example code for usage:
-   * @code
-   Timer* timer = new Timer;
-   events()->connect(timer->timeout(), this, &Foo::do_sth);
-   timer->SetInterval(50);	// 50 ms
-   @endcode
-   *
-   * @ingroup blendint_core
+   * @brief Default constructor
    */
-  class Timer: public Object
+  Timer ();
+
+  /**
+   * @brief Destructor
+   */
+  ~Timer ();
+
+  /**
+   * @brief Start the timer
+   */
+  void Start ();
+
+  /**
+   * @brief Stop the timer
+   */
+  void Stop ();
+
+  /**
+   * @brief Reset the Interval
+   * @param interval the interval in millisecond
+   *
+   * Reset the interval time of the timer, if it's already started, the timer will
+   * continue to running with new interval
+   */
+  void SetInterval (unsigned int interval);
+
+  /**
+   * @brief Get the interval time
+   * @return
+   */
+  unsigned int interval () const
   {
-  public:
+    return interval_;
+  }
 
-    /**
-     * @brief Default constructor
-     */
-    Timer ();
+  /**
+   * @brief Check if the timer is active (enabled)
+   * @return true: enabled
+   */
+  bool enabled () const
+  {
+    return enabled_;
+  }
 
-    /**
-     * @brief Destructor
-     */
-    ~Timer ();
+  /**
+   * @brief The timeout event
+   * @return Reference to a CppEvent::Event
+   */
+  CppEvent::EventRef<Timer*> timeout ()
+  {
+    return timeout_;
+  }
 
-    /**
-     * @brief Start the timer
-     */
-    void Start ();
+  static double GetIntervalOfSeconds ();
 
-    /**
-     * @brief Stop the timer
-     */
-    void Stop ();
+  static double GetIntervalOfMilliseconds ();
 
-    /**
-     * @brief Reset the Interval
-     * @param interval the interval in millisecond
-     *
-     * Reset the interval time of the timer, if it's already started, the timer will
-     * continue to running with new interval
-     */
-    void SetInterval (unsigned int interval);
+  static double GetIntervalOfMicroseconds ();
 
-    /**
-     * @brief Get the interval time
-     * @return
-     */
-    unsigned int interval () const
-    {
-      return interval_;
-    }
+  static double GetProgramSeconds ();
 
-    /**
-     * @brief Check if the timer is active (enabled)
-     * @return true: enabled
-     */
-    bool enabled () const
-    {
-      return enabled_;
-    }
+  static double GetProgramMilliseconds ();
 
-    /**
-     * @brief The timeout event
-     * @return Reference to a CppEvent::Event
-     */
-    CppEvent::EventRef<Timer*> timeout ()
-    {
-      return timeout_;
-    }
+  static double GetProgramMicroseconds ();
 
-    static double GetIntervalOfSeconds ();
+  static uint64_t GetMicroSeconds ();
 
-    static double GetIntervalOfMilliseconds ();
+  static void SaveCurrentTime ();
 
-    static double GetIntervalOfMicroseconds ();
+  static void SaveProgramTime ();
 
-    static double GetProgramSeconds ();
+  static inline uint64_t saved_time ()
+  {
+    return kSavedTime;
+  }
 
-    static double GetProgramMilliseconds ();
+  static inline uint64_t program_time ()
+  {
+    return kProgramTime;
+  }
 
-    static double GetProgramMicroseconds ();
-
-    static uint64_t GetMicroSeconds ();
-
-    static void SaveCurrentTime ();
-
-    static void SaveProgramTime ();
-
-    static inline uint64_t saved_time ()
-    {
-      return kSavedTime;
-    }
-
-    static inline uint64_t program_time ()
-    {
-      return kProgramTime;
-    }
-
-  protected:
+ protected:
 
 #if BLENDINT_USE_POSIX_TIMER
-    static void ThreadCallback (union sigval sigev_value);
+  static void ThreadCallback (union sigval sigev_value);
 #else
-    static void *ThreadCallback (void* data);
+  static void *ThreadCallback (void* data);
 #endif
 
-    void set_interval (unsigned int interval)
-    {
-      interval_ = interval;
-    }
+  void set_interval (unsigned int interval)
+  {
+    interval_ = interval;
+  }
 
-  private:
+ private:
 
-    void Create ();
+  void Create ();
 
 #if BLENDINT_USE_POSIX_TIMER
-    timer_t m_id;
+  timer_t m_id;
 #else
-    pthread_t m_id;	// thread id
+  pthread_t m_id;	// thread id
 #endif	// __APPLE__
 
-    /**
-     * @brief the interval time in millisecond
-     *
-     * The default is 40ms: 25fps
-     */
-    unsigned int interval_;
+  /**
+   * @brief the interval time in millisecond
+   *
+   * The default is 40ms: 25fps
+   */
+  unsigned int interval_;
 
-    bool enabled_;
+  bool enabled_;
 
-    /**
-     * @brief the time out event
-     */
-    CppEvent::Event<Timer*> timeout_;
+  /**
+   * @brief the time out event
+   */
+  CppEvent::Event<Timer*> timeout_;
 
-    static uint64_t kSavedTime;
+  static uint64_t kSavedTime;
 
-    static uint64_t kProgramTime;
+  static uint64_t kProgramTime;
 
-  };
+};
 
 }

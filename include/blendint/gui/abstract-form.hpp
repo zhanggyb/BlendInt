@@ -34,173 +34,173 @@
 
 namespace BlendInt {
 
-  /**
-   * @brief Abstract form class
-   *
-   * @ingroup blendint_gui_forms
-   */
-  class AbstractForm: public Object
+/**
+ * @brief Abstract form class
+ *
+ * @ingroup blendint_gui_forms
+ */
+class AbstractForm: public Object
+{
+ public:
+
+  AbstractForm ()
+      : Object()
   {
-  public:
+  }
 
-    AbstractForm ()
-        : Object()
-    {
-    }
+  AbstractForm (int width, int height)
+      : Object(), size_(width, height)
+  {
+  }
 
-    AbstractForm (int width, int height)
-        : Object(), size_(width, height)
-    {
-    }
+  AbstractForm (const Size& size)
+      : Object(), size_(size)
+  {
+  }
 
-    AbstractForm (const Size& size)
-        : Object(), size_(size)
-    {
-    }
+  virtual ~AbstractForm ()
+  {
+  }
 
-    virtual ~AbstractForm ()
-    {
-    }
+  AbstractForm (const AbstractForm& orig)
+  {
+    size_ = orig.size_;
+  }
 
-    AbstractForm (const AbstractForm& orig)
-    {
-      size_ = orig.size_;
-    }
+  AbstractForm& operator = (const AbstractForm& orig)
+  {
+    size_ = orig.size();
+    return *this;
+  }
 
-    AbstractForm& operator = (const AbstractForm& orig)
-    {
-      size_ = orig.size();
-      return *this;
-    }
+  void Resize (int width, int height);
 
-    void Resize (int width, int height);
+  void Resize (const Size& size);
 
-    void Resize (const Size& size);
+  const Size& size () const
+  {
+    return size_;
+  }
 
-    const Size& size () const
-    {
-      return size_;
-    }
+  virtual void Draw (int x,
+                     int y,
+                     const float* color_ptr = Color(Palette::Black).data(),
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const = 0;
 
-    virtual void Draw (int x,
-                       int y,
-                       const float* color_ptr = Color(Palette::Black).data(),
-                       short gamma = 0,
-                       float rotate = 0.f,
-                       float scale_x = 1.f,
-                       float scale_y = 1.f) const = 0;
+  virtual void DrawInRect (const Rect& rect,
+                           int align,
+                           const float* color_ptr =
+                           Color(Palette::White).data(),
+                           short gamma = 0,
+                           float rotate = 0.f,
+                           bool scale = false) const = 0;
 
-    virtual void DrawInRect (const Rect& rect,
-                             int align,
-                             const float* color_ptr =
-                                 Color(Palette::White).data(),
-                             short gamma = 0,
-                             float rotate = 0.f,
-                             bool scale = false) const = 0;
+  static void SetDefaultBorderWidth (int border);
 
-    static void SetDefaultBorderWidth (int border);
+  static inline float default_border_width ()
+  {
+    return kBorderWidth;
+  }
 
-    static inline float default_border_width ()
-    {
-      return kBorderWidth;
-    }
+  static int GetOutlineVertices (int round_type);
 
-    static int GetOutlineVertices (int round_type);
+  static inline int outline_vertex_count(int round_type)
+  {
+    return kOutlineVertexTable[round_type & 0x0F];
+  }
 
-    static inline int outline_vertex_count(int round_type)
-    {
-      return kOutlineVertexTable[round_type & 0x0F];
-    }
+ protected:
 
-  protected:
+  virtual void PerformSizeUpdate (int width, int height) = 0;
 
-    virtual void PerformSizeUpdate (int width, int height) = 0;
+  /**
+   * @brief preset the size of the form
+   * @param width
+   * @param height
+   *
+   * @note this function should be called only in the constructor of subclass to set
+   * the size without through Update() for performance.
+   */
+  inline void set_size (int width, int height)
+  {
+    size_.set_width(width);
+    size_.set_height(height);
+  }
 
-    /**
-     * @brief preset the size of the form
-     * @param width
-     * @param height
-     *
-     * @note this function should be called only in the constructor of subclass to set
-     * the size without through Update() for performance.
-     */
-    inline void set_size (int width, int height)
-    {
-      size_.set_width(width);
-      size_.set_height(height);
-    }
+  /**
+   * @brief preset the size of the form
+   * @param size
+   *
+   * @note this function should be called only in the constructor of subclass to set
+   * the size without through Update() for performance.
+   */
+  inline void set_size (const Size& size)
+  {
+    size_ = size;
+  }
 
-    /**
-     * @brief preset the size of the form
-     * @param size
-     *
-     * @note this function should be called only in the constructor of subclass to set
-     * the size without through Update() for performance.
-     */
-    inline void set_size (const Size& size)
-    {
-      size_ = size;
-    }
+  static void GenerateVertices (float xmin,
+                                float ymin,
+                                float xmax,
+                                float ymax,
+                                float border,
+                                int round_type,
+                                float radius,
+                                std::vector<GLfloat>* inner,
+                                std::vector<GLfloat>* outer);
 
-    static void GenerateVertices (float xmin,
-                                  float ymin,
-                                  float xmax,
-                                  float ymax,
-                                  float border,
-                                  int round_type,
-                                  float radius,
-                                  std::vector<GLfloat>* inner,
-                                  std::vector<GLfloat>* outer);
+  static void GenerateVertices (float xmin,
+                                float ymin,
+                                float xmax,
+                                float ymax,
+                                float border,
+                                int round_type,
+                                float radius,
+                                Orientation shadedir,
+                                short shadetop,
+                                short shadedown,
+                                std::vector<GLfloat>* inner,
+                                std::vector<GLfloat>* outer);
 
-    static void GenerateVertices (float xmin,
-                                  float ymin,
-                                  float xmax,
-                                  float ymax,
-                                  float border,
-                                  int round_type,
-                                  float radius,
-                                  Orientation shadedir,
-                                  short shadetop,
-                                  short shadedown,
-                                  std::vector<GLfloat>* inner,
-                                  std::vector<GLfloat>* outer);
+  static void GenerateVertices (const Size& size,
+                                float border,
+                                int round_type,
+                                float radius,
+                                std::vector<GLfloat>* inner,
+                                std::vector<GLfloat>* outer);
 
-    static void GenerateVertices (const Size& size,
-                                  float border,
-                                  int round_type,
-                                  float radius,
-                                  std::vector<GLfloat>* inner,
-                                  std::vector<GLfloat>* outer);
+  static void GenerateVertices (const Size& size,
+                                float border,
+                                int round_type,
+                                float radius,
+                                Orientation shadedir,
+                                short shadetop,
+                                short shadedown,
+                                std::vector<GLfloat>* inner,
+                                std::vector<GLfloat>* outer);
 
-    static void GenerateVertices (const Size& size,
-                                  float border,
-                                  int round_type,
-                                  float radius,
-                                  Orientation shadedir,
-                                  short shadetop,
-                                  short shadedown,
-                                  std::vector<GLfloat>* inner,
-                                  std::vector<GLfloat>* outer);
+  static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
-    static const float cornervec[WIDGET_CURVE_RESOLU][2];
+ private:
 
-  private:
+  static inline float make_shaded_offset (short shadetop,
+                                          short shadedown,
+                                          float fact);
 
-    static inline float make_shaded_offset (short shadetop,
-                                            short shadedown,
-                                            float fact);
+  static void GenerateTriangleStripVertices (const std::vector<GLfloat>* inner,
+                                             const std::vector<GLfloat>* edge,
+                                             unsigned int num,
+                                             std::vector<GLfloat>* strip);
 
-    static void GenerateTriangleStripVertices (const std::vector<GLfloat>* inner,
-                                               const std::vector<GLfloat>* edge,
-                                               unsigned int num,
-                                               std::vector<GLfloat>* strip);
+  Size size_;
 
-    Size size_;
+  static float kBorderWidth;
 
-    static float kBorderWidth;
+  static const int kOutlineVertexTable[16];
 
-    static const int kOutlineVertexTable[16];
-
-  };
+};
 
 }

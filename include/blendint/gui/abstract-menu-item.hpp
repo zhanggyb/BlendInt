@@ -28,18 +28,18 @@
 
 namespace BlendInt {
 
-	class AbstractMenuItem: public AbstractWidget
-	{
-	public:
+class AbstractMenuItem: public AbstractWidget
+{
+ public:
 
-		AbstractMenuItem();
+  AbstractMenuItem();
 
-		virtual ~AbstractMenuItem ();
+  virtual ~AbstractMenuItem ();
 
-	protected:
+ protected:
 
 
-	};
+};
 
 }
 

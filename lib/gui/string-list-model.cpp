@@ -26,73 +26,73 @@
 
 namespace BlendInt {
 
-	StringListModel::StringListModel()
-	: AbstractListModel(),
-	  rows_(0)
-	{
+StringListModel::StringListModel()
+    : AbstractListModel(),
+      rows_(0)
+{
 
-	}
+}
 
-	StringListModel::~StringListModel()
-	{
-		rows_ = 0;
-	}
+StringListModel::~StringListModel()
+{
+  rows_ = 0;
+}
 
-	void StringListModel::AddString (const String& string)
-	{
-		ModelIndex root = GetRootIndex();
-		if(InsertRow(rows_, root)) {
-			RefPtr<Text> data(new Text(string));
-			ModelIndex index = GetIndex(rows_ - 1, 0, root);
-			set_index_data(index, data);
-		}
-	}
+void StringListModel::AddString (const String& string)
+{
+  ModelIndex root = GetRootIndex();
+  if(InsertRow(rows_, root)) {
+    RefPtr<Text> data(new Text(string));
+    ModelIndex index = GetIndex(rows_ - 1, 0, root);
+    set_index_data(index, data);
+  }
+}
 
-	void StringListModel::InsertString (int row, const String& string)
-	{
-		ModelIndex root = GetRootIndex();
-		if(InsertRow(row, root)) {
-			RefPtr<Text> data(new Text(string));
-			int valid_row = std::min(row, rows_ - 1);
-			ModelIndex index = GetIndex(valid_row, 0, root);
-			set_index_data(index, data);
-		}
-	}
+void StringListModel::InsertString (int row, const String& string)
+{
+  ModelIndex root = GetRootIndex();
+  if(InsertRow(row, root)) {
+    RefPtr<Text> data(new Text(string));
+    int valid_row = std::min(row, rows_ - 1);
+    ModelIndex index = GetIndex(valid_row, 0, root);
+    set_index_data(index, data);
+  }
+}
 
-	int StringListModel::GetRowCount (const ModelIndex& parent) const
-	{
-		return rows_;
-	}
+int StringListModel::GetRowCount (const ModelIndex& parent) const
+{
+  return rows_;
+}
 
-	int StringListModel::GetColumnCount (const ModelIndex& parent) const
-	{
-		return 1;
-	}
+int StringListModel::GetColumnCount (const ModelIndex& parent) const
+{
+  return 1;
+}
 
-	bool StringListModel::InsertColumns (int column, int count,
-	        const ModelIndex& parent)
-	{
-		return false;
-	}
+bool StringListModel::InsertColumns (int column, int count,
+                                     const ModelIndex& parent)
+{
+  return false;
+}
 
-	bool StringListModel::RemoveColumns (int column, int count,
-	        const ModelIndex& parent)
-	{
-		return false;
-	}
+bool StringListModel::RemoveColumns (int column, int count,
+                                     const ModelIndex& parent)
+{
+  return false;
+}
 
-	bool StringListModel::InsertRows (int row, int count,
-			const ModelIndex& parent)
-	{
-		bool retval = false;
+bool StringListModel::InsertRows (int row, int count,
+                                  const ModelIndex& parent)
+{
+  bool retval = false;
 
-		retval = AbstractListModel::InsertRows(row, count, parent);
-		if (retval) {
-			rows_ += count;
-		}
+  retval = AbstractListModel::InsertRows(row, count, parent);
+  if (retval) {
+    rows_ += count;
+  }
 
-		return retval;
-	}
+  return retval;
+}
 
 int StringListModel::GetPreferredColumnWidth (int index,
                                               const ModelIndex& parent) const
@@ -107,40 +107,40 @@ int StringListModel::GetPreferredRowHeight (int index,
   return BlendInt::Font::default_height();
 }
 
-	bool StringListModel::RemoveRows (int row, int count,
-	        const ModelIndex& parent)
-	{
-		bool retval = false;
+bool StringListModel::RemoveRows (int row, int count,
+                                  const ModelIndex& parent)
+{
+  bool retval = false;
 
-		retval = AbstractListModel::RemoveRows(row, count, parent);
-		if(retval) {
+  retval = AbstractListModel::RemoveRows(row, count, parent);
+  if(retval) {
 
-			if((row + count) > rows_) {	// if count too large
-				count = rows_ - row;
-			}
-			rows_ -= count;
-		}
+    if((row + count) > rows_) {	// if count too large
+      count = rows_ - row;
+    }
+    rows_ -= count;
+  }
 
-		return retval;
-	}
+  return retval;
+}
 
 #ifdef DEBUG
 
-	void StringListModel::Print()
-	{
-		ModelNode* node = root()->child;
+void StringListModel::Print()
+{
+  ModelNode* node = root()->child;
 
-		Text* text = 0;
-		int i = 0;
-		while(node) {
-			text = dynamic_cast<Text*>(node->data.get());
-			if(text) {
-				DBG_PRINT_MSG("node %d: %s", i, ConvertFromString(text->text()).c_str());
-			}
-			node = node->down;
-			i++;
-		}
-	}
+  Text* text = 0;
+  int i = 0;
+  while(node) {
+    text = dynamic_cast<Text*>(node->data.get());
+    if(text) {
+      DBG_PRINT_MSG("node %d: %s", i, ConvertFromString(text->text()).c_str());
+    }
+    node = node->down;
+    i++;
+  }
+}
 
 #endif
 

@@ -26,84 +26,84 @@
 
 namespace BlendInt {
 
-	namespace Ft {
+namespace Ft {
 
-		Library::Library()
-		: library_(NULL)
-		{
+Library::Library()
+    : library_(NULL)
+{
 
-		}
+}
 
-		Library::~Library ()
-		{
-			if(library_) {
-				FT_Error err = FT_Done_FreeType(library_);
-				if(err) {
-					DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
-				}
-			}
-		}
+Library::~Library ()
+{
+  if(library_) {
+    FT_Error err = FT_Done_FreeType(library_);
+    if(err) {
+      DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
+    }
+  }
+}
 
-		bool Library::Init ()
-		{
-			FT_Error err = 0;
+bool Library::Init ()
+{
+  FT_Error err = 0;
 
-			if(library_) {
-				err = FT_Done_FreeType(library_);
-				if(err) {
-					DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
-				}
-			}
+  if(library_) {
+    err = FT_Done_FreeType(library_);
+    if(err) {
+      DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
+    }
+  }
 
-			err = FT_Init_FreeType(&library_);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to initialize FreeType library");
-			}
+  err = FT_Init_FreeType(&library_);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to initialize FreeType library");
+  }
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-		bool Library::SetLcdFilter (FT_LcdFilter filter)
-		{
-			FT_Error err = FT_Library_SetLcdFilter(library_, filter);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter");
-			}
+bool Library::SetLcdFilter (FT_LcdFilter filter)
+{
+  FT_Error err = FT_Library_SetLcdFilter(library_, filter);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter");
+  }
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-		bool Library::SetLcdFilterWeights (unsigned char* weights)
-		{
-			FT_Error err = FT_Library_SetLcdFilterWeights(library_, weights);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter Weights");
-			}
+bool Library::SetLcdFilterWeights (unsigned char* weights)
+{
+  FT_Error err = FT_Library_SetLcdFilterWeights(library_, weights);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter Weights");
+  }
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-		bool Library::GetVersion (FT_Int* major, FT_Int* minor, FT_Int* patch)
-		{
-			if(library_) {
-				FT_Library_Version(library_, major, minor, patch);
-				return true;
-			}
+bool Library::GetVersion (FT_Int* major, FT_Int* minor, FT_Int* patch)
+{
+  if(library_) {
+    FT_Library_Version(library_, major, minor, patch);
+    return true;
+  }
 
-			return false;
-		}
+  return false;
+}
 
-		bool Library::Done ()
-		{
-			FT_Error err = FT_Done_FreeType(library_);
-			if(err) {
-				DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
-			}
-			library_ = NULL;
+bool Library::Done ()
+{
+  FT_Error err = FT_Done_FreeType(library_);
+  if(err) {
+    DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
+  }
+  library_ = NULL;
 
-			return (err == 0);
-		}
+  return (err == 0);
+}
 
-	}
+}
 
 }

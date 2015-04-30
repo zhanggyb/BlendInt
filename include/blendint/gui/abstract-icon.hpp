@@ -27,21 +27,21 @@
 
 namespace BlendInt {
 
-	class AbstractIcon: public AbstractForm
-	{
-	public:
+class AbstractIcon: public AbstractForm
+{
+ public:
 
-	  inline AbstractIcon ()
-	  : AbstractForm()
-	  {}
+  inline AbstractIcon ()
+      : AbstractForm()
+  {}
 
-		inline AbstractIcon (int width, int height)
-		: AbstractForm(width, height)
-		{}
+  inline AbstractIcon (int width, int height)
+      : AbstractForm(width, height)
+  {}
 
-		virtual ~AbstractIcon ()
-		{}
+  virtual ~AbstractIcon ()
+  {}
 
-	};
+};
 
 }

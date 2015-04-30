@@ -387,6 +387,11 @@ private:
 
   bool mouse_tracking_;
 
+  /**
+   * @brief If a frame contains the cursor
+   */
+  bool z_overloap_;
+
   static AbstractWindow* kMainWindow;
 };
 

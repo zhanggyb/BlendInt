@@ -26,254 +26,254 @@
 
 namespace BlendInt {
 
-	RadioButton::RadioButton ()
-	: AbstractButton()
-	{
-		set_round_type(RoundAll);
-		set_checkable(true);
+RadioButton::RadioButton ()
+    : AbstractButton()
+{
+  set_round_type(RoundAll);
+  set_checkable(true);
 
-		Font font;	// default font
-		int w = 80;
-		int h = font.height();
+  Font font;	// default font
+  int w = 80;
+  int h = font.height();
 
-		set_size(w + pixel_size(kPadding.hsum()),
-		        h + pixel_size(kPadding.vsum()));
+  set_size(w + pixel_size(kPadding.hsum()),
+           h + pixel_size(kPadding.vsum()));
 
-		InitializeRadioButtonOnce();
-	}
+  InitializeRadioButtonOnce();
+}
 
-	RadioButton::RadioButton (const String& text)
-	: AbstractButton(text)
-	{
-		set_round_type(RoundAll);
-		set_checkable(true);
+RadioButton::RadioButton (const String& text)
+    : AbstractButton(text)
+{
+  set_round_type(RoundAll);
+  set_checkable(true);
 
-		int w = this->text()->size().width();
-		int h = this->text()->font().height();
-		if(w < 80) w = 80;
+  int w = this->text()->size().width();
+  int h = this->text()->font().height();
+  if(w < 80) w = 80;
 
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-		set_size(w, h);
+  set_size(w, h);
 
-		InitializeRadioButtonOnce();
-	}
+  InitializeRadioButtonOnce();
+}
 
-	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon)
-	: AbstractButton(icon)
-	{
-		set_round_type(RoundAll);
-		set_checkable(true);
+RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon)
+    : AbstractButton(icon)
+{
+  set_round_type(RoundAll);
+  set_checkable(true);
 
-		int w = this->icon()->size().width();
-		int h = this->icon()->size().height();
+  int w = this->icon()->size().width();
+  int h = this->icon()->size().height();
 
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-		set_size(w, h);
+  set_size(w, h);
 
-		InitializeRadioButtonOnce();
-	}
+  InitializeRadioButtonOnce();
+}
 
-	RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon,
-	        const String& text)
-	: AbstractButton(icon, text)
-	{
-		set_round_type(RoundAll);
-		set_checkable(true);
+RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon,
+                          const String& text)
+    : AbstractButton(icon, text)
+{
+  set_round_type(RoundAll);
+  set_checkable(true);
 
-		int w = this->icon()->size().width();
-		int h = this->icon()->size().height();
+  int w = this->icon()->size().width();
+  int h = this->icon()->size().height();
 
-		w += kIconTextSpace;
+  w += kIconTextSpace;
 
-		w += this->text()->size().width();
-		h = std::max(h, this->text()->font().height());
+  w += this->text()->size().width();
+  h = std::max(h, this->text()->font().height());
 
-		if(w < 80) w = 80;
-		w += pixel_size(kPadding.hsum());
-		h += pixel_size(kPadding.vsum());
+  if(w < 80) w = 80;
+  w += pixel_size(kPadding.hsum());
+  h += pixel_size(kPadding.vsum());
 
-		set_size(w, h);
+  set_size(w, h);
 
-		InitializeRadioButtonOnce();
-	}
+  InitializeRadioButtonOnce();
+}
 
-	RadioButton::~RadioButton ()
-	{
-		glDeleteVertexArrays(2, vao_);
-	}
+RadioButton::~RadioButton ()
+{
+  glDeleteVertexArrays(2, vao_);
+}
 
-	void RadioButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-	{
-		if(target == this) {
+void RadioButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if(target == this) {
 
-			set_size(width, height);
+    set_size(width, height);
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
 
-			if (AbstractWindow::theme()->radio_button().shaded) {
-				GenerateRoundedVertices(Vertical,
-						AbstractWindow::theme()->radio_button().shadetop,
-						AbstractWindow::theme()->radio_button().shadedown,
-						&inner_verts,
-						&outer_verts);
-			} else {
-				GenerateRoundedVertices(&inner_verts, &outer_verts);
-			}
+    if (AbstractWindow::theme()->radio_button().shaded) {
+      GenerateRoundedVertices(Vertical,
+                              AbstractWindow::theme()->radio_button().shadetop,
+                              AbstractWindow::theme()->radio_button().shadedown,
+                              &inner_verts,
+                              &outer_verts);
+    } else {
+      GenerateRoundedVertices(&inner_verts, &outer_verts);
+    }
 
-			vbo_.bind(0);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			vbo_.bind(1);
-			vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-			vbo_.reset();
+    vbo_.bind(0);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.bind(1);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    vbo_.reset();
 
-			RequestRedraw();
-		}
+    RequestRedraw();
+  }
 
-		if(source == this) {
-			report_size_update(source, target, width, height);
-		}
-	}
+  if(source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
 
-	void RadioButton::PerformRoundTypeUpdate (int round_type)
-	{
-		set_round_type(round_type);
+void RadioButton::PerformRoundTypeUpdate (int round_type)
+{
+  set_round_type(round_type);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme()->radio_button().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme()->radio_button().shadetop,
-					AbstractWindow::theme()->radio_button().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+  if (AbstractWindow::theme()->radio_button().shaded) {
+    GenerateRoundedVertices(Vertical,
+                            AbstractWindow::theme()->radio_button().shadetop,
+                            AbstractWindow::theme()->radio_button().shadedown,
+                            &inner_verts,
+                            &outer_verts);
+  } else {
+    GenerateRoundedVertices(&inner_verts, &outer_verts);
+  }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		vbo_.reset();
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  vbo_.reset();
 
-		RequestRedraw();
-	}
+  RequestRedraw();
+}
 
-	void RadioButton::PerformRoundRadiusUpdate (float radius)
-	{
-		set_round_radius(radius);
+void RadioButton::PerformRoundRadiusUpdate (float radius)
+{
+  set_round_radius(radius);
 
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme()->radio_button().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme()->radio_button().shadetop,
-					AbstractWindow::theme()->radio_button().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+  if (AbstractWindow::theme()->radio_button().shaded) {
+    GenerateRoundedVertices(Vertical,
+                            AbstractWindow::theme()->radio_button().shadetop,
+                            AbstractWindow::theme()->radio_button().shadedown,
+                            &inner_verts,
+                            &outer_verts);
+  } else {
+    GenerateRoundedVertices(&inner_verts, &outer_verts);
+  }
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		vbo_.reset();
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  vbo_.reset();
 
-		RequestRedraw();
-	}
+  RequestRedraw();
+}
 
-	Response RadioButton::Draw (AbstractWindow* context)
-	{
-		AbstractWindow::shaders()->widget_inner_program()->use();
+Response RadioButton::Draw (AbstractWindow* context)
+{
+  AbstractWindow::shaders()->widget_inner_program()->use();
 
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        context->theme()->radio_button().shaded);
-		if (is_checked()) {
-		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-		               AbstractWindow::theme()->radio_button().inner_sel.data());
-		} else {
-		  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-		               AbstractWindow::theme()->radio_button().inner.data());
-		}
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      context->theme()->radio_button().shaded);
+  if (is_checked()) {
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                 AbstractWindow::theme()->radio_button().inner_sel.data());
+  } else {
+    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                 AbstractWindow::theme()->radio_button().inner.data());
+  }
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-		AbstractWindow::shaders()->widget_outer_program()->use();
+  AbstractWindow::shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f, 0.f);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-		        AbstractWindow::theme()->radio_button().outline.data());
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f, 0.f);
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+               AbstractWindow::theme()->radio_button().outline.data());
 
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-		        outline_vertex_count(round_type()) * 2 + 2);
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0,
+               outline_vertex_count(round_type()) * 2 + 2);
 
-		if (emboss()) {
-			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-			        1.0f, 1.0f, 0.16f);
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-			        0.f, 0.f - 1.f);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-			        emboss_vertex_count(round_type()) * 2);
-		}
+  if (emboss()) {
+    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+                1.0f, 1.0f, 0.16f);
+    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f, 0.f - 1.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0,
+                 emboss_vertex_count(round_type()) * 2);
+  }
 
-		if (is_down()) {
-	    DrawIconText(context->theme()->radio_button().text_sel.data(), 0);
-		} else {
-	    DrawIconText(context->theme()->radio_button().text.data(), 0);
-		}
+  if (is_down()) {
+    DrawIconText(context->theme()->radio_button().text_sel.data(), 0);
+  } else {
+    DrawIconText(context->theme()->radio_button().text.data(), 0);
+  }
 
-		return Finish;
-	}
+  return Finish;
+}
 
-	void RadioButton::InitializeRadioButtonOnce ()
-	{
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+void RadioButton::InitializeRadioButtonOnce ()
+{
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-		if (AbstractWindow::theme()->radio_button().shaded) {
-			GenerateRoundedVertices(Vertical,
-					AbstractWindow::theme()->radio_button().shadetop,
-					AbstractWindow::theme()->radio_button().shadedown,
-					&inner_verts,
-					&outer_verts);
-		} else {
-			GenerateRoundedVertices(&inner_verts, &outer_verts);
-		}
+  if (AbstractWindow::theme()->radio_button().shaded) {
+    GenerateRoundedVertices(Vertical,
+                            AbstractWindow::theme()->radio_button().shadetop,
+                            AbstractWindow::theme()->radio_button().shadedown,
+                            &inner_verts,
+                            &outer_verts);
+  } else {
+    GenerateRoundedVertices(&inner_verts, &outer_verts);
+  }
 
-		glGenVertexArrays(2, vao_);
-		vbo_.generate();
+  glGenVertexArrays(2, vao_);
+  vbo_.generate();
 
-		glBindVertexArray(vao_[0]);
+  glBindVertexArray(vao_[0]);
 
-		vbo_.bind(0);
-		vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 3,
-				GL_FLOAT, GL_FALSE, 0, 0);
+  vbo_.bind(0);
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3,
+                        GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(vao_[1]);
-		vbo_.bind(1);
-		vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2,
-				GL_FLOAT, GL_FALSE, 0, 0);
+  glBindVertexArray(vao_[1]);
+  vbo_.bind(1);
+  vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2,
+                        GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindVertexArray(0);
-		vbo_.reset();
-	}
+  glBindVertexArray(0);
+  vbo_.reset();
+}
 
 }

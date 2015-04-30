@@ -29,80 +29,80 @@
 
 namespace BlendInt {
 
-	ScrollArea::ScrollArea ()
-	: AbstractWidget(),
-	  layout_(nullptr)
-	{
-		set_size(360, 240);
+ScrollArea::ScrollArea ()
+    : AbstractWidget(),
+      layout_(nullptr)
+{
+  set_size(360, 240);
 
-		layout_ = Manage(new TableLayout(2, 2));
+  layout_ = Manage(new TableLayout(2, 2));
 
-		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+  ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+  ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 
-		PushBackSubView(layout_);
-		ResizeSubView(layout_, size());
+  PushBackSubView(layout_);
+  ResizeSubView(layout_, size());
 
-		layout_->InsertWidget(0, 1, vbar);
-		layout_->InsertWidget(1, 0, hbar);
-	}
+  layout_->InsertWidget(0, 1, vbar);
+  layout_->InsertWidget(1, 0, hbar);
+}
 
-	ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
-	: AbstractWidget(width, height),
-	  layout_(nullptr)
-	{
-		layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));
+ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
+    : AbstractWidget(width, height),
+      layout_(nullptr)
+{
+  layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));
 
-		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+  ScrollBar* vbar = Manage(new ScrollBar(Vertical));
+  ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 
-		PushBackSubView(layout_);
+  PushBackSubView(layout_);
 
-		layout_->InsertWidget(0, 1, vbar);
-		layout_->InsertWidget(1, 0, hbar);
-	}
+  layout_->InsertWidget(0, 1, vbar);
+  layout_->InsertWidget(1, 0, hbar);
+}
 
-	ScrollArea::~ScrollArea ()
-	{
-	}
+ScrollArea::~ScrollArea ()
+{
+}
 
-	void ScrollArea::SetScrollableWidget (AbstractScrollable* widget)
-	{
-		layout_->InsertWidget(0, 0, widget);
-	}
+void ScrollArea::SetScrollableWidget (AbstractScrollable* widget)
+{
+  layout_->InsertWidget(0, 0, widget);
+}
 
-	bool ScrollArea::IsExpandX() const
-	{
-		return layout_->IsExpandX();
-	}
+bool ScrollArea::IsExpandX() const
+{
+  return layout_->IsExpandX();
+}
 
-	bool ScrollArea::IsExpandY() const
-	{
-		return layout_->IsExpandY();
-	}
+bool ScrollArea::IsExpandY() const
+{
+  return layout_->IsExpandY();
+}
 
-	Size ScrollArea::GetPreferredSize () const
-	{
-		return layout_->GetPreferredSize();
-	}
+Size ScrollArea::GetPreferredSize () const
+{
+  return layout_->GetPreferredSize();
+}
 
-	void ScrollArea::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-	{
-		if(target == this) {
+void ScrollArea::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if(target == this) {
 
-			set_size(width, height);
-			ResizeSubView(layout_, size());
+    set_size(width, height);
+    ResizeSubView(layout_, size());
 
-		}
-
-		if(source == this) {
-			report_size_update(source, target, width, height);
-		}
-	}
-
-  Response ScrollArea::Draw (AbstractWindow* context)
-  {
-    return Ignore;
   }
+
+  if(source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
+
+Response ScrollArea::Draw (AbstractWindow* context)
+{
+  return Ignore;
+}
 
 }

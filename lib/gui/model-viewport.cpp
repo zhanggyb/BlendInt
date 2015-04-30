@@ -32,82 +32,82 @@
 
 namespace BlendInt {
 
-  ModelViewport::ModelViewport ()
-  : AbstractViewport(640, 480)
-  {
-    projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                    (float) size().height(), 100.f, -100.f);
-    model_matrix_ = glm::mat3(1.f);
+ModelViewport::ModelViewport ()
+    : AbstractViewport(640, 480)
+{
+  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
+                                  (float) size().height(), 100.f, -100.f);
+  model_matrix_ = glm::mat3(1.f);
 
-    default_camera_.reset(new PerspectiveCamera);
+  default_camera_.reset(new PerspectiveCamera);
 
-    // setup camera
-    glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
-    glm::vec3 center = glm::vec3(0);
-    glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
-    default_camera_->LookAt(pos, center, up);
+  // setup camera
+  glm::vec3 pos = glm::vec3(8.f, -10.f, 6.f);
+  glm::vec3 center = glm::vec3(0);
+  glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
+  default_camera_->LookAt(pos, center, up);
 
-    default_camera_->SetPerspective(default_camera_->fovy(),
-                                    1.f * size().width() / size().height());
+  default_camera_->SetPerspective(default_camera_->fovy(),
+                                  1.f * size().width() / size().height());
 
-    gridfloor_.reset(new GridFloor);
-  }
+  gridfloor_.reset(new GridFloor);
+}
 
-  ModelViewport::~ModelViewport ()
-  {
-  }
+ModelViewport::~ModelViewport ()
+{
+}
 
-  bool ModelViewport::LoadPrimitive (const RefPtr<AbstractPrimitive>& primitive)
-  {
-    if (!primitive) return false;
+bool ModelViewport::LoadPrimitive (const RefPtr<AbstractPrimitive>& primitive)
+{
+  if (!primitive) return false;
 
-    primitive_ = primitive;
-    RequestRedraw();
-    return true;
-  }
+  primitive_ = primitive;
+  RequestRedraw();
+  return true;
+}
 
-  Size ModelViewport::GetPreferredSize () const
-  {
-    return Size(640, 480);
-  }
+Size ModelViewport::GetPreferredSize () const
+{
+  return Size(640, 480);
+}
 
-  void ModelViewport::PostPositionUpdate ()
-  {
-    Point offset = GetOffset();
-    float x = static_cast<float>(position().x() + offset.x());
-    float y = static_cast<float>(position().y() + offset.y());
+void ModelViewport::PostPositionUpdate ()
+{
+  Point offset = GetOffset();
+  float x = static_cast<float>(position().x() + offset.x());
+  float y = static_cast<float>(position().y() + offset.y());
 
-    projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
-                                    y + (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
+                                  y + (float) size().height(), 100.f, -100.f);
 
-    model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
+  model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
 
-    RequestRedraw();
-  }
+  RequestRedraw();
+}
 
-  void ModelViewport::PostSizeUpdate ()
-  {
-    Point offset = GetOffset();
-    float x = static_cast<float>(position().x() + offset.x());
-    float y = static_cast<float>(position().y() + offset.y());
+void ModelViewport::PostSizeUpdate ()
+{
+  Point offset = GetOffset();
+  float x = static_cast<float>(position().x() + offset.x());
+  float y = static_cast<float>(position().y() + offset.y());
 
-    projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
-                                    y + (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
+                                  y + (float) size().height(), 100.f, -100.f);
 
-    default_camera_->SetPerspective(default_camera_->fovy(),
-                                    1.f * size().width() / size().height());
+  default_camera_->SetPerspective(default_camera_->fovy(),
+                                  1.f * size().width() / size().height());
 
-    RequestRedraw();
-  }
+  RequestRedraw();
+}
 
-  void ModelViewport::RenderScene ()
-  {
-    gridfloor_->Render(default_camera_->projection(), default_camera_->view());
+void ModelViewport::RenderScene ()
+{
+  gridfloor_->Render(default_camera_->projection(), default_camera_->view());
 
-    if (primitive_)
-      primitive_->Render(default_camera_->projection(),
-                         default_camera_->view());
-  }
+  if (primitive_)
+    primitive_->Render(default_camera_->projection(),
+                       default_camera_->view());
+}
 
 }
 

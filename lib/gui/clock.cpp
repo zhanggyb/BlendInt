@@ -34,222 +34,222 @@
 
 namespace BlendInt {
 
-	Clock::Clock()
-	: AbstractRoundWidget(), angle_(-90), timer_(0)
-	{
-		set_size(160, 160);
+Clock::Clock()
+    : AbstractRoundWidget(), angle_(-90), timer_(0)
+{
+  set_size(160, 160);
 
-		InitializeClock();
-	}
+  InitializeClock();
+}
 
-	Clock::~Clock ()
-	{
-		glDeleteVertexArrays(3, vao_);
-	}
+Clock::~Clock ()
+{
+  glDeleteVertexArrays(3, vao_);
+}
 
-	Size Clock::GetPreferredSize() const
-	{
-		return Size(160, 160);
-	}
+Size Clock::GetPreferredSize() const
+{
+  return Size(160, 160);
+}
 
-	void Clock::Start()
-	{
-		timer_->Start();
-	}
+void Clock::Start()
+{
+  timer_->Start();
+}
 
-	void Clock::Stop()
-	{
-		timer_->Stop();
-	}
+void Clock::Stop()
+{
+  timer_->Stop();
+}
 
-	Response Clock::Draw(AbstractWindow* context)
-	{
-		AbstractWindow::shaders()->widget_triangle_program()->use();
+Response Clock::Draw(AbstractWindow* context)
+{
+  AbstractWindow::shaders()->widget_triangle_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-		        (float) (size().width() / 2.f),
-		        (float) (size().height() / 2.f));
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+              (float) (size().width() / 2.f),
+              (float) (size().height() / 2.f));
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
-		glVertexAttrib4f(AttributeColor, 0.35f, 0.45f, 0.75f, 1.f);
+  glVertexAttrib4f(AttributeColor, 0.35f, 0.45f, 0.75f, 1.f);
 
-		glBindVertexArray(vao_[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
+  glBindVertexArray(vao_[0]);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-		glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->regular().outline.data());
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+  glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->regular().outline.data());
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
-		glBindVertexArray(vao_[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
+  glBindVertexArray(vao_[1]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
-		glBindVertexArray(vao_[2]);
-		glVertexAttrib4f(AttributeColor, 1.f, 0.f, 0.f, 1.f);
-		glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), -(float)angle_);
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  glBindVertexArray(vao_[2]);
+  glVertexAttrib4f(AttributeColor, 1.f, 0.f, 0.f, 1.f);
+  glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), -(float)angle_);
+  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		glBindVertexArray(0);
+  glBindVertexArray(0);
 
-		glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
-		GLSLProgram::reset();
+  glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
+  GLSLProgram::reset();
 
-		return Finish;
-	}
+  return Finish;
+}
 
-	void Clock::OnUpdateClockHands(Timer* t)
-	{
-		angle_ = angle_ + 6;
-		if(angle_ < 360) {
-			angle_ = angle_ % 360;
-		}
+void Clock::OnUpdateClockHands(Timer* t)
+{
+  angle_ = angle_ + 6;
+  if(angle_ < 360) {
+    angle_ = angle_ % 360;
+  }
 
-		RequestRedraw();
-	}
+  RequestRedraw();
+}
 
-	void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-	{
-		if(target == this) {
-			int radius = std::min(width, height);
-			radius = radius / 2;
+void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if(target == this) {
+    int radius = std::min(width, height);
+    radius = radius / 2;
 
-			std::vector<GLfloat> inner_verts;
-			std::vector<GLfloat> outer_verts;
-			GenerateClockVertices(radius, 1.f, inner_verts, outer_verts);
+    std::vector<GLfloat> inner_verts;
+    std::vector<GLfloat> outer_verts;
+    GenerateClockVertices(radius, 1.f, inner_verts, outer_verts);
 
-			buffer_.bind(0);
-			buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			buffer_.bind(1);
-			buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+    buffer_.bind(0);
+    buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    buffer_.bind(1);
+    buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-			set_size(width, height);
+    set_size(width, height);
 
-			GLfloat second_hand_vertices[] = {
-					-5.f, -1.f,
-					size().width() / 2.f, -1.f,
-					-5.f, 1.f,
-					size().width() / 2.f, 1.f
-			};
+    GLfloat second_hand_vertices[] = {
+      -5.f, -1.f,
+      size().width() / 2.f, -1.f,
+      -5.f, 1.f,
+      size().width() / 2.f, 1.f
+    };
 
-			buffer_.bind(2);
-			buffer_.set_sub_data(0, sizeof(second_hand_vertices), second_hand_vertices);
-			buffer_.reset();
+    buffer_.bind(2);
+    buffer_.set_sub_data(0, sizeof(second_hand_vertices), second_hand_vertices);
+    buffer_.reset();
 
-			RequestRedraw();
-		}
+    RequestRedraw();
+  }
 
-		if(source == this) {
-			report_size_update(source, target, width, height);
-		}
-	}
+  if(source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
 
-	void Clock::GenerateClockVertices (int radius, float border,
-	        std::vector<GLfloat>& inner_vertices,
-	        std::vector<GLfloat>& outer_vertices)
-	{
-		if(inner_vertices.size() != (72 * 2 + 2 + 2))
-			inner_vertices.resize(72 * 2 + 2 + 2);
+void Clock::GenerateClockVertices (int radius, float border,
+                                   std::vector<GLfloat>& inner_vertices,
+                                   std::vector<GLfloat>& outer_vertices)
+{
+  if(inner_vertices.size() != (72 * 2 + 2 + 2))
+    inner_vertices.resize(72 * 2 + 2 + 2);
 
-		if(outer_vertices.size() != (72 * 4 + 4))
-			outer_vertices.resize(72 * 4 + 4);
+  if(outer_vertices.size() != (72 * 4 + 4))
+    outer_vertices.resize(72 * 4 + 4);
 
-		double rad = 0.0;
-		float x1 = 0.f;
-		float y1 = 0.f;
-		float x2 = 0.f;
-		float y2 = 0.f;
+  double rad = 0.0;
+  float x1 = 0.f;
+  float y1 = 0.f;
+  float x2 = 0.f;
+  float y2 = 0.f;
 
-		// 0 1 2 3 4 5
-		// x y r g b a
+  // 0 1 2 3 4 5
+  // x y r g b a
 
-		// the center point
-		inner_vertices[0] = 0.f;
-		inner_vertices[1] = 0.f;
+  // the center point
+  inner_vertices[0] = 0.f;
+  inner_vertices[1] = 0.f;
 
-		int i = 1;
-		int j = 0;
-		for(int angle = 0; angle < 360; angle = angle + 5) {
-			rad = angle * M_PI / 180.0;
+  int i = 1;
+  int j = 0;
+  for(int angle = 0; angle < 360; angle = angle + 5) {
+    rad = angle * M_PI / 180.0;
 
-			x1 = (radius - border) * cos(rad);
-			y1 = (radius - border) * sin(rad);
-			x2 = radius * cos(rad);
-			y2 = radius * sin(rad);
+    x1 = (radius - border) * cos(rad);
+    y1 = (radius - border) * sin(rad);
+    x2 = radius * cos(rad);
+    y2 = radius * sin(rad);
 
-			inner_vertices[i * 2 + 0] = x1;
-			inner_vertices[i * 2 + 1] = y1;
+    inner_vertices[i * 2 + 0] = x1;
+    inner_vertices[i * 2 + 1] = y1;
 
-			outer_vertices[j * 4 + 0] = x1;
-			outer_vertices[j * 4 + 1] = y1;
-			outer_vertices[j * 4 + 2] = x2;
-			outer_vertices[j * 4 + 3] = y2;
+    outer_vertices[j * 4 + 0] = x1;
+    outer_vertices[j * 4 + 1] = y1;
+    outer_vertices[j * 4 + 2] = x2;
+    outer_vertices[j * 4 + 3] = y2;
 
-			i++; j++;
-		}
+    i++; j++;
+  }
 
-		rad = 360 * M_PI / 180.0;
-		x1 = (radius - border) * cos(rad);
-		y1 = (radius - border) * sin(rad);
-		x2 = radius * cos(rad);
-		y2 = radius * sin(rad);
+  rad = 360 * M_PI / 180.0;
+  x1 = (radius - border) * cos(rad);
+  y1 = (radius - border) * sin(rad);
+  x2 = radius * cos(rad);
+  y2 = radius * sin(rad);
 
-		inner_vertices[i * 2 + 0] = x1;
-		inner_vertices[i * 2 + 1] = y1;
+  inner_vertices[i * 2 + 0] = x1;
+  inner_vertices[i * 2 + 1] = y1;
 
-		outer_vertices[j * 4 + 0] = x1;
-		outer_vertices[j * 4 + 1] = y1;
-		outer_vertices[j * 4 + 2] = x2;
-		outer_vertices[j * 4 + 3] = y2;
-	}
+  outer_vertices[j * 4 + 0] = x1;
+  outer_vertices[j * 4 + 1] = y1;
+  outer_vertices[j * 4 + 2] = x2;
+  outer_vertices[j * 4 + 3] = y2;
+}
 
-	void Clock::InitializeClock ()
-	{
-		std::vector<GLfloat> inner_verts;
-		std::vector<GLfloat> outer_verts;
+void Clock::InitializeClock ()
+{
+  std::vector<GLfloat> inner_verts;
+  std::vector<GLfloat> outer_verts;
 
-		GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
+  GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
 
-		glGenVertexArrays(3, vao_);
+  glGenVertexArrays(3, vao_);
 
-		glBindVertexArray(vao_[0]);
-		buffer_.generate();
+  glBindVertexArray(vao_[0]);
+  buffer_.generate();
 
-		buffer_.bind(0);
-		buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  buffer_.bind(0);
+  buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(vao_[1]);
+  glBindVertexArray(vao_[1]);
 
-		buffer_.bind(1);
-		buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+  buffer_.bind(1);
+  buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(vao_[2]);
+  glBindVertexArray(vao_[2]);
 
-		GLfloat second_hand_vertices[] = {
-				-5.f, -1.f,
-				size().width() / 2.f, -1.f,
-				-5.f, 1.f,
-				size().width() / 2.f, 1.f
-		};
+  GLfloat second_hand_vertices[] = {
+    -5.f, -1.f,
+    size().width() / 2.f, -1.f,
+    -5.f, 1.f,
+    size().width() / 2.f, 1.f
+  };
 
-		buffer_.bind(2);
-		buffer_.set_data(sizeof(second_hand_vertices), second_hand_vertices);
+  buffer_.bind(2);
+  buffer_.set_data(sizeof(second_hand_vertices), second_hand_vertices);
 
-		glEnableVertexAttribArray(AttributeCoord);
-		glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(0);
-		buffer_.reset();
+  glBindVertexArray(0);
+  buffer_.reset();
 
-		timer_.reset(new Timer);
-		timer_->SetInterval(1000 / 30);
+  timer_.reset(new Timer);
+  timer_->SetInterval(1000 / 30);
 
-		timer_->timeout().connect(this, &Clock::OnUpdateClockHands);
-	}
+  timer_->timeout().connect(this, &Clock::OnUpdateClockHands);
+}
 
 }

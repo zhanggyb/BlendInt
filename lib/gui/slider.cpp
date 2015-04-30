@@ -28,355 +28,355 @@
 
 namespace BlendInt {
 
-  Slider::Slider (Orientation orientation)
-  : AbstractSlider<int>(orientation),
+Slider::Slider (Orientation orientation)
+    : AbstractSlider<int>(orientation),
     vao_(0),
     last_value_(0),
     pressed_(false)
-  {
-    slide_icon_.Resize(14, 14);
+{
+  slide_icon_.Resize(14, 14);
 
-    if (orientation == Vertical) {
-      set_size(18, 200);
+  if (orientation == Vertical) {
+    set_size(18, 200);
+  } else {
+    set_size(200, 18);
+  }
+
+  glGenVertexArrays(1, &vao_);
+  vbo_.generate();
+
+  glBindVertexArray(vao_);
+
+  vbo_.bind(0);
+
+  std::vector<GLfloat> line_verts(8, 0.f);
+
+  if(orientation == Horizontal) {
+
+    // line_verts[0] = 0.f;
+    // line_verts[1] = 0.f;
+
+    line_verts[2] = size().width();
+    // line_verts[3] = 0.f;
+
+    //line_verts[4] = 0.f;
+    line_verts[5] = pixel_size(1);
+
+    line_verts[6] = size().width();
+    line_verts[7] = pixel_size(1);
+
+  } else {
+
+    // line_verts[0] = 0.f;
+    // line_verts[1] = 0.f;
+
+    line_verts[2] = pixel_size(1);
+    // line_verts[3] = 0.f;
+
+    // line_verts[4] = 0.f;
+    line_verts[5] = size().height();
+
+    line_verts[6] = pixel_size(1);
+    line_verts[7] = size().height();
+
+  }
+
+  vbo_.set_data (sizeof(GLfloat) * line_verts.size(), &line_verts[0]);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+}
+
+Slider::~Slider ()
+{
+  glDeleteVertexArrays(1, &vao_);
+}
+
+bool Slider::IsExpandX () const
+{
+  return orientation() == Horizontal ? true : false;
+}
+
+bool Slider::IsExpandY () const
+{
+  return orientation() == Vertical ? true : false;
+}
+
+Size Slider::GetPreferredSize () const
+{
+  if (orientation() == Horizontal)
+    return Size(200, 18);
+  else
+    return Size(18, 200);
+}
+
+void Slider::PerformOrientationUpdate (Orientation orientation)
+{
+  /*
+    m_line->bind();
+    GLfloat* buf_p = (GLfloat*) m_line->map(GL_READ_WRITE);
+    if (orientation == Horizontal) {
+    *(buf_p + 0) = m_slide_icon.size().width() / 2;
+    *(buf_p + 1) = size().height() / 2;
+    *(buf_p + 2) = size().width() - m_slide_icon.size().width() / 2;
+    *(buf_p + 3) = *(buf_p + 0);
     } else {
-      set_size(200, 18);
+    *(buf_p + 0) = size().width() / 2;
+    *(buf_p + 1) = m_slide_icon.size().height() / 2;
+    *(buf_p + 2) = *(buf_p + 0);
+    *(buf_p + 3) = size().height()
+    - m_slide_icon.size().height() / 2;
     }
+    m_line->unmap();
+    m_line->reset();
 
-    glGenVertexArrays(1, &vao_);
-    vbo_.generate();
+    RequestRedraw();
+  */
+}
 
-    glBindVertexArray(vao_);
+void Slider::PerformMinimumUpdate (int minimum)
+{
+  if (value() < minimum) {
+    set_value(minimum);
+  }
+}
+
+void Slider::PerformMaximumUpdate (int maximum)
+{
+  if (value() > maximum) {
+    set_value(maximum);
+  }
+}
+
+void Slider::PerformValueUpdate (int value)
+{
+}
+
+void Slider::PerformStepUpdate (int step)
+{
+}
+
+void Slider::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if (target == this) {
+    set_size(width, height);
 
     vbo_.bind(0);
-
-    std::vector<GLfloat> line_verts(8, 0.f);
-
-    if(orientation == Horizontal) {
-
-      // line_verts[0] = 0.f;
-      // line_verts[1] = 0.f;
-
-      line_verts[2] = size().width();
-      // line_verts[3] = 0.f;
-
-      //line_verts[4] = 0.f;
-      line_verts[5] = pixel_size(1);
-
-      line_verts[6] = size().width();
-      line_verts[7] = pixel_size(1);
-
+    GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
+    if (orientation() == Horizontal) {
+      *(buf_p + 2) = (GLfloat)size().width();
+      *(buf_p + 6) = (GLfloat)size().width();
     } else {
-
-      // line_verts[0] = 0.f;
-      // line_verts[1] = 0.f;
-
-      line_verts[2] = pixel_size(1);
-      // line_verts[3] = 0.f;
-
-      // line_verts[4] = 0.f;
-      line_verts[5] = size().height();
-
-      line_verts[6] = pixel_size(1);
-      line_verts[7] = size().height();
-
+      *(buf_p + 5) = (GLfloat)size().height();
+      *(buf_p + 7) = (GLfloat)size().height();
     }
-
-    vbo_.set_data (sizeof(GLfloat) * line_verts.size(), &line_verts[0]);
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindVertexArray(0);
+    vbo_.unmap();
     vbo_.reset();
+
+    RequestRedraw();
   }
 
-  Slider::~Slider ()
-  {
-    glDeleteVertexArrays(1, &vao_);
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
+
+Response Slider::Draw (AbstractWindow* context)
+{
+  float x = 0.f;
+  float y = 0.f;
+
+  AbstractWindow::shaders()->widget_outer_program()->use();
+  glBindVertexArray(vao_);
+
+  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, AbstractWindow::theme()->regular().outline.data());
+
+  if (orientation() == Horizontal) {
+
+    // ----- draw line
+
+    glUniform2f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f,
+                size().height() / 2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glUniform2f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f,
+                size().height() / 2 - 1.f);
+    glUniform4f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_COLOR),
+                1.f, 1.f, 1.f, 0.16f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    x += get_slider_position();
+    y += size().height() / 2.f - slide_icon_.size().height() / 2.f;
+
+  } else {
+
+    // ----- draw line
+
+    glUniform2f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_OFFSET),
+                size().width() / 2,
+                0.f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glUniform2f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_OFFSET),
+                size().width() / 2 + 1.f,
+                0.f);
+    glUniform4f(AbstractWindow::shaders()->
+                location(Shaders::WIDGET_OUTER_COLOR),
+                1.f, 1.f, 1.f, 0.16f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    x += size().width() / 2.f - slide_icon_.size().width() / 2.f;
+    y += get_slider_position();
+
   }
 
-  bool Slider::IsExpandX () const
-  {
-    return orientation() == Horizontal ? true : false;
-  }
+  slide_icon_.Draw(x, y);
 
-  bool Slider::IsExpandY () const
-  {
-    return orientation() == Vertical ? true : false;
-  }
+  return Finish;
+}
 
-  Size Slider::GetPreferredSize () const
-  {
-    if (orientation() == Horizontal)
-      return Size(200, 18);
-    else
-      return Size(18, 200);
-  }
+Response Slider::PerformMouseMove (AbstractWindow* context)
+{
+  if (pressed_) {
 
-  void Slider::PerformOrientationUpdate (Orientation orientation)
-  {
-    /*
-     m_line->bind();
-     GLfloat* buf_p = (GLfloat*) m_line->map(GL_READ_WRITE);
-     if (orientation == Horizontal) {
-     *(buf_p + 0) = m_slide_icon.size().width() / 2;
-     *(buf_p + 1) = size().height() / 2;
-     *(buf_p + 2) = size().width() - m_slide_icon.size().width() / 2;
-     *(buf_p + 3) = *(buf_p + 0);
-     } else {
-     *(buf_p + 0) = size().width() / 2;
-     *(buf_p + 1) = m_slide_icon.size().height() / 2;
-     *(buf_p + 2) = *(buf_p + 0);
-     *(buf_p + 3) = size().height()
-     - m_slide_icon.size().height() / 2;
-     }
-     m_line->unmap();
-     m_line->reset();
+    int new_value = value();
 
-     RequestRedraw();
-     */
-  }
-
-  void Slider::PerformMinimumUpdate (int minimum)
-  {
-    if (value() < minimum) {
-      set_value(minimum);
-    }
-  }
-
-  void Slider::PerformMaximumUpdate (int maximum)
-  {
-    if (value() > maximum) {
-      set_value(maximum);
-    }
-  }
-
-  void Slider::PerformValueUpdate (int value)
-  {
-  }
-
-  void Slider::PerformStepUpdate (int step)
-  {
-  }
-
-  void Slider::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
-      set_size(width, height);
-
-      vbo_.bind(0);
-      GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-      if (orientation() == Horizontal) {
-        *(buf_p + 2) = (GLfloat)size().width();
-        *(buf_p + 6) = (GLfloat)size().width();
-      } else {
-        *(buf_p + 5) = (GLfloat)size().height();
-        *(buf_p + 7) = (GLfloat)size().height();
-      }
-      vbo_.unmap();
-      vbo_.reset();
-
+    // DO not fire if cursor is out of range, otherwise too many events
+    if (GetNewValue(context->GetGlobalCursorPosition(), &new_value)) {
+      set_value(new_value);
+      fire_slider_moved_event(value());
       RequestRedraw();
     }
 
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  Response Slider::Draw (AbstractWindow* context)
-  {
-    float x = 0.f;
-    float y = 0.f;
-
-    AbstractWindow::shaders()->widget_outer_program()->use();
-    glBindVertexArray(vao_);
-
-    glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-                 1, AbstractWindow::theme()->regular().outline.data());
-
-    if (orientation() == Horizontal) {
-
-      // ----- draw line
-
-      glUniform2f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_OFFSET),
-                  0.f,
-                  size().height() / 2);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      glUniform2f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_OFFSET),
-                  0.f,
-                  size().height() / 2 - 1.f);
-      glUniform4f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_COLOR),
-                  1.f, 1.f, 1.f, 0.16f);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      x += get_slider_position();
-      y += size().height() / 2.f - slide_icon_.size().height() / 2.f;
-
-    } else {
-
-      // ----- draw line
-
-      glUniform2f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_OFFSET),
-                  size().width() / 2,
-                  0.f);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      glUniform2f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_OFFSET),
-                  size().width() / 2 + 1.f,
-                  0.f);
-      glUniform4f(AbstractWindow::shaders()->
-                  location(Shaders::WIDGET_OUTER_COLOR),
-                  1.f, 1.f, 1.f, 0.16f);
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      x += size().width() / 2.f - slide_icon_.size().width() / 2.f;
-      y += get_slider_position();
-
-    }
-
-    slide_icon_.Draw(x, y);
-
     return Finish;
-  }
 
-  Response Slider::PerformMouseMove (AbstractWindow* context)
-  {
-    if (pressed_) {
+  } else {
+    if (CursorOnSlideIcon(context->local_cursor_position())) {
 
-      int new_value = value();
+      //m_slide_icon.set_highlight(true);
 
-      // DO not fire if cursor is out of range, otherwise too many events
-      if (GetNewValue(context->GetGlobalCursorPosition(), &new_value)) {
-        set_value(new_value);
-        fire_slider_moved_event(value());
-        RequestRedraw();
-      }
+      RequestRedraw();
 
       return Finish;
-
     } else {
-      if (CursorOnSlideIcon(context->local_cursor_position())) {
 
-        //m_slide_icon.set_highlight(true);
-
-        RequestRedraw();
-
-        return Finish;
-      } else {
-
-        //m_slide_icon.set_highlight(false);
-        RequestRedraw();
-        return Finish;
-      }
+      //m_slide_icon.set_highlight(false);
+      RequestRedraw();
+      return Finish;
     }
   }
+}
 
-  Response Slider::PerformMousePress (AbstractWindow* context)
-  {
+Response Slider::PerformMousePress (AbstractWindow* context)
+{
+  if (CursorOnSlideIcon(context->local_cursor_position())) {
+    pressed_ = true;
+    last_value_ = value();
+    last_cursor_ = context->GetGlobalCursorPosition();
+    fire_slider_pressed();
+
+  }
+
+  return Finish;
+}
+
+Response Slider::PerformMouseRelease (AbstractWindow* context)
+{
+  if (pressed_) {
+    pressed_ = false;
+
     if (CursorOnSlideIcon(context->local_cursor_position())) {
-      pressed_ = true;
-      last_value_ = value();
-      last_cursor_ = context->GetGlobalCursorPosition();
-      fire_slider_pressed();
-
+      fire_slider_released();
     }
 
-    return Finish;
   }
 
-  Response Slider::PerformMouseRelease (AbstractWindow* context)
-  {
-    if (pressed_) {
-      pressed_ = false;
+  return Finish;
+}
 
-      if (CursorOnSlideIcon(context->local_cursor_position())) {
-        fire_slider_released();
-      }
+int Slider::GetSpace ()
+{
+  int space = 0;
 
-    }
-
-    return Finish;
+  if (orientation() == Horizontal) {
+    space = size().width() - slide_icon_.size().width();	// m_line_start.x() is the radius of m_switch
+  } else {
+    space = size().height() - slide_icon_.size().height();	// m_line_start.y() is the radius of m_switch
   }
 
-  int Slider::GetSpace ()
-  {
-    int space = 0;
+  return space;
+}
 
-    if (orientation() == Horizontal) {
-      space = size().width() - slide_icon_.size().width();	// m_line_start.x() is the radius of m_switch
-    } else {
-      space = size().height() - slide_icon_.size().height();	// m_line_start.y() is the radius of m_switch
-    }
+bool Slider::CursorOnSlideIcon (const Point& cursor)
+{
+  bool ret = false;
 
-    return space;
+  glm::vec2 icon_center;	// slide switch center position
+
+  int radius = 0;
+
+  if (orientation() == Horizontal) {
+    radius = slide_icon_.size().width() / 2;
+    icon_center.x = radius + get_slider_position();
+    icon_center.y = size().height() / 2;
+  } else {
+    radius = slide_icon_.size().height() / 2;
+    icon_center.x = size().width() / 2;
+    icon_center.y = radius + get_slider_position();
   }
 
-  bool Slider::CursorOnSlideIcon (const Point& cursor)
-  {
-    bool ret = false;
+  glm::vec2 cursor_pos(cursor.x(), cursor.y());
+  float distance = glm::distance(icon_center, cursor_pos);
 
-    glm::vec2 icon_center;	// slide switch center position
-
-    int radius = 0;
-
-    if (orientation() == Horizontal) {
-      radius = slide_icon_.size().width() / 2;
-      icon_center.x = radius + get_slider_position();
-      icon_center.y = size().height() / 2;
-    } else {
-      radius = slide_icon_.size().height() / 2;
-      icon_center.x = size().width() / 2;
-      icon_center.y = radius + get_slider_position();
-    }
-
-    glm::vec2 cursor_pos(cursor.x(), cursor.y());
-    float distance = glm::distance(icon_center, cursor_pos);
-
-    if (orientation() == Horizontal && distance <= radius) {
-      ret = true;
-    } else if (orientation() == Vertical && distance <= radius) {
-      ret = true;
-    } else {
-      ret = false;
-    }
-
-    return ret;
+  if (orientation() == Horizontal && distance <= radius) {
+    ret = true;
+  } else if (orientation() == Vertical && distance <= radius) {
+    ret = true;
+  } else {
+    ret = false;
   }
 
-  bool Slider::GetNewValue (const Point& cursor, int* vout)
-  {
-    bool ret = false;
+  return ret;
+}
 
-    int offset = 0;
-    int move_space = GetSpace();
+bool Slider::GetNewValue (const Point& cursor, int* vout)
+{
+  bool ret = false;
 
-    if (move_space == 0) return false;
+  int offset = 0;
+  int move_space = GetSpace();
 
-    if (orientation() == Horizontal) {
-      offset = cursor.x() - last_cursor_.x();
+  if (move_space == 0) return false;
 
-    } else {
-      offset = cursor.y() - last_cursor_.y();
-    }
+  if (orientation() == Horizontal) {
+    offset = cursor.x() - last_cursor_.x();
 
-    int val = last_value_ + (offset * (maximum() - minimum())) / move_space;
-
-    if (val > maximum()) {
-      *vout = maximum();
-    } else if (val < minimum()) {
-      *vout = minimum();
-    } else {
-      *vout = val;
-      ret = true;
-    }
-
-    return ret;
+  } else {
+    offset = cursor.y() - last_cursor_.y();
   }
+
+  int val = last_value_ + (offset * (maximum() - minimum())) / move_space;
+
+  if (val > maximum()) {
+    *vout = maximum();
+  } else if (val < minimum()) {
+    *vout = minimum();
+  } else {
+    *vout = val;
+    ret = true;
+  }
+
+  return ret;
+}
 
 }

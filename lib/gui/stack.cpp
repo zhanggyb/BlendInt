@@ -25,193 +25,193 @@
 
 namespace BlendInt {
 
-  Stack::Stack ()
-  : AbstractWidget(), active_widget_(0)
-  {
-    set_size(400, 300);
+Stack::Stack ()
+    : AbstractWidget(), active_widget_(0)
+{
+  set_size(400, 300);
+}
+
+Stack::~Stack ()
+{
+}
+
+void Stack::AddWidget (AbstractWidget* widget)
+{
+  if (PushBackSubView(widget)) {
+
+    ResizeSubView(widget, size());
+    MoveSubViewTo(widget, 0, 0);
+
+    if (subview_count() == 1) {
+      active_widget_ = widget;
+    }
+
+    RequestRedraw();
   }
+}
 
-  Stack::~Stack ()
-  {
+void Stack::InsertWidget (int index, AbstractWidget* widget)
+{
+  if (InsertSubView(index, widget)) {
+
+    ResizeSubView(widget, size());
+    MoveSubViewTo(widget, 0, 0);
+
+    RequestRedraw();
   }
+}
 
-  void Stack::AddWidget (AbstractWidget* widget)
-  {
-    if (PushBackSubView(widget)) {
+void Stack::Remove (AbstractWidget* widget)
+{
+  if (RemoveSubView(widget)) {
 
-      ResizeSubView(widget, size());
-      MoveSubViewTo(widget, 0, 0);
+    if (active_widget_ == widget) {
 
-      if (subview_count() == 1) {
-        active_widget_ = widget;
+      if (subview_count() == 0) {
+        active_widget_ = 0;
+      } else {
+        active_widget_ = dynamic_cast<AbstractWidget*>(first());
       }
 
-      RequestRedraw();
+    }
+
+    RequestRedraw();
+  }
+}
+
+int Stack::GetIndex () const
+{
+  int index = 0;
+
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p == active_widget_) {
+      break;
+    }
+
+    index++;
+  }
+
+  if (index >= subview_count()) index = -1;
+
+  return index;
+}
+
+void Stack::SetIndex (int index)
+{
+  int count = subview_count();
+
+  if ((index < 0) || (index > (count - 1))) return;
+
+  if (count) {
+
+    AbstractView* widget = GetSubViewAt(index);
+    if (active_widget_ == widget) {
+      return;
+    }
+
+    //active_widget_->SetVisible(false);
+    active_widget_ = dynamic_cast<AbstractWidget*>(widget);
+    //active_widget_->SetVisible(true);
+  }
+}
+
+bool Stack::IsExpandX () const
+{
+  bool ret = false;
+
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p->IsExpandX()) {
+      ret = true;
+      break;
     }
   }
 
-  void Stack::InsertWidget (int index, AbstractWidget* widget)
-  {
-    if (InsertSubView(index, widget)) {
+  return ret;
+}
 
-      ResizeSubView(widget, size());
-      MoveSubViewTo(widget, 0, 0);
+bool Stack::IsExpandY () const
+{
+  bool ret = false;
 
-      RequestRedraw();
+  for (AbstractView* p = first(); p; p = next(p)) {
+    if (p->IsExpandY()) {
+      ret = true;
+      break;
     }
   }
 
-  void Stack::Remove (AbstractWidget* widget)
-  {
-    if (RemoveSubView(widget)) {
+  return ret;
+}
 
-      if (active_widget_ == widget) {
+Size Stack::GetPreferredSize () const
+{
+  if (subview_count()) {
 
-        if (subview_count() == 0) {
-          active_widget_ = 0;
-        } else {
-          active_widget_ = dynamic_cast<AbstractWidget*>(first());
-        }
+    int w = 0;
+    int h = 0;
 
-      }
-
-      RequestRedraw();
-    }
-  }
-
-  int Stack::GetIndex () const
-  {
-    int index = 0;
-
+    Size tmp;
     for (AbstractView* p = first(); p; p = next(p)) {
-      if (p == active_widget_) {
-        break;
-      }
-
-      index++;
+      tmp = p->GetPreferredSize();
+      w = std::max(w, tmp.width());
+      h = std::max(h, tmp.height());
     }
 
-    if (index >= subview_count()) index = -1;
+    return Size(w, h);
 
-    return index;
+  } else {
+    return Size(400, 300);
   }
+}
 
-  void Stack::SetIndex (int index)
-  {
-    int count = subview_count();
+AbstractView* Stack::GetFirstSubView () const
+{
+  return active_widget_;
+}
 
-    if ((index < 0) || (index > (count - 1))) return;
+AbstractView* Stack::GetLastSubView () const
+{
+  return active_widget_;
+}
 
-    if (count) {
+AbstractView* Stack::GetNextSubView (const AbstractView* view) const
+{
+  return 0;
+}
 
-      AbstractView* widget = GetSubViewAt(index);
-      if (active_widget_ == widget) {
-        return;
-      }
+AbstractView* Stack::GetPreviousSubView (const AbstractView* view) const
+{
+  return 0;
+}
 
-      //active_widget_->SetVisible(false);
-      active_widget_ = dynamic_cast<AbstractWidget*>(widget);
-      //active_widget_->SetVisible(true);
-    }
-  }
+int Stack::GetSubViewCount () const
+{
+  return active_widget_ ? 1 : 0;
+}
 
-  bool Stack::IsExpandX () const
-  {
-    bool ret = false;
+bool Stack::IsSubViewActive (const AbstractView* subview) const
+{
+  DBG_ASSERT(subview && subview->super() == this);
+  return subview == active_widget_ ? true : false;
+}
 
+void Stack::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+{
+  if (target == this) {
+    set_size(width, height);
     for (AbstractView* p = first(); p; p = next(p)) {
-      if (p->IsExpandX()) {
-        ret = true;
-        break;
-      }
-    }
-
-    return ret;
-  }
-
-  bool Stack::IsExpandY () const
-  {
-    bool ret = false;
-
-    for (AbstractView* p = first(); p; p = next(p)) {
-      if (p->IsExpandY()) {
-        ret = true;
-        break;
-      }
-    }
-
-    return ret;
-  }
-
-  Size Stack::GetPreferredSize () const
-  {
-    if (subview_count()) {
-
-      int w = 0;
-      int h = 0;
-
-      Size tmp;
-      for (AbstractView* p = first(); p; p = next(p)) {
-        tmp = p->GetPreferredSize();
-        w = std::max(w, tmp.width());
-        h = std::max(h, tmp.height());
-      }
-
-      return Size(w, h);
-
-    } else {
-      return Size(400, 300);
+      ResizeSubView(p, size());
     }
   }
 
-  AbstractView* Stack::GetFirstSubView () const
-  {
-    return active_widget_;
+  if (source == this) {
+    report_size_update(source, target, width, height);
   }
+}
 
-  AbstractView* Stack::GetLastSubView () const
-  {
-    return active_widget_;
-  }
-
-  AbstractView* Stack::GetNextSubView (const AbstractView* view) const
-  {
-    return 0;
-  }
-
-  AbstractView* Stack::GetPreviousSubView (const AbstractView* view) const
-  {
-    return 0;
-  }
-
-  int Stack::GetSubViewCount () const
-  {
-    return active_widget_ ? 1 : 0;
-  }
-
-  bool Stack::IsSubViewActive (const AbstractView* subview) const
-  {
-    DBG_ASSERT(subview && subview->super() == this);
-    return subview == active_widget_ ? true : false;
-  }
-
-  void Stack::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
-  {
-    if (target == this) {
-      set_size(width, height);
-      for (AbstractView* p = first(); p; p = next(p)) {
-        ResizeSubView(p, size());
-      }
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  Response Stack::Draw (AbstractWindow* context)
-  {
-    return subview_count() ? Ignore : Finish;
-  }
+Response Stack::Draw (AbstractWindow* context)
+{
+  return subview_count() ? Ignore : Finish;
+}
 
 }

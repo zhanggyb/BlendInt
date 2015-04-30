@@ -21,280 +21,199 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <blendint/core/types.hpp>
+#include <string.h>
+
 #include <blendint/core/string.hpp>
 
 namespace BlendInt {
 
-#if __cplusplus <= 199711L
+String::String ()
+    : std::u32string()
+{
 
-	String::String ()
-	: std::basic_string<uint32_t>()
-	{
+}
 
-	}
+String::String (const char* str)
+    : std::u32string()
+{
+  size_t len = strlen(str);
 
-	String::String (const char* str)
-	: std::basic_string<uint32_t>()
-	{
-		size_t len = strlen(str);
+  if(len > 0) {
+    resize(len);
 
-		if (len > 0) {
-			resize(len);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = *(str + i);
+    }
+  }
+}
 
-			for (size_t i = 0; i < len; i++) {
-				at(i) = *(str + i);
-			}
-		}
-	}
+String::String (const wchar_t* str)
+    : std::u32string()
+{
+  size_t len = wcslen(str);
 
-	String::String (const wchar_t* str)
-	: std::basic_string<uint32_t>()
-	{
-		size_t len = wcslen(str);
+  if(len > 0) {
+    resize(len);
 
-		if (len > 0) {
-			resize(len);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = *(str + i);
+    }
+  }
+}
 
-			for (size_t i = 0; i < len; i++) {
-				at(i) = *(str + i);
-			}
-		}
-	}
+String::String (const char* str, size_t n)
+    : std::u32string()
+{
+  size_t len = strlen(str);
+  len = std::min(len, n);
 
-	String::String (const char* str, size_t n)
-	: std::basic_string<uint32_t>()
-	{
-		size_t len = strlen(str);
+  if(len > 0) {
+    resize(len);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = *(str + i);
+    }
+  }
+}
 
-		len = std::min(len, n);
+String::String (const std::string& str)
+    : std::u32string()
+{
+  size_t len = str.length();
 
-		if (len > 0) {
-			resize(len);
-			for (size_t i = 0; i < len; i++) {
-				at(i) = *(str + i);
-			}
-		}
-	}
+  if(len > 0) {
+    resize(len);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = str[i];
+    }
+  }
+}
 
-	String::String (const std::string& str)
-	: std::basic_string<uint32_t>()
-	{
-		size_t len = str.length();
+String::String (const std::wstring& str)
+    : std::u32string()
+{
+  size_t len = str.length();
 
-		if (len > 0) {
-			resize(len);
+  if(len > 0) {
+    resize(len);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = str[i];
+    }
+  }
+}
 
-			for (size_t i = 0; i < len; i++) {
-				at(i) = str[i];
-			}
-		}
-	}
+String::String (const String& orig)
+{
+  size_t len = orig.length();
 
-	String::String (const std::wstring& str)
-	: std::basic_string<uint32_t>()
-	{
-		size_t len = str.length();
+  if (len > 0) {
+    resize(len);
+    memcpy(&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
+  }
+}
 
-		if (len > 0) {
-			resize(len);
-			for (size_t i = 0; i < len; i++) {
-				at(i) = str[i];
-			}
-		}
-	}
+String& String::operator = (const char* str)
+{
+  size_t len = strlen(str);
 
-#else	// C++ 11
+  if(len > 0) {
+    resize(len);
 
-	String::String ()
-	: std::u32string()
-	{
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = *(str + i);
+    }
+  } else {
+    clear();
+  }
 
-	}
+  return *this;
+}
 
-	String::String (const char* str)
-	: std::u32string()
-	{
-		size_t len = strlen(str);
+String& String::operator = (const wchar_t* str)
+{
+  size_t len = wcslen(str);
 
-		if(len > 0) {
-			resize(len);
+  if(len > 0) {
+    resize(len);
 
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = *(str + i);
-			}
-		}
-	}
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = *(str + i);
+    }
+  } else {
+    clear();
+  }
 
-	String::String (const wchar_t* str)
-	: std::u32string()
-	{
-		size_t len = wcslen(str);
+  return *this;
+}
 
-		if(len > 0) {
-			resize(len);
+String& String::operator = (const std::string& str)
+{
+  size_t len = str.length();
 
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = *(str + i);
-			}
-		}
-	}
+  if(len > 0) {
+    resize(len);
 
-	String::String (const char* str, size_t n)
-	: std::u32string()
-	{
-		size_t len = strlen(str);
-		len = std::min(len, n);
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = str[i];
+    }
+  } else {
+    clear();
+  }
 
-		if(len > 0) {
-			resize(len);
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = *(str + i);
-			}
-		}
-	}
+  return *this;
+}
 
-	String::String (const std::string& str)
-	: std::u32string()
-	{
-		size_t len = str.length();
+String& String::operator = (const std::wstring& str)
+{
+  size_t len = str.length();
 
-		if(len > 0) {
-			resize(len);
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = str[i];
-			}
-		}
-	}
+  if(len > 0) {
+    resize(len);
 
-	String::String (const std::wstring& str)
-	: std::u32string()
-	{
-		size_t len = str.length();
+    for(size_t i = 0; i < len; i++)
+    {
+      at(i) = str[i];
+    }
+  } else {
+    clear();
+  }
 
-		if(len > 0) {
-			resize(len);
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = str[i];
-			}
-		}
-	}
+  return *this;
+}
 
-#endif
+String& String::operator = (const String& orig)
+{
+  size_t len = orig.length();
 
-	String::String (const String& orig)
-	{
-		size_t len = orig.length();
+  if(len > 0) {
+    resize(len);
+    memcpy (&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
+  } else {
+    clear();
+  }
 
-		if (len > 0) {
-			resize(len);
-			memcpy(&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
-		}
-	}
+  return *this;
+}
 
-	String& String::operator = (const char* str)
-	{
-		size_t len = strlen(str);
+std::string ConvertFromString (const String& src)
+{
+  std::string str;
 
-		if(len > 0) {
-			resize(len);
+  size_t len = src.length();
+  str.resize(len);
 
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = *(str + i);
-			}
-		} else {
-			clear();
-		}
-
-		return *this;
-	}
-
-	String& String::operator = (const wchar_t* str)
-	{
-		size_t len = wcslen(str);
-
-		if(len > 0) {
-			resize(len);
-
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = *(str + i);
-			}
-		} else {
-			clear();
-		}
-
-		return *this;
-	}
-
-	String& String::operator = (const std::string& str)
-	{
-		size_t len = str.length();
-
-		if(len > 0) {
-			resize(len);
-
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = str[i];
-			}
-		} else {
-			clear();
-		}
-
-		return *this;
-	}
-
-	String& String::operator = (const std::wstring& str)
-	{
-		size_t len = str.length();
-
-		if(len > 0) {
-			resize(len);
-
-			for(size_t i = 0; i < len; i++)
-			{
-				at(i) = str[i];
-			}
-		} else {
-			clear();
-		}
-
-		return *this;
-	}
-
-	String& String::operator = (const String& orig)
-	{
-		size_t len = orig.length();
-
-		if(len > 0) {
-			resize(len);
-			memcpy (&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
-		} else {
-			clear();
-		}
-
-		return *this;
-	}
-
-	std::string ConvertFromString (const String& src)
-	{
-		std::string str;
-
-		size_t len = src.length();
-		str.resize(len);
-
-		for(size_t i = 0; i < len; i++)
-		{
-			str[i] = src[i];
-		}
-		return str;
-	}
+  for(size_t i = 0; i < len; i++)
+  {
+    str[i] = src[i];
+  }
+  return str;
+}
 
 }

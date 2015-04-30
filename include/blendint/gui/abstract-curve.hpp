@@ -32,75 +32,75 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Abstract class for 2D curve
-	 */
-	class AbstractCurve: public Object
-	{
-	public:
+/**
+ * @brief Abstract class for 2D curve
+ */
+class AbstractCurve: public Object
+{
+ public:
 
-		AbstractCurve ()
-		{
-		}
+  AbstractCurve ()
+  {
+  }
 
-		virtual ~AbstractCurve ()
-		{
-		}
+  virtual ~AbstractCurve ()
+  {
+  }
 
-		inline void push_back(const glm::vec2& point)
-		{
-			points_.push_back(point);
-		}
+  inline void push_back(const glm::vec2& point)
+  {
+    points_.push_back(point);
+  }
 
-		inline void push_back(float x, float y)
-		{
-			points_.push_back(glm::vec2(x, y));
-		}
+  inline void push_back(float x, float y)
+  {
+    points_.push_back(glm::vec2(x, y));
+  }
 
-		inline void push_front (const glm::vec2& point)
-		{
-			points_.push_front(point);
-		}
+  inline void push_front (const glm::vec2& point)
+  {
+    points_.push_front(point);
+  }
 
-		inline void push_front (float x, float y)
-		{
-			points_.push_front(glm::vec2(x, y));
-		}
+  inline void push_front (float x, float y)
+  {
+    points_.push_front(glm::vec2(x, y));
+  }
 
-		inline void insert (int index, const glm::vec2& point)
-		{
-			std::deque<glm::vec2>::iterator it = points_.begin();
-			std::advance(it, index);
+  inline void insert (int index, const glm::vec2& point)
+  {
+    std::deque<glm::vec2>::iterator it = points_.begin();
+    std::advance(it, index);
 
-			points_.insert(it, point);
-		}
+    points_.insert(it, point);
+  }
 
-		inline glm::vec2& operator [] (int i)
-		{
-			return points_[i];
-		}
+  inline glm::vec2& operator [] (int i)
+  {
+    return points_[i];
+  }
 
-		inline const glm::vec2& operator [] (int i) const
-		{
-			return points_[i];
-		}
+  inline const glm::vec2& operator [] (int i) const
+  {
+    return points_[i];
+  }
 
-		inline size_t count () const
-		{
-			return points_.size();
-		}
+  inline size_t count () const
+  {
+    return points_.size();
+  }
 
-		/**
-		 * @brief Upload to GPU buffer
-		 */
-		virtual void Unpack () = 0;
+  /**
+   * @brief Upload to GPU buffer
+   */
+  virtual void Unpack () = 0;
 
-		virtual void Draw () = 0;
+  virtual void Draw () = 0;
 
-	private:
+ private:
 
-		std::deque<glm::vec2> points_;
-	};
+  std::deque<glm::vec2> points_;
+};
 
 }
 

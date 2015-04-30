@@ -25,95 +25,142 @@
 
 namespace BlendInt {
 
-	LinearAdjustment::LinearAdjustment(AbstractView* view, Orientation orient, int alignment, int space)
-	: AbstractAdjustment(view),
-	  orientation_(orient),
-	  alignment_(alignment),
-	  space_(space)
-	{
+LinearAdjustment::LinearAdjustment(AbstractView* view,
+                                   Orientation orient,
+                                   int alignment,
+                                   int space)
+    : AbstractAdjustment(view),
+      orientation_(orient),
+      alignment_(alignment),
+      space_(space)
+{
 
-	}
+}
 
-	LinearAdjustment::~LinearAdjustment()
-	{
+LinearAdjustment::~LinearAdjustment()
+{
 
-	}
+}
 
-	void LinearAdjustment::Adjust (int x, int y, int w, int h)
-	{
-		if(orientation_ == Horizontal) {
-			AdjustHorizontally(x, y, w, h);
-		} else {
-			AdjustVertically(x, y, w, h);
-		}
-	}
+void LinearAdjustment::Adjust (int x, int y, int w, int h)
+{
+  if(orientation_ == Horizontal) {
+    AdjustHorizontally(x, y, w, h);
+  } else {
+    AdjustVertically(x, y, w, h);
+  }
+}
 
-	void LinearAdjustment::AdjustHorizontally(int x, int y, int w, int h)
-	{
-		int expandable_preferred_width_sum = 0;	// the width sum of the expandable widgets' size
-		int unexpandable_preferred_width_sum = 0;	// the width sum of the unexpandable widgets' size
+void LinearAdjustment::AdjustHorizontally(int x, int y, int w, int h)
+{
+  int expandable_preferred_width_sum = 0;	// the width sum of the expandable widgets' size
+  int unexpandable_preferred_width_sum = 0;	// the width sum of the unexpandable widgets' size
 
-    Size tmp_size;
-    for (AbstractView* p = view()->GetFirstSubView(); p;
-        p = view()->GetNextSubView(p)) {
-      tmp_size = p->GetPreferredSize();
+  Size tmp_size;
+  for (AbstractView* p = view()->GetFirstSubView(); p;
+       p = view()->GetNextSubView(p)) {
+    tmp_size = p->GetPreferredSize();
 
-      if (p->IsExpandX()) {
-        expandable_preferred_width_sum += tmp_size.width();
-        expandable_preferred_width_list_.push_back(tmp_size.width());
-      } else {
-        unexpandable_preferred_width_sum += tmp_size.width();
-        unexpandable_preferred_width_list_.push_back(tmp_size.width());
-      }
-
-      if (!p->IsExpandY()) {
-        unexpandable_preferred_height_list_.push_back(tmp_size.height());
-      }
+    if (p->IsExpandX()) {
+      expandable_preferred_width_sum += tmp_size.width();
+      expandable_preferred_width_list_.push_back(tmp_size.width());
+    } else {
+      unexpandable_preferred_width_sum += tmp_size.width();
+      unexpandable_preferred_width_list_.push_back(tmp_size.width());
     }
 
-		if ((expandable_preferred_width_list_.size()
-		        + unexpandable_preferred_width_list_.size()) == 0)
-			return;	// do nothing if all sub widgets are invisible
+    if (!p->IsExpandY()) {
+      unexpandable_preferred_height_list_.push_back(tmp_size.height());
+    }
+  }
 
-		int total_space = ((expandable_preferred_width_list_.size() +
-				unexpandable_preferred_width_list_.size()) - 1) * space_;
+  if ((expandable_preferred_width_list_.size()
+       + unexpandable_preferred_width_list_.size()) == 0)
+    return;	// do nothing if all sub widgets are invisible
 
-		int total_preferred_width = expandable_preferred_width_sum
-						+ unexpandable_preferred_width_sum
-						+ total_space;
+  int total_space = ((expandable_preferred_width_list_.size() +
+                      unexpandable_preferred_width_list_.size()) - 1) * space_;
 
-		if (total_preferred_width == w) {
-			DistributeWithPreferredWidth(x);
-		} else if (total_preferred_width < w) {
-			DistributeWithLargeWidth(x, w,
-			        expandable_preferred_width_sum,
-			        unexpandable_preferred_width_sum);
-		} else {
-			DistributeWithSmallWidth(x,
-					w,
-					expandable_preferred_width_sum,
-					unexpandable_preferred_width_sum);
-		}
+  int total_preferred_width = expandable_preferred_width_sum
+      + unexpandable_preferred_width_sum
+      + total_space;
 
-		AlignHorizontally(y, h);
+  if (total_preferred_width == w) {
+    DistributeWithPreferredWidth(x);
+  } else if (total_preferred_width < w) {
+    DistributeWithLargeWidth(x, w,
+                             expandable_preferred_width_sum,
+                             unexpandable_preferred_width_sum);
+  } else {
+    DistributeWithSmallWidth(x,
+                             w,
+                             expandable_preferred_width_sum,
+                             unexpandable_preferred_width_sum);
+  }
 
-	}
+  AlignHorizontally(y, h);
 
-	void LinearAdjustment::DistributeWithPreferredWidth (int x)
-	{
-		std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
-		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_width_list_.begin();
+}
 
-		AbstractView* p = view()->GetFirstSubView();
+void LinearAdjustment::DistributeWithPreferredWidth (int x)
+{
+  std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
+  std::deque<int>::const_iterator unexp_it = unexpandable_preferred_width_list_.begin();
+
+  AbstractView* p = view()->GetFirstSubView();
+
+  while (p) {
+
+    if (p->IsExpandX()) {
+      resize(p, *exp_it, p->size().height());
+      move(p, x, p->position().y());
+      exp_it++;
+    } else {
+      resize(p, *unexp_it, p->size().height());
+      move(p, x, p->position().y());
+      unexp_it++;
+    }
+
+    x = x + p->size().width() + space_;
+
+    p = view()->GetNextSubView(p);
+
+  }
+}
+
+void LinearAdjustment::DistributeWithSmallWidth (int x, int width,
+                                                 int expandable_prefer_sum,
+                                                 int unexpandable_prefer_sum)
+{
+  int widgets_width = width - (expandable_preferred_width_list_.size() +
+                               unexpandable_preferred_width_list_.size() - 1) * space_;
+
+  if(widgets_width <= 0) {
+    for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
+    {
+      p->Resize(0, p->size().height());
+    }
+    return;
+  }
+
+  int reference_width;
+  std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
+  std::deque<int>::const_iterator unexp_it = unexpandable_preferred_width_list_.begin();
+
+  AbstractView* p = view()->GetFirstSubView();
+
+  if (widgets_width <= unexpandable_prefer_sum) {
+    reference_width = widgets_width;
 
     while (p) {
 
       if (p->IsExpandX()) {
-        resize(p, *exp_it, p->size().height());
+        resize(p, 0, p->size().height());
         move(p, x, p->position().y());
         exp_it++;
       } else {
-        resize(p, *unexp_it, p->size().height());
+        resize(p, reference_width * (*unexp_it) / unexpandable_prefer_sum,
+               p->size().height());
         move(p, x, p->position().y());
         unexp_it++;
       }
@@ -121,94 +168,15 @@ namespace BlendInt {
       x = x + p->size().width() + space_;
 
       p = view()->GetNextSubView(p);
-
     }
-  }
 
-	void LinearAdjustment::DistributeWithSmallWidth (int x, int width,
-	        int expandable_prefer_sum,
-	        int unexpandable_prefer_sum)
-	{
-		int widgets_width = width - (expandable_preferred_width_list_.size() +
-				unexpandable_preferred_width_list_.size() - 1) * space_;
+  } else {
+    reference_width = widgets_width - unexpandable_prefer_sum;
 
-		if(widgets_width <= 0) {
-			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
-			{
-				p->Resize(0, p->size().height());
-			}
-			return;
-		}
-
-		int reference_width;
-		std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
-		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_width_list_.begin();
-
-		AbstractView* p = view()->GetFirstSubView();
-
-    if (widgets_width <= unexpandable_prefer_sum) {
-      reference_width = widgets_width;
-
-      while (p) {
-
-        if (p->IsExpandX()) {
-          resize(p, 0, p->size().height());
-          move(p, x, p->position().y());
-          exp_it++;
-        } else {
-          resize(p, reference_width * (*unexp_it) / unexpandable_prefer_sum,
-                 p->size().height());
-          move(p, x, p->position().y());
-          unexp_it++;
-        }
-
-        x = x + p->size().width() + space_;
-
-        p = view()->GetNextSubView(p);
-      }
-
-    } else {
-      reference_width = widgets_width - unexpandable_prefer_sum;
-
-      while (p) {
-
-        if (p->IsExpandX()) {
-          resize(p, reference_width * (*exp_it) / expandable_prefer_sum,
-                 p->size().height());
-          move(p, x, p->position().y());
-          exp_it++;
-        } else {
-          resize(p, (*unexp_it), p->size().height());
-          move(p, x, p->position().y());
-          unexp_it++;
-        }
-
-        x = x + p->size().width() + space_;
-
-        p = view()->GetNextSubView(p);
-
-      }
-
-    }
-  }
-
-	void LinearAdjustment::DistributeWithLargeWidth (int x, int width,
-	        int expandable_prefer_sum, int unexpandable_prefer_sum)
-	{
-		int widgets_width = width - (expandable_preferred_width_list_.size() +
-				unexpandable_preferred_width_list_.size() - 1) * space_;
-
-		int expandable_width = widgets_width - unexpandable_prefer_sum;
-
-		std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
-    std::deque<int>::const_iterator unexp_it =
-        unexpandable_preferred_width_list_.begin();
-
-    AbstractView* p = view()->GetFirstSubView();
     while (p) {
 
       if (p->IsExpandX()) {
-        resize(p, expandable_width * (*exp_it) / expandable_prefer_sum,
+        resize(p, reference_width * (*exp_it) / expandable_prefer_sum,
                p->size().height());
         move(p, x, p->position().y());
         exp_it++;
@@ -221,117 +189,197 @@ namespace BlendInt {
       x = x + p->size().width() + space_;
 
       p = view()->GetNextSubView(p);
+
+    }
+
+  }
+}
+
+void LinearAdjustment::DistributeWithLargeWidth (int x, int width,
+                                                 int expandable_prefer_sum, int unexpandable_prefer_sum)
+{
+  int widgets_width = width - (expandable_preferred_width_list_.size() +
+                               unexpandable_preferred_width_list_.size() - 1) * space_;
+
+  int expandable_width = widgets_width - unexpandable_prefer_sum;
+
+  std::deque<int>::const_iterator exp_it = expandable_preferred_width_list_.begin();
+  std::deque<int>::const_iterator unexp_it =
+      unexpandable_preferred_width_list_.begin();
+
+  AbstractView* p = view()->GetFirstSubView();
+  while (p) {
+
+    if (p->IsExpandX()) {
+      resize(p, expandable_width * (*exp_it) / expandable_prefer_sum,
+             p->size().height());
+      move(p, x, p->position().y());
+      exp_it++;
+    } else {
+      resize(p, (*unexp_it), p->size().height());
+      move(p, x, p->position().y());
+      unexp_it++;
+    }
+
+    x = x + p->size().width() + space_;
+
+    p = view()->GetNextSubView(p);
+  }
+}
+
+void LinearAdjustment::AlignHorizontally (int y, int height)
+{
+  std::deque<int>::const_iterator unexp_it =
+      unexpandable_preferred_height_list_.begin();
+
+  for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
+  {
+    if (p->IsExpandY()) {
+
+      resize(p, p->size().width(), height);
+      move(p, p->position().x(), y);
+
+    } else {
+
+      if ((*unexp_it) >= height) {
+        resize(p, p->size().width(), height);
+        move(p, p->position().x(), y);
+      } else {
+
+        resize(p, p->size().width(),
+               (*unexp_it));
+
+        if (alignment_ & AlignTop) {
+          move(p,
+               p->position().x(),
+               y + (height - p->size().height()));
+        } else if (alignment_ & AlignBottom) {
+          move(p, p->position().x(), y);
+        } else if (alignment_ & AlignVerticalCenter) {
+          move(p,
+               p->position().x(),
+               y + (height - p->size().height()) / 2);
+        }
+      }
+
+      unexp_it++;
     }
   }
 
-	void LinearAdjustment::AlignHorizontally (int y, int height)
-	{
-		std::deque<int>::const_iterator unexp_it =
-		        unexpandable_preferred_height_list_.begin();
+}
 
-		for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
-		{
-			if (p->IsExpandY()) {
+void LinearAdjustment::AdjustVertically (int x, int y, int w, int h)
+{
+  int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
+  int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
 
-				resize(p, p->size().width(), height);
-				move(p, p->position().x(), y);
+  Size tmp_size;
+  for (AbstractView* p = view()->GetFirstSubView(); p;
+       p = view()->GetNextSubView(p)) {
+    tmp_size = p->GetPreferredSize();
 
-			} else {
-
-				if ((*unexp_it) >= height) {
-					resize(p, p->size().width(), height);
-					move(p, p->position().x(), y);
-				} else {
-
-					resize(p, p->size().width(),
-					        (*unexp_it));
-
-					if (alignment_ & AlignTop) {
-						move(p,
-							 p->position().x(),
-							 y + (height - p->size().height()));
-					} else if (alignment_ & AlignBottom) {
-						move(p, p->position().x(), y);
-					} else if (alignment_ & AlignVerticalCenter) {
-						move(p,
-							 p->position().x(),
-							 y + (height - p->size().height()) / 2);
-					}
-				}
-
-				unexp_it++;
-			}
-		}
-
-	}
-
-	void LinearAdjustment::AdjustVertically (int x, int y, int w, int h)
-	{
-		int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
-		int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
-
-    Size tmp_size;
-    for (AbstractView* p = view()->GetFirstSubView(); p;
-        p = view()->GetNextSubView(p)) {
-      tmp_size = p->GetPreferredSize();
-
-      if (p->IsExpandY()) {
-        expandable_preferred_height_sum += tmp_size.height();
-        expandable_preferred_height_list_.push_back(tmp_size.height());
-      } else {
-        unexpandable_preferred_height_sum += tmp_size.height();
-        unexpandable_preferred_height_list_.push_back(tmp_size.height());
-      }
-
-      if (!p->IsExpandX()) {
-        unexpandable_preferred_width_list_.push_back(tmp_size.width());
-      }
+    if (p->IsExpandY()) {
+      expandable_preferred_height_sum += tmp_size.height();
+      expandable_preferred_height_list_.push_back(tmp_size.height());
+    } else {
+      unexpandable_preferred_height_sum += tmp_size.height();
+      unexpandable_preferred_height_list_.push_back(tmp_size.height());
     }
 
-		if ((expandable_preferred_height_list_.size()
-		        + unexpandable_preferred_height_list_.size()) == 0)
-			return;	// do nothing if all sub widgets are invisible
+    if (!p->IsExpandX()) {
+      unexpandable_preferred_width_list_.push_back(tmp_size.width());
+    }
+  }
 
-		int total_space = ((expandable_preferred_height_list_.size()
-		        + unexpandable_preferred_height_list_.size()) - 1) * space_;
+  if ((expandable_preferred_height_list_.size()
+       + unexpandable_preferred_height_list_.size()) == 0)
+    return;	// do nothing if all sub widgets are invisible
 
-		int total_preferred_height = expandable_preferred_height_sum
-						+ unexpandable_preferred_height_sum
-						+ total_space;
+  int total_space = ((expandable_preferred_height_list_.size()
+                      + unexpandable_preferred_height_list_.size()) - 1) * space_;
 
-		if (total_preferred_height == h) {
-			DistributeWithPreferredHeight(y, h);
-		} else if (total_preferred_height < h) {
-			DistributeWithLargeHeight(y, h,
-			        expandable_preferred_height_sum,
-			        unexpandable_preferred_height_sum);
-		} else {
-			DistributeWithSmallHeight(y, h,
-			        expandable_preferred_height_sum,
-			        unexpandable_preferred_height_sum);
-		}
+  int total_preferred_height = expandable_preferred_height_sum
+      + unexpandable_preferred_height_sum
+      + total_space;
 
-		AlignVertically(x, w);
+  if (total_preferred_height == h) {
+    DistributeWithPreferredHeight(y, h);
+  } else if (total_preferred_height < h) {
+    DistributeWithLargeHeight(y, h,
+                              expandable_preferred_height_sum,
+                              unexpandable_preferred_height_sum);
+  } else {
+    DistributeWithSmallHeight(y, h,
+                              expandable_preferred_height_sum,
+                              unexpandable_preferred_height_sum);
+  }
 
-	}
+  AlignVertically(x, w);
 
-	void LinearAdjustment::DistributeWithPreferredHeight (int y, int height)
-	{
-		std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
-		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
+}
 
-		AbstractView* p = view()->GetFirstSubView();
+void LinearAdjustment::DistributeWithPreferredHeight (int y, int height)
+{
+  std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
+  std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
 
-    y = y + height;
+  AbstractView* p = view()->GetFirstSubView();
+
+  y = y + height;
+  while (p) {
+
+    if (p->IsExpandY()) {
+      resize(p, p->size().width(), (*exp_it));
+      y = y - p->size().height();
+      move(p, p->position().x(), y);
+      exp_it++;
+    } else {
+      resize(p, p->size().width(), (*unexp_it));
+      y = y - p->size().height();
+      move(p, p->position().x(), y);
+      unexp_it++;
+    }
+
+    y = y - space_;
+    p = view()->GetNextSubView(p);
+
+  }
+}
+
+void LinearAdjustment::DistributeWithSmallHeight (int y, int height,
+                                                  int expandable_prefer_sum, int unexpandable_prefer_sum)
+{
+  int widgets_height = height - (expandable_preferred_height_list_.size() +
+                                 unexpandable_preferred_height_list_.size() - 1) * space_;
+
+  if(widgets_height <= 0) {
+    for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
+    {
+      p->Resize(p->size().width(), 0);
+    }
+    return;
+  }
+
+  int reference_height;
+  std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
+  std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
+
+  AbstractView* p = view()->GetFirstSubView();
+
+  y = y + height;
+  if (widgets_height <= unexpandable_prefer_sum) {
+    reference_height = widgets_height;
+
     while (p) {
 
       if (p->IsExpandY()) {
-        resize(p, p->size().width(), (*exp_it));
+        resize(p, p->size().width(), 0);
         y = y - p->size().height();
         move(p, p->position().x(), y);
         exp_it++;
       } else {
-        resize(p, p->size().width(), (*unexp_it));
+        resize(p, p->size().width(),
+               reference_height * (*unexp_it) / unexpandable_prefer_sum);
         y = y - p->size().height();
         move(p, p->position().x(), y);
         unexp_it++;
@@ -339,97 +387,16 @@ namespace BlendInt {
 
       y = y - space_;
       p = view()->GetNextSubView(p);
-
     }
-  }
 
-	void LinearAdjustment::DistributeWithSmallHeight (int y, int height,
-	        int expandable_prefer_sum, int unexpandable_prefer_sum)
-	{
-		int widgets_height = height - (expandable_preferred_height_list_.size() +
-				unexpandable_preferred_height_list_.size() - 1) * space_;
+  } else {
+    reference_height = widgets_height - unexpandable_prefer_sum;
 
-		if(widgets_height <= 0) {
-			for(AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p))
-			{
-				p->Resize(p->size().width(), 0);
-			}
-			return;
-		}
-
-		int reference_height;
-		std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
-		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
-
-		AbstractView* p = view()->GetFirstSubView();
-
-    y = y + height;
-    if (widgets_height <= unexpandable_prefer_sum) {
-      reference_height = widgets_height;
-
-      while (p) {
-
-        if (p->IsExpandY()) {
-          resize(p, p->size().width(), 0);
-          y = y - p->size().height();
-          move(p, p->position().x(), y);
-          exp_it++;
-        } else {
-          resize(p, p->size().width(),
-                 reference_height * (*unexp_it) / unexpandable_prefer_sum);
-          y = y - p->size().height();
-          move(p, p->position().x(), y);
-          unexp_it++;
-        }
-
-        y = y - space_;
-        p = view()->GetNextSubView(p);
-      }
-
-    } else {
-      reference_height = widgets_height - unexpandable_prefer_sum;
-
-      while (p) {
-
-        if (p->IsExpandY()) {
-          resize(p, p->size().width(),
-                 reference_height * (*exp_it) / expandable_prefer_sum);
-          y = y - p->size().height();
-          move(p, p->position().x(), y);
-          exp_it++;
-        } else {
-          resize(p, p->size().width(), (*unexp_it));
-          y = y - p->size().height();
-          move(p, p->position().x(), y);
-          unexp_it++;
-        }
-
-        y = y - space_;
-        p = view()->GetNextSubView(p);
-
-      }
-
-    }
-  }
-
-	void LinearAdjustment::DistributeWithLargeHeight (int y, int height,
-	        int expandable_prefer_sum, int unexpandable_prefer_sum)
-	{
-		int widgets_height = height - (expandable_preferred_height_list_.size() +
-				unexpandable_preferred_height_list_.size() - 1) * space_;
-
-		int expandable_height = widgets_height - unexpandable_prefer_sum;
-
-		std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
-		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
-
-    y = y + height;
-    AbstractView* p = view()->GetFirstSubView();
     while (p) {
 
       if (p->IsExpandY()) {
         resize(p, p->size().width(),
-               expandable_height * (*exp_it) / expandable_prefer_sum);
+               reference_height * (*exp_it) / expandable_prefer_sum);
         y = y - p->size().height();
         move(p, p->position().x(), y);
         exp_it++;
@@ -444,48 +411,84 @@ namespace BlendInt {
       p = view()->GetNextSubView(p);
 
     }
+
   }
+}
 
-	void LinearAdjustment::AlignVertically (int x, int width)
-	{
-		std::deque<int>::const_iterator unexp_it =
-				unexpandable_preferred_width_list_.begin();
+void LinearAdjustment::DistributeWithLargeHeight (int y, int height,
+                                                  int expandable_prefer_sum, int unexpandable_prefer_sum)
+{
+  int widgets_height = height - (expandable_preferred_height_list_.size() +
+                                 unexpandable_preferred_height_list_.size() - 1) * space_;
 
-		for (AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p)) {
+  int expandable_height = widgets_height - unexpandable_prefer_sum;
 
-			if (p->IsExpandX()) {
+  std::deque<int>::const_iterator exp_it = expandable_preferred_height_list_.begin();
+  std::deque<int>::const_iterator unexp_it = unexpandable_preferred_height_list_.begin();
 
-				resize(p, width, p->size().height());
-				move(p, x, p->position().y());
+  y = y + height;
+  AbstractView* p = view()->GetFirstSubView();
+  while (p) {
 
-			} else {
+    if (p->IsExpandY()) {
+      resize(p, p->size().width(),
+             expandable_height * (*exp_it) / expandable_prefer_sum);
+      y = y - p->size().height();
+      move(p, p->position().x(), y);
+      exp_it++;
+    } else {
+      resize(p, p->size().width(), (*unexp_it));
+      y = y - p->size().height();
+      move(p, p->position().x(), y);
+      unexp_it++;
+    }
 
-				if ((*unexp_it) >= width) {
-					resize(p, width, p->size().height());
-					move(p, x, p->position().y());
-				} else {
+    y = y - space_;
+    p = view()->GetNextSubView(p);
 
-					resize(p, (*unexp_it),
-					        p->size().height());
+  }
+}
 
-					if (alignment_ & AlignLeft) {
-						move(p, x, p->position().y());
-					} else if (alignment_ & AlignRight) {
-						move(p,
-						        x + (width - p->size().width()),
-						        p->position().y());
-					} else if (alignment_ & AlignHorizontalCenter) {
-						move(p,
-						        x + (width - p->size().width()) / 2,
-						        p->position().y());
-					}
+void LinearAdjustment::AlignVertically (int x, int width)
+{
+  std::deque<int>::const_iterator unexp_it =
+      unexpandable_preferred_width_list_.begin();
 
-				}
+  for (AbstractView* p = view()->GetFirstSubView(); p; p = view()->GetNextSubView(p)) {
 
-				unexp_it++;
+    if (p->IsExpandX()) {
 
-			}
-		}
-	}
+      resize(p, width, p->size().height());
+      move(p, x, p->position().y());
+
+    } else {
+
+      if ((*unexp_it) >= width) {
+        resize(p, width, p->size().height());
+        move(p, x, p->position().y());
+      } else {
+
+        resize(p, (*unexp_it),
+               p->size().height());
+
+        if (alignment_ & AlignLeft) {
+          move(p, x, p->position().y());
+        } else if (alignment_ & AlignRight) {
+          move(p,
+               x + (width - p->size().width()),
+               p->position().y());
+        } else if (alignment_ & AlignHorizontalCenter) {
+          move(p,
+               x + (width - p->size().width()) / 2,
+               p->position().y());
+        }
+
+      }
+
+      unexp_it++;
+
+    }
+  }
+}
 
 }

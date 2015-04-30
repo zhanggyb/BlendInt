@@ -28,46 +28,69 @@
 
 namespace BlendInt {
 
-  NodeView::NodeView ()
-  : AbstractScrollable(),
-    vao_(0),
-    pressed_(false),
-    focused_(false),
-    hover_(false),
-    mouse_tracking_record_(false)
-  {
-    set_size(400, 300);
+NodeView::NodeView ()
+    : AbstractScrollable(),
+      vao_(0),
+      pressed_(false),
+      focused_(false),
+      hover_(false),
+      mouse_tracking_record_(false)
+{
+  set_size(400, 300);
 
-    InitializeNodeView();
-//		curve_ = new CubicBezierCurve;
-//		curve_->Unpack();
+  InitializeNodeView();
+  //		curve_ = new CubicBezierCurve;
+  //		curve_->Unpack();
 
-    guides_.reset(new GridGuides(size().width(), size().height()));
+  guides_.reset(new GridGuides(size().width(), size().height()));
+}
+
+NodeView::NodeView (int width, int height)
+    : AbstractScrollable(width, height), vao_(0), pressed_(false)
+{
+
+  InitializeNodeView();
+  //		curve_ = new CubicBezierCurve;
+  //		curve_->Unpack();
+  guides_.reset(new GridGuides(width, height));
+}
+
+NodeView::~NodeView ()
+{
+  //		delete curve_;
+  glDeleteVertexArrays(1, &vao_);
+}
+
+bool NodeView::AddNode (AbstractNode* node)
+{
+  AbstractWindow* win = AbstractWindow::GetWindow(this);
+
+  if (PushBackSubView(node)) {
+
+    if (win) {
+      if (previous(node)) {
+        dynamic_cast<AbstractNode*>(previous(node))->PerformFocusOff(
+            win);
+      }
+      node->PerformFocusOn(win);
+    }
+
+    RequestRedraw();
+    return true;
   }
 
-  NodeView::NodeView (int width, int height)
-      : AbstractScrollable(width, height), vao_(0), pressed_(false)
-  {
+  return false;
+}
 
-    InitializeNodeView();
-//		curve_ = new CubicBezierCurve;
-//		curve_->Unpack();
-    guides_.reset(new GridGuides(width, height));
-  }
+bool NodeView::InsertNode (int index, AbstractNode* node)
+{
+  AbstractWindow* win = AbstractWindow::GetWindow(this);
 
-  NodeView::~NodeView ()
-  {
-//		delete curve_;
-    glDeleteVertexArrays(1, &vao_);
-  }
+  if (InsertSubView(index, node)) {
 
-  bool NodeView::AddNode (AbstractNode* node)
-  {
-    AbstractWindow* win = AbstractWindow::GetWindow(this);
+    if (win) {
 
-    if (PushBackSubView(node)) {
-
-      if (win) {
+      if (next(node) == 0) { // push back
         if (previous(node)) {
           dynamic_cast<AbstractNode*>(previous(node))->PerformFocusOff(
               win);
@@ -75,408 +98,385 @@ namespace BlendInt {
         node->PerformFocusOn(win);
       }
 
-      RequestRedraw();
-      return true;
     }
 
-    return false;
-  }
-
-  bool NodeView::InsertNode (int index, AbstractNode* node)
-  {
-    AbstractWindow* win = AbstractWindow::GetWindow(this);
-
-    if (InsertSubView(index, node)) {
-
-      if (win) {
-
-        if (next(node) == 0) { // push back
-          if (previous(node)) {
-            dynamic_cast<AbstractNode*>(previous(node))->PerformFocusOff(
-                win);
-          }
-          node->PerformFocusOn(win);
-        }
-
-      }
-
-      RequestRedraw();
-      return true;
-    }
-
-    return false;
-  }
-
-  bool NodeView::IsExpandX () const
-  {
+    RequestRedraw();
     return true;
   }
 
-  bool NodeView::IsExpandY () const
-  {
-    return true;
+  return false;
+}
+
+bool NodeView::IsExpandX () const
+{
+  return true;
+}
+
+bool NodeView::IsExpandY () const
+{
+  return true;
+}
+
+Size NodeView::GetPreferredSize () const
+{
+  return Size(500, 400);
+}
+
+void NodeView::SetFocusedNode (AbstractNode* node)
+{
+  if (node == 0) return;
+
+  if (last() == node) return;
+
+  if (node->super() == 0) {
+    DBG_PRINT_MSG("%s", "the node is not in this view");
+    return;
   }
 
-  Size NodeView::GetPreferredSize () const
-  {
-    return Size(500, 400);
-  }
+  AbstractWindow* win = AbstractWindow::GetWindow(this);
 
-  void NodeView::SetFocusedNode (AbstractNode* node)
-  {
-    if (node == 0) return;
+  // if node is not the root node in this view, find and switch to it
+  if (node->super() != this) {
 
-    if (last() == node) return;
+    AbstractView* tmp = node;
+    NodeView* node_view = 0;
 
-    if (node->super() == 0) {
+    while (tmp->super()) {
+      node_view = dynamic_cast<NodeView*>(tmp->super());
+      if (node_view) break;
+      tmp = tmp->super();
+    }
+
+    if (node_view == 0) {
       DBG_PRINT_MSG("%s", "the node is not in this view");
       return;
     }
 
-    AbstractWindow* win = AbstractWindow::GetWindow(this);
-
-    // if node is not the root node in this view, find and switch to it
-    if (node->super() != this) {
-
-      AbstractView* tmp = node;
-      NodeView* node_view = 0;
-
-      while (tmp->super()) {
-        node_view = dynamic_cast<NodeView*>(tmp->super());
-        if (node_view) break;
-        tmp = tmp->super();
-      }
-
-      if (node_view == 0) {
-        DBG_PRINT_MSG("%s", "the node is not in this view");
-        return;
-      }
-
-      if (node_view != this) {
-        DBG_PRINT_MSG("%s", "the node is not in this view");
-        return;
-      }
-
-      node = dynamic_cast<AbstractNode*>(tmp);
-      if (node == 0) return;
+    if (node_view != this) {
+      DBG_PRINT_MSG("%s", "the node is not in this view");
+      return;
     }
 
-    if (last()) {
-      dynamic_cast<AbstractNode*>(last())->PerformFocusOff(win);
-    }
-
-    MoveToLast(node);
-    node->PerformFocusOn(win);
-
-    RequestRedraw();
+    node = dynamic_cast<AbstractNode*>(tmp);
+    if (node == 0) return;
   }
 
-  NodeView* NodeView::GetNodeView (AbstractNode* node)
-  {
-    AbstractView* parent = node->super();
-    while (parent && is_node(parent)) {
-      parent = parent->super();
-    }
-
-    return dynamic_cast<NodeView*>(parent);
+  if (last()) {
+    dynamic_cast<AbstractNode*>(last())->PerformFocusOff(win);
   }
 
-  bool NodeView::SizeUpdateTest (const AbstractView* source,
-                                 const AbstractView* target,
-                                 int width,
-                                 int height) const
-  {
-    return true;
+  MoveToLast(node);
+  node->PerformFocusOn(win);
+
+  RequestRedraw();
+}
+
+NodeView* NodeView::GetNodeView (AbstractNode* node)
+{
+  AbstractView* parent = node->super();
+  while (parent && is_node(parent)) {
+    parent = parent->super();
   }
 
-  bool NodeView::PositionUpdateTest (const AbstractView* source,
-                                     const AbstractView* target,
-                                     int x,
-                                     int y) const
-  {
-    return true;
-  }
+  return dynamic_cast<NodeView*>(parent);
+}
 
-  void NodeView::PerformSizeUpdate (const AbstractView* source,
-                                    const AbstractView* target,
-                                    int width,
-                                    int height)
-  {
-    if (target == this) {
-      set_size(width, height);
+bool NodeView::SizeUpdateTest (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height) const
+{
+  return true;
+}
 
-      std::vector<GLfloat> inner_verts;
-      GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-                       0);
+bool NodeView::PositionUpdateTest (const AbstractView* source,
+                                   const AbstractView* target,
+                                   int x,
+                                   int y) const
+{
+  return true;
+}
 
-      vbo_.bind();
-      vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
-                        &inner_verts[0]);
-      vbo_.reset();
-
-      guides_->Resize(width, height);
-      RequestRedraw();
-    }
-
-    if (source == this) {
-      report_size_update(source, target, width, height);
-    }
-  }
-
-  void NodeView::PerformRoundTypeUpdate (int type)
-  {
-    set_round_type(type);
+void NodeView::PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height)
+{
+  if (target == this) {
+    set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
     GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
                      0);
 
     vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+                      &inner_verts[0]);
     vbo_.reset();
 
+    guides_->Resize(width, height);
     RequestRedraw();
   }
 
-  void NodeView::PerformRoundRadiusUpdate (float radius)
-  {
-    set_round_radius(radius);
+  if (source == this) {
+    report_size_update(source, target, width, height);
+  }
+}
 
-    std::vector<GLfloat> inner_verts;
-    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-                     0);
+void NodeView::PerformRoundTypeUpdate (int type)
+{
+  set_round_type(type);
 
-    vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-    vbo_.reset();
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                   0);
 
-    RequestRedraw();
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.reset();
+
+  RequestRedraw();
+}
+
+void NodeView::PerformRoundRadiusUpdate (float radius)
+{
+  set_round_radius(radius);
+
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                   0);
+
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+  vbo_.reset();
+
+  RequestRedraw();
+}
+
+void NodeView::PerformFocusOn (AbstractWindow* context)
+{
+  DBG_PRINT_MSG("%s", "Focused");
+  focused_ = true;
+
+  if(hover_) {
+    mouse_tracking_record_ = context->mouse_tracking();
+    context->set_mouse_tracking(true);
+  }
+}
+
+void NodeView::PerformFocusOff (AbstractWindow* context)
+{
+  DBG_PRINT_MSG("%s", "UnFocused");
+  focused_ = false;
+
+  if(hover_) {
+    context->set_mouse_tracking(mouse_tracking_record_);
+  }
+}
+
+void NodeView::PerformHoverIn (AbstractWindow* context)
+{
+  hover_ = true;
+
+  if(focused_) {
+    mouse_tracking_record_ = context->mouse_tracking();
+    context->set_mouse_tracking(true);
+  }
+}
+
+void NodeView::PerformHoverOut (AbstractWindow* context)
+{
+  hover_ = false;
+
+  if(focused_ && context)
+    context->set_mouse_tracking(mouse_tracking_record_);
+}
+
+Response NodeView::PerformKeyPress (AbstractWindow* context)
+{
+  Response response = Ignore;
+
+  for (AbstractView* p = last(); p; p = previous(p)) {
+    response = dynamic_cast<AbstractNode*>(p)->PerformKeyPress(context);
+    if (response == Finish) break;
   }
 
-  void NodeView::PerformFocusOn (AbstractWindow* context)
-  {
-    DBG_PRINT_MSG("%s", "Focused");
-    focused_ = true;
+  return response;
+}
 
-    if(hover_) {
-      mouse_tracking_record_ = context->mouse_tracking();
-      context->set_mouse_tracking(true);
+Response NodeView::PerformMousePress (AbstractWindow* context)
+{
+  pressed_ = true;
+
+  PerformMouseHover(context);
+
+  Response response = Ignore;
+  Point local_position = context->local_cursor_position();
+  for (AbstractView* p = last(); p; p = previous(p)) {
+    response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
+    context->set_local_cursor_position(local_position);
+    if (response == Finish) break;
+  }
+
+  return Finish;
+}
+
+Response NodeView::PerformMouseRelease (AbstractWindow* context)
+{
+  pressed_ = false;
+
+  PerformMouseHover(context);
+
+  Response response = Ignore;
+  Point local_position = context->local_cursor_position();
+  for (AbstractView* p = last(); p; p = previous(p)) {
+    response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
+    context->set_local_cursor_position(local_position);
+    if (response == Finish) {
+      break;
     }
   }
 
-  void NodeView::PerformFocusOff (AbstractWindow* context)
-  {
-    DBG_PRINT_MSG("%s", "UnFocused");
-    focused_ = false;
+  return Finish;
+}
 
-    if(hover_) {
-      context->set_mouse_tracking(mouse_tracking_record_);
-    }
-  }
+Response NodeView::PerformMouseMove (AbstractWindow* context)
+{
+  PerformMouseHover(context);
 
-  void NodeView::PerformHoverIn (AbstractWindow* context)
-  {
-    hover_ = true;
+  if (pressed_) {
 
-    if(focused_) {
-      mouse_tracking_record_ = context->mouse_tracking();
-      context->set_mouse_tracking(true);
-    }
-  }
-
-  void NodeView::PerformHoverOut (AbstractWindow* context)
-  {
-    hover_ = false;
-
-    if(focused_ && context)
-      context->set_mouse_tracking(mouse_tracking_record_);
-  }
-
-  Response NodeView::PerformKeyPress (AbstractWindow* context)
-  {
     Response response = Ignore;
-
-    for (AbstractView* p = last(); p; p = previous(p)) {
-      response = dynamic_cast<AbstractNode*>(p)->PerformKeyPress(context);
-       if (response == Finish) break;
-    }
-
-    return response;
-  }
-
-  Response NodeView::PerformMousePress (AbstractWindow* context)
-  {
-    pressed_ = true;
-
-    PerformMouseHover(context);
-
-    Response response = Ignore;
+    AbstractNode* node = 0;
     Point local_position = context->local_cursor_position();
+
     for (AbstractView* p = last(); p; p = previous(p)) {
-      response = dynamic_cast<AbstractNode*>(p)->PerformMousePress(context);
-      context->set_local_cursor_position(local_position);
-      if (response == Finish) break;
-    }
-
-    return Finish;
-  }
-
-  Response NodeView::PerformMouseRelease (AbstractWindow* context)
-  {
-    pressed_ = false;
-
-    PerformMouseHover(context);
-
-    Response response = Ignore;
-    Point local_position = context->local_cursor_position();
-    for (AbstractView* p = last(); p; p = previous(p)) {
-      response = dynamic_cast<AbstractNode*>(p)->PerformMouseRelease(context);
+      node = dynamic_cast<AbstractNode*>(p);
+      response = node->PerformMouseMove(context);
       context->set_local_cursor_position(local_position);
       if (response == Finish) {
         break;
       }
     }
 
-    return Finish;
   }
 
-  Response NodeView::PerformMouseMove (AbstractWindow* context)
-  {
-    PerformMouseHover(context);
+  return Finish;
+}
 
-    if (pressed_) {
+bool NodeView::PreDraw (AbstractWindow* context)
+{
+  glm::mat3 matrix = glm::translate(
+      AbstractWindow::shaders()->widget_model_matrix(),
+      glm::vec2(position().x(), position().y()));
 
-      Response response = Ignore;
-      AbstractNode* node = 0;
-      Point local_position = context->local_cursor_position();
+  AbstractWindow::shaders()->PushWidgetModelMatrix();
+  AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
-      for (AbstractView* p = last(); p; p = previous(p)) {
-        node = dynamic_cast<AbstractNode*>(p);
-        response = node->PerformMouseMove(context);
-        context->set_local_cursor_position(local_position);
-        if (response == Finish) {
-          break;
-        }
-      }
+  AbstractWindow::shaders()->widget_inner_program()->use();
 
-    }
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      0);
+  glUniform4f(
+      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+      0.565f, 0.596f, 0.627f, 1.f);
 
-    return Finish;
-  }
+  glBindVertexArray(vao_);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-  bool NodeView::PreDraw (AbstractWindow* context)
-  {
+  context->BeginPushStencil();	// inner stencil
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+  context->EndPushStencil();
+
+  return true;
+}
+
+Response NodeView::Draw (AbstractWindow* context)
+{
+  //		curve_->Draw();
+  guides_->Draw(0, 0);
+
+  if (subview_count()) {
+
+    Point offset = GetOffset();
+
     glm::mat3 matrix = glm::translate(
         AbstractWindow::shaders()->widget_model_matrix(),
-        glm::vec2(position().x(), position().y()));
+        glm::vec2(offset.x(), offset.y()));
 
     AbstractWindow::shaders()->PushWidgetModelMatrix();
     AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
 
-    AbstractWindow::shaders()->widget_inner_program()->use();
+    return Ignore;
 
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        0);
-    glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-        0.565f, 0.596f, 0.627f, 1.f);
-
-    glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-    context->BeginPushStencil();	// inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-    context->EndPushStencil();
-
-    return true;
+  } else {
+    return Finish;
   }
+}
 
-  Response NodeView::Draw (AbstractWindow* context)
-  {
-//		curve_->Draw();
-    guides_->Draw(0, 0);
-
-    if (subview_count()) {
-
-      Point offset = GetOffset();
-
-      glm::mat3 matrix = glm::translate(
-          AbstractWindow::shaders()->widget_model_matrix(),
-          glm::vec2(offset.x(), offset.y()));
-
-      AbstractWindow::shaders()->PushWidgetModelMatrix();
-      AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
-
-      return Ignore;
-
-    } else {
-      return Finish;
-    }
-  }
-
-  void NodeView::PostDraw (AbstractWindow* context)
-  {
-    if (subview_count()) {
-      AbstractWindow::shaders()->PopWidgetModelMatrix();
-    }
-
-    // draw mask
-    AbstractWindow::shaders()->widget_inner_program()->use();
-
-    glBindVertexArray(vao_);
-
-    context->BeginPopStencil();	// pop inner stencil
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-    context->EndPopStencil();
-
+void NodeView::PostDraw (AbstractWindow* context)
+{
+  if (subview_count()) {
     AbstractWindow::shaders()->PopWidgetModelMatrix();
   }
 
-  void NodeView::PerformMouseHover (AbstractWindow* context)
-  {
-    try {
+  // draw mask
+  AbstractWindow::shaders()->widget_inner_program()->use();
 
-      Response response = Ignore;
-      Point local_position = context->local_cursor_position();
-      for (AbstractView* p = last(); p; p = previous(p)) {
-        response = dynamic_cast<AbstractNode*>(p)->PerformMouseHover(context);
-        context->set_local_cursor_position(local_position);
-        if (response == Finish) break;
-      }
+  glBindVertexArray(vao_);
 
-    } catch (std::bad_cast& e) {
+  context->BeginPopStencil();	// pop inner stencil
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+  context->EndPopStencil();
 
-      DBG_PRINT_MSG("Error: %s", "Only AbstractNode should be added in NodeView");
-      exit(EXIT_FAILURE);
+  AbstractWindow::shaders()->PopWidgetModelMatrix();
+}
 
+void NodeView::PerformMouseHover (AbstractWindow* context)
+{
+  try {
+
+    Response response = Ignore;
+    Point local_position = context->local_cursor_position();
+    for (AbstractView* p = last(); p; p = previous(p)) {
+      response = dynamic_cast<AbstractNode*>(p)->PerformMouseHover(context);
+      context->set_local_cursor_position(local_position);
+      if (response == Finish) break;
     }
-  }
 
-  void NodeView::InitializeNodeView ()
-  {
-    std::vector<GLfloat> inner_verts;
-    GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
-                     0);
+  } catch (std::bad_cast& e) {
 
-    vbo_.generate();
-    glGenVertexArrays(1, &vao_);
-
-    glBindVertexArray(vao_);
-
-    vbo_.bind();
-    vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-
-    glEnableVertexAttribArray(AttributeCoord);
-    glVertexAttribPointer(AttributeCoord, 3,
-    GL_FLOAT,
-                          GL_FALSE, 0, 0);
-
-    glBindVertexArray(0);
-    vbo_.reset();
+    DBG_PRINT_MSG("Error: %s", "Only AbstractNode should be added in NodeView");
+    exit(EXIT_FAILURE);
 
   }
+}
+
+void NodeView::InitializeNodeView ()
+{
+  std::vector<GLfloat> inner_verts;
+  GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
+                   0);
+
+  vbo_.generate();
+  glGenVertexArrays(1, &vao_);
+
+  glBindVertexArray(vao_);
+
+  vbo_.bind();
+  vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 3,
+                        GL_FLOAT,
+                        GL_FALSE, 0, 0);
+
+  glBindVertexArray(0);
+  vbo_.reset();
+
+}
 
 }
