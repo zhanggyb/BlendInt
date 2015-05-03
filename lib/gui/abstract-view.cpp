@@ -51,7 +51,7 @@ bool IsContained (AbstractView* container, AbstractView* widget)
 
 float AbstractView::kBorderWidth = 1.f;
 
-Mutex AbstractView::kRefreshMutex;
+pthread_mutex_t AbstractView::kRefreshMutex = PTHREAD_MUTEX_INITIALIZER;
 
 const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = {
     { 0.0, 0.0 }, //
@@ -262,15 +262,15 @@ void AbstractView::RequestRedraw ()
 
     } else {
 
-      kRefreshMutex.lock();
+      pthread_mutex_lock(&kRefreshMutex);
       set_refresh(true);
-      kRefreshMutex.unlock();
+      pthread_mutex_unlock(&kRefreshMutex);
 
       while (p && (!p->refresh())) {
         root = p;
-        kRefreshMutex.lock();
+        pthread_mutex_lock(&kRefreshMutex);
         p->set_refresh(true);
-        kRefreshMutex.unlock();
+        pthread_mutex_unlock(&kRefreshMutex);
         p = p->super();
       }
 
@@ -580,9 +580,9 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
     if (p->PreDraw(context)) {
 
       Response response = p->Draw(context);
-      kRefreshMutex.lock();
+      pthread_mutex_lock(&kRefreshMutex);
       p->set_refresh(refresh());
-      kRefreshMutex.unlock();
+      pthread_mutex_unlock(&kRefreshMutex);
 
       if (response == Ignore) {
         for (AbstractView* sub = p->GetFirstSubView(); sub;
@@ -599,13 +599,13 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 
   //set_refresh(refresh_record);
   if (super_) {
-    kRefreshMutex.lock();
+    pthread_mutex_lock(&kRefreshMutex);
     set_refresh(super_->refresh());
-    kRefreshMutex.unlock();
+    pthread_mutex_unlock(&kRefreshMutex);
   } else {
-    kRefreshMutex.lock();
+    pthread_mutex_lock(&kRefreshMutex);
     set_refresh(false);
-    kRefreshMutex.unlock();
+    pthread_mutex_unlock(&kRefreshMutex);
   }
 }
 
@@ -863,9 +863,9 @@ void AbstractView::DispatchDrawEvent (AbstractView* widget,
 
     Response response = widget->Draw(context);
 
-    kRefreshMutex.lock();
+    pthread_mutex_lock(&kRefreshMutex);
     widget->set_refresh(widget->super_->refresh());
-    kRefreshMutex.unlock();
+    pthread_mutex_unlock(&kRefreshMutex);
 
     if (response == Ignore) {
       for (AbstractView* sub = widget->GetFirstSubView(); sub;

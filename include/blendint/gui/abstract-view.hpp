@@ -606,7 +606,7 @@ private:
   std::string name_;
 #endif
 
-  static Mutex kRefreshMutex;
+  static pthread_mutex_t kRefreshMutex;
 
   static float kBorderWidth;
 

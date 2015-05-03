@@ -11,7 +11,7 @@ Version: @BLENDINT_VERSION_FULL@
 URL: https://github.com/zhanggyb/BlendInt
 # Requires: glib-2.0 = 1.3.1
 # Conflicts: foobar <= 4.5
-Libs: -L${libdir} -l@BLENDINT_LIB_NAME@
+Libs: -L${libdir} -L@Boost_LIBRARY_DIRS@ -l@BLENDINT_LIB_NAME@ -l@BOOST_FILESYSTEM_LIB_NAME@ -l@BOOST_SYSTEM_LIB_NAME@ -l@BOOST_THREAD_LIB_NAME@
 Libs.private: -lm
 Cflags: -I${includedir} -I${includedir}/@BLENDINT_LIB_NAME@ -I@FREETYPE_INCLUDE_DIRS@
 

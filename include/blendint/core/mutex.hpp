@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_CORE_MUTEX_HPP_
 #define _BLENDINT_CORE_MUTEX_HPP_
 
+#include <blendint/config.hpp>
+
 #ifdef __UNIX__
 #include <pthread.h>
 #endif
@@ -32,144 +34,147 @@
 
 namespace BlendInt {
 
-	class Mutex;
+class Mutex;
 
-	class MutexAttrib
-	{
-	public:
+class MutexAttrib
+{
+ public:
 
-		enum Type {
-			NORMAL = PTHREAD_MUTEX_NORMAL,
-			ERRORCHECK = PTHREAD_MUTEX_ERRORCHECK,
-			RECURSIVE = PTHREAD_MUTEX_RECURSIVE,
-			DEFAULT = PTHREAD_MUTEX_DEFAULT
-        };
+  enum Type {
+    NORMAL = PTHREAD_MUTEX_NORMAL,
+    ERRORCHECK = PTHREAD_MUTEX_ERRORCHECK,
+    RECURSIVE = PTHREAD_MUTEX_RECURSIVE,
+    DEFAULT = PTHREAD_MUTEX_DEFAULT
+  };
 
-		inline MutexAttrib () {}
+  inline MutexAttrib () {}
 
-		inline ~MutexAttrib () {}
+  inline ~MutexAttrib () {}
 
-		inline bool initialize ()
-		{
-			return pthread_mutexattr_init(&attribute_) == 0 ? true : false;
-		}
+  inline bool initialize ()
+  {
+    return pthread_mutexattr_init(&attribute_) == 0 ? true : false;
+  }
 
-		inline bool destroy ()
-		{
-			return pthread_mutexattr_destroy(&attribute_) == 0 ? true : false;
-		}
+  inline bool destroy ()
+  {
+    return pthread_mutexattr_destroy(&attribute_) == 0 ? true : false;
+  }
 
-		inline bool set_type (int type)
-		{
-			return pthread_mutexattr_settype(&attribute_, type) == 0 ? true : false;
-		}
+  inline bool set_type (int type)
+  {
+    return pthread_mutexattr_settype(&attribute_, type) == 0 ? true : false;
+  }
 
-        inline bool set_protocol (int protocol)
-        {
-            return pthread_mutexattr_setprotocol(&attribute_, protocol) == 0 ? true : false;
-        }
+  inline bool set_protocol (int protocol)
+  {
+    return pthread_mutexattr_setprotocol(&attribute_, protocol) == 0 ? true : false;
+  }
 
-	private:
+ private:
 
-		friend class Mutex;
+  friend class Mutex;
 
-		pthread_mutexattr_t attribute_;
+  pthread_mutexattr_t attribute_;
 
-	};
+};
 
-	/**
-	 * @brief Thread Mutex
-	 *
-	 * Create static mutex by default, if dynamically, use initialize()
-	 * and destroy() when no longer used.
-	 */
-	class Mutex
-	{
-	public:
+/**
+ * @brief Thread Mutex
+ *
+ * Create static mutex by default, if dynamically, use initialize()
+ * and destroy() when no longer used.
+ */
+class Mutex
+{
+ public:
 
-		inline Mutex ()
-		: mutex_(PTHREAD_MUTEX_INITIALIZER)
-		{
-		}
+  inline Mutex ()
+  {
+  }
 
-		inline ~Mutex ()
-		{
-		}
+  inline ~Mutex ()
+  {
+  }
 
-		inline bool initialize (const MutexAttrib& attr)
-		{
+  inline bool initialize (const MutexAttrib* attr = 0)
+  {
+    const pthread_mutexattr_t* attr_ptr = NULL;
+
+    if(attr) attr_ptr = &attr->attribute_;
+
 #ifdef DEBUG
-			if(pthread_mutex_init(&mutex_, &attr.attribute_) != 0) {
-				DBG_PRINT_MSG("%s", "Fail to initialize mutex");
-				return false;
-			}
+    if(pthread_mutex_init(&mutex_, attr_ptr) != 0) {
+      DBG_PRINT_MSG("%s", "Fail to initialize mutex");
+      return false;
+    }
 
-			return true;
+    return true;
 #else
-			return pthread_mutex_init(&mutex_, &attr.attribute_);
+    return pthread_mutex_init(&mutex_, attr_ptr);
 #endif	// DEBUG
-		}
+  }
 
-		inline bool lock ()
-		{
+  inline bool lock ()
+  {
 #ifdef DEBUG
-			if(pthread_mutex_lock(&mutex_) != 0) {
-				DBG_PRINT_MSG("%s", "Fail to lock mutex");
-				return false;
-			}
+    if(pthread_mutex_lock(&mutex_) != 0) {
+      DBG_PRINT_MSG("%s", "Fail to lock mutex");
+      return false;
+    }
 
-			return true;
+    return true;
 #else
-			return pthread_mutex_lock(&mutex_) == 0 ? true : false;
+    return pthread_mutex_lock(&mutex_) == 0 ? true : false;
 #endif	// DEBUG
-		}
+  }
 
-		inline bool trylock ()
-		{
+  inline bool trylock ()
+  {
 #ifdef DEBUG
-			if(pthread_mutex_trylock(&mutex_) != 0) {
-				DBG_PRINT_MSG("%s", "Fail to trylock mutex");
-				return false;
-			}
+    if(pthread_mutex_trylock(&mutex_) != 0) {
+      DBG_PRINT_MSG("%s", "Fail to trylock mutex");
+      return false;
+    }
 
-			return true;
+    return true;
 #else
-			return pthread_mutex_trylock(&mutex_) == 0 ? true : false;
+    return pthread_mutex_trylock(&mutex_) == 0 ? true : false;
 #endif	// DEBUG
-		}
+  }
 
-		inline bool unlock ()
-		{
+  inline bool unlock ()
+  {
 #ifdef DEBUG
-			if(pthread_mutex_unlock(&mutex_) != 0) {
-				DBG_PRINT_MSG("%s", "Fail to unlock mutex");
-				return false;
-			}
+    if(pthread_mutex_unlock(&mutex_) != 0) {
+      DBG_PRINT_MSG("%s", "Fail to unlock mutex");
+      return false;
+    }
 
-			return true;
+    return true;
 #else
-			return pthread_mutex_unlock(&mutex_) == 0 ? true : false;
+    return pthread_mutex_unlock(&mutex_) == 0 ? true : false;
 #endif	// DEBUG
-		}
+  }
 
-		inline bool destroy ()
-		{
+  inline bool destroy ()
+  {
 #ifdef DEBUG
-			if(pthread_mutex_destroy(&mutex_) != 0) {
-				DBG_PRINT_MSG("%s", "Fail to destroy mutex");
-				return false;
-			}
-			return true;
+    if(pthread_mutex_destroy(&mutex_) != 0) {
+      DBG_PRINT_MSG("%s", "Fail to destroy mutex");
+      return false;
+    }
+    return true;
 #else
-			return pthread_mutex_destroy(&mutex_) == 0 ? true : false;
+    return pthread_mutex_destroy(&mutex_) == 0 ? true : false;
 #endif	// DEBUG
-		}
+  }
 
-	private:
+ private:
 
-		pthread_mutex_t mutex_;
+  pthread_mutex_t mutex_;
 
-	};
+};
 
 }
 

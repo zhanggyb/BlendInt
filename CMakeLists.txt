@@ -90,10 +90,51 @@ endif()
 
 find_package(Boost REQUIRED COMPONENTS filesystem system thread)
 if(Boost_FOUND)
+
   include_directories(${Boost_INCLUDE_DIRS})
   set(LIBS ${LIBS} ${Boost_LIBRARIES})
   #message(STATUS "Use the Boost libraries: ${Boost_LIBRARIES}")
   #message(STATUS "Use the Boost libraries in: ${Boost_LIBRARY_DIRS}")
+  message(STATUS "boost lib dir: ${Boost_LIBRARY_DIRS}")
+  
+  if(OS_APPLE)
+    
+    string(REGEX MATCH "libboost_system.*[.]dylib" BOOST_SYSTEM_LIB_NAME "${Boost_SYSTEM_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_SYSTEM_LIB_NAME "${BOOST_SYSTEM_LIB_NAME}")
+    string(REGEX REPLACE "[.]dylib$" "" BOOST_SYSTEM_LIB_NAME "${BOOST_SYSTEM_LIB_NAME}")
+    message(STATUS "Use boost_system: ${BOOST_SYSTEM_LIB_NAME}")
+    
+    string(REGEX MATCH "libboost_filesystem.*[.]dylib" BOOST_FILESYSTEM_LIB_NAME "${Boost_FILESYSTEM_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
+    string(REGEX REPLACE "[.]dylib$" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
+    message(STATUS "Use boost_filesystem: ${BOOST_FILESYSTEM_LIB_NAME}")
+    
+    string(REGEX MATCH "libboost_thread.*[.]dylib" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    string(REGEX REPLACE "[.]dylib$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
+    
+  elseif(OS_LINUX)
+
+    string(REGEX MATCH "libboost_system.*[.]so.*" BOOST_SYSTEM_LIB_NAME "${Boost_SYSTEM_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_SYSTEM_LIB_NAME "${BOOST_SYSTEM_LIB_NAME}")
+    string(REGEX REPLACE "[.]so.*$" "" BOOST_SYSTEM_LIB_NAME "${BOOST_SYSTEM_LIB_NAME}")
+    message(STATUS "Use boost_system: ${BOOST_SYSTEM_LIB_NAME}")
+    
+    string(REGEX MATCH "libboost_filesystem.*[.]so.*" BOOST_FILESYSTEM_LIB_NAME "${Boost_FILESYSTEM_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
+    string(REGEX REPLACE "[.]so.*$" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
+    message(STATUS "Use boost_filesystem: ${BOOST_FILESYSTEM_LIB_NAME}")
+    
+    string(REGEX MATCH "libboost_thread.*[.]so.*" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
+    string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    string(REGEX REPLACE "[.]so.*$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
+    
+  else()                          # WIN
+    
+  endif()
+
 endif()
 
 # add OpenImageIO link
@@ -204,6 +245,17 @@ endif()
 if(EXISTS "${BlendInt_SOURCE_DIR}/demo")
   add_subdirectory(demo)
 endif()
+
+# ----------------------------------------------------------------------------
+# Uninstall
+# ----------------------------------------------------------------------------
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 # ----------------------------------------------------------------------------
 # Summary:

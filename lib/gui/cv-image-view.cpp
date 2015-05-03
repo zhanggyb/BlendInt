@@ -41,7 +41,7 @@ CVImageView::CVImageView ()
 
   MutexAttrib attrib;
   attrib.initialize();
-  mutex_.initialize(attrib);
+  mutex_.initialize(&attrib);
   attrib.destroy();
 
   std::vector<GLfloat> inner_verts;
