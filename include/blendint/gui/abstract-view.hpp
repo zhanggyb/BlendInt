@@ -199,6 +199,11 @@ public:
   }
   */
 
+  inline int reference_count () const
+  {
+    return reference_count_;
+  }
+  
   inline bool refresh () const
   {
     return view_flag_ & ViewRefreshMask;
