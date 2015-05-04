@@ -241,18 +241,21 @@ class RefPtr
 
 };
 
-template<typename T> inline RefPtr<T>::RefPtr ()
+template<typename T>
+inline RefPtr<T>::RefPtr ()
     : ptr_(0)
 {
 }
 
-template<typename T> inline RefPtr<T>::RefPtr (T* obj)
+template<typename T>
+inline RefPtr<T>::RefPtr (T* obj)
     : ptr_(obj)
 {
   if (ptr_) ++ptr_->reference_count_;
 }
 
-template<typename T> inline RefPtr<T>::RefPtr (const RefPtr<T>& orig)
+template<typename T>
+inline RefPtr<T>::RefPtr (const RefPtr<T>& orig)
     : ptr_(orig.ptr_)
 {
   if (ptr_) ++ptr_->reference_count_;
@@ -266,12 +269,14 @@ inline RefPtr<T>::RefPtr (const RefPtr<T_CastFrom>& orig)
   if (ptr_) ++ptr_->reference_count_;
 }
 
-template<typename T> inline RefPtr<T>::~RefPtr ()
+template<typename T>
+inline RefPtr<T>::~RefPtr ()
 {
   destroy();
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::operator = (const RefPtr<T>& src)
+template<typename T>
+inline RefPtr<T>& RefPtr<T>::operator = (const RefPtr<T>& src)
 {
   T* const old = ptr_;
   ptr_ = src.ptr_;
@@ -308,8 +313,8 @@ void RefPtr<T>::reset (T* obj)
   if (old && (--old->reference_count_ == 0)) delete old;
 }
 
-template<typename T> inline
-void RefPtr<T>::reset (const RefPtr<T>& other)
+template<typename T>
+inline void RefPtr<T>::reset (const RefPtr<T>& other)
 {
   T* const old = ptr_;
   ptr_ = other.ptr_;
@@ -319,8 +324,8 @@ void RefPtr<T>::reset (const RefPtr<T>& other)
   if (old && (--old->m_count == 0)) delete old;
 }
 
-template<typename T> inline
-void RefPtr<T>::destroy ()
+template<typename T>
+inline void RefPtr<T>::destroy ()
 {
   if (ptr_ && (--ptr_->reference_count_ == 0)) {
     delete ptr_;
@@ -329,65 +334,70 @@ void RefPtr<T>::destroy ()
   }
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::swap (RefPtr<T>& other)
+template<typename T>
+inline RefPtr<T>& RefPtr<T>::swap (RefPtr<T>& other)
 {
   T* const temp = ptr_;
   ptr_ = other.ptr_;
   other.ptr_ = temp;
 }
 
-template<typename T> inline T* RefPtr<T>::operator-> () const
+template<typename T>
+inline T* RefPtr<T>::operator-> () const
 {
   return ptr_;
 }
 
-template<typename T> inline T& RefPtr<T>::operator* () const
+template<typename T>
+inline T& RefPtr<T>::operator* () const
 {
   return *ptr_;
 }
 
-template<typename T> inline T* RefPtr<T>::get () const
+template<typename T>
+inline T* RefPtr<T>::get () const
 {
   return ptr_;
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator== (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator== (const RefPtr<T>& src) const
 {
   return (ptr_ == src.ptr_);
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator!= (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator!= (const RefPtr<T>& src) const
 {
   return (ptr_ != src.ptr_);
 }
 
-template<typename T> inline RefPtr<T>::operator bool () const
+template<typename T>
+inline RefPtr<T>::operator bool () const
 {
   return (ptr_ != 0);
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator< (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator< (const RefPtr<T>& src) const
 {
   return (ptr_ < src.ptr_);
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator<= (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator<= (const RefPtr<T>& src) const
 {
   return (ptr_ <= src.ptr_);
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator> (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator> (const RefPtr<T>& src) const
 {
   return (ptr_ > src.ptr_);
 }
 
-template<typename T> inline
-bool RefPtr<T>::operator>= (const RefPtr<T>& src) const
+template<typename T>
+inline bool RefPtr<T>::operator>= (const RefPtr<T>& src) const
 {
   return (ptr_ >= src.ptr_);
 }

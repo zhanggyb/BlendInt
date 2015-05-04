@@ -39,6 +39,7 @@ namespace BlendInt {
 
 class AbstractWindow;
 class AbstractFrame;
+class ManagedPtr;
 struct ColorScheme;
 
 enum ViewFlagsMask
@@ -545,6 +546,7 @@ private:
   friend class AbstractWidget;
   friend class AbstractNode;
   friend class AbstractAdjustment;
+  friend class ManagedPtr;
 
   /**
    * @brief Dispatch draw
@@ -580,6 +582,16 @@ private:
     view_flag_ = (view_flag_ & (~ViewTypeMask)) | (type & ViewTypeMask);
   }
 
+  inline void set_destroying (bool destroying)
+  {
+    if (destroying)
+      SETBIT(view_flag_, ViewDestroyingMask);
+    else
+      CLRBIT(view_flag_, ViewDestroyingMask);
+  }
+  
+  int reference_count_;
+  
   int view_flag_;
 
   int subview_count_;  // count of sub views

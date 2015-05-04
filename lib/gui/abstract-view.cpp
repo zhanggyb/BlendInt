@@ -105,6 +105,7 @@ const int AbstractView::kEmbossVertexTable[16] = {
 
 AbstractView::AbstractView ()
 : CppEvent::Trackable(),
+  reference_count_(0),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
@@ -117,6 +118,7 @@ AbstractView::AbstractView ()
 
 AbstractView::AbstractView (int width, int height)
 : CppEvent::Trackable(),
+  reference_count_(0),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
@@ -611,10 +613,14 @@ AbstractView* AbstractView::Destroy (AbstractView* view)
 {
   DBG_ASSERT(view);
 
-  if(view->super_) view->super_->RemoveSubView(view);
+  if(view->reference_count_ <= 0) {
+    delete view;
+    return 0;
+  }
+
+  view->set_destroying(true);
   
-  delete view;
-  return 0;
+  return view;
 }
 
 bool AbstractView::SwapIndex (AbstractView *view1, AbstractView *view2)

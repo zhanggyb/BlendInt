@@ -21,20 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include "editor-window.hpp"
-#include <iostream>
+#include <blendint/gui/managed-ptr.hpp>
 
-int main (int argc, char* argv[])
+namespace BlendInt {
+
+ManagedPtr::~ManagedPtr()
 {
-  using namespace BlendInt;
+  if(view_ && (--view_->reference_count_ <= 0)) {
 
-  if (Window::Initialize()) {
-    EditorWindow win(1280, 800, "UI Editor");
-    win.Exec();
-    Window::Terminate();
+    if(view_->destroying())
+      delete view_;
+
+    view_ = 0;
+    
+  }
+}
+
+ManagedPtr& ManagedPtr::operator = (const ManagedPtr& orig)
+{
+  AbstractView* const old = view_;
+  view_ = orig.view_;
+
+  if(view_) ++view_->reference_count_;
+
+  if(old && (--old->reference_count_ <= 0)) {
+    if(old->destroying())
+      delete old;
   }
 
-  std::cout << "sizeof (AbstractView): " << sizeof(AbstractView) << std::endl;
-  
-  return 0;
+  return *this;
+}
+
+ManagedPtr& ManagedPtr::operator = (AbstractView* view)
+{
+  AbstractView* const old = view_;
+  view_ = view;
+
+  if(view_) ++view_->reference_count_;
+
+  if(old && (--old->reference_count_ <= 0)) {
+    if (old->destroying())
+      delete old;
+  }
+
+  return *this;
+}
+
 }

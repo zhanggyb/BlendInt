@@ -13,8 +13,9 @@ inheritance.
 BlendInt is free software and covered by the GNU Library General
 Public License (LGPL) v3.
 
-<font color="#FF1F1F">**Warning: BlendInt is under heavy development. Support
-cannot be guaranteed and it may not function as you expect.**</font>
+<font color="#FF1F1F">**Warning: BlendInt is under heavy
+development. Support cannot be guaranteed and it may not function as
+you expect.**</font>
 
 ## Features
 
