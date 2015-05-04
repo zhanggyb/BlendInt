@@ -237,7 +237,7 @@ namespace BlendInt {
 
 		if(context) {
 
-			dialog_ = Manage(new FileSelector);
+			dialog_ = new FileSelector;
 			DBG_SET_NAME(dialog_, "File Selector on File PushButton");
 
 			int w = 800;

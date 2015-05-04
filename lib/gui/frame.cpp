@@ -44,7 +44,7 @@ namespace BlendInt {
     pressed_(false)
   {
     if (layout == nullptr) {
-      layout_ = Manage(new FlowLayout);
+      layout_ = new FlowLayout;
     } else {
       layout_ = layout;
     }
@@ -66,7 +66,7 @@ namespace BlendInt {
     pressed_(false)
   {
     if (layout == nullptr) {
-      layout_ = Manage(new FlowLayout);
+      layout_ = new FlowLayout;
     } else {
       layout_ = layout;
     }

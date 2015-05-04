@@ -35,10 +35,10 @@ ScrollArea::ScrollArea ()
 {
   set_size(360, 240);
 
-  layout_ = Manage(new TableLayout(2, 2));
+  layout_ = new TableLayout(2, 2);
 
-  ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-  ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+  ScrollBar* vbar = new ScrollBar(Vertical);
+  ScrollBar* hbar = new ScrollBar(Horizontal);
 
   PushBackSubView(layout_);
   ResizeSubView(layout_, size());
@@ -51,10 +51,10 @@ ScrollArea::ScrollArea (int width, int height, const Margin& margin, int space)
     : AbstractWidget(width, height),
       layout_(nullptr)
 {
-  layout_ = Manage(new TableLayout(width, height, 2, 2, margin, space));
+  layout_ = new TableLayout(width, height, 2, 2, margin, space);
 
-  ScrollBar* vbar = Manage(new ScrollBar(Vertical));
-  ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+  ScrollBar* vbar = new ScrollBar(Vertical);
+  ScrollBar* hbar = new ScrollBar(Horizontal);
 
   PushBackSubView(layout_);
 

@@ -86,21 +86,21 @@ void Menu::SetTitle (const String& title)
 
 void Menu::AddAction (const String& text)
 {
-  MenuItem* item = Manage(new MenuItem(text));
+  MenuItem* item = new MenuItem(text);
 
   AddWidget(item);
 }
 
 void Menu::AddAction (const String& text, const String& shortcut)
 {
-  MenuItem* item = Manage(new MenuItem(text, shortcut));
+  MenuItem* item = new MenuItem(text, shortcut);
 
   AddWidget(item);
 }
 
 void Menu::AddAction (const RefPtr<AbstractIcon>& icon, const String& text)
 {
-  MenuItem* item = Manage(new MenuItem(icon, text));
+  MenuItem* item = new MenuItem(icon, text);
 
   AddWidget(item);
 }
@@ -109,7 +109,7 @@ void Menu::AddAction (const RefPtr<AbstractIcon>& icon,
                       const String& text,
                       const String& shortcut)
 {
-  MenuItem* item = Manage(new MenuItem(icon, text, shortcut));
+  MenuItem* item = new MenuItem(icon, text, shortcut);
 
   AddWidget(item);
 }
@@ -117,7 +117,7 @@ void Menu::AddAction (const RefPtr<AbstractIcon>& icon,
 void Menu::AddAction (const RefPtr<Action>& action)
 {
   if (action) {
-    MenuItem* item = Manage(new MenuItem(action));
+    MenuItem* item = new MenuItem(action);
     AddWidget(item);
   }
 }

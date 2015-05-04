@@ -69,18 +69,6 @@ enum ViewType
 
 };
 
-/**
- * @brief Set/reset the managed flag of a View
- *
- * A managed View will be deleted when the superview is destroyed.
- */
-template<typename T>
-T* Manage (T* obj, bool val = true)
-{
-  obj->set_manage(val);
-  return obj;
-}
-
 // ----------------------------------------------------
 
 /**
@@ -112,7 +100,7 @@ T* Manage (T* obj, bool val = true)
  *
  * @ingroup gui
  */
-class AbstractView: public Object, public CppEvent::Trackable
+class AbstractView: public CppEvent::Trackable
 {
 DISALLOW_COPY_AND_ASSIGN(AbstractView);
 
@@ -203,10 +191,12 @@ public:
     return size_;
   }
 
+  /*
   inline bool managed () const
   {
     return view_flag_ & ViewManageMask;
   }
+  */
 
   inline bool refresh () const
   {
@@ -453,6 +443,15 @@ protected:
   void DrawSubViewsOnce (AbstractWindow* context);
 
   /**
+   * @brief Destroy a view object
+   * @param[in] view the view need to be destroyed
+   * @return
+   * 	- A valid pointer to the view if it's referenced in week_ptr
+   * 	- 0 if the view is destroyed immediately
+   */
+  static AbstractView* Destroy (AbstractView* view);
+  
+  /**
    * @brief Swap 2 views' position in their superview
    *
    * The 2 views must have the same superview, otherwise, this function just retern false and do nothing.
@@ -538,7 +537,7 @@ protected:
   {
     return view->next_;
   }
-
+  
 private:
 
   friend class AbstractWindow;
@@ -546,8 +545,6 @@ private:
   friend class AbstractWidget;
   friend class AbstractNode;
   friend class AbstractAdjustment;
-
-  template<typename T> friend T* Manage (T* obj, bool val);
 
   /**
    * @brief Dispatch draw
@@ -568,6 +565,7 @@ private:
                                           short shadedown,
                                           float fact);
 
+  /*
   inline void set_manage (bool value)
   {
     if (value)
@@ -575,6 +573,7 @@ private:
     else
       CLRBIT(view_flag_, ViewManageMask);
   }
+  */
 
   inline void set_view_type (ViewType type)
   {

@@ -150,12 +150,12 @@ Expander::Expander (const String& title,
       space_(space),
       expand_(true)
 {
-  title_ = Manage(new ExpandButton(title));
+  title_ = new ExpandButton(title);
 
   if (layout) {
     layout_ = layout;
   } else {
-    layout_ = Manage(new LinearLayout(orient));
+    layout_ = new LinearLayout(orient);
   }
 
   PushBackSubView(title_);	// 0

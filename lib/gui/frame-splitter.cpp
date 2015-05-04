@@ -730,7 +730,7 @@ void FrameSplitter::AddColumn (AbstractFrame* frame, SizePolicy policy)
 
   Size squeezed_size = size();
   Size frame_size = frame->size();
-  FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Vertical));
+  FrameSplitterHandle* handle = new FrameSplitterHandle(Vertical);
 
   switch (policy) {
     case PreferredWidth: {
@@ -788,7 +788,7 @@ void FrameSplitter::AddRow (AbstractFrame* frame, SizePolicy policy)
 
   Size squeezed_size = size();
   Size frame_size = frame->size();
-  FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Horizontal));
+  FrameSplitterHandle* handle = new FrameSplitterHandle(Horizontal);
 
   switch (policy) {
     case PreferredHeight: {
@@ -849,7 +849,7 @@ void FrameSplitter::InsertColumn (int index,
 
   Size squeezed_size = size();
   Size frame_size = frame->size();
-  FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Vertical));
+  FrameSplitterHandle* handle = new FrameSplitterHandle(Vertical);
 
   switch (policy) {
     case PreferredWidth: {
@@ -921,7 +921,7 @@ void FrameSplitter::InsertRow (int index,
 
   Size squeezed_size = size();
   Size frame_size = frame->size();
-  FrameSplitterHandle* handle = Manage(new FrameSplitterHandle(Horizontal));
+  FrameSplitterHandle* handle = new FrameSplitterHandle(Horizontal);
 
   switch (policy) {
     case PreferredHeight: {

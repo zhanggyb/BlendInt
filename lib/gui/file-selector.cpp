@@ -307,20 +307,20 @@ namespace BlendInt {
 
 	LinearLayout* FileSelector::CreateButtons()
 	{
-		LinearLayout* hlayout = Manage(new LinearLayout);
+		LinearLayout* hlayout = new LinearLayout;
 		DBG_SET_NAME(hlayout, "FileSelectorDecorationLayout");
 		hlayout->SetMargin(Margin(0, 0, 0, 0));
 
 		// create close button
-		CloseButton* close_button = Manage(new CloseButton);
+		CloseButton* close_button = new CloseButton;
 
 		// directory control group
-		Block* block1 = Manage(new Block);
+		Block* block1 = new Block;
 
-		PushButton* btn_back = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::BACK)));
-		PushButton* btn_forward = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FORWARD)));
-		PushButton* btn_up = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT)));
-		PushButton* btn_reload = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH)));
+		PushButton* btn_back = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::BACK));
+		PushButton* btn_forward = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FORWARD));
+		PushButton* btn_up = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT));
+		PushButton* btn_reload = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH));
 
 		block1->AddWidget(btn_back);
 		block1->AddWidget(btn_forward);
@@ -330,37 +330,37 @@ namespace BlendInt {
 		block1->Resize(block1->GetPreferredSize());
 
 		// create new
-		PushButton* btn_new = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory"));
+		PushButton* btn_new = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory");
 
 		// display mode
-		Block* block2 = Manage(new Block);
+		Block* block2 = new Block;
 
-		PushButton* btn_short_list = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY)));
-		PushButton* btn_detail_list = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY)));
-		PushButton* btn_thumbnail = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY)));
+		PushButton* btn_short_list = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY));
+		PushButton* btn_detail_list = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY));
+		PushButton* btn_thumbnail = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY));
 
 		block2->AddWidget(btn_short_list);
 		block2->AddWidget(btn_detail_list);
 		block2->AddWidget(btn_thumbnail);
 
-		Block* block3 = Manage(new Block);
+		Block* block3 = new Block;
 
-		PushButton* btn_sort_alpha = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA)));
-		PushButton* btn_sort_ext = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT)));
-		PushButton* btn_sort_time = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME)));
-		PushButton* btn_sort_size = Manage(new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE)));
+		PushButton* btn_sort_alpha = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA));
+		PushButton* btn_sort_ext = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT));
+		PushButton* btn_sort_time = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME));
+		PushButton* btn_sort_size = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE));
 
 		block3->AddWidget(btn_sort_alpha);
 		block3->AddWidget(btn_sort_ext);
 		block3->AddWidget(btn_sort_time);
 		block3->AddWidget(btn_sort_size);
 
-		PushButton* open = Manage(new PushButton(String("Open")));
+		PushButton* open = new PushButton(String("Open"));
 		DBG_SET_NAME(open, "Open PushButton");
 
-		Separator* separator1 = Manage(new Separator);
-		Separator* separator2 = Manage(new Separator);
-		Separator* separator3 = Manage(new Separator(true));
+		Separator* separator1 = new Separator;
+		Separator* separator2 = new Separator;
+		Separator* separator3 = new Separator(true);
 
 		hlayout->AddWidget(close_button);
 		hlayout->AddWidget(separator1);
@@ -386,20 +386,20 @@ namespace BlendInt {
 
 	LinearLayout* FileSelector::CreateBrowserAreaOnce()
 	{
-		LinearLayout* vbox = Manage(new LinearLayout(Vertical));
+		LinearLayout* vbox = new LinearLayout(Vertical);
 		vbox->SetMargin(Margin(0, 0, 0, 0));
 		DBG_SET_NAME(vbox, "VBox in Broser Area");
 		vbox->SetSpace(2);
 
-		path_entry_ = Manage(new TextEntry);
+		path_entry_ = new TextEntry;
 		DBG_SET_NAME(path_entry_, "Path Entry");
 		path_entry_->SetRoundType(RoundAll);
 
-		file_entry_ = Manage(new TextEntry);
+		file_entry_ = new TextEntry;
 		DBG_SET_NAME(file_entry_, "File Entry");
 		file_entry_->SetRoundType(RoundAll);
 
-		browser_ = Manage(new FileBrowser);
+		browser_ = new FileBrowser;
 		DBG_SET_NAME(browser_, "FileBrowser");
 
 		vbox->AddWidget(path_entry_);
@@ -428,10 +428,10 @@ namespace BlendInt {
 
 	Expander* FileSelector::CreateSystemDevicesOnce ()
 	{
-		Expander* expander = Manage(new Expander("System"));
+		Expander* expander = new Expander("System");
 		DBG_SET_NAME(expander, "System Expander");
 
-		FolderList* system_folders = Manage(new FolderList);
+		FolderList* system_folders = new FolderList;
 		DBG_SET_NAME(system_folders, "System Folders");
 
 		expander->AddWidget(system_folders);
@@ -441,10 +441,10 @@ namespace BlendInt {
 
 	Expander* FileSelector::CreateSystemBookmarksOnce ()
 	{
-		Expander* expander = Manage(new Expander("System Bookmarks"));
+		Expander* expander = new Expander("System Bookmarks");
 		DBG_SET_NAME(expander, "System Bookmarks Expander");
 
-		FolderList* system_bookmark = Manage(new FolderList);
+		FolderList* system_bookmark = new FolderList;
 		DBG_SET_NAME(system_bookmark, "System Bookmarks");
 
 		expander->AddWidget(system_bookmark);

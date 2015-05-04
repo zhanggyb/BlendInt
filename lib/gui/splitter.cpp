@@ -404,9 +404,9 @@ AbstractWidget* Splitter::AddWidget (AbstractWidget* widget)
   } else {
     SplitterHandle* handle = 0;
     if (orientation_ == Horizontal) {
-      handle = Manage(new SplitterHandle(Vertical));
+      handle = new SplitterHandle(Vertical);
     } else {
-      handle = Manage(new SplitterHandle(Horizontal));
+      handle = new SplitterHandle(Horizontal);
     }
 
     PushBackSubView(handle);
@@ -428,9 +428,9 @@ AbstractWidget* Splitter::InsertWidget (int index, AbstractWidget* widget)
   } else {
     SplitterHandle* handle = 0;
     if (orientation_ == Horizontal) {
-      handle = Manage(new SplitterHandle(Vertical));
+      handle = new SplitterHandle(Vertical);
     } else {
-      handle = Manage(new SplitterHandle(Horizontal));
+      handle = new SplitterHandle(Horizontal);
     }
 
     index = index * 2;

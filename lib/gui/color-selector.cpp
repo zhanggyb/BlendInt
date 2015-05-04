@@ -42,18 +42,18 @@ namespace BlendInt {
 ColorSelector::ColorSelector ()
     : AbstractDialog(), stack_(0)
 {
-  LinearLayout* main_layout = Manage(new LinearLayout(Vertical));
+  LinearLayout* main_layout = new LinearLayout(Vertical);
 
-  LinearLayout* hbox1 = Manage(new LinearLayout);
-  ColorWheel* colorwheel = Manage(new ColorWheel);
-  BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
+  LinearLayout* hbox1 = new LinearLayout;
+  ColorWheel* colorwheel = new ColorWheel;
+  BrightnessSlider* br_slider = new BrightnessSlider(Vertical);
 
   hbox1->AddWidget(colorwheel);
   hbox1->AddWidget(br_slider);
 
-  ColorModeButton* btn1 = Manage(new ColorModeButton("RGB"));
-  ColorModeButton* btn2 = Manage(new ColorModeButton("HSV"));
-  ColorModeButton* btn3 = Manage(new ColorModeButton("Hex"));
+  ColorModeButton* btn1 = new ColorModeButton("RGB");
+  ColorModeButton* btn2 = new ColorModeButton("HSV");
+  ColorModeButton* btn3 = new ColorModeButton("Hex");
 
   radio_group_.AddButton(btn1);
   radio_group_.AddButton(btn2);
@@ -61,28 +61,27 @@ ColorSelector::ColorSelector ()
 
   btn1->SetChecked(true);
 
-  Block* btn_block = Manage(new Block(Horizontal));
+  Block* btn_block = new Block(Horizontal);
   btn_block->AddWidget(btn1);
   btn_block->AddWidget(btn2);
   btn_block->AddWidget(btn3);
 
   stack_ = CreateBlockStack();
-  NumericalSlider* alpha_slider = Manage(new NumericalSlider("A:"));
+  NumericalSlider* alpha_slider = new NumericalSlider("A:");
   alpha_slider->SetMinimum(0.0);
   alpha_slider->SetMaximum(1.0);
   alpha_slider->SetValue(1.0);
   alpha_slider->SetEmboss(true);
 
-  LinearLayout* color_box = Manage(new LinearLayout(Vertical));
+  LinearLayout* color_box = new LinearLayout(Vertical);
   color_box->SetMargin(Margin(0, 0, 0, 0));
   color_box->AddWidget(stack_);
   color_box->AddWidget(alpha_slider);
 
-  PushButton* pick_btn = Manage(
-      new PushButton(AbstractWindow::icons()->icon_16x16(Icons::EYEDROPPER)));
+  PushButton* pick_btn = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::EYEDROPPER));
   pick_btn->SetEmboss(true);
 
-  LinearLayout* hbox2 = Manage(new LinearLayout(Horizontal, AlignTop));
+  LinearLayout* hbox2 = new LinearLayout(Horizontal, AlignTop);
   hbox2->AddWidget(color_box);
   hbox2->AddWidget(pick_btn);
 
@@ -269,19 +268,19 @@ Response ColorSelector::Draw (AbstractWindow* context)
 
 Block* ColorSelector::CreateRGBBlock ()
 {
-  Block* block = Manage(new Block(Vertical));
+  Block* block = new Block(Vertical);
 
-  NumericalSlider* red_slider = Manage(new NumericalSlider("R:"));
+  NumericalSlider* red_slider = new NumericalSlider("R:");
   red_slider->SetMinimum(0.0);
   red_slider->SetMaximum(1.0);
   red_slider->SetValue(1.0);
 
-  NumericalSlider* green_slider = Manage(new NumericalSlider("G:"));
+  NumericalSlider* green_slider = new NumericalSlider("G:");
   green_slider->SetMinimum(0.0);
   green_slider->SetMaximum(1.0);
   green_slider->SetValue(1.0);
 
-  NumericalSlider* blue_slider = Manage(new NumericalSlider("B:"));
+  NumericalSlider* blue_slider = new NumericalSlider("B:");
   blue_slider->SetMinimum(0.0);
   blue_slider->SetMaximum(1.0);
   blue_slider->SetValue(1.0);
@@ -295,19 +294,19 @@ Block* ColorSelector::CreateRGBBlock ()
 
 Block* ColorSelector::CreateHSVBlock ()
 {
-  Block* block = Manage(new Block(Vertical));
+  Block* block = new Block(Vertical);
 
-  NumericalSlider* h_slider = Manage(new NumericalSlider("H:"));
+  NumericalSlider* h_slider = new NumericalSlider("H:");
   h_slider->SetMinimum(0.0);
   h_slider->SetMaximum(1.0);
   h_slider->SetValue(1.0);
 
-  NumericalSlider* s_slider = Manage(new NumericalSlider("S:"));
+  NumericalSlider* s_slider = new NumericalSlider("S:");
   s_slider->SetMinimum(0.0);
   s_slider->SetMaximum(1.0);
   s_slider->SetValue(1.0);
 
-  NumericalSlider* v_slider = Manage(new NumericalSlider("V:"));
+  NumericalSlider* v_slider = new NumericalSlider("V:");
   v_slider->SetMinimum(0.0);
   v_slider->SetMaximum(1.0);
   v_slider->SetValue(1.0);
@@ -321,12 +320,12 @@ Block* ColorSelector::CreateHSVBlock ()
 
 LinearLayout* ColorSelector::CreateHexBlock ()
 {
-  LinearLayout* box = Manage(new LinearLayout(Vertical, AlignLeft, 0));
+  LinearLayout* box = new LinearLayout(Vertical, AlignLeft, 0);
   box->SetMargin(Margin(0, 0, 0, 0));
 
-  TextEntry* hex_edit = Manage(new TextEntry);
+  TextEntry* hex_edit = new TextEntry;
   hex_edit->SetEmboss(true);
-  Label* label = Manage(new Label("Gamma Corrected"));
+  Label* label = new Label("Gamma Corrected");
   label->SetForeground(Color(Palette::Gray));
 
   box->AddWidget(hex_edit);
@@ -343,7 +342,7 @@ void ColorSelector::OnButtonToggled (int index, bool toggled)
 
 Stack* ColorSelector::CreateBlockStack ()
 {
-  Stack* stack = Manage(new Stack);
+  Stack* stack = new Stack;
 
   Block* rgb_block = CreateRGBBlock();
   Block* hsv_block = CreateHSVBlock();

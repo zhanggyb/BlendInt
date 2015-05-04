@@ -121,7 +121,7 @@ TableLayout::TableLayout (unsigned int row, unsigned int column, int space)
 
     for (unsigned int j = 0; j < column_; j++) {
 
-      cell = Manage(new Cell);
+      cell = new Cell;
       PushBackSubView(cell);
 
       MoveSubViewTo(cell, j * cell->size().width() + x,
@@ -166,7 +166,7 @@ TableLayout::TableLayout (int width,
 
     for (unsigned int j = 0; j < column_; j++) {
 
-      cell = Manage(new Cell);
+      cell = new Cell;
       PushBackSubView(cell);
 
       ResizeSubView(cell, cell_width, cell_height);

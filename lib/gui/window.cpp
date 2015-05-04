@@ -141,7 +141,7 @@ Window::~Window ()
 
 AbstractWindow* Window::CreateSharedContext (int width, int height, int flags)
 {
-  Window* shared = Manage(new Window(width, height, "", flags));
+  Window* shared = new Window(width, height, "", flags);
 
   return shared;
 }

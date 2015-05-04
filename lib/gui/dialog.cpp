@@ -45,10 +45,10 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
   LinearLayout* title_layout = new LinearLayout(Horizontal);
   title_layout->SetMargin(Margin(0, 0, 0, 0));
 
-  CloseButton* close_button = Manage(new CloseButton);
+  CloseButton* close_button = new CloseButton;
   close_button->clicked().connect(this,
                     &Dialog::OnCloseButtonClicked);
-  Label* title_label = Manage(new Label(title, AlignCenter));
+  Label* title_label = new Label(title, AlignCenter);
 
   title_layout->AddWidget(close_button);
   title_layout->AddWidget(title_label);
@@ -62,22 +62,22 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
   }
 
   if (flags & DialogButtonApply) {
-    PushButton* apply_button = Manage(new PushButton("Apply"));
+    PushButton* apply_button = new PushButton("Apply");
     bottom_layout->AddWidget(apply_button);
     apply_button->clicked().connect(this,
                       &Dialog::OnApplyButtonClicked);
   }
 
   if (flags & DialogButtonOK) {
-    PushButton* ok_button = Manage(new PushButton("OK"));
+    PushButton* ok_button = new PushButton("OK");
     bottom_layout->AddWidget(ok_button);
     ok_button->clicked().connect(this, &Dialog::OnOKButtonClicked);
   }
 
-  main_layout_ = Manage(new LinearLayout(Vertical));
+  main_layout_ = new LinearLayout(Vertical);
 
   if (layout == nullptr) {
-    content_layout_ = Manage(new LinearLayout(Vertical));
+    content_layout_ = new LinearLayout(Vertical);
   } else {
     content_layout_ = layout;
   }

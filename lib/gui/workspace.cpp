@@ -498,7 +498,7 @@ Response Workspace::PerformMouseHover (AbstractWindow* context)
 
 void Workspace::InitializeWorkspace ()
 {
-  splitter_ = Manage(new FrameSplitter);
+  splitter_ = new FrameSplitter;
   DBG_SET_NAME(splitter_, "Splitter");
 
   PushBackSubView(splitter_);

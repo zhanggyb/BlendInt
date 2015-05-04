@@ -35,9 +35,9 @@ Tab::Tab ()
 {
   set_size(400, 300);
 
-  TabHeader* header = Manage(new TabHeader);
+  TabHeader* header = new TabHeader;
   DBG_SET_NAME(header, "TabHeader");
-  Stack* stack = Manage(new Stack);
+  Stack* stack = new Stack;
   DBG_SET_NAME(stack, "Stack");
 
   PushBackSubView(header);	// 0
@@ -54,7 +54,7 @@ Tab::~Tab ()
 
 void Tab::AddWidget (const String& title, AbstractWidget* widget)
 {
-  TabButton* btn = Manage(new TabButton(title));
+  TabButton* btn = new TabButton(title);
   DBG_SET_NAME(btn, ConvertFromString(title).c_str());
 
   TabHeader* header = dynamic_cast<TabHeader*>(GetSubViewAt(0));

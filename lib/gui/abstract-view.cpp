@@ -104,8 +104,7 @@ const int AbstractView::kEmbossVertexTable[16] = {
 };
 
 AbstractView::AbstractView ()
-: Object(),
-  CppEvent::Trackable(),
+: CppEvent::Trackable(),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
@@ -117,8 +116,7 @@ AbstractView::AbstractView ()
 }
 
 AbstractView::AbstractView (int width, int height)
-: Object(),
-  CppEvent::Trackable(),
+: CppEvent::Trackable(),
   view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
@@ -607,6 +605,16 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
     set_refresh(false);
     pthread_mutex_unlock(&kRefreshMutex);
   }
+}
+
+AbstractView* AbstractView::Destroy (AbstractView* view)
+{
+  DBG_ASSERT(view);
+
+  if(view->super_) view->super_->RemoveSubView(view);
+  
+  delete view;
+  return 0;
 }
 
 bool AbstractView::SwapIndex (AbstractView *view1, AbstractView *view2)
@@ -2247,28 +2255,7 @@ void AbstractView::ClearSubViews ()
     ptr->next_ = 0;
     ptr->super_ = 0;
 
-    if (ptr->managed()) {
-
-      if (ptr->reference_count() == 0) {
-        delete ptr;
-      } else {
-        DBG_PRINT_MSG(
-            "%s is set managed but is referenced by another object, it will be deleted later",
-            ptr->name_.c_str());
-      }
-
-    } else {
-
-      if (ptr->reference_count() == 0) {
-        DBG_PRINT_MSG("Warning: %s is not set managed and will not be deleted",
-                      ptr->name_.c_str());
-      } else {
-        DBG_PRINT_MSG(
-            "%s is set unmanaged but is referenced by another object, it will be deleted later",
-            ptr->name_.c_str());
-      }
-
-    }
+    delete ptr;
 
     ptr = next_ptr;
   }

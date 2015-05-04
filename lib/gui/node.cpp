@@ -42,9 +42,9 @@ Node::Node (const String& title)
   main_layout_ = new LinearLayout(Vertical);
   main_layout_->SetMargin(Margin(5, 5, 5, 5));
 
-  layout_ = Manage(new LinearLayout(Vertical));
+  layout_ = new LinearLayout(Vertical);
 
-  Label* label = Manage(new Label(title));
+  Label* label = new Label(title);
   main_layout_->AddWidget(label);
   main_layout_->AddWidget(layout_);
 
