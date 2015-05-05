@@ -57,6 +57,22 @@ namespace BlendInt {
 
   AbstractNode::~AbstractNode ()
   {
+    destroyed_.Invoke(this);
+
+    if (subview_count() > 0) {
+      ClearSubViews();
+    } else {
+      DBG_ASSERT(subview_count_ == 0);
+      DBG_ASSERT(first_ == 0);
+      DBG_ASSERT(last_ == 0);
+    }
+
+    if (super_) {
+      super_->RemoveSubView(this);
+    } else {
+      DBG_ASSERT(previous_ == 0);
+      DBG_ASSERT(next_ == 0);
+    }
   }
 
   void AbstractNode::SetRoundRadius (float radius)

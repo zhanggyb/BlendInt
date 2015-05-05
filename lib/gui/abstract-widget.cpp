@@ -55,6 +55,8 @@ AbstractWidget::AbstractWidget (int width, int height)
 
 AbstractWidget::~AbstractWidget ()
 {
+  destroyed_.Invoke(this);
+
   if (subview_count() > 0) {
     ClearSubViews();
   } else {
@@ -63,28 +65,31 @@ AbstractWidget::~AbstractWidget ()
     DBG_ASSERT(last_ == 0);
   }
 
-  if (super_) super_->RemoveSubView(this);
-
-  destroyed_.Invoke(this);
+  if (super_) {
+    super_->RemoveSubView(this);
+  } else {
+    DBG_ASSERT(previous_ == 0);
+    DBG_ASSERT(next_ == 0);
+  }
 }
 
 bool AbstractWidget::PreDraw (AbstractWindow* context)
 {
-  //glm::mat4 model;
-  //AbstractWindow::shaders()->GetUIModelMatrix(model);
-
-//		Point pos = GetGlobalPosition();
-
+  // glm::mat4 model;
+  // AbstractWindow::shaders()->GetUIModelMatrix(model);
+  
+  // Point pos = GetGlobalPosition();
+  
   Point offset = GetOffset();
-
+  
   glm::mat3 matrix = glm::translate(
       AbstractWindow::shaders()->widget_model_matrix(),
       glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
-//		glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
-
+  // glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
+  
   AbstractWindow::shaders()->PushWidgetModelMatrix();
   AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
-
+  
   return true;
 }
 

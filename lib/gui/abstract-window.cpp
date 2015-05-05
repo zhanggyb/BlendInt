@@ -94,6 +94,21 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
 AbstractWindow::~AbstractWindow ()
 {
   if (kMainWindow == this) kMainWindow = 0;
+
+  if (subview_count() > 0) {
+    ClearSubViews();
+  } else {
+    DBG_ASSERT(subview_count_ == 0);
+    DBG_ASSERT(first_ == 0);
+    DBG_ASSERT(last_ == 0);
+  }
+
+  if (super_) {
+    super_->RemoveSubView(this);
+  } else {
+    DBG_ASSERT(previous_ == 0);
+    DBG_ASSERT(next_ == 0);
+  }
 }
 
 AbstractFrame* AbstractWindow::AddFrame (AbstractFrame* frame)
