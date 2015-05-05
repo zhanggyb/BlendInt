@@ -31,6 +31,10 @@ namespace BlendInt {
 
 /**
  * @brief A smart pointer to hold AbstractView when iterating
+ *
+ * ManagedPtr is a special smart pointer works with
+ * AbstractView::Destroy() only.
+ *
  */
 class ManagedPtr
 {
@@ -41,7 +45,7 @@ class ManagedPtr
       : view_(0)
   {}
   
-  explicit inline ManagedPtr (AbstractView* view)
+  inline ManagedPtr (AbstractView* view)
       : view_(view)
   {
     if(view_) ++view_->reference_count_;
@@ -74,6 +78,10 @@ class ManagedPtr
     return view_;
   }
 
+  ManagedPtr& operator++ ();
+
+  ManagedPtr& operator-- ();
+  
   inline bool operator == (const ManagedPtr& other) const
   {
     return view_ == other.view_;

@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <blendint/core/types.hpp>
 #include <blendint/gui/managed-ptr.hpp>
 
 namespace BlendInt {
@@ -62,6 +63,65 @@ ManagedPtr& ManagedPtr::operator = (AbstractView* view)
   if(old && (--old->reference_count_ <= 0)) {
     if (old->destroying())
       delete old;
+  }
+
+  return *this;
+}
+
+ManagedPtr& ManagedPtr::operator ++ ()
+{
+  if (view_) {
+
+    AbstractView* const old = view_;
+    
+    if (view_->super()) {
+      view_ = view_->super()->GetNextSubView(view_);
+      if(view_) ++view_->reference_count_;
+      if(old && (--old->reference_count_ <= 0)) {
+        if(old->destroying())
+          delete old;
+      }
+      
+    } else {
+
+      DBG_ASSERT(view_->next_ == 0);
+      view_ = 0;
+      if(old && (--old->reference_count_ <= 0)) {
+        if(old->destroying())
+          delete old;
+      }
+    }
+    
+  }
+
+  return *this;
+}
+
+ManagedPtr& ManagedPtr::operator -- ()
+{
+  if(view_) {
+
+    AbstractView* const old = view_;
+    
+    if(view_->super()) {
+      view_ = view_->super()->GetPreviousSubView(view_);
+      if(view_) ++view_->reference_count_;
+      if(old && (--old->reference_count_ <= 0)) {
+        if(old->destroying())
+          delete old;
+      }
+
+    } else {
+
+      DBG_ASSERT(view_->previous_ == 0);
+      view_ = 0;
+      if(old && (--old->reference_count_ <= 0)) {
+        if(old->destroying())
+          delete old;
+      }
+      
+    }
+
   }
 
   return *this;

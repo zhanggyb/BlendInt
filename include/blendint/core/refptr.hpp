@@ -71,7 +71,7 @@ class RefPtr
    *
    * @note The parameter obj MUST be created in heap by new.
    */
-  explicit inline RefPtr (T* obj);
+  inline RefPtr (T* obj);
 
   /**
    * @brief Copy constructor
