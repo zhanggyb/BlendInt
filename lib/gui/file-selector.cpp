@@ -244,7 +244,7 @@ namespace BlendInt {
 	void FileSelector::OnClose()
 	{
 		AbstractView* parent = super();
-		delete this;
+		Destroy(this);
 
 		parent->RequestRedraw();
 	}
@@ -301,7 +301,7 @@ namespace BlendInt {
 		AbstractView* parent = super();
 		fire_applied_event();
 
-		delete this;
+		Destroy(this);
 		parent->RequestRedraw();
 	}
 

@@ -31,6 +31,8 @@
 #include <blendint/gui/abstract-view.hpp>
 #include <blendint/gui/abstract-window.hpp>
 
+#include <blendint/gui/managed-ptr.hpp>
+
 namespace BlendInt {
 
 bool IsContained (AbstractView* container, AbstractView* widget)
@@ -132,8 +134,6 @@ AbstractView::AbstractView (int width, int height)
 
 AbstractView::~AbstractView ()
 {
-  SETBIT(view_flag_, ViewDestroyingMask);
-
   if (subview_count() > 0) {
     ClearSubViews();
   } else {
@@ -575,7 +575,7 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 {
   //bool refresh_record = false;
 
-  for (AbstractView* p = GetFirstSubView(); p; p = GetNextSubView(p)) {
+  for (ManagedPtr p = GetFirstSubView(); p; ++p) {
     set_refresh(false);	// allow pass to superview in RequestRedraw()
     if (p->PreDraw(context)) {
 
@@ -585,9 +585,8 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
       pthread_mutex_unlock(&kRefreshMutex);
 
       if (response == Ignore) {
-        for (AbstractView* sub = p->GetFirstSubView(); sub;
-            sub = p->GetNextSubView(sub)) {
-          DispatchDrawEvent(sub, context);
+        for (ManagedPtr sub = p->GetFirstSubView(); sub; ++sub) {
+          DispatchDrawEvent(sub.get(), context);
         }
       }
 
@@ -613,13 +612,11 @@ AbstractView* AbstractView::Destroy (AbstractView* view)
 {
   DBG_ASSERT(view);
 
+  view->set_destroying(true);
   if(view->reference_count_ <= 0) {
     delete view;
     return 0;
   }
-
-  view->set_destroying(true);
-  
   return view;
 }
 
@@ -882,9 +879,8 @@ void AbstractView::DispatchDrawEvent (AbstractView* widget,
     pthread_mutex_unlock(&kRefreshMutex);
 
     if (response == Ignore) {
-      for (AbstractView* sub = widget->GetFirstSubView(); sub;
-          sub = widget->GetNextSubView(sub)) {
-        DispatchDrawEvent(sub, context);
+      for (ManagedPtr sub = widget->GetFirstSubView(); sub; ++sub) {
+        DispatchDrawEvent(sub.get(), context);
       }
     }
 
@@ -2261,7 +2257,8 @@ void AbstractView::ClearSubViews ()
     ptr->next_ = 0;
     ptr->super_ = 0;
 
-    delete ptr;
+    // delete ptr;
+    Destroy(ptr);
 
     ptr = next_ptr;
   }

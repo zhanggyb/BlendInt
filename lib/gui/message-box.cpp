@@ -242,7 +242,7 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 void MessageBox::OnClose ()
 {
   AbstractView* parent = super();
-  delete this;
+  Destroy(this);
   parent->RequestRedraw();
 }
 

@@ -176,7 +176,7 @@ void Workspace::SetMainFrame (AbstractFrame* frame)
   if ((frame == nullptr) || (frame == main_frame_)) return;
 
   if (main_frame_) {
-    delete main_frame_;
+    Destroy(main_frame_);
   }
 
   if (left_frame_) {

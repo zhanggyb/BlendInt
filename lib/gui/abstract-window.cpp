@@ -34,6 +34,7 @@
 #include <blendint/font/fc-pattern.hpp>
 #include <blendint/font/fc-config.hpp>
 
+#include <blendint/gui/managed-ptr.hpp>
 #include <blendint/gui/abstract-frame.hpp>
 #include <blendint/gui/abstract-window.hpp>
 
@@ -451,7 +452,7 @@ bool AbstractWindow::PreDraw (AbstractWindow* context)
 
 Response AbstractWindow::Draw (AbstractWindow* context)
 {
-  for (AbstractView* p = first(); p; p = next(p)) {
+  for (ManagedPtr p = first(); p; ++p) {
     p->PreDraw(context);
     p->Draw(context);
     p->set_refresh(this->refresh());
@@ -486,7 +487,7 @@ Response AbstractWindow::PerformKeyPress (AbstractWindow* context)
   Response response = Ignore;
   active_frame_ = 0;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformKeyPress(context);
     if (response == Finish) break;
   }
@@ -510,7 +511,7 @@ Response AbstractWindow::PerformMousePress (AbstractWindow* context)
   active_frame_ = 0;
   pressed_ = true;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformMousePress(context);
     if (response == Finish) {
       break;
@@ -526,7 +527,7 @@ Response AbstractWindow::PerformMouseRelease (AbstractWindow* context)
   active_frame_ = 0;
   pressed_ = false;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformMouseRelease(context);
     if (response == Finish) {
       break;
@@ -543,7 +544,7 @@ Response AbstractWindow::PerformMouseMove (AbstractWindow* context)
   active_frame_ = 0;
   if (pressed_) {
 
-    for (AbstractView* p = last(); p; p = previous(p)) {
+    for (ManagedPtr p = last(); p; --p) {
       response = p->PerformMouseMove(context);
       if (response == Finish) {
         break;
@@ -720,8 +721,8 @@ void AbstractWindow::DispatchMouseHover ()
 
     active_frame_ = 0;
     Response response = Ignore;
-    for (AbstractView* p = last(); p; p = previous(p)) {
-      response = dynamic_cast<AbstractFrame*>(p)->PerformMouseHover(this);
+    for (ManagedPtr p = last(); p; --p) {
+      response = dynamic_cast<AbstractFrame*>(p.get())->PerformMouseHover(this);
       if (response == Finish) break;
     }
 

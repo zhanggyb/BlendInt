@@ -95,7 +95,7 @@ Response AbstractDialog::PerformKeyPress (AbstractWindow* context)
 
     if (context == super()) context->RequestRedraw();
 
-    delete this;
+    Destroy(this);
 
     return Finish;
   }
