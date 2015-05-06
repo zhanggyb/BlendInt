@@ -353,15 +353,11 @@ namespace BlendInt {
   {
     Response retval = Finish;
 
-    AbstractFrame* current = context->active_frame();
-
     if (Contain(context->GetGlobalCursorPosition())) {
 
       cursor_position_ = InsideRectangle;
 
-      if (current != 0) {
-
-        DBG_ASSERT(current != this);
+      if (context->overlap()) {
 
         if (hover_) {
           DeclareActiveFrame(context, this);
@@ -402,7 +398,7 @@ namespace BlendInt {
 
         }
 
-        DeclareActiveFrame(context, this);
+        context->set_overlap(true);
         retval = Ignore;
       }
 
@@ -414,8 +410,6 @@ namespace BlendInt {
         DeclareActiveFrame(context, this);
         PerformHoverOut(context);
       }
-
-      DeclareActiveFrame(context, current);
 
       if (pressed_) {
         retval = Finish;

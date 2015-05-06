@@ -23,7 +23,9 @@
 
 #pragma once
 
-#include <boost/thread.hpp>
+#include <thread>  // std::thread
+#include <mutex>  // std::mutex
+#include <vector>
 
 #include <blendint/cppevent/event.hpp>
 
@@ -33,7 +35,6 @@
 #include <blendint/core/object.hpp>
 #include <blendint/core/point.hpp>
 #include <blendint/core/size.hpp>
-#include <blendint/core/mutex.hpp>
 
 namespace BlendInt {
 
@@ -450,9 +451,9 @@ protected:
 
   /**
    * @brief Destroy a view object
-   * @param[in] view the view need to be destroyed
+   * @param[in] view the view needs to be destroyed
    * @return
-   * 	- A valid pointer to the view if it's referenced in week_ptr
+   * 	- A valid pointer to the view which is referenced by a ManagedPtr
    * 	- 0 if the view is destroyed immediately
    */
   static AbstractView* Destroy (AbstractView* view);
@@ -622,7 +623,7 @@ private:
   std::string name_;
 #endif
 
-  static pthread_mutex_t kRefreshMutex;
+  static std::mutex kRefreshMutex;
 
   static float kBorderWidth;
 

@@ -280,9 +280,7 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
 
       cursor_position_ = InsideRectangle;
 
-      if (context->active_frame()) {
-
-        DBG_ASSERT(context->active_frame() != this);
+      if (context->overlap()) {
 
         // if there's frame above this position, dispatch hover out
         if (hovered_widget_) {
@@ -322,7 +320,7 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
           context->PopCursor();
         }
 
-        DeclareActiveFrame(context, this);
+        context->set_overlap(true);
 
         retval = Ignore;
       }
@@ -332,12 +330,11 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
       set_cursor_on_border(true);
       cursor_position_ = InsideRectangle;
 
-      if (context->active_frame() == 0) {
+      if (!context->overlap()) {
         SetCursorShapeOnBorder(context);
-        DeclareActiveFrame(context, this);
+        context->set_overlap(true);
         retval = Ignore;
       } else {
-        DBG_ASSERT(context->active_frame() != this);
         retval = Finish;
       }
 

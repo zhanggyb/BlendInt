@@ -40,7 +40,7 @@
 
 namespace BlendInt {
 
-boost::thread::id AbstractWindow::kMainThreadID;
+std::thread::id AbstractWindow::kMainThreadID;
 
 Theme* AbstractWindow::kTheme = 0;
 Icons* AbstractWindow::kIcons = 0;
@@ -63,7 +63,7 @@ AbstractWindow::AbstractWindow (int flags)
   floating_frame_count_(0),
   pressed_(false),
   mouse_tracking_(false),
-  z_overloap_(false)
+  overlap_(false)
 {
   set_view_type(ViewTypeWindow);
 
@@ -82,7 +82,7 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
   floating_frame_count_(0),
   pressed_(false),
   mouse_tracking_(false),
-  z_overloap_(false)
+  overlap_(false)
 {
   set_view_type(ViewTypeWindow);
 
@@ -735,6 +735,8 @@ void AbstractWindow::DispatchMouseHover ()
   try {
 
     active_frame_ = 0;
+    overlap_ = false;
+    
     Response response = Ignore;
     for (ManagedPtr p = last(); p; --p) {
       response = dynamic_cast<AbstractFrame*>(p.get())->PerformMouseHover(this);

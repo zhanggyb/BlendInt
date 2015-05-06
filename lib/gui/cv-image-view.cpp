@@ -39,11 +39,6 @@ CVImageView::CVImageView ()
 
   timer_->timeout().connect(this, &CVImageView::OnUpdateFrame);
 
-  MutexAttrib attrib;
-  attrib.initialize();
-  mutex_.initialize(&attrib);
-  attrib.destroy();
-
   std::vector<GLfloat> inner_verts;
   GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
@@ -394,7 +389,7 @@ void CVImageView::DrawTexture ()
 {
   // TODO: use double textures
   glBindVertexArray(vao_[1]);
-  if (mutex_.trylock()) {
+  if (mutex_.try_lock()) {
     texture_.bind();
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     mutex_.unlock();
@@ -493,7 +488,7 @@ void CVImageView::OnUpdateFrame ()
 {
   video_stream_ >> image_;
 
-  if (mutex_.trylock()) {
+  if (mutex_.try_lock()) {
     
     off_screen_context_->MakeCurrent();
 
