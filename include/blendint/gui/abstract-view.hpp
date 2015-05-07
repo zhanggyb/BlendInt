@@ -629,7 +629,7 @@ private:
   std::string name_;
 #endif
 
-  static std::mutex kRefreshMutex;
+  // static std::mutex kRefreshMutex;
 
   static float kBorderWidth;
 

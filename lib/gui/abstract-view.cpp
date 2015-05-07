@@ -53,7 +53,7 @@ bool IsContained (AbstractView* container, AbstractView* widget)
 
 float AbstractView::kBorderWidth = 1.f;
 
-std::mutex AbstractView::kRefreshMutex;
+// std::mutex AbstractView::kRefreshMutex;
 
 const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = {
     { 0.0, 0.0 }, //
