@@ -107,8 +107,10 @@ const int AbstractView::kEmbossVertexTable[16] = {
 
 AbstractView::AbstractView ()
 : CppEvent::Trackable(),
+  refresh_(false),
+  destroying_(false),
+  view_type_(ViewTypeUndefined),
   reference_count_(0),
-  view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
   previous_(0),
@@ -120,8 +122,10 @@ AbstractView::AbstractView ()
 
 AbstractView::AbstractView (int width, int height)
 : CppEvent::Trackable(),
+  refresh_(false),
+  destroying_(false),
+  view_type_(ViewTypeUndefined),
   reference_count_(0),
-  view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
   previous_(0),
@@ -257,31 +261,24 @@ void AbstractView::RequestRedraw ()
     */
     //else {
 
-    kRefreshMutex.lock();
     set_refresh(true);
-    kRefreshMutex.unlock();
     
     while (p && (!p->refresh())) {
       root = p;
-      kRefreshMutex.lock();
       p->set_refresh(true);
-      kRefreshMutex.unlock();
       p = p->super();
     }
     
     //}
 
-    DBG_PRINT_MSG("%s", "----------------------------");
+    // DBG_PRINT_MSG("%s", "----------------------------");
     
-    if (root->super() == 0) {
-      //AbstractWindow* window = dynamic_cast<AbstractWindow*>(root);
-      if (is_window(root)) {
-        DBG_PRINT_MSG("%s", "Synchronize GL context");
-        static_cast<AbstractWindow*>(root)->Synchronize();
-        //window->Synchronize();
-      }
+    if ((root->super() == 0) && is_window(root)) {
+      // DBG_PRINT_MSG("%s", "Synchronize GL context");
+      static_cast<AbstractWindow*>(root)->Synchronize();
     }
 
+    /*
     p = super();
     while(p) {
       DBG_PRINT_MSG("superview name: %s, refresh flag: %s",
@@ -289,7 +286,8 @@ void AbstractView::RequestRedraw ()
                     p->refresh() ? "True":"False");
       p = p->super();
     }
-
+    */
+    
   }
 }
 
@@ -584,14 +582,13 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 
   for (ManagedPtr p = GetFirstSubView(); p; ++p) {
 
+    set_refresh(false);
+    
     if (p->PreDraw(context)) {
 
-      set_refresh(false);	// allow pass to superview in RequestRedraw()
       Response response = p->Draw(context);
 
-      kRefreshMutex.lock();
       p->set_refresh(refresh());
-      kRefreshMutex.unlock();
 
       if (response == Ignore) {
         for (ManagedPtr sub = p->GetFirstSubView(); sub; ++sub) {
@@ -607,13 +604,9 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 
   //set_refresh(refresh_record);
   if (super_) {
-    kRefreshMutex.lock();
     set_refresh(super_->refresh());
-    kRefreshMutex.unlock();
   } else {
-    kRefreshMutex.lock();
     set_refresh(false);
-    kRefreshMutex.unlock();
   }
 }
 
@@ -881,9 +874,7 @@ void AbstractView::DispatchDrawEvent (AbstractView* view,
 
     Response response = view->Draw(context);
 
-    kRefreshMutex.lock();
     view->set_refresh(view->super_->refresh());
-    kRefreshMutex.unlock();
 
     if (response == Ignore) {
       for (ManagedPtr sub = view->GetFirstSubView(); sub; ++sub) {
