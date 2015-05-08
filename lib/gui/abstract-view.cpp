@@ -31,6 +31,8 @@
 #include <blendint/gui/abstract-view.hpp>
 #include <blendint/gui/abstract-window.hpp>
 
+#include <blendint/gui/managed-ptr.hpp>
+
 namespace BlendInt {
 
 bool IsContained (AbstractView* container, AbstractView* widget)
@@ -51,7 +53,7 @@ bool IsContained (AbstractView* container, AbstractView* widget)
 
 float AbstractView::kBorderWidth = 1.f;
 
-pthread_mutex_t AbstractView::kRefreshMutex = PTHREAD_MUTEX_INITIALIZER;
+// std::mutex AbstractView::kRefreshMutex;
 
 const float AbstractView::cornervec[WIDGET_CURVE_RESOLU][2] = {
     { 0.0, 0.0 }, //
@@ -105,8 +107,10 @@ const int AbstractView::kEmbossVertexTable[16] = {
 
 AbstractView::AbstractView ()
 : CppEvent::Trackable(),
+  refresh_(false),
+  destroying_(false),
+  view_type_(ViewTypeUndefined),
   reference_count_(0),
-  view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
   previous_(0),
@@ -118,8 +122,10 @@ AbstractView::AbstractView ()
 
 AbstractView::AbstractView (int width, int height)
 : CppEvent::Trackable(),
+  refresh_(false),
+  destroying_(false),
+  view_type_(ViewTypeUndefined),
   reference_count_(0),
-  view_flag_(ViewManageMask),
   subview_count_(0),
   super_(0),
   previous_(0),
@@ -132,8 +138,6 @@ AbstractView::AbstractView (int width, int height)
 
 AbstractView::~AbstractView ()
 {
-  SETBIT(view_flag_, ViewDestroyingMask);
-
   if (subview_count() > 0) {
     ClearSubViews();
   } else {
@@ -241,16 +245,9 @@ void AbstractView::RequestRedraw ()
 
     AbstractView* root = this;
     AbstractView* p = super();
-    boost::thread::id id = boost::this_thread::get_id();
+    //std::thread::id id = std::this_thread::get_id();
 
     /*
-     while(p) {
-     DBG_PRINT_MSG("superview name: %s, refresh flag: %s", p->name().c_str(), p->refresh() ? "True":"False");
-     p = p->super();
-     }
-     p = super();
-     */
-
     if (id == AbstractWindow::main_thread_id()) {
 
       set_refresh(true);
@@ -260,29 +257,37 @@ void AbstractView::RequestRedraw ()
         p = p->super();
       }
 
-    } else {
+    }
+    */
+    //else {
 
-      pthread_mutex_lock(&kRefreshMutex);
-      set_refresh(true);
-      pthread_mutex_unlock(&kRefreshMutex);
+    set_refresh(true);
+    
+    while (p && (!p->refresh())) {
+      root = p;
+      p->set_refresh(true);
+      p = p->super();
+    }
+    
+    //}
 
-      while (p && (!p->refresh())) {
-        root = p;
-        pthread_mutex_lock(&kRefreshMutex);
-        p->set_refresh(true);
-        pthread_mutex_unlock(&kRefreshMutex);
-        p = p->super();
-      }
-
+    // DBG_PRINT_MSG("%s", "----------------------------");
+    
+    if ((root->super() == 0) && is_window(root)) {
+      // DBG_PRINT_MSG("%s", "Synchronize GL context");
+      static_cast<AbstractWindow*>(root)->Synchronize();
     }
 
-    if (root->super() == 0) {
-      AbstractWindow* window = dynamic_cast<AbstractWindow*>(root);
-      if (window) {
-        window->Synchronize();
-      }
+    /*
+    p = super();
+    while(p) {
+      DBG_PRINT_MSG("superview name: %s, refresh flag: %s",
+                    p->name().c_str(),
+                    p->refresh() ? "True":"False");
+      p = p->super();
     }
-
+    */
+    
   }
 }
 
@@ -575,19 +580,19 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 {
   //bool refresh_record = false;
 
-  for (AbstractView* p = GetFirstSubView(); p; p = GetNextSubView(p)) {
-    set_refresh(false);	// allow pass to superview in RequestRedraw()
+  for (ManagedPtr p = GetFirstSubView(); p; ++p) {
+
+    set_refresh(false);
+    
     if (p->PreDraw(context)) {
 
       Response response = p->Draw(context);
-      pthread_mutex_lock(&kRefreshMutex);
+
       p->set_refresh(refresh());
-      pthread_mutex_unlock(&kRefreshMutex);
 
       if (response == Ignore) {
-        for (AbstractView* sub = p->GetFirstSubView(); sub;
-            sub = p->GetNextSubView(sub)) {
-          DispatchDrawEvent(sub, context);
+        for (ManagedPtr sub = p->GetFirstSubView(); sub; ++sub) {
+          DispatchDrawEvent(sub.get(), context);
         }
       }
 
@@ -599,13 +604,9 @@ void AbstractView::DrawSubViewsOnce (AbstractWindow* context)
 
   //set_refresh(refresh_record);
   if (super_) {
-    pthread_mutex_lock(&kRefreshMutex);
     set_refresh(super_->refresh());
-    pthread_mutex_unlock(&kRefreshMutex);
   } else {
-    pthread_mutex_lock(&kRefreshMutex);
     set_refresh(false);
-    pthread_mutex_unlock(&kRefreshMutex);
   }
 }
 
@@ -613,13 +614,11 @@ AbstractView* AbstractView::Destroy (AbstractView* view)
 {
   DBG_ASSERT(view);
 
+  view->set_destroying(true);
   if(view->reference_count_ <= 0) {
     delete view;
     return 0;
   }
-
-  view->set_destroying(true);
-  
   return view;
 }
 
@@ -866,29 +865,24 @@ bool AbstractView::InsertSiblingAfter (AbstractView *src, AbstractView *dst)
   return true;
 }
 
-void AbstractView::DispatchDrawEvent (AbstractView* widget,
+void AbstractView::DispatchDrawEvent (AbstractView* view,
                                       AbstractWindow* context)
 {
-#ifdef DEBUG
-  DBG_ASSERT(widget != 0);
-#endif
+  DBG_ASSERT(view != 0);
 
-  if (widget->PreDraw(context)) {
+  if (view->PreDraw(context)) {
 
-    Response response = widget->Draw(context);
+    Response response = view->Draw(context);
 
-    pthread_mutex_lock(&kRefreshMutex);
-    widget->set_refresh(widget->super_->refresh());
-    pthread_mutex_unlock(&kRefreshMutex);
+    view->set_refresh(view->super_->refresh());
 
     if (response == Ignore) {
-      for (AbstractView* sub = widget->GetFirstSubView(); sub;
-          sub = widget->GetNextSubView(sub)) {
-        DispatchDrawEvent(sub, context);
+      for (ManagedPtr sub = view->GetFirstSubView(); sub; ++sub) {
+        DispatchDrawEvent(sub.get(), context);
       }
     }
 
-    widget->PostDraw(context);
+    view->PostDraw(context);
   }
 }
 
@@ -2261,7 +2255,8 @@ void AbstractView::ClearSubViews ()
     ptr->next_ = 0;
     ptr->super_ = 0;
 
-    delete ptr;
+    // delete ptr;
+    Destroy(ptr);
 
     ptr = next_ptr;
   }

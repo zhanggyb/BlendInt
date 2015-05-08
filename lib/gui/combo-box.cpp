@@ -853,7 +853,7 @@ Response ComboBox::PerformMousePress (AbstractWindow* context)
 
   if (popup_) {
 
-    delete popup_;
+    Destroy(popup_);
     popup_ = 0;
     SetRoundType(last_round_status_);
     RequestRedraw();

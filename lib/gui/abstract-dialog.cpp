@@ -95,7 +95,7 @@ Response AbstractDialog::PerformKeyPress (AbstractWindow* context)
 
     if (context == super()) context->RequestRedraw();
 
-    delete this;
+    Destroy(this);
 
     return Finish;
   }
@@ -280,9 +280,7 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
 
       cursor_position_ = InsideRectangle;
 
-      if (context->active_frame()) {
-
-        DBG_ASSERT(context->active_frame() != this);
+      if (context->overlap()) {
 
         // if there's frame above this position, dispatch hover out
         if (hovered_widget_) {
@@ -322,7 +320,7 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
           context->PopCursor();
         }
 
-        DeclareActiveFrame(context, this);
+        context->set_overlap(true);
 
         retval = Ignore;
       }
@@ -332,12 +330,11 @@ Response AbstractDialog::PerformMouseHover (AbstractWindow* context)
       set_cursor_on_border(true);
       cursor_position_ = InsideRectangle;
 
-      if (context->active_frame() == 0) {
+      if (!context->overlap()) {
         SetCursorShapeOnBorder(context);
-        DeclareActiveFrame(context, this);
+        context->set_overlap(true);
         retval = Ignore;
       } else {
-        DBG_ASSERT(context->active_frame() != this);
         retval = Finish;
       }
 
@@ -391,9 +388,9 @@ void AbstractDialog::OnFocusedWidgetDestroyed (AbstractWidget* widget)
   DBG_ASSERT(focused_widget_ == widget);
 
   //set_widget_focus_status(widget, false);
-  DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
-  widget->destroyed().disconnect1(this,
-                                    &AbstractDialog::OnFocusedWidgetDestroyed);
+  //DBG_PRINT_MSG("focused widget %s destroyed", widget->name().c_str());
+  //widget->destroyed().disconnect1(this,
+  //                                  &AbstractDialog::OnFocusedWidgetDestroyed);
 
   focused_widget_ = 0;
 }
@@ -401,10 +398,9 @@ void AbstractDialog::OnFocusedWidgetDestroyed (AbstractWidget* widget)
 void AbstractDialog::OnHoverWidgetDestroyed (AbstractWidget* widget)
 {
   DBG_ASSERT(hovered_widget_ == widget);
-
-  DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
-  widget->destroyed().disconnect1(this,
-                                    &AbstractDialog::OnHoverWidgetDestroyed);
+  //DBG_PRINT_MSG("unset hover status of widget %s", widget->name().c_str());
+  //widget->destroyed().disconnect1(this,
+  //                                  &AbstractDialog::OnHoverWidgetDestroyed);
 
   hovered_widget_ = 0;
 }

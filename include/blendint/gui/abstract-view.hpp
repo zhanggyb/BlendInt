@@ -23,7 +23,9 @@
 
 #pragma once
 
-#include <boost/thread.hpp>
+#include <thread>  // std::thread
+#include <atomic>
+#include <vector>
 
 #include <blendint/cppevent/event.hpp>
 
@@ -33,7 +35,6 @@
 #include <blendint/core/object.hpp>
 #include <blendint/core/point.hpp>
 #include <blendint/core/size.hpp>
-#include <blendint/core/mutex.hpp>
 
 namespace BlendInt {
 
@@ -42,31 +43,18 @@ class AbstractFrame;
 class ManagedPtr;
 struct ColorScheme;
 
-enum ViewFlagsMask
-{
-
-  ViewManageMask = 0x1 << 0,
-
-  ViewRefreshMask = 0x1 << 1,
-
-  ViewDestroyingMask = 0x1 << 2,
-
-  ViewTypeMask = 0x07 << 3
-
-};
-
 enum ViewType
 {
 
   ViewTypeUndefined = 0x0,
 
-  ViewTypeWindow = (ViewTypeUndefined + 1) << 3,  // 0x08
+  ViewTypeWindow = (ViewTypeUndefined + 1),  // 0x08
 
-  ViewTypeFrame = (ViewTypeUndefined + 2) << 3,   // 0x10
+  ViewTypeFrame = (ViewTypeUndefined + 2),   // 0x10
 
-  ViewTypeWidget = (ViewTypeUndefined + 3) << 3,  // 0x18
+  ViewTypeWidget = (ViewTypeUndefined + 3),  // 0x18
 
-  ViewTypeNode = (ViewTypeUndefined + 4) << 3     // 0x20
+  ViewTypeNode = (ViewTypeUndefined + 4)     // 0x20
 
 };
 
@@ -206,12 +194,22 @@ public:
   
   inline bool refresh () const
   {
-    return view_flag_ & ViewRefreshMask;
+    return refresh_;
+
+    /*
+    bool retval;
+
+    kRefreshMutex.lock();
+    retval = view_flag_ & ViewRefreshMask;
+    kRefreshMutex.unlock();
+
+    return retval;
+    */
   }
 
   inline bool destroying () const
   {
-    return view_flag_ & ViewDestroyingMask;
+    return destroying_;
   }
 
   inline AbstractView* super () const
@@ -236,27 +234,27 @@ public:
 
   static inline bool is_window (const AbstractView* view)
   {
-    return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeWindow : false;
+    return view ? view->view_type_ == ViewTypeWindow : false;
   }
 
   static inline bool is_frame (const AbstractView* view)
   {
-    return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeFrame : false;
+    return view ? view->view_type_ == ViewTypeFrame : false;
   }
 
   static inline bool is_widget (const AbstractView* view)
   {
-    return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeWidget : false;
+    return view ? view->view_type_ == ViewTypeWidget : false;
   }
 
   static inline bool is_node (const AbstractView* view)
   {
-    return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeNode : false;
+    return view ? view->view_type_ == ViewTypeNode : false;
   }
 
   static inline bool is_undefined_type (const AbstractView* view)
   {
-    return view ? (view->view_flag_ & ViewTypeMask) == ViewTypeUndefined : false;
+    return view ? view->view_type_ == ViewTypeUndefined : false;
   }
 
   static inline float default_border_width ()
@@ -352,10 +350,18 @@ protected:
 
   inline void set_refresh (bool refresh)
   {
+    refresh_ = refresh;
+
+    /*
+    kRefreshMutex.lock();
+
     if (refresh)
       SETBIT(view_flag_, ViewRefreshMask);
     else
       CLRBIT(view_flag_, ViewRefreshMask);
+
+    kRefreshMutex.unlock();
+    */
   }
 
   inline void report_size_update (const AbstractView* source,
@@ -450,9 +456,9 @@ protected:
 
   /**
    * @brief Destroy a view object
-   * @param[in] view the view need to be destroyed
+   * @param[in] view the view needs to be destroyed
    * @return
-   * 	- A valid pointer to the view if it's referenced in week_ptr
+   * 	- A valid pointer to the view which is referenced by a ManagedPtr
    * 	- 0 if the view is destroyed immediately
    */
   static AbstractView* Destroy (AbstractView* view);
@@ -584,21 +590,22 @@ private:
 
   inline void set_view_type (ViewType type)
   {
-    view_flag_ = (view_flag_ & (~ViewTypeMask)) | (type & ViewTypeMask);
+    view_type_ = type;
   }
 
   inline void set_destroying (bool destroying)
   {
-    if (destroying)
-      SETBIT(view_flag_, ViewDestroyingMask);
-    else
-      CLRBIT(view_flag_, ViewDestroyingMask);
+    destroying_ = destroying;
   }
+
+  std::atomic_bool refresh_;
+
+  bool destroying_;
+
+  int view_type_;
   
   int reference_count_;
   
-  int view_flag_;
-
   int subview_count_;  // count of sub views
 
   AbstractView* super_;
@@ -622,7 +629,7 @@ private:
   std::string name_;
 #endif
 
-  static pthread_mutex_t kRefreshMutex;
+  // static std::mutex kRefreshMutex;
 
   static float kBorderWidth;
 

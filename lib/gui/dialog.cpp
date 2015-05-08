@@ -288,7 +288,7 @@ void Dialog::OnCloseButtonClicked ()
 {
   AbstractView* parent = super();
   //DBG_ASSERT(button == decoration_->close_button());
-  delete this;
+  Destroy(this);
 
   parent->RequestRedraw();
 }
@@ -303,7 +303,7 @@ void Dialog::OnOKButtonClicked ()
   AbstractView* parent = super();
   fire_applied_event();
 
-  delete this;
+  Destroy(this);
   parent->RequestRedraw();
 }
 

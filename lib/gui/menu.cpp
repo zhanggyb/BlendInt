@@ -217,7 +217,7 @@ Response Menu::PerformMousePress (AbstractWindow* context)
 
   } else if (cursor_range_ == OutsideRectangle) {
     pressed_ = false;
-    delete this;
+    Destroy(this);
     return Finish;
   }
 
@@ -443,7 +443,7 @@ Response Menu::PerformKeyPress (AbstractWindow* context)
 {
   if (context->GetKeyInput() == Key_Escape) {
     RequestRedraw();
-    delete this;
+    Destroy(this);
     return Finish;
   }
 

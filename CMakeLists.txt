@@ -88,7 +88,7 @@ endif()
 #    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 #endif()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system thread)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 if(Boost_FOUND)
 
   include_directories(${Boost_INCLUDE_DIRS})
@@ -109,10 +109,10 @@ if(Boost_FOUND)
     string(REGEX REPLACE "[.]dylib$" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
     message(STATUS "Use boost_filesystem: ${BOOST_FILESYSTEM_LIB_NAME}")
     
-    string(REGEX MATCH "libboost_thread.*[.]dylib" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
-    string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
-    string(REGEX REPLACE "[.]dylib$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
-    message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
+    # string(REGEX MATCH "libboost_thread.*[.]dylib" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
+    # string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    # string(REGEX REPLACE "[.]dylib$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    # message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
     
   elseif(OS_LINUX)
 
@@ -126,10 +126,10 @@ if(Boost_FOUND)
     string(REGEX REPLACE "[.]so.*$" "" BOOST_FILESYSTEM_LIB_NAME "${BOOST_FILESYSTEM_LIB_NAME}")
     message(STATUS "Use boost_filesystem: ${BOOST_FILESYSTEM_LIB_NAME}")
     
-    string(REGEX MATCH "libboost_thread.*[.]so.*" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
-    string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
-    string(REGEX REPLACE "[.]so.*$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
-    message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
+    # string(REGEX MATCH "libboost_thread.*[.]so.*" BOOST_THREAD_LIB_NAME "${Boost_THREAD_LIBRARY}")
+    # string(REGEX REPLACE "^lib" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    # string(REGEX REPLACE "[.]so.*$" "" BOOST_THREAD_LIB_NAME "${BOOST_THREAD_LIB_NAME}")
+    # message(STATUS "Use boost_thread: ${BOOST_THREAD_LIB_NAME}")
     
   else()                          # WIN
     

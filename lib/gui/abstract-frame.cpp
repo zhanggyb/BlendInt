@@ -55,6 +55,8 @@ namespace BlendInt {
 
   AbstractFrame::~AbstractFrame ()
   {
+    destroyed_.Invoke(this);
+
     if (subview_count() > 0) {
       ClearSubViews();
     } else {
@@ -63,9 +65,12 @@ namespace BlendInt {
       DBG_ASSERT(last_ == 0);
     }
 
-    if (super_) super_->RemoveSubView(this);
-
-    destroyed_.Invoke(this);
+    if (super_) {
+      super_->RemoveSubView(this);
+    } else {
+      DBG_ASSERT(previous_ == 0);
+      DBG_ASSERT(next_ == 0);
+    }
   }
 
   Point AbstractFrame::GetAbsolutePosition (const AbstractView* view)

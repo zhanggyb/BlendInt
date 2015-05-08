@@ -34,12 +34,13 @@
 #include <blendint/font/fc-pattern.hpp>
 #include <blendint/font/fc-config.hpp>
 
+#include <blendint/gui/managed-ptr.hpp>
 #include <blendint/gui/abstract-frame.hpp>
 #include <blendint/gui/abstract-window.hpp>
 
 namespace BlendInt {
 
-boost::thread::id AbstractWindow::kMainThreadID;
+std::thread::id AbstractWindow::kMainThreadID;
 
 Theme* AbstractWindow::kTheme = 0;
 Icons* AbstractWindow::kIcons = 0;
@@ -62,7 +63,7 @@ AbstractWindow::AbstractWindow (int flags)
   floating_frame_count_(0),
   pressed_(false),
   mouse_tracking_(false),
-  z_overloap_(false)
+  overlap_(false)
 {
   set_view_type(ViewTypeWindow);
 
@@ -81,7 +82,7 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
   floating_frame_count_(0),
   pressed_(false),
   mouse_tracking_(false),
-  z_overloap_(false)
+  overlap_(false)
 {
   set_view_type(ViewTypeWindow);
 
@@ -93,6 +94,21 @@ AbstractWindow::AbstractWindow (int width, int height, int flags)
 AbstractWindow::~AbstractWindow ()
 {
   if (kMainWindow == this) kMainWindow = 0;
+
+  if (subview_count() > 0) {
+    ClearSubViews();
+  } else {
+    DBG_ASSERT(subview_count_ == 0);
+    DBG_ASSERT(first_ == 0);
+    DBG_ASSERT(last_ == 0);
+  }
+
+  if (super_) {
+    super_->RemoveSubView(this);
+  } else {
+    DBG_ASSERT(previous_ == 0);
+    DBG_ASSERT(next_ == 0);
+  }
 }
 
 AbstractFrame* AbstractWindow::AddFrame (AbstractFrame* frame)
@@ -451,7 +467,7 @@ bool AbstractWindow::PreDraw (AbstractWindow* context)
 
 Response AbstractWindow::Draw (AbstractWindow* context)
 {
-  for (AbstractView* p = first(); p; p = next(p)) {
+  for (ManagedPtr p = first(); p; ++p) {
     p->PreDraw(context);
     p->Draw(context);
     p->set_refresh(this->refresh());
@@ -486,7 +502,7 @@ Response AbstractWindow::PerformKeyPress (AbstractWindow* context)
   Response response = Ignore;
   active_frame_ = 0;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformKeyPress(context);
     if (response == Finish) break;
   }
@@ -510,7 +526,7 @@ Response AbstractWindow::PerformMousePress (AbstractWindow* context)
   active_frame_ = 0;
   pressed_ = true;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformMousePress(context);
     if (response == Finish) {
       break;
@@ -526,7 +542,7 @@ Response AbstractWindow::PerformMouseRelease (AbstractWindow* context)
   active_frame_ = 0;
   pressed_ = false;
 
-  for (AbstractView* p = last(); p; p = previous(p)) {
+  for (ManagedPtr p = last(); p; --p) {
     response = p->PerformMouseRelease(context);
     if (response == Finish) {
       break;
@@ -543,7 +559,7 @@ Response AbstractWindow::PerformMouseMove (AbstractWindow* context)
   active_frame_ = 0;
   if (pressed_) {
 
-    for (AbstractView* p = last(); p; p = previous(p)) {
+    for (ManagedPtr p = last(); p; --p) {
       response = p->PerformMouseMove(context);
       if (response == Finish) {
         break;
@@ -719,9 +735,11 @@ void AbstractWindow::DispatchMouseHover ()
   try {
 
     active_frame_ = 0;
+    overlap_ = false;
+    
     Response response = Ignore;
-    for (AbstractView* p = last(); p; p = previous(p)) {
-      response = dynamic_cast<AbstractFrame*>(p)->PerformMouseHover(this);
+    for (ManagedPtr p = last(); p; --p) {
+      response = dynamic_cast<AbstractFrame*>(p.get())->PerformMouseHover(this);
       if (response == Finish) break;
     }
 

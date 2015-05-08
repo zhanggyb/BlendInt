@@ -26,11 +26,12 @@
 // generate makefile with cmake -DENABLE_OPENCV to activate
 #ifdef __USE_OPENCV__
 
+#include <mutex>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 #include <blendint/core/timer.hpp>
-#include <blendint/core/mutex.hpp>
 
 #include <blendint/opengl/gl-buffer.hpp>
 
@@ -161,7 +162,7 @@ private:
 
   RefPtr<Timer> timer_;
 
-  Mutex mutex_;
+  std::mutex mutex_;
 
   AbstractWindow* off_screen_context_;
 

@@ -228,13 +228,29 @@ public:
     return current_cursor_shape_;
   }
 
+  /**
+   * @brief If there's a frame contains current cursor position
+   *
+   * This status is used in frame's DispatchMouseHover() to check if
+   * there's popup frame overlap at the current cursor position.
+   */
+  inline bool overlap () const
+  {
+    return overlap_;
+  }
+
+  inline void set_overlap (bool overlap)
+  {
+    overlap_ = overlap;
+  }
+  
   static AbstractWindow* GetWindow (AbstractView* widget);
 
   static bool InitializeGLContext ();
 
   static void ReleaseGLContext ();
 
-  static inline boost::thread::id& main_thread_id ()
+  static inline std::thread::id& main_thread_id ()
   {
     return kMainThreadID;
   }
@@ -313,7 +329,7 @@ protected:
 
   static glm::mat4 default_view_matrix;
 
-  static boost::thread::id kMainThreadID;
+  static std::thread::id kMainThreadID;
 
   static inline void reset_refresh_status (AbstractWindow* window)
   {
@@ -390,7 +406,7 @@ private:
   /**
    * @brief If a frame contains the cursor
    */
-  bool z_overloap_;
+  bool overlap_;
 
   static AbstractWindow* kMainWindow;
 };
