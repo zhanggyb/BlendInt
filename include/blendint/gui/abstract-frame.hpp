@@ -41,8 +41,13 @@ enum FrameFlagMask
   /**
    * whether the frame is floating above other regular frames, also called always-on-top.
    */
-  FrameFloatingMask = (1 << 1)
+  FrameFloatingMask = (1 << 1),
 
+  /**
+   * whether render contents to texture
+   */
+  FrameBufferedMask = (1 << 2)
+  
 };
 
 enum FrameFlags {
@@ -202,11 +207,11 @@ class AbstractFrame: public AbstractView
    * @param[in] context
    * @param[out] texture
    */
-  static bool RenderSubFramesToTexture (AbstractFrame* frame,
-                                        AbstractWindow* context,
-                                        const glm::mat4& projection,
-                                        const glm::mat3& model,
-                                        GLTexture2D* texture);
+  static bool RenderToTexture (AbstractFrame* frame,
+                               AbstractWindow* context,
+                               const glm::mat4& projection,
+                               const glm::mat3& model,
+                               GLTexture2D* texture);
 
  private:
 

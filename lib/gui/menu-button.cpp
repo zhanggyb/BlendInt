@@ -50,7 +50,10 @@ MenuButton::~MenuButton ()
   glDeleteVertexArrays(1, &vao_);
 }
 
-void MenuButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void MenuButton::PerformSizeUpdate (const AbstractView* source,
+                                    const AbstractView* target,
+                                    int width,
+                                    int height)
 {
   if (target == this) {
 

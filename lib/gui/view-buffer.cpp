@@ -29,6 +29,7 @@
 namespace BlendInt {
 
 // FIXME: the default constructor has no effect
+/*
 ViewBuffer::ViewBuffer ()
     : AbstractForm(),
       vao_(0)
@@ -50,9 +51,9 @@ ViewBuffer::ViewBuffer ()
   vbo_.set_data(sizeof(vertices), vertices);
 
   glEnableVertexAttribArray(AttributeCoord);
-  glEnableVertexAttribArray(AttributeUV);
   glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE,
 		        sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(AttributeUV);
   glVertexAttribPointer(AttributeUV, 2,
                         GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
 		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
@@ -60,6 +61,7 @@ ViewBuffer::ViewBuffer ()
   glBindVertexArray(0);
   vbo_.reset();
 }
+*/
 
 ViewBuffer::ViewBuffer (int width, int height)
     : AbstractForm(width, height),
@@ -105,10 +107,19 @@ ViewBuffer::~ViewBuffer ()
   glDeleteVertexArrays(1, &vao_);
 }
 
+static size_t count = 0;
+
 void ViewBuffer::Draw (int x, int y, const float* color_ptr, short gamma,
                        float rotate, float scale_x, float scale_y) const
 {
   texture_.bind();
+
+#ifdef DEBUG
+  if (!glIsTexture(texture_.id())) {
+    DBG_PRINT_MSG("Error: %s", "texutre not valid");
+  }
+#endif
+
   glBindVertexArray(vao_);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
@@ -123,6 +134,9 @@ void ViewBuffer::DrawInRect (const Rect& rect, int align, const float* color_ptr
 void ViewBuffer::SaveToFile(const char* name)
 {
   texture_.bind();
+  if (!glIsTexture(texture_.id())) {
+    DBG_PRINT_MSG("ERROR: %s", "texture not valid");
+  }
   texture_.WriteToFile(name);
 }
 
@@ -137,7 +151,7 @@ void ViewBuffer::PerformSizeUpdate (int width, int height)
     0.f, 0.f,                     	0.f, 0.f,
     (float)width, 0.f,             	1.f, 0.f,
     0.f, (float)height,            	0.f, 1.f,
-    (float)width, (float)height,	  1.f, 1.f
+    (float)width, (float)height,	1.f, 1.f
   };
 
   vbo_.bind(0);

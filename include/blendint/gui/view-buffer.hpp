@@ -30,52 +30,52 @@
 
 namespace BlendInt {
 
-  class ViewBuffer: public AbstractForm
+class ViewBuffer: public AbstractForm
+{
+ public:
+
+  ViewBuffer () = delete;  // disable the default constructor
+
+  ViewBuffer (int width, int height);
+
+  virtual ~ViewBuffer ();
+
+  virtual void Draw (int x = 0,
+                     int y = 0,
+                     const float* color_ptr = 0,
+                     short gamma = 0,
+                     float rotate = 0.f,
+                     float scale_x = 1.f,
+                     float scale_y = 1.f) const;
+
+  virtual void DrawInRect (const Rect& rect,
+                           int align,
+                           const float* color_ptr = 0,
+                           short gamma = 0,
+                           float rotate = 0.f,
+                           bool scale = false) const;
+
+  inline GLTexture2D* texture ()
   {
-  public:
-
-    ViewBuffer ();
-
-    ViewBuffer (int width, int height);
-
-    virtual ~ViewBuffer ();
-
-    virtual void Draw (int x = 0,
-                       int y = 0,
-                       const float* color_ptr = 0,
-                       short gamma = 0,
-                       float rotate = 0.f,
-                       float scale_x = 1.f,
-                       float scale_y = 1.f) const;
-
-    virtual void DrawInRect (const Rect& rect,
-                             int align,
-                             const float* color_ptr = 0,
-                             short gamma = 0,
-                             float rotate = 0.f,
-                             bool scale = false) const;
-
-    inline GLTexture2D* texture ()
-    {
-      return &texture_;
-    }
+    return &texture_;
+  }
 
 #ifdef DEBUG
-    void SaveToFile (const char* file);
+  void SaveToFile (const char* file);
 #endif
 
-  protected:
+ protected:
 
-    virtual void PerformSizeUpdate (int width, int height);
+  virtual void PerformSizeUpdate (int width, int height);
 
-  private:
+ private:
 
-    GLuint vao_;
+  GLuint vao_;
 
-    GLBuffer<> vbo_;
+  GLBuffer<> vbo_;
 
-    GLTexture2D texture_;
+  GLTexture2D texture_;
 
-  };
+};
 
 }

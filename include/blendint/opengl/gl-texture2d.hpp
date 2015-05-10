@@ -29,178 +29,201 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief C++ wrapper for 2D Texture
-	 *
-	 * @ingroup opengl
-	 */
-	class GLTexture2D: public Object
-	{
-	public:
+/**
+ * @brief C++ wrapper for 2D Texture
+ *
+ * @ingroup opengl
+ */
+class GLTexture2D: public Object
+{
+ public:
 
-		GLTexture2D();
+  GLTexture2D();
 
-		~GLTexture2D();
+  ~GLTexture2D();
 
-		inline GLuint id() const {return id_;}
+  inline GLuint id() const {return id_;}
 
-		inline void generate ()
-		{
-			if(id_ != 0) clear();
-			glGenTextures(1, &id_);
-		}
+  inline void generate ()
+  {
+    if(id_ != 0) clear();
+    glGenTextures(1, &id_);
+  }
 
-		inline void bind () const
-		{
-			glBindTexture(GL_TEXTURE_2D, id_);
-		}
+  inline void bind () const
+  {
+    glBindTexture(GL_TEXTURE_2D, id_);
+  }
 
-		/**
-		 * @brief Get the index of the lowest defined mipmap level
-		 * @return Index of the level
-		 */
-		GLint GetBaseLevel ();
+  /**
+   * @brief Get the index of the lowest defined mipmap level
+   * @return Index of the level
+   */
+  GLint GetBaseLevel ();
 
-		/**
-		 * @brief Specifies the index of the lowest defined mipmap level.
-		 * @param[in] level The index of the level, integer value, initial is 0
-		 */
-		void SetBaseLevel (GLint level);
+  /**
+   * @brief Specifies the index of the lowest defined mipmap level.
+   * @param[in] level The index of the level, integer value, initial is 0
+   */
+  void SetBaseLevel (GLint level);
 
-		/**
-		 * @brief Set the border color
-		 * @param color
-		 */
-		void SetBorderColor (const GLint color[4]);
+  /**
+   * @brief Set the border color
+   * @param color
+   */
+  void SetBorderColor (const GLint color[4]);
 
-		/**
-		 * @brief Set the border color
-		 * @param color
-		 */
-		void SetBorderColor (const GLfloat color[4]);
+  /**
+   * @brief Set the border color
+   * @param color
+   */
+  void SetBorderColor (const GLfloat color[4]);
 
-		/**
-		 * @brief Specifies the comparison operator used when GL_TEXTURE_COMPARE_MODE is set to GL_COMPARE_REF_TO_TEXTURE.
-		 * @param value
-		 */
-		void SetCompareFunc (GLint func);
+  /**
+   * @brief Specifies the comparison operator used when GL_TEXTURE_COMPARE_MODE is set to GL_COMPARE_REF_TO_TEXTURE.
+   * @param value
+   */
+  void SetCompareFunc (GLint func);
 
-		/**
-		 * @brief Specifies the texture comparison mode for currently bound depth textures
-		 * @param mode
-		 */
-		void SetCompareMode (GLint mode);
+  /**
+   * @brief Specifies the texture comparison mode for currently bound depth textures
+   * @param mode
+   */
+  void SetCompareMode (GLint mode);
 
-		void SetLodBias (GLfloat value);
+  void SetLodBias (GLfloat value);
 
-		void SetMinFilter (GLint filter);
+  void SetMinFilter (GLint filter);
 
-		void SetMagFilter (GLint filter);
+  void SetMagFilter (GLint filter);
 
-		/**
-		 * @brief Sets the wrap parameter for texture coordinates
-		 * @param[in] s_mode The wrap mode for S(X) coordinate
-		 * @param[in] t_mode The wrap mode for T(Y) coordinate
-		 *
-		 * Both s_mode, t_mode should be one of:
-		 * 	- GL_CLAMP_TO_EDGE
-		 * 	- GL_CLAMP_TO_BORDER
-		 * 	- GL_MIRRORED_REPEAT
-		 * 	- GL_REPEAT
-		 */
-		void SetWrapMode (GLint s_mode, GLint t_mode);
+  /**
+   * @brief Sets the wrap parameter for texture coordinates
+   * @param[in] s_mode The wrap mode for S(X) coordinate
+   * @param[in] t_mode The wrap mode for T(Y) coordinate
+   *
+   * Both s_mode, t_mode should be one of:
+   * 	- GL_CLAMP_TO_EDGE
+   * 	- GL_CLAMP_TO_BORDER
+   * 	- GL_MIRRORED_REPEAT
+   * 	- GL_REPEAT
+   */
+  void SetWrapMode (GLint s_mode, GLint t_mode);
 
-		/**
-		 * @brief Sets the wrap parameter for texture S(X) coordinate
-		 * @param[in] mode The wrap mode for S(X) coordinate
-		 *
-		 * The parameter mode, should be one of:
-		 * 	- GL_CLAMP_TO_EDGE
-		 * 	- GL_CLAMP_TO_BORDER
-		 * 	- GL_MIRRORED_REPEAT
-		 * 	- GL_REPEAT
-		 */
-		void SetWrapModeS (GLint mode);
+  /**
+   * @brief Sets the wrap parameter for texture S(X) coordinate
+   * @param[in] mode The wrap mode for S(X) coordinate
+   *
+   * The parameter mode, should be one of:
+   * 	- GL_CLAMP_TO_EDGE
+   * 	- GL_CLAMP_TO_BORDER
+   * 	- GL_MIRRORED_REPEAT
+   * 	- GL_REPEAT
+   */
+  void SetWrapModeS (GLint mode);
 
-		/**
-		 * @brief Sets the wrap parameter for texture T(Y) coordinate
-		 * @param[in] mode The wrap mode for T(Y) coordinate
-		 *
-		 * The parameter mode, should be one of:
-		 * 	- GL_CLAMP_TO_EDGE
-		 * 	- GL_CLAMP_TO_BORDER
-		 * 	- GL_MIRRORED_REPEAT
-		 * 	- GL_REPEAT
-		 */
-		void SetWrapModeT (GLint mode);
+  /**
+   * @brief Sets the wrap parameter for texture T(Y) coordinate
+   * @param[in] mode The wrap mode for T(Y) coordinate
+   *
+   * The parameter mode, should be one of:
+   * 	- GL_CLAMP_TO_EDGE
+   * 	- GL_CLAMP_TO_BORDER
+   * 	- GL_MIRRORED_REPEAT
+   * 	- GL_REPEAT
+   */
+  void SetWrapModeT (GLint mode);
 
-		/**
-		 * @brief Sets the minimal level-of-detail parameter
-		 * @param value
-		 */
-		void SetMinLod (GLint value);
+  /**
+   * @brief Sets the minimal level-of-detail parameter
+   * @param value
+   */
+  void SetMinLod (GLint value);
 
-		/**
-		 * @brief Sets the maximal level-of-detail parameter
-		 * @param value
-		 */
-		void SetMaxLod (GLint value);
+  /**
+   * @brief Sets the maximal level-of-detail parameter
+   * @param value
+   */
+  void SetMaxLod (GLint value);
 
-		/**
-		 * @brief Sets the inex of the highest defined mipmap level.
-		 * @param level Integer value, initial is 1000
-		 */
-		void SetMaxLevel (GLint level);
+  /**
+   * @brief Sets the inex of the highest defined mipmap level.
+   * @param level Integer value, initial is 1000
+   */
+  void SetMaxLevel (GLint level);
 
-		GLint GetWidth (GLint level = 0) const;
+  GLint GetWidth (GLint level = 0) const;
 
-		GLint GetHeight (GLint level = 0) const;
+  GLint GetHeight (GLint level = 0) const;
 
-		Size GetSize (GLint level = 0) const;
+  Size GetSize (GLint level = 0) const;
 
-		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
+  void SetImage (GLint level,
+                 GLint internalFormat,
+                 GLsizei width,
+                 GLsizei height,
+                 GLint border,
+                 GLenum format,
+                 GLenum type,
+                 const GLvoid* data);
 
-		void SetSubImage (GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
+  void SetSubImage (GLint level,
+                    GLint xoffset,
+                    GLint yoffset,
+                    GLsizei width,
+                    GLsizei height,
+                    GLenum format,
+                    GLenum type,
+                    const GLvoid* data);
 
-		void CopySubimage (GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+  void CopySubimage (GLint level,
+                     GLint xoffset,
+                     GLint yoffset,
+                     GLint x,
+                     GLint y,
+                     GLsizei width,
+                     GLsizei height);
 
-		static inline void reset ()
-		{
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+  static inline void reset ()
+  {
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
 
-		/**
-		 * @brief Write the texture to file
-		 * @param path
-		 * @return
-		 */
-		bool WriteToFile (const std::string& path, GLint level = 0, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
+  /**
+   * @brief Write the texture to file
+   * @param path
+   * @return
+   */
+  bool WriteToFile (const std::string& path,
+                    GLint level = 0,
+                    GLenum format = GL_RGBA,
+                    GLenum type = GL_UNSIGNED_BYTE) const;
 
-		inline void clear()
-		{
-			glDeleteTextures(1, &id_);
-			id_ = 0;
-		}
+  inline void clear()
+  {
+    glDeleteTextures(1, &id_);
+    id_ = 0;
+  }
 
-		static GLuint GetTextureBinding ();
+  static GLuint GetTextureBinding ();
 
-	protected:
+ protected:
 
-		inline void set_parameter (GLenum name, GLint value);
+  inline void set_parameter (GLenum name, GLint value);
 
-		inline void set_parameter (GLenum name, GLfloat value);
+  inline void set_parameter (GLenum name, GLfloat value);
 
-		inline void get_parameter (GLenum pname, GLfloat* params);
+  inline void get_parameter (GLenum pname, GLfloat* params) const;
+  
+  inline void get_parameter (GLenum pname, GLint* params) const;
 
-		inline void get_parameter (GLenum pname, GLint* params);
+  inline void get_level_parameter (GLint level, GLenum pname, GLfloat* params) const;
 
-		inline void get_level_parameter (GLint level, GLenum pname, GLfloat* params);
+  inline void get_level_parameter (GLint level, GLenum pname, GLint* params) const;
 
-		inline void get_level_parameter (GLint level, GLenum pname, GLint* params);
+ private:
 
-	private:
-
-		GLuint id_;
-	};
+  GLuint id_;
+};
 
 }

@@ -47,7 +47,7 @@ enum AttributeLayout
  */
 class Shaders
 {
-public:
+ public:
 
   enum LocationType
   {
@@ -114,6 +114,9 @@ public:
     WIDGET_SHADOW_ANTI_ALIAS,
     WIDGET_SHADOW_SIZE,
 
+    // Debug layout
+    WIDGET_DEBUG_COORD,
+    
     PRIMITIVE_COORD,
     PRIMITIVE_COLOR,
     PRIMITIVE_PROJECTION,
@@ -145,87 +148,92 @@ public:
     LocationLast
   };
 
-  const RefPtr<GLSLProgram>& widget_text_program () const
+  inline const RefPtr<GLSLProgram>& widget_text_program () const
   {
     return widget_text_program_;
   }
 
-  const RefPtr<GLSLProgram>& primitive_program () const
+  inline const RefPtr<GLSLProgram>& primitive_program () const
   {
     return primitive_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_triangle_program () const
+  inline const RefPtr<GLSLProgram>& widget_triangle_program () const
   {
     return widget_triangle_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_simple_triangle_program () const
+  inline const RefPtr<GLSLProgram>& widget_simple_triangle_program () const
   {
     return widget_simple_triangle_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_inner_program () const
+  inline const RefPtr<GLSLProgram>& widget_inner_program () const
   {
     return widget_inner_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_split_inner_program () const
+  inline const RefPtr<GLSLProgram>& widget_split_inner_program () const
   {
     return widget_split_inner_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_outer_program () const
+  inline const RefPtr<GLSLProgram>& widget_outer_program () const
   {
     return widget_outer_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_image_program () const
+  inline const RefPtr<GLSLProgram>& widget_image_program () const
   {
     return widget_image_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_line_program () const
+  inline const RefPtr<GLSLProgram>& widget_line_program () const
   {
     return widget_line_program_;
   }
 
-  const RefPtr<GLSLProgram>& widget_shadow_program () const
+  inline const RefPtr<GLSLProgram>& widget_shadow_program () const
   {
     return widget_shadow_program_;
   }
 
-  const RefPtr<GLSLProgram>& frame_inner_program () const
+  inline const RefPtr<GLSLProgram>& widget_debug_program () const
+  {
+    return widget_debug_program_;
+  }
+  
+  inline const RefPtr<GLSLProgram>& frame_inner_program () const
   {
     return frame_inner_program_;
   }
 
-  const RefPtr<GLSLProgram>& frame_outer_program () const
+  inline const RefPtr<GLSLProgram>& frame_outer_program () const
   {
     return frame_outer_program_;
   }
 
-  const RefPtr<GLSLProgram>& frame_image_program () const
+  inline const RefPtr<GLSLProgram>& frame_image_program () const
   {
     return frame_image_program_;
   }
 
-  const RefPtr<GLSLProgram>& frame_shadow_program () const
+  inline const RefPtr<GLSLProgram>& frame_shadow_program () const
   {
     return frame_shadow_program_;
   }
 
-  const glm::mat4& widget_projection_matrix () const
+  inline const glm::mat4& widget_projection_matrix () const
   {
     return current_widget_projection_matrix_;
   }
 
-  const glm::mat4& widget_view_matrix () const
+  inline const glm::mat4& widget_view_matrix () const
   {
     return current_widget_view_matrix_;
   }
 
-  const glm::mat3& widget_model_matrix () const
+  inline const glm::mat3& widget_model_matrix () const
   {
     return current_widget_model_matrix_;
   }
@@ -274,7 +282,7 @@ public:
     return locations_[index];
   }
 
-private:
+ private:
 
   enum
   {
@@ -309,6 +317,8 @@ private:
 
   bool SetupWidgetShadowProgram ();
 
+  bool SetupWidgetDebugProgram ();
+  
   bool SetupPrimitiveProgram ();
 
   bool SetupFrameInnerProgram ();
@@ -339,6 +349,8 @@ private:
 
   RefPtr<GLSLProgram> widget_shadow_program_;
 
+  RefPtr<GLSLProgram> widget_debug_program_;
+  
   RefPtr<GLSLProgram> frame_inner_program_;
 
   RefPtr<GLSLProgram> frame_outer_program_;
@@ -432,6 +444,10 @@ private:
 
   static const char* widget_shadow_fragment_shader;
 
+  static const char* widget_debug_vertex_shader;
+
+  static const char* widget_debug_fragment_shader;
+  
   static const char* frame_inner_vertex_shader;
 
   static const char* frame_inner_fragment_shader;

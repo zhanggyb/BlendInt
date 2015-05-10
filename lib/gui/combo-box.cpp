@@ -32,6 +32,9 @@
 #include <blendint/gui/combo-box.hpp>
 #include <blendint/gui/menu.hpp>
 
+// for debug:
+#include <blendint/gui/curve-edit.hpp>
+
 namespace BlendInt {
 
 ComboListModel::ComboListModel ()
@@ -864,9 +867,12 @@ Response ComboBox::PerformMousePress (AbstractWindow* context)
     last_round_status_ = round_type();
     Menu* menu = new Menu;
 
-    ComboListView* list = new ComboListView;
-    list->SetModel(model_);
-    menu->AddWidget(list);
+    // ComboListView* list = new ComboListView;
+    // list->SetModel(model_);
+    // menu->AddWidget(list);
+
+    CurveEdit* debug_widget = new CurveEdit;
+    menu->AddWidget(debug_widget);
 
     popup_ = menu;
     popup_->Resize(popup_->GetPreferredSize());

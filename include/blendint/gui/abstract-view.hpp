@@ -602,7 +602,7 @@ private:
 
   bool destroying_;
 
-  int view_type_;
+  short view_type_;
   
   int reference_count_;
   

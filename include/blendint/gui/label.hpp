@@ -33,77 +33,78 @@
 #include <blendint/gui/text.hpp>
 #include <blendint/gui/abstract-widget.hpp>
 
-using namespace std;
-
 namespace BlendInt {
 
-  /**
-   * @brief A widget that displays text
-   *
-   * @ingroup blendint_gui_widgets
-   */
-  class Label: public AbstractWidget
-  {
+/**
+ * @brief A widget that displays text
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class Label: public AbstractWidget
+{
   DISALLOW_COPY_AND_ASSIGN(Label);
 
-  public:
+ public:
 
-    Label (const String& label, Alignment alignment = AlignLeft);
+  Label (const String& label, Alignment alignment = AlignLeft);
 
-    virtual ~Label ();
+  virtual ~Label ();
 
-    /**
-     * @brief set the label text
-     * @param label
-     *
-     * call this function will reset the size and preferred size of this object
-     */
-    void SetText (const String& text);
+  /**
+   * @brief set the label text
+   * @param label
+   *
+   * call this function will reset the size and preferred size of this object
+   */
+  void SetText (const String& text);
 
-    /**
-     * @brief set the text font
-     * @param font
-     *
-     * call this function will reset the preferred size of this object
-     */
-    void SetFont (const Font& font);
+  /**
+   * @brief set the text font
+   * @param font
+   *
+   * call this function will reset the preferred size of this object
+   */
+  void SetFont (const Font& font);
 
-    void SetForeground (const Color& color);
+  void SetForeground (const Color& color);
 
-    void SetBackground (const Color& color);
+  void SetBackground (const Color& color);
 
-    virtual Size GetPreferredSize () const;
+  virtual Size GetPreferredSize () const;
 
-    virtual bool IsExpandX () const;
+  virtual bool IsExpandX () const;
 
-  protected:
+ protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height);
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height);
 
-    virtual Response PerformMousePress (AbstractWindow* context);
+  virtual Response PerformMousePress (AbstractWindow* context);
 
-    virtual Response PerformMouseRelease (AbstractWindow* context);
+  virtual Response PerformMouseRelease (AbstractWindow* context);
 
-    virtual Response PerformMouseMove (AbstractWindow* context);
+  virtual Response PerformMouseMove (AbstractWindow* context);
 
-    virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context);
 
-  private:
+ private:
 
-    RefPtr<Text> text_;
+  RefPtr<Text> text_;
 
-    Alignment alignment_;
+  Alignment alignment_;
 
-    GLuint vao_;
+  GLuint vao_;
 
-    GLBuffer<> vbo_;
+  GLBuffer<> vbo_;
 
-    Color foreground_;
+  Color foreground_;
 
-    Color background_;
+  Color background_;
 
-    static Margin kPadding;
+  static Margin kPadding;
 
-  };
+};
 
 } /* namespace BlendInt */

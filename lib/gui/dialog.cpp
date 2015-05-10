@@ -217,7 +217,7 @@ bool Dialog::PreDraw (AbstractWindow* context)
   DeclareActiveFrame(context, this);
 
   if (refresh() && view_buffer()) {
-    RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
+    RenderToTexture(this, context, projection_matrix_, model_matrix_,
                              view_buffer()->texture());
   }
 

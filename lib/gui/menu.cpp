@@ -50,7 +50,7 @@ Menu::Menu ()
   set_size(240, 360);
   set_round_type(RoundAll);
   set_refresh(true);
-  EnableViewBuffer();
+  // EnableViewBuffer();
 
   projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
                                   (float) size().height(), 100.f, -100.f);
@@ -351,8 +351,11 @@ bool Menu::PreDraw (AbstractWindow* context)
   DeclareActiveFrame(context, this);
 
   if (refresh() && view_buffer()) {
-    RenderSubFramesToTexture(this, context, projection_matrix_, model_matrix_,
-                             view_buffer()->texture());
+    RenderToTexture(this,
+                    context,
+                    projection_matrix_,
+                    model_matrix_,
+                    view_buffer()->texture());
   }
 
   return true;
@@ -366,7 +369,7 @@ Response Menu::Draw (AbstractWindow* context)
 
   glUniform2f(
       AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
-      (float) position().x(), (float) position().y());
+      position().x(), position().y());
   glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -441,6 +444,15 @@ void Menu::PerformHoverOut (AbstractWindow* context)
 
 Response Menu::PerformKeyPress (AbstractWindow* context)
 {
+#ifdef DEBUG
+  if (context->GetKeyAction() == KeyPress) {
+    if (context->GetTextInput().empty() && (context->GetKeyInput() == Key_D)) {
+       DBG_PRINT_MSG("%s", "render to debug.png");
+       if (view_buffer()) view_buffer()->SaveToFile("debug.png");
+     }
+  }
+#endif
+
   if (context->GetKeyInput() == Key_Escape) {
     RequestRedraw();
     Destroy(this);

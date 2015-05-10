@@ -183,7 +183,7 @@ namespace BlendInt {
 		DeclareActiveFrame(context, this);
 
 		if(refresh() && view_buffer()) {
-			RenderSubFramesToTexture(this,
+			RenderToTexture(this,
 					context,
 					projection_matrix_,
 					model_matrix_,

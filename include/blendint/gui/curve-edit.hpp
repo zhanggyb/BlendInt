@@ -24,22 +24,32 @@
 #pragma once
 
 #include <blendint/opengl/gl-buffer.hpp>
-#include <blendint/gui/abstract-button.hpp>
+
+#include <blendint/gui/abstract-widget.hpp>
 
 namespace BlendInt {
 
-/**
- * @brief A special button used in MenuBar only
- *
- * @ingroup blendint_gui_widgets_buttons
+/*
+ * Currently for debuging shader
  */
-class MenuButton: public AbstractButton
+
+/**
+ * @brief A widget to show and edit curve
+ *
+ */
+class CurveEdit: public AbstractWidget
 {
  public:
 
-  MenuButton (const String& text);
+  CurveEdit ();
 
-  virtual ~MenuButton ();
+  virtual ~CurveEdit ();
+
+  virtual Size GetPreferredSize () const;
+  
+  virtual bool IsExpandX () const;
+
+  virtual bool IsExpandY () const;
 
  protected:
 
@@ -47,26 +57,15 @@ class MenuButton: public AbstractButton
                                   const AbstractView* target,
                                   int width,
                                   int height);
-
-  virtual void PerformRoundTypeUpdate (int round_type);
-
-  virtual void PerformRoundRadiusUpdate (float radius);
-
-  virtual void PerformHoverIn (AbstractWindow* context);
-
-  virtual void PerformHoverOut (AbstractWindow* context);
-
+  
   virtual Response Draw (AbstractWindow* context);
 
  private:
 
-  void InitializeMenuButton ();
+  GLuint vao_[2];
 
-  GLuint vao_;
-
-  GLBuffer<> vbo_;
-
-  bool hover_;
+  GLBuffer<ARRAY_BUFFER, 2> vbo_;
+  
 };
 
-} /* namespace BlendInt */
+}

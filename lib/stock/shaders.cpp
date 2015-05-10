@@ -691,6 +691,64 @@ const char* Shaders::widget_shadow_fragment_shader =
 
 // ---------------------------------------------------------------
 
+const char* Shaders::widget_debug_vertex_shader =
+    "#version 330\n"
+    "layout(location = 0) in vec3 aCoord;"
+    ""
+    "layout (std140) uniform WidgetMatrices {"
+    "	mat4 projection;"
+    "	mat4 view;"
+    "	mat3 model;"
+    "};"
+    ""
+    "out vec4 fColor;"
+    ""
+    "void main(void) {"
+    
+    /* Test projection: */
+    "   fColor.r = length(projection[0]);"
+    "   fColor.g = length(projection[1]);"
+    "   fColor.b = length(projection[2]);"
+    "   fColor.a = length(projection[3]);"
+    "   fColor = vec4((vec4(1.f) - fColor).rgb, 1.f);"
+
+    /*
+    "   fColor.r = length(view[0]);"
+    "   fColor.g = length(view[1]);"
+    "   fColor.b = length(view[2]);"
+    "   fColor.a = length(view[3]);"
+    "   fColor = normalize(fColor);"
+    "   fColor.a = 1.f;"
+    */
+    
+    /* Test model
+    "   fColor.r = length(model[0]);"
+    "   fColor.g = length(model[1]);"
+    "   fColor.b = length(model[2]);"
+    "   fColor.a = 1.f;"
+    "   fColor = normalize(fColor);"
+    "   fColor.a = 1.f;"
+    */
+
+    // "   fColor = vec4((vec4(1.f) - fColor).rgb, 1.f);"
+    "	vec3 point = model * vec3(aCoord.xy, 1.f);"
+    "	gl_Position = projection * view * vec4(point.xy, 0.f, 1.f);"
+    "}";
+
+const char* Shaders::widget_debug_fragment_shader =
+    "#version 330\n"
+    ""
+    "in vec4 fColor;"
+    "out vec4 FragmentColor;"
+    ""
+    "void main(void) {"
+    ""
+    "	FragmentColor = fColor;"
+    "}";
+
+
+// ---------------------------------------------------------------
+
 const char* Shaders::frame_inner_vertex_shader =
     "#version 330\n"
     ""
@@ -959,6 +1017,7 @@ Shaders::Shaders ()
   widget_image_program_.reset(new GLSLProgram);
   widget_line_program_.reset(new GLSLProgram);
   widget_shadow_program_.reset(new GLSLProgram);
+  widget_debug_program_.reset(new GLSLProgram);
   frame_inner_program_.reset(new GLSLProgram);
   frame_outer_program_.reset(new GLSLProgram);
   frame_image_program_.reset(new GLSLProgram);
@@ -1130,6 +1189,7 @@ bool Shaders::Setup ()
   if (!SetupWidgetImageProgram()) return false;
   if (!SetupWidgetLineProgram()) return false;
   if (!SetupWidgetShadowProgram()) return false;
+  if (!SetupWidgetDebugProgram()) return false;
   if (!SetupPrimitiveProgram()) return false;
   if (!SetupFrameInnerProgram()) return false;
   if (!SetupFrameOuterProgram()) return false;
@@ -1271,13 +1331,20 @@ bool Shaders::Setup ()
   glUniformBlockBinding(widget_line_program_->id(), block_index,
                         kWidgetMatricesBindingPoint);
 
-  // set uniform black in shadow program
+  // set uniform block in shadow program
 
   block_index = glGetUniformBlockIndex(widget_shadow_program_->id(),
                                        "WidgetMatrices");
   glUniformBlockBinding(widget_shadow_program_->id(), block_index,
                         kWidgetMatricesBindingPoint);
 
+  // set uniform block in debug program
+
+  block_index = glGetUniformBlockIndex(widget_debug_program_->id(),
+                                       "WidgetMatrices");
+  glUniformBlockBinding(widget_debug_program_->id(), block_index,
+                        kWidgetMatricesBindingPoint);
+  
   // ------------------------------ Frame matrix uniform block
 
   block_index = glGetUniformBlockIndex(frame_inner_program_->id(),
@@ -1625,6 +1692,28 @@ bool Shaders::SetupWidgetShadowProgram ()
       widget_shadow_program_->GetUniformLocation("uAA");
   locations_[WIDGET_SHADOW_SIZE] = widget_shadow_program_->GetUniformLocation(
       "uSize");
+
+  return true;
+}
+
+bool Shaders::SetupWidgetDebugProgram ()
+{
+  if (!widget_debug_program_->Create()) {
+    return false;
+  }
+
+  widget_debug_program_->AttachShader(widget_debug_vertex_shader,
+                                       GL_VERTEX_SHADER);
+  widget_debug_program_->AttachShader(widget_debug_fragment_shader,
+                                       GL_FRAGMENT_SHADER);
+  if (!widget_debug_program_->Link()) {
+    DBG_PRINT_MSG("Fail to link the widget debug program: %d",
+                  widget_debug_program_->id());
+    return false;
+  }
+
+  locations_[WIDGET_DEBUG_COORD] =
+      widget_debug_program_->GetAttributeLocation("aCoord");
 
   return true;
 }

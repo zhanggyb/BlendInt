@@ -260,8 +260,10 @@ void PushButton::InitializeButtonOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateRoundedVertices(Vertical, AbstractWindow::theme()->push_button(),
-                          &inner_verts, &outer_verts);
+  GenerateRoundedVertices(Vertical,
+                          AbstractWindow::theme()->push_button(),
+                          &inner_verts,
+                          &outer_verts);
 
   glGenVertexArrays(2, vao_);
   vbo_.generate();
@@ -271,9 +273,7 @@ void PushButton::InitializeButtonOnce ()
   vbo_.bind(0);
   vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
-  glVertexAttribPointer(AttributeCoord, 3,
-  GL_FLOAT,
-                        GL_FALSE, 0, 0);
+  glVertexAttribPointer(AttributeCoord, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
   vbo_.bind(1);
