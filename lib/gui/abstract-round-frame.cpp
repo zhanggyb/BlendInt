@@ -136,8 +136,11 @@ namespace BlendInt {
                                                     std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * AbstractWindow::theme()->pixel(),
-                     round_type(), round_radius_, inner, outer);
+                     default_border_width(),
+                     round_type(),
+                     round_radius_,
+                     inner,
+                     outer);
   }
 
   void AbstractRoundFrame::GenerateRoundedVertices (Orientation shadedir,
@@ -147,9 +150,14 @@ namespace BlendInt {
                                                     std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * AbstractWindow::theme()->pixel(),
-                     round_type(), round_radius_, shadedir, shadetop, shadedown,
-                     inner, outer);
+                     default_border_width(),
+                     round_type(),
+                     round_radius_,
+                     shadedir,
+                     shadetop,
+                     shadedown,
+                     inner,
+                     outer);
   }
 
   void AbstractRoundFrame::PerformRoundTypeUpdate (int round_type)

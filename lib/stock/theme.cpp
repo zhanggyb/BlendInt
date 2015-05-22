@@ -47,7 +47,7 @@ static xml_node<>* AllocateThemeNode (xml_document<>& doc,
 Theme::Theme ()
 {
   data_.dpi = 72;
-  data_.pixel = 1;
+  data_.pixel = 1.f;
   data_.shadow_fac = 0.5;
   data_.shadow_width = 12;
 }
@@ -143,7 +143,7 @@ bool Theme::Save (const std::string& filepath)
   attr = doc.allocate_attribute("dpi", value);
   ui_node->append_attribute(attr);
 
-  snprintf(buf, 16, "%hd", data_.pixel);
+  snprintf(buf, 16, "%g", data_.pixel);
   value = doc.allocate_string(buf);
   attr = doc.allocate_attribute("pixel", value);
   ui_node->append_attribute(attr);
@@ -543,7 +543,7 @@ void Theme::Reset ()
   data_.shadow_width = 9;
 
   // TODO: check if retina in Mac OS
-  data_.pixel = 1;
+  data_.pixel = 2.f;
 
   data_.xaxis = 0xFF0000FF;
   data_.yaxis = 0x00FF00FF;
@@ -568,8 +568,8 @@ void ParseUINode (const rapidxml::xml_node<>* node, ThemeData* data)
 
     } else if (strcmp("pixel", attrib->name()) == 0) {
 
-      short v = 0;
-      if (sscanf(attrib->value(), "%hd", &v) == 1) {
+      float v = 0.f;
+      if (sscanf(attrib->value(), "%g", &v) == 1) {
         data->pixel = v;
       }
 

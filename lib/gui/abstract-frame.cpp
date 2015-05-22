@@ -495,14 +495,20 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
                         GL_ONE_MINUS_SRC_ALPHA);
     //glEnable(GL_BLEND);
 
-    glViewport(0, 0, frame->size().width(), frame->size().height());
+    glViewport(0,
+               0,
+               pixel_size(frame->size().width()),
+               pixel_size(frame->size().height()));
 
     // Draw context:
     frame->DrawSubViewsOnce(context);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0,
+               0,
+               pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
     DBG_ASSERT(context->stencil_count_ == 0);
     context->stencil_count_ = original_stencil_count;
 

@@ -26,95 +26,102 @@
 
 namespace BlendInt {
 
-	AbstractRoundWidget::AbstractRoundWidget()
-	: AbstractWidget(),
-	  widget_flag_(0),
-	  round_radius_(5.f)
-	{
-	}
+AbstractRoundWidget::AbstractRoundWidget()
+    : AbstractWidget(),
+      widget_flag_(0),
+      round_radius_(5.f)
+{
+}
 
-	AbstractRoundWidget::AbstractRoundWidget(int width, int height)
-	: AbstractWidget(width, height),
-	  widget_flag_(0),
-	  round_radius_(5.f)
-	{
-	}
+AbstractRoundWidget::AbstractRoundWidget(int width, int height)
+    : AbstractWidget(width, height),
+      widget_flag_(0),
+      round_radius_(5.f)
+{
+}
 
-	AbstractRoundWidget::~AbstractRoundWidget()
-	{
-	}
+AbstractRoundWidget::~AbstractRoundWidget()
+{
+}
 
-	void AbstractRoundWidget::SetRoundRadius(float radius)
-	{
-		if(round_radius_ == radius) return;
+void AbstractRoundWidget::SetRoundRadius(float radius)
+{
+  if(round_radius_ == radius) return;
 
-		PerformRoundRadiusUpdate(radius);
-	}
+  PerformRoundRadiusUpdate(radius);
+}
 
-	void AbstractRoundWidget::SetRoundType(int type)
-	{
-		if((widget_flag_ & 0x0F) == (type & 0x0F)) return;
+void AbstractRoundWidget::SetRoundType(int type)
+{
+  if((widget_flag_ & 0x0F) == (type & 0x0F)) return;
 
-		PerformRoundTypeUpdate(type & 0x0F);
-	}
+  PerformRoundTypeUpdate(type & 0x0F);
+}
 
-	void AbstractRoundWidget::SetEmboss(bool emboss)
-	{
-		if(this->emboss() == emboss) return;
+void AbstractRoundWidget::SetEmboss(bool emboss)
+{
+  if(this->emboss() == emboss) return;
 
-		PerformEmbossUpdate(emboss);
-	}
+  PerformEmbossUpdate(emboss);
+}
 
-	void AbstractRoundWidget::PerformRoundTypeUpdate(int round)
-	{
-		set_round_type(round);
-	}
+void AbstractRoundWidget::PerformRoundTypeUpdate(int round)
+{
+  set_round_type(round);
+}
 
-	void AbstractRoundWidget::PerformRoundRadiusUpdate(float radius)
-	{
-		round_radius_ = radius;
-	}
+void AbstractRoundWidget::PerformRoundRadiusUpdate(float radius)
+{
+  round_radius_ = radius;
+}
 
-	void AbstractRoundWidget::PerformEmbossUpdate(bool emboss)
-	{
-		set_emboss(emboss);
-	}
+void AbstractRoundWidget::PerformEmbossUpdate(bool emboss)
+{
+  set_emboss(emboss);
+}
 
-	void AbstractRoundWidget::GenerateRoundedVertices(std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
-	{
-		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme()->pixel(),
-				round_type(),
-				round_radius_,
-				inner,
-				outer);
-	}
+void AbstractRoundWidget::GenerateRoundedVertices(std::vector<GLfloat>* inner,
+                                                  std::vector<GLfloat>* outer)
+{
+  GenerateVertices(size(),
+                   default_border_width(),
+                   round_type(),
+                   round_radius_,
+                   inner,
+                   outer);
+}
 
-	void AbstractRoundWidget::GenerateRoundedVertices(Orientation shadedir, short shadetop,
-			short shadedown, std::vector<GLfloat>* inner,
-			std::vector<GLfloat>* outer)
-	{
-		GenerateVertices(size(),
-				default_border_width() * AbstractWindow::theme()->pixel(),
-				round_type(),
-				round_radius_,
-				shadedir,
-				shadetop,
-				shadedown,
-				inner,
-				outer);
-	}
+void AbstractRoundWidget::GenerateRoundedVertices(Orientation shadedir,
+                                                  short shadetop,
+                                                  short shadedown,
+                                                  std::vector<GLfloat>* inner,
+                                                  std::vector<GLfloat>* outer)
+{
+  GenerateVertices(size(),
+                   default_border_width(),
+                   round_type(),
+                   round_radius_,
+                   shadedir,
+                   shadetop,
+                   shadedown,
+                   inner,
+                   outer);
+}
 
-  void AbstractRoundWidget::GenerateRoundedVertices (Orientation shadedir,
-                                                     const ColorScheme& color_theme,
-                                                     std::vector<GLfloat>* inner,
-                                                     std::vector<GLfloat>* outer)
-  {
-    GenerateVertices(size(),
-                     default_border_width() * AbstractWindow::theme()->pixel(),
-                     round_type(), round_radius_, shadedir,
-                     color_theme.shadetop, color_theme.shadedown, inner, outer);
-  }
+void AbstractRoundWidget::GenerateRoundedVertices (Orientation shadedir,
+                                                   const ColorScheme& color_theme,
+                                                   std::vector<GLfloat>* inner,
+                                                   std::vector<GLfloat>* outer)
+{
+  GenerateVertices(size(),
+                   default_border_width(),
+                   round_type(),
+                   round_radius_,
+                   shadedir,
+                   color_theme.shadetop,
+                   color_theme.shadedown,
+                   inner,
+                   outer);
+}
 
 }

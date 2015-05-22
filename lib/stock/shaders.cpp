@@ -31,6 +31,8 @@
 #include <blendint/opengl/opengl.hpp>
 #include <blendint/stock/shaders.hpp>
 
+#include <blendint/gui/abstract-window.hpp>
+
 namespace BlendInt {
 
 const char* Shaders::widget_text_vertex_shader =
@@ -1204,7 +1206,12 @@ bool Shaders::Setup ()
   GLubyte* buf_p = NULL;
 
   // set default matrix
-  glm::mat4 projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
+  glm::mat4 projection = glm::ortho(0.f,
+                                    pixel_size(800.f),
+                                    0.f,
+                                    pixel_size(600.f),
+                                    100.f,
+                                    -100.f);
   glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
                                glm::vec3(0.f, 0.f, 0.f),
                                glm::vec3(0.f, 1.f, 0.f));

@@ -121,10 +121,11 @@ void Frame::PerformSizeUpdate (const AbstractView* source, const AbstractView* t
   if (target == this) {
 
     projection_matrix_ = glm::ortho(0.f,
-                                    0.f + (float) width,
+                                    pixel_size(width),
                                     0.f,
-                                    0.f + (float) height,
-                                    100.f, -100.f);
+                                    pixel_size(height),
+                                    100.f,
+                                    -100.f);
 
     set_size(width, height);
 
@@ -134,7 +135,7 @@ void Frame::PerformSizeUpdate (const AbstractView* source, const AbstractView* t
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
-    GenerateVertices(size(), 1.f * AbstractWindow::theme()->pixel(),
+    GenerateVertices(size(), 1.f,
                      RoundNone, 0.f, &inner_verts, &outer_verts);
 
     vbo_.bind(0);
@@ -172,7 +173,7 @@ Response Frame::Draw (AbstractWindow* context)
 
   glUniform2f(
       AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
-      position().x(), position().y());
+      pixel_size(position().x()), pixel_size(position().y()));
   glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -187,7 +188,7 @@ Response Frame::Draw (AbstractWindow* context)
 
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        position().x(), position().y());
+        pixel_size(position().x()), pixel_size(position().y()));
     glUniform1i(
         AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(
@@ -198,23 +199,26 @@ Response Frame::Draw (AbstractWindow* context)
 
   } else {
 
-    glViewport(position().x(), position().y(), size().width(),
-               size().height());
+    glViewport(pixel_size(position().x()),
+               pixel_size(position().y()),
+               pixel_size(size().width()),
+               pixel_size(size().height()));
 
     AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
     AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0, 0, pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
 
   }
 
   AbstractWindow::shaders()->frame_outer_program()->use();
 
-  glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
-      position().x(), position().y());
+  glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glBindVertexArray(vao_[1]);
 
   glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
@@ -423,13 +427,17 @@ Response Frame::PerformMouseHover (AbstractWindow* context)
 
 void Frame::InitializeFrameOnce ()
 {
-  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                  (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(0.f,
+                                  pixel_size(size().width()),
+                                  0.f,
+                                  pixel_size(size().height()),
+                                  100.f,
+                                  -100.f);
   model_matrix_ = glm::mat3(1.f);
 
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
-  GenerateVertices(size(), pixel_size(1), RoundNone, 0.f, &inner_verts,
+  GenerateVertices(size(), 1.f, RoundNone, 0.f, &inner_verts,
                    &outer_verts);
 
   vbo_.generate();

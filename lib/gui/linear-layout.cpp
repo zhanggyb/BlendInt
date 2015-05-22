@@ -39,8 +39,7 @@ LinearLayout::LinearLayout (int width,
                             Orientation orient,
                             int align,
                             int space)
-    :
-      AbstractLayout(width, height, margin),
+    : AbstractLayout(width, height, margin),
       orientation_(orient),
       alignment_(align),
       space_(space)
@@ -178,8 +177,8 @@ Size BlendInt::LinearLayout::GetPreferredSize () const
       h = std::max(h, tmp.height());
     }
 
-    w += pixel_size(margin().hsum());
-    h += pixel_size(margin().vsum());
+    w += margin().hsum();
+    h += margin().vsum();
   } else {
     h = -space_;
     for (AbstractView* p = first(); p; p = next(p)) {
@@ -189,8 +188,8 @@ Size BlendInt::LinearLayout::GetPreferredSize () const
       h += (tmp.height() + space_);
     }
 
-    w += pixel_size(margin().hsum());
-    h += pixel_size(margin().vsum());
+    w += margin().hsum();
+    h += margin().vsum();
   }
 
   return Size(w, h);

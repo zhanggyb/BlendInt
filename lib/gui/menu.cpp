@@ -52,8 +52,12 @@ Menu::Menu ()
   set_refresh(true);
   // EnableViewBuffer();
 
-  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                  (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(0.f,
+                                  pixel_size(size().width()),
+                                  0.f,
+                                  pixel_size(size().height()),
+                                  100.f,
+                                  -100.f);
   model_matrix_ = glm::mat3(1.f);
 
   InitializeMenu();
@@ -247,8 +251,12 @@ void Menu::PerformSizeUpdate (const AbstractView* source,
 
     set_size(width, height);
 
-    projection_matrix_ = glm::ortho(0.f, 0.f + size().width(), 0.f,
-                                    0.f + size().height(), 100.f, -100.f);
+    projection_matrix_ = glm::ortho(0.f,
+                                    pixel_size(size().width()),
+                                    0.f,
+                                    pixel_size(size().height()),
+                                    100.f,
+                                    -100.f);
 
     if (view_buffer()) {
       view_buffer()->Resize(size());

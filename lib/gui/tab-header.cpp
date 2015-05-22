@@ -41,8 +41,15 @@ TabHeader::TabHeader()
   //events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &CppEvent::Event<int, bool>::fire);
 
   std::vector<GLfloat> inner_verts;
-  GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
-                   &inner_verts, 0);
+  GenerateRawVertices(0.f,
+                      0.f,
+                      pixel_size(size().width()),
+                      pixel_size(kBaseLine),
+                      0.f,
+                      RoundNone,
+                      0.f,
+                      &inner_verts,
+                      0);
 
   glGenVertexArrays(1, &vao_);
   glBindVertexArray(vao_);
@@ -155,8 +162,15 @@ void TabHeader::PerformSizeUpdate (const AbstractView* source, const AbstractVie
     set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
-    GenerateVertices(0.f, 0.f, size().width(), kBaseLine, 0.f, RoundNone, 0.f,
-                     &inner_verts, 0);
+    GenerateRawVertices(0.f,
+                        0.f,
+                        pixel_size(size().width()),
+                        pixel_size(kBaseLine),
+                        0.f,
+                        RoundNone,
+                        0.f,
+                        &inner_verts,
+                        0);
 
     vbo_.bind();
     vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),

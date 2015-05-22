@@ -35,7 +35,7 @@ PushButton::PushButton ()
   int w = 80;
   int h = font.height();
 
-  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(w + kPadding.hsum(), h + kPadding.vsum());
 
   InitializeButtonOnce();
 }
@@ -49,8 +49,8 @@ PushButton::PushButton (const String& text)
   int h = this->text()->font().height();
   if (w < 80) w = 80;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -65,8 +65,8 @@ PushButton::PushButton (const RefPtr<AbstractIcon>& icon)
   int w = this->icon()->size().width();
   int h = this->icon()->size().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -87,8 +87,8 @@ PushButton::PushButton (const RefPtr<AbstractIcon>& icon, const String& text)
   h = std::max(h, this->text()->font().height());
 
   if (w < 80) w = 80;
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -246,7 +246,7 @@ Response PushButton::Draw (AbstractWindow* context)
         1.0f, 1.0f, 0.16f);
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        -1.f);
+        pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 

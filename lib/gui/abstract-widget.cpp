@@ -81,10 +81,20 @@ bool AbstractWidget::PreDraw (AbstractWindow* context)
   // Point pos = GetGlobalPosition();
   
   Point offset = GetOffset();
-  
+
   glm::mat3 matrix = glm::translate(
       AbstractWindow::shaders()->widget_model_matrix(),
-      glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
+      glm::vec2(pixel_size(position().x() + offset.x()),
+                pixel_size(position().y() + offset.y())
+                ));
+
+  /*
+  glm::mat3 matrix = glm::translate(
+      AbstractWindow::shaders()->widget_model_matrix(),
+      glm::vec2(position().x() + offset.x(),
+                position().y() + offset.y()
+                ));
+  */
   // glm::mat4 matrix = glm::translate(glm::mat4(1.f), glm::vec3(pos.x() + offset_x(), pos.y() + offset_y(), 0.f));
   
   AbstractWindow::shaders()->PushWidgetModelMatrix();
@@ -215,8 +225,11 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
     glm::mat3 identity(1.f);
     AbstractWindow::shaders()->SetWidgetModelMatrix(identity);
 
-    glm::mat4 projection = glm::ortho(0.f, (float) widget->size().width(), 0.f,
-                                      (float) widget->size().height(), 100.f,
+    glm::mat4 projection = glm::ortho(0.f,
+                                      pixel_size(widget->size().width()),
+                                      0.f,
+                                      pixel_size(widget->size().height()),
+                                      100.f,
                                       -100.f);
     AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection);
 
@@ -238,7 +251,8 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
                           GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    glViewport(0, 0, widget->size().width(), widget->size().height());
+    glViewport(0, 0, pixel_size(widget->size().width()),
+               pixel_size(widget->size().height()));
     glDisable(GL_SCISSOR_TEST);
 
     //DrawPanel();

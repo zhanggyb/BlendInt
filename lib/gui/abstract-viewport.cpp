@@ -168,11 +168,17 @@ namespace BlendInt {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
     // now set viewport for 3D scene
-    glViewport(position().x(), position().y(), size().width(), size().height());
+    glViewport(pixel_size(position().x()),
+               pixel_size(position().y()),
+               pixel_size(size().width()),
+               pixel_size(size().height()));
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor(position().x(), position().y(), size().width(), size().height());
-
+    glScissor(pixel_size(position().x()),
+              pixel_size(position().y()),
+              pixel_size(size().width()),
+              pixel_size(size().height()));
+    
     return true;
   }
 
@@ -193,7 +199,9 @@ namespace BlendInt {
   void AbstractViewport::PostDraw (AbstractWindow* context)
   {
     glDisable(GL_SCISSOR_TEST);
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0, 0,
+               pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
   }
 
 }

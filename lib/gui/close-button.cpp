@@ -33,7 +33,7 @@ CloseButton::CloseButton ()
     : AbstractButton()
 {
   set_round_type(RoundAll);
-  int h = 16 * AbstractWindow::theme()->pixel();
+  int h = 16;
   set_size(h, h);
   set_round_radius(h / 2.f);
 
@@ -47,8 +47,7 @@ CloseButton::~CloseButton ()
 
 Size CloseButton::GetPreferredSize () const
 {
-  int h = pixel_size(16);
-  return Size(h, h);
+  return Size(16, 16);
 }
 
 void CloseButton::PerformSizeUpdate (const AbstractView* source,
@@ -177,7 +176,7 @@ Response CloseButton::Draw (AbstractWindow* context)
         1.0f, 1.0f, 0.16f);
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        -1.f);
+        pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 
@@ -212,7 +211,7 @@ void CloseButton::InitializeCloseButtonOnce ()
   buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 3,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
@@ -220,7 +219,7 @@ void CloseButton::InitializeCloseButtonOnce ()
   buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);

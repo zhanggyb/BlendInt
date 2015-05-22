@@ -65,8 +65,12 @@ MessageBox::MessageBox (const String& title, const String& description)
 
   PushBackSubView(vlayout);
 
-  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                  (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(0.f,
+                                  pixel_size(size().width()),
+                                  0.f,
+                                  pixel_size(size().height()),
+                                  100.f,
+                                  -100.f);
   model_matrix_ = glm::mat3(1.f);
 
   std::vector<GLfloat> inner_verts;
@@ -119,14 +123,20 @@ void MessageBox::SetTextFont (const BlendInt::Font& font)
   text_->SetFont(font);
 }
 
-void MessageBox::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void MessageBox::PerformSizeUpdate (const AbstractView* source,
+                                    const AbstractView* target,
+                                    int width,
+                                    int height)
 {
   if (target == this) {
 
     set_size(width, height);
 
-    projection_matrix_ = glm::ortho(0.f, 0.f + (float) size().width(), 0.f,
-                                    0.f + (float) size().height(), 100.f,
+    projection_matrix_ = glm::ortho(0.f,
+                                    pixel_size(size().width()),
+                                    0.f,
+                                    pixel_size(size().height()),
+                                    100.f,
                                     -100.f);
 
     if (view_buffer()) {
@@ -184,7 +194,8 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 
   glUniform2f(
       AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
-      position().x(), position().y());
+      pixel_size(position().x()),
+      pixel_size(position().y()));
   glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(
@@ -200,7 +211,8 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 
     glUniform2f(
         AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        position().x(), position().y());
+        pixel_size(position().x()),
+        pixel_size(position().y()));
     glUniform1i(
         AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(
@@ -211,15 +223,18 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 
   } else {
 
-    glViewport(position().x(), position().y(), size().width(),
-               size().height());
+    glViewport(pixel_size(position().x()),
+               pixel_size(position().y()),
+               pixel_size(size().width()),
+               pixel_size(size().height()));
 
     AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
     AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0, 0, pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
 
   }
 
@@ -227,7 +242,8 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 
   glUniform2f(
       AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
-      position().x(), position().y());
+      pixel_size(position().x()),
+      pixel_size(position().y()));
   glUniform4fv(
       AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 1,
       AbstractWindow::theme()->menu_back().outline.data());

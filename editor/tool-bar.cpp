@@ -102,9 +102,9 @@ namespace BlendInt {
     if (target == this) {
 
       projection_matrix_ = glm::ortho(0.f,
-                                      0.f + (float) width,
+                                      pixel_size(width),
                                       0.f,
-                                      0.f + (float) height,
+                                      pixel_size(height),
                                       100.f, -100.f);
 
       set_size(width, height);
@@ -185,15 +185,19 @@ namespace BlendInt {
 
     } else {
 
-      glViewport(position().x(), position().y(), size().width(),
-                 size().height());
+      glViewport(pixel_size(position().x()),
+                 pixel_size(position().y()),
+                 pixel_size(size().width()),
+                 pixel_size(size().height()));
 
       AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
       AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
 
       DrawSubViewsOnce(context);
 
-      glViewport(0, 0, context->size().width(), context->size().height());
+      glViewport(0, 0,
+                 pixel_size(context->size().width()),
+                 pixel_size(context->size().height()));
 
     }
 
@@ -369,8 +373,12 @@ namespace BlendInt {
 
   void ToolBar::InitializeToolBar ()
   {
-    projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                    (float) size().height(), 100.f, -100.f);
+    projection_matrix_ = glm::ortho(0.f,
+                                    pixel_size(size().width()),
+                                    0.f,
+                                    pixel_size(size().height()),
+                                    100.f,
+                                    -100.f);
     model_matrix_ = glm::mat3(1.f);
 
     std::vector<GLfloat> inner_verts;

@@ -100,8 +100,12 @@ Window::Window (int width, int height, const char* title, int flags)
       exit(EXIT_FAILURE);
     }
 
-    glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
-                                      (float) size().height(), 100.f, -100.f);
+    glm::mat4 projection = glm::ortho(0.f,
+                                      pixel_size(size().width()),
+                                      0.f,
+                                      pixel_size(size().height()),
+                                      100.f,
+                                      -100.f);
     kShaders->SetFrameProjectionMatrix(projection);
     kShaders->SetFrameViewMatrix(default_view_matrix);
     kShaders->SetFrameModelMatrix(glm::mat3(1.f));
@@ -371,8 +375,12 @@ void Window::PerformSizeUpdate (const AbstractView* source,
   if (target == this) {
     set_size(width, height);
 
-    glm::mat4 projection = glm::ortho(0.f, (float) size().width(), 0.f,
-                                      (float) size().height(), 100.f, -100.f);
+    glm::mat4 projection = glm::ortho(0.f,
+                                      pixel_size(size().width()),
+                                      0.f,
+                                      pixel_size(size().height()),
+                                      100.f,
+                                      -100.f);
     kShaders->SetFrameProjectionMatrix(projection);
 
     set_refresh(true);
@@ -413,7 +421,10 @@ bool Window::PreDraw (AbstractWindow* context)
   }
   set_stencil_count(0);
 
-  glViewport(0, 0, size().width(), size().height());
+  glViewport(0,
+             0,
+             pixel_size(size().width()),
+             pixel_size(size().height()));
 
   return true;
 }

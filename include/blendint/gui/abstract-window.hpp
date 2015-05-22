@@ -411,14 +411,19 @@ private:
   static AbstractWindow* kMainWindow;
 };
 
-inline int pixel_size (int a)
+inline float pixel_size (float a)
 {
   return a * AbstractWindow::theme()->pixel();
 }
 
-inline int pixel_size (unsigned int a)
+inline float pixel_size (int a)
 {
   return a * AbstractWindow::theme()->pixel();
 }
 
+inline float pixel_size (unsigned int a)
+{
+  return a * AbstractWindow::theme()->pixel();
 }
+
+}  // namespace BlendInt

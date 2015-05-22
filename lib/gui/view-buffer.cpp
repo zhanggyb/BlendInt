@@ -73,9 +73,9 @@ ViewBuffer::ViewBuffer (int width, int height)
   GLfloat vertices[] = {
     // coord						uv
     0.f, 0.f,						0.f, 0.f,
-    (float)size().width(), 0.f,				1.f, 0.f,
-    0.f, (float)size().height(),			0.f, 1.f,
-    (float)size().width(), (float)size().height(),	1.f, 1.f
+    pixel_size(size().width()), 0.f,			1.f, 0.f,
+    0.f, pixel_size(size().height()),			0.f, 1.f,
+    pixel_size(size().width()), pixel_size(size().height()),	1.f, 1.f
   };
 
   glBindVertexArray(vao_);
@@ -149,9 +149,9 @@ void ViewBuffer::PerformSizeUpdate (int width, int height)
   GLfloat vertices[] = {
     // coord                      	uv
     0.f, 0.f,                     	0.f, 0.f,
-    (float)width, 0.f,             	1.f, 0.f,
-    0.f, (float)height,            	0.f, 1.f,
-    (float)width, (float)height,	1.f, 1.f
+    pixel_size(width), 0.f,            	1.f, 0.f,
+    0.f, pixel_size(height),           	0.f, 1.f,
+    pixel_size(width), pixel_size(height),	1.f, 1.f
   };
 
   vbo_.bind(0);

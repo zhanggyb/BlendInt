@@ -88,8 +88,8 @@ Size AbstractButton::GetPreferredSize () const
     w = h;
   }
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   return Size(w, h);
 }

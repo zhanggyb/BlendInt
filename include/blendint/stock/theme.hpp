@@ -78,7 +78,7 @@ struct ThemeData
   unsigned int dpi;
 
   /** How many pixels for 1 border */
-  short pixel;
+  float pixel;
 
   /* fac: 0 - 1 for blend factor, width in pixels */
   // NOT USED
@@ -229,7 +229,7 @@ public:
     return data_.dpi;
   }
 
-  inline short pixel () const
+  inline float pixel () const
   {
     return data_.pixel;
   }

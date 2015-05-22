@@ -37,8 +37,8 @@ Label::Label (const String& text, Alignment alignment)
   int w = text_->size().width();
   int h = text_->font().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -168,8 +168,8 @@ Size Label::GetPreferredSize () const
   int h = text_->font().height();
   int w = text_->size().width();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   return Size(w, h);
 }

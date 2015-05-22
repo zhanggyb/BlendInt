@@ -31,26 +31,19 @@
 #include <vector>
 #include <boost/filesystem.hpp>
 
+#include <blendint/core/image.hpp>
+
 #include <blendint/stock/icons.hpp>
 #include <blendint/stock/shaders.hpp>
 
 #include <blendint/gui/icon-texture.hpp>
-#include <blendint/core/image.hpp>
+#include <blendint/gui/abstract-window.hpp>
 
 #include <blendint/config.hpp>
 
 namespace BlendInt {
 
 Icons::Icons ()
-{
-  CreateIcons();
-}
-
-Icons::~Icons ()
-{
-}
-
-void Icons::CreateIcons ()
 {
   CreateVectorIcons();
   CreatePixelIcons16x16();
@@ -61,42 +54,46 @@ void Icons::CreateIcons ()
   dot_.reset(new DotIcon);
 }
 
+Icons::~Icons ()
+{
+}
+
 void Icons::CreateVectorIcons ()
 {
   float vec[16][2];
 
   menu_.reset(new VectorIcon(16, 16));
   for (int i = 0; i < 6; i++) {
-    vec[i][0] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][0];
-    vec[i][1] = 0.5 * 16 * VectorIcon::menu_tria_vert[i][1];
+    vec[i][0] = 0.5 * pixel_size(16) * VectorIcon::menu_tria_vert[i][0];
+    vec[i][1] = 0.5 * pixel_size(16) * VectorIcon::menu_tria_vert[i][1];
   }
   menu_->Load(vec, 6, VectorIcon::menu_tria_face, 2);
 
   circle_.reset(new VectorIcon(10, 10));
   for (int i = 0; i < 16; i++) {
-    vec[i][0] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][0];
-    vec[i][1] = 0.5 * 10 * VectorIcon::scroll_circle_vert[i][1];
+    vec[i][0] = 0.5 * pixel_size(10) * VectorIcon::scroll_circle_vert[i][0];
+    vec[i][1] = 0.5 * pixel_size(10) * VectorIcon::scroll_circle_vert[i][1];
   }
   circle_->Load(vec, 16, VectorIcon::scroll_circle_face, 14);
 
   hook_.reset(new VectorIcon(14, 14));
   for (int i = 0; i < 6; i++) {
-    vec[i][0] = 0.5 * 14 * VectorIcon::check_tria_vert[i][0];
-    vec[i][1] = 0.5 * 14 * VectorIcon::check_tria_vert[i][1];
+    vec[i][0] = 0.5 * pixel_size(14) * VectorIcon::check_tria_vert[i][0];
+    vec[i][1] = 0.5 * pixel_size(14) * VectorIcon::check_tria_vert[i][1];
   }
   hook_->Load(vec, 6, VectorIcon::check_tria_face, 4);
 
   num_.reset(new VectorIcon(10, 10));
   for (int i = 0; i < 3; i++) {
-    vec[i][0] = 0.5 * 10 * VectorIcon::num_tria_vert[i][0];
-    vec[i][1] = 0.5 * 10 * VectorIcon::num_tria_vert[i][1];
+    vec[i][0] = 0.5 * pixel_size(10) * VectorIcon::num_tria_vert[i][0];
+    vec[i][1] = 0.5 * pixel_size(10) * VectorIcon::num_tria_vert[i][1];
   }
   num_->Load(vec, 3, VectorIcon::num_tria_face, 1);
 
   cross_.reset(new VectorIcon(12, 12));
   for (int i = 0; i < 12; i++) {
-    vec[i][0] = 0.5 * 12 * VectorIcon::cross_tria_vert[i][0];
-    vec[i][1] = 0.5 * 12 * VectorIcon::cross_tria_vert[i][1];
+    vec[i][0] = 0.5 * pixel_size(12) * VectorIcon::cross_tria_vert[i][0];
+    vec[i][1] = 0.5 * pixel_size(12) * VectorIcon::cross_tria_vert[i][1];
   }
   cross_->Load(vec, 12, VectorIcon::cross_tria_face, 10);
 

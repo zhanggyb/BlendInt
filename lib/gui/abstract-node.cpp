@@ -130,10 +130,18 @@ namespace BlendInt {
                                               std::vector<GLfloat>* inner,
                                               std::vector<GLfloat>* outer)
   {
-    GenerateVertices(0.f, 0.f, size().width(), size().height(),
-                     default_border_width() * AbstractWindow::theme()->pixel(),
-                     round_type(), round_radius(), shadedir, shadetop,
-                     shadedown, inner, outer);
+    GenerateRawVertices(0.f,
+                        0.f,
+                        pixel_size(size().width()),
+                        pixel_size(size().height()),
+                        pixel_size(default_border_width()),
+                        round_type(),
+                        pixel_size(round_radius()),
+                        shadedir,
+                        shadetop,
+                        shadedown,
+                        inner,
+                        outer);
   }
 
   void AbstractNode::PerformRoundTypeUpdate (int round)

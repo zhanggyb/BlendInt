@@ -24,17 +24,33 @@
 #include "editor-window.hpp"
 #include <iostream>
 
+#include <blendint/gui/dialog.hpp>
+#include <blendint/gui/frame.hpp>
+#include <blendint/gui/linear-layout.hpp>
+#include <blendint/gui/push-button.hpp>
+#include <blendint/gui/toggle-button.hpp>
+#include <blendint/gui/label.hpp>
+
 int main (int argc, char* argv[])
 {
   using namespace BlendInt;
 
+  std::cout << "sizeof (AbstractView): " << sizeof(AbstractView) << std::endl;
   if (Window::Initialize()) {
-    EditorWindow win(1280, 800, "UI Editor");
+    //EditorWindow win(1280, 800, "UI Editor");
+
+    Window win(300, 300, "UI Editor");
+    Frame* frame = new Frame(new LinearLayout);
+    frame->AddWidget(new Label("Hello World!"));
+    win.AddFrame(frame);
+    frame->Resize(100, 100);
+    frame->MoveTo(100, 100);
+    
     win.Exec();
     Window::Terminate();
   }
 
-  std::cout << "sizeof (AbstractView): " << sizeof(AbstractView) << std::endl;
+
   
   return 0;
 }
