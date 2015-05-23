@@ -43,8 +43,9 @@ int main (int argc, char* argv[])
 
     Window win(300, 300, "UI Editor");
 
-    Frame* frame = new Frame(new LinearLayout);
+    //Frame* frame = new Frame(new LinearLayout);
     //Menu* frame = new Menu;
+    Dialog* frame = new Dialog("Test");
     
     // frame->EnableViewBuffer();
 

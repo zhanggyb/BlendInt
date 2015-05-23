@@ -27,9 +27,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include <blendint/opengl/opengl.hpp>
+#include <blendint/stock/theme.hpp>
+#include <blendint/stock/shaders.hpp>
 #include <blendint/gui/vector-icon.hpp>
-
-#include <blendint/gui/abstract-window.hpp>
 
 #ifndef WIDGET_AA_JITTER
 #define WIDGET_AA_JITTER 8
@@ -194,34 +194,27 @@ void VectorIcon::Draw (int x,
   shaders()->widget_triangle_program()->use();
 
   glVertexAttrib4fv(AttributeColor, color_ptr);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
-      y);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-      gamma);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-      1);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+              pixel_size(x), pixel_size(y));
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              gamma);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+              1);
 
-  glUniform1f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
-      rotate);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
-      scale_x, scale_y);
+  glUniform1f(shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+              rotate);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+              scale_x, scale_y);
 
   glBindVertexArray(vao_);
   glDrawElements(GL_TRIANGLES, elements_,
   GL_UNSIGNED_INT,
                  BUFFER_OFFSET(0));
 
-  glUniform1f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
-      0.f);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f,
-      1.f);
+  glUniform1f(shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+              0.f);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f,
+              1.f);
 }
 
 void VectorIcon::DrawInRect (const Rect& rect,
@@ -253,34 +246,29 @@ void VectorIcon::DrawInRect (const Rect& rect,
   shaders()->widget_triangle_program()->use();
 
   glVertexAttrib4fv(AttributeColor, color_ptr);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
-      y);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-      gamma);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-      1);
-  glUniform1f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
-      rotate);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+              pixel_size(x), pixel_size(y));
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+              gamma);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+              1);
+  glUniform1f(shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+              rotate);
 
   if (scale) {
     float scale_x = rect.width() * 1.f / size().width();
     float scale_y = rect.height() * 1.f / size().height();
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
-        scale_x, scale_y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+                scale_x, scale_y);
   } else {
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
-        1.f, 1.f);
+    glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+                1.f, 1.f);
   }
 
   glBindVertexArray(vao_);
-  glDrawElements(GL_TRIANGLES, elements_,
-  GL_UNSIGNED_INT,
+  glDrawElements(GL_TRIANGLES,
+                 elements_,
+                 GL_UNSIGNED_INT,
                  BUFFER_OFFSET(0));
 }
 

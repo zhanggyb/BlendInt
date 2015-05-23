@@ -204,9 +204,10 @@ Response AbstractButton::PerformMouseMove (AbstractWindow* context)
 
 void AbstractButton::DrawIconText ()
 {
-  Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-            size().width() - pixel_size(kPadding.hsum()),
-            size().height() - pixel_size(kPadding.vsum()));
+  Rect rect(kPadding.left(),
+            kPadding.bottom(),
+            size().width() - kPadding.hsum(),
+            size().height() - kPadding.vsum());
 
   if (icon_) {
     if (icon_->size().height() <= rect.height()) {
@@ -238,9 +239,10 @@ void AbstractButton::DrawIconText (const float* text_color_v,
                                    const float* icon_color_v,
                                    short icon_gamma)
 {
-  Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-            size().width() - pixel_size(kPadding.hsum()),
-            size().height() - pixel_size(kPadding.vsum()));
+  Rect rect(kPadding.left(),
+            kPadding.bottom(),
+            size().width() - kPadding.hsum(),
+            size().height() - kPadding.vsum());
 
   if (icon_) {
     if (icon_->size().height() <= rect.height()) {
