@@ -62,10 +62,10 @@ void CloseButton::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->regular().shaded) {
+    if (theme()->regular().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->regular().shadetop,
-                              AbstractWindow::theme()->regular().shadedown,
+                              theme()->regular().shadetop,
+                              theme()->regular().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -94,10 +94,10 @@ void CloseButton::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -119,10 +119,10 @@ void CloseButton::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -139,32 +139,32 @@ void CloseButton::PerformRoundRadiusUpdate (float radius)
 
 Response CloseButton::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-              context->theme()->regular().shaded);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              theme()->regular().shaded);
 
   if (is_down()) {
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        AbstractWindow::theme()->regular().inner_sel.data());
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        theme()->regular().inner_sel.data());
   } else {
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        AbstractWindow::theme()->regular().inner.data());
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        theme()->regular().inner.data());
   }
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->regular().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->regular().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -172,10 +172,10 @@ Response CloseButton::Draw (AbstractWindow* context)
 
   if (is_down()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
@@ -183,7 +183,7 @@ Response CloseButton::Draw (AbstractWindow* context)
   int x = size().width() / 2;
   int y = size().height() / 2;
 
-  AbstractWindow::icons()->cross()->Draw(x, y, Color(0x0F0F0FFF).data());
+  icons()->cross()->Draw(x, y, Color(0x0F0F0FFF).data());
 
   return Finish;
 }
@@ -193,10 +193,10 @@ void CloseButton::InitializeCloseButtonOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);

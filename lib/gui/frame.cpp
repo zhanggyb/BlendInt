@@ -169,14 +169,14 @@ bool Frame::PreDraw (AbstractWindow* context)
 
 Response Frame::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->frame_inner_program()->use();
+  shaders()->frame_inner_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+      shaders()->location(Shaders::FRAME_INNER_POSITION),
       pixel_size(position().x()), pixel_size(position().y()));
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
-  glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
+  glUniform4f(shaders()->location(Shaders::FRAME_INNER_COLOR),
               0.447f, 0.447f, 0.447f, 1.f);
 
   glBindVertexArray(vao_[0]);
@@ -184,15 +184,15 @@ Response Frame::Draw (AbstractWindow* context)
 
   if (view_buffer()) {
 
-    AbstractWindow::shaders()->frame_image_program()->use();
+    shaders()->frame_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
         pixel_size(position().x()), pixel_size(position().y()));
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+        shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -204,8 +204,8 @@ Response Frame::Draw (AbstractWindow* context)
                pixel_size(size().width()),
                pixel_size(size().height()));
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+    shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
@@ -214,18 +214,18 @@ Response Frame::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->frame_outer_program()->use();
+  shaders()->frame_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+  glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION),
               pixel_size(position().x()),
               pixel_size(position().y()));
   glBindVertexArray(vao_[1]);
 
-  glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+  glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
               0.576f, 0.576f, 0.576f, 1.f);
   glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
 
-  glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+  glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
               0.4f, 0.4f, 0.4f, 1.f);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 

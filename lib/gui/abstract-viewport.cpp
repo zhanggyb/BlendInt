@@ -152,18 +152,18 @@ namespace BlendInt {
 
     // draw outline
 
-    AbstractWindow::shaders()->frame_outer_program()->use();
+    shaders()->frame_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+        shaders()->location(Shaders::FRAME_OUTER_POSITION),
         position().x(), position().y());
     glBindVertexArray(vao_);
 
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+    glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
                 0.576f, 0.576f, 0.576f, 1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
 
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
+    glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
                 0.4f, 0.4f, 0.4f, 1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 

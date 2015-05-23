@@ -213,14 +213,14 @@ ModelIndex FileBrowser::GetIndexAt (const Point& point) const
 
 Response FileBrowser::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->box().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->box().inner.data());
 
   glBindVertexArray(vaos_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
@@ -229,12 +229,12 @@ Response FileBrowser::Draw (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
   context->EndPushStencil();
 
-  AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+  shaders()->widget_simple_triangle_program()->use();
 
   glUniform4fv(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, AbstractWindow::theme()->box().inner_sel.data());
+      1, theme()->box().inner_sel.data());
 
   glBindVertexArray(vaos_[1]);
 
@@ -245,24 +245,24 @@ Response FileBrowser::Draw (AbstractWindow* context)
   while (y > 0) {
     y -= h;
     glUniform2f(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
         0.f, y);
 
     if (i == highlight_index_) {
       glUniform1i(
-          AbstractWindow::shaders()->location(
+          shaders()->location(
               Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
           -35);
     } else {
       if (i % 2 == 0) {
         glUniform1i(
-            AbstractWindow::shaders()->location(
+            shaders()->location(
                 Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
             0);
       } else {
         glUniform1i(
-            AbstractWindow::shaders()->location(
+            shaders()->location(
                 Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
             15);
       }
@@ -281,14 +281,14 @@ Response FileBrowser::Draw (AbstractWindow* context)
     while (index.valid()) {
       index.GetRawData()->DrawInRect(
           rect, AlignLeft | AlignVerticalCenter | AlignBaseline | AlignJustify,
-          AbstractWindow::theme()->regular().text.data());
+          theme()->regular().text.data());
       index = index.GetDownIndex();
       rect.set_y(rect.y() - h);
     }
 
   }
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   context->BeginPopStencil();	// pop inner stencil
   glBindVertexArray(vaos_[0]);
@@ -312,10 +312,10 @@ void FileBrowser::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> row_verts;
 
-    if (AbstractWindow::theme()->box().shaded) {
+    if (theme()->box().shaded) {
       GenerateVertices(size(), 0.f, round_type(), round_radius(), Vertical,
-                       AbstractWindow::theme()->box().shadetop,
-                       AbstractWindow::theme()->box().shadedown, &inner_verts,
+                       theme()->box().shadetop,
+                       theme()->box().shadedown, &inner_verts,
                        0);
     } else {
       GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
@@ -397,10 +397,10 @@ void FileBrowser::InitializeFileBrowserOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> row_verts;
 
-  if (AbstractWindow::theme()->box().shaded) {
+  if (theme()->box().shaded) {
     GenerateVertices(size(), 0.f, round_type(), round_radius(), Vertical,
-                     AbstractWindow::theme()->box().shadetop,
-                     AbstractWindow::theme()->box().shadedown, &inner_verts, 0);
+                     theme()->box().shadetop,
+                     theme()->box().shadedown, &inner_verts, 0);
   } else {
     GenerateVertices(size(), 0.f, round_type(), round_radius(), &inner_verts,
                      0);
@@ -426,10 +426,10 @@ void FileBrowser::InitializeFileBrowserOnce ()
   buffer_.set_data(sizeof(GLfloat) * row_verts.size(), &row_verts[0]);
 
   glEnableVertexAttribArray(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
   glVertexAttribPointer(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
       3, GL_FLOAT, GL_FALSE, 0, 0);
 

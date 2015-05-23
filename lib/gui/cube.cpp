@@ -52,17 +52,17 @@ void Cube::Render (const glm::mat4& projection_matrix,
                    const glm::mat4& view_matrix)
 {
   RefPtr<GLSLProgram> program =
-      AbstractWindow::shaders()->primitive_program();
+      shaders()->primitive_program();
 
   program->use();
   glUniformMatrix4fv(
-      AbstractWindow::shaders()->location(Shaders::PRIMITIVE_PROJECTION), 1,
+      shaders()->location(Shaders::PRIMITIVE_PROJECTION), 1,
       GL_FALSE, glm::value_ptr(projection_matrix));
   glUniformMatrix4fv(
-      AbstractWindow::shaders()->location(Shaders::PRIMITIVE_VIEW), 1,
+      shaders()->location(Shaders::PRIMITIVE_VIEW), 1,
       GL_FALSE, glm::value_ptr(view_matrix));
   glUniformMatrix4fv(
-      AbstractWindow::shaders()->location(Shaders::PRIMITIVE_MODEL), 1,
+      shaders()->location(Shaders::PRIMITIVE_MODEL), 1,
       GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
   /* Push each element in buffer_vertices to the vertex shader */

@@ -43,6 +43,8 @@
 
 namespace BlendInt {
 
+Icons* Icons::kIcons = 0;
+
 Icons::Icons ()
 {
   CreateVectorIcons();

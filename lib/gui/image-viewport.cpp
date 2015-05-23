@@ -299,8 +299,8 @@ namespace BlendInt {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(), size().height());
 
-		AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-		AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+		shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+		shaders()->SetWidgetModelMatrix(model_matrix_);
 
 		return true;
 	}
@@ -315,13 +315,13 @@ namespace BlendInt {
 			float w = texture_->GetWidth();
 			float h = texture_->GetHeight();
 
-			AbstractWindow::shaders()->widget_image_program()->use();
+			shaders()->widget_image_program()->use();
 
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+			glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+			glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
 					(size().width() - w)/2.f,
 					(size().height() - h) / 2.f);
-			glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+			glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
 			glBindVertexArray(vao_);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -357,11 +357,11 @@ namespace BlendInt {
 		image_plane_.bind();
 		image_plane_.set_data(sizeof(vertices), vertices);
 
-		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD));
-		glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV));
-		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
+		glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_IMAGE_COORD));
+		glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_IMAGE_UV));
+		glVertexAttribPointer(shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
 				GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
+		glVertexAttribPointer(shaders()->location(Shaders::WIDGET_IMAGE_UV), 2, GL_FLOAT,
 				GL_FALSE, sizeof(GLfloat) * 4,
 				BUFFER_OFFSET(2 * sizeof(GLfloat)));
 

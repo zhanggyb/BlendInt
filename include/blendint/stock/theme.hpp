@@ -23,14 +23,9 @@
 
 #pragma once
 
-#include <blendint/core/types.hpp>
 #include <blendint/core/color.hpp>
 
-#include <blendint/gui/font.hpp>
-
 namespace BlendInt {
-
-class Theme;
 
 struct ColorScheme
 {
@@ -98,6 +93,8 @@ struct ThemeData
 class Theme
 {
 public:
+
+  static Theme* kTheme;
 
   /**
    * @brief Load theme from an existing xml file
@@ -272,8 +269,26 @@ private:
   ~Theme ();
 
   ThemeData data_;
-
-DISALLOW_COPY_AND_ASSIGN(Theme);
 };
+
+inline Theme* const theme ()
+{
+  return Theme::kTheme;
+}
+
+inline float pixel_size (float a)
+{
+  return a * Theme::kTheme->pixel();
+}
+
+inline float pixel_size (int a)
+{
+  return a * Theme::kTheme->pixel();
+}
+
+inline float pixel_size (unsigned int a)
+{
+  return a * Theme::kTheme->pixel();
+}
 
 } /* namespace BlendInt */

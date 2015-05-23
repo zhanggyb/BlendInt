@@ -279,15 +279,15 @@ Response ComboListView::Draw (AbstractWindow* context)
   // int y = size().height();
   const int h = Font::default_height();
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->regular().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->regular().inner.data());
 
   glBindVertexArray(vao_[0]);
   // glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
@@ -297,12 +297,12 @@ Response ComboListView::Draw (AbstractWindow* context)
   context->EndPushStencil();
 
   /*
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       0);
   glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
 
@@ -313,21 +313,21 @@ Response ComboListView::Draw (AbstractWindow* context)
     y -= h;
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
         0, y);
 
     if (i == highlight_index_) { // TODO: use different functions for performance
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+          shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
           -35);
     } else {
       if (i % 2 == 0) {
         glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
             0);
       } else {
         glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
             15);
       }
     }
@@ -349,7 +349,7 @@ Response ComboListView::Draw (AbstractWindow* context)
 
       index.GetData()->DrawInRect(
           rect, AlignCenter | AlignJustify | AlignBaseline,
-          AbstractWindow::theme()->menu_back().text.data());
+          theme()->menu_back().text.data());
 
       next = index.GetRightIndex();
       while (next.valid()) {
@@ -358,7 +358,7 @@ Response ComboListView::Draw (AbstractWindow* context)
         rect.set_x(rect.x() + h);
         next.GetData()->DrawInRect(
             rect, AlignRight | AlignJustify | AlignBaseline,
-            AbstractWindow::theme()->menu_back().text.data());
+            theme()->menu_back().text.data());
         next = next.GetRightIndex();
       }
 
@@ -370,7 +370,7 @@ Response ComboListView::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   context->BeginPopStencil(); // pop inner stencil
   glBindVertexArray(vao_[0]);
@@ -537,7 +537,7 @@ Size ComboBox::GetPreferredSize () const
 
   }
 
-  w += AbstractWindow::icons()->menu()->size().width();
+  w += icons()->menu()->size().width();
 
   w += pixel_size(kPadding.hsum());
   h += pixel_size(kPadding.vsum());
@@ -601,10 +601,10 @@ void ComboBox::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->menu().shaded) {
+    if (theme()->menu().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->menu().shadetop,
-                              AbstractWindow::theme()->menu().shadedown,
+                              theme()->menu().shadetop,
+                              theme()->menu().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -631,9 +631,9 @@ void ComboBox::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
-                            AbstractWindow::theme()->menu().shadedown,
+  if (theme()->menu().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->menu().shadetop,
+                            theme()->menu().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -655,9 +655,9 @@ void ComboBox::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
-                            AbstractWindow::theme()->menu().shadedown,
+  if (theme()->menu().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->menu().shadetop,
+                            theme()->menu().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -675,31 +675,31 @@ void ComboBox::PerformRoundRadiusUpdate (float radius)
 Response ComboBox::Draw (AbstractWindow* context)
 {
   // draw inner
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->menu().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->menu().inner.data());
 
   if (status_down_) {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 20);
+        shaders()->location(Shaders::WIDGET_INNER_GAMMA), 20);
   } else {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   }
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-              context->theme()->menu().shaded);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              theme()->menu().shaded);
 
   glBindVertexArray(vaos_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   // draw outer:
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->menu().outline.data());
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->menu().outline.data());
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
 
   glBindVertexArray(vaos_[1]);
@@ -707,9 +707,9 @@ Response ComboBox::Draw (AbstractWindow* context)
                outline_vertex_count(round_type()) * 2 + 2);
 
 //		if (emboss()) {
-//			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+//			glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 //			        1.0f, 1.0f, 0.16f);
-//			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+//			glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 //			        0.f, - 1.f);
 //			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 //			        emboss_vertex_count(round_type()) * 2);
@@ -719,7 +719,7 @@ Response ComboBox::Draw (AbstractWindow* context)
       pixel_size(kPadding.left()),
       pixel_size(kPadding.bottom()),
       size().width() - pixel_size(kPadding.hsum())
-          - context->icons()->menu()->size().width(),
+          - icons()->menu()->size().width(),
       size().height() - pixel_size(kPadding.vsum()));
 
   // draw model item
@@ -735,7 +735,7 @@ Response ComboBox::Draw (AbstractWindow* context)
         icon = current_index_.GetRawData();
         if (icon) {
           icon->DrawInRect(rect, AlignCenter,
-                           AbstractWindow::theme()->menu().text_sel.data());
+                           theme()->menu().text_sel.data());
         }
 
         break;
@@ -748,7 +748,7 @@ Response ComboBox::Draw (AbstractWindow* context)
           text = next.GetRawData();
           if (text) {
             text->DrawInRect(rect, AlignCenter | AlignJustify | AlignBaseline,
-                             AbstractWindow::theme()->menu().text_sel.data());
+                             theme()->menu().text_sel.data());
           }
         }
 
@@ -762,13 +762,13 @@ Response ComboBox::Draw (AbstractWindow* context)
         icon = current_index_.GetRawData();
         if (icon) {
           icon->DrawInRect(rect, AlignCenter,
-                           AbstractWindow::theme()->menu().text_sel.data());
+                           theme()->menu().text_sel.data());
         }
 
         rect.set_x(rect.x() + rect.width());
         rect.set_width(
             size().width() - pixel_size(kPadding.hsum())
-                - context->icons()->menu()->size().width() - rect.width());
+                - icons()->menu()->size().width() - rect.width());
 
         ModelIndex next = current_index_.GetRightIndex();
         if (next.valid()) {
@@ -777,7 +777,7 @@ Response ComboBox::Draw (AbstractWindow* context)
             text->DrawInRect(
                 rect,
                 AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
-                AbstractWindow::theme()->menu().text_sel.data());
+                theme()->menu().text_sel.data());
           }
         }
 
@@ -793,7 +793,7 @@ Response ComboBox::Draw (AbstractWindow* context)
             text->DrawInRect(
                 rect,
                 AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
-                AbstractWindow::theme()->menu().text_sel.data());
+                theme()->menu().text_sel.data());
             rect.cut_left(text->size().width());
           }
 
@@ -802,7 +802,7 @@ Response ComboBox::Draw (AbstractWindow* context)
         icon = current_index_.GetRawData();
         if (icon) {
           icon->DrawInRect(rect, AlignCenter,
-                           AbstractWindow::theme()->menu().text_sel.data());
+                           theme()->menu().text_sel.data());
         }
 
         break;
@@ -815,13 +815,13 @@ Response ComboBox::Draw (AbstractWindow* context)
         icon = current_index_.GetRawData();
         if (icon) {
           icon->DrawInRect(rect, AlignCenter,
-                           AbstractWindow::theme()->menu().text_sel.data());
+                           theme()->menu().text_sel.data());
         }
 
         rect.set_x(rect.x() + rect.width());
         rect.set_width(
             size().width() - pixel_size(kPadding.hsum())
-                - context->icons()->menu()->size().width() - rect.width());
+                - icons()->menu()->size().width() - rect.width());
 
         ModelIndex next = current_index_.GetRightIndex();
         if (next.valid()) {
@@ -830,7 +830,7 @@ Response ComboBox::Draw (AbstractWindow* context)
             text->DrawInRect(
                 rect,
                 AlignLeft | AlignJustify | AlignVerticalCenter | AlignBaseline,
-                AbstractWindow::theme()->menu().text_sel.data());
+                theme()->menu().text_sel.data());
           }
         }
 
@@ -843,7 +843,7 @@ Response ComboBox::Draw (AbstractWindow* context)
   rect.set_x(pixel_size(kPadding.left()));
   rect.set_width(size().width() - pixel_size(kPadding.hsum()));
 
-  AbstractWindow::icons()->menu()->DrawInRect(rect,
+  icons()->menu()->DrawInRect(rect,
                                               AlignRight | AlignVerticalCenter,
                                               Color(0xEFEFEFFF).data());
 
@@ -941,9 +941,9 @@ void ComboBox::InitializeComboBox ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->menu().shadetop,
-                            AbstractWindow::theme()->menu().shadedown,
+  if (theme()->menu().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->menu().shadetop,
+                            theme()->menu().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);

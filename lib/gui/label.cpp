@@ -134,14 +134,14 @@ Response Label::PerformMouseMove (AbstractWindow* context)
 
 Response Label::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+      shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
       Color(background_).data());
 
   glBindVertexArray(vao_);

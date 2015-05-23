@@ -185,13 +185,13 @@ Response OptionLabel::Draw (AbstractWindow* context)
   float rotate = 0.f;
   if (flags_ & OptionLabelToggleMask) rotate = -90.f;
   
-  context->icons()->num()->DrawInRect(rect, AlignCenter,
+  icons()->num()->DrawInRect(rect, AlignCenter,
                                       Color(0x0F0F0FFF).data(), 0, rotate, true);
   x += rect.width();
 
   if (flags_ & OptionLabelCheckableMask) {
     rect.set_x(rect.x() + x);
-    context->icons()->check()->DrawInRect(rect, AlignCenter,
+    icons()->check()->DrawInRect(rect, AlignCenter,
                                           Color(0x0F0F0FFF).data(), 0, 0, true);
     x += rect.width() + kSpace;
   }
@@ -201,7 +201,7 @@ Response OptionLabel::Draw (AbstractWindow* context)
     rect.set_width(size().width() - pixel_size(kPadding.hsum()) - x);
     text_->DrawInRect(
         rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-        context->theme()->regular().text.data());
+        theme()->regular().text.data());
   }
 
   if (display_icon_)

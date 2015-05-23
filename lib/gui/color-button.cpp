@@ -127,7 +127,7 @@ void ColorButton::PerformRoundRadiusUpdate (float radius)
 
 Response ColorButton::Draw (AbstractWindow* context)
 {
-  float x = (context->shaders()->widget_model_matrix()
+  float x = (shaders()->widget_model_matrix()
       * glm::vec3(0.f, 0.f, 1.f)).x;
 
   if (context->active_frame()->has_view_buffer()) {
@@ -137,37 +137,37 @@ Response ColorButton::Draw (AbstractWindow* context)
         - context->viewport_origin().x();
   }
 
-  AbstractWindow::shaders()->widget_split_inner_program()->use();
+  shaders()->widget_split_inner_program()->use();
 
   glUniform1f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
       x + size().width() / 2.f);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
       1, color0_.data());
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
       1, color1_.data());
 
   if (is_down()) {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
         -25);
   } else {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+        shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
         0);
   }
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->regular().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->regular().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -175,11 +175,11 @@ Response ColorButton::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         -1.f);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);

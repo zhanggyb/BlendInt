@@ -135,10 +135,10 @@ void ToggleButton::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->toggle().shaded) {
+    if (theme()->toggle().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->toggle().shadetop,
-                              AbstractWindow::theme()->toggle().shadedown,
+                              theme()->toggle().shadetop,
+                              theme()->toggle().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -165,10 +165,10 @@ void ToggleButton::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->toggle().shaded) {
+  if (theme()->toggle().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->toggle().shadetop,
-                            AbstractWindow::theme()->toggle().shadedown,
+                            theme()->toggle().shadetop,
+                            theme()->toggle().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -190,10 +190,10 @@ void ToggleButton::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->toggle().shaded) {
+  if (theme()->toggle().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->toggle().shadetop,
-                            AbstractWindow::theme()->toggle().shadedown,
+                            theme()->toggle().shadetop,
+                            theme()->toggle().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -228,32 +228,32 @@ void ToggleButton::PerformHoverOut (AbstractWindow* context)
 
 Response ToggleButton::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-              context->theme()->toggle().shaded);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
+              theme()->toggle().shaded);
 
   if (is_checked()) {
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        AbstractWindow::theme()->toggle().inner_sel.data());
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        theme()->toggle().inner_sel.data());
   } else {
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        AbstractWindow::theme()->toggle().inner.data());
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        theme()->toggle().inner.data());
   }
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->toggle().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->toggle().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -261,10 +261,10 @@ Response ToggleButton::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         pixel_size(- 1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
@@ -279,10 +279,10 @@ void ToggleButton::InitializeToggleButtonOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->toggle().shaded) {
+  if (theme()->toggle().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->toggle().shadetop,
-                            AbstractWindow::theme()->toggle().shadedown,
+                            theme()->toggle().shadetop,
+                            theme()->toggle().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);

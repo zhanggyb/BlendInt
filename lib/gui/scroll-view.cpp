@@ -210,23 +210,23 @@ void ScrollView::PerformSizeUpdate (const AbstractView* source, const AbstractVi
 
 bool ScrollView::PreDraw(AbstractWindow* context)
 {
-  glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
+  glm::mat3 matrix = glm::translate(shaders()->widget_model_matrix(),
                                     glm::vec2(position().x(), position().y()));
 
-  AbstractWindow::shaders()->PushWidgetModelMatrix();
-  AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+  shaders()->PushWidgetModelMatrix();
+  shaders()->SetWidgetModelMatrix(matrix);
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
       0);
 
   if(subview_count()) {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
   } else {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
   }
 
   glBindVertexArray(vao_);
@@ -245,11 +245,11 @@ Response ScrollView::Draw (AbstractWindow* context)
 
     Point offset = GetOffset();
 
-    glm::mat3 matrix = glm::translate(AbstractWindow::shaders()->widget_model_matrix(),
+    glm::mat3 matrix = glm::translate(shaders()->widget_model_matrix(),
                                       glm::vec2(offset.x(), offset.y()));
 
-    AbstractWindow::shaders()->PushWidgetModelMatrix();
-    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+    shaders()->PushWidgetModelMatrix();
+    shaders()->SetWidgetModelMatrix(matrix);
 
     return Ignore;
 
@@ -261,19 +261,19 @@ Response ScrollView::Draw (AbstractWindow* context)
 void ScrollView::PostDraw(AbstractWindow* context)
 {
   if(subview_count())
-    AbstractWindow::shaders()->PopWidgetModelMatrix();
+    shaders()->PopWidgetModelMatrix();
 
   // draw mask
-  AbstractWindow::shaders()->widget_inner_program()->use();
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  shaders()->widget_inner_program()->use();
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
       0);
 
   if(subview_count()) {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.908f, 0.208f, 0.208f, 0.25f);
   } else {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.947f, 0.447f, 0.447f, 0.25f);
   }
 
   glBindVertexArray(vao_);
@@ -281,7 +281,7 @@ void ScrollView::PostDraw(AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
   context->EndPopStencil();
 
-  AbstractWindow::shaders()->PopWidgetModelMatrix();
+  shaders()->PopWidgetModelMatrix();
 }
 
 Response ScrollView::PerformMousePress (AbstractWindow* context)

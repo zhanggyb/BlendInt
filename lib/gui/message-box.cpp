@@ -40,8 +40,8 @@ MessageBox::MessageBox (const String& title, const String& description)
   text_ = new Label(description, AlignCenter);
   close_ = new CloseButton;
 
-  title_->SetForeground(AbstractWindow::theme()->menu_back().text_sel);
-  text_->SetForeground(AbstractWindow::theme()->menu_back().text);
+  title_->SetForeground(theme()->menu_back().text_sel);
+  text_->SetForeground(theme()->menu_back().text);
 
   close_->clicked().connect(this, &MessageBox::OnClose);
 
@@ -76,10 +76,10 @@ MessageBox::MessageBox (const String& title, const String& description)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu_back().shaded) {
+  if (theme()->menu_back().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->menu_back().shadetop,
-                            AbstractWindow::theme()->menu_back().shadedown,
+                            theme()->menu_back().shadetop,
+                            theme()->menu_back().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -148,10 +148,10 @@ void MessageBox::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->menu_back().shaded) {
+    if (theme()->menu_back().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->menu_back().shadetop,
-                              AbstractWindow::theme()->menu_back().shadedown,
+                              theme()->menu_back().shadetop,
+                              theme()->menu_back().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -190,33 +190,33 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 {
   shadow_->Draw(position().x(), position().y());
 
-  AbstractWindow::shaders()->frame_inner_program()->use();
+  shaders()->frame_inner_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+      shaders()->location(Shaders::FRAME_INNER_POSITION),
       pixel_size(position().x()),
       pixel_size(position().y()));
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1,
-      AbstractWindow::theme()->menu_back().inner.data());
+      shaders()->location(Shaders::FRAME_INNER_COLOR), 1,
+      theme()->menu_back().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   if (view_buffer()) {
 
-    AbstractWindow::shaders()->frame_image_program()->use();
+    shaders()->frame_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
         pixel_size(position().x()),
         pixel_size(position().y()));
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+        shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -228,8 +228,8 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
                pixel_size(size().width()),
                pixel_size(size().height()));
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+    shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
@@ -238,15 +238,15 @@ Response BlendInt::MessageBox::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->frame_outer_program()->use();
+  shaders()->frame_outer_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+      shaders()->location(Shaders::FRAME_OUTER_POSITION),
       pixel_size(position().x()),
       pixel_size(position().y()));
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 1,
-      AbstractWindow::theme()->menu_back().outline.data());
+      shaders()->location(Shaders::FRAME_OUTER_COLOR), 1,
+      theme()->menu_back().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,

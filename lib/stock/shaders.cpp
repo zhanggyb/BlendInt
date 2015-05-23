@@ -1005,6 +1005,8 @@ const char* Shaders::frame_shadow_fragment_shader =
     "	FragmentColor = vec4(vec3(0.05, 0.05, 0.05), 0.8 * alpha);"
     "}";
 
+Shaders* Shaders::kShaders = 0;
+
 Shaders::Shaders ()
     : widget_matrices_ubo_total_size_(0),
       frame_matrices_ubo_total_size_(0)

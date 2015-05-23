@@ -76,10 +76,10 @@ FileSelector::FileSelector ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->dialog().shaded) {
+  if (theme()->dialog().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->dialog().shadetop,
-                            AbstractWindow::theme()->dialog().shadedown,
+                            theme()->dialog().shadetop,
+                            theme()->dialog().shadedown,
                             &inner_verts,
                             &outer_verts);
   } else {
@@ -153,10 +153,10 @@ void FileSelector::PerformSizeUpdate (const AbstractView* source, const Abstract
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->dialog().shaded) {
+    if (theme()->dialog().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->dialog().shadetop,
-                              AbstractWindow::theme()->dialog().shadedown,
+                              theme()->dialog().shadetop,
+                              theme()->dialog().shadedown,
                               &inner_verts,
                               &outer_verts);
     } else {
@@ -199,22 +199,22 @@ Response FileSelector::Draw (AbstractWindow* context)
 {
   shadow_->Draw(position().x(), position().y());
 
-  AbstractWindow::shaders()->frame_inner_program()->use();
+  shaders()->frame_inner_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1, AbstractWindow::theme()->dialog().inner.data());
+  glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION), position().x(), position().y());
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
+  glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR), 1, theme()->dialog().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   if(view_buffer()) {
 
-    AbstractWindow::shaders()->frame_image_program()->use();
+    shaders()->frame_image_program()->use();
 
-    glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+    glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION), position().x(), position().y());
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -226,8 +226,8 @@ Response FileSelector::Draw (AbstractWindow* context)
                pixel_size(size().width()),
                pixel_size(size().height()));
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+    shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
@@ -236,10 +236,10 @@ Response FileSelector::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->frame_outer_program()->use();
+  shaders()->frame_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR), 1, AbstractWindow::theme()->dialog().outline.data());
+  glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION), position().x(), position().y());
+  glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR), 1, theme()->dialog().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(round_type()) * 2 + 2);
@@ -323,10 +323,10 @@ LinearLayout* FileSelector::CreateButtons()
   // directory control group
   Block* block1 = new Block;
 
-  PushButton* btn_back = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::BACK));
-  PushButton* btn_forward = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FORWARD));
-  PushButton* btn_up = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_PARENT));
-  PushButton* btn_reload = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::FILE_REFRESH));
+  PushButton* btn_back = new PushButton(icons()->icon_16x16(Icons::BACK));
+  PushButton* btn_forward = new PushButton(icons()->icon_16x16(Icons::FORWARD));
+  PushButton* btn_up = new PushButton(icons()->icon_16x16(Icons::FILE_PARENT));
+  PushButton* btn_reload = new PushButton(icons()->icon_16x16(Icons::FILE_REFRESH));
 
   block1->AddWidget(btn_back);
   block1->AddWidget(btn_forward);
@@ -336,14 +336,14 @@ LinearLayout* FileSelector::CreateButtons()
   block1->Resize(block1->GetPreferredSize());
 
   // create new
-  PushButton* btn_new = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory");
+  PushButton* btn_new = new PushButton(icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory");
 
   // display mode
   Block* block2 = new Block;
 
-  PushButton* btn_short_list = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SHORTDISPLAY));
-  PushButton* btn_detail_list = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::LONGDISPLAY));
-  PushButton* btn_thumbnail = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::IMGDISPLAY));
+  PushButton* btn_short_list = new PushButton(icons()->icon_16x16(Icons::SHORTDISPLAY));
+  PushButton* btn_detail_list = new PushButton(icons()->icon_16x16(Icons::LONGDISPLAY));
+  PushButton* btn_thumbnail = new PushButton(icons()->icon_16x16(Icons::IMGDISPLAY));
 
   block2->AddWidget(btn_short_list);
   block2->AddWidget(btn_detail_list);
@@ -351,10 +351,10 @@ LinearLayout* FileSelector::CreateButtons()
 
   Block* block3 = new Block;
 
-  PushButton* btn_sort_alpha = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTALPHA));
-  PushButton* btn_sort_ext = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTBYEXT));
-  PushButton* btn_sort_time = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTTIME));
-  PushButton* btn_sort_size = new PushButton(AbstractWindow::icons()->icon_16x16(Icons::SORTSIZE));
+  PushButton* btn_sort_alpha = new PushButton(icons()->icon_16x16(Icons::SORTALPHA));
+  PushButton* btn_sort_ext = new PushButton(icons()->icon_16x16(Icons::SORTBYEXT));
+  PushButton* btn_sort_time = new PushButton(icons()->icon_16x16(Icons::SORTTIME));
+  PushButton* btn_sort_size = new PushButton(icons()->icon_16x16(Icons::SORTSIZE));
 
   block3->AddWidget(btn_sort_alpha);
   block3->AddWidget(btn_sort_ext);

@@ -47,8 +47,8 @@ CubicBezierCurve::CubicBezierCurve ()
 
   buffer_.set_data(sizeof(vertices), vertices);
 
-  glEnableVertexAttribArray(AbstractWindow::shaders()->location(Shaders::WIDGET_LINE_COORD));
-  glVertexAttribPointer(AbstractWindow::shaders()->location(Shaders::WIDGET_LINE_COORD), 3,
+  glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_LINE_COORD));
+  glVertexAttribPointer(shaders()->location(Shaders::WIDGET_LINE_COORD), 3,
                         GL_FLOAT, GL_FALSE, 0, 0);
 
   glBindVertexArray(0);
@@ -84,9 +84,9 @@ void CubicBezierCurve::Unpack()
 
 void CubicBezierCurve::Draw()
 {
-  AbstractWindow::shaders()->widget_line_program()->use();
+  shaders()->widget_line_program()->use();
 
-  glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_LINE_COLOR), 1.f, 0.1f, 0.1f, 1.f);
+  glUniform4f(shaders()->location(Shaders::WIDGET_LINE_COLOR), 1.f, 0.1f, 0.1f, 1.f);
 
   size_t n = GetPointNumber(max_subdiv_count);
 

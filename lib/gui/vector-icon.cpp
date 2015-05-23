@@ -191,24 +191,24 @@ void VectorIcon::Draw (int x,
                        float scale_x,
                        float scale_y) const
 {
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
   glVertexAttrib4fv(AttributeColor, color_ptr);
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
+      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
       y);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
       gamma);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       1);
 
   glUniform1f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
       rotate);
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
       scale_x, scale_y);
 
   glBindVertexArray(vao_);
@@ -217,10 +217,10 @@ void VectorIcon::Draw (int x,
                  BUFFER_OFFSET(0));
 
   glUniform1f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
       0.f);
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f,
+      shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE), 1.f,
       1.f);
 }
 
@@ -250,31 +250,31 @@ void VectorIcon::DrawInRect (const Rect& rect,
     y = rect.vcenter();
   }
 
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
   glVertexAttrib4fv(AttributeColor, color_ptr);
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
+      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
       y);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
       gamma);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       1);
   glUniform1f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION),
       rotate);
 
   if (scale) {
     float scale_x = rect.width() * 1.f / size().width();
     float scale_y = rect.height() * 1.f / size().height();
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
         scale_x, scale_y);
   } else {
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_SCALE),
         1.f, 1.f);
   }
 

@@ -131,16 +131,16 @@ Response MenuItem::Draw(AbstractWindow* context)
 {
   if (hovered_) {
 
-    AbstractWindow::shaders()->widget_inner_program()->use();
+    shaders()->widget_inner_program()->use();
 
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        context->theme()->menu_item().shaded);
+        shaders()->location(Shaders::WIDGET_INNER_SHADED),
+        theme()->menu_item().shaded);
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        AbstractWindow::theme()->menu_item().inner_sel.data());
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+        theme()->menu_item().inner_sel.data());
 
     glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -163,9 +163,9 @@ Response MenuItem::Draw(AbstractWindow* context)
 
   const float* color_v = 0;
   if(hovered_) {
-    color_v = AbstractWindow::theme()->menu_item().text_sel.data();
+    color_v = theme()->menu_item().text_sel.data();
   } else {
-    color_v = AbstractWindow::theme()->menu_item().text.data();
+    color_v = theme()->menu_item().text.data();
   }
 
   if(action_->text()) {
@@ -190,11 +190,11 @@ void MenuItem::PerformSizeUpdate (const AbstractView* source, const AbstractView
     set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
-    if (AbstractWindow::theme()->menu_item().shaded) {
+    if (theme()->menu_item().shaded) {
       GenerateVertices(size(), 0.f, RoundNone, 0.f,
                        Vertical,
-                       AbstractWindow::theme()->menu_item().shadetop,
-                       AbstractWindow::theme()->menu_item().shadedown,
+                       theme()->menu_item().shadetop,
+                       theme()->menu_item().shadedown,
                        &inner_verts, 0);
     } else {
       GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
@@ -246,11 +246,11 @@ void MenuItem::InitializeMenuItem()
 
   std::vector<GLfloat> inner_verts;
 
-  if (AbstractWindow::theme()->menu_item().shaded) {
+  if (theme()->menu_item().shaded) {
     GenerateVertices(size(), 0.f, RoundNone, 0.f,
                      Vertical,
-                     AbstractWindow::theme()->menu_item().shadetop,
-                     AbstractWindow::theme()->menu_item().shadedown,
+                     theme()->menu_item().shadetop,
+                     theme()->menu_item().shadedown,
                      &inner_verts, 0);
   } else {
     GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);

@@ -54,32 +54,32 @@ namespace BlendInt {
 
 	Response FolderList::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders()->widget_inner_program()->use();
+		shaders()->widget_inner_program()->use();
 
-		glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+		glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-				AbstractWindow::theme()->regular().inner.data());
+        shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+		glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+				theme()->regular().inner.data());
 
 		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-		AbstractWindow::shaders()->widget_outer_program()->use();
+		shaders()->widget_outer_program()->use();
 
-		glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+		glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 		        0.f, 0.f);
-		glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-				AbstractWindow::theme()->regular().outline.data());
+		glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+				theme()->regular().outline.data());
 
 		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 		             outline_vertex_count(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+			glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
 			        1.0f, 1.0f, 0.16f);
-			glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+			glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
 			        0.f, -1.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 			        emboss_vertex_count(round_type()) * 2);

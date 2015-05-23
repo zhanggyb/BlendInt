@@ -97,15 +97,15 @@ Response Viewport2D::Draw (AbstractWindow* context)
   glGetIntegerv(GL_VIEWPORT, vp);
 
   RefPtr<GLSLProgram> program =
-      AbstractWindow::shaders()->widget_inner_program();
+      shaders()->widget_inner_program();
   program->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
   glUniform4f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.25f,
+      shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.25f,
       0.25f, 0.25f, 1.f);
 
   glBindVertexArray(vao_);
@@ -138,9 +138,9 @@ Response Viewport2D::Draw (AbstractWindow* context)
 
   program->use();
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
 
   c->BeginPopStencil();	// pop inner stencil
   glBindVertexArray(vao_);

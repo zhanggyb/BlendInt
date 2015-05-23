@@ -204,19 +204,19 @@ void SplitterHandle::PerformSizeUpdate (const AbstractView* source,
 
 Response SplitterHandle::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       1);
 
   if (highlight_) {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
         25);
   } else {
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   }
 
   float x = 0.f;
@@ -234,7 +234,7 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     while (y > 0.f) {
 
       glUniform2f(
-          AbstractWindow::shaders()->location(
+          shaders()->location(
               Shaders::WIDGET_TRIANGLE_POSITION),
           x, y);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -247,7 +247,7 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     while (y > 0.f) {
 
       glUniform2f(
-          AbstractWindow::shaders()->location(
+          shaders()->location(
               Shaders::WIDGET_TRIANGLE_POSITION),
           x, y);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -265,7 +265,7 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     while (x < (size().width())) {
 
       glUniform2f(
-          AbstractWindow::shaders()->location(
+          shaders()->location(
               Shaders::WIDGET_TRIANGLE_POSITION),
           x, y);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -278,7 +278,7 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     while (x < (size().width())) {
 
       glUniform2f(
-          AbstractWindow::shaders()->location(
+          shaders()->location(
               Shaders::WIDGET_TRIANGLE_POSITION),
           x, y);
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

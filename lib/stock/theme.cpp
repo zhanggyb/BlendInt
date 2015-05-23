@@ -30,6 +30,7 @@
 #include <rapidxml_utils.hpp>
 #include <rapidxml_print.hpp>
 
+#include <blendint/core/types.hpp>
 #include <blendint/stock/theme.hpp>
 
 namespace BlendInt {
@@ -43,6 +44,8 @@ static void ParseColorSchemeNode (const rapidxml::xml_node<>* node, ThemeData* d
 static xml_node<>* AllocateThemeNode (xml_document<>& doc,
                                       const char* name,
                                       const ColorScheme& scheme);
+
+Theme* Theme::kTheme = 0;
 
 Theme::Theme ()
 {
@@ -543,7 +546,7 @@ void Theme::Reset ()
   data_.shadow_width = 9;
 
   // TODO: check if retina in Mac OS
-  data_.pixel = 2.f;
+  data_.pixel = 1.f;
 
   data_.xaxis = 0xFF0000FF;
   data_.yaxis = 0x00FF00FF;

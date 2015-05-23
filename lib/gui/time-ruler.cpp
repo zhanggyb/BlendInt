@@ -40,10 +40,10 @@ TimeRuler::TimeRuler()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if(AbstractWindow::theme()->scroll().shaded) {
+  if(theme()->scroll().shaded) {
 
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
 
     GenerateRoundedVertices(
         Vertical,
@@ -105,10 +105,10 @@ void TimeRuler::PerformSizeUpdate(const AbstractView* source, const AbstractView
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if(AbstractWindow::theme()->scroll().shaded) {
+    if(theme()->scroll().shaded) {
 
-      short shadetop = AbstractWindow::theme()->scroll().shadetop;
-      short shadedown = AbstractWindow::theme()->scroll().shadedown;
+      short shadetop = theme()->scroll().shadetop;
+      short shadedown = theme()->scroll().shadedown;
 
       GenerateRoundedVertices(
           Vertical,
@@ -140,30 +140,30 @@ void TimeRuler::PerformSizeUpdate(const AbstractView* source, const AbstractView
 
 Response TimeRuler::Draw(AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-               AbstractWindow::theme()->scroll().item.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+               theme()->scroll().item.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-               AbstractWindow::theme()->scroll().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+               theme()->scroll().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
                outline_vertex_count(round_type()) * 2 + 2);
 
   if (emboss()) {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
                 1.f, 1.f, 0.16f);
-    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f, 0.f - 1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  emboss_vertex_count(round_type()) * 2);

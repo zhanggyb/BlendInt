@@ -45,7 +45,7 @@ namespace BlendInt {
   {
     int width = shadow_width_;
 
-    float rad = radius() * AbstractWindow::theme()->pixel();
+    float rad = radius() * theme()->pixel();
 
     float minx = 0.0f;
     float miny = 0.0f;
@@ -58,7 +58,7 @@ namespace BlendInt {
 
     float vec[WIDGET_CURVE_RESOLU][2];
 
-    width *= AbstractWindow::theme()->pixel();
+    width *= theme()->pixel();
 
     int outline_vertex_count = GetOutlineVertexCount(round_type());
     unsigned int verts_num = (width + 1) * outline_vertex_count * 3;// 3 float for one vertex: 0, 1: coord, 2: shade

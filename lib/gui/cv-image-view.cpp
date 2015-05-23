@@ -426,21 +426,21 @@ bool CVImageView::PreDraw (AbstractWindow* context)
 {
   Point offset = GetOffset();
   glm::mat3 matrix = glm::translate(
-      AbstractWindow::shaders()->widget_model_matrix(),
+      shaders()->widget_model_matrix(),
       glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
 
-  AbstractWindow::shaders()->PushWidgetModelMatrix();
-  AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+  shaders()->PushWidgetModelMatrix();
+  shaders()->SetWidgetModelMatrix(matrix);
 
   // draw background and stencil mask
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
-  glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+  glUniform4f(shaders()->location(Shaders::WIDGET_INNER_COLOR),
               0.208f, 0.208f, 0.208f, 1.0f);
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -454,15 +454,15 @@ bool CVImageView::PreDraw (AbstractWindow* context)
 
 Response CVImageView::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_image_program()->use();
+  shaders()->widget_image_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+      shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+      shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
       (size().width() - image_size_.width()) / 2.f,
       (size().height() - image_size_.height()) / 2.f);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
               0);
 
   DrawTexture();
@@ -473,7 +473,7 @@ Response CVImageView::Draw (AbstractWindow* context)
 void CVImageView::PostDraw (AbstractWindow* context)
 {
   // draw background again to unmask stencil
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   glBindVertexArray(vao_[0]);
 
@@ -481,7 +481,7 @@ void CVImageView::PostDraw (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
   context->EndPopStencil();
 
-  AbstractWindow::shaders()->PopWidgetModelMatrix();
+  shaders()->PopWidgetModelMatrix();
 }
 
 void CVImageView::OnUpdateFrame ()

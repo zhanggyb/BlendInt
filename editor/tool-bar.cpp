@@ -153,15 +153,15 @@ namespace BlendInt {
   {
     shadow_->Draw(position().x(), position().y());
 
-    AbstractWindow::shaders()->frame_inner_program()->use();
+    shaders()->frame_inner_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+        shaders()->location(Shaders::FRAME_INNER_POSITION),
         position().x(), position().y());
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+    glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
                 0);
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR), 1,
+        shaders()->location(Shaders::FRAME_INNER_COLOR), 1,
         color_.data());
 
     glBindVertexArray(vao_);
@@ -169,15 +169,15 @@ namespace BlendInt {
 
     if (view_buffer()) {
 
-      AbstractWindow::shaders()->frame_image_program()->use();
+      shaders()->frame_image_program()->use();
 
       glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+          shaders()->location(Shaders::FRAME_IMAGE_POSITION),
           position().x(), position().y());
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+          shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+          shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
 
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
       view_buffer()->Draw(0, 0);
@@ -190,8 +190,8 @@ namespace BlendInt {
                  pixel_size(size().width()),
                  pixel_size(size().height()));
 
-      AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-      AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+      shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+      shaders()->SetWidgetModelMatrix(model_matrix_);
 
       DrawSubViewsOnce(context);
 
@@ -446,9 +446,9 @@ namespace BlendInt {
 
     LinearLayout* l1 = new LinearLayout(Horizontal, AlignLeft);
     ToolButton* btn1 = new ToolButton;
-    btn1->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CIRCLE), "Circle");
+    btn1->SetAction(icons()->icon_32x32(Icons::MESH_CIRCLE), "Circle");
     ToolButton* btn2 = new ToolButton;
-    btn2->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CONE), "Cone");
+    btn2->SetAction(icons()->icon_32x32(Icons::MESH_CONE), "Cone");
 
     l1->AddWidget(btn1);
     l1->AddWidget(btn2);
@@ -456,9 +456,9 @@ namespace BlendInt {
 
     LinearLayout* l2 = new LinearLayout(Horizontal, AlignLeft);
     ToolButton* btn3 = new ToolButton;
-    btn3->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CUBE), "Cube");
+    btn3->SetAction(icons()->icon_32x32(Icons::MESH_CUBE), "Cube");
     ToolButton* btn4 = new ToolButton;
-    btn4->SetAction(AbstractWindow::icons()->icon_32x32(Icons::MESH_CYLINDER), "Cylinder");
+    btn4->SetAction(icons()->icon_32x32(Icons::MESH_CYLINDER), "Cylinder");
 
     l2->AddWidget(btn3);
     l2->AddWidget(btn4);

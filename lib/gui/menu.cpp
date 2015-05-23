@@ -267,10 +267,10 @@ void Menu::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->menu_back().shaded) {
+    if (theme()->menu_back().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->menu_back().shadetop,
-                              AbstractWindow::theme()->menu_back().shadedown,
+                              theme()->menu_back().shadetop,
+                              theme()->menu_back().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -304,10 +304,10 @@ void Menu::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu_back().shaded) {
+  if (theme()->menu_back().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->menu_back().shadetop,
-                            AbstractWindow::theme()->menu_back().shadedown,
+                            theme()->menu_back().shadetop,
+                            theme()->menu_back().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -328,10 +328,10 @@ void Menu::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu_back().shaded) {
+  if (theme()->menu_back().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->menu_back().shadetop,
-                            AbstractWindow::theme()->menu_back().shadedown,
+                            theme()->menu_back().shadetop,
+                            theme()->menu_back().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -373,29 +373,29 @@ Response Menu::Draw (AbstractWindow* context)
 {
   shadow_->Draw(position().x(), position().y());
 
-  AbstractWindow::shaders()->frame_inner_program()->use();
+  shaders()->frame_inner_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+      shaders()->location(Shaders::FRAME_INNER_POSITION),
       position().x(), position().y());
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
-               1, AbstractWindow::theme()->menu_back().inner.data());
+  glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
+               1, theme()->menu_back().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   if (view_buffer()) {
 
-    AbstractWindow::shaders()->frame_image_program()->use();
+    shaders()->frame_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
         position().x(), position().y());
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
+        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
                 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
@@ -405,8 +405,8 @@ Response Menu::Draw (AbstractWindow* context)
 
     glViewport(position().x(), position().y(), size().width(), size().height());
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+    shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
@@ -414,13 +414,13 @@ Response Menu::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->frame_outer_program()->use();
+  shaders()->frame_outer_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+      shaders()->location(Shaders::FRAME_OUTER_POSITION),
       position().x(), position().y());
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
-               1, AbstractWindow::theme()->menu_back().outline.data());
+  glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR),
+               1, theme()->menu_back().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -525,10 +525,10 @@ void Menu::InitializeMenu ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->menu_back().shaded) {
+  if (theme()->menu_back().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->menu_back().shadetop,
-                            AbstractWindow::theme()->menu_back().shadedown,
+                            theme()->menu_back().shadetop,
+                            theme()->menu_back().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);

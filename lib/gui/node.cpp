@@ -54,8 +54,8 @@ Node::Node (const String& title)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
-                          AbstractWindow::theme()->node().shadedown,
+  GenerateRoundedVertices(Vertical, theme()->node().shadetop,
+                          theme()->node().shadedown,
                           &inner_verts, &outer_verts);
 
   glGenVertexArrays(2, vao_);
@@ -131,8 +131,8 @@ void Node::PerformSizeUpdate (const AbstractView* source, const AbstractView* ta
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
-                            AbstractWindow::theme()->node().shadedown,
+    GenerateRoundedVertices(Vertical, theme()->node().shadetop,
+                            theme()->node().shadedown,
                             &inner_verts, &outer_verts);
 
     vbo_.bind(0);
@@ -162,8 +162,8 @@ void Node::PerformRoundTypeUpdate (int round)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
-                          AbstractWindow::theme()->node().shadedown,
+  GenerateRoundedVertices(Vertical, theme()->node().shadetop,
+                          theme()->node().shadedown,
                           &inner_verts, &outer_verts);
 
   vbo_.bind(0);
@@ -182,8 +182,8 @@ void Node::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateRoundedVertices(Vertical, AbstractWindow::theme()->node().shadetop,
-                          AbstractWindow::theme()->node().shadedown,
+  GenerateRoundedVertices(Vertical, theme()->node().shadetop,
+                          theme()->node().shadedown,
                           &inner_verts, &outer_verts);
 
   vbo_.bind(0);
@@ -197,7 +197,7 @@ void Node::PerformRoundRadiusUpdate (float radius)
 
 Response Node::Draw (AbstractWindow* context)
 {
-  glm::vec3 v = context->shaders()->widget_model_matrix()
+  glm::vec3 v = shaders()->widget_model_matrix()
       * glm::vec3(0.f, 0.f, 1.f);
 
   if (context->active_frame()->has_view_buffer()) {
@@ -213,36 +213,36 @@ Response Node::Draw (AbstractWindow* context)
         - context->viewport_origin().y());
   }
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-      context->theme()->node().shaded);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      theme()->node().shaded);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-      context->theme()->node().inner.data());
+      shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+      theme()->node().inner.data());
 
   int vertices_count = outline_vertex_count(round_type());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_count + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+      shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
       0.f, 0.f);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-      context->theme()->node().outline.data());
+      shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+      theme()->node().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
                vertices_count * 2 + 2);
 
-  context->icons()->end_point()->Draw(0, 20, Color(Palette::Yellow).data());
+  icons()->end_point()->Draw(0, 20, Color(Palette::Yellow).data());
 
   return subview_count() ? Ignore : Finish;
 }

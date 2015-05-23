@@ -48,8 +48,8 @@ namespace BlendInt {
     set_size(width, height);
 
     Orientation shadedir = width < height ? Horizontal : Vertical;
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -70,8 +70,8 @@ namespace BlendInt {
 
     Orientation shadedir =
         size().width() < size().height() ? Horizontal : Vertical;
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -92,8 +92,8 @@ namespace BlendInt {
 
     Orientation shadedir =
         size().width() < size().height() ? Horizontal : Vertical;
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -116,32 +116,32 @@ namespace BlendInt {
                         float scale_x,
                         float scale_y) const
   {
-    AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+    shaders()->widget_simple_triangle_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
         x, y);
     glUniform4fv(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-        1, AbstractWindow::theme()->scroll().item.data());
+        1, theme()->scroll().item.data());
     glUniform1i(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
         gamma);
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertexCount(round_type()) + 2);
 
-    AbstractWindow::shaders()->widget_outer_program()->use();
+    shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
         y);
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        AbstractWindow::theme()->scroll().outline.data());
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        theme()->scroll().outline.data());
 
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -154,8 +154,8 @@ namespace BlendInt {
 
     Orientation shadedir =
         size().width() < size().height() ? Horizontal : Vertical;
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
@@ -171,10 +171,10 @@ namespace BlendInt {
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
     glEnableVertexAttribArray(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
     glVertexAttribPointer(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
         3,
         GL_FLOAT,

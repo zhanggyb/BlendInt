@@ -49,6 +49,8 @@ class Shaders
 {
  public:
 
+  static Shaders* kShaders;
+
   enum LocationType
   {
 
@@ -473,5 +475,10 @@ class Shaders
   //static const char* context_fragment_shader;
 
 };
+
+inline Shaders* shaders ()
+{
+  return Shaders::kShaders;
+}
 
 }

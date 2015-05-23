@@ -53,10 +53,10 @@ DotIcon::DotIcon ()
   vbo_.bind(0);
   vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
   glVertexAttribPointer(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
       3,
       GL_FLOAT,
@@ -105,30 +105,30 @@ void DotIcon::Draw (int x,
                     float scale_x,
                     float scale_y) const
 {
-  AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+  shaders()->widget_simple_triangle_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
       x, y);
   glUniform4fv(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
       1, color_ptr);
   glUniform1i(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
       0);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               x, y);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->scroll().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->scroll().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
@@ -160,30 +160,30 @@ void DotIcon::DrawInRect (const Rect& rect,
     y = rect.vcenter();
   }
 
-  AbstractWindow::shaders()->widget_simple_triangle_program()->use();
+  shaders()->widget_simple_triangle_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
       x, y);
   glUniform4fv(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, AbstractWindow::theme()->menu().inner.data());
+      1, theme()->menu().inner.data());
   glUniform1i(
-      AbstractWindow::shaders()->location(
+      shaders()->location(
           Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
       gamma);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               x, y);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->menu().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->menu().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);

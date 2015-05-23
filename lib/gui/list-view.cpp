@@ -82,15 +82,15 @@ Response ListView::Draw (AbstractWindow* context)
   int y = size().height();
   const int h = font_.height();
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->regular().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->regular().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
@@ -99,12 +99,12 @@ Response ListView::Draw (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
   context->EndPushStencil();
 
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       0);
   glVertexAttrib4f(AttributeColor, 0.475f, 0.475f, 0.475f, 0.75f);
 
@@ -115,21 +115,21 @@ Response ListView::Draw (AbstractWindow* context)
     y -= h;
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
         0, y);
 
     if (i == highlight_index_) {// TODO: use different functions for performance
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+          shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
           -35);
     } else {
       if (i % 2 == 0) {
         glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
             0);
       } else {
         glUniform1i(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
+            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
             15);
       }
     }
@@ -149,14 +149,14 @@ Response ListView::Draw (AbstractWindow* context)
     while (index.valid()) {
       index.GetData()->DrawInRect(
           rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-          AbstractWindow::theme()->regular().text.data());
+          theme()->regular().text.data());
       index = index.GetDownIndex();
       rect.set_y(rect.y() - h);
     }
 
   }
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   context->BeginPopStencil();	// pop inner stencil
   glBindVertexArray(vao_[0]);

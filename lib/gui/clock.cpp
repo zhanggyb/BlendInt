@@ -64,34 +64,34 @@ void Clock::Stop()
 
 Response Clock::Draw(AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
               (float) (size().width() / 2.f),
               (float) (size().height() / 2.f));
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
   glVertexAttrib4f(AttributeColor, 0.35f, 0.45f, 0.75f, 1.f);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
-  glVertexAttrib4fv(AttributeColor, AbstractWindow::theme()->regular().outline.data());
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
+  glVertexAttrib4fv(AttributeColor, theme()->regular().outline.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 1);
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
   glBindVertexArray(vao_[2]);
   glVertexAttrib4f(AttributeColor, 1.f, 0.f, 0.f, 1.f);
-  glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), -(float)angle_);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
+  glUniform1f(shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), -(float)angle_);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glBindVertexArray(0);
 
-  glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
+  glUniform1f(shaders()->location(Shaders::WIDGET_TRIANGLE_ROTATION), 0.f);
   GLSLProgram::reset();
 
   return Finish;

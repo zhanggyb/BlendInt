@@ -181,10 +181,10 @@ void NumericalSlider::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->number_slider().shaded) {
+    if (theme()->number_slider().shaded) {
       GenerateRoundedVertices(
-          Vertical, AbstractWindow::theme()->number_slider().shadetop,
-          AbstractWindow::theme()->number_slider().shadedown, &inner_verts,
+          Vertical, theme()->number_slider().shadetop,
+          theme()->number_slider().shadedown, &inner_verts,
           &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -198,9 +198,9 @@ void NumericalSlider::PerformSizeUpdate (const AbstractView* source,
     vbo_.bind(2);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
     *(buf_p + 5) = (GLfloat) (height
-        - vertical_space * 2 * AbstractWindow::theme()->pixel());
+        - vertical_space * 2 * theme()->pixel());
     *(buf_p + 7) = (GLfloat) (height
-        - vertical_space * 2 * AbstractWindow::theme()->pixel());
+        - vertical_space * 2 * theme()->pixel());
     vbo_.unmap();
     vbo_.reset();
 
@@ -218,10 +218,10 @@ void NumericalSlider::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -242,10 +242,10 @@ void NumericalSlider::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -406,10 +406,10 @@ void NumericalSlider::InitializeNumericalSlider ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -442,19 +442,19 @@ void NumericalSlider::InitializeNumericalSlider ()
 
   cursor_vertices[0] = 0.f;
   cursor_vertices[1] = (GLfloat) vertical_space
-      * AbstractWindow::theme()->pixel();
+      * theme()->pixel();
 
   cursor_vertices[2] = 1.f;
   cursor_vertices[3] = (GLfloat) vertical_space
-      * AbstractWindow::theme()->pixel();
+      * theme()->pixel();
 
   cursor_vertices[4] = 0.f;
   cursor_vertices[5] = (GLfloat) (size().height()
-      - vertical_space * 2 * AbstractWindow::theme()->pixel());
+      - vertical_space * 2 * theme()->pixel());
 
   cursor_vertices[6] = 1.f;
   cursor_vertices[7] = (GLfloat) (size().height()
-      - vertical_space * 2 * AbstractWindow::theme()->pixel());
+      - vertical_space * 2 * theme()->pixel());
 
   vao_.bind(2);
   vbo_.bind(2);
@@ -631,7 +631,7 @@ float NumericalSlider::GetSlidePosition (float border, double v)
 {
   float minxi = 0.f;
   float maxxi = size().width();
-  //float radi = (round_radius() - border) * AbstractWindow::theme()->pixel();
+  //float radi = (round_radius() - border) * theme()->pixel();
 
   return (maxxi - minxi) * v / (maximum() - minimum());
 }
@@ -667,7 +667,7 @@ bool NumericalSlider::GetNewValue (const Point& cursor, double* out_v)
 
 void NumericalSlider::DrawSlideMode (AbstractWindow* context)
 {
-  float x = (context->shaders()->widget_model_matrix()
+  float x = (shaders()->widget_model_matrix()
       * glm::vec3(0.f, 0.f, 1.f)).x;
 
   if (context->active_frame()->has_view_buffer()) {
@@ -680,61 +680,61 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
   int outline_vertices = outline_vertex_count(round_type());
   float len = GetSlidePosition(default_border_width(), value());
 
-  AbstractWindow::shaders()->widget_split_inner_program()->use();
+  shaders()->widget_split_inner_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
       0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_SHADED),
-      context->theme()->number_slider().shaded);
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_SHADED),
+      theme()->number_slider().shaded);
 
   glUniform1f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
       x + len);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
-      1, AbstractWindow::theme()->number_slider().inner_sel.data());
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
+      1, theme()->number_slider().inner_sel.data());
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
-      1, AbstractWindow::theme()->number_slider().inner.data());
+      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
+      1, theme()->number_slider().inner.data());
 
   vao_.bind(0);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->number_slider().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->number_slider().outline.data());
 
   vao_.bind(1);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         -1.f);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 
-  Rect rect(0, 0, AbstractWindow::icons()->num()->size().width() * 2,
+  Rect rect(0, 0, icons()->num()->size().width() * 2,
             size().height());
 
-  AbstractWindow::icons()->num()->DrawInRect(rect, AlignCenter,
+  icons()->num()->DrawInRect(rect, AlignCenter,
                                              Color(0x0F0F0FFF).data(), 0,
                                              180.f);
 
   rect.set_x(rect.width() + pixel_size(kPadding.left()));
   rect.set_width(
       size().width() - pixel_size(kPadding.hsum())
-          - 4 * AbstractWindow::icons()->num()->size().width());
+          - 4 * icons()->num()->size().width());
 
   if (title_text_) {
     title_text_->DrawInRect(
@@ -744,32 +744,32 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
       rect, AlignRight | AlignVerticalCenter | AlignJustify | AlignBaseline);
 
   rect.set_x(
-      size().width() - AbstractWindow::icons()->num()->size().width() * 2);
-  rect.set_width(AbstractWindow::icons()->num()->size().width());
+      size().width() - icons()->num()->size().width() * 2);
+  rect.set_width(icons()->num()->size().width());
 
-  AbstractWindow::icons()->num()->DrawInRect(rect, AlignCenter,
+  icons()->num()->DrawInRect(rect, AlignCenter,
                                              Color(0x0F0F0FFF).data(), 0, 0.f);
 }
 
 void NumericalSlider::DrawEditMode (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->text().inner.data());
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->text().inner.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
 
   vao_.bind(0);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->text().outline.data());
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->text().outline.data());
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
 
   vao_.bind(1);
@@ -778,10 +778,10 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         -1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
@@ -811,7 +811,7 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
     if (value_text_->size().height() <= h) {
       cursor_pos = value_text_->DrawWithCursor(
           x, y, cursor_index_, text_start_, w,
-          AbstractWindow::theme()->text().text);
+          theme()->text().text);
     }
 
   }
@@ -819,14 +819,14 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
   x += cursor_pos;
   y = 0 + 1;
 
-  AbstractWindow::shaders()->widget_triangle_program()->use();
+  shaders()->widget_triangle_program()->use();
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
+      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
       y);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
       0);
   glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
   // glVertexAttrib4f(AttributeColor, 0.f, 0.215f, 1.f, 0.75f);

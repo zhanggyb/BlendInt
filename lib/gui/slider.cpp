@@ -188,27 +188,27 @@ Response Slider::Draw (AbstractWindow* context)
   float x = 0.f;
   float y = 0.f;
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
   glBindVertexArray(vao_);
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->regular().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->regular().outline.data());
 
   if (orientation() == Horizontal) {
 
     // ----- draw line
 
-    glUniform2f(AbstractWindow::shaders()->
+    glUniform2f(shaders()->
                 location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f,
                 size().height() / 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glUniform2f(AbstractWindow::shaders()->
+    glUniform2f(shaders()->
                 location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f,
                 size().height() / 2 - 1.f);
-    glUniform4f(AbstractWindow::shaders()->
+    glUniform4f(shaders()->
                 location(Shaders::WIDGET_OUTER_COLOR),
                 1.f, 1.f, 1.f, 0.16f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -220,17 +220,17 @@ Response Slider::Draw (AbstractWindow* context)
 
     // ----- draw line
 
-    glUniform2f(AbstractWindow::shaders()->
+    glUniform2f(shaders()->
                 location(Shaders::WIDGET_OUTER_OFFSET),
                 size().width() / 2,
                 0.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glUniform2f(AbstractWindow::shaders()->
+    glUniform2f(shaders()->
                 location(Shaders::WIDGET_OUTER_OFFSET),
                 size().width() / 2 + 1.f,
                 0.f);
-    glUniform4f(AbstractWindow::shaders()->
+    glUniform4f(shaders()->
                 location(Shaders::WIDGET_OUTER_COLOR),
                 1.f, 1.f, 1.f, 0.16f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

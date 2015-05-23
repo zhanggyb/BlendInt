@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 ExpandButton::ExpandButton ()
-    : AbstractButton(AbstractWindow::icons()->num())
+    : AbstractButton(icons()->num())
 {
   set_checkable(true);
 
@@ -43,7 +43,7 @@ ExpandButton::ExpandButton ()
 }
 
 ExpandButton::ExpandButton (const String& text)
-    : AbstractButton(AbstractWindow::icons()->num(), text)
+    : AbstractButton(icons()->num(), text)
 {
   set_checkable(true);
 

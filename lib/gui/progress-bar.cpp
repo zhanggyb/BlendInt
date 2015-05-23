@@ -83,10 +83,10 @@ void ProgressBar::PerformSizeUpdate (const AbstractView* source, const AbstractV
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->number_slider().shaded) {
+    if (theme()->number_slider().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->number_slider().shadetop,
-                              AbstractWindow::theme()->number_slider().shadedown,
+                              theme()->number_slider().shadetop,
+                              theme()->number_slider().shadedown,
                               &inner_verts,
                               &outer_verts);
     } else {
@@ -113,10 +113,10 @@ void ProgressBar::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts,
                             &outer_verts);
   } else {
@@ -138,10 +138,10 @@ void ProgressBar::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts,
                             &outer_verts);
   } else {
@@ -165,34 +165,34 @@ Response ProgressBar::Draw(AbstractWindow* context)
   int outline_vertices = outline_vertex_count(round_type());
   float len = 20.f;
 
-  AbstractWindow::shaders()->widget_split_inner_program()->use();
+  shaders()->widget_split_inner_program()->use();
 
   //if(hover()) {
-  //	glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
+  //	glUniform1i(shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 15);
   //} else {
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
   //}
 
-  glUniform1f(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE), x + len);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, AbstractWindow::theme()->number_slider().inner_sel.data());
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, AbstractWindow::theme()->number_slider().inner.data());
+  glUniform1f(shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE), x + len);
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0), 1, theme()->number_slider().inner_sel.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1), 1, theme()->number_slider().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1, AbstractWindow::theme()->number_slider().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1, theme()->number_slider().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
   if (emboss()) {
-    glUniform4f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f, 1.0f, 1.0f, 0.16f);
 
-    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f, - 1.f);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -211,10 +211,10 @@ void ProgressBar::InitializeProgressBar ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->number_slider().shaded) {
+  if (theme()->number_slider().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->number_slider().shadetop,
-                            AbstractWindow::theme()->number_slider().shadedown,
+                            theme()->number_slider().shadetop,
+                            theme()->number_slider().shadedown,
                             &inner_verts,
                             &outer_verts);
   } else {

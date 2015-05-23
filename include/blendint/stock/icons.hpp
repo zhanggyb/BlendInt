@@ -41,9 +41,9 @@ namespace BlendInt {
  */
 class Icons
 {
-  DISALLOW_COPY_AND_ASSIGN (Icons);
-
 public:
+
+  static Icons* kIcons;
 
   enum IconType
   {
@@ -1141,5 +1141,10 @@ private:
 
   std::vector<RefPtr<PixelIcon> > icons_32x32_;
 };
+
+inline Icons* icons ()
+{
+  return Icons::kIcons;
+}
 
 }

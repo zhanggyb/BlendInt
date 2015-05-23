@@ -168,13 +168,13 @@ void PixelIcon::Draw (int x, int y, const float* color_ptr, short gamma,
 {
   if(texture_) {
 
-    AbstractWindow::shaders()->widget_image_program()->use();
+    shaders()->widget_image_program()->use();
 
-    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
     glActiveTexture(GL_TEXTURE0);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 
     texture_->bind();
     glBindVertexArray(vao_);
@@ -210,13 +210,13 @@ void PixelIcon::DrawInRect (const Rect& rect,
       y = rect.vcenter();
     }
 
-    AbstractWindow::shaders()->widget_image_program()->use();
+    shaders()->widget_image_program()->use();
 
-    glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
+    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
     glActiveTexture(GL_TEXTURE0);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
 
     texture_->bind();
     glBindVertexArray(vao_);
@@ -288,14 +288,14 @@ void PixelIcon::CreateVertexArray (unsigned int width, unsigned int height, cons
   vbo_->set_data(sizeof(GLfloat) * v.size(), &v[0]);
 
   glEnableVertexAttribArray(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
+      shaders()->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
   glEnableVertexAttribArray(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+      shaders()->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
   glVertexAttribPointer(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
+      shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
       GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
   glVertexAttribPointer(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_UV), 2,
+      shaders()->location(Shaders::WIDGET_IMAGE_UV), 2,
       GL_FLOAT,
       GL_FALSE, 4 * sizeof(GLfloat),
       BUFFER_OFFSET(2 * sizeof(GLfloat)));

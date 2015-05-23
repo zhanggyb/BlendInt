@@ -24,11 +24,13 @@
 #pragma once
 
 #include <blendint/core/input.hpp>
-#include <blendint/gui/abstract-view.hpp>
 
 #include <blendint/stock/icons.hpp>
 #include <blendint/stock/theme.hpp>
 #include <blendint/stock/shaders.hpp>
+
+#include <blendint/gui/font.hpp>
+#include <blendint/gui/abstract-view.hpp>
 
 namespace BlendInt {
 
@@ -260,21 +262,6 @@ public:
     return kMainWindow;
   }
 
-  static inline Theme* theme ()
-  {
-    return kTheme;
-  }
-
-  static inline Icons* icons ()
-  {
-    return kIcons;
-  }
-
-  static inline Shaders* shaders ()
-  {
-    return kShaders;
-  }
-
 protected:
 
   virtual bool PreDraw (AbstractWindow* context);
@@ -351,12 +338,6 @@ protected:
     window->PostDraw(window);
   }
 
-  static Theme* kTheme;
-
-  static Icons* kIcons;
-
-  static Shaders* kShaders;
-
 private:
 
   friend class AbstractFrame;
@@ -410,20 +391,5 @@ private:
 
   static AbstractWindow* kMainWindow;
 };
-
-inline float pixel_size (float a)
-{
-  return a * AbstractWindow::theme()->pixel();
-}
-
-inline float pixel_size (int a)
-{
-  return a * AbstractWindow::theme()->pixel();
-}
-
-inline float pixel_size (unsigned int a)
-{
-  return a * AbstractWindow::theme()->pixel();
-}
 
 }  // namespace BlendInt

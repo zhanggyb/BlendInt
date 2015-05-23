@@ -106,12 +106,13 @@ Window::Window (int width, int height, const char* title, int flags)
                                       pixel_size(size().height()),
                                       100.f,
                                       -100.f);
-    kShaders->SetFrameProjectionMatrix(projection);
-    kShaders->SetFrameViewMatrix(default_view_matrix);
-    kShaders->SetFrameModelMatrix(glm::mat3(1.f));
 
-    kShaders->SetWidgetViewMatrix(default_view_matrix);
-    kShaders->SetWidgetModelMatrix(glm::mat3(1.f));
+    shaders()->SetFrameProjectionMatrix(projection);
+    shaders()->SetFrameViewMatrix(default_view_matrix);
+    shaders()->SetFrameModelMatrix(glm::mat3(1.f));
+
+    shaders()->SetWidgetViewMatrix(default_view_matrix);
+    shaders()->SetWidgetModelMatrix(glm::mat3(1.f));
 
     Timer::SaveProgramTime();
 
@@ -381,7 +382,7 @@ void Window::PerformSizeUpdate (const AbstractView* source,
                                       pixel_size(size().height()),
                                       100.f,
                                       -100.f);
-    kShaders->SetFrameProjectionMatrix(projection);
+    shaders()->SetFrameProjectionMatrix(projection);
 
     set_refresh(true);
 

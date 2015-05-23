@@ -42,10 +42,6 @@ namespace BlendInt {
 
 std::thread::id AbstractWindow::kMainThreadID;
 
-Theme* AbstractWindow::kTheme = 0;
-Icons* AbstractWindow::kIcons = 0;
-Shaders* AbstractWindow::kShaders = 0;
-
 AbstractWindow* AbstractWindow::kMainWindow = 0;
 
 glm::mat4 AbstractWindow::default_view_matrix = glm::lookAt(
@@ -607,9 +603,9 @@ AbstractView* AbstractWindow::RemoveSubView (AbstractView* view)
 
 bool AbstractWindow::InitializeTheme ()
 {
-  if (!kTheme) {
-    kTheme = new Theme;
-    kTheme->Reset();
+  if (!Theme::kTheme) {
+    Theme::kTheme = new Theme;
+    Theme::kTheme->Reset();
   }
 
   return true;
@@ -617,7 +613,7 @@ bool AbstractWindow::InitializeTheme ()
 
 bool AbstractWindow::InitializeIcons ()
 {
-  if (!kIcons) kIcons = new Icons;
+  if (!Icons::kIcons) Icons::kIcons = new Icons;
 
   return true;
 }
@@ -626,11 +622,11 @@ bool AbstractWindow::InitializeShaders ()
 {
   bool ret = true;
 
-  if (!kShaders) {
-    kShaders = new Shaders;
+  if (!Shaders::kShaders) {
+    Shaders::kShaders = new Shaders;
 
-    if (kShaders) {
-      ret = kShaders->Setup();
+    if (Shaders::kShaders) {
+      ret = Shaders::kShaders->Setup();
     } else {
       ret = false;
     }
@@ -646,7 +642,7 @@ bool AbstractWindow::InitializeFont ()
   if (FontCache::kDefaultFontHash == 0) {
 
     Fc::Pattern p = Fc::Pattern::name_parse(
-        (const FcChar8*) kTheme->default_font());
+        (const FcChar8*) Theme::kTheme->default_font());
 
     Fc::Config::substitute(0, p, FcMatchPattern);
     p.default_substitute();
@@ -668,25 +664,25 @@ bool AbstractWindow::InitializeFont ()
 
 void AbstractWindow::ReleaseTheme ()
 {
-  if (kTheme) {
-    delete kTheme;
-    kTheme = 0;
+  if (Theme::kTheme) {
+    delete Theme::kTheme;
+    Theme::kTheme = 0;
   }
 }
 
 void AbstractWindow::ReleaseIcons ()
 {
-  if (kIcons) {
-    delete kIcons;
-    kIcons = 0;
+  if (Icons::kIcons) {
+    delete Icons::kIcons;
+    Icons::kIcons = 0;
   }
 }
 
 void AbstractWindow::ReleaseShaders ()
 {
-  if (kShaders) {
-    delete kShaders;
-    kShaders = 0;
+  if (Shaders::kShaders) {
+    delete Shaders::kShaders;
+    Shaders::kShaders = 0;
   }
 }
 

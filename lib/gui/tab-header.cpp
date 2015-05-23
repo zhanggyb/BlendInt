@@ -187,20 +187,20 @@ void TabHeader::PerformSizeUpdate (const AbstractView* source, const AbstractVie
 
 void TabHeader::PostDraw (AbstractWindow* context)
 {
-  Color baseline_color = context->theme()->tab().inner_sel;
+  Color baseline_color = theme()->tab().inner_sel;
 
-  if (context->theme()->tab().shaded)
-    baseline_color = baseline_color + context->theme()->tab().shadedown;
+  if (theme()->tab().shaded)
+    baseline_color = baseline_color + theme()->tab().shadedown;
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
       0);
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform4fv(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+      shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
       baseline_color.data());
 
   glBindVertexArray(vao_);

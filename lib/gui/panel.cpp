@@ -150,10 +150,10 @@ void Panel::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->regular().shaded) {
+    if (theme()->regular().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->regular().shadetop,
-                              AbstractWindow::theme()->regular().shadedown,
+                              theme()->regular().shadetop,
+                              theme()->regular().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -183,10 +183,10 @@ void Panel::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -208,10 +208,10 @@ void Panel::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -235,30 +235,30 @@ Response Panel::Draw (AbstractWindow* context)
     RenderSubWidgetsToTexture(this, context, view_buffer_->texture());
   }
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               0);
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->regular().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->regular().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   if (view_buffer_) {
 
-    AbstractWindow::shaders()->widget_image_program()->use();
+    shaders()->widget_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+        shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
         0.f, 0.f);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+        shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer_->Draw(0, 0);
@@ -272,12 +272,12 @@ Response Panel::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform2f(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+  glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, 0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->regular().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->regular().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -285,10 +285,10 @@ Response Panel::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         -1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
@@ -311,10 +311,10 @@ void Panel::InitializePanelOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->regular().shaded) {
+  if (theme()->regular().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->regular().shadetop,
-                            AbstractWindow::theme()->regular().shadedown,
+                            theme()->regular().shadetop,
+                            theme()->regular().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);

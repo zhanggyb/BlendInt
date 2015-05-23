@@ -65,7 +65,7 @@ Size CheckButton::GetPreferredSize () const
   int w = 0;
   int h = 0;
 
-  const RefPtr<CheckIcon>& icon = AbstractWindow::icons()->check();
+  const RefPtr<CheckIcon>& icon = icons()->check();
 
   w = icon->size().width();
   h = icon->size().height();
@@ -97,7 +97,7 @@ Response CheckButton::Draw (AbstractWindow* context)
             size().width() - pixel_size(kPadding.hsum()),
             size().height() - pixel_size(kPadding.vsum()));
 
-  const RefPtr<CheckIcon>& icon = context->icons()->check();
+  const RefPtr<CheckIcon>& icon = icons()->check();
 
   if (icon->size().height() <= rect.height()) {
     if (icon->size().width() <= rect.width()) {
@@ -111,7 +111,7 @@ Response CheckButton::Draw (AbstractWindow* context)
 
       icon->DrawInRect(rect, align);
       if(is_checked()) {
-        context->icons()->hook()->DrawInRect(rect, align,
+        icons()->hook()->DrawInRect(rect, align,
                                              Color(Palette::White).data());
       }
 

@@ -477,8 +477,8 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
 
   if (GLFramebuffer::CheckStatus()) {
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model);
+    shaders()->SetWidgetProjectionMatrix(projection);
+    shaders()->SetWidgetModelMatrix(model);
 
     // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
     GLuint original_stencil_count = context->stencil_count_;

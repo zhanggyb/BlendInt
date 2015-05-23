@@ -129,13 +129,13 @@ void ScrollBar::PerformSizeUpdate (const AbstractView* source, const AbstractVie
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->scroll().shaded) {
+    if (theme()->scroll().shaded) {
 
-      short shadetop = AbstractWindow::theme()->scroll().shadetop;
-      short shadedown = AbstractWindow::theme()->scroll().shadedown;
+      short shadetop = theme()->scroll().shadetop;
+      short shadedown = theme()->scroll().shadedown;
       if (orientation() == Vertical) {
-        shadetop = AbstractWindow::theme()->scroll().shadedown;
-        shadedown = AbstractWindow::theme()->scroll().shadetop;
+        shadetop = theme()->scroll().shadedown;
+        shadedown = theme()->scroll().shadetop;
       }
 
       GenerateVertices(size(), default_border_width(), round_type(), radius,
@@ -190,27 +190,27 @@ void ScrollBar::PerformStepUpdate (int step)
 
 Response ScrollBar::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-      context->theme()->scroll().shaded);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      theme()->scroll().shaded);
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->scroll().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->scroll().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+      shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
       0.f);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->scroll().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->scroll().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -218,10 +218,10 @@ Response ScrollBar::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.f,
         1.f, 1.f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
         0.f, 0.f - 1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  emboss_vertex_count(round_type()) * 2);
@@ -318,13 +318,13 @@ void ScrollBar::InitScrollBarOnce ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->scroll().shaded) {
+  if (theme()->scroll().shaded) {
 
-    short shadetop = AbstractWindow::theme()->scroll().shadetop;
-    short shadedown = AbstractWindow::theme()->scroll().shadedown;
+    short shadetop = theme()->scroll().shadetop;
+    short shadedown = theme()->scroll().shadedown;
     if (orientation() == Vertical) {
-      shadetop = AbstractWindow::theme()->scroll().shadedown;
-      shadedown = AbstractWindow::theme()->scroll().shadetop;
+      shadetop = theme()->scroll().shadedown;
+      shadedown = theme()->scroll().shadetop;
     }
 
     GenerateVertices(slot_size, default_border_width(), round_type(),

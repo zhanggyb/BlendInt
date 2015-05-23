@@ -157,10 +157,10 @@ void TextEntry::PerformSizeUpdate (const AbstractView* source, const AbstractVie
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->text().shaded) {
+    if (theme()->text().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->text().shadetop,
-                              AbstractWindow::theme()->text().shadedown, &inner_verts,
+                              theme()->text().shadetop,
+                              theme()->text().shadedown, &inner_verts,
                               &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -176,9 +176,9 @@ void TextEntry::PerformSizeUpdate (const AbstractView* source, const AbstractVie
     vbo_.bind(2);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
     *(buf_p + 5) = (GLfloat) (height
-                              - vertical_space * 2 * AbstractWindow::theme()->pixel());
+                              - vertical_space * 2 * theme()->pixel());
     *(buf_p + 7) = (GLfloat) (height
-                              - vertical_space * 2 * AbstractWindow::theme()->pixel());
+                              - vertical_space * 2 * theme()->pixel());
     vbo_.unmap();
     vbo_.reset();
 
@@ -197,9 +197,9 @@ void TextEntry::PerformRoundTypeUpdate (int round_type)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->text().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->text().shadetop,
-                            AbstractWindow::theme()->text().shadedown, &inner_verts, &outer_verts);
+  if (theme()->text().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->text().shadetop,
+                            theme()->text().shadedown, &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
   }
@@ -219,9 +219,9 @@ void TextEntry::PerformRoundRadiusUpdate (float radius)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->text().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->text().shadetop,
-                            AbstractWindow::theme()->text().shadedown, &inner_verts, &outer_verts);
+  if (theme()->text().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->text().shadetop,
+                            theme()->text().shadedown, &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
   }
@@ -368,25 +368,25 @@ Response TextEntry::PerformMousePress (AbstractWindow* context)
 
 Response TextEntry::Draw (AbstractWindow* context)
 {
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, AbstractWindow::theme()->text().inner.data());
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA),
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
+               1, theme()->text().inner.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
               0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-      context->theme()->text().shaded);
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      theme()->text().shaded);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-  AbstractWindow::shaders()->widget_outer_program()->use();
+  shaders()->widget_outer_program()->use();
 
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
-               1, AbstractWindow::theme()->text().outline.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+               1, theme()->text().outline.data());
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+      shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
       0.f);
 
   glBindVertexArray(vao_[1]);
@@ -395,10 +395,10 @@ Response TextEntry::Draw (AbstractWindow* context)
 
   if (emboss()) {
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
         1.0f, 1.0f, 0.16f);
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
         0.f, -1.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  emboss_vertex_count(round_type()) * 2);
@@ -429,7 +429,7 @@ Response TextEntry::Draw (AbstractWindow* context)
 
     if (text_->size().height() <= h) {
       cursor_pos = text_->DrawWithCursor(x, y, cursor_index_, text_start_, w,
-                                         AbstractWindow::theme()->text().text);
+                                         theme()->text().text);
     }
 
   }
@@ -439,14 +439,14 @@ Response TextEntry::Draw (AbstractWindow* context)
     x += cursor_pos;
     y = 0 + 1;
 
-    AbstractWindow::shaders()->widget_triangle_program()->use();
+    shaders()->widget_triangle_program()->use();
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+        shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
         x, y);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(
+        shaders()->location(
             Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
     glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
     // glVertexAttrib4f(AttributeColor, 0.f, 0.215f, 1.f, 0.75f);
@@ -463,9 +463,9 @@ void TextEntry::InitializeTextEntry ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->text().shaded) {
-    GenerateRoundedVertices(Vertical, AbstractWindow::theme()->text().shadetop,
-                            AbstractWindow::theme()->text().shadedown, &inner_verts, &outer_verts);
+  if (theme()->text().shaded) {
+    GenerateRoundedVertices(Vertical, theme()->text().shadetop,
+                            theme()->text().shadedown, &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
   }
@@ -491,19 +491,19 @@ void TextEntry::InitializeTextEntry ()
 
   cursor_vertices[0] = 0.f;
   cursor_vertices[1] = (GLfloat) vertical_space
-      * AbstractWindow::theme()->pixel();
+      * theme()->pixel();
 
   cursor_vertices[2] = 1.f;
   cursor_vertices[3] = (GLfloat) vertical_space
-      * AbstractWindow::theme()->pixel();
+      * theme()->pixel();
 
   cursor_vertices[4] = 0.f;
   cursor_vertices[5] = (GLfloat) (size().height()
-                                  - vertical_space * 2 * AbstractWindow::theme()->pixel());
+                                  - vertical_space * 2 * theme()->pixel());
 
   cursor_vertices[6] = 1.f;
   cursor_vertices[7] = (GLfloat) (size().height()
-                                  - vertical_space * 2 * AbstractWindow::theme()->pixel());
+                                  - vertical_space * 2 * theme()->pixel());
 
   glBindVertexArray(vao_[2]);
   vbo_.bind(2);

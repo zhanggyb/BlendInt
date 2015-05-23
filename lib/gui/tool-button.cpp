@@ -52,10 +52,10 @@ namespace BlendInt {
       std::vector<GLfloat> inner_verts;
       std::vector<GLfloat> outer_verts;
 
-      if (AbstractWindow::theme()->tool().shaded) {
+      if (theme()->tool().shaded) {
         GenerateRoundedVertices(Vertical,
-                                AbstractWindow::theme()->tool().shadedown,
-                                AbstractWindow::theme()->tool().shadetop,
+                                theme()->tool().shadedown,
+                                theme()->tool().shadetop,
                                 &inner_verts, &outer_verts);
       } else {
         GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -84,10 +84,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->tool().shaded) {
+    if (theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->tool().shadedown,
-                              AbstractWindow::theme()->tool().shadetop,
+                              theme()->tool().shadedown,
+                              theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -109,10 +109,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->tool().shaded) {
+    if (theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->tool().shadedown,
-                              AbstractWindow::theme()->tool().shadetop,
+                              theme()->tool().shadedown,
+                              theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -148,30 +148,30 @@ namespace BlendInt {
 
   Response ToolButton::Draw (AbstractWindow* context)
   {
-    AbstractWindow::shaders()->widget_inner_program()->use();
+    shaders()->widget_inner_program()->use();
 
     if (is_down()) {
 
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+          shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
       glUniform1i(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
-          context->theme()->tool().shaded);
+          shaders()->location(Shaders::WIDGET_INNER_SHADED),
+          theme()->tool().shaded);
       glUniform4fv(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-          AbstractWindow::theme()->tool().inner_sel.data());
+          shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+          theme()->tool().inner_sel.data());
 
       glBindVertexArray(vao_[0]);
       glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-      AbstractWindow::shaders()->widget_outer_program()->use();
+      shaders()->widget_outer_program()->use();
 
       glUniform2f(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+          shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
           0.f, 0.f);
       glUniform4fv(
-          AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-          AbstractWindow::theme()->tool().outline.data());
+          shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+          theme()->tool().outline.data());
 
       glBindVertexArray(vao_[1]);
       glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -179,10 +179,10 @@ namespace BlendInt {
 
       if (emboss()) {
         glUniform4f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+            shaders()->location(Shaders::WIDGET_OUTER_COLOR),
             1.0f, 1.0f, 1.0f, 0.16f);
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+            shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
             0.f, -1.f);
         glDrawArrays(GL_TRIANGLE_STRIP, 0,
                      emboss_vertex_count(round_type()) * 2);
@@ -192,14 +192,14 @@ namespace BlendInt {
 
       if (hover_) {
 
-        AbstractWindow::shaders()->widget_outer_program()->use();
+        shaders()->widget_outer_program()->use();
 
         glUniform2f(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+            shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
             0.f, 0.f);
         glUniform4fv(
-            AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-            AbstractWindow::theme()->tool().outline.data());
+            shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+            theme()->tool().outline.data());
 
         glBindVertexArray(vao_[1]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0,
@@ -207,10 +207,10 @@ namespace BlendInt {
 
         if (emboss()) {
           glUniform4f(
-              AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+              shaders()->location(Shaders::WIDGET_OUTER_COLOR),
               1.0f, 1.0f, 1.0f, 0.16f);
           glUniform2f(
-              AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+              shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
               0.f, -1.f);
           glDrawArrays(GL_TRIANGLE_STRIP, 0,
                        emboss_vertex_count(round_type()) * 2);
@@ -277,10 +277,10 @@ namespace BlendInt {
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->tool().shaded) {
+    if (theme()->tool().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->tool().shadedown,
-                              AbstractWindow::theme()->tool().shadetop,
+                              theme()->tool().shadedown,
+                              theme()->tool().shadetop,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);

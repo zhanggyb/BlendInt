@@ -103,13 +103,13 @@ void ChessBoard::Draw (int x, // x coord
 
   texture_->bind();
 
-  AbstractWindow::shaders()->widget_image_program()->use();
+  shaders()->widget_image_program()->use();
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x,
+      shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x,
       y);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
+      shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
               gamma);
 
   glBindVertexArray(vao_);
@@ -147,13 +147,13 @@ void ChessBoard::DrawInRect (const Rect& rect, // rectangel to draw
 
   texture_->bind();
 
-  AbstractWindow::shaders()->widget_image_program()->use();
+  shaders()->widget_image_program()->use();
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x,
+      shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x,
       y);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
+      shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA),
               gamma);
 
   glBindVertexArray(vao_);

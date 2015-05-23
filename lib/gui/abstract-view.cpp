@@ -929,9 +929,9 @@ void AbstractView::PerformPositionUpdate (const AbstractView* source,
  inner_ptr = inner;
  }
 
- float border = default_border_width * AbstractWindow::theme()->pixel();
+ float border = default_border_width * theme()->pixel();
 
- float rad = round_radius_ * AbstractWindow::theme()->pixel();
+ float rad = round_radius_ * theme()->pixel();
  float radi = rad - border;
 
  float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -1144,9 +1144,9 @@ void AbstractView::PerformPositionUpdate (const AbstractView* source,
  inner_ptr = inner;
  }
 
- float border = default_border_width * AbstractWindow::theme()->pixel();
+ float border = default_border_width * theme()->pixel();
 
- float rad = round_radius_ * AbstractWindow::theme()->pixel();
+ float rad = round_radius_ * theme()->pixel();
  float radi = rad - border;
 
  float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -1193,7 +1193,7 @@ void AbstractView::PerformPositionUpdate (const AbstractView* source,
  rad = 0.5f * minsize;
 
  if (2.0f * (radi + border) > minsize)
- radi = 0.5f * minsize - border * AbstractWindow::theme()->pixel();	// U.pixelsize;
+ radi = 0.5f * minsize - border * theme()->pixel();	// U.pixelsize;
 
  // mult
  for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

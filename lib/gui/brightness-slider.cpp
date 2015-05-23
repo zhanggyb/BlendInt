@@ -78,42 +78,42 @@ namespace BlendInt {
 
 	Response BrightnessSlider::Draw (AbstractWindow* context)
 	{
-		AbstractWindow::shaders()->widget_inner_program()->use();
+		shaders()->widget_inner_program()->use();
 
     glUniform4f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.f,
+        shaders()->location(Shaders::WIDGET_INNER_COLOR), 0.f,
         0.f, 0.f, 1.f);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+        shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED), 1);
+        shaders()->location(Shaders::WIDGET_INNER_SHADED), 1);
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
-    AbstractWindow::shaders()->widget_outer_program()->use();
+    shaders()->widget_outer_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
+        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
         0.f);
     glUniform4fv(
-        AbstractWindow::shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
-        AbstractWindow::theme()->regular().outline.data());
+        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
+        theme()->regular().outline.data());
     glBindVertexArray(vao_[1]);
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  outline_vertex_count(round_type()) * 2 + 2);
 
     int pos = 0;
     if (orientation() == Horizontal) {
-      pos = context->icons()->dot()->size().width() / 2
-          + (size().width() - context->icons()->dot()->size().width())
+      pos = icons()->dot()->size().width() / 2
+          + (size().width() - icons()->dot()->size().width())
               * (maximum() - minimum()) / value();
-      context->icons()->dot()->Draw(pos, size().height() / 2);
+      icons()->dot()->Draw(pos, size().height() / 2);
     } else {
-      pos = context->icons()->dot()->size().height() / 2
-          + (size().height() - context->icons()->dot()->size().height())
+      pos = icons()->dot()->size().height() / 2
+          + (size().height() - icons()->dot()->size().height())
               * (maximum() - minimum()) / value();
-      context->icons()->dot()->Draw(size().width() / 2, pos);
+      icons()->dot()->Draw(size().width() / 2, pos);
     }
 
 		return Finish;

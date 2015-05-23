@@ -367,21 +367,21 @@ Response NodeView::PerformMouseMove (AbstractWindow* context)
 bool NodeView::PreDraw (AbstractWindow* context)
 {
   glm::mat3 matrix = glm::translate(
-      AbstractWindow::shaders()->widget_model_matrix(),
+      shaders()->widget_model_matrix(),
       glm::vec2(position().x(), position().y()));
 
-  AbstractWindow::shaders()->PushWidgetModelMatrix();
-  AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+  shaders()->PushWidgetModelMatrix();
+  shaders()->SetWidgetModelMatrix(matrix);
 
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_SHADED),
+      shaders()->location(Shaders::WIDGET_INNER_SHADED),
       0);
   glUniform4f(
-      AbstractWindow::shaders()->location(Shaders::WIDGET_INNER_COLOR),
+      shaders()->location(Shaders::WIDGET_INNER_COLOR),
       0.565f, 0.596f, 0.627f, 1.f);
 
   glBindVertexArray(vao_);
@@ -404,11 +404,11 @@ Response NodeView::Draw (AbstractWindow* context)
     Point offset = GetOffset();
 
     glm::mat3 matrix = glm::translate(
-        AbstractWindow::shaders()->widget_model_matrix(),
+        shaders()->widget_model_matrix(),
         glm::vec2(offset.x(), offset.y()));
 
-    AbstractWindow::shaders()->PushWidgetModelMatrix();
-    AbstractWindow::shaders()->SetWidgetModelMatrix(matrix);
+    shaders()->PushWidgetModelMatrix();
+    shaders()->SetWidgetModelMatrix(matrix);
 
     return Ignore;
 
@@ -420,11 +420,11 @@ Response NodeView::Draw (AbstractWindow* context)
 void NodeView::PostDraw (AbstractWindow* context)
 {
   if (subview_count()) {
-    AbstractWindow::shaders()->PopWidgetModelMatrix();
+    shaders()->PopWidgetModelMatrix();
   }
 
   // draw mask
-  AbstractWindow::shaders()->widget_inner_program()->use();
+  shaders()->widget_inner_program()->use();
 
   glBindVertexArray(vao_);
 
@@ -432,7 +432,7 @@ void NodeView::PostDraw (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
   context->EndPopStencil();
 
-  AbstractWindow::shaders()->PopWidgetModelMatrix();
+  shaders()->PopWidgetModelMatrix();
 }
 
 void NodeView::PerformMouseHover (AbstractWindow* context)

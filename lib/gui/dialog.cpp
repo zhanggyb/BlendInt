@@ -107,10 +107,10 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  if (AbstractWindow::theme()->dialog().shaded) {
+  if (theme()->dialog().shaded) {
     GenerateRoundedVertices(Vertical,
-                            AbstractWindow::theme()->dialog().shadetop,
-                            AbstractWindow::theme()->dialog().shadedown,
+                            theme()->dialog().shadetop,
+                            theme()->dialog().shadedown,
                             &inner_verts, &outer_verts);
   } else {
     GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -194,10 +194,10 @@ void Dialog::PerformSizeUpdate (const AbstractView* source,
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
 
-    if (AbstractWindow::theme()->dialog().shaded) {
+    if (theme()->dialog().shaded) {
       GenerateRoundedVertices(Vertical,
-                              AbstractWindow::theme()->dialog().shadetop,
-                              AbstractWindow::theme()->dialog().shadedown,
+                              theme()->dialog().shadetop,
+                              theme()->dialog().shadedown,
                               &inner_verts, &outer_verts);
     } else {
       GenerateRoundedVertices(&inner_verts, &outer_verts);
@@ -235,29 +235,29 @@ Response Dialog::Draw (AbstractWindow* context)
 {
   // shadow_->Draw(position().x(), position().y());
 
-  AbstractWindow::shaders()->frame_inner_program()->use();
+  shaders()->frame_inner_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_INNER_POSITION),
+      shaders()->location(Shaders::FRAME_INNER_POSITION),
       pixel_size(position().x()), pixel_size(position().y()));
-  glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_GAMMA),
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_INNER_COLOR),
-               1, AbstractWindow::theme()->dialog().inner.data());
+  glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
+               1, theme()->dialog().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
 
   if (view_buffer()) {
 
-    AbstractWindow::shaders()->frame_image_program()->use();
+    shaders()->frame_image_program()->use();
 
     glUniform2f(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
         pixel_size(position().x()), pixel_size(position().y()));
     glUniform1i(
-        AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-    glUniform1i(AbstractWindow::shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
+        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
                 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
@@ -270,8 +270,8 @@ Response Dialog::Draw (AbstractWindow* context)
                pixel_size(size().width()),
                pixel_size(size().height()));
 
-    AbstractWindow::shaders()->SetWidgetProjectionMatrix(projection_matrix_);
-    AbstractWindow::shaders()->SetWidgetModelMatrix(model_matrix_);
+    shaders()->SetWidgetProjectionMatrix(projection_matrix_);
+    shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
@@ -279,13 +279,13 @@ Response Dialog::Draw (AbstractWindow* context)
 
   }
 
-  AbstractWindow::shaders()->frame_outer_program()->use();
+  shaders()->frame_outer_program()->use();
 
   glUniform2f(
-      AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_POSITION),
+      shaders()->location(Shaders::FRAME_OUTER_POSITION),
       pixel_size(position().x()), pixel_size(position().y()));
-  glUniform4fv(AbstractWindow::shaders()->location(Shaders::FRAME_OUTER_COLOR),
-               1, AbstractWindow::theme()->dialog().outline.data());
+  glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR),
+               1, theme()->dialog().outline.data());
 
   glBindVertexArray(vao_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0,
