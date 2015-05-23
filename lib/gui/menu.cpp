@@ -375,9 +375,9 @@ Response Menu::Draw (AbstractWindow* context)
 
   shaders()->frame_inner_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_INNER_POSITION),
-      position().x(), position().y());
+  glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -390,9 +390,9 @@ Response Menu::Draw (AbstractWindow* context)
 
     shaders()->frame_image_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        position().x(), position().y());
+    glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+                pixel_size(position().x()),
+                pixel_size(position().y()));
     glUniform1i(
         shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
@@ -403,22 +403,26 @@ Response Menu::Draw (AbstractWindow* context)
 
   } else {
 
-    glViewport(position().x(), position().y(), size().width(), size().height());
+    glViewport(pixel_size(position().x()),
+               pixel_size(position().y()),
+               pixel_size(size().width()),
+               pixel_size(size().height()));
 
     shaders()->SetWidgetProjectionMatrix(projection_matrix_);
     shaders()->SetWidgetModelMatrix(model_matrix_);
 
     DrawSubViewsOnce(context);
 
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0, 0, pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
 
   }
 
   shaders()->frame_outer_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_OUTER_POSITION),
-      position().x(), position().y());
+  glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR),
                1, theme()->menu_back().outline.data());
 
@@ -443,8 +447,8 @@ void Menu::PerformHoverOut (AbstractWindow* context)
   hover_ = false;
 
   if (hovered_widget_) {
-    hovered_widget_->destroyed().disconnect1(this,
-                                               &Menu::OnHoverWidgetDestroyed);
+    hovered_widget_->destroyed().disconnect1(
+        this, &Menu::OnHoverWidgetDestroyed);
     ClearHoverWidgets(hovered_widget_, context);
     hovered_widget_ = 0;
   }

@@ -30,6 +30,8 @@
 #include <blendint/gui/push-button.hpp>
 #include <blendint/gui/toggle-button.hpp>
 #include <blendint/gui/label.hpp>
+#include <blendint/gui/menu.hpp>
+#include <blendint/gui/radio-button.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -40,8 +42,18 @@ int main (int argc, char* argv[])
     //EditorWindow win(1280, 800, "UI Editor");
 
     Window win(300, 300, "UI Editor");
+
     Frame* frame = new Frame(new LinearLayout);
-    frame->AddWidget(new Label("Hello World!"));
+    //Menu* frame = new Menu;
+    
+    // frame->EnableViewBuffer();
+
+    //Label* label = new Label("Hello World!");
+    //label->SetBackground(Color(0xE02F2F9F));
+    //frame->AddWidget(label);
+
+    frame->AddWidget(new RadioButton);
+
     win.AddFrame(frame);
     frame->Resize(100, 100);
     frame->MoveTo(100, 100);
@@ -49,8 +61,6 @@ int main (int argc, char* argv[])
     win.Exec();
     Window::Terminate();
   }
-
-
   
   return 0;
 }

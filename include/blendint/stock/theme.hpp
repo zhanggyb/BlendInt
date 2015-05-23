@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <blendint/core/color.hpp>
 
 namespace BlendInt {
@@ -251,6 +253,11 @@ public:
     return data_.shadow_width;
   }
 
+  inline void set_pixel (float pixel)
+  {
+    data_.pixel = pixel;
+  }
+  
 private:
 
   friend class AbstractWindow;
@@ -276,17 +283,8 @@ inline Theme* const theme ()
   return Theme::kTheme;
 }
 
-inline float pixel_size (float a)
-{
-  return a * Theme::kTheme->pixel();
-}
-
-inline float pixel_size (int a)
-{
-  return a * Theme::kTheme->pixel();
-}
-
-inline float pixel_size (unsigned int a)
+template<typename T>
+inline float pixel_size (T a)
 {
   return a * Theme::kTheme->pixel();
 }

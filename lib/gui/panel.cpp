@@ -284,12 +284,10 @@ Response Panel::Draw (AbstractWindow* context)
                outline_vertex_count(round_type()) * 2 + 2);
 
   if (emboss()) {
-    glUniform4f(
-        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-        1.0f, 1.0f, 0.16f);
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        -1.f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                1.0f, 1.0f, 1.0f, 0.16f);
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f, pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 
@@ -329,7 +327,7 @@ void Panel::InitializePanelOnce ()
   vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 3,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
@@ -337,7 +335,7 @@ void Panel::InitializePanelOnce ()
   vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);

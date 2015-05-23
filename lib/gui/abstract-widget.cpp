@@ -173,8 +173,14 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
   tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
   tex->SetMinFilter(GL_NEAREST);
   tex->SetMagFilter(GL_NEAREST);
-  tex->SetImage(0, GL_RGBA, widget->size().width(), widget->size().height(), 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, 0);
+  tex->SetImage(0,
+                GL_RGBA,
+                pixel_size(widget->size().width()),
+                pixel_size(widget->size().height()),
+                0,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                0);
 
   GLint current_framebuffer = 0;
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &current_framebuffer);
@@ -185,8 +191,9 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
   // Set "renderedTexture" as our colour attachement #0
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-  GL_TEXTURE_2D,
+  glFramebufferTexture2D(GL_FRAMEBUFFER,
+                         GL_COLOR_ATTACHMENT0,
+                         GL_TEXTURE_2D,
                          tex->id(), 0);
   //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
@@ -195,14 +202,18 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
   glGenRenderbuffers(1, &rb);
 
   glBindRenderbuffer(GL_RENDERBUFFER, rb);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                        widget->size().width(), widget->size().height());
+  glRenderbufferStorage(GL_RENDERBUFFER,
+                        GL_DEPTH_STENCIL,
+                        pixel_size(widget->size().width()),
+                        pixel_size(widget->size().height()));
   //Attach depth buffer to FBO
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-  GL_RENDERBUFFER,
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                            GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER,
                             rb);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-  GL_RENDERBUFFER,
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                            GL_STENCIL_ATTACHMENT,
+                            GL_RENDERBUFFER,
                             rb);
 
   if (GLFramebuffer::CheckStatus()) {
@@ -214,10 +225,10 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
     glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
     AbstractWindow* c = context;
-    glm::vec3 pos = shaders()->widget_model_matrix()
-        * glm::vec3(0.f, 0.f, 1.f);
+    glm::vec3 pos = shaders()->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
     Point original = context->viewport_origin();
-    c->viewport_origin_.reset(original.x() + pos.x, original.y() + pos.y);
+    c->viewport_origin_.reset(original.x() + pixel_size(pos.x),
+                              original.y() + pixel_size(pos.y));
 
     shaders()->PushWidgetModelMatrix();
     shaders()->PushWidgetProjectionMatrix();

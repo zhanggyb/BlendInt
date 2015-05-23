@@ -22,9 +22,9 @@
  */
 
 #include <blendint/opengl/opengl.hpp>
-
+#include <blendint/stock/theme.hpp>
+#include <blendint/stock/shaders.hpp>
 #include <blendint/gui/view-buffer.hpp>
-#include <blendint/gui/abstract-window.hpp>
 
 namespace BlendInt {
 
@@ -172,4 +172,4 @@ void ViewBuffer::PerformSizeUpdate (int width, int height)
   */
 }
 
-}
+}  // namespace BlendInt

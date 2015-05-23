@@ -171,9 +171,9 @@ Response Frame::Draw (AbstractWindow* context)
 {
   shaders()->frame_inner_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_INNER_POSITION),
-      pixel_size(position().x()), pixel_size(position().y()));
+  glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4f(shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -186,9 +186,9 @@ Response Frame::Draw (AbstractWindow* context)
 
     shaders()->frame_image_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        pixel_size(position().x()), pixel_size(position().y()));
+    glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+                pixel_size(position().x()),
+                pixel_size(position().y()));
     glUniform1i(
         shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(

@@ -47,7 +47,7 @@ NumericalSlider::NumericalSlider (Orientation orientation)
   int w = h;
   w += h;
 
-  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(w + kPadding.hsum(), h + kPadding.vsum());
   set_round_radius(size().height() / 2);
 
   char buf[32];
@@ -77,7 +77,7 @@ NumericalSlider::NumericalSlider (const String& title, Orientation orientation)
   int w = std::max(title_text_->size().width(), h);
   w += h;
 
-  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(w + kPadding.hsum(), h + kPadding.vsum());
   set_round_radius(size().height() / 2);
 
   char buf[32];
@@ -130,8 +130,8 @@ Size NumericalSlider::GetPreferredSize () const
     radius_plus += round_radius();
   }
 
-  int w = font_.height() + pixel_size(kPadding.hsum() + radius_plus);
-  int h = font_.height() + pixel_size(kPadding.vsum());
+  int w = font_.height() + kPadding.hsum() + radius_plus;
+  int h = font_.height() + kPadding.vsum();
 
   if (title_text_) {
     w += title_text_->size().width();
@@ -835,4 +835,4 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-}
+}  // namespace BlendInt

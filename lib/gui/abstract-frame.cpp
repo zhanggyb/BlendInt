@@ -445,7 +445,11 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
   tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
   tex->SetMinFilter(GL_NEAREST);
   tex->SetMagFilter(GL_NEAREST);
-  tex->SetImage(0, GL_RGBA, frame->size().width(), frame->size().height(), 0,
+  tex->SetImage(0,
+                GL_RGBA,
+                pixel_size(frame->size().width()),
+                pixel_size(frame->size().height()),
+                0,
                 GL_RGBA,
                 GL_UNSIGNED_BYTE, 0);
 
@@ -455,7 +459,8 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
   fb->bind();
 
   // Set "renderedTexture" as our colour attachement #0
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+  glFramebufferTexture2D(GL_FRAMEBUFFER,
+                         GL_COLOR_ATTACHMENT0,
                          GL_TEXTURE_2D,
                          tex->id(), 0);
   //fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
@@ -465,8 +470,10 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
   glGenRenderbuffers(1, &rb);
 
   glBindRenderbuffer(GL_RENDERBUFFER, rb);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL,
-                        frame->size().width(), frame->size().height());
+  glRenderbufferStorage(GL_RENDERBUFFER,
+                        GL_DEPTH_STENCIL,
+                        pixel_size(frame->size().width()),
+                        pixel_size(frame->size().height()));
   //Attach depth buffer to FBO
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                             GL_RENDERBUFFER,

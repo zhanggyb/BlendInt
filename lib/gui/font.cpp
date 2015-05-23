@@ -32,266 +32,266 @@
 
 namespace BlendInt {
 
-  Font::Font ()
-      : Object()
-  {
-    cache_ = FontCache::kCacheDB[FontCache::kDefaultFontHash];
-  }
+Font::Font ()
+    : Object()
+{
+  cache_ = FontCache::kCacheDB[FontCache::kDefaultFontHash];
+}
 
-  Font::Font (const FcChar8* name)
-      : Object()
-  {
-    Fc::Pattern p = Fc::Pattern::name_parse(name);
+Font::Font (const FcChar8* name)
+    : Object()
+{
+  Fc::Pattern p = Fc::Pattern::name_parse(name);
 
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
 
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
-
-#ifdef DEBUG
-    DBG_ASSERT(match);
-#endif
-
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
-  }
-
-  Font::Font (const FcChar8* family, double size, int weight, int slant)
-      : Object()
-  {
-    Fc::Pattern p;
-    p.add_string(FC_FAMILY, family);
-    p.add_double(FC_SIZE, size);
-    p.add_integer(FC_WEIGHT, weight);
-    p.add_integer(FC_SLANT, slant);
-
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
-
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  Font::~Font ()
-  {
-  }
+  cache_ = FontCache::Create(match);
+}
 
-  void Font::SetFamily (const FcChar8* family)
-  {
-    Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+Font::Font (const FcChar8* family, double size, int weight, int slant)
+    : Object()
+{
+  Fc::Pattern p;
+  p.add_string(FC_FAMILY, family);
+  p.add_double(FC_SIZE, size);
+  p.add_integer(FC_WEIGHT, weight);
+  p.add_integer(FC_SLANT, slant);
 
-    if (!p.del(FC_FAMILY)) {
-      DBG_PRINT_MSG("Warning: %s", "no faimliy property");
-    }
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
 
-    p.add_string(FC_FAMILY, family);
-
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
-
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  void Font::SetStyle (const FcChar8* style)
-  {
+  cache_ = FontCache::Create(match);
+}
+
+Font::~Font ()
+{
+}
+
+void Font::SetFamily (const FcChar8* family)
+{
+  Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+  if (!p.del(FC_FAMILY)) {
+    DBG_PRINT_MSG("Warning: %s", "no faimliy property");
   }
 
-  void Font::SetFullName (const FcChar8* fullname)
-  {
-  }
+  p.add_string(FC_FAMILY, family);
 
-  void Font::SetSlant (int slant)
-  {
-    Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
 
-    if (!p.del(FC_SLANT)) {
-      DBG_PRINT_MSG("Warning: %s", "no fullname property");
-    }
-
-    p.add_integer(FC_SLANT, slant);
-
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
-
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  void Font::SetWeight (int weight)
-  {
-    Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+  cache_ = FontCache::Create(match);
+}
 
-    if (!p.del(FC_WEIGHT)) {
-      DBG_PRINT_MSG("Warning: %s", "no weight property");
-    }
+void Font::SetStyle (const FcChar8* style)
+{
+}
 
-    p.add_integer(FC_WEIGHT, weight);
+void Font::SetFullName (const FcChar8* fullname)
+{
+}
 
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
+void Font::SetSlant (int slant)
+{
+  Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  if (!p.del(FC_SLANT)) {
+    DBG_PRINT_MSG("Warning: %s", "no fullname property");
+  }
+
+  p.add_integer(FC_SLANT, slant);
+
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
+
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  void Font::SetSize (double size)
-  {
-    Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+  cache_ = FontCache::Create(match);
+}
 
-    if (!p.del(FC_SIZE)) {
-      DBG_PRINT_MSG("Warning: %s", "no size property");
-    }
+void Font::SetWeight (int weight)
+{
+  Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
-    p.add_double(FC_SIZE, size);
+  if (!p.del(FC_WEIGHT)) {
+    DBG_PRINT_MSG("Warning: %s", "no weight property");
+  }
 
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
+  p.add_integer(FC_WEIGHT, weight);
 
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
+
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  void Font::SetPixelSize (double pixel_size)
-  {
-    Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+  cache_ = FontCache::Create(match);
+}
 
-    if (!p.del(FC_PIXEL_SIZE)) {
-      DBG_PRINT_MSG("Warning: %s", "no pixelsize property");
-    }
+void Font::SetSize (double size)
+{
+  Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
 
-    p.add_double(FC_PIXEL_SIZE, pixel_size);
+  if (!p.del(FC_SIZE)) {
+    DBG_PRINT_MSG("Warning: %s", "no size property");
+  }
 
-    Fc::Config::substitute(0, p, FcMatchPattern);
-    p.default_substitute();
+  p.add_double(FC_SIZE, size);
 
-    FcResult result;
-    Fc::Pattern match = Fc::Config::match(0, p, &result);
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
+
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
 #ifdef DEBUG
-    DBG_ASSERT(match);
+  DBG_ASSERT(match);
 #endif
 
-    if (result != FcResultMatch) {
-      DBG_PRINT_MSG("Warning: %s", "the font was not found");
-    }
-
-    cache_ = FontCache::Create(match);
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
   }
 
-  size_t Font::GetTextWidth (const String& text) const
-  {
-    return GetTextWidth(text, text.length(), 0);
+  cache_ = FontCache::Create(match);
+}
+
+void Font::SetPixelSize (double pixel_size)
+{
+  Fc::Pattern p = Fc::Pattern::duplicate(cache_->pattern());
+
+  if (!p.del(FC_PIXEL_SIZE)) {
+    DBG_PRINT_MSG("Warning: %s", "no pixelsize property");
   }
 
-  size_t Font::GetTextWidth (const String& text,
-                             size_t length,
-                             size_t start) const
-  {
-    size_t width = 0;
-    const Glyph* g = 0;
+  p.add_double(FC_PIXEL_SIZE, pixel_size);
 
-    size_t str_len = text.length();
-    size_t last = std::min(start + length, str_len);
-    size_t next = 0;
+  Fc::Config::substitute(0, p, FcMatchPattern);
+  p.default_substitute();
 
-    if (has_kerning()) {
+  FcResult result;
+  Fc::Pattern match = Fc::Config::match(0, p, &result);
 
-      Kerning kerning;
-      for (size_t i = start; i < last; i++) {
+#ifdef DEBUG
+  DBG_ASSERT(match);
+#endif
 
-        g = glyph(text[i]);
-        next = i + 1;
+  if (result != FcResultMatch) {
+    DBG_PRINT_MSG("Warning: %s", "the font was not found");
+  }
 
-        if (next < last) {
-          kerning = GetKerning(text[i], text[next], KerningDefault);
-          width += (g->advance_x + kerning.x);
-        } else {
-          width += g->advance_x;
-        }
+  cache_ = FontCache::Create(match);
+}
 
-      }
+size_t Font::GetTextWidth (const String& text) const
+{
+  return GetTextWidth(text, text.length(), 0);
+}
 
-    } else {
+size_t Font::GetTextWidth (const String& text,
+                           size_t length,
+                           size_t start) const
+{
+  size_t width = 0;
+  const Glyph* g = 0;
 
-      for (size_t i = start; i < last; i++) {
-        g = glyph(text[i]);
+  size_t str_len = text.length();
+  size_t last = std::min(start + length, str_len);
+  size_t next = 0;
+
+  if (has_kerning()) {
+
+    Kerning kerning;
+    for (size_t i = start; i < last; i++) {
+
+      g = glyph(text[i]);
+      next = i + 1;
+
+      if (next < last) {
+        kerning = GetKerning(text[i], text[next], KerningDefault);
+        width += (g->advance_x + kerning.x);
+      } else {
         width += g->advance_x;
       }
 
     }
 
-    return width;
-  }
+  } else {
 
-  Kerning Font::GetKerning (uint32_t left_glyph,
-                            uint32_t right_glyph,
-                            KerningMode mode) const
-  {
-    Kerning retval;
-    FT_Vector akerning;
-
-    if (cache_->face_.get_kerning(left_glyph, right_glyph, mode, &akerning)
-        == 0) {
-      retval.x = akerning.x >> 6;
-      retval.y = akerning.y >> 6;
+    for (size_t i = start; i < last; i++) {
+      g = glyph(text[i]);
+      width += g->advance_x;
     }
 
-    return retval;
   }
+
+  return width;
+}
+
+Kerning Font::GetKerning (uint32_t left_glyph,
+                          uint32_t right_glyph,
+                          KerningMode mode) const
+{
+  Kerning retval;
+  FT_Vector akerning;
+
+  if (cache_->face_.get_kerning(left_glyph, right_glyph, mode, &akerning)
+      == 0) {
+    retval.x = akerning.x >> 6;
+    retval.y = akerning.y >> 6;
+  }
+
+  return retval;
+}
 
 }

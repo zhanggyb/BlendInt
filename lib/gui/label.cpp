@@ -96,7 +96,10 @@ void Label::SetBackground (const Color& color)
   }
 }
 
-void Label::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void Label::PerformSizeUpdate (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height)
 {
   if (target == this) {
     set_size(width, height);
@@ -136,13 +139,10 @@ Response Label::Draw (AbstractWindow* context)
 {
   shaders()->widget_inner_program()->use();
 
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
-  glUniform4fv(
-      shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-      Color(background_).data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+               Color(background_).data());
 
   glBindVertexArray(vao_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 6);

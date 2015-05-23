@@ -35,8 +35,12 @@ namespace BlendInt {
 ModelViewport::ModelViewport ()
     : AbstractViewport(640, 480)
 {
-  projection_matrix_ = glm::ortho(0.f, (float) size().width(), 0.f,
-                                  (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(0.f,
+                                  pixel_size(size().width()),
+                                  0.f,
+                                  pixel_size(size().height()),
+                                  100.f,
+                                  -100.f);
   model_matrix_ = glm::mat3(1.f);
 
   default_camera_.reset(new PerspectiveCamera);
@@ -77,8 +81,12 @@ void ModelViewport::PostPositionUpdate ()
   float x = static_cast<float>(position().x() + offset.x());
   float y = static_cast<float>(position().y() + offset.y());
 
-  projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
-                                  y + (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(pixel_size(x),
+                                  pixel_size(x + (float) size().width()),
+                                  pixel_size(y),
+                                  pixel_size(y + (float) size().height()),
+                                  100.f,
+                                  -100.f);
 
   model_matrix_ = glm::translate(glm::mat3(1.f), glm::vec2(x, y));
 
@@ -91,8 +99,12 @@ void ModelViewport::PostSizeUpdate ()
   float x = static_cast<float>(position().x() + offset.x());
   float y = static_cast<float>(position().y() + offset.y());
 
-  projection_matrix_ = glm::ortho(x, x + (float) size().width(), y,
-                                  y + (float) size().height(), 100.f, -100.f);
+  projection_matrix_ = glm::ortho(pixel_size(x),
+                                  pixel_size(x + (float) size().width()),
+                                  pixel_size(y),
+                                  pixel_size(y + (float) size().height()),
+                                  100.f,
+                                  -100.f);
 
   default_camera_->SetPerspective(default_camera_->fovy(),
                                   1.f * size().width() / size().height());
@@ -109,5 +121,5 @@ void ModelViewport::RenderScene ()
                        default_camera_->view());
 }
 
-}
+}  // namespace BlendInt
 

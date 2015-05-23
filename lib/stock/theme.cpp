@@ -538,15 +538,16 @@ void Theme::Reset ()
   strncpy (data_.default_font, "Droid Sans", 256);
 #endif
 
-  data_.dpi = 72;
+  // HiDPI for retina test
+  data_.dpi = 150;
 
   //_theme.panel.header = RGBAf();
   //_theme.panel.back = RGBAf();
   data_.shadow_fac = 0.5f;
   data_.shadow_width = 9;
 
-  // TODO: check if retina in Mac OS
-  data_.pixel = 1.f;
+  // testing retina in Mac OS
+  data_.pixel = 2.f;
 
   data_.xaxis = 0xFF0000FF;
   data_.yaxis = 0x00FF00FF;

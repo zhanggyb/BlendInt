@@ -21,11 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <blendint/gui/text.hpp>
-
 #include <blendint/font/ft-face.hpp>
 
-#include <blendint/gui/abstract-window.hpp>
+#include <blendint/stock/theme.hpp>
+#include <blendint/stock/shaders.hpp>
+
+#include <blendint/gui/text.hpp>
 
 namespace BlendInt {
 
@@ -49,8 +50,8 @@ Text::Text (const String& text)
   vbo_.bind();
   vbo_.set_data(sizeof(GLfloat) * verts.size(), &verts[0]);
 
-  glEnableVertexAttribArray (AttributeCoord);
-  glVertexAttribPointer (AttributeCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(AttributeCoord);
+  glVertexAttribPointer(AttributeCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   glBindVertexArray(0);
   vbo_.reset();
@@ -454,9 +455,7 @@ int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, sh
 void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
 {
   size_t buf_size = text_.length() * 4 * 4;
-  if(verts.size() != buf_size) {
-    verts.resize(buf_size, 0.f);
-  }
+  if(verts.size() != buf_size) verts.resize(buf_size, 0.f);
         
   int w = 0;	// width
   int a = 0;	// ascender

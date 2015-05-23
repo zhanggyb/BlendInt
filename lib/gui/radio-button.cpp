@@ -36,8 +36,8 @@ RadioButton::RadioButton ()
   int w = 80;
   int h = font.height();
 
-  set_size(w + pixel_size(kPadding.hsum()),
-           h + pixel_size(kPadding.vsum()));
+  set_size(w + kPadding.hsum(),
+           h + kPadding.vsum());
 
   InitializeRadioButtonOnce();
 }
@@ -52,8 +52,8 @@ RadioButton::RadioButton (const String& text)
   int h = this->text()->font().height();
   if(w < 80) w = 80;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -69,8 +69,8 @@ RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon)
   int w = this->icon()->size().width();
   int h = this->icon()->size().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -93,8 +93,8 @@ RadioButton::RadioButton (const RefPtr<AbstractIcon>& icon,
   h = std::max(h, this->text()->font().height());
 
   if(w < 80) w = 80;
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -106,7 +106,10 @@ RadioButton::~RadioButton ()
   glDeleteVertexArrays(2, vao_);
 }
 
-void RadioButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void RadioButton::PerformSizeUpdate (const AbstractView* source,
+                                     const AbstractView* target,
+                                     int width,
+                                     int height)
 {
   if(target == this) {
 
@@ -225,7 +228,7 @@ Response RadioButton::Draw (AbstractWindow* context)
     glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
                 1.0f, 1.0f, 0.16f);
     glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-                0.f, 0.f - 1.f);
+                0.f, pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  emboss_vertex_count(round_type()) * 2);
   }
