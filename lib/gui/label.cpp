@@ -108,7 +108,8 @@ void Label::PerformSizeUpdate (const AbstractView* source,
     GenerateVertices(size(), 0.f, RoundNone, 0.f, &inner_verts, 0);
 
     vbo_.bind();
-    vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),
+    vbo_.set_sub_data(0,
+                      sizeof(GLfloat) * inner_verts.size(),
                       &inner_verts[0]);
     vbo_.reset();
 
@@ -149,12 +150,14 @@ Response Label::Draw (AbstractWindow* context)
 
   if (text_) {
 
-    Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-              size().width() - pixel_size(kPadding.hsum()),
-              size().height() - pixel_size(kPadding.vsum()));
+    Rect rect(kPadding.left(),
+              kPadding.bottom(),
+              size().width() - kPadding.hsum(),
+              size().height() - kPadding.vsum());
 
     if (text_->size().height() <= rect.height()) {
-      text_->DrawInRect(rect, alignment_ | AlignJustify | AlignBaseline,
+      text_->DrawInRect(rect,
+                        alignment_ | AlignJustify | AlignBaseline,
                         Color(foreground_).data());
     }
 

@@ -56,13 +56,13 @@ Slider::Slider (Orientation orientation)
     // line_verts[0] = 0.f;
     // line_verts[1] = 0.f;
 
-    line_verts[2] = size().width();
+    line_verts[2] = pixel_size(size().width());
     // line_verts[3] = 0.f;
 
     //line_verts[4] = 0.f;
     line_verts[5] = pixel_size(1);
 
-    line_verts[6] = size().width();
+    line_verts[6] = pixel_size(size().width());
     line_verts[7] = pixel_size(1);
 
   } else {
@@ -74,10 +74,10 @@ Slider::Slider (Orientation orientation)
     // line_verts[3] = 0.f;
 
     // line_verts[4] = 0.f;
-    line_verts[5] = size().height();
+    line_verts[5] = pixel_size(size().height());
 
     line_verts[6] = pixel_size(1);
-    line_verts[7] = size().height();
+    line_verts[7] = pixel_size(size().height());
 
   }
 
@@ -158,7 +158,10 @@ void Slider::PerformStepUpdate (int step)
 {
 }
 
-void Slider::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void Slider::PerformSizeUpdate (const AbstractView* source,
+                                const AbstractView* target,
+                                int width,
+                                int height)
 {
   if (target == this) {
     set_size(width, height);
@@ -166,11 +169,11 @@ void Slider::PerformSizeUpdate (const AbstractView* source, const AbstractView* 
     vbo_.bind(0);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
     if (orientation() == Horizontal) {
-      *(buf_p + 2) = (GLfloat)size().width();
-      *(buf_p + 6) = (GLfloat)size().width();
+      *(buf_p + 2) = pixel_size(size().width());
+      *(buf_p + 6) = pixel_size(size().width());
     } else {
-      *(buf_p + 5) = (GLfloat)size().height();
-      *(buf_p + 7) = (GLfloat)size().height();
+      *(buf_p + 5) = pixel_size(size().height());
+      *(buf_p + 7) = pixel_size(size().height());
     }
     vbo_.unmap();
     vbo_.reset();
@@ -198,16 +201,14 @@ Response Slider::Draw (AbstractWindow* context)
 
     // ----- draw line
 
-    glUniform2f(shaders()->
-                location(Shaders::WIDGET_OUTER_OFFSET),
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f,
-                size().height() / 2);
+                pixel_size(size().height() / 2));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glUniform2f(shaders()->
-                location(Shaders::WIDGET_OUTER_OFFSET),
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
                 0.f,
-                size().height() / 2 - 1.f);
+                pixel_size(size().height() / 2 - 1.f));
     glUniform4f(shaders()->
                 location(Shaders::WIDGET_OUTER_COLOR),
                 1.f, 1.f, 1.f, 0.16f);
@@ -220,18 +221,15 @@ Response Slider::Draw (AbstractWindow* context)
 
     // ----- draw line
 
-    glUniform2f(shaders()->
-                location(Shaders::WIDGET_OUTER_OFFSET),
-                size().width() / 2,
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                pixel_size(size().width() / 2),
                 0.f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glUniform2f(shaders()->
-                location(Shaders::WIDGET_OUTER_OFFSET),
-                size().width() / 2 + 1.f,
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                pixel_size(size().width() / 2 + 1.f),
                 0.f);
-    glUniform4f(shaders()->
-                location(Shaders::WIDGET_OUTER_COLOR),
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                 1.f, 1.f, 1.f, 0.16f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -379,4 +377,4 @@ bool Slider::GetNewValue (const Point& cursor, int* vout)
   return ret;
 }
 
-}
+}  // namespace BlendInt

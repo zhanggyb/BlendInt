@@ -117,7 +117,14 @@ void Icons::CreatePixelIcons16x16 ()
   image.Read(icon16_path.native());
 
   RefPtr<IconTexture> texture(new IconTexture);
-  texture->Generate(image.width(), image.height(), 16, 16, 5, 10, 5, 5);
+  texture->Generate(image.width(),
+                    image.height(),
+                    16,
+                    16,
+                    5,
+                    10,
+                    5,
+                    5);
   texture->bind();
   texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
   texture->SetMinFilter(GL_LINEAR);
@@ -125,10 +132,13 @@ void Icons::CreatePixelIcons16x16 ()
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
   texture->SetImage(0,
-  GL_RGBA,
-                    image.width(), image.height(), 0,
                     GL_RGBA,
-                    GL_UNSIGNED_BYTE, image.pixels());
+                    image.width(),
+                    image.height(),
+                    0,
+                    GL_RGBA,
+                    GL_UNSIGNED_BYTE,
+                    image.pixels());
 
   texture->reset();
 

@@ -183,7 +183,9 @@ void Text::Draw (int x, int y, const float* color_ptr, short gamma,
 
   font_.bind_texture();
 
-  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION),
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_TEXT_COLOR), 1, color_ptr);
   glUniform1i(shaders()->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
@@ -242,7 +244,9 @@ void Text::DrawInRect (const Rect& rect,
 
   font_.bind_texture();
 
-  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION),
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_TEXT_COLOR), 1, color_ptr);
   glUniform1i(shaders()->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
@@ -296,7 +300,9 @@ void Text::Draw (int x, int y, size_t length, size_t start,
 
   font_.bind_texture();
 
-  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION),
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
   glUniform1i(shaders()->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
@@ -325,7 +331,9 @@ void Text::DrawWithin (int x, int y, int width, const Color& color,
 
   font_.bind_texture();
 
-  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION), x, y);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION),
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
   glUniform1i(shaders()->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
 
@@ -401,7 +409,9 @@ int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, co
         
   font_.bind_texture();
         
-  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION), x + ox, y);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TEXT_POSITION),
+              pixel_size(x + ox),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_TEXT_COLOR), 1, color.data());
   glUniform1i(shaders()->location(Shaders::WIDGET_TEXT_TEXTURE), 0);
         
@@ -452,7 +462,7 @@ int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, sh
   return DrawWithCursor(x, y, index, start, width, color, gamma);
 }
     
-void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int* ptr_ascender, int* ptr_descender)
+void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* width_ptr, int* ascender_ptr, int* descender_ptr)
 {
   size_t buf_size = text_.length() * 4 * 4;
   if(verts.size() != buf_size) verts.resize(buf_size, 0.f);
@@ -540,9 +550,9 @@ void Text::GenerateTextVertices(std::vector<GLfloat> &verts, int* ptr_width, int
 
   }
 
-  if(ptr_width) *ptr_width = w;
-  if(ptr_ascender) *ptr_ascender = a;
-  if(ptr_descender) *ptr_descender = d;
+  if(width_ptr) *width_ptr = static_cast<int>(w / theme()->pixel());
+  if(ascender_ptr) *ascender_ptr = static_cast<int>(a / theme()->pixel());
+  if(descender_ptr) *descender_ptr = static_cast<int>(d / theme()->pixel());
 }
     
 void Text::ReloadBuffer()
@@ -558,4 +568,4 @@ void Text::ReloadBuffer()
   set_size(width, ascender_ - descender_);
 }
     
-}
+}  // namespace BlendInt

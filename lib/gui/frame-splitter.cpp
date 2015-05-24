@@ -31,8 +31,7 @@
 namespace BlendInt {
 
 FrameSplitterHandle::FrameSplitterHandle (Orientation orientation)
-    :
-      AbstractFrame(FrameRegular),
+    : AbstractFrame(FrameRegular),
       orientation_(orientation),
       prev_size_(0),
       next_size_(0),
@@ -55,17 +54,19 @@ bool FrameSplitterHandle::Contain (const Point& point) const
 {
   if (orientation_ == Horizontal) {
 
-    if (point.x() < position().x() || point.y() < (position().y() - 2)
-        || point.x() > static_cast<int>(position().x() + size().width())
-        || point.y() > static_cast<int>(position().y() + size().height() + 2)) {
+    if (point.x() < position().x() ||
+        point.y() < (position().y() - 2) ||
+        point.x() > (position().x() + size().width()) ||
+        point.y() > (position().y() + size().height() + 2)) {
       return false;
     }
 
   } else {
 
-    if (point.x() < (position().x() - 2) || point.y() < position().y()
-        || point.x() > static_cast<int>(position().x() + size().width() + 2)
-        || point.y() > static_cast<int>(position().y() + size().height())) {
+    if (point.x() < (position().x() - 2) ||
+        point.y() < position().y() ||
+        point.x() > (position().x() + size().width() + 2) ||
+        point.y() > (position().y() + size().height())) {
       return false;
     }
 
@@ -246,14 +247,14 @@ Response FrameSplitterHandle::PerformMouseMove (AbstractWindow* context)
 
 FrameSplitter::FrameSplitter (Orientation orientation)
     :
-      AbstractFrame(FrameRegular),
-      orientation_(orientation),
-      hover_frame_(0),
-      focused_frame_(0),
-      focused_(false),
-      pressed_(false),
-      hover_(false),
-      cursor_position_(0)
+    AbstractFrame(FrameRegular),
+    orientation_(orientation),
+    hover_frame_(0),
+    focused_frame_(0),
+    focused_(false),
+    pressed_(false),
+    hover_(false),
+    cursor_position_(0)
 {
   set_size(500, 500);
 }
@@ -1039,7 +1040,7 @@ void FrameSplitter::DistributeHorizontally ()
   } else {
 
     int exp_width = size().width() - handlers_width_sum
-        - unexpandable_width_sum;
+                    - unexpandable_width_sum;
 
     if (exp_width <= 0) {
 
@@ -1110,7 +1111,7 @@ void FrameSplitter::DistributeExpandableFramesHorizontally (int unexpandable_wid
         ResizeSubView(
             p,
             (size().width() - prefer_width_sum - unexpandable_width_sum)
-                * (*exp_width_it) / widget_width_sum,
+            * (*exp_width_it) / widget_width_sum,
             p->size().height());
         exp_width_it++;
       }
@@ -1144,7 +1145,7 @@ void FrameSplitter::DistributeUnexpandableFramesHorizontally (std::deque<int>* w
         ResizeSubView(
             p,
             (size().width() - prefer_width_sum) * (*unexp_width_it)
-                / widget_width_sum,
+            / widget_width_sum,
             p->size().height());
         unexp_width_it++;
 
@@ -1216,7 +1217,7 @@ void FrameSplitter::DistributeVertically ()
   } else {
 
     int exp_height = size().height() - handlers_height_sum
-        - unexpandable_height_sum;
+                     - unexpandable_height_sum;
 
     if (exp_height <= 0) {
 
@@ -1257,7 +1258,7 @@ void FrameSplitter::DistributeVerticallyInProportion (std::deque<int>* widget_de
           p,
           p->size().width(),
           (size().height() - prefer_height_sum) * (*height_it)
-              / widget_height_sum);
+          / widget_height_sum);
       height_it++;
 
     } else {
@@ -1293,7 +1294,7 @@ void FrameSplitter::DistributeExpandableFramesVertically (int unexpandable_heigh
             p,
             p->size().width(),
             (size().height() - prefer_height_sum - unexpandable_height_sum)
-                * (*exp_height_it) / widget_height_sum);
+            * (*exp_height_it) / widget_height_sum);
         exp_height_it++;
       }
 
@@ -1329,7 +1330,7 @@ void FrameSplitter::DistributeUnexpandableFramesVertically (std::deque<int>* wid
             p,
             p->size().width(),
             (size().height() - prefer_height_sum) * (*unexp_height_it)
-                / widget_height_sum);
+            / widget_height_sum);
         unexp_height_it++;
 
       }
@@ -1504,4 +1505,4 @@ void FrameSplitter::SetHoveredFrame (AbstractWindow* context)
   }
 }
 
-}
+}  // namespace BlendInt

@@ -26,6 +26,8 @@
 #include <blendint/core/rect.hpp>
 #include <blendint/core/string.hpp>
 
+#include <blendint/stock/theme.hpp>
+
 #include <blendint/gui/font-cache.hpp>
 
 using namespace std;
@@ -146,22 +148,30 @@ class Font: public Object
 
   int height () const
   {
-    return cache_->face_.face()->size->metrics.height >> 6;
+    return static_cast<int>(
+        (cache_->face_.face()->size->metrics.height >> 6) /
+        theme()->pixel());
   }
 
   int ascender () const
   {
-    return cache_->face_.face()->size->metrics.ascender >> 6;
+    return static_cast<int>(
+        (cache_->face_.face()->size->metrics.ascender >> 6) /
+        theme()->pixel());
   }
 
   int descender () const
   {
-    return cache_->face_.face()->size->metrics.descender >> 6;
+    return static_cast<int>(
+        (cache_->face_.face()->size->metrics.descender >> 6) /
+        theme()->pixel());
   }
 
   int max_advance () const
   {
-    return cache_->face_.face()->size->metrics.max_advance >> 6;
+    return static_cast<int>(
+        (cache_->face_.face()->size->metrics.max_advance >> 6) /
+        theme()->pixel());
   }
 
   bool has_kerning () const
@@ -184,8 +194,9 @@ class Font: public Object
    */
   static inline int default_height ()
   {
-    return FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.height
-        >> 6;
+    return static_cast<int>(
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.height
+         >> 6) / theme()->pixel());
   }
 
   /**
@@ -193,8 +204,9 @@ class Font: public Object
    */
   static inline int default_ascender ()
   {
-    return FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.ascender
-        >> 6;
+    return static_cast<int>(
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.ascender
+         >> 6) / theme()->pixel());
   }
 
   /**
@@ -202,8 +214,9 @@ class Font: public Object
    */
   static inline int default_descender ()
   {
-    return FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.descender
-        >> 6;
+    return static_cast<int>(
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.descender
+         >> 6) / theme()->pixel());
   }
 
   /**
@@ -211,8 +224,9 @@ class Font: public Object
    */
   static inline int default_max_advance ()
   {
-    return FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.max_advance
-        >> 6;
+    return static_cast<int>(
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.max_advance
+         >> 6) / theme()->pixel());
   }
 
  private:
