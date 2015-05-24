@@ -37,7 +37,7 @@ CheckIcon::CheckIcon ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateVertices(-rad, -rad, rad, rad, pixel_size(1), RoundAll, 5.f, Vertical,
+  GenerateRawVertices(-rad, -rad, rad, rad, 1.f, RoundAll, 5.f, Vertical,
                    15, -10, &inner_verts, &outer_verts);
 
   vbo_.generate();

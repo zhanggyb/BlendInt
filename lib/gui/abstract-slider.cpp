@@ -118,27 +118,22 @@ namespace BlendInt {
   {
     shaders()->widget_simple_triangle_program()->use();
 
-    glUniform2f(
-        shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-        x, y);
-    glUniform4fv(
-        shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-        1, theme()->scroll().item.data());
-    glUniform1i(
-        shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-        gamma);
+    glUniform2f(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+                pixel_size(x),
+                pixel_size(y));
+    glUniform4fv(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+                 1, theme()->scroll().item.data());
+    glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+                gamma);
 
     glBindVertexArray(vao_[0]);
     glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertexCount(round_type()) + 2);
 
     shaders()->widget_outer_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), x,
-        y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                pixel_size(x),
+                pixel_size(y));
     glUniform4fv(
         shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1,
         theme()->scroll().outline.data());
@@ -186,11 +181,11 @@ namespace BlendInt {
 
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 2,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, 0);
-
+    
     glBindVertexArray(0);
     vbo_.reset();
   }
 
-}
+}  // namespace BlendInt

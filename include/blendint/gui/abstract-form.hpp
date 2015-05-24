@@ -142,29 +142,29 @@ class AbstractForm: public Object
     size_ = size;
   }
 
-  static void GenerateVertices (float xmin,
-                                float ymin,
-                                float xmax,
-                                float ymax,
-                                float border,
-                                int round_type,
-                                float radius,
-                                std::vector<GLfloat>* inner,
-                                std::vector<GLfloat>* outer);
+  static void GenerateRawVertices (float xmin,
+                                   float ymin,
+                                   float xmax,
+                                   float ymax,
+                                   float border,
+                                   int round_type,
+                                   float radius,
+                                   std::vector<GLfloat>* inner,
+                                   std::vector<GLfloat>* outer);
 
-  static void GenerateVertices (float xmin,
-                                float ymin,
-                                float xmax,
-                                float ymax,
-                                float border,
-                                int round_type,
-                                float radius,
-                                Orientation shadedir,
-                                short shadetop,
-                                short shadedown,
-                                std::vector<GLfloat>* inner,
-                                std::vector<GLfloat>* outer);
-
+  static void GenerateRawVertices (float xmin,
+                                   float ymin,
+                                   float xmax,
+                                   float ymax,
+                                   float border,
+                                   int round_type,
+                                   float radius,
+                                   Orientation shadedir,
+                                   short shadetop,
+                                   short shadedown,
+                                   std::vector<GLfloat>* inner,
+                                   std::vector<GLfloat>* outer);
+  
   static void GenerateVertices (const Size& size,
                                 float border,
                                 int round_type,

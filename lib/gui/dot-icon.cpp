@@ -43,7 +43,7 @@ DotIcon::DotIcon ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateVertices(-radius, -radius, radius, radius, pixel_size(1), RoundAll,
+  GenerateRawVertices(-radius, -radius, radius, radius, 1.f, RoundAll,
                    radius, &inner_verts, &outer_verts);
 
   glGenVertexArrays(2, vao_);

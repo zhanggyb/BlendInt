@@ -99,8 +99,15 @@ void AbstractForm::GenerateVertices (const Size& size,
                                      std::vector<GLfloat>* inner,
                                      std::vector<GLfloat>* outer)
 {
-  return GenerateVertices(0.f, 0.f, size.width(), size.height(), border,
-                          round_type, radius, inner, outer);
+  return GenerateRawVertices(0.f,
+                             0.f,
+                             pixel_size(size.width()),
+                             pixel_size(size.height()),
+                             pixel_size(border),
+                             round_type,
+                             pixel_size(radius),
+                             inner,
+                             outer);
 }
 
 void AbstractForm::GenerateVertices (const Size& size,
@@ -113,9 +120,17 @@ void AbstractForm::GenerateVertices (const Size& size,
                                      std::vector<GLfloat>* inner,
                                      std::vector<GLfloat>* outer)
 {
-  return GenerateVertices(0.f, 0.f, size.width(), size.height(), border,
-                          round_type, radius, shadedir, shadetop, shadedown,
-                          inner, outer);
+  return GenerateRawVertices(0.f,
+                             0.f,
+                             pixel_size(size.width()),
+                             pixel_size(size.height()),
+                             pixel_size(border),
+                             round_type,
+                             pixel_size(radius),
+                             shadedir,
+                             shadetop,
+                             shadedown,
+                             inner, outer);
 }
 
 inline float AbstractForm::make_shaded_offset (short shadetop,
@@ -128,15 +143,15 @@ inline float AbstractForm::make_shaded_offset (short shadetop,
   return faci * (shadetop / 255.f) + facm * (shadedown / 255.f);
 }
 
-void AbstractForm::GenerateVertices (float xmin,
-                                     float ymin,
-                                     float xmax,
-                                     float ymax,
-                                     float border,
-                                     int round_type,
-                                     float radius,
-                                     std::vector<GLfloat>* inner,
-                                     std::vector<GLfloat>* outer)
+void AbstractForm::GenerateRawVertices (float xmin,
+                                        float ymin,
+                                        float xmax,
+                                        float ymax,
+                                        float border,
+                                        int round_type,
+                                        float radius,
+                                        std::vector<GLfloat>* inner,
+                                        std::vector<GLfloat>* outer)
 {
   if (inner == 0 && outer == 0) return;
 
@@ -148,9 +163,7 @@ void AbstractForm::GenerateVertices (float xmin,
     inner_ptr = inner;
   }
 
-  border *= theme()->pixel();
-
-  float rad = radius * theme()->pixel();
+  float rad = radius;
   float radi = rad - border;
 
   float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -185,7 +198,7 @@ void AbstractForm::GenerateVertices (float xmin,
 
   if (2.0f * rad > minsize) rad = 0.5f * minsize;
 
-  if (2.0f * (radi + border) > minsize) radi = 0.5f * minsize - border; // U.pixelsize;
+  if (2.0f * (radi + border) > minsize) radi = 0.5f * minsize - border;
 
   // mult
   for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -342,18 +355,18 @@ void AbstractForm::GenerateVertices (float xmin,
   }
 }
 
-void AbstractForm::GenerateVertices (float xmin,
-                                     float ymin,
-                                     float xmax,
-                                     float ymax,
-                                     float border,
-                                     int round_type,
-                                     float radius,
-                                     Orientation shadedir,
-                                     short shadetop,
-                                     short shadedown,
-                                     std::vector<GLfloat>* inner,
-                                     std::vector<GLfloat>* outer)
+void AbstractForm::GenerateRawVertices (float xmin,
+                                        float ymin,
+                                        float xmax,
+                                        float ymax,
+                                        float border,
+                                        int round_type,
+                                        float radius,
+                                        Orientation shadedir,
+                                        short shadetop,
+                                        short shadedown,
+                                        std::vector<GLfloat>* inner,
+                                        std::vector<GLfloat>* outer)
 {
   if (inner == 0 && outer == 0) return;
 
@@ -365,9 +378,7 @@ void AbstractForm::GenerateVertices (float xmin,
     inner_ptr = inner;
   }
 
-  border *= theme()->pixel();
-
-  float rad = radius * theme()->pixel();
+  float rad = radius;
   float radi = rad - border;
 
   float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -407,8 +418,7 @@ void AbstractForm::GenerateVertices (float xmin,
 
   if (2.0f * rad > minsize) rad = 0.5f * minsize;
 
-  if (2.0f * (radi + border) > minsize)
-    radi = 0.5f * minsize - border * theme()->pixel(); // U.pixelsize;
+  if (2.0f * (radi + border) > minsize) radi = 0.5f * minsize - border;
 
         // mult
   for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -678,4 +688,4 @@ void AbstractForm::GenerateTriangleStripVertices (const std::vector<GLfloat>* in
   (*strip)[count * 2 + 3] = (*edge)[1];
 }
 
-}
+}  // namespace BlendInt

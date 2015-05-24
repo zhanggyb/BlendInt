@@ -32,6 +32,8 @@
 #include <blendint/gui/label.hpp>
 #include <blendint/gui/menu.hpp>
 #include <blendint/gui/radio-button.hpp>
+#include <blendint/gui/combo-box.hpp>
+#include <blendint/gui/textentry.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -41,9 +43,13 @@ int main (int argc, char* argv[])
   if (Window::Initialize()) {
     //EditorWindow win(1280, 800, "UI Editor");
 
-    Window win(300, 300, "UI Editor");
+    Window win(640, 480, "UI Editor");
 
-    Frame* frame = new Frame(new LinearLayout);
+    Frame* frame = new Frame(new LinearLayout(Vertical));
+    frame->Resize(500, 400);
+    frame->MoveTo((win.size().width() - frame->size().width()) / 2,
+                  (win.size().height() - frame->size().height()) / 2);
+
     //Menu* frame = new Menu;
     //Dialog* frame = new Dialog("Test");
     
@@ -53,11 +59,13 @@ int main (int argc, char* argv[])
     label->SetBackground(Color(0xE02F2F9F));
     frame->AddWidget(label);
 
-    //frame->AddWidget(new RadioButton);
+    frame->AddWidget(new PushButton("Push Button"));
+    frame->AddWidget(new ToggleButton("Toggle Button"));
+    frame->AddWidget(new RadioButton("Radio Button"));
+    frame->AddWidget(new ComboBox);
+    frame->AddWidget(new TextEntry);
 
     win.AddFrame(frame);
-    frame->Resize(100, 100);
-    frame->MoveTo(100, 100);
     
     win.Exec();
     Window::Terminate();

@@ -1513,7 +1513,7 @@ void AbstractView::GenerateRawVertices (float minx,
 
   if (2.0f * rad > minsize) rad = 0.5f * minsize;
 
-  if (2.0f * (radi + border) > minsize) radi = 0.5f * minsize - border; // U.pixelsize;
+  if (2.0f * (radi + border) > minsize) radi = 0.5f * minsize - border;
 
   // mult
   for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

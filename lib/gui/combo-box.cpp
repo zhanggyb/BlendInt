@@ -238,7 +238,7 @@ Size ComboListView::GetPreferredSize () const
       height += model_->GetPreferredRowHeight(i, root);
     }
 
-    width += pixel_size(kPaddingLeft + kPaddingRight);
+    width += kPaddingLeft + kPaddingRight;
     return Size(width, height);
   } else {
     return Size(200, Font::default_height());
@@ -343,7 +343,7 @@ Response ComboListView::Draw (AbstractWindow* context)
     index = index.GetChildIndex(0, 0);
     ModelIndex next;
 
-    Rect rect(pixel_size(kPaddingLeft), size().height() - h, h, h);
+    Rect rect(kPaddingLeft, size().height() - h, h, h);
 
     while (index.valid()) {
 
@@ -354,7 +354,7 @@ Response ComboListView::Draw (AbstractWindow* context)
       next = index.GetRightIndex();
       while (next.valid()) {
 
-        rect.set_width(size().width() - pixel_size(kPaddingLeft + kPaddingRight) - h);
+        rect.set_width(size().width() - (kPaddingLeft + kPaddingRight) - h);
         rect.set_x(rect.x() + h);
         next.GetData()->DrawInRect(
             rect, AlignRight | AlignJustify | AlignBaseline,
@@ -363,7 +363,7 @@ Response ComboListView::Draw (AbstractWindow* context)
       }
 
       index = index.GetDownIndex();
-      rect.set_x(pixel_size(kPaddingLeft));
+      rect.set_x(kPaddingLeft);
       rect.set_y(rect.y() - h);
       rect.set_width(h);
     }
@@ -469,7 +469,7 @@ ComboBox::ComboBox (DisplayMode display_mode)
   Font font;	// default font
   int h = font.height();
 
-  set_size(h + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(h + kPadding.hsum(), h + kPadding.vsum());
 
   InitializeComboBox();
 }
@@ -539,8 +539,8 @@ Size ComboBox::GetPreferredSize () const
 
   w += icons()->menu()->size().width();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   return Size(w, h);
 }
@@ -715,12 +715,11 @@ Response ComboBox::Draw (AbstractWindow* context)
 //			        emboss_vertex_count(round_type()) * 2);
 //		}
 
-  Rect rect(
-      pixel_size(kPadding.left()),
-      pixel_size(kPadding.bottom()),
-      size().width() - pixel_size(kPadding.hsum())
-          - icons()->menu()->size().width(),
-      size().height() - pixel_size(kPadding.vsum()));
+  Rect rect(kPadding.left(),
+            kPadding.bottom(),
+            size().width() - kPadding.hsum()
+            - icons()->menu()->size().width(),
+            size().height() - kPadding.vsum());
 
   // draw model item
   if (model_ && current_index_.valid()) {
@@ -766,9 +765,8 @@ Response ComboBox::Draw (AbstractWindow* context)
         }
 
         rect.set_x(rect.x() + rect.width());
-        rect.set_width(
-            size().width() - pixel_size(kPadding.hsum())
-                - icons()->menu()->size().width() - rect.width());
+        rect.set_width(size().width() - kPadding.hsum()
+                       - icons()->menu()->size().width() - rect.width());
 
         ModelIndex next = current_index_.GetRightIndex();
         if (next.valid()) {
@@ -819,9 +817,8 @@ Response ComboBox::Draw (AbstractWindow* context)
         }
 
         rect.set_x(rect.x() + rect.width());
-        rect.set_width(
-            size().width() - pixel_size(kPadding.hsum())
-                - icons()->menu()->size().width() - rect.width());
+        rect.set_width(size().width() - kPadding.hsum()
+                       - icons()->menu()->size().width() - rect.width());
 
         ModelIndex next = current_index_.GetRightIndex();
         if (next.valid()) {
@@ -840,12 +837,12 @@ Response ComboBox::Draw (AbstractWindow* context)
     }
   }
 
-  rect.set_x(pixel_size(kPadding.left()));
-  rect.set_width(size().width() - pixel_size(kPadding.hsum()));
+  rect.set_x(kPadding.left());
+  rect.set_width(size().width() - kPadding.hsum());
 
   icons()->menu()->DrawInRect(rect,
-                                              AlignRight | AlignVerticalCenter,
-                                              Color(0xEFEFEFFF).data());
+                              AlignRight | AlignVerticalCenter,
+                              Color(0xEFEFEFFF).data());
 
   return Finish;
 }

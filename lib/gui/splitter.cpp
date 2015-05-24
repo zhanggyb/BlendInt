@@ -31,8 +31,7 @@
 namespace BlendInt {
 
 SplitterHandle::SplitterHandle (Orientation orientation)
-    :
-      AbstractWidget(),
+    : AbstractWidget(),
       orientation_(orientation),
       vao_(0),
       highlight_(false),
@@ -57,30 +56,30 @@ SplitterHandle::SplitterHandle (Orientation orientation)
   std::vector<GLfloat> vertices(8, 0.f);
 
   if (orientation == Horizontal) {
-    vertices[2] = kHandleLength;
+    vertices[2] = pixel_size(kHandleLength);
     //vertices[3] = 0.f;
 
     //vertices[4] = 0.f;
-    vertices[5] = 1.f;
+    vertices[5] = pixel_size(1.f);
 
-    vertices[6] = kHandleLength;
-    vertices[7] = 1.f;
+    vertices[6] = pixel_size(kHandleLength);
+    vertices[7] = pixel_size(1.f);
   } else {
-    vertices[2] = 1.f;
+    vertices[2] = pixel_size(1.f);
     //vertices[3] = 0.f;
 
     //vertices[4] = 0.f;
-    vertices[5] = kHandleLength;
+    vertices[5] = pixel_size(kHandleLength);
 
-    vertices[6] = 1.f;
-    vertices[7] = kHandleLength;
+    vertices[6] = pixel_size(1.f);
+    vertices[7] = pixel_size(kHandleLength);
   }
 
   vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, BUFFER_OFFSET(0));
 
   glBindVertexArray(0);
@@ -154,14 +153,14 @@ void SplitterHandle::PerformSizeUpdate (const AbstractView* source,
 
         std::vector<GLfloat> vertices(8, 0.f);
 
-        vertices[2] = (GLfloat) size().width();
+        vertices[2] = pixel_size(size().width());
         //vertices[3] = 0.f;
 
         //vertices[4] = 0.f;
-        vertices[5] = 1.f;
+        vertices[5] = pixel_size(1.f);
 
-        vertices[6] = (GLfloat) size().width();
-        vertices[7] = 1.f;
+        vertices[6] = pixel_size(size().width());
+        vertices[7] = pixel_size(1.f);
 
         vbo_.bind();
         vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
@@ -177,14 +176,14 @@ void SplitterHandle::PerformSizeUpdate (const AbstractView* source,
 
         std::vector<GLfloat> vertices(8, 0.f);
 
-        vertices[2] = 1.f;
+        vertices[2] = pixel_size(1.f);
         //vertices[3] = 0.f;
 
         //vertices[4] = 0.f;
-        vertices[5] = (GLfloat) size().height();
+        vertices[5] = pixel_size(size().height());
 
-        vertices[6] = 1.f;
-        vertices[7] = (GLfloat) size().height();
+        vertices[6] = pixel_size(1.f);
+        vertices[7] = pixel_size(size().height());
 
         vbo_.bind();
         vbo_.set_data(sizeof(GLfloat) * vertices.size(), &vertices[0]);
@@ -233,10 +232,9 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     glVertexAttrib4f(AttributeColor, 0.16f, 0.16f, 0.16f, 1.f);
     while (y > 0.f) {
 
-      glUniform2f(
-          shaders()->location(
-              Shaders::WIDGET_TRIANGLE_POSITION),
-          x, y);
+      glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+                  pixel_size(x),
+                  pixel_size(y));
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       y -= 3.f;
@@ -246,10 +244,9 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     glVertexAttrib4f(AttributeColor, 1.f, 1.f, 1.f, 0.16f);
     while (y > 0.f) {
 
-      glUniform2f(
-          shaders()->location(
-              Shaders::WIDGET_TRIANGLE_POSITION),
-          x, y);
+      glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+                  pixel_size(x),
+                  pixel_size(y));
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       y -= 3.f;
@@ -264,10 +261,9 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     glVertexAttrib4f(AttributeColor, 0.16f, 0.16f, 0.16f, 1.f);
     while (x < (size().width())) {
 
-      glUniform2f(
-          shaders()->location(
-              Shaders::WIDGET_TRIANGLE_POSITION),
-          x, y);
+      glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+                  pixel_size(x),
+                  pixel_size(y));
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       x += 3.f;
@@ -277,10 +273,9 @@ Response SplitterHandle::Draw (AbstractWindow* context)
     glVertexAttrib4f(AttributeColor, 1.f, 1.f, 1.f, 0.16f);
     while (x < (size().width())) {
 
-      glUniform2f(
-          shaders()->location(
-              Shaders::WIDGET_TRIANGLE_POSITION),
-          x, y);
+      glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+                  pixel_size(x),
+                  pixel_size(y));
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
       x += 3.f;
@@ -1141,4 +1136,4 @@ int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size)
   return room;
 }
 
-}
+}  // namespace BlendInt

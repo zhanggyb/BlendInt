@@ -22,7 +22,6 @@
  */
 
 #include <blendint/gui/abstract-round-form.hpp>
-#include <blendint/gui/abstract-window.hpp>
 
 namespace BlendInt {
 
@@ -55,8 +54,11 @@ namespace BlendInt {
                                                    std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * theme()->pixel(),
-                     round_type_, radius_, inner, outer);
+                     default_border_width(),
+                     round_type_,
+                     radius_,
+                     inner,
+                     outer);
   }
 
   void AbstractRoundForm::GenerateRoundedVertices (Orientation shadedir,
@@ -66,8 +68,13 @@ namespace BlendInt {
                                                    std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * theme()->pixel(),
-                     round_type_, radius_, shadedir, shadetop, shadedown, inner,
+                     default_border_width(),
+                     round_type_,
+                     radius_,
+                     shadedir,
+                     shadetop,
+                     shadedown,
+                     inner,
                      outer);
   }
 
@@ -84,4 +91,4 @@ namespace BlendInt {
     return (4 - count) + count * WIDGET_CURVE_RESOLU;
   }
 
-}
+}  // namespace BlendInt

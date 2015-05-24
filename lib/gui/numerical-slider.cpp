@@ -197,10 +197,10 @@ void NumericalSlider::PerformSizeUpdate (const AbstractView* source,
 
     vbo_.bind(2);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-    *(buf_p + 5) = (GLfloat) (height
-        - vertical_space * 2 * theme()->pixel());
-    *(buf_p + 7) = (GLfloat) (height
-        - vertical_space * 2 * theme()->pixel());
+    *(buf_p + 5) = pixel_size(height
+                              - vertical_space * 2);
+    *(buf_p + 7) = pixel_size(height
+                              - vertical_space * 2);
     vbo_.unmap();
     vbo_.reset();
 
@@ -441,20 +441,18 @@ void NumericalSlider::InitializeNumericalSlider ()
   std::vector<GLfloat> cursor_vertices(8, 0.f);
 
   cursor_vertices[0] = 0.f;
-  cursor_vertices[1] = (GLfloat) vertical_space
-      * theme()->pixel();
+  cursor_vertices[1] = pixel_size(vertical_space);
 
-  cursor_vertices[2] = 1.f;
-  cursor_vertices[3] = (GLfloat) vertical_space
-      * theme()->pixel();
+  cursor_vertices[2] = pixel_size(1.f);
+  cursor_vertices[3] = pixel_size(vertical_space);
 
   cursor_vertices[4] = 0.f;
-  cursor_vertices[5] = (GLfloat) (size().height()
-      - vertical_space * 2 * theme()->pixel());
+  cursor_vertices[5] = pixel_size(size().height()
+                                  - vertical_space * 2);
 
-  cursor_vertices[6] = 1.f;
-  cursor_vertices[7] = (GLfloat) (size().height()
-      - vertical_space * 2 * theme()->pixel());
+  cursor_vertices[6] = pixel_size(1.f);
+  cursor_vertices[7] = pixel_size(size().height()
+                                  - vertical_space * 2);
 
   vao_.bind(2);
   vbo_.bind(2);
@@ -614,7 +612,7 @@ void NumericalSlider::DisposeRightPress ()
 {
   if ((value_text_->length() > 0) && (cursor_index_ < value_text_->length())) {
 
-    int valid_width = size().width() - pixel_size(kPadding.hsum());
+    int valid_width = size().width() - kPadding.hsum();
     size_t visible_width = value_text_->GetTextWidth(
         cursor_index_ - text_start_ + 1, text_start_, false);
 
@@ -731,10 +729,9 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
                                              Color(0x0F0F0FFF).data(), 0,
                                              180.f);
 
-  rect.set_x(rect.width() + pixel_size(kPadding.left()));
-  rect.set_width(
-      size().width() - pixel_size(kPadding.hsum())
-          - 4 * icons()->num()->size().width());
+  rect.set_x(rect.width() + kPadding.left());
+  rect.set_width(size().width() - kPadding.hsum()
+                 - 4 * icons()->num()->size().width());
 
   if (title_text_) {
     title_text_->DrawInRect(
@@ -794,7 +791,7 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
   if (value_text_) {
 
     int w = size().width() - round_radius() * 2;
-    int h = size().height() - pixel_size(kPadding.vsum());
+    int h = size().height() - kPadding.vsum();
 
     // A workaround for Adobe Source Han Sans
     int diff = font_.ascender() - font_.descender();
@@ -821,8 +818,9 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
 
   shaders()->widget_triangle_program()->use();
   glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION), x,
-      y);
+      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+      pixel_size(x),
+      pixel_size(y));
   glUniform1i(
       shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   glUniform1i(

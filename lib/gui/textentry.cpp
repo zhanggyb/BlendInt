@@ -47,8 +47,8 @@ TextEntry::TextEntry ()
   if (w < 160)
     w = 160;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -69,8 +69,8 @@ TextEntry::TextEntry (const String& text)
   if (w < 160)
     w = 160;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -132,8 +132,8 @@ Size TextEntry::GetPreferredSize () const
   if (w == 0)
     w = h;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   if (!text_) {
     if (w < 160)
@@ -175,10 +175,8 @@ void TextEntry::PerformSizeUpdate (const AbstractView* source, const AbstractVie
 
     vbo_.bind(2);
     GLfloat* buf_p = (GLfloat*) vbo_.map(GL_READ_WRITE);
-    *(buf_p + 5) = (GLfloat) (height
-                              - vertical_space * 2 * theme()->pixel());
-    *(buf_p + 7) = (GLfloat) (height
-                              - vertical_space * 2 * theme()->pixel());
+    *(buf_p + 5) = pixel_size(height - vertical_space * 2);
+    *(buf_p + 7) = pixel_size(height - vertical_space * 2);
     vbo_.unmap();
     vbo_.reset();
 
@@ -263,7 +261,7 @@ Response TextEntry::PerformKeyPress (AbstractWindow* context)
 {
   if (!context->GetTextInput().empty()) {
 
-    int valid_width = size().width() - pixel_size(kPadding.hsum());
+    int valid_width = size().width() - kPadding.hsum();
 
     if (text_->empty()) {
 
@@ -406,14 +404,14 @@ Response TextEntry::Draw (AbstractWindow* context)
 
   int cursor_pos = 0;
 
-  int x = pixel_size(kPadding.left());
+  int x = kPadding.left();
   int y = (size().height() - text_->font().height()) / 2
       - text_->font().descender();
 
   if (text_) {
 
-    int w = size().width() - pixel_size(kPadding.hsum());
-    int h = size().height() - pixel_size(kPadding.vsum());
+    int w = size().width() - kPadding.hsum();
+    int h = size().height() - kPadding.vsum();
 
     // A workaround for Adobe Source Han Sans
     int diff = text_->font().ascender() - text_->font().descender();
@@ -490,20 +488,16 @@ void TextEntry::InitializeTextEntry ()
   std::vector<GLfloat> cursor_vertices(8, 0.f);
 
   cursor_vertices[0] = 0.f;
-  cursor_vertices[1] = (GLfloat) vertical_space
-      * theme()->pixel();
+  cursor_vertices[1] = pixel_size(vertical_space);
 
   cursor_vertices[2] = 1.f;
-  cursor_vertices[3] = (GLfloat) vertical_space
-      * theme()->pixel();
+  cursor_vertices[3] = pixel_size(vertical_space);
 
   cursor_vertices[4] = 0.f;
-  cursor_vertices[5] = (GLfloat) (size().height()
-                                  - vertical_space * 2 * theme()->pixel());
+  cursor_vertices[5] = pixel_size(size().height() - vertical_space * 2);
 
   cursor_vertices[6] = 1.f;
-  cursor_vertices[7] = (GLfloat) (size().height()
-                                  - vertical_space * 2 * theme()->pixel());
+  cursor_vertices[7] = pixel_size(size().height() - vertical_space * 2);
 
   glBindVertexArray(vao_[2]);
   vbo_.bind(2);
@@ -572,7 +566,7 @@ void TextEntry::DisposeRightPress ()
 {
   if ((text_->length() > 0) && (cursor_index_ < text_->length())) {
 
-    int valid_width = size().width() - pixel_size(kPadding.hsum());
+    int valid_width = size().width() - kPadding.hsum();
     size_t visible_width = text_->GetTextWidth(
         cursor_index_ - text_start_ + 1, text_start_, false);
 
@@ -590,7 +584,7 @@ size_t TextEntry::GetTextCursorIndex (AbstractWindow* context)
   if (text_->empty())
     return 0;
 
-  int x = context->local_cursor_position().x() - pixel_size(kPadding.left());
+  int x = context->local_cursor_position().x() - kPadding.left();
   if (x < 0)
     return 0;
   if (x >= text_->size().width())
