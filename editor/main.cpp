@@ -45,13 +45,12 @@ int main (int argc, char* argv[])
 
     Window win(640, 480, "UI Editor");
 
-    Frame* frame = new Frame(new LinearLayout(Vertical));
+    Dialog* frame = new Dialog("Test");
+    //Menu* frame = new Menu;
+    // Frame* frame = new Frame(new LinearLayout(Horizontal));
     frame->Resize(500, 400);
     frame->MoveTo((win.size().width() - frame->size().width()) / 2,
                   (win.size().height() - frame->size().height()) / 2);
-
-    //Menu* frame = new Menu;
-    //Dialog* frame = new Dialog("Test");
     
     // frame->EnableViewBuffer();
 

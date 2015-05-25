@@ -47,15 +47,13 @@ CheckIcon::CheckIcon ()
   vbo_.bind(0);
   vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
-  glEnableVertexAttribArray(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-  glVertexAttribPointer(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
-      3,
-      GL_FLOAT,
-      GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+  glVertexAttribPointer(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
+                        3,
+                        GL_FLOAT,
+                        GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
   vbo_.bind(1);
@@ -63,7 +61,7 @@ CheckIcon::CheckIcon ()
 
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);
@@ -85,18 +83,13 @@ void CheckIcon::Draw (int x,
 {
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform2f(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-      x, y);
-  glUniform4fv(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, theme()->menu().inner.data());
-  glUniform1i(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-      gamma);
+  glUniform2f(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+               1, theme()->menu().inner.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+              gamma);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
@@ -104,7 +97,8 @@ void CheckIcon::Draw (int x,
   shaders()->widget_outer_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              x, y);
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                1, theme()->menu().outline.data());
 
@@ -140,18 +134,13 @@ void CheckIcon::DrawInRect (const Rect& rect,
 
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform2f(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-      x, y);
-  glUniform4fv(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, theme()->menu().inner.data());
-  glUniform1i(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-      gamma);
+  glUniform2f(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+               1, theme()->menu().inner.data());
+  glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+              gamma);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
@@ -159,7 +148,8 @@ void CheckIcon::DrawInRect (const Rect& rect,
   shaders()->widget_outer_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              x, y);
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                1, theme()->menu().outline.data());
 

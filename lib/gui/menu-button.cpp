@@ -37,8 +37,8 @@ MenuButton::MenuButton (const String& text)
   int w = this->text()->size().width();
   int h = this->text()->font().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -60,8 +60,8 @@ void MenuButton::PerformSizeUpdate (const AbstractView* source,
     set_size(width, height);
 
     std::vector<GLfloat> inner_verts;
-    AbstractView::GenerateVertices(size(), 0.f, round_type(), round_radius(),
-                                   &inner_verts, 0);
+    GenerateVertices(size(), 0.f, round_type(), round_radius(),
+                     &inner_verts, 0);
 
     vbo_.bind();
     vbo_.set_sub_data(0, sizeof(GLfloat) * inner_verts.size(),

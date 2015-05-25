@@ -62,11 +62,12 @@ void FrameShadow::Draw (int x,
 {
   shaders()->frame_shadow_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_SHADOW_POSITION), x,
-      y);
+  glUniform2f(shaders()->location(Shaders::FRAME_SHADOW_POSITION),
+              pixel_size(x),
+              pixel_size(y));
   glUniform2f(shaders()->location(Shaders::FRAME_SHADOW_SIZE),
-              size().width(), size().height());
+              pixel_size(size().width()),
+              pixel_size(size().height()));
 
   glBindVertexArray(vao_);
 
@@ -74,15 +75,13 @@ void FrameShadow::Draw (int x,
 
   int i = 0;
   if (i < theme()->shadow_width()) {
-    glUniform1i(
-        shaders()->location(Shaders::FRAME_SHADOW_ANTI_ALIAS),
-        1);
+    glUniform1i(shaders()->location(Shaders::FRAME_SHADOW_ANTI_ALIAS),
+                1);
     glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
                    BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
   }
 
-  glUniform1i(
-      shaders()->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 0);
+  glUniform1i(shaders()->location(Shaders::FRAME_SHADOW_ANTI_ALIAS), 0);
   i++;
   for (; i < theme()->shadow_width(); i++) {
     glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,

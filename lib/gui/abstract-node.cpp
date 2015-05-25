@@ -120,8 +120,11 @@ namespace BlendInt {
                                               std::vector<GLfloat>* outer)
   {
     GenerateVertices(size(),
-                     default_border_width() * theme()->pixel(),
-                     round_type(), round_radius_, inner, outer);
+                     default_border_width(),
+                     round_type(),
+                     round_radius_,
+                     inner,
+                     outer);
   }
 
   void AbstractNode::GenerateRoundedVertices (Orientation shadedir,
@@ -155,7 +158,8 @@ namespace BlendInt {
 
     glm::mat3 matrix = glm::translate(
         shaders()->widget_model_matrix(),
-        glm::vec2(position().x() + offset.x(), position().y() + offset.y()));
+        glm::vec2(pixel_size(position().x() + offset.x()),
+                  pixel_size(position().y() + offset.y())));
 
     shaders()->PushWidgetModelMatrix();
     shaders()->SetWidgetModelMatrix(matrix);

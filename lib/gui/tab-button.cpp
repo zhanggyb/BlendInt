@@ -38,7 +38,7 @@ TabButton::TabButton ()
   int h = font.height();
   int w = h;
 
-  set_size(w + pixel_size(kPadding.hsum()), h + pixel_size(kPadding.vsum()));
+  set_size(w + kPadding.hsum(), h + kPadding.vsum());
 
   InitializeTabButtonOnce();
 }
@@ -52,8 +52,8 @@ TabButton::TabButton (const String& text)
   int w = this->text()->size().width();
   int h = this->text()->font().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -69,8 +69,8 @@ TabButton::TabButton (const RefPtr<AbstractIcon>& icon)
   int w = this->icon()->size().width();
   int h = this->icon()->size().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -91,8 +91,8 @@ TabButton::TabButton (const RefPtr<AbstractIcon>& icon, const String& text)
   w += this->text()->size().width();
   h = std::max(h, this->text()->font().height());
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 
@@ -268,7 +268,7 @@ void TabButton::InitializeTabButtonOnce ()
   vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);

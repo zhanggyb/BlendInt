@@ -67,8 +67,8 @@ Response Clock::Draw(AbstractWindow* context)
   shaders()->widget_triangle_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-              (float) (size().width() / 2.f),
-              (float) (size().height() / 2.f));
+              pixel_size(size().width() / 2.f),
+              pixel_size(size().height() / 2.f));
   glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
   glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS), 0);
 
@@ -107,7 +107,10 @@ void Clock::OnUpdateClockHands()
   RequestRedraw();
 }
 
-void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void Clock::PerformSizeUpdate (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height)
 {
   if(target == this) {
     int radius = std::min(width, height);
@@ -115,7 +118,8 @@ void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* t
 
     std::vector<GLfloat> inner_verts;
     std::vector<GLfloat> outer_verts;
-    GenerateClockVertices(radius, 1.f, inner_verts, outer_verts);
+    GenerateClockVertices(pixel_size(radius), pixel_size(1.f),
+                          inner_verts, outer_verts);
 
     buffer_.bind(0);
     buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
@@ -125,10 +129,10 @@ void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* t
     set_size(width, height);
 
     GLfloat second_hand_vertices[] = {
-      -5.f, -1.f,
-      size().width() / 2.f, -1.f,
-      -5.f, 1.f,
-      size().width() / 2.f, 1.f
+      pixel_size(-5.f), pixel_size(-1.f),
+      pixel_size(size().width() / 2.f), pixel_size(-1.f),
+      pixel_size(-5.f), pixel_size(1.f),
+      pixel_size(size().width() / 2.f), pixel_size(1.f)
     };
 
     buffer_.bind(2);
@@ -143,7 +147,8 @@ void Clock::PerformSizeUpdate (const AbstractView* source, const AbstractView* t
   }
 }
 
-void Clock::GenerateClockVertices (int radius, float border,
+void Clock::GenerateClockVertices (int radius,
+                                   float border,
                                    std::vector<GLfloat>& inner_vertices,
                                    std::vector<GLfloat>& outer_vertices)
 {
@@ -207,7 +212,10 @@ void Clock::InitializeClock ()
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
+  GenerateClockVertices(pixel_size(80),
+                        pixel_size(1.f),
+                        inner_verts,
+                        outer_verts);
 
   glGenVertexArrays(3, vao_);
 
@@ -218,7 +226,7 @@ void Clock::InitializeClock ()
   buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
   glEnableVertexAttribArray(AttributeCoord);
-  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
   glBindVertexArray(vao_[1]);
 
@@ -226,22 +234,22 @@ void Clock::InitializeClock ()
   buffer_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
   glEnableVertexAttribArray(AttributeCoord);
-  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
   glBindVertexArray(vao_[2]);
 
   GLfloat second_hand_vertices[] = {
-    -5.f, -1.f,
-    size().width() / 2.f, -1.f,
-    -5.f, 1.f,
-    size().width() / 2.f, 1.f
+    pixel_size(-5.f), pixel_size(-1.f),
+    pixel_size(size().width() / 2.f), pixel_size(-1.f),
+    pixel_size(-5.f), pixel_size(1.f),
+    pixel_size(size().width() / 2.f), pixel_size(1.f)
   };
 
   buffer_.bind(2);
   buffer_.set_data(sizeof(second_hand_vertices), second_hand_vertices);
 
   glEnableVertexAttribArray(AttributeCoord);
-  glVertexAttribPointer(AttributeCoord, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+  glVertexAttribPointer(AttributeCoord, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
   glBindVertexArray(0);
   buffer_.reset();

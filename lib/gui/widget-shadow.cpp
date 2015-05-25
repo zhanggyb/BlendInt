@@ -62,12 +62,12 @@ void WidgetShadow::Draw (int x,
 {
   shaders()->widget_shadow_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_SHADOW_POSITION), x,
-      y);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
-      size().width(), size().height());
+  glUniform2f(shaders()->location(Shaders::WIDGET_SHADOW_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform2f(shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
+              pixel_size(size().width()),
+              pixel_size(size().height()));
 
   glBindVertexArray(vao_);
 
@@ -75,9 +75,7 @@ void WidgetShadow::Draw (int x,
 
   int i = 0;
   if (i < theme()->shadow_width()) {
-    glUniform1i(
-        shaders()->location(
-            Shaders::WIDGET_SHADOW_ANTI_ALIAS),
+    glUniform1i(shaders()->location(Shaders::WIDGET_SHADOW_ANTI_ALIAS),
         1);
     glDrawElements(GL_TRIANGLE_STRIP, count * 2, GL_UNSIGNED_INT,
                    BUFFER_OFFSET(sizeof(GLuint) * count * 2 * i));
@@ -102,16 +100,15 @@ void WidgetShadow::Draw (int x,
 {
   shaders()->widget_shadow_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_SHADOW_POSITION), x,
-      y);
-  glUniform2f(
-      shaders()->location(
-          Shaders::WIDGET_SHADOW_VIEWPORT_POSITION),
-      mask_x, mask_y);
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
-      size().width(), size().height());
+  glUniform2f(shaders()->location(Shaders::WIDGET_SHADOW_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform2f(shaders()->location(Shaders::WIDGET_SHADOW_VIEWPORT_POSITION),
+              pixel_size(mask_x),
+              pixel_size(mask_y));
+  glUniform2f(shaders()->location(Shaders::WIDGET_SHADOW_SIZE),
+              pixel_size(size().width()),
+              pixel_size(size().height()));
 
   glBindVertexArray(vao_);
 

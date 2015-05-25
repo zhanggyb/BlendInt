@@ -267,13 +267,13 @@ void Text::DrawInRect (const Rect& rect,
       next_it = it + 1;
       if(next_it != text_.end()) {
         kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
-        max += (g->advance_x + kerning.x);
+        max += static_cast<int>((g->advance_x + kerning.x) / theme()->pixel());
       } else {
-        max += g->advance_x;
+        max += static_cast<int>(g->advance_x / theme()->pixel());
       }
 
     } else {
-      max += g->advance_x;
+      max += static_cast<int>(g->advance_x / theme()->pixel());
     }
 
     if ((align & AlignJustify) && (max > rect.width())) break;
@@ -354,13 +354,13 @@ void Text::DrawWithin (int x, int y, int width, const Color& color,
       next_it = it + 1;
       if(next_it != text_.end()) {
         kerning = font_.GetKerning(*it, *next_it, Font::KerningDefault);
-        max += (g->advance_x + kerning.x);
+        max += static_cast<int>((g->advance_x + kerning.x) / theme()->pixel());
       } else {
-        max += g->advance_x;
+        max += static_cast<int>(g->advance_x / theme()->pixel());
       }
 
     } else {
-      max += g->advance_x;
+      max += static_cast<int>(g->advance_x / theme()->pixel());
     }
 
     if (max > width) break;
@@ -393,13 +393,13 @@ int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, co
       n = i + 1;
       if(n != text_.length()) {
         kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
-        ox -= (g->advance_x + kerning.x);
+        ox -= static_cast<int>((g->advance_x + kerning.x) / theme()->pixel());
       } else {
-        ox -= g->advance_x;
+        ox -= static_cast<int>(g->advance_x / theme()->pixel());
       }
 
     } else {
-      ox -= g->advance_x;
+      ox -= static_cast<int>(g->advance_x / theme()->pixel());
     }
   }
         
@@ -429,13 +429,13 @@ int Text::DrawWithCursor(int x, int y, size_t index, size_t start, int width, co
       n = i + 1;
       if(n != text_.length()) {
         kerning = font_.GetKerning(text_[i], text_[n], Font::KerningDefault);
-        tmp += (g->advance_x + kerning.x);
+        tmp += static_cast<int>((g->advance_x + kerning.x) / theme()->pixel());
       } else {
-        tmp += g->advance_x;
+        tmp += static_cast<int>(g->advance_x / theme()->pixel());
       }
 
     } else {
-      tmp += g->advance_x;
+      tmp += static_cast<int>(g->advance_x / theme()->pixel());
     }
 
     if (tmp > width) {

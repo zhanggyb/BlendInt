@@ -43,7 +43,10 @@ namespace BlendInt {
     glDeleteVertexArrays(2, vao_);
   }
 
-  void ToolButton::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+  void ToolButton::PerformSizeUpdate (const AbstractView* source,
+                                      const AbstractView* target,
+                                      int width,
+                                      int height)
   {
     if (target == this) {
 
@@ -67,7 +70,7 @@ namespace BlendInt {
       vbo_.bind(1);
       vbo_.set_sub_data(0, sizeof(GLfloat) * outer_verts.size(),
                         &outer_verts[0]);
-      GLArrayBuffer::reset();
+      vbo_.reset();
 
       RequestRedraw();
     }
@@ -183,7 +186,7 @@ namespace BlendInt {
             1.0f, 1.0f, 1.0f, 0.16f);
         glUniform2f(
             shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-            0.f, -1.f);
+            0.f, pixel_size(-1.f));
         glDrawArrays(GL_TRIANGLE_STRIP, 0,
                      emboss_vertex_count(round_type()) * 2);
       }
@@ -211,7 +214,7 @@ namespace BlendInt {
               1.0f, 1.0f, 1.0f, 0.16f);
           glUniform2f(
               shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              0.f, -1.f);
+              0.f, pixel_size(-1.f));
           glDrawArrays(GL_TRIANGLE_STRIP, 0,
                        emboss_vertex_count(round_type()) * 2);
         }
@@ -295,7 +298,7 @@ namespace BlendInt {
     vbo_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 3,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, 0);
 
     glBindVertexArray(vao_[1]);
@@ -303,7 +306,7 @@ namespace BlendInt {
     vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
     glEnableVertexAttribArray(AttributeCoord);
     glVertexAttribPointer(AttributeCoord, 2,
-    GL_FLOAT,
+                          GL_FLOAT,
                           GL_FALSE, 0, 0);
 
     glBindVertexArray(0);
@@ -314,10 +317,10 @@ namespace BlendInt {
   {
     if (!action_) return;
 
-    Rect rect(pixel_size(kPadding.left()),
-              pixel_size(kPadding.bottom()),
-              size().width() - pixel_size(kPadding.hsum()),
-              size().height() - pixel_size(kPadding.vsum()));
+    Rect rect(kPadding.left(),
+              kPadding.bottom(),
+              size().width() - kPadding.hsum(),
+              size().height() - kPadding.vsum());
 
     if (action_->icon()) {
       if (action_->icon()->size().height() <= rect.height()) {

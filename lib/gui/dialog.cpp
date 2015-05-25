@@ -233,7 +233,7 @@ bool Dialog::PreDraw (AbstractWindow* context)
 
 Response Dialog::Draw (AbstractWindow* context)
 {
-  // shadow_->Draw(position().x(), position().y());
+  shadow_->Draw(position().x(), position().y());
 
   shaders()->frame_inner_program()->use();
 
