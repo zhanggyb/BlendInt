@@ -81,28 +81,22 @@ Size ColorWheel::GetPreferredSize () const
 
 Response ColorWheel::Draw (AbstractWindow* context)
 {
-  RefPtr<GLSLProgram> program =
-      shaders()->widget_triangle_program();
-  program->use();
+  shaders()->widget_triangle_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-      (float) (0.f + size().width() / 2.f),
-      (float) (0.f + size().height() / 2.f));
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-      0);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+              pixel_size(0.f + size().width() / 2.f),
+              pixel_size(0.f + size().height() / 2.f));
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+              0);
 
   glBindVertexArray(vaos_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
   glVertexAttrib4fv(AttributeColor,
                     theme()->regular().outline.data());
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-      1);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+              1);
   glBindVertexArray(vaos_[1]);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
@@ -118,7 +112,8 @@ void ColorWheel::PerformSizeUpdate (const AbstractView* source,
 {
   if (target == this) {
 
-    int radius = std::min(width, height) / 2;
+    float r = pixel_size(std::min(width, height) / 2);
+    float ri = r - pixel_size(1);
 
     inner_->bind();
 
@@ -133,8 +128,8 @@ void ColorWheel::PerformSizeUpdate (const AbstractView* source,
     for (int angle = -30; angle < 330; angle = angle + 5) {
       rad = angle * M_PI / 180.0;
 
-      x1 = (radius - 1) * cos(rad);
-      y1 = (radius - 1) * sin(rad);
+      x1 = ri * cos(rad);
+      y1 = ri * sin(rad);
 
       *(ptr) = x1;
       *(ptr + 1) = y1;
@@ -143,8 +138,8 @@ void ColorWheel::PerformSizeUpdate (const AbstractView* source,
     }
 
     rad = 330 * M_PI / 180.0;
-    x1 = (radius - 1) * cos(rad);
-    y1 = (radius - 1) * sin(rad);
+    x1 = ri * cos(rad);
+    y1 = ri * sin(rad);
 
     *(ptr) = x1;
     *(ptr + 1) = y1;
@@ -162,10 +157,10 @@ void ColorWheel::PerformSizeUpdate (const AbstractView* source,
     for (int angle = -30; angle < 330; angle = angle + 5) {
       rad = angle * M_PI / 180.0;
 
-      x1 = (radius - 1) * cos(rad);
-      y1 = (radius - 1) * sin(rad);
-      x2 = radius * cos(rad);
-      y2 = radius * sin(rad);
+      x1 = ri * cos(rad);
+      y1 = ri * sin(rad);
+      x2 = r * cos(rad);
+      y2 = r * sin(rad);
 
       *(ptr + 0) = x1;
       *(ptr + 1) = y1;
@@ -176,10 +171,10 @@ void ColorWheel::PerformSizeUpdate (const AbstractView* source,
     }
 
     rad = 330 * M_PI / 180.0;
-    x1 = (radius - 1) * cos(rad);
-    y1 = (radius - 1) * sin(rad);
-    x2 = radius * cos(rad);
-    y2 = radius * sin(rad);
+    x1 = ri * cos(rad);
+    y1 = ri * sin(rad);
+    x2 = r * cos(rad);
+    y2 = r * sin(rad);
 
     *(ptr + 0) = x1;
     *(ptr + 1) = y1;
@@ -211,6 +206,8 @@ void ColorWheel::GenerateWheelVertices (int radius,
   float y1 = 0.f;
   float x2 = 0.f;
   float y2 = 0.f;
+  float r = pixel_size(radius);
+  float ri = r - pixel_size(1);
 
   // 0 1 2 3 4 5
   // x y r g b a
@@ -228,10 +225,10 @@ void ColorWheel::GenerateWheelVertices (int radius,
   for (int angle = -30; angle < 330; angle = angle + 5) {
     rad = angle * M_PI / 180.0;
 
-    x1 = (radius - 1) * cos(rad);
-    y1 = (radius - 1) * sin(rad);
-    x2 = radius * cos(rad);
-    y2 = radius * sin(rad);
+    x1 = ri * cos(rad);
+    y1 = ri * sin(rad);
+    x2 = r * cos(rad);
+    y2 = r * sin(rad);
 
     inner_vertices[i * 6 + 0] = x1;
     inner_vertices[i * 6 + 1] = y1;
@@ -307,10 +304,10 @@ void ColorWheel::GenerateWheelVertices (int radius,
   }
 
   rad = 330 * M_PI / 180.0;
-  x1 = (radius - 1) * cos(rad);
-  y1 = (radius - 1) * sin(rad);
-  x2 = radius * cos(rad);
-  y2 = radius * sin(rad);
+  x1 = ri * cos(rad);
+  y1 = ri * sin(rad);
+  x2 = r * cos(rad);
+  y2 = r * sin(rad);
 
   inner_vertices[i * 6 + 0] = x1;
   inner_vertices[i * 6 + 1] = y1;

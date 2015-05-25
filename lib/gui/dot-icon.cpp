@@ -36,15 +36,22 @@ namespace BlendInt {
 DotIcon::DotIcon ()
     : AbstractIcon()
 {
-  int radius = pixel_size(3);
+  int radius = 3;
 
   set_size(radius * 2, radius * 2);
 
   std::vector<GLfloat> inner_verts;
   std::vector<GLfloat> outer_verts;
 
-  GenerateRawVertices(-radius, -radius, radius, radius, 1.f, RoundAll,
-                   radius, &inner_verts, &outer_verts);
+  GenerateRawVertices(pixel_size(-radius),
+                      pixel_size(-radius),
+                      pixel_size(radius),
+                      pixel_size(radius),
+                      pixel_size(1),
+                      RoundAll,
+                      pixel_size(radius),
+                      &inner_verts,
+                      &outer_verts);
 
   glGenVertexArrays(2, vao_);
   glBindVertexArray(vao_[0]);
@@ -68,7 +75,7 @@ DotIcon::DotIcon ()
   vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);
@@ -107,18 +114,16 @@ void DotIcon::Draw (int x,
 {
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform2f(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-      x, y);
-  glUniform4fv(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, color_ptr);
-  glUniform1i(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-      0);
+  glUniform2f(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform4fv(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+               1, color_ptr);
+  glUniform1i(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+              0);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
@@ -126,7 +131,8 @@ void DotIcon::Draw (int x,
   shaders()->widget_outer_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              x, y);
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                1, theme()->scroll().outline.data());
 
@@ -162,18 +168,16 @@ void DotIcon::DrawInRect (const Rect& rect,
 
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform2f(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-      x, y);
-  glUniform4fv(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, theme()->menu().inner.data());
-  glUniform1i(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-      gamma);
+  glUniform2f(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform4fv(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+               1, theme()->menu().inner.data());
+  glUniform1i(shaders()->location(
+      Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+              gamma);
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(RoundAll) + 2);
@@ -181,7 +185,8 @@ void DotIcon::DrawInRect (const Rect& rect,
   shaders()->widget_outer_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              x, y);
+              pixel_size(x),
+              pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                1, theme()->menu().outline.data());
 
@@ -189,4 +194,4 @@ void DotIcon::DrawInRect (const Rect& rect,
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertex_count(RoundAll) * 2 + 2);
 }
 
-}
+}  // namespace BlendInt

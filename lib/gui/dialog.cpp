@@ -126,7 +126,7 @@ Dialog::Dialog (const String& title, AbstractLayout* layout, int flags)
 
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 3,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(vao_[1]);
@@ -237,9 +237,9 @@ Response Dialog::Draw (AbstractWindow* context)
 
   shaders()->frame_inner_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_INNER_POSITION),
-      pixel_size(position().x()), pixel_size(position().y()));
+  glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -252,13 +252,11 @@ Response Dialog::Draw (AbstractWindow* context)
 
     shaders()->frame_image_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        pixel_size(position().x()), pixel_size(position().y()));
-    glUniform1i(
-        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
-                0);
+    glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+                pixel_size(position().x()),
+                pixel_size(position().y()));
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -275,15 +273,16 @@ Response Dialog::Draw (AbstractWindow* context)
 
     DrawSubViewsOnce(context);
 
-    glViewport(0, 0, context->size().width(), context->size().height());
+    glViewport(0, 0, pixel_size(context->size().width()),
+               pixel_size(context->size().height()));
 
   }
 
   shaders()->frame_outer_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_OUTER_POSITION),
-      pixel_size(position().x()), pixel_size(position().y()));
+  glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR),
                1, theme()->dialog().outline.data());
 
@@ -317,4 +316,4 @@ void Dialog::OnOKButtonClicked ()
   parent->RequestRedraw();
 }
 
-}
+}  // namespace BlendInt

@@ -65,6 +65,10 @@ int main (int argc, char* argv[])
     frame->AddWidget(new TextEntry);
 
     win.AddFrame(frame);
+
+    Dialog* dlg2 = new Dialog("Test2");
+
+    win.AddFrame(dlg2);
     
     win.Exec();
     Window::Terminate();

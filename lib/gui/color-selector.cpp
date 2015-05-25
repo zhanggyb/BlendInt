@@ -219,9 +219,9 @@ Response ColorSelector::Draw (AbstractWindow* context)
 
   shaders()->frame_inner_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_INNER_POSITION),
-      position().x(), position().y());
+  glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
               0);
   glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
@@ -234,9 +234,9 @@ Response ColorSelector::Draw (AbstractWindow* context)
 
     shaders()->frame_image_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::FRAME_IMAGE_POSITION),
-        position().x(), position().y());
+    glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION),
+                pixel_size(position().x()),
+                pixel_size(position().y()));
     glUniform1i(
         shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
     glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA),
@@ -264,9 +264,9 @@ Response ColorSelector::Draw (AbstractWindow* context)
 
   shaders()->frame_outer_program()->use();
 
-  glUniform2f(
-      shaders()->location(Shaders::FRAME_OUTER_POSITION),
-      position().x(), position().y());
+  glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION),
+              pixel_size(position().x()),
+              pixel_size(position().y()));
   glUniform4fv(shaders()->location(Shaders::FRAME_OUTER_COLOR),
                1, theme()->menu_back().outline.data());
 
@@ -366,4 +366,4 @@ Stack* ColorSelector::CreateBlockStack ()
   return stack;
 }
 
-}
+}  // namespace BlendInt

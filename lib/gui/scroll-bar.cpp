@@ -222,7 +222,7 @@ Response ScrollBar::Draw (AbstractWindow* context)
         1.f, 1.f, 0.16f);
     glUniform2f(
         shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-        0.f, 0.f - 1.f);
+        0.f, pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0,
                  emboss_vertex_count(round_type()) * 2);
   }
@@ -496,4 +496,4 @@ bool ScrollBar::GetNewValue (const Point& cursor, int* vout)
   return result;
 }
 
-}
+}  // namespace BlendInt

@@ -36,8 +36,8 @@ ExpandButton::ExpandButton ()
   int w = this->icon()->size().width();
   int h = this->icon()->size().height();
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 }
@@ -56,8 +56,8 @@ ExpandButton::ExpandButton (const String& text)
   h = std::max(h, this->text()->font().height());
 
   if (w < 80) w = 80;
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 }
@@ -109,19 +109,19 @@ Response ExpandButton::Draw (AbstractWindow* context)
 {
   float rotate = is_checked() ? 0.f : -90.f;
 
-  Rect rect(pixel_size(kPadding.left()), pixel_size(kPadding.bottom()),
-            size().height() - pixel_size(kPadding.vsum()),
-            size().height() - pixel_size(kPadding.vsum()));
+  Rect rect(kPadding.left(),
+            kPadding.bottom(),
+            size().height() - kPadding.vsum(),
+            size().height() - kPadding.vsum());
 
   if (icon()) {
     icon()->DrawInRect(rect, AlignCenter, Color(0x0F0F0FFF).data(), 0, rotate,
                        true);
     rect.set_x(rect.width() + kIconTextSpace);
-    rect.set_width(
-        size().width() - pixel_size(kPadding.hsum()) - kIconTextSpace
+    rect.set_width(size().width() - kPadding.hsum() - kIconTextSpace
             - icon()->size().width());
   } else {
-    rect.set_width(size().width() - pixel_size(kPadding.hsum()));
+    rect.set_width(size().width() - kPadding.hsum());
   }
 
   if (text()) {
@@ -140,8 +140,7 @@ Expander::Expander (const String& title,
                     Orientation orient,
                     int align,
                     int space)
-    :
-      AbstractWidget(),
+    : AbstractWidget(),
       title_(0),
       layout_(0),
       last_size_(0),
