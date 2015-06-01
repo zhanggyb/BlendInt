@@ -834,4 +834,4 @@ void Window::CreateCursors ()
 
 }
 
-}
+}  // namespace BlendInt

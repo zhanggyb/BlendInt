@@ -84,11 +84,8 @@ Response ListView::Draw (AbstractWindow* context)
 
   shaders()->widget_inner_program()->use();
 
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-              0);
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
-              0);
-
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
   glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
                1, theme()->regular().inner.data());
 
@@ -114,23 +111,16 @@ Response ListView::Draw (AbstractWindow* context)
   while (y > 0) {
     y -= h;
 
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-        0, y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+                0, pixel_size(y));
 
     if (i == highlight_index_) {// TODO: use different functions for performance
-      glUniform1i(
-          shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-          -35);
+      glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), -35);
     } else {
       if (i % 2 == 0) {
-        glUniform1i(
-            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-            0);
+        glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
       } else {
-        glUniform1i(
-            shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA),
-            15);
+        glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 15);
       }
     }
 
@@ -147,9 +137,10 @@ Response ListView::Draw (AbstractWindow* context)
     Rect rect(0, size().height() - h, size().width(), h);
 
     while (index.valid()) {
-      index.GetData()->DrawInRect(
-          rect, AlignLeft | AlignVerticalCenter | AlignJustify | AlignBaseline,
-          theme()->regular().text.data());
+      index.GetData()->DrawInRect(rect,
+                                  AlignLeft | AlignVerticalCenter |
+                                  AlignJustify | AlignBaseline,
+                                  theme()->regular().text.data());
       index = index.GetDownIndex();
       rect.set_y(rect.y() - h);
     }
@@ -223,8 +214,10 @@ void ListView::PerformSizeUpdate (const AbstractView* source,
     set_size(width, height);
 
     GLfloat h = font_.height();
-    GLfloat verts[] = { 0.f, 0.f, (GLfloat) width, 0.f, 0.f, h, (GLfloat) width,
-        h };
+    GLfloat verts[] = { 0.f, 0.f,
+                        pixel_size(width), 0.f,
+                        0.f, pixel_size(h),
+                        pixel_size(width), pixel_size(h) };
 
     vbo_.bind(1);
     vbo_.set_data(sizeof(verts), verts);
@@ -245,8 +238,10 @@ void ListView::PerformSizeUpdate (const AbstractView* source,
 void ListView::InitializeListView ()
 {
   GLfloat h = (GLfloat) font_.height();
-  GLfloat verts[] = { 0.f, 0.f, (GLfloat) size().width(), 0.f, 0.f, h,
-      (GLfloat) size().width(), h };
+  GLfloat verts[] = { 0.f, 0.f,
+                      pixel_size(size().width()), 0.f,
+                      0.f, pixel_size(h),
+                      pixel_size(size().width()), pixel_size(h) };
 
   std::vector<GLfloat> inner_verts;
 

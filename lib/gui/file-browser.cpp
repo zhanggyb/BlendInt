@@ -231,10 +231,8 @@ Response FileBrowser::Draw (AbstractWindow* context)
 
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform4fv(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
-      1, theme()->box().inner_sel.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+               1, theme()->box().inner_sel.data());
 
   glBindVertexArray(vaos_[1]);
 
@@ -244,27 +242,19 @@ Response FileBrowser::Draw (AbstractWindow* context)
 
   while (y > 0) {
     y -= h;
-    glUniform2f(
-        shaders()->location(
-            Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-        0.f, y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+                0.f, pixel_size(y));
 
     if (i == highlight_index_) {
-      glUniform1i(
-          shaders()->location(
-              Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-          -35);
+      glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+                  -35);
     } else {
       if (i % 2 == 0) {
-        glUniform1i(
-            shaders()->location(
-                Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-            0);
+        glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+                    0);
       } else {
-        glUniform1i(
-            shaders()->location(
-                Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
-            15);
+        glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+                    15);
       }
     }
 
@@ -279,9 +269,12 @@ Response FileBrowser::Draw (AbstractWindow* context)
 
     Rect rect(0, size().height() - h, size().width(), h);
     while (index.valid()) {
-      index.GetRawData()->DrawInRect(
-          rect, AlignLeft | AlignVerticalCenter | AlignBaseline | AlignJustify,
-          theme()->regular().text.data());
+      index.GetRawData()->DrawInRect(rect,
+                                     AlignLeft |
+                                     AlignVerticalCenter |
+                                     AlignBaseline |
+                                     AlignJustify,
+                                     theme()->regular().text.data());
       index = index.GetDownIndex();
       rect.set_y(rect.y() - h);
     }
@@ -415,7 +408,7 @@ void FileBrowser::InitializeFileBrowserOnce ()
   buffer_.set_data(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 3,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   GenerateVertices(Size(size().width(), row_height), 0.f, RoundNone, 0.f,
@@ -425,13 +418,9 @@ void FileBrowser::InitializeFileBrowserOnce ()
   buffer_.bind(1);
   buffer_.set_data(sizeof(GLfloat) * row_verts.size(), &row_verts[0]);
 
-  glEnableVertexAttribArray(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
-  glVertexAttribPointer(
-      shaders()->location(
-          Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
-      3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD));
+  glVertexAttribPointer(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COORD),
+                        3, GL_FLOAT, GL_FALSE, 0, 0);
 
   glBindVertexArray(0);
   buffer_.reset();
