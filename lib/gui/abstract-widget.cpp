@@ -224,11 +224,10 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
     GLboolean scissor_test;
     glGetBooleanv(GL_SCISSOR_TEST, &scissor_test);
 
-    AbstractWindow* c = context;
     glm::vec3 pos = shaders()->widget_model_matrix() * glm::vec3(0.f, 0.f, 1.f);
     Point original = context->viewport_origin();
-    c->viewport_origin_.reset(original.x() + pixel_size(pos.x),
-                              original.y() + pixel_size(pos.y));
+    context->viewport_origin_.reset(original.x() + pixel_size(pos.x),
+                                    original.y() + pixel_size(pos.y));
 
     shaders()->PushWidgetModelMatrix();
     shaders()->PushWidgetProjectionMatrix();
@@ -247,8 +246,8 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     // in this off-screen framebuffer, a new stencil buffer was created, reset the stencil count to 0 and restore later
-    GLuint original_stencil_count = c->stencil_count_;
-    c->stencil_count_ = 0;
+    GLuint original_stencil_count = context->stencil_count_;
+    context->stencil_count_ = 0;
 
     glClearColor(0.f, 0.f, 0.f, 0.f);
     glClearDepth(1.0);
@@ -280,17 +279,15 @@ bool AbstractWidget::RenderSubWidgetsToTexture (AbstractWidget* widget,
     shaders()->PopWidgetProjectionMatrix();
     shaders()->PopWidgetModelMatrix();
 
-    if (scissor_test) {
-      glEnable(GL_SCISSOR_TEST);
-    }
+    if (scissor_test) glEnable(GL_SCISSOR_TEST);
 
-    c->viewport_origin_ = original;
+    context->viewport_origin_ = original;
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 
 #ifdef DEBUG
-    DBG_ASSERT(c->stencil_count_ == 0);
+    DBG_ASSERT(context->stencil_count_ == 0);
 #endif
-    c->stencil_count_ = original_stencil_count;
+    context->stencil_count_ = original_stencil_count;
 
     retval = true;
   }

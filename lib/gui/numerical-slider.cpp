@@ -680,22 +680,16 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
 
   shaders()->widget_split_inner_program()->use();
 
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA),
-      0);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_SPLIT_INNER_SHADED),
-      theme()->number_slider().shaded);
+  glUniform1i(shaders()->location(Shaders::WIDGET_SPLIT_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_SPLIT_INNER_SHADED),
+              theme()->number_slider().shaded);
 
-  glUniform1f(
-      shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
-      x + len);
-  glUniform4fv(
-      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
-      1, theme()->number_slider().inner_sel.data());
-  glUniform4fv(
-      shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
-      1, theme()->number_slider().inner.data());
+  glUniform1f(shaders()->location(Shaders::WIDGET_SPLIT_INNER_MIDDLE),
+              x + pixel_size(len));
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR0),
+               1, theme()->number_slider().inner_sel.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SPLIT_INNER_COLOR1),
+               1, theme()->number_slider().inner.data());
 
   vao_.bind(0);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
@@ -711,13 +705,11 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
   glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
   if (emboss()) {
-    glUniform4f(
-        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-        1.0f, 1.0f, 0.16f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                1.0f, 1.0f, 1.0f, 0.16f);
 
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        -1.f);
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f, pixel_size(-1.f));
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
@@ -726,8 +718,8 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
             size().height());
 
   icons()->num()->DrawInRect(rect, AlignCenter,
-                                             Color(0x0F0F0FFF).data(), 0,
-                                             180.f);
+                             Color(0x0F0F0FFF).data(), 0,
+                             180.f);
 
   rect.set_x(rect.width() + kPadding.left());
   rect.set_width(size().width() - kPadding.hsum()
@@ -745,7 +737,7 @@ void NumericalSlider::DrawSlideMode (AbstractWindow* context)
   rect.set_width(icons()->num()->size().width());
 
   icons()->num()->DrawInRect(rect, AlignCenter,
-                                             Color(0x0F0F0FFF).data(), 0, 0.f);
+                             Color(0x0F0F0FFF).data(), 0, 0.f);
 }
 
 void NumericalSlider::DrawEditMode (AbstractWindow* context)
@@ -774,12 +766,10 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
                outline_vertex_count(round_type()) * 2 + 2);
 
   if (emboss()) {
-    glUniform4f(
-        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-        1.0f, 1.0f, 0.16f);
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        -1.f);
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                1.0f, 1.0f, 1.0f, 0.16f);
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f, pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 
@@ -817,15 +807,12 @@ void NumericalSlider::DrawEditMode (AbstractWindow* context)
   y = 0 + 1;
 
   shaders()->widget_triangle_program()->use();
-  glUniform2f(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
-      pixel_size(x),
-      pixel_size(y));
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
-      0);
+  glUniform2f(shaders()->location(Shaders::WIDGET_TRIANGLE_POSITION),
+              pixel_size(x),
+              pixel_size(y));
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_TRIANGLE_ANTI_ALIAS),
+              0);
   glVertexAttrib4f(AttributeColor, 0.f, 0.f, 0.f, 1.f);
   // glVertexAttrib4f(AttributeColor, 0.f, 0.215f, 1.f, 0.75f);
 

@@ -49,21 +49,13 @@ GLFWcursor* Window::kTopRightCornerCursor = NULL;
 GLFWcursor* Window::kIBeamCursor = NULL;
 
 std::map<GLFWwindow*, Window*> Window::kSharedWindowMap;
-
 KeyAction Window::kKeyAction = KeyNone;
-
 int Window::kKey = 0;
-
 int Window::kModifiers = 0;
-
 int Window::kScancode = 0;
-
 String Window::kText;
-
 MouseAction Window::kMouseAction = MouseNone;
-
 MouseButton Window::kMouseButton = MouseButtonLeft;
-
 Point Window::kCursor;
 
 Window::Window (int width, int height, const char* title, int flags)
@@ -578,7 +570,9 @@ void Window::CbMouseButton (GLFWwindow* window,
                             int mods)
 {
   Window* win = 0;
-  std::map<GLFWwindow*, Window*>::iterator it = kSharedWindowMap.find(window);
+  std::map<GLFWwindow*, Window*>::iterator it
+      = kSharedWindowMap.find(window);
+
   if (it != kSharedWindowMap.end()) {
     win = it->second;
   } else {

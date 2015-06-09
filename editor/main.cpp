@@ -29,6 +29,7 @@
 #include <blendint/gui/linear-layout.hpp>
 #include <blendint/gui/push-button.hpp>
 #include <blendint/gui/toggle-button.hpp>
+#include <blendint/gui/color-button.hpp>
 #include <blendint/gui/label.hpp>
 #include <blendint/gui/menu.hpp>
 #include <blendint/gui/radio-button.hpp>
@@ -43,7 +44,7 @@ int main (int argc, char* argv[])
   if (Window::Initialize()) {
     //EditorWindow win(1280, 800, "UI Editor");
 
-    Window win(640, 480, "UI Editor");
+    Window win(1000, 600, "UI Editor");
 
     Dialog* frame = new Dialog("Test");
     //Menu* frame = new Menu;
@@ -63,6 +64,7 @@ int main (int argc, char* argv[])
     frame->AddWidget(new RadioButton("Radio Button"));
     frame->AddWidget(new ComboBox);
     frame->AddWidget(new TextEntry);
+    frame->AddWidget(new ColorButton);
 
     win.AddFrame(frame);
 

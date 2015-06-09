@@ -495,11 +495,10 @@ bool AbstractFrame::RenderToTexture (AbstractFrame* frame,
     glClearDepth(1.0);
     glClearStencil(0);
 
-    glClear(
-        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
-                        GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+                        GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     //glEnable(GL_BLEND);
 
     glViewport(0,
