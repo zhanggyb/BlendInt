@@ -37,11 +37,15 @@ PixelIcon::PixelIcon (int width, int height)
   CreateVertexArray(width, height);
 }
 
-PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const GLfloat* uv)
-    : AbstractIcon(width, height),
+PixelIcon::PixelIcon (int pixel_width,
+                      int pixel_height,
+                      const unsigned char* pixels,
+                      const GLfloat* uv)
+    : AbstractIcon(),
       vao_(0)
 {
-  CreateVertexArray(width, height, uv);
+  set_size(pixel_width / theme()->pixel(), pixel_height / theme()->pixel());
+  CreateVertexArray(pixel_width, pixel_height, uv);
 
   texture_.reset(new GLTexture2D);
   texture_->generate();
@@ -50,16 +54,20 @@ PixelIcon::PixelIcon (int width, int height, const unsigned char* pixels, const 
   texture_->SetMinFilter(GL_LINEAR);
   texture_->SetMagFilter(GL_LINEAR);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  texture_->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+  texture_->SetImage(0, GL_RGBA, pixel_width, pixel_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
   texture_->reset();
 }
 
-PixelIcon::PixelIcon (int width, int height,
-                      const RefPtr<GLTexture2D>& texture, const GLfloat* uv)
-    : AbstractIcon(width, height),
+PixelIcon::PixelIcon (int pixel_width,
+                      int pixel_height,
+                      const RefPtr<GLTexture2D>& texture,
+                      const GLfloat* uv)
+    : AbstractIcon(),
       vao_(0)
 {
-  CreateVertexArray(width, height, uv);
+  set_size(pixel_width / theme()->pixel(), pixel_height / theme()->pixel());
+  
+  CreateVertexArray(pixel_width, pixel_height, uv);
 
   texture_ = texture;
 }
@@ -69,7 +77,10 @@ PixelIcon::~PixelIcon ()
   glDeleteVertexArrays(1, &vao_);
 }
 
-void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsigned char* pixels, const GLfloat* uv)
+void PixelIcon::SetPixels (unsigned int pixel_width,
+                           unsigned int pixel_height,
+                           const unsigned char* pixels,
+                           const GLfloat* uv)
 {
   DBG_ASSERT(pixels);
 
@@ -80,7 +91,7 @@ void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsign
   texture->SetMinFilter(GL_LINEAR);
   texture->SetMagFilter(GL_LINEAR);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  texture->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+  texture->SetImage(0, GL_RGBA, pixel_width, pixel_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
   texture->reset();
 
   texture_ = texture;
@@ -89,10 +100,10 @@ void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsign
 
   GLfloat* ptr = (GLfloat*)vbo_->map(GL_READ_WRITE);
 
-  *(ptr + 4) = (GLfloat)width;
-  *(ptr + 9) = (GLfloat)height;
-  *(ptr + 12) = (GLfloat)width;
-  *(ptr + 13) = (GLfloat)height;
+  *(ptr + 4) = (GLfloat)pixel_width;
+  *(ptr + 9) = (GLfloat)pixel_height;
+  *(ptr + 12) = (GLfloat)pixel_width;
+  *(ptr + 13) = (GLfloat)pixel_height;
 
   if(uv) {
     *(ptr + 2) = *(uv + 0);
@@ -117,10 +128,12 @@ void PixelIcon::SetPixels (unsigned int width, unsigned int height, const unsign
   vbo_->unmap();
   vbo_->reset();
 
-  set_size(width, height);
+  set_size(pixel_width / theme()->pixel(), pixel_height / theme()->pixel());
 }
 
-void PixelIcon::SetTexture (unsigned int width, unsigned int height, const RefPtr<GLTexture2D>& texture,
+void PixelIcon::SetTexture (unsigned int pixel_width,
+                            unsigned int pixel_height,
+                            const RefPtr<GLTexture2D>& texture,
                             const GLfloat* uv)
 {
   if(!texture) return;
@@ -132,10 +145,10 @@ void PixelIcon::SetTexture (unsigned int width, unsigned int height, const RefPt
 
   GLfloat* ptr = (GLfloat*)vbo_->map(GL_READ_WRITE);
 
-  *(ptr + 4) = (GLfloat)width;
-  *(ptr + 9) = (GLfloat)height;
-  *(ptr + 12) = (GLfloat)width;
-  *(ptr + 13) = (GLfloat)height;
+  *(ptr + 4) = (GLfloat)pixel_width;
+  *(ptr + 9) = (GLfloat)pixel_height;
+  *(ptr + 12) = (GLfloat)pixel_width;
+  *(ptr + 13) = (GLfloat)pixel_height;
 
   if(uv) {
     *(ptr + 2) = *(uv + 0);
@@ -160,7 +173,7 @@ void PixelIcon::SetTexture (unsigned int width, unsigned int height, const RefPt
   vbo_->unmap();
   vbo_->reset();
 
-  set_size(width, height);
+  set_size(pixel_width / theme()->pixel(), pixel_height / theme()->pixel());
 }
 
 void PixelIcon::Draw (int x, int y, const float* color_ptr, short gamma,
@@ -170,7 +183,8 @@ void PixelIcon::Draw (int x, int y, const float* color_ptr, short gamma,
 
     shaders()->widget_image_program()->use();
 
-    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+                pixel_size(x), pixel_size(y));
     glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
     glActiveTexture(GL_TEXTURE0);
@@ -212,7 +226,8 @@ void PixelIcon::DrawInRect (const Rect& rect,
 
     shaders()->widget_image_program()->use();
 
-    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION), x, y);
+    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+                pixel_size(x), pixel_size(y));
     glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), gamma);
 
     glActiveTexture(GL_TEXTURE0);
@@ -287,18 +302,19 @@ void PixelIcon::CreateVertexArray (unsigned int width, unsigned int height, cons
   vbo_->bind();
   vbo_->set_data(sizeof(GLfloat) * v.size(), &v[0]);
 
-  glEnableVertexAttribArray(
-      shaders()->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
-  glEnableVertexAttribArray(
-      shaders()->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
-  glVertexAttribPointer(
-      shaders()->location(Shaders::WIDGET_IMAGE_COORD), 2,
-      GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-  glVertexAttribPointer(
-      shaders()->location(Shaders::WIDGET_IMAGE_UV), 2,
-      GL_FLOAT,
-      GL_FALSE, 4 * sizeof(GLfloat),
-      BUFFER_OFFSET(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_IMAGE_COORD));// 0: Coord
+  glEnableVertexAttribArray(shaders()->location(Shaders::WIDGET_IMAGE_UV));// 1: Texture UV
+  glVertexAttribPointer(shaders()->location(Shaders::WIDGET_IMAGE_COORD),
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+  glVertexAttribPointer(shaders()->location(Shaders::WIDGET_IMAGE_UV),
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        4 * sizeof(GLfloat),
+                        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
   glBindVertexArray(0);
   vbo_->reset();

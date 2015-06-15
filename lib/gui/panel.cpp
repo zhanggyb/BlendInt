@@ -237,13 +237,11 @@ Response Panel::Draw (AbstractWindow* context)
 
   shaders()->widget_inner_program()->use();
 
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-              0);
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
-              0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
 
-  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR),
-               1, theme()->regular().inner.data());
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+               theme()->regular().inner.data());
 
   glBindVertexArray(vao_[0]);
   glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);
@@ -252,13 +250,10 @@ Response Panel::Draw (AbstractWindow* context)
 
     shaders()->widget_image_program()->use();
 
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
-        0.f, 0.f);
-    glUniform1i(
-        shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
-    glUniform1i(
-        shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
+    glUniform2f(shaders()->location(Shaders::WIDGET_IMAGE_POSITION),
+                0.f, 0.f);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::WIDGET_IMAGE_GAMMA), 0);
 
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer_->Draw(0, 0);

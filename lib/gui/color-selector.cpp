@@ -78,7 +78,7 @@ ColorSelector::ColorSelector ()
   color_box->AddWidget(stack_);
   color_box->AddWidget(alpha_slider);
 
-  PushButton* pick_btn = new PushButton(icons()->icon_16x16(Icons::EYEDROPPER));
+  PushButton* pick_btn = new PushButton(icons()->pixel_icon(Icons::EYEDROPPER));
   pick_btn->SetEmboss(true);
 
   LinearLayout* hbox2 = new LinearLayout(Horizontal, AlignTop);

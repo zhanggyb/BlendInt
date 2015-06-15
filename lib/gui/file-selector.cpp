@@ -331,10 +331,10 @@ LinearLayout* FileSelector::CreateButtons()
   // directory control group
   Block* block1 = new Block;
 
-  PushButton* btn_back = new PushButton(icons()->icon_16x16(Icons::BACK));
-  PushButton* btn_forward = new PushButton(icons()->icon_16x16(Icons::FORWARD));
-  PushButton* btn_up = new PushButton(icons()->icon_16x16(Icons::FILE_PARENT));
-  PushButton* btn_reload = new PushButton(icons()->icon_16x16(Icons::FILE_REFRESH));
+  PushButton* btn_back = new PushButton(icons()->pixel_icon(Icons::BACK));
+  PushButton* btn_forward = new PushButton(icons()->pixel_icon(Icons::FORWARD));
+  PushButton* btn_up = new PushButton(icons()->pixel_icon(Icons::FILE_PARENT));
+  PushButton* btn_reload = new PushButton(icons()->pixel_icon(Icons::FILE_REFRESH));
 
   block1->AddWidget(btn_back);
   block1->AddWidget(btn_forward);
@@ -344,14 +344,14 @@ LinearLayout* FileSelector::CreateButtons()
   block1->Resize(block1->GetPreferredSize());
 
   // create new
-  PushButton* btn_new = new PushButton(icons()->icon_16x16(Icons::NEWFOLDER), "Create New Directory");
+  PushButton* btn_new = new PushButton(icons()->pixel_icon(Icons::NEWFOLDER), "Create New Directory");
 
   // display mode
   Block* block2 = new Block;
 
-  PushButton* btn_short_list = new PushButton(icons()->icon_16x16(Icons::SHORTDISPLAY));
-  PushButton* btn_detail_list = new PushButton(icons()->icon_16x16(Icons::LONGDISPLAY));
-  PushButton* btn_thumbnail = new PushButton(icons()->icon_16x16(Icons::IMGDISPLAY));
+  PushButton* btn_short_list = new PushButton(icons()->pixel_icon(Icons::SHORTDISPLAY));
+  PushButton* btn_detail_list = new PushButton(icons()->pixel_icon(Icons::LONGDISPLAY));
+  PushButton* btn_thumbnail = new PushButton(icons()->pixel_icon(Icons::IMGDISPLAY));
 
   block2->AddWidget(btn_short_list);
   block2->AddWidget(btn_detail_list);
@@ -359,10 +359,10 @@ LinearLayout* FileSelector::CreateButtons()
 
   Block* block3 = new Block;
 
-  PushButton* btn_sort_alpha = new PushButton(icons()->icon_16x16(Icons::SORTALPHA));
-  PushButton* btn_sort_ext = new PushButton(icons()->icon_16x16(Icons::SORTBYEXT));
-  PushButton* btn_sort_time = new PushButton(icons()->icon_16x16(Icons::SORTTIME));
-  PushButton* btn_sort_size = new PushButton(icons()->icon_16x16(Icons::SORTSIZE));
+  PushButton* btn_sort_alpha = new PushButton(icons()->pixel_icon(Icons::SORTALPHA));
+  PushButton* btn_sort_ext = new PushButton(icons()->pixel_icon(Icons::SORTBYEXT));
+  PushButton* btn_sort_time = new PushButton(icons()->pixel_icon(Icons::SORTTIME));
+  PushButton* btn_sort_size = new PushButton(icons()->pixel_icon(Icons::SORTSIZE));
 
   block3->AddWidget(btn_sort_alpha);
   block3->AddWidget(btn_sort_ext);

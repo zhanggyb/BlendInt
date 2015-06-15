@@ -35,6 +35,7 @@
 
 #include <blendint/stock/icons.hpp>
 #include <blendint/stock/shaders.hpp>
+#include <blendint/stock/theme.hpp>
 
 #include <blendint/gui/icon-texture.hpp>
 #include <blendint/gui/abstract-window.hpp>
@@ -48,12 +49,18 @@ Icons* Icons::kIcons = 0;
 Icons::Icons ()
 {
   CreateVectorIcons();
-  CreatePixelIcons16x16();
-  CreatePixelIcons32x32();
 
   end_point_.reset(new EndPointIcon);
   check_.reset(new CheckIcon);
   dot_.reset(new DotIcon);
+
+  if (theme()->pixel() == 1.f) {
+    CreatePixelIconsx1();
+  } else if (theme()->pixel() == 2.f) {
+    CreatePixelIconsx2();
+  } else {
+    // TODO:
+  }
 }
 
 Icons::~Icons ()
@@ -101,7 +108,7 @@ void Icons::CreateVectorIcons ()
 
 }
 
-void Icons::CreatePixelIcons16x16 ()
+void Icons::CreatePixelIconsx1 ()
 {
   namespace fs = boost::filesystem;
 
@@ -159,13 +166,13 @@ void Icons::CreatePixelIcons16x16 ()
   uv[6] = x + w;
   uv[7] = y;
 
-  icons_16x16_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
+  pixel_icons_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
 
   for (int i = 0; i < 30; i++) {
 
     for (int j = 0; j < 26; j++) {
 
-      icons_16x16_[i * 26 + j] = RefPtr<PixelIcon>(
+      pixel_icons_[i * 26 + j] = RefPtr<PixelIcon>(
           new PixelIcon(16, 16, texture, &uv[0]));
 
       for (int k = 0; k < 8; k += 2) {
@@ -187,7 +194,7 @@ void Icons::CreatePixelIcons16x16 ()
 
 }
 
-void Icons::CreatePixelIcons32x32 ()
+void Icons::CreatePixelIconsx2 ()
 {
   namespace fs = boost::filesystem;
 
@@ -235,13 +242,13 @@ void Icons::CreatePixelIcons32x32 ()
   uv[6] = x + w;
   uv[7] = y;
 
-  icons_32x32_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
+  pixel_icons_.resize(LAST_ICON + 1, RefPtr<PixelIcon>(0));
 
   for (int i = 0; i < 30; i++) {
 
     for (int j = 0; j < 26; j++) {
 
-      icons_32x32_[i * 26 + j] = RefPtr<PixelIcon>(
+      pixel_icons_[i * 26 + j] = RefPtr<PixelIcon>(
           new PixelIcon(32, 32, texture, &uv[0]));
 
       for (int k = 0; k < 8; k += 2) {

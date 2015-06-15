@@ -240,8 +240,7 @@ Response Dialog::Draw (AbstractWindow* context)
   glUniform2f(shaders()->location(Shaders::FRAME_INNER_POSITION),
               pixel_size(position().x()),
               pixel_size(position().y()));
-  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA),
-              0);
+  glUniform1i(shaders()->location(Shaders::FRAME_INNER_GAMMA), 0);
   glUniform4fv(shaders()->location(Shaders::FRAME_INNER_COLOR),
                1, theme()->dialog().inner.data());
 

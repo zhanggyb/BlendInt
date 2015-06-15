@@ -35,6 +35,7 @@
 #include <blendint/gui/radio-button.hpp>
 #include <blendint/gui/combo-box.hpp>
 #include <blendint/gui/textentry.hpp>
+#include <blendint/gui/splitter.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -70,7 +71,35 @@ int main (int argc, char* argv[])
 
     Dialog* dlg2 = new Dialog("Test2");
 
+    Splitter* splitter = new Splitter(Vertical);
+    PushButton* btn1 = new PushButton("Button1");
+    PushButton* btn2 = new PushButton("Button2");
+    PushButton* btn3 = new PushButton("Button3");
+
+    splitter->AddWidget(btn1);
+    splitter->AddWidget(btn2);
+    splitter->AddWidget(btn3);
+
+    dlg2->AddWidget(splitter);
+    
     win.AddFrame(dlg2);
+
+    Dialog* dlg3 = new Dialog("Test3");
+
+    Splitter* splitter2 = new Splitter(Horizontal);
+    PushButton* btn4 = new PushButton("Button4");
+    PushButton* btn5 = new PushButton("Button5");
+    PushButton* btn6 = new PushButton("Button6");
+
+    splitter2->AddWidget(btn4);
+    splitter2->AddWidget(btn5);
+    splitter2->AddWidget(btn6);
+
+    dlg3->AddWidget(splitter2);
+    dlg3->MoveTo(200, 200);
+    
+    win.AddFrame(dlg3);
+
     
     win.Exec();
     Window::Terminate();

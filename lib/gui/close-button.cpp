@@ -141,8 +141,7 @@ Response CloseButton::Draw (AbstractWindow* context)
 {
   shaders()->widget_inner_program()->use();
 
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-              0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               theme()->regular().shaded);
 
@@ -171,12 +170,10 @@ Response CloseButton::Draw (AbstractWindow* context)
                outline_vertex_count(round_type()) * 2 + 2);
 
   if (is_down()) {
-    glUniform4f(
-        shaders()->location(Shaders::WIDGET_OUTER_COLOR), 1.0f,
-        1.0f, 1.0f, 0.16f);
-    glUniform2f(
-        shaders()->location(Shaders::WIDGET_OUTER_OFFSET), 0.f,
-        pixel_size(-1.f));
+    glUniform4f(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
+                1.0f, 1.0f, 1.0f, 0.16f);
+    glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
+                0.f, pixel_size(-1.f));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, emboss_vertex_count(round_type()) * 2);
   }
 

@@ -114,15 +114,11 @@ void DotIcon::Draw (int x,
 {
   shaders()->widget_simple_triangle_program()->use();
 
-  glUniform2f(shaders()->location(
-      Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
-              pixel_size(x),
-              pixel_size(y));
-  glUniform4fv(shaders()->location(
-      Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
+  glUniform2f(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_POSITION),
+              pixel_size(x), pixel_size(y));
+  glUniform4fv(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_COLOR),
                1, color_ptr);
-  glUniform1i(shaders()->location(
-      Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
+  glUniform1i(shaders()->location(Shaders::WIDGET_SIMPLE_TRIANGLE_GAMMA),
               0);
 
   glBindVertexArray(vao_[0]);
@@ -131,8 +127,7 @@ void DotIcon::Draw (int x,
   shaders()->widget_outer_program()->use();
 
   glUniform2f(shaders()->location(Shaders::WIDGET_OUTER_OFFSET),
-              pixel_size(x),
-              pixel_size(y));
+              pixel_size(x), pixel_size(y));
   glUniform4fv(shaders()->location(Shaders::WIDGET_OUTER_COLOR),
                1, theme()->scroll().outline.data());
 

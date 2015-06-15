@@ -446,9 +446,9 @@ namespace BlendInt {
 
     LinearLayout* l1 = new LinearLayout(Horizontal, AlignLeft);
     ToolButton* btn1 = new ToolButton;
-    btn1->SetAction(icons()->icon_32x32(Icons::MESH_CIRCLE), "Circle");
+    btn1->SetAction(icons()->pixel_icon(Icons::MESH_CIRCLE), "Circle");
     ToolButton* btn2 = new ToolButton;
-    btn2->SetAction(icons()->icon_32x32(Icons::MESH_CONE), "Cone");
+    btn2->SetAction(icons()->pixel_icon(Icons::MESH_CONE), "Cone");
 
     l1->AddWidget(btn1);
     l1->AddWidget(btn2);
@@ -456,9 +456,9 @@ namespace BlendInt {
 
     LinearLayout* l2 = new LinearLayout(Horizontal, AlignLeft);
     ToolButton* btn3 = new ToolButton;
-    btn3->SetAction(icons()->icon_32x32(Icons::MESH_CUBE), "Cube");
+    btn3->SetAction(icons()->pixel_icon(Icons::MESH_CUBE), "Cube");
     ToolButton* btn4 = new ToolButton;
-    btn4->SetAction(icons()->icon_32x32(Icons::MESH_CYLINDER), "Cylinder");
+    btn4->SetAction(icons()->pixel_icon(Icons::MESH_CYLINDER), "Cylinder");
 
     l2->AddWidget(btn3);
     l2->AddWidget(btn4);

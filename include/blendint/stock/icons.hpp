@@ -1091,14 +1091,9 @@ public:
     return dot_;
   }
 
-  const RefPtr<PixelIcon>& icon_16x16 (int index) const
+  const RefPtr<PixelIcon>& pixel_icon (int index) const
   {
-    return icons_16x16_[index];
-  }
-
-  const RefPtr<PixelIcon>& icon_32x32 (int index) const
-  {
-    return icons_32x32_[index];
+    return pixel_icons_[index];
   }
 
 private:
@@ -1124,9 +1119,9 @@ private:
 
   void CreateVectorIcons ();
 
-  void CreatePixelIcons16x16 ();
+  void CreatePixelIconsx1 ();
 
-  void CreatePixelIcons32x32 ();
+  void CreatePixelIconsx2 ();
 
   RefPtr<VectorIcon> menu_;
   RefPtr<VectorIcon> circle_;
@@ -1137,9 +1132,7 @@ private:
   RefPtr<CheckIcon> check_;
   RefPtr<DotIcon> dot_;
 
-  std::vector<RefPtr<PixelIcon> > icons_16x16_;
-
-  std::vector<RefPtr<PixelIcon> > icons_32x32_;
+  std::vector<RefPtr<PixelIcon> > pixel_icons_;
 };
 
 inline Icons* icons ()
