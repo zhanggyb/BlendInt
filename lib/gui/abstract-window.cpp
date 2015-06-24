@@ -41,13 +41,11 @@
 namespace BlendInt {
 
 std::thread::id AbstractWindow::kMainThreadID;
-
-AbstractWindow* AbstractWindow::kMainWindow = 0;
-
+AbstractWindow* AbstractWindow::kMainWindow   = 0;
 glm::mat4 AbstractWindow::default_view_matrix = glm::lookAt(
-    glm::vec3(0.f, 0.f, 1.f), // eye
-    glm::vec3(0.f, 0.f, 0.f), // center
-    glm::vec3(0.f, 1.f, 0.f)  // up
+    glm::vec3(0.f, 0.f, 1.f),           // eye
+    glm::vec3(0.f, 0.f, 0.f),           // center
+    glm::vec3(0.f, 1.f, 0.f)            // up
 );
 
 AbstractWindow::AbstractWindow (int flags)
@@ -380,7 +378,7 @@ AbstractWindow* AbstractWindow::GetWindow (AbstractView* view)
   return dynamic_cast<AbstractWindow*>(parent);
 }
 
-bool AbstractWindow::InitializeGLContext ()
+bool AbstractWindow::InitializeGLContext (int width, int height)
 {
   bool success = true;
 
@@ -402,7 +400,7 @@ bool AbstractWindow::InitializeGLContext ()
   }
 
   Timer::SaveCurrentTime();
-  if (success && InitializeShaders()) {
+  if (success && InitializeShaders(width, height)) {
     DBG_PRINT_MSG("Timer to intialize shaders: %g (ms)",
                   Timer::GetIntervalOfMilliseconds());
   } else {
@@ -618,7 +616,7 @@ bool AbstractWindow::InitializeIcons ()
   return true;
 }
 
-bool AbstractWindow::InitializeShaders ()
+bool AbstractWindow::InitializeShaders (int width, int height)
 {
   bool ret = true;
 
@@ -626,7 +624,7 @@ bool AbstractWindow::InitializeShaders ()
     Shaders::kShaders = new Shaders;
 
     if (Shaders::kShaders) {
-      ret = Shaders::kShaders->Setup();
+      ret = Shaders::kShaders->Setup(width, height);
     } else {
       ret = false;
     }

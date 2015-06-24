@@ -36,6 +36,9 @@
 #include <blendint/gui/combo-box.hpp>
 #include <blendint/gui/textentry.hpp>
 #include <blendint/gui/splitter.hpp>
+#include <blendint/gui/node-view.hpp>
+#include <blendint/gui/filebutton.hpp>
+#include <blendint/gui/menu-button.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -66,6 +69,8 @@ int main (int argc, char* argv[])
     frame->AddWidget(new ComboBox);
     frame->AddWidget(new TextEntry);
     frame->AddWidget(new ColorButton);
+    frame->AddWidget(new FileButton);
+    frame->AddWidget(new MenuButton("Test Menu Button"));
 
     win.AddFrame(frame);
 
@@ -100,6 +105,12 @@ int main (int argc, char* argv[])
     
     win.AddFrame(dlg3);
 
+    Dialog* dlg4 = new Dialog("Test grid-guides");
+
+    NodeView* view = new NodeView();
+    dlg4->AddWidget(view);
+
+    win.AddFrame(dlg4);
     
     win.Exec();
     Window::Terminate();

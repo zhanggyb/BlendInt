@@ -22,7 +22,6 @@
  */
 
 #include <blendint/gui/menu-button.hpp>
-
 #include <blendint/gui/abstract-window.hpp>
 
 namespace BlendInt {
@@ -111,14 +110,11 @@ Response MenuButton::Draw (AbstractWindow* context)
 
     shaders()->widget_inner_program()->use();
 
-    glUniform1i(
-        shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-    glUniform1i(
-        shaders()->location(Shaders::WIDGET_INNER_SHADED),
-        theme()->menu_item().shaded);
-    glUniform4fv(
-        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
-        theme()->menu_item().inner_sel.data());
+    glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+    glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
+                theme()->menu_item().shaded);
+    glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+                 theme()->menu_item().inner_sel.data());
 
     glBindVertexArray(vao_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertex_count(round_type()) + 2);

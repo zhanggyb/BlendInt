@@ -75,7 +75,7 @@ TabHeader::~TabHeader()
   glDeleteVertexArrays(1, &vao_);
 }
 
-bool TabHeader::AddButton (TabButton* button)
+TabButton* TabHeader::AddButton (TabButton* button)
 {
   int x = GetLastPosition ();
   int y = kBaseLine - 1;
@@ -109,17 +109,17 @@ bool TabHeader::AddButton (TabButton* button)
       button->SetChecked(true);
     }
 
-    return true;
+    return button;
   }
 
-  return false;
+  return 0;
 }
 
-bool TabHeader::InsertButton (int index, TabButton* button)
+TabButton* TabHeader::InsertButton (int index, TabButton* button)
 {
-
-
-  return false;
+  // TODO: insert button
+  
+  return 0;
 }
 
 bool TabHeader::IsExpandX () const
@@ -193,14 +193,9 @@ void TabHeader::PostDraw (AbstractWindow* context)
     baseline_color = baseline_color + theme()->tab().shadedown;
 
   shaders()->widget_inner_program()->use();
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_INNER_SHADED),
-      0);
-
-  glUniform1i(
-      shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
-  glUniform4fv(
-      shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED), 0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
+  glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
       baseline_color.data());
 
   glBindVertexArray(vao_);
@@ -220,4 +215,4 @@ int TabHeader::GetLastPosition() const
   return x;
 }
 
-}
+} // namespace BlendInt

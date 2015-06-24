@@ -116,7 +116,10 @@ Size Frame::GetPreferredSize () const
   return layout_->GetPreferredSize();
 }
 
-void Frame::PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height)
+void Frame::PerformSizeUpdate (const AbstractView* source,
+                               const AbstractView* target,
+                               int width,
+                               int height)
 {
   if (target == this) {
 
@@ -189,10 +192,8 @@ Response Frame::Draw (AbstractWindow* context)
     glUniform2f(shaders()->location(Shaders::FRAME_IMAGE_POSITION),
                 pixel_size(position().x()),
                 pixel_size(position().y()));
-    glUniform1i(
-        shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
-    glUniform1i(
-        shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_TEXTURE), 0);
+    glUniform1i(shaders()->location(Shaders::FRAME_IMAGE_GAMMA), 0);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     view_buffer()->Draw(0, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -219,12 +220,10 @@ Response Frame::Draw (AbstractWindow* context)
   glUniform2f(shaders()->location(Shaders::FRAME_OUTER_POSITION),
               pixel_size(position().x()),
               pixel_size(position().y()));
-  glBindVertexArray(vao_[1]);
-
+  glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
   glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
               0.576f, 0.576f, 0.576f, 1.f);
-  glDrawArrays(GL_TRIANGLE_STRIP, 4, 6);
-
+  glBindVertexArray(vao_[1]);
   glUniform4f(shaders()->location(Shaders::FRAME_OUTER_COLOR),
               0.4f, 0.4f, 0.4f, 1.f);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);

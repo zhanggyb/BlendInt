@@ -299,7 +299,7 @@ class Shaders
 
   ~Shaders ();
 
-  bool Setup ();
+  bool Setup (int width, int height);
 
   bool SetupWidgetInnerProgram ();
 

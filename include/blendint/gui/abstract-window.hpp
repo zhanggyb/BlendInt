@@ -248,7 +248,7 @@ public:
   
   static AbstractWindow* GetWindow (AbstractView* widget);
 
-  static bool InitializeGLContext ();
+  static bool InitializeGLContext (int width, int height);
 
   static void ReleaseGLContext ();
 
@@ -347,7 +347,7 @@ private:
 
   static bool InitializeIcons ();
 
-  static bool InitializeShaders ();
+  static bool InitializeShaders (int width, int height);
 
   static bool InitializeFont ();
 

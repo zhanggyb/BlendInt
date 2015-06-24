@@ -38,8 +38,8 @@ FileButton::FileButton ()
   int h = this->text()->font().height();
   int w = h;
 
-  w += pixel_size(kPadding.hsum());
-  h += pixel_size(kPadding.vsum());
+  w += kPadding.hsum();
+  h += kPadding.vsum();
 
   set_size(w, h);
 

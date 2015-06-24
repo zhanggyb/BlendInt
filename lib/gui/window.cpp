@@ -40,23 +40,23 @@
 
 namespace BlendInt {
 
-GLFWcursor* Window::kArrowCursor = NULL;
-GLFWcursor* Window::kCrossCursor = NULL;
-GLFWcursor* Window::kSplitVCursor = NULL;
-GLFWcursor* Window::kSplitHCursor = NULL;
-GLFWcursor* Window::kTopLeftCornerCursor = NULL;
+GLFWcursor* Window::kArrowCursor          = NULL;
+GLFWcursor* Window::kCrossCursor          = NULL;
+GLFWcursor* Window::kSplitVCursor         = NULL;
+GLFWcursor* Window::kSplitHCursor         = NULL;
+GLFWcursor* Window::kTopLeftCornerCursor  = NULL;
 GLFWcursor* Window::kTopRightCornerCursor = NULL;
-GLFWcursor* Window::kIBeamCursor = NULL;
+GLFWcursor* Window::kIBeamCursor          = NULL;
 
 std::map<GLFWwindow*, Window*> Window::kSharedWindowMap;
-KeyAction Window::kKeyAction = KeyNone;
-int Window::kKey = 0;
-int Window::kModifiers = 0;
-int Window::kScancode = 0;
-String Window::kText;
-MouseAction Window::kMouseAction = MouseNone;
-MouseButton Window::kMouseButton = MouseButtonLeft;
-Point Window::kCursor;
+KeyAction                      Window::kKeyAction   = KeyNone;
+int                            Window::kKey         = 0;
+int                            Window::kModifiers   = 0;
+int                            Window::kScancode    = 0;
+String                         Window::kText;
+MouseAction                    Window::kMouseAction = MouseNone;
+MouseButton                    Window::kMouseButton = MouseButtonLeft;
+Point                          Window::kCursor;
 
 Window::Window (int width, int height, const char* title, int flags)
 : AbstractWindow(width, height, flags),
@@ -84,10 +84,9 @@ Window::Window (int width, int height, const char* title, int flags)
 
   if (main_window() == this) {
 
-    /* Make the window's context current */
     glfwMakeContextCurrent(window_);
 
-    if (!InitializeGLContext()) {
+    if (!InitializeGLContext(width, height)) {
       DBG_PRINT_MSG("Critical: %s", "Cannot initialize GL Context");
       exit(EXIT_FAILURE);
     }
@@ -102,7 +101,6 @@ Window::Window (int width, int height, const char* title, int flags)
     shaders()->SetFrameProjectionMatrix(projection);
     shaders()->SetFrameViewMatrix(default_view_matrix);
     shaders()->SetFrameModelMatrix(glm::mat3(1.f));
-
     shaders()->SetWidgetViewMatrix(default_view_matrix);
     shaders()->SetWidgetModelMatrix(glm::mat3(1.f));
 

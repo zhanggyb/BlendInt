@@ -30,70 +30,73 @@
 
 namespace BlendInt {
 
-  class TabButton;
+class TabButton;
 
-  /**
-   * @brief A container which manage tab buttons, used in Tab only
-   *
-   * @ingroup blendint_gui_widgets
-   */
-	class TabHeader: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(TabHeader);
+/**
+ * @brief A container which manage tab buttons, used in Tab only
+ *
+ * @ingroup blendint_gui_widgets
+ */
+class TabHeader: public AbstractWidget
+{
+  DISALLOW_COPY_AND_ASSIGN(TabHeader);
 
-	public:
+ public:
 
-		TabHeader ();
+  TabHeader ();
 
-		virtual ~TabHeader ();
+  virtual ~TabHeader ();
 
-		bool AddButton (TabButton* button);
+  TabButton* AddButton (TabButton* button);
 
-		bool InsertButton (int index, TabButton* button);
+  TabButton* InsertButton (int index, TabButton* button);
 
-		virtual bool IsExpandX () const override;
+  virtual bool IsExpandX () const override;
 
-		virtual Size GetPreferredSize () const override;
+  virtual Size GetPreferredSize () const override;
 
-		CppEvent::EventRef<int> button_clicked ()
-		{
-			return m_button_index_clicked;
-		}
+  CppEvent::EventRef<int> button_clicked ()
+  {
+    return m_button_index_clicked;
+  }
 
-		CppEvent::EventRef<int, bool> button_index_toggled ()
-		{
-			return m_button_index_toggled;
-		}
+  CppEvent::EventRef<int, bool> button_index_toggled ()
+  {
+    return m_button_index_toggled;
+  }
 
-	protected:
+ protected:
 
-    virtual void PerformSizeUpdate (const AbstractView* source, const AbstractView* target, int width, int height) final;
+  virtual void PerformSizeUpdate (const AbstractView* source,
+                                  const AbstractView* target,
+                                  int width,
+                                  int height) final;
 
-		virtual Response Draw (AbstractWindow* context) final;
+  virtual Response Draw (AbstractWindow* context) final;
 
-		virtual void PostDraw (AbstractWindow* context) final;
+  virtual void PostDraw (AbstractWindow* context) final;
 
-	private:
+ private:
 
-		void OnButtonIndexToggled (int index, bool toggled);
+  void OnButtonIndexToggled (int index, bool toggled);
 
-		int GetLastPosition () const;
+  int GetLastPosition () const;
 
-		GLuint vao_;
+  GLuint vao_;
 
-		GLBuffer<ARRAY_BUFFER, 1> vbo_;
+  GLBuffer<ARRAY_BUFFER, 1> vbo_;
 
-		ButtonGroup group_;
+  ButtonGroup group_;
 
-		CppEvent::Event<int> m_button_index_clicked;
+  CppEvent::Event<int> m_button_index_clicked;
 
-		CppEvent::Event<int, bool> m_button_index_toggled;
+  CppEvent::Event<int, bool> m_button_index_toggled;
 
-		static const int kBaseLine = 2;
+  static const int kBaseLine = 2;
 
-		static const int kLeftPadding = 2;
+  static const int kLeftPadding = 2;
 
-		static const int kRightPadding = 2;
-	};
+  static const int kRightPadding = 2;
+};
 
 }

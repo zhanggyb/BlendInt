@@ -195,8 +195,8 @@ class Font: public Object
   static inline int default_height ()
   {
     return static_cast<int>(
-        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.height
-         >> 6) / theme()->pixel());
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->
+         size->metrics.height >> 6) / theme()->pixel());
   }
 
   /**
@@ -205,8 +205,8 @@ class Font: public Object
   static inline int default_ascender ()
   {
     return static_cast<int>(
-        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.ascender
-         >> 6) / theme()->pixel());
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->
+         size->metrics.ascender >> 6) / theme()->pixel());
   }
 
   /**
@@ -215,8 +215,8 @@ class Font: public Object
   static inline int default_descender ()
   {
     return static_cast<int>(
-        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.descender
-         >> 6) / theme()->pixel());
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->
+         size->metrics.descender >> 6) / theme()->pixel());
   }
 
   /**
@@ -225,8 +225,8 @@ class Font: public Object
   static inline int default_max_advance ()
   {
     return static_cast<int>(
-        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->size->metrics.max_advance
-         >> 6) / theme()->pixel());
+        (FontCache::kCacheDB[FontCache::kDefaultFontHash]->face_.face()->
+         size->metrics.max_advance >> 6) / theme()->pixel());
   }
 
  private:

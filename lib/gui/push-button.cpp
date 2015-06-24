@@ -31,9 +31,8 @@ PushButton::PushButton ()
 {
   set_round_type(RoundAll);
 
-  Font font;	// default font
   int w = 80;
-  int h = font.height();
+  int h = Font::default_height();
 
   set_size(w + kPadding.hsum(), h + kPadding.vsum());
 
@@ -212,17 +211,14 @@ Response PushButton::Draw (AbstractWindow* context)
 {
   shaders()->widget_inner_program()->use();
 
-  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA),
-              0);
+  glUniform1i(shaders()->location(Shaders::WIDGET_INNER_GAMMA), 0);
   glUniform1i(shaders()->location(Shaders::WIDGET_INNER_SHADED),
               theme()->push_button().shaded);
   if (is_down()) {
-    glUniform4fv(
-        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+    glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
         theme()->push_button().inner_sel.data());
   } else {
-    glUniform4fv(
-        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+    glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
         theme()->push_button().inner.data());
   }
 
@@ -280,7 +276,7 @@ void PushButton::InitializeButtonOnce ()
   vbo_.set_data(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
   glEnableVertexAttribArray(AttributeCoord);
   glVertexAttribPointer(AttributeCoord, 2,
-  GL_FLOAT,
+                        GL_FLOAT,
                         GL_FALSE, 0, 0);
 
   glBindVertexArray(0);

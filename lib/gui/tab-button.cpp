@@ -34,8 +34,7 @@ TabButton::TabButton ()
   set_round_type(RoundAll);
   set_checkable(true);
 
-  Font font;  // default font
-  int h = font.height();
+  int h = Font::default_height();
   int w = h;
 
   set_size(w + kPadding.hsum(), h + kPadding.vsum());
@@ -196,12 +195,10 @@ Response TabButton::Draw (AbstractWindow* context)
               theme()->tab().shaded);
 
   if (is_checked()) {
-    glUniform4fv(
-        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+    glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
         theme()->tab().inner_sel.data());
   } else {
-    glUniform4fv(
-        shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
+    glUniform4fv(shaders()->location(Shaders::WIDGET_INNER_COLOR), 1,
         theme()->tab().inner.data());
   }
 
@@ -275,4 +272,4 @@ void TabButton::InitializeTabButtonOnce ()
   vbo_.reset();
 }
 
-}
+} // namespace BlendInt

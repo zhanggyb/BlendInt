@@ -93,6 +93,7 @@ Size Tab::GetPreferredSize () const
   Size tmp;
   for (AbstractView* p = first(); p; p = next(p)) {
     tmp = p->GetPreferredSize();
+    // DBG_PRINT_MSG("width: %d, height: %d", tmp.width(), tmp.height());    
     w = std::max(w, tmp.width());
     h += tmp.height();
   }
@@ -172,4 +173,4 @@ void Tab::FillSubWidgetsInTab (int x, int y, int w, int h)
   ResizeSubView(stack, w, h - header_size.height());
 }
 
-}
+}  // namespace BlendInt

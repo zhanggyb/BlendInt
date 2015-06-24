@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <blendint/core/string.hpp>
 #include <blendint/gui/abstract-widget.hpp>
 
 namespace BlendInt {
@@ -57,9 +58,9 @@ protected:
   virtual void PerformSizeUpdate (const AbstractView* source,
                                   const AbstractView* target,
                                   int width,
-                                  int height);
+                                  int height) final;
 
-  virtual Response Draw (AbstractWindow* context);
+  virtual Response Draw (AbstractWindow* context) final;
 
 private:
 
@@ -70,4 +71,4 @@ private:
   void FillSubWidgetsInTab (int x, int y, int w, int h);
 };
 
-}
+}  // namespace BlendInt

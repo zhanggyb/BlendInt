@@ -10,19 +10,19 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(BLENDINT_VERSION_FULL "0.1")
 set(BLENDINT_LIB_NAME "blendint")
 
-# Check the system and define BLENDINT_SYSTEM_NAME to:
+# Determine the platform and define BLENDINT_SYSTEM_NAME to:
 #   0 - Linux
 #   1 - OS X
 #   2 - Windows (not supported currently)
 # These values are also defined in include/blendint/config.hpp.in
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
   set(OS_LINUX TRUE)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
   set(BLENDINT_SYSTEM_NAME 0)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
   set(OS_APPLE TRUE)
   set(BLENDINT_SYSTEM_NAME 1)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
   message(FATAL_ERROR "BlendInt does not support Windows yet!")
   set(OS_WINDOWS TRUE)
   set(BLENDINT_SYSTEM_NAME 2)
