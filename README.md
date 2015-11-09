@@ -1,5 +1,7 @@
 # BlendInt
 
+**This project is deprecated, I realized it's better to use [Electron](http://electron.atom.io/)+HTML5+CSS3 to develop cross-platform application.**
+
 ------
 
 ## What is BlendInt
